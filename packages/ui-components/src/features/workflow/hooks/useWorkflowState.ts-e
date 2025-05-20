@@ -1,0 +1,49 @@
+import { useState, useEffect } from 'react';
+import { WorkflowState, WorkflowStatus } from '../types';
+
+export function useWorkflowState(workflowId: string) {
+  const [state, setState] = useState<WorkflowState>({
+    status: WorkflowStatus.PENDING,
+    completedSteps: [],
+  });
+
+  useEffect(() => {
+    // Load initial workflow state
+    loadWorkflowState(workflowId).then(setState);
+  }, [workflowId]);
+
+  const updateState = (updates: Partial<WorkflowState>) => {
+    setState(current => {
+      const newState = { ...current, ...updates };
+      // Persist state changes
+      saveWorkflowState(workflowId, newState);
+      return newState;
+    });
+  };
+
+  return { state, updateState };
+}
+
+async function loadWorkflowState(): Promise<void> (workflowId: string): Promise<WorkflowState> {
+  try {
+    const stored = localStorage.getItem(`workflow:${workflowId}`);
+    return stored ? JSON.parse(stored) : {
+      status: WorkflowStatus.PENDING,
+      completedSteps: [],
+    };
+  } catch (error) {
+    console.error('Failed to load workflow state:', error);
+    return {
+      status: WorkflowStatus.PENDING,
+      completedSteps: [],
+    };
+  }
+}
+
+async function saveWorkflowState(): Promise<void> (workflowId: string, state: WorkflowState): Promise<void> {
+  try {
+    localStorage.setItem(`workflow:${workflowId}`, JSON.stringify(state));
+  } catch (error) {
+    console.error('Failed to save workflow state:', error);
+  }
+}

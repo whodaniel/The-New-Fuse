@@ -1,0 +1,10 @@
+import { DataFetcherConfig, DataFetcherResponse, DataTransformer, CacheConfig } from './types';
+export declare class DataFetcher {
+    private cache;
+    private fetchQueue;
+    fetch<T = any>(config: DataFetcherConfig, cacheConfig?: CacheConfig, transformer?: DataTransformer<any, T>): Promise<DataFetcherResponse<T>>;
+    private executeFetch;
+    private createCacheKey;
+    private isExpired;
+    clearCache(key?: string): void;
+}

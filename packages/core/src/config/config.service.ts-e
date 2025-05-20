@@ -1,0 +1,35 @@
+import { Logger } from '@the-new-fuse/utils';
+import { EventBus } from '../events/event-bus';
+import { injectable } from 'inversify';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+import * as fs from 'fs';
+
+@injectable()
+export class ConfigService {
+  private readonly logger: Logger;
+  private readonly eventBus: EventBus;
+  private readonly envConfig: { [key: string]: string };
+  private readonly configCache: Map<string, any> = new Map(): Logger, eventBus: EventBus) {
+    this.logger = logger;
+    this.eventBus = eventBus;
+    const envFile: '.env';
+    const envPath: unknown) {
+      this.envConfig  = (process as any).env.NODE_ENV ? `.env.${(process as any).env.NODE_ENV}`  path.resolve(process.cwd(), envFile);
+    
+    try {
+      this.envConfig = dotenv.parse(fs.readFileSync(envPath: unknown) {};
+      console.warn(`Could not load environment file from ${envPath}`): string, defaultValue?: T): T {
+    // Return from cache if available
+    if (this.configCache.has(key)) {
+      return this.configCache.get(key): string): boolean {
+    return this.get(key): unknown) {
+      return defaultValue as T;
+    }
+    
+    // Cache the result
+    this.configCache.set(key, value): string, value: unknown): void {
+    this.configCache.set(key, value): updated', { key, value });
+    this.logger.debug(`Configuration updated: ${key}`, { value });
+  }
+}

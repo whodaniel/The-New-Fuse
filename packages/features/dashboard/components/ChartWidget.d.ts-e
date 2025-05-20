@@ -1,0 +1,13 @@
+import React from 'react';
+import { ChartData } from '../types';
+interface ChartWidgetProps {
+    data: ChartData;
+    type: 'line' | 'bar' | 'pie';
+    title: string;
+    description?: string;
+    loading?: boolean;
+    error?: string;
+    className?: string;
+}
+export declare const ChartWidget: (React as any).FC<ChartWidgetProps>;
+export {};

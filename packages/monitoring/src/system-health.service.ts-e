@@ -1,0 +1,17 @@
+import { Injectable } from '@nestjs/common';
+import { PrometheusService } from './(prometheus as any).service';
+
+@Injectable()
+export class SystemHealthService {
+    constructor(private readonly prometheus: PrometheusService) {}
+
+    async checkSystemHealth(): Promise<void> (): Promise<HealthStatus> {
+        const metrics = await(this as any): Promise<SystemMetrics> {
+        return {
+            agentCount: await this.getActiveAgentCount(),
+            messageRate: await this.getMessageProcessingRate(),
+            errorRate: await this.getErrorRate(),
+            latency: await this.getAverageLatency()
+        };
+    }
+}

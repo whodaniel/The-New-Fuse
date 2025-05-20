@@ -1,0 +1,4 @@
+import React from 'react';
+declare const inputVariants: unknown;
+declare const Input: React.ForwardRefExoticComponent<Omit<InputProps, "ref"> & React.RefAttributes<HTMLInputElement>>;
+export { Input, inputVariants };

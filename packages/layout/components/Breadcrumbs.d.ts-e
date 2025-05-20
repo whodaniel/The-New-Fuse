@@ -1,0 +1,11 @@
+import React from 'react';
+interface BreadcrumbItem {
+    label: string;
+    path: string;
+}
+interface BreadcrumbsProps {
+    items: BreadcrumbItem[];
+    onNavigate: (path: string) => void;
+}
+export declare const Breadcrumbs: (React as any).FC<BreadcrumbsProps>;
+export {};

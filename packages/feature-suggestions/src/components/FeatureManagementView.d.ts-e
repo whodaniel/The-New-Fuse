@@ -1,0 +1,7 @@
+import React from 'react';
+interface FeatureManagementViewProps {
+    suggestionService: unknown;
+    currentUserId: string;
+}
+export declare const FeatureManagementView: (React as any).FC<FeatureManagementViewProps>;
+export {};

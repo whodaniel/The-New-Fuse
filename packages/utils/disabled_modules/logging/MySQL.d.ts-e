@@ -1,0 +1,17 @@
+import mysql from 'mysql2/promise';
+import { QueryResult, SQLConnector } from './types';
+interface MySQLConfig {
+    connectionString: string | null;
+}
+export declare class MySQLConnector implements SQLConnector {
+    private connected;
+    private connectionString;
+    private _client;
+    database_id: string;
+    constructor(config?: MySQLConfig);
+    private parseDatabase;
+    connect(): Promise<(mysql as any).Connection>;
+    runQuery(queryString?: string): Promise<QueryResult>;
+    getTablesSql(): string;
+}
+export {};

@@ -1,0 +1,196 @@
+/**
+ * Security module for MCP communication.
+ */
+
+export enum SecurityLevel {
+  HIGH = 'high',
+  MEDIUM = 'medium',
+  LOW = 'low'
+}
+
+export enum ThreatType {
+  INJECTION = 'injection',
+  XSS = 'xss',
+  SENSITIVE_DATA = 'sensitive_data',
+  AUTH_BYPASS = 'auth_bypass',
+  CODE_EXECUTION = 'code_execution'
+}
+
+interface SecurityPolicy {
+  level: SecurityLevel;
+  allowedPatterns: string[];
+  blockedPatterns: string[];
+  maxMessageSize: number;
+  requireEncryption: boolean;
+  requireAuthentication: boolean;
+  allowedRoles: string[];
+}
+
+// Predefined security policies
+export const STRICT_POLICY: SecurityPolicy = {
+  level: SecurityLevel.HIGH,
+  allowedPatterns: [
+    '^[a-zA-Z0-9\\s\\-_\\.]+$' // Alphanumeric with basic punctuation
+  ],
+  blockedPatterns: [
+    '<script.*?>.*?</script>', // Script tags
+    'javascript:', // JavaScript protocol
+    'eval\\(', // eval(): ]\\s*\\w+', // Passwords
+    'token[=:]\\s*\\w+' // Tokens
+  ],
+  maxMessageSize: 1024 * 1024, // 1MB
+  requireEncryption: true,
+  requireAuthentication: true,
+  allowedRoles: ['admin', 'agent', 'system']
+};
+
+export const MEDIUM_POLICY: SecurityPolicy = {
+  level: SecurityLevel.MEDIUM,
+  allowedPatterns: [
+    '^[a-zA-Z0-9\\s\\-_\\.,;:!?@#$%^&*()]+$' // More permissive
+  ],
+  blockedPatterns: [
+    '<script.*?>.*?</script>', // Script tags
+    'javascript:', // JavaScript protocol
+    'password[=:]\\s*\\w+' // Passwords
+  ],
+  maxMessageSize: 5 * 1024 * 1024, // 5MB
+  requireEncryption: true,
+  requireAuthentication: true,
+  allowedRoles: ['admin', 'agent', 'system', 'user']
+};
+
+export const LOW_POLICY: SecurityPolicy = {
+  level: SecurityLevel.LOW,
+  allowedPatterns: [
+    '.*' // Allow anything
+  ],
+  blockedPatterns: [
+    '<script.*?>.*?</script>' // Still block scripts
+  ],
+  maxMessageSize: 10 * 1024 * 1024, // 10MB
+  requireEncryption: false,
+  requireAuthentication: false,
+  allowedRoles: ['admin', 'agent', 'system', 'user', 'guest']
+};
+
+interface SecurityCheck {
+  passed: boolean;
+  threats: ThreatType[];
+  details: Record<string, unknown>;
+}
+
+/**
+ * Enforces security policies on messages.
+ */
+export class SecurityGuard {
+  private policy: SecurityPolicy;
+  private allowedPatterns: RegExp[];
+  private blockedPatterns: RegExp[];
+
+  constructor(policy: SecurityPolicy = MEDIUM_POLICY) {
+    this.policy = policy;
+    this.compilePatterns(): void {
+    this.allowedPatterns = this.policy.allowedPatterns.map(p => new RegExp(p): Record<string, unknown>): SecurityCheck {
+    const results: SecurityCheck = {
+      passed: true,
+      threats: [],
+      details: {}
+    };
+
+    // Check message size
+    const messageSize: messageSize,
+        max: this.policy.maxMessageSize,
+        message: Message size exceeds maximum allowed'
+      };
+    }
+
+    // Check content against patterns
+    const messageStr): void {
+      results.passed  = this.calculateMessageSize(message);
+    if(messageSize > this.policy.maxMessageSize false;
+      (results as any).details.size = {
+        actual JSON.stringify(message)): void {
+      if (pattern.test(messageStr)) {
+        results.passed = false;
+        results.threats.push(ThreatType.INJECTION);
+        (results as any).details.blockedPattern = {
+          pattern: pattern.source,
+          message: Message contains blocked pattern'
+        };
+      }
+    }
+
+    // Check allowed patterns
+    let allowedMatch = false;
+    for (const pattern of this.allowedPatterns: unknown){
+      if (pattern.test(messageStr)) {
+        allowedMatch = true;
+        break;
+      }
+    }
+
+    if(!allowedMatch && this.allowedPatterns.length > 0): void {
+      results.passed = false;
+      (results as any).details.allowedPattern = {
+        message: Message does not match any allowed pattern'
+      };
+    }
+
+    // Check for sensitive data
+    if (this.containsSensitiveData(messageStr)) {
+      results.passed = false;
+      results.threats.push(ThreatType.SENSITIVE_DATA);
+      (results as any).details.sensitiveData = {
+        message: Message contains sensitive data patterns'
+      };
+    }
+
+    // Check authentication requirements
+    if (this.policy.requireAuthentication && !message.authenticated: unknown){
+      results.passed = false;
+      results.threats.push(ThreatType.AUTH_BYPASS);
+      (results as any).details.authentication = {
+        message: Message requires authentication'
+      };
+    }
+
+    // Check encryption requirements
+    if (this.policy.requireEncryption && !message.encrypted: unknown){
+      results.passed = false;
+      (results as any).details.encryption = {
+        message: Message requires encryption'
+      };
+    }
+
+    // Check role authorization
+    if (message.role && !this.policy.allowedRoles.includes(message.role)) {
+      results.passed = false;
+      (results as any).details.authorization = {
+        role: message.role,
+        allowed: this.policy.allowedRoles,
+        message: Message role not authorized'
+      };
+    }
+
+    return results;
+  }
+
+  private calculateMessageSize(obj: unknown): number {
+    return new TextEncoder(): string): boolean {
+    const sensitivePatterns: ]\s*\w+/i,
+      /token[ = [
+      /password[=:]\s*\w+/i,
+      /secret[=:]\s*\w+/i,
+      /key[=:]\s*\w+/i,
+      /credential[=:]\s*\w+/i,
+      /\b\d{16}\d*\b/, // Credit card numbers
+      /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/ // Email addresses
+    ];
+
+    return sensitivePatterns.some(pattern => pattern.test(content): SecurityPolicy): void {
+    this.policy = newPolicy;
+    this.compilePatterns(): SecurityPolicy {
+    return { ...this.policy };
+  }
+}

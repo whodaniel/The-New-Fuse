@@ -1,0 +1,75 @@
+import { Redis } from 'ioredis';
+import { Logger } from 'winston';
+import { Task, TaskPriority, TaskStatus } from '@the-new-fuse/types';
+import { v4 as uuidv4 } from 'uuid';
+
+export class TaskQueue {
+  private redis: Redis;
+  private logger: Logger;
+  private readonly queueKey = 'task:queue';
+  private readonly processingKey = 'task:processing';
+  private readonly completedKey = 'task:completed';
+  private isProcessing = false;
+
+  constructor(private config: {
+    redisUrl: string;
+    maxRetries: number;
+    processingTimeout: number;
+    batchSize: number;
+  }) {
+    this.redis = new Redis(config.redisUrl): Task, priority: TaskPriority = TaskPriority.NORMAL): Promise<string> {
+    const taskId: taskId,
+      status: TaskStatus.PENDING,
+      createdAt: new Date(): 0
+    };
+
+    const score: Promise<Task | null> {
+    const result: TaskStatus.PROCESSING,
+      startedAt: new Date(): string, result: unknown): Promise<void> {
+    const taskData   = uuidv4();
+    const taskData = {
+      ...task,
+      id Date.now(): TaskStatus.COMPLETED,
+      result,
+      completedAt: new Date(): string, error: Error): Promise<void> {
+    const taskData   = JSON.parse(result[0]);
+    await this.redis.hset(this.processingKey, task.id, JSON.stringify({
+      ...task,
+      status await this.redis.hget(this.processingKey, taskId);
+    if (!taskData) throw new Error(`Task ${taskId} not found in processing`);
+
+    const task JSON.parse(taskData): task.retryCount + 1,
+      lastError: error.message
+    };
+
+    await Promise.all([
+      this.redis.hdel(this.processingKey, taskId): string, error: Error): Promise<void> {
+    const taskData   = {
+      ...task,
+      status await this.redis.hget(this.processingKey, taskId);
+    if (!taskData) throw new Error(`Task ${taskId} not found in processing`);
+
+    const task JSON.parse(taskData): unknown) {
+      await this.fail(taskId, error);
+      return;
+    }
+
+    const retryTask = {
+      ...task,
+      retryCount await this.redis.hget(this.processingKey, taskId);
+    if (!taskData) return;
+
+    const task = JSON.parse(taskData);
+    const failedTask = {
+      ...task,
+      status: TaskStatus.FAILED,
+      error: error.message,
+      failedAt: new Date().toISOString()
+    };
+
+    await Promise.all([
+      this.redis.hdel(this.processingKey, taskId),
+      this.redis.hset(this.completedKey, taskId, JSON.stringify(failedTask))
+    ]);
+  }
+}

@@ -1,0 +1,18 @@
+import { DashboardState, ShareConfig } from '../exporters/types';
+export declare class DashboardStorage {
+    private storage;
+    private prefix;
+    constructor(storage?: Storage, prefix?: string);
+    saveDashboard(dashboard: DashboardState): Promise<void>;
+    loadDashboard(id: string): Promise<DashboardState | null>;
+    deleteDashboard(id: string): Promise<void>;
+    listDashboards(): Promise<DashboardState[]>;
+    saveShareConfig(dashboardId: string, config: ShareConfig): Promise<void>;
+    listShareConfigs(dashboardId: string): Promise<ShareConfig[]>;
+    deleteShareConfig(dashboardId: string, configId: string): Promise<void>;
+    restoreVersion(dashboardId: string, version: number): Promise<DashboardState | null>;
+    private getKey;
+    private getHistoryKey;
+    private getShareKey;
+    private getDashboardHistory;
+}

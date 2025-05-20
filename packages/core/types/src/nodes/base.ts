@@ -1,0 +1,45 @@
+
+export {}
+exports.BaseNode = void 0;
+import types_1 from './types.js';
+class BaseNode {
+    constructor(id, type, config, metadata) {
+        this.id = id;
+        this.type = type;
+        this.config = config;
+        this.metadata = metadata;
+        this.state = {
+            id,
+            status: types_1.NodeStatus.PENDING,
+            startTime: undefined,
+            stopTime: undefined,
+            error: undefined,
+            metadata: metadata
+        };
+        this.metrics = {
+            executionCount: 0,
+            successCount: 0,
+            errorCount: 0,
+            lastExecutionTime: undefined,
+            avgExecutionTime: undefined,
+            customMetrics: {},
+            duration: undefined,
+            retries: 0,
+            errors: 0
+        };
+    }
+    getStatus() {
+        return this.state.status;
+    }
+    getMetrics() {
+        return { ...this.metrics };
+    }
+    updateStatus(status) {
+        this.state.status = status;
+    }
+    updateMetrics(metrics) {
+        Object.assign(this.metrics, metrics);
+    }
+}
+exports.BaseNode = BaseNode;
+//# sourceMappingURL=base.js.mapexport {};

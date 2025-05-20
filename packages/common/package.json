@@ -1,0 +1,9 @@
+{
+  "name": "@the-new-fuse/common",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "mkdir -p dist && echo '// Common utilities' > dist/index.js",
+    "clean": "rimraf dist .turbo node_modules"
+  }
+}

@@ -1,0 +1,155 @@
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  createHash,
+  scrypt,
+  timingSafeEqual
+} from 'crypto';
+import { promisify } from 'util';
+
+const scryptAsync = promisify(scrypt);
+
+interface EncryptionConfig {
+  algorithm: string;
+  keyLength: number;
+  ivLength: number;
+  saltLength: number;
+  tagLength: number;
+  iterations: number;
+}
+
+@Injectable()
+export class EncryptionService {
+  private logger: Logger;
+  private readonly db: DatabaseService;
+  private config: EncryptionConfig;
+  private masterKey: Buffer;
+
+  constructor() {
+    this.logger = new Logger('EncryptionService');
+    this.db = new DatabaseService();
+    this.config = {
+      algorithm: 'aes-256-gcm',
+      keyLength: 32,
+      ivLength: 16,
+      saltLength: 32,
+      tagLength: 16,
+      iterations: 100000
+    };
+  }
+
+  async initialize(): Promise<void> (): Promise<void> {
+    try {
+      const storedKey = await this.db.secrets.findUnique({
+        where: { key: 'master_key' }
+      });
+
+      if (storedKey) {
+        this.masterKey = Buffer.from(storedKey.value, 'hex');
+      } else {
+        this.masterKey = await this.generateMasterKey();
+      }
+    } catch (error) {
+      this.logger.error('Failed to initialize encryption service:', error);
+      throw error;
+    }
+  }
+
+  private async generateMasterKey(): Promise<void> (): Promise<Buffer> {
+    const key = randomBytes(this.config.keyLength);
+
+    await this.db.secrets.create({
+      data: {
+        key: 'master_key',
+        value: key.toString('hex'),
+        createdAt: new Date()
+      }
+    });
+
+    return key;
+  }
+
+  async deriveKey(): Promise<void> (password: string, salt?: Buffer): Promise<{ key: Buffer; salt: Buffer }> {
+    const saltBuffer = salt || randomBytes(this.config.saltLength);
+    
+    const key = await scryptAsync(
+      password,
+      saltBuffer,
+      this.config.keyLength,
+      {
+        N: this.config.iterations,
+        r: 8,
+        p: 1
+      }
+    );
+
+    return { key: key as Buffer, salt: saltBuffer };
+  }
+
+  async encrypt(): Promise<void> (data: string | Buffer, key?: Buffer): Promise<{
+    encrypted: Buffer;
+    iv: Buffer;
+    tag: Buffer;
+    salt?: Buffer;
+  }> {
+    try {
+      const iv = randomBytes(this.config.ivLength);
+      const encryptionKey = key || this.masterKey;
+      
+      const cipher = createCipheriv(
+        this.config.algorithm,
+        encryptionKey,
+        iv
+      );
+
+      const inputBuffer = Buffer.isBuffer(data) ? data : Buffer.from(data, 'utf8');
+      const encrypted = Buffer.concat([
+        cipher.update(inputBuffer),
+        cipher.final()
+      ]);
+
+      const tag = cipher.getAuthTag();
+
+      return {
+        encrypted,
+        iv,
+        tag,
+        salt: key ? undefined : null
+      };
+    } catch (error) {
+      this.logger.error('Encryption failed:', error);
+      throw error;
+    }
+  }
+
+  async decrypt(): Promise<void> (
+    encrypted: Buffer,
+    iv: Buffer,
+    tag: Buffer,
+    key?: Buffer
+  ): Promise<Buffer> {
+    try {
+      const decryptionKey = key || this.masterKey;
+      
+      const decipher = createDecipheriv(
+        this.config.algorithm,
+        decryptionKey,
+        iv
+      );
+
+      decipher.setAuthTag(tag);
+
+      return Buffer.concat([
+        decipher.update(encrypted),
+        decipher.final()
+      ]);
+    } catch (error) {
+      this.logger.error('Decryption failed:', error);
+      throw error;
+    }
+  }
+}

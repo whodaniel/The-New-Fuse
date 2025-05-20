@@ -1,0 +1,17 @@
+{
+  "extends": "../../../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "types": ["react", "node", "jest"],
+    "declaration": true,
+    "declarationMap": true
+  },
+  "include": ["src/**/*", "components/**/*"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../../../core" },
+    { "path": "../../../types" }
+  ]
+}

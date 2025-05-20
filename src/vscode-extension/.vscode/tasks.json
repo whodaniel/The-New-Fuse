@@ -1,0 +1,128 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "watch",
+            "problemMatcher": "$ts-webpack-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "test-watch",
+            "problemMatcher": "$tsc-watch",
+            "isBackground": true,
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "group": "test"
+        },
+        {
+            "label": "Run MCP Tests",
+            "type": "shell",
+            "command": "npm",
+            "args": ["test"],
+            "group": {
+                "kind": "test",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run MCP Tests (Watch)",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "test:watch"],
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "dedicated"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run MCP Benchmark",
+            "type": "shell",
+            "command": "npm",
+            "args": ["run", "benchmark"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run All Tests and Benchmarks",
+            "dependsOn": [
+                "Run MCP Tests",
+                "Run MCP Benchmark"
+            ],
+            "dependsOrder": "sequence",
+            "group": "test",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Launch MCP Integration",
+            "type": "shell",
+            "command": "${command:thefuse.mcp.initialize}",
+            "group": "none",
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            }
+        },
+        {
+            "label": "Show MCP Tools",
+            "type": "shell",
+            "command": "${command:thefuse.mcp.showTools}",
+            "group": "none"
+        },
+        {
+            "label": "Test MCP Tool",
+            "type": "shell",
+            "command": "${command:thefuse.mcp.testTool}",
+            "group": "none"
+        },
+        {
+            "label": "Ask MCP Agent",
+            "type": "shell",
+            "command": "${command:thefuse.mcp.askAgent}",
+            "group": "none"
+        },
+        {
+            "label": "Run Docker Environment",
+            "type": "docker-run",
+            "dependsOn": ["docker-build"],
+            "dockerRun": {
+                "env": {
+                    "NODE_ENV": "development"
+                }
+            },
+            "node": {
+                "package": "./package.json",
+                "enableDebugging": true
+            }
+        }
+    ]
+}

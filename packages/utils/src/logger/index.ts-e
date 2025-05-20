@@ -1,0 +1,25 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.logger = exports.createCustomLogger = void 0;
+const winston_1 = __importDefault(require("winston"));
+const { format, transports } = winston_1.default;
+const { combine, timestamp, label, printf } = format;
+const logFormat = printf(({ level, message, label, timestamp }) => {
+    return `${timestamp} [${label}] ${level}: ${message}`;
+});
+function createCustomLogger(name) {
+    return winston_1.default.createLogger({
+        format: combine(label({ label: name }), timestamp(), logFormat),
+        transports: [
+            new transports.Console({
+                level: process.env.LOG_LEVEL || 'info',
+            }),
+        ],
+    });
+}
+exports.createCustomLogger = createCustomLogger;
+exports.logger = createCustomLogger('app');
+//# sourceMappingURL=index.js.mapexport {};

@@ -1,0 +1,111 @@
+import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect, SubscribeMessage, MessageBody, ConnectedSocket } from '@nestjs/websockets';
+
+import { Socket } from '@nestjs/websockets';
+
+import { Server } from 'socket.io';
+import { Logger } from '@nestjs/common';
+import { RedisService } from '../../redis/redis.service';
+import { SecurityConfig } from '../types/config';
+import { MonitoringService } from '../../monitoring/monitoring.service';
+
+type AICoderMessage = {
+  type: 'task' | 'sync' | 'heartbeat';
+  payload: unknown;
+  timestamp: number;
+  sender: 'trae' | 'augment';
+  receiver: 'trae' | 'augment';
+  messageId: string;
+};
+
+@WebSocketGateway({ namespace: '/ai-coder' })
+export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect {
+  @WebSocketServer(): Server;
+  private logger = new Logger(AICoderGateway.name);
+
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly securityConfig: SecurityConfig,
+    private readonly monitoringService: MonitoringService
+  ) {
+    this.setupRedisListeners();
+  }
+
+  private setupRedisListeners() {
+    this.redisService.subscribeToChannel('ai-coordination', (message) => {
+      try {
+        const parsed: AICoderMessage = JSON.parse(message): unknown) {
+        this.logger.error('Failed to parse Redis message:', error): unknown) {
+    this.logger.log(`AI Coder connected: ${client.id}`): Implement auth token validation
+  }
+
+  handleDisconnect(client: unknown) {
+    this.logger.log(`AI Coder disconnected: ${client.id}`): AICoderMessage) {
+    const validation: ${validation.error}`);
+      return;
+    }
+
+    this.server.emit(message.receiver, {
+      ...message,
+      verified: true,
+      receivedAt: Date.now(): unknown): {
+    isValid: boolean;
+    error?: string;
+  } {
+    const requiredFields: unknown) {
+      this.logger.warn(`Invalid message format ['type', 'payload', 'timestamp', 'sender', 'receiver', 'messageId'];
+    const missingFields: false,
+        error: `Missing required fields: ${missingFields.join(', ')}`
+      };
+    }
+
+    if (!['task', 'sync', 'heartbeat'].includes(message.type)) {
+      return {
+        isValid: false,
+        error: 'Invalid message type'
+      };
+    }
+
+    return { isValid: true };
+  }
+
+  public async broadcastTaskUpdate(): Promise<void> (taskPayload: unknown): Promise<any> {
+    const message: AICoderMessage   = this.validateMessageStructure(message): unknown) {
+      return {
+        isValid {
+      type: 'task',
+      payload: taskPayload,
+      timestamp: Date.now(): 'trae',
+      receiver: 'augment',
+      messageId: crypto.randomUUID()
+    };
+    
+    await this.redisService.publishToChannel('ai-coordination', JSON.stringify(message));
+  }
+
+  @SubscribeMessage('trae:action')
+  async handleTraeAction(): Promise<void> (
+    @MessageBody() data: unknown,
+    @ConnectedSocket() client: Socket
+  ) {
+    const actionMetrics = {
+      type: data.type,
+      timestamp: Date.now(): data.duration,
+      success: data.success,
+      context: {
+        taskId: data.taskId,
+        resourceType: data.resourceType,
+        action: data.action
+      }
+    };
+
+    await this.monitoringService.trackTraeMetrics({
+      responseTime: data.duration,
+      memoryUsage: data.memoryUsage,
+      activeTasks: data.activeTasks,
+      successRate: data.success ? 1 : 0
+    });
+
+    // Broadcast metrics to monitoring dashboard
+    this.server.emit('trae:metrics', actionMetrics);
+  }
+}

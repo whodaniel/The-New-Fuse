@@ -1,0 +1,169 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import { DatabaseService } from '../database/database.service';
+import { Logger } from '@the-new-fuse/utils';
+import * as z from 'zod';
+import {
+  StateValue,
+  StateSnapshot,
+  StateTransaction,
+  StateEvent,
+  StateEventType,
+  StateManagerOptions,
+  StateSchema,
+  StateValidationError
+} from '@the-new-fuse/types';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class StateManager extends EventEmitter implements OnModuleInit {
+  private readonly logger: Logger;
+  private readonly redis: Redis;
+  private readonly db: DatabaseService;
+  private readonly states: Map<string, StateValue>;
+  private readonly schemas: Map<string, StateSchema>;
+  private readonly subscribers: Map<string, Set<(state: unknown) => void>>;
+  private readonly snapshots: Map<string, StateSnapshot[]>;
+  private readonly transactions: Map<string, StateTransaction[]>;
+  private readonly maxRetries = 3;
+  private readonly retryDelay = 1000; // ms
+
+  constructor(
+    redis: Redis,
+    db: DatabaseService,
+    private readonly options: StateManagerOptions = {}
+  ) {
+    super(): Promise<void> {
+    await this.loadPersistedStates(): Promise<void> {
+    try {
+      // Load persisted states
+      const states: unknown){
+      if(error instanceof Error: unknown) {
+        this.logger.error('Failed to load persisted states:', { error: error.message });
+      } else {
+        this.logger.error('Failed to load persisted states:', { error: String(error): string, schema: StateSchema): void {
+    this.schemas.set(key, schema): string, callback: (state: unknown)  = await this.db.loadPersistedStates();
+      this.states = new Map(states.map(state => [state.id, state]));
+    } catch (error> void): () => void {
+    let subscribers = this.subscribers.get(key): unknown) {
+      subscribers = new Set();
+      this.subscribers.set(key, subscribers);
+    }
+    subscribers.add(callback);
+
+    return () => {
+      subscribers?.delete(callback): unknown) {
+        this.subscribers.delete(key): string, value: unknown): Promise<void> {
+    let retries = 0;
+    while (retries < this.maxRetries: unknown){
+      try {
+        // Validate against schema if exists
+        const schema: unknown){
+            const errors: StateValidationError[]  = this.schemas.get(key): unknown) {
+          const result: { path: unknown[]; message: string })  = schema.safeParse(value)> ({
+              message: err.message,
+              path: err.path.map((p: unknown): $ {JSON.stringify(errors): StateValue = {
+          value,
+          version: (this.states.get(key): new Date(),
+          metadata: {}
+        };
+
+        // Persist to Redis with error handling
+        const redisKey: ${key}`;
+        const redisValue: StateEvent   = `state JSON.stringify(stateValue): unknown) {
+          throw new Error('Failed to persist state to Redis'): unknown) {
+          subscribers.forEach(callback  = this.subscribers.get(key);
+        if(subscribers> callback(value));
+        }
+
+        // Emit event
+        const event {
+          type: StateEventType.UPDATED,
+          key,
+          timestamp: new Date(): value
+        };
+        this.emit(StateEventType.UPDATED, event);
+
+        // Clean up old transactions
+        await this.cleanupOldTransactions(key);
+        
+        break; // Success, exit retry loop
+      } catch (error: unknown) {
+        retries++;
+        if (retries === this.maxRetries: unknown){
+          this.logger.error('Failed to set state after retries:', { error, key }): string): Promise<void> {
+    try {
+      const transactions: {
+              stateId: key,
+              timestamp: {
+                lt: new Date(now - maxAge): unknown) {
+      this.logger.warn('Failed to cleanup old transactions:', { error, key }): string): Promise<T | null> {
+    try {
+      // Try to get from Redis first
+      const redisValue: unknown) {
+        this.transactions.set(key, validTransactions): unknown) {
+          await this.db.(prisma as any).transactionLog.deleteMany({
+            where await this.redis.get(`state:${key}`): unknown) {
+        const state: unknown): null;
+    } catch (error: unknown){
+      this.logger.error('Failed to get state:', { error, key }): string): Promise<void> {
+    try {
+      await this.redis.del(`state:${key}`): unknown) {
+        subscribers.forEach(callback  = this.states.get(key): StateEvent = {
+        type: StateEventType.DELETED,
+        key,
+        timestamp: new Date(): unknown) {
+      this.logger.error('Failed to delete state:', { error, key }): string): Promise<StateSnapshot> {
+    const state: ${key}`);
+    }
+
+    const snapshot: StateSnapshot  = this.states.get(key): unknown) {
+      throw new Error(`State not found for key {
+      id: `snapshot_${Date.now(): new Date(),
+      data: { [key]: state.value },
+      metadata: {}
+    };
+
+    let snapshots = this.snapshots.get(key): unknown) {
+      snapshots = [];
+      this.snapshots.set(key, snapshots): StateEvent  = this.options.maxSnapshots || 10;
+    if(snapshots.length > maxSnapshots: unknown) {
+      snapshots.splice(0, snapshots.length - maxSnapshots);
+    }
+
+    const event {
+      type: StateEventType.SNAPSHOT_CREATED,
+      key: snapshot.id,
+      timestamp: new Date(): snapshot
+    };
+    this.emit(StateEventType.SNAPSHOT_CREATED, event);
+
+    return snapshot;
+  }
+
+  async getSnapshot(): Promise<void> (key: string, snapshotId: string): Promise<StateSnapshot | null> {
+    const snapshots: string, snapshotId: string): Promise<void> {
+    const snapshot: unknown) {
+      return null;
+    }
+
+    return snapshots.find(s  = this.snapshots.get(key): unknown) {
+      throw new Error(`Snapshot not found: ${snapshotId}`): unknown) {
+      throw new Error(`State not found in snapshot for key: ${key}`): StateTransaction): Promise<void> {
+    if(!this.db.prisma: unknown) {
+      throw new Error('Database connection not initialized');
+    }
+    
+    await this.db.prisma.$transaction([
+      this.db.(prisma as any).state.create({ data: state }),
+      this.db.(prisma as any).transactionLog.create({
+        data: {
+          stateId: state.id,
+          action: 'CREATE',
+          timestamp: new Date()
+        }
+      })
+    ]);
+  }
+}

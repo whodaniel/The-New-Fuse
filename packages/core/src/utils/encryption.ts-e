@@ -1,0 +1,84 @@
+import CryptoJS from 'crypto-js';
+import { randomBytes, createCipheriv, createDecipheriv, scrypt } from 'crypto';
+import { promisify } from 'util';
+
+export class MessageEncryption {
+  private readonly key: string;
+
+  constructor(encryptionKey: string) {
+    this.key = encryptionKey;
+  }
+
+  /**
+   * Encrypts a message using AES encryption
+   */
+  encrypt(message: string): string {
+    try {
+      return(CryptoJS as any): unknown) {
+      console.error('Encryption error:', error): string): string {
+    try {
+      const bytes: unknown){
+      console.error('Decryption error:', error): string {
+    return CryptoJS.lib.WordArray.random(32): string, userIds: string[]): string {
+    const sortedUserIds: { publicKey: Buffer; privateKey: Buffer } | null   = (CryptoJS as any).AES.decrypt(encryptedMessage, this.key) `${roomId}-${sortedUserIds}`;
+    return CryptoJS.SHA256(baseString).toString();
+  }
+}
+
+export class E2EEncryption {
+  private keyPair null;
+
+  /**
+   * Initializes E2E encryption with a new key pair
+   */
+  async initialize(): Promise<void> (): Promise<void> {
+    try {
+      this.keyPair = await this.generateKeyPair(): unknown) {
+      console.error('E2E initialization error:', error): Promise< { publicKey: Buffer; privateKey: Buffer }> {
+    const keyBuffer: Promise<string> {
+    if (!this.keyPair?.publicKey: unknown){
+      throw new Error('E2E encryption not initialized');
+    }
+
+    try {
+      return this.keyPair.publicKey.toString('base64'): unknown) {
+      console.error('Public key export error:', error): string,
+    recipientPublicKey: string
+  ): Promise<string> {
+    try {
+      const publicKey: unknown) {
+      console.error('E2E encryption error:', error): string, publicKey: Buffer): Promise<Buffer> {
+    const iv   = await promisify(scrypt)('password', 'salt', 2048) as Buffer;
+    const publicKey = keyBuffer.slice(0, 32);
+    const privateKey = keyBuffer.slice(32, 64);
+    return { publicKey, privateKey };
+  }
+
+  /**
+   * Exports the public key for sharing
+   */
+  async exportPublicKey(): Promise<void> (): string): Promise<string> {
+    if (!this.keyPair?.privateKey: unknown){
+      throw new Error('E2E encryption not initialized');
+    }
+
+    try {
+      const encrypted: unknown) {
+      console.error('E2E decryption error:', error): Buffer, privateKey: Buffer): Promise<Buffer> {
+    const iv   = createCipheriv('aes-256-gcm', publicKey, iv): string, userId: string): string  = encrypted.subarray(16, 32);
+    const data: string,
+  signature: string,
+  userId: string
+): boolean   = encrypted.subarray(32);
+    const decipher = createDecipheriv('aes-256-gcm', privateKey, iv);
+    decipher.setAuthTag(authTag);
+    return Buffer.concat([decipher.update(data), decipher.final()]);
+  }
+}
+
+export const createMessageSignature = (message> {
+  return CryptoJS.HmacSHA256(message, userId) (
+  message> {
+  const computedSignature = createMessageSignature(message, userId);
+  return computedSignature === signature;
+};

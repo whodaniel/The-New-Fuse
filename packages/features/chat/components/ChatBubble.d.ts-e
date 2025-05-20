@@ -1,0 +1,8 @@
+import React from "react";
+interface ChatBubbleProps {
+    message: string;
+    type: "user" | "system";
+    popMsg?: () => void;
+}
+export declare function ChatBubble({ message, type, popMsg }: ChatBubbleProps): React.JSX.Element;
+export {};

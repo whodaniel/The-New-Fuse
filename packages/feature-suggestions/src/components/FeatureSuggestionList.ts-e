@@ -1,0 +1,129 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FeatureSuggestionList = void 0;
+const react_1 = __importStar(require("react"));
+const types_1 = require("../types");
+const FeatureSuggestionCard = ({ suggestion, onVote, onConvert, onAddTodo, onAddComment, currentUserId, }) => {
+    const [newComment, setNewComment] = (0, react_1.useState)('');
+    const [newTodoTitle, setNewTodoTitle] = (0, react_1.useState)('');
+    const handleVote = () => onVote(suggestion.id);
+    const handleConvert = () => onConvert(suggestion.id);
+    const handleAddComment = (e) => {
+        e.preventDefault();
+        if (newComment.trim()) {
+            onAddComment(newComment);
+            setNewComment('');
+        }
+    };
+    const handleAddTodo = (e) => {
+        e.preventDefault();
+        if (newTodoTitle.trim()) {
+            onAddTodo({
+                title: newTodoTitle,
+                description: `Todo for feature suggestion: ${suggestion.title}`,
+                priority: suggestion.priority,
+                suggestionId: suggestion.id,
+            });
+            setNewTodoTitle('');
+        }
+    };
+    return (<div className="border rounded-lg p-4 mb-4 bg-white shadow-sm">
+      <div className="flex justify-between items-start mb-2">
+        <div>
+          <h3 className="text-lg font-semibold">{suggestion.title}</h3>
+          <p className="text-gray-600">{suggestion.description}</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <button onClick={handleVote} className="px-3 py-1 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200">
+            ⬆️ {suggestion.votes}
+          </button>
+          {suggestion.status !== types_1.SuggestionStatus.CONVERTED && (<button onClick={handleConvert} className="px-3 py-1 bg-green-100 text-green-600 rounded-full hover:bg-green-200">
+              Convert to Feature
+            </button>)}
+        </div>
+      </div>
+
+      <div className="flex flex-wrap gap-2 mb-2">
+        {suggestion.tags.map((tag) => (<span key={tag} className="px-2 py-1 bg-gray-100 text-gray-600 text-sm rounded-full">
+            {tag}
+          </span>))}
+      </div>
+
+      <div className="mt-4">
+        <h4 className="font-medium mb-2">Add Todo</h4>
+        <form onSubmit={handleAddTodo} className="flex gap-2">
+          <input type="text" value={newTodoTitle} onChange={(e) => setNewTodoTitle(e.target.value)} placeholder="New todo title..." className="flex-1 px-3 py-1 border rounded"/>
+          <button type="submit" className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Add
+          </button>
+        </form>
+      </div>
+
+      <div className="mt-4">
+        <h4 className="font-medium mb-2">Comments</h4>
+        <form onSubmit={handleAddComment} className="flex gap-2">
+          <input type="text" value={newComment} onChange={(e) => setNewComment(e.target.value)} placeholder="Add a comment..." className="flex-1 px-3 py-1 border rounded"/>
+          <button type="submit" className="px-4 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+            Comment
+          </button>
+        </form>
+      </div>
+    </div>);
+};
+const FeatureSuggestionList = ({ suggestionService, suggestions, onUpdateStatus, onConvertToFeature, onRefresh, }) => {
+    return (<div className="space-y-4">
+      {suggestions.map(suggestion => (<div key={suggestion.id} className="bg-white rounded-lg shadow-sm p-4 border border-gray-200">
+          <div className="flex justify-between items-start">
+            <h4 className="font-medium text-gray-900">{suggestion.title}</h4>
+            <div className="flex space-x-2">
+              <button onClick={() => onUpdateStatus(suggestion.id, types_1.SuggestionStatus.UNDER_REVIEW)} className="px-3 py-1 text-sm bg-blue-100 text-blue-800 rounded-lg hover:bg-blue-200">
+                Review
+              </button>
+              <button onClick={() => onConvertToFeature(suggestion.id)} className="px-3 py-1 text-sm bg-green-100 text-green-800 rounded-lg hover:bg-green-200">
+                Convert
+              </button>
+            </div>
+          </div>
+          <p className="mt-2 text-gray-600">{suggestion.description}</p>
+          <div className="mt-4 flex items-center space-x-4 text-sm text-gray-500">
+            <span>👍 {suggestion.votes} votes</span>
+            <span>Status: {suggestion.status}</span>
+          </div>
+        </div>))}
+    </div>);
+};
+exports.FeatureSuggestionList = FeatureSuggestionList;
+//# sourceMappingURL=FeatureSuggestionList.js.mapexport {};

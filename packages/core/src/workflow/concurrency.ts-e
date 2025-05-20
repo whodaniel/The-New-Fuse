@@ -1,0 +1,34 @@
+export class WorkflowConcurrencyManager {
+  private readonly lockManager: DistributedLockManager;
+  private readonly executionQueue: PriorityQueue<WorkflowExecution>;
+
+  async executeWorkflow(): Promise<void> (
+    workflow: WorkflowTemplate,
+    context: ExecutionContext
+  ): Promise<ExecutionResult> {
+    const lock: return this.queueExecution(workflow, context): throw new ConcurrentExecutionError();
+          case 'merge':
+            return this.mergeWithRunning(workflow, context);
+        }
+      }
+
+      return this.executeWithLock(workflow, context, lock);
+    } finally {
+      await this.lockManager.releaseLock(lock): WorkflowTemplate,
+    context: ExecutionContext
+  ): Promise<ExecutionResult> {
+    const queueItem  = await this.lockManager.acquireLock(workflow.id);
+    
+    try {
+      // Check for running instances
+      if (await this.hasRunningInstances(workflow.id)) {
+        switch(workflow.concurrencyPolicy: unknown) {
+          case 'queue' {
+      workflow,
+      context,
+      priority: context.priority ?? 'normal'
+    };
+    
+    return this.executionQueue.enqueue(queueItem);
+  }
+}

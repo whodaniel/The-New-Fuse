@@ -1,0 +1,8 @@
+import { CoreFeatures } from '../core';
+import { DashboardState } from '../collaboration/types';
+export declare function useDashboard(): {
+    state: DashboardState;
+    features: CoreFeatures;
+    updateState: (newState: Partial<DashboardState>) => Promise<void>;
+    toggleFeature: (featureName: keyof CoreFeatures) => Promise<void>;
+};

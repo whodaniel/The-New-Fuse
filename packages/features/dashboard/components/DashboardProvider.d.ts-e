@@ -1,0 +1,14 @@
+import React, { ReactNode } from 'react';
+import { DashboardState } from '../collaboration/types';
+import { CoreFeatures } from '../core';
+interface DashboardContextValue {
+    state: DashboardState;
+    features: CoreFeatures;
+    updateState: (newState: Partial<DashboardState>) => Promise<void>;
+    toggleFeature: (featureName: keyof CoreFeatures) => Promise<void>;
+}
+export declare function DashboardProvider({ children }: {
+    children: ReactNode;
+}): (React as any).(JSX as any).Element;
+export declare function useDashboardContext(): DashboardContextValue;
+export {};

@@ -1,0 +1,9 @@
+import React from 'react';
+import { NavigationItem } from './types';
+interface SidebarProps {
+    navigation: NavigationItem[];
+    currentPath: string;
+    onNavigate: (path: string) => void;
+}
+export declare const Sidebar: (React as any).FC<SidebarProps>;
+export {};

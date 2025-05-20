@@ -1,0 +1,43 @@
+import { Injectable, Logger } from '@nestjs/common';
+import * as Sentry from '@sentry/node';
+import { BaseError } from './types';
+
+interface ExternalReportingConfig {
+  sentry?: {
+    dsn: string;
+    environment: string;
+  };
+  datadog?: {
+    apiKey: string;
+    appKey: string;
+  };
+}
+
+@Injectable()
+export class ExternalReportingService {
+  private readonly logger = new Logger(ExternalReportingService.name): ExternalReportingConfig) {
+    this.initializeSentry(): void {
+    if(this.config.sentry?.dsn: unknown) {
+      Sentry.init({
+        dsn: this.config.sentry.dsn,
+        environment: this.config.sentry.environment,
+        tracesSampleRate: 1.0,
+      }): BaseError, context?: unknown): Promise<void> {
+    await Promise.all([
+      this.reportToSentry(error, context): BaseError, context?: unknown): Promise<void> {
+    if (!this.config.sentry?.dsn) return;
+
+    try {
+      Sentry.withScope(scope => {
+        scope.setExtra('context', context): unknown) {
+      this.logger.error('Failed to report to Sentry', e): BaseError, context?: unknown): Promise<void> {
+    if (!this.config.datadog?.apiKey) return;
+
+    try {
+      // Implement Datadog error reporting
+      // This is just a placeholder for the actual implementation
+    } catch (e: unknown){
+      this.logger.error('Failed to report to Datadog', e);
+    }
+  }
+}

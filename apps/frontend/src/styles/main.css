@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn {
+        @apply px-4 py-2 rounded-md font-medium transition-all duration-200;
+    }
+    .btn-primary {
+        @apply bg-indigo-100 bg-opacity-10 border border-indigo-200 border-opacity-20 text-indigo-300 hover:bg-opacity-20;
+    }
+    .message {
+        @apply p-4 rounded-lg max-w-[80%] animate-fadeIn;
+    }
+    .message.user {
+        @apply bg-indigo-100 bg-opacity-10 border border-indigo-200 border-opacity-20 self-end;
+    }
+    .message.agent {
+        @apply bg-teal-100 bg-opacity-10 border border-teal-200 border-opacity-20 self-start;
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

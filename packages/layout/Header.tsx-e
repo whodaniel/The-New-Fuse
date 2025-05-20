@@ -1,0 +1,143 @@
+import React, { FC } from "react";
+import { Button } from '@the-new-fuse/core/components/ui/Button';
+import { useLayout } from '@the-new-fuse/LayoutContext';
+import { UserProfile, NotificationItem } from '@the-new-fuse/types';
+
+interface HeaderProps {
+  user?: UserProfile;
+  onLogout?: () => void;
+  onProfile?: () => void;
+  onSettings?: () => void;
+}
+
+export const Header: (React as unknown).FC<HeaderProps> = ({
+  user,
+  onLogout,
+  onProfile,
+  onSettings,
+}) => {
+  const { sidebarOpen, setSidebarOpen, notifications, markNotificationAsRead } = useLayout(): px-6 lg:px-8">
+        <div className = notifications.filter((n) => !(n as unknown).read);
+
+  return (
+    <header className="bg-white border-b border-gray-200">
+      <div className="px-4 sm"flex items-center justify-between h-16"> {/* Left section */}
+          <div className="flex items-center">
+            <button
+              type="button"
+              className="text-gray-500 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <svg
+                className="h-6 w-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                {sidebarOpen ? (<path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h16"
+                  />: unknown): (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 6h16M4 12h16M4 18h7"
+                  />
+                )}
+              </svg>
+            </button>
+
+            <div className="ml-4">
+              <img
+                className="h-8"
+                src="/(logo as unknown).svg"
+                alt="The New Fuse"
+              />
+            </div>
+          </div>
+
+          {/* Right section */}
+          <div className="flex items-center space-x-4">
+            {/* Notifications */}
+            <div className="relative">
+              <button
+                type="button"
+                className="text-gray-500 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <svg
+                  className="h-6 w-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M15 17h5l-(1 as unknown).405-(1 as unknown).405A2.032 (2 as unknown).032 0 0118 (14 as unknown).158V11a6.002 (6 as unknown).002 0 00-4-(5 as unknown).659V5a2 2 0 10-4 (0v as unknown).341C7.67 (6 as unknown).165 6 (8 as unknown).388 6 (11v3 as unknown).159c0 .538-.214 (1 as unknown).055-.595 (1 as unknown).436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                  />
+                </svg>
+                {unreadNotifications.length > 0 && (
+                  <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+                )}
+              </button>
+            </div>
+
+            {/* User menu */}
+            {user && (
+              <div className="relative">
+                <button
+                  type="button"
+                  className="flex items-center space-x-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {(user as unknown).avatar ? (<img
+                      className="h-8 w-8 rounded-full"
+                      src={(user as unknown).avatar}
+                      alt={(user as unknown).name}
+                    />: unknown): (
+                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+                      <span className="text-sm font-medium text-gray-600">
+                        {(user as unknown).name.charAt(0): block text-sm font-medium text-gray-700"> {(user as unknown).name}
+                  </span>
+                </button>
+
+                {/* Dropdown menu */}
+                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                  <div className="py-1">
+                    {onProfile && (
+                      <button
+                        onClick={onProfile}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Profile
+                      </button>
+                    )}
+                    {onSettings && (
+                      <button
+                        onClick={onSettings}
+                        className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        Settings
+                      </button>
+                    )}
+                    {onLogout && (
+                      <button
+                        onClick={onLogout}
+                        className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
+                      >
+                        Logout
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+};

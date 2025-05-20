@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Development Environment Tools</title>
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --success: #22c55e;
+            --success-hover: #16a34a;
+            --bg: #1a1a1a;
+            --card-bg: #262626;
+            --text: #ffffff;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 2rem;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 4px;
+        }
+
+        .checkbox-group:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 0.75rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            color: white;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-success {
+            background: var(--success);
+        }
+
+        .btn-success:hover {
+            background: var(--success-hover);
+        }
+
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .status {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.2);
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        .loading {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--primary);
+        }
+
+        .loading.active {
+            display: flex;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Development Environment Tools</h1>
+            <p>Manage your development environment cleanup and initialization options</p>
+        </div>
+
+        <div class="card">
+            <h2>Cleanup Options</h2>
+            <div class="grid">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="node_modules" checked>
+                    <label for="node_modules">Clean node_modules</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="cache" checked>
+                    <label for="cache">Clear Cache (Yarn, NPM, TS)</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="docker" checked>
+                    <label for="docker">Clean Docker</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="build" checked>
+                    <label for="build">Clean Build Artifacts</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="env" checked>
+                    <label for="env">Reset Environment Files</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="ide" checked>
+                    <label for="ide">Clean IDE Artifacts</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="git" checked>
+                    <label for="git">Reset Git Submodules</label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="redis" checked>
+                    <label for="redis">Clear Redis Cache</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Actions</h2>
+            <div class="actions">
+                <button class="btn-primary" onclick="executeCleanup()">Clean Selected</button>
+                <button class="btn-danger" onclick="executeCleanup(true)">Clean Everything</button>
+                <button class="btn-success" onclick="startDev()">Start Development</button>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="spinner"></div>
+                <span>Processing...</span>
+            </div>
+            
+            <pre class="status" id="status"></pre>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = '/api/dev-tools';
+        const status = document.getElementById('status');
+        const loading = document.getElementById('loadingIndicator');
+
+        async function executeCleanup(everything = false) {
+            try {
+                loading.classList.add('active');
+                status.textContent = '🚀 Starting cleanup process...\n';
+
+                const options = everything ? { all: true } : {
+                    node_modules: document.getElementById('node_modules').checked,
+                    cache: document.getElementById('cache').checked,
+                    docker: document.getElementById('docker').checked,
+                    build: document.getElementById('build').checked,
+                    env: document.getElementById('env').checked,
+                    ide: document.getElementById('ide').checked,
+                    git: document.getElementById('git').checked,
+                    redis: document.getElementById('redis').checked
+                };
+
+                const response = await fetch(`${API_BASE}/cleanup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(options)
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    status.textContent += decoder.decode(value);
+                }
+
+                status.textContent += '\n✅ Cleanup completed successfully!\n';
+            } catch (error) {
+                status.textContent += `\n❌ Error: ${error.message}\n`;
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+
+        async function startDev() {
+            try {
+                loading.classList.add('active');
+                status.textContent = '🚀 Starting development environment...\n';
+
+                const response = await fetch(`${API_BASE}/start`, {
+                    method: 'POST'
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+                    status.textContent += decoder.decode(value);
+                }
+
+                status.textContent += '\n✅ Development environment started successfully!\n';
+            } catch (error) {
+                status.textContent += `\n❌ Error: ${error.message}\n`;
+            } finally {
+                loading.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>

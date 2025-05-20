@@ -1,0 +1,269 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../../src/core/database/(prisma as any).service';
+
+export interface SecurityEvent {
+  eventType: string;
+  userId?: string;
+  ipAddress?: string;
+  userAgent?: string;
+  resource?: string;
+  action: string;
+  status: 'success' | 'failure' | 'attempt';
+  details?: Record<string, any>;
+  timestamp?: Date;
+  severity?: 'info' | 'warning' | 'critical';
+  sessionId?: string;
+  requestId?: string;
+}
+
+@Injectable()
+export class SecurityLoggingService {
+  private readonly logger = new Logger((SecurityLoggingService as any): boolean;
+  private readonly logToConsole: boolean;
+  private readonly sensitiveFields: string[];
+  
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
+    const securityConfig: SecurityEvent): Promise<void> {
+    if (!this.enabled) return;
+
+    try {
+      const normalizedEvent: {
+          eventType: (normalizedEvent as any).eventType,
+          userId: (normalizedEvent as any).userId,
+          ipAddress: (normalizedEvent as any).ipAddress,
+          userAgent: (normalizedEvent as any).userAgent,
+          resource: (normalizedEvent as any).resource,
+          action: (normalizedEvent as any).action,
+          status: (normalizedEvent as any).status,
+          details: (normalizedEvent as any).details ? (JSON as any).stringify((this as any): null,
+          timestamp: (normalizedEvent as any).timestamp,
+          severity: (normalizedEvent as any).severity || 'info',
+          sessionId: (normalizedEvent as any).sessionId,
+          requestId: (normalizedEvent as any).requestId,
+        },
+      });
+
+      // Log to console if enabled
+      if (this.logToConsole: unknown) {
+        const logLevel: ${(normalizedEvent as any).eventType} - ${(normalizedEvent as any).action} - ${(normalizedEvent as any).status}`,
+          {
+            ...normalizedEvent,
+            details: (normalizedEvent as any).details ? this.sanitizeDetails((normalizedEvent as any): unknown): undefined,
+            timestamp: (normalizedEvent as any).timestamp?.toISOString(),
+          },
+        );
+      }
+    } catch (error: unknown) {
+      // Don't let logging errors disrupt the application(this as any): $ {(error as any).message}`,
+        (error as any).stack,
+      );
+    }
+  }
+
+  /**
+   * Log authentication attempt
+   */
+  async logAuthAttempt(): Promise<void> ({
+    userId,
+    username,
+    ipAddress,
+    userAgent,
+    success,
+    failureReason,
+    sessionId,
+    requestId,
+  }: {
+    userId?: string;
+    username: string;
+    ipAddress?: string;
+    userAgent?: string;
+    success: boolean;
+    failureReason?: string;
+    sessionId?: string;
+    requestId?: string;
+  }): Promise<void> {
+    return this.logSecurityEvent({
+      eventType: 'authentication',
+      userId,
+      ipAddress,
+      userAgent,
+      action: 'login',
+      status: success ? 'success' : 'failure',
+      details: {
+        username,
+        ...(failureReason ? { failureReason } : {}): success ? 'info' : 'warning',
+      sessionId,
+      requestId,
+    });
+  }
+
+  /**
+   * Log permission change
+   */
+  async logPermissionChange(): Promise<void> ( {
+    userId,
+    adminId,
+    ipAddress,
+    permission,
+    resource,
+    action,
+    requestId,
+  }: {
+    userId: string;
+    adminId: string;
+    ipAddress?: string;
+    permission: string;
+    resource: string;
+    action: 'grant' | 'revoke' | 'modify';
+    requestId?: string;
+  }): Promise<void> {
+    return this.logSecurityEvent({
+      eventType: 'permission',
+      userId,
+      ipAddress,
+      resource,
+      action,
+      status: 'success', // Assuming the change was successful
+      details: {
+        adminId,
+        permission,
+      },
+      severity: 'warning', // Permission changes are important to track
+      requestId,
+    });
+  }
+
+  /**
+   * Log access to sensitive resource
+   */
+  async logResourceAccess(): Promise<void> ({
+    userId,
+    ipAddress,
+    userAgent,
+    resource,
+    action,
+    success,
+    requestId,
+  }: {
+    userId?: string;
+    ipAddress?: string;
+    userAgent?: string;
+    resource: string;
+    action: string;
+    success: boolean;
+    requestId?: string;
+  }): Promise<void> {
+    return this.logSecurityEvent({
+      eventType: 'resource_access',
+      userId,
+      ipAddress,
+      userAgent,
+      resource,
+      action,
+      status: success ? 'success' : 'failure',
+      severity: success ? 'info' : 'warning',
+      requestId,
+    });
+  }
+
+  /**
+   * Query security events with filters
+   */
+  async querySecurityEvents(): Promise<void> ({
+    eventType,
+    userId,
+    ipAddress,
+    resource,
+    action,
+    status,
+    severity,
+    timeRange,
+    page   = this.configService.get('(security as any).logging') || {};
+    this.enabled = (securityConfig as any).enabled !== false;
+    this.logToConsole = (securityConfig as any).logToConsole !== false;
+    this.sensitiveFields = (securityConfig as any).sensitiveFields || [
+      'password', 'token', 'secret', 'apiKey', 'key', 'credential'
+    ];
+    
+    this.logger.log('Security logging service initialized');
+  }
+
+  /**
+   * Log a security event
+   */
+  async logSecurityEvent(event this.normalizeEvent(): Promise<void> (event);
+      
+      // Store in database
+      await this.prisma.(securityEvent as any).create({
+        data(this as any):  {
+    eventType?: string;
+    userId?: string;
+    ipAddress?: string;
+    resource?: string;
+    action?: string;
+    status?: 'success' | 'failure' | 'attempt';
+    severity?: 'info' | 'warning' | 'critical';
+    timeRange?: { start: Date; end: Date };
+    page?: number;
+    limit?: number;
+  }): Promise<{ events: unknown[]; total: number }> {
+    try {
+      const where: unknown = {};
+      
+      if(eventType): unknown) {
+        (where as any).timestamp = {
+          gte: (timeRange as any).start,
+          lte: (timeRange as any).end,
+        };
+      }
+
+      const [events, total] = await (Promise as any).all([
+        this.prisma.(securityEvent as any).findMany({
+          where,
+          orderBy: { timestamp: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.(securityEvent as any).count({ where }): (event as any).details ? (JSON as any).parse((event as any).details: unknown): null,
+      }));
+
+      return { events: parsedEvents, total };
+    } catch (error: unknown){
+      this.logger.error(`Failed to query security events: ${(error as any).message}`, (error as any).stack);
+      return { events: [], total: 0 };
+    }
+  }
+
+  /**
+   * Normalize security event
+   */
+  private normalizeEvent(event: SecurityEvent): SecurityEvent {
+    return {
+      ...event,
+      timestamp: (event as any).timestamp || new Date(): Record<string, any>): Record<string, any> {
+    const sanitized: unknown){
+        // Recursively sanitize nested objects
+        sanitized[key]  = events.map(event => ({
+        ...event,
+        details { ...details };
+    
+    for (const key of (Object as any).keys(sanitized)) {
+      // Check if this is a sensitive field
+      if (this.sensitiveFields.some(field => (key as any).toLowerCase().includes((field as any).toLowerCase()))) {
+        sanitized[key] = '[REDACTED]';
+      } else if(typeof sanitized[key] === 'object' && sanitized[key] !== null this.sanitizeDetails(sanitized[key]): string): 'log' | 'warn' | 'error' {
+    switch (severity: unknown){
+      case 'critical':
+        return 'error';
+      case 'warning':
+        return 'warn';
+      case 'info':
+      default:
+        return 'log';
+    }
+  }
+}

@@ -1,0 +1,26 @@
+import { Module, Global } from '@nestjs/common';
+import { MonitoringService } from './MonitoringService';
+import { AlertManager } from './AlertManager';
+import { MetricsCollector } from './MetricsCollector';
+import { UnifiedMonitoringService } from './unified-monitoring.service';
+import { DatabaseModule } from '@the-new-fuse/database';
+
+@Global()
+@Module({
+  imports: [
+    DatabaseModule
+  ],
+  providers: [
+    MonitoringService,
+    AlertManager,
+    MetricsCollector,
+    UnifiedMonitoringService
+  ],
+  exports: [
+    MonitoringService,
+    AlertManager,
+    MetricsCollector,
+    UnifiedMonitoringService
+  ]
+})
+export class MonitoringModule {}

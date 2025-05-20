@@ -1,0 +1,18 @@
+import { AgentMessage } from '@fuse/types';
+import { AuthProvider, AuthConfig } from './index';
+
+export interface AIProviderConfig extends AuthConfig {
+  modelName?: string;
+  maxTokens?: number;
+}
+
+export interface AIProvider extends AuthProvider {
+  config: AIProviderConfig;
+}
+
+export declare const providerRegistry: {
+    providers: Map<string, AIProvider>;
+    registerProvider(provider: AIProvider): void;
+    getProvider(id: string): AIProvider | undefined;
+    getAllProviders(): AIProvider[];
+};

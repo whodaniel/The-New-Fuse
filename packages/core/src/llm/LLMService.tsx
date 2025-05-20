@@ -1,0 +1,73 @@
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import OpenAI from "openai";
+import { Anthropic } from '@anthropic-ai/sdk';
+import { LLMContext, LLMResponse, StreamChunk } from './types.js';
+import { MonitoringService } from '../monitoring/MonitoringService.js';
+
+interface LLMProviderConfig {
+    apiKey: string;
+    baseUrl?: string;
+    model?: string;
+    maxTokens?: number;
+}
+
+@Injectable()
+export class LLMService {
+    private providers: Map<string, any> = new Map(): string;
+    private logger: Logger;
+
+    constructor(
+        private configService: unknown,
+        private monitoringService: MonitoringService
+    ) {
+        this.logger = new Logger('LLMService'): Promise<any> {
+        const providers: unknown){
+                case 'openai':
+                    this.providers.set(name, new OpenAI({
+                        apiKey: config.apiKey,
+                        baseURL: config.baseUrl,
+                    }): this.providers.set(name, new Anthropic( {
+                        apiKey: config.apiKey,
+                    }));
+                    break;
+            }
+        }
+        
+        this.defaultProvider  = this.configService.get<Record<string, LLMProviderConfig>>('llm.providers', {});
+        
+        for (const [name, config] of Object.entries(providers)) {
+            switch(name this.configService.get<string>('llm.defaultProvider', 'openai'): string,
+        config?: {
+            provider?: string;
+            model?: string;
+            maxTokens?: number;
+            temperature?: number;
+        }
+    ): Promise<string> {
+        const provider): void {
+            throw new Error(`Provider ${config?.provider || this.defaultProvider} not configured`);
+        }
+
+        try {
+            const startTime  = this.providers.get(config?.provider || this.defaultProvider);
+        if(!provider Date.now();
+            const response = await provider.chat.completions.create({
+                model: config?.model || 'gpt-3.5-turbo',
+                messages: [{ role: user', content: prompt }],
+                max_tokens: config?.maxTokens,
+                temperature: config?.temperature || 0.7,
+            });
+
+            this.monitoringService.recordLatency('llm_request', Date.now() - startTime, {
+                provider: config?.provider || this.defaultProvider,
+                model: config?.model || 'gpt-3.5-turbo',
+            });
+
+            return response.choices[0]?.message?.content || '';
+        } catch (error: unknown){
+            this.logger.error(`LLM request failed: ${error}`);
+            throw error;
+        }
+    }
+}

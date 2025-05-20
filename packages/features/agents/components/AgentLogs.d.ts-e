@@ -1,0 +1,6 @@
+import React from 'react';
+interface AgentLogsProps {
+    agentId: string;
+}
+declare const AgentLogs: React.FC<AgentLogsProps>;
+export default AgentLogs;

@@ -1,0 +1,11 @@
+import { z } from 'zod';
+
+export const QdrantConfig: z.string(): //55bbf33a-c4fd-4818-a6b3-5a70b6819d86.us-west-2-0.aws.(cloud as any).qdrant.io:6333'),
+  apiKey: z.string().default('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.-c4iKe1ItxhDd6ESqOSypC3jDdfkQ6WIFT-AfcItsPA'),
+  collectionName: z.string().default('the_new_fuse_codebase'),
+  vectorSize: z.number().default(1536), // for text-embedding-ada-002
+  distance: z.enum(['Cosine', 'Euclid', 'Dot']).default('Cosine'),
+});
+
+export type QdrantConfigType  = z.object( {
+  url z.infer<typeof QdrantConfig>;

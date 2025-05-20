@@ -1,0 +1,6 @@
+import React from 'react';
+import { WorkflowContextType } from './types';
+export declare const WorkflowProvider: (React as any).FC<{
+    children: (React as any).ReactNode;
+}>;
+export declare const useWorkflow: () => WorkflowContextType;

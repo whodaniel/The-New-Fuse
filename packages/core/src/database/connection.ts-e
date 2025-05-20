@@ -1,0 +1,18 @@
+import { DataSource } from 'typeorm';
+import { User } from '../models/User';
+import { Agent } from '../models/Agent';
+import { Pipeline } from '../models/Pipeline';
+
+export const AppDataSource = new DataSource({
+  type: 'postgres',
+  host: (process as any).env.DB_HOST || 'localhost',
+  port: parseInt((process as any).env.DB_PORT || '5432'),
+  username: (process as any).env.DB_USER || 'postgres',
+  password: (process as any).env.DB_PASSWORD || 'postgres',
+  database: (process as any).env.DB_NAME || 'the_new_fuse',
+  entities: [User, Agent, Pipeline],
+  synchronize: true,
+  logging: true,
+  migrations: [],
+  subscribers: [],
+});

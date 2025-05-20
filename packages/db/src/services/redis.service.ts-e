@@ -1,0 +1,86 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.RedisService = void 0;
+const ioredis_1 = __importDefault(require("ioredis"));
+class RedisService {
+    constructor(config) {
+        this.client = new ioredis_1.default({
+            host: config.host,
+            port: config.port,
+            password: config.password,
+            db: config.db || 0,
+        });
+        this.subscribers = new Map();
+    }
+    async connect(): Promise<void> () {
+        // Connection is handled in constructor
+        return Promise.resolve();
+    }
+    async get(): Promise<void> (key) {
+        return this.client.get(key);
+    }
+    async getAll(): Promise<void> (pattern) {
+        const keys = await this.client.keys(pattern);
+        if (keys.length === 0)
+            return [];
+        const values = await this.client.mget(...keys);
+        return values.filter((value) => value !== null);
+    }
+    async set(): Promise<void> (key, value, ttl) {
+        if (ttl) {
+            await this.client.set(key, value, 'EX', ttl);
+        }
+        else {
+            await this.client.set(key, value);
+        }
+    }
+    async setWorkflowState(): Promise<void> (workflowId, state) {
+        await this.set(`workflow:${workflowId}:state`, JSON.stringify(state));
+    }
+    async del(): Promise<void> (key) {
+        await this.client.del(key);
+    }
+    async exists(): Promise<void> (key) {
+        const result = await this.client.exists(key);
+        return result === 1;
+    }
+    async keys(): Promise<void> (pattern) {
+        return this.client.keys(pattern);
+    }
+    async publish(): Promise<void> (channel, message) {
+        await this.client.publish(channel, message);
+    }
+    async subscribe(): Promise<void> (channel, callback) {
+        const subscriber = new ioredis_1.default({
+            host: this.client.options.host,
+            port: this.client.options.port,
+            password: this.client.options.password,
+            db: this.client.options.db,
+        });
+        await subscriber.subscribe(channel);
+        subscriber.on('message', (ch, message) => {
+            if (ch === channel) {
+                callback(message);
+            }
+        });
+        this.subscribers.set(channel, callback);
+    }
+    async unsubscribe(): Promise<void> (channel) {
+        const subscriber = this.subscribers.get(channel);
+        if (subscriber) {
+            await this.client.unsubscribe(channel);
+            this.subscribers.delete(channel);
+        }
+    }
+    async disconnect(): Promise<void> () {
+        for (const [channel] of this.subscribers) {
+            await this.unsubscribe(channel);
+        }
+        await this.client.quit();
+    }
+}
+exports.RedisService = RedisService;
+export {};

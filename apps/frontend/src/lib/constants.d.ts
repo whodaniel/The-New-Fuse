@@ -1,0 +1,15 @@
+export declare const API_BASE: any;
+export declare const ONBOARDING_SURVEY_URL = "https://onboarding.anythingllm.com";
+export declare const AUTH_USER = "anythingllm_user";
+export declare const AUTH_TOKEN = "anythingllm_authToken";
+export declare const AUTH_TIMESTAMP = "anythingllm_authTimestamp";
+export declare const COMPLETE_QUESTIONNAIRE = "anythingllm_completed_questionnaire";
+export declare const SEEN_DOC_PIN_ALERT = "anythingllm_pinned_document_alert";
+export declare const SEEN_WATCH_ALERT = "anythingllm_watched_document_alert";
+export declare const APPEARANCE_SETTINGS = "anythingllm_appearance_settings";
+export declare const OLLAMA_COMMON_URLS: string[];
+export declare const LMSTUDIO_COMMON_URLS: string[];
+export declare const KOBOLDCPP_COMMON_URLS: string[];
+export declare const LOCALAI_COMMON_URLS: string[];
+export declare function fullApiUrl(): any;
+export declare const POPUP_BROWSER_EXTENSION_EVENT = "NEW_BROWSER_EXTENSION_CONNECTION";

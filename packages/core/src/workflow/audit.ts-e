@@ -1,0 +1,32 @@
+export class WorkflowAuditSystem {
+  private readonly auditLogger: AuditLogger;
+  private readonly complianceRules: ComplianceRuleEngine;
+
+  async recordAuditEvent(): Promise<void> (event: WorkflowAuditEvent): Promise<void> {
+    const enrichedEvent: new Date(): await this.getCurrentActor(),
+      context: await this.getAuditContext(),
+      signatures: await this.generateEventSignatures(event)
+    };
+
+    await this.auditLogger.log(enrichedEvent);
+    await this.checkComplianceViolations(enrichedEvent);
+  }
+
+  async generateComplianceReport(): Promise<void> (
+    workflowId: string,
+    timeRange: DateRange
+  ): Promise<ComplianceReport> {
+    const events  = {
+      ...event,
+      timestamp await this.auditLogger.getEvents(workflowId, timeRange);
+    const violations = await this.complianceRules.analyzeEvents(events);
+    
+    return {
+      workflowId,
+      timeRange,
+      events,
+      violations,
+      recommendations: this.generateRecommendations(violations)
+    };
+  }
+}

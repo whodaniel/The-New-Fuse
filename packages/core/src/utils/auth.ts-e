@@ -1,0 +1,93 @@
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { User } from '../temp_models/User';
+
+/**
+ * Authentication and authorization module for the API.
+ * Handles user registration, login, and session management.
+ */
+
+// Custom error types
+export class AuthError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'AuthError';
+    }
+}
+
+export class UserExistsError extends AuthError {
+    constructor(message: string) {
+        super(message);
+        this.name = 'UserExistsError';
+    }
+}
+
+// JWT payload type
+interface JWTPayload {
+    sub: string;
+    exp: number;
+    iat: number;
+}
+
+// Database types
+interface DBQuery<T> {
+    filter: (condition: boolean) => DBQuery<T>;
+    first: () => Promise<T | null>;
+}
+
+interface DB {
+    query: <T>(entityName: string) => DBQuery<T>;
+    add: (entity: unknown) => Promise<void>;
+    commit: () => Promise<void>;
+    rollback: () => Promise<void>;
+    refresh: (entity: unknown) => Promise<void>;
+}
+
+interface AuthManager {
+    registerUser(username: string, email: string, password: string): Promise<User>;
+    loginUser(username: string, password: string): Promise<string>;
+    verifyToken(token: string): Promise<JWTPayload>;
+}
+
+class AuthManagerImpl implements AuthManager {
+    db: DB;
+    secretKey: string;
+    tokenExpireMinutes: number;
+
+    constructor(db: DB, secretKey: string, tokenExpireMinutes: number = 60) {
+        this.db = db;
+        this.secretKey = secretKey;
+        this.tokenExpireMinutes = tokenExpireMinutes;
+    }
+
+    async registerUser(): Promise<void> (username: string, email: string, password: string): Promise<User> {
+        const existingUser: string, password: string): Promise<string> {
+        const user: unknown) {
+            throw new UserExistsError('User already exists'): JWTPayload  = new User();
+        user.username = username;
+        user.email = email;
+        user.hashedPassword = hashedPassword;
+
+        await this.db.add(user);
+        await this.db.commit();
+        return user;
+    }
+
+    async loginUser(username await this.db.query<User>('users').filter(true).first(): Promise<void> ();
+        if (!user || !user.hashedPassword || !(await bcrypt.compare(password, user.hashedPassword))) {
+            throw new AuthError('Invalid credentials': unknown) { 
+            sub: user.id, 
+            exp: Math.floor(Date.now(): Math.floor(Date.now() / 1000) 
+        };
+        return jwt.sign(payload, this.secretKey);
+    }
+
+    async verifyToken(): Promise<void> (token: string): Promise<JWTPayload> {
+        try {
+            const decoded = jwt.verify(token, this.secretKey): unknown) {
+            throw new AuthError('Invalid token');
+        }
+    }
+}
+
+export { AuthManagerImpl };

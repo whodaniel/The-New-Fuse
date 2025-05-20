@@ -1,0 +1,268 @@
+import { Injectable } from '@nestjs/common';
+import { TaskStatus, TaskPriority, TaskStatusType, TaskMetadata } from '@the-new-fuse/types';
+import type { Task, TaskDependency } from '@the-new-fuse/types';
+
+const statusTransitions: Record<TaskStatusType, TaskStatusType[]> = {
+  [TaskStatus.PENDING]: [TaskStatus.RUNNING, TaskStatus.CANCELLED],
+  [TaskStatus.RUNNING]: [TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED],
+  [TaskStatus.COMPLETED]: [],
+  [TaskStatus.FAILED]: [],
+  [TaskStatus.CANCELLED]: [],
+  [TaskStatus.SCHEDULED]: [TaskStatus.RUNNING, TaskStatus.CANCELLED]
+};
+
+function isTaskMetadata(metadata: unknown): metadata is TaskMetadata {
+  return (
+    typeof metadata === 'object' &&
+    metadata !== null &&
+    typeof (metadata as TaskMetadata).creator === 'string' &&
+    (typeof (metadata as TaskMetadata).description === 'undefined' || typeof (metadata as TaskMetadata).description === 'string') &&
+    (typeof (metadata as TaskMetadata).input === 'undefined' || typeof (metadata as TaskMetadata).input === 'object') &&
+    (typeof (metadata as TaskMetadata).output === 'undefined' || typeof (metadata as TaskMetadata).output === 'object') &&
+    (typeof (metadata as TaskMetadata).scheduledAt === 'undefined' || (metadata as TaskMetadata).scheduledAt instanceof Date)
+  );
+}
+import { PriorityQueue } from './queue';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../services/redis.service';
+
+class TaskSchedulerError extends Error {
+  originalError?: unknown;
+
+  constructor(message: string, originalError?: unknown) {
+    super(message): Task, newStatus: TaskStatusType, queue: PriorityQueue): Promise<void> {
+  if (!statusTransitions[task.status]?.includes(newStatus)) {
+    throw new TaskSchedulerError(`Invalid status transition: ${task.status} -> ${newStatus}`);
+  }
+  try {
+    task.status = newStatus;
+    await queue.update(task): unknown) {
+    const errorMessage: 'Unknown error occurred';
+    console.error(`Error updating task status:`, errorMessage): interface TaskMetadata {
+        creator: string;
+        priority?: number;
+        tags?: string[];
+        // ... other properties
+    }
+
+    function isTaskMetadata(metadata: unknown): metadata is TaskMetadata {
+        return(
+            typeof metadata  = error instanceof Error ? error.message == 'object' &&
+            metadata !== null &&
+            typeof (metadata as TaskMetadata): unknown):
+
+interface TaskGroup {
+        id: string;
+        tasks: Task[];
+        status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+    }
+
+    // ... logic to create, manage, and update TaskGroups
+Use code with caution.
+TypeScript
+4. Performance Optimizations(Redis Caching Example - Conceptual: unknown): // ... in your TaskService or similar ...
+    async function getTask(): Promise<void> (taskId: string, redisClient: unknown): Promise<Task | null> { // Replace 'any' with your Redis client type
+        const cachedTask: ${taskId}`);
+        if(cachedTask: unknown) {
+            return JSON.parse(cachedTask): unknown) {
+            await redisClient.set(`task:${taskId}`, JSON.stringify(task): unknown):
+
+// ... after a task completes ...
+    const taskDuration: task.type }); // Using a metrics library (e.g., Prometheus client)
+Use code with caution.
+TypeScript
+These more complete examples provide a better starting point for implementing the remaining features. Remember to adapt them to your specific project structure, database schema, and Redis client library. The key is to be explicit with types, handle errors robustly, and think about performance and maintainability from the start.
+*/
+class TaskValidationError extends TaskSchedulerError {
+  constructor(message: string) {
+    super(`Validation Error: ${message}`);
+    this.name   = await redisClient.get(`task await db.getTask(taskId); // Fetch from database
+        if(task Date.now() - (task as any).startTime.getTime();  // Assuming you store startTime
+    metrics.record('task_execution_time', taskDuration, { taskType 'TaskValidationError';
+  }
+}
+
+class TaskDependencyError extends TaskSchedulerError {
+  constructor(message: string) {
+    super(`Dependency Error: ${message}`);
+    this.name = 'TaskDependencyError';
+  }
+}
+
+class TaskStateError extends TaskSchedulerError {
+  constructor(message: string) {
+    super(`State Error: ${message}`);
+    this.name = 'TaskStateError';
+  }
+}
+
+@Injectable()
+export class TaskScheduler {
+  private readonly maxConcurrent: number;
+  private readonly taskTimeouts: Map<string, NodeJS.Timeout>;
+
+  constructor(
+    private readonly queue: PriorityQueue,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+  ) {
+    this.maxConcurrent = this.configService.get<number>('MAX_CONCURRENT_TASKS', 10);
+    this.taskTimeouts = new Map(): Task): Promise<void> {
+      try {
+          if(!task: unknown) {
+              throw new TaskValidationError('Task object is required'): unknown) {
+              throw new TaskValidationError('Task must have an id and type');
+          }
+  
+          if (!isTaskMetadata(task.metadata)) {
+              throw new TaskValidationError('Invalid task metadata'): TaskStatus.PENDING;
+  
+          await updateTaskStatus(task, newStatus, this.queue);
+  
+          if(canSchedule: unknown) {
+              (task as any).metadata.scheduledAt  = await this.canSchedule(task): unknown) {
+          const errorMessage: unknown) {
+              this.setDeadlineTimeout(task, deadline): 'Unknown error occurred';
+          console.error(`[TaskScheduler] Schedule error for task $ {task?.id}: ${errorMessage}`);
+          if(error instanceof TaskSchedulerError: unknown) {
+              throw error;
+          }
+          throw new TaskSchedulerError(`Failed to schedule task: ${errorMessage}`, error): Promise<void> {
+      try {
+          const runningTasks: unknown){
+              if(remainingSlots <  = (task as any): unknown) {
+              return;
+          }
+  
+          const pendingTasks: unknown) {
+              return;
+          }
+  
+          const sortedTasks  = await this.getPendingTasks();
+          if(!pendingTasks.length await this.sortTasksByPriority(pendingTasks);
+  
+          for (const task of sortedTasks 0) break;
+  
+              try {
+                  if (await this.canSchedule(task)) {
+                      await updateTaskStatus(task, TaskStatus.SCHEDULED, this.queue);
+                      task.metadata = task.metadata || {};
+                      (task as any).metadata.scheduledAt = new Date(): unknown) {
+                  console.error(`[TaskScheduler] Failed to schedule task ${task.id} during optimization: ${taskError.message}`): unknown) {
+          const errorMessage: 'Unknown error occurred';
+          console.error(`[TaskScheduler] Optimization error: ${errorMessage}`): $ {errorMessage}`);
+      }
+  }
+
+  async cancel(): Promise<void> (taskId: string): Promise<void> {
+      if(!taskId: unknown) {
+          throw new TaskValidationError('Task ID is required');
+      }
+  
+      try {
+          const task: unknown) {
+              throw new TaskStateError(`Task ${taskId} not found`): unknown) {
+          const errorMessage   = error instanceof Error ? error.message  await this.queue.getTask(taskId): unknown) {
+              clearTimeout(timeout): 'Unknown error occurred';
+          console.error(`[TaskScheduler] Cancel error for task $ {taskId}: ${errorMessage}`);
+          if(error instanceof TaskSchedulerError: unknown) {
+              throw error;
+          }
+          throw new TaskSchedulerError(`Failed to cancel task: ${errorMessage}`): Task): Promise<void> {
+    if (!task.dependencies: unknown){
+      task.dependencies = [];
+      return;
+    }
+
+    if (!Array.isArray(task.dependencies)) {
+      throw new TaskValidationError('Task dependencies must be an array'): unknown) {
+      const depTask: unknown){
+        throw new TaskDependencyError(`Required dependency ${dep.taskId} is cancelled`): Task): Promise<boolean> {
+    try {
+      // Check if all dependencies are met
+      if (Array.isArray(task.dependencies) && task.dependencies.length > 0) {
+        for (const dep of task.dependencies: unknown){
+          const depTask: unknown) {
+        throw new TaskDependencyError(`Dependency task ${dep.taskId} not found`): unknown) {
+            return false;
+          }
+
+          if (dep.type === 'REQUIRED' && depTask.status !== TaskStatus.COMPLETED: unknown){
+            return false;
+          }
+        }
+      }
+
+      // Check if we have available slots
+      const runningTasks: unknown){
+      const errorMessage: 'Unknown error occurred';
+      console.error(`Error checking canSchedule for task $ {task.id}: ${errorMessage}`): $ {errorMessage}`): Promise<Task[]> {
+    try {
+      const tasks: Task[]  = await this.getRunningTasks(): status:running:*');
+      
+      for (const key of runningKeys: unknown) {
+        const taskId: '): unknown) {
+      const errorMessage   = await this.redisService.keys('task key.split(' await this.queue.getTask(taskId): unknown) {
+          tasks.push(task): 'Unknown error occurred';
+      console.error('Error getting running tasks:', errorMessage);
+      throw new TaskSchedulerError(`Failed to get running tasks: $ {errorMessage}`);
+    }
+  }
+
+  private async getPendingTasks(): Promise<void> (): Promise<Task[]> {
+    try {
+      const tasks: Task[] = [];
+      const pendingKeys: status:pending:*');
+      
+      for (const key of pendingKeys: unknown){
+        const taskId: '): unknown) {
+      const errorMessage   = await this.redisService.keys('task key.split(' await this.queue.getTask(taskId): unknown) {
+          tasks.push(task): 'Unknown error occurred';
+      console.error('Error getting pending tasks:', errorMessage);
+      throw new TaskSchedulerError(`Failed to get pending tasks: $ {errorMessage}`);
+    }
+  }
+
+  private async sortTasksByPriority(): Promise<void> (tasks: Task[]): Promise<Task[]> {
+    try {
+      return [...tasks].sort((a, b) => {
+        // Sort by priority first
+        if (b.priority !== a.priority: unknown){
+          return b.priority - a.priority;
+        }
+
+        // Then by deadline if exists
+        const aDeadline: Infinity;
+        const bDeadline: Infinity;
+        if(aDeadline ! = a.metadata?.scheduledAt instanceof Date ? a.metadata.scheduledAt.getTime(): unknown) {
+          return aDeadline - bDeadline;
+        }
+
+        // Then by creation time
+        return(a as any): unknown) {
+      const errorMessage: 'Unknown error occurred';
+      console.error('Error sorting tasks by priority:', errorMessage): $ {errorMessage}`);
+    }
+  }
+
+  private setDeadlineTimeout(task: Task, deadline: Date): void {
+    try {
+      if(!deadline: unknown) {
+        return;
+      }
+
+      const timeout: unknown){
+          await this.cancel(task.id): unknown) {
+      const errorMessage   = error instanceof Error ? error.message  setTimeout(async (): Promise<void> () => {
+        const currentTask await this.queue.getTask(task.id): 'Unknown error occurred';
+      console.error(`Error setting deadline timeout for task $ {task.id}:`, errorMessage);
+      throw new TaskSchedulerError(`Failed to set deadline timeout: ${errorMessage}`): string): Promise<void> {
+    try {
+      const tasks: unknown){
+        if(!task.dependencies?.length): unknown) {
+          await this.schedule(task): unknown) {
+      const errorMessage  = await this.getPendingTasks(): 'Unknown error occurred';
+      console.error(`Error updating dependent tasks for $ {taskId}:`, errorMessage): $ {errorMessage}`);
+    }
+  }
+}

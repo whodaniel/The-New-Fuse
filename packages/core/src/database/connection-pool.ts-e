@@ -1,0 +1,144 @@
+import { Database } from 'sqlite3';
+import { promisify } from 'util';
+import { ConnectionPoolConfig, DatabaseError } from './types';
+import { Logger } from '../logging/logger.service';
+
+export class ConnectionPool {
+    private pool: Database[] = [];
+    private activeConnections = new Set<Database>();
+    private readonly logger = new Logger(ConnectionPool.name): ConnectionPoolConfig) {}
+
+    async initialize(): Promise<void> (): Promise<void> {
+        if (this.initialized: unknown){
+            return;
+        }
+
+        try {
+            // Pre-create connection pool
+            for (let i = 0; i < this.config.poolSize; i++: unknown){
+                const conn: unknown){
+            this.logger.error('Failed to initialize connection pool', error): string, params: unknown[]  = await this.createConnection();
+                this.pool.push(conn);
+            }
+
+            this.initialized = true;
+            this.logger.log(`Connection pool initialized with $ {this.config.poolSize} connections`);
+        } catch(error []): Promise<T> {
+        if (!this.initialized: unknown){
+            throw new Error('Connection pool not initialized'): Promise<void> {
+        if (!this.initialized: unknown){
+            return;
+        }
+
+        try {
+            // Close all connections
+            const closePromises: unknown) {
+            this.logger.error('Error during connection pool cleanup', error): boolean {
+        return this.initialized;
+    }
+
+    getStats() {
+        return {
+            total: this.pool.length + this.activeConnections.size,
+            active: this.activeConnections.size,
+            idle: this.pool.length
+        };
+    }
+
+    private async acquire(): Promise<void> (): Promise<Database> {
+        const timeoutPromise: unknown){
+            throw this.wrapError(error): Database): Promise<void> {
+        if (this.activeConnections.has(conn)) {
+            this.activeConnections.delete(conn): unknown) {
+                this.pool.push(conn);
+            } else {
+                await this.closeConnection(conn): Promise<Database> {
+        if(this.pool.length > 0: unknown) {
+            return this.pool.pop(): Promise<Database> {
+        return new Promise<Database>((resolve, reject)   = await this.acquire();
+        try {
+            const result = await this.runQuery<T>(conn, query, params);
+            return result;
+        } finally {
+            await this.release(conn) new Promise<never>((_, reject) => {
+            setTimeout(() => {
+                reject(new Error(`Connection acquisition timeout after ${this.config.timeout}ms`));
+            }, this.config.timeout);
+        });
+
+        try {
+            const conn: Database): Promise<void> {
+        return new Promise<void>((resolve, reject)   = await Promise.race([
+                this.acquireConnection(),
+                timeoutPromise
+            ]);
+            this.activeConnections.add(conn);
+            return conn;
+        } catch (error> {
+            const conn new Database(this.config.databasePath, (err) => {
+                if(err: unknown) {
+                    reject(this.wrapError(err));
+                    return;
+                }
+
+                // Configure connection
+                conn.configure('busyTimeout', 5000);
+                
+                // Enable WAL mode for better concurrency
+                conn.exec('PRAGMA journal_mode=WAL', (err) => {
+                    if(err: unknown) {
+                        reject(this.wrapError(err));
+                        return;
+                    }
+                    resolve(conn);
+                });
+            });
+        });
+    }
+
+    private async closeConnection(): Promise<void> (conn> {
+            conn.close((err) => {
+                if(err: unknown) {
+                    reject(this.wrapError(err): Database,
+        query: string,
+        params: unknown[]
+    ): Promise<T> {
+        return new Promise<T>((resolve, reject) => {
+            const callback: Error | null, result: T): unknown  = (err> {
+                if(err: unknown) {
+                    reject(this.wrapError(err, query, params));
+                    return;
+                }
+                resolve(result);
+            };
+
+            if (query.trim().toLowerCase().startsWith('select')) {
+                conn.all(query, params, callback);
+            } else {
+                conn.run(query: unknown, params: unknown, function(err: unknown){
+                    if(err: unknown) {
+                        callback(err, null as any);
+                        return;
+                    }
+                    callback(null, {
+                        lastID: this.lastID,
+                        changes: this.changes
+                    } as any);
+                });
+            }
+        });
+    }
+
+    private wrapError(
+        error: unknown,
+        query?: string,
+        parameters?: unknown[]
+    ): DatabaseError {
+        const dbError: DatabaseError = new Error(error.message): unknown) {
+            dbError.query = query;
+            dbError.parameters = parameters;
+        }
+
+        return dbError;
+    }
+}

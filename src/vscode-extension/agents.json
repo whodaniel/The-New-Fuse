@@ -1,0 +1,14 @@
+[
+  {
+    "id": "agent1",
+    "name": "Timestamp Generator Agent",
+    "description": "Generates the current timestamp.",
+    "capabilities": ["generate_timestamp"]
+  },
+  {
+    "id": "agent2",
+    "name": "Logging Agent",
+    "description": "Logs messages to the VS Code output.",
+    "capabilities": ["log_message"]
+  }
+]

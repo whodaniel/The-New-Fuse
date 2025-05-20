@@ -1,0 +1,73 @@
+interface XRScene {
+    id: string;
+    type: 'ar' | 'vr';
+    objects: XRObject[];
+    camera: {
+        position: Vector3;
+        rotation: Vector3;
+    };
+    lights: XRLight[];
+}
+interface XRObject {
+    id: string;
+    type: 'widget' | 'container' | 'control';
+    geometry: {
+        type: 'box' | 'sphere' | 'plane';
+        dimensions: Vector3;
+    };
+    material: {
+        color: string;
+        opacity: number;
+        texture?: string;
+    };
+    transform: {
+        position: Vector3;
+        rotation: Vector3;
+        scale: Vector3;
+    };
+    interaction?: {
+        hoverable: boolean;
+        selectable: boolean;
+        draggable: boolean;
+    };
+    data?: unknown;
+}
+interface XRLight {
+    type: 'ambient' | 'directional' | 'point';
+    color: string;
+    intensity: number;
+    position?: Vector3;
+    target?: Vector3;
+}
+interface Vector3 {
+    x: number;
+    y: number;
+    z: number;
+}
+export declare class XREngine {
+    private scene;
+    private session;
+    private renderer;
+    private camera;
+    private objects;
+    private raycaster;
+    private selectedObject;
+    private isInitialized;
+    constructor();
+    initialize(mode: 'ar' | 'vr'): Promise<void>;
+    createScene(config: Omit<XRScene, 'id'>): Promise<string>;
+    addObject(object: Omit<XRObject, 'id'>): Promise<string>;
+    updateObject(id: string, updates: Partial<XRObject>): Promise<void>;
+    removeObject(id: string): Promise<void>;
+    private isWebXRSupported;
+    private initializeThreeJS;
+    private setupXRSession;
+    private createSceneObjects;
+    private createLight;
+    private createObject;
+    private updateObjectInScene;
+    private removeObjectFromScene;
+    private handleXRFrame;
+    destroy(): Promise<void>;
+}
+export {};

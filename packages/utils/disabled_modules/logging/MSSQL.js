@@ -1,0 +1,149 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function (o, m, k, k2) {
+    if (k2 === undefined)
+        k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+        desc = { enumerable: true, get: function () { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function (o, m, k, k2) {
+    if (k2 === undefined)
+        k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function (o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function (o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule)
+        return mod;
+    var result = {};
+    if (mod != null)
+        for (var k in mod)
+            if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k))
+                __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MSSQLConnector = void 0;
+const mssql = __importStar(require("mssql"));
+const url_pattern_1 = __importDefault(require("url-pattern"));
+class MSSQLConnector {
+    constructor(config = { connectionString: null }) {
+        this.connected = false;
+        this.database_id = '';
+        this._client = null;
+        this.connectionConfig = {
+            user: null,
+            password: null,
+            database: null,
+            server: null,
+            port: null,
+            pool: {
+                max: 10,
+                min: 0,
+                idleTimeoutMillis: 30000,
+            },
+            options: {
+                encrypt: false,
+                trustServerCertificate: true,
+            },
+        };
+        this.connectionString = config.connectionString || '';
+        this.parseDatabase();
+    }
+    parseDatabase() {
+        const connectionPattern = new url_pattern_1.default('mssql\\://:username\\::password@*\\::port/:database*');
+        const match = connectionPattern.match(this.connectionString);
+        this.database_id = match?.database || '';
+        this.connectionConfig = {
+            ...this.connectionConfig,
+            user: match?.username || null,
+            password: match?.password || null,
+            database: match?.database || null,
+            server: match?._[0] || null,
+            port: match?.port ? Number(match.port) : null,
+        };
+    }
+}
+() => ;
+() => {
+    if (!this._client) {
+        const config = {
+            user: this.connectionConfig.user || undefined,
+            password: this.connectionConfig.password || undefined,
+            database: this.connectionConfig.database || undefined,
+            server: this.connectionConfig.server || '',
+            port: this.connectionConfig.port || 1433,
+            pool: this.connectionConfig.pool,
+            options: this.connectionConfig.options
+        };
+        this._client = await new mssql.ConnectionPool(config).connect();
+    }
+    this.connected = true;
+    return this._client;
+};
+async;
+runQuery();
+Promise();
+Promise(queryString = '');
+{
+    const result = { rows: [], count: 0, error: null };
+    try {
+        if (!this._client) {
+            await this.connect();
+        }
+        if (!this._client) {
+            throw new Error('Failed to establish database connection');
+        }
+        const queryResult = await this._client.request().query(queryString);
+        result.rows = queryResult.recordset;
+        result.count = queryResult.rowsAffected[0];
+    }
+    catch (error) {
+        result.error = error instanceof Error ? error.message : String(error);
+    }
+    return result;
+}
+async;
+disconnect();
+Promise();
+Promise();
+{
+    if (this._client) {
+        await this._client.close();
+        this._client = null;
+        this.connected = false;
+    }
+}
+getTablesSql();
+{
+    return `
+      SELECT TABLE_NAME 
+      FROM INFORMATION_SCHEMA.TABLES 
+      WHERE TABLE_TYPE = 'BASE TABLE'
+    `;
+}
+getTableSchemaSql(table_name);
+{
+    return `
+      SELECT 
+        COLUMN_NAME AS column_name,
+        DATA_TYPE AS data_type,
+        CHARACTER_MAXIMUM_LENGTH AS character_maximum_length,
+        COLUMN_DEFAULT AS column_default,
+        IS_NULLABLE AS is_nullable
+      FROM INFORMATION_SCHEMA.COLUMNS 
+      WHERE TABLE_NAME = '${table_name}'
+    `;
+}
+exports.MSSQLConnector = MSSQLConnector;
+export {};
+//# sourceMappingURL=MSSQL.js.map

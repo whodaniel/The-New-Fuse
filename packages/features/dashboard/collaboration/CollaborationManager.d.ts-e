@@ -1,0 +1,34 @@
+import { User, Comment, Annotation, ActivityEvent, CollaborationState } from './types';
+export declare class CollaborationManager {
+    private ws;
+    private state;
+    private listeners;
+    private cursorUpdateThrottle;
+    private lastCursorUpdate;
+    constructor(websocketUrl: string, initialState: CollaborationState, cursorUpdateThrottle?: number);
+    updateUserPresence(userId: string, status: User['presence']['status']): void;
+    addComment(comment: Omit<Comment, 'id' | 'createdAt'>): void;
+    updateComment(commentId: string, content: string): void;
+    resolveComment(commentId: string, user: User): void;
+    addAnnotation(annotation: Omit<Annotation, 'id' | 'createdAt'>): void;
+    updateAnnotation(annotationId: string, updates: Partial<Annotation>): void;
+    updateCursor(userId: string, position: {
+        x: number;
+        y: number;
+    }): void;
+    trackActivity(event: Omit<ActivityEvent, 'id' | 'timestamp'>): void;
+    private updateState;
+    private handleMessage;
+    private handlePresenceUpdate;
+    private handleCommentAdded;
+    private handleCommentUpdated;
+    private handleCommentResolved;
+    private handleAnnotationAdded;
+    private handleAnnotationUpdated;
+    private handleCursorMoved;
+    private handleActivityRecorded;
+    private handleStateSync;
+    private sendMessage;
+    subscribe(id: string, callback: (state: CollaborationState) => void): () => void;
+    private notifyListeners;
+}

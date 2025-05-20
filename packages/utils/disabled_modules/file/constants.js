@@ -1,0 +1,52 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SUPPORTED_FILETYPE_CONVERTERS = exports.ACCEPTED_MIMES = exports.WATCH_DIRECTORY = void 0;
+const path_1 = __importDefault(require("path"));
+exports.WATCH_DIRECTORY = path_1.default.resolve(__dirname, "../hotdir");
+exports.ACCEPTED_MIMES = {
+    "text/plain": [".txt", ".md", ".org", ".adoc", ".rst"],
+    "text/html": [".html"],
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document": [
+        ".docx",
+    ],
+    "application/vnd.openxmlformats-officedocument.presentationml.presentation": [
+        ".pptx",
+    ],
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+    ],
+    "application/vnd.oasis.opendocument.text": [".odt"],
+    "application/vnd.oasis.opendocument.presentation": [".odp"],
+    "application/pdf": [".pdf"],
+    "application/mbox": [".mbox"],
+    "audio/wav": [".wav"],
+    "audio/mpeg": [".mp3"],
+    "video/mp4": [".mp4"],
+    "video/mpeg": [".mpeg"],
+    "application/epub+zip": [".epub"],
+};
+exports.SUPPORTED_FILETYPE_CONVERTERS = {
+    ".txt": "./convert/asTxt",
+    ".md": "./convert/asTxt",
+    ".org": "./convert/asTxt",
+    ".adoc": "./convert/asTxt",
+    ".rst": "./convert/asTxt",
+    ".html": "./convert/asTxt",
+    ".pdf": "./convert/asPDF/index",
+    ".docx": "./convert/asDocx",
+    ".pptx": "./convert/asOfficeMime",
+    ".odt": "./convert/asOfficeMime",
+    ".odp": "./convert/asOfficeMime",
+    ".xlsx": "./convert/asXlsx",
+    ".mbox": "./convert/asMbox",
+    ".wav": "./convert/asAudio",
+    ".mp3": "./convert/asAudio",
+    ".mp4": "./convert/asAudio",
+    ".mpeg": "./convert/asAudio",
+    ".epub": "./convert/asEPub",
+};
+export {};
+//# sourceMappingURL=constants.js.map

@@ -1,0 +1,204 @@
+// This is your Prisma schema file
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                  String    @id @default(uuid())
+  email               String    @unique
+  name                String?
+  sessions            Session[]
+  role                String    @default("user")
+  isActive            Boolean   @default(true)
+  onboardingCompleted Boolean   @default(false)
+  onboardingData      Json?
+  userType            String    @default("human")
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+  lastLoginAt         DateTime?
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model State {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StateSync {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     Json
+  version   Int      @default(0)
+  timestamp DateTime @default(now())
+  status    String   @default("pending")
+  retries   Int      @default(0)
+  error     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  dependencies  ProjectDependency[]
+  files         ProjectFile[]
+  testCoverage  ProjectTestCoverage[]
+}
+
+model ProjectDependency {
+  id            String    @id @default(uuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  dependencyId  String
+  dependency    Dependency @relation(fields: [dependencyId], references: [id])
+  type          String    // 'direct' | 'dev' | 'peer'
+  version       String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  vulnerabilities SecurityVulnerability[] @relation("DependencyVulnerabilities")
+}
+
+model Dependency {
+  id            String    @id @default(uuid())
+  name          String    @unique
+  version       String
+  latestVersion String?
+  metadata      Json?
+  projects      ProjectDependency[]
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ProjectFile {
+  id            String    @id @default(uuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  path          String
+  content       String
+  size          Int
+  hash          String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  metrics       FileMetrics?
+  vulnerabilities SecurityVulnerability[] @relation("FileVulnerabilities")
+}
+
+model FileMetrics {
+  id            String    @id @default(uuid())
+  fileId        String    @unique
+  file          ProjectFile @relation(fields: [fileId], references: [id])
+  complexity    Int
+  duplicateCode Float
+  linesOfCode   Int
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model ProjectTestCoverage {
+  id            String    @id @default(uuid())
+  projectId     String
+  project       Project   @relation(fields: [projectId], references: [id])
+  coverage      Float
+  totalLines    Int
+  coveredLines  Int
+  timestamp     DateTime  @default(now())
+  filesCoverage FileCoverage[]
+}
+
+model FileCoverage {
+  id                String    @id @default(uuid())
+  testCoverageId    String
+  testCoverage      ProjectTestCoverage @relation(fields: [testCoverageId], references: [id])
+  filePath          String
+  coverage          Float
+  totalLines        Int
+  coveredLines      Int
+  createdAt         DateTime  @default(now())
+}
+
+model SecurityVulnerability {
+  id                String   @id @default(uuid())
+  type              String
+  packageName       String
+  version           String
+  severity          String
+  description       String
+  recommendation    String?
+  cve              String?
+  references       String[]
+  affectedVersions String[]
+  patchedVersions  String[]
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  metadata         Json?
+  dependencies     ProjectDependency[] @relation("DependencyVulnerabilities")
+  files            ProjectFile[] @relation("FileVulnerabilities")
+}
+
+model Task {
+  id             String        @id @default(uuid())
+  title          String
+  description    String?
+  status         String        @default("pending")
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  dependantTasks    TaskDependency[] @relation("dependant")
+  dependencyTasks   TaskDependency[] @relation("dependency")
+}
+
+model TaskDependency {
+  id             String    @id @default(uuid())
+  taskId         String
+  task           Task      @relation("dependant", fields: [taskId], references: [id])
+  dependencyId   String
+  dependency     Task      @relation("dependency", fields: [dependencyId], references: [id])
+  type           String    @default("blocking") // 'blocking' | 'non-blocking'
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+// Onboarding configuration model
+model OnboardingConfig {
+  id        String    @id @default(uuid())
+  type      String    @unique // 'general', 'user-types', 'steps', 'ai-settings'
+  data      Json
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+// Onboarding analytics model
+model OnboardingAnalytics {
+  id                  String    @id @default(uuid())
+  userId              String
+  userType            String
+  startedAt           DateTime  @default(now())
+  completedAt         DateTime?
+  completionStatus    String    @default("in_progress") // 'in_progress', 'completed', 'abandoned'
+  stepsCompleted      Int       @default(0)
+  totalSteps          Int
+  timeSpentSeconds    Int       @default(0)
+  dropOffStep         String?
+  deviceInfo          Json?
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}

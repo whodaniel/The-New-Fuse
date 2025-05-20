@@ -1,0 +1,70 @@
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+interface Experiment {
+    id: string;
+    name: string;
+    description: string;
+    variants: Variant[];
+    status: 'active' | 'paused' | 'completed';
+    startDate: Date;
+    endDate?: Date;
+    targetUsers: {
+        percentage: number;
+        criteria?: {
+            type: string;
+            value: unknown;
+        }[];
+    };
+    metrics: {
+        primary: string[];
+        secondary: string[];
+    };
+}
+interface Variant {
+    id: string;
+    name: string;
+    changes: {
+        type: 'layout' | 'widget' | 'feature' | 'style';
+        target: string;
+        value: unknown;
+    }[];
+    traffic: number;
+}
+interface ExperimentResult {
+    experimentId: string;
+    variantId: string;
+    metrics: {
+        name: string;
+        value: number;
+        confidence: number;
+        improvement: number;
+    }[];
+    sampleSize: number;
+    duration: number;
+    conclusion: string;
+    recommendation: string;
+}
+export declare class ABTestEngine {
+    private analyticsManager;
+    private activeExperiments;
+    private results;
+    private userAssignments;
+    constructor(analyticsManager: AnalyticsManager);
+    createExperiment(experiment: Omit<Experiment, 'id'>): Promise<string>;
+    assignUserToVariants(userId: string, dashboardState: DashboardState): Promise<Map<string, string>>;
+    applyExperimentalChanges(dashboardState: DashboardState, assignments: Map<string, string>): Promise<DashboardState>;
+    trackMetrics(experimentId: string, variantId: string, metrics: Record<string, number>): Promise<void>;
+    getExperimentResults(experimentId: string): Promise<ExperimentResult | null>;
+    private userMeetsCriteria;
+    private selectVariant;
+    private applyVariantChanges;
+    private shouldConcludeExperiment;
+    private concludeExperiment;
+    private hasStatisticalSignificance;
+    private analyzeResults;
+    private applyLayoutChange;
+    private applyWidgetChange;
+    private applyFeatureChange;
+    private applyStyleChange;
+}
+export {};

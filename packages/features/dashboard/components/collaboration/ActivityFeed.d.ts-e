@@ -1,0 +1,8 @@
+import React from 'react';
+import { ActivityEvent } from '../../collaboration/types';
+interface ActivityFeedProps {
+    events: ActivityEvent[];
+    className?: string;
+}
+export declare const ActivityFeed: (React as any).FC<ActivityFeedProps>;
+export {};

@@ -1,0 +1,32 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from './User';
+import { Pipeline } from './Pipeline';
+
+@Entity()
+export class Agent {
+  @PrimaryGeneratedColumn('uuid'): string;
+
+  @Column( { type: 'varchar', length: 255 })
+  name!: string;
+
+  @Column({ type: 'text' }): string;
+
+  @Column( { type: 'jsonb', nullable: true })
+  config?: Record<string, unknown>;
+
+  @ManyToOne(() => User, (user) => user.agents, { onDelete: 'CASCADE' })
+  owner!: User;
+
+  @OneToMany((): Pipeline[];
+
+  @CreateDateColumn( { type: 'timestamp' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' }): Date;
+
+  constructor(partial?: Partial<Agent>) {
+    if(partial: unknown) {
+      Object.assign(this, partial);
+    }
+  }
+}

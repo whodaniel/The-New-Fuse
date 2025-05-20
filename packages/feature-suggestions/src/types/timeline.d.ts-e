@@ -1,0 +1,88 @@
+import { FeatureSuggestion, TodoItem } from '../types';
+import { FeatureProgress } from '@the-new-fuse/feature-tracker';
+export type TimelineEventType = 'SUGGESTION' | 'TODO' | 'FEATURE' | 'WORKFLOW_STEP' | 'AGENT' | 'NOTE' | 'VIRTUAL' | 'COMMENT';
+export interface TimelineItem {
+    id: string;
+}
+export interface TimelineNote {
+    id: string;
+    content: string;
+    createdAt: Date;
+    updatedAt: Date;
+    author: string;
+    color?: string;
+    tags?: string[];
+}
+export interface TimelineRange {
+    id: string;
+    startDate: Date;
+    endDate: Date;
+    label: string;
+    color?: string;
+    type: 'milestone' | 'phase' | 'sprint';
+}
+export interface TimelineEvent {
+    id: string;
+    type: TimelineEventType;
+    timestamp: Date;
+    endTimestamp?: Date;
+    parentId?: string;
+    branchName?: string;
+    mergedFrom?: string[];
+    data: {
+        title: string;
+        description: string;
+        item: FeatureSuggestion | TodoItem | FeatureProgress | TimelineItem | any;
+        agentId?: string;
+        agentRole?: string;
+        agentStatus?: 'ACTIVE' | 'INACTIVE' | 'BUSY';
+        metadata?: Record<string, unknown>;
+        notes?: TimelineNote[];
+        progress?: number;
+        priority?: 'LOW' | 'MEDIUM' | 'HIGH';
+        tags?: string[];
+    };
+    children?: TimelineEvent[];
+}
+export interface TimelineBranch {
+    id: string;
+    name: string;
+    parentBranchId?: string;
+    startEvent: string;
+    endEvent?: string;
+    status: 'ACTIVE' | 'MERGED' | 'ABANDONED';
+    color?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface WorkflowStep {
+    id: string;
+    type: string;
+    config: Record<string, unknown>;
+    nextSteps: string[];
+    branchConditions?: {
+        condition: string;
+        branchTo: string;
+    }[];
+    assignedAgentId?: string;
+    estimatedDuration?: number;
+    actualDuration?: number;
+    status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+}
+export interface TimelineWorkflow {
+    id: string;
+    name: string;
+    description: string;
+    steps: WorkflowStep[];
+    timelineEventId: string;
+    status: 'DRAFT' | 'ACTIVE' | 'COMPLETED' | 'FAILED';
+    currentStepId?: string;
+    timeRange?: TimelineRange;
+    metrics?: {
+        completionPercentage: number;
+        timeSpent: number;
+        estimatedTimeRemaining: number;
+    };
+    createdAt: Date;
+    updatedAt: Date;
+}

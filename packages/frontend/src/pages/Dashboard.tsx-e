@@ -1,0 +1,23 @@
+import React from 'react';
+import { useAuth } from '../hooks/useAuth';
+import { Navigate } from 'react-router-dom';
+
+const Dashboard = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className="container mx-auto p-6">
+      <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
+      <div className="bg-white shadow-md rounded-lg p-6">
+        <p className="text-lg">Welcome to your dashboard!</p>
+        <p className="mt-4">This is a protected route that requires authentication.</p>
+      </div>
+    </div>
+  );
+};
+
+export { Dashboard };

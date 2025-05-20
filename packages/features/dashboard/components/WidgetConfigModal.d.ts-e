@@ -1,0 +1,10 @@
+import React from 'react';
+import { DashboardWidget } from '../types';
+interface WidgetConfigModalProps {
+    widget: DashboardWidget;
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (widget: DashboardWidget) => void;
+}
+export declare const WidgetConfigModal: (React as any).FC<WidgetConfigModalProps>;
+export {};

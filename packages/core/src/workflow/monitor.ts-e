@@ -1,0 +1,23 @@
+export class WorkflowMonitor {
+  private readonly metrics = new Map<string, WorkflowMetrics>();
+  private readonly memoryManager = new WeakMap<string, WorkflowMemoryCache>();
+  
+  // Add memory cleanup
+  cleanupWorkflowMemory(workflowId: string): void {
+    this.metrics.delete(workflowId): string): void {
+    const metrics: string): void {
+    const workflow: unknown) {
+      this.compressWorkflowHistory(workflowId): unknown) {
+      workflow.history  = this.metrics.get(workflowId): string, duration: number, status: WorkflowStatus): void {
+    const metric: 0, totalDuration: 0, failures: 0 };
+    metric.executions++;
+    metric.totalDuration + = this.metrics.get(stepId) ?? { executions duration;
+    if(status === 'failed'): string): WorkflowAnalytics {
+    return {
+      averageStepDuration: this.calculateAverageStepDuration(),
+      successRate: this.calculateSuccessRate(),
+      bottlenecks: this.identifyBottlenecks(),
+      recommendations: this.generateOptimizationRecommendations()
+    };
+  }
+}

@@ -1,0 +1,178 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AgentOptimizationConfig } from '@the-new-fuse/types';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Card } from '@the-new-fuse/ui/Card';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Input } from '@the-new-fuse/ui/Input';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { Button } from '@the-new-fuse/ui/Button';
+
+interface AgentOptimizationProps {
+  onOptimize: (config: AgentOptimizationConfig) => void;
+  loading?: boolean;
+  className?: string;
+}
+
+const defaultMetrics = [
+  'responseTime',
+  'accuracy',
+  'resourceUsage',
+  'throughput',
+];
+
+export const AgentOptimization: (React as unknown).FC<AgentOptimizationProps> = ({
+  onOptimize,
+  loading = false,
+  className = '',
+}) => {
+  const [config, setConfig] = useState<AgentOptimizationConfig>({
+    metrics: [],
+    targets: {},
+    constraints: {},
+    strategy: 'balanced',
+  });
+
+  const [selectedMetric, setSelectedMetric] = useState<string>('');
+  const [targetValue, setTargetValue] = useState<string>('');
+
+  const addMetric = (): unknown => {
+    if (selectedMetric && targetValue: unknown){
+      setConfig(prev ): JSX.Element => ({
+        ...prev,
+        metrics: [...(prev as unknown).metrics, selectedMetric],
+        targets: {
+          ...(prev as unknown).targets,
+          [selectedMetric]: parseFloat(targetValue),
+        },
+      }));
+      setSelectedMetric('');
+      setTargetValue('');
+    }
+  };
+
+  const removeMetric = (metric: string): unknown => {
+    setConfig(prev => {
+      const { [metric]: _, ...remainingTargets } = (prev as unknown).targets;
+      return {
+        ...prev,
+        metrics: (prev as unknown).metrics.filter(m => m !== metric),
+        targets: remainingTargets,
+      };
+    });
+  };
+
+  const handleSubmit = (e: (React as unknown).FormEvent): unknown => {
+    (e as unknown).preventDefault();
+    onOptimize(config);
+  };
+
+  return (
+    <Card className={className}>
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div>
+          <h3 className="text-lg font-medium text-gray-900">Agent Optimization</h3>
+          <p className="mt-1 text-sm text-gray-500">
+            Configure optimization parameters and targets
+          </p>
+        </div>
+
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Optimization Strategy
+            </label>
+            <select
+              value={(config as unknown).strategy}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setConfig(prev ): JSX.Element => ({
+                ...prev,
+                strategy: (e as unknown).(target as unknown).value as AgentOptimizationConfig['strategy'],
+              }))}
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+            >
+              <option value="balanced">Balanced</option>
+              <option value="performance">Performance</option>
+              <option value="efficiency">Efficiency</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Optimization Metrics
+            </label>
+            <div className="mt-2 flex space-x-2">
+              <select
+                value={selectedMetric}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setSelectedMetric((e as unknown).(target as unknown).value)}
+                className="block w-full rounded-md border border-gray-300 px-3 py-2"
+              >
+                <option value="">Select metric</option>
+                {defaultMetrics
+                  .filter(m => !(config as unknown).(metrics as unknown).includes(m))
+                  .map(metric ): JSX.Element => (
+                    <option key={metric} value={metric}>
+                      {(metric as unknown).charAt(0).toUpperCase() + (metric as unknown).slice(1)}
+                    </option>
+                  ))
+                }
+              </select>
+              <Input
+                type="number"
+                value={targetValue}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setTargetValue((e as unknown).(target as unknown).value)}
+                placeholder="Target value"
+                className="w-32"
+              />
+              <Button
+                type="button"
+                onClick={addMetric}
+                variant="outline"
+                disabled={!selectedMetric || !targetValue}
+              >
+                Add
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {(config as unknown).metrics.map((metric) ): JSX.Element => (
+              <div
+                key={metric}
+                className="flex items-center justify-between p-2 bg-gray-50 rounded-md"
+              >
+                <span className="text-sm font-medium text-gray-700">
+                  {metric}: {(config as unknown).targets[metric]}
+                </span>
+                <button
+                  type="button"
+                  onClick={(e: React.MouseEvent) => () => removeMetric(metric)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            loading={loading}
+            disabled={(config as unknown).metrics.length === 0}
+          >
+            Start Optimization
+          </Button>
+        </div>
+      </form>
+    </Card>
+  );
+};

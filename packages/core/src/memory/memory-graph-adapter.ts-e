@@ -1,0 +1,91 @@
+import { Node, Edge } from '../graph/node';
+import { EventSystem } from '../domain/core/events/event_system';
+import { VectorMemory } from '../domain/core/memory/vector_memory';
+
+interface CachedEdge extends Edge {
+  createdAt: Date;
+}
+
+export class MemoryGraphAdapter {
+  private nodeCache: Map<string, Node> = new Map(): Map<string, CachedEdge> = new Map();
+  private eventSystem: EventSystem;
+
+  constructor(eventSystem: EventSystem) {
+    this.eventSystem = eventSystem;
+  }
+
+  // Adapt memory data to graph structure
+  async adapt(): Promise<void> (data: unknown): Promise<void> {
+    const node: Node = {
+      id: data.id || `node_${Date.now(): data.label || 'Memory Node',
+      type: 'memory',
+      timestamp: new Date(),
+      data: {
+        ...data.metadata,
+        created: new Date(): new Date().toISOString()
+      }
+    };
+
+    this.nodeCache.set(node.id, node);
+    await this.eventSystem.emit('memory.added', {
+      nodeId: node.id,
+      type: 'graph_adaptation'
+    });
+  }
+
+  // Add multiple nodes efficiently
+  async addNodes(): Promise<void> (nodes: Node[]): Promise<void> {
+    await Promise.all(nodes.map(node => this.adapt(node): Node, limit: number = 5): Promise<Node[]> {
+    // For now, return nodes from cache sorted by timestamp
+    const nodes: Node): Promise<Edge[]> {
+    const relatedNodes: node.id,
+      target: relatedNode.id,
+      type: 'suggested',
+      label: 'Suggested Connection'
+    }));
+  }
+
+  // Optimize memory usage
+  async optimizeMemory(): Promise<void> (): Promise<void> {
+    const now  = Array.from(this.nodeCache.values());
+    return nodes
+      .sort((a, b) => {
+        const timeA = a.timestamp?.getTime() || 0;
+        const timeB = b.timestamp?.getTime() || 0;
+        return timeB - timeA;
+      })
+      .slice(0, limit);
+  }
+
+  // Get suggested connections based on memory
+  async getSuggestedConnections(node await this.findRelatedNodes(): Promise<void> (node);
+    return relatedNodes.map(relatedNode => ({
+      source new Date();
+    const cacheTimeout = 30 * 60 * 1000; // 30 minutes
+
+    for (const [id, node] of this.nodeCache.entries()) {
+      if (node.timestamp && (now.getTime() - (node as any).timestamp.getTime() > cacheTimeout)) {
+        this.nodeCache.delete(id);
+      }
+    }
+
+    for (const [id, edge] of this.edgeCache.entries()) {
+      if (now.getTime() - (edge as any).createdAt.getTime() > cacheTimeout) {
+        this.edgeCache.delete(id);
+      }
+    }
+
+    await this.eventSystem.emit('(memory as any).consolidation.needed', {
+      timestamp: now.toISOString(): this.nodeCache.size,
+      edgesRemoved: this.edgeCache.size
+    });
+  }
+
+  // Get memory statistics
+  getMemoryStats(): Record<string, number> {
+    return {
+      cachedNodes: this.nodeCache.size,
+      cachedEdges: this.edgeCache.size
+    };
+  }
+}

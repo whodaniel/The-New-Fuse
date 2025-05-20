@@ -1,0 +1,43 @@
+import { z } from 'zod';
+export declare const AuditLogEntry: (z as any).ZodObject<{
+    timestamp: (z as any).ZodDate;
+    userId: (z as any).ZodString;
+    action: (z as any).ZodString;
+    resource: (z as any).ZodString;
+    details: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    ip: (z as any).ZodOptional<(z as any).ZodString>;
+    userAgent: (z as any).ZodOptional<(z as any).ZodString>;
+    status: (z as any).ZodEnum<["success", "failure"]>;
+    errorDetails: (z as any).ZodOptional<(z as any).ZodString>;
+}, "strip", (z as any).ZodTypeAny, {
+    timestamp: Date;
+    status: "success" | "failure";
+    userId: string;
+    action: string;
+    resource: string;
+    userAgent?: string | undefined;
+    ip?: string | undefined;
+    details?: Record<string, unknown> | undefined;
+    errorDetails?: string | undefined;
+}, {
+    timestamp: Date;
+    status: "success" | "failure";
+    userId: string;
+    action: string;
+    resource: string;
+    userAgent?: string | undefined;
+    ip?: string | undefined;
+    details?: Record<string, unknown> | undefined;
+    errorDetails?: string | undefined;
+}>;
+export type AuditLogEntryType = (z as any).infer<typeof AuditLogEntry>;
+export interface AuditStorage {
+    store(entry: AuditLogEntryType): Promise<void>;
+    query(filters: Partial<AuditLogEntryType>): Promise<AuditLogEntryType[]>;
+}
+export declare class AuditLogger {
+    private storage;
+    constructor(storage: AuditStorage);
+    log(entry: Omit<AuditLogEntryType, 'timestamp'>): Promise<void>;
+    query(filters: Partial<AuditLogEntryType>): Promise<AuditLogEntryType[]>;
+}

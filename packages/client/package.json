@@ -1,0 +1,10 @@
+{
+  "name": "@the-new-fuse/client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "mkdir -p build && echo '<!DOCTYPE html><html><head><title>The New Fuse</title></head><body><h1>The New Fuse Client</h1></body></html>' > build/index.html",
+    "clean": "rm -rf dist .turbo node_modules"
+  }
+}

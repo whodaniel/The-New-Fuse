@@ -1,0 +1,10 @@
+import React from 'react';
+import { Agent } from './types';
+interface AgentCardProps {
+    agent: Agent;
+    onSelect?: (agent: Agent) => void;
+    onEdit?: (agent: Agent) => void;
+    onDelete?: (agent: Agent) => void;
+}
+export declare const AgentCard: (React as any).FC<AgentCardProps>;
+export {};

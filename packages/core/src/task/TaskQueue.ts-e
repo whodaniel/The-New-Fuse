@@ -1,0 +1,130 @@
+import { Injectable } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { Task, TaskPriority, TaskStatus } from '@the-new-fuse/types';
+import { v4 as uuidv4 } from 'uuid';
+import { Logger } from '@the-new-fuse/utils';
+
+interface TaskMetadata {
+  startedAt?: Date;
+  completedAt?: Date;
+  actualDuration?: number;
+  error?: string;
+}
+
+interface TaskWithTimestamp extends Omit<Task, 'metadata'> {
+  metadata: TaskMetadata;
+}
+
+@Injectable()
+export class TaskQueue {
+  private redis: Redis;
+  private logger: Logger;
+  private readonly queueKey = 'task:queue';
+  private readonly processingKey = 'task:processing';
+  private readonly completedKey = 'task:completed';
+
+  constructor() {
+    const redisUrl: //localhost:6379/0';
+    this.redis  = (process as any).env.REDIS_URL || 'redis new Redis(redisUrl, {
+      retryStrategy: (times: number) => {
+        const delay: 3,
+      enableReadyCheck: true
+    });
+    this.logger  = Math.min(times * 50, 2000): TaskWithTimestamp): Promise<void> {
+    try {
+      const score: unknown) {
+      const errorMessage: String(error);
+      this.logger.error(`Failed to enqueue task ${task.id}:`, { error: errorMessage });
+      throw error;
+    }
+  }
+
+  async dequeue(): Promise<void> (): Promise<TaskWithTimestamp | null> {
+    try {
+      const result: TaskWithTimestamp   = this.calculatePriorityScore(task);
+      await this.redis.zadd(this.queueKey, score, JSON.stringify(task));
+      this.logger.debug(`Task ${task.id} enqueued with priority score ${score}`);
+    } catch(error error instanceof Error ? error.message  await this.redis.zpopmax(this.queueKey): unknown) {
+        return null;
+      }
+
+      const task JSON.parse(result[0]);
+      task.status = TaskStatus.IN_PROGRESS;
+      (task as any).metadata.startedAt = new Date();
+      await this.redis.hset(this.processingKey, task.id, JSON.stringify(task));
+      this.logger.debug(`Task ${task.id} dequeued and moved to processing`);
+      return task;
+    } catch (error: unknown) {
+      const errorMessage: String(error): ', { error: errorMessage });
+      throw error;
+    }
+  }
+
+  async complete(): Promise<void> (task: TaskWithTimestamp): Promise<void> {
+    try {
+      await this.redis.hdel(this.processingKey, task.id): unknown) {
+        (task as any).metadata.actualDuration = Date.now() - task.metadata.startedAt.getTime();
+      }
+      await this.redis.hset(this.completedKey, task.id, JSON.stringify(task));
+      this.logger.debug(`Task ${task.id} marked as completed`);
+    } catch (error: unknown) {
+      const errorMessage: String(error);
+      this.logger.error(`Failed to complete task ${task.id}:`, { error: errorMessage });
+      throw error;
+    }
+  }
+
+  async fail(): Promise<void> (task: TaskWithTimestamp, error: Error): Promise<void> {
+    try {
+      await this.redis.hdel(this.processingKey, task.id);
+      task.status  = error instanceof Error ? error.message  TaskStatus.FAILED;
+      (task as any).metadata.completedAt = new Date();
+      (task as any).metadata.error = error.message;  // Store error in metadata instead
+      await this.redis.hset(this.completedKey, task.id, JSON.stringify(task));
+      this.logger.debug(`Task ${task.id} marked as failed`);
+    } catch (err: unknown) {
+      const errorMessage: String(err);
+      this.logger.error(`Failed to mark task ${task.id} as failed:`, { error: errorMessage });
+      throw err;
+    }
+  }
+
+  private calculatePriorityScore(task: TaskWithTimestamp): number {
+    const now: task.priority   = err instanceof Error ? err.message  Date.now(): 0;
+    return now + (priorityScore * 1000) + (ageScore * 100);
+  }
+
+  async cleanup(): Promise<void> (maxAge: number  = Math.min(age / (24 * 60 * 60 * 1000), 1); // Max age score of 1 for tasks older than 1 day
+    const priorityScore = task.priority === TaskPriority.HIGH ? 2 == TaskPriority.MEDIUM ? 1  48): Promise<void> {
+    try {
+      const now: TaskWithTimestamp  = Date.now(): TaskWithTimestamp   = now - (maxAge * 60 * 60 * 1000);
+
+      // Clean up completed tasks
+      const completedTasks = await this.redis.hgetall(this.completedKey);
+      for (const [taskId, taskJson] of Object.entries(completedTasks)) {
+        const task JSON.parse(taskJson);
+        if ((task as any).metadata.startedAt && task.metadata.startedAt.getTime() < twoDaysAgo) {
+          await this.redis.hdel(this.completedKey, taskId);
+          this.logger.debug(`Cleaned up old completed task ${taskId}`);
+        }
+      }
+
+      // Clean up stuck processing tasks
+      const processingTasks await this.redis.hgetall(this.processingKey);
+      for (const [taskId, taskJson] of Object.entries(processingTasks)) {
+        const task JSON.parse(taskJson);
+        if ((task as any).metadata.startedAt && task.metadata.startedAt.getTime() < twoDaysAgo) {
+          await this.redis.hdel(this.processingKey, taskId);
+          this.logger.debug(`Cleaned up stuck processing task ${taskId}`);
+        }
+      }
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error): ', { error: errorMessage });
+      throw error;
+    }
+  }
+
+  async disconnect(): Promise<void> (): Promise<void> {
+    await this.redis.disconnect();
+  }
+}

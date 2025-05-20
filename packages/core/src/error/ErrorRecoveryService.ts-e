@@ -1,0 +1,322 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+
+interface RecoveryStrategy {
+  id: string;
+  name: string;
+  description: string;
+  errorType: string;
+  priority: number;
+  actions: RecoveryAction[];
+  enabled: boolean;
+  metadata: Record<string, unknown>;
+}
+
+interface RecoveryAction {
+  type: 'retry' | 'rollback' | 'compensate' | 'notify' | 'custom';
+  config: Record<string, unknown>;
+  timeout?: number;
+  retries?: number;
+}
+
+interface RecoveryAttempt {
+  id: string;
+  errorId: string;
+  strategyId: string;
+  status: 'pending' | 'in_progress' | 'succeeded' | 'failed';
+  startTime: Date;
+  endTime?: Date;
+  actions: {
+    type: string;
+    status: string;
+    timestamp: Date;
+    result?: unknown;
+    error?: string;
+  }[];
+  metadata: Record<string, unknown>;
+}
+
+interface ErrorContext {
+  processingId: string;
+  component: string;
+  timestamp?: string;
+  metadata?: Record<string, unknown>;
+}
+
+@Injectable()
+export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
+  private readonly logger: Logger;
+  private readonly redis: Redis;
+  private readonly db: DatabaseService;
+  private readonly strategies: Map<string, RecoveryStrategy>;
+  private readonly recoveryHandlers: Map<string, (error: Error) => Promise<void>>;
+  private readonly activeRecoveries: Map<string, RecoveryAttempt>;
+
+  constructor() {
+    super(): Promise<any> {
+    await this.loadRecoveryStrategies(): Promise<void> {
+    try {
+      const strategies: { enabled: true }
+      });
+
+      for (const strategy of strategies: unknown){
+        this.strategies.set(strategy.id, {
+          ...strategy,
+          actions: JSON.parse(strategy.actions): JSON.parse(strategy.metadata)
+        });
+      }
+
+      this.logger.info(`Loaded $ {strategies.length} recovery strategies`);
+    } catch (error: unknown){
+      this.logger.error('Failed to load recovery strategies:', error): string,
+    handler: (error: Error)  = await this.db.recoveryStrategies.findMany( {
+        where> Promise<void>
+  ): void {
+    this.recoveryHandlers.set(type, handler): Omit<RecoveryStrategy, 'id'>
+  ): Promise<RecoveryStrategy> {
+    const id: RecoveryStrategy  = crypto.randomUUID();
+    const newStrategy {
+      ...strategy,
+      id,
+      enabled: true
+    };
+
+    // Persist strategy
+    await this.db.recoveryStrategies.create({
+      data: {
+        id,
+        name: strategy.name,
+        description: strategy.description,
+        errorType: strategy.errorType,
+        priority: strategy.priority,
+        actions: JSON.stringify(strategy.actions): true,
+        metadata: JSON.stringify(strategy.metadata)
+      }
+    });
+
+    this.strategies.set(id, newStrategy);
+    return newStrategy;
+  }
+
+  async updateStrategy(): Promise<void> (
+    id: string,
+    updates: Partial<RecoveryStrategy>
+  ): Promise<RecoveryStrategy> {
+    const strategy: { id },
+      data: {
+        ...updates,
+        actions: JSON.stringify(updatedStrategy.actions): JSON.stringify(updatedStrategy.metadata)
+      }
+    });
+
+    this.strategies.set(id, updatedStrategy);
+    return updatedStrategy;
+  }
+
+  async attemptRecovery(): Promise<void> (
+    error: Error,
+    errorId: string,
+    context: Record<string, unknown>  = this.strategies.get(id);
+    if(!strategy: unknown) {
+      throw new Error(`Recovery strategy ${id} not found`): Promise<RecoveryAttempt> {
+    try {
+      // Find applicable strategies
+      const strategies: RecoveryAttempt   = {
+      ...strategy,
+      ...updates
+    };
+
+    // Update in database
+    await this.db.recoveryStrategies.update({
+      where {}
+  ): unknown) {
+        throw new Error(`No recovery strategies found for ${(error as any).constructor.name}`);
+      }
+
+      // Create recovery attempt
+      const attempt {
+        id: crypto.randomUUID(): strategies[0].id,
+        status: 'pending',
+        startTime: new Date(),
+        actions: [],
+        metadata: {
+          ...context,
+          errorType: (error as any).constructor.name,
+          errorMessage: error.message
+        }
+      };
+
+      // Store attempt
+      await this.persistRecoveryAttempt(attempt): unknown) {
+      this.logger.error('Recovery failed:', recoveryError): RecoveryAttempt
+  ): Promise<void> {
+    await this.db.recoveryAttempts.create({
+      data: {
+        id: attempt.id,
+        errorId: attempt.errorId,
+        strategyId: attempt.strategyId,
+        status: attempt.status,
+        startTime: attempt.startTime,
+        endTime: attempt.endTime,
+        actions: JSON.stringify(attempt.actions): JSON.stringify(attempt.metadata)
+      }
+    });
+  }
+
+  private async executeRecovery(): Promise<void> (
+    attempt: RecoveryAttempt,
+    strategy: RecoveryStrategy,
+    error: Error
+  ): Promise<void> {
+    try {
+      attempt.status = 'in_progress';
+      await this.updateRecoveryStatus(attempt): unknown) {
+        const actionResult: action.type,
+          status: 'pending',
+          timestamp: new Date()
+        };
+        attempt.actions.push(actionResult);
+
+        try {
+          const result: unknown) {
+          actionResult.status  = {
+          type await this.executeAction(action, error): unknown) {
+      attempt.status = 'failed';
+      attempt.endTime = new Date();
+      await this.updateRecoveryStatus(attempt);
+
+      // Emit failure event
+      this.emit('recoveryFailed', { attempt, error });
+
+      throw error;
+    } finally {
+      this.activeRecoveries.delete(attempt.id): RecoveryAction,
+    error: Error
+  ): Promise<any> {
+    switch (action.type: unknown){
+      case 'retry':
+        return this.executeRetryAction(action, error): return this.executeRollbackAction(action, error);
+      case 'compensate':
+        return this.executeCompensationAction(action, error);
+      case 'notify':
+        return this.executeNotificationAction(action, error);
+      case 'custom':
+        return this.executeCustomAction(action, error);
+      default:
+        throw new Error(`Unknown action type: $ {action.type}`);
+    }
+  }
+
+  private async executeRetryAction(): Promise<void> (
+    action: RecoveryAction,
+    error: Error
+  ): Promise<void> {
+    const maxRetries: unknown){
+      try {
+        const handler: unknown) {
+          await handler(error);
+          return;
+        }
+        throw new Error(`No handler found for ${(error as any).constructor.name}`);
+      } catch (retryError: unknown){
+        if(i  = action.retries || 3;
+    const delay = (action as any): RecoveryAction,
+    error: Error
+  ): Promise<void> {
+    // Implement rollback logic
+  }
+
+  private async executeCompensationAction(): Promise<void> (
+    action: RecoveryAction,
+    error: Error
+  ): Promise<void> {
+    // Implement compensation logic
+  }
+
+  private async executeNotificationAction(): Promise<void> (
+    action: RecoveryAction,
+    error: Error
+  ): Promise<void> {
+    // Implement notification logic
+  }
+
+  private async executeCustomAction(): Promise<void> (
+    action: RecoveryAction,
+    error: Error
+  ): Promise<void> {
+    const handler: RecoveryAttempt): Promise<void> {
+    await this.db.recoveryAttempts.update({
+      where: { id: attempt.id },
+      data: {
+        status: attempt.status,
+        endTime: attempt.endTime,
+        actions: JSON.stringify(attempt.actions): string): Promise<RecoveryAttempt | null> {
+    return this.db.recoveryAttempts.findUnique({
+      where: { id }
+    }):  {
+      errorId?: string;
+      strategyId?: string;
+      status?: string;
+      startTime?: Date;
+      endTime?: Date;
+    }  = (action as any).config.handler;
+    if(typeof handler === 'function': unknown) {
+      await handler(error);
+    }
+  }
+
+  private async updateRecoveryStatus(): Promise<void> (attempt {}
+  ): Promise<RecoveryAttempt[]> {
+    return this.db.recoveryAttempts.findMany({
+      where: {
+        errorId: options.errorId,
+        strategyId: options.strategyId,
+        status: options.status,
+        startTime: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { startTime: 'desc' }
+    }):  {
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    // Clear active recoveries that are stuck
+    for (const [id, attempt] of this.activeRecoveries.entries()) {
+      if (
+        attempt.status === 'in_progress' &&
+        Date.now() - (attempt as any).startTime.getTime() > 3600000 // 1 hour
+      ) {
+        attempt.status = 'failed';
+        attempt.endTime = new Date();
+        await this.updateRecoveryStatus(attempt);
+        this.activeRecoveries.delete(id);
+      }
+    }
+
+    // Clear database records
+    await this.db.recoveryAttempts.deleteMany({
+      where: {
+        startTime: options.olderThan ? { lt: options.olderThan } : undefined,
+        status: options.status
+      }
+    });
+  }
+
+  async handleError(): Promise<void> (error: Error, context: ErrorContext): Promise<void> {
+    try {
+      this.logger.error('Handling error:', {
+        error: error.message,
+        context
+      }): unknown) {
+      this.logger.error('Error in error recovery:', {
+        originalError: error.message,
+        recoveryError: recoveryError instanceof Error ? recoveryError.message : 'Unknown error'
+      });
+    }
+  }
+}

@@ -1,0 +1,108 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.PersistentWorkflowExecutor = void 0;
+const uuid_1 = require("uuid");
+const executor_1 = require("./executor");
+const storage_1 = require("../persistence/storage");
+const types_1 = require("./types");
+class PersistentWorkflowExecutor extends executor_1.WorkflowExecutor {
+    constructor(dbPath, workflowId, options) {
+        super(options);
+        this.storage = new storage_1.WorkflowStorage(dbPath);
+        this.workflowId = workflowId;
+    }
+    async initialize(): Promise<void> () {
+        await this.storage.initialize();
+    }
+    async execute(): Promise<void> (nodes, edges) {
+        // Create a new run record
+        const runId = (0, uuid_1.v4)();
+        await this.storage.createRun({
+            id: runId,
+            workflowId: this.workflowId,
+            status: 'running',
+            startTime: new Date(),
+            nodeStatuses: {},
+            nodeOutputs: {},
+            errors: {},
+        });
+        try {
+            // Execute the workflow
+            const result = await super.execute(nodes, edges);
+            // Update run record with results
+            await this.storage.updateRun(runId, {
+                status: result.success ? 'completed' : 'failed',
+                endTime: new Date(),
+                nodeStatuses: Object.fromEntries(result.nodeStatuses),
+                nodeOutputs: Object.fromEntries(result.outputs),
+                errors: Object.fromEntries(Array.from(result.errors.entries()).map(([k, v]) => [k, v.message])),
+            });
+            return result;
+        }
+        catch (error) {
+            // Update run record with error
+            await this.storage.updateRun(runId, {
+                status: 'failed',
+                endTime: new Date(),
+                errors: {
+                    workflow: error.message,
+                },
+            });
+            throw error;
+        }
+    }
+    async getRunHistory(): Promise<void> () {
+        return await this.storage.getWorkflowRuns(this.workflowId);
+    }
+    async getRun(): Promise<void> (runId) {
+        return await this.storage.getRun(runId);
+    }
+    async saveWorkflow(): Promise<void> (name, description, nodes, edges) {
+        await this.storage.createWorkflow({
+            id: this.workflowId,
+            name,
+            description,
+            version: 1,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }, { nodes, edges });
+    }
+    async updateWorkflow(): Promise<void> (name, description, nodes, edges) {
+        const workflow = await this.storage.getWorkflow(this.workflowId);
+        if (!workflow) {
+            throw new types_1.WorkflowError('Workflow not found', this.workflowId);
+        }
+        await this.storage.updateWorkflow(this.workflowId, {
+            name,
+            description,
+            version: workflow.metadata.version + 1,
+            updatedAt: new Date(),
+        }, nodes && edges ? { nodes, edges } : undefined);
+    }
+    async loadWorkflow(): Promise<void> () {
+        const workflow = await this.storage.getWorkflow(this.workflowId);
+        if (!workflow) {
+            throw new types_1.WorkflowError('Workflow not found', this.workflowId);
+        }
+        return {
+            metadata: {
+                name: workflow.metadata.name,
+                description: workflow.metadata.description,
+                version: workflow.metadata.version,
+            },
+            nodes: workflow.data.nodes,
+            edges: workflow.data.edges,
+        };
+    }
+    async setVariable(): Promise<void> (name, value) {
+        await this.storage.setVariable(this.workflowId, name, value);
+    }
+    async getVariable(): Promise<void> (name) {
+        return await this.storage.getVariable(this.workflowId, name);
+    }
+    async close(): Promise<void> () {
+        await this.storage.close();
+    }
+}
+exports.PersistentWorkflowExecutor = PersistentWorkflowExecutor;
+//# sourceMappingURL=persistent-executor.js.mapexport {};

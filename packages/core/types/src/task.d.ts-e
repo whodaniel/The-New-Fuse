@@ -1,0 +1,437 @@
+import { z } from 'zod';
+export declare const TaskInputSchema: (z as any).ZodObject<{
+    prompt: (z as any).ZodString;
+    context: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    parameters: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    prompt: string;
+    context?: Record<string, unknown> | undefined;
+    parameters?: Record<string, unknown> | undefined;
+}, {
+    prompt: string;
+    context?: Record<string, unknown> | undefined;
+    parameters?: Record<string, unknown> | undefined;
+}>;
+export declare const TaskOutputSchema: (z as any).ZodObject<{
+    result: (z as any).ZodUnknown;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    metadata?: Record<string, unknown> | undefined;
+    result?: unknown;
+}, {
+    metadata?: Record<string, unknown> | undefined;
+    result?: unknown;
+}>;
+export declare const TaskStatusSchema: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+export declare const TaskPrioritySchema: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+export declare const TaskStatus: (z as any).Values<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+export declare const TaskPriority: (z as any).Values<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+export declare const TaskExecutionSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    startTime: (z as any).ZodNumber;
+    endTime: (z as any).ZodOptional<(z as any).ZodNumber>;
+    status: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+    priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+    retries: (z as any).ZodDefault<(z as any).ZodNumber>;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+}, "strip", (z as any).ZodTypeAny, {
+    startTime: number;
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    retries: number;
+    endTime?: number | undefined;
+    error?: string | undefined;
+}, {
+    startTime: number;
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    endTime?: number | undefined;
+    error?: string | undefined;
+    retries?: number | undefined;
+}>;
+export declare const TaskSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    title: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    status: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+    priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+    input: (z as any).ZodObject<{
+        prompt: (z as any).ZodString;
+        context: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        parameters: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }>;
+    output: (z as any).ZodOptional<(z as any).ZodObject<{
+        result: (z as any).ZodUnknown;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }>>;
+    execution: (z as any).ZodOptional<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        startTime: (z as any).ZodNumber;
+        endTime: (z as any).ZodOptional<(z as any).ZodNumber>;
+        status: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+        priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+        retries: (z as any).ZodDefault<(z as any).ZodNumber>;
+        error: (z as any).ZodOptional<(z as any).ZodString>;
+    }, "strip", (z as any).ZodTypeAny, {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        retries: number;
+        endTime?: number | undefined;
+        error?: string | undefined;
+    }, {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        endTime?: number | undefined;
+        error?: string | undefined;
+        retries?: number | undefined;
+    }>>;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+    retries: (z as any).ZodDefault<(z as any).ZodNumber>;
+    dependencies: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+    createdAt: (z as any).ZodDate;
+    updatedAt: (z as any).ZodDate;
+}, "strip", (z as any).ZodTypeAny, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    retries: number;
+    createdAt: Date;
+    updatedAt: Date;
+    error?: string | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    description?: string | undefined;
+    execution?: {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        retries: number;
+        endTime?: number | undefined;
+        error?: string | undefined;
+    } | undefined;
+    dependencies?: string[] | undefined;
+}, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    createdAt: Date;
+    updatedAt: Date;
+    error?: string | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    description?: string | undefined;
+    retries?: number | undefined;
+    execution?: {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        endTime?: number | undefined;
+        error?: string | undefined;
+        retries?: number | undefined;
+    } | undefined;
+    dependencies?: string[] | undefined;
+}>;
+export declare const TaskResultSchema: (z as any).ZodObject<{
+    success: (z as any).ZodBoolean;
+    data: (z as any).ZodOptional<(z as any).ZodUnknown>;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+}, "strip", (z as any).ZodTypeAny, {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+}, {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+}>;
+export declare const CreateTaskDtoSchema: (z as any).ZodObject<{
+    title: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+    input: (z as any).ZodObject<{
+        prompt: (z as any).ZodString;
+        context: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        parameters: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }>;
+    dependencies: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+}, "strip", (z as any).ZodTypeAny, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    description?: string | undefined;
+    dependencies?: string[] | undefined;
+}, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    description?: string | undefined;
+    dependencies?: string[] | undefined;
+}>;
+export declare const UpdateTaskDtoSchema: (z as any).ZodObject<(z as any).(objectUtil as any).extendShape<{
+    title: (z as any).ZodOptional<(z as any).ZodString>;
+    description: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodString>>;
+    priority: (z as any).ZodOptional<(z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>>;
+    input: (z as any).ZodOptional<(z as any).ZodObject<{
+        prompt: (z as any).ZodString;
+        context: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        parameters: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }>>;
+    dependencies: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>>;
+}, {
+    status: (z as any).ZodOptional<(z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>>;
+    output: (z as any).ZodOptional<(z as any).ZodObject<{
+        result: (z as any).ZodUnknown;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }>>;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+}>, "strip", (z as any).ZodTypeAny, {
+    input?: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    } | undefined;
+    error?: string | undefined;
+    priority?: "HIGH" | "MEDIUM" | "LOW" | "URGENT" | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+    status?: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED" | undefined;
+    dependencies?: string[] | undefined;
+}, {
+    input?: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    } | undefined;
+    error?: string | undefined;
+    priority?: "HIGH" | "MEDIUM" | "LOW" | "URGENT" | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    title?: string | undefined;
+    description?: string | undefined;
+    status?: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED" | undefined;
+    dependencies?: string[] | undefined;
+}>;
+export declare const TaskResponseDtoSchema: (z as any).ZodObject<(z as any).(objectUtil as any).extendShape<{
+    id: (z as any).ZodString;
+    title: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    status: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+    priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+    input: (z as any).ZodObject<{
+        prompt: (z as any).ZodString;
+        context: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        parameters: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }, {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    }>;
+    output: (z as any).ZodOptional<(z as any).ZodObject<{
+        result: (z as any).ZodUnknown;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }, {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    }>>;
+    execution: (z as any).ZodOptional<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        startTime: (z as any).ZodNumber;
+        endTime: (z as any).ZodOptional<(z as any).ZodNumber>;
+        status: (z as any).ZodEnum<["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED", "CANCELLED"]>;
+        priority: (z as any).ZodEnum<["LOW", "MEDIUM", "HIGH", "URGENT"]>;
+        retries: (z as any).ZodDefault<(z as any).ZodNumber>;
+        error: (z as any).ZodOptional<(z as any).ZodString>;
+    }, "strip", (z as any).ZodTypeAny, {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        retries: number;
+        endTime?: number | undefined;
+        error?: string | undefined;
+    }, {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        endTime?: number | undefined;
+        error?: string | undefined;
+        retries?: number | undefined;
+    }>>;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+    retries: (z as any).ZodDefault<(z as any).ZodNumber>;
+    dependencies: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+    createdAt: (z as any).ZodDate;
+    updatedAt: (z as any).ZodDate;
+}, {
+    result: (z as any).ZodOptional<(z as any).ZodObject<{
+        success: (z as any).ZodBoolean;
+        data: (z as any).ZodOptional<(z as any).ZodUnknown>;
+        error: (z as any).ZodOptional<(z as any).ZodString>;
+    }, "strip", (z as any).ZodTypeAny, {
+        success: boolean;
+        data?: unknown;
+        error?: string | undefined;
+    }, {
+        success: boolean;
+        data?: unknown;
+        error?: string | undefined;
+    }>>;
+}>, "strip", (z as any).ZodTypeAny, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    retries: number;
+    createdAt: Date;
+    updatedAt: Date;
+    error?: string | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    description?: string | undefined;
+    result?: {
+        success: boolean;
+        data?: unknown;
+        error?: string | undefined;
+    } | undefined;
+    execution?: {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        retries: number;
+        endTime?: number | undefined;
+        error?: string | undefined;
+    } | undefined;
+    dependencies?: string[] | undefined;
+}, {
+    input: {
+        prompt: string;
+        context?: Record<string, unknown> | undefined;
+        parameters?: Record<string, unknown> | undefined;
+    };
+    id: string;
+    priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+    title: string;
+    status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+    createdAt: Date;
+    updatedAt: Date;
+    error?: string | undefined;
+    output?: {
+        metadata?: Record<string, unknown> | undefined;
+        result?: unknown;
+    } | undefined;
+    description?: string | undefined;
+    result?: {
+        success: boolean;
+        data?: unknown;
+        error?: string | undefined;
+    } | undefined;
+    retries?: number | undefined;
+    execution?: {
+        startTime: number;
+        id: string;
+        priority: "HIGH" | "MEDIUM" | "LOW" | "URGENT";
+        status: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "FAILED" | "CANCELLED";
+        endTime?: number | undefined;
+        error?: string | undefined;
+        retries?: number | undefined;
+    } | undefined;
+    dependencies?: string[] | undefined;
+}>;
+export type TaskInput = (z as any).infer<typeof TaskInputSchema>;
+export type TaskOutput = (z as any).infer<typeof TaskOutputSchema>;
+export type TaskExecution = (z as any).infer<typeof TaskExecutionSchema>;
+export type Task = (z as any).infer<typeof TaskSchema>;
+export type TaskResult = (z as any).infer<typeof TaskResultSchema>;
+export type CreateTaskDto = (z as any).infer<typeof CreateTaskDtoSchema>;
+export type UpdateTaskDto = (z as any).infer<typeof UpdateTaskDtoSchema>;
+export type TaskResponseDto = (z as any).infer<typeof TaskResponseDtoSchema>;

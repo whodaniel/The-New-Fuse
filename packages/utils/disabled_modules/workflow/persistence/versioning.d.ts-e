@@ -1,0 +1,45 @@
+import { Node, Edge } from 'reactflow';
+import { WorkflowStorage } from './storage';
+export interface Version {
+    id: string;
+    workflowId: string;
+    version: number;
+    data: {
+        nodes: Node[];
+        edges: Edge[];
+    };
+    metadata: {
+        name: string;
+        description?: string;
+        createdAt: Date;
+        createdBy?: string;
+        comment?: string;
+    };
+    parent?: string;
+}
+export interface VersionDiff {
+    nodesAdded: Node[];
+    nodesRemoved: Node[];
+    nodesModified: Array<{
+        before: Node;
+        after: Node;
+    }>;
+    edgesAdded: Edge[];
+    edgesRemoved: Edge[];
+}
+export declare class WorkflowVersionManager {
+    private storage;
+    constructor(storage: WorkflowStorage);
+    createVersion(workflowId: string, nodes: Node[], edges: Edge[], metadata: {
+        name: string;
+        description?: string;
+        createdBy?: string;
+        comment?: string;
+    }): Promise<Version>;
+    private storeVersion;
+    getVersion(workflowId: string, version: number): Promise<Version | null>;
+    listVersions(workflowId: string): Promise<Version[]>;
+    rollback(workflowId: string, targetVersion: number, comment?: string): Promise<Version>;
+    getDiff(workflowId: string, fromVersion: number, toVersion: number): Promise<VersionDiff>;
+    private deepEqual;
+}

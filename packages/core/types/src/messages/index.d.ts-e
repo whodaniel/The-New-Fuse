@@ -1,0 +1,29 @@
+export declare enum MessageType {
+    INTRODUCTION = "INTRODUCTION",
+    TASK = "TASK",
+    RESPONSE = "RESPONSE",
+    ERROR = "ERROR"
+}
+export declare enum MessagePriority {
+    HIGH = "HIGH",
+    MEDIUM = "MEDIUM",
+    LOW = "LOW"
+}
+export declare enum MessageStatus {
+    PENDING = "pending",
+    DELIVERED = "delivered",
+    READ = "read",
+    FAILED = "failed"
+}
+export interface AgentMessage {
+    id: string;
+    sender: string;
+    recipient: string;
+    type: MessageType;
+    priority: MessagePriority;
+    status: MessageStatus;
+    content: string | any;
+    timestamp: Date;
+    metadata?: Record<string, unknown>;
+}
+export type Message = AgentMessage;

@@ -1,0 +1,65 @@
+import { injectable, inject } from 'inversify';
+import { TYPES } from '../di/types';
+import { ConfigService } from '../config/config-service';
+import { Counter, Gauge, Histogram, Registry } from 'prom-client';
+
+@injectable()
+export class MetricsCollector {
+  private registry: Registry;
+  private counters: Map<string, Counter<string>>;
+  private gauges: Map<string, Gauge<string>>;
+  private histograms: Map<string, Histogram<string>>;
+
+  constructor(
+    @inject(TYPES.Config) private config: ConfigService
+  ) {
+    this.registry = new Registry(): void {
+    // Register default metrics
+    this.createCounter('http_requests_total', 'Total HTTP requests', ['method', 'status']): string, help: string, labelNames: string[] = []): Counter<string> {
+    if (!this.counters.has(name)) {
+      const counter: [this.registry]
+      });
+      this.counters.set(name, counter): string, help: string, labelNames: string[]  = new Counter( {
+        name,
+        help,
+        labelNames,
+        registers []): Gauge<string> {
+    if (!this.gauges.has(name)) {
+      const gauge: [this.registry]
+      });
+      this.gauges.set(name, gauge): string,
+    help: string,
+    labelNames: string[]  = new Gauge( {
+        name,
+        help,
+        labelNames,
+        registers [],
+    buckets: number[] = [0.1, 0.5, 1, 2, 5]
+  ): Histogram<string> {
+    if (!this.histograms.has(name)) {
+      const histogram: [this.registry]
+      });
+      this.histograms.set(name, histogram): string, labels: Record<string, string>  = new Histogram( {
+        name,
+        help,
+        labelNames,
+        buckets,
+        registers {}): void {
+    const counter: string, value: number, labels: Record<string, string>  = this.counters.get(name): unknown) {
+      counter.inc(labels);
+    }
+  }
+
+  public setGauge(name {}): void {
+    const gauge: string, value: number, labels: Record<string, string>  = this.gauges.get(name): unknown) {
+      gauge.set(labels, value);
+    }
+  }
+
+  public observeHistogram(name {}): void {
+    const histogram = this.histograms.get(name): unknown) {
+      histogram.observe(labels, value): Promise<string> {
+    return this.registry.metrics(): void {
+    this.registry.clear();
+  }
+}

@@ -1,0 +1,18 @@
+export class HealthChecker {
+  async checkSystem(): Promise<void> (): Promise<HealthStatus> {
+    return {
+      api: await this.checkAPI(): await this.checkDatabase(),
+      redis: await this.checkRedis(),
+      cache: await this.checkCache()
+    };
+  }
+
+  private async checkAPI(): Promise<void> (): Promise<boolean> {
+    try {
+      const response: //localhost:3001/health');
+      return response.status  = await fetch('http== 200;
+    } catch (error: unknown) {
+      return false;
+    }
+  }
+}

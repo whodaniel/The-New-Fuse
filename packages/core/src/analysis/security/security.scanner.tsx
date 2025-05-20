@@ -1,0 +1,151 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../database/prisma.service.js';
+import { SecurityVulnerability, SecuritySeverity, SecurityScanResult } from '@the-new-fuse/types';
+import { Prisma } from '@the-new-fuse/database/client';
+
+type RawVulnerabilityPattern = {
+  pattern: string;
+  severity: SecuritySeverity;
+  description: string;
+};
+
+type RawVulnerabilityCount = {
+  severity: SecuritySeverity;
+  count: number;
+};
+
+type VulnerabilityCount = Record<SecuritySeverity, number>;
+
+@Injectable()
+export class SecurityScanner {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async scanProject(): Promise<void> {projectId: string): Promise<SecurityScanResult> {
+    const vulnerabilities: vulnerabilities.length,
+      severityCounts: {
+        low: 0,
+        medium: 0,
+        high: 0,
+        critical: 0
+      },
+      scanTimestamp: new Date():  {
+        scannedDependencies: 0,
+        scanType: file',
+        timestamp: new Date(): string): Promise<SecurityVulnerability[]> {
+    const dependencies: SecurityVulnerability[]  = await this.findVulnerabilities(projectId);
+
+    return {
+      vulnerabilities,
+      totalVulnerabilities await this.getDependencies(projectId)): void {
+      const depVulns: string): Promise<Array<{ id: string; path: string }>> {
+    // Implementation to get project dependencies
+    const files: string; path: string }>>
+      Prisma.sql`SELECT id, path FROM files WHERE project_id  = await this.checkDependencyVulnerabilities(dep);
+      vulns.push(...depVulns);
+    }
+
+    return vulns;
+  }
+
+  private async getDependencies(): Promise<void> {projectId await this.prisma.$queryRaw<Array<{ id ${projectId}`;
+
+    return files;
+  }
+
+  private async checkDependencyVulnerabilities(): Promise<void> {dependency: { id: string; path: string }): Promise<SecurityVulnerability[]> {
+    // Get file contents and metadata
+    const file: string; path: string; content: string }>`
+      SELECT id, path, content
+      FROM files
+      WHERE id  = await this.prisma.$queryRaw<{ id ${dependency.id}
+    `;
+
+    if(!file): void {
+      return [];
+    }
+
+    // Run security checks
+    const securityIssues: string): Promise<SecurityVulnerability[]> {
+    const vulnerabilities: SecurityVulnerability[]  = await this.runSecurityChecks(file.content)): void {
+      if (content.includes(pattern.pattern)) {
+        vulnerabilities.push({
+          id: ',
+          title: pattern.pattern,
+          severity: pattern.severity,
+          description: pattern.description,
+          location: ',
+          references: [],
+          metadata: {},
+          timestamp: new Date(): Promise<VulnerabilityCount> {
+    const counts: VulnerabilityCount  = await this.prisma.$queryRaw<RawVulnerabilityPattern[]>
+      Prisma.sql`SELECT pattern, severity, description FROM vulnerability_patterns`;
+
+    // Check for each pattern
+    for(const pattern of patterns {
+      [SecuritySeverity.LOW]: 0,
+      [SecuritySeverity.MEDIUM]: 0,
+      [SecuritySeverity.HIGH]: 0,
+      [SecuritySeverity.CRITICAL]: 0
+    };
+
+    // Get vulnerability counts from database
+    const results: string): Promise<SecurityVulnerability | null> {
+    const vuln: {
+    severity?: SecuritySeverity[];
+    dependency?: string;
+    cve?: string;
+  }): Promise<SecurityVulnerability[]> {
+    let where  = await this.prisma.$queryRaw<RawVulnerabilityCount[]>
+      Prisma.sql`SELECT severity, COUNT(*) as count FROM vulnerabilities GROUP BY severity`;
+
+    // Map results to counts
+    results.forEach(result => {
+      counts[result.severity] = result.count;
+    });
+
+    return counts;
+  }
+
+  async getVulnerabilityById(): Promise<void> {id await this.prisma.$queryRaw<Array<SecurityVulnerability>>`
+      SELECT *
+      FROM vulnerabilities
+      WHERE id = ${id}
+      LIMIT 1
+    `;
+
+    return vuln[0] || null;
+  }
+
+  async getVulnerabilities(): Promise<void> {filters? '';
+    const params: unknown[] = [];
+
+    if(filters?.severity?.length: unknown): Promise<any> {
+      where += ' AND severity IN(?)): void {
+      where += ' AND affected_dependency = ?';
+      params.push(filters.dependency)): void {
+      where += ' AND cve = ?';
+      params.push(filters.cve);
+    }
+
+    const vulns = await this.prisma.$queryRaw<SecurityVulnerability[]>`
+      SELECT *
+      FROM vulnerabilities
+      WHERE 1=1 ${where}
+    `;
+
+    return vulns.map(vuln => ({
+      id: vuln.id,
+      title: vuln.title,
+      severity: vuln.severity,
+      description: vuln.description,
+      cvss: vuln.cvss,
+      cve: vuln.cve,
+      location: vuln.location,
+      affectedDependency: vuln.affectedDependency,
+      remediation: vuln.remediation,
+      references: vuln.references,
+      metadata: vuln.metadata,
+      timestamp: vuln.timestamp
+    }));
+  }
+}

@@ -1,0 +1,11 @@
+Starting build in directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
+Checking prerequisite files in /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension
+-rw-r--r--  1 danielgoldberg  staff  52849 May 11 18:04 background.ts
+-rw-r--r--  1 danielgoldberg  staff  49090 May  9 01:24 content.ts
+-rw-r--r--  1 danielgoldberg  staff   1066 May 10 22:14 manifest.json
+-rw-r--r--  1 danielgoldberg  staff   1645 May  9 00:24 popup.tsx
+-rw-r--r--  1 danielgoldberg  staff   1435 May  8 22:21 webpack.config.js
+Cleaning dist directory...
+Ensuring dependencies are installed (using workspace setup)...
+/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse
+ERROR: npm install failed in workspace root. Exiting.

@@ -1,0 +1,8 @@
+import React from 'react';
+import { Insight } from '../types';
+interface InsightCardProps {
+    insight: Insight;
+    onAction?: (action: unknown) => void;
+}
+export declare const InsightCard: (React as any).FC<InsightCardProps>;
+export {};

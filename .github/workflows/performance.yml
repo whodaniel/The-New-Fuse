@@ -1,0 +1,53 @@
+name: Performance Tests
+
+on:
+  schedule:
+    # Run performance tests daily at midnight
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+jobs:
+  performance:
+    name: Run Performance Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'yarn'
+      
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+      
+      - name: Build packages
+        run: yarn build
+      
+      - name: Run performance tests
+        run: yarn test:perf
+      
+      - name: Upload performance reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-reports
+          path: performance-reports/
+          retention-days: 30
+      
+      - name: Check for performance regressions
+        run: node scripts/check-performance-regressions.js
+      
+      - name: Notify on performance regression
+        if: failure()
+        uses: slackapi/slack-github-action@v1.23.0
+        with:
+          payload: |
+            {
+              "text": "⚠️ Performance regression detected in The New Fuse! Check the latest performance test results."
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

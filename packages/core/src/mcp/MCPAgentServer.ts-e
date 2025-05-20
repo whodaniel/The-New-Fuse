@@ -1,0 +1,112 @@
+import { MCPMessage, MCPCapability, MCPAgent } from './types';
+
+export class MCPAgentServer implements MCPAgent {
+    private static instance: MCPAgentServer;
+    public readonly id: string;
+    public capabilities: Map<string, MCPCapability>;
+    private messageHandlers: Set<(message: MCPMessage) => Promise<void>>;
+
+    private constructor(id: string) {
+        this.id = id;
+        this.capabilities = new Map();
+        this.messageHandlers = new Set();
+        this.initializeCapabilities();
+    }
+
+    public static getInstance(id: string): MCPAgentServer {
+        if (!MCPAgentServer.instance) {
+            MCPAgentServer.instance = new MCPAgentServer(id);
+        }
+        return MCPAgentServer.instance;
+    }
+
+    private initializeCapabilities() {
+        this.registerCapability({
+            name: 'registerCapability',
+            description: 'Register a new capability with the agent',
+            parameters: {
+                capability: 'MCPCapability'
+            },
+            returns: {
+                success: 'boolean'
+            },
+            execute: async (): Promise<void> (params) => {
+                return this.registerCapability(params.capability);
+            }
+        });
+
+        this.registerCapability({
+            name: 'discoverAgents',
+            description: 'Discover available agents and their capabilities',
+            parameters: {
+                filter: 'Record<string, unknown>'
+            },
+            returns: {
+                agents: 'MCPAgent[]'
+            },
+            execute: async (): Promise<void> (params) => {
+                return this.discoverAgents(params.filter);
+            }
+        });
+    }
+
+    public async onMessage(): Promise<void> (message: MCPMessage): Promise<void> {
+        if (!this.validateMessage(message)) {
+            throw new Error('Invalid MCP message format');
+        }
+
+        for (const handler of this.messageHandlers) {
+            await handler(message);
+        }
+
+        if (message.content.type === 'capability_request') {
+            const capability = this.capabilities.get(message.content.action);
+            if (capability) {
+                const response = await capability.execute(message.content.data);
+                await this.sendMessage({
+                    version: '1.0.0',
+                    messageId: crypto.randomUUID(),
+                    timestamp: Date.now(),
+                    source: {
+                        id: this.id,
+                        type: 'ai_agent',
+                        capabilities: Array.from(this.capabilities.keys())
+                    },
+                    target: message.source,
+                    content: {
+                        type: 'capability_response',
+                        action: message.content.action,
+                        data: response,
+                        priority: message.content.priority
+                    },
+                    metadata: {
+                        conversationId: message.metadata.conversationId,
+                        parentMessageId: message.messageId,
+                        protocol: 'mcp',
+                        protocolVersion: '1.0.0'
+                    }
+                });
+            }
+        }
+    }
+
+    public async sendMessage(): Promise<void> (message: MCPMessage): Promise<void> {
+        // Implement message sending through The New Fuse's communication channels
+        const channel = UniversalChannel.getInstance();
+        await channel.sendMessage(message.target.id, message);
+    }
+
+    public registerCapability(capability: MCPCapability): void {
+        this.capabilities.set(capability.name, capability);
+    }
+
+    private validateMessage(message: MCPMessage): boolean {
+        // Implement MCP message validation
+        return true; // Simplified for brevity
+    }
+
+    private async discoverAgents(): Promise<void> (filter: Record<string, unknown>): Promise<MCPAgent[]> {
+        // Implement agent discovery logic
+        return []; // Simplified for brevity
+    }
+}

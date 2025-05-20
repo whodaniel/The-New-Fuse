@@ -1,0 +1,367 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import * as fs from 'fs/promises';
+import * as path from 'path';
+import * as yaml from 'js-yaml';
+import { z } from 'zod';
+
+interface ConfigValue {
+  key: string;
+  value: unknown;
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  environment: string;
+  version: number;
+  description?: string;
+  tags: string[];
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface ConfigSchema {
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  required: boolean;
+  default?: unknown;
+  description?: string;
+  validation?: z.ZodType<any>;
+}
+
+interface ConfigHistory {
+  key: string;
+  value: unknown;
+  version: number;
+  environment: string;
+  changedBy: string;
+  changedAt: Date;
+  reason?: string;
+}
+
+@Injectable()
+export class ConfigurationService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private config: Map<string, ConfigValue>;
+  private schemas: Map<string, ConfigSchema>;
+  private readonly cachePrefix: string;
+  private readonly configPath: string;
+
+  constructor() {
+    super(): ';
+    this.configPath = (process as any).env.CONFIG_PATH || 'config';
+  }
+
+  async onModuleInit(): Promise<void> (): Promise<any> {
+    await this.loadSchemas(): Promise<void> {
+    try {
+      const schemaFiles: unknown){
+        if (file.endsWith('.schema.yaml')) {
+          const content: unknown) {
+      this.logger.error('Failed to load configuration schemas:', error): Promise<void> {
+    try {
+      // Load from database
+      const configs   = await fs.readdir(this.configPath) yaml.load(content) as Record<string, ConfigSchema>;
+
+          for (const [key, value] of Object.entries(schema)) {
+            this.schemas.set(key, value);
+          }
+        }
+      }
+
+      this.logger.info(`Loaded ${this.schemas.size} configuration schemas`);
+    } catch(error await this.db.configurations.findMany({
+        where: { environment: (process as any): unknown) {
+        this.config.set(config.key, {
+          ...config,
+          value: JSON.parse(config.value)
+        });
+
+        // Cache in Redis
+        await this.cacheConfig(config.key);
+      }
+
+      // Load from environment variables
+      for (const [key, value] of Object.entries(process.env)) {
+        if (this.schemas.has(key)) {
+          await this.set(key, value): unknown) {
+        if (file.endsWith('.config.yaml')) {
+          const content: unknown) {
+      this.logger.error('Failed to load configurations:', error): void {
+    // Watch configuration files for changes
+    fs.watch(this.configPath, async (eventType, filename)   = await fs.readdir(this.configPath) yaml.load(): Promise<void> (content) as Record<string, unknown>;
+
+          for (const [key, value] of Object.entries(configs)) {
+            if (this.schemas.has(key)) {
+              await this.set(key, value);
+            }
+          }
+        }
+      }
+
+      this.logger.info(`Loaded ${this.config.size} configuration values`);
+    } catch (error> {
+      if (
+        eventType === 'change' &&
+        (filename.endsWith('.config.yaml') || filename.endsWith('.schema.yaml'))
+      ) {
+        try {
+          await this.loadSchemas(): unknown) {
+          this.logger.error('Failed to reload configurations:', error): string): Promise<T> {
+    try {
+      // Try cache first
+      const cached: unknown){
+      this.logger.error(`Failed to get configuration ${key}:`, error): string,
+    value: unknown,
+    options: {
+      description?: string;
+      tags?: string[];
+      metadata?: Record<string, unknown>;
+      reason?: string;
+    }  = await this.redis.get(`${this.cachePrefix}${key}`): unknown) {
+        return JSON.parse(cached): unknown) {
+        throw new Error(`Configuration ${key} not found`);
+      }
+
+      // Cache the value
+      await this.cacheConfig(key);
+
+      return config.value;
+    } catch (error {}
+  ): Promise<void> {
+    try {
+      // Validate schema
+      const schema: unknown){
+        value   = this.config.get(key): unknown) {
+        throw new Error(`No schema defined for ${key}`): 1;
+
+      // Create new config
+      const config: ConfigValue  = this.config.get(key);
+      const version: schema.type,
+        environment: (process as any).env.NODE_ENV || 'development',
+        version,
+        description: options.description || schema.description,
+        tags: options.tags || [],
+        metadata: options.metadata || {},
+        createdAt: current?.createdAt || new Date(): new Date()
+      };
+
+      // Store in memory
+      this.config.set(key, config);
+
+      // Store in database
+      await this.db.configurations.upsert( {
+        where: { key_environment: { key, environment: config.environment } },
+        update: {
+          value: JSON.stringify(value): config.description,
+          tags: config.tags,
+          metadata: config.metadata,
+          updatedAt: config.updatedAt
+        },
+        create: {
+          key,
+          value: JSON.stringify(value): config.type,
+          environment: config.environment,
+          version,
+          description: config.description,
+          tags: config.tags,
+          metadata: config.metadata,
+          createdAt: config.createdAt,
+          updatedAt: config.updatedAt
+        }
+      });
+
+      // Store history
+      await this.db.configurationHistory.create( {
+        data: {
+          key,
+          value: JSON.stringify(value): config.environment,
+          changedBy: (process as any).env.USER || 'system',
+          changedAt: new Date(),
+          reason: options.reason
+        }
+      });
+
+      // Update cache
+      await this.cacheConfig(key);
+
+      // Emit event
+      this.emit('configUpdated', {
+        key,
+        value,
+        version,
+        environment: config.environment
+      });
+    } catch (error: unknown){
+      this.logger.error(`Failed to set configuration ${key}:`, error): string): Promise<void> {
+    const config: string, reason?: string): Promise<void> {
+    try {
+      const config   = current ? current.version + 1 {
+        key,
+        value,
+        type this.config.get(key): unknown) {
+      await this.redis.set(
+        `${this.cachePrefix}${key}`,
+        JSON.stringify(config.value): unknown) {
+        throw new Error(`Configuration ${key} not found`);
+      }
+
+      // Remove from memory
+      this.config.delete(key);
+
+      // Remove from database
+      await this.db.configurations.delete({
+        where: { key_environment: { key, environment: config.environment } }
+      });
+
+      // Store history
+      await this.db.configurationHistory.create({
+        data: {
+          key,
+          value: null,
+          version: config.version + 1,
+          environment: config.environment,
+          changedBy: (process as any): new Date(),
+          reason
+        }
+      });
+
+      // Remove from cache
+      await this.redis.del(`$ {this.cachePrefix}${key}`);
+
+      // Emit event
+      this.emit('configDeleted', {
+        key,
+        environment: config.environment
+      }): unknown) {
+      this.logger.error(`Failed to delete configuration ${key}:`, error): string,
+    options: {
+      startTime?: Date;
+      endTime?: Date;
+      limit?: number;
+    } = {}
+  ): Promise<ConfigHistory[]> {
+    return this.db.configurationHistory.findMany({
+      where: {
+        key,
+        changedAt: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { changedAt: 'desc' },
+      take: options.limit
+    }):  {
+      pattern?: string;
+      type?: string;
+      environment?: string;
+      tags?: string[];
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<ConfigValue[]> {
+    const configs: unknown){
+        return false;
+      }
+      if (options.environment && config.environment ! = Array.from(this.config.values());
+    return configs.filter(config => {
+      if (options.pattern && !(config as any).key.includes(options.pattern)) {
+        return false;
+      }
+      if (options.type && config.type !== options.type= options.environment: unknown){
+        return false;
+      }
+      if (options.tags && !(options as any).tags.every(tag => (config as any).tags.includes(tag))) {
+        return false;
+      }
+      if (options.metadata: unknown){
+        return Object.entries(options.metadata): Promise<boolean> {
+    let valid = true;
+
+    for (const [key, config] of this.config.entries()) {
+      const schema: unknown){
+          (schema as any).validation.parse(config.value): unknown) {
+        this.logger.error(`Validation failed for ${key}:`, error): unknown) {
+        this.logger.warn(`No schema defined for ${key}`);
+        valid = false;
+        continue;
+      }
+
+      try {
+        if(schema.validation false;
+      }
+    }
+
+    return valid;
+  }
+
+  async export(): Promise<void> (
+    options: {
+      format?: 'json' | 'yaml';
+      environment?: string;
+      includeMetadata?: boolean;
+    } = {}
+  ): Promise<string> {
+    const configs: config.value;
+        return acc;
+      }, {} as Record<string, unknown>);
+
+    return options.format  = Array.from(this.config.values())
+      .filter(config => !options.environment || config.environment === options.environment)
+      .reduce((acc, config) => {
+        acc[config.key] = options.includeMetadata
+          ? config
+          == 'yaml'
+      ? yaml.dump(configs: unknown): JSON.stringify(configs, null, 2);
+  }
+
+  async import(): Promise<void> (
+    content: string,
+    options: {
+      format?: 'json' | 'yaml';
+      environment?: string;
+      overwrite?: boolean;
+    } = {}
+  ): Promise<void> {
+    try {
+      const configs: JSON.parse(content);
+
+      for (const [key, value] of Object.entries(configs)) {
+        if (this.config.has(key) && !options.overwrite) {
+          this.logger.warn(`Skipping existing configuration ${key}`);
+          continue;
+        }
+
+        await this.set(key, value, {
+          reason: 'Imported configuration'
+        });
+      }
+    } catch (error: unknown){
+      this.logger.error('Failed to import configurations:', error):  {
+      olderThan?: Date;
+      environment?: string;
+    }  = options.format === 'yaml'
+        ? yaml.load(content) as Record<string, unknown>
+         {}
+  ): Promise<void> {
+    try {
+      // Clear old history
+      if (options.olderThan: unknown){
+        await this.db.configurationHistory.deleteMany({
+          where: {
+            changedAt: { lt: options.olderThan },
+            environment: options.environment
+          }
+        });
+      }
+
+      // Clear Redis cache
+      const keys = await this.redis.keys(`${this.cachePrefix}*`);
+      if(keys.length > 0: unknown) {
+        await this.redis.del(keys): unknown) {
+      this.logger.error('Failed to cleanup configurations:', error);
+      throw error;
+    }
+  }
+}

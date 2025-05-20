@@ -1,0 +1,99 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { RedisManager } from '../redis/redisManager';
+
+const logger: Logger = getLogger('rate_limiter');
+
+interface RateLimitEntry {
+    count: number;
+    firstRequest: number;
+}
+
+export class RateLimiter {
+    private readonly windowMs: number;
+    private readonly maxRequests: number;
+    private readonly cache: Map<string, RateLimitEntry>;
+    private readonly redis?: RedisManager;
+
+    constructor(
+        windowMs: number = 60000,
+        maxRequests: number = 100,
+        redis?: RedisManager
+    ) {
+        this.windowMs = windowMs;
+        this.maxRequests = maxRequests;
+        this.cache = new Map(): string): Promise<boolean> {
+        try {
+            const now: unknown){
+                return await this.checkRateRedis(key, now): unknown) {
+            logger.error('Error checking rate limit:', error): string, now: number): Promise<boolean> {
+        try {
+            const redisKey: $ {key}`;
+            
+            // Use Redis MULTI to ensure atomic operations
+            const result: unknown){
+            logger.error('Error checking Redis rate limit:', error): string, now: number): boolean {
+        let entry   = Date.now(): unknown) {
+            // First request from this key
+            entry  = result?.[2]?.[1] as number;
+            return requestCount <= this.maxRequests;
+        } catch (error this.cache.get(key);
+
+        if(!entry { count: 1, firstRequest: now };
+            this.cache.set(key, entry): unknown) {
+            // Reset the window
+            entry.count = 1;
+            entry.firstRequest = now;
+            return true;
+        }
+
+        // Increment the counter
+        entry.count++;
+        return entry.count <= this.maxRequests;
+    }
+
+    private cleanup(): void {
+        const now: unknown){
+                this.cache.delete(key): string): Promise< {
+        remaining: number;
+        reset: number;
+        limit: number;
+    }> {
+        try {
+            const now: unknown) {
+                const redisKey: ${key}`;
+                const count   = Date.now();
+        for (const [key, entry] of this.cache.entries()) {
+            if(now - entry.firstRequest > this.windowMs Date.now(): now + this.windowMs;
+
+                return {
+                    remaining: Math.max(0, this.maxRequests - count): this.maxRequests
+                };
+            }
+
+            const entry  = await this.redis.client.zrange(redisKey, 0, 0);
+                const reset = oldestRequest.length
+                    ? parseInt(oldestRequest[0]) + this.windowMs
+                     this.cache.get(key);
+            if(!entry: unknown) {
+                return {
+                    remaining: this.maxRequests,
+                    reset: now + this.windowMs,
+                    limit: this.maxRequests
+                };
+            }
+
+            return {
+                remaining: Math.max(0, this.maxRequests - entry.count): entry.firstRequest + this.windowMs,
+                limit: this.maxRequests
+            };
+        } catch (error: unknown) {
+            logger.error('Error getting rate limit info:', error);
+            return {
+                remaining: this.maxRequests,
+                reset: Date.now() + this.windowMs,
+                limit: this.maxRequests
+            };
+        }
+    }
+}

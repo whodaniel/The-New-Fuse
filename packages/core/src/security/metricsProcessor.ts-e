@@ -1,0 +1,81 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { SystemMetrics, ApplicationMetrics, AgentMetrics } from './metricsCollector';
+
+const logger: Logger = getLogger('metrics_processor');
+
+export interface MetricThresholds {
+    system: {
+        cpuUsage: number;
+        memoryUsage: number;
+        diskUsage: number;
+        networkLatency: number;
+    };
+    application: {
+        errorRate: number;
+        responseTime: number;
+        queueLength: number;
+        connectionLimit: number;
+    };
+    agent: {
+        errorRate: number;
+        processingTime: number;
+        queueLength: number;
+        resourceUsage: number;
+    };
+}
+
+export class MetricsProcessor {
+    private readonly thresholds: MetricThresholds;
+    private alertHandlers: ((alert: MetricAlert) => Promise<void>)[];
+
+    constructor(thresholds: MetricThresholds) {
+        this.thresholds = thresholds;
+        this.alertHandlers = [];
+    }
+
+    public async processSystemMetrics(): Promise<void> (metrics: SystemMetrics): Promise<MetricAlert[]> {
+        const alerts: MetricAlert[] = [];
+        const timestamp = Date.now();
+
+        try {
+            if (metrics.cpu.usage > this.thresholds.system.cpuUsage) {
+                alerts.push({
+                    timestamp,
+                    type: 'system',
+                    severity: 'warning',
+                    metric: 'cpu_usage',
+                    value: metrics.cpu.usage,
+                    threshold: this.thresholds.system.cpuUsage,
+                    message: `High CPU usage detected: ${metrics.cpu.usage}%`
+                });
+            }
+
+            if (metrics.memory.usage > this.thresholds.system.memoryUsage) {
+                alerts.push({
+                    timestamp,
+                    type: 'system',
+                    severity: 'warning',
+                    metric: 'memory_usage',
+                    value: metrics.memory.usage,
+                    threshold: this.thresholds.system.memoryUsage,
+                    message: `High memory usage detected: ${metrics.memory.usage}%`
+                });
+            }
+
+            await this.handleAlerts(alerts);
+            return alerts;
+        } catch (error) {
+            logger.error('Error processing system metrics:', error);
+            throw error;
+        }
+    }
+
+    private async handleAlerts(): Promise<void> (alerts: MetricAlert[]): Promise<void> {
+        await Promise.all(
+            alerts.map(alert => 
+                Promise.all(this.alertHandlers.map(handler => handler(alert)))
+            )
+        );
+    }
+}

@@ -1,0 +1,65 @@
+import React from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+const AgentSettings = ({ agent }) => {
+    const handleSave = async (): Promise<void> (e) => {
+        e.preventDefault();
+    };
+    return (<form onSubmit={handleSave}>
+      <Card>
+        <CardContent className="space-y-6 p-4">
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium" htmlFor="name">
+                Agent Name
+              </Label>
+              <Input id="name" defaultValue={agent.name}/>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium" htmlFor="description">
+                Description
+              </Label>
+              <Input id="description" defaultValue={agent.description}/>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium" htmlFor="capabilities">
+                Capabilities
+              </Label>
+              <Input id="capabilities" defaultValue={agent.capabilities.join(', ')} placeholder="Enter capabilities separated by commas"/>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex flex-col gap-1.5">
+              <Label className="text-sm font-medium" htmlFor="model">
+                Model
+              </Label>
+              <Input id="model" defaultValue={agent.configuration.model}/>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between space-x-2">
+            <div className="flex items-center space-x-2">
+              <Switch id="status" defaultChecked={agent.status === 'active'}/>
+              <Label className="text-sm font-medium" htmlFor="status">
+                Active
+              </Label>
+            </div>
+          </div>
+
+          <Button type="submit">Save Changes</Button>
+        </CardContent>
+      </Card>
+    </form>);
+};
+export default AgentSettings;
+//# sourceMappingURL=AgentSettings.js.map

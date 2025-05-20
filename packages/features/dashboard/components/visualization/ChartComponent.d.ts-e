@@ -1,0 +1,13 @@
+import React from 'react';
+export type ChartType = 'line' | 'bar' | 'pie' | 'area';
+interface ChartComponentProps {
+    type: ChartType;
+    data: unknown[];
+    xKey: string;
+    yKeys: string[];
+    colors?: string[];
+    stacked?: boolean;
+    className?: string;
+}
+export declare const ChartComponent: (React as any).FC<ChartComponentProps>;
+export {};

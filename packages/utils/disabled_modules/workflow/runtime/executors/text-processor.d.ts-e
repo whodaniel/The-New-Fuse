@@ -1,0 +1,15 @@
+import { Node } from 'reactflow';
+import { NodeExecutor, NodeContext } from '../types';
+import { TextProcessorNodeData } from '../../nodes/document/text-processor';
+export declare class TextProcessorNodeExecutor implements NodeExecutor {
+    validate(node: Node<TextProcessorNodeData>): Promise<boolean>;
+    execute(node: Node<TextProcessorNodeData>, context: NodeContext): Promise<{
+        chunks: string[];
+    } | {
+        text: string;
+    }>;
+    private executeSplit;
+    private executeClean;
+    private executeCombine;
+    cleanup(): Promise<void>;
+}

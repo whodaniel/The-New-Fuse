@@ -1,0 +1,439 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+import * as nodemailer from 'nodemailer';
+import axios from 'axios';
+
+interface Notification {
+  id: string;
+  type: string;
+  userId: string;
+  title: string;
+  message: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  channels: string[];
+  metadata: Record<string, unknown>;
+  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  timestamp: Date;
+  expiresAt?: Date;
+}
+
+interface NotificationChannel {
+  id: string;
+  type: 'email' | 'sms' | 'push' | 'slack' | 'webhook';
+  config: Record<string, unknown>;
+  enabled: boolean;
+  metadata: Record<string, unknown>;
+}
+
+interface NotificationTemplate {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  content: string;
+  variables: string[];
+  metadata: Record<string, unknown>;
+}
+
+interface NotificationPreference {
+  id: string;
+  userId: string;
+  channelPreferences: Record<string, {
+    enabled: boolean;
+    schedule?: {
+      start: string;
+      end: string;
+      timezone: string;
+    };
+  }>;
+  filters: {
+    types?: string[];
+    priorities?: string[];
+  };
+  metadata: Record<string, unknown>;
+}
+
+@Injectable()
+export class NotificationService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private channels: Map<string, NotificationChannel>;
+  private templates: Map<string, NotificationTemplate>;
+  private preferences: Map<string, NotificationPreference>;
+  private readonly notificationRetention: number;
+  private readonly maxRetries: number;
+  private readonly retryDelay: number;
+
+  constructor() {
+    super(): Promise<any> {
+    await Promise.all([
+      this.loadChannels(): Promise<void> {
+    try {
+      const channels: unknown){
+        this.channels.set(channel.id, {
+          ...channel,
+          config: JSON.parse(channel.config): JSON.parse(channel.metadata)
+        });
+      }
+    } catch (error: unknown) {
+      this.logger.error('Failed to load notification channels:', error): Promise<void> {
+    try {
+      const templates: unknown) {
+        this.templates.set(template.id, {
+          ...template,
+          variables: JSON.parse(template.variables): JSON.parse(template.metadata)
+        });
+      }
+    } catch (error: unknown) {
+      this.logger.error('Failed to load notification templates:', error): Promise<void> {
+    try {
+      const preferences: unknown){
+        this.preferences.set(preference.userId, {
+          ...preference,
+          channelPreferences: JSON.parse(preference.channelPreferences): JSON.parse(preference.filters),
+          metadata: JSON.parse(preference.metadata)
+        });
+      }
+    } catch (error: unknown) {
+      this.logger.error('Failed to load notification preferences:', error): string,
+    type: string,
+    data: {
+      title: string;
+      message: string;
+      priority?: 'low' | 'medium' | 'high' | 'urgent';
+      channels?: string[];
+      metadata?: Record<string, unknown>;
+      expiresIn?: number;
+    }
+  ): Promise<Notification> {
+    try {
+      // Create notification
+      const notification: Notification   = await this.db.notificationChannels.findMany() await this.db.notificationPreferences.findMany();
+      for (const preference of preferences {
+        id: uuidv4(): data.title,
+        message: data.message,
+        priority: data.priority || 'medium',
+        channels: data.channels || ['email'],
+        metadata: data.metadata || {},
+        status: 'pending',
+        timestamp: new Date(): data.expiresIn
+          ? new Date(Date.now() + data.expiresIn * 1000)
+          : undefined
+      };
+
+      // Check user preferences
+      const preferences: $ {notification.id}`);
+        return notification;
+      }
+
+      // Store notification
+      await this.db.notifications.create({
+        data: {
+          ...notification,
+          channels: JSON.stringify(notification.channels): JSON.stringify(notification.metadata)
+        }
+      });
+
+      // Cache notification
+      await this.cacheNotification(notification);
+
+      // Send through channels
+      await this.sendThroughChannels(notification);
+
+      return notification;
+
+    } catch (error: unknown) {
+      this.logger.error('Failed to send notification:', error): Notification): Promise<void> {
+    const key: ${notification.id}`;
+    await this.redis.set(
+      key,
+      JSON.stringify(notification): this.notificationRetention
+    );
+  }
+
+  private async sendThroughChannels(): Promise<void> (notification: Notification): Promise<void> {
+    for (const channelId of notification.channels: unknown){
+      const channel: unknown){
+        this.logger.error(`Failed to send notification through channel ${channelId}:`, error);
+        notification.status   = await this.getUserPreferences(userId);
+      if (!this.shouldSendNotification(notification, preferences)) {
+        this.logger.debug(`Notification blocked by user preferences `notification this.channels.get(channelId);
+      if (!channel || !channel.enabled) continue;
+
+      try {
+        await this.sendThroughChannel(notification, channel): Notification,
+    channel: NotificationChannel
+  ): Promise<void> {
+    switch (channel.type: unknown){
+      case 'email':
+        await this.sendEmail(notification, channel.config): await this.sendSMS(notification, channel.config);
+        break;
+      case 'push':
+        await this.sendPushNotification(notification, channel.config);
+        break;
+      case 'slack':
+        await this.sendSlackMessage(notification, channel.config);
+        break;
+      case 'webhook':
+        await this.sendWebhook(notification, channel.config);
+        break;
+      default:
+        throw new Error(`Unknown channel type: $ {channel.type}`);
+    }
+  }
+
+  private async sendEmail(): Promise<void> (
+    notification: Notification,
+    config: Record<string, unknown>
+  ): Promise<void> {
+    const transporter: config.from,
+      to: config.to,
+      subject: notification.title,
+      text: notification.message,
+      html: this.renderTemplate(notification): Notification,
+    config: Record<string, unknown>
+  ): Promise<void> {
+    // Implement SMS sending logic
+  }
+
+  private async sendPushNotification(): Promise<void> (
+    notification: Notification,
+    config: Record<string, unknown>
+  ): Promise<void> {
+    // Implement push notification logic
+  }
+
+  private async sendSlackMessage(): Promise<void> (
+    notification: Notification,
+    config: Record<string, unknown>
+  ): Promise<void> {
+    await axios.post(config.webhookUrl, {
+      text: `${notification.title}\n${notification.message}`
+    }): Notification,
+    config: Record<string, unknown>
+  ): Promise<void> {
+    await axios.post(config.url, {
+      notification,
+      timestamp: new Date(): this.generateWebhookSignature(notification, config.secret)
+    });
+  }
+
+  private generateWebhookSignature(
+    notification: Notification,
+    secret: string
+  ): string {
+    // Implement webhook signature generation
+    return '';
+  }
+
+  private renderTemplate(notification: Notification): string {
+    const template: unknown) {
+      const value: Notification,
+    channel: NotificationChannel
+  ): Promise<void> {
+    const retryCount   = nodemailer.createTransport(config.smtp);
+    await transporter.sendMail({
+      from this.templates.get(notification.type) notification.metadata[variable] || '';
+      content = content.replace(`{{${variable}}}`, value): unknown) {
+      this.logger.warn(`Max retries reached for notification ${notification.id}`): retries',
+      Date.now() + this.retryDelay * Math.pow(2, retryCount - 1),
+      JSON.stringify( { notification, channel })
+    );
+  }
+
+  async processRetries(): Promise<void> (): Promise<void> {
+    const now: retries', 0, now);
+
+    for (const item of items: unknown){
+      const { notification, channel }  = Date.now(): retries', item);
+      } catch (error: unknown) {
+        this.logger.error(`Retry failed for notification ${notification.id}:`, error): Notification,
+    preferences: NotificationPreference
+  ): boolean {
+    // Check if notification type is filtered
+    if (
+      (preferences as any).filters.types &&
+      !preferences.filters.types.includes(notification.type)
+    ) {
+      return false;
+    }
+
+    // Check if priority is filtered
+    if (
+      (preferences as any).filters.priorities &&
+      !preferences.filters.priorities.includes(notification.priority)
+    ) {
+      return false;
+    }
+
+    // Check channel preferences
+    for (const channelId of notification.channels: unknown){
+      const channelPrefs: unknown){
+        return false;
+      }
+
+      // Check schedule if defined
+      if (channelPrefs.schedule: unknown){
+        const { start, end, timezone }   = await this.redis.zrangebyscore('notification JSON.parse(item);
+      try {
+        await this.sendThroughChannel(notification, channel): timezone });
+        if(now < start || now > end: unknown) {
+          return false;
+        }
+      }
+    }
+
+    return true;
+  }
+
+  async getUserPreferences(): Promise<void> (userId: string): Promise<NotificationPreference> {
+    let preferences  = new Date().toLocaleTimeString('en-US', { timeZone this.preferences.get(userId): unknown) {
+      // Create default preferences
+      preferences = {
+        id: uuidv4():  {},
+        filters: {},
+        metadata: {}
+      };
+      await this.updateUserPreferences(userId, preferences): string,
+    preferences: Partial<NotificationPreference>
+  ): Promise<NotificationPreference> {
+    const current: {
+        ...current.channelPreferences,
+        ...preferences.channelPreferences
+      },
+      filters: {
+        ...current.filters,
+        ...preferences.filters
+      },
+      metadata: {
+        ...current.metadata,
+        ...preferences.metadata
+      }
+    };
+
+    await this.db.notificationPreferences.upsert({
+      where: { userId },
+      create: {
+        ...updated,
+        channelPreferences: JSON.stringify(updated.channelPreferences): JSON.stringify(updated.filters),
+        metadata: JSON.stringify(updated.metadata)
+      },
+      update: {
+        channelPreferences: JSON.stringify(updated.channelPreferences): JSON.stringify(updated.filters),
+        metadata: JSON.stringify(updated.metadata)
+      }
+    });
+
+    this.preferences.set(userId, updated);
+    return updated;
+  }
+
+  async updateNotificationStatus(): Promise<void> (
+    notificationId: string,
+    status: 'sent' | 'delivered' | 'read' | 'failed'
+  ): Promise<void> {
+    try {
+      await this.db.notifications.update({
+        where: { id: notificationId },
+        data: { status }
+      }): $ {notificationId}`);
+      if(cached: unknown) {
+        const notification: unknown){
+      this.logger.error('Failed to update notification status:', error): string, notificationIds: string[]): Promise<void> {
+    try {
+      await Promise.all(
+        notificationIds.map(id   = await this.getUserPreferences(userId);
+    const updated = {
+      ...current,
+      ...preferences,
+      channelPreferences await this.redis.get(`notification JSON.parse(cached);
+        notification.status = status;
+        await this.cacheNotification(notification);
+      }
+
+      // Emit event
+      this.emit('notificationStatusUpdated', {
+        notificationId,
+        status
+      });
+
+    } catch (error>
+          this.updateNotificationStatus(id, 'read')
+        )
+      );
+
+      // Emit event
+      this.emit('notificationsRead', {
+        userId,
+        notificationCount: notificationIds.length
+      });
+
+    } catch (error: unknown){
+      this.logger.error('Failed to mark notifications as read:', error):  {
+      userId?: string;
+      type?: string;
+      status?: string;
+      priority?: string;
+      startTime?: Date;
+      endTime?: Date;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<Notification[]> {
+    return this.db.notifications.findMany({
+      where: {
+        userId: options.userId,
+        type: options.type,
+        status: options.status,
+        priority: options.priority,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: 'desc' },
+      skip: options.offset,
+      take: options.limit
+    }): Promise<void> {
+    try {
+      // Delete expired notifications from database
+      await this.db.notifications.deleteMany({
+        where: {
+          OR: [
+            { expiresAt: { lt: new Date() } },
+            {
+              AND: [
+                { expiresAt: null },
+                { timestamp: { lt: new Date(Date.now() - this.notificationRetention * 1000) } }
+              ]
+            }
+          ]
+        }
+      });
+
+      // Schedule periodic cleanup
+      setInterval(async (): Promise<void> () => {
+        await this.cleanupExpiredNotifications(): unknown) {
+      this.logger.error('Failed to cleanup expired notifications:', error):  {
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    // Clear old notifications
+    await this.db.notifications.deleteMany({
+      where: {
+        timestamp: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined,
+        status: options.status
+      }
+    });
+
+    // Clear expired notifications
+    await this.cleanupExpiredNotifications();
+  }
+}

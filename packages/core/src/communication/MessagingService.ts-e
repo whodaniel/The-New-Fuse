@@ -1,0 +1,349 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+
+interface Message {
+  id: string;
+  type: 'direct' | 'group' | 'broadcast';
+  senderId: string;
+  recipients: string[];
+  content: string;
+  metadata: Record<string, unknown>;
+  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  timestamp: Date;
+  expiresAt?: Date;
+}
+
+interface Channel {
+  id: string;
+  name: string;
+  description: string;
+  type: 'public' | 'private' | 'direct';
+  members: string[];
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface Subscription {
+  id: string;
+  userId: string;
+  channelId: string;
+  status: 'active' | 'muted' | 'blocked';
+  metadata: Record<string, unknown>;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+@Injectable()
+export class MessagingService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private readonly messageRetention: number;
+  private readonly maxRecipientsPerMessage: number;
+  private readonly maxMessageLength: number;
+
+  constructor() {
+    super(): Promise<any> {
+    await this.cleanupExpiredMessages(): string,
+    recipients: string[],
+    content: string,
+    options: {
+      type?: 'direct' | 'group' | 'broadcast';
+      metadata?: Record<string, unknown>;
+      expiresIn?: number;
+    } = {}
+  ): Promise<Message> {
+    try {
+      // Validate input
+      if(!senderId || !recipients.length || !content: unknown) {
+        throw new Error('Missing required fields'): unknown) {
+        throw new Error(`Message exceeds maximum length of ${this.maxMessageLength}`): unknown) {
+        throw new Error(`Too many recipients. Maximum is ${this.maxRecipientsPerMessage}`): Message = {
+        id: uuidv4(): options.type || 'direct',
+        senderId,
+        recipients,
+        content,
+        metadata: options.metadata || {},
+        status: 'pending',
+        timestamp: new Date(): options.expiresIn
+          ? new Date(Date.now() + options.expiresIn * 1000)
+          : undefined
+      };
+
+      // Store message
+      await this.db.messages.create( {
+        data: {
+          ...message,
+          recipients: JSON.stringify(recipients): JSON.stringify(message.metadata)
+        }
+      });
+
+      // Cache message for quick access
+      await this.cacheMessage(message);
+
+      // Update message status
+      message.status = 'sent';
+      await this.updateMessageStatus(message.id, 'sent');
+
+      // Notify recipients
+      await this.notifyRecipients(message);
+
+      // Emit event
+      this.emit('messageSent', {
+        messageId: message.id,
+        senderId: message.senderId,
+        recipientCount: recipients.length
+      });
+
+      return message;
+
+    } catch (error: unknown){
+      this.logger.error('Failed to send message:', error): Message): Promise<void> {
+    const key: ${message.id}`;
+    await this.redis.set(
+      key,
+      JSON.stringify(message): this.messageRetention
+    );
+  }
+
+  private async notifyRecipients(): Promise<void> (message: Message): Promise<void> {
+    for (const recipientId of message.recipients: unknown){
+      const key: ${recipientId}`;
+      await this.redis.lpush(key, JSON.stringify({
+        type: 'message',
+        messageId: message.id,
+        senderId: message.senderId,
+        timestamp: message.timestamp
+      }): string,
+    options: {
+      description?: string;
+      type?: 'public' | 'private' | 'direct';
+      members?: string[];
+      metadata?: Record<string, unknown>;
+    }  = `message `notifications {}
+  ): Promise<Channel> {
+    try {
+      const channel: Channel = {
+        id: uuidv4(): options.description || '',
+        type: options.type || 'public',
+        members: options.members || [],
+        metadata: options.metadata || {},
+        createdAt: new Date(): new Date()
+      };
+
+      // Store channel
+      await this.db.channels.create( {
+        data: {
+          ...channel,
+          members: JSON.stringify(channel.members): JSON.stringify(channel.metadata)
+        }
+      });
+
+      // Create subscriptions for members
+      if(channel.members.length > 0: unknown) {
+        await Promise.all(
+          channel.members.map(userId =>
+            this.subscribe(userId, channel.id)
+          )
+        );
+      }
+
+      // Emit event
+      this.emit('channelCreated', {
+        channelId: channel.id,
+        name: channel.name,
+        type: channel.type
+      });
+
+      return channel;
+
+    } catch (error: unknown){
+      this.logger.error('Failed to create channel:', error): string,
+    channelId: string,
+    options: {
+      status?: 'active' | 'muted' | 'blocked';
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<Subscription> {
+    try {
+      const subscription: Subscription = {
+        id: uuidv4(): options.status || 'active',
+        metadata: options.metadata || {},
+        createdAt: new Date(): new Date()
+      };
+
+      // Store subscription
+      await this.db.subscriptions.create( {
+        data: {
+          ...subscription,
+          metadata: JSON.stringify(subscription.metadata)
+        }
+      });
+
+      // Update channel members
+      await this.db.channels.update({
+        where: { id: channelId },
+        data: {
+          members: {
+            push: userId
+          }
+        }
+      });
+
+      // Emit event
+      this.emit('subscriptionCreated', {
+        subscriptionId: subscription.id,
+        userId,
+        channelId
+      }): unknown) {
+      this.logger.error('Failed to create subscription:', error): string, channelId: string): Promise<void> {
+    try {
+      // Remove subscription
+      await this.db.subscriptions.deleteMany({
+        where: {
+          userId,
+          channelId
+        }
+      });
+
+      // Update channel members
+      await this.db.channels.update({
+        where: { id: channelId },
+        data: {
+          members: {
+            set: (await this.db.channels.findUnique({
+              where: { id: channelId }
+            }))?.members.filter(id => id !== userId)
+          }
+        }
+      });
+
+      // Emit event
+      this.emit('subscriptionDeleted', {
+        userId,
+        channelId
+      });
+
+    } catch (error: unknown){
+      this.logger.error('Failed to delete subscription:', error):  {
+      channelId?: string;
+      userId?: string;
+      status?: string;
+      startTime?: Date;
+      endTime?: Date;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<Message[]> {
+    return this.db.messages.findMany({
+      where: {
+        channelId: options.channelId,
+        OR: [
+          { senderId: options.userId },
+          { recipients: { has: options.userId } }
+        ],
+        status: options.status,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: 'desc' },
+      skip: options.offset,
+      take: options.limit
+    }):  {
+      userId?: string;
+      type?: string;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<Channel[]> {
+    return this.db.channels.findMany({
+      where: {
+        type: options.type,
+        members: options.userId ? { has: options.userId } : undefined
+      },
+      orderBy: { updatedAt: 'desc' },
+      skip: options.offset,
+      take: options.limit
+    }): string,
+    status: 'sent' | 'delivered' | 'read' | 'failed'
+  ): Promise<void> {
+    try {
+      await this.db.messages.update({
+        where: { id: messageId },
+        data: { status }
+      }): $ {messageId}`);
+      if(cached: unknown) {
+        const message: unknown){
+      this.logger.error('Failed to update message status:', error): string,
+    messageIds: string[]
+  ): Promise<void> {
+    try {
+      await Promise.all(
+        messageIds.map(id  = await this.redis.get(`message JSON.parse(cached);
+        message.status = status;
+        await this.cacheMessage(message);
+      }
+
+      // Emit event
+      this.emit('messageStatusUpdated', {
+        messageId,
+        status
+      });
+
+    } catch (error>
+          this.updateMessageStatus(id, 'read')
+        )
+      );
+
+      // Emit event
+      this.emit('messagesRead', {
+        userId,
+        messageCount: messageIds.length
+      });
+
+    } catch (error: unknown){
+      this.logger.error('Failed to mark messages as read:', error): Promise<void> {
+    try {
+      // Delete expired messages from database
+      await this.db.messages.deleteMany({
+        where: {
+          OR: [
+            { expiresAt: { lt: new Date() } },
+            {
+              AND: [
+                { expiresAt: null },
+                { timestamp: { lt: new Date(Date.now() - this.messageRetention * 1000) } }
+              ]
+            }
+          ]
+        }
+      });
+
+      // Schedule periodic cleanup
+      setInterval(async (): Promise<void> () => {
+        await this.cleanupExpiredMessages(): unknown) {
+      this.logger.error('Failed to cleanup expired messages:', error):  {
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    // Clear old messages
+    await this.db.messages.deleteMany({
+      where: {
+        timestamp: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined,
+        status: options.status
+      }
+    });
+
+    // Clear expired messages
+    await this.cleanupExpiredMessages();
+  }
+}

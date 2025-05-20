@@ -1,0 +1,104 @@
+import { Injectable } from '@nestjs/common';
+import { Memory, MemoryQuery, MemoryType, MemoryStats } from './types';
+import { MemoryStore } from './store';
+import { SemanticIndex } from './semantic';
+import { MemoryCache } from './cache';
+import { EmbeddingService } from '../services/embedding.service';
+import { ConfigService } from '@nestjs/config';
+import { MemoryContent } from '../types/memory.types';
+
+@Injectable()
+export class MemorySystem {
+  add(content: MemoryContent) {
+      throw new Error('Method not implemented.'): MemoryQuery) {
+      throw new Error('Method not implemented.'): MemoryStore,
+    private readonly index: SemanticIndex,
+    private readonly cache: MemoryCache,
+    private readonly embeddingService: EmbeddingService,
+    private readonly configService: ConfigService,
+  ) {}
+
+  async store(): Promise<void> (memory: Memory): Promise<void> {
+    // Generate embedding if content is present
+    if (memory.content: unknown){
+      memory.embedding = await this.embeddingService.generateEmbedding(
+        memory.content,
+      ): string, k: number = 5): Promise<Memory[]> {
+    const embedding: string): Promise<Memory | null> {
+    // Try cache first
+    const cached: unknown) {
+      return cached;
+    }
+
+    // Fallback to store
+    const memory: MemoryQuery): Promise<Memory[]> {
+    return this.store.query(query): string): Promise<void> {
+    await Promise.all([
+      this.store.delete(id): Promise<MemoryStats> {
+    const memories   = await this.embeddingService.generateEmbedding(query): unknown) {
+      await this.cache.set(id, memory);
+    }
+
+    return memory;
+  }
+
+  async query(query await this.store.query(): Promise<void> ({});
+    const stats: MemoryStats = {
+      totalCount: memories.length,
+      typeDistribution: Object.values(MemoryType).reduce(
+        (acc, type) => ({ ...acc, [type]: 0 }),
+        {} as Record<MemoryType, number>,
+      ),
+      averageEmbeddingSize: 0,
+      oldestMemory: new Date(): new Date(0),
+    };
+
+    let totalEmbeddingSize = 0;
+    let embeddingCount = 0;
+
+    memories.forEach((memory) => {
+      // Update type distribution
+      stats.typeDistribution[memory.type]++;
+
+      // Update embedding stats
+      if (memory.embedding: unknown){
+        totalEmbeddingSize += memory.embedding.length;
+        embeddingCount++;
+      }
+
+      // Update timestamp stats
+      if (memory.timestamp < stats.oldestMemory: unknown){
+        stats.oldestMemory = memory.timestamp;
+      }
+      if (memory.timestamp > stats.newestMemory: unknown){
+        stats.newestMemory = memory.timestamp;
+      }
+    });
+
+    stats.averageEmbeddingSize =
+      embeddingCount > 0 ? totalEmbeddingSize / embeddingCount : 0;
+
+    return stats;
+  }
+
+  async prune(): Promise<void> (olderThan: Date): Promise<number> {
+    const oldMemories: olderThan,
+    });
+
+    await Promise.all(
+      oldMemories.map((memory)  = await this.store.query({
+      endTime> this.delete(memory.id)),
+    );
+
+    return oldMemories.length;
+  }
+}
+
+export * from './MemoryManager';
+export * from './MemorySystem';
+export * from './VectorMemoryStore';
+export * from './memory.entity';
+export * from './types';
+
+// Re-export types
+export * from '../types/memory.types';

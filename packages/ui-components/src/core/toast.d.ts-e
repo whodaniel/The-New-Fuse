@@ -1,0 +1,24 @@
+import React from 'react';
+import * as ToastPrimitives from "@radix-ui/react-toast";
+type ToastVariant = 'default' | 'success' | 'error' | 'warning' | 'info';
+interface Toast {
+    id: string;
+    message: string;
+    variant: ToastVariant;
+}
+interface ToastContextType {
+    toasts: Toast[];
+    addToast: (message: string, variant?: ToastVariant) => void;
+    removeToast: (id: string) => void;
+}
+declare const ToastProvider: React.FC<ToastPrimitives.ToastProviderProps>;
+declare const ToastViewport: React.ForwardRefExoticComponent<Omit<ToastPrimitives.ToastViewportProps & React.RefAttributes<HTMLOListElement>, "ref"> & React.RefAttributes<HTMLOListElement>>;
+declare const Toast: React.ForwardRefExoticComponent<Omit<ToastPrimitives.ToastProps & React.RefAttributes<HTMLLIElement>, "ref"> & React.RefAttributes<HTMLLIElement>>;
+declare const ToastClose: React.ForwardRefExoticComponent<Omit<ToastPrimitives.ToastCloseProps & React.RefAttributes<HTMLButtonElement>, "ref"> & React.RefAttributes<HTMLButtonElement>>;
+declare const ToastTitle: React.ForwardRefExoticComponent<Omit<ToastPrimitives.ToastTitleProps & React.RefAttributes<HTMLDivElement>, "ref"> & React.RefAttributes<HTMLDivElement>>;
+declare const ToastDescription: React.ForwardRefExoticComponent<Omit<ToastPrimitives.ToastDescriptionProps & React.RefAttributes<HTMLDivElement>, "ref"> & React.RefAttributes<HTMLDivElement>>;
+export declare function ToastProviderComponent({ children }: {
+    children: React.ReactNode;
+}): React.JSX.Element;
+export declare function useToast(): ToastContextType;
+export { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose, };

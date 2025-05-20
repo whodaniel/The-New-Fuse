@@ -1,0 +1,57 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AzureProvider = void 0;
+const base_1 = require("./base");
+const registry_1 = require("./registry");
+class AzureProvider extends base_1.BaseLLMProvider {
+    constructor(config = {}) {
+        const { endpoint, deploymentName, ...rest } = config;
+        super({
+            ...rest,
+            baseURL: endpoint || '',
+        });
+        this.endpoint = endpoint || this.getDefaultEndpoint();
+        this.deploymentName = deploymentName || this.getDefaultDeploymentName();
+    }
+    getDefaultApiKey() {
+        return registry_1.providerRegistry.getApiKey('azure') || '';
+    }
+    getDefaultBaseURL() {
+        return this.endpoint;
+    }
+    getDefaultModel() {
+        return this.deploymentName;
+    }
+    getDefaultMaxTokens() {
+        return 4096;
+    }
+    getDefaultHeaders() {
+        return {
+            'api-key': this.getDefaultApiKey(),
+        };
+    }
+    getDefaultEndpoint() {
+        return process.env.AZURE_OPENAI_ENDPOINT || '';
+    }
+    getDefaultDeploymentName() {
+        return process.env.AZURE_OPENAI_DEPLOYMENT_NAME || 'gpt-35-turbo';
+    }
+    async chat(): Promise<void> (messages) {
+        const response = await this.client.chat.completions.create({
+            model: this.deploymentName,
+            messages,
+            max_tokens: this.maxTokens,
+        });
+        return {
+            content: response.choices[0]?.message?.content || '',
+            usage: {
+                promptTokens: response.usage?.prompt_tokens,
+                completionTokens: response.usage?.completion_tokens,
+                totalTokens: response.usage?.total_tokens,
+            },
+            model: response.model,
+        };
+    }
+}
+exports.AzureProvider = AzureProvider;
+//# sourceMappingURL=azure.js.mapexport {};

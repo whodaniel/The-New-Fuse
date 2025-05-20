@@ -1,0 +1,257 @@
+import { Injectable } from '@nestjs/common';
+import {
+  WorkflowTemplate,
+  WorkflowStep,
+  WorkflowStepType,
+  WorkflowStatus
+} from '@the-new-fuse/types';
+
+class WorkflowError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly templateId: string,
+    public readonly stepId?: string,
+    public readonly details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'WorkflowError';
+  }
+}
+import { Logger } from '@the-new-fuse/utils';
+
+@Injectable()
+export class WorkflowValidator {
+  private readonly logger = new Logger(WorkflowValidator.name);
+  
+  async validateTemplate(template: WorkflowTemplate): Promise<void> {
+    this.logger.debug('Starting workflow validation', { workflowId: template.id });
+    try {
+      // Validate basic template properties
+      if (!template || !template.id) {
+        this.logger.error('Template validation failed: Missing template ID');
+        throw new Error('Template ID is required');
+      }
+      if (!template.name) {
+        this.logger.error('Template validation failed: Missing template name', { templateId: template.id });
+        throw new Error('Template name is required');
+      }
+      if (!template.version) {
+        this.logger.error('Template validation failed: Missing template version', { templateId: template.id });
+        throw new Error('Template version is required');
+      }
+      if (!template.steps || !Array.isArray(template.steps) || template.steps.length === 0) {
+        this.logger.error('Template validation failed: Invalid or empty steps array', { templateId: template.id });
+        throw new Error('Template must contain at least one step');
+      }
+
+      this.logger.debug('Validating individual steps', { templateId: template.id, stepCount: template.steps.length });
+      // Validate each step
+      const stepIds = new Set<string>();
+      for(const step of template.steps) {
+        await this.validateStep(step, stepIds);
+      }
+
+      // Validate step dependencies
+      this.logger.debug('Validating step dependencies', { templateId: template.id });
+      this.validateStepDependencies(template.steps);
+
+      this.logger.debug(`Template ${template.id} validated successfully`, { templateId: template.id });
+    } catch (error) {
+      const workflowError = new WorkflowError(
+        error instanceof Error ? error.message : 'Unknown validation error',
+        'TEMPLATE_VALIDATION_ERROR',
+        template.id,
+        undefined,
+        error instanceof Error ? { stack: error.stack } : undefined
+      );
+      this.logger.error(`Template validation failed: ${workflowError.message}`, {
+        templateId: template.id,
+        error: workflowError
+      });
+      throw workflowError;
+    }
+  }
+
+  private async validateStep(step: WorkflowStep, stepIds: Set<string>): Promise<void> {
+    // Validate step ID
+    if (!step.id) {
+      throw new Error('Step ID is required');
+    }
+    if (stepIds.has(step.id)) {
+      throw new Error(`Duplicate step ID found: ${step.id}`);
+    }
+    stepIds.add(step.id);
+
+    // Validate step type
+    if (!step.type || !Object.values(WorkflowStepType).includes(step.type as string)) {
+      throw new Error(`Invalid step type for step ${step.id}: ${step.type}`);
+    }
+    
+    // Validate step name
+    if (!step.name) {
+      throw new Error(`Step name is required for step ${step.id}`);
+    }
+    
+    // Validate step parameters
+    if (!step.config) {
+      throw new Error(`Invalid parameters for step ${step.id}`);
+    }
+
+    // Validate dependencies
+    if (step.dependencies && !Array.isArray(step.dependencies)) {
+      throw new Error(`Invalid dependencies for step ${step.id}`);
+    }
+    
+    // Validate step-specific configuration
+    await this.validateStepConfig(step);
+  }
+  
+  private async validateStepConfig(step: WorkflowStep): Promise<void> {
+    const config = step.config || {};
+
+    // Validate common configuration properties
+    if (config.timeout !== undefined && (typeof config.timeout !== 'number' || config.timeout <= 0)) {
+      throw new Error(`Invalid timeout value for step ${step.id}`);
+    }
+
+    if (config.retries !== undefined && (typeof config.retries !== 'number' || config.retries < 0)) {
+      throw new Error(`Invalid retries value for step ${step.id}`);
+    }
+
+    // Validate step-specific configuration based on step type
+    switch (step.type) {
+      case WorkflowStepType.TRANSFORM:
+        if (config.transformation && typeof config.transformation !== 'string') {
+          throw new Error(`Invalid transformation configuration for step ${step.id}`);
+        }
+        if (config.inputSchema && typeof config.inputSchema !== 'object') {
+          throw new Error(`Invalid input schema for transform step ${step.id}`);
+        }
+        if (config.outputSchema && typeof config.outputSchema !== 'object') {
+          throw new Error(`Invalid output schema for transform step ${step.id}`);
+        }
+        break;
+      case WorkflowStepType.VALIDATE:
+        if (config.rules) {
+          if (!Array.isArray(config.rules)) {
+            throw new Error(`Validation rules must be an array for step ${step.id}`);
+          }
+          for (const rule of config.rules) {
+            if (rule.condition && typeof rule.condition !== 'string') {
+              throw new Error(`Invalid validation rule condition in step ${step.id}`);
+            }
+          }
+        }
+        break;
+      case WorkflowStepType.PROCESS:
+        if (config.processType && typeof config.processType !== 'string') {
+          throw new Error(`Invalid process type for step ${step.id}`);
+        }
+        if (config.parameters && typeof config.parameters !== 'object') {
+          throw new Error(`Invalid parameters for process step ${step.id}`);
+        }
+        break;
+      case WorkflowStepType.ANALYZE:
+        if(config.analysisType && typeof config.analysisType !== 'string') {
+          throw new Error(`Invalid analysis type for step ${step.id}`);
+        }
+        if (config.options && typeof config.options !== 'object') {
+          throw new Error(`Invalid analysis options for step ${step.id}`);
+        }
+        break;
+      case WorkflowStepType.SECURITY:
+        if(config.securityCheck && typeof config.securityCheck !== 'string') {
+          throw new Error(`Invalid security check configuration for step ${step.id}`);
+        }
+        if (config.severity && !['low', 'medium', 'high', 'critical'].includes(config.severity as string)) {
+          throw new Error(`Invalid security severity level for step ${step.id}`);
+        }
+        break;
+      case WorkflowStepType.ACCESSIBILITY:
+        if(config.standard && typeof config.standard !== 'string') {
+          throw new Error(`Invalid accessibility standard for step ${step.id}`);
+        }
+        if (config.level && !['A', 'AA', 'AAA'].includes(config.level as string)) {
+          throw new Error(`Invalid accessibility compliance level for step ${step.id}`);
+        }
+        break;
+      case WorkflowStepType.LOCALIZE:
+        if(config.locales) {
+          if (!Array.isArray(config.locales) || config.locales.length === 0) {
+            throw new Error(`Locales must be a non-empty array for step ${step.id}`);
+          }
+          if (!this.validateLocales(config.locales)) {
+            throw new Error(`Invalid locale format in step ${step.id}`);
+          }
+          if (config.defaultLocale && !(config.locales as any[]).includes(config.defaultLocale)) {
+            throw new Error(`Default locale must be included in locales array for step ${step.id}`);
+          }
+        }
+        break;
+      case WorkflowStepType.DATA_FLOW:
+        if(config.flowType && typeof config.flowType !== 'string') {
+          throw new Error(`Invalid data flow type for step ${step.id}`);
+        }
+        if (config.mapping && typeof config.mapping !== 'object') {
+          throw new Error(`Invalid data mapping configuration for step ${step.id}`);
+        }
+        break;
+      default:
+        throw new Error(`Unsupported step type: ${step.type}`);
+    }
+  }
+  
+  private validateLocales(locales: string[]): boolean {
+    const localeRegex = /^[a-z]{2,3}(-[A-Z]{2})?$/;
+    return locales.every(locale => localeRegex.test(locale));
+  }
+  
+  private validateStepDependencies(steps: WorkflowStep[]): void {
+    const stepIds = new Set<string>(steps.map(step => step.id));
+    
+    for (const step of steps) {
+      if(step.dependencies) {
+        for(const depId of step.dependencies) {
+          if (!stepIds.has(depId)) {
+            throw new Error(`Invalid dependency ${depId} in step ${step.id}`);
+          }
+        }
+      }
+    }
+    
+    // Check for circular dependencies
+    const visited = new Set<string>();
+    const recursionStack = new Set<string>();
+    
+    const hasCycle = (stepId: string): boolean => {
+      if (recursionStack.has(stepId)) {
+        return true;
+      }
+      if (visited.has(stepId)) {
+        return false;
+      }
+      
+      visited.add(stepId);
+      recursionStack.add(stepId);
+      
+      const step = steps.find(s => s.id === stepId);
+      if (step && step.dependencies) {
+        for (const depId of step.dependencies) {
+          if (hasCycle(depId)) {
+            return true;
+          }
+        }
+      }
+      
+      recursionStack.delete(stepId);
+      return false;
+    };
+    
+    for (const step of steps) {
+      if (hasCycle(step.id)) {
+        throw new Error(`Cyclic dependency detected in step ${step.id}`);
+      }
+    }
+  }
+}

@@ -1,0 +1,109 @@
+export interface User {
+  id: string;
+  name: string;
+  avatar?: string;
+  email: string;
+  presence?: {
+    status: 'online' | 'away' | 'offline';
+    lastSeen?: Date;
+  };
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  author: User;
+  createdAt: Date;
+  updatedAt?: Date;
+  attachments?: Array<{
+    id: string;
+    type: 'image' | 'file';
+    url: string;
+    name: string;
+    size: number;
+  }>;
+  reactions?: Array<{
+    type: string;
+    count: number;
+    users: string[];
+  }>;
+  replies?: Comment[];
+  mentions?: string[]; // User IDs
+  resolved?: boolean;
+  resolvedBy?: User;
+  resolvedAt?: Date;
+}
+
+export interface Annotation {
+  id: string;
+  widgetId: string;
+  author: User;
+  content: string;
+  position: {
+    x: number;
+    y: number;
+  };
+  createdAt: Date;
+  updatedAt?: Date;
+  color?: string;
+  resolved?: boolean;
+}
+
+export interface ActivityEvent {
+  id: string;
+  type:
+    | 'widget_added'
+    | 'widget_removed'
+    | 'widget_updated'
+    | 'layout_changed'
+    | 'filter_applied'
+    | 'data_refreshed'
+    | 'comment_added'
+    | 'comment_resolved'
+    | 'annotation_added'
+    | 'annotation_resolved'
+    | 'dashboard_shared'
+    | 'dashboard_exported';
+  user: User;
+  timestamp: Date;
+  metadata: Record<string, unknown>;
+}
+
+export interface CollaborationState {
+  users: User[];
+  comments: Comment[];
+  annotations: Annotation[];
+  activity: ActivityEvent[];
+  cursors: Record<string, {
+    position: { x: number; y: number };
+    timestamp: Date;
+  }>;
+}
+
+export interface DashboardState {
+  widgets: Record<string, {
+    id: string;
+    type: string;
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+    data: unknown;
+    settings?: unknown;
+  }>;
+  layout: {
+    id: string;
+    name: string;
+    grid: {
+      columns: number;
+      rows: number;
+      gap: number;
+    };
+    background?: string;
+  };
+  features: {
+    [key: string]: boolean;
+  };
+  styles: {
+    theme: string;
+    customStyles?: Record<string, unknown>;
+  };
+}

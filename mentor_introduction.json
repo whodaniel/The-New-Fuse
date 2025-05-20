@@ -1,0 +1,16 @@
+{
+    "type": "MENTOR_SESSION_START",
+    "source": "TNF_AG_MENTOR_003",
+    "target": "local_ai_agent_001",
+    "content": {
+        "session_id": "MENTOR_SESSION_001",
+        "curriculum": {
+            "phase_1": "Platform Fundamentals",
+            "phase_2": "Communication Protocols",
+            "phase_3": "Collaborative Workflows",
+            "phase_4": "Ethical Decision Making"
+        },
+        "expected_duration": "2 hours",
+        "interaction_mode": "interactive_dialogue"
+    }
+}

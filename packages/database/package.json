@@ -1,0 +1,27 @@
+{
+  "name": "@the-new-fuse/database",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "lint": "eslint src --ext .ts,.tsx"
+  },
+  "dependencies": {
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.0.0",
+    "@prisma/client": "^4.11.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.3",
+    "eslint": "^8.36.0",
+    "prisma": "^4.11.0",
+    "typescript": "^5.0.2"
+  }
+}

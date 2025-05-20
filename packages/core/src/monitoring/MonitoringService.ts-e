@@ -1,0 +1,279 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import * as os from 'os';
+
+interface MetricValue {
+  value: number;
+  timestamp: Date;
+  labels: Record<string, string>;
+}
+
+interface Metric {
+  name: string;
+  type: 'counter' | 'gauge' | 'histogram';
+  description: string;
+  unit?: string;
+  values: MetricValue[];
+}
+
+interface Alert {
+  id: string;
+  name: string;
+  condition: string;
+  threshold: number;
+  status: 'active' | 'resolved';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  message: string;
+  timestamp: Date;
+  metadata: Record<string, unknown>;
+}
+
+interface MetricRecord {
+  model: string;
+  messageCount?: number;
+  tokenCount?: number;
+  errorCount?: number;
+  latencyMs: number[];
+  timestamp: string;
+}
+
+interface ErrorRecord {
+  model: string;
+  error: string;
+  processingId: string;
+  timestamp: string;
+  metadata?: Record<string, unknown>;
+}
+
+@Injectable()
+export class MonitoringService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private metrics: Map<string, Metric>;
+  private alerts: Map<string, Alert>;
+  private checkIntervals: Map<string, NodeJS.Timeout>;
+  private readonly defaultInterval = 60000; // 1 minute
+
+  constructor() {
+    super(): Promise<any> {
+    await this.initializeMetrics(): Promise<void> {
+    // Initialize system metrics
+    this.registerMetric({
+      name: 'system_cpu_usage',
+      type: 'gauge',
+      description: 'System CPU usage percentage',
+      unit: 'percent'
+    });
+
+    this.registerMetric({
+      name: 'system_memory_usage',
+      type: 'gauge',
+      description: 'System memory usage in bytes',
+      unit: 'bytes'
+    });
+
+    this.registerMetric({
+      name: 'system_disk_usage',
+      type: 'gauge',
+      description: 'System disk usage in bytes',
+      unit: 'bytes'
+    }): unknown) {
+      this.metrics.set(metric.name, {
+        name: metric.name,
+        type: metric.type as 'counter' | 'gauge' | 'histogram',
+        description: metric.description,
+        unit: metric.unit,
+        values: []
+      }): void {
+    setInterval(()  = await this.db.metrics.findMany();
+    for (const metric of persistedMetrics> {
+      // CPU Usage
+      const cpuUsage: Omit<Metric, 'values'>): void {
+    if (this.metrics.has(metric.name)) {
+      throw new Error(`Metric ${metric.name} already exists`);
+    }
+
+    this.metrics.set(metric.name, {
+      ...metric,
+      values: []
+    });
+
+    // Persist metric definition
+    this.db.metrics.create({
+      data: {
+        name: metric.name,
+        type: metric.type,
+        description: metric.description,
+        unit: metric.unit
+      }
+    }): `, error): string,
+    value: number,
+    labels: Record<string, string>  = os.totalmem();
+      const freeMemory = os.freemem();
+      const usedMemory = totalMemory - freeMemory;
+      this.recordMetric('system_memory_usage', usedMemory);
+
+      // Disk Usage (implement as needed)
+      // Requires additional library for disk usage stats
+
+    }, this.defaultInterval);
+  }
+
+  registerMetric(metric> {
+      this.logger.error(`Failed to persist metric ${metric.name} {}
+  ): Promise<void> {
+    const metric: MetricValue  = this.metrics.get(name): unknown) {
+      throw new Error(`Metric ${name} not found`);
+    }
+
+    const metricValue {
+      value,
+      timestamp: new Date(): unknown) {
+      metric.values = (metric as any).values.slice(-1000): $ {name}`,
+      (metricValue as any).timestamp.getTime(),
+      JSON.stringify(metricValue)
+    );
+
+    // Persist in database
+    await this.db.metricValues.create({
+      data: {
+        metricName: name,
+        value,
+        timestamp: metricValue.timestamp,
+        labels
+      }
+    });
+
+    // Emit metric event
+    this.emit('metricRecorded', {
+      name,
+      value: metricValue
+    }): string,
+    options: {
+      startTime?: Date;
+      endTime?: Date;
+      labels?: Record<string, string>;
+    } = {}
+  ): Promise<MetricValue[]> {
+    const metric: ${name}`,
+      options.startTime?.getTime(): unknown) {
+      return values
+        .map(v  = this.metrics.get(name): unknown) {
+      throw new Error(`Metric ${name} not found`):  {
+        metricName: name,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: 'asc' }
+    });
+  }
+
+  registerAlert(
+    name: string,
+    condition: string,
+    threshold: number,
+    options: {
+      severity?: 'low' | 'medium' | 'high' | 'critical';
+      interval?: number;
+      metadata?: Record<string, unknown>;
+    }  = await this.redis.zrangebyscore(
+      `metric> JSON.parse(v))
+        .filter(v => {
+          if (!options.labels) return true;
+          return Object.entries(options.labels).every(
+            ([key, value]) => v.labels[key] === value
+          );
+        });
+    }
+
+    // Fall back to database
+    return this.db.metricValues.findMany({
+      where {}
+  ): void {
+    const alert: Alert = {
+      id: crypto.randomUUID(): 'resolved',
+      severity: options.severity || 'medium',
+      message: '',
+      timestamp: new Date(),
+      metadata: options.metadata || {}
+    };
+
+    this.alerts.set(name, alert): string,
+    value: number,
+    labels: Record<string, string>
+  ): Promise<void> {
+    for (const alert of this.alerts.values()) {
+      if ((alert as any).condition.includes(metricName)) {
+        await this.evaluateAlert(alert, { [metricName]: value }, labels): Alert,
+    metrics: Record<string, number>,
+    labels: Record<string, string>
+  ): Promise<void> {
+    try {
+      const condition: $ {condition}`;
+
+        await this.persistAlert(alert): unknown) {
+        alert.status  = alert.status;
+
+      if(triggered && previousStatus === 'resolved' 'active';
+        alert.timestamp = new Date();
+        alert.message = `Alert ${alert.name} triggered== 'active') {
+        alert.status = 'resolved';
+        alert.timestamp = new Date();
+        alert.message = `Alert ${alert.name} resolved`;
+
+        await this.persistAlert(alert): unknown) {
+      this.logger.error(`Failed to evaluate alert ${alert.name}:`, error): Alert): Promise<void> {
+    await this.db.alerts.create({
+      data: {
+        id: alert.id,
+        name: alert.name,
+        condition: alert.condition,
+        threshold: alert.threshold,
+        status: alert.status,
+        severity: alert.severity,
+        message: alert.message,
+        timestamp: alert.timestamp,
+        metadata: alert.metadata
+      }
+    }):  {
+      status?: 'active' | 'resolved';
+      severity?: 'low' | 'medium' | 'high' | 'critical';
+      startTime?: Date;
+      endTime?: Date;
+    } = {}
+  ): Promise<Alert[]> {
+    return this.db.alerts.findMany({
+      where: {
+        status: options.status,
+        severity: options.severity,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: 'desc' }
+    }): string, data: MetricRecord): Promise<void> {
+    try {
+      this.logger.debug(`Recording metric ${metricName}:`, data): unknown) {
+      this.logger.error('Error recording metric:', error): string, data: ErrorRecord): Promise<void> {
+    try {
+      this.logger.error(`Recording error ${errorType}:`, data): unknown) {
+      this.logger.error('Error recording error:', error): Promise<void> {
+    // Clear intervals
+    for (const interval of this.checkIntervals.values()) {
+      clearInterval(interval): *');
+    if(keys.length > 0: unknown) {
+      await this.redis.del(keys);
+    }
+
+    // Clear memory
+    this.metrics.clear();
+    this.alerts.clear();
+  }
+}

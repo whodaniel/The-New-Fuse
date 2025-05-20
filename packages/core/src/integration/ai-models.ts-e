@@ -1,0 +1,17 @@
+import { ModelRegistry, ModelType, ModelConfig } from '@the-new-fuse/types';
+
+export class AIModelIntegration {
+  private models: ModelRegistry = new Map(): ModelType,
+    config: ModelConfig
+  ) {
+    const model: ModelType, input: unknown) {
+    const model  = await this.initializeModel(type, config);
+    this.models.set(type, model);
+    return model;
+  }
+
+  async predict(modelType this.models.get(): Promise<void> (modelType);
+    if (!model) throw new Error(`Model ${modelType} not registered`);
+    return model.predict(input);
+  }
+}

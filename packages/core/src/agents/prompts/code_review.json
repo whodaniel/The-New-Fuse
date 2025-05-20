@@ -1,0 +1,5 @@
+{
+  "code_review": {
+    "template": "Review the following {domain} code:\n\nContext: {context}\n\nFocus on:\n{key_terms}\n\nConstraints:\n{constraints}\n\nTone: {tone}"
+  }
+}

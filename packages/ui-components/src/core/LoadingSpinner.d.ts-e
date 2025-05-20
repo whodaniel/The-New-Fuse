@@ -1,0 +1,6 @@
+import { FC } from 'react';
+interface LoadingSpinnerProps {
+    className?: string;
+}
+declare const LoadingSpinner: FC<LoadingSpinnerProps>;
+export default LoadingSpinner;

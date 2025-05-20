@@ -1,0 +1,31 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"typescript.tsdk": ".yarn/sdks/typescript/lib",
+		"typescript.enablePromptUseWorkspaceTsdk": true,
+		"augment.nextEdit.enableGlobalBackgroundSuggestions": true,
+		"augment.nextEdit.highlightSuggestionsInTheEditor": true,
+		"codium.codeCompletion.enable": true,
+		"augment.nextEdit.showDiffInHover": true,
+		"dbcode.connections": [
+			{
+				"connectionId": "2Nu-9iO7IjEC2t_TKKy3u",
+				"name": "fuse",
+				"driver": "postgres",
+				"connectionType": "host",
+				"host": "localhost",
+				"port": 5432,
+				"ssl": false,
+				"username": "postgres",
+				"password": "",
+				"savePassword": "secretStorage",
+				"readOnly": false,
+				"connectionTimeout": 30
+			}
+		]
+	}
+}

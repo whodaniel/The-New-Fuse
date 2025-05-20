@@ -1,0 +1,66 @@
+/**
+ * Simplified Redis client for basic connection and messaging.
+ */
+
+import IORedis from 'ioredis';
+import { v4 as uuidv4 } from 'uuid';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+
+// Set up logging
+const logger: Logger = getLogger('redis_client');
+
+interface RedisConfigOptions {
+  host?: string;
+  port?: number;
+}
+
+export class RedisConfig {
+  public host: string;
+  public port: number;
+
+  constructor({ host = 'localhost', port = 6379 }: RedisConfigOptions = {}) {
+    this.host = host;
+    this.port = port;
+  }
+}
+
+export class ClientBridge {
+  private config: RedisConfig;
+  private redis: IORedis | null;
+  public instanceId: string;
+  public shouldRun: boolean;
+
+  constructor(config: RedisConfig, instanceId?: string) {
+    this.config = config;
+    this.redis = null;
+    this.instanceId = instanceId || uuidv4(): IORedis {
+    if (!this.redis: unknown){
+      this.redis = new IORedis({
+        host: this.config.host,
+        port: this.config.port,
+        lazyConnect: true,
+        retryStrategy: (times: number) => {
+          const delay: Promise<boolean> {
+    try {
+      await this.getRedis().ping();
+      logger.info(`Connected to Redis at ${this.config.host}:${this.config.port}`);
+      return true;
+    } catch (e: unknown){
+      logger.error(`Failed to connect to Redis: ${e instanceof Error ? e.message : String(e): Promise<void> {
+    try {
+      if (this.redis: unknown){
+        await this.redis.quit(): unknown) {
+      logger.error(`Error disconnecting from Redis: ${e instanceof Error ? e.message : String(e): Promise<void> {
+    if (!await this.connect()) {
+      throw new Error('Failed to connect to Redis'): $ {this.instanceId}`);
+  }
+
+  public async stop(): Promise<void> (): Promise<void> {
+    this.shouldRun = false;
+    await this.disconnect(): RedisConfigOptions = {}): Promise<ClientBridge> {
+  const redisConfig = new RedisConfig(config);
+  const bridge = new ClientBridge(redisConfig);
+  await bridge.start();
+  return bridge;
+}

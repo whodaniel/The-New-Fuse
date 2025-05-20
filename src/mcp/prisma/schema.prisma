@@ -1,0 +1,226 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// MCP Server Models
+
+// Agent Model - represents an AI agent that interacts with the MCP server
+model Agent {
+  id                String              @id @default(uuid())
+  name              String
+  description       String?
+  apiKey            String              @unique
+  type              String              // e.g., "assistant", "copilot", "specialist"
+  capabilities      String[]            // e.g., ["code-generation", "debugging"]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  metadata          Json?               // Additional metadata as needed
+  isActive          Boolean             @default(true)
+  // Relations
+  stateItems        AgentState[]
+  sentMessages      Message[]           @relation("SentMessages")
+  receivedMessages  Message[]           @relation("ReceivedMessages")
+  conversations     ConversationAgent[]
+  toolExecutions    ToolExecution[]
+  assistanceRequests AssistanceRequest[] @relation("RequestingAgent")
+  assistanceResponses AssistanceRequest[] @relation("TargetAgent")
+}
+
+// Agent State - key-value store for agent state data
+model AgentState {
+  id        String   @id @default(uuid())
+  agentId   String
+  key       String
+  value     Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  // Relations
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, key])
+}
+
+// Conversation Model - represents a conversation session
+model Conversation {
+  id          String             @id @default(uuid())
+  title       String?
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  isArchived  Boolean            @default(false)
+  metadata    Json?              // Additional metadata
+  // Relations
+  messages    Message[]
+  agents      ConversationAgent[]
+}
+
+// ConversationAgent - join table for many-to-many relationship
+model ConversationAgent {
+  conversationId String
+  agentId        String
+  joinedAt       DateTime @default(now())
+  role           String?  // e.g., "leader", "participant"
+  // Relations
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  agent          Agent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@id([conversationId, agentId])
+}
+
+// Message Model - represents messages in a conversation
+model Message {
+  id             String       @id @default(uuid())
+  conversationId String
+  senderId       String
+  receiverId     String?
+  content        String
+  role           String       // e.g., "user", "assistant", "system"
+  timestamp      DateTime     @default(now())
+  metadata       Json?        // Additional metadata
+  // Relations
+  conversation   Conversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender         Agent        @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver       Agent?       @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  toolCalls      ToolCall[]
+}
+
+// Tool Model - represents available tools in the system
+model Tool {
+  id            String         @id @default(uuid())
+  name          String         @unique
+  description   String
+  parameters    Json           // Zod schema converted to JSON
+  capability    String?        // e.g., "file-operations", "build-operations"
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  isDeprecated  Boolean        @default(false)
+  // Relations
+  executions    ToolExecution[]
+  toolCalls     ToolCall[]
+}
+
+// ToolCall Model - represents a request to execute a tool
+model ToolCall {
+  id          String        @id @default(uuid())
+  messageId   String
+  toolId      String
+  parameters  Json
+  timestamp   DateTime      @default(now())
+  status      String        // e.g., "pending", "success", "error"
+  // Relations
+  message     Message       @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  tool        Tool          @relation(fields: [toolId], references: [id])
+  execution   ToolExecution?
+}
+
+// ToolExecution Model - represents the execution of a tool
+model ToolExecution {
+  id          String    @id @default(uuid())
+  toolCallId  String    @unique
+  toolId      String
+  agentId     String
+  parameters  Json
+  result      Json?
+  error       String?
+  startTime   DateTime  @default(now())
+  endTime     DateTime?
+  // Relations
+  toolCall    ToolCall  @relation(fields: [toolCallId], references: [id], onDelete: Cascade)
+  tool        Tool      @relation(fields: [toolId], references: [id])
+  agent       Agent     @relation(fields: [agentId], references: [id])
+}
+
+// Workflow Model - represents a sequence of tasks to accomplish a goal
+model Workflow {
+  id          String        @id @default(uuid())
+  name        String
+  description String?
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  status      String        // e.g., "draft", "active", "completed"
+  metadata    Json?
+  // Relations
+  tasks       WorkflowTask[]
+  executions  WorkflowExecution[]
+}
+
+// WorkflowTask Model - represents a step in a workflow
+model WorkflowTask {
+  id          String      @id @default(uuid())
+  workflowId  String
+  name        String
+  description String?
+  toolId      String?
+  parameters  Json?       // Default parameters for this task
+  order       Int         // Sequence order in workflow
+  isRequired  Boolean     @default(true)
+  // Relations
+  workflow    Workflow    @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  executions  WorkflowTaskExecution[]
+
+  @@unique([workflowId, order])
+}
+
+// WorkflowExecution Model - represents an instance of running a workflow
+model WorkflowExecution {
+  id          String        @id @default(uuid())
+  workflowId  String
+  initiatedBy String        // Agent ID that started this workflow
+  startTime   DateTime      @default(now())
+  endTime     DateTime?
+  status      String        // e.g., "running", "completed", "failed"
+  // Relations
+  workflow    Workflow      @relation(fields: [workflowId], references: [id])
+  tasks       WorkflowTaskExecution[]
+}
+
+// WorkflowTaskExecution Model - represents execution of a workflow task
+model WorkflowTaskExecution {
+  id                String            @id @default(uuid())
+  workflowExecutionId String
+  workflowTaskId    String
+  startTime         DateTime          @default(now())
+  endTime           DateTime?
+  status            String            // e.g., "pending", "running", "completed", "failed"
+  result            Json?
+  error             String?
+  // Relations
+  workflowExecution WorkflowExecution @relation(fields: [workflowExecutionId], references: [id], onDelete: Cascade)
+  workflowTask      WorkflowTask      @relation(fields: [workflowTaskId], references: [id])
+}
+
+// AssistanceRequest Model - for agent-to-agent assistance
+model AssistanceRequest {
+  id                String    @id @default(uuid())
+  requestingAgentId String
+  targetAgentId     String
+  taskDescription   String
+  priority          String    // e.g., "high", "medium", "low"
+  data              Json?
+  status            String    // e.g., "pending", "accepted", "completed", "rejected"
+  response          Json?
+  createdAt         DateTime  @default(now())
+  respondedAt       DateTime?
+  // Relations
+  requestingAgent   Agent     @relation("RequestingAgent", fields: [requestingAgentId], references: [id])
+  targetAgent       Agent     @relation("TargetAgent", fields: [targetAgentId], references: [id])
+}
+
+// Capability Model - represents agent capabilities and discovery
+model Capability {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String
+  category    String   // e.g., "file-operations", "code-generation"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  isActive    Boolean  @default(true)
+  metadata    Json?
+}

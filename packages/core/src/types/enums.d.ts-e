@@ -1,0 +1,46 @@
+export declare const MessageRole: {
+    readonly USER: "USER";
+    readonly SYSTEM: "SYSTEM";
+    readonly ASSISTANT: "ASSISTANT";
+    readonly TOOL: "TOOL";
+    readonly FUNCTION: "FUNCTION";
+};
+export declare const MessageType: {
+    readonly TEXT: "TEXT";
+    readonly SYSTEM: "SYSTEM";
+    readonly IMAGE: "IMAGE";
+    readonly VIDEO: "VIDEO";
+    readonly AUDIO: "AUDIO";
+    readonly FILE: "FILE";
+    readonly COMMAND: "COMMAND";
+    readonly STREAM: "STREAM";
+    readonly CODE: "CODE";
+    readonly MARKDOWN: "MARKDOWN";
+};
+export declare const MessageStatus: {
+    readonly PENDING: "PENDING";
+    readonly DELIVERED: "DELIVERED";
+    readonly ERROR: "ERROR";
+    readonly SENT: "SENT";
+    readonly READ: "READ";
+    readonly FAILED: "FAILED";
+};
+export declare const VerificationLevel: {
+    readonly NONE: "NONE";
+    readonly LOW: "LOW";
+    readonly MEDIUM: "MEDIUM";
+    readonly HIGH: "HIGH";
+};
+export type VerificationLevelType = typeof VerificationLevel[keyof typeof VerificationLevel];
+export type MessageRoleType = typeof MessageRole[keyof typeof MessageRole];
+export type MessageTypeType = typeof MessageType[keyof typeof MessageType];
+export type MessageStatusType = typeof MessageStatus[keyof typeof MessageStatus];
+export declare const LogLevel: {
+    readonly ERROR: "ERROR";
+    readonly WARN: "WARN";
+    readonly INFO: "INFO";
+    readonly DEBUG: "DEBUG";
+    readonly TRACE: "TRACE";
+};
+export type LogLevelType = typeof LogLevel[keyof typeof LogLevel];
+//# sourceMappingURL=(enums as any).d.ts.map

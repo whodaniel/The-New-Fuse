@@ -1,0 +1,47 @@
+import { SecurityContext } from '../security';
+import { NodeConfig, NodeInstance, NodeState, NodeStatus, NodeMetrics } from './types';
+export interface BaseNodeConfig<T = any> extends NodeConfig<T> {
+    id: string;
+    type: string;
+    config?: T;
+    metadata?: Record<string, any>;
+}
+export declare abstract class BaseNode<T = any> implements NodeInstance<T> {
+    readonly id: string;
+    readonly type: string;
+    readonly config?: T | undefined;
+    readonly metadata?: Record<string, any> | undefined;
+    readonly state: NodeState;
+    protected metrics: NodeMetrics;
+    constructor(id: string, type: string, config?: T | undefined, metadata?: Record<string, any> | undefined);
+    abstract initialize(): Promise<void>;
+    abstract start(): Promise<void>;
+    abstract stop(): Promise<void>;
+    abstract destroy(): Promise<void>;
+    getStatus(): NodeStatus;
+    getMetrics(): NodeMetrics;
+    protected updateStatus(status: NodeStatus): void;
+    protected updateMetrics(metrics: Partial<NodeMetrics>): void;
+}
+export interface ExecutionContext<TInput = unknown> {
+    nodeId: string;
+    flowId: string;
+    security: SecurityContext;
+    input: TInput;
+    metadata?: Record<string, any>;
+}
+export interface ExecutionResult<TOutput = unknown> {
+    success: boolean;
+    output?: TOutput;
+    error?: Error;
+    metadata?: Record<string, any>;
+}
+export interface NodeHandler<T = any> {
+    type: string;
+    validate(config: NodeConfig<T>): Promise<ValidationResult>;
+    execute(context: ExecutionContext, config: NodeConfig<T>): Promise<ExecutionResult>;
+}
+export interface ValidationResult {
+    isValid: boolean;
+    errors: string[];
+}

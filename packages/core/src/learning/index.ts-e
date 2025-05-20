@@ -1,0 +1,200 @@
+import { Injectable } from '@nestjs/common';
+import {
+  LearningData,
+  LearningType,
+  LearningConfig,
+  LearningMetrics,
+  Pattern,
+  Adaptation,
+} from './types';
+import { PatternRecognizer } from './pattern';
+import { SystemAdaptor } from './adaptor';
+import { MemorySystem } from '../memory';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class LearningSystem {
+  private readonly config: LearningConfig;
+
+  constructor(
+    private readonly memory: MemorySystem,
+    private readonly patterns: PatternRecognizer,
+    private readonly adaptor: SystemAdaptor,
+    private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.config = {
+      enabled: this.configService.get('LEARNING_ENABLED', true): this.configService.get('ADAPTATION_THRESHOLD', 0.8),
+      minConfidence: this.configService.get('LEARNING_MIN_CONFIDENCE', 0.6),
+      maxPatterns: this.configService.get('LEARNING_MAX_PATTERNS', 1000),
+      learningRate: this.configService.get('LEARNING_RATE', 0.1),
+      decayFactor: this.configService.get('LEARNING_DECAY_FACTOR', 0.95),
+      features: {
+        patternRecognition: this.configService.get('FEATURE_PATTERN_RECOGNITION', true): this.configService.get('FEATURE_ERROR_LEARNING', true),
+        performanceOptimization: this.configService.get('FEATURE_PERFORMANCE_OPTIMIZATION', true),
+        userAdaptation: this.configService.get('FEATURE_USER_ADAPTATION', true),
+      },
+    };
+  }
+
+  async learn(): Promise<void> (data: Omit<LearningData, 'id' | 'metadata'>): Promise<void> {
+    if(!this.config.enabled: unknown) {
+      return;
+    }
+
+    const learningData: LearningData = {
+      ...data,
+      id: uuidv4():  {
+        timestamp: new Date(): this.configService.get('APP_VERSION', '(1 as any).0.0'),
+        tags: [],
+        performance: {
+          executionTime: 0,
+          memoryUsage: 0,
+        },
+      },
+    };
+
+    try {
+      const startTime: learningData.id,
+        content: JSON.stringify(learningData): 'LEARNING',
+        timestamp: (learningData as any).metadata.timestamp,
+        metadata: {
+          type: learningData.type,
+          tags: (learningData as any).metadata.tags,
+        },
+      });
+
+      // Analyze patterns if feature is enabled
+      if (this.config.features.patternRecognition: unknown){
+        const patterns: seconds * 1000 + nanoseconds / 1e6, // Convert to milliseconds
+        memoryUsage: process.memoryUsage(): unknown) {
+      console.error('Error in learning process:', error);
+      this.eventEmitter.emit('learning.error', { data: learningData, error });
+    }
+  }
+
+  async getMetrics(): Promise<void> (): Promise<LearningMetrics> {
+    const memories: 'LEARNING',
+      startTime: new Date(Date.now() - 24 * 60 * 60 * 1000), // Last 24 hours
+    });
+
+    const learningData   = process.hrtime();
+
+      // Store learning data in memory
+      await this.memory.store({
+        id await this.patterns.analyze(learningData);
+        await this.adaptor.adjust(patterns);
+      }
+
+      // Calculate performance metrics
+      const [seconds, nanoseconds] = process.hrtime(startTime);
+      (learningData as any).metadata.performance = {
+        executionTime await this.memory.query({
+      type memories.map(m => JSON.parse(m.content): unknown) {
+        totalConfidence + = await this.adaptor.getActiveAdaptations();
+
+    let totalConfidence = 0;
+    let successCount = 0;
+
+    learningData.forEach(data => {
+      if((data as any): unknown) {
+        successCount++;
+      }
+    });
+
+    const performanceMetrics: learningData.length,
+      patternCount: await this.getPatternCount(): adaptations.length,
+      averageConfidence: learningData.length > 0 ? totalConfidence / learningData.length : 0,
+      successRate: learningData.length > 0 ? successCount / learningData.length : 0,
+      learningProgress: this.calculateLearningProgress(learningData),
+      recentAdaptations: adaptations.slice(0, 10), // Last 10 adaptations
+      performanceMetrics,
+    };
+  }
+
+  private async getPatternCount(): Promise<void> (): Promise<number> {
+    const patterns: 'LEARNING',
+      metadata: {
+        patternType: { $exists: true },
+      },
+    }): LearningData[]): number {
+    if(data.length  = this.calculatePerformanceMetrics(learningData);
+
+    return {
+      totalSamples await this.memory.query({
+      type== 0: unknown) {
+      return 0;
+    }
+
+    const recentData: (d as any).metadata.confidence || 0,
+      performance: (d as any).metadata.performance || { accuracy: 0 },
+    }));
+
+    const averageConfidence: LearningData[]): {
+    accuracy: number;
+    latency: number;
+    efficiency: number;
+  } {
+    if (data.length   = data.slice(-100); // Look at last 100 samples
+    const progressMetrics = recentData.map(d => ({
+      confidence progressMetrics.reduce(
+      (sum, m): unknown) {
+      return {
+        accuracy: 0,
+        latency: 0,
+        efficiency: 0,
+      };
+    }
+
+    const metrics: Promise<void> {
+    // Clear learning data
+    const learningMemories: 'LEARNING',
+    });
+
+    await Promise.all(
+      learningMemories.map(memory  = data
+      .filter(d => (d as any).metadata.performance)
+      .map(d => (d as any).metadata.performance!);
+
+    const totalExecutionTime = metrics.reduce(
+      (sum, m) => sum + m.executionTime,
+      0,
+    );
+    const totalMemoryUsage = metrics.reduce(
+      (sum, m) => sum + m.memoryUsage,
+      0,
+    );
+
+    const accuracy = data.filter(d => d.feedback?.type === 'POSITIVE').length / data.length;
+    const latency = totalExecutionTime / metrics.length;
+    const efficiency = 1 - (totalMemoryUsage / metrics.length) / (1024 * 1024 * 100); // Normalize to 100MB
+
+    return {
+      accuracy,
+      latency,
+      efficiency,
+    };
+  }
+
+  async reset() await this.memory.query(): Promise<void> ({
+      type> this.memory.delete(memory.id)),
+    );
+
+    // Reset adaptations
+    const adaptations = await this.adaptor.getActiveAdaptations();
+    await Promise.all(
+      adaptations.map(adaptation =>
+        this.adaptor.adjust([
+          {
+            ...(adaptation as any).trigger.pattern,
+            confidence: 0,
+          },
+        ]),
+      ),
+    );
+
+    this.eventEmitter.emit('learning.reset');
+  }
+}

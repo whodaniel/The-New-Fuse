@@ -1,0 +1,128 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Button } from '../components/ui/Button';
+
+export const Landing: React.FC = () => {
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex justify-between items-center">
+          <div className="flex items-center">
+            <img
+              className="h-8 w-auto"
+              src="/logo.svg"
+              alt="Logo"
+            />
+            <span className="ml-3 text-xl font-bold text-gray-900">
+              Your App
+            </span>
+          </div>
+          
+          <div className="flex items-center space-x-4">
+            <Link
+              to="/login"
+              className="text-gray-600 hover:text-gray-900"
+            >
+              Sign in
+            </Link>
+            <Link to="/register">
+              <Button>Get Started</Button>
+            </Link>
+          </div>
+        </div>
+      </nav>
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="text-center">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl"
+          >
+            <span className="block">Welcome to Your App</span>
+            <span className="block text-primary">Built for the Future</span>
+          </motion.h1>
+          
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-3 max-w-md mx-auto text-base text-gray-500 sm:text-lg md:mt-5 md:text-xl md:max-w-3xl"
+          >
+            Description of your application and its main benefits.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-5 max-w-md mx-auto sm:flex sm:justify-center md:mt-8"
+          >
+            <div className="rounded-md shadow">
+              <Link to="/register">
+                <Button size="lg">
+                  Get Started
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-3 sm:mt-0 sm:ml-3">
+              <Link to="/about">
+                <Button variant="outline" size="lg">
+                  Learn More
+                </Button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+
+        <div className="mt-32">
+          <h2 className="text-center text-3xl font-extrabold text-gray-900">
+            Featured Benefits
+          </h2>
+          
+          <div className="mt-20 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map((feature) => (
+              <motion.div
+                key={feature.title}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5 }}
+                className="relative p-6 bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+              >
+                <feature.icon className="h-12 w-12 text-primary" />
+                <h3 className="mt-4 text-lg font-medium text-gray-900">
+                  {feature.title}
+                </h3>
+                <p className="mt-2 text-base text-gray-500">
+                  {feature.description}
+                </p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </main>
+
+      <footer className="bg-gray-50 border-t border-gray-200">
+        <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+            {/* Add footer content */}
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+const features = [
+  {
+    title: 'Feature 1',
+    description: 'Description of feature 1',
+    icon: /* Add icon component */,
+  },
+  // Add more features...
+];
+
+export default Landing;

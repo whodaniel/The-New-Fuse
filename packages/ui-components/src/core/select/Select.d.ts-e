@@ -1,0 +1,3 @@
+import React from 'react';
+declare const Select: React.ForwardRefExoticComponent<Omit<SelectProps, "ref"> & React.RefAttributes<HTMLSelectElement>>;
+export { Select };

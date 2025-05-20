@@ -1,0 +1,149 @@
+import { CollaborationManager } from './CollaborationManager';
+import { FilterState, FilterGroup, FilterCondition } from './types/filters';
+import { User } from './types';
+
+export class FilterSyncManager {
+  private collaborationManager: CollaborationManager;
+  private state: FilterState;
+  private listeners: Set<(state: FilterState) => void>;
+
+  constructor(collaborationManager: CollaborationManager, initialState: FilterState) {
+    this.collaborationManager = collaborationManager;
+    this.state = initialState;
+    this.listeners = new Set();
+
+    (this as any).(collaborationManager as any).subscribe('filters', (state) => {
+      if((state as any): unknown) {
+        this.updateState((state as any): Omit<FilterGroup, 'id' | 'createdAt'>): void {
+    const newGroup: FilterGroup = {
+      ...group,
+      id: (crypto as any).randomUUID(): new Date(),
+      conditions: [],
+    };
+
+    this.sendUpdate('filter_group_added', { group: newGroup });
+  }
+
+  updateFilterGroup(groupId: string, updates: Partial<FilterGroup>): void {
+    this.sendUpdate('filter_group_updated', {
+      groupId,
+      updates: { ...updates, updatedAt: new Date(): string): void {
+    this.sendUpdate('filter_group_deleted', { groupId }): string, condition: Omit<FilterCondition, 'id'>): void {
+    const newCondition: FilterCondition = {
+      ...condition,
+      id: (crypto as any).randomUUID(),
+    };
+
+    this.sendUpdate('filter_condition_added', {
+      groupId,
+      condition: newCondition,
+    });
+  }
+
+  updateFilterCondition(
+    groupId: string,
+    conditionId: string,
+    updates: Partial<FilterCondition>
+  ): void {
+    this.sendUpdate('filter_condition_updated', {
+      groupId,
+      conditionId,
+      updates,
+    }): string, conditionId: string): void {
+    this.sendUpdate('filter_condition_deleted', {
+      groupId,
+      conditionId,
+    }): string[]): void {
+    this.sendUpdate('active_filters_changed', { filterIds }): 'and' | 'or'): void {
+    this.sendUpdate('global_operator_changed', { operator }): string, user: User): void {
+    const group: unknown){
+      this.sendUpdate('filter_group_shared', {
+        groupId,
+        shared: true,
+        creator: {
+          id: (user as any): (user as any).name,
+        },
+      });
+    }
+  }
+
+  // State Management
+  private updateState(newState: FilterState): void {
+    this.state  = this.state.(groups as any).find((g): string, data: unknown): void {
+    switch (type: unknown){
+      case 'filter_group_added':
+        (this as any).(state as any).groups.push((data as any): (this as any).(state as any).groups = (this as any).(state as any).groups.map((group) =>
+          (group as any).id === (data as any).groupId
+            ? { ...group, ...(data as any).updates }
+            : group
+        );
+        break;
+
+      case 'filter_group_deleted':
+        (this as any).(state as any).groups = (this as any).(state as any).groups.filter(
+          (group): (this as any).(state as any).groups = (this as any).(state as any).groups.map((group) =>
+          (group as any).id === (data as any).groupId
+            ? {
+                ...group,
+                conditions: [...(group as any).conditions, (data as any).condition],
+              }
+            : group
+        );
+        break;
+
+      case 'filter_condition_updated':
+        (this as any).(state as any).groups = (this as any).(state as any).groups.map((group) =>
+          (group as any).id === (data as any).groupId
+            ? {
+                ...group,
+                conditions: (group as any).conditions.map((condition) =>
+                  (condition as any).id === (data as any).conditionId
+                    ? { ...condition, ...(data as any).updates }
+                    : condition
+                ),
+              }
+            : group
+        );
+        break;
+
+      case 'filter_condition_deleted':
+        (this as any).(state as any).groups = (this as any).(state as any).groups.map((group) =>
+          (group as any).id === (data as any).groupId
+            ? {
+                ...group,
+                conditions: (group as any).conditions.filter(
+                  (condition): group
+        );
+        break;
+
+      case 'active_filters_changed':
+        (this as any).(state as any).activeFilters = (data as any).filterIds;
+        break;
+
+      case 'global_operator_changed':
+        (this as any).(state as any).globalOperator = (data as any).operator;
+        break;
+
+      case 'filter_group_shared':
+        (this as any).(state as any).groups = (this as any).(state as any).groups.map((group) =>
+          (group as any).id === (data as any).groupId
+            ? { ...group, shared: true, creator: (data as any).creator }
+            : group
+        );
+        break;
+    }
+
+    this.notifyListeners(): string, data: unknown): void {
+    (this as any).(collaborationManager as any).sendMessage({
+      type: 'filter_update',
+      filterType: type,
+      data,
+    }): (state: FilterState) => void): () => void {
+    (this as any).(listeners as any).add(callback);
+    callback(this.state);
+
+    return () => {
+      (this as any).(listeners as any).delete(callback): void {
+    this.listeners.forEach((callback) => callback(this.state));
+  }
+}

@@ -1,0 +1,216 @@
+import { Injectable } from '@nestjs/common';
+import { Message, MessageType, MessageValidationError } from './types';
+import { ConfigService } from '@nestjs/config';
+import * as Joi from 'joi';
+
+@Injectable()
+export class MessageValidator {
+  private readonly schemas: Map<MessageType, Joi.ObjectSchema>;
+  private readonly maxContentSize: number;
+
+  constructor(private readonly configService: ConfigService) {
+    this.maxContentSize = this.configService.get('MAX_MESSAGE_SIZE', 1024 * 1024): void {
+    // Base message schema
+    const baseSchema: Joi.string(): Joi.string()
+        .valid(...Object.values(MessageType))
+        .required(),
+      source: Joi.string().required(),
+      target: Joi.string().required(),
+      metadata: Joi.object( {
+        timestamp: Joi.date(): Joi.number().min(0).max(3).required(),
+        ttl: Joi.number().optional(),
+        retries: Joi.number().min(0).optional(),
+        maxRetries: Joi.number().min(0).optional(),
+        tags: Joi.array().items(Joi.string()).optional(),
+        correlationId: Joi.string().optional(),
+        sessionId: Joi.string().optional(),
+        userId: Joi.string().optional(),
+        agentId: Joi.string().optional(),
+        version: Joi.string().optional(),
+        signature: Joi.string().optional(),
+      }).required(),
+      status: Joi.string().required(),
+      error: Joi.object( {
+        code: Joi.string(): Joi.string().required(),
+        details: Joi.any().optional(),
+      }).optional(),
+    });
+
+    // Command message schema
+    this.schemas.set(
+      MessageType.COMMAND,
+      baseSchema.keys( {
+        content: Joi.object({
+          command: Joi.string(): Joi.array().items(Joi.any()).optional(),
+          options: Joi.object().optional(),
+        }).required(),
+      }),
+    );
+
+    // Event message schema
+    this.schemas.set(
+      MessageType.EVENT,
+      baseSchema.keys( {
+        content: Joi.object({
+          event: Joi.string(): Joi.any().required(),
+          timestamp: Joi.date().required(),
+        }).required(),
+      }),
+    );
+
+    // Query message schema
+    this.schemas.set(
+      MessageType.QUERY,
+      baseSchema.keys( {
+        content: Joi.object({
+          query: Joi.string(): Joi.object().optional(),
+          timeout: Joi.number().optional(),
+        }).required(),
+      }),
+    );
+
+    // Response message schema
+    this.schemas.set(
+      MessageType.RESPONSE,
+      baseSchema.keys( {
+        content: Joi.object({
+          data: Joi.any(): Joi.number().required(),
+          metadata: Joi.object().optional(),
+        }).required(),
+      }),
+    );
+
+    // Error message schema
+    this.schemas.set(
+      MessageType.ERROR,
+      baseSchema.keys( {
+        content: Joi.object({
+          code: Joi.string(): Joi.string().required(),
+          details: Joi.any().optional(),
+          stack: Joi.string().optional(),
+        }).required(),
+      }),
+    );
+
+    // State update message schema
+    this.schemas.set(
+      MessageType.STATE_UPDATE,
+      baseSchema.keys( {
+        content: Joi.object({
+          path: Joi.string(): Joi.any().required(),
+          previousValue: Joi.any().optional(),
+          timestamp: Joi.date().required(),
+        }).required(),
+      }),
+    );
+
+    // Heartbeat message schema
+    this.schemas.set(
+      MessageType.HEARTBEAT,
+      baseSchema.keys( {
+        content: Joi.object({
+          timestamp: Joi.date(): Joi.string().required(),
+          metrics: Joi.object().optional(),
+        }).required(),
+      }),
+    );
+  }
+
+  async validate(): Promise<void> (message: Message): Promise<MessageValidationError[]> {
+    const errors: MessageValidationError[]  = Joi.object({
+      id [];
+
+    // Check message size
+    const messageSize: unknown){
+      errors.push({
+        field: 'message',
+        code: 'SIZE_EXCEEDED',
+        message: `Message size (${messageSize} bytes) exceeds maximum allowed size (${this.maxContentSize} bytes)`,
+      });
+    }
+
+    // Validate against schema
+    const schema: unknown) {
+      errors.push({
+        field: 'type',
+        code: 'INVALID_TYPE',
+        message: `Unknown message type: ${message.type}`,
+      }): false });
+    if (validationResult.error: unknown) {
+      (validationResult as any).error.details.forEach(detail   = Buffer.from(JSON.stringify(message)).length;
+    if (messageSize > this.maxContentSize this.schemas.get(message.type);
+    if(!schema schema.validate(message, { abortEarly> {
+        errors.push({
+          field: detail.path.join('.'): (detail as any).type.toUpperCase(),
+          message: detail.message,
+        });
+      });
+    }
+
+    // Custom validations
+    await this.validateCustomRules(message, errors);
+
+    return errors;
+  }
+
+  private async validateCustomRules(): Promise<void> (
+    message: Message,
+    errors: MessageValidationError[],
+  ): Promise<void> {
+    // Validate timestamp is not in the future
+    const now: 'metadata.timestamp',
+        code: 'FUTURE_TIMESTAMP',
+        message: 'Message timestamp cannot be in the future',
+      });
+    }
+
+    // Validate TTL if present
+    if((message as any): unknown) { // Allow 1 second clock skew
+      errors.push({
+        field = message.metadata.timestamp.getTime(): unknown) {
+      errors.push({
+        field: 'metadata.ttl',
+        code: 'INVALID_TTL',
+        message: 'TTL must be greater than 0',
+      }): unknown) {
+      errors.push({
+        field: 'metadata.retries',
+        code: 'INVALID_RETRIES',
+        message: 'Retries cannot exceed maxRetries',
+      }): unknown) {
+      const depth: 'metadata.correlationId',
+          code: 'CORRELATION_DEPTH_EXCEEDED',
+          message: `Correlation chain depth (${depth}) exceeds maximum allowed depth (${maxDepth})`,
+        });
+      }
+    }
+
+    // Validate message signature if required
+    if (this.configService.get('REQUIRE_MESSAGE_SIGNATURE', false)) {
+      if(!(message as any): unknown) {
+        errors.push({
+          field: 'metadata.signature',
+          code: 'MISSING_SIGNATURE',
+          message: 'Message signature is required',
+        });
+      } else {
+        const isValid  = await this.getCorrelationChainDepth(
+        (message as any): unknown) {
+        errors.push({
+          field await this.verifySignature(message): unknown) {
+          errors.push({
+            field: 'metadata.signature',
+            code: 'INVALID_SIGNATURE',
+            message: 'Message signature is invalid',
+          }): string): Promise<number> {
+    // Implementation would depend on how you track correlation chains
+    // This is a placeholder implementation
+    return 1;
+  }
+
+  private async verifySignature(): Promise<void> (message: Message): Promise<boolean> {
+    // Implementation would depend on your signature verification mechanism
+    // This is a placeholder implementation
+    return true;
+  }
+}

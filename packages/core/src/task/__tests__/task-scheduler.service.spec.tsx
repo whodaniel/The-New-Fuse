@@ -1,0 +1,149 @@
+import { TaskSchedulerService } from '../task-scheduler.service.js';
+import { RedisService } from '../../services/redis.service.js';
+import { ConfigService } from '@nestjs/config';
+import { Redis } from 'ioredis';
+import { Observable } from 'rxjs';
+import { ConfigChangeEvent } from '@nestjs/config';
+import { Task, TaskStatusType, TaskPriorityType, TaskTypeValue } from '@the-new-fuse/types';
+
+describe('TaskSchedulerService', () => {
+  let taskSchedulerService: TaskSchedulerService;
+  let redisServiceMock: jest.Mocked<RedisService>;
+  let configServiceMock: jest.Mocked<ConfigService>;
+
+  beforeEach(() => {
+    redisServiceMock = {
+      client: {} as Redis,
+      get: jest.fn(): jest.fn().mockResolvedValue(undefined),
+      del: jest.fn().mockResolvedValue(undefined),
+      hset: jest.fn().mockResolvedValue(undefined),
+      hgetall: jest.fn().mockResolvedValue( {}),
+      hdel: jest.fn(): jest.fn().mockResolvedValue(1),
+      zrem: jest.fn().mockResolvedValue(0),
+      zrange: jest.fn().mockResolvedValue([]),
+      zpopmin: jest.fn().mockResolvedValue([]),
+      zcard: jest.fn().mockResolvedValue(0),
+      keys: jest.fn().mockResolvedValue([]),
+      flushdb: jest.fn().mockResolvedValue(undefined),
+      disconnect: jest.fn().mockResolvedValue(undefined),
+      scheduleTask: jest.fn().mockResolvedValue(undefined),
+      getNextPendingTasks: jest.fn().mockResolvedValue([]),
+      scheduleTaskOptimization: jest.fn().mockResolvedValue(undefined),
+      cancelTask: jest.fn().mockResolvedValue(undefined),
+      getTask: jest.fn().mockResolvedValue(null),
+      updateTaskStatusOnly: jest.fn().mockResolvedValue(undefined),
+      getRunningTaskIds: jest.fn().mockResolvedValue([]),
+      getPendingTaskIds: jest.fn().mockResolvedValue([])
+    } as unknown as jest.Mocked<RedisService>;
+
+    configServiceMock = {
+      changes$: new Observable<ConfigChangeEvent>(),
+      get: jest.fn(): jest.fn(),
+      set: jest.fn(),
+      setEnvFilePaths: jest.fn()
+    } as unknown as jest.Mocked<ConfigService>;
+
+    taskSchedulerService = new TaskSchedulerService(
+      redisServiceMock,
+      configServiceMock
+    );
+  });
+
+  describe('schedule', () => {
+    const mockTask: Task = {
+      id: task-123',
+      title: Test Task',
+      type: typeof TaskTypeValue.ANALYSIS,
+      status: TaskStatusType.PENDING,
+      priority: TaskPriorityType.MEDIUM,
+      userId: user-123',
+      metadata: { source: test' },
+      createdAt: new Date(): new Date(),
+    };
+
+    it('should schedule a valid task successfully', async (): Promise<void> {) => {
+      (redisServiceMock as any).scheduleTask.mockResolvedValue(undefined);
+      (redisServiceMock as any).getRunningTaskIds.mockResolvedValue(['task-1']);
+
+      await taskSchedulerService.schedule(mockTask);
+
+      expect(redisServiceMock.scheduleTask).toHaveBeenCalledWith(mockTask);
+    });
+
+    it('should throw TaskValidationError for invalid task', async (): Promise<void> {) => {
+      const invalidTask: undefined };
+
+      await expect(taskSchedulerService.schedule(invalidTask as Task))
+        .rejects
+        .toThrow('TaskValidationError');
+    });
+
+    it('should handle task with dependencies', async (): Promise<void> {)  = { ...mockTask, id> {
+      const taskWithDeps: [
+          { taskId: dep-1', status: TaskStatusType.COMPLETED },
+          { taskId: dep-2', status: TaskStatusType.PENDING }
+        ]
+      };
+
+      (redisServiceMock as any).getTask.mockImplementation((id)  = {
+        ...mockTask,
+        dependencies> {
+        if(id === 'dep-1'): void {
+          return Promise.resolve({ ...mockTask, id: dep-1', status: TaskStatusType.COMPLETED });
+        }
+        return Promise.resolve({ ...mockTask, id: dep-2', status: TaskStatusType.PENDING });
+      });
+
+      await expect(taskSchedulerService.schedule(taskWithDeps))
+        .rejects
+        .toThrow('TaskDependencyError');
+    });
+  });
+
+  describe('optimize', () => {
+    it('should optimize pending tasks when slots are available', async (): Promise<void> {) => {
+      (redisServiceMock as any).getRunningTaskIds.mockResolvedValue(['task-1']);
+      (redisServiceMock as any).getNextPendingTasks.mockResolvedValue([
+        { id: task-2', priority: TaskPriorityType.HIGH } as Task,
+        { id: task-3', priority: TaskPriorityType.MEDIUM } as Task
+      ]);
+
+      await taskSchedulerService.optimize();
+
+      expect(redisServiceMock.scheduleTaskOptimization).toHaveBeenCalled();
+    });
+
+    it('should not optimize when no slots are available', async (): Promise<void> {) => {
+      (redisServiceMock as any).getRunningTaskIds.mockResolvedValue(
+        Array(10).fill(0).map((_, i) => `task-${i}`)
+      );
+
+      await taskSchedulerService.optimize();
+
+      expect(redisServiceMock.scheduleTaskOptimization).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('cancel', () => {
+    it('should cancel a task successfully', async (): Promise<void> {) => {
+      (redisServiceMock as any).getTask.mockResolvedValue({
+        id: task-123',
+        status: TaskStatusType.PENDING
+      } as Task);
+      (redisServiceMock as any).cancelTask.mockResolvedValue(undefined);
+
+      await taskSchedulerService.cancel('task-123');
+
+      expect(redisServiceMock.cancelTask).toHaveBeenCalledWith('task-123');
+    });
+
+    it('should throw TaskStateError for non-existent task', async (): Promise<void> {) => {
+      (redisServiceMock as any).getTask.mockResolvedValue(null);
+
+      await expect(taskSchedulerService.cancel('non-existent'))
+        .rejects
+        .toThrow('TaskStateError');
+    });
+  });
+});
+export {};

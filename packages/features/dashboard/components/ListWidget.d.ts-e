@@ -1,0 +1,26 @@
+import React from 'react';
+interface ListItem {
+    id: string;
+    title: string;
+    subtitle?: string;
+    icon?: (React as any).ReactNode;
+    status?: {
+        type: 'info' | 'success' | 'warning' | 'error';
+        text: string;
+    };
+    timestamp?: Date;
+    action?: {
+        label: string;
+        onClick: () => void;
+    };
+}
+interface ListWidgetProps {
+    data: ListItem[];
+    title: string;
+    description?: string;
+    loading?: boolean;
+    error?: string;
+    className?: string;
+}
+export declare const ListWidget: (React as any).FC<ListWidgetProps>;
+export {};

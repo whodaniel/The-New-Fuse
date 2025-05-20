@@ -1,0 +1,80 @@
+import { Injectable } from '@nestjs/common';
+import { YoutubeService } from './services/youtube.service';
+import { TranscriptProcessor } from './transcript/transcript.processor';
+import { Logger } from '../../utils/src/logger';
+import { VideoMetadata } from '@the-new-fuse/types';
+
+@Injectable()
+export class YoutubeIntegrator {
+  private readonly logger: Logger;
+  private readonly youtubeService: YoutubeService;
+  private readonly transcriptProcessor: TranscriptProcessor;
+
+  constructor(
+    youtubeService: YoutubeService,
+    transcriptProcessor: TranscriptProcessor
+  ) {
+    this.youtubeService = youtubeService;
+    this.transcriptProcessor = transcriptProcessor;
+    this.logger = new Logger(YoutubeIntegrator.name);
+  }
+
+  async processVideo(): Promise<void> (videoId: string): Promise<void> {
+    try {
+      const transcript = await this.youtubeService.getTranscript(videoId);
+      await this.transcriptProcessor.process(transcript);
+    } catch (error) {
+      this.logger.error('Error processing YouTube video', error);
+      throw error;
+    }
+  }
+
+  async getVideoMetadata(): Promise<void> (videoId: string): Promise<VideoMetadata> {
+    try {
+      const data = await this.youtubeService.getVideoMetadata(videoId);
+      return {
+        thumbnails: {
+          default: data.thumbnails.default.url,
+          medium: data.thumbnails.medium.url,
+          high: data.thumbnails.high.url
+        },
+        publishedAt: data.publishedAt.toISOString(),
+        channelId: data.channelId,
+        channelTitle: data.channelTitle,
+        tags: data.tags || [],
+        duration: String(data.duration),
+        viewCount: data.viewCount || 0,
+        likeCount: data.likeCount || 0
+      };
+    } catch(error: unknown) {
+      this.logger.error('Error fetching video metadata:', error);
+      throw error;
+    }
+  }
+
+  async searchVideos(): Promise<void> (query: string): Promise<VideoMetadata[]> {
+    try {
+      const results = await this.youtubeService.searchVideos(query);
+      return results.map(data => ({
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        thumbnails: {
+          default: data.thumbnails.default.url,
+          medium: data.thumbnails.medium.url,
+          high: data.thumbnails.high.url
+        },
+        publishedAt: data.publishedAt.toISOString(),
+        channelId: data.channelId,
+        channelTitle: data.channelTitle,
+        tags: data.tags || [],
+        duration: String(data.duration),
+        viewCount: data.viewCount || 0,
+        likeCount: data.likeCount || 0
+      }));
+    } catch(error: unknown) {
+      this.logger.error('Error searching videos:', error);
+      throw error;
+    }
+  }
+}

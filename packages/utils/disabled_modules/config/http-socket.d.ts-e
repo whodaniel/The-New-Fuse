@@ -1,0 +1,11 @@
+import { Socket } from '(socket as any).io';
+import { AIbitat } from '../types';
+export interface SocketHandler {
+    (socket: Socket, aibitat: AIbitat): void;
+}
+export interface ErrorHandler {
+    (error: Error, aibitat: AIbitat): void;
+}
+export interface MessageHandler {
+    (messageText: string, socket: Socket): void;
+}

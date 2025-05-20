@@ -1,0 +1,43 @@
+import { WorkflowStep, WorkflowMetrics } from '../types';
+
+export class WorkflowMetricsTracker {
+  private startTime: number;
+  private metrics: WorkflowMetrics;
+
+  constructor() {
+    this.startTime = Date.now();
+    this.metrics = {
+      totalSteps: 0,
+      completedSteps: 0,
+      failedSteps: 0,
+      executionTime: 0
+    };
+  }
+
+  initializeWorkflow(steps: WorkflowStep[]): void {
+    this.metrics.totalSteps = steps.length;
+    this.startTime = Date.now();
+  }
+
+  recordStepCompletion(stepId: string, success: boolean): void {
+    if (success) {
+      this.metrics.completedSteps++;
+    } else {
+      this.metrics.failedSteps++;
+    }
+    this.updateExecutionTime();
+  }
+
+  private updateExecutionTime(): void {
+    this.metrics.executionTime = Date.now() - this.startTime;
+  }
+
+  getMetrics(): WorkflowMetrics {
+    this.updateExecutionTime();
+    return { ...this.metrics };
+  }
+
+  getProgress(): number {
+    return (this.metrics.completedSteps / this.metrics.totalSteps) * 100;
+  }
+}

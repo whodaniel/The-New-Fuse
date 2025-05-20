@@ -1,0 +1,75 @@
+import React, { FC } from "react";
+import { Grid, Card, Typography, Button } from '@mui/material';
+import { Feature, FeatureStatus, FeatureService } from '@the-new-fuse/types';
+import FeatureSuggestionList from '@the-new-fuse/FeatureSuggestionList';
+import KanbanBoard from '@the-new-fuse/KanbanBoard';
+
+interface FeatureManagementViewProps {
+  featureService: FeatureService;
+  initialFeatures?: Feature[];
+}
+
+const FeatureManagementView: FC<FeatureManagementViewProps> = ({
+  featureService,
+  initialFeatures = []
+}) => {
+  const [features, setFeatures] = useState<Feature[]>(initialFeatures);
+  const [selectedFeature, setSelectedFeature] = useState<Feature | null>(null);
+
+  const handleStatusChange: string, newStatus: FeatureStatus)  = async(featureId> {
+    try {
+      const updatedFeature: f): unknown) {
+      console.error('Failed to update feature status:', error): Feature) => {
+    setSelectedFeature(feature): Omit<Feature, 'id' | 'status'>)  = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (featureData> {
+    try {
+      const newFeature: FeatureStatus.PROPOSED
+      });
+      setFeatures(prev  = await featureService.createFeature({
+        ...featureData,
+        status> [...prev, newFeature]): unknown) {
+      console.error('Failed to create feature:', error);
+    }
+  };
+
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Typography variant="h4" gutterBottom>
+          Feature Management
+        </Typography>
+      </Grid>
+
+      <Grid item xs={12} md={4}>
+        <Card>
+          <FeatureSuggestionList
+            features={features.filter(f => f.status === FeatureStatus.PROPOSED)}
+            onFeatureSelect={handleFeatureSelect}
+            onCreateFeature={handleCreateFeature}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12} md={8}>
+        <Card>
+          <KanbanBoard
+            items={features}
+            onStatusChange={handleStatusChange}
+            selectedItem={selectedFeature}
+          />
+        </Card>
+      </Grid>
+
+      <Grid item xs={12}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => featureService.refreshFeatures().then(setFeatures)}
+        >
+          Refresh Features
+        </Button>
+      </Grid>
+    </Grid>
+  );
+};
+
+export default FeatureManagementView;

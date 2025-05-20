@@ -1,0 +1,96 @@
+import { WorkflowState, WorkflowStep, WorkflowContext } from '../types';
+
+export class WorkflowPersistence {
+  private storage: Storage;
+  private readonly WORKFLOW_KEY_PREFIX = 'workflow:';
+
+  constructor(storage: Storage = localStorage) {
+    this.storage = storage;
+  }
+
+  async saveWorkflowState(): Promise<void> (
+    workflowId: string,
+    state: WorkflowState
+  ): Promise<void> {
+    const key = this.getWorkflowKey(workflowId);
+    await this.storage.setItem(key, JSON.stringify({
+      ...state,
+      lastUpdated: new Date().toISOString()
+    }));
+  }
+
+  async getWorkflowState(): Promise<void> (workflowId: string): Promise<WorkflowState | null> {
+    const key = this.getWorkflowKey(workflowId);
+    const data = await this.storage.getItem(key);
+    return data ? JSON.parse(data) : null;
+  }
+
+  async saveCheckpoint(): Promise<void> (
+    workflowId: string,
+    step: WorkflowStep,
+    context: WorkflowContext
+  ): Promise<void> {
+    const checkpointKey = this.getCheckpointKey(workflowId, step.id);
+    await this.storage.setItem(checkpointKey, JSON.stringify({
+      step,
+      context,
+      timestamp: new Date().toISOString()
+    }));
+  }
+
+  async getLatestCheckpoint(): Promise<void> (
+    workflowId: string
+  ): Promise<{ step: WorkflowStep; context: WorkflowContext } | null> {
+    const checkpoints = await this.getAllCheckpoints(workflowId);
+    return checkpoints.length > 0 ? checkpoints[checkpoints.length - 1] : null;
+  }
+
+  async clearWorkflow(): Promise<void> (workflowId: string): Promise<void> {
+    const keys = await this.getAllWorkflowKeys(workflowId);
+    await Promise.all(keys.map(key => this.storage.removeItem(key)));
+  }
+
+  private getWorkflowKey(workflowId: string): string {
+    return `${this.WORKFLOW_KEY_PREFIX}${workflowId}`;
+  }
+
+  private getCheckpointKey(workflowId: string, stepId: string): string {
+    return `${this.getWorkflowKey(workflowId)}:checkpoint:${stepId}`;
+  }
+
+  private async getAllWorkflowKeys(): Promise<void> (workflowId: string): Promise<string[]> {
+    const prefix = this.getWorkflowKey(workflowId);
+    const keys = [];
+    for (let i = 0; i < this.storage.length; i++) {
+      const key = this.storage.key(i);
+      if (key?.startsWith(prefix)) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  }
+
+  private async getAllCheckpoints(): Promise<void> (
+    workflowId: string
+  ): Promise<Array<{ step: WorkflowStep; context: WorkflowContext }>> {
+    const checkpoints = [];
+    const keys = await this.getAllWorkflowKeys(workflowId);
+    
+    for (const key of keys) {
+      if (key.includes(':checkpoint:')) {
+        const data = await this.storage.getItem(key);
+        if (data) {
+          const checkpoint = JSON.parse(data);
+          checkpoints.push({
+            step: checkpoint.step,
+            context: checkpoint.context
+          });
+        }
+      }
+    }
+
+    return checkpoints.sort((a, b) => 
+      new Date(a.step.timestamp).getTime() - new Date(b.step.timestamp).getTime()
+    );
+  }
+}

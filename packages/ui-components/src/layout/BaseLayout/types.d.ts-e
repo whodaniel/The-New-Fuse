@@ -1,0 +1,30 @@
+import { ReactNode } from 'react';
+export interface BaseLayoutProps {
+    children: ReactNode;
+    className?: string;
+    showSidebar?: boolean;
+    showHeader?: boolean;
+    pageTitle?: string;
+    pageDescription?: string;
+    showNavigation?: boolean;
+    showCommandPalette?: boolean;
+    showToast?: boolean;
+}
+export interface HeaderProps {
+    className?: string;
+    showThemeToggle?: boolean;
+    showUserMenu?: boolean;
+    showNotifications?: boolean;
+}
+export interface SidebarProps {
+    className?: string;
+    setActiveView: (view: string) => void;
+    collapsible?: boolean;
+    defaultCollapsed?: boolean;
+}
+export interface NavigationItem {
+    label: string;
+    href: string;
+    icon?: ReactNode;
+    children?: NavigationItem[];
+}

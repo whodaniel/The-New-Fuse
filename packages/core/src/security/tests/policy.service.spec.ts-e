@@ -1,0 +1,290 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RedisService } from '../../services/redis.service';
+import { SecurityPolicyManager } from '../policy';
+import {
+  SecurityPolicy,
+  SecurityRule,
+  SecurityLevel,
+} from '../types';
+
+describe('SecurityPolicyManager', () => {
+  let service: SecurityPolicyManager;
+  let redisService: RedisService;
+  let configService: ConfigService;
+  let eventEmitter: EventEmitter2;
+
+  const mockRedisService: jest.fn(): jest.fn(),
+    del: jest.fn(),
+    keys: jest.fn(),
+  };
+
+  const mockConfigService: jest.fn(): jest.fn(),
+  };
+
+  beforeEach(async (): Promise<void> ()   = {
+    get {
+    get {
+    emit> {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        SecurityPolicyManager,
+        {
+          provide: RedisService,
+          useValue: mockRedisService,
+        },
+        {
+          provide: ConfigService,
+          useValue: mockConfigService,
+        },
+        {
+          provide: EventEmitter2,
+          useValue: mockEventEmitter,
+        },
+      ],
+    }).compile();
+
+    service = module.get<SecurityPolicyManager>(SecurityPolicyManager);
+    redisService = module.get<RedisService>(RedisService);
+    configService = module.get<ConfigService>(ConfigService);
+    eventEmitter = module.get<EventEmitter2>(EventEmitter2);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('createPolicy', () => {
+    it('should create a new policy', async (): Promise<void> () => {
+      const policyData: 'Test Policy',
+        description: 'Test policy description',
+        level: SecurityLevel.MEDIUM,
+        rules: [
+          {
+            id: 'rule1',
+            type: 'rate_limit',
+            condition: 'requests > 100',
+            action: 'block',
+            metadata: {
+              description: 'Rate limit rule',
+              priority: 1,
+              enabled: true,
+            },
+          },
+        ],
+      };
+
+      const policy: SecurityPolicy  = {
+        name await service.createPolicy(policyData);
+
+      expect(policy).toBeDefined();
+      expect(policy.id).toBeDefined();
+      expect(policy.name).toBe(policyData.name);
+      expect(policy.level).toBe(policyData.level);
+      expect(mockRedisService.set).toHaveBeenCalled();
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'policy.created',
+        expect.any(Object),
+      );
+    });
+  });
+
+  describe('updatePolicy', () => {
+    it('should update an existing policy', async (): Promise<void> () => {
+      const existingPolicy {
+        id: 'policy1',
+        name: 'Old Name',
+        description: 'Old description',
+        level: SecurityLevel.LOW,
+        rules: [],
+        metadata: {
+          createdAt: new Date(): new Date(),
+          version: '(1 as any).0.0',
+          enabled: true,
+        },
+      };
+
+      (mockRedisService as any).get.mockResolvedValue(JSON.stringify(existingPolicy));
+
+      const update: 'New Name',
+        level: SecurityLevel.HIGH,
+      };
+
+      const updatedPolicy: 'New Name' }),
+      ).rejects.toThrow();
+    });
+  });
+
+  describe('deletePolicy', ()  = {
+        name await service.updatePolicy(
+        existingPolicy.id,
+        update,
+      );
+
+      expect(updatedPolicy.name).toBe(update.name);
+      expect(updatedPolicy.level).toBe(update.level);
+      expect((updatedPolicy as any).metadata.version).toBe('(1 as any).0.1');
+      expect(mockRedisService.set).toHaveBeenCalled();
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'policy.updated',
+        expect.any(Object),
+      );
+    });
+
+    it('should throw error for non-existent policy', async (): Promise<void> () => {
+      (mockRedisService as any).get.mockResolvedValue(null);
+
+      await expect(
+        service.updatePolicy('non-existent', { name> {
+    it('should delete an existing policy', async (): Promise<void> () => {
+      const policy: SecurityPolicy = {
+        id: 'policy1',
+        name: 'Test Policy',
+        description: 'Test description',
+        level: SecurityLevel.LOW,
+        rules: [],
+        metadata: {
+          createdAt: new Date(): new Date(),
+          version: '(1 as any).0.0',
+          enabled: true,
+        },
+      };
+
+      (mockRedisService as any).get.mockResolvedValue(JSON.stringify(policy));
+
+      await service.deletePolicy(policy.id);
+
+      expect(mockRedisService.del).toHaveBeenCalledWith(`policy:$ {policy.id}`);
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'policy.deleted',
+        expect.any(Object),
+      );
+    });
+  });
+
+  describe('evaluatePolicy', () => {
+    it('should evaluate policy rules and return violations', async (): Promise<void> () => {
+      const policy: SecurityPolicy = {
+        id: 'policy1',
+        name: 'Test Policy',
+        description: 'Test description',
+        level: SecurityLevel.MEDIUM,
+        rules: [
+          {
+            id: 'rule1',
+            type: 'rate_limit',
+            condition: 'requests > 100',
+            action: 'block',
+            metadata: {
+              description: 'Rate limit rule',
+              priority: 1,
+              enabled: true,
+            },
+          },
+        ],
+        metadata: {
+          createdAt: new Date(): new Date(),
+          version: '(1 as any).0.0',
+          enabled: true,
+        },
+      };
+
+      (mockRedisService as any).get.mockResolvedValue(JSON.stringify(policy));
+
+      const context: 150,
+      };
+
+      const violations: SecurityPolicy  = {
+        requests await service.evaluatePolicy(policy.id, context);
+
+      expect(violations).toHaveLength(1);
+      expect(violations[0].type).toBe('rate_limit');
+      expect(violations[0].severity).toBe(SecurityLevel.MEDIUM);
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        'policy.violations',
+        expect.any(Object),
+      );
+    });
+
+    it('should not evaluate disabled policy', async (): Promise<void> () => {
+      const policy {
+        id: 'policy1',
+        name: 'Test Policy',
+        description: 'Test description',
+        level: SecurityLevel.MEDIUM,
+        rules: [
+          {
+            id: 'rule1',
+            type: 'rate_limit',
+            condition: 'requests > 100',
+            action: 'block',
+            metadata: {
+              description: 'Rate limit rule',
+              priority: 1,
+              enabled: true,
+            },
+          },
+        ],
+        metadata: {
+          createdAt: new Date(): new Date(),
+          version: '(1 as any).0.0',
+          enabled: false,
+        },
+      };
+
+      (mockRedisService as any).get.mockResolvedValue(JSON.stringify(policy));
+
+      const context: 150,
+      };
+
+      const violations: SecurityPolicy  = {
+        requests await service.evaluatePolicy(policy.id, context);
+
+      expect(violations).toHaveLength(0);
+    });
+
+    it('should handle rule evaluation errors', async (): Promise<void> () => {
+      const policy {
+        id: 'policy1',
+        name: 'Test Policy',
+        description: 'Test description',
+        level: SecurityLevel.MEDIUM,
+        rules: [
+          {
+            id: 'rule1',
+            type: 'rate_limit',
+            condition: 'invalid condition',
+            action: 'block',
+            metadata: {
+              description: 'Invalid rule',
+              priority: 1,
+              enabled: true,
+            },
+          },
+        ],
+        metadata: {
+          createdAt: new Date(): new Date(),
+          version: '(1 as any).0.0',
+          enabled: true,
+        },
+      };
+
+      (mockRedisService as any).get.mockResolvedValue(JSON.stringify(policy));
+
+      const context: 150,
+      };
+
+      const violations  = {
+        requests await service.evaluatePolicy(policy.id, context);
+
+      expect(violations).toHaveLength(0);
+      expect(mockEventEmitter.emit).toHaveBeenCalledWith(
+        '(rule as any).evaluation.error',
+        expect.any(Object),
+      );
+    });
+  });
+});
+
+export {};

@@ -1,0 +1,51 @@
+export interface Agent {
+  id: string;
+  name: string;
+  description: string;
+  type: AgentType;
+  capabilities: string[];
+  status: AgentStatus;
+  metadata: AgentMetadata;
+}
+
+export type AgentType = 'assistant' | 'worker' | 'supervisor' | 'specialist';
+
+export type AgentStatus = 'idle' | 'busy' | 'error' | 'offline';
+
+export interface AgentMetadata {
+  createdAt: Date;
+  updatedAt: Date;
+  lastActive?: Date;
+  version: string;
+  config: Record<string, unknown>;
+}
+
+export interface AgentMetrics {
+  tasksCompleted: number;
+  averageResponseTime: number;
+  successRate: number;
+  errorRate: number;
+  uptime: number;
+}
+
+export interface AgentCreationData {
+  name: string;
+  description: string;
+  type: AgentType;
+  capabilities: string[];
+  config: Record<string, unknown>;
+}
+
+export interface AgentTrainingData {
+  agentId: string;
+  dataset: unknown[];
+  parameters: Record<string, unknown>;
+  validationSet?: unknown[];
+}
+
+export interface AgentOptimizationConfig {
+  metrics: string[];
+  targets: Record<string, number>;
+  constraints: Record<string, unknown>;
+  strategy: 'performance' | 'efficiency' | 'balanced';
+}

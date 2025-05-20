@@ -1,0 +1,20 @@
+import { WebSocketConfig, SubscriptionConfig } from './types';
+export declare class WebSocketManager {
+    private ws;
+    private config;
+    private subscriptions;
+    private reconnectTimer;
+    private reconnectAttempt;
+    constructor(config: WebSocketConfig);
+    private connect;
+    private handleReconnect;
+    subscribe(config: SubscriptionConfig): () => void;
+    private notifySubscribers;
+    send(data: unknown): void;
+    close(): void;
+    getStatus(): {
+        connected: boolean;
+        reconnecting: boolean;
+        reconnectAttempt: number;
+    };
+}

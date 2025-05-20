@@ -1,0 +1,55 @@
+import { TaskStatus, TaskPriority, TaskType } from '../../../task/types';
+import { WorkflowStep, WorkflowExecutionResult } from '../types';
+
+export class WorkflowTaskQueue {
+  private static instance: WorkflowTaskQueue;
+  private taskService: unknown; // Replace with your actual task service type
+
+  private constructor() {
+    // Initialize task service
+  }
+
+  static getInstance(): WorkflowTaskQueue {
+    if (!WorkflowTaskQueue.instance) {
+      WorkflowTaskQueue.instance = new WorkflowTaskQueue();
+    }
+    return WorkflowTaskQueue.instance;
+  }
+
+  async enqueueWorkflowStep(): Promise<void> (
+    workflowId: string,
+    step: WorkflowStep
+  ): Promise<string> {
+    const task = {
+      type: TaskType.WORKFLOW,
+      priority: TaskPriority.HIGH,
+      status: TaskStatus.PENDING,
+      metadata: {
+        workflowId,
+        stepId: step.id,
+        stepType: step.type
+      },
+      input: {
+        action: step.action,
+        parameters: step.parameters
+      },
+      dependencies: this.getStepDependencies(step)
+    };
+
+    return await this.taskService.createTask(task);
+  }
+
+  async getStepStatus(): Promise<void> (taskId: string): Promise<WorkflowExecutionResult> {
+    const task = await this.taskService.getTask(taskId);
+    
+    return {
+      success: task.status === TaskStatus.COMPLETED,
+      error: task.error,
+      output: task.output
+    };
+  }
+
+  private getStepDependencies(step: WorkflowStep) {
+    return step.metadata?.dependencies || [];
+  }
+}

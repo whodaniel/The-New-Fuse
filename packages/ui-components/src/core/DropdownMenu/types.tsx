@@ -1,0 +1,41 @@
+import { ComponentProps } from "react";
+import { VariantProps } from "class-variance-authority";
+import { dropdownMenuVariants } from ".";
+
+export type DropdownMenuVariants = VariantProps<typeof dropdownMenuVariants>;
+
+export interface DropdownMenuProps {
+  trigger: React.ReactNode;
+  children: React.ReactNode;
+  align?: "start" | "center" | "end";
+  side?: "top" | "right" | "bottom" | "left";
+  sideOffset?: number;
+  alignOffset?: number;
+  className?: string;
+}
+
+export interface DropdownMenuItemProps extends ComponentProps<"div"> {
+  inset?: boolean;
+  disabled?: boolean;
+}
+
+export interface DropdownMenuCheckboxItemProps extends DropdownMenuItemProps {
+  checked?: boolean;
+  onCheckedChange?: (checked: boolean) => void;
+}
+
+export interface DropdownMenuRadioItemProps extends DropdownMenuItemProps {
+  value: string;
+}
+
+export interface DropdownMenuRadioGroupProps {
+  value?: string;
+  onValueChange?: (value: string) => void;
+  children: React.ReactNode;
+}
+
+export interface DropdownMenuLabelProps extends ComponentProps<"div"> {
+  inset?: boolean;
+}
+
+export interface DropdownMenuSeparatorProps extends ComponentProps<"div"> {}

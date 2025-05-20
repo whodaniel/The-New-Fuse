@@ -1,0 +1,56 @@
+import { UserAction, DashboardMetrics, DashboardPerformanceMetrics, UserMetrics } from './types';
+export declare class AnalyticsManager {
+    private actions;
+    private dashboardMetrics;
+    private performanceMetrics;
+    private userMetrics;
+    private storage;
+    private storageKey;
+    constructor(storage?: Storage, storageKey?: string);
+    trackAction(action: Omit<UserAction, 'id' | 'timestamp'>): void;
+    getDashboardMetrics(dashboardId: string, period: {
+        start: Date;
+        end: Date;
+    }): DashboardMetrics;
+    trackPerformance(metrics: Omit<DashboardPerformanceMetrics, 'id'>): void;
+    getPerformanceMetrics(dashboardId: string, period?: {
+        start?: Date;
+        end?: Date;
+    }): DashboardPerformanceMetrics[];
+    getUserMetrics(userId: string, period: {
+        start: Date;
+        end: Date;
+    }): UserMetrics;
+    generateDashboardReport(dashboardId: string, period: {
+        start: Date;
+        end: Date;
+    }): {
+        metrics: DashboardMetrics;
+        performance: DashboardPerformanceMetrics[];
+        topUsers: Array<{
+            userId: string;
+            metrics: UserMetrics;
+        }>;
+    };
+    generateUserReport(userId: string, period: {
+        start: Date;
+        end: Date;
+    }):  {
+        metrics: UserMetrics;
+        actions: UserAction[];
+        topDashboards: Array<{
+            dashboardId: string;
+            views: number;
+            interactions: number;
+        }>;
+    };
+    trackExperimentMetrics(experimentId: string, variantId: string, metrics: Record<string, number>): Promise<void>;
+    getExperimentMetrics(experimentId: string): Promise<any>;
+    private updateMetrics: (action: UserAction) => void;
+    private updateDashboardMetrics: (metrics: DashboardMetrics, action: UserAction) => void;
+    private updateUserMetrics: (metrics: UserMetrics, action: UserAction) => void;
+    private createDashboardMetrics: (dashboardId: string) => DashboardMetrics;
+    private createUserMetrics: (userId: string) => UserMetrics;
+    private loadState: () => void;
+    private saveState: () => void;
+}

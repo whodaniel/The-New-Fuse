@@ -1,0 +1,74 @@
+/**
+ * Vendor CSS for The New Fuse - AI Bridge
+ * This file contains CSS from third-party libraries
+ */
+
+/* Font Awesome */
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  font-style: normal;
+  font-weight: 900;
+  font-display: block;
+  src: url(chrome-extension://__MSG_@@extension_id__/icons/fa-solid-900.woff2) format('woff2');
+}
+
+.fas {
+  font-family: 'Font Awesome 6 Free';
+  font-weight: 900;
+}
+
+/* Icon definitions */
+.fa-moon:before {
+  content: "\f186";
+}
+.fa-sun:before {
+  content: "\f185";
+}
+.fa-cog:before {
+  content: "\f013";
+}
+.fa-arrow-left:before {
+  content: "\f060";
+}
+.fa-play:before {
+  content: "\f04b";
+}
+.fa-eye:before {
+  content: "\f06e";
+}
+.fa-save:before {
+  content: "\f0c7";
+}
+.fa-window-maximize:before {
+  content: "\f2d0";
+}
+.fa-chart-line:before {
+  content: "\f201";
+}
+.fa-microscope:before {
+  content: "\f610";
+}
+.fa-code:before {
+  content: "\f121";
+}
+.fa-robot:before {
+  content: "\f544";
+}
+.fa-folder-open:before {
+  content: "\f07c";
+}
+.fa-terminal:before {
+  content: "\f120";
+}
+.fa-bug:before {
+  content: "\f188";
+}
+.fa-upload:before {
+  content: "\f093";
+}
+.fa-microphone:before {
+  content: "\f130";
+}
+.fa-paper-plane:before {
+  content: "\f1d8";
+}

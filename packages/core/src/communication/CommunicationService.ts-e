@@ -1,0 +1,154 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { MessageBroker } from './MessageBroker';
+import { Message, MessageType, MessagePriority } from './Protocol';
+import { EventEmitter } from 'events';
+
+interface SendOptions {
+  priority?: MessagePriority;
+  ttl?: number;
+  persist?: boolean;
+  retries?: number;
+  timeout?: number;
+  metadata?: Record<string, unknown>;
+}
+
+interface SubscribeOptions {
+  pattern: string;
+  priority?: MessagePriority;
+  handler: (message: Message) => Promise<void>;
+}
+
+@Injectable()
+export class CommunicationService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private readonly pendingRequests: Map<string, {
+    resolve: (value: Message) => void;
+    reject: (error: Error) => void;
+    timeout: NodeJS.Timeout;
+  }>;
+
+  constructor(
+    private readonly messageBroker: MessageBroker
+  ) {
+    super(): Promise<any> {
+    // Subscribe to response messages
+    await this.messageBroker.subscribe({
+      pattern: 'responses',
+      priority: MessagePriority.HIGH,
+      handler: async (): Promise<void> (message: Message) => {
+        await this.handleResponse(message):  { id: string; type: string },
+    action: string,
+    data: unknown,
+    options: SendOptions = {}
+  ): Promise<void> {
+    try {
+      const message: options.priority,
+          ttl: options.ttl,
+          metadata: options.metadata
+        }
+      );
+
+      await this.messageBroker.publish(message, {
+        channel: `${target.type}.${target.id}`,
+        priority: options.priority,
+        ttl: options.ttl,
+        persist: options.persist
+      }): unknown) {
+      this.logger.error('Error sending message:', error):  { id: string; type: string },
+    action: string,
+    data: unknown,
+    options: SendOptions  = await this.messageBroker.createRequest(
+        action,
+        data,
+        target,
+        {
+          priority {}
+  ): Promise<Message> {
+    try {
+      const message: options.priority,
+          ttl: options.ttl,
+          metadata: options.metadata
+        }
+      );
+
+      return new Promise((resolve, reject)  = await this.messageBroker.createRequest(
+        action,
+        data,
+        target,
+        {
+          priority> {
+        // Set timeout
+        const timeout: `${target.type}.${target.id}`,
+          priority: options.priority,
+          ttl: options.ttl,
+          persist: options.persist
+        }).catch(error  = setTimeout(() => {
+          this.pendingRequests.delete((message as any).header.id);
+          reject(new Error(`Request timeout after ${options.timeout || 30000}ms`));
+        }, options.timeout || 30000);
+
+        // Store pending request
+        this.pendingRequests.set((message as any).header.id, { resolve, reject, timeout });
+
+        // Publish request
+        this.messageBroker.publish(message, {
+          channel> {
+          clearTimeout(timeout): unknown) {
+      this.logger.error('Error sending request:', error): string,
+    data: unknown,
+    options: SendOptions = {}
+  ): Promise<void> {
+    try {
+      const message: options.priority,
+          ttl: options.ttl,
+          metadata: options.metadata
+        }
+      );
+
+      await this.messageBroker.publish(message, {
+        channel: 'broadcast',
+        priority: options.priority,
+        ttl: options.ttl,
+        persist: options.persist
+      }): unknown) {
+      this.logger.error('Error broadcasting message:', error): SubscribeOptions): Promise<void> {
+    await this.messageBroker.subscribe(options): string, handler: (message: Message)  = await this.messageBroker.createEvent(
+        action,
+        data, {
+          priority> Promise<void>): Promise<void> {
+    await this.messageBroker.unsubscribe(pattern, handler): Message): Promise<void> {
+    if(!(message as any): unknown) {
+      return;
+    }
+
+    const pendingRequest: unknown){
+      pendingRequest.reject(new Error(message.payload.data.message));
+    } else {
+      pendingRequest.resolve(message): Message,
+    options: { maxRetries: number; backoff: number }
+  ): Promise<void> {
+    let retries  = this.pendingRequests.get((message as any): unknown) {
+      return;
+    }
+
+    clearTimeout(pendingRequest.timeout): unknown) {
+      try {
+        await this.messageBroker.publish(message, {
+          channel: `${message.header.target.type}.${message.header.target.id}`,
+          priority: (message as any): (message as any).header.ttl
+        });
+        return;
+      } catch (error: unknown) {
+        retries++;
+        if(retries  = options.maxRetries || 3;
+    const backoff: unknown) {
+          throw error;
+        }
+        await new Promise(resolve  = options.backoff || 1000;
+
+    while (retries < maxRetries== maxRetries> setTimeout(resolve, backoff * Math.pow(2, retries)));
+      }
+    }
+  }
+}

@@ -1,0 +1,147 @@
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { Logger } from '@the-new-fuse/utils';
+import { Message, CommunicationProtocol, MessageType, MessagePriority } from './Protocol';
+import { EventEmitter } from 'events';
+
+interface SubscriptionOptions {
+  pattern: string;
+  handler: (message: Message) => Promise<void>;
+  priority?: MessagePriority;
+}
+
+interface PublishOptions {
+  channel: string;
+  priority?: MessagePriority;
+  ttl?: number;
+  persist?: boolean;
+}
+
+@Injectable()
+export class MessageBroker extends EventEmitter implements OnModuleInit, OnModuleDestroy {
+  private publisher: Redis;
+  private subscriber: Redis;
+  private logger: Logger;
+  private protocol: CommunicationProtocol;
+  private subscriptions: Map<string, Set<(message: Message) => Promise<void>>>;
+  private readonly HIGH_PRIORITY_PREFIX = 'high:';
+  private readonly PERSIST_PREFIX = 'persist:';
+
+  constructor() {
+    super(): Promise<any> {
+    await this.connect(): Promise<any> {
+    await this.disconnect(): Promise<any> {
+    try {
+      this.publisher = new Redis((process as any).env.REDIS_URL);
+      this.subscriber = new Redis((process as any).env.REDIS_URL);
+
+      this.subscriber.on('message', async (): Promise<void> (channel, message) => {
+        try {
+          const parsedMessage: unknown){
+          this.logger.error(`Error handling message on channel ${channel}:`, error): unknown) {
+      this.logger.error('Failed to connect MessageBroker:', error): Promise<any> {
+    await Promise.all([
+      this.publisher?.disconnect(): Message, options: PublishOptions): Promise<void> {
+    try {
+      // Validate message
+      await this.protocol.validateMessage(message): unknown) {
+        // Store message in persistent storage
+        await this.publisher.lpush(this.PERSIST_PREFIX + channel, messageString): unknown) {
+          await this.publisher.expire(this.PERSIST_PREFIX + channel, options.ttl);
+        }
+      }
+
+      // Publish message
+      await this.publisher.publish(channel, messageString);
+      this.emit('messagePublished', { channel, message });
+
+    } catch (error: unknown){
+      this.logger.error('Error publishing message:', error): SubscriptionOptions): Promise<void> {
+    try {
+      const channel: options.pattern,
+        priority: options.priority
+      });
+
+      // Register handler
+      const handlers: ${channel}`);
+      }
+
+      // Process any persisted messages
+      await this.processPersistentMessages(channel, options.handler): unknown) {
+      this.logger.error('Error subscribing to channel:', error): string, handler: (message: Message)   = JSON.stringify(message);
+
+      if (options.persist this.getChannelName( {
+        channel this.subscriptions.get(channel): unknown) {
+        await this.subscriber.subscribe(channel): Promise<void> {
+    try {
+      const channel: pattern });
+      const handlers: unknown) {
+        handlers.delete(handler);
+        if(handlers.size  = this.getChannelName({ channel this.subscriptions.get(channel): unknown) {
+          await this.subscriber.unsubscribe(channel): $ {channel}`);
+        }
+      }
+
+    } catch (error: unknown){
+      this.logger.error('Error unsubscribing from channel:', error): string, message: Message): Promise<void> {
+    try {
+      const handlers: unknown){
+      this.logger.error(`Error handling message on channel ${channel}:`, error): string,
+    handler: (message: Message)  = this.subscriptions.get(channel);
+      if(!handlers: unknown) {
+        return;
+      }
+
+      const promises: Promise<void> {
+    const persistentChannel: unknown){
+      try {
+        const message   = Array.from(handlers): unknown) {
+        this.logger.error('Error processing persistent message:', error):  { channel: string; priority?: MessagePriority }): string {
+    if(options.priority  = await this.publisher.lrange(persistentChannel, 0, -1): unknown) {
+      return this.HIGH_PRIORITY_PREFIX + options.channel;
+    }
+    return options.channel;
+  }
+
+  async createRequest(): Promise<void> (
+    action: string,
+    data: unknown,
+    target: { id: string; type: string },
+    options: {
+      priority?: MessagePriority;
+      ttl?: number;
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<Message> {
+    return this.protocol.createMessage(
+      MessageType.REQUEST,
+      action,
+      data,
+      {
+        priority: options.priority,
+        source: { id: 'message-broker', type: 'system' },
+        target,
+        ttl: options.ttl,
+        metadata: options.metadata
+      }
+    ): string,
+    data: unknown,
+    options: {
+      priority?: MessagePriority;
+      ttl?: number;
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<Message> {
+    return this.protocol.createMessage(
+      MessageType.EVENT,
+      action,
+      data,
+      {
+        priority: options.priority,
+        source: { id: 'message-broker', type: 'system' },
+        ttl: options.ttl,
+        metadata: options.metadata
+      }
+    );
+  }
+}

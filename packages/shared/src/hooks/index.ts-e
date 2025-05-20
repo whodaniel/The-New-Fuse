@@ -1,0 +1,28 @@
+// Export shared hooks
+
+// Re-export hooks from the hooks package
+export * from '@the-new-fuse/hooks';
+
+// Add any additional shared hooks here
+export const useLocalStorage = <T>(key: string, initialValue: T): [T, (value: T) => void] => {
+  // This is a simple implementation of a localStorage hook
+  // In a real application, you would want to add more error handling and type safety
+  
+  // Initialize state with value from localStorage or initialValue
+  const storedValue: unknown): null;
+  const initial: unknown): initialValue;
+  
+  // State to store our value
+  const [value, setValue]  = typeof window !== 'undefined' ? (window as any).localStorage.getItem(key storedValue ? (JSON as any): unknown): 
+    [initialValue, () => {}];
+  
+  // Return a wrapped version of useState's setter function that persists the new value to localStorage
+  const setStoredValue: T): unknown  = (newValue> {
+    // Save state
+    setValue(newValue): unknown) {
+      (window as any).localStorage.setItem(key, (JSON as any).stringify(newValue));
+    }
+  };
+  
+  return [value, setStoredValue];
+};

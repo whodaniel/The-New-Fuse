@@ -1,0 +1,7 @@
+import React from 'react';
+interface PreLoaderProps {
+    size?: string;
+}
+export declare function PreLoader({ size }: PreLoaderProps): React.JSX.Element;
+export declare function FullScreenLoader(): React.JSX.Element;
+export {};

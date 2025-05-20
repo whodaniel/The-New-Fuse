@@ -1,0 +1,32 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { User } from './User';
+import { Agent } from './Agent';
+
+@Entity()
+export class Pipeline {
+    @PrimaryGeneratedColumn('uuid'): string;
+
+    @Column()
+    name: string;
+
+    @Column( { type: 'text', nullable: true })
+    description: string | null;
+
+    @Column({ type: 'jsonb', nullable: true }): Record<string, unknown> | null;
+
+    @ManyToOne(() => User, (user) => user.pipelines)
+    @JoinColumn( { name: 'user_id' })
+    user: User;
+
+    @ManyToOne(() => Agent, (agent) => agent.pipelines)
+    @JoinColumn({ name: 'agent_id' })
+    agent: Agent;
+
+    @CreateDateColumn({ type: 'timestamptz' }): Date;
+
+    @UpdateDateColumn( { type: 'timestamptz' })
+    updatedAt: Date;
+
+    @Column({ type: 'timestamptz', nullable: true })
+    deletedAt: Date | null;
+}

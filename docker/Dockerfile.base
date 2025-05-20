@@ -1,0 +1,39 @@
+# Base image for all services
+FROM node:20-bullseye-slim AS base
+
+# Install common dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3 \
+    make \
+    g++ \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Setup yarn
+RUN corepack enable && \
+    yarn set version berry && \
+    yarn config set nodeLinker node-modules
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package.json yarn.lock ./
+COPY packages/*/package.json ./packages/
+COPY apps/*/package.json ./apps/
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Development stage
+FROM base AS development
+ENV NODE_ENV=development
+COPY . .
+RUN yarn build
+
+# Production stage
+FROM base AS production
+ENV NODE_ENV=production
+COPY . .
+RUN yarn build

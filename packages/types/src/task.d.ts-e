@@ -1,0 +1,116 @@
+import { TaskPriority } from './core/enums';
+export declare enum TaskStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed",
+    CANCELLED = "cancelled"
+}
+export declare enum TaskType {
+    ROUTINE = "routine",
+    ONETIME = "onetime",
+    RECURRING = "recurring",
+    DEPENDENT = "dependent",
+    BACKGROUND = "background"
+}
+export interface TaskMetadata {
+    description?: string;
+    input?: Record<string, unknown>;
+    output?: Record<string, unknown>;
+    dependencies?: TaskDependency[];
+    scheduledAt?: Date;
+    startedAt?: Date;
+    completedAt?: Date;
+    error?: string;
+    retryCount?: number;
+    maxRetries?: number;
+    timeout?: number;
+    tags?: string[];
+    duration: string;
+    viewCount: number;
+    likeCount: number;
+}
+export interface TaskDependency {
+    taskId: string;
+    type: 'REQUIRED' | 'OPTIONAL';
+}
+export interface Task {
+    id: string;
+    title: string;
+    description?: string;
+    status: TaskStatus;
+    priority: TaskPriority;
+    type: typeof TaskType;
+    metadata: TaskMetadata;
+    dependencies?: TaskDependency[];
+    userId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface CreateTaskDto {
+    title: string;
+    description?: string;
+    priority?: TaskPriority;
+    type?: typeof TaskType;
+    dueDate?: Date;
+    assigneeId?: string;
+    dependencies?: string[];
+    metadata?: TaskMetadata;
+}
+export interface UpdateTaskDto {
+    status?: TaskStatus;
+    completedAt?: Date | null;
+    error?: string | null;
+    [key: string]: unknown;
+}
+export declare enum MessageType {
+    INFO = "INFO",
+    WARNING = "WARNING",
+    ERROR = "ERROR"
+}
+export interface TaskService {
+    process(data: Record<string, unknown>): Promise<void>;
+    create(task: CreateTaskDto): Promise<Task>;
+    update(id: string, data: Partial<Task>): Promise<Task>;
+    delete(id: string): Promise<void>;
+    findById(id: string): Promise<Task | null>;
+    findAll(query?: TaskQuery): Promise<Task[]>;
+    execute(id: string): Promise<TaskResult>;
+    cancel(id: string): Promise<void>;
+    retry(id: string): Promise<void>;
+}
+export interface TaskQuery {
+    status?: TaskStatus;
+    type?: typeof TaskType;
+    priority?: string;
+    userId?: string;
+    startDate?: Date;
+    endDate?: Date;
+}
+export interface TaskResult {
+    id: string;
+    taskId: string;
+    status: TaskStatus;
+    output?: Record<string, unknown>;
+    error?: string;
+    metrics: {
+        duration: number;
+        resourceUsage: {
+            cpuUsage: number;
+            memoryUsage: number;
+        };
+    };
+    timestamp: Date;
+}
+export interface TaskFilter {
+    status?: TaskStatus[];
+    priority?: TaskPriority[];
+    type?: typeof TaskType[];
+    assigneeId?: string;
+    fromDate?: Date;
+    toDate?: Date;
+}
+export type TaskStatusType = TaskStatus;
+export type TaskPriorityType = TaskPriority;
+export type TaskTypeValue = keyof typeof TaskType;
+//# sourceMappingURL=task.d.ts.map

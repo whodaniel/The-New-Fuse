@@ -1,0 +1,12 @@
+import { NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import { SecurityService } from '../SecurityService';
+export declare class SecurityMiddleware implements NestMiddleware {
+    private readonly securityService;
+    private logger;
+    constructor(securityService: SecurityService);
+    use(req: Request, res: Response, next: NextFunction): Promise<Response<any, Record<string, any>> | undefined>;
+    private extractToken;
+    private getResourceFromRequest;
+    private getActionFromRequest;
+}

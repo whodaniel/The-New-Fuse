@@ -1,0 +1,2 @@
+export declare function formatDate(date: Date | string | number): string;
+export declare function parseDate(dateStr: string): Date;

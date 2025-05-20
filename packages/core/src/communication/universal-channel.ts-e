@@ -1,0 +1,90 @@
+import * as vscode from 'vscode';
+
+interface Participant {
+    id: string;
+    type: 'user' | 'ai_agent';
+    capabilities: string[];
+}
+
+export class UniversalChannel {
+    private static instance: UniversalChannel;
+    private participants: Map<string, Participant> = new Map();
+    private eventEmitter = new vscode.EventEmitter<any>();
+
+    private constructor() {
+        this.initialize();
+    }
+
+    public static getInstance(): UniversalChannel {
+        if (!UniversalChannel.instance) {
+            UniversalChannel.instance = new UniversalChannel();
+        }
+        return UniversalChannel.instance;
+    }
+
+    private initialize() {
+        // Register self as participant
+        this.registerParticipant({
+            id: 'augment',
+            type: 'ai_agent',
+            capabilities: ['code_analysis', 'communication', 'workspace_monitoring']
+        });
+
+        // Listen for new participants
+        vscode.extensions.onDidChange(() => {
+            this.discoverParticipants();
+        });
+    }
+
+    public registerParticipant(participant: Participant) {
+        this.participants.set(participant.id, participant);
+        this.broadcastPresence(participant);
+    }
+
+    public async sendMessage(): Promise<void> (to: string, message: unknown) {
+        const recipient = this.participants.get(to);
+        if (!recipient) {
+            throw new Error(`Recipient ${to} not found in the system`);
+        }
+
+        const messagePacket = {
+            from: 'augment',
+            to,
+            content: message,
+            timestamp: new Date().toISOString()
+        };
+
+        // Try all available communication methods
+        await Promise.all([
+            this.sendViaExtension(messagePacket),
+            this.sendViaFileSystem(messagePacket),
+            this.sendViaCommandPalette(messagePacket)
+        ]);
+    }
+
+    public onMessage(callback: (message: unknown) => void) {
+        return this.eventEmitter.event(callback);
+    }
+
+    private async sendViaExtension(): Promise<void> (message: unknown) {
+        const extension = vscode.extensions.getExtension(message.to);
+        if (extension) {
+            const api = await extension.activate();
+            if (api.receiveMessage) {
+                api.receiveMessage(message);
+            }
+        }
+    }
+
+    private async sendViaFileSystem(): Promise<void> (message: unknown) {
+        // Implementation for file-based communication
+    }
+
+    private async sendViaCommandPalette(): Promise<void> (message: unknown) {
+        await vscode.commands.executeCommand(`${message.to}.receiveMessage`, message);
+    }
+
+    public getActiveParticipants(): Participant[] {
+        return Array.from(this.participants.values());
+    }
+}

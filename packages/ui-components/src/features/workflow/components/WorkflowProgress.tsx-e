@@ -1,0 +1,60 @@
+import React, { FC } from "react";
+import { WorkflowStep, WorkflowStatus } from '@the-new-fuse/types';
+
+interface WorkflowProgressProps {
+  steps: WorkflowStep[];
+  currentStep?: string;
+  completedSteps: string[];
+  className?: string;
+}
+
+export const WorkflowProgress: FC<WorkflowProgressProps> = ({
+  steps,
+  currentStep,
+  completedSteps,
+  className = ''
+}) => {
+  const getStepStatus = (stepId: string) => {
+    if (completedSteps.includes(stepId)) return 'completed';
+    if (stepId === currentStep) return 'current';
+    return 'pending';
+  };
+
+  return (
+    <div className={`workflow-progress ${className}`}>
+      <div className="steps-container flex items-center">
+        {steps.map((step, index) => (
+          <React.Fragment key={step.id}>
+            <StepIndicator
+              step={step}
+              status={getStepStatus(step.id)}
+              index={index + 1}
+            />
+            {index < steps.length - 1 && (
+              <StepConnector completed={completedSteps.includes(step.id)} />
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+interface StepIndicatorProps {
+  step: WorkflowStep;
+  status: 'completed' | 'current' | 'pending';
+  index: number;
+}
+
+const StepIndicator: FC<StepIndicatorProps> = ({ step, status, index }) => (
+  <div className={`step-indicator ${status}`}>
+    <div className="indicator-circle">
+      {status === 'completed' ? '✓' : index}
+    </div>
+    <span className="step-label">{step.action}</span>
+  </div>
+);
+
+const StepConnector: FC<{ completed: boolean }> = ({ completed }) => (
+  <div className={`step-connector ${completed ? 'completed' : ''}`} />
+);

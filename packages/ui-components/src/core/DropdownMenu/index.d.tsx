@@ -1,0 +1,20 @@
+import * as React from "react";
+import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
+export declare const DropdownMenu: React.FC<DropdownMenuPrimitive.DropdownMenuProps>;
+export declare const DropdownMenuTrigger: React.ForwardRefExoticComponent<DropdownMenuPrimitive.DropdownMenuTriggerProps & React.RefAttributes<HTMLButtonElement>>;
+export declare const DropdownMenuGroup: React.ForwardRefExoticComponent<DropdownMenuPrimitive.DropdownMenuGroupProps & React.RefAttributes<HTMLDivElement>>;
+export declare const DropdownMenuPortal: React.FC<DropdownMenuPrimitive.DropdownMenuPortalProps>;
+export declare const DropdownMenuSub: React.FC<DropdownMenuPrimitive.DropdownMenuSubProps>;
+export declare const DropdownMenuRadioGroup: React.ForwardRefExoticComponent<DropdownMenuPrimitive.DropdownMenuRadioGroupProps & React.RefAttributes<HTMLDivElement>>;
+export declare const DropdownMenuSubTrigger: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuSubContent: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuContent: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuItem: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuCheckboxItem: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuRadioItem: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuLabel: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuSeparator: React.ForwardRefExoticComponent<React.RefAttributes<unknown>>;
+export declare const DropdownMenuShortcut: React.FC<React.HTMLAttributes<HTMLSpanElement>> & {
+    displayName: string;
+};
+export { DropdownMenu as Root, DropdownMenuTrigger as Trigger, DropdownMenuContent as Content, DropdownMenuItem as Item, DropdownMenuCheckboxItem as CheckboxItem, DropdownMenuRadioItem as RadioItem, DropdownMenuLabel as Label, DropdownMenuSeparator as Separator, DropdownMenuShortcut as Shortcut, DropdownMenuGroup as Group, DropdownMenuPortal as Portal, DropdownMenuSub as Sub, DropdownMenuSubContent as SubContent, DropdownMenuSubTrigger as SubTrigger, DropdownMenuRadioGroup as RadioGroup, };

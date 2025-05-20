@@ -1,0 +1,8 @@
+import React from 'react';
+import { Message } from './types';
+interface ChatMessageProps {
+    message: Message;
+    isCurrentUser: boolean;
+}
+export declare const ChatMessage: (React as any).FC<ChatMessageProps>;
+export {};

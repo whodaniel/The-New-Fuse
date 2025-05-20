@@ -1,0 +1,20 @@
+import { Injectable } from '@nestjs/common';
+import { MCPMessage } from '../../types/mcp';
+
+@Injectable()
+export class ProtocolTranslatorService {
+  async translateMessage(): Promise<void> (
+    message: unknown, 
+    sourceProtocol: string, 
+    targetProtocol: string
+  ): Promise<any> {
+    // Convert messages between different protocols
+  }
+
+  async validateProtocolCompliance(): Promise<void> (
+    message: unknown, 
+    protocol: string
+  ): Promise<any> {
+    // Ensure message compliance with protocol specifications
+  }
+}

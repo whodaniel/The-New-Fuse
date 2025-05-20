@@ -1,0 +1,7 @@
+import React from 'react';
+interface BaseLayoutProps {
+    children: React.ReactNode;
+    className?: string;
+}
+export declare const BaseLayout: React.FC<BaseLayoutProps>;
+export {};

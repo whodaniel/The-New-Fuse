@@ -1,0 +1,25 @@
+{
+  "name": "@the-new-fuse/api-client",
+  "version": "1.0.0",
+  "description": "API client for The New Fuse",
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -b",
+    "clean": "rimraf dist",
+    "dev": "tsc -b --watch"
+  },
+  "dependencies": {
+    "@the-new-fuse/api-types": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "axios": "^1.6.0",
+    "qs": "^6.11.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.3.1",
+    "@types/qs": "^6.9.8",
+    "rimraf": "^5.0.0",
+    "typescript": "^5.1.3"
+  }
+}

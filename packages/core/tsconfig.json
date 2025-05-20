@@ -1,0 +1,52 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "composite": true,
+    "declaration": true,
+    "jsx": "react-jsx"
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "src/state",
+    "src/services",
+    "src/state_manager.tsx",
+    "src/task",
+    "src/system",
+    "src/temp_models",
+    "src/security",
+    "src/resource",
+    "src/response",
+    "src/routing",
+    "src/routes",
+    "src/scenarios",
+    "src/queue",
+    "src/recovery",
+    "src/redis",
+    "src/redis_*.tsx",
+    "src/monitoring",
+    "src/notifications",
+    "src/optimization",
+    "src/performance",
+    "src/pipeline",
+    "src/processing",
+    "src/providers",
+    "src/metrics",
+    "src/middleware",
+    "src/models",
+    "src/memory",
+    "src/llm",
+    "src/loadbalancer",
+    "src/logging",
+    "src/mcp",
+    "src/main.tsx",
+    "src/learning"
+  ],
+  "references": [
+    { "path": "../types" },
+    { "path": "../utils" }
+  ]
+}

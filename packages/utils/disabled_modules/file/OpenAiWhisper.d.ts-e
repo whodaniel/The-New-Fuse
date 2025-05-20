@@ -1,0 +1,11 @@
+import { WhisperOptions, TranscriptionResult } from "./types";
+export declare class OpenAiWhisper {
+    #private;
+    private openai;
+    private model;
+    private temperature;
+    constructor({ options }: {
+        options: WhisperOptions;
+    });
+    processFile(fullFilePath: string): Promise<TranscriptionResult>;
+}

@@ -1,0 +1,783 @@
+import { z } from 'zod';
+import { FlowStatus } from './flow/index';
+export { FlowStatus as WorkflowStatus };
+export declare const workflowStateSchema: (z as any).ZodObject<{
+    status: (z as any).ZodNativeEnum<typeof FlowStatus>;
+    error: (z as any).ZodOptional<(z as any).ZodType<Error, (z as any).ZodTypeDef, Error>>;
+    startTime: (z as any).ZodOptional<(z as any).ZodDate>;
+    endTime: (z as any).ZodOptional<(z as any).ZodDate>;
+    metrics: (z as any).ZodOptional<(z as any).ZodObject<{
+        nodeCount: (z as any).ZodNumber;
+        edgeCount: (z as any).ZodNumber;
+        runningNodes: (z as any).ZodNumber;
+        completedNodes: (z as any).ZodNumber;
+        failedNodes: (z as any).ZodNumber;
+        customMetrics: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        nodeCount: number;
+        edgeCount: number;
+        runningNodes: number;
+        completedNodes: number;
+        failedNodes: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    }, {
+        nodeCount: number;
+        edgeCount: number;
+        runningNodes: number;
+        completedNodes: number;
+        failedNodes: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    }>>;
+    lastExecutedNode: (z as any).ZodOptional<(z as any).ZodString>;
+    executionPath: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    status: FlowStatus;
+    endTime?: Date | undefined;
+    startTime?: Date | undefined;
+    error?: Error | undefined;
+    metadata?: Record<string, unknown> | undefined;
+    metrics?: {
+        nodeCount: number;
+        edgeCount: number;
+        runningNodes: number;
+        completedNodes: number;
+        failedNodes: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    } | undefined;
+    lastExecutedNode?: string | undefined;
+    executionPath?: string[] | undefined;
+}, {
+    status: FlowStatus;
+    endTime?: Date | undefined;
+    startTime?: Date | undefined;
+    error?: Error | undefined;
+    metadata?: Record<string, unknown> | undefined;
+    metrics?: {
+        nodeCount: number;
+        edgeCount: number;
+        runningNodes: number;
+        completedNodes: number;
+        failedNodes: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    } | undefined;
+    lastExecutedNode?: string | undefined;
+    executionPath?: string[] | undefined;
+}>;
+export declare const workflowEdgeSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    source: (z as any).ZodString;
+    target: (z as any).ZodString;
+    data: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    id: string;
+    source: string;
+    target: string;
+    data?: Record<string, unknown> | undefined;
+    metadata?: Record<string, unknown> | undefined;
+}, {
+    id: string;
+    source: string;
+    target: string;
+    data?: Record<string, unknown> | undefined;
+    metadata?: Record<string, unknown> | undefined;
+}>;
+export declare const workflowNodeSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    type: (z as any).ZodString;
+    data: (z as any).ZodUnknown;
+    config: (z as any).ZodOptional<(z as any).ZodUnknown>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    type: string;
+    id: string;
+    data?: unknown;
+    metadata?: Record<string, unknown> | undefined;
+    config?: unknown;
+}, {
+    type: string;
+    id: string;
+    data?: unknown;
+    metadata?: Record<string, unknown> | undefined;
+    config?: unknown;
+}>;
+export declare const workflowConfigSchema: (z as any).ZodObject<{
+    maxRetries: (z as any).ZodOptional<(z as any).ZodNumber>;
+    timeout: (z as any).ZodOptional<(z as any).ZodNumber>;
+    concurrency: (z as any).ZodOptional<(z as any).ZodNumber>;
+    autoStart: (z as any).ZodOptional<(z as any).ZodBoolean>;
+    validateBeforeRun: (z as any).ZodOptional<(z as any).ZodBoolean>;
+    stopOnError: (z as any).ZodOptional<(z as any).ZodBoolean>;
+    customConfig: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    timeout?: number | undefined;
+    maxRetries?: number | undefined;
+    concurrency?: number | undefined;
+    autoStart?: boolean | undefined;
+    validateBeforeRun?: boolean | undefined;
+    stopOnError?: boolean | undefined;
+    customConfig?: Record<string, unknown> | undefined;
+}, {
+    timeout?: number | undefined;
+    maxRetries?: number | undefined;
+    concurrency?: number | undefined;
+    autoStart?: boolean | undefined;
+    validateBeforeRun?: boolean | undefined;
+    stopOnError?: boolean | undefined;
+    customConfig?: Record<string, unknown> | undefined;
+}>;
+export declare const workflowExecutionContextSchema: (z as any).ZodObject<{
+    workflowId: (z as any).ZodString;
+    nodeId: (z as any).ZodOptional<(z as any).ZodString>;
+    state: (z as any).ZodObject<{
+        status: (z as any).ZodNativeEnum<typeof FlowStatus>;
+        error: (z as any).ZodOptional<(z as any).ZodType<Error, (z as any).ZodTypeDef, Error>>;
+        startTime: (z as any).ZodOptional<(z as any).ZodDate>;
+        endTime: (z as any).ZodOptional<(z as any).ZodDate>;
+        metrics: (z as any).ZodOptional<(z as any).ZodObject<{
+            nodeCount: (z as any).ZodNumber;
+            edgeCount: (z as any).ZodNumber;
+            runningNodes: (z as any).ZodNumber;
+            completedNodes: (z as any).ZodNumber;
+            failedNodes: (z as any).ZodNumber;
+            customMetrics: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        }, "strip", (z as any).ZodTypeAny, {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        }, {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        }>>;
+        lastExecutedNode: (z as any).ZodOptional<(z as any).ZodString>;
+        executionPath: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    }, {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    }>;
+    variables: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    state: {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    };
+    workflowId: string;
+    metadata?: Record<string, unknown> | undefined;
+    nodeId?: string | undefined;
+    variables?: Record<string, unknown> | undefined;
+}, {
+    state: {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    };
+    workflowId: string;
+    metadata?: Record<string, unknown> | undefined;
+    nodeId?: string | undefined;
+    variables?: Record<string, unknown> | undefined;
+}>;
+export declare const workflowExecutionResultSchema: (z as any).ZodObject<{
+    success: (z as any).ZodBoolean;
+    error: (z as any).ZodOptional<(z as any).ZodString>;
+    data: (z as any).ZodOptional<(z as any).ZodUnknown>;
+    nodeResults: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    metrics: (z as any).ZodOptional<(z as any).ZodObject<{
+        duration: (z as any).ZodNumber;
+        nodesExecuted: (z as any).ZodNumber;
+        customMetrics: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        duration: number;
+        nodesExecuted: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    }, {
+        duration: number;
+        nodesExecuted: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    }>>;
+}, "strip", (z as any).ZodTypeAny, {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+    metrics?: {
+        duration: number;
+        nodesExecuted: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    } | undefined;
+    nodeResults?: Record<string, unknown> | undefined;
+}, {
+    success: boolean;
+    data?: unknown;
+    error?: string | undefined;
+    metrics?: {
+        duration: number;
+        nodesExecuted: number;
+        customMetrics?: Record<string, unknown> | undefined;
+    } | undefined;
+    nodeResults?: Record<string, unknown> | undefined;
+}>;
+export declare const createWorkflowSchema: (z as any).ZodObject<{
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    nodes: (z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        type: (z as any).ZodString;
+        data: (z as any).ZodUnknown;
+        config: (z as any).ZodOptional<(z as any).ZodUnknown>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }>, "many">;
+    edges: (z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        source: (z as any).ZodString;
+        target: (z as any).ZodString;
+        data: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }>, "many">;
+    config: (z as any).ZodOptional<(z as any).ZodObject<{
+        maxRetries: (z as any).ZodOptional<(z as any).ZodNumber>;
+        timeout: (z as any).ZodOptional<(z as any).ZodNumber>;
+        concurrency: (z as any).ZodOptional<(z as any).ZodNumber>;
+        autoStart: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        validateBeforeRun: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        stopOnError: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        customConfig: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }>>;
+    version: (z as any).ZodOptional<(z as any).ZodString>;
+    tags: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    edges: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[];
+    nodes: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[];
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    tags?: string[] | undefined;
+}, {
+    name: string;
+    edges: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[];
+    nodes: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[];
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    tags?: string[] | undefined;
+}>;
+export declare const updateWorkflowSchema: (z as any).ZodObject<{
+    name: (z as any).ZodOptional<(z as any).ZodString>;
+    description: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodString>>;
+    nodes: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        type: (z as any).ZodString;
+        data: (z as any).ZodUnknown;
+        config: (z as any).ZodOptional<(z as any).ZodUnknown>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }>, "many">>;
+    edges: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        source: (z as any).ZodString;
+        target: (z as any).ZodString;
+        data: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }>, "many">>;
+    config: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodObject<{
+        maxRetries: (z as any).ZodOptional<(z as any).ZodNumber>;
+        timeout: (z as any).ZodOptional<(z as any).ZodNumber>;
+        concurrency: (z as any).ZodOptional<(z as any).ZodNumber>;
+        autoStart: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        validateBeforeRun: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        stopOnError: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        customConfig: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }>>>;
+    version: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodString>>;
+    tags: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>>;
+    metadata: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>>;
+}, "strip", (z as any).ZodTypeAny, {
+    name?: string | undefined;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    edges?: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[] | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    nodes?: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[] | undefined;
+    tags?: string[] | undefined;
+}, {
+    name?: string | undefined;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    edges?: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[] | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    nodes?: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[] | undefined;
+    tags?: string[] | undefined;
+}>;
+export declare const workflowSchema: (z as any).ZodObject<(z as any).(objectUtil as any).extendShape<{
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    nodes: (z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        type: (z as any).ZodString;
+        data: (z as any).ZodUnknown;
+        config: (z as any).ZodOptional<(z as any).ZodUnknown>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }, {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }>, "many">;
+    edges: (z as any).ZodArray<(z as any).ZodObject<{
+        id: (z as any).ZodString;
+        source: (z as any).ZodString;
+        target: (z as any).ZodString;
+        data: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }, {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }>, "many">;
+    config: (z as any).ZodOptional<(z as any).ZodObject<{
+        maxRetries: (z as any).ZodOptional<(z as any).ZodNumber>;
+        timeout: (z as any).ZodOptional<(z as any).ZodNumber>;
+        concurrency: (z as any).ZodOptional<(z as any).ZodNumber>;
+        autoStart: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        validateBeforeRun: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        stopOnError: (z as any).ZodOptional<(z as any).ZodBoolean>;
+        customConfig: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }, {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    }>>;
+    version: (z as any).ZodOptional<(z as any).ZodString>;
+    tags: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, {
+    id: (z as any).ZodString;
+    state: (z as any).ZodObject<{
+        status: (z as any).ZodNativeEnum<typeof FlowStatus>;
+        error: (z as any).ZodOptional<(z as any).ZodType<Error, (z as any).ZodTypeDef, Error>>;
+        startTime: (z as any).ZodOptional<(z as any).ZodDate>;
+        endTime: (z as any).ZodOptional<(z as any).ZodDate>;
+        metrics: (z as any).ZodOptional<(z as any).ZodObject<{
+            nodeCount: (z as any).ZodNumber;
+            edgeCount: (z as any).ZodNumber;
+            runningNodes: (z as any).ZodNumber;
+            completedNodes: (z as any).ZodNumber;
+            failedNodes: (z as any).ZodNumber;
+            customMetrics: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+        }, "strip", (z as any).ZodTypeAny, {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        }, {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        }>>;
+        lastExecutedNode: (z as any).ZodOptional<(z as any).ZodString>;
+        executionPath: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodString, "many">>;
+        metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+    }, "strip", (z as any).ZodTypeAny, {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    }, {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    }>;
+    createdAt: (z as any).ZodDate;
+    updatedAt: (z as any).ZodDate;
+}>, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    id: string;
+    state: {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    };
+    edges: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[];
+    createdAt: Date;
+    updatedAt: Date;
+    nodes: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[];
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    tags?: string[] | undefined;
+}, {
+    name: string;
+    id: string;
+    state: {
+        status: FlowStatus;
+        endTime?: Date | undefined;
+        startTime?: Date | undefined;
+        error?: Error | undefined;
+        metadata?: Record<string, unknown> | undefined;
+        metrics?: {
+            nodeCount: number;
+            edgeCount: number;
+            runningNodes: number;
+            completedNodes: number;
+            failedNodes: number;
+            customMetrics?: Record<string, unknown> | undefined;
+        } | undefined;
+        lastExecutedNode?: string | undefined;
+        executionPath?: string[] | undefined;
+    };
+    edges: {
+        id: string;
+        source: string;
+        target: string;
+        data?: Record<string, unknown> | undefined;
+        metadata?: Record<string, unknown> | undefined;
+    }[];
+    createdAt: Date;
+    updatedAt: Date;
+    nodes: {
+        type: string;
+        id: string;
+        data?: unknown;
+        metadata?: Record<string, unknown> | undefined;
+        config?: unknown;
+    }[];
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+    version?: string | undefined;
+    config?: {
+        timeout?: number | undefined;
+        maxRetries?: number | undefined;
+        concurrency?: number | undefined;
+        autoStart?: boolean | undefined;
+        validateBeforeRun?: boolean | undefined;
+        stopOnError?: boolean | undefined;
+        customConfig?: Record<string, unknown> | undefined;
+    } | undefined;
+    tags?: string[] | undefined;
+}>;
+export type WorkflowState = (z as any).infer<typeof workflowStateSchema>;
+export type WorkflowEdge = (z as any).infer<typeof workflowEdgeSchema>;
+export type WorkflowNode = (z as any).infer<typeof workflowNodeSchema>;
+export type WorkflowConfig = (z as any).infer<typeof workflowConfigSchema>;
+export type WorkflowSchema = (z as any).infer<typeof workflowSchema>;
+export type WorkflowExecution = (z as any).infer<typeof workflowExecutionContextSchema>;
+export type WorkflowExecutionContext = (z as any).infer<typeof workflowExecutionContextSchema>;
+export type WorkflowExecutionResult = (z as any).infer<typeof workflowExecutionResultSchema>;
+export type CreateWorkflowDto = (z as any).infer<typeof createWorkflowSchema>;
+export type UpdateWorkflowDto = (z as any).infer<typeof updateWorkflowSchema>;
+export type Workflow = (z as any).infer<typeof workflowSchema>;

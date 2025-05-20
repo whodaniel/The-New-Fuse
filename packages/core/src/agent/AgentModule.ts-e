@@ -1,0 +1,28 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { AgentProcessor } from './AgentProcessor';
+import { AgentProcessorConfig } from './config/AgentProcessorConfig';
+import { TaskProcessor } from './processors/TaskProcessor';
+import { NotificationProcessor } from './processors/NotificationProcessor';
+import { CommandProcessor } from './processors/CommandProcessor';
+import { MessageValidator } from './services/MessageValidator';
+import { QueueManager } from './services/QueueManager';
+import { CacheModule } from '../cache/CacheModule';
+import { ErrorRecoveryModule } from '../error/ErrorRecoveryModule';
+
+@Module({
+  imports: [
+    ConfigModule,
+    EventEmitterModule.forRoot(): [
+    AgentProcessor,
+    AgentProcessorConfig,
+    TaskProcessor,
+    NotificationProcessor,
+    CommandProcessor,
+    MessageValidator,
+    QueueManager,
+  ],
+  exports: [AgentProcessor],
+})
+export class AgentModule {}

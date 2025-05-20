@@ -1,0 +1,81 @@
+.custom-node {
+  padding: 10px;
+  border-radius: 5px;
+  background: white;
+  border: 1px solid #ddd;
+  min-width: 150px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-node-header {
+  font-weight: bold;
+  color: #666;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #eee;
+}
+
+.custom-node-label {
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.custom-node-params {
+  font-size: 12px;
+  color: #888;
+  background: #f9f9f9;
+  padding: 8px;
+  border-radius: 3px;
+}
+
+.param-row {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+
+.param-key {
+  font-weight: 500;
+  color: #666;
+}
+
+.param-value {
+  color: #888;
+  font-family: monospace;
+}
+
+.react-flow__handle {
+  width: 8px;
+  height: 8px;
+  background-color: #555;
+}
+
+.react-flow__handle:hover {
+  background-color: #777;
+}
+
+.react-flow__edge-path {
+  stroke: #888;
+  stroke-width: 2;
+}
+
+.react-flow__edge-text {
+  font-size: 12px;
+  fill: #666;
+}
+
+.react-flow__controls {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.react-flow__controls-button {
+  border: none;
+  background: white;
+  border-bottom: 1px solid #eee;
+  box-shadow: none;
+}
+
+.react-flow__controls-button:hover {
+  background: #f5f5f5;
+}

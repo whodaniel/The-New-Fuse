@@ -1,0 +1,64 @@
+import { useState, useCallback } from 'react';
+import { NLPEngine } from '../ai/NLPEngine.js';
+import { SearchEngine } from '../ai/SearchEngine.js';
+import { DashboardState } from '../collaboration/types.js';
+import { SearchResult, SearchSuggestion } from '../ai/types.js';
+
+export function useNLP(
+  searchEngine: SearchEngine,
+  dashboardState: DashboardState
+): unknown {
+  const [nlpEngine] = useState(() => new NLPEngine());
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [results, setResults] = useState<{
+    searchResults: SearchResult[];
+    total: number;
+    suggestions: SearchSuggestion[];
+  }>({
+    searchResults: [],
+    total: 0,
+    suggestions: [],
+  });
+
+  const processNaturalLanguageQuery = useCallback(
+    async (): Promise<void> {query: string) => {
+      setIsProcessing(true);
+      try {
+        // Process query using NLP engine
+        const nlpResult = await (nlpEngine as any).processQuery(
+          query,
+          dashboardState
+        );
+
+        // Generate search config from NLP result
+        const searchConfig = await (nlpEngine as any).generateSearchConfig(
+          nlpResult,
+          dashboardState
+        );
+
+        // Execute search with generated config
+        const searchResults = await (searchEngine as any).search(
+          searchConfig
+        );
+
+        setResults(searchResults);
+        return {
+          nlpResult,
+          searchResults,
+        };
+      } catch (error: unknown){
+        (console as any).error('Error processing query:', error);
+        throw error;
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [nlpEngine, searchEngine, dashboardState]
+  );
+
+  return {
+    processNaturalLanguageQuery,
+    isProcessing,
+    results,
+  };
+}

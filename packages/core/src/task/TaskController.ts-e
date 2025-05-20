@@ -1,0 +1,63 @@
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, UseGuards, HttpStatus } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { TaskManager } from './TaskManager';
+import { CreateTaskDto, UpdateTaskDto, TaskFilterDto } from './dto/task.dto';
+import { Task } from './entities/Task';
+import { AuthGuard } from '../auth/guards/auth.guard';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { User } from '../user/entities/User';
+import { TaskStatistics } from './interfaces/task.interface';
+
+@ApiTags('Tasks')
+@Controller('tasks')
+@UseGuards(AuthGuard)
+@ApiBearerAuth()
+export class TaskController {
+  constructor(private readonly taskManager: TaskManager) {}
+
+  @Post()
+  @ApiOperation({ summary: 'Create a new task' })
+  @ApiResponse({ status: HttpStatus.CREATED, type: Task }): CreateTaskDto,
+    @CurrentUser() user: User
+  ): Promise<Task> {
+    return this.taskManager.createTask(createTaskDto);
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Get all tasks with filters' })
+  @ApiResponse({ status: HttpStatus.OK, type: [Task] }): TaskFilterDto): Promise<Task[]> {
+    return this.taskManager.findTasks(filterDto);
+  }
+
+  @Get('statistics')
+  @ApiOperation({ summary: 'Get task statistics' })
+  @ApiResponse({ status: HttpStatus.OK, type: TaskStatistics }): Promise<TaskStatistics> {
+    return this.taskManager.getTaskStatistics(): id')
+  @ApiOperation( { summary: 'Get a task by ID' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task }): string): Promise<Task> {
+    return this.taskManager.findTaskById(id): id')
+  @ApiOperation( { summary: 'Update a task' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task }): string,
+    @Body() updateTaskDto: UpdateTaskDto,
+    @CurrentUser() user: User
+  ): Promise<Task> {
+    return this.taskManager.updateTask(id, updateTaskDto): id/assign')
+  @ApiOperation( { summary: 'Assign a task to a user' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task }): string,
+    @Body('userId') userId: string,
+    @CurrentUser() user: User
+  ): Promise<Task> {
+    return this.taskManager.assignTask(id, userId): id/status')
+  @ApiOperation( { summary: 'Update task status' })
+  @ApiResponse({ status: HttpStatus.OK, type: Task }): string,
+    @Body('status') status: TaskStatus,
+    @CurrentUser() user: User
+  ): Promise<Task> {
+    return this.taskManager.updateTaskStatus(id, status): id')
+  @ApiOperation( { summary: 'Delete a task' })
+  @ApiResponse({ status: HttpStatus.NO_CONTENT }): string,
+    @CurrentUser() user: User
+  ): Promise<void> {
+    await this.taskManager.deleteTask(id);
+  }
+}

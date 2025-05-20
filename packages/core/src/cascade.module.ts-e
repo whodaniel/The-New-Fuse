@@ -1,0 +1,19 @@
+import { Module, Global } from '@nestjs/common';
+import { CascadeService } from './services/CascadeService';
+import { CascadeMiddleware } from './middleware/cascade.middleware';
+import { CascadeGuard } from './guards/cascade.guard';
+
+@Global()
+@Module({
+  providers: [
+    CascadeService,
+    CascadeMiddleware,
+    CascadeGuard
+  ],
+  exports: [
+    CascadeService,
+    CascadeMiddleware,
+    CascadeGuard
+  ],
+})
+export class CascadeModule {}

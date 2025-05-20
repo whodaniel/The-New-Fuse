@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "The New Fuse - Text Input Manager",
+  "version": "1.0.0",
+  "description": "Manage text inputs on web pages with VS Code integration",
+  "permissions": [
+    "storage",
+    "activeTab",
+    "scripting",
+    "contextMenus",
+    "notifications",
+    "tabs"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "vendor.js",
+        "commons.js",
+        "*.js.map",
+        "*.css.map",
+        "floatingPanel.html",
+        "floatingPanel.js",
+        "floatingPanel.css"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "options_page": "options.html",
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' https://chat.openai.com https://claude.ai https://gemini.google.com;"
+  }
+}

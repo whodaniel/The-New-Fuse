@@ -1,0 +1,422 @@
+#!/usr/bin/osascript
+
+-- Universal MCP Configuration Wizard
+-- This script helps discover and configure MCP servers across different platforms
+
+on run argv
+    -- Parse command-line arguments
+    set interactive_mode to false
+    if (count of argv) > 0 then
+        if item 1 of argv is "interactive" then
+            set interactive_mode to true
+        end if
+    end if
+    
+    -- Set up logging
+    set log_file to (((path to home folder) as text) & "Desktop:A1-Inter-LLM-Com:The New Fuse:universal_mcp_wizard.log")
+    my log_message("Starting Universal MCP Wizard", log_file)
+    my log_message("Mode: " & (if interactive_mode then "Interactive" else "Automatic"), log_file)
+    
+    -- Find all available MCP configuration files
+    set config_files to my find_mcp_config_files()
+    my log_message("Found " & (count of config_files) & " MCP configuration files", log_file)
+    
+    -- Discover MCP servers on network
+    set discovered_servers to my discover_network_mcp_servers()
+    my log_message("Discovered " & (count of discovered_servers) & " MCP servers on network", log_file)
+    
+    -- Find local MCP servers
+    set local_servers to my find_local_mcp_servers()
+    my log_message("Found " & (count of local_servers) & " local MCP servers", log_file)
+    
+    -- Initialize variables
+    set selected_config_file to ""
+    set selected_servers to {}
+    
+    -- Interactive mode
+    if interactive_mode then
+        -- Show welcome dialog
+        display dialog "Welcome to the Universal MCP Configuration Wizard" & return & return & ¬
+            "This wizard will help you discover and configure MCP capability providers across different systems." ¬
+            buttons {"Continue"} default button "Continue" with title "Universal MCP Wizard"
+        
+        -- Choose configuration file
+        if (count of config_files) is 0 then
+            -- No config files found, ask for custom path
+            set user_choice to display dialog "No MCP configuration files found. Would you like to:" ¬
+                buttons {"Create New", "Specify Path", "Cancel"} default button "Specify Path" ¬
+                with title "Universal MCP Wizard"
+            
+            if button returned of user_choice is "Create New" then
+                set selected_config_file to my create_new_config_file()
+            else if button returned of user_choice is "Specify Path" then
+                set custom_path to text returned of (display dialog "Enter the path to an MCP configuration file:" ¬
+                    default answer "~/path/to/config.json" ¬
+                    with title "Universal MCP Wizard")
+                
+                set selected_config_file to my expand_path(custom_path)
+            else
+                my log_message("User canceled configuration", log_file)
+                return "Operation canceled by user."
+            end if
+        else
+            -- Let user choose from found config files
+            set config_options to {}
+            repeat with cfg in config_files
+                set end of config_options to item 1 of cfg & " (" & item 2 of cfg & ")"
+            end repeat
+            
+            set selected_option to choose from list config_options with prompt ¬
+                "Select an MCP configuration file to modify:" ¬
+                with title "Universal MCP Wizard" without multiple selections allowed
+            
+            if selected_option is false then
+                my log_message("User canceled configuration file selection", log_file)
+                return "Operation canceled by user."
+            end if
+            
+            set selected_index to 1
+            repeat with i from 1 to count of config_options
+                if item i of config_options is item 1 of selected_option then
+                    set selected_index to i
+                    exit repeat
+                end if
+            end repeat
+            
+            set selected_config_file to item 2 of (item selected_index of config_files)
+        end if
+        
+        -- Choose servers to add
+        set all_servers to {}
+        repeat with server in local_servers
+            set end of all_servers to {name:name of server, source:"Local", details:server}
+        end repeat
+        
+        repeat with server in discovered_servers
+            set end of all_servers to {name:name of server, source:"Network", details:server}
+        end repeat
+        
+        if (count of all_servers) is 0 then
+            display dialog "No MCP servers found locally or on the network." ¬
+                buttons {"OK"} default button "OK" with title "Universal MCP Wizard" with icon caution
+            return "No MCP servers found."
+        end if
+        
+        set server_options to {}
+        repeat with server in all_servers
+            set end of server_options to (name of server) & " (" & (source of server) & ")"
+        end repeat
+        
+        set selected_options to choose from list server_options with prompt ¬
+            "Select MCP capability providers to add:" ¬
+            with title "Universal MCP Wizard" with multiple selections allowed
+        
+        if selected_options is false then
+            my log_message("User canceled server selection", log_file)
+            return "Operation canceled by user."
+        end if
+        
+        -- Convert selections back to server objects
+        repeat with selected_option in selected_options
+            repeat with i from 1 to count of server_options
+                if item i of server_options is selected_option then
+                    set end of selected_servers to details of (item i of all_servers)
+                    exit repeat
+                end if
+            end repeat
+        end repeat
+    else
+        -- Automatic mode
+        -- If no config files found, create one at default location
+        if (count of config_files) is 0 then
+            set selected_config_file to my create_new_config_file()
+        else
+            -- Use the first config file found (typically Claude's)
+            set selected_config_file to item 2 of (item 1 of config_files)
+        end if
+        
+        -- Use all discovered servers
+        repeat with server in local_servers
+            set end of selected_servers to server
+        end repeat
+        
+        repeat with server in discovered_servers
+            set end of selected_servers to server
+        end repeat
+    end if
+    
+    -- Now add selected servers to the selected configuration file
+    set success_count to my add_servers_to_config(selected_servers, selected_config_file, log_file)
+    
+    -- Show results
+    if interactive_mode then
+        if success_count > 0 then
+            display dialog "Successfully added " & success_count & " MCP servers to:" & return & return & ¬
+                selected_config_file & return & return & ¬
+                "You may need to restart applications for changes to take effect." ¬
+                buttons {"OK"} default button "OK" with title "Universal MCP Wizard"
+        else
+            display dialog "No MCP servers were added to the configuration." & return & ¬
+                "Please check the log file for details." ¬
+                buttons {"OK"} default button "OK" with title "Universal MCP Wizard" with icon caution
+        end if
+    end if
+    
+    -- Return success
+    my log_message("Operation complete. Added " & success_count & " servers.", log_file)
+    return "SUCCESS: Added " & success_count & " servers to " & selected_config_file
+end run
+
+-- Find all MCP configuration files on the system
+on find_mcp_config_files()
+    set config_files to {}
+    
+    -- Common locations for MCP configuration files
+    set common_locations to {¬
+        {name:"Claude", path:((path to home folder) as text) & "Library:Application Support:Claude:claude_desktop_config.json"}, ¬
+        {name:"VS Code (Copilot)", path:((path to home folder) as text) & "Library:Application Support:Code:User:globalStorage:github.copilot:mcp_config.json"}, ¬
+        {name:"The New Fuse", path:((path to home folder) as text) & "Desktop:A1-Inter-LLM-Com:The New Fuse:mcp_config.json"}, ¬
+        {name:"System-wide", path:"/etc/mcp/config.json"}¬
+    }
+    
+    -- Check each location
+    repeat with loc in common_locations
+        try
+            tell application "System Events"
+                if exists file (POSIX path of (path of loc)) then
+                    set end of config_files to {name of loc, POSIX path of (path of loc)}
+                end if
+            end tell
+        on error
+            -- Silently continue if location doesn't exist
+        end try
+    end repeat
+    
+    -- Look for additional config files in VS Code extensions
+    try
+        set vs_code_dir to POSIX path of (((path to home folder) as text) & "Library:Application Support:Code:User:globalStorage:")
+        set found_files to do shell script "find " & quoted form of vs_code_dir & " -name '*mcp*config*.json' -type f 2>/dev/null || echo ''"
+        
+        if found_files is not "" then
+            set file_list to paragraphs of found_files
+            repeat with file_path in file_list
+                -- Extract extension name from path
+                set ext_name to do shell script "basename \"$(dirname " & quoted form of file_path & ")\" | sed 's/\\..*//' | tr '.' ' '"
+                set end of config_files to {"VS Code Extension: " & ext_name, file_path}
+            end repeat
+        end if
+    on error err_msg
+        -- Log but continue if we can't search VS Code directories
+        do shell script "echo 'Error searching VS Code dirs: " & err_msg & "' >> /tmp/mcp_search_error.log"
+    end try
+    
+    return config_files
+end find_mcp_config_files
+
+-- Create a new config file at the default location
+on create_new_config_file()
+    set default_path to ((path to home folder) as text) & "Library:Application Support:MCP:mcp_config.json"
+    set config_path to POSIX path of default_path
+    
+    -- Ensure directory exists
+    do shell script "mkdir -p \"" & (POSIX path of ((path to home folder) as text) & "Library:Application Support:MCP") & "\""
+    
+    -- Create empty config with mcpServers object
+    do shell script "echo '{\"mcpServers\": {}}' > " & quoted form of config_path
+    
+    return config_path
+end create_new_config_file
+
+-- Discover MCP servers on the local network using mDNS/Bonjour and port scanning
+on discover_network_mcp_servers()
+    set discovered_servers to {}
+    
+    -- Look for mDNS/Bonjour advertised MCP servers
+    try
+        set mdns_results to do shell script "dns-sd -B _mcp._tcp local. 2>/dev/null & pid=$!; sleep 2; kill $pid 2>/dev/null || true"
+        
+        if mdns_results contains "_mcp._tcp" then
+            -- Parse results and add to discovered_servers
+            set mdns_lines to paragraphs of mdns_results
+            repeat with line in mdns_lines
+                if line contains "_mcp._tcp" then
+                    -- Extract service name and add as discovered server
+                    set service_name to do shell script "echo " & quoted form of line & " | awk '{print $7}' | sed 's/\\..*//'"
+                    if service_name is not "" then
+                        set end of discovered_servers to {name:service_name, command:"mdns-lookup", args:{service_name}, type:"network"}
+                    end if
+                end if
+            end repeat
+        end if
+    on error
+        -- Continue if mDNS discovery fails
+    end try
+    
+    -- Scan common ports for MCP servers
+    try
+        set common_ports to "3000 3001 3002 3003 3004 3005 3010 8000 8080 9000"
+        set scan_results to do shell script "for port in " & common_ports & "; do nc -z -G 1 localhost $port 2>/dev/null && echo \"$port open\"; done"
+        
+        if scan_results is not "" then
+            set port_lines to paragraphs of scan_results
+            repeat with line in port_lines
+                if line contains "open" then
+                    -- Extract port number
+                    set port_num to do shell script "echo " & quoted form of line & " | awk '{print $1}'"
+                    -- Try to get MCP info from this port
+                    try
+                        set http_check to do shell script "curl -s -m 1 http://localhost:" & port_num & "/mcp/info 2>/dev/null || echo ''"
+                        if http_check contains "mcp" or http_check contains "MCP" then
+                            -- Seems to be an MCP server
+                            set end of discovered_servers to {name:"MCP Server (Port " & port_num & ")", command:"curl", args:{"http://localhost:" & port_num & "/mcp"}, type:"network"}
+                        end if
+                    on error
+                        -- Skip this port if curl fails
+                    end try
+                end if
+            end repeat
+        end if
+    on error
+        -- Continue if port scanning fails
+    end try
+    
+    return discovered_servers
+end discover_network_mcp_servers
+
+-- Find local MCP servers installed on the system
+on find_local_mcp_servers()
+    set local_servers to {}
+    
+    -- Standard MCP servers
+    set standard_servers to {¬
+        {name:"web-search", command:"npx", args:{"@modelcontextprotocol/server-websearch"}, type:"standard"}, ¬
+        {name:"applescript_execute", command:"npx", args:{"@peakmojo/applescript-mcp"}, type:"standard"}, ¬
+        {name:"mcp-config-manager", command:"node", args:{(POSIX path of ((path to home folder) as text) & "Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js")}, type:"standard"}¬
+    }
+    
+    -- Add standard servers to the list
+    repeat with server in standard_servers
+        set end of local_servers to server
+    end repeat
+    
+    -- Look for NPM installed MCP packages
+    try
+        set npm_results to do shell script "npm list -g | grep mcp"
+        if npm_results is not "" then
+            set npm_lines to paragraphs of npm_results
+            repeat with line in npm_lines
+                if line contains "mcp" or line contains "modelcontext" then
+                    -- Extract package name
+                    set pkg_name to do shell script "echo " & quoted form of line & " | awk -F'@' '{print $1}' | sed 's/[^a-zA-Z0-9-]//g'"
+                    if pkg_name is not "" then
+                        set end of local_servers to {name:pkg_name, command:"npx", args:{pkg_name}, type:"npm"}
+                    end if
+                end if
+            end repeat
+        end if
+    on error
+        -- Continue if npm search fails
+    end try
+    
+    -- Look for local MCP server JS files
+    try
+        set home_dir to POSIX path of (path to home folder)
+        set js_results to do shell script "find " & quoted form of home_dir & " -name '*mcp*server*.js' -not -path '*/node_modules/*' -not -path '*/\\.git/*' 2>/dev/null || echo ''"
+        
+        if js_results is not "" then
+            set js_lines to paragraphs of js_results
+            repeat with file_path in js_lines
+                -- Get the filename for the server name
+                set server_name to do shell script "basename " & quoted form of file_path & " | sed 's/\\.js$//'"
+                set end of local_servers to {name:server_name, command:"node", args:{file_path}, type:"js-file"}
+            end repeat
+        end if
+    on error
+        -- Continue if file search fails
+    end try
+    
+    return local_servers
+end find_local_mcp_servers
+
+-- Add servers to the specified configuration file
+on add_servers_to_config(servers, config_path, log_file)
+    set success_count to 0
+    set mcp_cli_path to ((path to home folder) as text) & "Desktop:A1-Inter-LLM-Com:The New Fuse:scripts:mcp-config-manager.cjs"
+    
+    -- Make sure the config file exists
+    try
+        tell application "System Events"
+            if not (exists file config_path) then
+                -- Create directory if needed
+                do shell script "mkdir -p \"" & (do shell script "dirname " & quoted form of config_path) & "\""
+                -- Create empty config
+                do shell script "echo '{\"mcpServers\": {}}' > " & quoted form of config_path
+                my log_message("Created new config file at: " & config_path, log_file)
+            end if
+        end tell
+    on error err_msg
+        my log_message("Error ensuring config file exists: " & err_msg, log_file)
+        return 0
+    end try
+    
+    -- For each server, add it to the configuration
+    repeat with server in servers
+        set server_name to name of server
+        set server_command to command of server
+        set server_args to args of server
+        
+        my log_message("Adding server: " & server_name & " (Type: " & (type of server) & ")", log_file)
+        
+        try
+            -- Prepare args as JSON array
+            set args_json to "["
+            repeat with i from 1 to count of server_args
+                set arg_val to item i of server_args
+                set args_json to args_json & "\"" & arg_val & "\""
+                if i < count of server_args then
+                    set args_json to args_json & ","
+                end if
+            end repeat
+            set args_json to args_json & "]"
+            
+            -- Use the MCP Config Manager CLI to add the server
+            do shell script "node " & quoted form of (POSIX path of mcp_cli_path) & ¬
+                " add --file=" & quoted form of config_path & ¬
+                " --name=" & quoted form of server_name & ¬
+                " --command=" & quoted form of server_command & ¬
+                " --args='" & args_json & "'"
+            
+            set success_count to success_count + 1
+            my log_message("Added " & server_name & " to config", log_file)
+        on error err_msg
+            my log_message("Error adding server " & server_name & ": " & err_msg, log_file)
+        end try
+    end repeat
+    
+    return success_count
+end add_servers_to_config
+
+-- Helper function to log messages
+on log_message(msg, log_file)
+    set now to (do shell script "date +'%Y-%m-%d %H:%M:%S'")
+    set log_entry to now & " - " & msg
+    
+    try
+        -- Output to log file
+        do shell script "echo " & quoted form of log_entry & " >> " & quoted form of (POSIX path of log_file)
+        
+        -- Output to terminal
+        do shell script "echo " & quoted form of log_entry
+    end try
+end log_message
+
+-- Helper function to expand tilde in paths
+on expand_path(path_with_tilde)
+    if path_with_tilde starts with "~" then
+        set home_path to POSIX path of (path to home folder)
+        set path_without_tilde to text 2 thru -1 of path_with_tilde
+        return home_path & path_without_tilde
+    else
+        return path_with_tilde
+    end if
+end expand_path

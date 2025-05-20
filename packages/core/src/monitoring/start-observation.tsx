@@ -1,0 +1,24 @@
+import { TraeObserver } from './trae-observer.js';
+import { Logger } from '../../../utils/src/logger.js';
+
+const logger: , error);
+        process.exit(1): Promise<any> {
+    try {
+        logger.info('Starting Trae observation...');
+        
+        const observer = new TraeObserver();
+
+        // Log insights every minute
+        setInterval(() => {
+            const insights = observer.getInsights();
+            logger.info('Current Trae Insights', insights);
+        }, 60000);
+
+        // Keep the process running
+        process.on('SIGINT', () => {
+            logger.info('Shutting down Trae observation...')): void {
+        logger.error('Error in Trae observation> {
+    logger.error('Failed to start observation:', error);
+    process.exit(1);
+});
+export {};

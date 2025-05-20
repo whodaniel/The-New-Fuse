@@ -1,0 +1,27 @@
+import { Task, TaskQuery, TaskResult } from './model.js';
+import { CreateTaskDto, UpdateTaskDto } from './dto.js';
+
+/**
+ * Task service interface
+ */
+export interface TaskService {
+  create(task: CreateTaskDto): Promise<Task>;
+  update(id: string, data: UpdateTaskDto): Promise<Task>;
+  delete(id: string): Promise<void>;
+  findById(id: string): Promise<Task | null>;
+  findAll(query?: TaskQuery): Promise<Task[]>;
+  execute(id: string): Promise<TaskResult>;
+  cancel(id: string): Promise<void>;
+  retry(id: string): Promise<void>;
+  process(data: Record<string, unknown>): Promise<void>;
+}
+
+/**
+ * Task event handler interface
+ */
+export interface TaskEventHandler {
+  onTaskCreated(task: Task): Promise<void>;
+  onTaskUpdated(task: Task): Promise<void>;
+  onTaskDeleted(taskId: string): Promise<void>;
+  onTaskExecuted(result: TaskResult): Promise<void>;
+}

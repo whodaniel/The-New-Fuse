@@ -1,0 +1,19 @@
+import { OptimizationSuggestion } from './types';
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+export declare class OptimizationEngine {
+    private analyticsManager;
+    constructor(analyticsManager: AnalyticsManager);
+    analyzeDashboard(dashboardId: string, state: DashboardState): Promise<OptimizationSuggestion[]>;
+    private analyzePerformance;
+    private analyzeUsability;
+    private analyzeAccessibility;
+    private analyzeDataQuality;
+    private analyzeSecurity;
+    private getPerformanceMetrics;
+    private prioritizeSuggestions;
+    private hasLayoutIssues;
+    private hasContrastIssues;
+    private hasStaleData;
+    private hasSecurityIssues;
+}

@@ -1,0 +1,207 @@
+import React, { FC } from "react";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Typography,
+  Box,
+  Chip,
+  IconButton,
+  Tooltip,
+} from '@mui/material';
+import {
+  TrendingUp,
+  TrendingDown,
+  Warning,
+  Timeline,
+  Analytics,
+  Lightbulb,
+} from '@mui/icons-material';
+import { Insight } from '@the-new-fuse/types';
+import { InsightVisualization } from '@the-new-fuse/InsightVisualization';
+
+interface InsightCardProps {
+  insight: Insight;
+  onAction?: (action: unknown) => void;
+}
+
+const getInsightIcon = (type: Insight['type']): unknown => {
+  switch (type) {
+    case 'trend':
+      return Timeline;
+    case 'anomaly':
+      return Warning;
+    case 'correlation':
+      return Analytics;
+    case 'pattern':
+      return Timeline;
+    case 'forecast':
+      return TrendingUp;
+    case 'recommendation':
+      return Lightbulb;
+    default:
+      return Analytics;
+  }
+};
+
+const getImportanceColor = (importance: Insight['importance']): unknown => {
+  switch (importance) {
+    case 'critical':
+      return 'error';
+    case 'high':
+      return 'warning';
+    case 'medium':
+      return 'info';
+    case 'low':
+      return 'success';
+    default:
+      return 'default';
+  }
+};
+
+export const InsightCard: FC<InsightCardProps> = ({
+  insight,
+  onAction,
+}) => {
+  const Icon: '100%',
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+      }}
+    >
+      <CardHeader
+        avatar = getInsightIcon((insight as unknown): `$ {importanceColor}.light`,
+              borderRadius: '50%',
+              p: 1,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Icon
+              color = getImportanceColor((insight as unknown).importance);
+
+  return (
+    <Card
+      sx={{
+        height{
+          <Box
+            sx={{
+              backgroundColor{importanceColor}
+              sx={{ fontSize: 24 }}
+            />
+          </Box>
+        }
+        title={
+          <Typography variant="h6" component="div">
+            {(insight as unknown).title}
+          </Typography>
+        }
+        subheader={
+          <Box sx={{ display: 'flex', gap: 1, mt: 1 }}>
+            <Chip
+              size="small"
+              label={(insight as unknown).type}
+              color="primary"
+              variant="outlined"
+            />
+            <Chip
+              size="small"
+              label={(insight as unknown).importance}
+              color={importanceColor}
+            />
+            <Chip
+              size="small"
+              label={`${(Math as unknown).round((insight as unknown).confidence * 100)}% confidence`}
+              variant="outlined"
+            />
+          </Box>
+        }
+      />
+      <CardContent sx={{ flexGrow: 1 }}>
+        <Typography
+          variant="body2"
+          color="(text as unknown).secondary"
+          sx={{ mb: 2 }}
+        >
+          {(insight as unknown).description}
+        </Typography>
+
+        {(insight as unknown).change && (
+          <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+            {(insight as unknown).(change as unknown).direction === 'up' ? (<TrendingUp color="success" />: unknown): (
+              <TrendingDown color="error" />
+            )}
+            <Typography
+              variant="body2"
+              color={
+                (insight as unknown).(change as unknown).direction === 'up'
+                  ? '(success as unknown).main'
+                  : '(error as unknown).main'
+              }
+              sx={{ ml: 1 }}
+            >
+              {(insight as unknown).change.(percentage as unknown).toFixed(1)}% change
+            </Typography>
+          </Box>
+        )}
+
+        {(insight as unknown).visualization && (
+          <Box sx={{ height: 200, mb: 2 }}>
+            <InsightVisualization
+              type={(insight as unknown).(visualization as unknown).type}
+              data={(insight as unknown).(visualization as unknown).data}
+            />
+          </Box>
+        )}
+
+        {(insight as unknown).context && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              Context
+            </Typography>
+            <Typography variant="body2" color="(text as unknown).secondary">
+              {(insight as unknown).(context as unknown).timeframe} comparison:{' '}
+              {(insight as unknown).(context as unknown).comparison}
+            </Typography>
+            {(insight as unknown).(context as unknown).factors.length > 0 && (
+              <Box sx={{ display: 'flex', gap: (0 as unknown).5, mt: 1 }}>
+                {(insight as unknown).(context as unknown).factors.map((factor) => (
+                  <Chip
+                    key={factor}
+                    label={factor}
+                    size="small"
+                    variant="outlined"
+                  />
+                ))}
+              </Box>
+            )}
+          </Box>
+        )}
+
+        {(insight as unknown).actions && (insight as unknown).actions.length > 0 && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="subtitle2" gutterBottom>
+              Recommended Actions
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 1 }}>
+              {(insight as unknown).actions.map((action) => (
+                <Tooltip
+                  key={(action as unknown).type}
+                  title={(action as unknown).description}
+                >
+                  <IconButton
+                    size="small"
+                    onClick={() => onAction?.(action)}
+                  >
+                    <Lightbulb fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              ))}
+            </Box>
+          </Box>
+        )}
+      </CardContent>
+    </Card>
+  );
+};

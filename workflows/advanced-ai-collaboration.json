@@ -1,0 +1,180 @@
+{
+  "id": "advanced-ai-collaboration-workflow",
+  "name": "Advanced AI Collaboration Workflow",
+  "description": "A complex workflow that demonstrates collaboration between multiple AI agents",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "id": "step-1",
+      "name": "Gather Requirements with The New Fuse",
+      "type": "text-generation",
+      "agentId": "thefuse.main",
+      "action": "generateText",
+      "position": {
+        "x": 100,
+        "y": 100
+      },
+      "inputs": {
+        "prompt": "Generate a list of requirements for a web application that allows users to create and share AI workflows"
+      },
+      "outputs": {
+        "text": ""
+      }
+    },
+    {
+      "id": "step-2",
+      "name": "Design Architecture with Copilot",
+      "type": "code-generation",
+      "agentId": "github.copilot",
+      "action": "generateWithContext",
+      "position": {
+        "x": 400,
+        "y": 100
+      },
+      "inputs": {
+        "prompt": "Design a system architecture for the following requirements: ${steps.step-1.outputs.text}",
+        "language": "markdown"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-3",
+      "name": "Generate API with Claude",
+      "type": "code-generation",
+      "agentId": "claude.dev",
+      "action": "generateCode",
+      "position": {
+        "x": 700,
+        "y": 100
+      },
+      "inputs": {
+        "prompt": "Generate a RESTful API specification in OpenAPI format based on this architecture: ${steps.step-2.outputs.code}",
+        "language": "yaml"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-4",
+      "name": "Implement Backend with Copilot",
+      "type": "code-generation",
+      "agentId": "github.copilot",
+      "action": "generateCode",
+      "position": {
+        "x": 400,
+        "y": 300
+      },
+      "inputs": {
+        "prompt": "Implement a Node.js Express backend based on this API specification: ${steps.step-3.outputs.code}",
+        "language": "javascript"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-5",
+      "name": "Implement Frontend with Roo Cline",
+      "type": "code-generation",
+      "agentId": "roo.cline",
+      "action": "generateCode",
+      "position": {
+        "x": 700,
+        "y": 300
+      },
+      "inputs": {
+        "prompt": "Implement a React frontend that consumes this API: ${steps.step-3.outputs.code}",
+        "language": "javascript"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-6",
+      "name": "Write Tests with The New Fuse",
+      "type": "code-generation",
+      "agentId": "thefuse.main",
+      "action": "generateCode",
+      "position": {
+        "x": 1000,
+        "y": 300
+      },
+      "inputs": {
+        "prompt": "Write Jest tests for this backend code: ${steps.step-4.outputs.code}",
+        "language": "javascript"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-7",
+      "name": "Review and Optimize with Copilot",
+      "type": "code-enhancement",
+      "agentId": "github.copilot",
+      "action": "enhanceCode",
+      "position": {
+        "x": 700,
+        "y": 500
+      },
+      "inputs": {
+        "code": "${steps.step-4.outputs.code}\n\n${steps.step-5.outputs.code}",
+        "language": "javascript",
+        "enhancements": ["performance", "security", "readability"]
+      },
+      "outputs": {
+        "optimizedCode": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "sourceStepId": "step-1",
+      "targetStepId": "step-2",
+      "sourceOutput": "text",
+      "targetInput": "prompt"
+    },
+    {
+      "sourceStepId": "step-2",
+      "targetStepId": "step-3",
+      "sourceOutput": "code",
+      "targetInput": "prompt"
+    },
+    {
+      "sourceStepId": "step-3",
+      "targetStepId": "step-4",
+      "sourceOutput": "code",
+      "targetInput": "prompt"
+    },
+    {
+      "sourceStepId": "step-3",
+      "targetStepId": "step-5",
+      "sourceOutput": "code",
+      "targetInput": "prompt"
+    },
+    {
+      "sourceStepId": "step-4",
+      "targetStepId": "step-6",
+      "sourceOutput": "code",
+      "targetInput": "prompt"
+    },
+    {
+      "sourceStepId": "step-4",
+      "targetStepId": "step-7",
+      "sourceOutput": "code",
+      "targetInput": "code"
+    },
+    {
+      "sourceStepId": "step-5",
+      "targetStepId": "step-7",
+      "sourceOutput": "code",
+      "targetInput": "code"
+    }
+  ],
+  "created": "2023-07-15T12:00:00Z",
+  "updated": "2023-07-15T12:00:00Z"
+}

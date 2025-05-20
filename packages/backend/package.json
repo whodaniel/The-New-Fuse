@@ -1,0 +1,27 @@
+{
+  "name": "@the-new-fuse/backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@the-new-fuse/core": "workspace:*",
+    "@the-new-fuse/database": "workspace:*",
+    "@the-new-fuse/types": "workspace:*",
+    "@the-new-fuse/utils": "workspace:*",
+    "react": "^18.2.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.1.0",
+    "nodemon": "^3.1.1",
+    "rimraf": "^5.0.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  }
+}

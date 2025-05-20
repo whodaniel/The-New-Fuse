@@ -1,0 +1,69 @@
+import { DefaultSessionManager } from '../SessionManager';
+import { AuthUser } from '../../types/auth';
+import { Session } from '../../types/session';
+
+describe('SessionManager', () => {
+  let sessionManager: DefaultSessionManager;
+  const mockUser: AuthUser = {
+    id: '123',
+    email: 'test@example.com',
+    roles: ['user']
+  };
+
+  beforeEach(() => {
+    sessionManager = new DefaultSessionManager({
+      maxConcurrentSessions: 2,
+      sessionTimeout: 1000, // 1 second for testing
+      extendOnActivity: true
+    });
+  });
+
+  it('should create a new session', async (): Promise<void> () => {
+    const session = await sessionManager.createSession(
+      mockUser,
+      'token123',
+      '127.0.0.1',
+      'Mozilla/5.0'
+    );
+
+    expect(session).toBeDefined();
+    expect(session.userId).toBe(mockUser.id);
+    expect(session.token).toBe('token123');
+    expect(session.isActive).toBe(true);
+  });
+
+  it('should validate an active session', async (): Promise<void> () => {
+    const session = await sessionManager.createSession(mockUser, 'token123');
+    const isValid = await sessionManager.validateSession(session.id);
+    expect(isValid).toBe(true);
+  });
+
+  it('should invalidate expired sessions', async (): Promise<void> () => {
+    const session = await sessionManager.createSession(mockUser, 'token123');
+    
+    // Wait for session to expire
+    await new Promise(resolve => setTimeout(resolve, 1100));
+    
+    const isValid = await sessionManager.validateSession(session.id);
+    expect(isValid).toBe(false);
+  });
+
+  it('should enforce maximum concurrent sessions', async (): Promise<void> () => {
+    const session1 = await sessionManager.createSession(mockUser, 'token1');
+    const session2 = await sessionManager.createSession(mockUser, 'token2');
+    const session3 = await sessionManager.createSession(mockUser, 'token3');
+
+    const activeSessions = await sessionManager.getActiveUserSessions(mockUser.id);
+    expect(activeSessions.length).toBe(2);
+    expect(activeSessions.find(s => s.id === session1.id)).toBeUndefined();
+  });
+
+  it('should revoke all user sessions', async (): Promise<void> () => {
+    await sessionManager.createSession(mockUser, 'token1');
+    await sessionManager.createSession(mockUser, 'token2');
+
+    await sessionManager.revokeAllUserSessions(mockUser.id);
+    const activeSessions = await sessionManager.getActiveUserSessions(mockUser.id);
+    expect(activeSessions.length).toBe(0);
+  });
+});export {};

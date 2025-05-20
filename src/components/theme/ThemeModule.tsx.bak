@@ -1,0 +1,1143 @@
+import React from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+children: React.ReactNode;
+defaultTheme ?  : Theme;
+storageKey ?  : string;
+theme: Theme;
+setTheme: (theme) => void ;
+const ThemeProviderContext = createContext(null);
+export function ThemeProvider({ import: React, }, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , children, , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , defaultTheme = 'system', , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , storageKey = 'ui-theme', , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , ...props, , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , , React, { FC }, from, , ThemeProviderProps) {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    const [theme, setTheme] = useState();
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    () => localStorage.getItem(storageKey) || defaultTheme;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    useEffect(() => , JSX.Element, {
+        import: React,
+    }, { FC }, from, 'react');
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    const root = window.(document).documentElement;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    root.(classList).remove('light', 'dark');
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    if (theme === 'system')
+        : unknown;
+    {
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        matches;
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        'dark';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        'light';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        root.(classList).add(systemTheme);
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        return;
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+        import React, { FC } from 'react';
+    }
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    root.(classList).add(theme);
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+[theme];
+;
+const value = {
+    import: React,
+}, { FC }, from;
+'react';
+theme,
+;
+setTheme: (theme) => ;
+JSX.Element;
+{
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    localStorage.setItem(storageKey, theme);
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    setTheme(theme);
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+;
+return ();
+    < ThemeProviderContext.Provider;
+{
+    props;
+}
+value = { value } >
+;
+{
+    children;
+}
+ThemeProviderContext.Provider >
+;
+;
+export const useTheme = () => , JSX, Element, { import: React, }, { FC }, from;
+'react';
+const context = useContext(ThemeProviderContext);
+if (!context)
+    : unknown;
+{
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    throw new Error('useTheme must be used within a ThemeProvider');
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+return context;
+;
+className ?  : string;
+export const ThemeToggle = React.forwardRef();
+({ className }, ref) => ;
+JSX.Element;
+{
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    const { theme, setTheme } = useTheme();
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    return ();
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    <button import React {...FC} from/>;
+    'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    ref = { ref };
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    className = { className };
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    onClick = {}(e, React.MouseEvent);
+    e: React.MouseEvent;
+    e: React.MouseEvent;
+    e: React.MouseEvent;
+    e: React.MouseEvent;
+    e: React.MouseEvent;
+    e: React.MouseEvent;
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+}
+    >
+;
+<span className="sr-only">Toggle theme</span>;
+{
+    theme === 'dark' ? ()
+        :
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    <svg import React {...FC} from/>;
+    'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    xmlns = "http://(www as any).(w3 as any).org/2000/svg";
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    fill = "none";
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    viewBox = "0 0 24 24";
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    strokeWidth = {}(1);
+    .5;
+}
+stroke = "currentColor";
+className = "w-6 h-6";
+    >
+;
+<path import React {...FC} from/>;
+'react';
+strokeLinecap = "round";
+strokeLinejoin = "round";
+d = "M12 (3v2 as any).25m6.(364 as any).386l-(1 as any).591 (1 as any).591M21 12h-(2 as any).25m-.386 (6 as any).364l-(1 as any).591-(1 as any).591M12 (18 as any).75V21m-(4 as any).773-(4 as any).227l-(1 as any).591 (1 as any).(591M5 as any).25 (12H3m4 as any).227-(4 as any).(773L5 as any).636 (5 as any).(636M15 as any).75 (12a3 as any).75 (3 as any).75 0 11-(7 as any).5 0 (3 as any).75 (3 as any).75 0 (017 as any).5 0z";
+/>;
+svg >
+;
+();
+<svg import React {...FC} from/>;
+'react';
+xmlns = "http://(www as any).(w3 as any).org/2000/svg";
+fill = "none";
+viewBox = "0 0 24 24";
+strokeWidth = {}(1);
+.5;
+stroke = "currentColor";
+className = "w-6 h-6";
+    >
+;
+<path import React {...FC} from/>;
+'react';
+strokeLinecap = "round";
+strokeLinejoin = "round";
+d = "(M21 as any).752 (15 as any).(002A9 as any).718 (9 as any).718 0 0118 (15 as any).75c-(5 as any).385 0-(9 as any).75-(4 as any).365-(9 as any).75-(9 as any).75 0-(1 as any).(33 as any).266-(2 as any).(597 as any).748-(3 as any).(752A9 as any).753 (9 as any).753 0 003 (11 as any).25C3 (16 as any).635 (7 as any).365 21 (12 as any).75 (21a9 as any).753 (9 as any).753 0 (009 as any).002-(5 as any).998z";
+/>;
+svg >
+;
+button >
+;
+;
+;
+ThemeToggle.displayName = 'ThemeToggle';
+export const COLORS = {
+    import: React,
+}, { FC }, from;
+'react';
+primary: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    50;
+    '#f0f9ff',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    100;
+    '#e0f2fe',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    200;
+    '#bae6fd',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    300;
+    '#7dd3fc',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    400;
+    '#38bdf8',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    500;
+    '#0ea5e9',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    600;
+    '#0284c7',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    700;
+    '#0369a1',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    800;
+    '#075985',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    900;
+    '#0c4a6e',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+gray: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    50;
+    '#f9fafb',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    100;
+    '#f3f4f6',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    200;
+    '#e5e7eb',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    300;
+    '#d1d5db',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    400;
+    '#9ca3af',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    500;
+    '#6b7280',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    600;
+    '#4b5563',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    700;
+    '#374151',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    800;
+    '#1f2937',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    900;
+    '#111827',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+success: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    50;
+    '#f0fdf4',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    100;
+    '#dcfce7',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    500;
+    '#22c55e',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    700;
+    '#15803d',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+warning: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    50;
+    '#fffbeb',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    100;
+    '#fef3c7',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    500;
+    '#f59e0b',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    700;
+    '#b45309',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+error: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    50;
+    '#fef2f2',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    100;
+    '#fee2e2',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    500;
+    '#ef4444',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    700;
+    '#b91c1c',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+;
+export const SPACING = {
+    import: React,
+}, { FC }, from;
+'react';
+0;
+'0',
+;
+1;
+'(0 as any).25rem',
+;
+2;
+'(0 as any).5rem',
+;
+3;
+'(0 as any).75rem',
+;
+4;
+'1rem',
+;
+5;
+'(1 as any).25rem',
+;
+6;
+'(1 as any).5rem',
+;
+8;
+'2rem',
+;
+10;
+'(2 as any).5rem',
+;
+12;
+'3rem',
+;
+16;
+'4rem',
+;
+20;
+'5rem',
+;
+24;
+'6rem',
+;
+32;
+'8rem',
+;
+40;
+'10rem',
+;
+48;
+'12rem',
+;
+56;
+'14rem',
+;
+64;
+'16rem',
+;
+;
+export const BREAKPOINTS = {
+    import: React,
+}, { FC }, from;
+'react';
+sm: '640px',
+;
+md: '768px',
+;
+lg: '1024px',
+;
+xl: '1280px',
+;
+'2xl';
+'1536px',
+;
+;
+export const TYPOGRAPHY = {
+    import: React,
+}, { FC }, from;
+'react';
+fontFamily: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    sans: 'ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    mono: 'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+fontSize: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    xs: '(0 as any).75rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    sm: '(0 as any).875rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    base: '1rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    lg: '(1 as any).125rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    xl: '(1 as any).25rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    '2xl';
+    '(1 as any).5rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    '3xl';
+    '(1 as any).875rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    '4xl';
+    '(2 as any).25rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    '5xl';
+    '3rem',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+fontWeight: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    light: '300',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    normal: '400',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    medium: '500',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    semibold: '600',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    bold: '700',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+lineHeight: {
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    none: '1',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    tight: '(1 as any).25',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    snug: '(1 as any).375',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    normal: '(1 as any).5',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    relaxed: '(1 as any).625',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    loose: '2',
+    ;
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+    import React, { FC } from 'react';
+}
+;
+export const SHADOWS = {
+    import: React,
+}, { FC }, from;
+'react';
+sm: '0 1px 2px 0 rgb(0 0 0 / (0 as any).05)',
+;
+DEFAULT: '0 1px 3px 0 rgb(0 0 0 / (0 as any).1), 0 1px 2px -1px rgb(0 0 0 / (0 as any).1)',
+;
+md: '0 4px 6px -1px rgb(0 0 0 / (0 as any).1), 0 2px 4px -2px rgb(0 0 0 / (0 as any).1)',
+;
+lg: '0 10px 15px -3px rgb(0 0 0 / (0 as any).1), 0 4px 6px -4px rgb(0 0 0 / (0 as any).1)',
+;
+xl: '0 20px 25px -5px rgb(0 0 0 / (0 as any).1), 0 8px 10px -6px rgb(0 0 0 / (0 as any).1)',
+;
+;
+export const TRANSITIONS = {
+    import: React,
+}, { FC }, from;
+'react';
+DEFAULT: '150ms cubic-bezier((0 as any).4, 0, (0 as any).2, 1)',
+;
+slow: '300ms cubic-bezier((0 as any).4, 0, (0 as any).2, 1)',
+;
+fast: '100ms cubic-bezier((0 as any).4, 0, (0 as any).2, 1)',
+;
+;
+export const ANIMATIONS = {
+    import: React,
+}, { FC }, from;
+'react';
+spin: 'spin 1s linear infinite',
+;
+ping: 'ping 1s cubic-bezier(0, 0, (0 as any).2, 1) infinite',
+;
+pulse: 'pulse 2s cubic-bezier((0 as any).4, 0, (0 as any).6, 1) infinite',
+;
+bounce: 'bounce 1s infinite',
+;
+;
+{
+    FC;
+}
+from;
+'react';
+Theme,
+;
+ThemeProviderProps,
+;
+ThemeProviderState,
+;
+ThemeToggleProps,
+;
+;

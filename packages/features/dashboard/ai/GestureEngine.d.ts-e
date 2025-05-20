@@ -1,0 +1,36 @@
+interface GestureEvent {
+    type: 'swipe' | 'pinch' | 'rotate' | 'tap' | 'hold';
+    direction?: 'up' | 'down' | 'left' | 'right';
+    scale?: number;
+    rotation?: number;
+    position: {
+        x: number;
+        y: number;
+    };
+    target?: Element;
+    timestamp: number;
+}
+export declare class GestureEngine {
+    private handlers;
+    private touchStartX;
+    private touchStartY;
+    private touchStartTime;
+    private initialDistance;
+    private initialAngle;
+    private isGestureInProgress;
+    constructor();
+    registerHandler(type: GestureEvent['type'], handler: (event: GestureEvent) => Promise<void>): void;
+    enableHandler(type: GestureEvent['type']): void;
+    disableHandler(type: GestureEvent['type']): void;
+    private initialize;
+    private handleTouchStart;
+    private handleTouchMove;
+    private handleTouchEnd;
+    private handleMouseDown;
+    private handleMouseMove;
+    private handleMouseUp;
+    private getSwipeDirection;
+    private triggerGestureEvent;
+    destroy(): void;
+}
+export {};

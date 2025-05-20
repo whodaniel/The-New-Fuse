@@ -1,0 +1,102 @@
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+import { Button } from '@/components/ui/button';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+const personalityTraits = ['openness', 'conscientiousness', 'extraversion', 'agreeableness', 'neuroticism'];
+const agentFormSchema = z.object({
+    name: z.string().min(1, 'Name is required'),
+    description: z.string().min(1, 'Description is required'),
+    capabilities: z.array(z.string()).min(1, 'At least one capability is required'),
+    personality: z.object({
+        openness: z.number().min(0).max(100),
+        conscientiousness: z.number().min(0).max(100),
+        extraversion: z.number().min(0).max(100),
+        agreeableness: z.number().min(0).max(100),
+        neuroticism: z.number().min(0).max(100),
+    }),
+});
+export const AgentForm: React.FC = ({ onSubmit, initialValues }) => {
+    var _a, _b, _c, _d, _e;
+    const form = useForm({
+        resolver: zodResolver(agentFormSchema),
+        defaultValues: {
+            name: (initialValues === null || initialValues === void 0 ? void 0 : initialValues.name) || '',
+            description: (initialValues === null || initialValues === void 0 ? void 0 : initialValues.description) || '',
+            capabilities: (initialValues === null || initialValues === void 0 ? void 0 : initialValues.capabilities) || [],
+            personality: {
+                openness: ((_a = initialValues === null || initialValues === void 0 ? void 0 : initialValues.personality) === null || _a === void 0 ? void 0 : _a.openness) || 50,
+                conscientiousness: ((_b = initialValues === null || initialValues === void 0 ? void 0 : initialValues.personality) === null || _b === void 0 ? void 0 : _b.conscientiousness) || 50,
+                extraversion: ((_c = initialValues === null || initialValues === void 0 ? void 0 : initialValues.personality) === null || _c === void 0 ? void 0 : _c.extraversion) || 50,
+                agreeableness: ((_d = initialValues === null || initialValues === void 0 ? void 0 : initialValues.personality) === null || _d === void 0 ? void 0 : _d.agreeableness) || 50,
+                neuroticism: ((_e = initialValues === null || initialValues === void 0 ? void 0 : initialValues.personality) === null || _e === void 0 ? void 0 : _e.neuroticism) || 50,
+            },
+        },
+    });
+    return (<Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <FormField control={form.control} name="name" render={({ field }) => (<FormItem>
+              <FormLabel>Name</FormLabel>
+              <FormControl>
+                <Input {...field}/>
+              </FormControl>
+              <FormMessage />
+            </FormItem>)}/>
+
+        <FormField control={form.control} name="description" render={({ field }) => (<FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea {...field}/>
+              </FormControl>
+              <FormMessage />
+            </FormItem>)}/>
+
+        <FormField control={form.control} name="capabilities" render={({ field }) => (<FormItem>
+              <FormLabel>Capabilities</FormLabel>
+              <FormControl>
+                <Select onValueChange={(value) => {
+                const values = field.value || [];
+                const newValues = values.includes(value)
+                    ? values.filter((v) => v !== value)
+                    : [...values, value];
+                field.onChange(newValues);
+            }}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select capabilities"/>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="conversation">Conversation</SelectItem>
+                    <SelectItem value="task_execution">Task Execution</SelectItem>
+                    <SelectItem value="code_generation">Code Generation</SelectItem>
+                    <SelectItem value="data_analysis">Data Analysis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>)}/>
+
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium">Personality Traits</h3>
+          {personalityTraits.map((trait) => (<FormField key={trait} control={form.control} name={`personality.${trait}`} render={({ field }) => (<FormItem>
+                  <FormLabel className="capitalize">{trait}</FormLabel>
+                  <FormControl>
+                    <Input type="range" min={0} max={100} value={field.value} onChange={(e) => field.onChange(Number(e.target.value))}/>
+                  </FormControl>
+                  <div className="flex justify-between text-sm text-muted-foreground">
+                    <span>0</span>
+                    <span>{field.value}</span>
+                    <span>100</span>
+                  </div>
+                  <FormMessage />
+                </FormItem>)}/>))}
+        </div>
+
+        <Button type="submit">Save Agent</Button>
+      </form>
+    </Form>);
+};
+//# sourceMappingURL=index.js.map

@@ -1,0 +1,64 @@
+.workflow-container {
+  width: 100%;
+  height: 100%;
+}
+
+.workflow-node {
+  cursor: pointer;
+}
+
+.workflow-node-label {
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.workflow-link {
+  stroke: #999;
+  fill: none;
+}
+
+.workflow-arrow {
+  fill: #999;
+}
+
+.workflow-node-pending {
+  fill: #f8f9fa;
+}
+
+.workflow-node-running {
+  fill: #e3f2fd;
+}
+
+.workflow-node-completed {
+  fill: #e3fcef;
+}
+
+.workflow-node-failed {
+  fill: #fff5f5;
+}
+
+.workflow-status-pending {
+  fill: #adb5bd;
+}
+
+.workflow-status-running {
+  fill: #1c7ed6;
+}
+
+.workflow-status-completed {
+  fill: #37b24d;
+}
+
+.workflow-status-failed {
+  fill: #f03e3e;
+}
+
+.workflow-node-highlighted {
+  stroke: #ff6b6b;
+  stroke-width: 3;
+}
+
+.workflow-node-normal {
+  stroke: #666;
+  stroke-width: 1;
+}

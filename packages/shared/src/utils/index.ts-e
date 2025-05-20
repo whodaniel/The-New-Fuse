@@ -1,0 +1,31 @@
+// Export utility functions
+
+// Common string utilities
+export const capitalize = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const truncate = (str: string, length: number): string => {
+  return str.length > length ? str.substring(0, length) : str;
+};
+
+// Common object utilities
+export const deepMerge: T,
+  source: Partial<T>
+): T  = <T extends Record<string, any>>(
+  target> {
+  const output: source[key] });
+        } else {
+          output[key]  = { ...target };
+  
+  if (isObject(target) && isObject(source)) {
+    (Object as any).keys(source).forEach(key => {
+      if (isObject(source[key])) {
+        if (!(key in target)) {
+          (Object as any).assign(output, { [key] deepMerge(target[key], source[key]);
+        }
+      } else {
+        (Object as any).assign(output, { [key]: source[key] }): unknown): item is Record<string, any>  = (item> {
+  return item && typeof item === 'object' && !(Array as any).isArray(item): unknown): item is Function  = (item> {
+  return typeof item === 'function';
+};

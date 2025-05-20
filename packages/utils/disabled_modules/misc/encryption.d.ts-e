@@ -1,0 +1,41 @@
+export declare class MessageEncryption {
+    private readonly key;
+    constructor(encryptionKey: string);
+    /**
+     * Encrypts a message using AES encryption
+     */
+    encrypt(message: string): string;
+    /**
+     * Decrypts an encrypted message
+     */
+    decrypt(encryptedMessage: string): string;
+    /**
+     * Generates a new encryption key
+     */
+    static generateKey(): string;
+    /**
+     * Creates a secure room key for end-to-end encryption
+     */
+    static createRoomKey(roomId: string, userIds: string[]): string;
+}
+export declare class E2EEncryption {
+    private readonly keyPair;
+    /**
+     * Initializes E2E encryption with a new key pair
+     */
+    initialize(): Promise<void>;
+    /**
+     * Exports the public key for sharing
+     */
+    exportPublicKey(): Promise<string>;
+    /**
+     * Encrypts data using the recipient's public key
+     */
+    encryptForRecipient(data: string, recipientPublicKey: string): Promise<string>;
+    /**
+     * Decrypts data using our private key
+     */
+    decrypt(encryptedData: string): Promise<string>;
+}
+export declare const createMessageSignature: (message: string, userId: string) => string;
+export declare const verifyMessageSignature: (message: string, signature: string, userId: string) => boolean;

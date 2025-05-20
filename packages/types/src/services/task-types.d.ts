@@ -1,0 +1,28 @@
+import { BaseServiceConfig, ServiceStatusType } from './service-types.js';
+export interface TaskConfig extends BaseServiceConfig {
+    maxRetries?: number;
+    timeout?: number;
+}
+export interface Task {
+    id: string;
+    type: string;
+    data: unknown;
+    status: ServiceStatusType;
+}
+export interface TaskMetadata {
+    description?: string;
+    input?: Record<string, unknown>;
+    output?: Record<string, unknown>;
+    dependencies?: string[];
+    scheduledAt?: Date;
+    startedAt?: Date;
+    completedAt?: Date;
+    error?: string;
+    retryCount?: number;
+    maxRetries?: number;
+    timeout?: number;
+}
+export interface TaskWithMetadata extends Task {
+    metadata: TaskMetadata;
+}
+//# sourceMappingURL=task-types.d.ts.map

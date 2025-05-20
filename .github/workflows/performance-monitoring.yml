@@ -1,0 +1,98 @@
+name: MCP Performance Monitoring
+
+on:
+  schedule:
+    - cron: '0 */6 * * *'  # Run every 6 hours
+  workflow_dispatch:  # Allow manual triggering
+
+jobs:
+  monitor:
+    name: Monitor MCP Performance
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.x'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          cd src/vscode-extension
+          npm ci
+          
+      - name: Run performance tests
+        run: |
+          cd src/vscode-extension
+          npm run benchmark
+          
+      - name: Process results
+        id: process
+        run: |
+          cd src/vscode-extension/benchmark-results
+          LATEST=$(ls -t *.json | head -1)
+          
+          # Extract key metrics
+          echo "::set-output name=metrics::$(cat $LATEST)"
+          
+          # Compare with previous
+          if [ $(ls -1 *.json | wc -l) -gt 1 ]; then
+            PREVIOUS=$(ls -t *.json | head -2 | tail -1)
+            echo "::set-output name=comparison::$(node ../scripts/compare-benchmarks.js $PREVIOUS $LATEST)"
+          fi
+          
+      - name: Create issue on regression
+        if: ${{ fromJson(steps.process.outputs.comparison).hasRegression }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const metrics = ${{ steps.process.outputs.metrics }};
+            const comparison = ${{ steps.process.outputs.comparison }};
+            
+            const body = `## Performance Regression Detected
+            
+            ${comparison.summary}
+            
+            ### Current Metrics
+            - Message Rate: ${metrics.messageRate}/sec
+            - Average Latency: ${metrics.averageLatency}ms
+            - Error Rate: ${metrics.errorRate}%
+            - Memory Usage: ${metrics.memoryUsage}MB
+            
+            ### Changes
+            ${Object.entries(comparison.changes)
+              .map(([key, value]) => `- ${key}: ${value}`)
+              .join('\n')}
+            
+            [View full report](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID})
+            `;
+            
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: '🚨 Performance Regression Detected',
+              body,
+              labels: ['performance', 'regression']
+            });
+            
+      - name: Upload metrics
+        uses: actions/upload-artifact@v3
+        with:
+          name: performance-metrics
+          path: src/vscode-extension/benchmark-results/*.json
+          
+      - name: Update metrics dashboard
+        run: |
+          cd src/vscode-extension
+          node scripts/update-metrics-dashboard.js
+          
+      - name: Deploy dashboard
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./metrics-dashboard
+          publish_branch: gh-pages
+          keep_files: true

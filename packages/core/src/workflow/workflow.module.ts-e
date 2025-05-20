@@ -1,0 +1,17 @@
+import { Module } from '@nestjs/common';
+import { WorkflowEngine } from './engine';
+import { WorkflowExecutor } from './executor';
+import { WorkflowValidator } from './validator';
+
+@Module({
+  imports: [],
+  providers: [
+    WorkflowEngine,
+    WorkflowExecutor,
+    WorkflowValidator
+  ],
+  exports: [
+    WorkflowEngine
+  ]
+})
+export class WorkflowModule {}

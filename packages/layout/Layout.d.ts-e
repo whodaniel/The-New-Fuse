@@ -1,0 +1,18 @@
+import React from 'react';
+import { NavigationItem, UserProfile } from './types';
+interface LayoutProps {
+    children: (React as any).ReactNode;
+    navigation: NavigationItem[];
+    currentPath: string;
+    user?: UserProfile;
+    onNavigate: (path: string) => void;
+    onLogout?: () => void;
+    onProfile?: () => void;
+    onSettings?: () => void;
+    footerLinks?: Array<{
+        label: string;
+        href: string;
+    }>;
+}
+export declare const Layout: (React as any).FC<LayoutProps>;
+export {};

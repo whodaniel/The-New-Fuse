@@ -1,0 +1,11 @@
+import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types';
+export declare class FeatureTracker {
+    private features;
+    createFeature(featureId: string, name: string, description: string, dependencies?: string[]): FeatureProgress;
+    private calculateCompletionPercentage;
+    updateStage(featureId: string, newStage: FeatureStage): FeatureProgress;
+    updateMetrics(featureId: string, metrics: Partial<CodeMetrics>): FeatureProgress;
+    updateQualitativeAssessment(featureId: string, assessment: Partial<QualitativeAssessment>): FeatureProgress;
+    getFeatureProgress(featureId: string): FeatureProgress;
+    getProgressSummary(featureId: string): string;
+}

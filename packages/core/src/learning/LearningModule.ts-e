@@ -1,0 +1,27 @@
+import { Module, OnModuleInit } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { LearningSystem } from './LearningSystem';
+import { PatternRecognition } from './PatternRecognition';
+import { Pattern } from '@the-new-fuse/database/src/models/Pattern';
+import { LearningEvent } from '@the-new-fuse/database/src/models/LearningEvent';
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Pattern, LearningEvent]): [
+    LearningSystem,
+    PatternRecognition
+  ],
+  exports: [
+    LearningSystem,
+    PatternRecognition
+  ]
+})
+export class LearningModule implements OnModuleInit {
+  constructor(
+    private readonly learningSystem: LearningSystem
+  ) {}
+
+  async onModuleInit(): Promise<void> (): Promise<any> {
+    await this.learningSystem.initialize();
+  }
+}

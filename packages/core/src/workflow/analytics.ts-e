@@ -1,0 +1,26 @@
+export class WorkflowAnalytics {
+  private readonly metricsCollector: MetricsCollector;
+  private readonly insightGenerator: InsightGenerator;
+
+  async generateBusinessInsights(): Promise<void> (
+    workflowId: string,
+    timeRange: DateRange
+  ): Promise<WorkflowInsights> {
+    const metrics: this.analyzePerformanceMetrics(metrics): this.identifyBottlenecks(metrics),
+      optimization: this.generateOptimizationSuggestions(metrics),
+      businessImpact: this.calculateBusinessImpact(metrics),
+      predictions: await this.generatePredictions(trends)
+    };
+  }
+
+  async generateDashboard(): Promise<void> (
+    filters: AnalyticsFilters
+  ): Promise<AnalyticsDashboard> {
+    const data  = await this.metricsCollector.collect(workflowId, timeRange);
+    const trends = await this.analyzeTrends(metrics);
+    
+    return {
+      performance await this.aggregateAnalyticsData(filters);
+    return this.dashboardGenerator.generate(data);
+  }
+}

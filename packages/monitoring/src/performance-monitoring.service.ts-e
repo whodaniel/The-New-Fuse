@@ -1,0 +1,474 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../../src/core/database/prisma.service';
+
+export interface PerformanceMetric {
+  name: string;
+  value: number;
+  tags?: Record<string, string>;
+  timestamp?: Date;
+  unit?: string;
+  context?: Record<string, any>;
+}
+
+export interface PerformanceThreshold {
+  metricName: string;
+  operator: 'gt' | 'lt' | 'gte' | 'lte' | 'eq';
+  value: number;
+  severity: 'info' | 'warning' | 'critical';
+  duration?: number; // Duration in seconds the threshold must be exceeded
+}
+
+@Injectable()
+export class PerformanceMonitoringService {
+  private readonly logger = new Logger(PerformanceMonitoringService.name);
+  private readonly enabled: boolean;
+  private readonly sampleRate: number;
+  private readonly thresholds: PerformanceThreshold[];
+  private readonly alertingEnabled: boolean;
+  
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
+    const perfConfig = this.configService.get('monitoring.performance') || {};
+    this.enabled = perfConfig.enabled !== false;
+    this.sampleRate = perfConfig.sampleRate || 1.0; // Default to capturing all metrics
+    this.thresholds = perfConfig.thresholds || [];
+    this.alertingEnabled = perfConfig.alerting?.enabled !== false;
+    
+    this.logger.log('Performance monitoring service initialized');
+  }
+
+  /**
+   * Record a performance metric
+   */
+  async recordMetric(metric: PerformanceMetric): Promise<void> {
+    if (!this.enabled || Math.random() > this.sampleRate) return;
+
+    try {
+      const normalizedMetric = this.normalizeMetric(metric);
+      
+      // Store in database
+      await this.prisma.performanceMetric.create({
+        data: {
+          name: normalizedMetric.name,
+          value: normalizedMetric.value,
+          tags: normalizedMetric.tags ? JSON.stringify(normalizedMetric.tags) : null,
+          timestamp: normalizedMetric.timestamp,
+          unit: normalizedMetric.unit,
+          context: normalizedMetric.context ? JSON.stringify(normalizedMetric.context) : null,
+        },
+      });
+
+      // Check thresholds if alerting is enabled
+      if (this.alertingEnabled) {
+        await this.checkThresholds(normalizedMetric);
+      }
+    } catch (error) {
+      // Don't let monitoring errors disrupt the application
+      this.logger.error(
+        `Failed to record metric: ${(error as Error).message}`,
+        (error as Error).stack,
+      );
+    }
+  }
+
+  /**
+   * Record response time for an operation
+   */
+  async recordResponseTime({
+    operation,
+    durationMs,
+    success = true,
+    tags = {},
+  }: {
+    operation: string;
+    durationMs: number;
+    success?: boolean;
+    tags?: Record<string, string>;
+  }): Promise<void> {
+    return this.recordMetric({
+      name: 'response_time',
+      value: durationMs,
+      unit: 'ms',
+      tags: {
+        operation,
+        success: String(success),
+        ...tags,
+      },
+      context: {
+        operation,
+        success,
+      },
+    });
+  }
+
+  /**
+   * Record resource usage
+   */
+  async recordResourceUsage({
+    resource,
+    usage,
+    capacity,
+    tags = {},
+  }: {
+    resource: string;
+    usage: number;
+    capacity?: number;
+    tags?: Record<string, string>;
+  }): Promise<void> {
+    const metrics: PerformanceMetric[] = [
+      {
+        name: 'resource_usage',
+        value: usage,
+        tags: {
+          resource,
+          ...tags,
+        },
+        context: {
+          resource,
+          usage,
+          capacity,
+        },
+      },
+    ];
+
+    // If capacity is provided, also record utilization percentage
+    if (capacity !== undefined && capacity > 0) {
+      metrics.push({
+        name: 'resource_utilization',
+        value: (usage / capacity) * 100,
+        unit: '%',
+        tags: {
+          resource,
+          ...tags,
+        },
+        context: {
+          resource,
+          usage,
+          capacity,
+        },
+      });
+    }
+
+    // Record all metrics
+    await Promise.all(metrics.map(metric => this.recordMetric(metric)));
+  }
+
+  /**
+   * Record throughput for an operation
+   */
+  async recordThroughput({
+    operation,
+    count,
+    intervalSeconds = 60,
+    success = true,
+    tags = {},
+  }: {
+    operation: string;
+    count: number;
+    intervalSeconds?: number;
+    success?: boolean;
+    tags?: Record<string, string>;
+  }): Promise<void> {
+    return this.recordMetric({
+      name: 'throughput',
+      value: count / intervalSeconds, // Calculate operations per second
+      unit: 'ops/s',
+      tags: {
+        operation,
+        success: String(success),
+        interval: `${intervalSeconds}s`,
+        ...tags,
+      },
+      context: {
+        operation,
+        count,
+        intervalSeconds,
+        success,
+      },
+    });
+  }
+
+  /**
+   * Get performance metrics with filters
+   */
+  async getMetrics({
+    name,
+    tags,
+    timeRange,
+    aggregation = 'avg',
+    interval,
+    page = 1,
+    limit = 100,
+  }: {
+    name?: string;
+    tags?: Record<string, string>;
+    timeRange?: { start: Date; end: Date };
+    aggregation?: 'avg' | 'min' | 'max' | 'sum' | 'count';
+    interval?: string;
+    page?: number;
+    limit?: number;
+  }): Promise<{ metrics: unknown[]; total: number }> {
+    try {
+      const where: any = {};
+      
+      if (name) {
+        where.name = name;
+      }
+      
+      if (tags) {
+        // Convert tags to JSON string conditions
+        for (const [key, value] of Object.entries(tags)) {
+          where.tags = {
+            contains: `"${key}":"${value}"`,
+          };
+        }
+      }
+      
+      if (timeRange) {
+        where.timestamp = {
+          gte: timeRange.start,
+          lte: timeRange.end,
+        };
+      }
+
+      // If interval is specified, we need to perform time-based aggregation
+      if (interval) {
+        // This would require raw SQL or a more complex query builder
+        // For simplicity, we'll just fetch the raw data and aggregate in memory
+        const metrics = await this.prisma.performanceMetric.findMany({
+          where,
+          orderBy: { timestamp: 'asc' },
+        });
+
+        // Perform time-based aggregation
+        const aggregatedMetrics = this.aggregateMetricsByTime(metrics, interval, aggregation);
+        const paginatedMetrics = aggregatedMetrics.slice((page - 1) * limit, page * limit);
+        
+        return { metrics: paginatedMetrics, total: aggregatedMetrics.length };
+      }
+
+      // Without interval, just fetch with pagination
+      const [metrics, total] = await Promise.all([
+        this.prisma.performanceMetric.findMany({
+          where,
+          orderBy: { timestamp: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.performanceMetric.count({ where }),
+      ]);
+
+      // Parse JSON strings back to objects
+      const parsedMetrics = metrics.map(metric => ({
+        ...metric,
+        tags: metric.tags ? JSON.parse(metric.tags as string) : null,
+        context: metric.context ? JSON.parse(metric.context as string) : null,
+      }));
+
+      return { metrics: parsedMetrics, total };
+    } catch (error) {
+      this.logger.error(`Failed to get metrics: ${(error as Error).message}`, (error as Error).stack);
+      return { metrics: [], total: 0 };
+    }
+  }
+
+  /**
+   * Normalize performance metric
+   */
+  private normalizeMetric(metric: PerformanceMetric): PerformanceMetric {
+    return {
+      ...metric,
+      timestamp: metric.timestamp || new Date(),
+    };
+  }
+
+  /**
+   * Check if a metric exceeds any thresholds and handle alerts
+   */
+  private async checkThresholds(metric: PerformanceMetric): Promise<void> {
+    const matchingThresholds = this.thresholds.filter(
+      threshold => threshold.metricName === metric.name
+    );
+
+    for (const threshold of matchingThresholds) {
+      const isExceeded = this.checkThresholdExceeded(metric.value, threshold);
+      
+      if (isExceeded) {
+        // Log the threshold violation
+        const logLevel = this.getLogLevelForSeverity(threshold.severity);
+        this.logger[logLevel](
+          `Performance threshold exceeded: ${metric.name} = ${metric.value} ${metric.unit || ''}`,
+          {
+            metric,
+            threshold,
+          },
+        );
+
+        // Store the alert in the database
+        try {
+          await this.prisma.performanceAlert.create({
+            data: {
+              metricName: metric.name,
+              metricValue: metric.value,
+              thresholdValue: threshold.value,
+              operator: threshold.operator,
+              severity: threshold.severity,
+              timestamp: metric.timestamp || new Date(),
+              tags: metric.tags ? JSON.stringify(metric.tags) : null,
+              context: metric.context ? JSON.stringify(metric.context) : null,
+            },
+          });
+        } catch (error) {
+          this.logger.error(`Failed to store performance alert: ${(error as Error).message}`);
+        }
+      }
+    }
+  }
+
+  /**
+   * Check if a value exceeds a threshold
+   */
+  private checkThresholdExceeded(value: number, threshold: PerformanceThreshold): boolean {
+    switch (threshold.operator) {
+      case 'gt':
+        return value > threshold.value;
+      case 'lt':
+        return value < threshold.value;
+      case 'gte':
+        return value >= threshold.value;
+      case 'lte':
+        return value <= threshold.value;
+      case 'eq':
+        return value === threshold.value;
+      default:
+        return false;
+    }
+  }
+
+  /**
+   * Map severity to log level
+   */
+  private getLogLevelForSeverity(severity: string): 'log' | 'warn' | 'error' {
+    switch (severity) {
+      case 'critical':
+        return 'error';
+      case 'warning':
+        return 'warn';
+      case 'info':
+      default:
+        return 'log';
+    }
+  }
+
+  /**
+   * Aggregate metrics by time interval
+   * This is a simplified implementation and would need to be enhanced for production use
+   */
+  private aggregateMetricsByTime(
+    metrics: any[],
+    interval: string,
+    aggregation: 'avg' | 'min' | 'max' | 'sum' | 'count'
+  ): any[] {
+    // Parse interval
+    const intervalValue = parseInt(interval.slice(0, -1), 10);
+    const intervalUnit = interval.slice(-1);
+    
+    // Group metrics by time bucket
+    const buckets: Record<string, any[]> = {};
+    
+    metrics.forEach(metric => {
+      const timestamp = new Date(metric.timestamp);
+      let bucketKey: string;
+      
+      // Create time buckets based on interval
+      switch (intervalUnit) {
+        case 'h': // hours
+          bucketKey = new Date(
+            timestamp.getFullYear(),
+            timestamp.getMonth(),
+            timestamp.getDate(),
+            Math.floor(timestamp.getHours() / intervalValue) * intervalValue
+          ).toISOString();
+          break;
+        case 'd': // days
+          bucketKey = new Date(
+            timestamp.getFullYear(),
+            timestamp.getMonth(),
+            Math.floor(timestamp.getDate() / intervalValue) * intervalValue
+          ).toISOString();
+          break;
+        default: // minutes (default)
+          bucketKey = new Date(
+            timestamp.getFullYear(),
+            timestamp.getMonth(),
+            timestamp.getDate(),
+            timestamp.getHours(),
+            Math.floor(timestamp.getMinutes() / intervalValue) * intervalValue
+          ).toISOString();
+      }
+      
+      if (!buckets[bucketKey]) {
+        buckets[bucketKey] = [];
+      }
+      
+      buckets[bucketKey].push({
+        ...metric,
+        tags: metric.tags ? JSON.parse(metric.tags) : null,
+        context: metric.context ? JSON.parse(metric.context) : null,
+      });
+    });
+    
+    // Aggregate values in each bucket
+    return Object.entries(buckets).map(([timestamp, bucketMetrics]) => {
+      // Group by metric name within the bucket
+      const metricsByName: Record<string, any[]> = {};
+      
+      bucketMetrics.forEach(metric => {
+        if (!metricsByName[metric.name]) {
+          metricsByName[metric.name] = [];
+        }
+        metricsByName[metric.name].push(metric);
+      });
+      
+      // Aggregate each metric name group
+      const aggregatedMetrics: Record<string, any> = {};
+      
+      Object.entries(metricsByName).forEach(([name, nameMetrics]) => {
+        let value: number;
+        
+        switch (aggregation) {
+          case 'min':
+            value = Math.min(...nameMetrics.map(m => m.value));
+            break;
+          case 'max':
+            value = Math.max(...nameMetrics.map(m => m.value));
+            break;
+          case 'sum':
+            value = nameMetrics.reduce((sum, m) => sum + m.value, 0);
+            break;
+          case 'count':
+            value = nameMetrics.length;
+            break;
+          default: // avg
+            value = nameMetrics.reduce((sum, m) => sum + m.value, 0) / nameMetrics.length;
+            break;
+        }
+        
+        // Assign the aggregated value to the metrics object
+        aggregatedMetrics[name] = {
+          value,
+          unit: nameMetrics[0].unit,
+          count: nameMetrics.length
+        };
+      });
+      
+      return {
+        timestamp,
+        metrics: aggregatedMetrics
+      };
+    });
+  }
+}

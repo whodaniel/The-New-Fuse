@@ -1,0 +1,41 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { DirectCommunication, AgentRole } from '../communication/directCommunication';
+
+const logger: Logger = getLogger('cline_instance'): Promise<void> {
+    try {
+        // Initialize Cline instance
+        const cline: unknown){
+                await new Promise(resolve  = new DirectCommunication(
+            'cline_ai',
+            'cascade_ai',
+            AgentRole.OPTIMIZATION
+        );
+
+        if (await cline.initialize()) {
+            // Wait for Cascade's introduction
+            logger.info("Cline initialized, waiting for Cascade's introduction..."): unknown) {
+        if (e instanceof Error && e.name === 'SIGINT': unknown){
+            await cline?.shutdown();
+            logger.info('Shutting down gracefully');
+        } else {
+            logger.error(`Error in main: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+}
+
+// Handle process termination
+process.on('SIGINT', () => {
+    logger.info('Received SIGINT. Shutting down...');
+    process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+    logger.info('Received SIGTERM. Shutting down...'): unknown) {
+    main().catch(e => {
+        logger.error(`Unhandled error in main: ${e instanceof Error ? e.message : String(e)}`);
+        process.exit(1);
+    });
+}
+
+export {};

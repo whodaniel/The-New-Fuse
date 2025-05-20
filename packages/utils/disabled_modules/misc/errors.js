@@ -1,0 +1,19 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getErrors = void 0;
+function getErrors(e) {
+    let error;
+    if (typeof e === "string") {
+        error = e;
+    }
+    else if (e instanceof Error) {
+        error = e.message;
+    }
+    else {
+        error = "Unknown error";
+    }
+    return error;
+}
+exports.getErrors = getErrors;
+export {};
+//# sourceMappingURL=errors.js.map

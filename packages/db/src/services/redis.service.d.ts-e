@@ -1,0 +1,23 @@
+export interface RedisConfig {
+    host: string;
+    port: number;
+    password?: string;
+    db?: number;
+}
+export declare class RedisService {
+    private client;
+    private subscribers;
+    constructor(config: RedisConfig);
+    connect(): Promise<void>;
+    get(key: string): Promise<string | null>;
+    getAll(pattern: string): Promise<string[]>;
+    set(key: string, value: string, ttl?: number): Promise<void>;
+    setWorkflowState(workflowId: string, state: unknown): Promise<void>;
+    del(key: string): Promise<void>;
+    exists(key: string): Promise<boolean>;
+    keys(pattern: string): Promise<string[]>;
+    publish(channel: string, message: string): Promise<void>;
+    subscribe(channel: string, callback: (message: string) => void): Promise<void>;
+    unsubscribe(channel: string): Promise<void>;
+    disconnect(): Promise<void>;
+}

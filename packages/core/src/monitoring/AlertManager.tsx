@@ -1,0 +1,282 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+
+interface AlertRule {
+  id: string;
+  name: string;
+  description: string;
+  condition: string;
+  threshold: number;
+  severity: low' | 'medium' | 'high' | 'critical';
+  enabled: boolean;
+  labels: Record<string, string>;
+  actions: AlertAction[];
+}
+
+interface AlertAction {
+  type: email' | 'webhook' | 'slack' | 'notification';
+  config: Record<string, unknown>;
+}
+
+interface AlertInstance {
+  id: string;
+  ruleId: string;
+  status: firing' | 'resolved';
+  value: number;
+  startsAt: Date;
+  endsAt?: Date;
+  labels: Record<string, string>;
+  annotations: Record<string, string>;
+}
+
+@Injectable()
+export class AlertManager extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private rules: Map<string, AlertRule>;
+  private activeAlerts: Map<string, AlertInstance>;
+  private checkIntervals: Map<string, NodeJS.Timeout>;
+
+  constructor() {
+    super(): Promise<any> {
+    await this.loadAlertRules(): Promise<void> {
+    try {
+      const rules: { enabled: true }
+      });
+
+      for (const rule of rules: unknown){
+        this.rules.set(rule.id, {
+          ...rule,
+          actions: JSON.parse(rule.actions)
+        });
+      }
+
+      this.logger.info(`Loaded ${rules.length} alert rules`);
+    } catch (error: unknown){
+      this.logger.error('Failed to load alert rules:', error): void {
+    for (const rule of this.rules.values()) {
+      if (rule.enabled: unknown){
+        const interval: Omit<AlertRule, 'id'>): Promise<AlertRule> {
+    const id: AlertRule   = await this.db.alertRules.findMany({
+        where setInterval(
+          () crypto.randomUUID();
+    const newRule {
+      ...rule,
+      id,
+      enabled: true
+    };
+
+    // Persist rule
+    await this.db.alertRules.create({
+      data: {
+        id,
+        name: rule.name,
+        description: rule.description,
+        condition: rule.condition,
+        threshold: rule.threshold,
+        severity: rule.severity,
+        enabled: true,
+        labels: rule.labels,
+        actions: JSON.stringify(rule.actions)): void {
+      const interval: string, updates: Partial<AlertRule>): Promise<AlertRule> {
+    const rule): void {
+      throw new Error(`Alert rule ${id} not found`):  { id },
+      data: {
+        ...updates,
+        actions: JSON.stringify(updatedRule.actions)
+      }
+    });
+
+    this.rules.set(id, updatedRule);
+
+    // Update check interval if enabled status changed
+    if(updates.enabled !  = setInterval(
+        () => this.evaluateRule(newRule),
+        60000
+      );
+      this.checkIntervals.set(id, interval);
+    }
+
+    return newRule;
+  }
+
+  async updateRule(id this.rules.get(): Promise<void> {id);
+    if(!rule {
+      ...rule: unknown, ...updates
+    };
+
+    // Update in database
+    await this.db.alertRules.update({
+      where= undefined): void {
+      const existingInterval: unknown){
+        const interval): void {
+        clearInterval(existingInterval): string): Promise<void> {
+    // Stop checking
+    const interval: { id }
+    });
+
+    // Resolve any active alerts for this rule
+    const activeAlerts   = this.checkIntervals.get(id)): void {
+      clearInterval(interval);
+      this.checkIntervals.delete(id);
+    }
+
+    // Remove from memory
+    this.rules.delete(id);
+
+    // Remove from database
+    await this.db.alertRules.delete({
+      where Array.from(this.activeAlerts.values()): void {
+      await this.resolveAlert(alert.id): AlertRule): Promise<void> {
+    try {
+      const result: unknown){
+        await this.fireAlert(rule, result);
+      } else {
+        await this.resolveAlertsForRule(rule.id)): void {
+      this.logger.error(`Failed to evaluate rule ${rule.name}:`, error): string): Promise<number> {
+    // Implement condition evaluation logic
+    // This should support various metric queries and calculations
+    return 0;
+  }
+
+  private async fireAlert(): Promise<void> {rule: AlertRule, value: number): Promise<void> {
+    const alertId: ${Date.now(): AlertInstance  = await this.evaluateCondition(rule.condition);
+
+      if (result > rule.threshold `$ {rule.id} {
+      id: alertId,
+      ruleId: rule.id,
+      status: firing',
+      value,
+      startsAt: new Date(): rule.labels,
+      annotations: {
+        description: rule.description,
+        value: value.toString(): string): Promise<void> {
+    const alert: unknown){
+      return;
+    }
+
+    alert.status  = this.activeAlerts.get(alertId);
+    if (!alert || alert.status === 'resolved' 'resolved';
+    alert.endsAt = new Date();
+
+    // Update in database
+    await this.db.alertInstances.update({
+      where: { id: alertId },
+      data: {
+        status: resolved',
+        endsAt: alert.endsAt
+      }
+    });
+
+    // Remove from active alerts
+    this.activeAlerts.delete(alertId): string): Promise<void> {
+    const alerts: unknown){
+      await this.resolveAlert(alert.id): AlertInstance): Promise<void> {
+    await this.db.alertInstances.create({
+      data: {
+        id: alert.id,
+        ruleId: alert.ruleId,
+        status: alert.status,
+        value: alert.value,
+        startsAt: alert.startsAt,
+        endsAt: alert.endsAt,
+        labels: alert.labels,
+        annotations: alert.annotations
+      }
+    }): AlertRule,
+    alert: AlertInstance
+  ): Promise<void> {
+    for (const action of rule.actions: unknown){
+      try {
+        switch (action.type: unknown){
+          case 'email':
+            await this.sendEmail(action.config, alert): await this.callWebhook(action.config, alert);
+            break;
+          case 'slack':
+            await this.sendSlackNotification(action.config, alert);
+            break;
+          case 'notification':
+            await this.sendNotification(action.config, alert);
+            break;
+        }
+      } catch (error): void {
+        this.logger.error(
+          `Failed to execute ${action.type} action for alert ${alert.id}:`,
+          error
+        ): Record<string, unknown>,
+    alert: AlertInstance
+  ): Promise<void> {
+    // Implement email sending logic
+  }
+
+  private async callWebhook(): Promise<void> {
+    config: Record<string, unknown>,
+    alert: AlertInstance
+  ): Promise<void> {
+    // Implement webhook calling logic
+  }
+
+  private async sendSlackNotification(): Promise<void> {
+    config: Record<string, unknown>,
+    alert: AlertInstance
+  ): Promise<void> {
+    // Implement Slack notification logic
+  }
+
+  private async sendNotification(): Promise<void> {
+    config: Record<string, unknown>,
+    alert: AlertInstance
+  ): Promise<void> {
+    // Implement system notification logic
+  }
+
+  async getActiveAlerts(): Promise<void> {
+    options: {
+      severity?: low' | 'medium' | 'high' | 'critical';
+      labels?: Record<string, string>;
+    }  = Array.from(this.activeAlerts.values())
+      .filter(alert => alert.ruleId === ruleId);
+
+    for (const alert of alerts {}
+  ): Promise<AlertInstance[]> {
+    return Array.from(this.activeAlerts.values())
+      .filter(alert => {
+        if (options.severity: unknown){
+          const rule: unknown){
+            return false;
+          }
+        }
+
+        if (options.labels: unknown){
+          return Object.entries(options.labels):  {
+      startTime?: Date;
+      endTime?: Date;
+      ruleId?: string;
+      severity?: low' | 'medium' | 'high' | 'critical';
+    } = {}
+  ): Promise<AlertInstance[]> {
+    return this.db.alertInstances.findMany({
+      where: {
+        ruleId: options.ruleId,
+        startsAt: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { startsAt: desc' }
+    }): Promise<void> {
+    // Clear intervals
+    for (const interval of this.checkIntervals.values()) {
+      clearInterval(interval);
+    }
+    this.checkIntervals.clear();
+
+    // Clear memory
+    this.rules.clear();
+    this.activeAlerts.clear();
+  }
+}

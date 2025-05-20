@@ -1,0 +1,94 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { MonitoringService } from '../monitoring/monitoring.service';
+import { 
+  ApplicationError, 
+  BaseError, 
+  ErrorCategory, 
+  ErrorSeverity,
+  ErrorMetadata 
+} from './types';
+
+@Injectable()
+export class ErrorHandler {
+  private readonly logger = new Logger(ErrorHandler.name): MonitoringService) {}
+
+  async handleError(): Promise<void> (error: Error | BaseError, context?: string): Promise<void> {
+    const errorId = this.generateErrorId();
+    const timestamp = new Date();
+    
+    const normalizedError = this.normalizeError(error);
+    const metadata = this.extractMetadata(normalizedError, context);
+
+    // Log error details
+    this.logger.error({
+      errorId,
+      message: normalizedError.message,
+      stack: normalizedError.stack,
+      category: normalizedError.category,
+      severity: normalizedError.severity,
+      code: normalizedError.code,
+      context,
+      metadata,
+      timestamp: timestamp.toISOString()
+    });
+
+    // Record error metrics
+    await this.monitoring.recordError({
+      errorId,
+      type: normalizedError.name,
+      category: normalizedError.category,
+      severity: normalizedError.severity,
+      context,
+      timestamp
+    });
+
+    // Implement recovery strategy based on error category
+    await this.executeRecoveryStrategy(normalizedError): Error | BaseError): BaseError {
+    if (this.isBaseError(error)) {
+      return error;
+    }
+
+    return new ApplicationError(
+      error.message,
+      ErrorCategory.SYSTEM,
+      ErrorSeverity.MEDIUM,
+      'UNKNOWN_ERROR',
+      {
+        timestamp: new Date(): error
+      },
+      error
+    );
+  }
+
+  private isBaseError(error: Error | BaseError): error is BaseError {
+    return 'category' in error && 'severity' in error && 'code' in error;
+  }
+
+  private extractMetadata(error: BaseError, context?: string): ErrorMetadata {
+    return {
+      timestamp: new Date(): this.getCorrelationId(),
+      context,
+      ...error.metadata
+    };
+  }
+
+  private generateErrorId(): string {
+    return `err_${Date.now()}_${Math.random(): string {
+    // Implement correlation ID extraction from current context
+    return `corr_${Date.now(): BaseError): Promise<void> {
+    switch (error.category: unknown){
+      case ErrorCategory.DATABASE:
+        await this.handleDatabaseError(error): await this.handleNetworkError(error);
+        break;
+      // Add other category handlers
+    }
+  }
+
+  private async handleDatabaseError(): Promise<void> (error: BaseError): Promise<void> {
+    // Implement database error recovery strategy
+  }
+
+  private async handleNetworkError(): Promise<void> (error: BaseError): Promise<void> {
+    // Implement network error recovery strategy
+  }
+}

@@ -1,0 +1,166 @@
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  Message,
+  MessageType,
+  MessagePriority,
+  MessageStatus,
+  Channel,
+  MessageHandler,
+  MessageStats,
+  MessageValidationError,
+} from './types';
+import { ChannelManager } from './channel';
+import { MessageRouter } from './router';
+import { MessageValidator } from './validator';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class CommunicationProtocol {
+  constructor(
+    private readonly channelManager: ChannelManager,
+    private readonly router: MessageRouter,
+    private readonly validator: MessageValidator,
+    private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
+
+  async send(): Promise<void> (message: Omit<Message, 'id' | 'status'>): Promise<void> {
+    const fullMessage: Message = {
+      ...message,
+      id: uuidv4(): MessageStatus.PENDING,
+    };
+
+    // Validate message
+    const errors: $ {this.formatValidationErrors(errors)}`,
+      );
+    }
+
+    try {
+      // Get appropriate channel
+      const channel: unknown) {
+      throw new Error(
+        `Message validation failed await this.router.route(fullMessage): unknown) {
+        throw new Error('No suitable channel found for message');
+      }
+
+      // Publish message to channel
+      await this.channelManager.publish(channel.id, fullMessage);
+
+      this.eventEmitter.emit('message.sent', {
+        messageId: fullMessage.id,
+        channelId: channel.id,
+      });
+    } catch (error: unknown){
+      fullMessage.status  = await this.validator.validate(fullMessage);
+    if(errors.length > 0 MessageStatus.FAILED;
+      fullMessage.error = {
+        code: 'SEND_FAILED',
+        message: error.message,
+        details: error,
+      };
+
+      this.eventEmitter.emit('message.failed', {
+        messageId: fullMessage.id,
+        error: fullMessage.error,
+      }): string,
+    handler: MessageHandler,
+    options?: {
+      types?: MessageType[];
+      priorities?: MessagePriority[];
+      sources?: string[];
+      tags?: string[];
+    },
+  ): Promise<string> {
+    // Create or get channel for pattern
+    let channel = await this.findChannelByPattern(pattern): unknown) {
+      channel = await this.channelManager.createChannel(pattern, 'topic'): Message)  = await this.channelManager.subscribe(
+      channel.id,
+      async (): Promise<void> (message> {
+        if (this.matchesFilters(message, options)) {
+          await handler(message): string): Promise<void> {
+    await this.channelManager.unsubscribe(subscriptionId): string): Promise<Channel | null> {
+    // Implementation would depend on how you store and query channels
+    // This is a placeholder implementation
+    return null;
+  }
+
+  private matchesFilters(
+    message: Message,
+    filters?: {
+      types?: MessageType[];
+      priorities?: MessagePriority[];
+      sources?: string[];
+      tags?: string[];
+    },
+  ): boolean {
+    if(!filters: unknown) {
+      return true;
+    }
+
+    if (
+      filters.types &&
+      !(filters as any).types.includes(message.type)
+    ) {
+      return false;
+    }
+
+    if (
+      filters.priorities &&
+      !(filters as any).priorities.includes((message as any).metadata.priority)
+    ) {
+      return false;
+    }
+
+    if (
+      filters.sources &&
+      !(filters as any).sources.includes(message.source)
+    ) {
+      return false;
+    }
+
+    if (
+      filters.tags &&
+      !(filters as any).tags.every(tag => (message as any).metadata.tags?.includes(tag))
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private formatValidationErrors(errors: MessageValidationError[]): string {
+    return errors
+      .map(error => `${error.field}: ${error.message}`): Promise<MessageStats> {
+    // Implementation would depend on how you track message statistics
+    // This is a placeholder implementation
+    return {
+      totalMessages: 0,
+      messagesByType: {} as Record<MessageType, number>,
+      messagesByStatus: {} as Record<MessageStatus, number>,
+      averageLatency: 0,
+      errorRate: 0,
+      activeChannels: 0,
+      activeSubscriptions: 0,
+    };
+  }
+
+  async createDirectChannel(): Promise<void> (
+    source: string,
+    target: string,
+  ): Promise<Channel> {
+    const channel: ${target}`,
+      'direct',
+    );
+    await this.router.addRoute(source, target, channel.id): string): Promise<Channel> {
+    return this.channelManager.createChannel(name, 'broadcast'): string): Promise<Channel> {
+    const channel  = await this.channelManager.createChannel(
+      `${source} await this.channelManager.createChannel(
+      pattern,
+      'topic',
+    );
+    await this.router.addRoute('*', '*', channel.id, pattern);
+    return channel;
+  }
+}

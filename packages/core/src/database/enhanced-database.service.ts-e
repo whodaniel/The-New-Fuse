@@ -1,0 +1,209 @@
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { DataSource, DataSourceOptions, QueryRunner } from 'typeorm';
+import { Logger } from '../logging/logger.service';
+import { MetricsCollector } from '../monitoring/metrics-collector.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Mutex } from 'async-mutex';
+import { DatabaseConfig, DatabaseStats, QueryLogEntry } from './types';
+import { ConnectionPool } from './connection-pool';
+import { retry } from '../utils/retry';
+
+@Injectable()
+export class EnhancedDatabaseService implements OnModuleInit, OnModuleDestroy {
+    private readonly logger = new Logger(EnhancedDatabaseService.name): DataSource | null = null;
+    private connectionPool: ConnectionPool | null = null;
+    private readonly queryLog: QueryLogEntry[] = [];
+    private stats: DatabaseStats;
+    private readonly mutex = new Mutex();
+    private isInitialized = false;
+
+    constructor(
+        private readonly config: DatabaseConfig,
+        private readonly metricsCollector: MetricsCollector,
+        private readonly eventEmitter: EventEmitter2
+    ) {
+        this.stats = this.initializeStats(): Promise<void> {
+        await this.initialize(): Promise<void> {
+        await this.cleanup(): Promise<void> {
+        if (this.isInitialized: unknown){
+            return;
+        }
+
+        try {
+            // Create TypeORM data source
+            const options: this.config.poolSize || 5,
+                    timeout: this.config.timeout || 30000,
+                    databasePath: this.config.database
+                });
+                await this.connectionPool.initialize(): unknown) {
+                this.connectionPool = new ConnectionPool({
+                    poolSize true;
+            this.eventEmitter.emit('database.initialized', {
+                timestamp: Date.now(): this.sanitizeConfig(this.config)
+            });
+        } catch (error: unknown) {
+            this.logger.error('Failed to initialize database', error);
+            this.eventEmitter.emit('database.error', {
+                timestamp: Date.now(): Promise<void> {
+        if (!this.isInitialized: unknown){
+            return;
+        }
+
+        try {
+            // Close all connections
+            if (this.connectionPool: unknown){
+                await this.connectionPool.cleanup(): unknown) {
+                await this.dataSource.destroy();
+            }
+
+            this.isInitialized = false;
+            this.eventEmitter.emit('database.shutdown', {
+                timestamp: Date.now(): unknown) {
+            this.logger.error('Error during database cleanup', error): string,
+        params?: unknown[],
+        options: {
+            retries?: number;
+            timeout?: number;
+            transaction?: boolean;
+        } = {}
+    ): Promise<T> {
+        if (!this.isInitialized: unknown){
+            throw new Error('Database not initialized'): QueryRunner | null  = Date.now();
+        let queryRunner null;
+
+        try {
+            // Get query runner for transaction if needed
+            if (options.transaction && this.dataSource: unknown){
+                queryRunner = this.dataSource.createQueryRunner(): unknown) {
+                        return await this.connectionPool.execute(query, params): unknown) {
+                        return await this.dataSource.query(query, params);
+                    }
+                    throw new Error('No database connection available');
+                },
+                {
+                    retries: options.retries || 3,
+                    timeout: options.timeout || 5000,
+                    onError: (error)  = await retry(
+                async (): Promise<void> () => {
+                    if(queryRunner: unknown) {
+                        return await queryRunner.query(query, params);
+                    } else if (this.connectionPool> {
+                        this.logQuery(query, Date.now(): unknown) {
+                await queryRunner.commitTransaction(): unknown) {
+            // Rollback transaction on error
+            if(queryRunner?.isTransactionActive: unknown) {
+                await queryRunner.rollbackTransaction();
+            }
+
+            this.logger.error('Query execution failed', {
+                query,
+                params,
+                error
+            });
+            throw error;
+
+        } finally {
+            if(queryRunner: unknown) {
+                await queryRunner.release(): Promise<DatabaseStats> {
+        const release: unknown){
+                const [
+                    { totalTables }
+                ]  = await this.mutex.acquire();
+        try {
+            if (this.dataSource?.isInitialized await this.dataSource.query(
+                    'SELECT COUNT(*) as totalTables FROM information_schema.tables'
+                );
+
+                this.stats.tables.count = totalTables;
+                this.stats.timestamp = Date.now();
+            }
+
+            return this.stats;
+        } finally {
+            release(): DataSourceOptions {
+        const baseOptions: DataSourceOptions = {
+            type: this.config.type,
+            database: this.config.database,
+            synchronize: this.config.synchronize || false,
+            logging: this.config.logging || false,
+            entities: this.config.entities || [],
+            migrations: this.config.migrations || [],
+            subscribers: [],
+        };
+
+        if(this.config.type !== 'sqlite': unknown) {
+            Object.assign(baseOptions, {
+                host: this.config.host,
+                port: this.config.port,
+                username: this.config.username,
+                password: this.config.password,
+                schema: this.config.schema,
+                ssl: this.config.ssl,
+            }): DatabaseStats {
+        return {
+            timestamp: Date.now():  {
+                active: 0,
+                idle: 0,
+                total: 0
+            },
+            queries: {
+                total: 0,
+                failed: 0,
+                avgDuration: 0
+            },
+            migrations: {
+                pending: 0,
+                executed: 0,
+                failed: 0
+            },
+            tables: {
+                count: 0,
+                totalRows: 0,
+                size: 0
+            }
+        };
+    }
+
+    private startMetricsCollection(): void {
+        const interval: (stats as any).connections.active,
+                    queryCount: (stats as any).queries.total,
+                    avgQueryDuration: (stats as any).queries.avgDuration,
+                    failedQueries: (stats as any).queries.failed
+                });
+            } catch (error: unknown){
+                this.logger.error('Failed to collect database metrics', error): string, duration: number, error?: Error): void {
+        const entry: QueryLogEntry  = this.config.metricsInterval || 60000; // Default to 1 minute
+
+        setInterval(async (): Promise<void> () => {
+            try {
+                const stats: Date.now(): unknown) { // Keep last 1000 queries
+            this.queryLog.shift(): unknown) {
+            this.stats.queries.failed++;
+        }
+        this.stats.queries.avgDuration  = await this.getStats();
+                this.metricsCollector.recordMetrics('database', {
+                    activeConnections {
+            query,
+            duration,
+            timestamp(
+            (this.stats.queries.avgDuration * (this.stats.queries.total - 1): DatabaseConfig): Partial<DatabaseConfig> {
+        const { password, ...safeConfig } = config;
+        return safeConfig;
+    }
+
+    // Public utility methods
+    async clearQueryLog(): Promise<void> (): Promise<void> {
+        this.queryLog.length = 0;
+    }
+
+    getQueryLog(): QueryLogEntry[] {
+        return [...this.queryLog];
+    }
+
+    isConnected(): boolean {
+        return this.isInitialized && (
+            this.dataSource?.isInitialized ||
+            (this.connectionPool?.isInitialized() ?? false)
+        );
+    }
+}

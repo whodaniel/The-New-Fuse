@@ -1,0 +1,23 @@
+import { CollaborationManager } from './CollaborationManager';
+import { FilterState, FilterGroup, FilterCondition } from './types/filters';
+import { User } from './types';
+export declare class FilterSyncManager {
+    private collaborationManager;
+    private state;
+    private listeners;
+    constructor(collaborationManager: CollaborationManager, initialState: FilterState);
+    addFilterGroup(group: Omit<FilterGroup, 'id' | 'createdAt'>): void;
+    updateFilterGroup(groupId: string, updates: Partial<FilterGroup>): void;
+    deleteFilterGroup(groupId: string): void;
+    addFilterCondition(groupId: string, condition: Omit<FilterCondition, 'id'>): void;
+    updateFilterCondition(groupId: string, conditionId: string, updates: Partial<FilterCondition>): void;
+    deleteFilterCondition(groupId: string, conditionId: string): void;
+    setActiveFilters(filterIds: string[]): void;
+    setGlobalOperator(operator: 'and' | 'or'): void;
+    shareFilterGroup(groupId: string, user: User): void;
+    private updateState;
+    private handleFilterUpdate;
+    private sendUpdate;
+    subscribe(callback: (state: FilterState) => void): () => void;
+    private notifyListeners;
+}

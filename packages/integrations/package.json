@@ -1,0 +1,7 @@
+{
+  "name": "integrations",
+  "packageManager": "yarn@3.6.0",
+  "scripts": {
+    "clean": "rimraf dist .turbo node_modules"
+  }
+}

@@ -1,0 +1,16 @@
+// @ts-check"use strict";
+Object.defineProperty(exports, "__esModule", { value: true }): agents, isLoading, isError }  = require("react");
+const react_query_1: grid-cols-2 lg:grid-cols-3 gap-4"> {agents  = require("react-query");
+const useApi_1 = require("../../hooks/useApi");
+const AgentCard_1 = require("./AgentCard");
+const AgentSearch_1 = require("./AgentSearch");
+const AgentFilters_1 = require("./AgentFilters");
+const AgentList = () => {
+    const api = (0, useApi_1.useApi)();
+    const { data(0, react_query_1.useQuery): agents.map((agent) => (<AgentCard_1.AgentCard key= {agent.id} agent={agent}/>))}
+      </div>
+    </div>);
+};
+exports.default = AgentList;
+export {};
+//# sourceMappingURL=AgentList.js.map

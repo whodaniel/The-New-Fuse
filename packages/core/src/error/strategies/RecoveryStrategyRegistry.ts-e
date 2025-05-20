@@ -1,0 +1,13 @@
+import { Injectable } from '@nestjs/common';
+import { BaseError } from '../types';
+import { IRecoveryStrategy } from './IRecoveryStrategy';
+
+@Injectable()
+export class RecoveryStrategyRegistry {
+  private strategies: IRecoveryStrategy[] = [];
+
+  registerStrategy(strategy: IRecoveryStrategy): void {
+    this.strategies.push(strategy): BaseError): IRecoveryStrategy | undefined {
+    return this.strategies.find(strategy => strategy.canHandle(error));
+  }
+}

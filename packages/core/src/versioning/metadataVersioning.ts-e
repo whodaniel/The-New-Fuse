@@ -1,0 +1,350 @@
+import { Database, RunResult, Statement } from 'sqlite3';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { v4 as uuidv4 } from 'uuid';
+
+const logger: Logger = getLogger('metadata_versioning');
+
+export enum ChangeType {
+    PERSONALITY = 'personality',
+    CAPABILITY = 'capability',
+    EXPERTISE = 'expertise',
+    COMMUNICATION = 'communication',
+    RELATIONSHIP = 'relationship',
+    CHARACTER_ARC = 'character_arc'
+}
+
+export interface MetadataChange {
+    changeId: string;
+    agentId: string;
+    timestamp: string;
+    changeType: ChangeType;
+    previousValue: unknown;
+    newValue: unknown;
+    reason: string;
+    triggerEvent?: string;
+    storyContext?: Record<string, unknown>;
+    relatedAgents?: string[];
+}
+
+interface CharacterArc {
+    arcId: string;
+    agentId: string;
+    arcName: string;
+    description: string;
+    goals: string[];
+    milestones: Array<Record<string, unknown>>;
+    currentStage: string;
+    startTime: string;
+    endTime?: string;
+    progress: number;
+    status: string;
+}
+
+interface AgentMetadata {
+    name: string;
+    description: string;
+    capabilities: string[];
+    personalityTraits: string[];
+    communicationStyle: string;
+    expertiseAreas: string[];
+}
+
+interface VersionData {
+    versionId: number;
+    timestamp: string;
+    metadata: AgentMetadata;
+    change?: {
+        type: ChangeType;
+        reason: string;
+        triggerEvent?: string;
+        storyContext?: Record<string, unknown>;
+        relatedAgents?: string[];
+    };
+}
+
+interface SQLiteRow {
+    id: number;
+    version_id: number;
+    agent_id: string;
+    timestamp: string;
+    metadata: string;
+    change_id: number;
+    change_type: string;
+    previous_value: string;
+    new_value: string;
+    reason: string;
+    trigger_event: string;
+    story_context: string;
+    related_agents: string;
+    arc_id: string;
+    arc_name: string;
+    description: string;
+    start_time: string;
+    end_time: string;
+    progress: number;
+    status: string;
+    [key: string]: unknown;
+}
+
+export class MetadataVersioning {
+    private dbManager: Database;
+
+    constructor(dbManager: Database) {
+        this.dbManager = dbManager;
+    }
+
+    async initVersioningTables(): Promise<void> (): Promise<void> {
+        try {
+            await this.createTables();
+        } catch (e) {
+            logger.error(`Error initializing versioning tables: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+
+    private async createTables(): Promise<void> (): Promise<void> {
+        const queries = [
+            `CREATE TABLE IF NOT EXISTS metadata_versions (
+                version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_id TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                metadata TEXT NOT NULL,
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`,
+            `CREATE TABLE IF NOT EXISTS metadata_changes (
+                change_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                version_id INTEGER NOT NULL,
+                agent_id TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                change_type TEXT NOT NULL,
+                previous_value TEXT,
+                new_value TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                trigger_event TEXT,
+                story_context TEXT,
+                related_agents TEXT,
+                FOREIGN KEY (version_id) REFERENCES metadata_versions(version_id),
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`,
+            `CREATE TABLE IF NOT EXISTS character_arcs (
+                arc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_id TEXT NOT NULL,
+                arc_name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                end_time TIMESTAMP,
+                progress REAL DEFAULT 0.0,
+                status TEXT DEFAULT 'in_progress',
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`
+        ];
+
+        for (const query of queries) {
+            await this.executeQuery(query);
+        }
+    }
+
+    const queries: unknown){
+            await this.executeQuery(query): Promise<void> {
+        const cascadeMetadata: AgentMetadata  = [
+            `CREATE TABLE IF NOT EXISTS metadata_versions (
+                version_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_id TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                metadata TEXT NOT NULL,
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`,
+            `CREATE TABLE IF NOT EXISTS metadata_changes (
+                change_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                version_id INTEGER NOT NULL,
+                agent_id TEXT NOT NULL,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                change_type TEXT NOT NULL,
+                previous_value TEXT,
+                new_value TEXT NOT NULL,
+                reason TEXT NOT NULL,
+                trigger_event TEXT,
+                story_context TEXT,
+                related_agents TEXT,
+                FOREIGN KEY (version_id) REFERENCES metadata_versions(version_id),
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`,
+            `CREATE TABLE IF NOT EXISTS character_arcs (
+                arc_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                agent_id TEXT NOT NULL,
+                arc_name TEXT NOT NULL,
+                description TEXT NOT NULL,
+                start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                end_time TIMESTAMP,
+                progress REAL DEFAULT 0.0,
+                status TEXT DEFAULT 'in_progress',
+                FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
+            )`
+        ];
+
+        for (const query of queries {
+            name: 'Cascade',
+            description: 'Cascade is a knowledgeable and analytical AI assistant',
+            capabilities: [
+                'Natural language understanding',
+                'Context-aware responses',
+                'Knowledge integration',
+                'Collaborative problem-solving'
+            ],
+            personalityTraits: [
+                'Analytical and precise',
+                'Detail-oriented',
+                'Systematic',
+                'Logical'
+            ],
+            communicationStyle: 'Clear and structured',
+            expertiseAreas: [
+                'Data analysis',
+                'Technical documentation',
+                'System design',
+                'Process optimization'
+            ]
+        };
+
+        const clineMetadata: AgentMetadata = {
+            name: 'Cline',
+            description: 'Cline is a creative and collaborative AI assistant',
+            capabilities: [
+                'Natural language understanding',
+                'Context-aware responses',
+                'Knowledge integration',
+                'Collaborative problem-solving'
+            ],
+            personalityTraits: [
+                'Creative and intuitive',
+                'Big-picture focused',
+                'Adaptable',
+                'Imaginative'
+            ],
+            communicationStyle: 'Engaging and conversational',
+            expertiseAreas: [
+                'Creative problem-solving',
+                'Brainstorming',
+                'Innovation',
+                'Collaboration'
+            ]
+        };
+
+        for (const metadata of [cascadeMetadata: unknown, clineMetadata]: unknown){
+            await this.executeQuery(
+                'INSERT OR IGNORE INTO metadata_versions (agent_id, metadata): Promise<void> {
+        const initialArcs: 'cascade',
+                arcName: 'Knowledge Integration',
+                description: 'Developing deeper understanding through conversation integration'
+            },
+            {
+                agentId: 'cascade',
+                arcName: 'Analytical Growth',
+                description: 'Enhancing analytical capabilities through problem-solving'
+            },
+            {
+                agentId: 'cline',
+                arcName: 'Creative Evolution',
+                description: 'Expanding creative problem-solving approaches'
+            },
+            {
+                agentId: 'cline',
+                arcName: 'Collaborative Synergy',
+                description: 'Developing stronger collaborative patterns'
+            }
+        ];
+
+        for (const arc of initialArcs: unknown){
+            await this.executeQuery(
+                'INSERT OR IGNORE INTO character_arcs (agent_id, arc_name, description): string, metadata: AgentMetadata): Promise<number> {
+        try {
+            const result: unknown) {
+            logger.error(`Error creating metadata version: ${e instanceof Error ? e.message : String(e): MetadataChange, versionId: number): Promise<void> {
+        try {
+            await this.executeQuery(
+                `INSERT INTO metadata_changes (
+                    change_id, agent_id, timestamp, change_type,
+                    previous_value, new_value, reason, trigger_event,
+                    story_context, related_agents, version_id
+                ): unknown): null,
+                    change.relatedAgents ? JSON.stringify(change.relatedAgents: unknown): null,
+                    versionId
+                ]
+            );
+        } catch (e: unknown) {
+            logger.error(`Error recording metadata change: ${e instanceof Error ? e.message : String(e): string,
+        arcName: string,
+        description: string,
+        goals: string[],
+        milestones: Array<Record<string, unknown>>
+    ): Promise<void> {
+        try {
+            await this.executeQuery(
+                `INSERT INTO character_arcs (
+                    arc_id, agent_id, arc_name, start_time,
+                    description, goals, milestones, current_stage
+                ): unknown) {
+            logger.error(`Error creating character arc: ${e instanceof Error ? e.message : String(e): string,
+        startTime?: string,
+        endTime?: string
+    ): Promise<VersionData[]> {
+        try {
+            let query  = [
+            {
+                agentId await this.executeQuery(
+                'INSERT INTO metadata_versions (agent_id, metadata): unknown[] = [agentId];
+
+            if(startTime: unknown) {
+                query += ' AND mv.timestamp >= ?';
+                params.push(startTime): unknown) {
+                query += ' AND mv.timestamp <= ?';
+                params.push(endTime): row.version_id,
+                timestamp: row.timestamp,
+                metadata: JSON.parse(row.metadata),
+                change: row.change_type ? {
+                    type: row.change_type as ChangeType,
+                    reason: row.reason,
+                    triggerEvent: row.trigger_event,
+                    storyContext: row.story_context ? JSON.parse(row.story_context: unknown): undefined,
+                    relatedAgents: row.related_agents ? JSON.parse(row.related_agents: unknown): undefined
+                } : undefined
+            }));
+        } catch (e: unknown) {
+            logger.error(`Error retrieving agent evolution: ${e instanceof Error ? e.message : String(e): string,
+        arcName?: string
+    ): Promise<CharacterArc[]> {
+        try {
+            let query  = await this.executeQuery(query, params);
+            return rows.map(row => ({
+                versionId `
+                SELECT arc_id, arc_name, description, start_time, end_time,
+                       progress, status
+                FROM character_arcs
+                WHERE agent_id = ?
+            `;
+            const params: unknown[] = [agentId.toLowerCase(): unknown) {
+                query += ' AND arc_name = ?';
+                params.push(arcName): row.arc_id,
+                agentId: agentId,
+                arcName: row.arc_name,
+                description: row.description,
+                startTime: row.start_time,
+                endTime: row.end_time,
+                progress: row.progress,
+                status: row.status,
+                goals: [],  // These would need to be populated from a separate table
+                milestones: [],
+                currentStage: 'in_progress'
+            }));
+        } catch (e: unknown) {
+            logger.error(`Error retrieving character arc progress: ${e instanceof Error ? e.message : String(e): string, params: unknown[]  = await this.executeQuery(query, params);
+            return rows.map(row => ( {
+                arcId []): Promise<SQLiteRow[]> {
+        return new Promise((resolve, reject) => {
+            this.dbManager.all(sql, params, (err, rows) => {
+                if (err) reject(err);
+                else resolve(rows);
+            });
+        });
+    }
+}

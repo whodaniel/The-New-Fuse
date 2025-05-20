@@ -1,0 +1,76 @@
+export class AgentMonitor {
+  private static instance: AgentMonitor;
+  private metrics: Map<string, any> = new Map();
+  private heartbeatIntervals: Map<string, NodeJS.Timeout> = new Map();
+
+  private constructor() {
+    this.initializeHeartbeat();
+  }
+
+  static getInstance(): AgentMonitor {
+    if (!AgentMonitor.instance) {
+      AgentMonitor.instance = new AgentMonitor();
+    }
+    return AgentMonitor.instance;
+  }
+
+  private initializeHeartbeat() {
+    // Send heartbeat every 30 seconds
+    setInterval(() => {
+      this.sendHeartbeat('augment');
+    }, 30000);
+
+    // Monitor Trae's heartbeat
+    this.monitorHeartbeat('trae');
+  }
+
+  private sendHeartbeat(agentId: string) {
+    const heartbeat = {
+      type: heartbeat',
+      timestamp: new Date().toISOString(),
+      metadata: {
+        version: 1.1.0',
+        source: agentId,
+        status: active'
+      }
+    };
+
+    this.redis.publish(`agent:${agentId}`, JSON.stringify(heartbeat));
+  }
+
+  private monitorHeartbeat(agentId: string) {
+    let lastHeartbeat = Date.now();
+    
+    this.redis.subscribe(`agent:${agentId}`, (message) => {
+      if (message.type === 'heartbeat') {
+        lastHeartbeat = Date.now();
+        this.updateAgentStatus(agentId, 'active');
+      }
+    });
+
+    // Check for missing heartbeats
+    setInterval(() => {
+      const timeSinceLastHeartbeat = Date.now() - lastHeartbeat;
+      if (timeSinceLastHeartbeat > 60000) { // 1 minute timeout
+        this.updateAgentStatus(agentId, 'disconnected');
+        this.emitAlert(agentId, 'Agent heartbeat timeout');
+      }
+    }, 30000);
+  }
+
+  private updateAgentStatus(agentId: string, status: string) {
+    this.metrics.set(`${agentId}:status`, {
+      status,
+      lastUpdated: Date.now()
+    });
+  }
+
+  private emitAlert(agentId: string, message: string) {
+    this.redis.publish('monitoring:alerts', JSON.stringify({
+      agentId,
+      message,
+      timestamp: new Date().toISOString(),
+      severity: high'
+    }));
+  }
+}

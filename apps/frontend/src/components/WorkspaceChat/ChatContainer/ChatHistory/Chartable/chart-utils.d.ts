@@ -1,0 +1,26 @@
+export declare const Colors: {
+    blue: string;
+    sky: string;
+    cyan: string;
+    teal: string;
+    emerald: string;
+    green: string;
+    lime: string;
+    yellow: string;
+    amber: string;
+    orange: string;
+    red: string;
+    rose: string;
+    pink: string;
+    fuchsia: string;
+    purple: string;
+    violet: string;
+    indigo: string;
+    neutral: string;
+    stone: string;
+    gray: string;
+    slate: string;
+    zinc: string;
+};
+export declare function getTremorColor(color: any): any string | undefined;
+export declare const themeColorRange: string[];

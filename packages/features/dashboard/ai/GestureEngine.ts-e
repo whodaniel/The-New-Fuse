@@ -1,0 +1,272 @@
+interface GestureEvent {
+  type: 'swipe' | 'pinch' | 'rotate' | 'tap' | 'hold';
+  direction?: 'up' | 'down' | 'left' | 'right';
+  scale?: number;
+  rotation?: number;
+  position: { x: number; y: number };
+  target?: Element;
+  timestamp: number;
+}
+
+interface GestureHandler {
+  type: GestureEvent['type'];
+  handler: (event: GestureEvent) => Promise<void>;
+  enabled: boolean;
+}
+
+export class GestureEngine {
+  private handlers: Map<string, GestureHandler> = new Map();
+  private touchStartX: number = 0;
+  private touchStartY: number = 0;
+  private touchStartTime: number = 0;
+  private initialDistance: number = 0;
+  private initialAngle: number = 0;
+  private isGestureInProgress: boolean = false;
+
+  constructor() {
+    this.attachEventListeners();
+  }
+
+  registerGestureHandler(
+    type: GestureEvent['type'],
+    handler: (event: GestureEvent) => Promise<void>
+  ): void {
+    this.handlers.set(type, {
+      type,
+      handler,
+      enabled: true,
+    });
+  }
+
+  enableGesture(type: GestureEvent['type']): void {
+    const handler = this.handlers.get(type);
+    if (handler) {
+      handler.enabled = true;
+    }
+  }
+
+  disableGesture(type: GestureEvent['type']): void {
+    const handler = this.handlers.get(type);
+    if (handler) {
+      handler.enabled = false;
+    }
+  }
+
+  private attachEventListeners(): void {
+    if (typeof window === 'undefined') return;
+
+    window.addEventListener('touchstart', this.handleTouchStart);
+    window.addEventListener('touchmove', this.handleTouchMove);
+    window.addEventListener('touchend', this.handleTouchEnd);
+    window.addEventListener('mousedown', this.handleMouseDown);
+    window.addEventListener('mousemove', this.handleMouseMove);
+    window.addEventListener('mouseup', this.handleMouseUp);
+  }
+
+  private handleTouchStart = (event: TouchEvent): void => {
+    this.touchStartX = event.touches[0].clientX;
+    this.touchStartY = event.touches[0].clientY;
+    this.touchStartTime = Date.now();
+
+    if (event.touches.length === 2) {
+      // Initialize pinch/rotate gesture
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+
+      // Calculate initial distance for pinch
+      this.initialDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+
+      // Calculate initial angle for rotation
+      this.initialAngle = Math.atan2(
+        touch2.clientY - touch1.clientY,
+        touch2.clientX - touch1.clientX
+      );
+    }
+  };
+
+  private handleTouchMove = (event: TouchEvent): void => {
+    if (event.touches.length === 1) {
+      // Handle swipe
+      const deltaX = event.touches[0].clientX - this.touchStartX;
+      const deltaY = event.touches[0].clientY - this.touchStartY;
+
+      if (Math.abs(deltaX) > 50 || Math.abs(deltaY) > 50) {
+        const direction = this.getSwipeDirection(deltaX, deltaY);
+        this.triggerGestureEvent({
+          type: 'swipe',
+          direction,
+          position: {
+            x: event.touches[0].clientX,
+            y: event.touches[0].clientY,
+          },
+          timestamp: Date.now(),
+        });
+        this.isGestureInProgress = true;
+      }
+    } else if (event.touches.length === 2) {
+      const touch1 = event.touches[0];
+      const touch2 = event.touches[1];
+
+      // Handle pinch
+      const currentDistance = Math.hypot(
+        touch2.clientX - touch1.clientX,
+        touch2.clientY - touch1.clientY
+      );
+      const scale = currentDistance / this.initialDistance;
+
+      if (Math.abs(scale - 1) > 0.1) {
+        this.triggerGestureEvent({
+          type: 'pinch',
+          scale,
+          position: {
+            x: (touch1.clientX + touch2.clientX) / 2,
+            y: (touch1.clientY + touch2.clientY) / 2,
+          },
+          timestamp: Date.now(),
+        });
+      }
+
+      // Handle rotation
+      const currentAngle = Math.atan2(
+        touch2.clientY - touch1.clientY,
+        touch2.clientX - touch1.clientX
+      );
+      const rotation = ((currentAngle - this.initialAngle) * 180) / Math.PI;
+
+      if (Math.abs(rotation) > 10) {
+        this.triggerGestureEvent({
+          type: 'rotate',
+          rotation,
+          position: {
+            x: (touch1.clientX + touch2.clientX) / 2,
+            y: (touch1.clientY + touch2.clientY) / 2,
+          },
+          timestamp: Date.now(),
+        });
+      }
+    }
+  };
+
+  private handleTouchEnd = (event: TouchEvent): void => {
+    if (!this.isGestureInProgress) {
+      const endTime = Date.now();
+      const duration = endTime - this.touchStartTime;
+
+      if (duration < 200) {
+        // Handle tap
+        this.triggerGestureEvent({
+          type: 'tap',
+          position: {
+            x: this.touchStartX,
+            y: this.touchStartY,
+          },
+          timestamp: endTime,
+        });
+      } else if (duration > 500) {
+        // Handle hold
+        this.triggerGestureEvent({
+          type: 'hold',
+          position: {
+            x: this.touchStartX,
+            y: this.touchStartY,
+          },
+          timestamp: endTime,
+        });
+      }
+    }
+
+    this.isGestureInProgress = false;
+  };
+
+  private handleMouseDown = (event: MouseEvent): void => {
+    this.touchStartX = event.clientX;
+    this.touchStartY = event.clientY;
+    this.touchStartTime = Date.now();
+  };
+
+  private handleMouseMove = (event: MouseEvent): void => {
+    if (!this.isGestureInProgress) {
+      const deltaX = event.clientX - this.touchStartX;
+      const deltaY = event.clientY - this.touchStartY;
+
+      if (Math.abs(deltaX) > 50 || Math.abs(deltaY) > 50) {
+        const direction = this.getSwipeDirection(deltaX, deltaY);
+        this.triggerGestureEvent({
+          type: 'swipe',
+          direction,
+          position: {
+            x: event.clientX,
+            y: event.clientY,
+          },
+          timestamp: Date.now(),
+        });
+        this.isGestureInProgress = true;
+      }
+    }
+  };
+
+  private handleMouseUp = (event: MouseEvent): void => {
+    if (!this.isGestureInProgress) {
+      const endTime = Date.now();
+      const duration = endTime - this.touchStartTime;
+
+      if (duration < 200) {
+        this.triggerGestureEvent({
+          type: 'tap',
+          position: {
+            x: event.clientX,
+            y: event.clientY,
+          },
+          timestamp: endTime,
+        });
+      } else if (duration > 500) {
+        this.triggerGestureEvent({
+          type: 'hold',
+          position: {
+            x: event.clientX,
+            y: event.clientY,
+          },
+          timestamp: endTime,
+        });
+      }
+    }
+
+    this.isGestureInProgress = false;
+  };
+
+  private getSwipeDirection(
+    deltaX: number,
+    deltaY: number
+  ): GestureEvent['direction'] {
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      return deltaX > 0 ? 'right' : 'left';
+    } else {
+      return deltaY > 0 ? 'down' : 'up';
+    }
+  }
+
+  private async triggerGestureEvent(event: GestureEvent): Promise<void> {
+    const handler = this.handlers.get(event.type);
+    if (handler?.enabled) {
+      try {
+        await handler.handler(event);
+      } catch (error) {
+        console.error('Error handling gesture:', error);
+      }
+    }
+  }
+
+  dispose(): void {
+    if (typeof window === 'undefined') return;
+
+    window.removeEventListener('touchstart', this.handleTouchStart);
+    window.removeEventListener('touchmove', this.handleTouchMove);
+    window.removeEventListener('touchend', this.handleTouchEnd);
+    window.removeEventListener('mousedown', this.handleMouseDown);
+    window.removeEventListener('mousemove', this.handleMouseMove);
+    window.removeEventListener('mouseup', this.handleMouseUp);
+  }
+}

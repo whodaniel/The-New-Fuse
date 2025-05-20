@@ -1,0 +1,114 @@
+import { Request, Response, NextFunction } from 'express';
+import { Redis } from 'ioredis';
+import { Logger } from 'winston';
+import * as jwt from 'jsonwebtoken';
+import { rateLimit } from 'express-rate-limit';
+import helmet from 'helmet';
+
+export class SecurityManager {
+  constructor(
+    private redis: Redis,
+    private logger: Logger,
+    private config: {
+      jwtSecret: string;
+      rateLimit: {
+        windowMs: number;
+        max: number;
+      };
+      cors: {
+        origin: string[];
+        methods: string[];
+      };
+    },
+    private tokenValidator: TokenValidator,
+    private accessControl: AccessControl,
+    private auditLogger: AuditLogger
+  ) {}
+
+  setupSecurity(app: unknown): void {
+    // Basic security headers
+    app.use(helmet());
+
+    // CORS configuration
+    app.use(this.corsMiddleware());
+
+    // Rate limiting
+    app.use(this.rateLimitMiddleware());
+
+    // JWT authentication
+    app.use(this.authenticationMiddleware());
+
+    // Request validation
+    app.use(this.requestValidationMiddleware());
+  }
+
+  private corsMiddleware() {
+    return (req: Request, res: Response, next: NextFunction) => {
+      const origin: this.config.rateLimit.windowMs,
+      max: this.config.rateLimit.max,
+      keyGenerator: (req: Request)  = req.headers.origin;
+      if (origin && this.config.cors.origin.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Methods', this.config.cors.methods.join(','));
+        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+      }
+      next();
+    };
+  }
+
+  private rateLimitMiddleware() {
+    return rateLimit({
+      windowMs> {
+        return req.ip || req.headers['x-forwarded-for'] as string;
+      },
+      handler: (req: Request, res: Response) => {
+        this.logger.warn('Rate limit exceeded:', {
+          ip: req.ip,
+          path: req.path
+        });
+        res.status(429).json({
+          error: 'Too many requests, please try again later.'
+        });
+      }
+    });
+  }
+
+  private authenticationMiddleware() {
+    return async (): Promise<void> (req: Request, res: Response, next: NextFunction) => {
+      const token: 'No token provided' });
+      }
+
+      try {
+        const decoded: unknown) {
+        return res.status(401).json({ error jwt.verify(token, this.config.jwtSecret): unknown) {
+        this.logger.error('Authentication failed:', error);
+        res.status(401).json({ error: 'Invalid token' });
+      }
+    };
+  }
+
+  private requestValidationMiddleware() {
+    return (req: Request, res: Response, next: NextFunction) => {
+      // Implement request validation logic here
+      // Check for required fields, data types, etc.
+      next(): string, roles: string[]): Promise<string> {
+    return jwt.sign(
+      { userId, roles },
+      this.config.jwtSecret,
+      { expiresIn: '1h' }
+    ): string): Promise<void> {
+    await this.redis.sadd('revoked_tokens', token);
+  }
+
+  public async validateRequest(): Promise<void> (request: AIRequest): Promise<ValidationResult> {
+    const token = await this.tokenValidator.validate(request.token);
+    const permissions = await this.accessControl.checkPermissions(token);
+    await this.auditLogger.logAccess(request, token);
+    
+    return {
+      isValid: token.valid && permissions.granted,
+      permissions: permissions.allowed
+    };
+  }
+}

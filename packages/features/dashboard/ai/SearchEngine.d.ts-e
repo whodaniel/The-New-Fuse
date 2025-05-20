@@ -1,0 +1,27 @@
+import { SearchConfig, SearchResult, SearchSuggestion } from './types';
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+export declare class SearchEngine {
+    private analyticsManager;
+    private searchIndex;
+    constructor(analyticsManager: AnalyticsManager);
+    search(config: SearchConfig): Promise<{
+        results: SearchResult[];
+        total: number;
+        suggestions: SearchSuggestion[];
+    }>;
+    indexDashboard(dashboard: DashboardState): Promise<void>;
+    generateSuggestions(config: SearchConfig, searchResults: unknown): Promise<SearchSuggestion[]>;
+    private buildSearchQuery;
+    private executeSearch;
+    private processResults;
+    private processHighlights;
+    private getQuerySuggestions;
+    private getFilterSuggestions;
+    private getCategorySuggestions;
+    private getTagSuggestions;
+    private rankSuggestions;
+    private indexDocument;
+    private extractDashboardContent;
+    private extractWidgetContent;
+}

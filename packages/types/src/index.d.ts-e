@@ -1,0 +1,197 @@
+export declare enum TaskStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed",
+    CANCELLED = "cancelled"
+}
+export declare enum TaskPriority {
+    LOW = "low",
+    MEDIUM = "medium",
+    HIGH = "high",
+    URGENT = "urgent"
+}
+export declare enum TaskType {
+    ROUTINE = "routine",
+    ONETIME = "onetime",
+    RECURRING = "recurring",
+    DEPENDENT = "dependent",
+    BACKGROUND = "background",
+    GENERIC = "generic"
+}
+export type TaskStatusType = typeof TaskStatus[keyof typeof TaskStatus];
+export type TaskPriorityType = typeof TaskPriority[keyof typeof TaskPriority];
+export type TaskTypeValue = typeof TaskType[keyof typeof TaskType];
+export interface TaskMetadata {
+    description?: string;
+    input?: Record<string, unknown>;
+    output?: Record<string, unknown> | undefined;
+    dependencies?: TaskDependency[];
+    scheduledAt?: Date;
+    startedAt?: Date;
+    completedAt?: Date;
+    error?: Error | Record<string, unknown> | undefined;
+    retryCount?: number;
+    maxRetries?: number;
+    lastRetryAt?: Date;
+    resourceUsage?: {
+        cpuUsage: number;
+        memoryUsage: number;
+        networkUsage?: number;
+        diskUsage?: number;
+    };
+    customMetadata?: Record<string, unknown>;
+    creator: string;
+    assignee?: string;
+    tags?: string[];
+    lastError?: string;
+    [key: string]: unknown;
+}
+export interface Task {
+    id: string;
+    title: string;
+    description?: string;
+    type: TaskTypeValue;
+    status: TaskStatusType;
+    priority: TaskPriorityType;
+    data?: Record<string, unknown>;
+    input?: Record<string, unknown>;
+    output?: Record<string, unknown> | undefined;
+    metadata: TaskMetadata;
+    dependencies?: TaskDependency[];
+    userId: string;
+    scheduledAt?: Date | null;
+    started?: Date | null;
+    completed?: Date | null;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface TaskDependency {
+    taskId: string;
+    type: 'REQUIRED' | 'OPTIONAL';
+    status: TaskStatusType;
+}
+export interface TaskResult {
+    id: string;
+    taskId: string;
+    status: TaskStatusType;
+    output?: Record<string, unknown> | undefined;
+    error?: string;
+    metrics: {
+        duration: number;
+        resourceUsage: {
+            cpuUsage: number;
+            memoryUsage: number;
+        };
+    };
+    timestamp: Date;
+}
+export interface CreateTaskDto {
+    title: string;
+    description?: string;
+    agentId: string;
+    type?: TaskTypeValue;
+    priority?: TaskPriorityType;
+    metadata?: TaskMetadata;
+    input?: Record<string, unknown>;
+    dependencies?: string[];
+    scheduledAt?: Date;
+}
+export interface TaskQuery {
+    status?: TaskStatusType;
+    type?: TaskTypeValue;
+    priority?: TaskPriorityType;
+    userId?: string;
+    startDate?: Date;
+    endDate?: Date;
+    tags?: string[];
+}
+export interface Agent {
+    id: string;
+    name: string;
+    capabilities: string[];
+    status: AgentStatus;
+}
+export declare enum AgentStatus {
+    AVAILABLE = "available",
+    BUSY = "busy",
+    OFFLINE = "offline"
+}
+export interface Workflow {
+    id: string;
+    name: string;
+    steps: WorkflowStep[];
+    status: WorkflowStatus;
+}
+export interface WorkflowStep {
+    id: string;
+    name: string;
+    agentId: string;
+    status: StepStatus;
+    input?: Record<string, unknown>;
+    output?: Record<string, unknown>;
+}
+export declare enum WorkflowStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed"
+}
+export declare enum StepStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed"
+}
+export interface User {
+    id: string;
+    email: string;
+    name?: string;
+    role: UserRole;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export declare enum UserRole {
+    ADMIN = "ADMIN",
+    USER = "USER",
+    GUEST = "GUEST"
+}
+export interface APIResponse<T = unknown> {
+    success: boolean;
+    data?: T;
+    error?: string;
+    meta?: Record<string, unknown>;
+}
+export interface PaginatedResponse<T> extends APIResponse<T[]> {
+    meta: {
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+    };
+}
+export interface BaseComponentProps {
+    className?: string;
+    style?: React.CSSProperties;
+    children?: React.ReactNode;
+}
+export interface LoadingProps extends BaseComponentProps {
+    size?: 'small' | 'medium' | 'large';
+    color?: string;
+}
+export interface ErrorBoundaryProps extends BaseComponentProps {
+    fallback?: React.ReactNode;
+    onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
+}
+import * as CoreTypes from './core';
+export { CoreTypes };
+import * as TaskTypes from './task';
+export { TaskTypes };
+import * as AgentTypes from './agent';
+export { AgentTypes };
+import * as WorkflowTypes from './workflow';
+export { WorkflowTypes };
+import * as FeatureTrackerTypes from './feature-tracker';
+export { FeatureTrackerTypes };
+export * from './youtube';
+//# sourceMappingURL=index.d.ts.map

@@ -1,0 +1,55 @@
+import React, { FC } from "react";
+import { Link, Outlet, useLocation } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Sidebar } from '@the-new-fuse/Sidebar';
+
+const MainLayout: FC<{ : unknown }> = () => {
+  const location: 'Dashboard', path: '/dashboard' },
+    { name: 'Workspace', path: '/workspace' },
+    { name: 'Analytics', path: '/analytics' },
+    { name: 'Settings', path: '/settings' },
+    { name: 'Fine Tuning', path: '/fine-tuning' },
+    { name: 'Invite', path: '/invite' },
+  ];
+
+  return(
+    <div className = useLocation(): 'hover:bg-accent'
+                  }`}
+                > {item.name}
+                </Link>
+              ))}
+            </div>
+
+            <div className = [
+    { name"min-h-screen bg-background flex">
+      {/* Sidebar */}
+      <Sidebar className="flex-shrink-0" />
+
+      <div className="flex-1 flex flex-col">
+        {/* Navigation Bar */}
+        <nav className="bg-card shadow-md p-4 border-b">
+          <div className="container mx-auto flex justify-between items-center">
+            <Link to="/dashboard" className="text-2xl font-bold text-primary">The New Fuse</Link>
+            
+            <div className="flex gap-4">
+              {navItems.map((item) => (
+                <Link
+                  key={item.path}
+                  to={item.path}
+                  className={`px-4 py-2 rounded-md transition-colors ${
+                    location.pathname === item.path ? 'bg-primary/10 text-primary' "flex items-center gap-4">
+              <Button variant="outline" onClick={() => console.log('Profile clicked')}>Profile</Button>
+            </div>
+          </div>
+        </nav>
+
+        {/* Main Content */}
+        <main className="flex-1 container mx-auto p-6 overflow-auto">
+          <Outlet />
+        </main>
+      </div>
+    </div>
+  );
+};
+
+export default MainLayout;

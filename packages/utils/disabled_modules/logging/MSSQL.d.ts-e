@@ -1,0 +1,20 @@
+import * as mssql from 'mssql';
+import { QueryResult, SQLConnector } from './types';
+interface MSSQLConfig {
+    connectionString: string | null;
+}
+export declare class MSSQLConnector implements SQLConnector {
+    private connected;
+    database_id: string;
+    private connectionString;
+    private _client;
+    private connectionConfig;
+    constructor(config?: MSSQLConfig);
+    private parseDatabase;
+    connect(): Promise<(mssql as any).ConnectionPool>;
+    runQuery(queryString?: string): Promise<QueryResult>;
+    disconnect(): Promise<void>;
+    getTablesSql(): string;
+    getTableSchemaSql(table_name: string): string;
+}
+export {};

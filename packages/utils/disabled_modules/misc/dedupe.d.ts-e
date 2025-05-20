@@ -1,0 +1,21 @@
+declare class Deduplicator {
+    private hashes;
+    private cooldowns;
+    private uniques;
+    constructor();
+    trackRun(key: string, params?: unknown): void;
+    isDuplicate(key: string, params?: unknown): boolean;
+    /**
+     * Resets the object property for this instance of the Deduplicator class
+     * @param {('runs'|'cooldowns'|'uniques')} type - The type of prop to reset
+     */
+    reset(type?: 'runs' | 'cooldowns' | 'uniques'): void;
+    startCooldown(key: string, parameters?: {
+        cooldownInMs: number;
+    }): void;
+    isOnCooldown(key: string): boolean;
+    isUnique(key: string): boolean;
+    removeUniqueConstraint(key: string): void;
+    markUnique(key: string): void;
+}
+export { Deduplicator };

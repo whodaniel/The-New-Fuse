@@ -1,0 +1,42 @@
+{
+  "name": "@the-new-fuse/utils",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "rimraf dist && tsc --project tsconfig.json",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.784.0",
+    "@mui/icons-material": "^7.0.1",
+    "@mui/material": "^7.0.1",
+    "@nestjs/common": "^10.0.0",
+    "@nestjs/config": "^3.0.0",
+    "@nestjs/jwt": "^10.0.0",
+    "@octokit/rest": "^21.1.1",
+    "date-fns": "^4.1.0",
+    "lodash": "^4.17.21",
+    "prom-client": "^14.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.0.0",
+    "reflect-metadata": "0.2.2",
+    "rxjs": "^7.8.2",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.17.16",
+    "@types/react": "^19.1.0",
+    "@types/react-router-dom": "^5.3.3",
+    "rimraf": "^5.0.0"
+  }
+}

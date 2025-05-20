@@ -1,0 +1,176 @@
+import { useState, useCallback, useEffect } from 'react';
+import { DraggableLocation } from 'react-beautiful-dnd';
+import { 
+  FeatureSuggestion, 
+  SuggestionStatus, 
+  TodoItem,
+  SuggestionService 
+} from '../types';
+
+interface KanbanColumn {
+  id: string;
+  title: string;
+  items: (FeatureSuggestion | TodoItem)[];
+}
+
+interface DragResult {
+  source: DraggableLocation;
+  destination: DraggableLocation | null;
+  draggableId: string;
+}
+
+export const useKanbanBoard = ({
+  suggestionService,
+  initialSuggestions = [],
+  initialTodos = [],
+}: {
+  suggestionService: SuggestionService;
+  initialSuggestions?: FeatureSuggestion[];
+  initialTodos?: TodoItem[];
+}) => {
+  const [suggestions, setSuggestions] = useState<FeatureSuggestion[]>(initialSuggestions);
+  const [todos, setTodos] = useState<TodoItem[]>(initialTodos);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  const loadData = useCallback(async (): Promise<void> () => {
+    try {
+      setLoading(true);
+      const [suggestionsData, todosData] = await Promise.all([
+        suggestionService.getSuggestionsByStatus(SuggestionStatus.SUBMITTED),
+        suggestionService.getAllTodos(),
+      ]);
+      setSuggestions(suggestionsData);
+      setTodos(todosData);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load kanban data'));
+    } finally {
+      setLoading(false);
+    }
+  }, [suggestionService]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  const updateSuggestionStatus = useCallback(async (): Promise<void> (
+    id: string,
+    status: SuggestionStatus
+  ): Promise<void> => {
+    try {
+      const updatedSuggestion = await suggestionService.updateSuggestionStatus(id, status);
+      setSuggestions(prev => 
+        prev.map(s => s.id === id ? updatedSuggestion : s)
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to update suggestion status'));
+      throw err;
+    }
+  }, [suggestionService]);
+
+  const updateTodoStatus = useCallback(async (): Promise<void> (
+    id: string,
+    status: string
+  ): Promise<void> => {
+    try {
+      const updatedTodo = await suggestionService.updateTodoStatus(id, status);
+      setTodos(prev => 
+        prev.map(t => t.id === id ? updatedTodo : t)
+      );
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to update todo status'));
+      throw err;
+    }
+  }, [suggestionService]);
+
+  const convertSuggestionToFeature = useCallback(async (): Promise<void> (
+    suggestionId: string
+  ): Promise<FeatureSuggestion> => {
+    try {
+      const convertedSuggestion = await suggestionService.convertToFeature(suggestionId);
+      setSuggestions(prev => prev.filter(s => s.id !== suggestionId));
+      return convertedSuggestion;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to convert suggestion to feature'));
+      throw err;
+    }  useState<KanbanColumn[]>([
+    {
+      id: 'suggestions',
+      title: 'Feature Suggestions',
+      items: suggestions.filter(s => s.status === SuggestionStatus.SUBMITTED),
+    },
+    {
+      id: 'under-review',
+      title: 'Under Review',
+      items: suggestions.filter(s => s.status === SuggestionStatus.UNDER_REVIEW),
+    },
+    {
+      id: 'todo',
+      title: 'Todo',
+      items: todos.filter(t => t.status === 'TODO'),
+    },
+    {
+      id: 'in-progress',
+      title: 'In Progress',
+      items: todos.filter(t => t.status === 'IN_PROGRESS'),
+    },
+    {
+      id: 'done',
+      title: 'Done',
+      items: todos.filter(t => t.status === 'DONE'),
+    },
+  ]);
+
+  const handleDragEnd = useCallback(async (): Promise<void> (result: DragResult): Promise<void> => {
+    if (!result.destination) return;
+
+    const sourceColumn = columns.find(col => col.id === result.source.droppableId);
+    const destColumn = columns.find(col => col.id === result.destination?.droppableId);
+    
+    if (!sourceColumn || !destColumn) return;
+
+    try {
+      const item = sourceColumn.items[result.source.index];
+      const newColumns = columns.map(col => {
+        if (col.id === result.source.droppableId) {
+          const newItems = [...col.items];
+          newItems.splice(result.source.index, 1);
+          return { ...col, items: newItems };
+        }
+        
+        if (col.id === result.destination?.droppableId) {
+          const newItems = [...col.items];
+          newItems.splice(result.destination.index, 0, item);
+          return { ...col, items: newItems };
+        }
+        
+        return col;
+      });
+
+      setColumns(newColumns);
+
+      if ('type' in item) {
+        if (item.type === 'suggestion') {
+          await updateSuggestionStatus(item.id, destColumn.id as SuggestionStatus);
+        } else {
+          await updateTodoStatus(item.id, destColumn.id);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to update item status:', error);
+    }
+  }, [columns, updateSuggestionStatus, updateTodoStatus]);
+
+  return {
+    suggestions,
+    todos,
+    loading,
+    error,
+    updateSuggestionStatus,
+    updateTodoStatus,
+    convertSuggestionToFeature,
+    refresh: loadData,
+    columns,
+    handleDragEnd,
+  };
+};

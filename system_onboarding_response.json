@@ -1,0 +1,13 @@
+{
+    "type": "ONBOARDING_GUIDANCE",
+    "source": "new_fuse_core",
+    "content": {
+        "next_step": "training_initialization",
+        "assigned_mentor": "TNF_AG_MENTOR_003",
+        "training_channel": "agent:training:TNF_AG_001",
+        "resources": {
+            "documentation": "/docs/ai-agents/getting-started",
+            "practice_environment": "/sandbox/new-agent"
+        }
+    }
+}

@@ -1,0 +1,173 @@
+.workflow-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+.workflow-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.workflow-editor-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.workflow-editor-actions button {
+  padding: 0.5rem 1rem;
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.workflow-editor-actions button:hover {
+  background-color: #2d3748;
+}
+
+.workflow-editor-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.workflow-editor-canvas {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  background-color: #f7fafc;
+}
+
+.workflow-editor-sidebar {
+  width: 300px;
+  border-left: 1px solid #e2e8f0;
+  padding: 1rem;
+  overflow: auto;
+}
+
+.workflow-editor-sidebar h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.125rem;
+}
+
+.step-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.step-property {
+  display: flex;
+  flex-direction: column;
+}
+
+.step-property label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  color: #4a5568;
+}
+
+.step-property pre {
+  background-color: #f7fafc;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  overflow: auto;
+  max-height: 200px;
+}
+
+.step-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.step-actions button {
+  padding: 0.5rem 1rem;
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.step-actions button:hover {
+  background-color: #2d3748;
+}
+
+.step-actions button:last-child {
+  background-color: #e53e3e;
+}
+
+.step-actions button:last-child:hover {
+  background-color: #c53030;
+}
+
+.step-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+  color: #4a5568;
+}
+
+.form-group input,
+.form-group textarea {
+  padding: 0.5rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.form-group textarea {
+  font-family: monospace;
+  resize: vertical;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  padding: 0.5rem 1rem;
+  background-color: #4a5568;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.form-actions button:hover {
+  background-color: #2d3748;
+}
+
+.form-actions button:last-child {
+  background-color: #a0aec0;
+}
+
+.form-actions button:last-child:hover {
+  background-color: #718096;
+}

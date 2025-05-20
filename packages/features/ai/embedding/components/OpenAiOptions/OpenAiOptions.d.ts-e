@@ -1,0 +1,12 @@
+import React from 'react';
+interface OpenAiSettings {
+    OpenAiKey?: string;
+    EmbeddingModelPref?: OpenAiModel;
+}
+interface OpenAiOptionsProps {
+    settings: OpenAiSettings;
+}
+declare const OPENAI_MODELS: readonly ["text-embedding-ada-002", "text-embedding-3-small", "text-embedding-3-large"];
+type OpenAiModel = typeof OPENAI_MODELS[number];
+export declare function OpenAiOptions({ settings }: OpenAiOptionsProps): React.JSX.Element;
+export {};

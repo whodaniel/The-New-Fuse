@@ -1,0 +1,40 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@the-new-fuse/database/client';
+import { Logger } from '@the-new-fuse/utils';
+
+interface TaskData {
+  type: string;
+  status: string;
+  priority: string;
+  title: string;
+  description: string;
+  metadata: Record<string, any>;
+  input: Record<string, any>;
+  output?: unknown;
+  dependencies?: string[];
+  scheduledAt?: Date;
+}
+
+@Injectable()
+export class TaskService {
+  private readonly logger: Logger;
+  private readonly prisma: PrismaClient;
+
+  constructor(prisma: PrismaClient) {
+    this.logger = new Logger(TaskService.name);
+    try {
+      const task = await this.prisma.task.create({
+        data: {
+          ...taskData,
+          data: JSON.stringify(taskData),
+        },
+      });
+      return task;
+    } catch (error: any) {
+      this.logger.error('Failed to create task:', error);
+      throw error;
+    }
+  }
+
+  // Add other methods here
+}

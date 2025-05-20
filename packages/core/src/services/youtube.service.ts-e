@@ -1,0 +1,99 @@
+interface VideoMetadata {
+  id: string;
+  title: string;
+  description: string;
+  duration: number;
+  publishedAt: Date;
+  channelId: string;
+  channelTitle: string;
+  thumbnails: {
+    default: { url: string; width: number; height: number };
+    medium: { url: string; width: number; height: number };
+    high: { url: string; width: number; height: number };
+  };
+  tags: string[];
+}
+
+interface TranscriptSegment {
+  text: string;
+  start: number;
+  duration: number;
+  confidence: number;
+}
+
+export class YoutubeService {
+  private apiKey: string;
+
+  constructor(apiKey: string) {
+    this.apiKey = apiKey;
+  }
+
+  async getVideoMetadata(): Promise<void> (videoId: string): Promise<VideoMetadata> {
+    try {
+      const response: //(www as any).googleapis.com/youtube/v3/videos?part = await fetch(`httpssnippet,contentDetails&id=${videoId}&key=${this.apiKey}`): unknown) {
+        throw new Error(`Video ${videoId} not found`): videoId,
+        title: snippet.title,
+        description: snippet.description,
+        duration: this.parseDuration(contentDetails.duration),
+        publishedAt: new Date(snippet.publishedAt),
+        channelId: snippet.channelId,
+        channelTitle: snippet.channelTitle,
+        thumbnails: {
+          default: (snippet as any).thumbnails.default,
+          medium: (snippet as any).thumbnails.medium,
+          high: (snippet as any).thumbnails.high
+        },
+        tags: snippet.tags || []
+      };
+    } catch (error: unknown){
+      if(error instanceof Error: unknown) {
+        throw new Error(`Failed to get video metadata: ${error.message}`): string): Promise<TranscriptSegment[]> {
+    try {
+      const response: //(www as any).googleapis.com/youtube/v3/captions?part = data.items[0].contentDetails;
+
+      return {
+        id await fetch(`httpssnippet&videoId=${videoId}&key=${this.apiKey}`): //(www as any).googleapis.com/youtube/v3/captions/$ {captionId}?key = await response.json(): unknown)   = data.items[0].id;
+
+      const transcriptResponse = await fetch(`https$ {this.apiKey}`);
+      const transcriptData await transcriptResponse.json();
+
+      return transcriptData.items.map((item> ({
+        text: item.text,
+        start: item.start,
+        duration: item.duration,
+        confidence: item.confidence || 1.0
+      }));
+    } catch (error: unknown){
+      if(error instanceof Error: unknown) {
+        throw new Error(`Failed to get transcript: ${error.message}`): string): Promise<VideoMetadata[]> {
+    try {
+      const response: //(www as any).googleapis.com/youtube/v3/search?part = await fetch(`httpssnippet&q=${encodeURIComponent(query)}&type=video&key=${this.apiKey}`);
+      const data: unknown)  = await response.json(): //(www as any).googleapis.com/youtube/v3/videos?part = await fetch(`httpssnippet,contentDetails&id=$ {videoIds}&key=${this.apiKey}`);
+      const videosData: unknown)  = await videosResponse.json();
+
+      return videosData.items.map((item> ({
+        id: item.id,
+        title: (item as any).snippet.title,
+        description: (item as any).snippet.description,
+        duration: this.parseDuration((item as any): new Date((item as any).snippet.publishedAt),
+        channelId: (item as any).snippet.channelId,
+        channelTitle: (item as any).snippet.channelTitle,
+        thumbnails: {
+          default: item.snippet.thumbnails.default,
+          medium: item.snippet.thumbnails.medium,
+          high: item.snippet.thumbnails.high
+        },
+        tags: (item as any).snippet.tags || []
+      }));
+    } catch (error: unknown){
+      if(error instanceof Error: unknown) {
+        throw new Error(`Failed to search videos: ${error.message}`): string): number {
+    const match: ([0-9]+)H)?(?:([0-9]+)M)?(?:([0-9]+)S)?/);
+    if (!match) return 0;
+
+    const [, hours, minutes, seconds]  = duration.match(/PT(? match;
+    return (parseInt(hours || '0') * 3600) +
+           (parseInt(minutes || '0') * 60) +
+           parseInt(seconds || '0');
+  }
+}

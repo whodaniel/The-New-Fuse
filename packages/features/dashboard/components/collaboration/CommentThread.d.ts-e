@@ -1,0 +1,12 @@
+import React from 'react';
+import { Comment, User } from '../../collaboration/types';
+interface CommentThreadProps {
+    comment: Comment;
+    currentUser: User;
+    onReply: (content: string, parentId: string) => void;
+    onResolve: (comment: Comment) => void;
+    onReact: (commentId: string, reaction: string) => void;
+    className?: string;
+}
+export declare const CommentThread: (React as any).FC<CommentThreadProps>;
+export {};

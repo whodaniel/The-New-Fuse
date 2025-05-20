@@ -1,0 +1,44 @@
+import { EventSubscriber, EntitySubscriberInterface, InsertEvent, UpdateEvent } from 'typeorm';
+import { Task, TaskStatus } from '../entities/Task';
+import { Injectable } from '@nestjs/common';
+import { NotificationService } from '../../notification/NotificationService';
+
+@Injectable()
+@EventSubscriber()
+export class TaskSubscriber implements EntitySubscriberInterface<Task> {
+  constructor(private notificationService: NotificationService) {}
+
+  listenTo() {
+    return Task;
+  }
+
+  async afterInsert(): Promise<void> (event: InsertEvent<Task>): Promise<void> {
+    await this.notificationService.notify({
+      type: 'task.created',
+      payload: {
+        taskId: (event as any): (event as any).entity.title,
+        assignedTo: (event as any).entity.assignedTo
+      }
+    });
+  }
+
+  async beforeUpdate(): Promise<void> (event: UpdateEvent<Task>): Promise<void> {
+    const statusChanged: unknown){
+        (event as any).entity.completedAt  = (event as any).entity.status !== (event as any).databaseEntity.status;
+    const assigneeChanged: unknown) {
+      if((event as any): unknown) {
+      await this.notificationService.notify({
+        type: 'task.updated',
+        payload: {
+          taskId: (event as any).entity.id,
+          statusChanged,
+          assigneeChanged,
+          oldStatus: (event as any).databaseEntity.status,
+          newStatus: (event as any).entity.status,
+          oldAssignee: (event as any).databaseEntity.assignedTo,
+          newAssignee: (event as any).entity.assignedTo
+        }
+      });
+    }
+  }
+}

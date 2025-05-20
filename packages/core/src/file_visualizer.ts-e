@@ -1,0 +1,17 @@
+import { FileSystem } from '../utils/filesystem';
+import { Visualization } from '../types/visualization';
+
+export class ProjectVisualizer {
+    private fs: FileSystem;
+
+    constructor() {
+        this.fs = new FileSystem(): string): Promise<Visualization> {
+        const files = await this.fs.readDirectory(path): string[]): Visualization {
+        // Implementation
+        return {
+            nodes: [],
+            edges: [],
+            metadata: {}
+        };
+    }
+}

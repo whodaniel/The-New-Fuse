@@ -1,0 +1,34 @@
+import { ISODateTime, TaskPriority, TaskStatus, TaskType, UUID } from '../core';
+import { TaskMetadata } from './model';
+
+/**
+ * Data transfer object for creating a task
+ */
+export interface CreateTaskDto {
+  title: string;
+  description?: string;
+  priority?: TaskPriority;
+  type?: typeof TaskType;
+  dueDate?: ISODateTime;
+  assigneeId?: UUID;
+  dependencies?: UUID[];
+  metadata?: Partial<TaskMetadata>;
+  tags?: string[];
+}
+
+/**
+ * Data transfer object for updating a task
+ */
+export interface UpdateTaskDto {
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  type?: typeof TaskType;
+  dueDate?: ISODateTime | null;
+  assigneeId?: UUID | null;
+  completedAt?: ISODateTime | null;
+  error?: string | null;
+  metadata?: Partial<TaskMetadata>;
+  tags?: string[];
+}

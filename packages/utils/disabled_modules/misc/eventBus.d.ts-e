@@ -1,0 +1,14 @@
+/// <reference types="node" />
+import { EventEmitter } from 'events';
+declare class EventBus extends EventEmitter {
+    private static instance;
+    private constructor();
+    static getInstance(): EventBus;
+    emit(event: string, ...args: unknown[]): boolean;
+    on(event: string, listener: (...args: unknown[]) => void): this;
+    off(event: string, listener: (...args: unknown[]) => void): this;
+    once(event: string, listener: (...args: unknown[]) => void): this;
+    clear(event?: string): void;
+}
+export declare const eventBus: EventBus;
+export {};

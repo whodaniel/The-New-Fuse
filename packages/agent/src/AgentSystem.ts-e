@@ -1,0 +1,20 @@
+import { Injectable } from '@nestjs/common';
+import { AgentRegistry } from './AgentRegistry';
+import { AgentFactory } from './AgentFactory';
+import { AgentCommunicationBus } from './AgentCommunicationBus';
+
+@Injectable()
+export class AgentSystem {
+  constructor(
+    private readonly registry: AgentRegistry,
+    private readonly factory: AgentFactory,
+    private readonly communicationBus: AgentCommunicationBus
+  ) {}
+
+  // TODO: Implement core agent system functionality
+  // - Agent lifecycle management
+  // - Inter-agent communication protocols
+  // - Agent state synchronization
+  // - Task distribution and coordination
+  // - Learning and adaptation mechanisms
+}

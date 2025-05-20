@@ -1,0 +1,42 @@
+{
+  "name": "@the-new-fuse/core",
+  "version": "1.0.0",
+  "description": "Core functionality for The New Fuse",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "lint": "eslint src/**/*.ts"
+  },
+  "dependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^3.3.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/event-emitter": "^2.0.3",
+    "chromadb": "^1.5.0",
+    "crypto-js": "^4.1.1",
+    "ioredis": "^5.0.0",
+    "mysql2": "^2.3.0",
+    "redis": "^4.6.7",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.1.1",
+    "@types/ioredis": "^4.28.0",
+    "@types/jest": "^27.0.0",
+    "@types/node": "^16.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "eslint": "^8.0.0",
+    "jest": "^27.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "reflect-metadata": "^0.2.0",
+    "rxjs": "^7.8.0"
+  }
+}

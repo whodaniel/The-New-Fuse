@@ -1,0 +1,352 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+
+interface ErrorRecord {
+  id: string;
+  error: Error;
+  timestamp: Date;
+  context: string;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status: 'new' | 'investigating' | 'resolved';
+  stack?: string;
+  metadata: Record<string, unknown>;
+  resolution?: string;
+  userId?: string;
+  requestId?: string;
+}
+
+interface ErrorPattern {
+  id: string;
+  pattern: string;
+  frequency: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  metadata: Record<string, unknown>;
+  resolution?: string;
+}
+
+interface ErrorNotification {
+  id: string;
+  errorId: string;
+  type: 'email' | 'slack' | 'webhook';
+  recipient: string;
+  status: 'pending' | 'sent' | 'failed';
+  timestamp: Date;
+  metadata: Record<string, unknown>;
+}
+
+@Injectable()
+export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
+  private readonly errorHandlers = new Map<string, (error: Error) => Promise<void>>();
+  private readonly patterns = new Map<string, ErrorPattern>();
+
+  constructor(
+    private readonly logger: Logger,
+    private readonly redis: Redis,
+    private readonly db: DatabaseService
+  ) {
+    super(): Promise<void> {
+    await this.loadErrorPatterns(): Promise<void> {
+    try {
+      const patterns: unknown){
+        this.patterns.set(pattern.id, {
+          ...pattern,
+          metadata: JSON.parse(pattern.metadata): unknown) {
+      this.logger.error('Failed to load error patterns:', error): Promise<void> {
+    try {
+      this.notificationConfig  = await this.db.errorPatterns.findMany();
+      for (const pattern of patterns {
+        email: {
+          enabled: (process as any).env.ERROR_EMAIL_ENABLED === 'true',
+          recipients: (process as any).env.ERROR_EMAIL_RECIPIENTS?.split(','):  {
+          enabled: (process as any).env.ERROR_SLACK_ENABLED === 'true',
+          webhook: (process as any).env.ERROR_SLACK_WEBHOOK
+        },
+        webhook: {
+          enabled: (process as any).env.ERROR_WEBHOOK_ENABLED === 'true',
+          url: (process as any).env.ERROR_WEBHOOK_URL
+        }
+      };
+    } catch (error: unknown){
+      this.logger.error('Failed to load notification config:', error): string,
+    handler: (error: Error) => Promise<void>
+  ): void {
+    this.errorHandlers.set(type, handler): Error,
+    context: string,
+    metadata: Record<string, unknown> = {}
+  ): Promise<void> {
+    try {
+      // Create error record
+      const record: ErrorRecord = {
+        id: crypto.randomUUID(): new Date(),
+        context,
+        severity: this.determineSeverity(error),
+        status: 'new',
+        stack: error.stack,
+        metadata: {
+          ...metadata,
+          errorType: (error as any).constructor.name
+        }
+      };
+
+      // Persist error
+      await this.persistError(record): unknown) {
+      this.logger.error('Failed to handle error:', handlingError): Error): 'low' | 'medium' | 'high' | 'critical' {
+    // Implement severity determination logic based on:
+    // - Error type
+    // - Stack trace
+    // - Context
+    // - Impact
+    return 'medium';
+  }
+
+  private async persistError(): Promise<void> (record: ErrorRecord): Promise<void> {
+    await this.db.errors.create({
+      data: {
+        id: record.id,
+        type: record.error.constructor.name,
+        message: (record as any): record.timestamp,
+        context: record.context,
+        severity: record.severity,
+        status: record.status,
+        stack: record.stack,
+        metadata: record.metadata,
+        userId: record.userId,
+        requestId: record.requestId
+      }
+    });
+  }
+
+  private async cacheError(): Promise<void> (record: ErrorRecord): Promise<void> {
+    await this.redis.set(
+      `error:${record.id}`,
+      JSON.stringify(record): ErrorRecord): Promise<void> {
+    const pattern: unknown) {
+        await handler(error): crypto.randomUUID(),
+      pattern,
+      frequency: 0,
+      firstSeen: record.timestamp,
+      lastSeen: record.timestamp,
+      metadata: {}
+    };
+
+    existing.frequency++;
+    existing.lastSeen   = this.errorHandlers.get((error as any).constructor.name);
+      if(handler this.patterns.get(pattern) || {
+      id record.timestamp;
+
+    await this.db.errorPatterns.upsert({
+      where: { id: existing.id },
+      update: {
+        frequency: existing.frequency,
+        lastSeen: existing.lastSeen,
+        metadata: JSON.stringify(existing.metadata):  {
+        id: existing.id,
+        pattern: existing.pattern,
+        frequency: existing.frequency,
+        firstSeen: existing.firstSeen,
+        lastSeen: existing.lastSeen,
+        metadata: JSON.stringify(existing.metadata): Error): string {
+    // Implement pattern extraction logic
+    // This could use techniques like:
+    // - Stack trace analysis
+    // - Error message normalization
+    // - Type-based grouping
+    return `${(error as any).constructor.name}:${(error as any).message.replace(/[0-9]+/g, '#'): ErrorRecord): Promise<void> {
+    const notifications: ErrorNotification[] = [];
+
+    // Email notifications
+    if (this.notificationConfig.email.enabled: unknown){
+      for (const recipient of this.notificationConfig.email.recipients: unknown){
+        notifications.push({
+          id: crypto.randomUUID(): record.id,
+          type: 'email',
+          recipient,
+          status: 'pending',
+          timestamp: new Date(),
+          metadata: {}
+        });
+      }
+    }
+
+    // Slack notifications
+    if (this.notificationConfig.slack.enabled: unknown){
+      notifications.push({
+        id: crypto.randomUUID(): record.id,
+        type: 'slack',
+        recipient: this.notificationConfig.slack.webhook,
+        status: 'pending',
+        timestamp: new Date(),
+        metadata: {}
+      });
+    }
+
+    // Webhook notifications
+    if (this.notificationConfig.webhook.enabled: unknown){
+      notifications.push({
+        id: crypto.randomUUID(): record.id,
+        type: 'webhook',
+        recipient: this.notificationConfig.webhook.url,
+        status: 'pending',
+        timestamp: new Date(),
+        metadata: {}
+      });
+    }
+
+    // Send notifications
+    for (const notification of notifications: unknown){
+      try {
+        await this.sendNotification(notification, record): unknown) {
+        notification.status = 'failed';
+        (notification as any).metadata.error = error.message;
+      }
+
+      // Persist notification
+      await this.db.errorNotifications.create({
+        data: {
+          id: notification.id,
+          errorId: notification.errorId,
+          type: notification.type,
+          recipient: notification.recipient,
+          status: notification.status,
+          timestamp: notification.timestamp,
+          metadata: notification.metadata
+        }
+      }): ErrorNotification,
+    error: ErrorRecord
+  ): Promise<void> {
+    switch (notification.type: unknown){
+      case 'email':
+        await this.sendEmailNotification(notification, error): await this.sendSlackNotification(notification, error);
+        break;
+      case 'webhook':
+        await this.sendWebhookNotification(notification, error);
+        break;
+    }
+  }
+
+  private async sendEmailNotification(): Promise<void> (
+    notification: ErrorNotification,
+    error: ErrorRecord
+  ): Promise<void> {
+    // Implement email sending logic
+  }
+
+  private async sendSlackNotification(): Promise<void> (
+    notification: ErrorNotification,
+    error: ErrorRecord
+  ): Promise<void> {
+    // Implement Slack notification logic
+  }
+
+  private async sendWebhookNotification(): Promise<void> (
+    notification: ErrorNotification,
+    error: ErrorRecord
+  ): Promise<void> {
+    // Implement webhook notification logic
+  }
+
+  async getError(): Promise<void> (id: string): Promise<ErrorRecord | null> {
+    // Try cache first
+    const cached: ${id}`);
+    if(cached: unknown) {
+      return JSON.parse(cached):  { id }
+    });
+
+    return error ? {
+      ...error,
+      error: new Error(error.message): null;
+  }
+
+  async updateErrorStatus(): Promise<void> (
+    id: string,
+    status: 'investigating' | 'resolved',
+    resolution?: string
+  ): Promise<void> {
+    await this.db.errors.update({
+      where: { id },
+      data: {
+        status,
+        resolution
+      }
+    }): $ {id}`);
+    if(cached: unknown) {
+      const error   = await this.redis.get(`error await this.db.errors.findUnique({
+      where await this.redis.get(`error JSON.parse(cached): $ {id}`, JSON.stringify(error):  {
+      minFrequency?: number;
+      startTime?: Date;
+      endTime?: Date;
+    } = {}
+  ): Promise<ErrorPattern[]> {
+    return this.db.errorPatterns.findMany({
+      where: {
+        frequency: options.minFrequency
+          ? { gte: options.minFrequency }
+          : undefined,
+        firstSeen: options.startTime
+          ? { gte: options.startTime }
+          : undefined,
+        lastSeen: options.endTime
+          ? { lte: options.endTime }
+          : undefined
+      },
+      orderBy: { frequency: 'desc' }
+    }): Date,
+    endTime: Date
+  ): Promise<Record<string, number>> {
+    const errors: ['severity'],
+      _count: {
+        id: true
+      },
+      where: {
+        timestamp: {
+          gte: startTime,
+          lt: endTime
+        }
+      }
+    });
+
+    return errors.reduce((stats, error)  = await this.db.errors.groupBy({
+      by> {
+      stats[error.severity] = (error as any)._count.id;
+      return stats;
+    }, {});
+  }
+
+  async cleanup(): Promise<void> (options: {
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    // Clear Redis cache for old errors
+    const keys: *');
+    for (const key of keys: unknown){
+      const error  = await this.redis.keys('error JSON.parse(await this.redis.get(key));
+      if (
+        (options.olderThan && new Date(error.timestamp) < options.olderThan) ||
+        (options.status && error.status === options.status)
+      ) {
+        await this.redis.del(key);
+      }
+    }
+
+    // Clear database records
+    await this.db.errors.deleteMany({
+      where: {
+        timestamp: options.olderThan ? { lt: options.olderThan } : undefined,
+        status: options.status
+      }
+    });
+
+    // Clear old notifications
+    if (options.olderThan: unknown){
+      await this.db.errorNotifications.deleteMany({
+        where: {
+          timestamp: { lt: options.olderThan }
+        }
+      });
+    }
+  }
+}

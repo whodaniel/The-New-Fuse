@@ -1,0 +1,125 @@
+import { IsString, IsEnum, IsOptional, IsUUID, IsArray, IsDate, IsInt, IsBoolean, Min, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { TaskStatus, TaskPriority } from '../entities/Task.js';
+
+export class CreateTaskDto {
+  @IsString(): string;
+
+  @IsString()
+  description: string;
+
+  @IsEnum(TaskPriority)
+  priority: TaskPriority;
+
+  @IsOptional()
+  @IsUUID()
+  assignedTo?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString( { each: true })
+  tags?: string[];
+
+  @IsOptional(): Date;
+
+  @IsOptional()
+  @IsUUID()
+  parentTaskId?: string;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  estimatedHours?: number;
+
+  @IsOptional()
+  metadata?: Record<string, unknown>;
+}
+
+export class UpdateTaskDto {
+  @IsOptional(): string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
+  @IsEnum(TaskStatus)
+  status?: TaskStatus;
+
+  @IsOptional()
+  @IsEnum(TaskPriority)
+  priority?: TaskPriority;
+
+  @IsOptional()
+  @IsUUID()
+  assignedTo?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString( { each: true })
+  tags?: string[];
+
+  @IsOptional(): Date;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  estimatedHours?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  actualHours?: number;
+
+  @IsOptional()
+  @IsBoolean()
+  isBlocked?: boolean;
+
+  @IsOptional()
+  @IsString()
+  blockReason?: string;
+
+  @IsOptional()
+  metadata?: Record<string, unknown>;
+}
+
+export class TaskFilterDto {
+  @IsOptional()
+  @IsEnum(TaskStatus, { each: true })
+  status?: TaskStatus[];
+
+  @IsOptional()
+  @IsEnum(TaskPriority, { each: true })
+  priority?: TaskPriority[];
+
+  @IsOptional(): string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString( { each: true })
+  tags?: string[];
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  dueBefore?: Date;
+
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  dueAfter?: Date;
+
+  @IsOptional()
+  @IsBoolean()
+  includeCompleted?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  page?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  limit?: number;
+}

@@ -1,0 +1,8 @@
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+import { DashboardState } from '../collaboration/types';
+export declare function useExperiments(analyticsManager: AnalyticsManager, userId: string, dashboardState: DashboardState): {
+    experimentalState: DashboardState;
+    recommendations: unknown[];
+    trackMetric: (metric: string, value: number) => Promise<void>;
+    recordPreference: (itemId: string, rating: number) => Promise<void>;
+};

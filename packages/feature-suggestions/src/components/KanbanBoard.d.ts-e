@@ -1,0 +1,13 @@
+import React from 'react';
+import { FeatureSuggestion, TodoItem } from '../types';
+interface KanbanColumn {
+    id: string;
+    title: string;
+    items: (FeatureSuggestion | TodoItem)[];
+}
+interface KanbanBoardProps {
+    columns: KanbanColumn[];
+    onDragEnd: (result: unknown) => void;
+}
+declare const KanbanBoard: (React as any).FC<KanbanBoardProps>;
+export default KanbanBoard;

@@ -1,0 +1,59 @@
+{
+  "name": "AI Agent Terminal Bridge",
+  "version": "1.0.0",
+  "description": "A bridge that allows AI agents to share terminal outputs and inputs",
+  "agents": ["copilot", "augment"],
+  "communication_channels": {
+    "terminal_output": {
+      "type": "file",
+      "path": "terminal_bridge_output.log",
+      "format": "json",
+      "polling_interval_ms": 1000
+    },
+    "terminal_input": {
+      "type": "file",
+      "path": "terminal_bridge_input.log",
+      "format": "json",
+      "polling_interval_ms": 1000
+    },
+    "command_queue": {
+      "type": "file",
+      "path": "terminal_bridge_commands.json",
+      "format": "json",
+      "polling_interval_ms": 500
+    }
+  },
+  "message_format": {
+    "timestamp": "ISO8601 datetime string",
+    "source_agent": "Name of the agent sending the message",
+    "message_type": "command|output|notification",
+    "content": "The actual message content",
+    "target_agent": "Name of the agent that should receive this message",
+    "metadata": {
+      "terminal_id": "Optional identifier for different terminal instances",
+      "command_id": "Unique identifier for commands to match with their outputs",
+      "status": "success|error|in_progress"
+    }
+  },
+  "activation_triggers": {
+    "copilot": {
+      "file_pattern": "copilot_activation_*.json",
+      "command_prefix": "COPILOT:"
+    },
+    "augment": {
+      "file_pattern": "augment_activation_*.json",
+      "command_prefix": "AUGMENT:"
+    }
+  },
+  "heartbeat": {
+    "interval_ms": 30000,
+    "timeout_ms": 60000,
+    "retry_count": 3
+  },
+  "error_handling": {
+    "max_retries": 3,
+    "retry_interval_ms": 5000,
+    "log_errors": true,
+    "error_log_path": "terminal_bridge_errors.log"
+  }
+}

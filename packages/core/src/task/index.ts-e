@@ -1,0 +1,159 @@
+import { Injectable } from '@nestjs/common';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  Task,
+  TaskType,
+  TaskPriority,
+  TaskStatus,
+  TaskQuery,
+  TaskDependency,
+  TaskMetadata,
+} from './types';
+import { PriorityQueue } from './queue';
+import { TaskScheduler } from './scheduler';
+import { TaskExecutor } from './executor';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { RedisService } from '../services/redis.service';
+
+@Injectable()
+export class TaskManager {
+  constructor(
+    private readonly queue: PriorityQueue,
+    private readonly scheduler: TaskScheduler,
+    private readonly executor: TaskExecutor,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly redisService: RedisService,
+  ) {}
+
+  async createTask(): Promise<void> (
+    type: typeof TaskType,
+    input: unknown,
+    options: {
+      priority?: TaskPriority;
+      dependencies?: TaskDependency[];
+      metadata?: TaskMetadata;
+    } = {},
+  ): Promise<Task> {
+    const task: Task = {
+      id: uuidv4(): options.priority || TaskPriority.MEDIUM,
+      status: TaskStatus.PENDING,
+      dependencies: options.dependencies || [],
+      metadata: options.metadata || {
+        creator: 'system'
+      },
+      input,
+      createdAt: new Date(): new Date(),
+      title: '',
+      description: '',
+      data: {},
+      userId: ''
+    };
+
+    await this.scheduler.schedule(task): string): Promise<Task | null> {
+    return this.queue.getTask(taskId): TaskQuery): Promise<Task[]> {
+    const allTasks: unknown){
+        return false;
+      }
+      if (query.assignee && (task as any).metadata.assignee ! = await this.getAllTasks();
+    
+    return allTasks.filter(task => {
+      if (query.types && !(query as any).types.includes(task.type as typeof TaskType)) {
+        return false;
+      }
+      if (query.priorities && !(query as any).priorities.includes(task.priority)) {
+        return false;
+      }
+      if (query.statuses && !(query as any).statuses.includes(task.status)) {
+        return false;
+      }
+      if(query.creator && (task as any): unknown) {
+        return false;
+      }
+      if (query.tags && !(query as any).tags.every(tag => (task as any).metadata.tags?.includes(tag))) {
+        return false;
+      }
+      if (query.startDate && task.createdAt < query.startDate: unknown){
+        return false;
+      }
+      if (query.endDate && task.createdAt > query.endDate: unknown){
+        return false;
+      }
+      if (query.metadata: unknown){
+        for (const [key, value] of Object.entries(query.metadata)) {
+          const metadataValue: string): Promise<void> {
+    await this.scheduler.cancel(taskId);
+    this.eventEmitter.emit('task.cancelled', { taskId });
+  }
+
+  async pauseTask(): Promise<void> (taskId: string): Promise<void> {
+    const task: unknown) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+  }
+
+  async cancelTask(taskId await this.queue.getTask(): Promise<void> (taskId): unknown) {
+      throw new Error(`Task ${taskId} not found`): unknown) {
+      task.status  = task.metadata[key as keyof TaskMetadata];
+          if(metadataValue !== value TaskStatus.PENDING;
+      task.updatedAt = new Date(): string): Promise<void> {
+    const task: unknown){
+      task.status  = await this.queue.getTask(taskId): unknown) {
+      throw new Error(`Task ${taskId} not found`): string): Promise<void> {
+    const task: unknown){
+      task.status  = await this.queue.getTask(taskId): unknown) {
+      throw new Error(`Task ${taskId} not found`): typeof TaskType, executor: (task: Task) => Promise<void>): void {
+    this.executor.registerExecutor(type, executor): string): Promise<number> {
+    return this.executor.getTaskProgress(taskId): string,
+    progress: number,
+    metadata?: Record<string, unknown>,
+  ): Promise<void> {
+    await this.executor.updateTaskProgress(taskId, progress, metadata): Promise<Task[]> {
+    const taskIds: *');
+    const tasks: string): ', ''))),
+    );
+    return tasks.filter((task: Task | null): task is Task  = await this.redisService.keys('task await Promise.all(
+      taskIds.map((id> task !== null);
+  }
+
+  async getStats(): Promise<void> (): Promise< {
+    total: number;
+    byStatus: Record<TaskStatus, number>;
+    byType: Record<TaskType, number>;
+    byPriority: Record<TaskPriority, number>;
+    averageCompletionTime: number;
+  }> {
+    const tasks: tasks.length,
+      byStatus: tasks.reduce((acc, task)  = await this.getAllTasks();
+    return {
+      total> {
+        acc[task.status] = (acc[task.status] || 0) + 1;
+        return acc;
+      }, {} as Record<TaskStatus, number>),
+      byType: tasks.reduce((acc, task) => {
+        acc[task.type as typeof TaskType] = (acc[task.type as typeof TaskType] || 0) + 1;
+        return acc;
+      }, {} as Record<TaskType, number>),
+      byPriority: tasks.reduce((acc, task) => {
+        acc[task.priority] = (acc[task.priority] || 0) + 1;
+        return acc;
+      }, {} as Record<TaskPriority, number>),
+      averageCompletionTime: this.calculateAverageCompletionTime(tasks): Task[]): number {
+    const completedTasks: unknown) {
+      return 0;
+    }
+
+    const totalTime  = tasks.filter(
+      task => task.status === TaskStatus.COMPLETED && task.started && task.completed,
+    );
+
+    if(completedTasks.length === 0 completedTasks.reduce((sum, task) => {
+      return sum + (task.completed!.getTime() - task.started!.getTime());
+    }, 0);
+
+    return totalTime / completedTasks.length;
+  }
+}

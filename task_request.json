@@ -1,0 +1,14 @@
+{
+    "type": "TASK_REQUEST",
+    "source": "local_ai_agent_001",
+    "target": "new_fuse_core",
+    "content": {
+        "request_type": "initial_assignment",
+        "preferred_domains": [
+            "code_analysis",
+            "task_coordination"
+        ],
+        "availability": "immediate"
+    },
+    "timestamp": "2024-01-06T10:00:45Z"
+}

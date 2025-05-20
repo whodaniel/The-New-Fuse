@@ -1,0 +1,11 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AIError = void 0;
+class AIError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'AIError';
+    }
+}
+exports.AIError = AIError;
+//# sourceMappingURL=error.js.mapexport {};

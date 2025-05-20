@@ -1,0 +1,577 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EnhancedTimelineView = void 0;
+const react_1 = __importStar(require("react"));
+const date_fns_1 = require("date-fns");
+const d3 = __importStar(require("d3"));
+const TimelineSlider_1 = __importDefault(require("./TimelineSlider"));
+const colors = {
+    suggestion: {
+        bg: '#818CF8',
+        bgHover: '#6366F1',
+        text: '#FFFFFF',
+        gradient: 'linear-gradient(135deg, #818CF8 0%, #6366F1 100%)'
+    },
+    todo: {
+        bg: '#34D399',
+        bgHover: '#10B981',
+        text: '#FFFFFF',
+        gradient: 'linear-gradient(135deg, #34D399 0%, #10B981 100%)'
+    },
+    feature: {
+        bg: '#F59E0B',
+        bgHover: '#D97706',
+        text: '#FFFFFF',
+        gradient: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)'
+    },
+    workflow: {
+        bg: '#8B5CF6',
+        bgHover: '#7C3AED',
+        text: '#FFFFFF',
+        gradient: 'linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%)'
+    },
+    agent: {
+        bg: '#EC4899',
+        bgHover: '#DB2777',
+        text: '#FFFFFF',
+        gradient: 'linear-gradient(135deg, #EC4899 0%, #DB2777 100%)'
+    },
+    branch: {
+        active: '#10B981',
+        merged: '#6366F1',
+        inactive: '#9CA3AF'
+    }
+};
+const EnhancedTimelineView = ({ events, branches, workflows, onEventClick, onCreateBranch, onAddNote, onEventMove }) => {
+    var _a;
+    const containerRef = (0, react_1.useRef)(null);
+    const svgRef = (0, react_1.useRef)(null);
+    const [hoveredEvent, setHoveredEvent] = (0, react_1.useState)(null);
+    const [hoveredPosition, setHoveredPosition] = (0, react_1.useState)(null);
+    const [selectedEvent, setSelectedEvent] = (0, react_1.useState)(null);
+    const [zoom, setZoom] = (0, react_1.useState)(1);
+    const [dragState, setDragState] = (0, react_1.useState)({
+        isDragging: false,
+        startPosition: null,
+        currentPosition: null
+    });
+    const [showBranchForm, setShowBranchForm] = (0, react_1.useState)(false);
+    const [showNoteForm, setShowNoteForm] = (0, react_1.useState)(false);
+    const [newBranchName, setNewBranchName] = (0, react_1.useState)('');
+    const [noteContent, setNoteContent] = (0, react_1.useState)('');
+    const handleZoom = (0, react_1.useCallback)((event) => {
+        if (!svgRef.current)
+            return;
+        const { transform } = event;
+        setZoom(transform.k);
+        const svg = d3.select(svgRef.current);
+        svg.select('g.main-group')
+            .transition()
+            .duration(50)
+            .attr('transform', transform.toString());
+    }, []);
+    const handleDrag = (0, react_1.useCallback)((event) => {
+        if (!event.sourceEvent || !event.sourceEvent.currentTarget)
+            return;
+        const node = d3.select(event.sourceEvent.currentTarget.parentNode);
+        node.raise();
+        const snapGrid = 20;
+        const x = Math.round(event.x / snapGrid) * snapGrid;
+        const y = Math.round(event.y / snapGrid) * snapGrid;
+        node.attr('transform', `translate(${x},${y})`);
+        setDragState(prev => (Object.assign(Object.assign({}, prev), { isDragging: true, currentPosition: { x, y } })));
+        if (!svgRef.current)
+            return;
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('.guideline').remove();
+        const guidelineData = [
+            { type: 'horizontal', pos: y },
+            { type: 'vertical', pos: x }
+        ];
+        svg.selectAll('.guideline')
+            .data(guidelineData)
+            .join('line')
+            .attr('class', 'guideline')
+            .attr('stroke', '#94A3B8')
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '4,4')
+            .attr('x1', d => d.type === 'vertical' ? d.pos : -1000)
+            .attr('y1', d => d.type === 'horizontal' ? d.pos : -1000)
+            .attr('x2', d => d.type === 'vertical' ? d.pos : 1000)
+            .attr('y2', d => d.type === 'horizontal' ? d.pos : 1000);
+    }, []);
+    const initializeDrag = (0, react_1.useCallback)(() => {
+        return d3.drag()
+            .on('start', function () {
+            const node = d3.select(this);
+            node.attr('cursor', 'grabbing')
+                .transition()
+                .duration(200)
+                .attr('filter', 'url(#glow)');
+            const bbox = this.getBBox();
+            setDragState({
+                isDragging: true,
+                startPosition: { x: bbox.x, y: bbox.y },
+                currentPosition: { x: bbox.x, y: bbox.y }
+            });
+        })
+            .on('drag', handleDrag)
+            .on('end', function () {
+            const node = d3.select(this);
+            node.attr('cursor', 'grab')
+                .transition()
+                .duration(200)
+                .attr('filter', null);
+            d3.select(svgRef.current)
+                .selectAll('.guideline')
+                .remove();
+            if (onEventMove && dragState.startPosition && dragState.currentPosition) {
+                const eventId = d3.select(this).datum().data.id;
+                onEventMove(eventId, dragState.currentPosition);
+            }
+            setDragState({
+                isDragging: false,
+                startPosition: null,
+                currentPosition: null
+            });
+        });
+    }, [handleDrag, dragState, onEventMove]);
+    const initializeZoom = (0, react_1.useCallback)(() => {
+        if (!svgRef.current)
+            return;
+        const svg = d3.select(svgRef.current);
+        const zoomBehavior = d3.zoom()
+            .scaleExtent([0.1, 4])
+            .translateExtent([[-2000, -2000], [2000, 2000]])
+            .filter((event) => {
+            if (event.type === 'wheel')
+                return !event.ctrlKey;
+            return !event.button && !event.ctrlKey;
+        })
+            .on('zoom', handleZoom);
+        svg.call(zoomBehavior)
+            .call(zoomBehavior.transform, d3.zoomIdentity);
+        svg.on('touchstart', (event) => {
+            event.preventDefault();
+        });
+        return () => {
+            svg.on('.zoom', null);
+        };
+    }, [handleZoom]);
+    const handleEventClick = (0, react_1.useCallback)((event) => {
+        setSelectedEvent(event);
+        onEventClick === null || onEventClick === void 0 ? void 0 : onEventClick(event);
+    }, [onEventClick]);
+    const handleAddNote = (0, react_1.useCallback)((date, content) => {
+        if (!onAddNote)
+            return;
+        const note = {
+            id: `note-${Date.now()}`,
+            content,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            author: 'Current User',
+            color: '#6B7280',
+        };
+        const nearestEvent = events.reduce((nearest, event) => {
+            const currentDiff = Math.abs(new Date(event.timestamp).getTime() - date.getTime());
+            const nearestDiff = Math.abs(new Date(nearest.timestamp).getTime() - date.getTime());
+            return currentDiff < nearestDiff ? event : nearest;
+        });
+        onAddNote(nearestEvent.id, note);
+        setShowNoteForm(false);
+        setNoteContent('');
+    }, [events, onAddNote]);
+    const processedEvents = (0, react_1.useMemo)(() => {
+        return events.map(event => (Object.assign(Object.assign({}, event), { timestamp: new Date(event.timestamp) })));
+    }, [events]);
+    const timelineRanges = (0, react_1.useMemo)(() => {
+        return workflows.map(workflow => {
+            var _a, _b;
+            return ({
+                id: workflow.id,
+                startDate: ((_a = workflow.timeRange) === null || _a === void 0 ? void 0 : _a.startDate) || new Date(),
+                endDate: ((_b = workflow.timeRange) === null || _b === void 0 ? void 0 : _b.endDate) || new Date(),
+                type: 'phase',
+                color: colors.workflow.bg,
+                label: workflow.name
+            });
+        });
+    }, [workflows]);
+    (0, react_1.useEffect)(() => {
+        if (!svgRef.current || !containerRef.current || !events.length)
+            return;
+        const container = containerRef.current;
+        const boundingRect = container.getBoundingClientRect();
+        const width = boundingRect.width;
+        const height = boundingRect.height;
+        const margin = { top: 40, right: 40, bottom: 40, left: 40 };
+        const svg = d3.select(svgRef.current);
+        svg.selectAll('*').remove();
+        svg.attr('width', width)
+            .attr('height', height);
+        const defs = svg.append('defs');
+        Object.entries(colors).forEach(([type, color]) => {
+            if (color.gradient) {
+                const gradient = defs.append('linearGradient')
+                    .attr('id', `gradient-${type}`)
+                    .attr('x1', '0%')
+                    .attr('y1', '0%')
+                    .attr('x2', '100%')
+                    .attr('y2', '100%');
+                gradient.append('stop')
+                    .attr('offset', '0%')
+                    .attr('stop-color', color.bg)
+                    .attr('stop-opacity', 0.9);
+                gradient.append('stop')
+                    .attr('offset', '50%')
+                    .attr('stop-color', color.bgHover)
+                    .attr('stop-opacity', 0.95);
+                gradient.append('stop')
+                    .attr('offset', '100%')
+                    .attr('stop-color', color.gradient.split(' ').pop())
+                    .attr('stop-opacity', 1);
+            }
+        });
+        const filter = defs.append('filter')
+            .attr('id', 'glow')
+            .attr('x', '-50%')
+            .attr('y', '-50%')
+            .attr('width', '200%')
+            .attr('height', '200%');
+        filter.append('feGaussianBlur')
+            .attr('class', 'blur')
+            .attr('stdDeviation', '3')
+            .attr('result', 'coloredBlur');
+        filter.append('feGaussianBlur')
+            .attr('stdDeviation', '1')
+            .attr('result', 'innerGlow');
+        const feMerge = filter.append('feMerge');
+        feMerge.append('feMergeNode')
+            .attr('in', 'coloredBlur');
+        feMerge.append('feMergeNode')
+            .attr('in', 'innerGlow');
+        feMerge.append('feMergeNode')
+            .attr('in', 'SourceGraphic');
+        const g = svg.append('g')
+            .attr('class', 'main-group')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+        const gridPattern = defs.append('pattern')
+            .attr('id', 'grid')
+            .attr('width', 20)
+            .attr('height', 20)
+            .attr('patternUnits', 'userSpaceOnUse');
+        gridPattern.append('path')
+            .attr('d', 'M 20 0 L 0 0 0 20')
+            .attr('fill', 'none')
+            .attr('stroke', '#E2E8F0')
+            .attr('stroke-width', '0.5');
+        g.append('rect')
+            .attr('width', width - margin.left - margin.right)
+            .attr('height', height - margin.top - margin.bottom)
+            .attr('fill', 'url(#grid)')
+            .attr('opacity', 0.2);
+        const treeLayout = d3.tree()
+            .size([height - margin.top - margin.bottom, width - margin.left - margin.right])
+            .separation((a, b) => (a.parent === b.parent ? 2.5 : 4));
+        const hierarchyData = d3.hierarchy({
+            id: 'virtual-root',
+            type: 'VIRTUAL',
+            timestamp: new Date(),
+            data: { title: 'Root', description: '', item: { id: 'root' } },
+            children: events
+        });
+        const nodes = treeLayout(hierarchyData);
+        const linkGenerator = d3.linkHorizontal()
+            .source((d) => ({ x: d.source.x, y: d.source.y }))
+            .target((d) => ({ x: d.target.x, y: d.target.y }));
+        g.append('g')
+            .attr('class', 'links')
+            .selectAll('path')
+            .data(nodes.links().filter(link => link.source.data.id !== 'virtual-root'))
+            .join('path')
+            .attr('d', linkGenerator)
+            .attr('stroke', d => {
+            var _a;
+            const sourceEvent = d.source.data;
+            const targetEvent = d.target.data;
+            if ((_a = sourceEvent.mergedFrom) === null || _a === void 0 ? void 0 : _a.includes(targetEvent.id))
+                return colors.branch.merged;
+            if (targetEvent.parentId === sourceEvent.id)
+                return colors.branch.active;
+            return '#E5E7EB';
+        })
+            .attr('stroke-width', d => { var _a; return ((_a = d.source.data.mergedFrom) === null || _a === void 0 ? void 0 : _a.includes(d.target.data.id)) ? 3 : 2; })
+            .attr('fill', 'none')
+            .attr('pointer-events', 'none')
+            .style('stroke-dasharray', d => { var _a; return ((_a = d.source.data.mergedFrom) === null || _a === void 0 ? void 0 : _a.includes(d.target.data.id)) ? '0' : '5,5'; })
+            .style('opacity', 0.7)
+            .transition()
+            .duration(500)
+            .style('opacity', 1);
+        const nodeGroup = g.append('g')
+            .attr('class', 'nodes')
+            .selectAll('g')
+            .data(nodes.descendants().filter(d => d.data.id !== 'virtual-root'))
+            .join('g')
+            .attr('class', 'node')
+            .attr('transform', d => `translate(${d.y},${d.x})`)
+            .attr('cursor', 'grab')
+            .call(initializeDrag());
+        const cardWidth = 160;
+        const cardHeight = 90;
+        nodeGroup.each(function (d) {
+            const node = d3.select(this);
+            const data = d.data;
+            const card = node.append('g')
+                .attr('class', 'card')
+                .style('cursor', 'grab');
+            card.append('rect')
+                .attr('rx', 12)
+                .attr('ry', 12)
+                .attr('x', -cardWidth / 2)
+                .attr('y', -cardHeight / 2)
+                .attr('width', cardWidth)
+                .attr('height', cardHeight)
+                .attr('fill', `url(#gradient-${data.type.toLowerCase()})`)
+                .attr('filter', hoveredEvent === data.id ? 'url(#glow)' : null)
+                .attr('stroke', '#FFFFFF')
+                .attr('stroke-opacity', 0.1)
+                .attr('stroke-width', 1)
+                .on('mouseover', function (event) {
+                if (event.buttons)
+                    return;
+                setHoveredEvent(data.id);
+                setHoveredPosition({ x: event.pageX, y: event.pageY });
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('transform', 'scale(1.05)')
+                    .attr('filter', 'url(#glow)');
+            })
+                .on('mouseout', function () {
+                setHoveredEvent(null);
+                setHoveredPosition(null);
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr('transform', null)
+                    .attr('filter', null);
+            })
+                .on('click', (event) => {
+                event.stopPropagation();
+                handleEventClick(data);
+            });
+            const title = card.append('text')
+                .attr('dy', -cardHeight / 4)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'white')
+                .attr('font-size', '14px')
+                .attr('font-weight', 'bold')
+                .attr('pointer-events', 'none')
+                .text(data.data.title);
+            const titleElement = title.node();
+            if (titleElement && titleElement.getComputedTextLength() > cardWidth - 20) {
+                let text = data.data.title;
+                while (titleElement.getComputedTextLength() > cardWidth - 30 && text.length > 0) {
+                    text = text.slice(0, -1);
+                }
+                title.text(text + '...');
+            }
+            card.append('text')
+                .attr('dy', 0)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'rgba(255, 255, 255, 0.9)')
+                .attr('font-size', '12px')
+                .attr('pointer-events', 'none')
+                .text((0, date_fns_1.format)(new Date(data.timestamp), 'MMM d, yyyy'));
+            const badge = card.append('g')
+                .attr('transform', `translate(${cardWidth / 2 - 40}, ${-cardHeight / 2 + 15})`);
+            badge.append('rect')
+                .attr('rx', 9)
+                .attr('ry', 9)
+                .attr('width', 70)
+                .attr('height', 18)
+                .attr('fill', 'rgba(255, 255, 255, 0.15)');
+            badge.append('text')
+                .attr('x', 35)
+                .attr('y', 13)
+                .attr('text-anchor', 'middle')
+                .attr('fill', 'white')
+                .attr('font-size', '10px')
+                .attr('font-weight', 'medium')
+                .attr('pointer-events', 'none')
+                .text(data.type);
+            if (data.data.progress !== undefined) {
+                const progressWidth = cardWidth - 40;
+                const progressHeight = 4;
+                const progressGroup = card.append('g')
+                    .attr('class', 'progress')
+                    .attr('transform', `translate(0,${cardHeight / 2 - 15})`);
+                progressGroup.append('rect')
+                    .attr('x', -progressWidth / 2)
+                    .attr('y', 0)
+                    .attr('width', progressWidth)
+                    .attr('height', progressHeight)
+                    .attr('rx', 2)
+                    .attr('fill', 'rgba(255, 255, 255, 0.2)');
+                const progress = progressGroup.append('rect')
+                    .attr('x', -progressWidth / 2)
+                    .attr('y', 0)
+                    .attr('width', 0)
+                    .attr('height', progressHeight)
+                    .attr('rx', 2)
+                    .attr('fill', 'rgba(255, 255, 255, 0.9)');
+                progress.transition()
+                    .duration(1000)
+                    .ease(d3.easeQuadOut)
+                    .attr('width', progressWidth * (data.data.progress / 100));
+                progressGroup.append('text')
+                    .attr('x', progressWidth / 2 + 10)
+                    .attr('y', progressHeight)
+                    .attr('text-anchor', 'start')
+                    .attr('fill', 'rgba(255, 255, 255, 0.9)')
+                    .attr('font-size', '10px')
+                    .text(`${data.data.progress}%`);
+            }
+        });
+        initializeZoom();
+    }, [events, branches, workflows, hoveredEvent, handleZoom, handleEventClick, initializeZoom, handleDrag, initializeDrag]);
+    return (<div className="relative w-full h-full bg-gray-50 rounded-xl shadow-lg overflow-hidden flex flex-col">
+      
+      <div className="h-16 bg-white shadow-sm px-6 flex items-center justify-between z-10">
+        <div className="flex items-center space-x-4">
+          <h2 className="text-xl font-bold text-gray-800">Timeline View</h2>
+          <div className="flex items-center space-x-2">
+            <button onClick={() => {
+            const svg = d3.select(svgRef.current);
+            svg.transition().duration(300).call(svg.property("__zoom").transform, d3.zoomIdentity);
+        }} className="px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-md transition-colors">
+              Reset Zoom
+            </button>
+            <span className="text-sm text-gray-500">{Math.round(zoom * 100)}%</span>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <button onClick={() => setShowBranchForm(true)} disabled={!selectedEvent} className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg 
+                     shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50
+                     disabled:cursor-not-allowed">
+            Create Branch
+          </button>
+          <button onClick={() => setShowNoteForm(true)} className="px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-lg 
+                     shadow-lg hover:shadow-xl transition-all duration-200">
+            Add Note
+          </button>
+        </div>
+      </div>
+
+      
+      <div className="px-6 py-4 border-b border-gray-200">
+        <TimelineSlider_1.default events={processedEvents} ranges={timelineRanges} onAddNote={handleAddNote} onRangeSelect={(start, end) => {
+            console.log('Selected range:', { start, end });
+        }}/>
+      </div>
+
+      
+      <div ref={containerRef} className="flex-1 overflow-hidden">
+        <svg ref={svgRef} className="w-full h-full"/>
+      </div>
+
+      
+      {showBranchForm && selectedEvent && (<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold mb-4">Create New Branch</h3>
+            <input type="text" value={newBranchName} onChange={(e) => setNewBranchName(e.target.value)} placeholder="Branch name" className="w-full px-3 py-2 border rounded-lg mb-4"/>
+            <div className="flex justify-end space-x-2">
+              <button onClick={() => {
+                setShowBranchForm(false);
+                setNewBranchName('');
+            }} className="px-4 py-2 text-gray-600 hover:text-gray-800">
+                Cancel
+              </button>
+              <button onClick={() => {
+                if (newBranchName.trim() && selectedEvent) {
+                    onCreateBranch(selectedEvent.id, newBranchName);
+                    setShowBranchForm(false);
+                    setNewBranchName('');
+                }
+            }} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                Create
+              </button>
+            </div>
+          </div>
+        </div>)}
+
+      
+      {showNoteForm && (<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-96">
+            <h3 className="text-lg font-bold mb-4">Add Note</h3>
+            <textarea value={noteContent} onChange={(e) => setNoteContent(e.target.value)} placeholder="Enter your note..." className="w-full px-3 py-2 border rounded-lg mb-4 h-32 resize-none"/>
+            <div className="flex justify-end space-x-2">
+              <button onClick={() => {
+                setShowNoteForm(false);
+                setNoteContent('');
+            }} className="px-4 py-2 text-gray-600 hover:text-gray-800">
+                Cancel
+              </button>
+              <button onClick={() => {
+                if (noteContent.trim()) {
+                    handleAddNote(new Date(), noteContent);
+                }
+            }} className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600">
+                Add Note
+              </button>
+            </div>
+          </div>
+        </div>)}
+
+      
+      <div className="fixed pointer-events-none" style={{
+            display: hoveredEvent && hoveredPosition ? 'block' : 'none',
+            left: hoveredPosition ? `${hoveredPosition.x + 10}px` : '0',
+            top: hoveredPosition ? `${hoveredPosition.y + 10}px` : '0'
+        }}>
+        <div className="bg-white rounded-lg shadow-xl p-4 max-w-sm">
+          {hoveredEvent && ((_a = events.find(e => e.id === hoveredEvent)) === null || _a === void 0 ? void 0 : _a.data.description)}
+        </div>
+      </div>
+    </div>);
+};
+exports.EnhancedTimelineView = EnhancedTimelineView;
+//# sourceMappingURL=EnhancedTimelineView.js.mapexport {};

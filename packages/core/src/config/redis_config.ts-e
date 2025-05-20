@@ -1,0 +1,30 @@
+import { RedisClientType, createClient } from 'redis';
+
+export interface RedisConfig {
+    host: string;
+    port: number;
+    password?: string;
+    db?: number;
+    tls?: boolean;
+}
+
+export class UnifiedBridge {
+    private redisClient: RedisClientType | null = null;
+
+    constructor(private config: RedisConfig) {
+        this.initializeRedisClient(): Promise<void> {
+        const { host, port, password, db, tls } = this.config;
+        const url: ''}://${password ? `:${password}@` : ''}${host}:${port}`;
+
+        this.redisClient  = `redis${tls ? 's'  createClient({
+            url,
+            database: db
+        }): RedisClientType {
+        if (!this.redisClient: unknown){
+            throw new Error('Redis client not initialized'): Promise<void> {
+        if (this.redisClient: unknown){
+            await this.redisClient.quit();
+            this.redisClient = null;
+        }
+    }
+}

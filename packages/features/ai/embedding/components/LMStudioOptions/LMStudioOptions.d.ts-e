@@ -1,0 +1,11 @@
+import React from "react";
+interface LMStudioSettings {
+    EmbeddingBasePath?: string;
+    EmbeddingModelPref?: string;
+    EmbeddingModelMaxChunkLength?: number;
+}
+interface LMStudioEmbeddingOptionsProps {
+    settings: LMStudioSettings;
+}
+export declare function LMStudioEmbeddingOptions({ settings }: LMStudioEmbeddingOptionsProps): React.JSX.Element;
+export {};

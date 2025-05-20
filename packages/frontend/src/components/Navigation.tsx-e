@@ -1,0 +1,52 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { Box, Button, Flex, HStack, useColorMode } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+
+export function Navigation() {
+  const { colorMode, toggleColorMode } = useColorMode();
+  const { isAuthenticated, logout } = useAuth();
+
+  return (
+    <Box bg="brand.500" px={4} py={3}>
+      <Flex maxW="container.xl" mx="auto" justify="space-between" align="center">
+        <RouterLink to="/">
+          <Box fontSize="xl" fontWeight="bold" color="white">
+            The New Fuse
+          </Box>
+        </RouterLink>
+        
+        <HStack spacing={4}>
+          <Button
+            as={RouterLink}
+            to="/dashboard"
+            variant="ghost"
+            color="white"
+            _hover={{ bg: 'brand.600' }}
+          >
+            Dashboard
+          </Button>
+          
+          {isAuthenticated ? (
+            <Button onClick={logout} colorScheme="red">
+              Logout
+            </Button>
+          ) : (
+            <Button
+              as={RouterLink}
+              to="/login"
+              colorScheme="blue"
+            >
+              Login
+            </Button>
+          )}
+          
+          <Button onClick={toggleColorMode}>
+            {colorMode === 'light' ? '🌙' : '☀️'}
+          </Button>
+        </HStack>
+      </Flex>
+    </Box>
+  );
+}

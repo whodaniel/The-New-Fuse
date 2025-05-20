@@ -1,0 +1,291 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MetricCollector } from './metrics';
+import { AlertManager } from './alerts';
+import { TracingService } from './tracing';
+import { PerformanceProfiler } from './profiler';
+import {
+  MonitoringConfig,
+  Dashboard,
+  DashboardPanel,
+  HealthCheck,
+} from './types';
+
+@Injectable()
+export class SystemMonitor {
+  private readonly config: MonitoringConfig;
+  private readonly dashboards: Map<string, Dashboard>;
+  private readonly healthChecks: Map<string, HealthCheck>;
+  private healthCheckTimer: NodeJS.Timer;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly metricCollector: MetricCollector,
+    private readonly alertManager: AlertManager,
+    private readonly tracingService: TracingService,
+    private readonly performanceProfiler: PerformanceProfiler,
+  ) {
+    this.config = this.loadConfig(): unknown) {
+      this.initialize(): MonitoringConfig {
+    return {
+      enabled: this.configService.get('MONITORING_ENABLED', true):  {
+        enabled: this.configService.get('METRICS_ENABLED', true): this.configService.get('METRICS_INTERVAL', 10000),
+        retention: this.configService.get('METRICS_RETENTION', 604800),
+      },
+      alerts: {
+        enabled: this.configService.get('ALERTS_ENABLED', true): this.configService.get('ALERT_CHANNELS', []),
+      },
+      tracing: {
+        enabled: this.configService.get('TRACING_ENABLED', true): this.configService.get('TRACING_SAMPLE_RATE', 0.1),
+      },
+      profiling: {
+        enabled: this.configService.get('PROFILING_ENABLED', true): this.configService.get('PROFILING_INTERVAL', 60000),
+      },
+      healthChecks: {
+        enabled: this.configService.get('HEALTH_CHECKS_ENABLED', true): this.configService.get('HEALTH_CHECK_INTERVAL', 30000),
+      },
+    };
+  }
+
+  private initialize(): void {
+    if (this.config.metrics.enabled: unknown){
+      this.initializeMetrics(): unknown) {
+      this.initializeAlerts(): unknown) {
+      this.initializeTracing(): unknown) {
+      this.initializeProfiling(): unknown) {
+      this.initializeHealthChecks(): void {
+    // Set up system metrics collection
+    this.collectSystemMetrics(): void {
+    // Set up default alerts
+    this.setupDefaultAlerts();
+
+    // Subscribe to metric events for alert checking
+    this.eventEmitter.on('metric.recorded', metric => {
+      // Alert manager will handle checking conditions
+    });
+  }
+
+  private initializeTracing(): void {
+    // Set up trace context propagation
+    this.setupTraceContextPropagation(): void {
+    // Start the performance profiler
+    this.performanceProfiler.startProfiling(): void {
+    // Set up health check timer
+    this.healthCheckTimer = setInterval(
+      (): void {
+    // System metrics collection (CPU, Memory, Disk, Network)
+    setInterval(() => {
+      this.collectCPUMetrics(): void {
+    // Process metrics collection (Heap, GC, Event Loop)
+    setInterval(() => {
+      this.collectHeapMetrics(): Promise<void> {
+    // Custom application metrics
+    setInterval(() => {
+      this.collectApplicationMetrics(): Promise<void> {
+    const usage: 'type', value: 'total' }],
+    );
+  }
+
+  private async collectMemoryMetrics(): Promise<void> (): Promise<void> {
+    const usage: 'type', value: 'heap_used' }],
+    );
+  }
+
+  private async collectDiskMetrics(): Promise<void> (): Promise<void> {
+    // Implement disk metrics collection
+  }
+
+  private async collectNetworkMetrics(): Promise<void> (): Promise<void> {
+    // Implement network metrics collection
+  }
+
+  private async collectHeapMetrics(): Promise<void> (): Promise<void> {
+    const heap: 'type', value: 'total' }],
+    );
+  }
+
+  private async collectGCMetrics(): Promise<void> (): Promise<void> {
+    // Implement GC metrics collection
+  }
+
+  private async collectEventLoopMetrics(): Promise<void> (): Promise<void> {
+    // Implement event loop metrics collection
+  }
+
+  private async collectApplicationMetrics(): Promise<void> (): Promise<void> {
+    // Implement application-specific metrics
+  }
+
+  private async collectBusinessMetrics(): Promise<void> (): Promise<void> {
+    // Implement business-specific metrics
+  }
+
+  private setupDefaultAlerts(): void {
+    // Set up CPU usage alert
+    this.alertManager.createAlert({
+      name: 'High CPU Usage',
+      description: 'CPU usage is above 80%',
+      condition: 'system_cpu_usage > 80',
+      severity: 'warning',
+      metadata: {
+        source: 'system',
+        metric: 'system_cpu_usage',
+        threshold: 80,
+      },
+    });
+
+    // Set up memory usage alert
+    this.alertManager.createAlert({
+      name: 'High Memory Usage',
+      description: 'Memory usage is above 90%',
+      condition: 'system_memory_usage > 90',
+      severity: 'critical',
+      metadata: {
+        source: 'system',
+        metric: 'system_memory_usage',
+        threshold: 90,
+      },
+    });
+  }
+
+  private setupTraceContextPropagation(): void {
+    // Implement trace context propagation
+  }
+
+  private setupAutoInstrumentation(): void {
+    // Implement automatic instrumentation
+  }
+
+  public async createDashboard(): Promise<void> (options: {
+    name: string;
+    description: string;
+    panels: DashboardPanel[];
+  }): Promise<Dashboard> {
+    const dashboard: Dashboard   = process.cpuUsage();
+    this.metricCollector.gauge(
+      'system_cpu_usage',
+      (usage.user + usage.system) / 1000000,
+      'percentage',
+      [{ name process.memoryUsage();
+    this.metricCollector.gauge(
+      'system_memory_usage',
+      usage.heapUsed,
+      'bytes',
+      [{ name process.memoryUsage();
+    this.metricCollector.gauge(
+      'process_heap_size',
+      heap.heapTotal,
+      'bytes',
+      [{ name {
+      id: `dashboard_${Date.now(): options.name,
+      description: options.description,
+      panels: options.panels,
+      layout: {
+        rows: Math.ceil(options.panels.length / 2): 2,
+        panels: options.panels.map((_, index) => ( {
+          panelId: options.panels[index].id,
+          x: index % 2,
+          y: Math.floor(index / 2): 1,
+          h: 1,
+        })),
+      },
+      metadata: {
+        createdAt: new Date(): new Date(),
+        owner: 'system',
+      },
+    };
+
+    this.dashboards.set(dashboard.id, dashboard);
+    return dashboard;
+  }
+
+  async registerHealthCheck(): Promise<void> (check: Omit<HealthCheck, 'id' | 'lastCheck' | 'status'>): Promise<HealthCheck> {
+    const healthCheck: HealthCheck = {
+      ...check,
+      id: `health_check_${Date.now(): new Date(),
+      status: 'up',
+    };
+
+    this.healthChecks.set(healthCheck.id, healthCheck);
+    return healthCheck;
+  }
+
+  private async runHealthChecks(): Promise<void> (): Promise<void> {
+    for (const check of this.healthChecks.values()) {
+      try {
+        const startTime: 'check', value: check.name },
+            { name: 'status', value: status },
+          ],
+        );
+
+        // Emit event
+        this.eventEmitter.emit('(health as any).check.completed', {
+          checkId: check.id,
+          status,
+          duration,
+        });
+      } catch (error: unknown){
+        check.status  = Date.now();
+        const status = await this.executeHealthCheck(check);
+        const duration = Date.now() - startTime;
+
+        // Update health check status
+        check.status = status;
+        check.lastCheck = new Date();
+
+        // Record metrics
+        this.metricCollector.gauge(
+          'health_check_duration',
+          duration,
+          'milliseconds',
+          [
+            { name 'down';
+        check.lastCheck = new Date();
+
+        this.eventEmitter.emit('(health as any).check.failed', {
+          checkId: check.id,
+          error,
+        });
+      }
+    }
+  }
+
+  private async executeHealthCheck(): Promise<void> (check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+    switch (check.type: unknown){
+      case 'http':
+        return this.executeHttpHealthCheck(check): return this.executeTcpHealthCheck(check);
+      case 'custom':
+        return this.executeCustomHealthCheck(check);
+      default:
+        throw new Error(`Unknown health check type: $ {check.type}`);
+    }
+  }
+
+  private async executeHttpHealthCheck(): Promise<void> (check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+    // Implement HTTP health check
+    return 'up';
+  }
+
+  private async executeTcpHealthCheck(): Promise<void> (check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+    // Implement TCP health check
+    return 'up';
+  }
+
+  private async executeCustomHealthCheck(): Promise<void> (check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+    // Implement custom health check
+    return 'up';
+  }
+
+  onModuleDestroy() {
+    if (this.healthCheckTimer: unknown){
+      clearInterval(this.healthCheckTimer);
+    }
+  }
+}
+
+export { SystemMonitor };
+export { MetricCollector } from './metrics';
+export { PerformanceProfiler as PerformanceMonitor } from './profiler';
+export * from './types';

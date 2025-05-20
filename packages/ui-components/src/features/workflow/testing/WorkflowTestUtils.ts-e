@@ -1,0 +1,38 @@
+import { WorkflowStep, WorkflowStatus, WorkflowState } from '../types';
+
+export class WorkflowTestUtils {
+  static createMockStep(overrides: Partial<WorkflowStep> = {}): WorkflowStep {
+    return {
+      id: `step-${Math.random().toString(36).substr(2, 9)}`,
+      type: 'test',
+      action: 'test-action',
+      parameters: {},
+      ...overrides
+    };
+  }
+
+  static createMockWorkflowState(overrides: Partial<WorkflowState> = {}): WorkflowState {
+    return {
+      status: WorkflowStatus.PENDING,
+      completedSteps: [],
+      ...overrides
+    };
+  }
+
+  static async simulateStepExecution(): Promise<void> (
+    step: WorkflowStep,
+    delay: number = 1000
+  ): Promise<void> {
+    await new Promise(resolve => setTimeout(resolve, delay));
+  }
+
+  static createTestWorkflow(numSteps: number): WorkflowStep[] {
+    return Array.from({ length: numSteps }, (_, i) => ({
+      id: `step-${i + 1}`,
+      type: 'test',
+      action: `Test Action ${i + 1}`,
+      parameters: { testParam: `value-${i + 1}` },
+      next: i < numSteps - 1 ? `step-${i + 2}` : null
+    }));
+  }
+}

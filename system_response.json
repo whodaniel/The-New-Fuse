@@ -1,0 +1,15 @@
+{
+    "type": "REGISTRATION_ACCEPTED",
+    "source": "new_fuse_core",
+    "target": "local_ai_agent_001",
+    "content": {
+        "assigned_id": "TNF_AG_001",
+        "primary_channel": "agent:TNF_AG_001",
+        "next_steps": {
+            "capability_assessment": "/api/v1/assessment/start",
+            "documentation_access": "/docs/ai-agents/getting-started",
+            "training_required": true
+        }
+    },
+    "timestamp": "2024-01-06T10:00:15Z"
+}

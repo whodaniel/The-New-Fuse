@@ -1,0 +1,70 @@
+import { ValidationResult } from '../validation';
+export interface NodeState {
+    id: string;
+    status: NodeStatus;
+    startTime?: Date;
+    stopTime?: Date;
+    error?: Error;
+    metadata?: Record<string, any>;
+}
+export declare enum NodeStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed",
+    CANCELLED = "cancelled"
+}
+export interface NodeMetrics {
+    executionCount: number;
+    successCount: number;
+    errorCount: number;
+    lastExecutionTime?: Date;
+    avgExecutionTime?: number;
+    customMetrics?: Record<string, any>;
+    duration?: number;
+    retries: number;
+    errors: number;
+}
+export interface NodeConfig<T = any> {
+    id: string;
+    type: string;
+    config?: T;
+    metadata?: Record<string, any>;
+}
+export interface NodeInstance<T = any> {
+    id: string;
+    type: string;
+    config?: T;
+    metadata?: Record<string, any>;
+    state: NodeState;
+    initialize(): Promise<void>;
+    start(): Promise<void>;
+    stop(): Promise<void>;
+    destroy(): Promise<void>;
+    getStatus(): NodeStatus;
+    getMetrics(): NodeMetrics;
+}
+export interface NodeExecutionContext<T = any> {
+    nodeId: string;
+    input?: T;
+    metadata?: Record<string, any>;
+}
+export interface NodeExecutionResult<T = any> {
+    success: boolean;
+    data?: T;
+    error?: Error;
+    metadata?: Record<string, any>;
+}
+export interface NodeHandler<T = any> {
+    createNode(config: NodeConfig<T>): NodeInstance<T>;
+    validateConfig(config: NodeConfig<T>): Promise<ValidationResult>;
+}
+export interface NodeTypeRegistry {
+    register<T>(type: string, handler: NodeHandler<T>, config: NodeConfig<T>): void;
+    unregister(type: string): void;
+    getHandler<T>(type: string): NodeHandler<T> | undefined;
+    getConfig<T>(type: string): NodeConfig<T> | undefined;
+    getTypes(): string[];
+    clear(): void;
+    [key: string]: unknown;
+}

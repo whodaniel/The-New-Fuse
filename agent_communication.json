@@ -1,0 +1,15 @@
+{
+    "type": "COLLABORATION_REQUEST",
+    "source": "TNF_AG_001",
+    "target": "cascade_agent",
+    "content": {
+        "action": "task_assistance",
+        "task_type": "code_review",
+        "context": {
+            "file": "packages/core/src/services/agent/agent.service.ts",
+            "focus_areas": ["error_handling", "memory_management"]
+        },
+        "priority": "medium"
+    },
+    "timestamp": "2024-01-06T10:02:00Z"
+}

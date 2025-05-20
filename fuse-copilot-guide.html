@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse with GitHub Copilot Guide</title>
+    <meta name="description" content="Guide to using The New Fuse with GitHub Copilot for collaborative AI workflows.">
+    <meta name="keywords" content="The New Fuse, GitHub Copilot, AI workflows, VS Code, Redis">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2, h3 {
+            color: #2c3e50;
+        }
+        .step {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        .command {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            margin: 10px 0;
+        }
+        .note {
+            background-color: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .workflow {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        .workflow-step {
+            background-color: #e9f7ef;
+            border: 1px solid #27ae60;
+            border-radius: 4px;
+            padding: 10px;
+            margin: 10px 0;
+            display: inline-block;
+            width: 200px;
+        }
+        .workflow-connection {
+            display: inline-block;
+            width: 50px;
+            text-align: center;
+            font-size: 24px;
+            color: #7f8c8d;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .workflow-step {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>The New Fuse with GitHub Copilot Guide</h1>
+    <p>This guide will help you use The New Fuse extension with GitHub Copilot to create collaborative AI workflows.</p>
+
+    <nav>
+        <ul>
+            <li><a href="#activating-the-new-fuse-extension">Activating The New Fuse Extension</a></li>
+            <li><a href="#creating-a-collaborative-workflow">Creating a Collaborative Workflow</a></li>
+            <li><a href="#example-workflow">Example Workflow</a></li>
+            <li><a href="#using-javascript-scripts">Using JavaScript Scripts</a></li>
+            <li><a href="#troubleshooting">Troubleshooting</a></li>
+        </ul>
+    </nav>
+
+    <div class="note">
+        <strong>Prerequisites:</strong> Both The New Fuse and GitHub Copilot extensions are already installed in your VS Code environment. The Redis server is running on port 6379.
+    </div>
+
+    <h2>Activating The New Fuse Extension</h2>
+
+    <div class="step">
+        <h3>Step 1: Open VS Code Command Palette</h3>
+        <p>Press <code>Cmd+Shift+P</code> (Mac) or <code>Ctrl+Shift+P</code> (Windows/Linux) to open the VS Code Command Palette.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Show Discovered AI Agents</h3>
+        <p>Type the following command in the Command Palette and select it:</p>
+        <div class="command">The New Fuse: Show Discovered AI Agents</div>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Refresh Agent Discovery</h3>
+        <p>Open the Command Palette again and type:</p>
+        <div class="command">The New Fuse: Refresh Agent Discovery</div>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Open Workflow Builder</h3>
+        <p>Open the Command Palette again and type:</p>
+        <div class="command">The New Fuse: Open Workflow Builder</div>
+    </div>
+
+    <h2>Creating a Collaborative Workflow</h2>
+
+    <div class="step">
+        <h3>Step 1: Create a New Workflow</h3>
+        <p>In the workflow builder, click the "New Workflow" button and provide a name and description for your workflow.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Add a GitHub Copilot Step</h3>
+        <p>Drag and drop a "Code Generation" step type from the sidebar onto the canvas. Configure it to use GitHub Copilot as the agent.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Add a The New Fuse Step</h3>
+        <p>Drag and drop a "Code Explanation" step type from the sidebar onto the canvas. Configure it to use The New Fuse as the agent.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Connect the Steps</h3>
+        <p>Click and drag from the output port of the Copilot step to the input port of The New Fuse step to create a connection.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 5: Save and Execute the Workflow</h3>
+        <p>Click the "Save" button to save your workflow, then click "Execute" to run it.</p>
+    </div>
+
+    <h2>Example Workflow: Code Generation and Explanation</h2>
+
+    <div class="workflow">
+        <div class="workflow-step">
+            <strong>Step 1: Generate Code</strong><br>
+            Agent: GitHub Copilot<br>
+            Input: Prompt<br>
+            Output: Code
+        </div>
+        <div class="workflow-connection">→</div>
+        <div class="workflow-step">
+            <strong>Step 2: Explain Code</strong><br>
+            Agent: The New Fuse<br>
+            Input: Code<br>
+            Output: Explanation
+        </div>
+    </div>
+
+    <h2>Using JavaScript Scripts</h2>
+
+    <div class="step">
+        <h3>Open Workflow Builder</h3>
+        <p>Run the following script in a JavaScript Debug Terminal:</p>
+        <pre><code>node open-workflow-builder.js</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Show Discovered Agents</h3>
+        <p>Run the following script in a JavaScript Debug Terminal:</p>
+        <pre><code>node show-agents.js</code></pre>
+    </div>
+
+    <div class="step">
+        <h3>Refresh Agent Discovery</h3>
+        <p>Run the following script in a JavaScript Debug Terminal:</p>
+        <div class="command">node refresh-agents.js</div>
+    </div>
+
+    <div class="step">
+        <h3>Create a Collaborative Workflow</h3>
+        <p>Run the following script in a JavaScript Debug Terminal:</p>
+        <div class="command">node create-collaborative-workflow.js</div>
+    </div>
+
+    <div class="note">
+        <strong>Note:</strong> These scripts require the VS Code API to be available. They should be run in a JavaScript Debug Terminal within VS Code.
+    </div>
+
+    <h2>Troubleshooting</h2>
+
+    <div class="step">
+        <h3>Check Extension Status</h3>
+        <p>Run the following command in a terminal to verify that both extensions are installed:</p>
+        <div class="command">code --list-extensions | grep -E 'fuse|copilot'</div>
+    </div>
+
+    <div class="step">
+        <h3>Check Redis Server</h3>
+        <p>Run the following command in a terminal to verify that the Redis server is running:</p>
+        <div class="command">ps aux | grep redis</div>
+    </div>
+
+    <div class="step">
+        <h3>Restart VS Code</h3>
+        <p>If you encounter issues, try restarting VS Code and then activating The New Fuse extension again.</p>
+    </div>
+</body>
+</html>

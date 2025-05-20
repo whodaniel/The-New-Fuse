@@ -1,0 +1,58 @@
+export interface LLMProvider {
+    initialize(): Promise<void>;
+    generateResponse(context: LLMContext): Promise<LLMResponse>;
+    checkSetup(): Promise<boolean>;
+}
+export interface LLMConfig {
+    model: string;
+    temperature?: number;
+    maxTokens?: number;
+    topP?: number;
+    frequencyPenalty?: number;
+    presencePenalty?: number;
+    stop?: string[];
+    apiKey?: string;
+    apiEndpoint?: string;
+    apiVersion?: string;
+    organization?: string;
+}
+export interface ExtendedLLMConfig extends LLMConfig {
+    contextWindow?: number;
+    systemPrompt?: string;
+    modelFamily?: string;
+    modelProvider?: string;
+    streamingEnabled?: boolean;
+    cacheEnabled?: boolean;
+    retryConfig?: {
+        maxRetries: number;
+        initialDelay: number;
+        maxDelay: number;
+    };
+    rateLimit?: {
+        requestsPerMinute: number;
+        tokensPerMinute: number;
+    };
+}
+export interface LLMContext {
+    messages: Array<{
+        role: string;
+        content: string;
+    }>;
+    systemPrompt?: string;
+    metadata?: Record<string, unknown>;
+}
+export interface LLMResponse {
+    content: string;
+    usage?: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    };
+    metadata?: Record<string, unknown>;
+}
+export interface StreamChunk {
+    content: string;
+    done: boolean;
+    metadata?: Record<string, unknown>;
+}
+//# sourceMappingURL=(llm as any).d.ts.map

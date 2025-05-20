@@ -1,0 +1,8 @@
+import * as React from "react";
+import * as SliderPrimitive from "@radix-ui/react-slider";
+interface SliderProps extends React.ComponentPropsWithoutRef<typeof SliderPrimitive.Root> {
+    value: number;
+    onChange: (value: number) => void;
+}
+declare const Slider: React.ForwardRefExoticComponent<SliderProps & React.RefAttributes<HTMLSpanElement>>;
+export { Slider };

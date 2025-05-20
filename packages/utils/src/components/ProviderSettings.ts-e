@@ -1,0 +1,76 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProviderSettings = void 0;
+const jsx_runtime_1 = require("react/jsx-runtime");
+const react_1 = require("react");
+const material_1 = require("@mui/material");
+const icons_material_1 = require("@mui/icons-material");
+const registry_1 = require("../providers/registry");
+const ProviderSettings = ({ onProviderChange }) => {
+    const [providers, setProviders] = (0, react_1.useState)([]);
+    const [selectedProvider, setSelectedProvider] = (0, react_1.useState)('');
+    const [apiKey, setApiKey] = (0, react_1.useState)('');
+    const [model, setModel] = (0, react_1.useState)('');
+    const [error, setError] = (0, react_1.useState)('');
+    const [success, setSuccess] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        const allProviders = registry_1.providerRegistry.getAllProviders();
+        setProviders(allProviders);
+        // Set first provider as default if none selected
+        if (!selectedProvider && allProviders.length > 0) {
+            setSelectedProvider(allProviders[0].id);
+            setModel(allProviders[0].defaultModel);
+        }
+    }, []);
+    (0, react_1.useEffect)(() => {
+        if (selectedProvider) {
+            const provider = registry_1.providerRegistry.getProvider(selectedProvider);
+            if (provider) {
+                setModel(provider.defaultModel);
+                const savedKey = registry_1.providerRegistry.getApiKey(provider.id);
+                setApiKey(savedKey || '');
+            }
+        }
+    }, [selectedProvider]);
+    const handleProviderChange = (event) => {
+        const newProviderId = event.target.value;
+        setSelectedProvider(newProviderId);
+        if (onProviderChange) {
+            onProviderChange(newProviderId);
+        }
+    };
+    const handleModelChange = (event) => {
+        setModel(event.target.value);
+    };
+    const handleSave = () => {
+        try {
+            if (!selectedProvider || !apiKey) {
+                throw new Error('Provider and API key are required');
+            }
+            registry_1.providerRegistry.setApiKey(selectedProvider, apiKey);
+            setSuccess('API key saved successfully');
+            setError('');
+            // Clear success message after 3 seconds
+            setTimeout(() => setSuccess(''), 3000);
+        }
+        catch (err) {
+            setError(err.message);
+            setSuccess('');
+        }
+    };
+    const handleDelete = () => {
+        if (selectedProvider) {
+            registry_1.providerRegistry.removeApiKey(selectedProvider);
+            setApiKey('');
+            setSuccess('API key removed successfully');
+            setError('');
+            // Clear success message after 3 seconds
+            setTimeout(() => setSuccess(''), 3000);
+        }
+    };
+    return ((0, jsx_runtime_1.jsx)(material_1.Card, { children: (0, jsx_runtime_1.jsxs)(material_1.CardContent, { children: [(0, jsx_runtime_1.jsx)(material_1.Typography, { variant: "h6", gutterBottom: true, children: "LLM Provider Settings" }), (0, jsx_runtime_1.jsxs)(material_1.Box, { sx: { display: 'flex', flexDirection: 'column', gap: 2 }, children: [(0, jsx_runtime_1.jsxs)(material_1.FormControl, { fullWidth: true, children: [(0, jsx_runtime_1.jsx)(material_1.InputLabel, { children: "Provider" }), (0, jsx_runtime_1.jsx)(material_1.Select, { value: selectedProvider, label: "Provider", onChange: handleProviderChange, children: providers.map((provider) => ((0, jsx_runtime_1.jsx)(material_1.MenuItem, { value: provider.id, children: (0, jsx_runtime_1.jsxs)(material_1.Box, { sx: { display: 'flex', alignItems: 'center' }, children: [provider.name, provider.type === 'aggregator' && ((0, jsx_runtime_1.jsx)(material_1.Tooltip, { title: "Aggregator: Provides access to multiple LLM providers", children: (0, jsx_runtime_1.jsx)(material_1.IconButton, { size: "small", sx: { ml: 1 }, children: (0, jsx_runtime_1.jsx)(icons_material_1.Info, { fontSize: "small" }) }) }))] }) }, provider.id))) })] }), selectedProvider && ((0, jsx_runtime_1.jsxs)(jsx_runtime_1.Fragment, { children: [(0, jsx_runtime_1.jsxs)(material_1.FormControl, { fullWidth: true, children: [(0, jsx_runtime_1.jsx)(material_1.InputLabel, { children: "Model" }), (0, jsx_runtime_1.jsx)(material_1.Select, { value: model, label: "Model", onChange: handleModelChange, children: registry_1.providerRegistry
+                                                .getProvider(selectedProvider)
+                                                ?.models.map((modelName) => ((0, jsx_runtime_1.jsx)(material_1.MenuItem, { value: modelName, children: modelName }, modelName))) })] }), (0, jsx_runtime_1.jsx)(material_1.TextField, { label: "API Key", type: "password", value: apiKey, onChange: (e) => setApiKey(e.target.value), fullWidth: true }), (0, jsx_runtime_1.jsxs)(material_1.Box, { sx: { display: 'flex', gap: 2 }, children: [(0, jsx_runtime_1.jsx)(material_1.Button, { variant: "contained", color: "primary", onClick: handleSave, disabled: !apiKey, children: "Save API Key" }), (0, jsx_runtime_1.jsx)(material_1.Button, { variant: "outlined", color: "error", onClick: handleDelete, disabled: !apiKey, startIcon: (0, jsx_runtime_1.jsx)(icons_material_1.Delete, {}), children: "Remove API Key" })] }), error && ((0, jsx_runtime_1.jsx)(material_1.Alert, { severity: "error", onClose: () => setError(''), children: error })), success && ((0, jsx_runtime_1.jsx)(material_1.Alert, { severity: "success", onClose: () => setSuccess(''), children: success })), (0, jsx_runtime_1.jsxs)(material_1.Typography, { variant: "body2", color: "text.secondary", children: ["Visit", ' ', (0, jsx_runtime_1.jsx)("a", { href: registry_1.providerRegistry.getProvider(selectedProvider)?.website, target: "_blank", rel: "noopener noreferrer", children: registry_1.providerRegistry.getProvider(selectedProvider)?.name }), ' ', "to get your API key."] })] }))] })] }) }));
+};
+exports.ProviderSettings = ProviderSettings;
+//# sourceMappingURL=ProviderSettings.js.mapexport {};

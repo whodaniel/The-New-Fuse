@@ -1,0 +1,17 @@
+{
+    "type": "STATE_INIT",
+    "source": "local_ai_agent_001",
+    "target": "new_fuse_core",
+    "content": {
+        "state_version": "1.0",
+        "persistence_type": "redis",
+        "state_key": "agent:state:TNF_AG_001",
+        "initial_state": {
+            "status": "active",
+            "mode": "learning",
+            "connections": [],
+            "tasks": []
+        }
+    },
+    "timestamp": "2024-01-06T10:00:40Z"
+}

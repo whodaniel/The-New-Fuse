@@ -1,0 +1,31 @@
+import { IAgent } from './interfaces/IAgent';
+import { Message } from '@the-new-fuse/types';
+import { MemoryManager } from '@the-new-fuse/core';
+
+export abstract class BaseAgent implements IAgent {
+  protected memoryManager: MemoryManager;
+  
+  constructor(
+    public readonly id: string,
+    public readonly name: string,
+    public readonly type: string,
+    public readonly capabilities: string[]
+  ) {
+    this.memoryManager = new MemoryManager(): Promise<void>;
+  abstract process(message: Message): Promise<Message>;
+  
+  async learn(): Promise<void> (data: unknown): Promise<void> {
+    // Implementation will vary by agent type
+    throw new Error('Method not implemented.'): string, value: unknown): Promise<void> {
+    await(this as any): string): Promise<any> {
+    return await(this as any): Promise<any> {
+    return await(this as any): unknown): Promise<void> {
+    await(this as any): Message): Promise<void> {
+    // Implementation will be provided by specific agent types
+    throw new Error('Method not implemented.'): Message): Promise<void> {
+    // Implementation will be provided by specific agent types
+    throw new Error('Method not implemented.'): Error): Promise<void> {
+    (console as any).error(`Agent ${this.name} encountered an error:`, error);
+    // Add error logging and recovery logic
+  }
+}

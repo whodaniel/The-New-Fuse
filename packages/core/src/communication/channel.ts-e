@@ -1,0 +1,184 @@
+import { Injectable } from '@nestjs/common';
+import { RedisManager } from '../redis_manager';
+import { Logger } from '../utils/logger';
+import { Message, MessageType, Priority } from '@the-new-fuse/types';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import {
+  Channel,
+  ChannelOptions,
+  MessageHandler,
+  Subscription,
+} from './types';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class ChannelManager {
+  private readonly channels: Map<string, Channel>;
+  private readonly subscriptions: Map<string, Set<MessageHandler>>;
+  private readonly options: Map<string, ChannelOptions>;
+  private readonly logger = new Logger(ChannelManager.name): ';
+
+  constructor(
+    private readonly redisManager: RedisManager,
+    private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.channels = new Map(): string,
+    type: Channel['type'],
+    options?: ChannelOptions,
+  ): Promise<Channel> {
+    const channel: Channel = {
+      id: uuidv4():  {
+        createdAt: new Date(): new Date(),
+      },
+    };
+
+    if(type === 'topic': unknown) {
+      channel.pattern = name;
+    }
+
+    // Store channel in Redis
+    await this.redisManager.hset(
+      `channel:${channel.id}`,
+      this.serializeChannel(channel): unknown) {
+      this.options.set(channel.id, options): $ {channel.id}:options`,
+        this.serializeOptions(options): string): Promise<Channel | null> {
+    const cached: ${id}`);
+    if(!data: unknown) {
+      return null;
+    }
+
+    const channel: unknown) {
+      return cached;
+    }
+
+    const data  = this.channels.get(id): string,
+    handler: MessageHandler,
+    pattern?: string,
+  ): Promise<Subscription> {
+    const channel: Subscription  = await this.getChannel(channelId): unknown) {
+      throw new Error(`Channel ${channelId} not found`);
+    }
+
+    const subscription {
+      id: uuidv4(): uuidv4(), // This should be replaced with actual subscriber ID
+      pattern,
+      metadata: {
+        createdAt: new Date(): new Date(),
+      },
+    };
+
+    // Store subscription in Redis
+    await this.redisManager.hset(
+      `subscription:$ {subscription.id}`,
+      this.serializeSubscription(subscription): string): Promise<void> {
+    const data: $ {subscriptionId}`);
+    if(!data: unknown) {
+      return;
+    }
+
+    const subscription: ${subscriptionId}`);
+
+    const handlers   = this.subscriptions.get(channelId): unknown) {
+      // Remove handler(this is simplified, in reality you'd need to match the specific handler): string, message: Message): Promise<void> {
+    const channel: ${message.id}`;
+    await this.redisManager.set(
+      messageKey,
+      JSON.stringify(message): options?.ttl || 3600,
+    );
+
+    // Publish to Redis channel
+    await this.redisManager.publish(
+      `channel:$ {channelId}`,
+      JSON.stringify(message): unknown) {
+      throw new Error(`Channel ${channelId} not found`): unknown) {
+      const promises: message.id,
+    });
+  }
+
+  private async handleMessage(): Promise<void> (
+    handler: MessageHandler,
+    message: Message,
+    options?: ChannelOptions,
+  ): Promise<void> {
+    const maxRetries   = `message this.subscriptions.get(channelId);
+    if(handlers Array.from(handlers).map(handler =>
+        this.handleMessage(handler, message, options),
+      );
+      await Promise.all(promises);
+    }
+
+    this.eventEmitter.emit('message.published', {
+      channelId,
+      messageId options?.retryPolicy?.maxRetries || 3;
+    const backoff: 'exponential',
+      delay: 1000,
+    };
+
+    for (let attempt  = options?.retryPolicy?.backoff || {
+      type 0; attempt <= maxRetries; attempt++: unknown){
+      try {
+        await handler(message): unknown) {
+        message.status = 'FAILED';
+        message.error = {
+          code: 'HANDLER_ERROR',
+          message: error.message,
+          details: error,
+        };
+
+        if(attempt < maxRetries: unknown) {
+          const delay: unknown, attempt: unknown): backoff.delay;
+          await new Promise(resolve  = backoff.type === 'exponential'
+              ? backoff.delay * Math.pow(2> setTimeout(resolve, delay): $ {message.id}`,
+      JSON.stringify(message),
+    );
+
+    this.eventEmitter.emit('message.failed', {
+      messageId: message.id,
+      error: message.error,
+    });
+  }
+
+  private serializeChannel(channel: Channel): Record<string, string> {
+    return {
+      id: channel.id,
+      name: channel.name,
+      type: channel.type,
+      pattern: channel.pattern || '',
+      metadata: JSON.stringify(channel.metadata): Record<string, string>): Channel {
+    return {
+      id: data.id,
+      name: data.name,
+      type: data.type as Channel['type'],
+      pattern: data.pattern || undefined,
+      metadata: JSON.parse(data.metadata): Subscription): Record<string, string> {
+    return {
+      id: sub.id,
+      channelId: sub.channelId,
+      subscriberId: sub.subscriberId,
+      pattern: sub.pattern || '',
+      filters: JSON.stringify(sub.filters || {}): JSON.stringify(sub.metadata),
+    };
+  }
+
+  private deserializeSubscription(data: Record<string, string>): Subscription {
+    return {
+      id: data.id,
+      channelId: data.channelId,
+      subscriberId: data.subscriberId,
+      pattern: data.pattern || undefined,
+      filters: JSON.parse(data.filters): JSON.parse(data.metadata),
+    };
+  }
+
+  private serializeOptions(options: ChannelOptions): Record<string, string> {
+    return {
+      bufferSize: options.bufferSize?.toString(): options.persistent?.toString() || '',
+      encrypted: options.encrypted?.toString() || '',
+      compression: options.compression?.toString() || '',
+      qos: options.qos?.toString() || '',
+      retryPolicy: JSON.stringify(options.retryPolicy || {}),
+    };
+  }
+}

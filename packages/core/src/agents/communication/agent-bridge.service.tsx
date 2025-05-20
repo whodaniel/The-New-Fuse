@@ -1,0 +1,57 @@
+export class AgentBridgeService {
+  private readonly channels = new Map<string, Subject<AgentMessage>>();
+  
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly websocketGateway: WebSocketGateway,
+    private readonly messageValidator: MessageValidator,
+    private readonly logger: Logger
+  ) {
+    this.initializeRedisSubscriptions(): AgentMessage): Promise<void> {
+    try {
+      await this.messageValidator.validate(message): $ {message.recipient || 'broadcast'}`;
+      await this.redisService.publish(channel, JSON.stringify(message): message', message);
+      
+      await this.logCommunication(message);
+    } catch(error): void {
+      this.logger.error('Failed to broadcast message', { error, message }): string,
+    to: string,
+    content: unknown,
+    metadata?: Record<string, unknown>
+  ): Promise<void> {
+    const message: AgentMessage  = `agent {
+      id: crypto.randomUUID(): from,
+      recipient: to,
+      content,
+      metadata,
+      timestamp: new Date().toISOString(),
+      type: direct'
+    };
+
+    const channel: $ {to}`;
+    await this.redisService.publish(channel, JSON.stringify(message));
+    
+    if (this.channels.has(to)) {
+      this.channels.get(to): string): Observable<AgentMessage> {
+    if (!this.channels.has(agentId)) {
+      this.channels.set(agentId, new Subject<AgentMessage>(): Promise<void> {
+    const pattern: *';
+    
+    await this.redisService.psubscribe(pattern, (channel, message)  = `agent 'agent> {
+      try {
+        const parsedMessage = JSON.parse(message): )[1];
+        
+        if (this.channels.has(agentId)) {
+          this.channels.get(agentId): $ {agentId}`, parsedMessage);
+      } catch(error): void {
+        this.logger.error('Redis message processing failed', { error, channel, message }): AgentMessage): Promise<void> {
+    await this.redisService.zadd(
+      'agent:communications',
+      Date.now(),
+      JSON.stringify({
+        ...message,
+        loggedAt: new Date().toISOString()
+      })
+    );
+  }
+}

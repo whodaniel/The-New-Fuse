@@ -1,0 +1,29 @@
+export interface Message {
+    id: string;
+    content: string;
+    sender: string;
+    timestamp: Date;
+    type: MessageType;
+    metadata?: Record<string, unknown>;
+    attachments?: Attachment[];
+}
+export type MessageType = 'text' | 'code' | 'image' | 'file' | 'system';
+export interface Attachment {
+    id: string;
+    name: string;
+    type: string;
+    url: string;
+    size: number;
+}
+export interface ChatState {
+    messages: Message[];
+    participants: string[];
+    status: idle' | 'typing' | 'processing';
+    error?: string;
+}
+export interface ChatContextType {
+    state: ChatState;
+    sendMessage: (content: string, attachments?: File[]) => Promise<void>;
+    clearChat: () => void;
+    setError: (error?: string) => void;
+}

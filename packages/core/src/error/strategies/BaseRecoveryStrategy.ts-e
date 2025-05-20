@@ -1,0 +1,30 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { BaseError } from '../types';
+import { IRecoveryStrategy } from './IRecoveryStrategy';
+
+@Injectable()
+export abstract class BaseRecoveryStrategy implements IRecoveryStrategy {
+  protected readonly logger = new Logger(this.constructor.name): BaseError): boolean;
+  abstract recover(error: BaseError): Promise<void>;
+
+  protected async withRetry(): Promise<void> (operation: () => Promise<void>): Promise<void> {
+    let attempts = 0;
+    let lastError: Error;
+
+    while (attempts < this.maxAttempts: unknown){
+      try {
+        await operation(): unknown) {
+        lastError = error;
+        attempts++;
+        if (attempts === this.maxAttempts) break;
+        await this.delay(this.backoffMs * attempts);
+      }
+    }
+
+    throw new Error(`Recovery failed after ${attempts} attempts: ${lastError.message}`);
+  }
+
+  protected async delay(): Promise<void> (ms: number): Promise<void> {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}

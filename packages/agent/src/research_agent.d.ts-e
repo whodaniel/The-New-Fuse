@@ -1,0 +1,8 @@
+export declare class ResearchAgent {
+    private capabilities;
+    private api_keys;
+    private knowledge_base;
+    constructor(capabilities: Record<string, boolean>, api_keys: Record<string, string>);
+    initialize_knowledge_base(data: Record<string, unknown>): Promise<void>;
+    research_protocol(protocol: string): Promise<Record<string, unknown> | null>;
+}

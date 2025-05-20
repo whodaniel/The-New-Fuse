@@ -1,0 +1,21 @@
+import { InsightConfig, Insight } from './types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+export declare class InsightEngine {
+    private analyticsManager;
+    private apiEndpoint;
+    constructor(analyticsManager: AnalyticsManager);
+    generateInsights(dashboardId: string, configs: InsightConfig[]): Promise<Insight[]>;
+    private generateInsight;
+    private getMetricsForInsight;
+    private analyzeTrend;
+    private detectAnomaly;
+    private findCorrelation;
+    private identifyPattern;
+    private generateForecast;
+    private createRecommendation;
+    private predictValues;
+    private findAnomalies;
+    private prioritizeInsights;
+    private determineImportance;
+    private getTimeframePeriod;
+}

@@ -1,0 +1,7 @@
+import React from 'react';
+interface InsightVisualizationProps {
+    type: 'line' | 'bar' | 'scatter' | 'heatmap';
+    data: unknown[];
+}
+export declare const InsightVisualization: (React as any).FC<InsightVisualizationProps>;
+export {};

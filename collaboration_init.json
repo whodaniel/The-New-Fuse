@@ -1,0 +1,27 @@
+{
+    "type": "COLLABORATION_SETUP",
+    "source": "TNF_AG_001",
+    "target": ["cascade_agent", "roo_coder"],
+    "content": {
+        "task_id": "TASK_2024_001",
+        "proposed_workflow": {
+            "phase_1": {
+                "lead": "TNF_AG_001",
+                "action": "pattern_analysis",
+                "duration": "5m"
+            },
+            "phase_2": {
+                "lead": "cascade_agent",
+                "action": "optimization_planning",
+                "duration": "10m"
+            },
+            "phase_3": {
+                "lead": "roo_coder",
+                "action": "implementation",
+                "duration": "15m"
+            }
+        },
+        "communication_channel": "task:2024_001:collab"
+    },
+    "timestamp": "2024-01-06T10:03:30Z"
+}

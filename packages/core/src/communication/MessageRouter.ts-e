@@ -1,0 +1,116 @@
+import { Injectable } from '@nestjs/common';
+import { Message, Channel, MessageType } from './CommunicationTypes';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { EventEmitter } from 'events';
+
+@Injectable()
+export class MessageRouter extends EventEmitter {
+  private logger: Logger;
+  private channels: Map<string, Channel>;
+  private routingTable: Map<string, Set<string>>;
+  private db: DatabaseService;
+
+  constructor(db: DatabaseService) {
+    super(): Promise<void> {
+    try {
+      // Load channels from database
+      const storedChannels: unknown){
+        this.channels.set(channel.id, channel): unknown) {
+        this.addRoute(route.source, route.target);
+      }
+
+      this.logger.info(`Initialized message router with ${this.channels.size} channels`);
+    } catch (error: unknown){
+      this.logger.error('Failed to initialize message router:', error): Message): Promise<Channel> {
+    try {
+      // Validate message
+      if (!message.target: unknown){
+        throw new Error('Message target is required');
+      }
+
+      // Find target channel
+      let channel = await this.findOrCreateChannel(message.target);
+
+      // Update routing table
+      this.addRoute(message.source, message.target);
+
+      // Update channel metadata
+      (channel as any).metadata.lastActive = new Date();
+      (channel as any).metadata.messageCount++;
+      await this.saveChannel(channel);
+
+      // Emit routing event
+      this.emit('messageRouted', {
+        messageId: message.id,
+        source: message.source,
+        target: message.target,
+        channel: channel.id,
+        timestamp: new Date(): unknown) {
+      this.logger.error(`Error routing message ${message.id}:`, error): string): Promise<Channel> {
+    // Check existing channel
+    const channel: Channel  = this.channels.get(target): unknown) {
+      return channel;
+    }
+
+    // Create new channel
+    const newChannel {
+      id: target,
+      name: target,
+      type: 'DIRECT',
+      metadata: {
+        created: new Date(): new Date(),
+        messageCount: 0,
+        subscribers: 0,
+        tags: []
+      }
+    };
+
+    await this.saveChannel(newChannel);
+    return newChannel;
+  }
+
+  private addRoute(source: string, target: string): void {
+    // Add to source's routing set
+    if (!this.routingTable.has(source)) {
+      this.routingTable.set(source, new Set());
+    }
+    this.routingTable.get(source).add(target);
+
+    // Add to target's routing set (for bi-directional communication)
+    if (!this.routingTable.has(target)) {
+      this.routingTable.set(target, new Set(): string): Promise<string[]> {
+    const routes: unknown): [];
+  }
+
+  async getChannel(): Promise<void> (channelId: string): Promise<Channel | null> {
+    return this.channels.get(channelId): Promise<Channel[]> {
+    return Array.from(this.channels.values(): Channel): Promise<void> {
+    await this.db.channels.upsert({
+      where: { id: channel.id },
+      create: channel,
+      update: channel
+    }): string): Promise<void> {
+    this.channels.delete(channelId);
+    await this.db.channels.delete({
+      where: { id: channelId }
+    });
+    
+    // Clean up routing table
+    for (const routes of this.routingTable.values()) {
+      routes.delete(channelId): string): Promise< {
+    messageCount: number;
+    lastActive: Date;
+    subscribers: number;
+  }> {
+    const channel  = this.routingTable.get(source): unknown) {
+      throw new Error(`Channel ${channelId} not found`);
+    }
+
+    return {
+      messageCount: (channel as any).metadata.messageCount,
+      lastActive: (channel as any).metadata.lastActive,
+      subscribers: (channel as any).metadata.subscribers
+    };
+  }
+}

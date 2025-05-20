@@ -1,0 +1,17 @@
+import React from 'react';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow, TimelineNote } from '../types/timeline';
+interface TimelinePosition {
+    x: number;
+    y: number;
+}
+interface EnhancedTimelineViewProps {
+    events: TimelineEvent[];
+    branches: TimelineBranch[];
+    workflows: TimelineWorkflow[];
+    onEventClick: (event: TimelineEvent) => void;
+    onCreateBranch: (fromEventId: string, name: string) => void;
+    onAddNote: (eventId: string, note: TimelineNote) => void;
+    onEventMove?: (eventId: string, position: TimelinePosition) => void;
+}
+export declare const EnhancedTimelineView: (React as any).FC<EnhancedTimelineViewProps>;
+export {};

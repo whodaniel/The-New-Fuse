@@ -1,0 +1,47 @@
+import { DashboardState } from '../collaboration/types';
+import { SearchConfig } from './types';
+interface NLPQuery {
+    type: 'search' | 'filter' | 'sort' | 'analyze';
+    intent: string;
+    parameters: Record<string, unknown>;
+    confidence: number;
+}
+interface EntityMention {
+    text: string;
+    type: string;
+    start: number;
+    end: number;
+    confidence: number;
+}
+interface NLPResult {
+    query: NLPQuery;
+    entities: EntityMention[];
+    expandedQuery: string;
+    suggestions: string[];
+}
+export declare class NLPEngine {
+    private vocabulary;
+    private synonyms;
+    private entityPatterns;
+    constructor();
+    processQuery(query: string, context: DashboardState): Promise<NLPResult>;
+    generateSearchConfig(nlpResult: NLPResult, context: DashboardState): Promise<SearchConfig>;
+    private initialize;
+    private initializeVocabulary;
+    private initializeSynonyms;
+    private initializeEntityPatterns;
+    private normalizeQuery;
+    private extractEntities;
+    private determineQueryIntent;
+    private expandQuery;
+    private generateSuggestions;
+    private parseDateRange;
+    private extractSortParameters;
+    private extractMetric;
+    private extractTimeframe;
+    private addContextTerms;
+    private generateRelatedTerms;
+    private generateFilterSuggestions;
+    private generateAnalysisSuggestions;
+}
+export {};

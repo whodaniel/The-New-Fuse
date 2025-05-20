@@ -1,0 +1,2 @@
+import winston from 'winston';
+export declare function createLogger(component: string): winston.Logger;

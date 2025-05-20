@@ -1,0 +1,35 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AUTH_ENDPOINTS = exports.API_BASE_URL = exports.PASSWORD_EXPIRY_DAYS = exports.PASSWORD_MIN_LENGTH = exports.ACCOUNT_LOCK_DURATION = exports.MAX_LOGIN_ATTEMPTS = exports.TWO_FACTOR_CODE_LENGTH = exports.TWO_FACTOR_BACKUP_CODES = exports.TWO_FACTOR_SECRET_LENGTH = exports.REFRESH_TOKEN_EXPIRY_DAYS = exports.TOKEN_EXPIRY_DAYS = exports.AUTH_TIMESTAMP = exports.AUTH_TOKEN = exports.AUTH_USER = void 0;
+// Authentication related constants
+exports.AUTH_USER = 'auth_user';
+exports.AUTH_TOKEN = 'auth_token';
+exports.AUTH_TIMESTAMP = 'auth_timestamp';
+// Token expiration
+exports.TOKEN_EXPIRY_DAYS = 7;
+exports.REFRESH_TOKEN_EXPIRY_DAYS = 30;
+// 2FA related
+exports.TWO_FACTOR_SECRET_LENGTH = 32;
+exports.TWO_FACTOR_BACKUP_CODES = 10;
+exports.TWO_FACTOR_CODE_LENGTH = 6;
+// Security related
+exports.MAX_LOGIN_ATTEMPTS = 5;
+exports.ACCOUNT_LOCK_DURATION = 15 * 60 * 1000; // 15 minutes
+exports.PASSWORD_MIN_LENGTH = 8;
+exports.PASSWORD_EXPIRY_DAYS = 90;
+// API endpoints
+exports.API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:3000';
+exports.AUTH_ENDPOINTS = {
+    LOGIN: '/auth/login',
+    REGISTER: '/auth/register',
+    LOGOUT: '/auth/logout',
+    REFRESH: '/auth/refresh',
+    VERIFY_EMAIL: '/auth/verify-email',
+    RESET_PASSWORD: '/auth/reset-password',
+    CHANGE_PASSWORD: '/auth/change-password',
+    ENABLE_2FA: '/auth/2fa/enable',
+    DISABLE_2FA: '/auth/2fa/disable',
+    VERIFY_2FA: '/auth/2fa/verify',
+    BACKUP_CODES: '/auth/2fa/backup-codes'
+};
+//# sourceMappingURL=constants.js.mapexport {};

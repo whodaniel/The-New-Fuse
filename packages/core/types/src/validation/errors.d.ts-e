@@ -1,0 +1,6 @@
+export type BaseValidationError = {
+    code: string;
+    message: string;
+    path?: string[];
+    metadata?: Record<string, any>;
+};

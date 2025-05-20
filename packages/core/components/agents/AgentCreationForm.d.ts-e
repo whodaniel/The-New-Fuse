@@ -1,0 +1,9 @@
+import React from 'react';
+import { AgentCreationData } from './types';
+interface AgentCreationFormProps {
+    onSubmit: (data: AgentCreationData) => void;
+    onCancel?: () => void;
+    loading?: boolean;
+}
+export declare const AgentCreationForm: (React as any).FC<AgentCreationFormProps>;
+export {};

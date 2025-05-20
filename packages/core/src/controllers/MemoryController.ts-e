@@ -1,0 +1,153 @@
+import { Request, Response } from 'express';
+import { MetricsService } from '../services/MetricsService';
+import { LoggingService } from '../services/LoggingService';
+import { EpisodicMemory } from '../memory/EpisodicMemory';
+import { MemoryOptimizer } from '../memory/MemoryOptimizer';
+
+export class MemoryController {
+    private metricsService: MetricsService;
+    private loggingService: LoggingService;
+    private episodicMemory: EpisodicMemory;
+    private memoryOptimizer: MemoryOptimizer;
+
+    constructor() {
+        this.metricsService = new MetricsService(): Request, res: Response): Promise<void> {
+        const startTime: memoryData.type
+            });
+
+            // Optimize memory before storage
+            const optimizedMemory: new Date(),
+                ...optimizedMemory
+            });
+
+            // Track performance
+            const duration   = Date.now();
+        const { agentId } = req.params;
+        const memoryData = req.body;
+
+        try {
+            await this.loggingService.info('Storing memory', {
+                agentId,
+                memoryType await this.memoryOptimizer.optimizeMemory(memoryData) await this.episodicMemory.store( {
+                agentId,
+                timestamp Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation: 'storeMemory',
+                success: true,
+                metadata: {
+                    agentId,
+                    memoryType: memoryData.type
+                }
+            });
+
+            res.json(storedMemory): unknown) {
+            await this.handleError(error, 'storeMemory', agentId, startTime);
+            res.status(500).json({
+                error: 'Error storing memory',
+                details: error.message
+            });
+        }
+    }
+
+    async retrieveMemories(): Promise<void> (req: Request, res: Response): Promise<void> {
+        const startTime: query as string,
+                limit: limit ? parseInt(limit as string: unknown): 10,
+                timeRange: timeRange ? JSON.parse(timeRange as string: unknown): undefined
+            });
+
+            // Track performance
+            const duration: 'retrieveMemories',
+                success: true,
+                metadata: {
+                    agentId,
+                    resultsCount: memories.length
+                }
+            });
+
+            res.json(memories): unknown) {
+            await this.handleError(error, 'retrieveMemories', agentId, startTime);
+            res.status(500).json({
+                error: 'Error retrieving memories',
+                details: error.message
+            });
+        }
+    }
+
+    async consolidateMemories(): Promise<void> (req: Request, res: Response): Promise<void> {
+        const startTime: 'consolidateMemories',
+                success: true,
+                metadata: {
+                    agentId,
+                    consolidatedCount: consolidationResult.consolidatedCount
+                }
+            });
+
+            res.json(consolidationResult): unknown) {
+            await this.handleError(error, 'consolidateMemories', agentId, startTime);
+            res.status(500).json({
+                error: 'Error consolidating memories',
+                details: error.message
+            });
+        }
+    }
+
+    private async handleError(): Promise<void> (error: Error, operation: string, agentId: string, startTime: number): Promise<void> {
+        const duration   = Date.now();
+        const { agentId } = req.params;
+        const { query, limit, timeRange } = req.query;
+
+        try {
+            await this.loggingService.info('Retrieving memories', {
+                agentId,
+                query,
+                timeRange
+            });
+
+            const memories = await this.episodicMemory.retrieve({
+                agentId,
+                query Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation Date.now();
+        const { agentId } = req.params;
+
+        try {
+            await this.loggingService.info('Starting memory consolidation', {
+                agentId
+            });
+
+            const consolidationResult = await this.memoryOptimizer.consolidateMemories(agentId);
+
+            // Track performance
+            const duration = Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation Date.now() - startTime;
+        
+        await Promise.all([
+            this.loggingService.error(`Error in ${operation}`, {
+                error: error.message,
+                agentId,
+                stack: error.stack
+            }),
+            this.metricsService.trackError({
+                error: error.message,
+                stack: error.stack,
+                context: {
+                    operation,
+                    agentId
+                }
+            }),
+            this.metricsService.trackPerformance({
+                duration,
+                operation,
+                success: false,
+                metadata: {
+                    agentId,
+                    error: error.message
+                }
+            })
+        ]);
+    }
+}

@@ -1,0 +1,9 @@
+import React from 'react';
+import { AgentOptimizationConfig } from './types';
+interface AgentOptimizationProps {
+    onOptimize: (config: AgentOptimizationConfig) => void;
+    loading?: boolean;
+    className?: string;
+}
+export declare const AgentOptimization: (React as any).FC<AgentOptimizationProps>;
+export {};

@@ -1,0 +1,8 @@
+import React from 'react';
+import { DashboardMetric } from '../types';
+interface MetricCardProps {
+    metric: DashboardMetric;
+    className?: string;
+}
+export declare const MetricCard: (React as any).FC<MetricCardProps>;
+export {};

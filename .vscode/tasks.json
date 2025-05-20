@@ -1,0 +1,551 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		// Core Commands
+		{
+			"label": "Open The New Fuse UI",
+			"type": "shell",
+			"command": "${command:thefuse.openWebUI}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Open Communication Hub",
+			"type": "shell",
+			"command": "${command:thefuse.openCommunicationPanel}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Start AI Collaboration",
+			"type": "shell",
+			"command": "${command:thefuse.startAICollab}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Toggle Collaborative Completion",
+			"type": "shell", 
+			"command": "${command:thefuse.toggleCollaborativeCompletion}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Open Master Command Center",
+			"type": "shell",
+			"command": "${command:thefuse.openMasterCommandCenter}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// MCP Commands
+		{
+			"label": "Register MCP Commands",
+			"type": "shell",
+			"command": "node ${workspaceFolder}/scripts/initialize-mcp-commands.js",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Show MCP Tools Direct",
+			"type": "shell",
+			"command": "node ${workspaceFolder}/scripts/show-mcp-tools.js",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Run MCP Health Check",
+			"type": "shell",
+			"command": "node ${workspaceFolder}/scripts/mcp-health-check.js",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Full MCP Diagnostic Check",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Run MCP Health Check",
+				"Check Docker Ports"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "Kill Port Processes",
+			"type": "shell",
+			"command": "node ${workspaceFolder}/scripts/kill-port-processes.js",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Check Docker Ports",
+			"type": "shell",
+			"command": "node ${workspaceFolder}/scripts/check-docker-ports.js",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Build Production Pipeline",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/scripts/production-build.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": [],
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Start WebSocket Server",
+			"type": "shell",
+			"command": "node test-websocket-server-3711.cjs",
+			"isBackground": true,
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": false
+			},
+			"problemMatcher": [
+				{
+					"pattern": [
+						{
+							"regexp": ".",
+							"file": 1,
+							"location": 2,
+							"message": 3
+						}
+					],
+					"background": {
+						"activeOnStart": true,
+						"beginsPattern": "WebSocket server running",
+						"endsPattern": "WebSocket server running"
+					}
+				}
+			]
+		},
+		{
+			"type": "docker-build",
+			"label": "docker-build",
+			"platform": "node",
+			"dockerBuild": {
+				"dockerfile": "${workspaceFolder}/packages/shared/Dockerfile",
+				"context": "${workspaceFolder}/packages/shared",
+				"pull": true
+			},
+			"node": {
+				"package": "${workspaceFolder}/packages/shared/package.json"
+			}
+		},
+		{
+			"type": "docker-run",
+			"label": "docker-run: release",
+			"dependsOn": [
+				"docker-build"
+			],
+			"platform": "node",
+			"node": {
+				"package": "${workspaceFolder}/packages/shared/package.json"
+			}
+		},
+		{
+			"type": "docker-run",
+			"label": "docker-run: debug",
+			"dependsOn": [
+				"docker-build"
+			],
+			"dockerRun": {
+				"env": {
+					"DEBUG": "*",
+					"NODE_ENV": "development"
+				}
+			},
+			"node": {
+				"package": "${workspaceFolder}/packages/shared/package.json",
+				"enableDebugging": true
+			}
+		},
+		{
+			"type": "Live Preview",
+			"workspacePath": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse",
+			"problemMatcher": [],
+			"label": "Live Preview: Run Server",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			}
+		},
+		{
+			"label": "Initialize MCP Integration",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/scripts/initialize-mcp.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Show MCP Tools",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.showTools}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Test MCP Tool",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.testTool}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Ask Agent with MCP Tools",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.askAgent}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "shared"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Setup MCP",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/fix-permissions.sh && bash ${workspaceFolder}/setup-extension.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Create Sample Files",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/create-sample-files.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Launch VS Code with Extension",
+			"type": "shell",
+			"command": "cd ${workspaceFolder}/src/vscode-extension && ./launch-vscode.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "dedicated"
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP Quick Start (All Steps)",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Setup MCP",
+				"Create Sample Files",
+				"Launch VS Code with Extension"
+			],
+			"problemMatcher": []
+		},
+		{
+			"label": "Launch Integrated Extension",
+			"type": "shell",
+			"command": "cd ${workspaceFolder}/src/vscode-extension && ./launch-integrated-extension.sh",
+			"group": {
+				"kind": "test",
+				"isDefault": true
+			},
+			"presentation": {
+				"reveal": "always",
+				"panel": "new"
+			}
+		},
+		{
+			"label": "Launch Universal MCP Wizard",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/scripts/mcp-setup.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": [],
+			"group": "test"
+		},
+		{
+			"label": "MCP Complete Setup",
+			"type": "shell",
+			"command": "bash ${workspaceFolder}/scripts/mcp-setup.sh",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": [],
+			"group": "test"
+		},
+		// LLM Orchestrator Tasks
+		{
+			"label": "Show AI Agents",
+			"type": "shell",
+			"command": "${command:llm-orchestrator.showAgents}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Discover AI Agents",
+			"type": "shell",
+			"command": "${command:llm-orchestrator.discoverAgents}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Create Collaborative Task",
+			"type": "shell",
+			"command": "${command:llm-orchestrator.createCollaborativeTask}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// AI Coding Team Tasks
+		{
+			"label": "Start Collaborative Coding",
+			"type": "shell",
+			"command": "${command:thefuse.startCollaborativeCoding}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Analyze Code Problem",
+			"type": "shell",
+			"command": "${command:thefuse.analyzeCodeProblem}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Consult Specific AI Coder",
+			"type": "shell",
+			"command": "${command:thefuse.ai.consultCoder}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// Message-Based Communication Tasks
+		{
+			"label": "Send Message via File Protocol",
+			"type": "shell",
+			"command": "${command:thefuse.sendFileMessage}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Send MCP Message",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.sendMessage}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Register MCP Handler",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.registerHandler}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Start MCP Auto-Discovery",
+			"type": "shell",
+			"command": "${command:thefuse.mcp.startAutoDiscovery}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// Workflow Engine Tasks
+		{
+			"label": "Start AI Collaboration Workflow",
+			"type": "shell",
+			"command": "${command:thefuse.ai.startCollaboration}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Execute AI Task",
+			"type": "shell",
+			"command": "${command:thefuse.ai.executeTask}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// Language Model Tasks
+		{
+			"label": "Generate Text with LM",
+			"type": "shell",
+			"command": "${command:thefuse.lm.generate}",
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		// Combined Workflows
+		{
+			"label": "Start Complete AI Collaboration",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Show AI Agents",
+				"Start AI Collaboration Workflow",
+				"Open Communication Hub"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Start Code Analysis Pipeline",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Analyze Code Problem",
+				"Consult Specific AI Coder"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "MCP Message Communication Pipeline",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Register MCP Handler",
+				"Start MCP Auto-Discovery",
+				"Send MCP Message"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "Full LLM Integration Setup",
+			"dependsOrder": "sequence",
+			"dependsOn": [
+				"Initialize MCP Integration",
+				"Show MCP Tools",
+				"Generate Text with LM"
+			],
+			"presentation": {
+				"reveal": "always",
+				"panel": "new",
+				"focus": true
+			},
+			"problemMatcher": []
+		}
+	]
+}

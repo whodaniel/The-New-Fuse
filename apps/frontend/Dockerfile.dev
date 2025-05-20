@@ -1,0 +1,46 @@
+# Build stage
+FROM node:18-alpine AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+RUN apk add --no-cache python3 make g++
+
+# Enable corepack and set up yarn
+RUN corepack enable && \
+    corepack prepare yarn@4.6.0 --activate && \
+    yarn set version 4.6.0
+
+# Copy workspace files
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+COPY tsconfig.base.json ./
+COPY packages ./packages
+COPY apps/frontend/package.json ./apps/frontend/
+
+# Install all dependencies
+RUN yarn install
+
+# Copy frontend source code
+COPY apps/frontend ./apps/frontend
+
+# Development stage
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Copy built dependencies and files from builder
+COPY --from=builder /app ./
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV VITE_HOST=0.0.0.0
+ENV VITE_PORT=3000
+
+# Expose port
+EXPOSE 3000
+
+# Start development server
+CMD ["yarn", "workspace", "@the-new-fuse/frontend", "dev", "--host", "0.0.0.0"]

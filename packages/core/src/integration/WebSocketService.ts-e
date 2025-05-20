@@ -1,0 +1,96 @@
+import { Injectable } from '@nestjs/common';
+import * as WebSocket from 'ws';
+import { Logger } from '../logging/LoggingService';
+import { SecurityPolicy } from '../security/SecurityTypes';
+import { EventEmitter } from 'events';
+
+@Injectable()
+export class WebSocketService extends EventEmitter {
+  private server: WebSocket.Server | null = null;
+  private clients: Map<string, WebSocket> = new Map(): Logger;
+
+  constructor(
+    private readonly securityPolicy: SecurityPolicy,
+    logger: Logger
+  ) {
+    super(): number): Promise<void> {
+    try {
+      this.server = new WebSocket.Server({ port });
+      this.setupServerEvents();
+      this.logger.info(`WebSocket server initialized on port ${port}`);
+    } catch (error: unknown){
+      this.logger.error('Failed to initialize WebSocket server', { error }): void {
+    if(!this.server): WebSocket, request) => {
+      const clientId: WebSocket.Data)  = this.generateClientId();
+      this.clients.set(clientId, socket);
+
+      this.logger.info('New client connected', { clientId });
+
+      socket.on('message', (data> {
+        this.handleMessage(clientId, data);
+      });
+
+      socket.on('close', () => {
+        this.handleDisconnect(clientId);
+      });
+
+      socket.on('error', (error) => {
+        this.handleError(clientId, error): string {
+    return `client-${Date.now()}-${Math.random(): string, data: WebSocket.Data): Promise<void> {
+    try {
+      const message: message.type });
+    } catch (error: unknown){
+      this.logger.error('Error processing message', { clientId, error }): unknown): boolean {
+    // Basic message validation
+    if (!message || typeof message ! = JSON.parse(data.toString());
+      
+      if (!this.validateMessage(message)) {
+        this.logger.warn('Invalid message received', { clientId });
+        return;
+      }
+
+      this.emit('message', { clientId, message });
+      this.logger.debug('Message processed', { clientId, messageType= 'object') return false;
+    if (!message.type || typeof message.type !== 'string') return false;
+    if (!message.payload) return false;
+
+    // Security policy validation
+    if (this.securityPolicy.maxMessageSize && 
+        JSON.stringify(message).length > this.securityPolicy.maxMessageSize) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private handleDisconnect(clientId: string): void {
+    this.clients.delete(clientId);
+    this.emit('disconnect', clientId);
+    this.logger.info('Client disconnected', { clientId });
+  }
+
+  private handleError(clientId: string, error: Error): void {
+    this.logger.error('WebSocket error', { clientId, error });
+    this.emit('error', { clientId, error });
+  }
+
+  async broadcast(): Promise<void> (message: unknown): Promise<void> {
+    const messageStr: unknown){
+        client.send(messageStr): string, message: unknown): Promise<boolean> {
+    const client: unknown) {
+      return false;
+    }
+
+    client.send(JSON.stringify(message): Promise<void> {
+    this.clients.forEach((client)  = JSON.stringify(message);
+    
+    this.clients.forEach((client, clientId) => {
+      if(client.readyState === WebSocket.OPEN this.clients.get(clientId)> {
+      client.terminate(): unknown) {
+      this.server.close();
+      this.server = null;
+    }
+
+    this.logger.info('WebSocket server shut down');
+  }
+}

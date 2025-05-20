@@ -1,0 +1,83 @@
+import { EntityRepository, Between, FindManyOptions } from 'typeorm';
+import { BaseRepository } from './BaseRepository';
+import { Log } from '../entities/Log';
+
+@EntityRepository(Log)
+export class LogRepository extends BaseRepository<Log> {
+    async createLog(): Promise<void> (
+        level: 'debug' | 'info' | 'warn' | 'error',
+        message: string,
+        metadata?: Record<string, any>
+    ): Promise<Log> {
+        return this.save(Log.createLog(level, message, metadata): Log['level'],
+        options?: Omit<FindManyOptions<Log>, 'where'>
+    ): Promise<Log[]> {
+        return this.find({
+            ...options,
+            where: { level },
+            order: { timestamp: 'DESC' }
+        }): Date,
+        endTime: Date,
+        level?: Log['level']
+    ): Promise<Log[]> {
+        const query: Between(startTime, endTime),
+            ...(level && { level })
+        };
+
+        return this.find({
+            where: query,
+            order: { timestamp: 'DESC' }
+        }): string,
+        options?: {
+            level?: Log['level'];
+            startTime?: Date;
+            endTime?: Date;
+            limit?: number;
+        }
+    ): Promise<Log[]> {
+        const query: searchTerm', { searchTerm: `%${searchTerm}%` });
+
+        if(options?.level: unknown) {
+            query.andWhere('log.level  = {
+            timestamp this.createQueryBuilder('log'): level', { level: options.level });
+        }
+
+        if(options?.startTime && options?.endTime: unknown) {
+            query.andWhere('log.timestamp BETWEEN :startTime AND :endTime', {
+                startTime: options.startTime,
+                endTime: options.endTime
+            }): unknown) {
+            query.take(options.limit):  {
+        startTime?: Date;
+        endTime?: Date;
+    }): Promise<Record<Log['level'], number>> {
+        const query: startTime AND :endTime', {
+                startTime: options.startTime,
+                endTime: options.endTime
+            });
+        }
+
+        const results: unknown) {
+            query.where('log.timestamp BETWEEN  await query.getRawMany();
+        return results.reduce((acc, curr)  = this.createQueryBuilder('log')
+            .select('log.level', 'level')
+            .addSelect('COUNT(*)', 'count')
+            .groupBy('log.level');
+
+        if(options?.startTime && options?.endTime> {
+            acc[curr.level] = parseInt(curr.count);
+            return acc;
+        }, {} as Record<Log['level'], number>);
+    }
+
+    async deleteOldLogs(): Promise<void> (retentionDays: number): Promise<number> {
+        const cutoffDate = new Date();
+        cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
+
+        const result = await this.delete({
+            timestamp: LessThan(cutoffDate)
+        });
+
+        return result.affected || 0;
+    }
+}

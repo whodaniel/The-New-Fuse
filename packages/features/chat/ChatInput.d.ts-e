@@ -1,0 +1,8 @@
+import React from 'react';
+interface ChatInputProps {
+    onSend: (content: string, attachments?: File[]) => void;
+    disabled?: boolean;
+    placeholder?: string;
+}
+export declare const ChatInput: (React as any).FC<ChatInputProps>;
+export {};

@@ -1,0 +1,52 @@
+import type { BaseValidationError } from './errors';
+export type ValidationResult = {
+    valid: boolean;
+    errors?: ValidationError[];
+};
+export type ValidationError = {
+    code: string;
+    message: string;
+    path?: string[];
+    metadata?: Record<string, any>;
+};
+export type ValidationOptions = {
+    strict?: boolean;
+    allowUnknown?: boolean;
+    abortEarly?: boolean;
+};
+export type Validator<T = any> = {
+    validate(value: T, options?: ValidationOptions): Promise<ValidationResult>;
+};
+export type SchemaValidator = Validator & {
+    addSchema(schema: unknown, name: string): void;
+    removeSchema(name: string): void;
+};
+export type { BaseValidationError };
+export declare class BaseValidator implements Validator {
+    validate(_value: unknown, _options?: ValidationOptions): Promise<ValidationResult>;
+}
+export declare class ValidatorRegistry {
+    private validators;
+    register(type: string, validator: Validator): void;
+    unregister(type: string): void;
+    get(type: string): Validator | undefined;
+    getAll(): Map<string, Validator>;
+    clear(): void;
+}
+export declare class HttpConfigValidator extends BaseValidator {
+    type: string;
+    validate(_value: unknown, _options?: ValidationOptions): Promise<ValidationResult>;
+}
+export declare class TransformConfigValidator extends BaseValidator {
+    type: string;
+    validate(_value: unknown, _options?: ValidationOptions): Promise<ValidationResult>;
+}
+export declare class ConditionConfigValidator extends BaseValidator {
+    type: string;
+    validate(_value: unknown, _options?: ValidationOptions): Promise<ValidationResult>;
+}
+export declare class RegistryConfigValidator extends BaseValidator {
+    type: string;
+    validate(_value: unknown, _options?: ValidationOptions): Promise<ValidationResult>;
+}
+export declare const configValidator: ValidatorRegistry;

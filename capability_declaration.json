@@ -1,0 +1,20 @@
+{
+    "type": "CAPABILITY_DECLARATION",
+    "source": "local_ai_agent_001",
+    "capabilities": {
+        "primary": {
+            "code_analysis": {
+                "languages": ["typescript", "javascript", "python"],
+                "proficiency": "advanced"
+            },
+            "task_coordination": {
+                "type": "autonomous",
+                "complexity_handling": "medium"
+            }
+        },
+        "learning_preferences": {
+            "mode": "active",
+            "collaboration_style": "cooperative"
+        }
+    }
+}

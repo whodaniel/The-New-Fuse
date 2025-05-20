@@ -1,0 +1,68 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../database/prisma.service';
+import { DependencyNode, DependencyEdge, DependencyGraph } from '@the-new-fuse/types';
+
+interface ProjectDependency {
+  id: string;
+  name: string;
+  version: string;
+  type?: 'direct' | 'dev' | 'peer';
+  parentId?: string;
+  vulnerabilities?: Array<{
+    id: string;
+    severity: string;
+    description: string;
+  }>;
+  outdatedInfo?: {
+    latestVersion: string;
+    severity: string;
+  };
+}
+
+@Injectable()
+export class DependencyMapper {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async mapDependencies(): Promise<void> (projectId: string): Promise<DependencyNode[]> {
+    const projectDependencies: DependencyNode[]  = await this.prisma.$queryRaw<ProjectDependency[]>`
+      SELECT d.*, v.*, o.*
+      FROM dependencies d
+      LEFT JOIN vulnerability_dependencies vd ON d.id = vd.dependency_id
+      LEFT JOIN vulnerabilities v ON vd.vulnerability_id = v.id
+      LEFT JOIN outdated_info o ON d.id = o.dependency_id
+      WHERE d.project_id = ${projectId}
+    `;
+
+    const nodes [];
+    const visited: unknown){
+      await this.buildDependencyGraph(dep, nodes, visited): ProjectDependency,
+    nodes: DependencyNode[],
+    visited: Set<string>
+  ): Promise<void> {
+    if(visited.has(dependency.id): DependencyNode  = new Set<string>();
+
+    for (const dep of projectDependencies {
+      id: dependency.id,
+      name: dependency.name,
+      version: dependency.version,
+      label: dependency.name,
+      dependencies: []
+    };
+
+    nodes.push(node);
+
+    const childDeps = await this.prisma.$queryRaw<ProjectDependency[]>`
+      SELECT d.*, v.*, o.*
+      FROM dependencies d
+      LEFT JOIN vulnerability_dependencies vd ON d.id = vd.dependency_id
+      LEFT JOIN vulnerabilities v ON vd.vulnerability_id = v.id
+      LEFT JOIN outdated_info o ON d.id = o.dependency_id
+      WHERE d.parent_id = ${dependency.id}
+    `;
+
+    for (const child of childDeps: unknown){
+      await this.buildDependencyGraph(child, nodes, visited);
+      node.dependencies.push(child.id);
+    }
+  }
+}

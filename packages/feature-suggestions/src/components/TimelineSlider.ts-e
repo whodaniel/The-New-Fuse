@@ -1,0 +1,247 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importStar(require("react"));
+const d3 = __importStar(require("d3"));
+const date_fns_1 = require("date-fns");
+function throttle(func, limit) {
+    let timeout = null;
+    let previous = 0;
+    return function (...args) {
+        const now = Date.now();
+        const remaining = limit - (now - previous);
+        if (remaining <= 0 || remaining > limit) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            previous = now;
+            func.apply(this, args);
+        }
+        else if (!timeout) {
+            timeout = setTimeout(() => {
+                previous = Date.now();
+                timeout = null;
+                func.apply(this, args);
+            }, remaining);
+        }
+    };
+}
+function debounce(func, wait) {
+    let timeout = null;
+    return function (...args) {
+        if (timeout) {
+            clearTimeout(timeout);
+        }
+        timeout = setTimeout(() => {
+            func.apply(this, args);
+            timeout = null;
+        }, wait);
+    };
+}
+const getEventColor = (type) => {
+    switch (type) {
+        case 'SUGGESTION': return '#818CF8';
+        case 'TODO': return '#34D399';
+        case 'FEATURE': return '#F59E0B';
+        case 'WORKFLOW_STEP': return '#8B5CF6';
+        case 'AGENT': return '#EC4899';
+        case 'NOTE': return '#6B7280';
+        default: return '#E5E7EB';
+    }
+};
+const TimelineSlider = ({ events, ranges, onAddNote, onRangeSelect, }) => {
+    const svgRef = (0, react_1.useRef)(null);
+    const [selectedDate, setSelectedDate] = (0, react_1.useState)(null);
+    const [isAddingNote, setIsAddingNote] = (0, react_1.useState)(false);
+    const [noteContent, setNoteContent] = (0, react_1.useState)('');
+    const [brushSelection, setBrushSelection] = (0, react_1.useState)(null);
+    (0, react_1.useEffect)(() => {
+        if (!svgRef.current || !events.length)
+            return;
+        const boundingRect = svgRef.current.getBoundingClientRect();
+        const width = boundingRect.width;
+        const height = 120;
+        const margin = { top: 20, right: 40, bottom: 40, left: 40 };
+        const updateDOM = () => {
+            d3.select(svgRef.current).selectAll('*').remove();
+            const svg = d3.select(svgRef.current)
+                .attr('width', width)
+                .attr('height', height);
+            const timeExtent = d3.extent(events, d => d.timestamp);
+            const xScale = d3.scaleTime()
+                .domain(timeExtent)
+                .range([margin.left, width - margin.right]);
+            const mainGroup = svg.append('g');
+            mainGroup.append('line')
+                .attr('x1', margin.left)
+                .attr('x2', width - margin.right)
+                .attr('y1', height / 2)
+                .attr('y2', height / 2)
+                .attr('stroke', '#E5E7EB')
+                .attr('stroke-width', 4)
+                .attr('stroke-linecap', 'round');
+            const timeRangeData = ranges.map(range => (Object.assign(Object.assign({}, range), { x: xScale(range.startDate), width: xScale(range.endDate) - xScale(range.startDate) })));
+            mainGroup.selectAll('.time-range')
+                .data(timeRangeData)
+                .join('rect')
+                .attr('class', 'time-range')
+                .attr('x', d => d.x)
+                .attr('y', height / 2 - 15)
+                .attr('width', d => d.width)
+                .attr('height', 30)
+                .attr('fill', d => d.color || '#93C5FD')
+                .attr('opacity', 0.3)
+                .attr('rx', 4);
+            const eventData = events.map(event => (Object.assign(Object.assign({}, event), { x: xScale(event.timestamp), color: getEventColor(event.type) })));
+            const eventGroups = mainGroup.selectAll('.event')
+                .data(eventData)
+                .join('g')
+                .attr('class', 'event')
+                .attr('transform', d => `translate(${d.x},${height / 2})`);
+            eventGroups.append('circle')
+                .attr('r', 6)
+                .attr('fill', d => d.color)
+                .attr('stroke', '#fff')
+                .attr('stroke-width', 2)
+                .style('cursor', 'pointer')
+                .on('mouseover', throttle((event, d) => {
+                const tooltip = d3.select('.timeline-tooltip');
+                const tooltipContent = `
+            <div class="p-2">
+              <div class="font-bold">${d.data.title}</div>
+              <div class="text-sm text-gray-600">${(0, date_fns_1.format)(d.timestamp, 'MMM d, yyyy')}</div>
+              ${d.data.description ? `<div class="mt-1">${d.data.description}</div>` : ''}
+            </div>
+          `;
+                requestAnimationFrame(() => {
+                    tooltip
+                        .style('opacity', 1)
+                        .style('left', `${event.pageX + 10}px`)
+                        .style('top', `${event.pageY - 10}px`)
+                        .html(tooltipContent);
+                });
+            }, 16))
+                .on('mouseout', () => {
+                requestAnimationFrame(() => {
+                    d3.select('.timeline-tooltip')
+                        .style('opacity', 0);
+                });
+            })
+                .on('click', debounce((event, d) => {
+                setSelectedDate(d.timestamp);
+                setIsAddingNote(true);
+            }, 300));
+            const noteData = events
+                .filter(e => e.data.notes && e.data.notes.length > 0)
+                .map(event => (Object.assign(Object.assign({}, event), { x: xScale(event.timestamp) })));
+            const noteGroups = mainGroup.selectAll('.note')
+                .data(noteData)
+                .join('g')
+                .attr('class', 'note')
+                .attr('transform', d => `translate(${d.x},${height / 2 - 25})`);
+            noteGroups.append('path')
+                .attr('d', 'M0,0 L6,10 L-6,10 Z')
+                .attr('fill', '#6B7280');
+            const brush = d3.brushX()
+                .extent([[margin.left, 0], [width - margin.right, height]])
+                .on('end', debounce((event) => {
+                if (!event.selection)
+                    return;
+                const [x0, x1] = event.selection;
+                const dateRange = [xScale.invert(x0), xScale.invert(x1)];
+                setBrushSelection(dateRange);
+                onRangeSelect(dateRange[0], dateRange[1]);
+            }, 150));
+            mainGroup.append('g')
+                .attr('class', 'brush')
+                .call(brush);
+            const xAxis = d3.axisBottom(xScale)
+                .tickFormat(d => (0, date_fns_1.format)(d, 'MMM d, yyyy'))
+                .ticks(Math.floor(width / 100));
+            mainGroup.append('g')
+                .attr('transform', `translate(0,${height - margin.bottom})`)
+                .call(xAxis)
+                .selectAll('text')
+                .attr('transform', 'rotate(-45)')
+                .style('text-anchor', 'end');
+        };
+        requestAnimationFrame(updateDOM);
+        return () => {
+            d3.select(svgRef.current).selectAll('*').remove();
+        };
+    }, [events, ranges]);
+    return (<div className="relative">
+      <svg ref={svgRef} className="w-full"/>
+      
+      
+      <div className="timeline-tooltip absolute bg-white rounded-lg shadow-xl p-2 pointer-events-none opacity-0 transition-opacity z-50"/>
+
+      
+      {isAddingNote && selectedDate && (<div className="absolute top-0 left-0 right-0 bg-white rounded-lg shadow-xl p-4 z-40">
+          <div className="flex items-start space-x-4">
+            <div className="flex-1">
+              <textarea value={noteContent} onChange={(e) => setNoteContent(e.target.value)} placeholder="Add a note..." className="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" rows={3}/>
+            </div>
+            <div className="space-y-2">
+              <button onClick={() => {
+                if (noteContent.trim()) {
+                    onAddNote(selectedDate, noteContent);
+                    setNoteContent('');
+                    setIsAddingNote(false);
+                    setSelectedDate(null);
+                }
+            }} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors">
+                Add
+              </button>
+              <button onClick={() => {
+                setIsAddingNote(false);
+                setNoteContent('');
+                setSelectedDate(null);
+            }} className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors">
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>)}
+
+      
+      {brushSelection && (<div className="absolute bottom-0 left-0 right-0 bg-white bg-opacity-90 p-2 text-sm text-gray-600">
+          Selected Range: {(0, date_fns_1.format)(brushSelection[0], 'MMM d, yyyy')} - {(0, date_fns_1.format)(brushSelection[1], 'MMM d, yyyy')}
+        </div>)}
+    </div>);
+};
+exports.default = TimelineSlider;
+//# sourceMappingURL=TimelineSlider.js.mapexport {};

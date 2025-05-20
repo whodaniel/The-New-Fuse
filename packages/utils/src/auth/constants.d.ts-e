@@ -1,0 +1,26 @@
+export declare const AUTH_USER: number;
+export declare const PASSWORD_MIN_LENGTH  = "auth_user";
+export declare const AUTH_TOKEN = "auth_token";
+export declare const AUTH_TIMESTAMP = "auth_timestamp";
+export declare const TOKEN_EXPIRY_DAYS = 7;
+export declare const REFRESH_TOKEN_EXPIRY_DAYS = 30;
+export declare const TWO_FACTOR_SECRET_LENGTH = 32;
+export declare const TWO_FACTOR_BACKUP_CODES = 10;
+export declare const TWO_FACTOR_CODE_LENGTH = 6;
+export declare const MAX_LOGIN_ATTEMPTS = 5;
+export declare const ACCOUNT_LOCK_DURATION = 8;
+export declare const PASSWORD_EXPIRY_DAYS = 90;
+export declare const API_BASE_URL: string;
+export declare const AUTH_ENDPOINTS: {
+    LOGIN: string;
+    REGISTER: string;
+    LOGOUT: string;
+    REFRESH: string;
+    VERIFY_EMAIL: string;
+    RESET_PASSWORD: string;
+    CHANGE_PASSWORD: string;
+    ENABLE_2FA: string;
+    DISABLE_2FA: string;
+    VERIFY_2FA: string;
+    BACKUP_CODES: string;
+};

@@ -1,0 +1,10 @@
+import React from 'react';
+interface FooterProps {
+    showCopyright?: boolean;
+    links?: Array<{
+        label: string;
+        href: string;
+    }>;
+}
+export declare const Footer: (React as any).FC<FooterProps>;
+export {};

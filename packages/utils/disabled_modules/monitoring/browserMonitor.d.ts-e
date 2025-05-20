@@ -1,0 +1,14 @@
+declare class BrowserMonitor {
+    private static instance;
+    private metricsInterval;
+    private readonly METRICS_INTERVAL;
+    private constructor();
+    static getInstance(): BrowserMonitor;
+    private initializeMonitoring;
+    private collectMetrics;
+    private getFirstContentfulPaint;
+    stopMonitoring(): void;
+    resumeMonitoring(): void;
+}
+export declare const browserMonitor: BrowserMonitor;
+export {};

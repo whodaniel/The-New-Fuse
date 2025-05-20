@@ -1,0 +1,28 @@
+FROM node:20-bullseye AS builder
+
+WORKDIR /app
+
+# Setup yarn
+RUN corepack enable && \
+    yarn set version berry && \
+    yarn config set nodeLinker node-modules
+
+COPY package.json yarn.lock ./
+COPY packages ./packages
+COPY apps ./apps
+
+RUN yarn install
+RUN yarn build
+
+FROM node:20-bullseye-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package.json ./
+COPY --from=builder /app/yarn.lock ./
+
+RUN yarn install --production
+
+EXPOSE 3001
+CMD ["node", "dist/main.js"]

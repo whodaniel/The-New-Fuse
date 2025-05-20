@@ -1,0 +1,79 @@
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { User, onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../lib/firebase.js';
+
+interface AuthContextType {
+  isAuthenticated: boolean;
+  token: string | null;
+  user: User | null;
+  setToken: (token: string | null) => void;
+  isInitialized: boolean;
+  signIn: () => void;
+}
+
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [token, setToken] = useState<string | null>(localStorage.getItem('auth_token'));
+  const [user, setUser] = useState<User | null>(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setUser(user);
+      if (user) {
+        const token = await user.getIdToken();
+        setToken(token);
+        localStorage.setItem('auth_token', token);
+      } else {
+        setToken(null);
+        localStorage.removeItem('auth_token');
+      }
+      setIsInitialized(true);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Mock sign in function for now
+  const signIn = () => {
+    
+    // Implement actual sign in logic here
+  };
+
+  const value = {
+    isAuthenticated: !!token && !!user,
+    token,
+    user,
+    isInitialized,
+    setToken: (newToken: string | null) => {
+      setToken(newToken);
+      if (newToken) {
+        localStorage.setItem('auth_token', newToken);
+      } else {
+        localStorage.removeItem('auth_token');
+      }
+    },
+    signIn
+  };
+
+  if (!isInitialized) {
+    return <div className="min-h-screen flex items-center justify-center">
+      <div role="status" className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
+    </div>;
+  }
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (context === undefined) {
+    throw new Error('useAuth must be used within an AuthProvider');
+  }
+  return context;
+};

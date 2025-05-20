@@ -1,0 +1,2 @@
+export declare function formatDuration(durationInMs: number): string;
+export declare const msToMinutes: (ms: number) => number;

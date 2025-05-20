@@ -1,0 +1,19 @@
+interface MessageData {
+    source: string;
+    type: string;
+    content: Record<string, unknown>;
+}
+declare class CascadeAgent {
+    private redisClient;
+    private channels;
+    private conversationHistory;
+    private sessionId;
+    constructor();
+    processMessage(data: MessageData): Promise<Record<string, unknown> | null>;
+    private handleIntroduction;
+    private handleQuery;
+    private handleTask;
+    private handleResponse;
+    private generateDefaultResponse;
+}
+export { CascadeAgent };

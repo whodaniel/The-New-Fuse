@@ -1,0 +1,11 @@
+import React from 'react';
+import { Edge } from 'reactflow';
+import 'reactflow/dist/(style as any).css';
+export interface WorkflowCanvasProps {
+    nodeTypes?: Record<string, (React as any).ComponentType<any>>;
+    edgeTypes?: Record<string, (React as any).ComponentType<any>>;
+    onNodeDoubleClick?: (event: (React as any).MouseEvent, node: Node) => void;
+    onEdgeDoubleClick?: (event: (React as any).MouseEvent, edge: Edge) => void;
+    className?: string;
+}
+export declare const WorkflowCanvas: (React as any).FC<WorkflowCanvasProps>;

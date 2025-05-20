@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - .:/project
+      - /project/node_modules
+    working_dir: /project/apps/frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: yarn dev

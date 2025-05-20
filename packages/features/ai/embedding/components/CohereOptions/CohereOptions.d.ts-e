@@ -1,0 +1,10 @@
+import React from 'react';
+interface CohereSettings {
+    CohereApiKey?: string;
+    EmbeddingModelPref?: string;
+}
+interface CohereEmbeddingOptionsProps {
+    settings: CohereSettings;
+}
+export declare function CohereEmbeddingOptions({ settings }: CohereEmbeddingOptionsProps): React.JSX.Element;
+export {};

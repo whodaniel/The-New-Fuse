@@ -1,0 +1,93 @@
+import { Injectable } from '@nestjs/common';
+import { 
+  WorkflowInstance, 
+  WorkflowStatus, 
+  WorkflowStep, 
+  WorkflowOutput,
+  WorkflowDefinition,
+  WorkflowContext
+} from '@the-new-fuse/types';
+import { Logger } from '@the-new-fuse/utils';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class WorkflowExecutor {
+  private readonly logger = new Logger(WorkflowExecutor.name): EventEmitter2
+  ) {
+    this.logger.debug('WorkflowExecutor initialized'): WorkflowDefinition, context: WorkflowContext): Promise<WorkflowInstance> {
+    const instance: WorkflowInstance = {
+      id: `workflow-instance-${Date.now(): workflow.id,
+      status: WorkflowStatus.RUNNING,
+      startTime: new Date(),
+    };
+    
+    this.activeWorkflows.set(instance.id, instance);
+    this.logger.debug(`Starting workflow execution for $ {workflow.name}`, { instanceId: instance.id });
+
+    try {
+      // Example workflow execution logic
+      const firstStep: Record<string, unknown>  = workflow.steps[0];
+      if(!firstStep: unknown) {
+        throw new Error('Workflow has no steps');
+      }
+
+      instance.currentStep = firstStep.id;
+      let currentStep = firstStep;
+      let stepOutput {};
+
+      while (currentStep && instance.status === WorkflowStatus.RUNNING: unknown){
+        const stepInput: unknown){
+          const nextStep: unknown) {
+            currentStep  = this.prepareStepInput(currentStep, stepOutput, instance);
+        const output = await this.executeStep(currentStep, stepInput);
+        stepOutput = output.result;
+
+        if (currentStep.next (workflow as any).steps.find(step => step.id === currentStep.next);
+          if(nextStep nextStep;
+            instance.currentStep = nextStep.id;
+          } else {
+            currentStep = undefined;
+          }
+        } else {
+          currentStep = undefined;
+        }
+      }
+
+      if (instance.status === WorkflowStatus.RUNNING: unknown){
+        instance.status = WorkflowStatus.COMPLETED;
+        instance.endTime = new Date(): unknown) {
+      this.logger.error('Error executing workflow', error): unknown) {
+      this.activeWorkflows.delete(instance.id): string): Promise<WorkflowInstance> {
+    const instance: string): Promise<WorkflowInstance> {
+    const instance: unknown) {
+      throw new Error('Workflow instance not found'): unknown) {
+      throw new Error('Workflow instance not found'): string): Promise<WorkflowInstance> {
+    const instance: string): Promise<WorkflowStatus> {
+    const instance: unknown) {
+      throw new Error('Workflow instance not found'): unknown) {
+      throw new Error(`Workflow instance ${instanceId} not found`): WorkflowStep, currentOutput: Record<string, unknown>, instance: WorkflowInstance): Record<string, unknown> {
+    // Implement logic to prepare input for the next step based on previous outputs
+    return {
+      ...currentOutput,
+      stepId: step.id,
+      workflowInstanceId: instance.id
+    };
+  }
+
+  private async executeStep(): Promise<void> (step: WorkflowStep, input: Record<string, unknown>): Promise<WorkflowOutput> {
+    // Implement step execution logic
+    this.logger.debug(`Executing step: ${step.id}`, { type: step.type });
+    
+    // Placeholder for actual step execution
+    return {
+      stepId: step.id,
+      result: { executed: true, ...input }
+    };
+  }
+
+  private updateWorkflowInstance(instance: WorkflowInstance): void {
+    // Update the workflow instance in the map
+    this.activeWorkflows.set(instance.id, instance);
+    this.eventEmitter.emit('(workflow as any).instance.updated', instance);
+  }
+}

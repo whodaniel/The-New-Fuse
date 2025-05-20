@@ -1,0 +1,80 @@
+{
+  "id": "copilot-collaboration-workflow",
+  "name": "Copilot Collaboration Workflow",
+  "description": "A workflow that demonstrates collaboration between The New Fuse and GitHub Copilot",
+  "version": "1.0.0",
+  "steps": [
+    {
+      "id": "step-1",
+      "name": "Generate Code with Copilot",
+      "type": "code-generation",
+      "agentId": "github.copilot",
+      "action": "generateCode",
+      "position": {
+        "x": 100,
+        "y": 100
+      },
+      "inputs": {
+        "prompt": "Write a function to calculate the Fibonacci sequence",
+        "language": "javascript"
+      },
+      "outputs": {
+        "code": ""
+      }
+    },
+    {
+      "id": "step-2",
+      "name": "Explain Code with The New Fuse",
+      "type": "code-explanation",
+      "agentId": "thefuse.main",
+      "action": "explainCode",
+      "position": {
+        "x": 400,
+        "y": 100
+      },
+      "inputs": {
+        "code": "${steps.step-1.outputs.code}",
+        "language": "javascript",
+        "detail": "high"
+      },
+      "outputs": {
+        "explanation": ""
+      }
+    },
+    {
+      "id": "step-3",
+      "name": "Optimize Code with Copilot",
+      "type": "code-enhancement",
+      "agentId": "github.copilot",
+      "action": "enhanceCode",
+      "position": {
+        "x": 700,
+        "y": 100
+      },
+      "inputs": {
+        "code": "${steps.step-1.outputs.code}",
+        "language": "javascript",
+        "enhancements": ["performance", "readability"]
+      },
+      "outputs": {
+        "optimizedCode": ""
+      }
+    }
+  ],
+  "connections": [
+    {
+      "sourceStepId": "step-1",
+      "targetStepId": "step-2",
+      "sourceOutput": "code",
+      "targetInput": "code"
+    },
+    {
+      "sourceStepId": "step-1",
+      "targetStepId": "step-3",
+      "sourceOutput": "code",
+      "targetInput": "code"
+    }
+  ],
+  "created": "2023-07-15T12:00:00Z",
+  "updated": "2023-07-15T12:00:00Z"
+}

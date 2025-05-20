@@ -1,0 +1,51 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnthropicProvider = void 0;
+const base_1 = require("./base");
+const registry_1 = require("./registry");
+class AnthropicProvider extends base_1.BaseLLMProvider {
+    constructor(config = {}) {
+        super({
+            ...config,
+            baseURL: 'https://api.anthropic.com/v1',
+            defaultHeaders: {
+                'anthropic-version': '2023-06-01',
+            },
+        });
+    }
+    getDefaultApiKey() {
+        return registry_1.providerRegistry.getApiKey('anthropic') || '';
+    }
+    getDefaultBaseURL() {
+        return 'https://api.anthropic.com/v1';
+    }
+    getDefaultModel() {
+        return 'claude-2';
+    }
+    getDefaultMaxTokens() {
+        return 4096;
+    }
+    getDefaultHeaders() {
+        return {
+            'anthropic-version': '2023-06-01',
+        };
+    }
+    async chat(): Promise<void> (messages) {
+        // Convert OpenAI format to Anthropic format
+        const prompt = messages
+            .map(msg => `${msg.role === 'assistant' ? 'Assistant' : 'Human'}: ${msg.content}`)
+            .join('\n\n');
+        const response = await this.client.chat.completions.create({
+            model: this.model,
+            messages: [{ role: 'user', content: prompt }],
+            max_tokens: this.maxTokens,
+        });
+        return {
+            content: response.choices[0]?.message?.content || '',
+            usage: response.usage,
+            model: response.model,
+        };
+    }
+}
+exports.AnthropicProvider = AnthropicProvider;
+//# sourceMappingURL=anthropic.js.mapexport {};

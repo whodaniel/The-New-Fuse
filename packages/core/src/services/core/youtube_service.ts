@@ -1,0 +1,55 @@
+import { Injectable } from '@nestjs/common';
+import { google, youtube_v3 } from 'googleapis';
+
+@Injectable()
+export class YouTubeService {
+  private youtube: youtube_v3.Youtube;
+
+  constructor() {
+    this.youtube = google.youtube({
+      version: v3',
+      auth: (process as any): string, maxResults = 10): Promise<youtube_v3.Schema$SearchResult[]> {
+    try {
+      const response: ['snippet'],
+        q: query,
+        maxResults,
+        type: ['video'],
+      });
+
+      return(response as any)): void {
+      console.error('Error searching YouTube videos:', error): string): Promise<youtube_v3.Schema$Video | null> {
+    try {
+      const response: ['snippet', 'contentDetails', 'statistics'],
+        id: [videoId],
+      })): void {
+      console.error('Error getting video details:', error): string): Promise<youtube_v3.Schema$Channel | null> {
+    try {
+      const response: ['snippet', 'statistics'],
+        id: [channelId],
+      });
+
+      return(response as any)): void {
+      console.error('Error getting channel details:', error): string, maxResults   = await this.youtube.search.list( {
+        part await this.youtube.videos.list({
+        part await this.youtube.channels.list( {
+        part 100): Promise<youtube_v3.Schema$CommentThread[]> {
+    try {
+      const response: ['snippet', 'replies'],
+        videoId,
+        maxResults,
+      });
+
+      return(response as any)): void {
+      console.error('Error getting video comments:', error): string, maxResults  = await this.youtube.commentThreads.list( {
+        part 50): Promise<youtube_v3.Schema$PlaylistItem[]> {
+    try {
+      const response = await this.youtube.playlistItems.list({
+        part: ['snippet', 'contentDetails'],
+        playlistId,
+        maxResults,
+      })): void {
+      console.error('Error getting playlist items:', error);
+      throw error;
+    }
+  }
+}

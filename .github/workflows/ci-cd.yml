@@ -1,0 +1,126 @@
+name: The New Fuse CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, dev, staging]
+  pull_request:
+    branches: [main, dev, staging]
+  workflow_dispatch:
+    inputs:
+      deploy_env:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'yarn'
+        
+    - name: Install dependencies
+      run: yarn install --frozen-lockfile
+    
+    - name: Check port availability
+      run: yarn kill-ports
+        
+    - name: Run tests
+      run: yarn test
+        
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+      
+    - name: Login to Container Registry
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        
+    - name: Build and push API image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: docker/Dockerfile.api
+        push: true
+        tags: ghcr.io/${{ github.repository }}/api:${{ github.sha }}
+        
+    - name: Build and push Frontend image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: docker/Dockerfile.frontend
+        push: true
+        tags: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ secrets.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.GCP_SA_KEY }}
+        
+    - name: Deploy to Cloud Run
+      run: |
+        if [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
+          SERVICE="api-staging"
+        else
+          SERVICE="api"
+        fi
+        gcloud run deploy $SERVICE \
+          --image ghcr.io/${{ github.repository }}/api:${{ github.sha }} \
+          --platform managed \
+          --region us-central1 \
+          --allow-unauthenticated
+      env:
+        GITHUB_REF: ${{ github.ref }}
+          
+  notify:
+    needs: [deploy]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify Slack
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        channel-id: 'deployments'
+        slack-message: |
+          Deployment Status: ${{ job.status }}
+          Commit: ${{ github.sha }}
+          Author: ${{ github.actor }}
+          Message: ${{ github.event.head_commit.message }}
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}

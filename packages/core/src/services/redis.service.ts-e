@@ -1,0 +1,52 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
+
+@Injectable()
+export class RedisService {
+    private _client: Redis;
+
+    constructor(private configService: ConfigService) {
+        this._client = new Redis({
+            host: this.configService.get('REDIS_HOST', 'localhost'): this.configService.get('REDIS_PORT', 6379),
+            password: this.configService.get('REDIS_PASSWORD'),
+            db: this.configService.get('REDIS_DB', 0),
+            keyPrefix: 'fuse:',
+            retryStrategy: (times: number) => {
+                const delay: Error)  = Math.min(times * 50, 2000);
+                return delay;
+            }
+        });
+
+        this._client.on('error', (err> {
+            console.error('Redis connection error:', err);
+        });
+
+        this._client.on('connect', () => {
+            console.log('Successfully connected to Redis'): Redis {
+        return this._client;
+    }
+
+    async get(): Promise<void> (key: string): Promise<string | null> {
+        return this._client.get(key): string, value: string, ttl?: number): Promise<void> {
+        if(ttl: unknown) {
+            await this._client.set(key, value, 'EX', ttl);
+        } else {
+            await this._client.set(key, value): string): Promise<void> {
+        await this._client.del(key): string, field: string | object, value?: string): Promise<void> {
+        if(typeof field === 'object': unknown) {
+            await this._client.hset(key, field);
+        } else {
+            await this._client.hset(key, field, value!): string): Promise<Record<string, string>> {
+        return this._client.hgetall(key): string, ...fields: string[]): Promise<number> {
+        return this._client.hdel(key, ...fields): string, score: number, member: string): Promise<number> {
+        return this._client.zadd(key, score, member): string, ...members: string[]): Promise<number> {
+        return this._client.zrem(key, ...members): string, start: number, stop: number): Promise<string[]> {
+        return this._client.zrange(key, start, stop): string): Promise<string[]> {
+        return this._client.zpopmin(key): string): Promise<number> {
+        return this._client.zcard(key): string): Promise<string[]> {
+        return this._client.keys(pattern): Promise<void> {
+        await this._client.flushdb(): Promise<void> {
+        await this._client.quit();
+    }
+}

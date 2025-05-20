@@ -1,0 +1,44 @@
+export declare class EncryptionService {
+    private logger;
+    private readonly db;
+    private config;
+    private masterKey;
+    constructor();
+    private initialize;
+    private generateMasterKey;
+    deriveKey(password: string, salt?: Buffer): Promise<{
+        key: Buffer;
+        salt: Buffer;
+    }>;
+    encrypt(data: string | Buffer, key?: Buffer): Promise< {
+        encrypted: Buffer;
+        iv: Buffer;
+        tag: Buffer;
+        salt?: Buffer;
+    }>;
+    decrypt(encrypted: Buffer, iv: Buffer, tag: Buffer, key?: Buffer): Promise<Buffer>;
+    encryptWithPassword(data: string | Buffer, password: string): Promise< {
+        encrypted: Buffer;
+        iv: Buffer;
+        tag: Buffer;
+        salt: Buffer;
+    }>;
+    decryptWithPassword(encrypted: Buffer, iv: Buffer, tag: Buffer, salt: Buffer, password: string): Promise<Buffer>;
+    rotateMasterKey(): Promise<void>;
+    generateHash(data: string | Buffer): string;
+    generateHMAC(data: string | Buffer, key?: Buffer): Promise< {
+        hmac: Buffer;
+        salt: Buffer;
+    }>;
+    verifyHMAC(data: string | Buffer, hmac: Buffer, salt: Buffer, key?: Buffer): Promise<boolean>;
+    encryptFile(file: Buffer, metadata?: Record<string, any>): Promise< {
+        encrypted: Buffer;
+        iv: Buffer;
+        tag: Buffer;
+        metadata: Buffer;
+    }>;
+    decryptFile(encrypted: Buffer, iv: Buffer, tag: Buffer, metadata: Buffer): Promise< {
+        decrypted: Buffer;
+        metadata?: Record<string, any>;
+    }>;
+}

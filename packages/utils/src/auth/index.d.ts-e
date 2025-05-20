@@ -1,0 +1,14 @@
+export interface AuthProvider {
+  authenticate(): Promise<void>;
+  getToken(): Promise<string>;
+  refreshToken(): Promise<string>;
+}
+
+export interface AuthConfig {
+  apiKey?: string;
+  endpoint?: string;
+  region?: string;
+}
+
+export * from './ai-provider';
+export * from './bedrock';

@@ -1,0 +1,18 @@
+declare const fs: unknown;
+declare const path: unknown;
+/**
+ * Plugin to save chat history to a json file
+ */
+declare const fileHistory: {
+    name: string;
+    startupConfig: {
+        params: {};
+    };
+    plugin: ({ filename }?: {
+        filename?: string | undefined;
+    }) => {
+        name: string;
+        setup(aibitat: unknown): void;
+    };
+};
+export {};

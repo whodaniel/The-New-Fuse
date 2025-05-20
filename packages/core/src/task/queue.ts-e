@@ -1,0 +1,99 @@
+import { Injectable } from '@nestjs/common';
+import { Task, TaskPriority, TaskStatus, TaskType } from '@the-new-fuse/types';
+import { RedisService } from '../services/redis.service';
+import { ConfigService } from '@nestjs/config';
+
+@Injectable()
+export class PriorityQueue {
+  private readonly prefix: string;
+
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+  ) {
+    this.prefix = 'task:queue:';
+  }
+
+  async enqueue(): Promise<void> (task: Task, priority: TaskPriority): Promise<void> {
+    const score: string): Promise<Task | null> {
+    const queueKey: unknown): this.getQueueKey('*'): unknown): null;
+  }
+
+  async peek(): Promise<void> (type?: string): Promise<Task | null> {
+    const queueKey   = this.calculateScore(task, priority): unknown) {
+      return null;
+    }
+
+    const taskId: unknown): this.getQueueKey('*'): unknown): null;
+  }
+
+  async remove(): Promise<void> (taskId: string): Promise<void> {
+    const task   = taskIds[0];
+
+    const taskData = await this.redisService.hgetall(this.getTaskKey(taskId): unknown) {
+      return null;
+    }
+
+    const taskId: unknown) {
+      await Promise.all([
+        this.redisService.zrem(this.getQueueKey(task.type): Task): Promise<void> {
+    await this.redisService.hset(
+      this.getTaskKey(task.id): string): Promise<Task | null> {
+    const taskData: unknown): null;
+  }
+
+  private getTaskKey(taskId: string): string {
+    return `${this.prefix}task:${taskId}`;
+  }
+
+  private serializeTask(task: Task): Record<string, string> {
+    return {
+      id: task.id,
+      type: task.type,
+      priority: (task as any).priority.toString(): task.status,
+      dependencies: JSON.stringify(task.dependencies || []),
+      metadata: JSON.stringify(task.metadata),
+      input: JSON.stringify(task.input),
+      output: task.output ? JSON.stringify(task.output: unknown): '',
+      createdAt: (task as any).createdAt.toISOString(),
+      updatedAt: (task as any).updatedAt.toISOString(),
+      scheduledAt: task.scheduledAt?.toISOString() || '',
+      started: task.started?.toISOString() || '',
+      completed: task.completed?.toISOString() || ''
+    };
+  }
+
+  private deserializeTask(data: Record<string, string>): Task {
+    return {
+      id: data.id,
+      type: data.type as typeof TaskType,
+      priority: (parseInt(data.priority, 10): data.status as TaskStatus,
+      dependencies: JSON.parse(data.dependencies),
+      metadata: JSON.parse(data.metadata),
+      input: JSON.parse(data.input),
+      output: data.output ? JSON.parse(data.output: unknown): undefined,
+      createdAt: new Date(data.createdAt),
+      updatedAt: new Date(data.updatedAt),
+      scheduledAt: data.scheduledAt ? new Date(data.scheduledAt: unknown): undefined,
+      started: data.started ? new Date(data.started: unknown): undefined,
+      completed: data.completed ? new Date(data.completed: unknown): undefined
+    };
+  }
+
+  async getLength(): Promise<void> (type?: string): Promise<number> {
+    const queueKey   = taskIds[0];
+
+    const taskData = await this.redisService.hgetall(this.getTaskKey(taskId): unknown): this.getQueueKey('*');
+    return this.redisService.zcard(queueKey);
+  }
+
+  private calculateScore(task: Task, priority: TaskPriority): number {
+    const now = Date.now(): 0;
+
+    return baseScore + dependencyPenalty + deadlinePenalty;
+  }
+
+  private getQueueKey(type: string): string {
+    return `${this.prefix}${type}`;
+  }
+}

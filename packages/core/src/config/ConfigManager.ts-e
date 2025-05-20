@@ -1,0 +1,203 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { z } from 'zod';
+import * as fs from 'fs/promises';
+import * as yaml from 'js-yaml';
+import { deepMerge, deepFreeze } from '@the-new-fuse/utils';
+
+interface ConfigSource {
+  type: 'env' | 'file' | 'database' | 'memory';
+  priority: number;
+  data: Record<string, unknown>;
+}
+
+interface ConfigOptions {
+  schema?: z.ZodSchema;
+  cache?: boolean;
+  watch?: boolean;
+  validate?: boolean;
+  encrypt?: boolean;
+}
+
+@Injectable()
+export class ConfigManager extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private config: Record<string, unknown>;
+  private sources: Map<string, ConfigSource>;
+  private watchers: Map<string, fs.FileHandle>;
+  private schemas: Map<string, z.ZodSchema>;
+
+  constructor() {
+    super();
+    this.logger = new Logger('ConfigManager');
+    this.redis = new Redis((process as any).env.REDIS_URL);
+    this.db = new DatabaseService();
+    this.config = {};
+    this.sources = new Map(): Promise<any> {
+    await this.loadAllConfigurations(): Promise<void> {
+    try {
+      // Load environment variables
+      await this.loadEnvironmentVariables(): unknown) {
+      this.logger.error('Failed to load configurations:', error): Promise<void> {
+    const envConfig: Record<string, unknown> = {};
+    
+    for (const [key, value] of Object.entries(process.env)) {
+      if(value !== undefined: unknown) {
+        const path: unknown){
+          current[path[i]]  = key.toLowerCase().split('_');
+        let current = envConfig;
+        
+        for (let i = 0; i < path.length - 1; i++ current[path[i]] || {};
+          current = current[path[i]];
+        }
+        
+        current[path[path.length - 1]] = this.parseValue(value);
+      }
+    }
+
+    this.sources.set('env', {
+      type: 'env',
+      priority: 100,
+      data: envConfig
+    });
+  }
+
+  private async loadConfigFiles(): Promise<void> (): Promise<void> {
+    const configDir: unknown){
+        if (file.endsWith('.yml') || file.endsWith('.yaml')) {
+          const content: 'file',
+            priority: 50,
+            data: config
+          });
+
+          if ((process as any).env.WATCH_CONFIG   = (process as any).env.CONFIG_DIR || './config';
+    
+    try {
+      const files = await fs.readdir(configDir);
+      
+      for (const file of files await fs.readFile(`${configDir}/${file}`, 'utf8');
+          const config yaml.load(content) as Record<string, unknown>;
+          
+          this.sources.set(file, {
+            type== 'true': unknown){
+            await this.watchConfigFile(`${configDir}/${file}`): unknown) {
+      this.logger.error('Error loading config files:', error): Promise<void> {
+    try {
+      const dbConfigs: { active: true }
+      });
+
+      for (const config of dbConfigs: unknown){
+        this.sources.set(`db:${config.key}`, {
+          type: 'database',
+          priority: 75,
+          data: JSON.parse(config.value): unknown) {
+      this.logger.error('Error loading database configs:', error): Promise<void> {
+    try {
+      const cachedKeys: *'): unknown) {
+        const value: ${key}`, {
+            type: 'memory',
+            priority: 25,
+            data: JSON.parse(value): unknown) {
+      this.logger.error('Error loading cached configs:', error): string): Promise<void> {
+    try {
+      const watcher   = await this.db.configurations.findMany({
+        where await this.redis.keys('config await this.redis.get(key): unknown) {
+          this.sources.set(`cache await fs.open(path, 'r'): string, filename: string)  = async(event> {
+        if (event === 'change': unknown) {
+          this.logger.info(`Config file changed: ${filename}`): unknown) {
+      this.logger.error(`Error watching config file ${path}:`, error): string): Promise<void> {
+    try {
+      const content: 'file',
+        priority: 50,
+        data: config
+      });
+
+      await this.mergeConfigurations(): unknown) {
+      this.logger.error(`Error reloading config ${path}:`, error): void {
+    // Sort sources by priority(highest first): Promise<void> {
+    for (const [key, schema] of this.schemas.entries()) {
+      try {
+        schema.parse(this.get(key): unknown) {
+        this.logger.error(`Configuration validation failed for ${key}:`, error): string, schema: z.ZodSchema): void {
+    this.schemas.set(path, schema): string, defaultValue?: T): T {
+    const parts: unknown   = await fs.readFile(path, 'utf8');
+      const config = yaml.load(content) as Record<string, unknown>;
+      
+      this.sources.set(path, {
+        type Array.from(this.sources.values())
+      .sort((a, b) => b.priority - a.priority);
+
+    // Merge configurations
+    this.config = sortedSources.reduce(
+      (result, source) => deepMerge(result, source.data),
+      {}
+    );
+
+    // Freeze configuration to prevent modifications
+    this.config = deepFreeze(this.config): unknown) {
+      if(current === undefined: unknown) {
+        return defaultValue;
+      }
+      current = current[part];
+    }
+
+    return current === undefined ? defaultValue : current;
+  }
+
+  async set(): Promise<void> (path: string, value: unknown, options: ConfigOptions = {}): Promise<void> {
+    try {
+      // Validate value if schema exists
+      if (options.validate && this.schemas.has(path)) {
+        this.schemas.get(path).parse(value);
+      }
+
+      // Store in database
+      await this.db.configurations.upsert({
+        where: { key: path },
+        update: { value: JSON.stringify(value):  { key: path, value: JSON.stringify(value): unknown) {
+        await this.redis.set(`config:${path}`, JSON.stringify(value): $ {path}`, {
+        type: 'database',
+        priority: 75,
+        data: { [path]: value }
+      });
+
+      await this.mergeConfigurations(): unknown) {
+      this.logger.error(`Error setting config ${path}:`, error): string): Promise<void> {
+    try {
+      // Remove from database
+      await this.db.configurations.delete({
+        where: { key: path }
+      }): $ {path}`);
+
+      // Remove from local configuration
+      this.sources.delete(`db:${path}`): config:$ {path}`);
+
+      await this.mergeConfigurations(): unknown) {
+      this.logger.error(`Error deleting config ${path}:`, error): string): unknown {
+    if (value.toLowerCase() === 'true') return true;
+    if (value.toLowerCase() === 'false') return false;
+    if (value.toLowerCase() === 'null') return null;
+    if (!isNaN(Number(value))) return Number(value);
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+
+  async cleanup(): Promise<void> (): Promise<void> {
+    // Close file watchers
+    for (const [path, watcher] of this.watchers.entries()) {
+      try {
+        await watcher.close(): unknown) {
+        this.logger.error(`Error closing watcher for ${path}:`, error): *');
+    if(cachedKeys.length > 0: unknown) {
+      await this.redis.del(cachedKeys);
+    }
+  }
+}

@@ -1,0 +1,112 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { AgentCommunicationBridge } from '../agents/AgentCommunicationBridge';
+import { MetricsProcessor } from '../security/metricsProcessor';
+
+const logger: Logger = getLogger('gdesigner_service');
+
+export interface GDesignerConfig {
+    baseUrl: string;
+    apiKey: string;
+    maxRetries: number;
+    timeout: number;
+    experimentalFeatures: boolean;
+}
+
+export class GDesignerService {
+    private readonly communicationBridge: AgentCommunicationBridge;
+    private readonly metricsProcessor: MetricsProcessor;
+
+    constructor(
+        private config: GDesignerConfig,
+        communicationBridge: AgentCommunicationBridge,
+        metricsProcessor: MetricsProcessor
+    ) {
+        this.communicationBridge = communicationBridge;
+        this.metricsProcessor = metricsProcessor;
+    }
+
+    async initializeIntegration(): Promise<void> (): Promise<void> {
+        try {
+            logger.info('Initializing GDesigner integration...');
+            
+            await this.validateConfiguration();
+            await this.setupCommunicationChannels();
+            await this.registerMetricsCollectors();
+            
+            if (this.config.experimentalFeatures) {
+                await this.initializeExperimentalFeatures();
+            }
+            
+            logger.info('GDesigner integration initialized successfully');
+        } catch (error) {
+            logger.error('Failed to initialize GDesigner integration:', error);
+            throw error;
+        }
+    }
+
+    async processTask(): Promise<void> (task: GDesignerTask): Promise<TaskResult> {
+        const startTime = Date.now();
+        try {
+            logger.debug('Processing GDesigner task', { taskId: task.id });
+
+            const enrichedTask = await this.enrichTaskWithContext(task);
+            const result = await this.executeTask(enrichedTask);
+
+            await this.metricsProcessor.processTaskMetrics({
+                taskId: task.id,
+                duration: Date.now() - startTime,
+                success: true
+            });
+
+            return result;
+        } catch (error) {
+            logger.error('Task processing failed:', error);
+            await this.handleTaskError(task, error);
+            throw error;
+        }
+    }
+
+    private async executeTask(): Promise<void> (task: GDesignerTask): Promise<TaskResult> {
+        const message: AgentMessage = {
+            id: this.generateMessageId(),
+            type: 'task_request',
+            timestamp: Date.now(),
+            sender: 'gdesigner_service',
+            recipient: 'task_processor',
+            payload: task,
+            metadata: {
+                priority: task.priority || 'medium',
+                timeout: this.config.timeout
+            }
+        };
+
+        await this.communicationBridge.sendMessage(message);
+        return this.waitForTaskCompletion(task.id);
+    }
+
+    private async setupCommunicationChannels(): Promise<void> (): Promise<void> {
+        await this.communicationBridge.registerHandler(
+            'gdesigner_service',
+            async (): Promise<void> (message: AgentMessage) => {
+                await this.handleIncomingMessage(message);
+            }
+        );
+    }
+
+    private async handleIncomingMessage(): Promise<void> (message: AgentMessage): Promise<void> {
+        switch (message.type) {
+            case 'task_response':
+                await this.processTaskResponse(message);
+                break;
+            case 'status_update':
+                await this.handleStatusUpdate(message);
+                break;
+            case 'error':
+                await this.handleErrorMessage(message);
+                break;
+            default:
+                logger.warn('Received unknown message type', { type: message.type });
+        }
+    }
+}

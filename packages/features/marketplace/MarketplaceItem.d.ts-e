@@ -1,0 +1,10 @@
+import React from 'react';
+import { MarketplaceItem as MarketplaceItemType } from './types';
+interface MarketplaceItemProps {
+    item: MarketplaceItemType;
+    onSelect?: (item: MarketplaceItemType) => void;
+    onDownload?: (item: MarketplaceItemType) => void;
+    onPurchase?: (item: MarketplaceItemType) => void;
+}
+export declare const MarketplaceItem: (React as any).FC<MarketplaceItemProps>;
+export {};

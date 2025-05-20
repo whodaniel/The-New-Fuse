@@ -1,0 +1,40 @@
+interface AgentConfig {
+    id: string;
+    name: string;
+    role?: string;
+    systemPrompt?: string;
+    model?: string;
+    provider?: string;
+    temperature?: number;
+    maxTokens?: number;
+}
+interface ChannelConfig {
+    id: string;
+    name: string;
+    members: string[];
+    systemPrompt?: string;
+}
+interface GroupMember {
+    id: string;
+    name: string;
+    role?: string;
+}
+/**
+ * Get the configuration for a specific agent
+ * @param agentId - The ID of the agent to get configuration for
+ * @returns The agent configuration
+ */
+export declare function getAgentConfig(agentId: string): Promise<AgentConfig>;
+/**
+ * Get the configuration for a specific channel
+ * @param channelId - The ID of the channel to get configuration for
+ * @returns The channel configuration
+ */
+export declare function getChannelConfig(channelId: string): Promise<ChannelConfig>;
+/**
+ * Get the members of a specific group
+ * @param groupId - The ID of the group to get members for
+ * @returns Array of group members
+ */
+export declare function getGroupMembers(groupId: string): Promise<GroupMember[]>;
+export type { AgentConfig, ChannelConfig, GroupMember };

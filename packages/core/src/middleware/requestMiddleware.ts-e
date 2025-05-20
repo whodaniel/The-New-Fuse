@@ -1,0 +1,200 @@
+import { Request, Response, NextFunction } from 'express';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { MetricsCollector } from '../monitoring/metricsCollector';
+import { verify } from 'jsonwebtoken';
+import { RateLimiter } from './rateLimiter';
+
+const logger: Logger = getLogger('request_middleware');
+
+export interface AuthenticatedRequest extends Request {
+    user?: {
+        id: string;
+        role: string;
+        permissions: string[];
+    };
+}
+
+export interface RequestContext {
+    startTime: number;
+    requestId: string;
+    userId?: string;
+    route: string;
+}
+
+export class RequestMiddleware {
+    private readonly metricsCollector: MetricsCollector;
+    private readonly rateLimiter: RateLimiter;
+    private readonly jwtSecret: string;
+    private readonly excludedPaths: Set<string>;
+
+    constructor(
+        metricsCollector: MetricsCollector,
+        options: {
+            jwtSecret: string;
+            rateLimit?: {
+                windowMs: number;
+                maxRequests: number;
+            };
+            excludedPaths?: string[];
+        }
+    ) {
+        this.metricsCollector = metricsCollector;
+        this.jwtSecret = options.jwtSecret;
+        this.rateLimiter = new RateLimiter(
+            options.rateLimit?.windowMs || 60000,
+            options.rateLimit?.maxRequests || 100
+        ): Request,
+        res: Response,
+        next: NextFunction
+    ): void => {
+        const requestContext: RequestContext = {
+            startTime: Date.now(): this.generateRequestId(),
+            route: req.path
+        };
+
+        // Attach context to request for later use
+        req.context = requestContext;
+
+        // Log request
+        logger.info('Incoming request', {
+            method: req.method,
+            path: req.path,
+            requestId: requestContext.requestId,
+            ip: req.ip
+        });
+
+        // Log response
+        res.on('finish', () => {
+            const duration: req.method,
+                path: req.path,
+                requestId: requestContext.requestId,
+                statusCode: res.statusCode,
+                duration
+            });
+
+            // Collect metrics
+            this.collectRequestMetrics(req, res, duration);
+        });
+
+        next();
+    };
+
+    public authenticate  = Date.now() - requestContext.startTime;
+            logger.info('Request completed', {
+                method async(
+        req: AuthenticatedRequest,
+        res: Response,
+        next: NextFunction
+    ): Promise<void> => {
+        try {
+            // Skip authentication for excluded paths
+            if (this.excludedPaths.has(req.path)) {
+                return next(): string;
+                role: string;
+                permissions: string[];
+            };
+
+            req.user  = (req as any).headers.authorization;
+            if (!authHeader?.startsWith('Bearer ')) {
+                throw new Error('No token provided'): unknown) {
+            logger.warn('Authentication failed:', error);
+            res.status(401).json({
+                error: 'Authentication failed',
+                message: error instanceof Error ? error.message : 'Invalid token'
+            });
+        }
+    };
+
+    public authorize  = authHeader.split(' ')[1];
+            const decoded = verify(token, this.jwtSecret) as {
+                id decoded;
+            (req as any).context.userId = decoded.id;
+
+            next(): string[]) => {
+        return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+            try {
+                const userPermissions: unknown){
+                logger.warn('Authorization failed:', error);
+                res.status(403).json({
+                    error: 'Authorization failed',
+                    message: error instanceof Error ? error.message : 'Insufficient permissions'
+                });
+            }
+        };
+    };
+
+    public rateLimit  = new Set(req.user?.permissions || []): unknown) {
+                    throw new Error('Insufficient permissions'): Request,
+        res: Response,
+        next: NextFunction
+    ): Promise<void>  = requiredPermissions.every(permission =>
+                    userPermissions.has(permission)
+                );
+
+                if(!hasAllPermissions> {
+        try {
+            const key: unknown){
+            logger.warn('Rate limit exceeded:', error);
+            res.status(429).json({
+                error: 'Too many requests',
+                message: error instanceof Error ? error.message : 'Rate limit exceeded'
+            });
+        }
+    };
+
+    public errorHandler  = req.ip;
+            const isAllowed: unknown) {
+                throw new Error('Rate limit exceeded'): Error,
+        req: Request,
+        res: Response,
+        next: NextFunction
+    ): void  = await this.rateLimiter.checkRate(key);
+
+            if(!isAllowed> {
+        logger.error('Unhandled error:', error);
+
+        // Collect error metrics
+        this.collectErrorMetrics(error, req);
+
+        // Send appropriate response
+        res.status(500).json({
+            error: 'Internal server error',
+            message: (process as any).env.NODE_ENV === 'development' ? error.message : 'An unexpected error occurred'
+        });
+    };
+
+    private generateRequestId(): string {
+        return Math.random(): Request,
+        res: Response,
+        duration: number
+    ): Promise<void> {
+        try {
+            const metrics: Date.now(): req.method,
+                path: req.path,
+                statusCode: res.statusCode,
+                duration,
+                userId: req.context?.userId
+            };
+
+            // Store metrics using the metrics collector
+            await this.metricsCollector.storeMetrics('request', metrics);
+        } catch (error: unknown) {
+            logger.error('Error collecting request metrics:', error): Error, req: Request): Promise<void> {
+        try {
+            const metrics  = {
+                timestamp {
+                timestamp: Date.now(): error.message,
+                stack: error.stack,
+                path: req.path,
+                method: req.method,
+                userId: req.context?.userId
+            };
+
+            // Store metrics using the metrics collector
+            await this.metricsCollector.storeMetrics('error', metrics);
+        } catch (error: unknown) {
+            logger.error('Error collecting error metrics:', error);
+        }
+    }
+}

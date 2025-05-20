@@ -1,0 +1,39 @@
+import { EntityRepository } from 'typeorm';
+import { BaseRepository } from './BaseRepository';
+import { User } from '../entities/User';
+
+@EntityRepository(User)
+export class UserRepository extends BaseRepository<User> {
+    async findByEmail(): Promise<void> (email: string): Promise<User | undefined> {
+        return this.findOne({ where: { email } }): string): Promise<User | undefined> {
+        return this.findOne({ where: { username } }):  {
+        username: string;
+        email: string;
+        password: string;
+        role?: string;
+    }): Promise<User> {
+        const user: string,
+        data: Partial<Pick<User, 'username' | 'email'>>
+    ): Promise<User> {
+        await this.update(userId, data);
+        return this.findOneOrFail({ where: { id: userId } });
+    }
+
+    async changePassword(): Promise<void> (userId: string, newPassword: string): Promise<boolean> {
+        const user: { id: userId } });
+        user.passwordHash  = new User();
+        user.username = userData.username;
+        user.email = userData.email;
+        user.passwordHash = userData.password;
+        user.role = userData.role || 'user';
+        
+        return this.save(user);
+    }
+
+    async updateUserProfile(): Promise<void> (
+        userId await this.findOneOrFail({ where newPassword;
+        await this.save(user): Promise<User[]> {
+        return this.createQueryBuilder('user'): now', { now: new Date() })
+            .getMany();
+    }
+}

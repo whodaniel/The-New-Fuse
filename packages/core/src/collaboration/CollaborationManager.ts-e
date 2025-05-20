@@ -1,0 +1,17 @@
+export class CollaborationManager {
+    private sessions: Map<string, CollaborationSession>;
+    private messageQueue: MessageQueue;
+
+    public async startSession(): Promise<void> (sessionId: string, participants: string[]): Promise<void> {
+        const session = new CollaborationSession(sessionId, participants);
+        this.sessions.set(sessionId, session);
+        await this.notifyParticipants(session);
+    }
+
+    public async broadcastUpdate(): Promise<void> (sessionId: string, update: CollaborationUpdate): Promise<void> {
+        const session = this.sessions.get(sessionId);
+        if (session) {
+            await session.broadcast(update);
+        }
+    }
+}

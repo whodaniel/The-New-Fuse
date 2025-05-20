@@ -1,0 +1,27 @@
+/**
+ * Generates a list of backup codes for 2FA recovery
+ * @returns Array of unique backup codes
+ */
+export declare const generateBackupCodes: (count?: number) => string[];
+/**
+ * Validates password strength
+ * @param password Password to validate
+ * @returns Object containing validation result and error message
+ */
+export declare const validatePassword: (password: string) => {
+    isValid: boolean;
+    message?: string;
+};
+/**
+ * Generates a random token
+ * @param length Length of the token
+ * @returns Random token string
+ */
+export declare const generateToken: (length?: number) => string;
+/**
+ * Safely compares two strings in constant time
+ * @param a First string
+ * @param b Second string
+ * @returns Whether the strings are equal
+ */
+export declare const safeCompare: (a: string, b: string) => boolean;

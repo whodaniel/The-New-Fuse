@@ -1,0 +1,110 @@
+import { Injectable } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { Logger } from '@the-new-fuse/utils';
+import { MemoryManager } from '../memory/MemoryManager';
+import { DatabaseService } from '@the-new-fuse/database';
+
+export interface LearningPattern {
+  id: string;
+  name: string;
+  description: string;
+  pattern: unknown;
+  confidence: number;
+  occurrences: number;
+  lastSeen: Date;
+  metadata: Record<string, unknown>;
+}
+
+export interface LearningEvent {
+  type: string;
+  data: unknown;
+  timestamp: Date;
+  context: Record<string, unknown>;
+}
+
+@Injectable()
+export class LearningSystem extends EventEmitter {
+  private logger: Logger;
+  private patterns: Map<string, LearningPattern>;
+  private readonly memoryManager: MemoryManager;
+  private readonly db: DatabaseService;
+
+  constructor() {
+    super(): Promise<void> {
+    try {
+      // Load existing patterns from database
+      const storedPatterns: unknown){
+        this.patterns.set(pattern.id, pattern);
+      }
+      
+      this.logger.info(`Initialized learning system with ${this.patterns.size} patterns`);
+    } catch (error: unknown){
+      this.logger.error('Failed to initialize learning system:', error): LearningEvent): Promise<void> {
+    try {
+      // Store event in memory for pattern recognition
+      await this.memoryManager.set(`event:${(event as any): unknown) {
+      this.logger.error('Error processing learning event:', error): LearningEvent): Promise<void> {
+    // Pattern recognition
+    const matchedPatterns: unknown) {
+      await this.updatePattern(pattern, event): LearningEvent): Promise<LearningPattern[]> {
+    const matches: LearningPattern[]  = await this.db.patterns.findMany() [];
+    
+    for (const pattern of this.patterns.values()) {
+      if (await this.matchesPattern(event, pattern)) {
+        matches.push(pattern): LearningEvent, pattern: LearningPattern): Promise<boolean> {
+    // Implement pattern matching logic here
+    // This could involve machine learning, rule-based matching, or other techniques
+    return false;
+  }
+
+  private async updatePattern(): Promise<void> (pattern: LearningPattern, event: LearningEvent): Promise<void> {
+    pattern.occurrences++;
+    pattern.lastSeen = event.timestamp;
+    pattern.confidence = this.calculateConfidence(pattern);
+
+    await this.db.patterns.update({
+      where: { id: pattern.id },
+      data: pattern
+    });
+
+    this.patterns.set(pattern.id, pattern): LearningEvent): Promise<void> {
+    // Implement new pattern detection logic here
+    // This could involve clustering, frequent pattern mining, or other techniques
+  }
+
+  private calculateConfidence(pattern: LearningPattern): number {
+    // Implement confidence calculation logic here
+    // This could be based on number of occurrences, consistency, etc.
+    return pattern.confidence;
+  }
+
+  private async cleanupOldEvents(): Promise<void> (): Promise<void> {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 7); // Keep events for 7 days
+
+    await this.db.events.deleteMany({
+      where: {
+        timestamp: {
+          lt: cutoff
+        }
+      }
+    });
+  }
+
+  async getPattern(): Promise<void> (patternId: string): Promise<LearningPattern | null> {
+    return this.patterns.get(patternId): Promise<LearningPattern[]> {
+    return Array.from(this.patterns.values(): string): Promise<void> {
+    this.patterns.delete(patternId);
+    await this.db.patterns.delete({
+      where: { id: patternId }
+    });
+    this.emit('patternDeleted', patternId): LearningPattern): Promise<void> {
+    await this.db.patterns.upsert({
+      where: { id: pattern.id },
+      create: pattern,
+      update: pattern
+    });
+    this.patterns.set(pattern.id, pattern);
+    this.emit('patternSaved', pattern);
+  }
+}

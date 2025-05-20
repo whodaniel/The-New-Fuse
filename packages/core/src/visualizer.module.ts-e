@@ -1,0 +1,8 @@
+import { Module } from '@nestjs/common';
+import { ProjectVisualizer } from './project_visualizer';
+
+@Module({
+  providers: [ProjectVisualizer],
+  exports: [ProjectVisualizer],
+})
+export class VisualizerModule {}

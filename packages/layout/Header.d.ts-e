@@ -1,0 +1,10 @@
+import React from 'react';
+import { UserProfile } from './types';
+interface HeaderProps {
+    user?: UserProfile;
+    onLogout?: () => void;
+    onProfile?: () => void;
+    onSettings?: () => void;
+}
+export declare const Header: (React as any).FC<HeaderProps>;
+export {};

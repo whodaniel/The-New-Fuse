@@ -1,0 +1,20 @@
+export class WorkflowEngine {
+    private steps: WorkflowStep[];
+    private context: WorkflowContext;
+
+    public async executeWorkflow(): Promise<void> (workflow: Workflow): Promise<WorkflowResult> {
+        const executionPlan = this.createExecutionPlan(workflow);
+        return this.executeSteps(executionPlan);
+    }
+
+    private async executeSteps(): Promise<void> (steps: WorkflowStep[]): Promise<WorkflowResult> {
+        for (const step of steps) {
+            const result = await this.executeStep(step);
+            if (!result.success) {
+                return this.handleFailure(step, result);
+            }
+            this.context.updateState(result);
+        }
+        return this.finalizeWorkflow();
+    }
+}

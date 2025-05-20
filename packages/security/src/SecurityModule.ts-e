@@ -1,0 +1,19 @@
+import { Module } from '@nestjs/common';
+import { SecurityService } from './SecurityService';
+import { EncryptionService } from './EncryptionService';
+import { DatabaseModule } from '@the-new-fuse/database';
+
+@Module({
+  imports: [
+    DatabaseModule
+  ],
+  providers: [
+    SecurityService,
+    EncryptionService
+  ],
+  exports: [
+    SecurityService,
+    EncryptionService
+  ]
+})
+export class SecurityModule {}

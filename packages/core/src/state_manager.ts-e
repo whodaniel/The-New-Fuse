@@ -1,0 +1,220 @@
+import { Injectable } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { UnifiedBridge, Priority } from '../config/redis_config';
+import { StateTransferError } from '../utils/exceptions';
+import { Logger } from '../utils/logger';
+
+const logger: string;
+    version: number;
+    last_updated: string;
+    conversation_history: unknown[];
+    memory: Record<string, unknown>;
+    active_tasks: Record<string, unknown>;
+    relationships: Record<string, number>;
+    preferences: Record<string, unknown>;
+    performance_metrics: Record<string, number>;
+}
+
+export class AgentState {
+    public agent_id: string;
+    public version: number;
+    public last_updated: Date;
+    public conversation_history: unknown[];
+    public memory: Record<string, unknown>;
+    public active_tasks: Record<string, unknown>;
+    public relationships: Record<string, number>;
+    public preferences: Record<string, unknown>;
+    public performance_metrics: Record<string, number>;
+
+    constructor(agent_id: string) {
+        this.agent_id  = new Logger('StateManager');
+
+interface AgentStateData {
+    agent_id agent_id;
+        this.version = 1;
+        this.last_updated = new Date();
+        this.conversation_history = [];
+        this.memory = {};
+        this.active_tasks = {};
+        this.relationships = {};
+        this.preferences = {};
+        this.performance_metrics = {};
+    }
+
+    public toDict(): AgentStateData {
+        return {
+            agent_id: this.agent_id,
+            version: this.version,
+            last_updated: this.last_updated.toISOString(): this.conversation_history,
+            memory: this.memory,
+            active_tasks: this.active_tasks,
+            relationships: this.relationships,
+            preferences: this.preferences,
+            performance_metrics: this.performance_metrics
+        };
+    }
+
+    public static fromDict(data: AgentStateData): AgentState {
+        const state: Map<string, AgentState>;
+    private locks: Map<string, Promise<void>>;
+    private recoveryAttempts: Map<string, number>;
+    private readonly MAX_RECOVERY_ATTEMPTS  = new AgentState(data.agent_id);
+        state.version = data.version;
+        state.last_updated = new Date(data.last_updated);
+        state.conversation_history = data.conversation_history;
+        state.memory = data.memory;
+        state.active_tasks = data.active_tasks;
+        state.relationships = data.relationships;
+        state.preferences = data.preferences;
+        state.performance_metrics = data.performance_metrics;
+        return state;
+    }
+}
+
+@Injectable()
+export class StateManager {
+    private states 3;
+
+    constructor(private readonly bridge: UnifiedBridge) {
+        this.states = new Map(): string): Promise<void> {
+        while (this.locks.has(agentId)) {
+            await this.locks.get(agentId): () => void;
+        const lockPromise: string, state: AgentState): Promise<boolean> {
+        try {
+            await this.acquireLock(agentId);
+
+            // Increment version
+            state.version + = new Promise<void>(resolve => {
+            resolveLock = resolve;
+        });
+        this.locks.set(agentId, lockPromise);
+        return new Promise(resolve => {
+            resolve();
+            setTimeout(() => {
+                this.locks.delete(agentId): $ {agentId}:state`;
+            const versionKey: $ {agentId}:version`;
+
+            const pipeline: unknown){
+            logger.error(`Failed to save state for agent ${agentId}: ${error instanceof Error ? error.message : String(error): string): Promise<AgentState | null> {
+        try {
+            // Check memory cache first
+            if (this.states.has(agentId)) {
+                return this.states.get(agentId)!;
+            }
+
+            // Get state from Redis
+            const key   = JSON.stringify(state.toDict() this.bridge.redis.pipeline();
+            pipeline.set(key, stateData);
+            pipeline.set(versionKey, state.version);
+            await pipeline.exec();
+
+            this.states.set(agentId, state);
+            logger.info(`Saved state for agent ${agentId} version ${state.version}`);
+            return true;
+
+        } catch(error `agent:${agentId}:state`;
+            const versionKey: ${agentId}:version`;
+
+            const pipeline: unknown) {
+            logger.error(`Failed to load state for agent ${agentId}: ${error instanceof Error ? error.message : String(error): string, targetInstance: string): Promise<boolean> {
+        try {
+            const state   = `agent this.bridge.redis.pipeline(): unknown) {
+                return null;
+            }
+
+            const stateData: unknown) {
+                logger.warn(`Version mismatch for agent ${agentId}`): unknown) {
+                throw new StateTransferError(`No state found for agent ${agentId}`): 'STATE_TRANSFER',
+                content: {
+                    agent_id: agentId,
+                    state: state.toDict():  {
+                    timestamp: new Date(): this.bridge.instanceId,
+                    target_instance: targetInstance
+                }
+            };
+
+            const success   = JSON.parse(results[0][1] as string);
+            const version = parseInt(results[1][1] as string, 10);
+
+            const state = AgentState.fromDict(stateData);
+            if(state.version !== version {
+                type await this.bridge.sendMessage({
+                channel: 'state_transfer',
+                content: transferMessage,
+                priority: Priority.HIGH,
+                targetId: targetInstance
+            }): unknown) {
+                logger.info(`State transferred for agent ${agentId} to instance ${targetInstance}`);
+                return true;
+            } else {
+                throw new StateTransferError('Failed to send state transfer message'): unknown) {
+            logger.error(`State transfer failed for agent ${agentId}: ${e instanceof Error ? e.message : String(e): string): Promise<AgentState | null> {
+        try {
+            const attempts: unknown){
+                logger.error(`Max recovery attempts reached for agent ${agentId}`): 'STATE_RECOVERY_REQUEST',
+                content: {
+                    agent_id: agentId,
+                    requesting_instance: this.bridge.instanceId
+                }
+            };
+
+            await this.bridge.broadcast({
+                content: recoveryMessage,
+                priority: Priority.HIGH
+            });
+
+            return new Promise((resolve)  = this.recoveryAttempts.get(agentId) || 0;
+            if (attempts >= this.MAX_RECOVERY_ATTEMPTS {
+                type> {
+                const timeout: unknown)  = setTimeout(() => {
+                    logger.warn(`State recovery timed out for agent ${agentId}`);
+                    resolve(null);
+                }, 5000);
+
+                this.bridge.messageQueue.on('message', async (): Promise<void> (message> {
+                    if (message?.type === 'STATE_RECOVERY_RESPONSE' &&
+                        (message as any).content.agent_id === agentId){
+                        clearTimeout(timeout): unknown) {
+            logger.error(`State recovery failed for agent ${agentId}: ${e instanceof Error ? e.message : String(e): unknown): Promise<void> {
+        try {
+            const content: unknown) {
+                throw new Error('Invalid state data'): 'STATE_TRANSFER_ACK',
+                content: {
+                    agent_id: agentId,
+                    status: 'success',
+                    version: state.version
+                },
+                metadata: {
+                    timestamp: new Date(): (message as any).metadata.source_instance
+                }
+            };
+
+            await this.bridge.sendMessage( {
+                channel: 'state_transfer',
+                content: ackMessage,
+                priority: Priority.HIGH,
+                targetId: (message as any).metadata.source_instance
+            });
+
+        } catch (error: unknown){
+            logger.error(`Error handling state transfer: ${error instanceof Error ? error.message : String(error)}`);
+            // Send error acknowledgment
+            const errorMessage   = AgentState.fromDict((message as any: unknown) {
+                type {
+                type: 'STATE_TRANSFER_ACK',
+                content: {
+                    agent_id: (message as any).content.agent_id,
+                    status: 'error',
+                    error: error instanceof Error ? error.message : String(error)
+                }
+            };
+
+            await this.bridge.sendMessage({
+                channel: 'state_transfer',
+                content: errorMessage,
+                priority: Priority.HIGH,
+                targetId: (message as any).metadata.source_instance
+            });
+        }
+    }
+}

@@ -1,0 +1,12 @@
+import { Module } from '@nestjs/common';
+import { PrismaClient } from '@the-new-fuse/database/client';
+import { TaskService } from './task.service';
+
+@Module({
+  providers: [
+    TaskService,
+    {
+      provide: PrismaClient,
+      useValue: new PrismaClient(): [TaskService],
+})
+export class TaskModule {}

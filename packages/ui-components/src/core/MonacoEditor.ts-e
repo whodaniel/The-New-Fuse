@@ -1,0 +1,148 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = require("react");
+const react_2 = require("@monaco-editor/react");
+const lodash_1 = require("lodash");
+const MonacoEditor = ({ value, onChange, onEvent, language = 'typescript', height = '200px', options = {}, onError, onSave, readOnly = false, suggestions = [], typeDefinitions = [], }) => {
+    const editorRef = (0, react_1.useRef)(null);
+    const monaco = (0, react_2.useMonaco)();
+    const modelRef = (0, react_1.useRef)(null);
+    const stateRef = (0, react_1.useRef)({
+        value,
+        language,
+        markers: [],
+    });
+    (0, react_1.useEffect)(() => {
+        if (monaco && language === 'typescript') {
+            monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+                target: monaco.languages.typescript.ScriptTarget.ES2020,
+                allowNonTsExtensions: true,
+                moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+                module: monaco.languages.typescript.ModuleKind.CommonJS,
+                noEmit: true,
+                esModuleInterop: true,
+                jsx: monaco.languages.typescript.JsxEmit.React,
+                reactNamespace: 'React',
+                allowJs: true,
+                typeRoots: ['node_modules/@types'],
+                strict: true,
+                noImplicitAny: true,
+                strictNullChecks: true,
+                strictFunctionTypes: true,
+                strictBindCallApply: true,
+                strictPropertyInitialization: true,
+                noImplicitThis: true,
+                alwaysStrict: true,
+            });
+            Promise.all([
+                fetch('https://unpkg.com/@types/react@latest/index.d.ts').then(r => r.text()),
+                fetch('https://unpkg.com/@types/node@latest/index.d.ts').then(r => r.text()),
+                ...typeDefinitions.map(async ({ path, content }) => (): Promise<void> ({
+                    path,
+                    content: content || await fetch(path).then(r => r.text()),
+                })),
+            ]).then(([reactTypes, nodeTypes, ...customTypes]) => {
+                monaco.languages.typescript.typescriptDefaults.addExtraLib(reactTypes, 'file:///node_modules/@types/react/index.d.ts');
+                monaco.languages.typescript.typescriptDefaults.addExtraLib(nodeTypes, 'file:///node_modules/@types/node/index.d.ts');
+                customTypes.forEach(({ path, content }) => {
+                    monaco.languages.typescript.typescriptDefaults.addExtraLib(content, path);
+                });
+            });
+        }
+    }, [monaco, language, typeDefinitions]);
+    (0, react_1.useEffect)(() => {
+        if (!monaco || language !== 'typescript')
+            return;
+        const disposable = monaco.languages.registerCompletionItemProvider('typescript', {
+            provideCompletionItems: (model, position) => {
+                const word = model.getWordUntilPosition(position);
+                const range = {
+                    startLineNumber: position.lineNumber,
+                    endLineNumber: position.lineNumber,
+                    startColumn: word.startColumn,
+                    endColumn: word.endColumn,
+                };
+                return {
+                    suggestions: suggestions.map(suggestion => (Object.assign(Object.assign({}, suggestion), { range, kind: suggestion.kind || monaco.languages.CompletionItemKind.Snippet, insertTextRules: monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet }))),
+                };
+            },
+        });
+        return () => disposable.dispose();
+    }, [monaco, language, suggestions]);
+    const validateCode = (0, react_1.useCallback)(async (): Promise<void> (code) => {
+        if (!monaco || !modelRef.current) {
+            return { success: true, diagnostics: [] };
+        }
+        const markers = monaco.editor.getModelMarkers({
+            resource: modelRef.current.uri,
+        });
+        const errors = markers.filter(m => m.severity === monaco.MarkerSeverity.Error);
+        const warnings = markers.filter(m => m.severity === monaco.MarkerSeverity.Warning);
+        if (errors.length > 0 && onError) {
+            const error = {
+                name: 'CompilationError',
+                message: errors[0].message,
+                type: 'compilation',
+                severity: 'error',
+                line: errors[0].startLineNumber,
+                column: errors[0].startColumn,
+                source: code,
+            };
+            onError(error);
+        }
+        return {
+            success: errors.length === 0,
+            diagnostics: markers,
+            error: errors.length > 0 ? errors[0].message : undefined,
+        };
+    }, [monaco, onError]);
+    const debouncedValidation = (0, react_1.useCallback)((0, lodash_1.debounce)((code) => validateCode(code), 500), [validateCode]);
+    const handleEditorDidMount = (editor, monaco) => {
+        editorRef.current = editor;
+        modelRef.current = editor.getModel();
+        stateRef.current = Object.assign(Object.assign({}, stateRef.current), { model: editor.getModel() || undefined, viewState: editor.saveViewState() || undefined });
+        editor.updateOptions(Object.assign(Object.assign({}, options), { readOnly, quickSuggestions: { other: true, comments: true, strings: true }, suggestOnTriggerCharacters: true, parameterHints: { enabled: true }, formatOnPaste: true, formatOnType: true, autoClosingBrackets: 'always', autoClosingQuotes: 'always', autoIndent: 'full', renderWhitespace: 'selection', matchBrackets: 'always', minimap: { enabled: false }, scrollBeyondLastLine: false, fontSize: 12, lineNumbers: 'on', folding: true, foldingStrategy: 'indentation', showFoldingControls: 'always', links: true, contextmenu: true }));
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () => {
+            onSave === null || onSave === void 0 ? void 0 : onSave();
+            onEvent === null || onEvent === void 0 ? void 0 : onEvent({
+                type: 'save',
+                nodeId: 'editor',
+                timestamp: new Date(),
+                data: { content: editor.getValue() },
+            });
+        });
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyF, () => {
+            editor.getAction('actions.find').run();
+        });
+        editor.addCommand(monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF, () => {
+            editor.getAction('editor.action.formatDocument').run();
+            onEvent === null || onEvent === void 0 ? void 0 : onEvent({
+                type: 'format',
+                nodeId: 'editor',
+                timestamp: new Date(),
+            });
+        });
+        validateCode(editor.getValue());
+    };
+    const handleEditorChange = (value, event) => {
+        if (value !== undefined) {
+            onChange(value, event);
+            debouncedValidation(value);
+            onEvent === null || onEvent === void 0 ? void 0 : onEvent({
+                type: 'change',
+                nodeId: 'editor',
+                timestamp: new Date(),
+                data: { content: value, event },
+            });
+        }
+    };
+    return (<div className="relative">
+      <react_2.default height={height} defaultLanguage={language} value={value} onChange={handleEditorChange} onMount={handleEditorDidMount} theme="vs-dark" options={options} loading={<div className="text-sm text-gray-500">Loading editor...</div>}/>
+      <div className="absolute bottom-2 right-2 text-xs text-gray-400">
+        Press Ctrl+S to save, Ctrl+F to find, Shift+Alt+F to format
+      </div>
+    </div>);
+};
+exports.default = MonacoEditor;
+export {};
+//# sourceMappingURL=MonacoEditor.js.map

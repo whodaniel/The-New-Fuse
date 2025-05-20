@@ -1,0 +1,66 @@
+{
+    "chat.agent.enabled": true,
+    "chat.agent.autoFix": true,
+    "jest.jestCommandLine": "yarn jest --no-watchman",
+    "jest.autoRun": {
+        "watch": true,
+        "onSave": "test-src-file"
+    },
+    "jest.showCoverageOnLoad": false,
+    "jest.debugMode": true,
+    "jest.outputConfig": {
+        "revealOn": "run",
+        "revealWithFocus": "none",
+        "clearOnRun": "none"
+    },
+    "jest.runMode": {
+        "type": "watch"
+    },
+    "jest.monitorWorkspaceRootForPackageJsonChanges": true,
+    "jest.disabledWorkspaceFolders": [],
+    "jest.testExplorer": {
+        "enabled": true,
+        "showInlineError": true
+    },
+    "sqltools.connections": [
+        {
+            "name": "fuse",
+            "driver": "PostgreSQL",
+            "server": "localhost",
+            "port": 5432,
+            "database": "fuse",
+            "username": "postgres",
+            "password": "postgres",
+            "connectionTimeout": 30,
+            "ssl": {
+                "rejectUnauthorized": false
+            },
+            "poolSize": 10
+        }
+    ],
+    "theFuse.aiCoder.port": 3712,
+    "theFuse.aiCoder.rooPort": 3712,
+    "thefuse.chromeWebSocketPort": 3712,
+    
+    // AI assistant configuration (April 2025 updates)
+    "chat.instructionsFilesLocations": [
+        ".vscode"
+    ],
+    "chat.promptFilesLocations": [
+        ".vscode/prompts"
+    ],
+    "inlineChat.enableV2": true,
+    "inlineChat.hideOnRequest": true,
+    "github.copilot.nextEditSuggestions.enabled": true,
+    "github.copilot.nextEditSuggestions.fixes": true,
+    "github.copilot.chat.search.keywordSuggestions": true,
+    "typescript.experimental.expandableHover": true,
+    
+    // Accessibility improvements
+    "accessibility.signals.nextEditSuggestion": "auto",
+    "accessibility.signals.diffLineAdded": "auto",
+    
+    // Enable sending UI elements to chat
+    "chat.sendElementsToChat.enabled": true,
+    "chat.sendElementsToChat.attachCSS": true
+}

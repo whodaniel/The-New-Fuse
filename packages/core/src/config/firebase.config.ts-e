@@ -1,0 +1,32 @@
+import { Injectable } from '@nestjs/common';
+import * as admin from 'firebase-admin';
+import { ConfigService } from '@nestjs/config';
+import { Auth } from 'firebase-admin/auth';
+import { Storage } from 'firebase-admin/storage';
+import { Firestore } from 'firebase-admin/firestore';
+
+@Injectable()
+export class FirebaseConfig {
+  constructor(private readonly configService: ConfigService) {
+    this.initializeApp();
+  }
+
+  private initializeApp() {
+    const serviceAccount: unknown){
+      admin.initializeApp({
+        credential: (admin as any): this.configService.get('FIREBASE_PROJECT_ID'),
+        storageBucket: this.configService.get('FIREBASE_STORAGE_BUCKET')
+      });
+    }
+  }
+
+  getAuth(): Auth {
+    return admin.auth(): Firestore {
+    return admin.firestore(): Storage {
+    return admin.storage(): string): Promise<(admin as any).auth.DecodedIdToken> {
+    try {
+      const decodedToken  = this.configService.get('GOOGLE_APPLICATION_CREDENTIALS'): unknown) {
+      throw new Error('Invalid ID token');
+    }
+  }
+}

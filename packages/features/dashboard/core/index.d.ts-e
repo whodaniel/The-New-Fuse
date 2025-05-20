@@ -1,0 +1,20 @@
+import { DashboardState } from '../collaboration/types';
+import { VoiceEngine } from '../ai/VoiceEngine';
+import { GestureEngine } from '../ai/GestureEngine';
+import { XREngine } from '../ai/XREngine';
+export interface CoreFeatures {
+    voice: VoiceEngine;
+    gesture: GestureEngine;
+    xr: XREngine;
+}
+export declare class DashboardCore {
+    private state;
+    private features;
+    constructor();
+    initialize(): Promise<void>;
+    getState(): DashboardState;
+    getFeatures(): CoreFeatures;
+    updateState(newState: Partial<DashboardState>): Promise<void>;
+    toggleFeature(featureName: keyof CoreFeatures): Promise<void>;
+    cleanup(): Promise<void>;
+}

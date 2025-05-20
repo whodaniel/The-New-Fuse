@@ -1,0 +1,17 @@
+import OpenAI from 'openai';
+interface DeepSeekConfig {
+    model?: string;
+}
+declare const DeepSeekProvider_base: unknown;
+declare class DeepSeekProvider extends DeepSeekProvider_base {
+    model: string;
+    private _client;
+    verbose: boolean;
+    maxTokens: number;
+    constructor(config?: DeepSeekConfig);
+    get client(): OpenAI;
+    private handleFunctionCallChat;
+    generateResponse(prompt: string): Promise<string>;
+    streamResponse(prompt: string): AsyncGenerator<string, void, unknown>;
+}
+export default DeepSeekProvider;

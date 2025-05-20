@@ -1,0 +1,25 @@
+import { Node, Edge } from 'reactflow';
+import { NodeStatus } from '../runtime/types';
+export interface WorkflowMetadata {
+    id: string;
+    name: string;
+    description?: string;
+    version: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface WorkflowData {
+    nodes: Node[];
+    edges: Edge[];
+}
+export interface WorkflowRun {
+    id: string;
+    workflowId: string;
+    status: 'pending' | 'running' | 'completed' | 'failed';
+    startTime: Date;
+    endTime?: Date;
+    nodeStatuses: Record<string, NodeStatus>;
+    nodeOutputs: Record<string, any>;
+    errors: Record<string, string>;
+}
+export declare const SCHEMA_SQL = "\n-- Workflows table\nCREATE TABLE IF NOT EXISTS workflows (\n  id TEXT PRIMARY KEY,\n  name TEXT NOT NULL,\n  description TEXT,\n  version INTEGER NOT NULL,\n  data TEXT NOT NULL,\n  created_at DATETIME NOT NULL,\n  updated_at DATETIME NOT NULL\n);\n\n-- Workflow runs table\nCREATE TABLE IF NOT EXISTS workflow_runs (\n  id TEXT PRIMARY KEY,\n  workflow_id TEXT NOT NULL,\n  status TEXT NOT NULL,\n  start_time DATETIME NOT NULL,\n  end_time DATETIME,\n  node_statuses TEXT NOT NULL,\n  node_outputs TEXT,\n  errors TEXT,\n  FOREIGN KEY (workflow_id) REFERENCES workflows (id)\n);\n\n-- Workflow variables table\nCREATE TABLE IF NOT EXISTS workflow_variables (\n  workflow_id TEXT NOT NULL,\n  name TEXT NOT NULL,\n  value TEXT NOT NULL,\n  created_at DATETIME NOT NULL,\n  PRIMARY KEY (workflow_id, name),\n  FOREIGN KEY (workflow_id) REFERENCES workflows (id)\n);\n\n-- Create indexes\nCREATE INDEX IF NOT EXISTS idx_workflow_runs_workflow_id ON workflow_runs (workflow_id);\nCREATE INDEX IF NOT EXISTS idx_workflow_runs_status ON workflow_runs (status);\nCREATE INDEX IF NOT EXISTS idx_workflows_name ON workflows (name);\n";

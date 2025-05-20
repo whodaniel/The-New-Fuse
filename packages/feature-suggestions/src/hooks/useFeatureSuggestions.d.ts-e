@@ -1,0 +1,16 @@
+import { FeatureSuggestion, SuggestionPriority } from '../types';
+interface UseFeatureSuggestionsProps {
+    suggestionService: unknown;
+}
+export declare const useFeatureSuggestions: ({ suggestionService }: UseFeatureSuggestionsProps) => {
+    suggestions: FeatureSuggestion[];
+    loading: boolean;
+    error: Error | null;
+    submitSuggestion: (title: string, description: string, submittedBy: string, priority: SuggestionPriority, tags?: string[]) => Promise<any>;
+    voteSuggestion: (suggestionId: string, userId: string) => Promise<void>;
+    convertToFeature: (suggestionId: string) => Promise<any>;
+    addTodo: (title: string, description: string, priority: SuggestionPriority, suggestionId: string, assignedTo?: string, dueDate?: Date) => Promise<any>;
+    addComment: (suggestionId: string, content: string, authorId: string) => Promise<any>;
+    refresh: () => Promise<void>;
+};
+export {};

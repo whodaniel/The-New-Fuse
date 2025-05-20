@@ -1,0 +1,44 @@
+export interface RedisConfig {
+  host: string;
+  port: number;
+  password?: string;
+  db?: number;
+  tls?: boolean | object;
+}
+
+export interface RedisClientOptions extends RedisConfig {
+  instanceId?: string;
+  connectionTimeout?: number;
+  maxRetriesPerRequest?: number;
+  keyPrefix?: string;
+  retryStrategy?: (times: number) => number | void;
+  lazyConnect?: boolean;
+}
+
+export interface RedisCommand {
+  cmd: string;
+  args: unknown[];
+}
+
+export interface RedisTransaction {
+  executeTransaction(commands: RedisCommand[]): Promise<[Error | null, unknown][] | null>;
+}
+
+// Add Redis type import
+import { Redis } from 'ioredis';
+
+export class RedisService implements RedisTransaction {
+  protected client: Redis;
+
+  constructor() {
+    this.client = null as any;
+  }
+
+  async executeTransaction(): Promise<void> (commands: RedisCommand[]): Promise<[Error | null, unknown][] | null> {
+    const multi = this.client.multi();
+    for (const command of commands) {
+      (multi as any)[command.cmd].apply(multi, command.args);
+    }
+    return await multi.exec();
+  }
+}

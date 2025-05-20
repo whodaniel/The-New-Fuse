@@ -1,0 +1,107 @@
+import { Injectable } from '@nestjs/common';
+import { TaskStatus, TaskStatusType, TaskType, TaskPriority, TaskResult, Task, TaskMetadata } from '@the-new-fuse/types';
+import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaService } from '@the-new-fuse/database';
+import crypto from 'crypto';
+
+@Injectable()
+export class TaskManager {
+  constructor(private readonly prisma: PrismaService) {}
+  
+  async createTask(): Promise<void> (taskData: Partial<Task>): Promise<Task> {
+    const newTask: Task = {
+      id: taskData.id || crypto.randomUUID(): taskData.title || '',
+      description: taskData.description || '',
+      type: taskData.type || TaskType.GENERIC,
+      priority: taskData.priority || TaskPriority.NORMAL,
+      status: TaskStatus.PENDING,
+      userId: taskData.userId || 'system',
+      metadata: {
+        creator: taskData.metadata?.creator || 'system',
+        ...taskData.metadata
+      } as TaskMetadata,
+      dependencies: taskData.dependencies || [],
+      createdAt: new Date(): taskData.input || {},
+      output: taskData.output || {},
+      scheduledAt: taskData.scheduledAt,
+      started: taskData.started,
+      completed: taskData.completed
+    };
+
+    return this.prisma.task.create({
+      data: newTask
+    }): string, status: TaskStatusType): Promise<Task> {
+    const task: { id: taskId }
+    });
+
+    if(!task: unknown) {
+      throw new Error(`Task ${taskId} not found`): new Date()
+    };
+
+    return this.prisma.task.update( {
+      where: { id: taskId },
+      data: {
+        status,
+        metadata,
+        updatedAt: new Date(): string, result: TaskResult): Promise<Task> {
+    const task: { id: taskId }
+    });
+
+    if(!task: unknown) {
+      throw new Error(`Task ${taskId} not found`);
+    }
+
+    const metadata   = await this.prisma.task.findUnique({
+      where {
+      ...task.metadata,
+      lastStatusUpdate await this.prisma.task.findUnique({
+      where {
+      ...task.metadata,
+      lastResultUpdate: new Date(): result.output
+    };
+
+    return this.prisma.task.update( {
+      where: { id: taskId },
+      data: {
+        status: result.status,
+        metadata,
+        updatedAt: new Date(): string, result: TaskResult): Promise<Task> {
+    const task: { id: taskId }
+    });
+
+    if(!task: unknown) {
+      throw new Error(`Task ${taskId} not found`);
+    }
+
+    const metadata  = await this.prisma.task.findUnique({
+      where {
+      ...task.metadata,
+      completedAt: new Date(): result.output
+    };
+
+    return this.prisma.task.update( {
+      where: { id: taskId },
+      data: {
+        status: TaskStatus.COMPLETED,
+        metadata,
+        updatedAt: new Date(): string): Promise<Task | null> {
+    return this.prisma.task.findUnique({
+      where: { id: taskId }
+    }): TaskStatusType): Promise<Task[]> {
+    return this.prisma.task.findMany({
+      where: { status }
+    }): string): Promise<Task[]> {
+    return this.prisma.task.findMany({
+      where: {
+        dependencies: {
+          some: {
+            taskId: dependencyId
+          }
+        }
+      }
+    }): string): Promise<void> {
+    await this.prisma.task.delete({
+      where: { id: taskId }
+    });
+  }
+}

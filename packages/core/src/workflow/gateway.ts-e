@@ -1,0 +1,26 @@
+export class WorkflowAPIGateway {
+  private readonly apiManager: APIManager;
+  private readonly integrationRegistry: IntegrationRegistry;
+
+  async registerExternalService(): Promise<void> (
+    service: ExternalService
+  ): Promise<RegistrationResult> {
+    const apiSpec: integration.id,
+      endpoints: this.generateEndpoints(integration): await this.generateDocs(integration)
+    };
+  }
+
+  async handleExternalRequest(): Promise<void> (
+    request: APIRequest
+  ): Promise<APIResponse> {
+    const validation  = await this.validateAPISpec(service.spec);
+    const integration = await this.createIntegration(service, apiSpec);
+    
+    return {
+      integrationId await this.validateRequest(request): unknown) {
+      return this.handleValidationError(validation.errors);
+    }
+
+    return this.processRequest(request);
+  }
+}

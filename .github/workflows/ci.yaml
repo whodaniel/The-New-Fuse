@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: yarn install
+        
+    - name: Run tests
+      run: yarn test
+        
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Build Docker image
+      run: |
+        docker build -t ${{ secrets.DOCKER_REGISTRY }}/the-new-fuse:pr-${{ github.event.pull_request.number }} .
+        
+    - name: Login to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+        
+    - name: Push Docker image
+      run: |
+        docker push ${{ secrets.DOCKER_REGISTRY }}/the-new-fuse:pr-${{ github.event.pull_request.number }}
+        
+  deploy-staging:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Configure kubectl
+      uses: azure/k8s-set-context@v1
+      with:
+        kubeconfig: ${{ secrets.KUBE_CONFIG }}
+        
+    - name: Deploy to staging
+      run: |
+        kubectl apply -f k8s/staging/
+        kubectl set image deployment/the-new-fuse-staging \
+          the-new-fuse=${{ secrets.DOCKER_REGISTRY }}/the-new-fuse:pr-${{ github.event.pull_request.number }}
+        
+  notify:
+    needs: [deploy-staging]
+    runs-on: ubuntu-latest
+    if: always()
+    
+    steps:
+    - name: Notify Slack
+      uses: slackapi/slack-github-action@v1.24.0
+      with:
+        webhook-url: ${{ secrets.SLACK_WEBHOOK_URL }}
+        channel-id: 'pr-deployments'
+        slack-message: "PR #${{ github.event.pull_request.number }} deployment to staging ${{ job.status == 'success' && 'succeeded! 🎉' || 'failed! 🚨' }}"

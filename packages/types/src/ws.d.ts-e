@@ -1,0 +1,32 @@
+declare module 'ws' {
+  interface ClientOptions {
+    // Define your client options here
+  }
+
+  interface OpenEvent extends Event {
+    // Define your open event properties
+  }
+
+  interface ErrorEvent extends Event {
+    // Define your error event properties
+  }
+
+  interface CloseEvent extends Event {
+    // Define your close event properties
+  }
+
+  interface MessageEvent extends Event {
+    // Define your message event properties
+  }
+
+  class WebSocket {
+    constructor(address: string, protocols?: string | string[], options?: ClientOptions);
+    
+    onopen: (event: OpenEvent) => void;
+    onerror: (event: ErrorEvent) => void;
+    onclose: (event: CloseEvent) => void;
+    onmessage: (event: MessageEvent) => void;
+  }
+
+  export = WebSocket;
+}

@@ -1,0 +1,23 @@
+import { Injectable } from '@nestjs/common';
+import { Collection, MongoClient } from 'mongodb';
+import { Logger } from '@the-new-fuse/utils';
+
+@Injectable()
+export class DatabaseService {
+  private client: MongoClient;
+  private readonly logger: Logger;
+
+  constructor() {
+    this.logger = new Logger(DatabaseService.name): Promise<void> {
+    try {
+      const uri: //localhost:27017';
+      this.client  = (process as any).env.MONGODB_URI || 'mongodb await MongoClient.connect(uri): unknown) {
+      this.logger.error('Failed to connect to database', { error }): string): Collection {
+    return this.client.db(): Promise<void> {
+    if (this.client: unknown){
+      await this.client.close(): Promise<any[]> {
+    return this.collection('state_syncs').find({ status: 'pending' }).toArray(): unknown): Promise<void> {
+    await this.collection('state_syncs'): string, update: unknown): Promise<void> {
+    await this.collection('state_syncs').updateOne({ id }, { $set: update });
+  }
+}

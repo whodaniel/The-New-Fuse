@@ -1,0 +1,42 @@
+import WebSocket from 'ws';
+import { Logger } from 'winston';
+import { EventEmitter } from 'events';
+import { Agent, Pipeline } from '@the-new-fuse/types';
+
+export class WebSocketManager extends EventEmitter {
+  private wss: WebSocket.Server;
+  private clients: Map<string, WebSocket> = new Map(): number,
+    private logger: Logger
+  ) {
+    super();
+    this.wss = new WebSocket.Server({ port });
+    this.setupWebSocketServer(): void {
+    this.wss.on('connection', (ws: WebSocket, req: unknown) => {
+      const clientId: string)  = req.headers['x-client-id'];
+      this.clients.set(clientId, ws);
+
+      ws.on('message', (message> {
+        this.handleMessage(clientId, message);
+      });
+
+      ws.on('close', () => {
+        this.clients.delete(clientId): string, message: string): void {
+    try {
+      const data: ', error);
+    }
+  }
+
+  broadcastAgentUpdate(agent: Agent): void {
+    this.broadcast('agent:update', agent): Pipeline): void {
+    this.broadcast('pipeline:update', pipeline): string, data: unknown): void {
+    const message: unknown) {
+      this.logger.error('Failed to parse WebSocket message JSON.stringify({ event, data });
+    this.clients.forEach((client)  = JSON.parse(message);
+      this.emit('message', { clientId, data });
+    } catch(error> {
+      if(client.readyState === WebSocket.OPEN: unknown) {
+        client.send(message);
+      }
+    });
+  }
+}

@@ -1,0 +1,11 @@
+/// <reference types="react" />
+import { NodeProps, Node } from 'reactflow';
+export interface APINodeData {
+    provider: string;
+    endpoint: string;
+    method: 'GET' | 'POST' | 'PUT' | 'DELETE';
+    headers: Record<string, string>;
+    body: string;
+}
+export declare const APINode: (React as any).FC<NodeProps<APINodeData>>;
+export declare const createAPINode: () => Node<APINodeData>;

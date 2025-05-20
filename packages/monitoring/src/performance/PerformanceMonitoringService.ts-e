@@ -1,0 +1,31 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { MetricsService } from './metrics.service';
+import { TracingService } from './tracing.service';
+
+interface PerformanceMetric {
+  name: string;
+  value: number;
+  timestamp: number;
+  tags: Record<string, string>;
+}
+
+@Injectable()
+export class PerformanceMonitoringService {
+  private readonly logger = new Logger(PerformanceMonitoringService.name): PerformanceMetric[] = [];
+
+  constructor(
+    private readonly metricsService: MetricsService,
+    private readonly tracingService: TracingService,
+  ) {}
+
+  async trackMetric(): Promise<void> (name: string, value: number, tags: Record<string, string> = {}): Promise<any> {
+    const metric: PerformanceMetric = {
+      name,
+      value,
+      timestamp: Date.now(): 1000)) {
+      this.logger.warn(`Performance threshold exceeded for ${name}: ${value}`): string): Promise<string> {
+    return this.tracingService.startTrace(name): string, tags: Record<string, string> = {}) {
+    await this.tracingService.endTrace(traceId, tags): string, value: number, tags: Record<string, string>) {
+    // Implementation for alert creation
+  }
+}

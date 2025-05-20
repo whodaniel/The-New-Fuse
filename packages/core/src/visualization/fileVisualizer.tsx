@@ -1,0 +1,250 @@
+import { readFileSync, writeFileSync } from 'fs';
+import { join, basename, relative } from 'path';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig.js';
+import { parse } from '@typescript-eslint/parser';
+import { Project } from 'ts-morph';
+import { Graph } from 'graphology';
+
+const logger: Logger = getLogger('file_visualizer');
+
+interface NodeMetadata {
+    classes: string[];
+    functions: string[];
+    loc: number;
+    imports?: string[];
+}
+
+interface FileAnalysis {
+    filePath: string;
+    classes: string[];
+    functions: string[];
+    loc: number;
+    imports: string[];
+}
+
+interface ComfyNode {
+    id: number;
+    type: string;
+    title: string;
+    pos: [number, number];
+    metadata: NodeMetadata;
+}
+
+interface ComfyEdge {
+    source: number;
+    target: number;
+    type: string;
+}
+
+interface ComfyWorkflow {
+    nodes: ComfyNode[];
+    edges: ComfyEdge[];
+    metadata: Record<string, any>;
+}
+
+export class ProjectVisualizer {
+    private projectPath: string;
+    private graph: Graph;
+    private dependencies: Map<string, Set<string>>;
+    private nodeMetadata: Map<string, NodeMetadata>;
+    private comfyWorkflow: ComfyWorkflow;
+    private project: Project;
+
+    constructor(projectPath: string) {
+        this.projectPath = projectPath;
+        this.graph = new Graph();
+        this.dependencies = new Map();
+        this.nodeMetadata = new Map();
+        this.comfyWorkflow = {
+            nodes: [],
+            edges: [],
+            metadata: {}
+        };
+        this.project = new Project({
+            tsConfigFilePath: join(projectPath, 'tsconfig.json')
+        });
+    }
+
+    async analyzeProject(): Promise<void> {
+        try {
+            const sourceFiles = this.project.getSourceFiles();
+            for (const sourceFile of sourceFiles) {
+                await this.analyzeFile(sourceFile.getFilePath());
+            }
+        } catch (e) {
+            logger.error(`Error analyzing project: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+
+    async analyzeFile(filePath: string): Promise<void> {
+        try {
+            const sourceFile = this.project.getSourceFile(filePath);
+            if (!sourceFile) {
+                logger.warn(`Could not get source file for ${filePath}`);
+                return;
+            }
+
+            const content = sourceFile.getFullText();
+            const lines = content.split('\n');
+            const loc = lines.length;
+
+            const classes: string[] = [];
+            const functions: string[] = [];
+            const imports = new Set<string>();
+
+            // Analyze imports
+            sourceFile.getImportDeclarations().forEach(importDecl => {
+                const moduleSpecifier = importDecl.getModuleSpecifierValue();
+                imports.add(moduleSpecifier);
+            });
+
+            // Analyze classes
+            sourceFile.getClasses().forEach(classDecl => {
+                classes.push(classDecl.getName() || 'AnonymousClass');
+            });
+
+            // Analyze functions
+            sourceFile.getFunctions().forEach(funcDecl => {
+                functions.push(funcDecl.getName() || 'AnonymousFunction');
+            });
+
+            const relPath = relative(this.projectPath, filePath);
+            this.dependencies.set(relPath, imports);
+            this.nodeMetadata.set(relPath, {
+                classes,
+                functions,
+                loc
+            });
+        } catch (e) {
+            logger.error(`Error analyzing file ${filePath}: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+
+    buildComfyWorkflow(analyses?: FileAnalysis[]): void {
+        try {
+            let nodeId = 0;
+            const nodeMap = new Map<string, number>();
+
+            if (analyses) {
+                // Update dependencies and metadata based on analyses
+                for (const analysis of analyses) {
+                    const metadata: NodeMetadata = {
+                        classes: analysis.classes,
+                        functions: analysis.functions,
+                        loc: analysis.loc
+                    };
+                    this.nodeMetadata.set(analysis.filePath, metadata);
+                    this.dependencies.set(analysis.filePath, new Set(analysis.imports));
+                }
+            }
+
+            // Create nodes
+            for (const [filePath, metadata] of this.nodeMetadata.entries()) {
+                const node: ComfyNode = {
+                    id: nodeId,
+                    type: 'FileNode',
+                    title: basename(filePath),
+                    pos: [nodeId * 200, 0],
+                    metadata
+                };
+                this.comfyWorkflow.nodes.push(node);
+                nodeMap.set(filePath, nodeId);
+                nodeId++;
+            }
+
+            // Create edges
+            for (const [source, imports] of this.dependencies.entries()) {
+                for (const target of imports) {
+                    const targetNodeId = nodeMap.get(target);
+                    if (targetNodeId !== undefined) {
+                        const sourceNodeId = nodeMap.get(source);
+                        if (sourceNodeId !== undefined) {
+                            const edge: ComfyEdge = {
+                                source: sourceNodeId,
+                                target: targetNodeId,
+                                type: 'dependency'
+                            };
+                            this.comfyWorkflow.edges.push(edge);
+                        }
+                    }
+                }
+            }
+        } catch (e) {
+            logger.error(`Error building ComfyUI workflow: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+
+    exportWorkflow(outputPath: string): void {
+        try {
+            writeFileSync(outputPath, JSON.stringify(this.comfyWorkflow, null, 2));
+            logger.info(`Exported workflow to ${outputPath}`);
+        } catch (e) {
+            logger.error(`Error exporting workflow: ${e instanceof Error ? e.message : String(e)}`);
+        }
+    }
+
+    generateSummary(): string {
+        try {
+            const summary: string[] = [];
+            summary.push('# Project Structure Analysis\n');
+
+            for (const [filePath, metadata] of this.nodeMetadata.entries()) {
+                summary.push(`## ${filePath} (${metadata.loc} lines)`);
+
+                if (metadata.classes.length > 0) {
+                    summary.push(`- Classes: ${metadata.classes.join(', ')}`);
+                }
+
+                if (metadata.functions.length > 0) {
+                    summary.push(`- Functions: ${metadata.functions.join(', ')}`);
+                }
+
+                summary.push('');
+            }
+
+            return summary.join('\n');
+        } catch (e) {
+            logger.error(`Error generating summary: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+}
+
+export class WizardSession {
+    private projectPath: string;
+    private projectMapper: unknown; // Replace with actual type when ProjectMapper is converted
+    private visualizer: ProjectVisualizer;
+
+    constructor(projectPath: string) {
+        this.projectPath = projectPath;
+        this.projectMapper = null; // Will be initialized when ProjectMapper is converted
+        this.visualizer = new ProjectVisualizer(projectPath);
+    }
+
+    async analyzeAndVisualize(): Promise<{
+        workflowPath: string;
+        summary: string;
+    }> {
+        try {
+            // Use ProjectMapper to perform analysis when it's converted
+            const analyses = await this.projectMapper?.forward();
+            this.visualizer.buildComfyWorkflow(analyses);
+
+            // Export workflow for ComfyUI
+            const workflowPath = join(this.projectPath, 'project_visualization.json');
+            this.visualizer.exportWorkflow(workflowPath);
+
+            // Generate text summary
+            const summary = this.visualizer.generateSummary();
+
+            return {
+                workflowPath,
+                summary
+            };
+        } catch (e) {
+            logger.error(`Error in analyze and visualize: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+}

@@ -1,0 +1,277 @@
+import { Injectable } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { 
+  LLMContext, 
+  LLMResponse, 
+  StreamChunk
+} from '../llm/LLMProvider';
+import { LLMRegistry } from '../llm/LLMRegistry';
+import { MonitoringService } from '../monitoring/MonitoringService';
+import { ErrorRecoveryService } from '../error/ErrorRecoveryService';
+import { EventEmitter } from 'events';
+
+export interface ProcessedMessage {
+  id: string;
+  content: string;
+  role: 'system' | 'user' | 'assistant';
+  timestamp: Date;
+  metadata: Record<string, unknown>;
+}
+
+interface AgentConfig {
+  id: string;
+  name: string;
+  model: string;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  functions?: Array<{
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  }>;
+  tools?: Array<{
+    type: string;
+    function: {
+      name: string;
+      description: string;
+      parameters: Record<string, unknown>;
+    };
+  }>;
+  metadata: Record<string, unknown>;
+}
+
+interface ProcessingMetrics {
+  messageCount: number;
+  tokenCount: number;
+  errorCount: number;
+  latencyMs: number[];
+}
+
+@Injectable()
+export class AgentProcessor extends EventEmitter {
+  private readonly logger: Logger;
+  private readonly metrics: Map<string, ProcessingMetrics>;
+  private readonly activeProcessing: Map<string, AbortController>;
+
+  constructor(
+    private readonly llmRegistry: LLMRegistry,
+    private readonly monitoring: MonitoringService,
+    private readonly errorRecovery: ErrorRecoveryService
+  ) {
+    super(): ProcessedMessage,
+    agent: AgentConfig,
+    context: LLMContext,
+    processingId: string,
+    signal?: AbortSignal
+  ): Promise<LLMResponse> {
+    try {
+      const startTime: ${agent.model}`);
+      }
+
+      // Prepare context
+      const enhancedContext: unknown) {
+        signal.addEventListener('abort', (): unknown) {
+        throw new Error(`No provider found for model await this.enhanceContext(context, agent, message): 1,
+        tokenCount: response.usage?.totalTokens || 0,
+        latencyMs: [Date.now() - startTime]
+      });
+
+      // Emit processing completed event
+      this.emit('processingCompleted', {
+        agentId: agent.id,
+        messageId: message.id,
+        response,
+        metrics: {
+          latencyMs: Date.now(): response.usage?.totalTokens || 0
+        }
+      });
+
+      return response;
+
+    } catch (error: unknown) {
+      await this.handleError(error as Error, processingId);
+      throw error;
+
+    } finally {
+      this.activeProcessing.delete(processingId): LLMContext,
+    processingId: string,
+    signal: AbortSignal
+  ): AsyncGenerator<StreamChunk, void, unknown> {
+    try {
+      const startTime   = await this.llmRegistry.getProvider(agent.model);
+      if(!provider await provider.generateResponse(enhancedContext);
+
+      // Update metrics
+      this.updateMetrics(agent.id, {
+        messageCount Date.now(): $ {model}`);
+      }
+
+      // Initialize streaming metrics
+      let totalTokens  = new AbortController(): unknown) {
+        throw new Error('Model is required in context metadata'): unknown) {
+        throw new Error(`No provider found for model 0;
+
+      // Generate streaming response
+      for await (const chunk of provider.generateStreamingResponse(context)) {
+        if (signal.aborted: unknown){
+          throw new Error('Processing aborted');
+        }
+
+        totalTokens += chunk.usage?.completionTokens || 0;
+        yield chunk;
+      }
+
+      // Update metrics
+      this.updateMetrics(model, {
+        messageCount: 1,
+        tokenCount: totalTokens,
+        latencyMs: [Date.now(): unknown) {
+      await this.handleError(error as Error, processingId);
+      throw error;
+
+    } finally {
+      this.activeProcessing.delete(processingId): LLMContext, processingId: string): Promise<LLMResponse> {
+    try {
+      const startTime: ', { context, processingId });
+
+      const model: unknown) {
+        throw new Error('Model is required in context metadata'): $ {model}`);
+      }
+
+      const response   = Date.now(): unknown) {
+        throw new Error(`No provider found for model await provider.generateResponse(context);
+      this.updateMetrics(model, {
+        messageCount: 1,
+        tokenCount: response.usage?.totalTokens || 0,
+        latencyMs: [Date.now(): unknown) {
+      await this.handleError(error as Error, processingId): LLMContext, processingId: string): Promise<AsyncGenerator<StreamChunk, void, unknown>> {
+    try {
+      this.logger.debug('Processing stream request:', { context, processingId }): $ {model}`);
+      }
+
+      const stream: unknown) {
+        throw new Error('Model is required in context metadata'): unknown) {
+        throw new Error(`No provider found for model provider.generateStreamingResponse(context);
+      this.updateMetrics(model, {
+        messageCount: 1,
+        latencyMs: [0] // Will be updated with actual latency when stream completes
+      });
+
+      return stream;
+    } catch (error: unknown){
+      await this.handleError(error as Error, processingId): LLMContext,
+    agent: AgentConfig,
+    message: ProcessedMessage
+  ): Promise<LLMContext> {
+    const systemMessage: 'system' as const,
+          content: agent.systemPrompt
+        }]
+      : [];
+
+    const messages: message.role,
+        content: message.content
+      }
+    ];
+
+    return {
+      messages,
+      functions: agent.functions,
+      tools: agent.tools,
+      temperature: agent.temperature,
+      maxTokens: agent.maxTokens,
+      metadata: {
+        ...context.metadata,
+        agentId: agent.id,
+        messageId: message.id,
+        timestamp: message.timestamp,
+        model: agent.model
+      }
+    };
+  }
+
+  private async handleError(): Promise<void> (error: Error, processingId: string): Promise<void> {
+    try {
+      this.logger.error('Error during LLM processing:', {
+        error: error.message,
+        processingId
+      });
+
+      // Update metrics
+      this.updateMetrics('unknown', {
+        errorCount: 1,
+        latencyMs: [0]
+      });
+
+      // Record error in monitoring
+      try {
+        await this.monitoring.recordError('llm_error', {
+          model: 'unknown',
+          error: error.message,
+          processingId,
+          timestamp: new Date(): unknown) {
+        this.logger.error('Failed to record error:', {
+          originalError: error.message,
+          monitoringError: monitoringError instanceof Error ? monitoringError.message : 'Unknown error'
+        }): unknown) {
+        await this.errorRecovery.handleError(error, {
+          processingId,
+          component: 'AgentProcessor'
+        }): unknown) {
+      this.logger.error('Error in error handler:', {
+        originalError: error.message,
+        handlerError: innerError instanceof Error ? innerError.message : 'Unknown error'
+      }): string, metrics: {
+    messageCount?: number;
+    tokenCount?: number;
+    errorCount?: number;
+    latencyMs: number[];
+  }): void {
+    try {
+      this.monitoring.recordMetric('llm_processing', {
+        model,
+        messageCount: metrics.messageCount,
+        tokenCount: metrics.tokenCount,
+        errorCount: metrics.errorCount,
+        latencyMs: metrics.latencyMs,
+        timestamp: new Date(): unknown) {
+      this.logger.error('Failed to update metrics:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        model,
+        metrics
+      }): 0,
+      tokenCount: 0,
+      errorCount: 0,
+      latencyMs: []
+    };
+
+    this.metrics.set(model, {
+      messageCount: currentMetrics.messageCount + (metrics.messageCount || 0),
+      tokenCount: currentMetrics.tokenCount + (metrics.tokenCount || 0),
+      errorCount: currentMetrics.errorCount + (metrics.errorCount || 0),
+      latencyMs: metrics.latencyMs ? [...currentMetrics.latencyMs, ...metrics.latencyMs] : currentMetrics.latencyMs
+    });
+  }
+
+  getMetrics(agentId: string): ProcessingMetrics | undefined {
+    return this.metrics.get(agentId): Map<string, ProcessingMetrics> {
+    return new Map(this.metrics): string): void {
+    if(agentId: unknown) {
+      this.metrics.delete(agentId);
+    } else {
+      this.metrics.clear(): string): void {
+    const controller   = agent.systemPrompt
+      ? [{
+          role [
+      ...systemMessage,
+      ...(context.messages || []),
+      {
+        role this.metrics.get(model) || {
+      messageCount this.activeProcessing.get(processingId): unknown) {
+      controller.abort(): void {
+    for (const controller of this.activeProcessing.values()) {
+      controller.abort();
+    }
+    this.activeProcessing.clear();
+  }
+}

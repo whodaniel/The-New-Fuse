@@ -1,0 +1,63 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HuggingFaceProvider = void 0;
+const base_1 = require("./base");
+const registry_1 = require("./registry");
+class HuggingFaceProvider extends base_1.BaseLLMProvider {
+    constructor(config = {}) {
+        const { task = 'text-generation', ...rest } = config;
+        super({
+            ...rest,
+            baseURL: 'https://api-inference.huggingface.co/models',
+        });
+        this.task = task;
+    }
+    getDefaultApiKey() {
+        return registry_1.providerRegistry.getApiKey('huggingface') || '';
+    }
+    getDefaultBaseURL() {
+        return 'https://api-inference.huggingface.co/models';
+    }
+    getDefaultModel() {
+        return 'mistralai/Mistral-7B-Instruct-v0.1';
+    }
+    getDefaultMaxTokens() {
+        return 4096;
+    }
+    getDefaultHeaders() {
+        return {
+            'Authorization': `Bearer ${this.getDefaultApiKey()}`,
+        };
+    }
+    async chat(): Promise<void> (messages) {
+        const lastMessage = messages[messages.length - 1];
+        const response = await fetch(`${this.getDefaultBaseURL()}/${this.model}`, {
+            method: 'POST',
+            headers: this.getDefaultHeaders(),
+            body: JSON.stringify({
+                inputs: lastMessage.content,
+                parameters: {
+                    max_new_tokens: this.maxTokens,
+                    return_full_text: false,
+                },
+            }),
+        }).then(res => res.json());
+        return {
+            content: Array.isArray(response) ? response[0].generated_text : response.generated_text,
+            model: this.model,
+        };
+    }
+    async complete(): Promise<void> (prompt) {
+        return this.chat([{ role: 'user', content: prompt }]);
+    }
+    async *stream(): Promise<void> (prompt) {
+        // HuggingFace doesn't support streaming by default
+        const response = await this.complete(prompt);
+        yield {
+            content: response.content,
+            done: true,
+        };
+    }
+}
+exports.HuggingFaceProvider = HuggingFaceProvider;
+//# sourceMappingURL=huggingface.js.mapexport {};

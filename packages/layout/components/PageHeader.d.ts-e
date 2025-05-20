@@ -1,0 +1,23 @@
+import React from 'react';
+interface PageAction {
+    label: string;
+    icon?: (React as any).ReactNode;
+    variant?: 'primary' | 'secondary' | 'outline';
+    onClick: () => void;
+}
+interface PageHeaderProps {
+    title: string;
+    description?: string;
+    breadcrumbs?: Array<{
+        label: string;
+        path: string;
+    }>;
+    onNavigate?: (path: string) => void;
+    actions?: PageAction[];
+    status?: {
+        type: 'info' | 'success' | 'warning' | 'error';
+        message: string;
+    };
+}
+export declare const PageHeader: (React as any).FC<PageHeaderProps>;
+export {};

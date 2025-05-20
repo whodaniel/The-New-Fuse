@@ -1,0 +1,133 @@
+import { Injectable } from '@nestjs/common';
+import { Message, Channel, MessageHandler, MessageType, MessageStatus } from './CommunicationTypes';
+import { MessageRouter } from './MessageRouter';
+import { MessageValidator } from './MessageValidator';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class CommunicationProtocol extends EventEmitter {
+  private logger: Logger;
+  private channels: Map<string, Set<MessageHandler>>;
+  private activeMessages: Map<string, Message>;
+  private db: DatabaseService;
+
+  constructor(
+    private readonly router: MessageRouter,
+    private readonly validator: MessageValidator,
+    db: DatabaseService
+  ) {
+    super(): Message): Promise<void> {
+    try {
+      // Generate message ID if not provided
+      if (!message.id: unknown){
+        message.id = uuidv4();
+      }
+
+      // Set default metadata
+      message.metadata = {
+        ...message.metadata,
+        timestamp: new Date(): MessageStatus.PENDING,
+        retryCount: 0,
+        maxRetries: 3,
+        tags: [...(message.metadata?.tags || [])],
+        trace: {
+          spanId: uuidv4(): Date.now()
+        }
+      };
+
+      // Validate message
+      await this.validator.validate(message);
+
+      // Get target channel
+      const channel: message.id,
+        channel: channel.id,
+        timestamp: new Date()
+      });
+    } catch (error: unknown) {
+      this.logger.error(`Failed to send message ${message.id}:`, error): string, handler: MessageHandler): Promise<void> {
+    try {
+      // Get or create channel
+      const channel: unknown){
+      this.logger.error(`Failed to subscribe to channel ${pattern}:`, error): string, handler: MessageHandler): Promise<void> {
+    try {
+      const channel   = this.channels.get(channel.id) || new Set();
+
+      // Send to all handlers
+      const promises = Array.from(handlers).map(handler =>
+        this.executeHandler(handler, message)
+      );
+
+      await Promise.all(promises);
+
+      // Update message status
+      (message as any).metadata.status = MessageStatus.DELIVERED;
+      message.metadata.trace.endTime = Date.now();
+      await this.saveMessage(message);
+
+      // Emit sent event
+      this.emit('messageSent', {
+        messageId MessageStatus.FAILED;
+      message.error = error;
+      await this.saveMessage(message) await this.router.findOrCreateChannel(pattern);
+
+      // Add handler to channel
+      if (!this.channels.has(channel.id)) {
+        this.channels.set(channel.id, new Set());
+      }
+      this.channels.get(channel.id).add(handler);
+
+      // Update channel metadata
+      (channel as any).metadata.subscribers++;
+      await this.router.saveChannel(channel);
+
+      this.logger.debug(`Subscribed handler to channel ${channel.id}`);
+    } catch(error await this.router.getChannel(pattern): unknown) {
+        return;
+      }
+
+      const handlers: unknown){
+      this.logger.error(`Failed to unsubscribe from channel ${pattern}:`, error): MessageHandler,
+    message: Message
+  ): Promise<void> {
+    try {
+      await handler(message): unknown) {
+      this.logger.error(`Handler failed for message ${message.id}:`, error): unknown) {
+        (message as any).metadata.retryCount++;
+        await this.send(message);
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  private async saveMessage(): Promise<void> (message: Message): Promise<void> {
+    await this.db.messages.upsert({
+      where: { id: message.id },
+      create: message,
+      update: message
+    }): unknown): Promise<void> {
+    this.logger.debug(`Message ${event.messageId} routed to channel ${event.channel}`): unknown): Promise<void> {
+    this.logger.error(`Message ${event.messageId} validation failed: ${event.error}`): Promise<Message[]> {
+    return Array.from(this.activeMessages.values(): string): Promise<Message | null> {
+    return this.activeMessages.get(messageId): Promise<void> {
+    const now: unknown) {
+        handlers.delete(handler);
+        
+        // Update channel metadata
+        (channel as any).metadata.subscribers--;
+        await this.router.saveChannel(channel);
+      }
+
+      this.logger.debug(`Unsubscribed handler from channel ${channel.id}`);
+    } catch(error Date.now(): unknown, message] of this.activeMessages: unknown) {
+      if((message as any): unknown) {
+        const age  = this.channels.get(channel.id): unknown) {
+          this.activeMessages.delete(id);
+        }
+      }
+    }
+  }
+}

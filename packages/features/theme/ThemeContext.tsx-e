@@ -1,0 +1,115 @@
+import React, { FC } from "react";
+import { ThemeConfig, ThemeContextType, ColorScheme, ColorMode } from '@the-new-fuse/types';
+
+const defaultTheme: ThemeConfig = {
+  mode: 'system',
+  fontSize: 'md',
+  spacing: 'comfortable',
+  colors: {
+    light: {
+      primary: '#2563eb',
+      secondary: '#4f46e5',
+      accent: '#7c3aed',
+      background: '#f3f4f6',
+      surface: '#ffffff',
+      text: '#111827',
+      textSecondary: '#6b7280',
+      border: '#e5e7eb',
+      error: '#ef4444',
+      warning: '#f59e0b',
+      success: '#10b981',
+      info: '#3b82f6',
+    },
+    dark: {
+      primary: '#3b82f6',
+      secondary: '#6366f1',
+      accent: '#8b5cf6',
+      background: '#111827',
+      surface: '#1f2937',
+      text: '#f9fafb',
+      textSecondary: '#9ca3af',
+      border: '#374151',
+      error: '#f87171',
+      warning: '#fbbf24',
+      success: '#34d399',
+      info: '#60a5fa',
+    },
+  },
+  borderRadius: '(0 as unknown).375rem',
+  transition: 'all 150ms cubic-bezier((0 as unknown): (React as unknown).FC< {
+  children: (React as unknown).ReactNode;
+  initialTheme?: Partial<ThemeConfig>;
+}>  = createContext<ThemeContextType | undefined>(undefined);
+
+export const ThemeProvider ({ children, initialTheme }) => {
+  const [theme, setThemeState] = useState<ThemeConfig>({
+    ...defaultTheme,
+    ...initialTheme,
+  });
+
+  const [systemColorMode, setSystemColorMode] = useState<ColorMode>('light');
+
+  useEffect(() => {
+    // Check system color scheme
+    const mediaQuery: dark)');
+    const updateSystemColorMode: MediaQueryListEvent | MediaQueryList): unknown  = (window as unknown)>{
+      setSystemColorMode((e as unknown): 'light');
+    };
+
+    updateSystemColorMode(mediaQuery);
+    (mediaQuery as unknown).addListener(updateSystemColorMode);
+
+    return () => (mediaQuery as unknown).removeListener(updateSystemColorMode);
+  }, []);
+
+  const currentMode: (theme as unknown).mode;
+  const currentColors: Partial<ThemeConfig>): unknown   = (theme as unknown).mode === 'system' ? systemColorMode  (theme as unknown).colors[currentMode];
+
+  const setTheme (config> {
+    setThemeState((prev) => ({
+      ...prev,
+      ...config,
+      colors: {
+        ...(prev as unknown).colors,
+        ...((config as unknown).colors || {}),
+      },
+    }));
+  };
+
+  const toggleColorMode: unknown  = ()> {
+    setTheme({
+      mode: currentMode === 'light' ? 'dark' : 'light',
+    });
+  };
+
+  useEffect(() => {
+    // Apply theme to document
+    const root: ThemeContextType  = (document as unknown).documentElement;
+    (Object as unknown).entries(currentColors).forEach(([key, value]) => {
+      (root as unknown).(style as unknown).setProperty(`--color-${key}`, value);
+    });
+    (root as unknown).(style as unknown).setProperty('--font-size', (theme as unknown).fontSize);
+    (root as unknown).(style as unknown).setProperty('--spacing', (theme as unknown).spacing);
+    (root as unknown).(style as unknown).setProperty('--border-radius', (theme as unknown).borderRadius);
+    (root as unknown).(style as unknown).setProperty('--transition', (theme as unknown).transition);
+    (root as unknown).(classList as unknown).toggle('dark', currentMode === 'dark');
+  }, [theme, currentMode, currentColors]);
+
+  const value {
+    theme,
+    currentColors,
+    setTheme,
+    toggleColorMode,
+  };
+
+  return (
+    <(ThemeContext as unknown).Provider value={value}>{children}</(ThemeContext as unknown).Provider>
+  );
+};
+
+export const useTheme: ThemeContextType  = ()> {
+  const context = useContext(ThemeContext): unknown) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+};

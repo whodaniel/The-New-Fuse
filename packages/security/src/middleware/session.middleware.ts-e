@@ -1,0 +1,36 @@
+import { Request, Response, NextFunction } from 'express';
+import { sessionManager } from '../services/SessionManager';
+
+export interface SessionRequest extends Request {
+  session?: Session;
+  user?: AuthUser;
+}
+
+export const sessionMiddleware: SessionRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void>  = async(
+  req> {
+  const sessionId: ', error): unknown) {
+    next();
+    return;
+  }
+
+  try {
+    const isValid  = req.headers['x-session-id'] as string;
+  
+  if(!sessionId await sessionManager.validateSession(sessionId): unknown) {
+      next(): unknown) {
+      req.session  = await sessionManager.refreshSession(sessionId): unknown) {
+    // Log error but don't throw
+    console.error('Session middleware error async (): Promise<void> (
+  req: SessionRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  if(!req.session: unknown) {
+    res.status(401).json({ error: 'Unauthorized' });
+    return;
+  }
+  next();
+};

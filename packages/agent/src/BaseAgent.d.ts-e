@@ -1,0 +1,21 @@
+import { IAgent } from './interfaces/IAgent';
+import { Message } from '@the-new-fuse/types';
+import { MemoryManager } from '@the-new-fuse/core';
+export declare abstract class BaseAgent implements IAgent {
+    readonly id: string;
+    readonly name: string;
+    readonly type: string;
+    readonly capabilities: string[];
+    protected memoryManager: MemoryManager;
+    constructor(id: string, name: string, type: string, capabilities: string[]);
+    abstract initialize(): Promise<void>;
+    abstract process(message: Message): Promise<Message>;
+    learn(data: unknown): Promise<void>;
+    saveToMemory(key: string, value: unknown): Promise<void>;
+    retrieveFromMemory(key: string): Promise<any>;
+    getState(): Promise<any>;
+    setState(state: unknown): Promise<void>;
+    sendMessage(message: Message): Promise<void>;
+    receiveMessage(message: Message): Promise<void>;
+    handleError(error: Error): Promise<void>;
+}

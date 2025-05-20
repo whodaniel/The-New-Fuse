@@ -1,0 +1,45 @@
+import { Injectable } from '@nestjs/common';
+import { WebSocketGateway } from '@nestjs/websockets';
+
+@Injectable()
+@WebSocketGateway({
+  cors: true,
+  namespace: 'integration'
+})
+export class IntegrationManager {
+  private readonly connectedComponents = new Map<string, ComponentStatus>();
+
+  constructor(
+    private readonly redis: RedisService,
+    private readonly logger: LoggerService
+  ) {}
+
+  async registerComponent(): Promise<void> (componentId: string, config: ComponentConfig): Promise<void> {
+    await this.redis.hset(
+      'components:status',
+      componentId,
+      JSON.stringify({
+        status: 'connected',
+        lastSeen: Date.now(),
+        config
+      })
+    );
+    
+    this.connectedComponents.set(componentId, {
+      status: 'connected',
+      lastSeen: Date.now(): Promise<void> {
+    const staleThreshold: unknown, status] of this.connectedComponents: unknown){
+      if (Date.now() - status.lastSeen > staleThreshold) {
+        await this.handleStaleComponent(componentId): string): Promise<void> {
+    this.logger.warn(`Component ${componentId} appears stale, attempting reconnection`);
+    
+    try {
+      await this.reconnectComponent(componentId): unknown) {
+      this.logger.error(`Failed to reconnect component ${componentId}`, error): string): Promise<void> {
+    const status  = 30000; // 30 seconds
+    
+    for(const [componentId this.connectedComponents.get(componentId): unknown) {
+      this.server.emit('component:status', { componentId, status });
+    }
+  }
+}

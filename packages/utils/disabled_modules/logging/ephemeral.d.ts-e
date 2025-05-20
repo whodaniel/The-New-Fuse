@@ -1,0 +1,99 @@
+/// <reference types="node" />
+import AIbitat from './aibitat';
+import { AgentHandler } from '.';
+import EventEmitter from 'node:events';
+/**
+ * This is an instance and functional Agent handler, but it does not utilize
+ * sessions or websocket's and is instead a singular one-off agent run that does
+ * not persist between invocations
+ */
+declare class EphemeralAgentHandler extends AgentHandler {
+    #private;
+    /** @type {AIbitat|null} */
+    aibitat: AIbitat | null;
+    /** @type {string|null} */
+    channel: string | null;
+    /** @type {string|null} */
+    provider: string | null;
+    /** @type {string|null} the model to use for the agent */
+    model: string | null;
+    /**
+     * @param {{
+     * uuid: string,
+     * workspace: import("@the-new-fuse/database/client").workspaces,
+     * prompt: string,
+     * userId: import("@the-new-fuse/database/client").users["id"]|null,
+     * threadId: import("@the-new-fuse/database/client").workspace_threads["id"]|null,
+     * sessionId: string|null
+     * }} parameters
+     */
+    constructor({ uuid, workspace, prompt, userId, threadId, sessionId, }: {
+        uuid: string;
+        workspace: import('@the-new-fuse/database/client').workspaces;
+        prompt: string;
+        userId?: import('@the-new-fuse/database/client').users['id'] | null;
+        threadId?: import('@the-new-fuse/database/client').workspace_threads['id'] | null;
+        sessionId?: string | null;
+    });
+    log(text: string, ...args: unknown[]): void;
+    closeAlert(): void;
+    init(): Promise<this>;
+    createAIbitat(args?: {
+        handler: unknown;
+    }): Promise<void>;
+    startAgentCluster(): unknown;
+    /**
+     * Determine if the message provided is an agent invocation.
+     * @param {{message:string}} parameters
+     * @returns {boolean}
+     */
+    static isAgentInvocation({ message }: {
+        message: string;
+    }): boolean;
+}
+/**
+ * This is a special EventEmitter specifically used in the Aibitat agent handler
+ * that enables us to use HTTP to relay all .introspect and .send events back to an
+ * http handler instead of websockets, like we do on the frontend. This interface is meant to
+ * mock a websocket interface for the methods used and bind them to an HTTP method so that the developer
+ * API can invoke agent calls.
+ */
+declare class EphemeralEventListener extends EventEmitter {
+    messages: unknown[];
+    constructor();
+    send(jsonData: string): void;
+    close(): void;
+    /**
+     * Compacts all messages in class and returns them in a condensed format.
+     * @returns {{thoughts: string[], textResponse: string}}
+     */
+    packMessages(): {
+        thoughts: string[];
+        textResponse: string;
+    };
+    /**
+     * Waits on the HTTP plugin to emit the 'closed' event from the agentHandler
+     * so that we can compact and return all the messages in the current queue.
+     * @returns {Promise<{thoughts: string[], textResponse: string}>}
+     */
+    waitForClose(): Promise<{
+        thoughts: string[];
+        textResponse: string;
+    }>;
+    /**
+     * Streams the events with `writeResponseChunk` over HTTP chunked encoding
+     * and returns on the close event emission.
+     * ----------
+     * DevNote: Agents do not stream so in here we are simply
+     * emitting the thoughts and text response as soon as we get them.
+     * @param {import("express").Response} response
+     * @param {string} uuid - Unique identifier that is the same across chunks.
+     * @returns {Promise<{thoughts: string[], textResponse: string}>}
+     */
+    streamAgentEvents(response: import('express').Response, uuid: string): Promise<{
+        thoughts: string[];
+        textResponse: string;
+    }>;
+    [(Symbol as any).asyncIterator](): AsyncGenerator<any, void, unknown>;
+}
+export { EphemeralAgentHandler, EphemeralEventListener };

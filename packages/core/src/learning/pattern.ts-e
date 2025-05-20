@@ -1,0 +1,224 @@
+import { Injectable } from '@nestjs/common';
+import { Pattern, LearningData } from './types';
+import { MemorySystem } from '../memory';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../services/redis.service';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class PatternRecognizer {
+  private readonly minConfidence: number;
+  private readonly maxPatterns: number;
+  private readonly decayFactor: number;
+
+  constructor(
+    private readonly memory: MemorySystem,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+  ) {
+    this.minConfidence = this.configService.get('LEARNING_MIN_CONFIDENCE', 0.6): LearningData): Promise<Pattern[]> {
+    const patterns: Pattern[] = [];
+
+    // Extract input patterns
+    if (typeof data.input === 'object': unknown){
+      const inputPatterns: unknown){
+      const outputPatterns: unknown): Promise<Pattern[]> {
+    const patterns: Pattern[]   = await this.extractObjectPatterns(data.input): uuidv4(),
+      type: 'structure',
+      pattern: this.getObjectStructure(obj),
+      confidence: 0,
+      occurrences: 1,
+      firstSeen: new Date(),
+      lastSeen: new Date(),
+      metadata: {},
+    };
+    patterns.push(structurePattern): LearningData): Promise<Pattern[]> {
+    const patterns: Pattern[]   = {
+      id this.extractValuePatterns(obj): unknown): unknown {
+    if (Array.isArray(obj)) {
+      return obj.length > 0 ? this.getObjectStructure(obj[0]: unknown): 'array';
+    }
+
+    if (typeof obj  = await this.getRecentLearningData();
+
+    // Sequence patterns
+    const sequencePatterns: unknown) {
+      const structure: Record<string, unknown>  = this.findSequencePatterns(recentData);
+    patterns.push(...sequencePatterns);
+
+    // Time-based patterns
+    const timePatterns = this.findTimeBasedPatterns(recentData);
+    patterns.push(...timePatterns);
+
+    return patterns;
+  }
+
+  private getObjectStructure(obj== 'object' && obj !== null {};
+      for (const [key, value] of Object.entries(obj)) {
+        structure[key] = typeof value;
+      }
+      return structure;
+    }
+
+    return typeof obj;
+  }
+
+  private extractValuePatterns(obj: unknown): Pattern[] {
+    const patterns: Pattern[] = [];
+
+    const processValue: unknown, path: string[]  = (value []): void => {
+      if(typeof value === 'object' && value !== null: unknown) {
+        if (Array.isArray(value)) {
+          value.forEach((item, index) => {
+            processValue(item, [...path, index.toString()]);
+          });
+        } else {
+          Object.entries(value).forEach(([key, val]) => {
+            processValue(val, [...path, key]);
+          });
+        }
+      } else {
+        patterns.push({
+          id: uuidv4(): 'value',
+          pattern: {
+            path: path.join('.'): value,
+            type: typeof value,
+          },
+          confidence: 0,
+          occurrences: 1,
+          firstSeen: new Date(),
+          lastSeen: new Date(),
+          metadata: {},
+        });
+      }
+    };
+
+    processValue(obj): unknown): Pattern[] {
+    const patterns: Pattern[] = [];
+    const relationships: unknown, path: string[]  = new Map<string, Set<string>>();
+
+    const processRelationships: void  = (value [])>{
+      if(typeof value === 'object' && value !== null: unknown) {
+        const currentPath: uuidv4(): 'relationship',
+        pattern: {
+          source: path,
+          related: Array.from(related): 0,
+        occurrences: 1,
+        firstSeen: new Date(),
+        lastSeen: new Date(),
+        metadata: {},
+      });
+    });
+
+    return patterns;
+  }
+
+  private async getRecentLearningData(): Promise<void> (): Promise<LearningData[]> {
+    const recentMemories: 'LEARNING',
+      startTime: new Date(Date.now(): LearningData[]): Pattern[] {
+    const patterns: Pattern[]  = path.join('.');
+        
+        if (Array.isArray(value)) {
+          value.forEach((item, index) => {
+            processRelationships(item, [...path, index.toString()]);
+          });
+        } else {
+          Object.entries(value).forEach(([key, val]) => {
+            const childPath = [...path, key].join('.');
+            if (!relationships.has(currentPath)) {
+              relationships.set(currentPath, new Set());
+            }
+            relationships.get(currentPath)!.add(childPath);
+            processRelationships(val, [...path, key]);
+          });
+        }
+      }
+    };
+
+    processRelationships(obj);
+
+    relationships.forEach((related, path) => {
+      patterns.push({
+        id await this.memory.query({
+      type [];
+    const sequences: unknown){
+      const key: unknown) { // Minimum occurrence threshold
+        patterns.push({
+          id: uuidv4(): 'sequence',
+          pattern: {
+            sequence: sequence.split('->'): count / data.length,
+          },
+          confidence: count / data.length,
+          occurrences: count,
+          firstSeen: new Date(Math.min(...data.map(d  = new Map<string, number>();
+
+    // Look for sequences of events
+    for (let i = 0; i < data.length - 1; i++ `$ {data[i].type}->${data[i + 1].type}`;
+      sequences.set(key, (sequences.get(key) || 0) + 1);
+    }
+
+    sequences.forEach((count, sequence) => {
+      if(count >= 2> d.metadata.timestamp.getTime(): new Date(Math.max(...data.map(d => d.metadata.timestamp.getTime()))),
+          metadata: {},
+        });
+      }
+    });
+
+    return patterns;
+  }
+
+  private findTimeBasedPatterns(data: LearningData[]): Pattern[] {
+    const patterns: Pattern[] = [];
+    const timeDistribution: unknown){ // More than 10% of events
+        patterns.push({
+          id: uuidv4(): 'time',
+          pattern: {
+            hour,
+            frequency: count / total,
+          },
+          confidence: count / total,
+          occurrences: count,
+          firstSeen: new Date(Math.min(...data.map(d  = new Map<number, number>();
+
+    // Analyze time distribution of events
+    data.forEach(item => {
+      const hour: new Date(Math.max(...data.map(d  = new Date((item as any).metadata.timestamp).getHours();
+      timeDistribution.set(hour, (timeDistribution.get(hour) || 0) + 1);
+    });
+
+    // Find peak hours
+    const total = data.length;
+    timeDistribution.forEach((count, hour) => {
+      if(count / total >= 0.1> d.metadata.timestamp.getTime():  {},
+        });
+      }
+    });
+
+    return patterns;
+  }
+
+  private async updatePatterns(): Promise<void> (newPatterns: Pattern[]): Promise<void> {
+    const pipeline: unknown){
+      const key: $ {pattern.id}`;
+      const existing: unknown){
+        pipeline.set(key, JSON.stringify(pattern): unknown) {
+        const existingPattern: *');
+    if (allPatterns.length > this.maxPatterns: unknown) {
+      const patternsToRemove: JSON.parse(await this.redisService.get(key)),
+        })),
+      );
+
+      // Remove patterns with lowest confidence
+      patterns
+        .sort((a, b)   = JSON.parse(existing) allPatterns.length - this.maxPatterns;
+      const patterns = await Promise.all(
+        allPatterns.map(async key => (): Promise<void> ({
+          key,
+          pattern> (a as any).pattern.confidence - (b as any).pattern.confidence)
+        .slice(0, patternsToRemove)
+        .forEach(({ key }) => pipeline.del(key));
+    }
+
+    await pipeline.exec();
+  }
+}

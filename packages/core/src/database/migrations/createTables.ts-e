@@ -1,0 +1,234 @@
+import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+
+export class CreateTables1635000000000 implements MigrationInterface {
+    public async up(): Promise<void> (queryRunner: QueryRunner): Promise<void> {
+        // Create Users table
+        await queryRunner.createTable(
+            new Table({
+                name: 'users',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'uuid',
+                        isPrimary: true,
+                        default: 'uuid_generate_v4()'
+                    },
+                    {
+                        name: 'username',
+                        type: 'varchar',
+                        length: '50',
+                        isUnique: true
+                    },
+                    {
+                        name: 'email',
+                        type: 'varchar',
+                        length: '255',
+                        isUnique: true
+                    },
+                    {
+                        name: 'password_hash',
+                        type: 'varchar',
+                        length: '255'
+                    },
+                    {
+                        name: 'role',
+                        type: 'varchar',
+                        length: '20',
+                        default: "'user'"
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    }
+                ]
+            }),
+            true
+        );
+
+        // Create Sessions table
+        await queryRunner.createTable(
+            new Table({
+                name: 'sessions',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'uuid',
+                        isPrimary: true,
+                        default: 'uuid_generate_v4()'
+                    },
+                    {
+                        name: 'user_id',
+                        type: 'uuid'
+                    },
+                    {
+                        name: 'token',
+                        type: 'varchar',
+                        length: '255',
+                        isUnique: true
+                    },
+                    {
+                        name: 'expires_at',
+                        type: 'timestamp'
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    }
+                ],
+                foreignKeys: [
+                    {
+                        columnNames: ['user_id'],
+                        referencedTableName: 'users',
+                        referencedColumnNames: ['id'],
+                        onDelete: 'CASCADE'
+                    }
+                ]
+            }),
+            true
+        );
+
+        // Create Tasks table
+        await queryRunner.createTable(
+            new Table({
+                name: 'tasks',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'uuid',
+                        isPrimary: true,
+                        default: 'uuid_generate_v4()'
+                    },
+                    {
+                        name: 'user_id',
+                        type: 'uuid'
+                    },
+                    {
+                        name: 'title',
+                        type: 'varchar',
+                        length: '255'
+                    },
+                    {
+                        name: 'description',
+                        type: 'text',
+                        isNullable: true
+                    },
+                    {
+                        name: 'status',
+                        type: 'varchar',
+                        length: '20',
+                        default: "'pending'"
+                    },
+                    {
+                        name: 'priority',
+                        type: 'integer',
+                        default: 1
+                    },
+                    {
+                        name: 'created_at',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    },
+                    {
+                        name: 'updated_at',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    },
+                    {
+                        name: 'completed_at',
+                        type: 'timestamp',
+                        isNullable: true
+                    }
+                ],
+                foreignKeys: [
+                    {
+                        columnNames: ['user_id'],
+                        referencedTableName: 'users',
+                        referencedColumnNames: ['id'],
+                        onDelete: 'CASCADE'
+                    }
+                ]
+            }),
+            true
+        );
+
+        // Create Metrics table
+        await queryRunner.createTable(
+            new Table({
+                name: 'metrics',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'uuid',
+                        isPrimary: true,
+                        default: 'uuid_generate_v4()'
+                    },
+                    {
+                        name: 'type',
+                        type: 'varchar',
+                        length: '50'
+                    },
+                    {
+                        name: 'data',
+                        type: 'jsonb'
+                    },
+                    {
+                        name: 'timestamp',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    }
+                ]
+            }),
+            true
+        );
+
+        // Create Logs table
+        await queryRunner.createTable(
+            new Table({
+                name: 'logs',
+                columns: [
+                    {
+                        name: 'id',
+                        type: 'uuid',
+                        isPrimary: true,
+                        default: 'uuid_generate_v4()'
+                    },
+                    {
+                        name: 'level',
+                        type: 'varchar',
+                        length: '20'
+                    },
+                    {
+                        name: 'message',
+                        type: 'text'
+                    },
+                    {
+                        name: 'metadata',
+                        type: 'jsonb',
+                        isNullable: true
+                    },
+                    {
+                        name: 'timestamp',
+                        type: 'timestamp',
+                        default: 'CURRENT_TIMESTAMP'
+                    }
+                ]
+            }),
+            true
+        );
+    }
+
+    public async down(): Promise<void> (queryRunner: QueryRunner): Promise<void> {
+        await queryRunner.dropTable('logs');
+        await queryRunner.dropTable('metrics');
+        await queryRunner.dropTable('tasks');
+        await queryRunner.dropTable('sessions');
+        await queryRunner.dropTable('users');
+    }
+}

@@ -1,0 +1,62 @@
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { BaseBridge, MessageType, Priority } from '../bridges';
+import { ContextManager } from '../context/manager';
+import { ErrorRecovery } from '../error/recovery';
+import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics';
+export declare enum AgentState {
+    INITIALIZING = "INITIALIZING",
+    READY = "READY",
+    BUSY = "BUSY",
+    ERROR = "ERROR",
+    TERMINATED = "TERMINATED"
+}
+export declare enum AgentCapability {
+    CODE_GENERATION = "code_generation",
+    CODE_REVIEW = "code_review",
+    ARCHITECTURE_DESIGN = "architecture_design",
+    TESTING = "testing",
+    DOCUMENTATION = "documentation",
+    OPTIMIZATION = "optimization",
+    SECURITY_AUDIT = "security_audit",
+    PROJECT_MANAGEMENT = "project_management"
+}
+export interface AgentConfig {
+    agentId: string;
+    capabilities: Set<AgentCapability>;
+    modelName?: string;
+    maxConcurrentTasks?: number;
+    taskTimeout?: number;
+    retryLimit?: number;
+    memoryLimit?: number;
+}
+export interface Task {
+    taskId: string;
+    status: 'pending' | 'running' | 'completed' | 'failed' | 'timeout';
+    startTime?: number;
+    result?: unknown;
+    error?: string;
+}
+export declare abstract class BaseAgent extends EventEmitter {
+    protected config: AgentConfig;
+    protected bridge?: BaseBridge;
+    protected contextManager: ContextManager;
+    protected metrics: MetricsRegistry;
+    protected monitor: PerformanceMonitor;
+    protected errorRecovery: ErrorRecovery;
+    protected state: AgentState;
+    protected tasks: Map<string, Task>;
+    protected context: Map<string, any>;
+    protected shouldRun: boolean;
+    protected taskProcessor?: Promise<void>;
+    constructor(config: AgentConfig, bridge?: BaseBridge, redisClient?: Redis);
+    abstract initialize(): Promise<boolean>;
+    abstract processMessage(message: Record<string, unknown>): Promise<void>;
+    abstract executeTask(task: Task): Promise<Record<string, unknown>>;
+    start(): Promise<boolean>;
+    stop(): Promise<boolean>;
+    private loadState;
+    private saveState;
+    sendMessage(target: string, messageType: MessageType, content: Record<string, unknown>, priority?: Priority): Promise<boolean>;
+    private processTasks;
+}

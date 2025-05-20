@@ -1,0 +1,72 @@
+import React, { FC } from "react";
+import { Split } from '@the-new-fuse/Split';
+import { ThemeProvider } from '@the-new-fuse/../providers/ThemeProvider';
+import { WorkspaceProvider } from '@the-new-fuse/WorkspaceProvider';
+
+export interface BaseWorkspaceProps {
+  header?: React.ReactNode;
+  sidebar?: React.ReactNode;
+  main: React.ReactNode;
+  sidebarWidth?: string;
+  className?: string;
+  theme?: 'light' | 'dark';
+  onLayoutChange?: (layout: WorkspaceLayout) => void;
+  tools?: WorkspaceTool[];
+}
+
+export interface WorkspaceLayout {
+  sidebarVisible: boolean;
+  sidebarWidth: string;
+  headerVisible: boolean;
+}
+
+export type WorkspaceTool = 
+  | 'chat'
+  | 'canvas'
+  | 'flowchart'
+  | 'codeEditor'
+  | 'whiteboard'
+  | 'documentViewer';
+
+export const BaseWorkspace: FC<BaseWorkspaceProps> = ({
+  header,
+  sidebar,
+  main,
+  sidebarWidth = 'w-1/4',
+  className = '',
+  theme = 'light',
+  onLayoutChange,
+  tools = []
+}) => {
+  return (
+    <ThemeProvider theme={theme}>
+      <WorkspaceProvider tools={tools}>
+        <div className={`workspace ${className} bg-workspace-bg`}>
+          {header && (
+            <div className="workspace-header border-b border-workspace-border">
+              {header}
+            </div>
+          )}
+          <Split
+            onChange={(sizes) => {
+              onLayoutChange?.({
+                sidebarVisible: !!sidebar,
+                sidebarWidth: `w-[${sizes[1]}%]`,
+                headerVisible: !!header
+              });
+            }}
+          >
+            <div className="workspace-main flex-1 bg-workspace-main">
+              {main}
+            </div>
+            {sidebar && (
+              <div className={`workspace-sidebar ${sidebarWidth} bg-workspace-sidebar`}>
+                {sidebar}
+              </div>
+            )}
+          </Split>
+        </div>
+      </WorkspaceProvider>
+    </ThemeProvider>
+  );
+};

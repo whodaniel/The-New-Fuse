@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.NodeStatus = void 0;
+var NodeStatus;
+(function (NodeStatus) {
+    NodeStatus["PENDING"] = "pending";
+    NodeStatus["RUNNING"] = "running";
+    NodeStatus["COMPLETED"] = "completed";
+    NodeStatus["FAILED"] = "failed";
+    NodeStatus["CANCELLED"] = "cancelled";
+})(NodeStatus || (exports.NodeStatus = NodeStatus = {}));
+//# sourceMappingURL=types.js.mapexport {};

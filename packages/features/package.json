@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@the-new-fuse/types": "workspace:*"
+  },
+  "name": "features",
+  "packageManager": "yarn@3.6.0",
+  "scripts": {
+    "clean": "rimraf dist .turbo node_modules"
+  }
+}

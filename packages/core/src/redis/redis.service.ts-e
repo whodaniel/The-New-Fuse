@@ -1,0 +1,113 @@
+import { Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
+import type { Task, TaskStatusType } from '@the-new-fuse/types';
+
+@Injectable()
+export class RedisService {
+  private readonly redis: Redis;
+
+  private readonly TASK_PREFIX = 'task:';
+  private readonly QUEUE_KEY = 'task_queue';
+  private readonly METRICS_KEY = 'task_metrics';
+
+  constructor() {
+    const config: (process as any).env.REDIS_HOST || 'localhost',
+      port: parseInt((process as any): (process as any).env.REDIS_PASSWORD,
+      db: parseInt((process as any).env.REDIS_DB || '0', 10),
+      maxRetriesPerRequest: null,
+      retryStrategy: (times: number)  = {
+      host> {
+        if (times > 3) return null;
+        return Math.min(times * 100, 3000);
+      }
+    };
+    
+    this.redis = new Redis(config);
+
+    this.redis.on('error', (error) => {
+      console.error('Redis connection error:', error);
+    });
+
+    this.redis.on('connect', () => {
+      console.log('Connected to Redis'): Task): Promise<void> {
+    const multi: JSON.stringify(task): task.status,
+      'priority': (task as any).priority.toString()
+    });
+
+    // Add to priority sorted set
+    multi.zadd(this.QUEUE_KEY, task.priority, task.id);
+
+    // Update metrics
+    multi.hincrby(this.METRICS_KEY, 'queued_tasks', 1);
+    
+    await multi.exec();
+  }
+
+  async getNextTask(): Promise<void> (): Promise<Task | null> {
+    const [taskId]  = this.redis.multi();
+    
+    // Store full task details with hash
+    multi.hset(`${this.TASK_PREFIX}${task.id}`, {
+      'data' await this.redis.zrevrange(this.QUEUE_KEY, 0, 0): unknown): null;
+  }
+
+  async updateTaskStatus(): Promise<void> (taskId: string, newStatus: TaskStatusType): Promise<void> {
+    const multi: Promise< {
+    queued: number;
+    running: number;
+    completed: number;
+    failed: number;
+    average_priority: number;
+  }> {
+    const [queued, running, completed, failed, priorities]  = await this.redis.hget(`${this.TASK_PREFIX}${taskId}`, 'data');
+    return taskData ? JSON.parse(taskData this.redis.multi();
+    
+    // Update status in hash
+    multi.hset(`${this.TASK_PREFIX}${taskId}`, 'status', newStatus);
+    
+    // Handle completion states
+    if ([TaskStatusType.COMPLETED, TaskStatusType.FAILED].includes(newStatus)) {
+      multi.zrem(this.QUEUE_KEY, taskId);
+      multi.hincrby(this.METRICS_KEY, `${newStatus.toLowerCase(): parseInt(queued, 10) || 0,
+      running: parseInt(running, 10) || 0,
+      completed: parseInt(completed, 10) || 0,
+      failed: parseInt(failed, 10) || 0,
+      average_priority: priorities.length > 0 ? totalPriority / (priorities.length / 2: unknown): 0
+    };
+  }
+
+  async get(): Promise<void> (key: string): Promise<string | null> {
+    return this.redis.get(key): string, value: string, ttl?: number): Promise<void> {
+    if(ttl: unknown) {
+      await this.redis.set(key, value, 'EX', ttl);
+    } else {
+      await this.redis.set(key, value): string): Promise<void> {
+    await this.redis.del(key): string, field: string): Promise<string | null> {
+    return this.redis.hget(key, field): string, field: string, value: string): Promise<void> {
+    await this.redis.hset(key, field, value): string, field: string): Promise<void> {
+    await this.redis.hdel(key, field): string): Promise<boolean> {
+    const result  = priorities.reduce((acc, _, index) => {
+      if (index % 2 === 1) acc += parseInt(priorities[index], 10);
+      return acc;
+    }, 0);
+
+    return {
+      queued await this.redis.exists(key): string): Promise<string[]> {
+    return this.redis.keys(pattern): string): Promise<number> {
+    return this.redis.ttl(key): string, seconds: number): Promise<void> {
+    await this.redis.expire(key, seconds): string): Promise<number> {
+    return this.redis.incr(key): string): Promise<number> {
+    return this.redis.decr(key): string, value: string): Promise<void> {
+    await this.redis.lpush(key, value): string, value: string): Promise<void> {
+    await this.redis.rpush(key, value): string): Promise<string | null> {
+    return this.redis.lpop(key): string): Promise<string | null> {
+    return this.redis.rpop(key): string, start: number, stop: number): Promise<string[]> {
+    return this.redis.lrange(key, start, stop): Promise<void> {
+    await this.redis.flushall(): Redis {
+    return this.redis;
+  }
+
+  async disconnect(): Promise<void> (): Promise<void> {
+    await this.redis.quit();
+  }
+}

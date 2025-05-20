@@ -1,0 +1,174 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { MetricsProcessor } from '../security/metricsProcessor';
+import { AgentWorkflow, WorkflowTask, WorkflowState } from './types';
+
+const logger: Logger = getLogger('workflow_metrics');
+
+export interface WorkflowMetrics {
+    workflowId: string;
+    startTime: number;
+    endTime?: number;
+    duration?: number;
+    taskMetrics: TaskMetrics[];
+    status: WorkflowState['status'];
+    resourceUtilization: ResourceMetrics;
+    errors?: WorkflowError[];
+}
+
+export interface TaskMetrics {
+    taskId: string;
+    type: TaskType;
+    startTime: number;
+    endTime?: number;
+    duration?: number;
+    attempts: number;
+    status: 'pending' | 'running' | 'completed' | 'failed';
+    resourceUtilization: ResourceMetrics;
+}
+
+export interface ResourceMetrics {
+    memoryUsage: number;
+    cpuUsage: number;
+    gpuUsage?: number;
+    networkIO: {
+        bytesIn: number;
+        bytesOut: number;
+    };
+}
+
+export class WorkflowMetricsCollector {
+    private readonly metricsProcessor: MetricsProcessor;
+    private activeWorkflows: Map<string, WorkflowMetrics>;
+
+    constructor(metricsProcessor: MetricsProcessor) {
+        this.metricsProcessor = metricsProcessor;
+        this.activeWorkflows = new Map();
+    }
+
+    async initializeWorkflowMetrics(): Promise<void> (workflow: AgentWorkflow): Promise<void> {
+        const metrics: WorkflowMetrics = {
+            workflowId: workflow.id,
+            startTime: Date.now(),
+            status: 'pending',
+            taskMetrics: [],
+            resourceUtilization: {
+                memoryUsage: 0,
+                cpuUsage: 0,
+                networkIO: { bytesIn: 0, bytesOut: 0 }
+            }
+        };
+
+        this.activeWorkflows.set(workflow.id, metrics);
+        await this.metricsProcessor.processWorkflowMetrics({
+            type: 'workflow_initialized',
+            workflowId: workflow.id,
+            timestamp: metrics.startTime,
+            metrics
+        });
+    }
+
+    async recordTaskStart(): Promise<void> (workflowId: string, task: WorkflowTask): Promise<void> {
+        const workflowMetrics = this.activeWorkflows.get(workflowId);
+        if (!workflowMetrics) {
+            throw new Error(`No metrics found for workflow ${workflowId}`);
+        }
+
+        const taskMetrics: TaskMetrics = {
+            taskId: task.id,
+            type: task.type,
+            startTime: Date.now(),
+            attempts: 0,
+            status: 'running',
+            resourceUtilization: {
+                memoryUsage: 0,
+                cpuUsage: 0,
+                networkIO: { bytesIn: 0, bytesOut: 0 }
+            }
+        };
+
+        workflowMetrics.taskMetrics.push(taskMetrics);
+        await this.metricsProcessor.processTaskMetrics({
+            type: 'task_started',
+            workflowId,
+            taskId: task.id,
+            timestamp: taskMetrics.startTime,
+            metrics: taskMetrics
+        });
+    }
+
+    async recordTaskCompletion(): Promise<void> (
+        workflowId: string,
+        taskId: string,
+        status: 'completed' | 'failed',
+        resourceMetrics: ResourceMetrics
+    ): Promise<void> {
+        const workflowMetrics = this.activeWorkflows.get(workflowId);
+        if (!workflowMetrics) {
+            throw new Error(`No metrics found for workflow ${workflowId}`);
+        }
+
+        const taskMetrics = workflowMetrics.taskMetrics.find(t => t.taskId === taskId);
+        if (!taskMetrics) {
+            throw new Error(`No metrics found for task ${taskId}`);
+        }
+
+        taskMetrics.endTime = Date.now();
+        taskMetrics.duration = taskMetrics.endTime - taskMetrics.startTime;
+        taskMetrics.status = status;
+        taskMetrics.resourceUtilization = resourceMetrics;
+
+        await this.metricsProcessor.processTaskMetrics({
+            type: 'task_completed',
+            workflowId,
+            taskId,
+            timestamp: taskMetrics.endTime,
+            metrics: taskMetrics
+        });
+
+        this.updateWorkflowResourceMetrics(workflowId);
+    }
+
+    private updateWorkflowResourceMetrics(workflowId: string): void {
+        const metrics = this.activeWorkflows.get(workflowId);
+        if (!metrics) return;
+
+        metrics.resourceUtilization = metrics.taskMetrics.reduce(
+            (acc, task) => ({
+                memoryUsage: acc.memoryUsage + task.resourceUtilization.memoryUsage,
+                cpuUsage: acc.cpuUsage + task.resourceUtilization.cpuUsage,
+                gpuUsage: (acc.gpuUsage || 0) + (task.resourceUtilization.gpuUsage || 0),
+                networkIO: {
+                    bytesIn: acc.networkIO.bytesIn + task.resourceUtilization.networkIO.bytesIn,
+                    bytesOut: acc.networkIO.bytesOut + task.resourceUtilization.networkIO.bytesOut
+                }
+            }),
+            {
+                memoryUsage: 0,
+                cpuUsage: 0,
+                gpuUsage: 0,
+                networkIO: { bytesIn: 0, bytesOut: 0 }
+            }
+        );
+    }
+
+    async finalizeWorkflowMetrics(): Promise<void> (workflowId: string, status: WorkflowState['status']): Promise<void> {
+        const metrics = this.activeWorkflows.get(workflowId);
+        if (!metrics) {
+            throw new Error(`No metrics found for workflow ${workflowId}`);
+        }
+
+        metrics.endTime = Date.now();
+        metrics.duration = metrics.endTime - metrics.startTime;
+        metrics.status = status;
+
+        await this.metricsProcessor.processWorkflowMetrics({
+            type: 'workflow_completed',
+            workflowId,
+            timestamp: metrics.endTime,
+            metrics
+        });
+
+        this.activeWorkflows.delete(workflowId);
+    }
+}

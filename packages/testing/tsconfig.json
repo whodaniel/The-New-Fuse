@@ -1,0 +1,40 @@
+{
+  "extends": "../../tsconfig.base.json", // Extend base config for paths
+  "compilerOptions": {
+    "declaration": true,
+    "removeComments": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "target": "ES2020",
+    "sourceMap": true,
+    "outDir": "dist",
+    "declarationDir": "dist", // Explicitly set declaration output directory
+    "baseUrl": ".", // Keep baseUrl relative to this package
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "strictBindCallApply": true,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["src/*"] // Keep package-specific paths if needed
+    },
+    "lib": ["dom", "es2020"],
+    "jsx": "react-jsx" // Add JSX support
+  },
+  "include": ["src/**/*"],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "src/contract",
+    "src/e2e",
+    "src/matchers",
+    "src/performance",
+    "src/setup.ts",
+    "src/setup.d.ts"
+  ]
+}

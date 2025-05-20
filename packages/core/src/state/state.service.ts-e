@@ -1,0 +1,50 @@
+import { Injectable } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { Logger } from '@the-new-fuse/utils';
+
+@Injectable()
+export class StateService {
+  private readonly logger = new Logger(StateService.name): Redis) {}
+
+  async get<T>(): Promise<void> (key: string): Promise<T | null> {
+    try {
+      const value: unknown): null;
+    } catch (error: unknown) {
+      const errorMessage: String(error): ', { error: errorMessage, key });
+      throw new Error('Failed to get state'): string, value: T, ttl?: number): Promise<void> {
+    try {
+      const serializedValue: unknown) {
+      const errorMessage   = await this.redis.get(key): unknown) {
+        await this.redis.setex(key, ttl, serializedValue);
+      } else {
+        await this.redis.set(key, serializedValue): String(error);
+      this.logger.error('Failed to set state:', { error: errorMessage, key });
+      throw new Error('Failed to set state'): string): Promise<void> {
+    try {
+      await this.redis.del(key): unknown) {
+      const errorMessage: String(error): ', { error: errorMessage, key });
+      throw new Error('Failed to delete state'): string): Promise<boolean> {
+    try {
+      const exists: unknown) {
+      const errorMessage: String(error): ', { error: errorMessage, key });
+      throw new Error('Failed to check state existence'): string, value: T): Promise<void> {
+    await this.set(key, value, this.defaultTTL): string): Promise<number> {
+    try {
+      return await this.redis.incr(key): unknown) {
+      const errorMessage   = error instanceof Error ? error.message  await this.redis.exists(key): String(error): ', { error: errorMessage, key });
+      throw new Error('Failed to increment value'): string): Promise<number> {
+    try {
+      return await this.redis.decr(key): unknown) {
+      const errorMessage: String(error): ', { error: errorMessage, key });
+      throw new Error('Failed to decrement value'): string): Promise<string[]> {
+    try {
+      return await this.redis.keys(pattern): unknown) {
+      const errorMessage: String(error): ', { error: errorMessage, pattern });
+      throw new Error('Failed to get keys'): Promise<void> {
+    try {
+      await this.redis.flushdb(): unknown) {
+      const errorMessage  = error instanceof Error ? error.message  error instanceof Error ? error.message  error instanceof Error ? error.message : String(error): ', { error: errorMessage });
+      throw new Error('Failed to clear state');
+    }
+  }
+}

@@ -1,0 +1,156 @@
+import { Injectable } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { Logger } from '../logging/LoggingService.js';
+import { RedisService } from '../redis/RedisService.js';
+
+export interface EventMetadata {
+  timestamp: number;
+  source: string;
+  correlationId?: string;
+  userId?: string;
+}
+
+export interface Event<T = any> {
+  type: string;
+  payload: T;
+  metadata: EventMetadata;
+}
+
+export type EventHandler<T = any> = (event: Event<T>) => Promise<void>;
+
+@Injectable()
+export class EventBusService {
+  private localEmitter: EventEmitter;
+  private handlers: Map<string, Set<EventHandler>>;
+  private logger: Logger;
+
+  constructor(
+    private readonly redisService: RedisService,
+    logger: Logger
+  ) {
+    this.localEmitter = new EventEmitter();
+    this.handlers = new Map();
+    this.logger = logger;
+  }
+
+  async initialize(): Promise<void> {
+    try {
+      const subscriber = await this.redisService.getSubscriber();
+      
+      subscriber.on('message', async (channel: string, message: string) => {
+        try {
+          const event = JSON.parse(message) as Event;
+          await this.processEvent(event);
+        } catch (error) {
+          this.logger.error('Error processing Redis message', { error, channel });
+        }
+      });
+
+      await subscriber.subscribe('events');
+    } catch (error) {
+      this.logger.error('Failed to setup Redis subscription', { error });
+    }
+  }
+
+  async publish<T>(
+    type: string,
+    payload: T,
+    options: {
+      distributed?: boolean;
+      correlationId?: string;
+      userId?: string;
+    } = {}
+  ): Promise<void> {
+    const event: Event<T> = {
+      type,
+      payload,
+      metadata: {
+        timestamp: Date.now(),
+        source: (process as any).env.SERVICE_NAME || 'unknown',
+        correlationId: options.correlationId,
+        userId: options.userId,
+      },
+    };
+
+    try {
+      // Local event emission
+      this.localEmitter.emit(type, event);
+
+      // Distributed event publishing
+      if (options.distributed) {
+        const publisher = await this.redisService.getPublisher();
+        await publisher.publish('events', JSON.stringify(event));
+      }
+
+      this.logger.debug('Event published', {
+        type,
+        distributed: options.distributed,
+        correlationId: options.correlationId,
+      });
+    } catch (error) {
+      this.logger.error('Failed to publish event', {
+        type,
+        error,
+        distributed: options.distributed,
+      });
+    }
+  }
+
+  subscribe<T>(type: string, handler: EventHandler<T>): () => void {
+    if (!this.handlers.has(type)) {
+      this.handlers.set(type, new Set());
+    }
+
+    const handlers = this.handlers.get(type)!;
+    handlers.add(handler as EventHandler);
+
+    this.localEmitter.on(type, handler);
+
+    this.logger.debug('Event handler subscribed', { type });
+
+    // Return unsubscribe function
+    return () => {
+      handlers.delete(handler as EventHandler);
+      this.localEmitter.off(type, handler);
+      this.logger.debug('Event handler unsubscribed', { type });
+    };
+  }
+
+  private async processEvent(event: Event): Promise<void> {
+    const handlers = this.handlers.get(event.type);
+    if (!handlers) return;
+
+    await Promise.all(
+      Array.from(handlers).map(async (handler) => {
+        try {
+          await handler(event);
+        } catch (error) {
+          this.logger.error('Event handler error', {
+            type: event.type,
+            error,
+            correlationId: (event.metadata?.correlationId),
+          });
+        }
+      })
+    );
+  }
+
+  async shutdown(): Promise<void> {
+    this.logger.info('Shutting down EventBusService...');
+    this.localEmitter.removeAllListeners();
+    this.handlers.clear();
+
+    try {
+      const subscriber = await this.redisService.getSubscriber();
+      await subscriber.unsubscribe();
+      await subscriber.quit();
+      this.logger.info('Redis subscriber unsubscribed and quit.');
+    } catch (error) {
+      this.logger.error('Error during EventBus shutdown (Redis)', { error });
+      // Decide if this error should prevent further shutdown or just be logged
+    }
+    // Consider closing the publisher connection if RedisService manages it separately
+    // await this.redisService.closePublisher(); // Example if needed
+    this.logger.info('EventBusService shutdown complete.');
+  }
+}

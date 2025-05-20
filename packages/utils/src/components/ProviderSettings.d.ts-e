@@ -1,0 +1,6 @@
+import React from 'react';
+interface ProviderSettingsProps {
+    onProviderChange?: (providerId: string) => void;
+}
+export declare const ProviderSettings: React.FC<ProviderSettingsProps>;
+export {};

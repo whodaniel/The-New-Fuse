@@ -1,0 +1,53 @@
+import React, { FC } from "react";
+import { WorkflowStep } from '@the-new-fuse/types';
+import { Button } from '@the-new-fuse/../../core/Button';
+
+interface WorkflowStepViewerProps {
+  step?: WorkflowStep;
+  onExecute: (stepId: string) => void;
+  isExecuting?: boolean;
+}
+
+export const WorkflowStepViewer: FC<WorkflowStepViewerProps> = ({
+  step,
+  onExecute,
+  isExecuting = false
+}) => {
+  if (!step) return null;
+
+  return (
+    <div className="workflow-step-viewer p-4 border rounded-lg">
+      <div className="step-header flex justify-between items-center mb-4">
+        <h3 className="text-lg font-semibold">{step.action}</h3>
+        <span className="step-type px-2 py-1 rounded bg-gray-100">{step.type}</span>
+      </div>
+      
+      <div className="step-parameters mb-4">
+        <h4 className="font-medium mb-2">Parameters</h4>
+        <pre className="bg-gray-50 p-2 rounded">
+          {JSON.stringify(step.parameters, null, 2)}
+        </pre>
+      </div>
+
+      {step.metadata && (
+        <div className="step-metadata mb-4">
+          <h4 className="font-medium mb-2">Metadata</h4>
+          <pre className="bg-gray-50 p-2 rounded">
+            {JSON.stringify(step.metadata, null, 2)}
+          </pre>
+        </div>
+      )}
+
+      <div className="step-actions flex justify-end gap-2">
+        <Button
+          variant="primary"
+          onClick={() => onExecute(step.id)}
+          disabled={isExecuting}
+          loading={isExecuting}
+        >
+          {isExecuting ? 'Executing...' : 'Execute Step'}
+        </Button>
+      </div>
+    </div>
+  );
+};

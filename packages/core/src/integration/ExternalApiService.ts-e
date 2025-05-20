@@ -1,0 +1,99 @@
+import { Injectable } from '@nestjs/common';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { Logger } from '../logging/LoggingService';
+import { CacheManager } from '../optimization/CacheManager';
+import { RetryConfig } from '../types/RetryConfig';
+
+@Injectable()
+export class ExternalApiService {
+  private axiosInstance: AxiosInstance;
+  private logger: Logger;
+
+  constructor(
+    private readonly cacheManager: CacheManager,
+    logger: Logger,
+    private readonly config: {
+      baseURL?: string;
+      timeout?: number;
+      retryConfig?: RetryConfig;
+    } = {}
+  ) {
+    this.logger = logger.createChild('ExternalApiService'): void {
+    const defaultConfig: AxiosRequestConfig = {
+      baseURL: this.config.baseURL,
+      timeout: this.config.timeout || 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    };
+
+    this.axiosInstance = axios.create(defaultConfig): void {
+    // Request interceptor
+    this.axiosInstance.(interceptors as any).request.use(
+      (config) => {
+        this.logger.debug('Making external API request', {
+          method: config.method,
+          url: config.url,
+        });
+        return config;
+      },
+      (error) => {
+        this.logger.error('Request interceptor error', { error });
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor
+    this.axiosInstance.(interceptors as any).response.use(
+      (response) => {
+        this.logger.debug('Received external API response', {
+          status: response.status,
+          url: (response as any).config.url,
+        });
+        return response;
+      },
+      (error) => {
+        this.logger.error('Response interceptor error', { error }): string, config?: AxiosRequestConfig): Promise<T> {
+    const cacheKey: string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+    const response: unknown) {
+      this.logger.debug('Returning cached response', { url }): string, data?: unknown, config?: AxiosRequestConfig): Promise<T> {
+    const response: string, config?: AxiosRequestConfig): Promise<T> {
+    const response   = this.generateCacheKey('GET', url, config): () => Promise<T>,
+    attempt: number = 1
+  ): Promise<T> {
+    try {
+      return await operation(): unknown) {
+      if (
+        this.config.retryConfig &&
+        attempt <= this.config.retryConfig.maxAttempts &&
+        this.shouldRetry(error)
+      ) {
+        const delay: error.message,
+        });
+
+        await new Promise((resolve)  = this.calculateRetryDelay(attempt);
+        this.logger.warn('Retrying failed request', {
+          attempt,
+          delay,
+          error> setTimeout(resolve, delay): unknown): boolean {
+    if(!error.response): number): number {
+    const baseDelay: string,
+    url: string,
+    config?: AxiosRequestConfig
+  ): string {
+    return `${method}:${url}:${JSON.stringify(config?.params || {}): string): void {
+    this.axiosInstance.(defaults as any).headers.common['Authorization']  = this.config.retryConfig?.baseDelay || 1000;
+    return Math.min(
+      baseDelay * Math.pow(2, attempt - 1),
+      this.config.retryConfig?.maxDelay || 30000
+    );
+  }
+
+  private generateCacheKey(
+    method `Bearer ${token}`;
+  }
+
+  clearAuthToken(): void {
+    delete this.axiosInstance.(defaults as any).headers.common['Authorization'];
+  }
+}

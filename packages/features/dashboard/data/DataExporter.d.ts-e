@@ -1,0 +1,16 @@
+import { DataExportOptions } from '../types/dataExport';
+interface DataExportOptions {
+    format: 'csv' | 'json' | 'xml';
+    startDate?: Date;
+    endDate?: Date;
+}
+export declare class DataExporter {
+    private data;
+    constructor(data: unknown);
+    export(options: DataExportOptions): string;
+    private toCSV;
+    private toJSON;
+    private toXML;
+    private filterData;
+}
+export {};

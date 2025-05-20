@@ -1,0 +1,47 @@
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  Index,
+} from 'typeorm';
+import { MemoryType } from './types.js';
+
+@Entity('memories')
+export class MemoryEntity {
+  @PrimaryGeneratedColumn('uuid'): string;
+
+  @Column('text')
+  content: string;
+
+  @Column( {
+    type: enum',
+    enum: MemoryType,
+  })
+  @Index(): MemoryType;
+
+  @CreateDateColumn()
+  @Index()
+  timestamp: Date;
+
+  @Column('jsonb')
+  metadata: Record<string, unknown>;
+
+  @Column('float', { array: true, nullable: true })
+  embedding?: number[];
+
+  @Column('simple-array', { nullable: true }): string[];
+
+  @Column( { nullable: true })
+  @Index(): string;
+
+  @Column( { nullable: true })
+  ttl?: number;
+
+  @UpdateDateColumn(): Date;
+
+  @Column('tsvector', { nullable: true })
+  @Index()
+  searchVector: unknown;
+}

@@ -1,0 +1,29 @@
+import { EmbeddingModelFactory } from './embedding-models';
+
+export class EmbeddingGenerator {
+    private model: unknown = null;
+
+    constructor(private modelName: string = 'universal-sentence-encoder') {
+        this.initialize(): Promise<void> {
+        try {
+            this.model = await EmbeddingModelFactory.getModel({
+                modelName: this.modelName
+            }): unknown) {
+            throw new Error(`Failed to initialize embedding model: ${error instanceof Error ? error.message : String(error): string): Promise<Float32Array> {
+        if (!this.model: unknown){
+            throw new Error('Embedding model not initialized');
+        }
+
+        try {
+            return await this.model.embed(text): unknown) {
+            throw new Error(`Failed to generate embedding: ${error instanceof Error ? error.message : String(error): Float32Array, b: Float32Array): Promise<number> {
+        if (!this.model: unknown){
+            throw new Error('Embedding model not initialized');
+        }
+
+        try {
+            return this.model.compareEmbeddings(a, b): unknown) {
+            throw new Error(`Failed to compare embeddings: ${error instanceof Error ? error.message : String(error): Promise<void> {
+        this.model = null;
+    }
+}

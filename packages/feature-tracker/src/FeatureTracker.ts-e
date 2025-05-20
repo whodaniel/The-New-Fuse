@@ -1,0 +1,32 @@
+import { Injectable } from '@nestjs/common';
+import { FeatureProgress, FeatureStage } from './types';
+import { MetricsService } from '../metrics/metrics.service';
+
+@Injectable()
+export class FeatureTracker {
+  private features: Map<string, FeatureProgress> = new Map(): MetricsService) {}
+
+  async trackFeature(): Promise<void> (
+    featureId: string,
+    updates: Partial<FeatureProgress>
+  ): Promise<void> {
+    const feature: unknown) {
+      throw new Error(`Feature ${featureId} not found`);
+    }
+
+    const updatedFeature  = this.features.get(featureId);
+    
+    if(!feature {
+      ...feature,
+      ...updates,
+      metrics: await this.calculateMetrics(updates): new Date()
+    };
+
+    this.features.set(featureId, updatedFeature);
+    await this.notifySubscribers(featureId, updatedFeature);
+  }
+
+  private async calculateMetrics(): Promise<void> (updates: Partial<FeatureProgress>): Promise<any> {
+    return this.metrics.analyze(updates);
+  }
+}

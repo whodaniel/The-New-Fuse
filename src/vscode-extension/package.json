@@ -1,0 +1,266 @@
+{
+  "name": "the-new-fuse-vscode",
+  "displayName": "The New Fuse",
+  "description": "AI Agent Orchestration and Workflow Automation with Monitoring, MCP Integration, and AI Coder Connector",
+  "version": "1.0.2",
+  "publisher": "thefuse",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "icon": "resources/fusion-icon.png",
+  "type": "module",
+  "categories": [
+    "Other"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/the-new-fuse.git"
+  },
+  "main": "dist/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "thefuse.openMainUI",
+        "title": "Open The New Fuse UI",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.openDashboard",
+        "title": "Open Dashboard",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.openMonitoringDashboard",
+        "title": "Open Monitoring Dashboard",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.mcp.initialize",
+        "title": "Initialize MCP Integration",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.anthropic.parseXmlFunctionCall",
+        "title": "Parse Anthropic XML Function Call",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "roo.startMonitoring",
+        "title": "Start Roo AI Code Monitoring",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "roo.stopMonitoring",
+        "title": "Stop Roo AI Code Monitoring",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showAICoderStatus",
+        "title": "Show AI Coder Status",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.aiCoder.process",
+        "title": "Process with AI Coder",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showConnectionStatus",
+        "title": "Show Connection Status",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.restartChromeWebSocketServer",
+        "title": "Restart Chrome WebSocket Server",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showChromeClients",
+        "title": "Show Chrome Extension Clients",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showChatTab",
+        "title": "Show Fuse Chat Tab",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showServersTab",
+        "title": "Show MCP Servers Tab",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.showMarketplaceTab",
+        "title": "Show MCP Marketplace Tab",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.sendMessage",
+        "title": "Send Message to LLM",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "thefuse.startConversation",
+        "title": "Start New Conversation",
+        "category": "The New Fuse"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "thefuse-sidebar",
+          "title": "The New Fuse",
+          "icon": "resources/fusion-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "thefuse-sidebar": [
+        {
+          "type": "webview",
+          "id": "thefuse-chat",
+          "name": "Fuse Chat",
+          "icon": "resources/chat-icon.svg",
+          "contextualTitle": "Fuse Chat"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "The New Fuse",
+      "properties": {
+        "theFuse.mcpEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable Model Context Protocol (MCP) integration"
+        },
+        "theFuse.monitoring.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable monitoring of LLM usage"
+        },
+        "theFuse.aiCoder.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable AI Coder integration"
+        },
+        "theFuse.aiCoder.rooMonitoring": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable monitoring of Roo AI output"
+        },
+        "theFuse.aiCoder.port": {
+          "type": "number",
+          "default": 3710,
+          "description": "Port to use for AI Coder WebSocket server"
+        },
+        "theFuse.aiCoder.rooPort": {
+          "type": "number",
+          "default": 3711,
+          "description": "Port to use for Roo output monitoring WebSocket server"
+        },
+        "thefuse.chromeWebSocketPort": {
+          "type": "number",
+          "default": 3710,
+          "description": "Port to use for Chrome extension WebSocket server"
+        },
+        "thefuse.useSecureWebSocket": {
+          "type": "boolean",
+          "default": false,
+          "description": "Use secure WebSocket (wss://) for Chrome extension communication"
+        },
+        "thefuse.maxChromeClients": {
+          "type": "number",
+          "default": 5,
+          "description": "Maximum number of Chrome extension clients that can connect simultaneously"
+        },
+        "thefuse.enableWebSocketCompression": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable WebSocket compression for Chrome extension communication"
+        },
+        "thefuse.enableWebSocketRateLimit": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable rate limiting for Chrome extension WebSocket connections"
+        },
+        "thefuse.enableWebSocketAuth": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable authentication for Chrome extension WebSocket connections"
+        },
+        "thefuse.webSocketRateLimitMaxMessages": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of messages allowed per time window"
+        },
+        "thefuse.webSocketRateLimitWindowMs": {
+          "type": "number",
+          "default": 60000,
+          "description": "Time window for rate limiting in milliseconds"
+        },
+        "thefuse.sharedSecret": {
+          "type": "string",
+          "default": "",
+          "description": "The shared secret for secure communication with The New Fuse Chrome extension. Must match the secret set in the Chrome extension.",
+          "scope": "application"
+        },
+        "thefuse.websocketPort": {
+          "type": "integer",
+          "default": 3711,
+          "description": "Port for the WebSocket server that communicates with the Chrome extension."
+        },
+        "thefuse.cerebrasApiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API Key for Cerebras LLM access. This will be stored securely after initial input.",
+          "scope": "machine-overridable"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run compile",
+    "clean": "rimraf dist out *.vsix",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "package": "npx @vscode/vsce package --no-dependencies",
+    "build": "bash ./build.sh",
+    "lint": "eslint src --ext ts,tsx"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^20.2.5",
+    "@types/vscode": "^1.85.0",
+    "@types/ws": "^8.5.10",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "@vscode/test-electron": "^2.3.9",
+    "eslint": "^8.26.0",
+    "jest": "^29.7.0",
+    "jest-mock-extended": "^3.0.5",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.1.3",
+    "vsce": "^2.15.0"
+  },
+  "dependencies": {
+    "@browsermcp/mcp": "^0.1.3",
+    "@cerebras/cerebras_cloud_sdk": "1.29.0",
+    "@types/pako": "^2.0.3",
+    "axios": "^1.6.2",
+    "lodash": "^4.17.21",
+    "minimatch": "^9.0.3",
+    "mocha": "^10.3.0",
+    "pako": "^2.1.0",
+    "reflect-metadata": "^0.1.14",
+    "rxjs": "^7.8.1",
+    "uuid": "^8.3.2",
+    "ws": "^8.16.0",
+    "zod": "^3.21.4"
+  }
+}

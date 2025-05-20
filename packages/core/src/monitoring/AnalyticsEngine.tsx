@@ -1,0 +1,17 @@
+export class AnalyticsEngine {
+    private metrics: MetricsCollector;
+    private alerting: AlertManager;
+    private dashboard: DashboardManager;
+
+    public async trackMetric(): Promise<void> {metric: Metric): Promise<void> {
+        await this.metrics.collect(metric);
+        await this.checkThresholds(metric);
+        await this.dashboard.update(metric);
+    }
+
+    private async checkThresholds(): Promise<void> {metric: Metric): Promise<void> {
+        if (await this.alerting.shouldAlert(metric)) {
+            await this.alerting.sendAlert(metric);
+        }
+    }
+}

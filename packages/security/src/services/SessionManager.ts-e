@@ -1,0 +1,92 @@
+import { Session, SessionManager, SessionOptions, AuthUser } from '../types/session';
+import { randomUUID } from 'crypto';
+
+export class DefaultSessionManager implements SessionManager {
+  private sessions: Map<string, Session> = new Map();
+  private options: Required<SessionOptions>;
+
+  constructor(options: SessionOptions = {}) {
+    this.options = {
+      maxConcurrentSessions: options.maxConcurrentSessions ?? 5,
+      sessionTimeout: options.sessionTimeout ?? 3600000, // 1 hour in milliseconds
+      extendOnActivity: options.extendOnActivity ?? true,
+      requireIpMatch: options.requireIpMatch ?? true,
+      requireUserAgentMatch: options.requireUserAgentMatch ?? true
+    };
+  }
+
+  async createSession(): Promise<void> (
+    user: AuthUser, 
+    token: string, 
+    ipAddress?: string, 
+    userAgent?: string
+  ): Promise<Session> {
+    const existingSessions = await this.getActiveUserSessions(user.id);
+    if (existingSessions.length >= this.options.maxConcurrentSessions) {
+      // Remove oldest session if limit reached
+      const oldestSession = existingSessions.sort(
+        (a, b) => a.createdAt.getTime() - b.createdAt.getTime()
+      )[0];
+      await this.revokeSession(oldestSession.id);
+    }
+
+    const session: Session = {
+      id: randomUUID(),
+      userId: user.id,
+      token,
+      expiresAt: new Date(Date.now() + this.options.sessionTimeout),
+      createdAt: new Date(),
+      lastActivityAt: new Date(),
+      ipAddress,
+      userAgent,
+      isActive: true
+    };
+
+    this.sessions.set(session.id, session);
+    return session;
+  }
+
+  async validateSession(): Promise<void> (sessionId: string): Promise<boolean> {
+    const session = this.sessions.get(sessionId);
+    if (!session || !session.isActive) {
+      return false;
+    }
+
+    if (session.expiresAt.getTime() < Date.now()) {
+      await this.revokeSession(sessionId);
+      return false;
+    }
+
+    if (this.options.extendOnActivity) {
+      session.lastActivityAt = new Date();
+      this.sessions.set(sessionId, session);
+    }
+
+    return true;
+  }
+
+  async revokeSession(): Promise<void> (sessionId: string): Promise<void> {
+    const session = this.sessions.get(sessionId);
+    if (session) {
+      session.isActive = false;
+      this.sessions.set(sessionId, session);
+    }
+  }
+
+  async getActiveUserSessions(): Promise<void> (userId: string): Promise<Session[]> {
+    return Array.from(this.sessions.values()).filter(
+      session => session.userId === userId && session.isActive
+    );
+  }
+
+  private cleanupExpiredSessions(): void {
+    for (const [sessionId, session] of this.sessions.entries()) {
+      if (session.expiresAt.getTime() < Date.now()) {
+        this.sessions.delete(sessionId);
+      }
+    }
+  }
+}
+
+// Export a singleton instance
+export const sessionManager = new DefaultSessionManager();

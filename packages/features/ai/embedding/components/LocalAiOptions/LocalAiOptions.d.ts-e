@@ -1,0 +1,13 @@
+import React from "react";
+interface LocalAiSettings {
+    EmbeddingBasePath?: string;
+    EmbeddingModelPref?: string;
+    EmbeddingModelMaxChunkLength?: number;
+    LocalAiApiKey?: string;
+    EmbeddingModelBasePath?: string;
+}
+interface LocalAiOptionsProps {
+    settings: LocalAiSettings;
+}
+export declare function LocalAiOptions({ settings }: LocalAiOptionsProps): React.JSX.Element;
+export {};

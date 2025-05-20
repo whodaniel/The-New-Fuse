@@ -1,0 +1,8 @@
+import React from 'react';
+import { AgentMetrics as Metrics } from './types';
+interface AgentMetricsProps {
+    metrics: Metrics;
+    className?: string;
+}
+export declare const AgentMetrics: (React as any).FC<AgentMetricsProps>;
+export {};

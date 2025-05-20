@@ -1,0 +1,10 @@
+import { BaseLLMProvider, LLMConfig } from './base';
+export declare class AnthropicProvider extends BaseLLMProvider {
+    constructor(config?: LLMConfig);
+    protected getDefaultApiKey(): string;
+    protected getDefaultBaseURL(): string;
+    protected getDefaultModel(): string;
+    protected getDefaultMaxTokens(): number;
+    protected getDefaultHeaders(): Record<string, string>;
+    chat(messages: unknown[]): Promise<any>;
+}

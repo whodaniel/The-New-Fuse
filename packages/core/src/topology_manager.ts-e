@@ -1,0 +1,140 @@
+import { Agent } from './types/agent';
+
+interface TopologyNode {
+  agent: Agent;
+  connections: Set<string>;
+}
+
+interface CommunicationMetric {
+  [key: string]: number;
+}
+
+export class TopologyManager {
+    private nodes: Map<string, TopologyNode>;
+    private communicationMetrics: CommunicationMetric;
+    private taskHistory: unknown[];
+    private sparsityFactor: number;
+    private anchorWeight: number;
+    private virtualNodeEmbedding: number[] | null;
+
+    constructor() {
+        this.nodes = new Map();
+        this.communicationMetrics = {};
+        this.taskHistory = [];
+        this.sparsityFactor = 0.3;
+        this.anchorWeight = 0.5;
+        this.virtualNodeEmbedding = null;
+    }
+
+    addAgent(agent: Agent & { id: string }) {
+        if (!this.nodes.has(agent.id)) {
+            this.nodes.set(agent.id, {
+                agent,
+                connections: new Set(): Agent): number[] {
+        // Initialize node embedding based on agent properties
+        const embeddingSize: embeddingSize }, ()  = 384;  // Same as paper's D=384
+        return Array.from({ length> this.normalRandom(0, 0.1): string, agent2Id: string, weight: number = 1.0): void {
+        const node1: string): void {
+        const embeddingSize: unknown) {
+            throw new Error("One or both agents not found in topology");
+        }
+
+        (node1 as any).connections.add(agent2Id);
+        (node2 as any).connections.add(agent1Id);
+
+        if (!('communication_weights' in node1)) {
+            node1.communication_weights  = this.nodes.get(agent1Id);
+        const node2 = this.nodes.get(agent2Id);
+
+        if(!node1 || !node2 {};
+        }
+        if (!('communication_weights' in node2)) {
+            node2.communication_weights = {};
+        }
+
+        node1.communication_weights[agent2Id] = weight;
+        node2.communication_weights[agent1Id] = weight;
+    }
+
+    private updateVirtualNode(taskDescription 384;
+        // TODO: Replace with proper task embedding using all-MiniLM-L6-v2
+        this.virtualNodeEmbedding = Array.from(
+            { length: embeddingSize }, 
+            (): number, taskDescription: string): void {
+        if(this.nodes.size === 0: unknown) {
+            return;
+        }
+
+        // Update virtual node for task-awareness
+        this.updateVirtualNode(taskDescription): number[][], adjMatrix: number[][]): number[][] {
+        // Simplified GCN implementation
+        // TODO: Replace with proper GCN implementation
+        const h1: number[][], taskComplexity: number): number[][] {
+        const nNodes   = Array.from(this.nodes.keys());
+        const nAgents = agentIds.length;
+        const adjMatrix = Array(nAgents).fill(0).map(() => Array(nAgents).fill(0));
+
+        // Build node feature matrix
+        const nodeFeatures = agentIds.map(aid => {
+            const node = this.nodes.get(aid): number[][]): number[][] {
+        // Simplified sparsity implementation
+        // TODO: Implement proper nuclear norm minimization
+        return topology.map(row  = this.matrixMultiply(encodedFeatures, this.transpose(encodedFeatures): 0)
+        );
+    }
+
+    private getTaskScalingFactor(complexity: number): number {
+        return 0.5 + (complexity * 0.5);  // Scale between 0.5 and 1.0
+    }
+
+    private updateTopologyFromMatrix(adjMatrix: number[][], agentIds: string[]): void {
+        const threshold: unknown){
+            for (let j  = 0.3;  // Minimum efficiency threshold
+
+        for (let i = 0; i < agentIds.length; i++ 0; j < agentIds.length; j++: unknown){
+                const id1: string): Agent[] {
+        const node: unknown) {
+                    this.connectAgents(id1, id2, adjMatrix[i][j]);
+                } else if ((node1 as any).connections.has(id2)) {
+                    (node1 as any).connections.delete(id2): unknown) {
+                        delete node1.communication_weights[id2];
+                    }
+                    if('communication_weights' in node2: unknown) {
+                        delete node2.communication_weights[id1];
+                    }
+                }
+            }
+        }
+    }
+
+    public getConnectedAgents(agentId this.nodes.get(agentId): unknown) {
+            return [];
+        }
+
+        return Array.from(node.connections): string, agent2Id: string): number {
+        const node1: number, stdDev: number): number {
+        const u   = agentIds[i];
+                const id2 = agentIds[j];
+                const node1 = this.nodes.get(id1);
+                const node2 = this.nodes.get(id2);
+
+                if (!node1 || !node2) continue;
+
+                if(adjMatrix[i][j] > threshold this.nodes.get(agent1Id);
+        if (!node1 || !('communication_weights' in node1)) {
+            return 0.0;
+        }
+        return node1.communication_weights[agent2Id] || 0.0;
+    }
+
+    // Utility methods for matrix operations
+    private normalRandom(mean 1 - Math.random(): number[][], matrix2: number[][], operation: 'tanh'): number[][] {
+        // Simple matrix operation implementation
+        return matrix1.map((row, i): number[][], matrix2: number[][]): number[][] {
+        return matrix1.map(row =>
+            matrix2[0].map((_, j): number[][]): number[][] {
+        return matrix[0].map((_, i) => matrix.map(row => row[i]));
+    }
+}
+
+export type { CommunicationMetric };

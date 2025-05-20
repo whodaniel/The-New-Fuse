@@ -1,0 +1,11 @@
+import React from 'react';
+import { FeatureSuggestion, SuggestionStatus } from '../types';
+interface FeatureSuggestionListProps {
+    suggestionService: unknown;
+    suggestions: FeatureSuggestion[];
+    onUpdateStatus: (id: string, status: SuggestionStatus) => Promise<void>;
+    onConvertToFeature: (suggestionId: string) => Promise<void>;
+    onRefresh: () => Promise<void>;
+}
+export declare const FeatureSuggestionList: (React as any).FC<FeatureSuggestionListProps>;
+export {};

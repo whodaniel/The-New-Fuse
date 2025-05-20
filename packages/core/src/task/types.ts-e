@@ -1,0 +1,35 @@
+import { TaskStatus, TaskPriority, TaskMetadata, Task, TaskTypeValue, TaskStatusType, TaskPriorityType } from '@the-new-fuse/types';
+
+export { TaskStatus, TaskPriority, TaskMetadata } from '@the-new-fuse/types';
+export type { Task, TaskTypeValue, TaskStatusType, TaskPriorityType } from '@the-new-fuse/types';
+
+export const TaskType = {
+  GENERIC: 'generic',
+  ANALYSIS: 'analysis',
+  PROCESSING: 'processing',
+  INTEGRATION: 'integration'
+} as const;
+
+export interface TaskResult {
+  success: boolean;
+  data?: Record<string, unknown>;
+  error?: string;
+}
+
+export interface TaskDependency {
+  taskId: string;
+  type: 'REQUIRED' | 'OPTIONAL';
+  condition?: string;
+}
+
+export interface TaskQuery {
+  types?: typeof TaskType[];
+  priorities?: TaskPriority[];
+  statuses?: TaskStatus[];
+  creator?: string;
+  assignee?: string;
+  tags?: string[];
+  startDate?: Date;
+  endDate?: Date;
+  metadata?: Partial<TaskMetadata>;
+}

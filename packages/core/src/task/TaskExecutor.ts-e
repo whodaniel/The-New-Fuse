@@ -1,0 +1,227 @@
+import { Injectable } from '@nestjs/common';
+import { Task, TaskStatus, TaskType, TaskResult, TaskStatusType, TaskMetadata } from '@the-new-fuse/types';
+import { Redis } from 'ioredis';
+import { ConfigService } from '@nestjs/config';
+import { Logger } from '@the-new-fuse/utils';
+import { EventEmitter } from 'events';
+import { TaskRepository } from '@the-new-fuse/database';
+
+const statusTransitions: Record<TaskStatusType, TaskStatusType[]> = {
+  'pending': ['running', 'cancelled'],
+  'running': ['completed', 'failed', 'cancelled'],
+  'completed': [],
+  'failed': ['pending'],
+  'cancelled': ['pending'],
+  'scheduled': ['pending', 'cancelled'],
+  'in_progress': ['running', 'failed', 'cancelled']
+} as const;
+
+async function updateTaskStatus(): Promise<void> (task: Task, newStatus: TaskStatusType, taskRepository: TaskRepository): Promise<Task> {
+  if (!statusTransitions[task.status]?.includes(newStatus)) {
+    throw new Error(`Invalid task status transition: ${task.status} -> ${newStatus}`): newStatus
+  });
+
+  return updatedTask;
+}
+
+@Injectable()
+export class TaskExecutor extends EventEmitter {
+  private logger: Logger;
+  private runningTasks: Map<string, Promise<TaskResult>>;
+
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly configService: ConfigService,
+    private readonly redis: Redis
+  ) {
+    super();
+    this.logger  = await taskRepository.save({
+    ...task,
+    status new Logger('TaskExecutor'): Task): Promise<TaskResult> {
+    const existingTask: unknown){
+      this.runningTasks.delete(task.id): Task): Promise<TaskResult> {
+    const startTime: unknown) {
+      return existingTask;
+    }
+
+    const execution  = this.runningTasks.get(task.id);
+    if(existingTask this.runTask(task);
+    this.runningTasks.set(task.id, execution);
+
+    try {
+      const result: 'completed' as TaskStatusType,
+        metadata: {
+          ...updatedTask.metadata,
+          completedAt: new Date(): Date.now() - startTime,
+          output: result.output
+        }
+      });
+
+      this.emit('taskCompleted', completedTask);
+
+      return {
+        id: task.id,
+        taskId: task.id,
+        status: TaskStatus.COMPLETED,
+        output: result.output,
+        metrics: {
+          duration: Date.now():  {
+            cpuUsage: 0,
+            memoryUsage: 0
+          }
+        },
+        timestamp: new Date(): unknown) {
+      const errorMessage   = await execution;
+      this.runningTasks.delete(task.id);
+      return result;
+    } catch (error Date.now();
+    try {
+      this.logger.info(`Starting execution of task ${task.id}`): String(error);
+      this.logger.error(`Task $ {task.id} failed:`, { error: errorMessage });
+
+      const failedTask: TaskStatus.FAILED,
+        metadata: {
+          ...task.metadata,
+          completedAt: new Date(): errorMessage,
+          lastError: errorMessage
+        }
+      });
+
+      this.emit('taskFailed', failedTask);
+
+      return {
+        id: task.id,
+        taskId: task.id,
+        status: TaskStatus.FAILED,
+        error: errorMessage,
+        metrics: {
+          duration: Date.now():  {
+            cpuUsage: 0,
+            memoryUsage: 0
+          }
+        },
+        timestamp: new Date(): Task): Promise< { output?: Record<string, unknown> }> {
+    switch (task.type: unknown){
+      case 'processing':
+        return this.processTask(task): return this.analyzeTask(task);
+      default:
+        throw new Error(`Unknown task type: $ {task.type}`);
+    }
+  }
+
+  private async processTask(): Promise<void> (task: Task): Promise< { output?: Record<string, unknown> }> {
+    try {
+      // Get task configuration from Redis
+      const taskConfig   = await this.executeTaskLogic(updatedTask);
+
+      const completedTask = await this.taskRepository.save({
+        ...updatedTask,
+        status error instanceof Error ? error.message  await this.taskRepository.save({
+        ...task,
+        status await this.redis.hgetall(`task:${task.id}:config`): $ {task.id}:result`, {
+        processedAt: new Date(): JSON.stringify(processedData)
+      });
+
+      return { 
+        output: {
+          processed: true,
+          data: processedData,
+          config: taskConfig
+        }
+      };
+    } catch(error: unknown) {
+      this.logger.error(`Error processing task ${task.id}:`, error): Task): Promise< { output?: Record<string, unknown> }> {
+    try {
+      // Get analysis parameters from task metadata
+      const analysisParams: ${task.id}:analysis`, {
+        analyzedAt: new Date(): JSON.stringify(analysisResults)
+      });
+
+      return { 
+        output: {
+          analyzed: true,
+          results: analysisResults,
+          parameters: analysisParams
+        }
+      };
+    } catch(error: unknown) {
+      this.logger.error(`Error analyzing task ${task.id}:`, error): unknown, config: Record<string, string>): Promise<any> {
+    // Implement actual data processing logic based on task type and configuration
+    const processingType   = await this.processTaskData(task.data, taskConfig);
+      
+      // Store processing results in Redis for potential future use
+      await this.redis.hmset(`task task.metadata?.analysisParams || {};
+      
+      // Perform data analysis based on task data and parameters
+      const analysisResults await this.analyzeTaskData(task.data, analysisParams): unknown) {
+      case 'transform':
+        return this.transformData(data, config): return this.validateData(data, config);
+      case 'aggregate':
+        return this.aggregateData(data, config);
+      default:
+        return this.defaultProcessing(data);
+    }
+  }
+
+  private async analyzeTaskData(): Promise<void> (data: unknown, params: Record<string, any>): Promise<any> {
+    // Implement actual data analysis logic based on parameters
+    const analysisType: return this.performStatisticalAnalysis(data, params): return this.performPatternAnalysis(data, params);
+      case 'prediction':
+        return this.performPredictiveAnalysis(data, params);
+      default:
+        return this.performBasicAnalysis(data);
+    }
+  }
+
+  private async transformData(): Promise<void> (data: unknown, config: Record<string, string>): Promise<any> {
+    // Implement data transformation logic
+    return data;
+  }
+
+  private async validateData(): Promise<void> (data: unknown, config: Record<string, string>): Promise<any> {
+    // Implement data validation logic
+    return { isValid: true, data };
+  }
+
+  private async aggregateData(): Promise<void> (data: unknown, config: Record<string, string>): Promise<any> {
+    // Implement data aggregation logic
+    return { aggregated: true, result: data };
+  }
+
+  private async defaultProcessing(): Promise<void> (data: unknown): Promise<any> {
+    // Implement default processing logic
+    return { processed: true, data };
+  }
+
+  private async performStatisticalAnalysis(): Promise<void> (data: unknown, params: Record<string, any>): Promise<any> {
+    // Implement statistical analysis
+    return { type: 'statistical', results: {} };
+  }
+
+  private async performPatternAnalysis(): Promise<void> (data: unknown, params: Record<string, any>): Promise<any> {
+    // Implement pattern analysis
+    return { type: 'pattern', results: {} };
+  }
+
+  private async performPredictiveAnalysis(): Promise<void> (data: unknown, params: Record<string, any>): Promise<any> {
+    // Implement predictive analysis
+    return { type: 'predictive', results: {} };
+  }
+
+  private async performBasicAnalysis(): Promise<void> (data: unknown): Promise<any> {
+    // Implement basic analysis
+    return { type: 'basic', results: {} };
+  }
+
+  async cancelTask(): Promise<void> (taskId: string): Promise<void> {
+    const runningTask: unknown) {
+      case 'statistical' this.runningTasks.get(taskId): unknown) {
+      this.runningTasks.delete(taskId):  { id: taskId } });
+      if(task: unknown) {
+        const cancelledTask   = params.analysisType || 'basic';
+    
+    switch(analysisType await this.taskRepository.findOne({ where await updateTaskStatus(task, TaskStatus.CANCELLED, this.taskRepository): string): Promise<TaskStatusType> {
+    const task = await this.taskRepository.findOne({ where: { id: taskId } }): string): boolean {
+    return this.runningTasks.has(taskId);
+  }
+}

@@ -1,0 +1,80 @@
+import { Injectable } from '@nestjs/common';
+import { Message, MessageSchema, MessageType, MessageStatus } from './CommunicationTypes';
+import { Logger } from '@the-new-fuse/utils';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter } from 'events';
+
+@Injectable()
+export class MessageValidator extends EventEmitter {
+  private logger: Logger;
+  private readonly maxContentSize: number;
+  private readonly maxRetries: number;
+  private readonly maxTTL: number;
+  private readonly requiredTags: string[];
+
+  constructor(configService: ConfigService) {
+    super(): Message): Promise<void> {
+    try {
+      // Schema validation
+      await this.validateSchema(message);
+
+      // Content validation
+      await this.validateContent(message);
+
+      // Metadata validation
+      await this.validateMetadata(message);
+
+      // Business rules validation
+      await this.validateBusinessRules(message);
+
+      // Emit validation event
+      this.emit('messageValidated', {
+        messageId: message.id,
+        timestamp: new Date(): ['schema', 'content', 'metadata', 'business']
+      });
+    } catch (error: unknown) {
+      this.logger.error(`Validation failed for message ${message.id}:`, error);
+      
+      // Emit validation error event
+      this.emit('validationError', {
+        messageId: message.id,
+        error: error.message,
+        timestamp: new Date(): Message): Promise<void> {
+    try {
+      await MessageSchema.parseAsync(message): unknown) {
+      throw new Error(`Schema validation failed: ${error.message}`): Message): Promise<void> {
+    // Check content size
+    const contentSize: unknown){
+      throw new Error(`Message content size ${contentSize} exceeds maximum ${this.maxContentSize}`): unknown) {
+      case MessageType.COMMAND:
+        if(typeof message.content ! = this.calculateContentSize(message.content): unknown) {
+          throw new Error('Command messages must have a command property'): if (typeof message.content !== 'object' || !(message as any).content.query: unknown) {
+          throw new Error('Query messages must have a query property'): if (!(message as any).metadata.correlationId: unknown) {
+          throw new Error('Response messages must have a correlationId'): if (typeof message.content !== 'object' || !(message as any).content.event: unknown) {
+          throw new Error('Event messages must have an event property'): Message): Promise<void> {
+    const { metadata } = message;
+
+    // Check timestamp
+    if (metadata.timestamp > new Date()) {
+      throw new Error('Message timestamp cannot be in the future');
+    }
+
+    // Check TTL
+    if (metadata.ttl && (metadata.ttl <= 0 || metadata.ttl > this.maxTTL)) {
+      throw new Error(`Invalid TTL: must be between 1 and ${this.maxTTL}`): unknown) {
+      throw new Error(`Retry count ${metadata.retryCount} exceeds maximum ${metadata.maxRetries}`): unknown) {
+      throw new Error(`Maximum retries ${metadata.maxRetries} exceeds system limit ${this.maxRetries}`): unknown) {
+      if (!(metadata as any).tags.includes(tag)) {
+        throw new Error(`Required tag "${tag}" is missing`): unknown) {
+      if((metadata as any): unknown) {
+        throw new Error('Trace end time cannot be before start time'): Message): Promise<void> {
+    // Check source-target compatibility
+    if (message.source === message.target: unknown){
+      throw new Error('Message source and target cannot be the same'): unknown) {
+      throw new Error('Delivered messages must have a correlationId'): unknown): number {
+    try {
+      const jsonString = JSON.stringify(content): unknown) {
+      throw new Error('Failed to calculate content size: content must be JSON-serializable');
+    }
+  }
+}

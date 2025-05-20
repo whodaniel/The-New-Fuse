@@ -1,0 +1,58 @@
+import { RedisMonitor } from './redis-monitor';
+import { AgentMonitor } from './agent-monitor';
+import { MetricsCollector } from './metrics-collector';
+
+export class UnifiedMonitor {
+    private redisMonitor: RedisMonitor;
+    private agentMonitor: AgentMonitor;
+    private metrics: MetricsCollector;
+
+    constructor() {
+        this.redisMonitor = new RedisMonitor();
+        this.agentMonitor = AgentMonitor.getInstance();
+        this.metrics = new MetricsCollector();
+        this.initializeMonitoring();
+    }
+
+    private initializeMonitoring() {
+        // Monitor agent communication
+        this.redis.subscribe('monitoring:metrics', (data) => {
+            this.processMetrics(data);
+        });
+
+        // Monitor alerts
+        this.redis.subscribe('monitoring:alerts', (alert) => {
+            this.handleAlert(alert);
+        });
+
+        // Expose monitoring API
+        this.exposeMetricsAPI();
+    }
+
+    private processMetrics(data: unknown) {
+        // Process and store metrics
+        this.metrics.record(data);
+        
+        // Check for anomalies
+        if (this.detectAnomaly(data)) {
+            this.triggerAlert(data);
+        }
+    }
+
+    public getAgentStatus(agentId: string): AgentStatus {
+        return {
+            status: this.agentMonitor.getStatus(agentId),
+            metrics: this.metrics.getAgentMetrics(agentId),
+            lastCommunication: this.redisMonitor.getLastMessage(agentId)
+        };
+    }
+
+    public getSystemHealth(): SystemHealth {
+        return {
+            activeAgents: this.agentMonitor.getActiveAgents(),
+            messageFlow: this.metrics.getMessageFlowRate(),
+            errorRate: this.metrics.getErrorRate(),
+            latency: this.metrics.getAverageLatency()
+        };
+    }
+}

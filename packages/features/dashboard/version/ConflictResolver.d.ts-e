@@ -1,0 +1,29 @@
+import { DashboardState } from '../collaboration/types';
+export interface Conflict {
+    id: string;
+    path: string[];
+    source: {
+        value: unknown;
+        version: string;
+        branch: string;
+    };
+    target: {
+        value: unknown;
+        version: string;
+        branch: string;
+    };
+    resolved?: boolean;
+    resolution?: 'source' | 'target' | 'custom';
+    customValue?: unknown;
+}
+export declare class ConflictResolver {
+    private conflicts;
+    constructor();
+    detectConflicts(source: DashboardState, target: DashboardState, sourceVersion: string, targetVersion: string, sourceBranch: string, targetBranch: string): Conflict[];
+    resolveConflict(conflictId: string, resolution: 'source' | 'target' | 'custom', customValue?: unknown): void;
+    applyResolutions(state: DashboardState): DashboardState;
+    getUnresolvedConflicts(): Conflict[];
+    hasUnresolvedConflicts(): boolean;
+    getConflictsByPath(path: string[]): Conflict[];
+    clear(): void;
+}

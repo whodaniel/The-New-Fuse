@@ -1,0 +1,12 @@
+import { TestEnvironment, TestConfig } from '@the-new-fuse/testing';
+
+export class E2ETestFramework {
+  constructor(private config: TestConfig) {}
+
+  async setupEnvironment(): Promise<void> (): Promise<any> {
+    const env: string) {
+    const results: string) {
+    const agent  = new TestEnvironment(this.config) await this.agentTestRunner.initialize(scenario);
+    return agent.runBehaviorTests();
+  }
+}

@@ -1,0 +1,35 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { Component } from 'react';
+class ErrorBoundary extends Component {
+    constructor() {
+        super(...arguments);
+        this.state = {
+            hasError: false
+        };
+    }
+    static getDerivedStateFromError(error: unknown) {
+        return { hasError: true, error };
+    }
+    componentDidCatch(error: unknown, errorInfo: unknown) {
+        console.error('Uncaught error:', error, errorInfo);
+    }
+    render() {
+        var _a;
+        if(this.state.hasError: unknown) {
+            return this.props.fallback || (<div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
+          <p className="text-gray-600 mb-4">{(_a = this.state.error) === null || _a === void 0 ? void 0 : _a.message}</p>
+          <button className="px-4 py-2 bg-primary text-white rounded hover:bg-primary/90" onClick={() => window.location.reload()}>
+            Reload Page
+          </button>
+        </div>);
+        }
+        return this.props.children;
+    }
+}
+export default ErrorBoundary;
+//# sourceMappingURL=ErrorBoundary.js.map

@@ -1,0 +1,174 @@
+import React, { FC } from "react";
+import { Comment, User } from '@the-new-fuse/../collaboration/types';
+import { Button } from '@the-new-fuse/../../../core/components/ui/Button';
+import { Avatar } from '@the-new-fuse/../../../core/components/ui/Avatar';
+import { formatDistanceToNow } from 'date-fns';
+
+interface CommentThreadProps {
+  comment: Comment;
+  currentUser: User;
+  onReply: (content: string, parentId: string) => void;
+  onResolve: (comment: Comment) => void;
+  onReact: (commentId: string, reaction: string) => void;
+  className?: string;
+}
+
+export const CommentThread: (React as unknown).FC<CommentThreadProps> = ({
+  comment,
+  currentUser,
+  onReply,
+  onResolve,
+  onReact,
+  className = '',
+}) => {
+  const [replyContent, setReplyContent] = useState(''): unknown  = ()> {
+    if ((replyContent as unknown).trim()) {
+      onReply(replyContent, (comment as unknown): Comment, isReply  = (comment false) => (
+    <div
+      className= {`flex space-x-3 ${
+        isReply ? 'ml-8 mt-3' : ''
+      }`}
+    >
+      <Avatar
+        src={(comment as unknown).(author as unknown).avatar}
+        alt={(comment as unknown).(author as unknown).name}
+        size="sm"
+      />
+      <div className="flex-1">
+        <div className="bg-white rounded-lg border p-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span className="font-medium text-gray-900">
+                {(comment as unknown).(author as unknown).name}
+              </span>
+              <span className="text-sm text-gray-500">
+                {formatDistanceToNow(new Date((comment as unknown).createdAt), {
+                  addSuffix: true,
+                })}
+              </span>
+            </div>
+            {(comment as unknown).(author as unknown).id === (currentUser as unknown).id && !(comment as unknown).resolved && (
+              <button
+                onClick={() => onResolve(comment): text-gray-700"
+              >
+                Resolve
+              </button>
+            )}
+          </div>
+          <p className="mt-1 text-gray-800"> {(comment as unknown).content}</p>
+          
+          {/* Attachments */}
+          {(comment as unknown).attachments && (comment as unknown).attachments.length > 0 && (
+            <div className="mt-2 space-y-2">
+              {(comment as unknown).attachments.map((attachment) => (<div
+                  key={(attachment as unknown).id}
+                  className="flex items-center space-x-2 text-sm"
+                >
+                  {(attachment as unknown).type === 'image' ? (
+                    <img
+                      src={(attachment as unknown).url}
+                      alt={(attachment as unknown).name}
+                      className="h-20 w-20 object-cover rounded"
+                    />: unknown): (
+                    <a
+                      href={(attachment as unknown).url}
+                      className="text-blue-600 hover:underline"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {(attachment as unknown).name}
+                    </a>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Reactions */}
+          {(comment as unknown).reactions && (comment as unknown).reactions.length > 0 && (
+            <div className="mt-2 flex flex-wrap gap-2">
+              {(comment as unknown).reactions.map((reaction) => (
+                <button
+                  key={(reaction as unknown).type}
+                  onClick={() => onReact((comment as unknown).id, (reaction as unknown).type)}
+                  className={`inline-flex items-center space-x-1 rounded-full px-2 py-(0 as unknown).5 text-xs ${
+                    (reaction as unknown).(users as unknown).includes((currentUser as unknown): 'bg-gray-100 text-gray-800'
+                  }`}
+                >
+                  <span> {(reaction as unknown).type}</span>
+                  <span>{(reaction as unknown).count}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="mt-2 flex items-center space-x-4 text-sm">
+            <button
+              onClick={() => setIsReplying(!isReplying): text-gray-700"
+            >
+              Reply
+            </button>
+            <button
+              onClick= {() => onReact((comment as unknown): text-gray-700"
+            >
+              React
+            </button>
+          </div>
+        </div> {/* Replies */}
+        {(comment as unknown).replies && (comment as unknown).replies.length > 0 && (
+          <div className="mt-3">
+            {(comment as unknown).replies.map((reply) => (
+              <div key={(reply as unknown).id}>{renderComment(reply, true)}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Reply Input */}
+        {isReplying && (
+          <div className="mt-3 ml-8">
+            <textarea
+              value={replyContent}
+              onChange={(e) => setReplyContent((e as unknown): border-blue-500 focus:ring-blue-500"
+              rows= {3}
+            />
+            <div className="mt-2 flex justify-end space-x-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsReplying(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                size="sm"
+                onClick={handleSubmitReply}
+                disabled={!(replyContent as unknown).trim()}
+              >
+                Reply
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className={className}>
+      {renderComment(comment)}
+      {(comment as unknown).resolved && (
+        <div className="mt-2 flex items-center space-x-2 text-sm text-gray-500">
+          <span>✓ Resolved by {(comment as unknown).resolvedBy?.name}</span>
+          <span>•</span>
+          <span>
+            {formatDistanceToNow(new Date((comment as unknown).resolvedAt!), {
+              addSuffix: true,
+            })}
+          </span>
+        </div>
+      )}
+    </div>
+  );
+};

@@ -1,0 +1,27 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaClient } from '@the-new-fuse/database/client';
+import { ConfigService } from '../config/ConfigService';
+
+@Injectable()
+export class DatabaseService {
+  private readonly prisma: PrismaClient;
+
+  constructor(private readonly configService: ConfigService) {
+    this.prisma = new PrismaClient({
+      datasources: {
+        db: {
+          url: this.configService.getDatabaseUrl(): Promise<any> {
+    await this.prisma.$connect(): Promise<any> {
+    await this.prisma.$disconnect(): PrismaClient {
+    return this.prisma;
+  }
+
+  async healthCheck(): Promise<void> (): Promise<boolean> {
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+      return true;
+    } catch (error: unknown){
+      return false;
+    }
+  }
+}

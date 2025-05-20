@@ -1,0 +1,64 @@
+{
+  // No extends - this is now self-contained
+  "compilerOptions": {
+    // Core settings for VS Code extension (ESM)
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
+    "outDir": "./dist", // Output relative to tsconfig.json location
+    "rootDir": "./src", // Correct rootDir for files in src/
+    "lib": [
+      "ESNext",
+      "DOM" // Keep DOM if webviews use it
+    ],
+    "sourceMap": true,
+
+    // Compatibility & Features
+    "jsx": "react", // Keep if using React in webviews
+    "esModuleInterop": true,
+    "skipLibCheck": true, // Keep for faster builds, especially with complex deps
+    "resolveJsonModule": true,
+    "allowJs": true, // Keep if mixing JS/TS
+    "experimentalDecorators": true, // From base
+    "emitDecoratorMetadata": true, // From base
+
+    // Strictness (keeping current settings for now)
+    "strict": true,
+    "noImplicitAny": false,
+    "strictPropertyInitialization": false, // From base
+
+    // Other settings
+    "forceConsistentCasingInFileNames": true, // From base
+    "baseUrl": ".", // Base for module resolution (src/vscode-extension)
+
+    "types": [ // Keep existing types
+      "node",
+      "vscode",
+      "mocha",
+      "jest",
+      "ws"
+    ],
+    "typeRoots": [ // Keep existing typeRoots
+      "./node_modules/@types", // Local node_modules
+      "../../node_modules/@types" // Root node_modules
+    ],
+    "paths": { // Add back paths for workspace dependencies
+      "@the-new-fuse/*": ["../../packages/*/src"],
+      "@core/*": ["./src/core/*"]
+    }
+    // Removed: noEmit, composite, declaration, declarationMap
+  },
+  "exclude": [ // Keep existing exclude, add dist, scripts, mocks
+    "node_modules",
+    ".vscode-test",
+    "dist",
+    "**/*.test.ts",
+    "**/__tests__/**",
+    "scripts",
+    "__mocks__"
+  ],
+  "include": [ // Point include specifically to the source directory
+    "src/**/*.ts",
+    "src/**/*.tsx"
+  ]
+}

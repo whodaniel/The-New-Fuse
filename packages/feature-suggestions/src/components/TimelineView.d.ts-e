@@ -1,0 +1,12 @@
+import React from 'react';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline';
+interface TimelineViewProps {
+    events: TimelineEvent[];
+    branches: TimelineBranch[];
+    workflows: TimelineWorkflow[];
+    onEventClick: (event: TimelineEvent) => void;
+    onCreateBranch: (fromEventId: string, name: string) => void;
+    onMergeBranch: (fromEventId: string, toEventId: string) => void;
+}
+declare const TimelineView: (React as any).FC<TimelineViewProps>;
+export default TimelineView;

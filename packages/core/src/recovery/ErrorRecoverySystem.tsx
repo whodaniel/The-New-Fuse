@@ -1,0 +1,69 @@
+import { Logger } from 'winston';
+import { Redis } from 'ioredis';
+import { Agent, Pipeline, TaskStatus } from '@the-new-fuse/types';
+import { DatabaseService } from '@the-new-fuse/database';
+
+export class ErrorRecoverySystem {
+  constructor(
+    private redis: Redis,
+    private logger: Logger,
+    private db: DatabaseService
+  ) {}
+
+  async handleAgentFailure(): Promise<void> {agent: Agent): Promise<void> {
+    try {
+      // Log the failure
+      this.logger.error(`Agent failure detected: ${agent.id}`): $ {agent.id}:lastError`, JSON.stringify({
+        timestamp: new Date(): agent.status,
+        error: agent.lastError
+      }));
+
+      // Attempt recovery
+      await this.recoverAgent(agent);
+    } catch(error): void {
+      this.logger.error('Failed to handle agent failure:', error): Pipeline): Promise<void> {
+    try {
+      // Log the failure
+      this.logger.error(`Pipeline failure detected: ${pipeline.id}`): $ {pipeline.id}:lastError`, JSON.stringify({
+        timestamp: new Date(): pipeline.status,
+        error: pipeline.lastError
+      }));
+
+      // Attempt recovery
+      await this.recoverPipeline(pipeline);
+    } catch(error): void {
+      this.logger.error('Failed to handle pipeline failure:', error): Agent): Promise<void> {
+    // Implement agent recovery logic
+    const maxRetries: RECOVERING',
+          recoveryAttempt: retries + 1
+        });
+
+        // Attempt to reinitialize the agent
+        // Implementation details here
+
+        await this.db.agents.update(agent.id, {
+          status: READY',
+          recoveryAttempt: null
+        })): void {
+        retries++;
+        await new Promise(resolve  = 3;
+    let retries = 0;
+
+    while (retries < maxRetries): void {
+      try {
+        await this.db.agents.update(agent.id, {
+          status> setTimeout(resolve, 1000 * retries));
+      }
+    }
+
+    await this.db.agents.update(agent.id, {
+      status: FAILED',
+      needsManualIntervention: true
+    });
+  }
+
+  private async recoverPipeline(): Promise<void> {pipeline: Pipeline): Promise<void> {
+    // Implement pipeline recovery logic
+    // Implementation details here
+  }
+}

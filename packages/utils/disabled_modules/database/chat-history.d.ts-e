@@ -1,0 +1,28 @@
+/**
+ * Plugin to save chat history to AnythingLLM DB.
+ */
+declare const chatHistory: {
+    name: string;
+    startupConfig: {
+        params: {};
+    };
+    plugin: () => {
+        name: string;
+        setup: (aibitat: unknown) => void;
+        _store: (aibitat: unknown, { prompt, response }: {
+            prompt: string;
+            response: string;
+        }) => Promise<void>;
+        _storeSpecial: (aibitat: unknown, { prompt, response, options, }: {
+            prompt: string;
+            response: string;
+            options?: {
+                sources?: unknown[] | undefined;
+                storedResponse?: ((response: string) => string) | undefined;
+                saveAsType?: string | undefined;
+                postSave?: (() => void) | undefined;
+            } | undefined;
+        }) => Promise<void>;
+    };
+};
+export default chatHistory;

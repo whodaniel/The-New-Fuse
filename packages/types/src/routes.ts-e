@@ -1,0 +1,26 @@
+import type { ComponentType } from 'react';
+
+export interface RouteProps {
+  Component: ComponentType<any>;
+}
+
+export interface WorkspaceRouteParams {
+  slug: string;
+  tab?: string;
+}
+
+export interface InviteRouteParams {
+  code: string;
+}
+
+export interface ChatRouteParams {
+  chatId: string;
+}
+
+export interface FeatureRouteParams {
+  featureId: string;
+}
+
+export interface ImportRouteParams {
+  itemId: string;
+}

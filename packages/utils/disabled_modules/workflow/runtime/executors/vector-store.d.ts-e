@@ -1,0 +1,24 @@
+import { Node } from 'reactflow';
+import { NodeExecutor, NodeContext } from '../types';
+interface VectorStoreNodeData {
+    operation: 'upsert' | 'query' | 'delete';
+    store: 'pinecone' | 'chroma' | 'redis';
+    config: {
+        indexName: string;
+        namespace?: string;
+        environment?: string;
+        metric?: 'cosine' | 'euclidean' | 'dotproduct';
+        dimensions?: number;
+    };
+}
+export declare class VectorStoreNodeExecutor implements NodeExecutor {
+    private stores;
+    validate(node: Node<VectorStoreNodeData>): Promise<boolean>;
+    execute(node: Node<VectorStoreNodeData>, context: NodeContext): Promise<any>;
+    private initializeStore;
+    private handleUpsert;
+    private handleQuery;
+    private handleDelete;
+    cleanup(): Promise<void>;
+}
+export {};

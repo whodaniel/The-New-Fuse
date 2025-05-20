@@ -1,0 +1,7 @@
+import React from 'react';
+interface DashboardGridProps {
+    className?: string;
+    onLayoutChange?: (layout: unknown) => void;
+}
+export declare const DashboardGrid: (React as any).FC<DashboardGridProps>;
+export {};

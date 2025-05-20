@@ -1,0 +1,15 @@
+{
+  "name": "mcp-config-manager-server",
+  "version": "1.0.0",
+  "description": "MCP server for managing MCP configurations",
+  "main": "mcp-config-manager-server.js",
+  "bin": {
+    "mcp-config-manager-server": "./mcp-config-manager-server.js"
+  },
+  "scripts": {
+    "start": "node mcp-config-manager-server.js"
+  },
+  "keywords": ["mcp", "model-context-protocol", "config", "manager"],
+  "author": "The New Fuse",
+  "license": "MIT"
+}

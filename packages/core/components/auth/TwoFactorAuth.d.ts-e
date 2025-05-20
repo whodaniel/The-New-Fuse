@@ -1,0 +1,3 @@
+import React from 'react';
+import { AuthProps } from './types';
+export declare const TwoFactorAuth: (React as any).FC<AuthProps>;

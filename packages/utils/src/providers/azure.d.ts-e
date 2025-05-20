@@ -1,0 +1,20 @@
+import { BaseLLMProvider, LLMConfig, LLMResponse } from './base';
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
+interface AzureConfig extends LLMConfig {
+    endpoint?: string;
+    deploymentName?: string;
+}
+export declare class AzureProvider extends BaseLLMProvider {
+    private endpoint;
+    private deploymentName;
+    constructor(config?: AzureConfig);
+    protected getDefaultApiKey(): string;
+    protected getDefaultBaseURL(): string;
+    protected getDefaultModel(): string;
+    protected getDefaultMaxTokens(): number;
+    protected getDefaultHeaders(): Record<string, string>;
+    private getDefaultEndpoint;
+    private getDefaultDeploymentName;
+    chat(messages: ChatCompletionMessageParam[]): Promise<LLMResponse>;
+}
+export {};

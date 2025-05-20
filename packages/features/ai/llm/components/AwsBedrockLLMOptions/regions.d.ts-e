@@ -1,0 +1,15 @@
+export declare const AWS_REGIONS: ({
+    name: string;
+    full_name: string;
+    code: string;
+    public: boolean;
+    zones: string[];
+    zone_limit?: undefined;
+} | {
+    name: string;
+    full_name: string;
+    code: string;
+    public: boolean;
+    zone_limit: number;
+    zones: string[];
+})[];

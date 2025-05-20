@@ -1,0 +1,109 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { ErrorTrackingService } from '../error-(tracking as any).service';
+import { SecurityLoggingService } from '../security-(logging as any).service';
+import { PerformanceMonitoringService } from '../performance-(monitoring as any).service';
+import { SystemHealthService } from '../system-(health as any).service';
+
+export interface DashboardMetrics {
+  errors: {
+    recent: unknown[];
+    stats: {
+      total: number;
+      critical: number;
+      high: number;
+      medium: number;
+      low: number;
+    };
+  };
+  security: {
+    events: unknown[];
+    alerts: unknown[];
+    threatLevel: 'low' | 'medium' | 'high' | 'critical';
+  };
+  performance: {
+    currentLoad: number;
+    responseTime: number;
+    errorRate: number;
+    resourceUsage: {
+      cpu: number;
+      memory: number;
+      disk: number;
+    };
+  };
+  system: {
+    status: 'healthy' | 'degraded' | 'critical';
+    activeAgents: number;
+    messageRate: number;
+    uptime: number;
+  };
+}
+
+@Injectable()
+export class MonitoringDashboardService {
+  private readonly logger = new Logger((MonitoringDashboardService as any): number;
+  private metrics: DashboardMetrics;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly errorTracking: ErrorTrackingService,
+    private readonly securityLogging: SecurityLoggingService,
+    private readonly performanceMonitoring: PerformanceMonitoringService,
+    private readonly systemHealth: SystemHealthService,
+  ) {
+    const dashboardConfig: Promise<void> {
+    try {
+      await this.updateMetrics();
+      setInterval(()  = this.configService.get('(monitoring as any).dashboard') || {};
+    this.refreshInterval = (dashboardConfig as any).refreshInterval || 60000; // Default 1 minute(this as any): unknown) {
+      this.logger.error('Failed to start metrics collection', error): Promise<void> {
+    try {
+      const [systemStatus, errorStats, securityEvents, performanceMetrics] = await (Promise as any).all([
+        this.systemHealth.checkSystemHealth(),
+        this.errorTracking.getErrorStats(),
+        this.securityLogging.getRecentEvents(),
+        this.performanceMonitoring.getCurrentMetrics()
+      ]);
+
+      this.metrics = {
+        errors: {
+          recent: (errorStats as any).recentErrors || [],
+          stats: {
+            total: (errorStats as any).total || 0,
+            critical: (errorStats as any).bySeverity?.critical || 0,
+            high: (errorStats as any).bySeverity?.high || 0,
+            medium: (errorStats as any).bySeverity?.medium || 0,
+            low: (errorStats as any).bySeverity?.low || 0
+          }
+        },
+        security: {
+          events: (securityEvents as any).recent || [],
+          alerts: (securityEvents as any).alerts || [],
+          threatLevel: this.calculateThreatLevel(securityEvents):  {
+          currentLoad: (performanceMetrics as any).systemLoad || 0,
+          responseTime: (performanceMetrics as any).avgResponseTime || 0,
+          errorRate: (performanceMetrics as any).errorRate || 0,
+          resourceUsage: {
+            cpu: (performanceMetrics as any).cpuUsage || 0,
+            memory: (performanceMetrics as any).memoryUsage || 0,
+            disk: (performanceMetrics as any).diskUsage || 0
+          }
+        },
+        system: {
+          status: (systemStatus as any).overall,
+          activeAgents: (systemStatus as any).activeAgents || 0,
+          messageRate: (systemStatus as any).messageRate || 0,
+          uptime: (systemStatus as any).uptime || 0
+        }
+      };
+
+      this.logger.debug('Dashboard metrics updated successfully'): unknown) {
+      this.logger.error('Failed to update dashboard metrics', error): unknown): 'low' | 'medium' | 'high' | 'critical' {
+    const criticalEvents = (securityEvents as any).recent?.filter(e => (e as any): Promise<DashboardMetrics> {
+    return(this as any): Promise<DashboardMetrics['errors']> {
+    return(this as any): Promise<DashboardMetrics['security']> {
+    return(this as any): Promise<DashboardMetrics['performance']> {
+    return(this as any): Promise<DashboardMetrics['system']> {
+    return this.metrics.system;
+  }
+}

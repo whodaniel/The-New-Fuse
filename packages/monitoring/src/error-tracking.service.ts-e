@@ -1,0 +1,229 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../../src/core/database/prisma.service';
+
+export interface ErrorDetails {
+  message: string;
+  stack?: string;
+  code?: string;
+  name?: string;
+  context?: Record<string, any>;
+  userId?: string;
+  requestId?: string;
+  timestamp?: Date;
+  severity?: 'low' | 'medium' | 'high' | 'critical';
+  source?: string;
+  tags?: string[];
+}
+
+export interface ErrorStats {
+  count: number;
+  firstSeen: Date;
+  lastSeen: Date;
+  affectedUsers: number;
+  occurrencesByDay: Record<string, number>;
+}
+
+@Injectable()
+export class ErrorTrackingService {
+  private readonly logger = new Logger(ErrorTrackingService.name);
+  private readonly enabled: boolean;
+  private readonly sampleRate: number;
+  private readonly groupSimilarErrors: boolean;
+  
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {
+    const errorTrackingConfig = this.configService.get('monitoring.errorTracking') || {};
+    this.enabled = errorTrackingConfig.enabled !== false;
+    this.sampleRate = errorTrackingConfig.sampleRate || 1.0; // Default to capturing all errors
+    this.groupSimilarErrors = errorTrackingConfig.groupSimilarErrors !== false;
+    
+    this.logger.log('Error tracking service initialized');
+  }
+
+  /**
+   * Track an error occurrence
+   */
+  async trackError(error: Error | string, details: Partial<ErrorDetails> = {}): Promise<void> {
+    if (!this.enabled || Math.random() > this.sampleRate) return;
+
+    try {
+      const errorDetails = this.normalizeError(error, details);
+      
+      // Store error in database
+      await this.prisma.errorEvent.create({
+        data: {
+          message: errorDetails.message,
+          stack: errorDetails.stack,
+          code: errorDetails.code,
+          name: errorDetails.name,
+          context: errorDetails.context ? JSON.stringify(errorDetails.context) : null,
+          userId: errorDetails.userId,
+          requestId: errorDetails.requestId,
+          timestamp: errorDetails.timestamp,
+          severity: errorDetails.severity || 'medium',
+          source: errorDetails.source || 'application',
+          fingerprint: this.generateErrorFingerprint(errorDetails),
+          tags: errorDetails.tags ? JSON.stringify(errorDetails.tags) : null,
+        },
+      });
+
+      // Log to console as well
+      this.logger.error(
+        `Error tracked: ${errorDetails.message}`,
+        {
+          ...errorDetails,
+          timestamp: errorDetails.timestamp?.toISOString(),
+        }
+      );
+    } catch (trackingError) {
+      // Don't let error tracking failures disrupt the application
+      this.logger.error(
+        `Failed to track error: ${(trackingError as Error).message}`,
+        (trackingError as Error).stack,
+      );
+    }
+  }
+
+  /**
+   * Get error statistics for a specific error fingerprint
+   */
+  async getErrorStats(fingerprint: string): Promise<ErrorStats | null> {
+    try {
+      const errors = await this.prisma.errorEvent.findMany({
+        where: { fingerprint },
+        orderBy: { timestamp: 'asc' },
+      });
+
+      if (errors.length === 0) {
+        return null;
+      }
+
+      const uniqueUsers = new Set();
+      const occurrencesByDay: Record<string, number> = {};
+
+      errors.forEach(error => {
+        if (error.userId) {
+          uniqueUsers.add(error.userId);
+        }
+        
+        // Group by day
+        const day = error.timestamp.toISOString().split('T')[0];
+        occurrencesByDay[day] = (occurrencesByDay[day] || 0) + 1;
+      });
+
+      return {
+        count: errors.length,
+        firstSeen: errors[0].timestamp,
+        lastSeen: errors[errors.length - 1].timestamp,
+        affectedUsers: uniqueUsers.size,
+        occurrencesByDay,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to get error stats: ${(error as Error).message}`, (error as Error).stack);
+      return null;
+    }
+  }
+
+  /**
+   * List recent errors with pagination
+   */
+  async listRecentErrors(page = 1, limit = 20, filters?: {
+    severity?: string;
+    source?: string;
+    userId?: string;
+    timeRange?: { start: Date; end: Date };
+  }): Promise<{ errors: unknown[]; total: number }> {
+    try {
+      const where: any = {};
+      
+      if (filters?.severity) {
+        where.severity = filters.severity;
+      }
+      
+      if (filters?.source) {
+        where.source = filters.source;
+      }
+      
+      if (filters?.userId) {
+        where.userId = filters.userId;
+      }
+      
+      if (filters?.timeRange) {
+        where.timestamp = {
+          gte: filters.timeRange.start,
+          lte: filters.timeRange.end,
+        };
+      }
+
+      const [errors, total] = await Promise.all([
+        this.prisma.errorEvent.findMany({
+          where,
+          orderBy: { timestamp: 'desc' },
+          skip: (page - 1) * limit,
+          take: limit,
+        }),
+        this.prisma.errorEvent.count({ where }),
+      ]);
+
+      return { errors, total };
+    } catch (error) {
+      this.logger.error(`Failed to list recent errors: ${(error as Error).message}`, (error as Error).stack);
+      return { errors: [], total: 0 };
+    }
+  }
+
+  /**
+   * Generate a fingerprint to group similar errors
+   */
+  private generateErrorFingerprint(error: ErrorDetails): string {
+    if (!this.groupSimilarErrors) {
+      // Generate a unique fingerprint for each error
+      return `${Date.now()}-${Math.random()}`;
+    }
+    
+    // Create a simplified stack trace for fingerprinting
+    const stackLines = error.stack?.split('\n').slice(0, 3).join('\n') || '';
+    const signature = `${error.name || 'Error'}:${error.message}:${stackLines}`;
+    
+    // Use a hash function to create a fixed-length fingerprint
+    return this.stringToHash(signature);
+  }
+
+  /**
+   * Simple hash function for strings
+   */
+  private stringToHash(str: string): string {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash.toString(16);
+  }
+
+  /**
+   * Normalize error object or string into ErrorDetails
+   */
+  private normalizeError(error: Error | string, details: Partial<ErrorDetails>): ErrorDetails {
+    const errorDetails: ErrorDetails = {
+      message: typeof error === 'string' ? error : error.message,
+      timestamp: details.timestamp || new Date(),
+      ...details,
+    };
+
+    if (typeof error !== 'string') {
+      errorDetails.stack = error.stack;
+      errorDetails.name = error.name;
+      
+      // Extract additional properties from error object
+      const anyError = error as any;
+      if (anyError.code) errorDetails.code = anyError.code;
+    }
+
+    return errorDetails;
+  }
+}

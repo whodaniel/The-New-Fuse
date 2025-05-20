@@ -1,0 +1,19 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkimport React from 'react';
+import { Toaster as HotToaster } from 'react-hot-toast';
+export function Toaster() {
+    return (<HotToaster position="top-right" toastOptions={{
+            duration: 5000,
+            style: {
+                background: 'var(--background)',
+                color: 'var(--foreground)',
+                border: '1px solid var(--border)',
+            },
+        }}/>);
+}
+//# sourceMappingURL=Toaster.js.map

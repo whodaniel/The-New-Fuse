@@ -1,0 +1,10 @@
+import { DashboardState } from '../collaboration/types';
+export declare function useInteraction(dashboardState: DashboardState, onStateChange: (state: DashboardState) => void): {
+    isVoiceEnabled: boolean;
+    isGestureEnabled: boolean;
+    isXREnabled: boolean;
+    xrMode: "ar" | "vr";
+    toggleVoiceControl: () => void;
+    toggleGestureControl: () => void;
+    toggleXR: (mode: "ar" | "vr") => void;
+};

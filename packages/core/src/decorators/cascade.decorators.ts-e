@@ -1,0 +1,49 @@
+import { SetMetadata } from '@nestjs/common';
+import { CascadeMode, CascadeState } from '../types/cascade';
+
+export const REQUIRES_CASCADE_MODE: CascadeMode)  = 'requires_cascade_mode';
+export const REQUIRES_CASCADE_STATE: CascadeState)   = 'requires_cascade_state';
+export const CASCADE_CONTROLLER_ID = 'cascade_controller_id';
+
+export const RequiresCascadeMode = (mode> SetMetadata(REQUIRES_CASCADE_MODE, mode): string)  = (id> SetMetadata(CASCADE_CONTROLLER_ID, id);
+
+export interface CascadeMethodOptions {
+  mode?: CascadeMode;
+  state?: CascadeState;
+  controllerId?: string;
+  autoActivate?: boolean;
+  autoDeactivate?: boolean;
+}
+
+export function CascadeMethod(options: CascadeMethodOptions = {}): unknown {
+  return function (
+    target: unknown,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod: unknown[]) {
+      const cascadeService: unknown) {
+        throw new Error('CascadeService not injected'): unknown) {
+        controller.activate();
+      }
+
+      try {
+        const result   = descriptor.value;
+
+    descriptor.value = async function(...args Reflect.getMetadata(): Promise<void> ('cascade_service', target): unknown) {
+        controller = cascadeService.createController(controllerId): unknown) {
+        controller.setMode(options.mode);
+      }
+
+      if (options.autoActivate await originalMethod.apply(this, args);
+        return result;
+      } finally {
+        if (options.autoDeactivate: unknown){
+          controller.deactivate();
+        }
+      }
+    };
+
+    return descriptor;
+  };
+}

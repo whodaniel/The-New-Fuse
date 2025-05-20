@@ -1,0 +1,11 @@
+import React from 'react';
+interface AzureAiSettings {
+    AzureOpenAiEndpoint?: string;
+    AzureOpenAiKey?: string;
+    AzureOpenAiEmbeddingModelPref?: string;
+}
+interface AzureAiOptionsProps {
+    settings: AzureAiSettings;
+}
+export declare function AzureAiOptions({ settings }: AzureAiOptionsProps): React.JSX.Element;
+export {};

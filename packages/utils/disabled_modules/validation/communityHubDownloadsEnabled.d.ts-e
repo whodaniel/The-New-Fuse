@@ -1,0 +1,31 @@
+import { Request, Response, NextFunction } from 'express';
+interface BundleItem {
+    verified: boolean;
+    visibility: 'public' | 'private';
+}
+interface CustomLocals {
+    bundleItem: BundleItem;
+}
+interface CustomResponse extends Response {
+    locals: CustomLocals;
+}
+/**
+ * ### Must be called after `communityHubItem`
+ * Checks if community hub bundle downloads are enabled. The reason this functionality is disabled
+ * by default is that since AgentSkills, Workspaces, and DataConnectors are all imported from the
+ * community hub via unzipping a bundle - it would be possible for a malicious user to craft and
+ * download a malicious bundle and import it into their own hosted instance. To avoid this, this
+ * functionality is disabled by default and must be enabled manually by the system administrator.
+ *
+ * On hosted systems, this would not be an issue since the user cannot modify this setting, but those
+ * who self-host can still unlock this feature manually by setting the environment variable
+ * which would require someone who likely has the capacity to understand the risks and the
+ * implications of importing unverified items that can run code on their system, container, or instance.
+ * @see {@link https://(docs as any).(anythingllm as any).com/docs/community-hub/import}
+ */
+declare function communityHubDownloadsEnabled(request: Request, response: CustomResponse, next: NextFunction): void;
+/**
+ * Validates that a community hub item exists and is accessible.
+ */
+declare function communityHubItem(request: Request, response: CustomResponse, next: NextFunction): Promise<void>;
+export { communityHubItem, communityHubDownloadsEnabled };

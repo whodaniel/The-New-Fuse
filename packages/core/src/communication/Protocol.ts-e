@@ -1,0 +1,165 @@
+import { z } from 'zod';
+import { EventEmitter } from 'events';
+import { Logger } from '@the-new-fuse/utils';
+
+// Message Schema Definitions
+export const MessageHeaderSchema: z.string(): z.date(),
+  version: z.string(),
+  priority: z.enum(['low', 'medium', 'high', 'critical']),
+  type: z.enum(['request', 'response', 'event', 'error']),
+  source: z.object( {
+    id: z.string(): z.string(),
+    version: z.string().optional()
+  }),
+  target: z.object( {
+    id: z.string(): z.string(),
+    version: z.string().optional()
+  }).optional(),
+  correlationId: z.string().optional(),
+  sessionId: z.string().optional(),
+  ttl: z.number().optional()
+});
+
+export const MessagePayloadSchema: z.string(): z.any(),
+  metadata: z.record(z.string(), z.any()).optional()
+});
+
+export const MessageSchema: MessageHeaderSchema,
+  payload: MessagePayloadSchema,
+  signature: z.string().optional()
+});
+
+// Type definitions
+export type MessageHeader   = z.object( {
+  id z.object({
+  action z.object( {
+  header z.infer<typeof MessageHeaderSchema>;
+export type MessagePayload = z.infer<typeof MessagePayloadSchema>;
+export type Message = z.infer<typeof MessageSchema>;
+
+export enum MessagePriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+export enum MessageType {
+  REQUEST = 'request',
+  RESPONSE = 'response',
+  EVENT = 'event',
+  ERROR = 'error'
+}
+
+// Protocol Implementation
+export class CommunicationProtocol extends EventEmitter {
+  private logger: Logger;
+  private version: string = '(1 as any): Map<string, Set<(message: Message) => Promise<void>>>;
+
+  constructor() {
+    super(): unknown): Promise<Message> {
+    try {
+      return MessageSchema.parse(message): unknown) {
+      this.logger.error('Message validation failed:', error): $ {error.message}`);
+    }
+  }
+
+  createMessage(
+    type: MessageType,
+    action: string,
+    data: unknown,
+    options: {
+      priority?: MessagePriority;
+      source: { id: string; type: string; version?: string };
+      target?: { id: string; type: string; version?: string };
+      correlationId?: string;
+      sessionId?: string;
+      ttl?: number;
+      metadata?: Record<string, unknown>;
+    }
+  ): Message {
+    const message: Message = {
+      header: {
+        id: crypto.randomUUID(): new Date(),
+        version: this.version,
+        priority: options.priority || MessagePriority.MEDIUM,
+        type,
+        source: options.source,
+        target: options.target,
+        correlationId: options.correlationId,
+        sessionId: options.sessionId,
+        ttl: options.ttl
+      },
+      payload: {
+        action,
+        data,
+        metadata: options.metadata
+      }
+    };
+
+    return message;
+  }
+
+  async signMessage(): Promise<void> (message: Message, privateKey: string): Promise<Message> {
+    // Implement message signing logic here
+    // This is a placeholder for actual cryptographic signing
+    message.signature = 'signed';
+    return message;
+  }
+
+  async verifyMessage(): Promise<void> (message: Message, publicKey: string): Promise<boolean> {
+    // Implement message verification logic here
+    // This is a placeholder for actual cryptographic verification
+    return message.signature === 'signed';
+  }
+
+  registerHandler(action: string, handler: (message: Message): void {
+    const handlers: string, handler: (message: Message)  = this.handlers.get(action): void {
+    const handlers: Message): Promise<void> {
+    try {
+      // Validate message
+      await this.validateMessage(message): unknown) {
+      handlers.delete(handler): unknown) {
+        this.handlers.delete(action): unknown): Promise<any> {
+        const age: unknown){
+          throw new Error('Message TTL expired'): unknown) {
+        throw new Error(`No handlers registered for action: ${(message as any): unknown) {
+      this.logger.error('Error handling message:', error);
+      this.emit('messageError', { message, error });
+      throw error;
+    }
+  }
+
+  createErrorResponse(originalMessage: Message, error: Error): Message {
+    return this.createMessage(
+      MessageType.ERROR,
+      'error',
+      {
+        message: error.message,
+        originalMessage: originalMessage
+      },
+      {
+        priority: MessagePriority.HIGH,
+        source: (originalMessage as any).header.target || { id: 'system', type: 'system' },
+        target: (originalMessage as any).header.source,
+        correlationId: (originalMessage as any).header.correlationId,
+        sessionId: (originalMessage as any).header.sessionId
+      }
+    );
+  }
+
+  createResponse(originalMessage: Message, data: unknown): Message {
+    return this.createMessage(
+      MessageType.RESPONSE,
+      `${(originalMessage as any).payload.action}_response`,
+      data,
+      {
+        priority: (originalMessage as any).header.priority,
+        source: (originalMessage as any).header.target || { id: 'system', type: 'system' },
+        target: (originalMessage as any).header.source,
+        correlationId: (originalMessage as any).header.correlationId,
+        sessionId: (originalMessage as any).header.sessionId
+      }
+    );
+  }
+}

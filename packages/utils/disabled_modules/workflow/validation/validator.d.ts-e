@@ -1,0 +1,42 @@
+import { Node, Edge } from 'reactflow';
+import { NodeExecutor } from '../runtime/types';
+interface ValidationError {
+    type: 'error' | 'warning';
+    nodeId?: string;
+    edgeId?: string;
+    message: string;
+    code: string;
+}
+interface ValidationResult {
+    isValid: boolean;
+    errors: ValidationError[];
+    warnings: ValidationError[];
+}
+interface ValidationContext {
+    errors: ValidationError[];
+    warnings: ValidationError[];
+}
+export declare class WorkflowValidator {
+    private executors;
+    constructor(executors: Map<string, NodeExecutor>);
+    validateWorkflow(nodes: Node[], edges: Edge[]): Promise<ValidationResult>;
+    private validateNode;
+    private validateEdge;
+    private validateWorkflowStructure;
+    private hasCycles;
+}
+export interface ValidationRule {
+    type: 'required' | 'string' | 'number' | 'boolean' | 'array' | 'enum';
+    fieldName: string;
+    allowedValues?: string[];
+}
+export declare class Validator {
+    validateRequired(value: unknown, fieldName: string, context: ValidationContext): void;
+    validateString(value: unknown, fieldName: string, context: ValidationContext): void;
+    validateNumber(value: unknown, fieldName: string, context: ValidationContext): void;
+    validateBoolean(value: unknown, fieldName: string, context: ValidationContext): void;
+    validateArray(value: unknown, fieldName: string, context: ValidationContext): void;
+    validateEnum(value: unknown, fieldName: string, allowedValues: string[], context: ValidationContext): void;
+    validate(value: unknown, rules: ValidationRule[]): ValidationResult;
+}
+export type { ValidationResult, ValidationError, ValidationContext };

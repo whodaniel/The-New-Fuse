@@ -1,0 +1,10 @@
+import React from 'react';
+import { DataSourceConfig as DataSourceConfigType } from './types';
+interface DataSourceConfigProps {
+    dataSource?: DataSourceConfigType;
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (config: DataSourceConfigType) => void;
+}
+export declare const DataSourceConfig: (React as any).FC<DataSourceConfigProps>;
+export {};

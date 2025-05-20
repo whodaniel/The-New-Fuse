@@ -1,0 +1,44 @@
+/**
+ * Command-line Interface plugin. It prints the messages on the console and asks for feedback
+ * while the conversation is running in the background.
+ */
+interface Message {
+    from: string;
+    to: string;
+    content?: string;
+    state: 'loading' | 'error' | 'success' | 'interrupt';
+}
+interface Node {
+    from: string;
+    to: string;
+}
+declare const cli: {
+    name: string;
+    startupConfig: {
+        params: {};
+    };
+    plugin: ({ simulateStream }?: {
+        simulateStream?: boolean | undefined;
+    }) => {
+        name: string;
+        setup(aibitat: unknown): void;
+        /**
+         * Print a message on the terminal
+         *
+         * @param message
+         * // message Type { from: string; to: string; content?: string } & {
+            state: 'loading' | 'error' | 'success' | 'interrupt'
+          }
+         * @param simulateStream
+         */
+        print: (message: Message, simulateStream?: boolean) => Promise<void>;
+        /**
+         * Ask for feedback to the user using the terminal
+         *
+         * @param node //{ from: string; to: string }
+         * @returns
+         */
+        askForFeedback: (node: Node) => import("@inquirer/type").CancelablePromise<string>;
+    };
+};
+export { cli };

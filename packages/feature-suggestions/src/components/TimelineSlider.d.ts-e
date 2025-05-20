@@ -1,0 +1,10 @@
+import React from 'react';
+import { TimelineEvent, TimelineRange } from '../types/timeline';
+interface TimelineSliderProps {
+    events: TimelineEvent[];
+    ranges: TimelineRange[];
+    onAddNote: (date: Date, content: string) => void;
+    onRangeSelect: (startDate: Date, endDate: Date) => void;
+}
+declare const TimelineSlider: (React as any).FC<TimelineSliderProps>;
+export default TimelineSlider;

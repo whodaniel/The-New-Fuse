@@ -1,0 +1,113 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = require("react");
+const react_router_dom_1 = require("react-router-dom");
+const Navigation = () => {
+    const routes = {
+        'Admin Panel': {
+            'System Overview': '/admin/overview',
+            'Agent Network': '/admin/agents',
+            'Task Management': '/admin/tasks',
+            'Performance Metrics': '/admin/performance',
+            'Knowledge Graph': '/admin/knowledge',
+            'Resource Management': '/admin/resources',
+            'Webhook Management': '/admin/webhooks',
+            'Voice Control': '/admin/voice',
+            'User Management': '/admin/users',
+            'System Settings': '/admin/settings',
+        },
+        'API Endpoints': {
+            'System': {
+                'System Metrics': '/api/system/metrics',
+                'Network Status': '/api/system/network/status',
+                'GPU Status': '/api/system/resources/gpu',
+                'Tasks Status': '/api/system/tasks/status',
+                'Knowledge Graph': '/api/system/knowledge/graph',
+                'Health Check': '/api/system/check_health',
+            },
+            'Admin': {
+                'Dashboard Overview': '/api/admin/dashboard/overview',
+                'Agent Performance': '/api/admin/agents/performance',
+                'System Maintenance': '/api/admin/system/maintenance',
+                'System Backup': '/api/admin/system/backup',
+                'Webhooks': '/api/admin/webhooks',
+                'Users': '/api/admin/users',
+                'Settings': '/api/admin/settings',
+            },
+            'Conversations': {
+                'All Conversations': '/api/conversations',
+                'Create Conversation': '/api/conversations/new',
+            },
+        },
+        'WebSocket': {
+            'Chat': 'ws://localhost:5000/ws/chat',
+            'Metrics': 'ws://localhost:5000/ws/metrics',
+            'Notifications': 'ws://localhost:5000/ws/notifications',
+        },
+        'Documentation': {
+            'API Docs': '/api/docs',
+            'Swagger UI': '/api/swagger',
+            'Frontend Docs': '/docs/frontend',
+            'Backend Docs': '/docs/backend',
+        },
+        'Monitoring': {
+            'Prometheus Metrics': '/metrics',
+            'Health Status': '/health',
+            'Status Page': '/status',
+        },
+    };
+    const renderRoutes = (routeObj, level = 0) => {
+        return Object.entries(routeObj).map(([key, value]) => {
+            if (typeof value === 'string') {
+                return (<div key={value} className={`pl-${level * 4} py-2 hover:bg-gray-100 dark:hover:bg-gray-800`}>
+            <react_router_dom_1.Link to={value} className="text-blue-600 dark:text-blue-400 hover:underline flex items-center">
+              <span className="w-4 h-4 mr-2">→</span>
+              {key}
+              <span className="ml-2 text-gray-500 dark:text-gray-400">{value}</span>
+            </react_router_dom_1.Link>
+          </div>);
+            }
+            else {
+                return (<div key={key} className={`pl-${level * 4} py-2`}>
+            <h3 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">
+              {key}
+            </h3>
+            {renderRoutes(value, level + 1)}
+          </div>);
+            }
+        });
+    };
+    return (<div className="min-h-screen bg-white dark:bg-gray-900 p-8">
+      <div className="max-w-4xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8 text-gray-800 dark:text-white">
+          System Navigation
+        </h1>
+        
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <div className="grid grid-cols-1 gap-6">
+            {renderRoutes(routes)}
+          </div>
+        </div>
+
+        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900 rounded-lg">
+          <h2 className="text-lg font-semibold mb-2 text-blue-800 dark:text-blue-200">
+            Quick Access
+          </h2>
+          <div className="flex flex-wrap gap-4">
+            <react_router_dom_1.Link to="/admin/overview" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+              Admin Dashboard
+            </react_router_dom_1.Link>
+            <react_router_dom_1.Link to="/api/docs" className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">
+              API Documentation
+            </react_router_dom_1.Link>
+            <react_router_dom_1.Link to="/status" className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">
+              System Status
+            </react_router_dom_1.Link>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+exports.default = Navigation;
+export {};
+//# sourceMappingURL=index.js.map

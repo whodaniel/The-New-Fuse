@@ -1,0 +1,12 @@
+import { Node } from 'reactflow';
+import { NodeExecutor, NodeContext } from '../types';
+import { ChatNodeData } from '../../nodes/llm/chat';
+export declare class LLMNodeExecutor implements NodeExecutor {
+    validate(node: Node<ChatNodeData>): Promise<boolean>;
+    execute(node: Node<ChatNodeData>, context: NodeContext): Promise<{
+        content: unknown;
+        usage: unknown;
+        model: unknown;
+    }>;
+    cleanup(node: Node<ChatNodeData>): Promise<void>;
+}

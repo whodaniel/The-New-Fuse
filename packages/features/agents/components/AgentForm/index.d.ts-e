@@ -1,0 +1,55 @@
+import React from 'react';
+import * as z from 'zod';
+declare const agentFormSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodString;
+    capabilities: z.ZodArray<z.ZodString, "many">;
+    personality: z.ZodObject<{
+        openness: z.ZodNumber;
+        conscientiousness: z.ZodNumber;
+        extraversion: z.ZodNumber;
+        agreeableness: z.ZodNumber;
+        neuroticism: z.ZodNumber;
+    }, "strip", z.ZodTypeAny, {
+        openness: number;
+        conscientiousness: number;
+        extraversion: number;
+        agreeableness: number;
+        neuroticism: number;
+    }, {
+        openness: number;
+        conscientiousness: number;
+        extraversion: number;
+        agreeableness: number;
+        neuroticism: number;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string;
+    personality: {
+        openness: number;
+        conscientiousness: number;
+        extraversion: number;
+        agreeableness: number;
+        neuroticism: number;
+    };
+    capabilities: string[];
+}, {
+    name: string;
+    description: string;
+    personality: {
+        openness: number;
+        conscientiousness: number;
+        extraversion: number;
+        agreeableness: number;
+        neuroticism: number;
+    };
+    capabilities: string[];
+}>;
+type AgentFormValues = z.infer<typeof agentFormSchema>;
+interface AgentFormProps {
+    onSubmit: (data: AgentFormValues) => void;
+    initialValues?: Partial<AgentFormValues>;
+}
+export declare const AgentForm: React.FC<AgentFormProps>;
+export {};

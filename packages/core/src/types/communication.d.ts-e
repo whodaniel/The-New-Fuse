@@ -1,0 +1,355 @@
+export declare enum ContentType {
+    TEXT = "text",
+    CODE = "code",
+    MARKDOWN = "markdown",
+    IMAGE = "image",
+    VIDEO = "video",
+    AUDIO = "audio",
+    DOCUMENT = "document",
+    URL = "url",
+    EMBED = "embed",
+    SMART_CONTRACT = "smart_contract",
+    TRANSACTION = "transaction",
+    TOKEN = "token",
+    NFT = "nft",
+    FUNGIBLE_TOKEN = "fungible_token",
+    SEMI_FUNGIBLE_TOKEN = "semi_fungible_token",
+    WALLET = "wallet",
+    MODEL_INTERACTION = "model_interaction",
+    MODEL_INFERENCE = "model_inference",
+    MODEL_TRAINING = "model_training",
+    PROMPT = "prompt",
+    COMPLETION = "completion",
+    EMBEDDING = "embedding",
+    COMPUTE_RESOURCE = "compute_resource",
+    STORAGE_RESOURCE = "storage_resource",
+    NETWORK_RESOURCE = "network_resource",
+    API_RESOURCE = "api_resource"
+}
+export declare enum PlatformType {
+    TWITTER = "twitter",
+    FACEBOOK = "facebook",
+    LINKEDIN = "linkedin",
+    INSTAGRAM = "instagram",
+    DISCORD = "discord",
+    SLACK = "slack",
+    GITHUB = "github",
+    GITLAB = "gitlab",
+    STACKOVERFLOW = "stackoverflow",
+    EMAIL = "email",
+    SMS = "sms",
+    CHAT = "chat",
+    FORUM = "forum",
+    BLOG = "blog",
+    ZOOM = "zoom",
+    TEAMS = "teams",
+    MEET = "meet",
+    ETHEREUM = "ethereum",
+    POLYGON = "polygon",
+    SOLANA = "solana",
+    BINANCE = "binance",
+    ARBITRUM = "arbitrum",
+    OPTIMISM = "optimism",
+    AVALANCHE = "avalanche",
+    COSMOS = "cosmos",
+    CARDANO = "cardano",
+    UNISWAP = "uniswap",
+    AAVE = "aave",
+    COMPOUND = "compound",
+    CURVE = "curve",
+    BALANCER = "balancer",
+    OPENSEA = "opensea",
+    RARIBLE = "rarible",
+    FOUNDATION = "foundation",
+    BLUR = "blur",
+    X2Y2 = "x2y2",
+    OPENAI = "openai",
+    ANTHROPIC = "anthropic",
+    COHERE = "cohere",
+    HUGGINGFACE = "huggingface",
+    REPLICATE = "replicate",
+    STABILITY_AI = "stability_ai",
+    CUSTOM_MODEL = "custom_model",
+    API = "api",
+    CUSTOM = "custom"
+}
+export declare enum ModelType {
+    GPT4 = "gpt4",
+    GPT35 = "gpt35",
+    CLAUDE = "claude",
+    LLAMA = "llama",
+    MISTRAL = "mistral",
+    PALM = "palm",
+    DALLE = "dalle",
+    STABLE_DIFFUSION = "stable_diffusion",
+    MIDJOURNEY = "midjourney",
+    WHISPER = "whisper",
+    MUSICGEN = "musicgen",
+    ADA = "ada",
+    BERT = "bert",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+export declare enum TokenType {
+    ERC20 = "erc20",
+    ERC223 = "erc223",
+    BEP20 = "bep20",
+    ERC721 = "erc721",
+    ERC1155 = "erc1155",
+    ERC1155_SEMI = "erc1155_semi",
+    SPL = "spl",
+    COSMOS_TOKEN = "cosmos_token",
+    CARDANO_TOKEN = "cardano_token",
+    CUSTOM = "custom"
+}
+export declare enum WalletType {
+    NON_CUSTODIAL = "non_custodial",
+    HARDWARE = "hardware",
+    PAPER = "paper",
+    CUSTODIAL = "custodial",
+    EXCHANGE = "exchange",
+    SMART_CONTRACT_WALLET = "smart_contract_wallet",
+    MULTISIG = "multisig",
+    HOT = "hot",
+    COLD = "cold",
+    CUSTOM = "custom"
+}
+export declare enum ResourceType {
+    CPU = "cpu",
+    GPU = "gpu",
+    TPU = "tpu",
+    MEMORY = "memory",
+    DISK = "disk",
+    OBJECT_STORAGE = "object_storage",
+    IPFS = "ipfs",
+    ARWEAVE = "arweave",
+    BANDWIDTH = "bandwidth",
+    LATENCY = "latency",
+    CUSTOM = "custom"
+}
+export declare enum ParticipantType {
+    HUMAN = "human",
+    AI_AGENT = "ai_agent",
+    SYSTEM = "system",
+    SERVICE = "service",
+    BOT = "bot",
+    SMART_CONTRACT = "smart_contract",
+    DAO = "dao",
+    UNKNOWN = "unknown"
+}
+export declare enum ProtocolType {
+    HTTP = "http",
+    HTTPS = "https",
+    WS = "ws",
+    WSS = "wss",
+    REDIS = "redis",
+    MQTT = "mqtt",
+    AMQP = "amqp",
+    GRPC = "grpc",
+    TCP = "tcp",
+    UDP = "udp",
+    EVM = "evm",
+    SOLANA_PROTOCOL = "solana_protocol",
+    COSMOS = "cosmos",
+    POLKADOT = "polkadot",
+    ERC20 = "erc20",
+    ERC721 = "erc721",
+    ERC1155 = "erc1155",
+    UNISWAP_V2 = "uniswap_v2",
+    UNISWAP_V3 = "uniswap_v3",
+    CUSTOM = "custom"
+}
+export declare enum CommunicationPattern {
+    DIRECT = "direct",
+    BROADCAST = "broadcast",
+    REQUEST_RESPONSE = "request_response",
+    PUBLISH_SUBSCRIBE = "publish_subscribe",
+    PIPELINE = "pipeline",
+    ORCHESTRATOR = "orchestrator",
+    SMART_CONTRACT_EVENT = "smart_contract_event",
+    ORACLE = "oracle",
+    CROSS_CHAIN = "cross_chain"
+}
+export declare enum MessagePriority {
+    CRITICAL = "critical",
+    HIGH = "high",
+    MEDIUM = "medium",
+    LOW = "low"
+}
+export declare enum SecurityLevel {
+    HIGH = "high",
+    MEDIUM = "medium",
+    LOW = "low"
+}
+export declare enum ChainType {
+    MAINNET = "mainnet",
+    TESTNET = "testnet",
+    DEVNET = "devnet"
+}
+export declare enum TransactionType {
+    TRANSFER = "transfer",
+    SWAP = "swap",
+    MINT = "mint",
+    BURN = "burn",
+    STAKE = "stake",
+    UNSTAKE = "unstake",
+    GOVERNANCE = "governance",
+    SMART_CONTRACT_INTERACTION = "smart_contract_interaction"
+}
+export interface ModelMetadata {
+    type: ModelType;
+    version?: string;
+    provider?: string;
+    parameters?: {
+        temperature?: number;
+        topP?: number;
+        maxTokens?: number;
+        customParams?: Record<string, any>;
+    };
+    usage?: {
+        promptTokens?: number;
+        completionTokens?: number;
+        totalTokens?: number;
+        computeTime?: number;
+        cost?: number;
+    };
+    performance?: {
+        latency?: number;
+        throughput?: number;
+        errorRate?: number;
+    };
+}
+export interface TokenMetadata {
+    type: TokenType;
+    standard: string;
+    name?: string;
+    symbol?: string;
+    decimals?: number;
+    totalSupply?: string;
+    maxSupply?: string;
+    mintable: boolean;
+    burnable: boolean;
+    paused?: boolean;
+    owner?: string;
+    customAttributes?: Record<string, any>;
+}
+export interface WalletMetadata {
+    type: WalletType;
+    address: string;
+    chain: string;
+    network: string;
+    balance?: string;
+    nonce?: number;
+    implementation?: string;
+    guardian?: string;
+    recoveryModule?: string;
+    securityLevel?: string;
+    customAttributes?: Record<string, any>;
+}
+export interface ResourceMetadata {
+    type: ResourceType;
+    provider?: string;
+    location?: string;
+    capacity?: {
+        total: number;
+        used: number;
+        available: number;
+        unit: string;
+    };
+    cost?: {
+        amount: number;
+        currency: string;
+        period?: string;
+    };
+    performance?: {
+        throughput?: number;
+        latency?: number;
+        reliability?: number;
+    };
+    customAttributes?: Record<string, any>;
+}
+export interface BlockchainMetadata {
+    chain: ChainType;
+    network: string;
+    transactionHash?: string;
+    blockNumber?: number;
+    contractAddress?: string;
+    tokenId?: string;
+    value?: string;
+    gasUsed?: number;
+    transactionType?: TransactionType;
+    token?: TokenMetadata;
+    wallet?: WalletMetadata;
+    resource?: ResourceMetadata;
+}
+export interface ContentMetadata {
+    format?: string;
+    encoding?: string;
+    language?: string;
+    size?: number;
+    blockchain?: BlockchainMetadata;
+    model?: ModelMetadata;
+    token?: TokenMetadata;
+    wallet?: WalletMetadata;
+    resource?: ResourceMetadata;
+    customAttributes?: Record<string, any>;
+}
+export interface InteractionContext {
+    id: string;
+    timestamp: string;
+    participants: {
+        sender: {
+            id: string;
+            type: ParticipantType;
+            metadata?: Record<string, any>;
+        };
+        receivers: Array<{
+            id: string;
+            type: ParticipantType;
+            metadata?: Record<string, any>;
+        }>;
+    };
+    platform: {
+        type: PlatformType;
+        url?: string;
+        metadata?: Record<string, any>;
+    };
+    protocol: {
+        type: ProtocolType;
+        version?: string;
+        metadata?: Record<string, any>;
+    };
+    content: {
+        type: ContentType;
+        value: unknown;
+        metadata?: ContentMetadata;
+    };
+    pattern: {
+        type: CommunicationPattern;
+        metadata?: Record<string, any>;
+    };
+    security: {
+        level: SecurityLevel;
+        encryption?: boolean;
+        authentication?: boolean;
+        metadata?: Record<string, any>;
+    };
+    metadata?: {
+        threadId?: string;
+        correlationId?: string;
+        sessionId?: string;
+        priority?: MessagePriority;
+        tags?: string[];
+        customFields?: Record<string, any>;
+    };
+}
+export declare class CommunicationRecord {
+    readonly id: string;
+    readonly context: InteractionContext;
+    readonly createdAt: string;
+    readonly updatedAt: string;
+    constructor(context: Partial<InteractionContext>);
+    update(updates: Partial<InteractionContext>): CommunicationRecord;
+    toJSON(): Record<string, any>;
+}
+//# sourceMappingURL=(communication as any).d.ts.map

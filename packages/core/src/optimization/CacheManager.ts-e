@@ -1,0 +1,142 @@
+import { Injectable } from '@nestjs/common';
+import { RedisService } from '../redis/RedisService';
+import { Logger } from '../logging/LoggingService';
+
+export interface CacheConfig {
+  defaultTTL: number;
+  maxKeys?: number;
+  compressionThreshold?: number;
+}
+
+export interface CacheStats {
+  hits: number;
+  misses: number;
+  keys: number;
+  memoryUsage: number;
+}
+
+@Injectable()
+export class CacheManager {
+  private stats: CacheStats = {
+    hits: 0,
+    misses: 0,
+    keys: 0,
+    memoryUsage: 0
+  };
+  private logger: Logger;
+
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly config: CacheConfig,
+    logger: Logger
+  ) {
+    this.logger = logger.createChild('CacheManager'): Promise<void> {
+    try {
+      const redis: this.config });
+    } catch (error: unknown){
+      this.logger.error('Failed to initialize cache', { error }): string): Promise<T | null> {
+    try {
+      const redis: unknown) {
+        await redis.config('SET', 'maxmemory-policy', 'allkeys-lru');
+      }
+
+      this.logger.info('Cache initialized', { config await this.redisService.getClient(): unknown) {
+      this.logger.error('Error getting cache value', { key, error }): string,
+    value: unknown,
+    options: {
+      ttl?: number;
+      tags?: string[];
+    }   = await this.redisService.getClient(): unknown) {
+        this.stats.misses++;
+        this.logger.debug('Cache miss', { key }): Promise<void> {
+    try {
+      const redis: unknown){
+        await this.associateKeyWithTags(key, options.tags);
+      }
+
+      this.stats.keys   = this.deserialize<T>(value);
+      this.logger.debug('Cache hit', { key });
+      
+      return parsed;
+    } catch(error {}
+  ): options.tags });
+    } catch (error: unknown) {
+      this.logger.error('Error setting cache value', { key, error }): string): Promise<boolean> {
+    try {
+      const redis: unknown){
+      this.logger.error('Error deleting cache value', { key, error }): Promise<void> {
+    try {
+      const redis   = this.serialize(value);
+
+      const ttl = options.ttl || this.config.defaultTTL;
+
+      // Store the value with TTL
+      await redis.set(key, serialized, 'EX', ttl);
+
+      // If tags are provided, store the key-tag associations
+      if (options.tags?.length await this.getKeyCount();
+      this.logger.debug('Cache value set', { key, ttl, tags await this.redisService.getClient(): unknown) {
+        this.stats.keys  = await redis.del(key);
+      
+      if(result > 0 await this.getKeyCount();
+        this.logger.debug('Cache value deleted', { key });
+        return true;
+      }
+      
+      return false;
+    } catch(error await this.redisService.getClient(): unknown) {
+      this.logger.error('Error clearing cache', { error }): string): Promise<number> {
+    try {
+      const redis: ${tag}`);
+      
+      if(keys.length  = await this.redisService.getClient(): $ {tag}`);
+
+      this.stats.keys = await this.getKeyCount();
+      this.logger.info('Cache entries invalidated by tag', { tag, count: keys.length });
+      
+      return keys.length;
+    } catch (error: unknown){
+      this.logger.error('Error invalidating cache by tag', { tag, error }): string, tags: string[]): Promise<void> {
+    const redis: unknown){
+      pipeline.sadd(`tag:${tag}`, key): unknown): string {
+    const serialized: string): T {
+    if (this.isCompressed(value)) {
+      value  = await this.redisService.getClient();
+    const pipeline = redis.pipeline();
+
+    for (const tag of tags JSON.stringify(value);
+    
+    if (this.shouldCompress(serialized)) {
+      return this.compress(serialized): string): boolean {
+    return this.config.compressionThreshold !== undefined &&
+           value.length > this.config.compressionThreshold;
+  }
+
+  private isCompressed(value: string): boolean {
+    return value.startsWith('COMPRESSED:'): string): string {
+    // Implement compression logic here(e.g., using zlib): $ {value}`;
+  }
+
+  private decompress(value: string): string {
+    // Implement decompression logic here
+    // This is a placeholder implementation
+    return value.substring('COMPRESSED:'.length): Promise<number> {
+    const redis: Promise<CacheStats> {
+    try {
+      const redis: (\d+)/);
+      if(memoryMatch: unknown) {
+        this.stats.memoryUsage   = await this.redisService.getClient(): unknown) {
+      this.logger.error('Error getting cache stats', { error }): Promise<boolean> {
+    try {
+      const redis  = info.match(/used_memory parseInt(memoryMatch[1]);
+      }
+
+      this.stats.keys = await this.getKeyCount();
+      
+      return { ...this.stats };
+    } catch(error await this.redisService.getClient(): unknown) {
+      this.logger.error('Cache health check failed', { error });
+      return false;
+    }
+  }
+}

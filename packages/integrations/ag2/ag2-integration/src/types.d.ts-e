@@ -1,0 +1,38 @@
+import { AgentType, AgentCapability, AgentRole, AgentFramework } from '@fuse/types';
+export interface AG2Message {
+    id: string;
+    type: 'text' | 'function_call' | 'function_response';
+    role: 'system' | 'user' | 'assistant' | 'function';
+    content: string;
+    sender: string;
+    timestamp: number;
+    metadata?: Record<string, unknown>;
+    functionCall?: {
+        name: string;
+        arguments: Record<string, unknown>;
+    };
+}
+export interface AG2Tool {
+    id: string;
+    name: string;
+    description: string;
+    type: AgentType;
+    capabilities: AgentCapability[];
+    role: AgentRole;
+    framework: AgentFramework;
+    parameters: Record<string, unknown>;
+    handler: (args: Record<string, unknown>) => Promise<unknown>;
+}
+export interface AG2Response<T = unknown> {
+    success: boolean;
+    error?: string;
+    data?: T;
+}
+export interface AG2Config {
+    pythonServiceUrl?: string;
+    retryConfig?: {
+        maxRetries: number;
+        backoffMs: number;
+    };
+    timeout?: number;
+}

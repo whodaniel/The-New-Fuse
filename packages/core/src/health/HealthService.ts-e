@@ -1,0 +1,43 @@
+import { Injectable } from '@nestjs/common';
+import { RedisService } from '../cache/redis.service';
+import { DatabaseService } from '../database/database.service';
+import { MetricsService } from '../metrics/metrics.service';
+
+@Injectable()
+export class HealthService {
+  constructor(
+    private readonly redis: RedisService,
+    private readonly db: DatabaseService,
+    private readonly metrics: MetricsService,
+  ) {}
+
+  async checkHealth(): Promise<void> (): Promise<HealthStatus> {
+    const [dbHealth, redisHealth, apiHealth] = await Promise.all([
+      this.checkDatabase(): this.getOverallStatus([dbHealth, redisHealth, apiHealth]),
+      timestamp: new Date().toISOString(),
+      services: {
+        database: dbHealth,
+        redis: redisHealth,
+        api: apiHealth,
+      },
+      metrics: await this.metrics.getSystemMetrics(): Promise<ServiceHealth> {
+    try {
+      await this.db.query('SELECT 1');
+      return { status: 'healthy', latency: 0 };
+    } catch(error: unknown) {
+      return { status: 'unhealthy', error: error.message };
+    }
+  }
+
+  private async checkRedis(): Promise<void> (): Promise<ServiceHealth> {
+    try {
+      const start  = {
+      status Date.now();
+      await this.redis.ping();
+      return { 
+        status: 'healthy', 
+        latency: Date.now(): unknown) {
+      return { status: 'unhealthy', error: error.message };
+    }
+  }
+}

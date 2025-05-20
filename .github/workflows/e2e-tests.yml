@@ -1,0 +1,119 @@
+name: E2E Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e-tests:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: fuse_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:6
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Install dependencies
+      run: |
+        npm ci
+        npx playwright install --with-deps chromium firefox webkit
+
+    - name: Build application
+      run: npm run build
+
+    - name: Start services
+      run: |
+        npm run start:api &
+        npm run start:backend &
+        npm run start &
+        npx wait-on http://localhost:3000 http://localhost:3001
+
+    - name: Run E2E tests
+      run: npm run test:e2e
+      env:
+        BASE_URL: http://localhost:3000
+        API_URL: http://localhost:3001
+        TEST_USER: testuser
+        TEST_PASSWORD: testpass123
+        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/fuse_test
+        REDIS_URL: redis://localhost:6379
+        CI: true
+
+    - name: Run performance tests
+      run: npm run test:e2e:perf
+      env:
+        PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/performance.json
+        CI: true
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results
+        path: |
+          packages/testing/playwright-report/
+          packages/testing/test-results/
+          packages/testing/test-artifacts/
+        retention-days: 30
+
+    - name: Upload performance results
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-results
+        path: packages/testing/test-results/performance.json
+        retention-days: 30
+
+    - name: Analyze performance results
+      if: success()
+      run: |
+        node packages/testing/scripts/analyze-performance.js \
+          --input test-results/performance.json \
+          --threshold-file .github/performance-thresholds.json \
+          --output performance-report.md
+
+    - name: Comment PR with performance results
+      if: github.event_name == 'pull_request' && success()
+      uses: actions/github-script@v6
+      with:
+        script: |
+          const fs = require('fs');
+          const report = fs.readFileSync('performance-report.md', 'utf8');
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: report
+          });

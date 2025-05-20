@@ -1,0 +1,229 @@
+/**
+ * Core enums used throughout the application
+ * Centralizes all enum definitions to avoid redundancy
+ */
+
+// Task related enums
+export enum TaskStatus {
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+  TODO = 'todo',
+  IN_PROGRESS = 'in_progress',
+  DONE = 'done'
+}
+
+export enum TaskPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+export enum TaskType {
+  ROUTINE = 'routine',
+  ONETIME = 'onetime',
+  RECURRING = 'recurring',
+  DEPENDENT = 'dependent',
+  BACKGROUND = 'background',
+  FEATURE = 'feature',
+  BUG = 'bug',
+  IMPROVEMENT = 'improvement'
+}
+
+// Workflow related enums
+export enum WorkflowStatus {
+  PENDING = 'pending',
+  STARTED = 'started',
+  RUNNING = 'running',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  CANCELLED = 'cancelled',
+  PAUSED = 'paused',
+  STOPPED = 'stopped',
+  ACTIVE = 'active'
+}
+
+export enum WorkflowStepType {
+  TASK = 'task',
+  CONDITION = 'condition',
+  LOOP = 'loop',
+  PARALLEL = 'parallel',
+  SEQUENCE = 'sequence',
+  ERROR_HANDLER = 'error_handler',
+  NOTIFICATION = 'notification',
+  CUSTOM = 'custom',
+  TRANSFORM = 'transform',
+  VALIDATE = 'validate',
+  PROCESS = 'process',
+  ANALYSIS = 'analysis',
+  SECURITY = 'security',
+  ACCESSIBILITY = 'accessibility',
+  I18N = 'i18n',
+  DATA_FLOW = 'data_flow',
+  DOCUMENTATION = 'documentation',
+  REPORT = 'report',
+  ANALYZE = 'analyze'
+}
+
+// Analysis related enums
+export enum AnalysisType {
+  DEPENDENCY = 'dependency',
+  SECURITY = 'security',
+  PERFORMANCE = 'performance',
+  CODE_QUALITY = 'code_quality',
+  CUSTOM = 'custom',
+  SECURITY_SCAN = 'security_scan'
+}
+
+export enum AnalysisStatus {
+  IN_PROGRESS = 'in_progress',
+  SUCCESS = 'success',
+  FAILED = 'failed',
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed'
+}
+
+export enum Severity {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+// Security related enums
+export enum SecuritySeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+export enum FeatureStage {
+  PLANNING = 'PLANNING',
+  DESIGN = 'DESIGN',
+  DEVELOPMENT = 'DEVELOPMENT',
+  TESTING = 'TESTING',
+  DEPLOYMENT = 'DEPLOYMENT',
+  MONITORING = 'MONITORING',
+  DEPLOYED = 'DEPLOYED'
+}
+
+export enum StateEventType {
+  CREATED = 'state.created',
+  UPDATED = 'state.updated',
+  DELETED = 'state.deleted',
+  SNAPSHOT_CREATED = 'state.snapshot.created',
+  TRANSACTION_RECORDED = 'state.transaction.recorded',
+  SYNC_STARTED = 'state.sync.started',
+  SYNC_COMPLETED = 'state.sync.completed'
+}
+
+// Communication related enums
+export enum MessageType {
+  COMMAND = 'command',
+  RESPONSE = 'response',
+  ERROR = 'error',
+  EVENT = 'event',
+  NOTIFICATION = 'notification',
+  REQUEST = 'request',
+  STATUS = 'status',
+  LOG = 'log',
+  METRIC = 'metric',
+  ALERT = 'alert',
+  HEARTBEAT = 'heartbeat',
+  INFO = 'info',
+  WARNING = 'warning',
+  TEXT = 'text'
+}
+
+export enum Priority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+// Error related enums
+export enum ErrorSeverity {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+// Feature/Suggestion related enums
+export enum SuggestionStatus {
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  APPROVED = 'APPROVED',
+  IMPLEMENTED = 'IMPLEMENTED',
+  REJECTED = 'REJECTED',
+  CLOSED = 'CLOSED',
+  CONVERTED = 'CONVERTED'
+}
+
+export enum SuggestionPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+  HIGH = 'high',
+  CRITICAL = 'critical'
+}
+
+export enum FeatureStage {
+  PLANNING = 'planning',
+  DEVELOPMENT = 'development',
+  TESTING = 'testing',
+  DEPLOYED = 'deployed'
+}
+
+// Agent related enums
+export enum AgentStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  PENDING = 'pending',
+  DELETED = 'deleted'
+}
+
+// State related enums
+export enum StateEventType {
+  CREATION = 'creation',
+  UPDATE = 'update',
+  DELETION = 'deletion',
+  SNAPSHOT = 'snapshot',
+  TRANSACTION = 'transaction',
+  SYNC = 'sync'
+}
+
+// Marketplace related enums
+export enum ListingType {
+  SALE = 'sale',
+  AUCTION = 'auction',
+  LEASE = 'lease'
+}
+
+export enum ListingStatus {
+  ACTIVE = 'active',
+  SOLD = 'sold',
+  CANCELLED = 'cancelled',
+  EXPIRED = 'expired'
+}
+
+export enum TransactionStatus {
+  PENDING = 'pending',
+  COMPLETED = 'completed',
+  FAILED = 'failed',
+  REFUNDED = 'refunded'
+}
+
+export enum PaymentMethod {
+  ETH = 'eth',
+  SOL = 'sol',
+  USDC = 'usdc',
+  CUSTOM_TOKEN = 'custom_token'
+}

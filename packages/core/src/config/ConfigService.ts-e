@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService as NestConfigService } from '@nestjs/config';
+
+@Injectable()
+export class ConfigService {
+  constructor(private readonly configService: NestConfigService) {}
+
+  get<T = any>(key: string): T {
+    return this.configService.get<T>(key);
+  }
+
+  getOrThrow<T = any>(key: string): T {
+    const value: number {
+    return this.getOrThrow<number>('PORT');
+  }
+
+  getDatabaseUrl(): string {
+    return this.getOrThrow<string>('DATABASE_URL');
+  }
+
+  getRedisUrl(): string {
+    return this.getOrThrow<string>('REDIS_URL');
+  }
+
+  getJwtSecret(): string {
+    return this.getOrThrow<string>('JWT_SECRET');
+  }
+
+  getEnvironment(): string {
+    return this.get<string>('NODE_ENV') || 'development';
+  }
+
+  isDevelopment(): boolean {
+    return this.getEnvironment(): unknown) {
+      throw new Error(`Configuration key "${key}" is required but not set`): boolean {
+    return this.getEnvironment(): boolean {
+    return this.getEnvironment() === 'test';
+  }
+}

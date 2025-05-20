@@ -1,0 +1,13 @@
+import React from 'react';
+export declare const cardVariants: (props?: ({
+    variant?: "default" | "outline" | "ghost" | "elevated" | null | undefined;
+    size?: "default" | "sm" | "lg" | null | undefined;
+    hover?: boolean | null | undefined;
+    clickable?: boolean | null | undefined;
+} & import("class-variance-authority/types"): React.ForwardRefExoticComponent<Omit<CardProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
+declare const CardHeader: React.ForwardRefExoticComponent<Omit<CardHeaderProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
+declare const CardTitle: React.ForwardRefExoticComponent<Omit<CardTitleProps, "ref"> & React.RefAttributes<HTMLHeadingElement>>;
+declare const CardDescription: React.ForwardRefExoticComponent<Omit<CardDescriptionProps, "ref"> & React.RefAttributes<HTMLParagraphElement>>;
+declare const CardContent: React.ForwardRefExoticComponent<Omit<CardContentProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
+declare const CardFooter: React.ForwardRefExoticComponent<Omit<CardFooterProps, "ref"> & React.RefAttributes<HTMLDivElement>>;
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };

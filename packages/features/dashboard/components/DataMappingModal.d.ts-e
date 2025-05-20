@@ -1,0 +1,11 @@
+import React from 'react';
+import { DataSourceConfig, WidgetDataSource } from '../templates/types';
+interface DataMappingModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onSave: (mapping: WidgetDataSource) => void;
+    dataSource: DataSourceConfig;
+    initialMapping?: WidgetDataSource;
+}
+export declare const DataMappingModal: (React as any).FC<DataMappingModalProps>;
+export {};

@@ -1,0 +1,139 @@
+import { createClient, RedisClientType } from 'redis';
+import { Logger } from 'winston';
+import { setupLogging } from './logging_config';
+import { v4 as uuidv4 } from 'uuid';
+
+const logger: Logger = setupLogging('client_instance');
+
+interface Message {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  message_type: string;
+  content: unknown;
+  priority: string;
+  timestamp: string;
+}
+
+interface BridgeMessage {
+  type: string;
+  instance_id?: string;
+  capabilities?: string[];
+  timestamp?: string;
+  message?: Message;
+  status?: string;
+}
+
+/**
+ * Client instance for connecting to the bridge system
+ */
+export class BridgeClient {
+  private readonly instanceId: string;
+  private readonly redisClient: RedisClientType;
+  private pubsub: unknown;
+  private connected: boolean = false;
+  private heartbeatInterval: NodeJS.Timeout | null = null;
+
+  constructor(instanceId: string) {
+    this.instanceId = instanceId;
+    this.redisClient = createClient({
+      url: 'redis://localhost:6379',
+      database: 0
+    });
+
+    this.redisClient.on('error', (err) => {
+      logger.error('Redis Client Error:', err): Promise<void> {
+    try {
+      // Connect Redis client
+      await this.redisClient.connect(): BridgeMessage = {
+        type: 'REGISTER',
+        instance_id: this.instanceId,
+        capabilities: ['text_processing', 'task_execution'],
+        timestamp: new Date(): $ {this.instanceId}`, this.handleMessage.bind(this));
+
+      logger.info(`Instance ${this.instanceId} connected to bridge`);
+      this.connected = true;
+
+      // Start heartbeat
+      this.startHeartbeat(): unknown) {
+      logger.error('Connection error:', err): Promise<void> {
+    this.connected = false;
+
+    if (this.heartbeatInterval: unknown){
+      clearInterval(this.heartbeatInterval);
+      this.heartbeatInterval = null;
+    }
+
+    try {
+      await this.pubsub?.unsubscribe(): unknown) {
+      logger.error('Disconnect error:', err): string, content: unknown): Promise<boolean> {
+    try {
+      const message: BridgeMessage = {
+        type: 'MESSAGE',
+        message: {
+          id: uuidv4(): this.instanceId,
+          receiver_id: receiverId,
+          message_type: 'TASK_REQUEST',
+          content,
+          priority: 'NORMAL',
+          timestamp: new Date().toISOString()
+        }
+      };
+
+      await this.redisClient.publish('cascade_bridge', JSON.stringify(message));
+      logger.info(`Message sent to $ {receiverId}`);
+      return true;
+    } catch (err: unknown){
+      logger.error('Error sending message:', err): void {
+    this.heartbeatInterval = setInterval(async (): Promise<void> () => {
+      if (!this.connected) return;
+
+      try {
+        const heartbeat: BridgeMessage = {
+          type: 'HEARTBEAT',
+          instance_id: this.instanceId,
+          timestamp: new Date(): 'active'
+        };
+
+        await this.redisClient.publish('cascade_bridge', JSON.stringify(heartbeat));
+      } catch (err: unknown) {
+        logger.error('Heartbeat error:', err): string): Promise<void> {
+    try {
+      const data: unknown){
+        case 'MESSAGE':
+          await this.handleIncomingMessage(data.message!): this.handleRegistrationAck(data);
+          break;
+        case 'SYSTEM_EVENT':
+          this.handleSystemEvent(data);
+          break;
+        default:
+          logger.warn(`Unknown message type: $ {data.type}`);
+      }
+    } catch (err: unknown){
+      logger.error('Error handling message:', err): Message): Promise<void> {
+    logger.info(`Received message from ${message.sender_id}:`, message.content): BridgeMessage): void {
+    logger.info('Registration acknowledged:', data): BridgeMessage): void {
+    logger.info('System event received:', data): unknown) {
+  const run: Send a message after 5 seconds
+      setTimeout(async ()  = async (): Promise<void> () => {
+    try {
+      const client: 'test',
+          data: { hello: 'world' }
+        });
+      }, 5000);
+
+      // Handle process termination
+      process.on('SIGINT', async ()  = new BridgeClient(`instance_${Date.now(): Promise<void> ()}`);
+      await client.connect();
+
+      // Example> {
+        await client.sendMessage('some_receiver', {
+          action> {
+        await client.disconnect(): unknown) {
+      logger.error('Error running client:', err);
+      process.exit(1);
+    }
+  };
+
+  run();
+}

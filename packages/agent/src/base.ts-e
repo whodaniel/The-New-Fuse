@@ -1,0 +1,190 @@
+/**
+ * Base classes and interfaces for agent system.
+ */
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { Logger } from 'winston';
+import { v4 as uuidv4 } from 'uuid';
+
+import { BaseBridge, MessageType, Priority } from '../bridges';
+import { ContextManager, ContextType } from '../context/manager';
+import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery';
+import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics';
+
+// Create logger
+const logger: 'info',
+    format: (Logger as any).format.json(): [new (Logger as any).transports.Console()]
+});
+
+export enum AgentState {
+    INITIALIZING  = (Logger as any).createLogger({
+    level 'INITIALIZING',
+    READY = 'READY',
+    BUSY = 'BUSY',
+    ERROR = 'ERROR',
+    TERMINATED = 'TERMINATED'
+}
+
+export enum AgentCapability {
+    CODE_GENERATION = 'code_generation',
+    CODE_REVIEW = 'code_review',
+    ARCHITECTURE_DESIGN = 'architecture_design',
+    TESTING = 'testing',
+    DOCUMENTATION = 'documentation',
+    OPTIMIZATION = 'optimization',
+    SECURITY_AUDIT = 'security_audit',
+    PROJECT_MANAGEMENT = 'project_management'
+}
+
+export interface AgentConfig {
+    agentId: string;
+    capabilities: Set<AgentCapability>;
+    modelName?: string;
+    maxConcurrentTasks?: number;
+    taskTimeout?: number;  // seconds
+    retryLimit?: number;
+    memoryLimit?: number;  // number of context items to remember
+}
+
+export interface Task {
+    taskId: string;
+    status: 'pending' | 'running' | 'completed' | 'failed' | 'timeout';
+    startTime?: number;
+    result?: unknown;
+    error?: string;
+}
+
+export abstract class BaseAgent extends EventEmitter {
+    protected config: AgentConfig;
+    protected bridge?: BaseBridge;
+    protected contextManager: ContextManager;
+    protected metrics: MetricsRegistry;
+    protected monitor: PerformanceMonitor;
+    protected errorRecovery: ErrorRecovery;
+    
+    protected state: AgentState;
+    protected tasks: Map<string, Task>;
+    protected context: Map<string, any>;
+    protected shouldRun: boolean;
+    protected taskProcessor?: Promise<void>;
+
+    constructor(
+        config: AgentConfig,
+        bridge?: BaseBridge,
+        redisClient?: Redis
+    ) {
+        super();
+        this.config = {
+            modelName: 'gpt-4',
+            maxConcurrentTasks: 5,
+            taskTimeout: 300,
+            retryLimit: 3,
+            memoryLimit: 1000,
+            ...config
+        };
+        this.bridge = bridge;
+
+        // Initialize context manager(this as any): $ {(config as any).agentId}`
+        );
+
+        // Initialize monitoring(this as any): Promise<boolean>;
+    abstract processMessage(message: Record<string, unknown>): Promise<void>;
+    abstract executeTask(task: Task): Promise<Record<string, unknown>>;
+
+    async start(): Promise<void> (): Promise<boolean> {
+        try {
+            if (!await this.initialize()) {
+                return false;
+            }
+
+            // Connect bridge
+            if((this as any): unknown) {
+                await(this as any): unknown) {
+                await this.bridge.sendMessage(
+                    'broadcast',
+                    (MessageType as any).STATUS,
+                    {
+                        agentId: this.config.agentId,
+                        status: 'online',
+                        capabilities: (Array as any).from((this as any): unknown) {
+            (logger as any).error(`Error starting agent: ${e}`): Promise<boolean> {
+        try {
+            // Save agent state
+            await(this as any): unknown) {
+                await(this as any): unknown) {
+                await(this as any): unknown) {
+            (logger as any).error(`Error stopping agent: ${e}`): Promise<void> {
+        try {
+            // Load agent state
+            const state: unknown){
+                this.state  = await(this as any): unknown) {
+                // Process task history
+            }
+
+        } catch (e: unknown){
+            (logger as any).error(`Error loading state: ${e}`): Promise<void> {
+        try {
+            // Save agent state
+            await this.contextManager.setContext(
+                (ContextType as any).AGENT_STATE,
+                this.config.agentId,
+                {
+                    state: this.state,
+                    tasks: (Object as any).fromEntries((this as any): new Date().toISOString()
+                }
+            );
+
+        } catch (e: unknown) {
+            (logger as any).error(`Error saving state: ${e}`);
+            throw e;
+        }
+    }
+
+    @(ErrorRecovery as any).withRecovery({
+        category: (ErrorCategory as any).NETWORK,
+        severity: (ErrorSeverity as any).HIGH
+    })
+    async sendMessage(): Promise<void> (
+        target: string,
+        messageType: MessageType,
+        content: Record<string, unknown>,
+        priority: Priority  = await (this as any): Promise<boolean> {
+        const trackRequest: unknown){
+            this.monitor.recordError(): Promise<void> {
+        try {
+            while((this as any): unknown) {
+                const activeTasks: unknown) {
+                    // Find next pending task
+                    const pendingTask: unknown){
+                        (pendingTask as any).status   = this.monitor.trackRequest();
+        try {
+            const result = await(this as any) (Array as any).from(this.tasks.values())
+                        .find(t => (t as any).status === 'pending');
+
+                    if (pendingTask 'running';
+                        (pendingTask as any).startTime = (Date as any).now();
+
+                        try {
+                            const result: unknown){
+                            (pendingTask as any).status  = await(this as any): String(e);
+                            (logger as any).error(`Error executing task $ {(pendingTask as any).taskId}: ${e}`);
+                        }
+                    }
+                }
+
+                // Check for timed out tasks
+                const currentTime: unknown){
+                        (task as any).status  = (Date as any).now();
+                for (const task of this.tasks.values()) {
+                    if ((task as any).status === 'running' && (task as any).startTime &&
+                        currentTime - (task as any).startTime > this.config.taskTimeout! * 1000 'timeout';
+                        (logger as any).warn(`Task ${(task as any).taskId} timed out`);
+                    }
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 100): unknown) {
+            (logger as any).error(`Error in task processor: ${e}`);
+            this.state = (AgentState as any).ERROR;
+        }
+    }
+}

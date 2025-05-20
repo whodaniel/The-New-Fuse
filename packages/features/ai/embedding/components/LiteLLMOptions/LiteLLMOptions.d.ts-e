@@ -1,0 +1,12 @@
+import React from "react";
+interface LiteLLMSettings {
+    LiteLLMBasePath?: string;
+    LiteLLMAPIKey?: string;
+    EmbeddingModelPref?: string;
+    EmbeddingModelMaxChunkLength?: number;
+}
+interface LiteLLMOptionsProps {
+    settings: LiteLLMSettings;
+}
+export declare function LiteLLMOptions({ settings }: LiteLLMOptionsProps): React.JSX.Element;
+export {};

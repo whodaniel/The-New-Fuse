@@ -1,0 +1,75 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique
+  password      String?   // Made optional for OAuth users
+  name          String?
+  googleId      String?   @unique // Added for Google OAuth
+  avatar        String?   // Added for user avatar
+  picture       String?   // Added for OAuth profile picture
+  role          String    @default("user") // Added role field
+  sessions      Session[]
+  agents        Agent[]   // Added relation to agents
+  emailVerified Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  ARCHIVED
+}
+
+model Agent {
+  id            String      @id @default(cuid())
+  name          String      @unique
+  description   String?
+  type          String      // Added type field
+  systemPrompt  String?
+  capabilities  String[]    // Stored as array of strings
+  status        AgentStatus @default(INACTIVE)
+  config        Json?       // Changed from configuration to config
+  userId        String      // Foreign key to User
+  user          User        @relation(fields: [userId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?   // Soft delete support
+
+  @@index([userId])
+  @@index([status])
+  @@map("agents")
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  userId    String
+  role      String   // 'user' | 'assistant'
+  content   String   @db.Text
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("chat_messages")
+}

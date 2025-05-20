@@ -1,0 +1,13 @@
+export declare class AIbitatError extends Error {
+    constructor(message: string);
+}
+export declare class APIError extends AIbitatError {
+    constructor(message: string);
+}
+/**
+ * The error when the AI provider returns an error that should be treated as something
+ * that should be retried.
+ */
+export declare class RetryError extends APIError {
+    constructor(message: string);
+}

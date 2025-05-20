@@ -1,0 +1,15 @@
+import { Injectable } from '@nestjs/common';
+import { WorkflowRegistry } from '../managers/workflow-registry';
+import { ServiceRegistryService } from '../discovery/service-registry.service';
+
+@Injectable()
+export class WorkflowOrchestratorService {
+  constructor(
+    private workflowRegistry: WorkflowRegistry,
+    private serviceRegistry: ServiceRegistryService
+  ) {}
+
+  async orchestrateWorkflow(): Promise<void> (workflowId: string, context: unknown): Promise<any> {
+    // Coordinate service interactions for workflow execution
+  }
+}

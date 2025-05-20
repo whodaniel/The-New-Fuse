@@ -1,0 +1,8 @@
+import React from 'react';
+import { MarketplaceContextType } from './types';
+export declare const MarketplaceProvider: (React as any).FC<{
+    children: (React as any).ReactNode;
+    onDownload?: (itemId: string) => Promise<void>;
+    onPurchase?: (itemId: string) => Promise<void>;
+}>;
+export declare const useMarketplace: () => MarketplaceContextType;

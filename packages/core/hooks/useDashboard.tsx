@@ -1,0 +1,41 @@
+import { useEffect, useState } from 'react';
+import { DashboardCore, CoreFeatures } from '../core.js';
+import { DashboardState } from '../collaboration/types.js';
+
+export function useDashboard(): unknown {
+  const [core] = useState(() => new DashboardCore());
+  const [state, setState] = useState<DashboardState>((core as any).getState());
+  const [features, setFeatures] = useState<CoreFeatures>((core as any).getFeatures());
+
+  useEffect(() => {
+    const initializeDashboard = async (): Promise<void> {) => {
+      await (core as any).initialize();
+      setState((core as any).getState());
+      setFeatures((core as any).getFeatures());
+    };
+
+    initializeDashboard();
+
+    return () => {
+      (core as any).cleanup();
+    };
+  }, [core]);
+
+  const updateState = async (): Promise<void> {newState: Partial<DashboardState>) => {
+    await (core as any).updateState(newState);
+    setState((core as any).getState());
+  };
+
+  const toggleFeature = async (): Promise<void> {featureName: keyof CoreFeatures) => {
+    await (core as any).toggleFeature(featureName);
+    setState((core as any).getState());
+    setFeatures((core as any).getFeatures());
+  };
+
+  return {
+    state,
+    features,
+    updateState,
+    toggleFeature
+  };
+}

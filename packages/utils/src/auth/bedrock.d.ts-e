@@ -1,0 +1,29 @@
+import { AgentMessage } from '@fuse/types';
+import { AIProvider } from './ai-provider';
+interface BedrockConfig {
+    region: string;
+    model: string;
+    credentials: {
+        accessKeyId: string;
+        secretAccessKey: string;
+    };
+}
+/**
+ * The agent provider for the AWS Bedrock provider.
+ */
+export declare class AWSBedrockProvider implements AIProvider {
+    private client;
+    private model;
+    readonly id: string;
+    readonly name: string;
+    readonly models: string[];
+    readonly defaultModel: string;
+    constructor(config: BedrockConfig);
+    private convertToBedrockMessage;
+    chat(messages: AgentMessage[]): Promise<string>;
+    sendMessage(messages: AgentMessage[]): Promise<string>;
+    getModel(): Promise<string>;
+    getModels(): Promise<string[]>;
+    getDefaultModel(): Promise<string>;
+}
+export {};

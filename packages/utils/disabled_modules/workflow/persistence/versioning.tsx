@@ -1,0 +1,167 @@
+export {}
+exports.WorkflowVersionManager = void 0;
+import types_1 from '../runtime/types.js';
+class WorkflowVersionManager {
+    constructor(storage) {
+        this.storage = storage;
+    }
+    async createVersion(workflowId: string, nodes: any[], edges: any[], metadata: any): Promise<any> {
+        // Get current version
+        const current = await this.storage.getWorkflow(workflowId);
+        if (!current) {
+            throw new types_1.WorkflowError('Workflow not found', workflowId);
+        }
+        // Create new version
+        const version = {
+            id: `${workflowId}-v${current.metadata.version + 1}`,
+            workflowId,
+            version: current.metadata.version + 1,
+            data: { nodes, edges },
+            metadata: {
+                ...metadata,
+                createdAt: new Date(),
+            },
+            parent: current.metadata.version > 0 ? `${workflowId}-v${current.metadata.version}` : undefined,
+        };
+        // Store version
+        await this.storeVersion(version);
+        // Update workflow to point to new version
+        await this.storage.updateWorkflow(workflowId, {
+            version: version.version,
+            updatedAt: new Date(),
+        });
+        return version;
+    }
+    async storeVersion(version: any): Promise<void> {
+        await this.storage.createWorkflow({
+            id: version.id,
+            name: version.metadata.name,
+            description: version.metadata.description,
+            version: version.version,
+            createdAt: version.metadata.createdAt,
+            updatedAt: version.metadata.createdAt,
+        }, version.data);
+        // Store additional version metadata
+        await this.storage.setVariable(version.id, 'version_metadata', JSON.stringify({
+            createdBy: version.metadata.createdBy,
+            comment: version.metadata.comment,
+            parent: version.parent,
+        }));
+    }
+    async getVersion(workflowId: string, version: number): Promise<any> {
+        const versionId = `${workflowId}-v${version}`;
+        const workflow = await this.storage.getWorkflow(versionId);
+        if (!workflow)
+            return null;
+        const metadataStr = await this.storage.getVariable(versionId, 'version_metadata');
+        const metadata = metadataStr ? JSON.parse(metadataStr) : {};
+        return {
+            id: versionId,
+            workflowId,
+            version,
+            data: workflow.data,
+            metadata: {
+                name: workflow.metadata.name,
+                description: workflow.metadata.description,
+                createdAt: workflow.metadata.createdAt,
+                createdBy: metadata.createdBy,
+                comment: metadata.comment,
+            },
+            parent: metadata.parent,
+        };
+    }
+    async listVersions(workflowId: string): Promise<any[]> {
+        const workflow = await this.storage.getWorkflow(workflowId);
+        if (!workflow) {
+            throw new types_1.WorkflowError('Workflow not found', workflowId);
+        }
+        const versions = [];
+        for (let v = 1; v <= workflow.metadata.version; v++) {
+            const version = await this.getVersion(workflowId, v);
+            if (version) {
+                versions.push(version);
+            }
+        }
+        return versions;
+    }
+    async rollback(workflowId: string, targetVersion: number, comment?: string): Promise<any> {
+        const version = await this.getVersion(workflowId, targetVersion);
+        if (!version) {
+            throw new types_1.WorkflowError(`Version ${targetVersion} not found`, workflowId);
+        }
+        // Create new version with rolled back content
+        return await this.createVersion(workflowId, version.data.nodes, version.data.edges, {
+            name: version.metadata.name,
+            description: version.metadata.description,
+            comment: comment || `Rollback to version ${targetVersion}`,
+        });
+    }
+    async getDiff(workflowId: string, fromVersion: number, toVersion: number): Promise<any> {
+        const from = await this.getVersion(workflowId, fromVersion);
+        const to = await this.getVersion(workflowId, toVersion);
+        if (!from || !to) {
+            throw new types_1.WorkflowError('Version not found', workflowId);
+        }
+        const fromNodes = new Map(from.data.nodes.map(n => [n.id, n]));
+        const toNodes = new Map(to.data.nodes.map(n => [n.id, n]));
+        const fromEdges = new Map(from.data.edges.map(e => [e.id, e]));
+        const toEdges = new Map(to.data.edges.map(e => [e.id, e]));
+        const diff = {
+            nodesAdded: [],
+            nodesRemoved: [],
+            nodesModified: [],
+            edgesAdded: [],
+            edgesRemoved: [],
+        };
+        // Find added and modified nodes
+        for (const [id, node] of toNodes) {
+            const fromNode = fromNodes.get(id);
+            if (!fromNode) {
+                diff.nodesAdded.push(node);
+            }
+            else if (!this.deepEqual(fromNode, node)) {
+                diff.nodesModified.push({ before: fromNode, after: node });
+            }
+        }
+        // Find removed nodes
+        for (const [id, node] of fromNodes) {
+            if (!toNodes.has(id)) {
+                diff.nodesRemoved.push(node);
+            }
+        }
+        // Find added edges
+        for (const [id, edge] of toEdges) {
+            if (!fromEdges.has(id)) {
+                diff.edgesAdded.push(edge);
+            }
+        }
+        // Find removed edges
+        for (const [id, edge] of fromEdges) {
+            if (!toEdges.has(id)) {
+                diff.edgesRemoved.push(edge);
+            }
+        }
+        return diff;
+    }
+    deepEqual(a, b) {
+        if (a === b)
+            return true;
+        if (typeof a !== typeof b)
+            return false;
+        if (typeof a !== 'object')
+            return false;
+        if (!a || !b)
+            return false;
+        const keysA = Object.keys(a).filter(k => k !== 'position'); // Ignore node positions
+        const keysB = Object.keys(b).filter(k => k !== 'position');
+        if (keysA.length !== keysB.length)
+            return false;
+        for (const key of keysA) {
+            if (!this.deepEqual(a[key], b[key]))
+                return false;
+        }
+        return true;
+    }
+}
+exports.WorkflowVersionManager = WorkflowVersionManager;
+//# sourceMappingURL=versioning.js.mapexport {};

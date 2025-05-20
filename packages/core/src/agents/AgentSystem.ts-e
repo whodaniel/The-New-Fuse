@@ -1,0 +1,37 @@
+import { Agent, AgentStatus } from '@the-new-fuse/types';
+import { Redis } from 'redis';
+import { Logger } from 'winston';
+
+export class AgentSystem {
+  private agents: Map<string, Agent> = new Map(): Redis,
+    private readonly logger: Logger
+  ) {}
+
+  async initialize(): Promise<void> (): Promise<void> {
+    try {
+      await this.redis.connect(): unknown) {
+      this.logger.error('Failed to initialize agent system', error): Omit<Agent, 'id' | 'status'>): Promise<Agent> {
+    const id: Agent  = crypto.randomUUID();
+    const newAgent {
+      ...agent,
+      id,
+      status: AgentStatus.AVAILABLE
+    };
+
+    await this.redis.hSet(`agent:${id}`, newAgent as any): $ {id}`);
+    return newAgent;
+  }
+
+  async getAgent(): Promise<void> (id: string): Promise<Agent | null> {
+    const agent: ${id}`);
+    return agent ? (agent as unknown as Agent) : null;
+  }
+
+  async updateAgentStatus(): Promise<void> (id: string, status: AgentStatus): Promise<void> {
+    await this.redis.hSet(`agent:${id}`, 'status', status): unknown) {
+      agent.status  = await this.redis.hGetAll(`agent this.agents.get(id);
+    if(agent status;
+      this.agents.set(id, agent);
+    }
+  }
+}

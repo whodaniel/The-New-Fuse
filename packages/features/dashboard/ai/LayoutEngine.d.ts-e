@@ -1,0 +1,48 @@
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+interface LayoutSuggestion {
+    id: string;
+    type: 'layout' | 'size' | 'position' | 'grouping';
+    title: string;
+    description: string;
+    impact: {
+        metrics: string[];
+        estimate: {
+            type: string;
+            value: number;
+            unit: string;
+        };
+    };
+    changes: Array<{
+        widgetId: string;
+        changes: {
+            x?: number;
+            y?: number;
+            w?: number;
+            h?: number;
+            group?: string;
+        };
+    }>;
+    reason: string;
+    confidence: number;
+}
+export declare class LayoutEngine {
+    private analyticsManager;
+    constructor(analyticsManager: AnalyticsManager);
+    analyzeDashboard(dashboardId: string, state: DashboardState): Promise<LayoutSuggestion[]>;
+    private analyzeWidgetUsage;
+    private analyzeWidgetRelationships;
+    private generatePositionSuggestions;
+    private generateSizeSuggestions;
+    private generateGroupingSuggestions;
+    private prioritizeSuggestions;
+    private areWidgetsRelated;
+    private shouldRepositionWidget;
+    private calculateOptimalPosition;
+    private areWidgetsSeparated;
+    private calculateRelatedPositions;
+    private calculateOptimalSize;
+    private shouldResizeWidget;
+    private identifyWidgetGroups;
+}
+export {};

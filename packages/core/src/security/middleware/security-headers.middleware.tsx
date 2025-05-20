@@ -1,0 +1,79 @@
+import { Injectable, NestMiddleware } from '@nestjs/common';
+import { Request, Response, NextFunction } from 'express';
+import helmet from 'helmet';
+
+@Injectable()
+export class SecurityHeadersMiddleware implements NestMiddleware {
+  private readonly helmetMiddleware: ReturnType<typeof helmet>;
+
+  constructor() {
+    this.helmetMiddleware = helmet({
+      // Content Security Policy
+      contentSecurityPolicy: {
+        directives: {
+          defaultSrc: ["'self'"],
+          scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
+          imgSrc: ["'self'", 'data:', 'https:'],
+          connectSrc: ["'self'"],
+          fontSrc: ["'self'"],
+          objectSrc: ["'none'"],
+          mediaSrc: ["'self'"],
+          frameSrc: ["'none'"],
+        },
+      },
+      // Cross-Origin Resource Policy
+      crossOriginResourcePolicy: { policy: same-origin' },
+      // Cross-Origin Opener Policy
+      crossOriginOpenerPolicy: { policy: same-origin' },
+      // Cross-Origin Embedder Policy
+      crossOriginEmbedderPolicy: { policy: require-corp' },
+      // HTTP Strict Transport Security
+      hsts: {
+        maxAge: 31536000,
+        includeSubDomains: true,
+        preload: true,
+      },
+      // No Sniff
+      noSniff: true,
+      // Origin Agent Cluster
+      originAgentCluster: true,
+      // DNS Prefetch Control
+      dnsPrefetchControl: {
+        allow: false,
+      },
+      // Frame Options
+      frameguard: {
+        action: deny',
+      },
+      // Permitted Cross-Domain Policies
+      permittedCrossDomainPolicies: {
+        permittedPolicies: none',
+      },
+      // Referrer Policy
+      referrerPolicy: {
+        policy: strict-origin-when-cross-origin',
+      },
+      // XSS Protection
+      xssFilter: true,
+    }): Request, res: Response, next: NextFunction) {
+    // Add custom security headers
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+    res.setHeader(
+      'Strict-Transport-Security',
+      'max-age=31536000; includeSubDomains; preload',
+    );
+    res.setHeader('X-Permitted-Cross-Domain-Policies', 'none');
+    res.setHeader(
+      'Referrer-Policy',
+      'strict-origin-when-cross-origin',
+    );
+    res.setHeader('X-Download-Options', 'noopen');
+    res.setHeader('X-DNS-Prefetch-Control', 'off');
+
+    // Apply Helmet middleware
+    this.helmetMiddleware(req, res, next);
+  }
+}

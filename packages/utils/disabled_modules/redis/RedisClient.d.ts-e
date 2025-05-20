@@ -1,0 +1,29 @@
+/// <reference types="node" />
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+export interface RedisClientOptions {
+    host?: string;
+    port?: number;
+    password?: string;
+    db?: number;
+    keyPrefix?: string;
+    retryStrategy?: (times: number) => number | void;
+    maxRetriesPerRequest?: number;
+}
+export declare class RedisClient extends EventEmitter {
+    private client;
+    private isConnected;
+    constructor(options?: RedisClientOptions);
+    private setupEventHandlers;
+    connect(): Promise<void>;
+    disconnect(): Promise<void>;
+    get(key: string): Promise<string | null>;
+    set(key: string, value: string, ttl?: number): Promise<'OK'>;
+    del(key: string): Promise<number>;
+    exists(key: string): Promise<number>;
+    publish(channel: string, message: string): Promise<number>;
+    subscribe(channel: string, callback: (message: string) => void): Promise<void>;
+    unsubscribe(channel: string): Promise<void>;
+    getStatus(): boolean;
+    getClient(): Redis;
+}

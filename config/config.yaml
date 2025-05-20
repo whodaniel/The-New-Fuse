@@ -1,0 +1,17 @@
+development:
+  DEBUG: true
+  DATABASE_URI: 'sqlite:///development.db'
+  REDIS_HOST: 'localhost'
+  REDIS_PORT: 6379
+
+production:
+  DEBUG: false
+  DATABASE_URI: 'postgresql://user:password@localhost/production'
+  REDIS_HOST: 'redis.production'
+  REDIS_PORT: 6379
+
+testing:
+  DEBUG: true
+  DATABASE_URI: 'sqlite:///testing.db'
+  REDIS_HOST: 'localhost'
+  REDIS_PORT: 6379

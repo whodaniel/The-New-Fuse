@@ -1,0 +1,40 @@
+export interface MonitoringConfig {
+  enabled: boolean;
+  interval: number;
+  thresholds: {
+    cpu: number;
+    memory: number;
+    latency: number;
+    errorRate: number;
+  };
+}
+
+export interface HealthStatus {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  timestamp: Date;
+  details: {
+    cpu: number;
+    memory: number;
+    latency: number;
+    errorRate: number;
+  };
+  message?: string;
+}
+
+export interface AlertConfig {
+  name: string;
+  condition: string;
+  threshold: number;
+  cooldown: number;
+  channels: string[];
+}
+
+export interface Alert {
+  id: string;
+  name: string;
+  severity: 'info' | 'warning' | 'critical';
+  message: string;
+  timestamp: Date;
+  status: 'active' | 'resolved';
+  metadata?: Record<string, unknown>;
+}

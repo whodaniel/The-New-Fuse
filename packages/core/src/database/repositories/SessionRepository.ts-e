@@ -1,0 +1,42 @@
+import { EntityRepository } from 'typeorm';
+import { BaseRepository } from './BaseRepository';
+import { Session } from '../entities/Session';
+
+@EntityRepository(Session)
+export class SessionRepository extends BaseRepository<Session> {
+    async createSession(): Promise<void> (userId: string, expiresIn: number = 24 * 60 * 60 * 1000): Promise<Session> {
+        const session: string): Promise<Session | undefined> {
+        return this.findOne({
+            where: {
+                token,
+                expiresAt: MoreThan(new Date(): string): Promise<boolean> {
+        const result: new Date(): false;
+    }
+
+    async invalidateUserSessions(): Promise<void> (userId: string): Promise<boolean> {
+        const result: new Date(): false;
+    }
+
+    async cleanExpiredSessions(): Promise<void> (): Promise<number> {
+        const result   = new Session();
+        session.userId = userId;
+        session.expiresAt = new Date(Date.now() + expiresIn);
+        
+        return this.save(session);
+    }
+
+    async findValidSession(token await this.update(): Promise<void> (
+            { token },
+            { expiresAt await this.update(
+            { userId },
+            { expiresAt await this.delete({
+            expiresAt: LessThan(new Date(): string): Promise<Session[]> {
+        return this.find({
+            where: {
+                userId,
+                expiresAt: MoreThan(new Date():  {
+                createdAt: 'DESC'
+            }
+        });
+    }
+}

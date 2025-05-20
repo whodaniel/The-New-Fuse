@@ -1,0 +1,13 @@
+{
+  "name": "the-new-fuse-websocket-server",
+  "version": "1.0.0",
+  "description": "WebSocket server for The New Fuse",
+  "main": "websocket-server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node websocket-server.js"
+  },
+  "dependencies": {
+    "ws": "^8.16.0"
+  }
+}

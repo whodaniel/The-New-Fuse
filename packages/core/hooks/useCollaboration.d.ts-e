@@ -1,0 +1,16 @@
+import { User, Comment, Annotation, ActivityEvent, CollaborationState } from '../collaboration/types';
+export declare function useCollaboration(websocketUrl: string, initialState: CollaborationState, currentUser: User): {
+    state: CollaborationState;
+    addComment: (content: string, widgetId?: string) => void;
+    resolveComment: (comment: Comment) => void;
+    addAnnotation: (widgetId: string, content: string, position: {
+        x: number;
+        y: number;
+    }) => void;
+    updateAnnotation: (annotationId: string, updates: Partial<Annotation>) => void;
+    trackActivity: (type: ActivityEvent["type"], metadata?: Record<string, unknown>) => void;
+    updateCursor: (position: {
+        x: number;
+        y: number;
+    }) => void;
+};

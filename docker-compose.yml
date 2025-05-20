@@ -1,0 +1,88 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: api
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+      - DATABASE_URL=prisma+postgres://accelerate.prisma-data.net/?api_key=${PRISMA_ACCELERATE_API_KEY}
+      - PULSE_API_KEY=${PULSE_API_KEY}
+      - OPTIMIZE_API_KEY=${OPTIMIZE_API_KEY}
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${EXTENSION_JWT_SECRET}
+      - JWT_ISSUER=the-new-fuse
+    depends_on:
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+      args:
+        SERVICE: frontend
+    environment:
+      - JWT_SECRET=${EXTENSION_JWT_SECRET}
+      - JWT_ISSUER=the-new-fuse
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
+  a2a-service:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    image: postgres:14-alpine
+    environment:
+      - POSTGRES_USER=newfuse
+      - POSTGRES_PASSWORD=secretpass
+      - POSTGRES_DB=a2a_metrics
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+  message-broker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        SERVICE: message-broker
+    ports:
+      - "3002:3002"
+    environment:
+      - EXTENSION_JWT_SECRET=cl1n3-tr43-s3cr3t-k3y-0x1234567890abcdef
+      - BROKER_PORT=3002
+    depends_on:
+      - redis
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

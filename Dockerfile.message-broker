@@ -1,0 +1,49 @@
+FROM node:18-alpine AS base
+
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+
+# Copy package.json files for all workspaces
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY apps/message-broker/package.json ./apps/message-broker/
+COPY packages/types/package.json ./packages/types/
+COPY packages/utils/package.json ./packages/utils/
+COPY packages/core/package.json ./packages/core/
+
+# Install dependencies
+RUN npm install
+
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+
+# Build packages in the correct order
+RUN npm run build:types
+RUN npm run build:utils
+RUN npm run build:core
+
+# Build the Message Broker application
+WORKDIR /app/apps/message-broker
+RUN npm run build
+
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+
+# Copy built files
+COPY --from=builder /app/apps/message-broker/dist ./dist
+COPY --from=builder /app/apps/message-broker/package.json ./
+
+# Install only production dependencies
+RUN npm install --only=production
+
+# Expose port
+EXPOSE 3002
+
+# Start the application
+CMD ["npm", "run", "start"]

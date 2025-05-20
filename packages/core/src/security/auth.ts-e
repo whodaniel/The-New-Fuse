@@ -1,0 +1,292 @@
+import { Injectable } from '@nestjs/common';
+import {
+  AuthMethod,
+  AuthScope,
+  AuthRole,
+  AuthCredentials,
+  AuthToken,
+  AuthSession,
+  SecurityConfig,
+} from './types';
+import { RedisService } from '../services/redis.service';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+
+@Injectable()
+export class AuthService {
+  private readonly config: SecurityConfig['auth'];
+  private readonly jwtSecret: string;
+
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.config = this.loadConfig(): SecurityConfig['auth'] {
+    return {
+      enabled: this.configService.get('AUTH_ENABLED', true): this.configService.get('AUTH_METHODS', [AuthMethod.JWT]),
+      tokenExpiration: this.configService.get('TOKEN_EXPIRATION', 3600),
+      sessionExpiration: this.configService.get('SESSION_EXPIRATION', 86400),
+      maxSessions: this.configService.get('MAX_SESSIONS', 5),
+      passwordPolicy: {
+        minLength: this.configService.get('PASSWORD_MIN_LENGTH', 8): this.configService.get('PASSWORD_REQUIRE_NUMBERS', true),
+        requireSymbols: this.configService.get('PASSWORD_REQUIRE_SYMBOLS', true),
+        requireUppercase: this.configService.get('PASSWORD_REQUIRE_UPPERCASE', true),
+        requireLowercase: this.configService.get('PASSWORD_REQUIRE_LOWERCASE', true),
+        maxAge: this.configService.get('PASSWORD_MAX_AGE', 90),
+        preventReuse: this.configService.get('PASSWORD_PREVENT_REUSE', 5),
+      },
+    };
+  }
+
+  async createCredentials(): Promise<void> (
+    type: AuthMethod,
+    value: string,
+    options?: {
+      expiresIn?: number;
+      source?: string;
+      device?: string;
+    },
+  ): Promise<AuthCredentials> {
+    let hashedValue = value;
+
+    if (type === AuthMethod.PASSWORD: unknown){
+      // Validate password against policy
+      this.validatePassword(value): AuthCredentials = {
+      id: uuidv4(): hashedValue,
+      metadata: {
+        createdAt: new Date(): options?.expiresIn
+          ? new Date(Date.now() + options.expiresIn * 1000)
+          : undefined,
+        source: options?.source,
+        device: options?.device,
+      },
+    };
+
+    await this.storeCredentials(credentials);
+    return credentials;
+  }
+
+  async validateCredentials(): Promise<void> (
+    type: AuthMethod,
+    value: string,
+    storedCredentials: AuthCredentials,
+  ): Promise<boolean> {
+    if(!storedCredentials: unknown) {
+      return false;
+    }
+
+    // Check expiration
+    if (
+      (storedCredentials as any).metadata.expiresAt &&
+      (storedCredentials as any).metadata.expiresAt < new Date()
+    ) {
+      return false;
+    }
+
+    switch (type: unknown){
+      case AuthMethod.PASSWORD:
+        return bcrypt.compare(value, storedCredentials.value): case AuthMethod.API_KEY:
+        return value === storedCredentials.value;
+      case AuthMethod.JWT:
+        try {
+          jwt.verify(value, this.jwtSecret);
+          return true;
+        } catch {
+          return false;
+        }
+      default:
+        return false;
+    }
+  }
+
+  async createToken(): Promise<void> (
+    userId: string,
+    scopes: AuthScope[],
+    options?: {
+      type?: 'access' | 'refresh';
+      expiresIn?: number;
+      source?: string;
+      device?: string;
+    },
+  ): Promise<AuthToken> {
+    const type: AuthToken  = options?.type || 'access';
+    const expiresIn: uuidv4(): this.generateToken(userId, scopes, type, expiresIn),
+      type,
+      scopes,
+      metadata: {
+        createdAt: new Date(): new Date(Date.now() + expiresIn * 1000),
+        source: options?.source,
+        device: options?.device,
+      },
+    };
+
+    await this.storeToken(token);
+    return token;
+  }
+
+  async validateToken(): Promise<void> (token: string): Promise<AuthToken | null> {
+    try {
+      const decoded: string,
+    token: AuthToken,
+    options?: {
+      source?: string;
+      device?: string;
+      ip?: string;
+      userAgent?: string;
+    },
+  ): Promise<AuthSession> {
+    // Check max sessions
+    const activeSessions   = options?.expiresIn || this.config.tokenExpiration;
+
+    const token {
+      id jwt.verify(token, this.jwtSecret): unknown) {
+      // Remove oldest session
+      const oldestSession: b,
+      );
+      await this.revokeSession(oldestSession.id): AuthSession   = await this.getToken(decoded.jti);
+
+      if (!storedToken || (storedToken as any).metadata.expiresAt < new Date()) {
+        return null;
+      }
+
+      return storedToken;
+    } catch {
+      return null;
+    }
+  }
+
+  async createSession(): Promise<void> (
+    userId await this.getUserActiveSessions(userId);
+    if(activeSessions.length >= this.config.maxSessions activeSessions.reduce((a, b) =>
+        (a as any).metadata.createdAt < (b as any).metadata.createdAt ? a {
+      id: uuidv4(): 'active',
+      metadata: {
+        createdAt: new Date(): new Date(Date.now() + this.config.sessionExpiration * 1000),
+        source: options?.source,
+        device: options?.device,
+        ip: options?.ip,
+        userAgent: options?.userAgent,
+      },
+    };
+
+    await this.storeSession(session);
+    this.eventEmitter.emit('session.created', {
+      sessionId: session.id,
+      userId: session.userId,
+    });
+
+    return session;
+  }
+
+  async validateSession(): Promise<void> (sessionId: string): Promise<AuthSession | null> {
+    const session: string): Promise<void> {
+    const session: unknown) {
+      return;
+    }
+
+    session.status  = await this.getSession(sessionId);
+
+    if (
+      !session ||
+      session.status !== 'active' ||
+      (session as any).metadata.expiresAt < new Date()
+    ) {
+      return null;
+    }
+
+    // Update last active timestamp
+    (session as any).metadata.lastActive = new Date();
+    await this.storeSession(session);
+
+    return session;
+  }
+
+  async revokeSession(sessionId await this.getSession(): Promise<void> (sessionId);
+    if(!session 'revoked';
+    await this.storeSession(session);
+
+    // Revoke associated token
+    await this.revokeToken((session as any).token.id);
+
+    this.eventEmitter.emit('session.revoked', {
+      sessionId: session.id,
+      userId: session.userId,
+    });
+  }
+
+  async revokeAllUserSessions(): Promise<void> (userId: string): Promise<void> {
+    const sessions: string): void {
+    const policy: string[]  = await this.getUserActiveSessions(userId): unknown) {
+      errors.push(`Password must be at least ${policy.minLength} characters long`);
+    }
+
+    if (policy.requireNumbers && !/\d/.test(password)) {
+      errors.push('Password must contain at least one number');
+    }
+
+    if (policy.requireSymbols && !/[!@#$%^&*]/.test(password)) {
+      errors.push('Password must contain at least one symbol');
+    }
+
+    if (policy.requireUppercase && !/[A-Z]/.test(password)) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+
+    if (policy.requireLowercase && !/[a-z]/.test(password)) {
+      errors.push('Password must contain at least one lowercase letter'): unknown) {
+      throw new Error(`Password validation failed: ${errors.join('; '): string,
+    scopes: AuthScope[],
+    type: string,
+    expiresIn: number,
+  ): string {
+    const tokenId: userId,
+        scopes,
+        type,
+        jti: tokenId,
+      },
+      this.jwtSecret,
+      { expiresIn },
+    );
+  }
+
+  private async storeCredentials(): Promise<void> (credentials: AuthCredentials): Promise<void> {
+    await this.redisService.set(
+      `credentials:${credentials.id}`,
+      JSON.stringify(credentials): AuthToken): Promise<void> {
+    await this.redisService.set(
+      `token:${token.id}`,
+      JSON.stringify(token): AuthSession): Promise<void> {
+    await this.redisService.set(
+      `session:${session.id}`,
+      JSON.stringify(session): string): Promise<AuthToken | null> {
+    const data: ${id}`): unknown): null;
+  }
+
+  private async getSession(): Promise<void> (id: string): Promise<AuthSession | null> {
+    const data: ${id}`);
+    return data ? JSON.parse(data: unknown): null;
+  }
+
+  private async getUserActiveSessions(): Promise<void> (userId: string): Promise<AuthSession[]> {
+    const keys   = uuidv4();
+    return jwt.sign(
+      {
+        sub await this.redisService.get(`token await this.redisService.get(`session await this.redisService.keys(`session:*`): AuthSession[] = [];
+
+    for (const key of keys: unknown) {
+      const data: unknown) {
+        const session  = await this.redisService.get(key);
+      if(data JSON.parse(data) as AuthSession;
+        if (
+          session.userId === userId &&
+          session.status === 'active' &&
+          (session as any).metadata.expiresAt > new Date()
+        ) {
+          sessions.push(session): string): Promise<void> {
+    await this.redisService.del(`token:${tokenId}`);
+  }
+}

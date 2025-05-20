@@ -1,0 +1,163 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importStar(require("react"));
+const date_fns_1 = require("date-fns");
+const d3 = __importStar(require("d3"));
+const TimelineView = ({ events, branches, workflows, onEventClick, onCreateBranch, onMergeBranch, }) => {
+    const svgRef = (0, react_1.useRef)(null);
+    const [selectedEvent, setSelectedEvent] = (0, react_1.useState)(null);
+    const [showBranchForm, setShowBranchForm] = (0, react_1.useState)(false);
+    const [newBranchName, setNewBranchName] = (0, react_1.useState)('');
+    (0, react_1.useEffect)(() => {
+        if (!svgRef.current || !events.length)
+            return;
+        const width = svgRef.current.clientWidth;
+        const height = svgRef.current.clientHeight;
+        const margin = { top: 20, right: 20, bottom: 20, left: 20 };
+        d3.select(svgRef.current).selectAll('*').remove();
+        const svg = d3.select(svgRef.current)
+            .attr('width', width)
+            .attr('height', height);
+        const g = svg.append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+        const stratify = d3.stratify()
+            .id(d => d.id)
+            .parentId(d => d.parentId);
+        const treeLayout = d3.tree()
+            .size([width - margin.left - margin.right, height - margin.top - margin.bottom]);
+        const root = stratify(events);
+        const nodes = treeLayout(root);
+        const links = g.append('g')
+            .attr('class', 'links')
+            .selectAll('path')
+            .data(nodes.links())
+            .enter()
+            .append('path')
+            .attr('class', 'link')
+            .attr('d', d3.linkHorizontal()
+            .x(d => d.y)
+            .y(d => d.x))
+            .attr('stroke', d => {
+            var _a;
+            const sourceEvent = d.source.data;
+            const targetEvent = d.target.data;
+            if ((_a = sourceEvent.mergedFrom) === null || _a === void 0 ? void 0 : _a.includes(targetEvent.id))
+                return '#9333ea';
+            if (targetEvent.parentId === sourceEvent.id)
+                return '#2563eb';
+            return '#6b7280';
+        })
+            .attr('stroke-width', 2)
+            .attr('fill', 'none');
+        const nodeGroups = g.append('g')
+            .attr('class', 'nodes')
+            .selectAll('g')
+            .data(nodes.descendants())
+            .enter()
+            .append('g')
+            .attr('transform', d => `translate(${d.y},${d.x})`);
+        nodeGroups.append('circle')
+            .attr('r', 6)
+            .attr('fill', d => {
+            switch (d.data.type) {
+                case 'SUGGESTION': return '#3b82f6';
+                case 'TODO': return '#10b981';
+                case 'FEATURE': return '#f59e0b';
+                case 'WORKFLOW_STEP': return '#8b5cf6';
+                default: return '#6b7280';
+            }
+        })
+            .attr('stroke', '#fff')
+            .attr('stroke-width', 2)
+            .on('click', (event, d) => {
+            setSelectedEvent(d.data);
+            onEventClick(d.data);
+        });
+        nodeGroups.append('text')
+            .attr('dy', -10)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '12px')
+            .text(d => d.data.data.title.substring(0, 20));
+        nodeGroups.append('text')
+            .attr('dy', 20)
+            .attr('text-anchor', 'middle')
+            .attr('font-size', '10px')
+            .attr('fill', '#6b7280')
+            .text(d => (0, date_fns_1.format)(new Date(d.data.timestamp), 'MMM d, yyyy'));
+        nodeGroups.filter(d => d.data.type === 'WORKFLOW_STEP')
+            .append('rect')
+            .attr('x', -8)
+            .attr('y', -8)
+            .attr('width', 16)
+            .attr('height', 16)
+            .attr('rx', 4)
+            .attr('fill', '#8b5cf6')
+            .attr('opacity', 0.2);
+    }, [events, branches, workflows]);
+    const handleCreateBranch = () => {
+        if (selectedEvent && newBranchName) {
+            onCreateBranch(selectedEvent.id, newBranchName);
+            setShowBranchForm(false);
+            setNewBranchName('');
+        }
+    };
+    return (<div className="relative w-full h-[600px]">
+      <svg ref={svgRef} className="w-full h-full"/>
+      
+      
+      <div className="absolute top-4 right-4 space-y-2">
+        <button onClick={() => setShowBranchForm(true)} disabled={!selectedEvent} className="px-3 py-1 bg-blue-500 text-white rounded-md disabled:opacity-50">
+          Create Branch
+        </button>
+      </div>
+
+      
+      {showBranchForm && (<div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white p-4 rounded-lg shadow-lg">
+          <h3 className="text-lg font-medium mb-4">Create New Branch</h3>
+          <input type="text" value={newBranchName} onChange={(e) => setNewBranchName(e.target.value)} placeholder="Branch name" className="block w-full px-3 py-2 border rounded-md mb-4"/>
+          <div className="flex justify-end space-x-2">
+            <button onClick={() => setShowBranchForm(false)} className="px-3 py-1 border rounded-md">
+              Cancel
+            </button>
+            <button onClick={handleCreateBranch} className="px-3 py-1 bg-blue-500 text-white rounded-md">
+              Create
+            </button>
+          </div>
+        </div>)}
+    </div>);
+};
+exports.default = TimelineView;
+//# sourceMappingURL=TimelineView.js.mapexport {};

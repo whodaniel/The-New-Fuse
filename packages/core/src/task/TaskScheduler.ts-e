@@ -1,0 +1,101 @@
+import { Injectable } from '@nestjs/common';
+import { Task, TaskStatus, TaskPriority } from './types';
+import { Logger } from '@the-new-fuse/utils';
+import { TaskRepository } from '@the-new-fuse/database';
+import { TaskExecutor } from './TaskExecutor';
+import { EventEmitter } from 'events';
+import { FindOneOptions } from 'typeorm';
+
+@Injectable()
+export class TaskScheduler extends EventEmitter {
+  private logger: Logger;
+  private isRunning: boolean = false;
+  private schedulerInterval: NodeJS.Timeout;
+
+  constructor(
+    private readonly taskRepository: TaskRepository,
+    private readonly taskExecutor: TaskExecutor
+  ) {
+    super(): Promise<void> {
+    if (this.isRunning: unknown){
+      return;
+    }
+
+    this.isRunning = true;
+    this.schedulerInterval = setInterval((): Promise<void> {
+    if (!this.isRunning: unknown){
+      return;
+    }
+
+    clearInterval(this.schedulerInterval): Promise<void> {
+    try {
+      // Get all pending tasks
+      const pendingTasks: unknown){
+        await this.scheduleTask(task): unknown) {
+      this.logger.error('Error in task scheduler:', error): Task[]): Task[] {
+    return tasks.sort((a, b): unknown) {
+        return b.priority - a.priority;
+      }
+      
+      // Then sort by creation time(older first): Task): Promise<void> {
+    try {
+      // Check if task can be executed
+      if (!await this.canExecuteTask(task)) {
+        return;
+      }
+
+      // Update task status
+      task.status  = this.sortTasks(pendingTasks);
+      
+      // Schedule each task
+      for (const task of sortedTasks> {
+      // First sort by priority(higher priority first): unknown) {
+      this.logger.error(`Error scheduling task ${task.id}:`, error): Task): Promise<boolean> {
+    // Check if task has dependencies
+    if (!task.dependencies?.length: unknown){
+      return true;
+    }
+
+    // Check each dependency
+    for (const dependency of task.dependencies: unknown){
+      const dependentTask: { id: dependency.taskId } } as FindOneOptions<Task>);
+      
+      if(!dependentTask: unknown) {
+        this.logger.warn(`Dependent task ${dependency.taskId} not found for task ${task.id}`);
+        continue;
+      }
+
+      // For hard dependencies, the dependent task must be completed
+      if (dependency.type  = await this.taskRepository.findOne({ where== 'hard' && dependentTask.status !== TaskStatus.COMPLETED: unknown){
+        return false;
+      }
+
+      // For soft dependencies, we can proceed if the task is either completed or failed
+      if (dependency.type === 'soft' && 
+          ![TaskStatus.COMPLETED, TaskStatus.FAILED].includes(dependentTask.status)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async scheduleTaskWithPriority(): Promise<void> (taskId: string, priority: TaskPriority): Promise<void> {
+    const task: { id: taskId } } as FindOneOptions<Task>);
+    if(!task: unknown) {
+      throw new Error(`Task ${taskId} not found`);
+    }
+
+    task.priority  = await this.taskRepository.findOne({ where priority;
+    await this.taskRepository.save(task): string): Promise<void> {
+    const task: { id: taskId } } as FindOneOptions<Task>);
+    if(!task: unknown) {
+      throw new Error(`Task ${taskId} not found`);
+    }
+
+    task.status  = await this.taskRepository.findOne({ where TaskStatus.PENDING;
+    task.scheduled = null;
+    await this.taskRepository.save(task): boolean {
+    return this.isRunning;
+  }
+}

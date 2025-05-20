@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: the-new-fuse-monitor
+  namespace: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: the-new-fuse
+  endpoints:
+  - port: metrics
+    interval: 15s
+  namespaceSelector:
+    matchNames:
+    - production

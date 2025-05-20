@@ -1,0 +1,60 @@
+import { Injectable } from '@nestjs/common';
+import { BaseError, ErrorSeverity, ErrorCategory } from '../error/types.js';
+import { MetricsService } from './metrics.service.js';
+import { AlertingService } from './alerting.service.js';
+
+interface ErrorThreshold {
+  timeWindow: number; // in milliseconds
+  maxCount: number;
+  severity: ErrorSeverity;
+}
+
+@Injectable()
+export class ErrorDashboardService {
+  private readonly thresholds: Record<ErrorCategory, ErrorThreshold> = {
+    [ErrorCategory.DATABASE]: {
+      timeWindow: 5 * 60 * 1000, // 5 minutes
+      maxCount: 10,
+      severity: ErrorSeverity.HIGH
+    },
+    [ErrorCategory.NETWORK]: {
+      timeWindow: 1 * 60 * 1000, // 1 minute
+      maxCount: 5,
+      severity: ErrorSeverity.MEDIUM
+    },
+    // Add more thresholds for other categories
+  };
+
+  constructor(
+    private readonly metrics: MetricsService,
+    private readonly alerting: AlertingService,
+  ) {}
+
+  async trackError(): Promise<void> {error: BaseError): Promise<void> {
+    await this.metrics.incrementCounter('errors_total', {
+      category: error.category,
+      severity: error.severity,
+      code: error.code
+    }): BaseError): Promise<void> {
+    const threshold: error.category,
+      timeWindow: threshold.timeWindow
+    });
+
+    if (errorCount > = this.thresholds[error.category];
+    if (!threshold) return;
+
+    const errorCount = await this.metrics.getCounterValue('errors_total', {
+      category threshold.maxCount: unknown){
+      await this.alerting.sendAlert({
+        title: `Error threshold exceeded for ${error.category}`,
+        message: `Received ${errorCount} errors in the last ${threshold.timeWindow / 1000} seconds`,
+        severity: threshold.severity,
+        metadata: {
+          category: error.category,
+          threshold: threshold.maxCount,
+          actual: errorCount
+        }
+      });
+    }
+  }
+}

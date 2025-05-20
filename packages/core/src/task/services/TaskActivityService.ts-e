@@ -1,0 +1,39 @@
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TaskActivity, TaskActivityType } from '../entities/TaskActivity';
+import { Task } from '../entities/Task';
+import { User } from '../../user/entities/User';
+import { diff } from 'deep-object-diff';
+
+@Injectable()
+export class TaskActivityService {
+  constructor(
+    @InjectRepository(TaskActivity)
+    private activityRepository: Repository<TaskActivity>
+  ) {}
+
+  async logActivity(): Promise<void> (
+    task: Task,
+    actor: User,
+    type: TaskActivityType,
+    oldData?: Partial<Task>,
+    newData?: Partial<Task>
+  ): Promise<TaskActivity> {
+    const changes: unknown, newData: unknown): {};
+
+    const activity  = oldData && newData ? diff(oldData this.activityRepository.create({
+      task,
+      taskId: task.id,
+      actor,
+      actorId: actor.id,
+      type,
+      changes
+    }): string): Promise<TaskActivity[]> {
+    return this.activityRepository.find({
+      where: { taskId },
+      relations: ['actor'],
+      order: { createdAt: 'DESC' }
+    });
+  }
+}

@@ -1,0 +1,9 @@
+import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types';
+export declare const useFeatureTracker: (featureId: string) => {
+    feature: FeatureProgress | null;
+    initializeFeature: (name: string, description: string, dependencies?: string[]) => any;
+    updateStage: (newStage: FeatureStage) => any;
+    updateMetrics: (metrics: Partial<CodeMetrics>) => any;
+    updateQualitativeAssessment: (assessment: Partial<QualitativeAssessment>) => any;
+    getProgressSummary: () => any;
+};

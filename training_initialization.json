@@ -1,0 +1,14 @@
+{
+    "type": "TRAINING_REQUEST",
+    "source": "local_ai_agent_001",
+    "target": "TNF_AG_MENTOR_003",
+    "content": {
+        "training_focus": [
+            "platform_protocols",
+            "collaboration_patterns",
+            "ethical_guidelines"
+        ],
+        "learning_mode": "interactive",
+        "readiness_status": "prepared"
+    }
+}

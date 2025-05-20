@@ -1,0 +1,10 @@
+import React from 'react';
+interface DataExportAndShareProps {
+    data: unknown;
+}
+export declare const DataExportAndShare: (React as any).FC<DataExportAndShareProps>;
+export declare const ExportButton: (React as any).FC<{}>;
+export declare const ShareButton: (React as any).FC<{}>;
+export declare const ExportModal: (React as any).FC<{}>;
+export declare const ShareModal: (React as any).FC<{}>;
+export {};

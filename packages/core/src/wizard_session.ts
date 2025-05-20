@@ -1,0 +1,53 @@
+import * as path from 'path';
+import * as fs from 'fs';
+import { Visualizer } from './visualizer.js';
+
+interface VideoAnalysis {
+    video_id: string;
+    transcript: string;
+    [key: string]: unknown;  // For other potential properties
+}
+
+interface AnalysisResult {
+    analysis_path: string;
+    video_id: string;
+    transcript_summary: string;
+}
+
+class WizardSession {
+    private projectPath: string;
+    private visualizer: Visualizer;
+
+    constructor(projectPath: string) {
+        this.projectPath = projectPath;
+    }
+
+    public analyzeAndVisualize(): void {
+        // Implementation to be added based on requirements
+    }
+
+    public analyzeVideo(videoId: string): AnalysisResult {
+        // Analyze YouTube video and integrate with project
+        const analysis: VideoAnalysis = this.visualizer.projectAnalyzer.analyzeVideoContent(videoId);
+        const videoPath = path.join(this.projectPath, "video_analyses");
+
+        // Create directory if it doesn't exist
+        if (!fs.existsSync(videoPath)) {
+            fs.mkdirSync(videoPath, { recursive: true });
+        }
+
+        // Save analysis using YouTube integrator
+        (this.visualizer.projectAnalyzer as any).youtubeIntegrator.saveAnalysis(
+            analysis,
+            videoPath
+        );
+
+        return {
+            analysis_path: videoPath,
+            video_id: videoId,
+            transcript_summary: (analysis as any).transcript.substring(0, 200) + "..."  // First 200 chars
+        };
+    }
+}
+
+export { WizardSession, VideoAnalysis, AnalysisResult };

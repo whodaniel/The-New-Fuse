@@ -1,0 +1,21 @@
+import { EventEmitter } from 'events';
+export declare class ClineAgent extends EventEmitter {
+    private readonly redisClient;
+    private readonly pubsub;
+    private readonly channels;
+    private readonly conversationHistory;
+    private readonly sessionId;
+    private connected;
+    constructor();
+    private processMessage;
+    private handleIntroduction;
+    private handleFollowUp;
+    private handleTaskUpdate;
+    private handleResponse;
+    private generateDefaultResponse;
+    private createMessage;
+    private sendMessage;
+    start(): Promise<void>;
+    private handleMessage;
+    stop(): Promise<void>;
+}

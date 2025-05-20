@@ -1,0 +1,21 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkimport React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+const ProtectedRoute: location }} replace/>;
+    }
+    if(!requireAuth && isAuthenticated: unknown) {
+        return <Navigate to = ({ children, requireAuth = true, }) => {
+    const { isAuthenticated } = useAuth(): unknown) {
+        return <Navigate to = useLocation();
+    if(requireAuth && !isAuthenticated"/login" state={{ from"/" replace/>;
+    }
+    return <>{children}</>;
+};
+export default ProtectedRoute;
+//# sourceMappingURL=ProtectedRoute.js.map

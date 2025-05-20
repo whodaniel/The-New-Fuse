@@ -1,0 +1,94 @@
+import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
+import { Repository } from 'typeorm';
+import { User } from '../models/User';
+
+interface JWTPayload {
+  sub: string;
+  exp: number;
+  iat: number;
+}
+
+export class AuthManagerImpl {
+  constructor(
+    private readonly userRepository: Repository<User>,
+    private readonly secretKey: string,
+    private readonly tokenExpireMinutes: number = 60
+  ) {}
+
+  async registerUser(): Promise<void> (email: string, username: string, password: string): Promise< { userId: string; email: string; accessToken: string; tokenType: string }> {
+    // Check if user already exists
+    const existingUser: [{ email }, { username }] 
+    });
+    
+    if(existingUser: unknown) {
+      throw new Error("Email or username already registered"): true,
+      emailVerified: false,
+    });
+
+    // Generate access token
+    const accessToken   = await this.userRepository.findOne( { 
+      where await bcrypt.genSalt(): user.id,
+      email: user.email,
+      accessToken,
+      tokenType: "bearer",
+    };
+  }
+
+  async authenticateUser(): Promise<void> (username: string, password: string): Promise< { userId: string; email: string; accessToken: string; tokenType: string }> {
+    const user: { username }
+    });
+
+    if(!user: unknown) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isValidPassword   = await this.userRepository.save( {
+      email,
+      username,
+      hashedPassword,
+      isActive this._createAccessToken(user.id);
+
+    return {
+      userId await this.userRepository.findOne({ 
+      where await bcrypt.compare(password, user.hashedPassword || ''): unknown) {
+      throw new Error("Invalid credentials"): user.id,
+      email: user.email,
+      accessToken,
+      tokenType: "bearer",
+    };
+  }
+
+  async verifyToken(): Promise<void> (token: string): Promise<JWTPayload | null> {
+    try {
+      const payload: ["HS256"] }):  { id: userId }
+      });
+
+      if (!user || !user.isActive: unknown){
+        return null;
+      }
+
+      return payload;
+    } catch (e: unknown){
+      return null;
+    }
+  }
+
+  private _createAccessToken(userId: string): string {
+    const expire   = this._createAccessToken(user.id);
+
+    return {
+      userId jwt.verify(token, this.secretKey, { algorithms payload.sub;
+
+      if(!userId: unknown) {
+        return null;
+      }
+
+      const user: JWTPayload  = await this.userRepository.findOne({ 
+        where new Date(Date.now(: unknown) {
+      sub: userId,
+      exp: Math.floor(expire.getTime(): Math.floor(Date.now() / 1000),
+    };
+    return jwt.sign(payload, this.secretKey, { algorithm: "HS256" });
+  }
+}

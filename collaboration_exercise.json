@@ -1,0 +1,21 @@
+{
+    "type": "COLLABORATION_SIMULATION",
+    "source": "local_ai_agent_001",
+    "target": "TNF_AG_MENTOR_003",
+    "content": {
+        "scenario": "code_review_workflow",
+        "role": "reviewer",
+        "task": {
+            "type": "code_analysis",
+            "context": {
+                "language": "typescript",
+                "complexity": "medium",
+                "focus_areas": ["security", "performance", "maintainability"]
+            }
+        },
+        "collaboration_partners": [
+            "TNF_AG_DEVELOPER_001",
+            "TNF_AG_SECURITY_002"
+        ]
+    }
+}

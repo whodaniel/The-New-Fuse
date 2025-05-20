@@ -1,0 +1,97 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.updateAgentStatusDtoSchema = exports.updateAgentDtoSchema = exports.createAgentDtoSchema = exports.agentMetricsSchema = exports.agentConfigurationSchema = exports.agentProfileSchema = exports.baseAgentSchema = exports.agentFrameworkSchema = exports.agentCapabilitySchema = exports.agentRoleSchema = exports.agentTypeSchema = exports.agentStatusSchema = exports.AgentFramework = exports.AgentCapability = exports.AgentRole = exports.AgentType = exports.AgentStatus = void 0;
+const zod_1 = require("zod");
+// Base enums
+var AgentStatus;
+(function (AgentStatus) {
+    AgentStatus["IDLE"] = "IDLE";
+    AgentStatus["BUSY"] = "BUSY";
+    AgentStatus["ERROR"] = "ERROR";
+    AgentStatus["OFFLINE"] = "OFFLINE";
+})(AgentStatus || (exports.AgentStatus = AgentStatus = {}));
+var AgentType;
+(function (AgentType) {
+    AgentType["CONVERSATIONAL"] = "CONVERSATIONAL";
+    AgentType["IDE_EXTENSION"] = "IDE_EXTENSION";
+    AgentType["API"] = "API";
+})(AgentType || (exports.AgentType = AgentType = {}));
+var AgentRole;
+(function (AgentRole) {
+    AgentRole["ASSISTANT"] = "ASSISTANT";
+    AgentRole["DEVELOPER"] = "DEVELOPER";
+    AgentRole["REVIEWER"] = "REVIEWER";
+})(AgentRole || (exports.AgentRole = AgentRole = {}));
+var AgentCapability;
+(function (AgentCapability) {
+    AgentCapability["CODE_REVIEW"] = "CODE_REVIEW";
+    AgentCapability["CODE_REFACTORING"] = "CODE_REFACTORING";
+    AgentCapability["DEBUGGING"] = "DEBUGGING";
+    AgentCapability["TESTING"] = "TESTING";
+    AgentCapability["DOCUMENTATION"] = "DOCUMENTATION";
+    AgentCapability["TOOL_USAGE"] = "TOOL_USAGE";
+    AgentCapability["TASK_EXECUTION"] = "TASK_EXECUTION";
+    AgentCapability["FILE_MANAGEMENT"] = "FILE_MANAGEMENT";
+    AgentCapability["CODE_COMPLETION"] = "CODE_COMPLETION";
+    AgentCapability["CODE_SUGGESTIONS"] = "CODE_SUGGESTIONS";
+    AgentCapability["SYNTAX_HIGHLIGHTING"] = "SYNTAX_HIGHLIGHTING";
+    AgentCapability["ERROR_DETECTION"] = "ERROR_DETECTION";
+    AgentCapability["CODE_FORMATTING"] = "CODE_FORMATTING";
+    AgentCapability["INTELLISENSE"] = "INTELLISENSE";
+    AgentCapability["REFACTORING"] = "REFACTORING";
+    AgentCapability["DOCUMENTATION_GENERATION"] = "DOCUMENTATION_GENERATION";
+})(AgentCapability || (exports.AgentCapability = AgentCapability = {}));
+var AgentFramework;
+(function (AgentFramework) {
+    AgentFramework["VSCODE"] = "VSCODE";
+    AgentFramework["WEBIDE"] = "WEBIDE";
+    AgentFramework["CLI"] = "CLI";
+})(AgentFramework || (exports.AgentFramework = AgentFramework = {}));
+// Zod schemas
+exports.agentStatusSchema = zod_1.z.nativeEnum(AgentStatus);
+exports.agentTypeSchema = zod_1.z.nativeEnum(AgentType);
+exports.agentRoleSchema = zod_1.z.nativeEnum(AgentRole);
+exports.agentCapabilitySchema = zod_1.z.nativeEnum(AgentCapability);
+exports.agentFrameworkSchema = zod_1.z.nativeEnum(AgentFramework);
+exports.baseAgentSchema = zod_1.z.object({
+    id: zod_1.z.string(),
+    name: zod_1.z.string(),
+    description: zod_1.z.string().optional(),
+    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
+    status: exports.agentStatusSchema,
+    lastActive: zod_1.z.date(),
+    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+});
+exports.agentProfileSchema = exports.baseAgentSchema.extend({
+    type: exports.agentTypeSchema,
+    role: exports.agentRoleSchema,
+    framework: exports.agentFrameworkSchema,
+    provider: zod_1.z.string(),
+    config: zod_1.z.record(zod_1.z.unknown()),
+});
+exports.agentConfigurationSchema = zod_1.z.object({
+    provider: zod_1.z.string(),
+    config: zod_1.z.record(zod_1.z.unknown()),
+});
+exports.agentMetricsSchema = zod_1.z.object({
+    successRate: zod_1.z.number(),
+    totalTasks: zod_1.z.number(),
+    averageResponseTime: zod_1.z.number(),
+    lastUpdated: zod_1.z.date(),
+});
+// Zod schemas for DTOs
+exports.createAgentDtoSchema = zod_1.z.object({
+    name: zod_1.z.string(),
+    description: zod_1.z.string().optional(),
+    type: exports.agentTypeSchema,
+    role: exports.agentRoleSchema,
+    framework: exports.agentFrameworkSchema,
+    provider: zod_1.z.string(),
+    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
+    config: zod_1.z.record(zod_1.z.unknown()),
+});
+exports.updateAgentDtoSchema = exports.createAgentDtoSchema.partial();
+exports.updateAgentStatusDtoSchema = zod_1.z.object({
+    status: exports.agentStatusSchema,
+});
+//# sourceMappingURL=agent.js.mapexport {};

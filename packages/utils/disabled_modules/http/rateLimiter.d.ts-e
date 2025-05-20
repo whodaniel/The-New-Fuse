@@ -1,0 +1,14 @@
+interface RateLimitConfig {
+    windowMs: number;
+    maxRequests: number;
+}
+export declare class RateLimiter {
+    private limits;
+    private readonly config;
+    constructor(config?: RateLimitConfig);
+    checkRateLimit(key: string): Promise<boolean>;
+    getRemainingRequests(key: string): number;
+    cleanupExpiredEntries(): Promise<void>;
+}
+declare const globalRateLimiter: RateLimiter;
+export default globalRateLimiter;

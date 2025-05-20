@@ -1,0 +1,158 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FeatureManagementView = void 0;
+const react_1 = __importStar(require("react"));
+const KanbanBoard_1 = __importDefault(require("./KanbanBoard"));
+const FeatureSuggestionList_1 = require("./FeatureSuggestionList");
+const useKanbanBoard_1 = require("../hooks/useKanbanBoard");
+const useFeatureSuggestions_1 = require("../hooks/useFeatureSuggestions");
+const types_1 = require("../types");
+const FeatureManagementView = ({ suggestionService, currentUserId, }) => {
+    const [viewMode, setViewMode] = (0, react_1.useState)('list');
+    const [showNewSuggestionForm, setShowNewSuggestionForm] = (0, react_1.useState)(false);
+    const [newSuggestion, setNewSuggestion] = (0, react_1.useState)({
+        title: '',
+        description: '',
+        priority: types_1.SuggestionPriority.MEDIUM,
+        tags: [],
+    });
+    const { suggestions, todos, loading, error, updateSuggestionStatus, updateTodoStatus, convertSuggestionToFeature, refresh, columns, handleDragEnd, } = (0, useKanbanBoard_1.useKanbanBoard)({
+        suggestionService,
+    });
+    const { submitSuggestion, voteSuggestion, addTodo, addComment, } = (0, useFeatureSuggestions_1.useFeatureSuggestions)({ suggestionService });
+    const handleSubmitNewSuggestion = async (): Promise<void> (e) => {
+        e.preventDefault();
+        try {
+            await submitSuggestion(newSuggestion.title, newSuggestion.description, currentUserId, newSuggestion.priority, newSuggestion.tags);
+            setShowNewSuggestionForm(false);
+            setNewSuggestion({
+                title: '',
+                description: '',
+                priority: types_1.SuggestionPriority.MEDIUM,
+                tags: [],
+            });
+        }
+        catch (error) {
+            console.error('Failed to submit suggestion:', error);
+        }
+    };
+    if (loading) {
+        return (<div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+      </div>);
+    }
+    if (error) {
+        return (<div className="text-red-500 p-4">
+        Error: {error.message}
+      </div>);
+    }
+    return (<div className="p-4">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex space-x-4">
+          <button className={`px-4 py-2 rounded-lg ${viewMode === 'list'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 text-gray-700'}`} onClick={() => setViewMode('list')}>
+            List View
+          </button>
+          <button className={`px-4 py-2 rounded-lg ${viewMode === 'kanban'
+            ? 'bg-blue-500 text-white'
+            : 'bg-gray-200 text-gray-700'}`} onClick={() => setViewMode('kanban')}>
+            Kanban View
+          </button>
+        </div>
+        <button onClick={() => setShowNewSuggestionForm(true)} className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+          New Suggestion
+        </button>
+      </div>
+
+      {showNewSuggestionForm && (<div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg p-6 max-w-lg w-full">
+            <h2 className="text-xl font-semibold mb-4">New Feature Suggestion</h2>
+            <form onSubmit={handleSubmitNewSuggestion}>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Title
+                  </label>
+                  <input type="text" value={newSuggestion.title} onChange={(e) => setNewSuggestion((prev) => (Object.assign(Object.assign({}, prev), { title: e.target.value })))} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"/>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Description
+                  </label>
+                  <textarea value={newSuggestion.description} onChange={(e) => setNewSuggestion((prev) => (Object.assign(Object.assign({}, prev), { description: e.target.value })))} rows={4} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"/>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Priority
+                  </label>
+                  <select value={newSuggestion.priority} onChange={(e) => setNewSuggestion((prev) => (Object.assign(Object.assign({}, prev), { priority: e.target.value })))} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                    {Object.values(types_1.SuggestionPriority).map((priority) => (<option key={priority} value={priority}>
+                        {priority}
+                      </option>))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">
+                    Tags (comma-separated)
+                  </label>
+                  <input type="text" value={newSuggestion.tags.join(', ')} onChange={(e) => setNewSuggestion((prev) => (Object.assign(Object.assign({}, prev), { tags: e.target.value.split(',').map((t) => t.trim()) })))} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"/>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end space-x-3">
+                <button type="button" onClick={() => setShowNewSuggestionForm(false)} className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50">
+                  Cancel
+                </button>
+                <button type="submit" className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">
+                  Submit
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>)}
+
+      {viewMode === 'kanban' ? (<KanbanBoard_1.default columns={columns} onDragEnd={handleDragEnd}/>) : (<FeatureSuggestionList_1.FeatureSuggestionList suggestionService={suggestionService} suggestions={suggestions} onUpdateStatus={updateSuggestionStatus} onConvertToFeature={convertSuggestionToFeature} onRefresh={refresh}/>)}
+    </div>);
+};
+exports.FeatureManagementView = FeatureManagementView;
+//# sourceMappingURL=FeatureManagementView.js.mapexport {};

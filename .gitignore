@@ -1,0 +1,70 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+build/
+dist/
+*.tsbuildinfo
+
+# Testing
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editors
+
+# Large files we don't want in git
+temp-import-list.txt
+file_structure.txt
+.qodo/history.sqlite
+*.dylib.node
+*.wasm
+*.vsix
+*.zip
+
+# Yarn/npm cache files
+.yarn/cache/
+**/node_modules/@esbuild/
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.history/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.sqlite
+*.db
+data/vector-db/
+
+# Cache
+.turbo
+.webpack
+.eslintcache
+.cache
+.parcel-cache
+
+# Generated files
+packages/database/prisma/client/
+
+# Misc
+.DS_Store
+*.pem

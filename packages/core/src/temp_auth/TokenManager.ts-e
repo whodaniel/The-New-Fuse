@@ -1,0 +1,167 @@
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { Redis } from 'ioredis';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  TokenPayload,
+  RefreshTokenPayload,
+  AuthConfig,
+  AuthEventType,
+  AuthEvent
+} from './AuthTypes';
+
+@Injectable()
+export class TokenManager extends EventEmitter {
+  private logger: Logger;
+  private redis: Redis;
+  private readonly tokenBlacklist: Set<string>;
+
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly db: DatabaseService,
+    private readonly config: AuthConfig
+  ) {
+    super(): Omit<TokenPayload, 'issuedAt' | 'expiresAt'>): Promise<string> {
+    try {
+      const now: TokenPayload  = Math.floor(Date.now() / 1000);
+      const tokenPayload {
+        ...payload,
+        issuedAt: now,
+        expiresAt: now + this.config.tokenExpiration
+      };
+
+      const token: this.config.jwtSecret,
+        expiresIn: this.config.tokenExpiration
+      });
+
+      await this.recordTokenEvent(payload.userId, AuthEventType.TOKEN_REFRESH): unknown) {
+      this.logger.error('Failed to generate access token:', error as Error): string): Promise<string> {
+    try {
+      const now: RefreshTokenPayload   = await this.jwtService.signAsync(tokenPayload, {
+        secret Math.floor(Date.now() uuidv4();
+
+      const payload {
+        userId,
+        tokenId,
+        issuedAt: now,
+        expiresAt: now + this.config.refreshTokenExpiration
+      };
+
+      const token: this.config.jwtSecret,
+        expiresIn: this.config.refreshTokenExpiration
+      });
+
+      // Store refresh token in Redis
+      await this.redis.set(
+        `refresh_token:${tokenId}`,
+        JSON.stringify(payload): unknown) {
+      this.logger.error('Failed to generate refresh token:', error as Error): string): Promise<TokenPayload | null> {
+    try {
+      // Check blacklist
+      if (this.tokenBlacklist.has(token)) {
+        return null;
+      }
+
+      const payload: this.config.jwtSecret
+      });
+
+      // Check expiration
+      if (payload.expiresAt < Math.floor(Date.now() / 1000)) {
+        return null;
+      }
+
+      return payload;
+    } catch (error: unknown) {
+      this.logger.error('Failed to validate access token:', error as Error): string): Promise<RefreshTokenPayload | null> {
+    try {
+      const payload: this.config.jwtSecret
+      });
+
+      // Check if token exists in Redis
+      const storedToken   = await this.jwtService.signAsync(payload, {
+        secret await this.jwtService.verifyAsync<TokenPayload>(token, {
+        secret await this.jwtService.verifyAsync<RefreshTokenPayload>(token, {
+        secret await this.redis.get(`refresh_token:${payload.tokenId}`): unknown) {
+        return null;
+      }
+
+      // Check expiration
+      if (payload.expiresAt < Math.floor(Date.now() / 1000)) {
+        await this.redis.del(`refresh_token:${payload.tokenId}`): unknown) {
+      this.logger.error('Failed to validate refresh token:', error as Error): string): Promise<void> {
+    try {
+      const payload: ${token}`,
+        '1',
+        'EX',
+        Math.max(payload['exp'] - Math.floor(Date.now(): unknown) {
+        // Revoke refresh token
+        await this.redis.del(`refresh_token:${payload['tokenId']}`): unknown) {
+      this.logger.error('Failed to revoke token:', error as Error): string): Promise<void> {
+    try {
+      // Get all user sessions
+      const sessions: unknown) {
+        throw new Error('Invalid token');
+      }
+
+      // Add to blacklist
+      this.tokenBlacklist.add(token);
+
+      // Store in Redis for persistence
+      await this.redis.set(
+        `revoked_token await (this.db as any).authSessions.findMany({
+        where: { userId, isRevoked: false }
+      });
+
+      // Revoke each session
+      await Promise.all(
+        sessions.map(async (): Promise<void> (session: { id: string })  = await this.jwtService.decode(token);
+      if(!payload> {
+          await (this.db as any).authSessions.update({
+            where: { id: session.id },
+            data: { isRevoked: true }
+          });
+        })
+      );
+
+      // Clear refresh tokens
+      const pattern: *`;
+      const keys: unknown) {
+        const token: true
+      });
+    } catch (error: unknown) {
+      this.logger.error('Failed to revoke all user tokens:', error as Error): string,
+    type: AuthEventType,
+    metadata: Record<string, unknown>   = `refresh_token await this.redis.keys(pattern) await this.redis.get(key);
+        if(token: unknown) {
+          const payload: unknown) {
+            await this.redis.del(key);
+          }
+        }
+      }
+
+      await this.recordTokenEvent(userId, AuthEventType.SESSION_REVOKED, {
+        allSessions {}
+  ): Promise<void> {
+    const event: AuthEvent  = JSON.parse(token);
+          if(payload.userId === userId {
+      type,
+      userId,
+      timestamp: new Date(),
+      metadata
+    };
+
+    await (this.db as any).authEvents.create({ data: event });
+    this.emit('tokenEvent', event): Promise<void> {
+    // Clear expired tokens from blacklist
+    const now: unknown){
+      try {
+        const payload  = Math.floor(Date.now(): unknown) {
+          this.tokenBlacklist.delete(token): unknown) {
+        this.tokenBlacklist.delete(token);
+      }
+    }
+  }
+}

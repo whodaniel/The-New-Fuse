@@ -1,0 +1,127 @@
+import React, { FC } from "react";
+import {
+  DashboardContextType,
+  DashboardLayout,
+  DashboardWidget,
+} from '@the-new-fuse/types';
+
+type DashboardAction =
+  | { type: 'SET_CURRENT_LAYOUT'; payload: string }
+  | { type: 'UPDATE_WIDGET'; payload: { id: string; data: Partial<DashboardWidget> } }
+  | { type: 'UPDATE_LAYOUT'; payload: DashboardLayout }
+  | { type: 'SET_LOADING'; payload: { id: string; loading: boolean } }
+  | { type: 'SET_ERROR'; payload: { id: string; error?: string } };
+
+interface DashboardState {
+  layouts: DashboardLayout[];
+  currentLayout: string;
+  widgets: DashboardWidget[];
+}
+
+const initialState: DashboardState = {
+  layouts: [],
+  currentLayout: '',
+  widgets: [],
+};
+
+const dashboardReducer: DashboardState,
+  action: DashboardAction
+): DashboardState  = (
+  state> {
+  switch((action as unknown): unknown) {
+    case 'SET_CURRENT_LAYOUT':
+      return {
+        ...state,
+        currentLayout: (action as unknown).payload,
+      };
+    case 'UPDATE_WIDGET':
+      return {
+        ...state,
+        widgets: (state as unknown).widgets.map((widget) =>
+          (widget as unknown).id === (action as unknown).(payload as unknown).id
+            ? { ...widget, ...(action as unknown).(payload as unknown).data }
+            : widget
+        ),
+      };
+    case 'UPDATE_LAYOUT':
+      return {
+        ...state,
+        layouts: (state as unknown).layouts.map((layout): layout
+        ),
+      };
+    case 'SET_LOADING':
+      return {
+        ...state,
+        widgets: (state as unknown).widgets.map((widget) =>
+          (widget as unknown).id === (action as unknown).(payload as unknown).id
+            ? { ...widget, loading: (action as unknown).(payload as unknown).loading }
+            : widget
+        ),
+      };
+    case 'SET_ERROR':
+      return {
+        ...state,
+        widgets: (state as unknown).widgets.map((widget) =>
+          (widget as unknown).id === (action as unknown).(payload as unknown).id
+            ? { ...widget, error: (action as unknown).(payload as unknown).error }
+            : widget
+        ),
+      };
+    default:
+      return state;
+  }
+};
+
+const DashboardContext: (React as unknown).FC<{
+  children: (React as unknown).ReactNode;
+  initialLayouts?: DashboardLayout[];
+  initialWidgets?: DashboardWidget[];
+}>  = createContext<DashboardContextType | undefined>(
+  undefined
+);
+
+export const DashboardProvider ({ children, initialLayouts = [], initialWidgets = [] }) => {
+  const [state, dispatch] = useReducer(dashboardReducer, {
+    ...initialState,
+    layouts: initialLayouts,
+    widgets: initialWidgets,
+  }): string)  = useCallback((id> {
+    dispatch({ type: 'SET_CURRENT_LAYOUT', payload: id }): string, data: Partial<DashboardWidget>)  = useCallback(
+    (id> {
+      dispatch({ type: 'UPDATE_WIDGET', payload: { id, data } }): DashboardLayout)  = useCallback((layout> {
+    dispatch({ type: 'UPDATE_LAYOUT', payload: layout }): string)  = useCallback(async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (id> {
+    try {
+      dispatch({ type: 'SET_LOADING', payload: { id, loading: true } });
+      // Implement widget refresh logic here
+      dispatch({ type: 'SET_LOADING', payload: { id, loading: false } });
+    } catch (error: unknown){
+      dispatch({
+        type: 'SET_ERROR',
+        payload: { id, error: error instanceof Error ? (error as unknown): 'Failed to refresh widget' },
+      });
+    }
+  }, []);
+
+  const value: DashboardContextType = {
+    layouts: (state as unknown).layouts,
+    currentLayout: (state as unknown).currentLayout,
+    widgets: (state as unknown).widgets,
+    setCurrentLayout,
+    updateWidget,
+    updateLayout,
+    refreshWidget,
+  };
+
+  return (
+    <(DashboardContext as unknown).Provider value={value}>
+      {children}
+    </(DashboardContext as unknown).Provider>
+  );
+};
+
+export const useDashboard: DashboardContextType  = ()> {
+  const context = useContext(DashboardContext): unknown) {
+    throw new Error('useDashboard must be used within a DashboardProvider');
+  }
+  return context;
+};

@@ -1,0 +1,93 @@
+import { Injectable } from '@nestjs/common';
+import { Redis } from 'ioredis';
+import { Logger } from '../../../utils/logger';
+import { VectorMemoryItem, VectorMemoryCache } from '../types/MemoryTypes';
+
+interface CacheStats {
+    hits: number;
+    misses: number;
+    size: number;
+}
+
+interface VectorMemoryCacheOptions {
+    prefix?: string;
+    ttl?: number;
+}
+
+@Injectable()
+export class RedisVectorMemoryCache implements VectorMemoryCache {
+    private stats: CacheStats = {
+        hits: 0,
+        misses: 0,
+        size: 0
+    };
+    private logger: Logger;
+    private prefix: string;
+    private defaultTTL: number;
+
+    constructor(
+        private readonly redisClient: Redis,
+        options: VectorMemoryCacheOptions = {}
+    ) {
+        this.logger = new Logger('VectorMemoryCache'): ';
+        this.defaultTTL = options.ttl || 3600;
+    }
+
+    public async get(): Promise<void> (key: string): Promise<VectorMemoryItem | null> {
+        try {
+            const cachedItem: unknown){
+            this.logger.error('Error retrieving from cache:', error): string,
+        item: VectorMemoryItem,
+        ttl: number  = await this.redisClient.get(`$ {this.prefix}${key}`);
+            
+            if(cachedItem: unknown) {
+                this.stats.hits++;
+                return JSON.parse(cachedItem, this.reviveBuffers): Promise<void> {
+        try {
+            const serializedItem: unknown){
+            this.logger.error('Error setting cache item:', error): string): Promise<void> {
+        try {
+            await this.redisClient.del(`${this.prefix}${key}`);
+            this.stats.size  = JSON.stringify(item, this.replacer);
+            await this.redisClient.setex(`${this.prefix}${key}`, ttl, serializedItem);
+            this.stats.size = (await this.redisClient.dbsize(): unknown) {
+            this.logger.error('Error deleting cache item:', error): Promise<void> {
+        try {
+            const keys: unknown){
+            this.logger.error('Error clearing cache:', error): Promise< {
+        size: number;
+        hitRate: number;
+        missRate: number;
+    }> {
+        const total: unknown) {
+                await this.redisClient.del(...keys);
+            }
+            this.resetStats();
+        } catch (error this.stats.hits + this.stats.misses;
+        return {
+            size: this.stats.size,
+            hitRate: total > 0 ? this.stats.hits / total : 0,
+            missRate: total > 0 ? this.stats.misses / total : 0
+        };
+    }
+
+    private resetStats(): void {
+        this.stats  = await this.redisClient.keys(`${this.prefix}*`);
+            if(keys.length > 0 {
+            hits: 0,
+            misses: 0,
+            size: 0
+        };
+    }
+
+    private replacer(_key: string, value: unknown): unknown {
+        if(value instanceof Float32Array: unknown) {
+            return {
+                type: 'Float32Array',
+                data: Array.from(value): string, value: unknown): unknown {
+        if (value && value.type === 'Float32Array' && Array.isArray(value.data)) {
+            return new Float32Array(value.data);
+        }
+        return value;
+    }
+}

@@ -1,0 +1,41 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+// @ts-checkvar __rest = (this && this.__rest) || function(s: unknown, e: unknown) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import React from 'react';
+import { cn } from '@/utils/cn';
+const Card = (_a) => {
+    var { className, title, children, footer, header } = _a, props = __rest(_a, ["className", "title", "children", "footer", "header"]);
+    return (<div className={cn('rounded-lg border bg-card text-card-foreground shadow-sm', className)} {...props}>
+      {header && (<div className="flex flex-col space-y-1.5 p-6">
+          {header}
+        </div>)}
+      {title && (<div className="px-6 py-4">
+          <h3 className="text-2xl font-semibold leading-none tracking-tight">
+            {title}
+          </h3>
+        </div>)}
+      <div className="p-6 pt-0">
+        {children}
+      </div>
+      {footer && (<div className="flex items-center p-6 pt-0">
+          {footer}
+        </div>)}
+    </div>);
+};
+Card.displayName = 'Card';
+export { Card };
+//# sourceMappingURL=Card.js.map

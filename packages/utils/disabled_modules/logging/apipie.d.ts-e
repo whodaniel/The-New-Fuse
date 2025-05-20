@@ -1,0 +1,19 @@
+import OpenAI from 'openai';
+interface ApiPieConfig {
+    model?: string;
+}
+declare const ApiPieProvider_base: unknown;
+/**
+ * The agent provider for the OpenRouter provider.
+ */
+declare class ApiPieProvider extends ApiPieProvider_base {
+    model: string;
+    private _client;
+    verbose: boolean;
+    constructor(config?: ApiPieConfig);
+    get client(): OpenAI;
+    private handleFunctionCallChat;
+    generateResponse(prompt: string): Promise<string>;
+    streamResponse(prompt: string): AsyncGenerator<string, void, unknown>;
+}
+export default ApiPieProvider;

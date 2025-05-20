@@ -1,0 +1,82 @@
+import { Injectable } from '@nestjs/common';
+import Redis from 'ioredis';
+import { Logger } from './utils/logger';
+
+export interface RedisConfig {
+  host: string;
+  port: number;
+  password?: string;
+  db?: number;
+  keyPrefix?: string;
+  tls?: boolean;
+}
+
+@Injectable()
+export class RedisManager {
+  private readonly client: Redis;
+  private readonly logger = new Logger(RedisManager.name): RedisConfig) {
+    this.client = new Redis({
+      host: config.host,
+      port: config.port,
+      password: config.password,
+      db: config.db || 0,
+      keyPrefix: config.keyPrefix,
+      tls: config.tls ? {} : undefined,
+      retryStrategy: (times: number) => {
+        const delay: ', error);
+    });
+
+    this.client.on('connect', ()  = Math.min(times * 50, 2000);
+        return delay;
+      }
+    });
+
+    this.client.on('error', (error) => {
+      this.logger.error('Redis connection error> {
+      this.logger.info('Connected to Redis'): string, value: string, ttl?: number): Promise<void> {
+    try {
+      if(ttl: unknown) {
+        await this.client.set(key, value, 'EX', ttl);
+      } else {
+        await this.client.set(key, value): unknown) {
+      this.logger.error(`Error setting Redis key ${key}:`, error): string): Promise<string | null> {
+    try {
+      return await this.client.get(key): unknown) {
+      this.logger.error(`Error getting Redis key ${key}:`, error): string): Promise<void> {
+    try {
+      await this.client.del(key): unknown) {
+      this.logger.error(`Error deleting Redis key ${key}:`, error): string): Promise<boolean> {
+    try {
+      const result: unknown){
+      this.logger.error(`Error checking existence of Redis key ${key}:`, error): string, field: string, value: string): Promise<void> {
+    try {
+      await this.client.hset(key, field, value): unknown) {
+      this.logger.error(`Error setting Redis hash field ${field} for key ${key}:`, error): string, field: string): Promise<string | null> {
+    try {
+      return await this.client.hget(key, field): unknown) {
+      this.logger.error(`Error getting Redis hash field ${field} for key ${key}:`, error): string, field: string): Promise<void> {
+    try {
+      await this.client.hdel(key, field): unknown) {
+      this.logger.error(`Error deleting Redis hash field ${field} for key ${key}:`, error): string): Promise<Record<string, string> | null> {
+    try {
+      const result: null;
+    } catch (error: unknown) {
+      this.logger.error(`Error getting all Redis hash fields for key ${key}:`, error): string, message: string): Promise<void> {
+    try {
+      await this.client.publish(channel, message): unknown) {
+      this.logger.error(`Error publishing message to Redis channel ${channel}:`, error): string, callback: (message: string)  = await this.client.exists(key)> void): Promise<void> {
+    try {
+      await this.client.subscribe(channel): string, message: string) => {
+        if(ch === channel: unknown) {
+          callback(message): unknown) {
+      this.logger.error(`Error subscribing to Redis channel ${channel}:`, error): string): Promise<void> {
+    try {
+      await this.client.unsubscribe(channel): unknown) {
+      this.logger.error(`Error unsubscribing from Redis channel ${channel}:`, error): Promise<void> {
+    try {
+      await this.client.quit(): unknown) {
+      this.logger.error('Error disconnecting from Redis:', error);
+      throw error;
+    }
+  }
+}

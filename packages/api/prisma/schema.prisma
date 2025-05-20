@@ -1,0 +1,75 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Agent {
+  id           String    @id @default(uuid())
+  name         String
+  type         String
+  description  String?
+  capabilities String[]  @default([])
+  status       String    @default("INACTIVE")
+  metadata     Json?     @default("{}")
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  @@map("agents")
+  @@index([deletedAt])
+  @@index([status])
+}
+
+model Workflow {
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  status      String         @default("draft") // draft, active, archived
+  steps       WorkflowStep[]
+  executions  WorkflowExecution[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  deletedAt   DateTime?
+
+  @@map("workflows")
+  @@index([deletedAt])
+}
+
+model WorkflowStep {
+  id          String   @id @default(uuid())
+  workflowId  String
+  workflow    Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  name        String
+  type        String
+  config      Json     @default("{}")
+  position    Json     @default("{\"x\": 0, \"y\": 0}")
+  connections Json     @default("[]")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("workflow_steps")
+  @@index([workflowId])
+}
+
+model WorkflowExecution {
+  id          String    @id @default(uuid())
+  workflowId  String
+  workflow    Workflow  @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  status      String    @default("running") // running, completed, failed
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+  result      Json?     @default("{}")
+  error       String?
+  stepResults Json      @default("{}")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@map("workflow_executions")
+  @@index([workflowId])
+  @@index([deletedAt])
+}

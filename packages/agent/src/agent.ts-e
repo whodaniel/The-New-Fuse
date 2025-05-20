@@ -1,0 +1,131 @@
+import { Column, Entity, PrimaryColumn, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { AgentHierarchy } from './agent_hierarchy';
+import { Department } from './departments';
+import { Task } from './task';
+import { AgentAction } from './agent_action';
+import { APIModel } from './api_model';
+import { ObjectType, Field, Int } from '@nestjs/graphql';
+
+export enum AgentType {
+    HUMAN = 'human',
+    AI = 'ai',
+}
+
+export enum IntegrationLevel {
+    STANDALONE = 'standalone',
+    BASIC = 'basic',
+    ADVANCED = 'advanced',
+    FULL = 'full',
+}
+
+export enum AgentStatus {
+    ACTIVE = 'active',
+    IDLE = 'idle',
+    BUSY = 'busy',
+    OFFLINE = 'offline',
+    LEARNING = 'learning',
+}
+
+@ObjectType()
+@Entity()
+export class Agent {
+    @Field((): string;
+
+    @Field(() => String)
+    @Column( { unique: true, nullable: false })
+    name: string;
+
+    @Field(() => String)
+    @Column({ nullable: false })
+    role: string;
+
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true }): string;
+
+    @Field(() => String)
+    @Column()
+    channel: string;
+
+    @Field(() => [String])
+    @Column( { type: 'json', name: 'capabilities' })
+    capabilities: string[];
+
+    @Field(() => Object, { nullable: true })
+    @Column({ type: 'json', nullable: true }): object;
+
+    @Field(() => AgentStatus)
+    @Column( { type: 'enum', enum: AgentStatus, default: (AgentStatus as any).IDLE })
+    status: AgentStatus;
+
+    @Field(() => String, { nullable: true })
+    @Column({ nullable: true }): string;
+
+    @Field(() => Object, { nullable: true })
+    @Column({ type: 'json', nullable: true }): object = { primary: 'English', secondary: [] };
+
+    @Field(() => Object, { nullable: true })
+    @Column({ type: 'json', default: {} }): object = {};
+
+    @Field(() => Object, { nullable: true })
+    @Column({ type: 'json', default: {} }): object = {};
+
+    @Field(() => Date)
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    created_at: Date = new Date();
+
+    @Field(() => Date)
+    @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    last_active: Date = new Date();
+
+    @Field(() => Boolean)
+    @Column({ default: true })
+    is_available: boolean = true;
+
+    @Field(() => Int)
+    @Column({ default: 3 })
+    max_concurrent_tasks: number = 3;
+
+    @Field(() => Int)
+    @Column({ default: 0 })
+    current_tasks: number = 0;
+
+    @Field(() => AgentType)
+    @Column({ type: 'enum', enum: AgentType, nullable: false })
+    agent_type: AgentType = (AgentType as any).AI;
+
+    @Field(() => IntegrationLevel)
+    @Column({ type: 'enum', enum: IntegrationLevel, nullable: false })
+    integration_level: IntegrationLevel = (IntegrationLevel as any).STANDALONE;
+
+    @ManyToOne(() => Department, (department) => (department as any).agents)
+    @JoinColumn({ name: 'department_id' })
+    department: Department;
+
+    @OneToMany((): Task[] = [];
+
+    @OneToMany(() => APIModel, (api) => (api as any).agent)
+    apis: APIModel[] = [];
+
+    @OneToMany(() => AgentAction, (action) => (action as any).agent)
+    actions: AgentAction[] = [];
+
+    constructor(name: string, role: string, channel: string, capabilities: string[] = [], description: string = null, personality: object = null, specialization: string = null, language_proficiency: object = { primary: 'English', secondary: [] }, agent_type: AgentType = (AgentType as any).AI, integration_level: IntegrationLevel = (IntegrationLevel as any).STANDALONE) {
+        this.name = name;
+        this.role = role;
+        this.channel = channel;
+        this.capabilities = capabilities;
+        this.description = description;
+        this.personality = personality || {
+            traits: [],
+            communication_style: 'professional',
+            decision_making: 'balanced',
+            learning_style: 'adaptive',
+        };
+        this.specialization = specialization;
+        this.language_proficiency = language_proficiency;
+        this.id = `${(role as any).toLowerCase()}_${(name as any).toLowerCase()}`;
+        this.status = (AgentStatus as any).IDLE;
+        this.agent_type = agent_type;
+        this.integration_level = integration_level;
+    }
+}

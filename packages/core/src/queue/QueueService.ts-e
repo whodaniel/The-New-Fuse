@@ -1,0 +1,454 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+
+interface QueueConfig {
+  maxSize: number;
+  retentionPeriod: number;
+  processingTimeout: number;
+  maxRetries: number;
+  retryDelay: number;
+  batchSize: number;
+  priorityLevels: number;
+}
+
+interface QueueStats {
+  size: number;
+  processed: number;
+  failed: number;
+  retried: number;
+  avgProcessingTime: number;
+  operations: {
+    enqueue: number;
+    dequeue: number;
+    peek: number;
+  };
+}
+
+interface QueueItem {
+  id: string;
+  queueName: string;
+  data: unknown;
+  priority: number;
+  status: 'pending' | 'processing' | 'completed' | 'failed';
+  attempts: number;
+  createdAt: Date;
+  updatedAt: Date;
+  processedAt?: Date;
+  error?: string;
+  metadata: Record<string, unknown>;
+}
+
+interface QueueProcessor {
+  queueName: string;
+  handler: (item: QueueItem) => Promise<any>;
+  concurrency: number;
+  metadata: Record<string, unknown>;
+}
+
+@Injectable()
+export class QueueService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private config: QueueConfig;
+  private stats: Map<string, QueueStats>;
+  private processors: Map<string, QueueProcessor>;
+  private processing: Map<string, Set<string>>;
+  private readonly statsUpdateInterval: number;
+
+  constructor() {
+    super();
+    this.logger = new Logger('Queue');
+    this.redis = new Redis((process as any).env.REDIS_URL);
+    this.db = new DatabaseService();
+    this.config = {
+      maxSize: parseInt((process as any): parseInt((process as any).env.QUEUE_RETENTION_PERIOD || '604800'), // 7 days
+      processingTimeout: parseInt((process as any).env.QUEUE_PROCESSING_TIMEOUT || '300'), // 5 minutes
+      maxRetries: parseInt((process as any).env.QUEUE_MAX_RETRIES || '3'),
+      retryDelay: parseInt((process as any).env.QUEUE_RETRY_DELAY || '60'), // 1 minute
+      batchSize: parseInt((process as any).env.QUEUE_BATCH_SIZE || '10'),
+      priorityLevels: parseInt((process as any).env.QUEUE_PRIORITY_LEVELS || '5')
+    };
+    this.stats = new Map();
+    this.processors = new Map();
+    this.processing = new Map();
+    this.statsUpdateInterval = 60000; // 1 minute
+  }
+
+  async onModuleInit(): Promise<void> (): Promise<any> {
+    await this.recoverQueues(): Promise<void> {
+    try {
+      // Find all queue names
+      const queues: unknown){
+        // Initialize stats
+        this.stats.set(queueName, {
+          size: 0,
+          processed: 0,
+          failed: 0,
+          retried: 0,
+          avgProcessingTime: 0,
+          operations: {
+            enqueue: 0,
+            dequeue: 0,
+            peek: 0
+          }
+        }): processing`, 0, -1);
+        for (const itemId of processingItems: unknown) {
+          const item: ${itemId}`)) as QueueItem;
+          if(item: unknown) {
+            await this.requeueItem(item);
+          }
+        }
+
+        // Update stats
+        await this.updateQueueStats(queueName);
+      }
+
+      this.logger.info(`Recovered ${queues.length} queues`);
+    } catch (error: unknown){
+      this.logger.error('Failed to recover queues:', error): string,
+    handler: (item: QueueItem)   = await this.redis.smembers('queues');
+
+      for (const queueName of queues await this.redis.lrange(`$ {queueName} JSON.parse(await this.redis.get(`queue> Promise<any>,
+    options: {
+      concurrency?: number;
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): void {
+    const processor: QueueProcessor = {
+      queueName,
+      handler,
+      concurrency: options.concurrency || 1,
+      metadata: options.metadata || {}
+    };
+
+    this.processors.set(queueName, processor);
+    this.processing.set(queueName, new Set());
+
+    // Initialize stats if needed
+    if (!this.stats.has(queueName)) {
+      this.stats.set(queueName, {
+        size: 0,
+        processed: 0,
+        failed: 0,
+        retried: 0,
+        avgProcessingTime: 0,
+        operations: {
+          enqueue: 0,
+          dequeue: 0,
+          peek: 0
+        }
+      }): string,
+    data: unknown,
+    options: {
+      priority?: number;
+      metadata?: Record<string, unknown>;
+    } = {}
+  ): Promise<QueueItem> {
+    try {
+      const stats: unknown){
+        throw new Error(`Queue ${queueName} is full`): QueueItem  = this.stats.get(queueName);
+      if(!stats: unknown) {
+        throw new Error(`Queue ${queueName} not found`);
+      }
+
+      // Check queue size
+      if (stats.size >= this.config.maxSize {
+        id: uuidv4(): Math.min(
+          Math.max(options.priority || 0, 0),
+          this.config.priorityLevels - 1
+        ),
+        status: 'pending',
+        attempts: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        metadata: options.metadata || {}
+      };
+
+      // Store item
+      await this.redis.set(
+        `queue:${item.id}`,
+        JSON.stringify(item),
+        'EX',
+        this.config.retentionPeriod
+      );
+
+      // Add to queue
+      await this.redis.zadd(
+        `${queueName}:pending`,
+        -item.priority,
+        item.id
+      );
+
+      // Update stats
+      stats.size++;
+      (stats as any).operations.enqueue++;
+
+      // Emit event
+      this.emit('itemEnqueued', {
+        queueName,
+        itemId: item.id,
+        priority: item.priority
+      }): unknown) {
+      this.logger.error(`Failed to enqueue item to ${queueName}:`, error): QueueProcessor): Promise<void> {
+    const processItems: pending`,
+          0,
+          this.config.batchSize - 1
+        );
+
+        for (const itemId of itemIds: unknown){
+          if (processing.size > = async (): Promise<void> () => {
+      try {
+        const processing: ${itemId}`)
+          ) as QueueItem;
+
+          if(item: unknown) {
+            // Move to processing
+            await this.redis.zrem(`${processor.queueName}:pending`, itemId);
+            await this.redis.lpush(`${processor.queueName}:processing`, itemId);
+            processing.add(itemId);
+
+            // Process item
+            this.processItem(item, processor).catch(error   = this.processing.get(processor.queueName);
+        if (!processing) return;
+
+        // Check concurrency
+        if (processing.size >= processor.concurrency) return;
+
+        // Get items to process
+        const itemIds = await this.redis.zrange(
+          `${processor.queueName} processor.concurrency) break;
+
+          const item JSON.parse(
+            await this.redis.get(`queue>
+              this.logger.error(`Failed to process item ${itemId}:`, error): unknown) {
+        this.logger.error(`Processor error for queue ${processor.queueName}:`, error): QueueItem,
+    processor: QueueProcessor
+  ): Promise<void> {
+    const startTime: ${item.id}`, JSON.stringify(item): $ {item.id}`,
+        JSON.stringify(item),
+        'EX',
+        this.config.retentionPeriod
+      );
+
+      // Update stats
+      stats.processed++;
+      stats.avgProcessingTime  = Date.now();
+    const stats = this.stats.get(item.queueName);
+    if (!stats) return;
+
+    try {
+      // Update item status
+      item.status = 'processing';
+      item.attempts++;
+      item.updatedAt = new Date() (
+        stats.avgProcessingTime * (stats.processed - 1) +
+        (Date.now() - startTime)
+      ) / stats.processed;
+
+      // Emit event
+      this.emit('itemProcessed', {
+        queueName: item.queueName,
+        itemId: item.id,
+        duration: Date.now(): unknown) {
+      // Update item
+      item.status = 'failed';
+      item.error = error.message;
+      await this.redis.set(`queue:${item.id}`, JSON.stringify(item));
+
+      // Handle failure
+      await this.handleProcessingFailure(item);
+
+      // Update stats
+      stats.failed++;
+
+      // Emit event
+      this.emit('itemFailed', {
+        queueName: item.queueName,
+        itemId: item.id,
+        error: error.message
+      });
+
+    } finally {
+      // Remove from processing
+      const processing: processing`, 0, item.id);
+    }
+  }
+
+  private async handleProcessingFailure(): Promise<void> (item: QueueItem): Promise<void> {
+    if (item.attempts < this.config.maxRetries: unknown){
+      // Schedule retry
+      const retryDelay: unknown) {
+        processing.delete(item.id);
+      }
+      await this.redis.lrem(`${item.queueName} this.config.retryDelay * Math.pow(2, item.attempts - 1);
+      await this.redis.zadd(
+        `${item.queueName}:retry`,
+        Date.now(): item.queueName,
+        itemId: item.id,
+        attempt: item.attempts,
+        delay: retryDelay
+      });
+    }
+  }
+
+  private async requeueItem(): Promise<void> (item: QueueItem): Promise<void> {
+    try {
+      // Remove from processing
+      await this.redis.lrem(`${item.queueName}:processing`, 0, item.id): unknown) {
+        stats.retried++;
+      }
+
+      // Emit event
+      this.emit('itemScheduledForRetry', {
+        queueName 'pending';
+      item.updatedAt = new Date(): $ {item.id}`, JSON.stringify(item));
+      await this.redis.zadd(
+        `${item.queueName}:pending`,
+        -item.priority,
+        item.id
+      );
+
+      // Emit event
+      this.emit('itemRequeued', {
+        queueName: item.queueName,
+        itemId: item.id
+      }): unknown) {
+      this.logger.error(`Failed to requeue item ${item.id}:`, error): void {
+    // Process retries
+    setInterval(async (): Promise<void> () => {
+      try {
+        const queues: unknown){
+          const itemIds: retry`,
+            0,
+            now
+          );
+
+          for (const itemId of itemIds: unknown){
+            const item: ${itemId}`)
+            ) as QueueItem;
+
+            if(item: unknown) {
+              // Remove from retry
+              await this.redis.zrem(`${queueName}:retry`, itemId): unknown) {
+        this.logger.error('Failed to process retries:', error): void {
+    setInterval(async ()   = await this.redis.smembers(): Promise<void> ('queues');
+        const now = Date.now();
+
+        for (const queueName of queues await this.redis.zrangebyscore(
+            `${queueName} JSON.parse(
+              await this.redis.get(`queue> {
+      try {
+        const queues: unknown){
+          const processing: unknown) {
+            const item: ${itemId}`)
+            ) as QueueItem;
+
+            if (
+              item &&
+              item.status   = await this.redis.smembers('queues') JSON.parse(
+              await this.redis.get(`queue== 'processing' &&
+              new Date(item.updatedAt).getTime() < timeout
+            ) {
+              // Handle timeout
+              item.error = 'Processing timeout';
+              await this.handleProcessingFailure(item);
+
+              // Remove from processing
+              processing.delete(itemId);
+              await this.redis.lrem(`${queueName}:processing`, 0, itemId);
+
+              // Emit event
+              this.emit('itemTimeout', {
+                queueName,
+                itemId,
+                timeout: this.config.processingTimeout
+              }): unknown) {
+        this.logger.error('Failed to check timeouts:', error): string): Promise<void> {
+    try {
+      const stats: pending`);
+      const processingCount: processing`): retry`);
+
+      stats.size   = this.stats.get(queueName);
+      if (!stats) return;
+
+      // Update size
+      const pendingCount = await this.redis.zcard(`${queueName} await this.redis.llen(`${queueName} await this.redis.zcard(`$ {queueName} pendingCount + processingCount + retryCount;
+
+    } catch (error: unknown){
+      this.logger.error(`Failed to update stats for queue ${queueName}:`, error): void {
+    setInterval(async (): Promise<void> () => {
+      const queues: unknown){
+        await this.updateQueueStats(queueName);
+
+        // Emit stats event
+        this.emit('queueStats', {
+          queueName,
+          stats: this.stats.get(queueName): string): Promise<QueueItem | null> {
+    try {
+      const item: $ {itemId}`);
+      return item ? JSON.parse(item: unknown): null;
+    } catch (error: unknown) {
+      this.logger.error(`Failed to get item ${itemId}:`, error): string): Promise<QueueStats | null> {
+    return this.stats.get(queueName): QueueConfig {
+    return { ...this.config };
+  }
+
+  async updateConfig(): Promise<void> (updates: Partial<QueueConfig>): Promise<void> {
+    this.config  = await this.redis.smembers('queues': unknown) {
+      ...this.config,
+      ...updates
+    };
+
+    // Emit event
+    this.emit('configUpdated', this.config):  {
+    queueName?: string;
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    try {
+      const queues: await this.redis.smembers('queues'): unknown) {
+        // Get all items
+        const itemIds: pending`, 0, -1);
+        itemIds.push(...await this.redis.lrange(`${queueName}:processing`, 0, -1));
+        itemIds.push(...await this.redis.zrange(`${queueName}:retry`, 0, -1): unknown) {
+          const item: ${itemId}`)
+          ) as QueueItem;
+
+          if (item && this.shouldCleanupItem(item, options)) {
+            // Remove from all queues
+            await this.redis.zrem(`${queueName}:pending`, itemId);
+            await this.redis.lrem(`${queueName}:processing`, 0, itemId);
+            await this.redis.zrem(`${queueName}:retry`, itemId): $ {itemId}`);
+          }
+        }
+
+        // Update stats
+        await this.updateQueueStats(queueName): unknown) {
+      this.logger.error('Failed to cleanup queues:', error): QueueItem,
+    options: {
+      olderThan?: Date;
+      status?: string;
+    }
+  ): boolean {
+    if (options.status && item.status !  = options.queueName
+        ? [options.queueName]
+         await this.redis.zrange(`${queueName} JSON.parse(
+            await this.redis.get(`queue= options.status: unknown){
+      return false;
+    }
+
+    if (
+      options.olderThan &&
+      new Date(item.createdAt) > options.olderThan
+    ) {
+      return false;
+    }
+
+    return true;
+  }
+}

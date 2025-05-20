@@ -1,0 +1,63 @@
+import { FeatureStage } from '@the-new-fuse/feature-tracker';
+
+export enum SuggestionStatus {
+  SUBMITTED = 'SUBMITTED',
+  UNDER_REVIEW = 'UNDER_REVIEW',
+  APPROVED = 'APPROVED',
+  REJECTED = 'REJECTED',
+  CONVERTED = 'CONVERTED' // When converted to a tracked feature
+}
+
+export enum SuggestionPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+export interface FeatureSuggestion {
+  id: string;
+  title: string;
+  description: string;
+  submittedBy: string;
+  submittedAt: Date;
+  status: SuggestionStatus;
+  priority: SuggestionPriority;
+  votes: number;
+  tags: string[];
+  relatedTodoIds: string[];
+  convertedFeatureId?: string; // If converted to a tracked feature
+  estimatedEffort?: string;
+  businessValue?: string;
+  technicalComplexity?: string;
+  updatedAt: Date;
+}
+
+export interface TodoItem {
+  id: string;
+  title: string;
+  description: string;
+  status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+  priority: SuggestionPriority;
+  assignedTo?: string;
+  dueDate?: Date;
+  featureId?: string; // ID of related feature if this todo is part of a feature
+  suggestionId?: string; // ID of related suggestion if this todo is part of suggestion review
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface VotingRecord {
+  userId: string;
+  suggestionId: string;
+  votedAt: Date;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  authorId: string;
+  suggestionId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

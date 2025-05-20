@@ -1,0 +1,46 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LogLevel = exports.VerificationLevel = exports.MessageStatus = exports.MessageType = exports.MessageRole = void 0;
+// Message related enums
+exports.MessageRole = {
+    USER: 'USER',
+    SYSTEM: 'SYSTEM',
+    ASSISTANT: 'ASSISTANT',
+    TOOL: 'TOOL',
+    FUNCTION: 'FUNCTION'
+};
+exports.MessageType = {
+    TEXT: 'TEXT',
+    SYSTEM: 'SYSTEM',
+    IMAGE: 'IMAGE',
+    VIDEO: 'VIDEO',
+    AUDIO: 'AUDIO',
+    FILE: 'FILE',
+    COMMAND: 'COMMAND',
+    STREAM: 'STREAM',
+    CODE: 'CODE',
+    MARKDOWN: 'MARKDOWN'
+};
+exports.MessageStatus = {
+    PENDING: 'PENDING',
+    DELIVERED: 'DELIVERED',
+    ERROR: 'ERROR',
+    SENT: 'SENT',
+    READ: 'READ',
+    FAILED: 'FAILED'
+};
+// Verification levels
+exports.VerificationLevel = {
+    NONE: 'NONE',
+    LOW: 'LOW',
+    MEDIUM: 'MEDIUM',
+    HIGH: 'HIGH'
+};
+exports.LogLevel = {
+    ERROR: 'ERROR',
+    WARN: 'WARN',
+    INFO: 'INFO',
+    DEBUG: 'DEBUG',
+    TRACE: 'TRACE'
+};
+//# sourceMappingURL=enums.js.mapexport {};

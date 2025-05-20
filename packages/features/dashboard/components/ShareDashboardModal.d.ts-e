@@ -1,0 +1,14 @@
+import React from 'react';
+import { ShareConfig } from '../data/exporters/types';
+interface ShareDashboardModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onShare: (config: ShareConfig) => void;
+    dashboardId: string;
+    currentUser: {
+        id: string;
+        name: string;
+    };
+}
+export declare const ShareDashboardModal: (React as any).FC<ShareDashboardModalProps>;
+export {};

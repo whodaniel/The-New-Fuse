@@ -1,0 +1,153 @@
+import { useState, useCallback, useEffect } from 'react';
+import { 
+  TimelineEvent, 
+  TimelineBranch, 
+  TimelineWorkflow,
+  WorkflowStep 
+} from '../types/timeline';
+import { TimelineService } from '../services/timeline.service';
+
+interface UseTimelineProps {
+  timelineService: TimelineService;
+  initialBranchId?: string;
+}
+
+export const useTimeline = ({ timelineService, initialBranchId }: UseTimelineProps) => {
+  const [events, setEvents] = useState<TimelineEvent[]>([]);
+  const [branches, setBranches] = useState<TimelineBranch[]>([]);
+  const [workflows, setWorkflows] = useState<TimelineWorkflow[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+  const [currentBranchId, setCurrentBranchId] = useState<string | undefined>(initialBranchId);
+
+  const loadTimelineData = useCallback(async (): Promise<void> (branchId: string) => {
+    try {
+      setLoading(true);
+      const [timelineEvents, branchHierarchy, workflowPromises] = await Promise.all([
+        timelineService.getTimelineEvents(branchId),
+        timelineService.getBranchHierarchy(branchId),
+        timelineService.getWorkflows(branchId)
+      ]);
+
+      const allWorkflows = (await Promise.all(workflowPromises)).flat();
+
+      setEvents(timelineEvents);
+      setBranches(branchHierarchy);
+      setWorkflows(allWorkflows);
+      setCurrentBranchId(branchId);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load timeline data'));
+    } finally {
+      setLoading(false);
+    }
+  }, [timelineService]);
+
+  const createBranch = useCallback(async (): Promise<void> (
+    name: string,
+    startEventId: string,
+    parentBranchId?: string
+  ) => {
+    try {
+      const newBranch = await timelineService.createBranch({
+        name,
+        startEventId,
+        parentBranchId
+      });
+      await loadTimelineData(newBranch.id);
+      return newBranch;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to create branch'));
+      throw err;
+    }
+  }, [timelineService, loadTimelineData]);
+
+  const mergeBranch = useCallback(async (): Promise<void> (
+    targetEventId: string,
+    mergedFromEvents: string[]
+  ) => {
+    try {
+      const updatedBranch = await timelineService.mergeBranch({
+        targetEventId,
+        mergedFromEvents
+      });
+      await loadTimelineData(updatedBranch.id);
+      return updatedBranch;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to merge branch'));
+      throw err;
+    }
+  }, [timelineService, loadTimelineData]);
+
+  const createWorkflow = useCallback(async (): Promise<void> (
+    description: string,
+    eventId: string,
+    steps: Omit<WorkflowStep, 'id' | 'workflowId'>[]
+  ) => {
+    try {
+      const newWorkflow = await timelineService.createWorkflow({
+        description,
+        eventId,
+        steps
+      });
+      await loadTimelineData(currentBranchId!);
+      return newWorkflow;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to create workflow'));
+      throw err;
+    }
+  }, [timelineService, loadTimelineData, currentBranchId]);
+
+  const executeWorkflowStep = useCallback(async (): Promise<void> (
+    workflowId: string,
+    stepId: string,
+    result: unknown
+  ) => {
+    try {
+      const nextStep = await timelineService.executeWorkflowStep(
+        workflowId,
+        stepId,
+        result
+      );
+
+      setWorkflows(prev =>
+        prev.map(w => {
+          if (w.id === workflowId) {
+            return nextStep ? {
+              ...w,
+              currentStepId: nextStep.id,
+              status: 'ACTIVE'
+            } : {
+              ...w,
+              status: 'COMPLETED'
+            };
+          }
+          return w;
+        })
+      );
+
+      return nextStep;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to execute workflow step'));
+      throw err;
+    }
+  }, [timelineService]);
+
+  const switchBranch = useCallback((branchId: string) => {
+    setCurrentBranchId(branchId);
+  }, []);
+
+  return {
+    events,
+    branches,
+    workflows,
+    loading,
+    error,
+    currentBranchId,
+    createBranch,
+    mergeBranch,
+    createWorkflow,
+    executeWorkflowStep,
+    switchBranch,
+    refresh: () => currentBranchId && loadTimelineData(currentBranchId),
+  };
+};

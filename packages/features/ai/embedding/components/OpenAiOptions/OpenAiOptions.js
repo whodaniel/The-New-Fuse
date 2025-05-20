@@ -1,0 +1,76 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.OpenAiOptions = OpenAiOptions;
+const OPENAI_MODELS = [
+    'text-embedding-ada-002',
+    'text-embedding-3-small',
+    'text-embedding-3-large',
+];
+const STYLES = {
+    input: "border-none bg-theme-settings-input-bg text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-full p-2.5",
+    label: "text-white text-sm font-semibold block mb-3",
+    select: "border-none bg-theme-settings-input-bg border-gray-500 text-white text-sm rounded-lg block w-full p-2.5",
+    container: "w-full flex flex-col gap-y-4",
+    inputGroup: "w-full flex items-center gap-[36px] mt-1.5",
+    inputContainer: "flex flex-col w-60",
+};
+function OpenAiOptions({ settings }) {
+    return className = { STYLES, : .container } >
+        className;
+    {
+        STYLES.inputGroup;
+    }
+     >
+        className;
+    {
+        STYLES.inputContainer;
+    }
+     >
+        className;
+    {
+        STYLES.label;
+    }
+     >
+        API;
+    Key
+        < /label>
+        < input;
+    type = "password";
+    name = "OpenAiKey";
+    className = { STYLES, : .input };
+    placeholder = "OpenAI API Key";
+    defaultValue = {}(settings === null || settings === void 0 ? void 0 : settings.OpenAiKey) ? "*".repeat(20) : "";
+}
+required;
+autoComplete = "off";
+spellCheck = { false:  } /  >
+    /div>
+    < div;
+className = { STYLES, : .inputContainer } >
+    className;
+{
+    STYLES.label;
+}
+ >
+    Model;
+Preference
+    < /label>
+    < select;
+name = "EmbeddingModelPref";
+required;
+className = { STYLES, : .select };
+defaultValue = { settings } === null || settings === void 0 ? void 0 : settings.EmbeddingModelPref;
+ >
+    label;
+"Available embedding models" >
+    { OPENAI_MODELS, : .map((model) => key = { model }, value = { model } >
+            { model }
+            < /option>) }
+    < /optgroup>
+    < /select>
+    < /div>
+    < /div>
+    < /div>;
+;
+//# sourceMappingURL=OpenAiOptions.js.map
+//# sourceMappingURL=OpenAiOptions.js.map

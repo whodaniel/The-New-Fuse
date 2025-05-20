@@ -1,0 +1,125 @@
+/* Model Selector Styles */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  padding: 0;
+  margin: 0;
+  color: var(--vscode-foreground);
+  background-color: var(--vscode-editor-background);
+}
+
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.header {
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--vscode-panel-border);
+  padding-bottom: 12px;
+}
+
+.header h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.header p {
+  font-size: 14px;
+  opacity: 0.8;
+  margin: 0;
+}
+
+.panel {
+  background-color: var(--vscode-editor-background);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 24px;
+}
+
+.panel h2 {
+  font-size: 18px;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.provider-list, .model-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.model-card {
+  background-color: var(--vscode-editor-inactiveSelectionBackground);
+  border: 1px solid var(--vscode-panel-border);
+  border-radius: 4px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.model-card:hover {
+  background-color: var(--vscode-list-hoverBackground);
+}
+
+.model-card.selected {
+  background-color: var(--vscode-editor-selectionBackground);
+  border-color: var(--vscode-focusBorder);
+}
+
+.model-name {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.model-description {
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+.api-key-form {
+  margin-bottom: 24px;
+}
+
+.api-key-form input {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  background-color: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border);
+  border-radius: 2px;
+}
+
+.api-key-form button {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 2px;
+  cursor: pointer;
+}
+
+.api-key-form button:hover {
+  background-color: var(--vscode-button-hoverBackground);
+}
+
+.error {
+  background-color: var(--vscode-inputValidation-errorBackground);
+  color: var(--vscode-inputValidation-errorForeground);
+  border: 1px solid var(--vscode-inputValidation-errorBorder);
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+}
+
+.success {
+  background-color: var(--vscode-inputValidation-infoBackground);
+  color: var(--vscode-inputValidation-infoForeground);
+  border: 1px solid var(--vscode-inputValidation-infoBorder);
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  border-radius: 2px;
+}

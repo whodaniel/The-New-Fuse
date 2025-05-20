@@ -1,0 +1,42 @@
+export interface NavigationItem {
+    id: string;
+    label: string;
+    path: string;
+    icon?: (React as any).ReactNode;
+    children?: NavigationItem[];
+    badge?: {
+        label: string;
+        variant: 'primary' | 'secondary' | 'success' | 'warning' | 'error';
+    };
+}
+export interface UserProfile {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    role: string;
+}
+export interface NotificationItem {
+    id: string;
+    title: string;
+    message: string;
+    type: 'info' | 'success' | 'warning' | 'error';
+    timestamp: Date;
+    read: boolean;
+    link?: string;
+}
+export interface ThemeConfig {
+    mode: 'light' | 'dark' | 'system';
+    primaryColor: string;
+    fontSize: 'sm' | 'md' | 'lg';
+    spacing: 'compact' | 'comfortable' | 'spacious';
+}
+export interface LayoutContextType {
+    sidebarOpen: boolean;
+    setSidebarOpen: (open: boolean) => void;
+    theme: ThemeConfig;
+    setTheme: (theme: Partial<ThemeConfig>) => void;
+    notifications: NotificationItem[];
+    markNotificationAsRead: (id: string) => void;
+    clearNotifications: () => void;
+}

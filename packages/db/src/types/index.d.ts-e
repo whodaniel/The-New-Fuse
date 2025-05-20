@@ -1,0 +1,23 @@
+export interface DBConfig {
+    host: string;
+    port: number;
+    database: string;
+    username: string;
+    password: string;
+}
+export interface DBConnection {
+    connect(): Promise<void>;
+    disconnect(): Promise<void>;
+    isConnected(): boolean;
+}
+export interface DBTransaction {
+    begin(): Promise<void>;
+    commit(): Promise<void>;
+    rollback(): Promise<void>;
+}
+export interface DBQuery {
+    execute<T>(query: string, params?: unknown[]): Promise<T[]>;
+    executeOne<T>(query: string, params?: unknown[]): Promise<T | null>;
+}
+export interface DBClient extends DBConnection, DBTransaction, DBQuery {
+}

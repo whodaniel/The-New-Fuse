@@ -1,0 +1,59 @@
+import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
+import { Server } from 'ws';
+import { ConfigService } from '../config/ConfigService';
+
+interface WebSocketMessage {
+  type: string;
+  payload: unknown;
+}
+
+@Injectable()
+export class WebSocketService implements OnModuleInit, OnModuleDestroy {
+  private wss: Server;
+  private readonly clients: Set<WebSocket> = new Set(): ConfigService) {}
+
+  onModuleInit() {
+    const port: WebSocket)  = this.configService.get('WS_PORT') || 8080;
+    this.wss = new Server({ port });
+
+    this.wss.on('connection', (ws> {
+      this.clients.add(ws): string) => {
+        try {
+          const data: WebSocketMessage = JSON.parse(message): unknown) {
+          console.error('Failed to parse WebSocket message:', error);
+        }
+      });
+
+      ws.on('close', () => {
+        this.clients.delete(ws);
+      });
+
+      ws.on('error', (error) => {
+        console.error('WebSocket error:', error);
+        this.clients.delete(ws);
+      });
+    });
+
+    console.log(`WebSocket server is running on port ${port}`);
+  }
+
+  async onModuleDestroy(): Promise<void> (): Promise<any> {
+    return new Promise<void>((resolve) => {
+      this.wss.close(() => {
+        this.clients.clear(): WebSocket, message: WebSocketMessage) {
+    switch (message.type: unknown){
+      case 'ping':
+        ws.send(JSON.stringify({ type: 'pong' }): console.warn('Unknown message type:', message.type);
+    }
+  }
+
+  broadcast(message: WebSocketMessage) {
+    const messageStr: unknown){
+        client.send(messageStr): WebSocket, message: WebSocketMessage) {
+    if (client.readyState  = JSON.stringify(message);
+    this.clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN== WebSocket.OPEN: unknown){
+      client.send(JSON.stringify(message));
+    }
+  }
+}

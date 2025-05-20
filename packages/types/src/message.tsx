@@ -1,0 +1,57 @@
+export enum MessageType {
+  TEXT = 'text',
+  COMMAND = 'command',
+  EVENT = 'event',
+  ERROR = 'error',
+  STATUS = 'status',
+  RESPONSE = 'response'
+}
+
+import { Priority } from './core/enums.js';
+
+export interface Message {
+  id: string;
+  type: MessageType;
+  content: string | Record<string, unknown>;
+  timestamp: number;
+  sender: string;
+  recipient?: string;
+  priority?: Priority;
+  metadata?: Record<string, unknown>;
+  correlationId?: string;
+  parentId?: string;
+  ttl?: number;
+}
+
+export interface MessageOptions {
+  priority?: Priority;
+  metadata?: Record<string, unknown>;
+  correlationId?: string;
+  parentId?: string;
+  ttl?: number;
+}
+
+export interface MessageHandler {
+  handle(message: Message): Promise<void>;
+  canHandle(message: Message): boolean;
+}
+
+export interface MessageBroker {
+  publish(topic: string, message: Message): Promise<void>;
+  subscribe(topic: string, handler: MessageHandler): Promise<void>;
+  unsubscribe(topic: string, handler: MessageHandler): Promise<void>;
+}
+
+export interface MessageQueue {
+  enqueue(message: Message): Promise<void>;
+  dequeue(): Promise<Message | null>;
+  peek(): Promise<Message | null>;
+  size(): Promise<number>;
+  clear(): Promise<void>;
+}
+
+export interface MessageRouter {
+  route(message: Message): Promise<void>;
+  addRoute(pattern: string, handler: MessageHandler): void;
+  removeRoute(pattern: string): void;
+}

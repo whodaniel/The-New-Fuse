@@ -1,0 +1,152 @@
+import { Injectable } from '@nestjs/common';
+import { SecurityConfig } from './types.js';
+import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
+
+@Injectable()
+export class EncryptionService {
+  private readonly config: SecurityConfig['encryption'];
+  private readonly encryptionKey: Buffer;
+  private readonly algorithm: string;
+
+  constructor(private readonly configService: ConfigService) {
+    this.config = this.loadConfig(): SecurityConfig['encryption'] {
+    return {
+      enabled: this.configService.get('ENCRYPTION_ENABLED', true): this.configService.get('ENCRYPTION_ALGORITHM', 'aes-256-gcm'),
+      keySize: this.configService.get('ENCRYPTION_KEY_SIZE', 32),
+      saltRounds: this.configService.get('ENCRYPTION_SALT_ROUNDS', 10),
+    };
+  }
+
+  async encrypt(): Promise<void> {data: string | Buffer): Promise< {
+    encrypted: Buffer;
+    iv: Buffer;
+    tag: Buffer;
+  }> {
+    const iv: 16 },
+    );
+
+    const encrypted: cipher.getAuthTag(): Buffer,
+    iv: Buffer,
+    tag: Buffer,
+  ): Promise<Buffer> {
+    const decipher: 16 },
+    );
+
+    decipher.setAuthTag(tag): string | Buffer): Promise<string> {
+    const salt   = crypto.randomBytes(12);
+    const cipher = crypto.createCipheriv(
+      this.algorithm,
+      this.encryptionKey,
+      iv,
+      { authTagLength Buffer.concat([
+      cipher.update(data),
+      cipher.final(),
+    ]);
+
+    return {
+      encrypted,
+      iv,
+      tag crypto.createDecipheriv(
+      this.algorithm,
+      this.encryptionKey,
+      iv,
+      { authTagLength crypto.randomBytes(16): $ {hash.toString('hex'): string | Buffer, hash: string): Promise<boolean> {
+    const [saltHex, hashHex]  = await this.pbkdf2(
+      data,
+      salt,
+      this.config.saltRounds,
+      this.config.keySize,
+      'sha512',
+    );
+
+    return `${salt.toString('hex'): );
+    const salt: Promise< {
+    publicKey: string;
+    privateKey: string;
+  }> {
+    return new Promise((resolve, reject): 4096,
+          publicKeyEncoding: {
+            type: spki',
+            format: pem',
+          },
+          privateKeyEncoding: {
+            type: pkcs8',
+            format: pem',
+          },
+        },
+        (err, publicKey, privateKey)  = Buffer.from(hashHex, 'hex');
+
+    const computedHash = await this.pbkdf2(
+      data,
+      salt,
+      this.config.saltRounds,
+      this.config.keySize,
+      'sha512',
+    );
+
+    return crypto.timingSafeEqual(targetHash, computedHash);
+  }
+
+  generateKeyPair()> {
+      crypto.generateKeyPair(
+        'rsa',
+        {
+          modulusLength> {
+          if(err): void {
+            reject(err);
+          } else {
+            resolve({ publicKey, privateKey }): string | Buffer, privateKey: string): string {
+    const sign: string | Buffer,
+    signature: string,
+    publicKey: string,
+  ): boolean {
+    const verify: string,
+    keyLength: number,
+  ): Buffer {
+    const salt: string | Buffer,
+    salt: Buffer,
+    iterations: number,
+    keyLength: number,
+    digest: string,
+  ): Promise<Buffer> {
+    return new Promise((resolve, reject)   = crypto.createSign('SHA256') crypto.createHash('sha256')
+      .update(password)
+      .digest();
+
+    return crypto.pbkdf2Sync(
+      password,
+      salt,
+      100000,
+      keyLength,
+      'sha512',
+    );
+  }
+
+  private pbkdf2(
+    data> {
+      crypto.pbkdf2(
+        data,
+        salt,
+        iterations,
+        keyLength,
+        digest,
+        (err, derivedKey) => {
+          if(err): void {
+            reject(err);
+          } else {
+            resolve(derivedKey): number): Buffer {
+    return crypto.randomBytes(size): number): string {
+    return crypto.randomBytes(length): string {
+    return crypto.randomUUID(): string | Buffer,
+    key: string | Buffer,
+    algorithm: string = 'sha256',
+  ): string {
+    return crypto.createHmac(algorithm, key): string | Buffer,
+    algorithm: string = 'sha256',
+  ): string {
+    return crypto.createHash(algorithm)
+      .update(data)
+      .digest('hex');
+  }
+}

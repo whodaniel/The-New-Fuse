@@ -1,0 +1,61 @@
+export declare enum ModelType {
+    GPT = "gpt",
+    BERT = "bert",
+    T5 = "t5",
+    LLAMA = "llama",
+    CLAUDE = "claude",
+    RESNET = "resnet",
+    YOLO = "yolo",
+    VISION_TRANSFORMER = "vision_transformer",
+    WHISPER = "whisper",
+    WAVE2VEC = "wave2vec",
+    GPT4V = "gpt4v",
+    DALLE = "dalle",
+    STABLE_DIFFUSION = "stable_diffusion",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+export declare enum TokenType {
+    ERC20 = "erc20",
+    BEP20 = "bep20",
+    ERC721 = "erc721",
+    ERC1155 = "erc1155",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+export declare enum WalletType {
+    METAMASK = "metamask",
+    TRUST = "trust",
+    COINBASE = "coinbase",
+    LEDGER = "ledger",
+    TREZOR = "trezor",
+    SAFE = "safe",
+    ARGENT = "argent",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+export declare enum ResourceType {
+    CPU = "cpu",
+    GPU = "gpu",
+    TPU = "tpu",
+    SSD = "ssd",
+    HDD = "hdd",
+    OBJECT_STORAGE = "object_storage",
+    BANDWIDTH = "bandwidth",
+    LATENCY = "latency",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+export declare enum CommunicationPattern {
+    DIRECT = "direct",
+    BROADCAST = "broadcast",
+    MULTICAST = "multicast",
+    REQUEST_RESPONSE = "request_response",
+    PUBLISH_SUBSCRIBE = "publish_subscribe",
+    QUEUE = "queue",
+    STREAM = "stream",
+    EVENT_DRIVEN = "event_driven",
+    CUSTOM = "custom",
+    UNKNOWN = "unknown"
+}
+//# sourceMappingURL=(models as any).d.ts.map

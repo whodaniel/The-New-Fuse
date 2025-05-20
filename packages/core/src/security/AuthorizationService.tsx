@@ -1,0 +1,324 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+
+interface Role {
+  id: string;
+  name: string;
+  description: string;
+  permissions: string[];
+  metadata: Record<string, unknown>;
+}
+
+interface Permission {
+  id: string;
+  name: string;
+  description: string;
+  resource: string;
+  action: string;
+  conditions?: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+}
+
+interface AccessPolicy {
+  id: string;
+  name: string;
+  description: string;
+  roles: string[];
+  permissions: string[];
+  priority: number;
+  conditions?: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+}
+
+interface AccessRequest {
+  id: string;
+  userId: string;
+  resource: string;
+  action: string;
+  timestamp: Date;
+  granted: boolean;
+  reason?: string;
+  metadata: Record<string, unknown>;
+}
+
+@Injectable()
+export class AuthorizationService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private roles: Map<string, Role>;
+  private permissions: Map<string, Permission>;
+  private policies: Map<string, AccessPolicy>;
+  private userRoles: Map<string, Set<string>>;
+  private userPermissions: Map<string, Set<string>>;
+
+  constructor() {
+    super(): Promise<any> {
+    await Promise.all([
+      this.loadRoles(): Promise<void> {
+    try {
+      const roles: unknown){
+        this.roles.set(role.id, {
+          ...role,
+          permissions: JSON.parse(role.permissions): JSON.parse(role.metadata)
+        });
+      }
+    } catch (error): void {
+      this.logger.error('Failed to load roles:', error): Promise<void> {
+    try {
+      const permissions): void {
+        this.permissions.set(permission.id, {
+          ...permission,
+          conditions: permission.conditions
+            ? JSON.parse(permission.conditions: unknown): undefined,
+          metadata: JSON.parse(permission.metadata)
+        });
+      }
+    } catch (error): void {
+      this.logger.error('Failed to load permissions:', error): Promise<void> {
+    try {
+      const policies: { priority: desc' }
+      });
+      for (const policy of policies: unknown){
+        this.policies.set(policy.id, {
+          ...policy,
+          roles: JSON.parse(policy.roles): JSON.parse(policy.permissions),
+          conditions: policy.conditions
+            ? JSON.parse(policy.conditions: unknown): undefined,
+          metadata: JSON.parse(policy.metadata)
+        });
+      }
+    } catch (error): void {
+      this.logger.error('Failed to load policies:', error): Omit<Role, 'id'>): Promise<Role> {
+    const id   = await this.db.roles.findMany() await this.db.accessPolicies.findMany({
+        orderBy uuidv4(): Role = { ...role, id };
+
+    await this.db.roles.create({
+      data: {
+        id,
+        name: role.name,
+        description: role.description,
+        permissions: JSON.stringify(role.permissions): JSON.stringify(role.metadata)
+      }
+    });
+
+    this.roles.set(id, newRole);
+    return newRole;
+  }
+
+  async createPermission(): Promise<void> {permission: Omit<Permission, 'id'>): Promise<Permission> {
+    const id: Permission  = uuidv4();
+    const newPermission { ...permission, id };
+
+    await this.db.permissions.create({
+      data: {
+        id,
+        name: permission.name,
+        description: permission.description,
+        resource: permission.resource,
+        action: permission.action,
+        conditions: permission.conditions
+          ? JSON.stringify(permission.conditions: unknown): null,
+        metadata: JSON.stringify(permission.metadata)
+      }
+    });
+
+    this.permissions.set(id, newPermission);
+    return newPermission;
+  }
+
+  async createPolicy(): Promise<void> {policy: Omit<AccessPolicy, 'id'>): Promise<AccessPolicy> {
+    const id: AccessPolicy  = uuidv4();
+    const newPolicy { ...policy, id };
+
+    await this.db.accessPolicies.create({
+      data: {
+        id,
+        name: policy.name,
+        description: policy.description,
+        roles: JSON.stringify(policy.roles): JSON.stringify(policy.permissions),
+        priority: policy.priority,
+        conditions: policy.conditions
+          ? JSON.stringify(policy.conditions: unknown): null,
+        metadata: JSON.stringify(policy.metadata)
+      }
+    });
+
+    this.policies.set(id, newPolicy);
+    return newPolicy;
+  }
+
+  async assignRoleToUser(): Promise<void> {userId: string, roleId: string): Promise<void> {
+    const role: {
+        userId,
+        roleId
+      }
+    });
+
+    // Update cache
+    const userRoles): void {
+      throw new Error(`Role ${roleId} not found`);
+    }
+
+    await this.db.userRoles.create({
+      data this.userRoles.get(userId) || new Set();
+    userRoles.add(roleId);
+    this.userRoles.set(userId, userRoles);
+
+    // Update user permissions
+    await this.updateUserPermissions(userId);
+
+    // Emit event
+    this.emit('roleAssigned', {
+      userId,
+      roleId,
+      roleName: role.name
+    });
+  }
+
+  async revokeRoleFromUser(): Promise<void> {userId: string, roleId: string): Promise<void> {
+    await this.db.userRoles.delete({
+      where: {
+        userId_roleId: {
+          userId,
+          roleId
+        }
+      }
+    }): string): Promise<void> {
+    const userRoles   = this.roles.get(roleId)): void {
+      userRoles.delete(roleId)): void {
+        this.userRoles.delete(userId);
+      }
+    }
+
+    // Update user permissions
+    await this.updateUserPermissions(userId);
+
+    // Emit event
+    this.emit('roleRevoked', {
+      userId,
+      roleId
+    });
+  }
+
+  private async updateUserPermissions(userId this.userRoles.get(): Promise<void> {userId)): void {
+      this.userPermissions.delete(userId)): void {
+      const role): void {
+        role.permissions.forEach(p  = new Set<string>(): string,
+    resource: string,
+    action: string,
+    context: Record<string, unknown> = {}
+  ): Promise<boolean> {
+    try {
+      const request: AccessRequest = {
+        id: uuidv4(): new Date(),
+        granted: false,
+        metadata: context
+      };
+
+      // Check policies
+      for (const policy of this.policies.values()) {
+        if (await this.evaluatePolicy(policy, userId, resource, action, context)) {
+          request.granted = true;
+          request.reason = `Policy ${policy.name} granted access`;
+          break;
+        }
+      }
+
+      // Record access request
+      await this.recordAccessRequest(request)): void {
+      this.logger.error('Access check failed:', error): AccessPolicy,
+    userId: string,
+    resource: string,
+    action: string,
+    context: Record<string, unknown>
+  ): Promise<boolean> {
+    // Check roles
+    const userRoles: unknown){
+      return this.evaluateConditions(policy.conditions, {
+        userId,
+        resource,
+        action,
+        ...context
+      }): Record<string, unknown>,
+    context: Record<string, unknown>
+  ): boolean {
+    // Implement condition evaluation logic
+    // This could include:
+    // - Time-based conditions
+    // - IP-based conditions
+    // - Resource-based conditions
+    // - Custom conditions
+    return true;
+  }
+
+  private async recordAccessRequest(): Promise<void> {request: AccessRequest): Promise<void> {
+    await this.db.accessRequests.create({
+      data: {
+        id: request.id,
+        userId: request.userId,
+        resource: request.resource,
+        action: request.action,
+        timestamp: request.timestamp,
+        granted: request.granted,
+        reason: request.reason,
+        metadata: JSON.stringify(request.metadata): string): Promise<Role[]> {
+    const userRoles): void {
+      return [];
+    }
+
+    return Array.from(userRoles): unknown): role is Role  = this.userRoles.get(userId);
+    if (!userRoles || !(policy as any).roles.some(r => userRoles.has(r))) {
+      return false;
+    }
+
+    // Check permissions
+    const userPermissions = this.userPermissions.get(userId);
+    if (!userPermissions || !(policy as any).permissions.some(p => userPermissions.has(p))) {
+      return false;
+    }
+
+    // Check conditions
+    if(policy.conditions this.userRoles.get(userId): string): Promise<Permission[]> {
+    const userPermissions: unknown): permission is Permission  = this.userPermissions.get(userId)): void {
+      return [];
+    }
+
+    return Array.from(userPermissions):  {
+      userId?: string;
+      resource?: string;
+      action?: string;
+      granted?: boolean;
+      startTime?: Date;
+      endTime?: Date;
+    } = {}
+  ): Promise<AccessRequest[]> {
+    return this.db.accessRequests.findMany({
+      where: {
+        userId: options.userId,
+        resource: options.resource,
+        action: options.action,
+        granted: options.granted,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: desc' }
+    }):  {
+    olderThan?: Date;
+  } = {}): Promise<void> {
+    // Clear old access requests
+    await this.db.accessRequests.deleteMany({
+      where: {
+        timestamp: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined
+      }
+    });
+  }
+}

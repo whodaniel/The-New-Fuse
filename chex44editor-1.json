@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@the-new-fuse/*": ["./src/types/@the-new-fuse/*"]
+    }
+  }
+}

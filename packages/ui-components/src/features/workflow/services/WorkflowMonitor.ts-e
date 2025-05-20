@@ -1,0 +1,71 @@
+import { EventEmitter } from 'events';
+import { WorkflowStep, WorkflowMetrics, MonitoringEvent } from '../types';
+
+export class WorkflowMonitor extends EventEmitter {
+  private static instance: WorkflowMonitor;
+  private activeWorkflows: Map<string, WorkflowMetrics>;
+
+  private constructor() {
+    super();
+    this.activeWorkflows = new Map();
+  }
+
+  static getInstance(): WorkflowMonitor {
+    if (!WorkflowMonitor.instance) {
+      WorkflowMonitor.instance = new WorkflowMonitor();
+    }
+    return WorkflowMonitor.instance;
+  }
+
+  startMonitoring(workflowId: string, initialMetrics: WorkflowMetrics): void {
+    this.activeWorkflows.set(workflowId, initialMetrics);
+    this.emit('workflow:start', { workflowId, metrics: initialMetrics });
+  }
+
+  updateMetrics(workflowId: string, metrics: Partial<WorkflowMetrics>): void {
+    const currentMetrics = this.activeWorkflows.get(workflowId) || {};
+    const updatedMetrics = { ...currentMetrics, ...metrics };
+    this.activeWorkflows.set(workflowId, updatedMetrics);
+    
+    this.emit('workflow:update', {
+      workflowId,
+      metrics: updatedMetrics
+    });
+  }
+
+  recordStepExecution(
+    workflowId: string,
+    step: WorkflowStep,
+    success: boolean,
+    duration: number
+  ): void {
+    const event: MonitoringEvent = {
+      workflowId,
+      stepId: step.id,
+      timestamp: new Date(),
+      success,
+      duration,
+      metrics: this.activeWorkflows.get(workflowId)
+    };
+
+    this.emit('step:complete', event);
+  }
+
+  stopMonitoring(workflowId: string): void {
+    const finalMetrics = this.activeWorkflows.get(workflowId);
+    this.activeWorkflows.delete(workflowId);
+    
+    this.emit('workflow:complete', {
+      workflowId,
+      metrics: finalMetrics
+    });
+  }
+
+  getActiveWorkflows(): Map<string, WorkflowMetrics> {
+    return new Map(this.activeWorkflows);
+  }
+
+  getWorkflowMetrics(workflowId: string): WorkflowMetrics | undefined {
+    return this.activeWorkflows.get(workflowId);
+  }
+}

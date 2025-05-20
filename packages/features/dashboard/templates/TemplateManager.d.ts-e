@@ -1,0 +1,45 @@
+import { DashboardState } from '../collaboration/types';
+export interface Template {
+    id: string;
+    name: string;
+    description: string;
+    thumbnail?: string;
+    category: string;
+    tags: string[];
+    state: DashboardState;
+    creator: {
+        id: string;
+        name: string;
+    };
+    createdAt: Date;
+    updatedAt?: Date;
+    usageCount: number;
+    isPublic: boolean;
+    variables: Array<{
+        name: string;
+        type: 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object';
+        description: string;
+        defaultValue?: unknown;
+        required: boolean;
+    }>;
+}
+export declare class TemplateManager {
+    private templates;
+    private storage;
+    private storageKey;
+    constructor(storage?: Storage, storageKey?: string);
+    createTemplate(template: Omit<Template, 'id' | 'createdAt' | 'usageCount'>): string;
+    updateTemplate(id: string, updates: Partial<Template>): void;
+    deleteTemplate(id: string): void;
+    getTemplate(id: string): Template | undefined;
+    listTemplates(filters?: {
+        category?: string;
+        tags?: string[];
+        isPublic?: boolean;
+        creator?: string;
+    }): Template[];
+    instantiateTemplate(templateId: string, variables: Record<string, unknown>): DashboardState;
+    private replaceVariables;
+    private loadTemplates;
+    private saveTemplates;
+}

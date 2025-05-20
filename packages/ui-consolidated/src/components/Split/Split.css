@@ -1,0 +1,16 @@
+:root {
+  --split-panel-basis: 50%;
+  --gutter-size: 4px;
+}
+
+.panel {
+  flex-basis: var(--split-panel-basis);
+}
+
+.gutterHorizontal {
+  width: var(--gutter-size);
+}
+
+.gutterVertical {
+  height: var(--gutter-size);
+}

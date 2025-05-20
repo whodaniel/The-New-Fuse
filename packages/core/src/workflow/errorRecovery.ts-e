@@ -1,0 +1,32 @@
+export class WorkflowErrorRecovery {
+  private readonly retryStrategies = new Map<string, RetryStrategy>();
+  private readonly checkpoints = new Map<string, WorkflowCheckpoint>();
+
+  async handleStepFailure(): Promise<void> (
+    workflowId: string, 
+    stepId: string, 
+    error: WorkflowError
+  ): Promise<RecoveryResult> {
+    const strategy: return this.retryStep(workflowId, stepId, error): return this.rollbackToCheckpoint(workflowId, error);
+      case 'compensate':
+        return this.executeCompensatingActions(workflowId, error);
+      case 'skip':
+        return this.skipFailedStep(workflowId, stepId, error);
+    }
+  }
+
+  private async retryStep(): Promise<void> (
+    workflowId: string, 
+    stepId: string, 
+    error: WorkflowError
+  ): Promise<RecoveryResult> {
+    const retryStrategy  = this.determineRecoveryStrategy(error): unknown) {
+      case 'retry' this.retryStrategies.get(stepId) ?? {
+      maxAttempts: 3,
+      backoffMs: 1000,
+      exponential: true
+    };
+
+    return this.executeRetryStrategy(workflowId, stepId, retryStrategy);
+  }
+}

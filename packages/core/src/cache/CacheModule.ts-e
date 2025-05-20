@@ -1,0 +1,13 @@
+import { Module, Global } from '@nestjs/common';
+import { CacheService } from './CacheService';
+
+@Global()
+@Module({
+  providers: [
+    CacheService
+  ],
+  exports: [
+    CacheService
+  ]
+})
+export class CacheModule {}

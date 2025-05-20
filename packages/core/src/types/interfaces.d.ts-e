@@ -1,0 +1,126 @@
+import { MessageType, MessageStatus } from './enums';
+import { MessageRole } from './messages';
+import { LLMConfig } from './llm';
+export interface BaseMessage {
+    id: string;
+    type: typeof MessageType;
+    content: string;
+    status: typeof MessageStatus;
+    timestamp: string;
+    role?: MessageRole;
+    threadId?: string;
+}
+export interface ChatMessage extends BaseMessage {
+    recipient: string;
+    sender: string;
+    attachments?: Array<{
+        type: string;
+        url: string;
+        name: string;
+    }>;
+    reactions?: Array<{
+        emoji: string;
+        users: string[];
+    }>;
+}
+export interface ProcessedMessage extends ChatMessage {
+    processed: boolean;
+    processingTime: number;
+    validationResult: {
+        isValid: boolean;
+        errors: string[];
+    };
+    processingMetadata?: {
+        processingTime: number;
+        processingSteps: string[];
+        llmProvider?: string;
+    };
+}
+export interface ChatError {
+    type: typeof MessageType.ERROR;
+    error: {
+        code: string;
+        message: string;
+        details?: Record<string, unknown>;
+    };
+    content: string;
+    timestamp: string;
+    status: typeof MessageStatus;
+}
+export interface Thread {
+    id: string;
+    name: string;
+    participants: string[];
+    messages: ChatMessage[];
+    createdAt: string;
+    updatedAt: string;
+    metadata?: Record<string, unknown>;
+}
+export interface ClassificationResult {
+    id: string;
+    content: string;
+    category: string;
+    confidence: number;
+    messageType: typeof MessageType;
+    modelType: string;
+    tokenType: string;
+    resourceType: string;
+    contentType?: string;
+    pattern?: string;
+    timestamp: number;
+    metadata?: Record<string, unknown>;
+}
+export interface RateLimitConfig {
+    maxRequests: number;
+    windowMs: number;
+    errorMessage: string;
+    keyGenerator?: (req: unknown) => string;
+    enabled?: boolean;
+    defaultLimit?: number;
+    defaultWindow?: number;
+    modelLimit?: number;
+    modelWindow?: number;
+    blockchainLimit?: number;
+    blockchainWindow?: number;
+    apiLimit?: number;
+    apiWindow?: number;
+}
+export interface CacheConfig {
+    ttl: number;
+    maxSize: number;
+    checkPeriod?: number;
+    deleteOnExpire?: boolean;
+    enabled?: boolean;
+}
+export interface ExtendedLLMConfig extends LLMConfig {
+    parameters?: {
+        temperature: number;
+        maxTokens: number;
+        streamingEnabled: boolean;
+    };
+    provider: string;
+    maxRetries: number;
+    timeoutMs: number;
+    retryDelayMs: number;
+}
+export interface MetricsConfig {
+    enabled: boolean;
+    prefix: string;
+    detailed?: boolean;
+}
+export interface AgentProcessorConfig {
+    maxRetries: number;
+    timeoutMs: number;
+    retryDelayMs: number;
+    defaultLLMConfig: ExtendedLLMConfig;
+}
+export interface InteractionContext {
+    user?: string;
+    api?: string;
+    sourceId?: string;
+}
+export interface MetricsDimensions {
+    api?: string;
+    sourceId?: string;
+}
+//# sourceMappingURL=(interfaces as any).d.ts.map

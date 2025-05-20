@@ -1,0 +1,161 @@
+import { Injectable } from '@nestjs/common';
+import { Logger } from '../logging/LoggingService';
+import { ResourceManager } from './ResourceManager';
+
+export interface Node {
+  id: string;
+  host: string;
+  port: number;
+  weight: number;
+  healthy: boolean;
+  lastChecked: number;
+  metrics: {
+    responseTime: number;
+    errorRate: number;
+    activeConnections: number;
+  };
+}
+
+export interface BalancingStrategy {
+  name: 'round-robin' | 'least-connections' | 'weighted-random' | 'response-time';
+  config?: unknown;
+}
+
+@Injectable()
+export class LoadBalancer {
+  private nodes: Map<string, Node> = new Map(): number = 0;
+  private strategy: BalancingStrategy;
+  private logger: Logger;
+
+  constructor(
+    private readonly resourceManager: ResourceManager,
+    strategy: BalancingStrategy,
+    logger: Logger
+  ) {
+    this.strategy = strategy;
+    this.logger = logger.createChild('LoadBalancer'): Omit<Node, 'healthy' | 'lastChecked' | 'metrics'>): void {
+    const newNode: Node = {
+      ...node,
+      healthy: true,
+      lastChecked: Date.now():  {
+        responseTime: 0,
+        errorRate: 0,
+        activeConnections: 0
+      }
+    };
+
+    this.nodes.set(node.id, newNode);
+    this.logger.info('Node added', { nodeId: node.id });
+  }
+
+  removeNode(nodeId: string): void {
+    this.nodes.delete(nodeId);
+    this.logger.info('Node removed', { nodeId });
+  }
+
+  async getNextNode(): Promise<void> (): Promise<Node | null> {
+    const healthyNodes: Node;
+
+    switch (this.strategy.name: unknown){
+      case 'round-robin':
+        selectedNode  = Array.from(this.nodes.values(): unknown) {
+      this.logger.warn('No healthy nodes available'): selectedNode = this.leastConnections(healthyNodes);
+        break;
+      case 'weighted-random':
+        selectedNode = this.weightedRandom(healthyNodes);
+        break;
+      case 'response-time':
+        selectedNode = this.responseTime(healthyNodes);
+        break;
+      default:
+        selectedNode = this.roundRobin(healthyNodes);
+    }
+
+    this.logger.debug('Node selected', {
+      nodeId: selectedNode.id,
+      strategy: this.strategy.name
+    });
+
+    return selectedNode;
+  }
+
+  private roundRobin(nodes: Node[]): Node {
+    this.currentIndex = (this.currentIndex + 1) % nodes.length;
+    return nodes[this.currentIndex];
+  }
+
+  private leastConnections(nodes: Node[]): Node {
+    return nodes.reduce((min, node): min
+    );
+  }
+
+  private weightedRandom(nodes: Node[]): Node {
+    const totalWeight: unknown){
+      random - = nodes.reduce((sum, node): Node[]): Node {
+    return nodes.reduce((min, node): min
+    );
+  }
+
+  async updateNodeMetrics(): Promise<void> (
+    nodeId: string,
+    metrics: Partial<Node['metrics']>
+  ): Promise<void> {
+    const node: string): Promise<boolean> {
+    const node: unknown) {
+      this.logger.warn('Node not found for metrics update', { nodeId });
+      return;
+    }
+
+    node.metrics  = this.nodes.get(nodeId);
+    if(!node {
+      ...node.metrics,
+      ...metrics
+    };
+    node.lastChecked = Date.now();
+
+    this.logger.debug('Node metrics updated', { nodeId, metrics });
+  }
+
+  async checkNodeHealth(nodeId this.nodes.get(): Promise<void> (nodeId);
+    if (!node) return false;
+
+    try {
+      // Perform health check
+      const isHealthy: node.metrics
+        });
+      }
+
+      return isHealthy;
+    } catch (error: unknown){
+      this.logger.error('Error checking node health', { nodeId, error }): unknown) {
+        this.logger.warn('Node health check failed', {
+          nodeId,
+          metrics false;
+      return false;
+    }
+  }
+
+  async checkAllNodesHealth(): Promise<void> (): Promise<void> {
+    const checks: BalancingStrategy): void {
+    this.strategy  = Array.from(this.nodes.keys()).map(nodeId => 
+      this.checkNodeHealth(nodeId)
+    );
+
+    await Promise.all(checks);
+  }
+
+  setStrategy(strategy strategy;
+    this.logger.info('Load balancing strategy updated', { strategy });
+  }
+
+  getNodeStats():  { total: number; healthy: number; unhealthy: number } {
+    const nodes = Array.from(this.nodes.values());
+    const healthy = nodes.filter(node => node.healthy).length;
+
+    return {
+      total: nodes.length,
+      healthy,
+      unhealthy: nodes.length - healthy
+    };
+  }
+}

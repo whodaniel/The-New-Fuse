@@ -1,0 +1,42 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true }): bg-neutral-950"> {/* Sidebar */}
+      <aside className = require("react"): border-neutral-800">
+        <div className = require("react-router-dom");
+const theme_toggle_1 = require("../common/theme-toggle");
+const scroll_area_1 = require("../ui/scroll-area");
+const nav_menu_1 = require("./nav-menu");
+const route_context_1 = require("../../contexts/route-context");
+function RootLayout() {
+    const { pageTitle } = (0, route_context_1.useRoute)();
+    return (<div className="flex h-screen bg-white dark"w-64 border-r border-neutral-200 dark"flex h-16 items-center justify-between px-4 border-b border-neutral-200 dark:border-neutral-800">
+          <h2 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">Agent Factory</h2>
+          <theme_toggle_1.ThemeToggle />
+        </div>
+        <scroll_area_1.ScrollArea className="h-[calc(100vh-4rem)]">
+          <div className="p-4">
+            <nav_menu_1.NavMenu />
+          </div>
+        </scroll_area_1.ScrollArea>
+      </aside>
+
+      {/* Main content */}
+      <main className="flex-1 flex flex-col">
+        <div className="h-16 border-b border-neutral-200 dark:border-neutral-800 px-8 flex items-center">
+          <h1 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">
+            {pageTitle}
+          </h1>
+        </div>
+        <div className="flex-1 overflow-auto p-8">
+          <react_router_dom_1.Outlet />
+        </div>
+      </main>
+    </div>);
+}
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicm9vdC1sYXlvdXQuanMiLCJzb3VyY2VSb290IjoiIiwic291cmNlcyI6WyJyb290LWxheW91dC50c3giXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7QUFPQSxnQ0ErQkM7QUF0Q0QsaUNBQTBCO0FBQzFCLHVEQUEwQztBQUMxQyx5REFBcUQ7QUFDckQsbURBQStDO0FBQy9DLHlDQUFxQztBQUNyQyxnRUFBd0Q7QUFFeEQsU0FBZ0IsVUFBVTtJQUN4QixNQUFNLEVBQUUsU0FBUyxFQUFFLEdBQUcsSUFBQSx3QkFBUSxHQUFFLENBQUM7SUFFakMsT0FBTyxDQUNMLENBQUMsR0FBRyxDQUFDLFNBQVMsQ0FBQyw0Q0FBNEMsQ0FDekQ7TUFBQSxDQUFDLGFBQWEsQ0FDZDtNQUFBLENBQUMsS0FBSyxDQUFDLFNBQVMsQ0FBQywwREFBMEQsQ0FDekU7UUFBQSxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsaUdBQWlHLENBQzlHO1VBQUEsQ0FBQyxFQUFFLENBQUMsU0FBUyxDQUFDLDZEQUE2RCxDQUFDLGFBQWEsRUFBRSxFQUFFLENBQzdGO1VBQUEsQ0FBQywwQkFBVyxDQUFDLEFBQUQsRUFDZDtRQUFBLEVBQUUsR0FBRyxDQUNMO1FBQUEsQ0FBQyx3QkFBVSxDQUFDLFNBQVMsQ0FBQyxzQkFBc0IsQ0FDMUM7VUFBQSxDQUFDLEdBQUcsQ0FBQyxTQUFTLENBQUMsS0FBSyxDQUNsQjtZQUFBLENBQUMsa0JBQU8sQ0FBQyxBQUFELEVBQ1Y7VUFBQSxFQUFFLEdBQUcsQ0FDUDtRQUFBLEVBQUUsd0JBQVUsQ0FDZDtNQUFBLEVBQUUsS0FBSyxDQUVQOztNQUFBLENBQUMsa0JBQWtCLENBQ25CO01BQUEsQ0FBQyxJQUFJLENBQUMsU0FBUyxDQUFDLHNCQUFzQixDQUNwQztRQUFBLENBQUMsR0FBRyxDQUFDLFNBQVMsQ0FBQyxpRkFBaUYsQ0FDOUY7VUFBQSxDQUFDLEVBQUUsQ0FBQyxTQUFTLENBQUMsNkRBQTZELENBQ3pFO1lBQUEsQ0FBQyxTQUFTLENBQ1o7VUFBQSxFQUFFLEVBQUUsQ0FDTjtRQUFBLEVBQUUsR0FBRyxDQUNMO1FBQUEsQ0FBQyxHQUFHLENBQUMsU0FBUyxDQUFDLDBCQUEwQixDQUN2QztVQUFBLENBQUMseUJBQU0sQ0FBQyxBQUFELEVBQ1Q7UUFBQSxFQUFFLEdBQUcsQ0FDUDtNQUFBLEVBQUUsSUFBSSxDQUNSO0lBQUEsRUFBRSxHQUFHLENBQUMsQ0FDUCxDQUFDO0FBQ0osQ0FBQyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBSZWFjdCBmcm9tICdyZWFjdCc7XG5pbXBvcnQgeyBPdXRsZXQgfSBmcm9tICdyZWFjdC1yb3V0ZXItZG9tJztcbmltcG9ydCB7IFRoZW1lVG9nZ2xlIH0gZnJvbSAnLi4vY29tbW9uL3RoZW1lLXRvZ2dsZSc7XG5pbXBvcnQgeyBTY3JvbGxBcmVhIH0gZnJvbSAnLi4vdWkvc2Nyb2xsLWFyZWEnO1xuaW1wb3J0IHsgTmF2TWVudSB9IGZyb20gJy4vbmF2LW1lbnUnO1xuaW1wb3J0IHsgdXNlUm91dGUgfSBmcm9tICcuLi8uLi9jb250ZXh0cy9yb3V0ZS1jb250ZXh0JztcblxuZXhwb3J0IGZ1bmN0aW9uIFJvb3RMYXlvdXQoKSB7XG4gIGNvbnN0IHsgcGFnZVRpdGxlIH0gPSB1c2VSb3V0ZSgpO1xuXG4gIHJldHVybiAoXG4gICAgPGRpdiBjbGFzc05hbWU9XCJmbGV4IGgtc2NyZWVuIGJnLXdoaXRlIGRhcms6YmctbmV1dHJhbC05NTBcIj5cbiAgICAgIHsvKiBTaWRlYmFyICovfVxuICAgICAgPGFzaWRlIGNsYXNzTmFtZT1cInctNjQgYm9yZGVyLXIgYm9yZGVyLW5ldXRyYWwtMjAwIGRhcms6Ym9yZGVyLW5ldXRyYWwtODAwXCI+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleCBoLTE2IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gcHgtNCBib3JkZXItYiBib3JkZXItbmV1dHJhbC0yMDAgZGFyazpib3JkZXItbmV1dHJhbC04MDBcIj5cbiAgICAgICAgICA8aDIgY2xhc3NOYW1lPVwidGV4dC1sZyBmb250LXNlbWlib2xkIHRleHQtbmV1dHJhbC05MDAgZGFyazp0ZXh0LW5ldXRyYWwtNTBcIj5BZ2VudCBGYWN0b3J5PC9oMj5cbiAgICAgICAgICA8VGhlbWVUb2dnbGUgLz5cbiAgICAgICAgPC9kaXY+XG4gICAgICAgIDxTY3JvbGxBcmVhIGNsYXNzTmFtZT1cImgtW2NhbGMoMTAwdmgtNHJlbSldXCI+XG4gICAgICAgICAgPGRpdiBjbGFzc05hbWU9XCJwLTRcIj5cbiAgICAgICAgICAgIDxOYXZNZW51IC8+XG4gICAgICAgICAgPC9kaXY+XG4gICAgICAgIDwvU2Nyb2xsQXJlYT5cbiAgICAgIDwvYXNpZGU+XG5cbiAgICAgIHsvKiBNYWluIGNvbnRlbnQgKi99XG4gICAgICA8bWFpbiBjbGFzc05hbWU9XCJmbGV4LTEgZmxleCBmbGV4LWNvbFwiPlxuICAgICAgICA8ZGl2IGNsYXNzTmFtZT1cImgtMTYgYm9yZGVyLWIgYm9yZGVyLW5ldXRyYWwtMjAwIGRhcms6Ym9yZGVyLW5ldXRyYWwtODAwIHB4LTggZmxleCBpdGVtcy1jZW50ZXJcIj5cbiAgICAgICAgICA8aDEgY2xhc3NOYW1lPVwidGV4dC1sZyBmb250LXNlbWlib2xkIHRleHQtbmV1dHJhbC05MDAgZGFyazp0ZXh0LW5ldXRyYWwtNTBcIj5cbiAgICAgICAgICAgIHtwYWdlVGl0bGV9XG4gICAgICAgICAgPC9oMT5cbiAgICAgICAgPC9kaXY+XG4gICAgICAgIDxkaXYgY2xhc3NOYW1lPVwiZmxleC0xIG92ZXJmbG93LWF1dG8gcC04XCI+XG4gICAgICAgICAgPE91dGxldCAvPlxuICAgICAgICA8L2Rpdj5cbiAgICAgIDwvbWFpbj5cbiAgICA8L2Rpdj5cbiAgKTtcbn1cbiJdfQ==
+export {};

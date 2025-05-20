@@ -1,0 +1,78 @@
+import type { ValidationResult } from '../validation';
+import type { SecurityContext } from '../security';
+import type { ExecutionContext, ExecutionResult } from '../nodes/base';
+export declare enum FlowStatus {
+    PENDING = "pending",
+    RUNNING = "running",
+    COMPLETED = "completed",
+    FAILED = "failed",
+    CANCELLED = "cancelled"
+}
+export interface FlowNode<T = any> {
+    id: string;
+    type: string;
+    config?: T;
+    metadata?: Record<string, any>;
+}
+export interface FlowEdge {
+    source: string;
+    target: string;
+    metadata?: Record<string, any>;
+}
+export interface FlowGraph<T = any> {
+    nodes: FlowNode<T>[];
+    edges: FlowEdge[];
+    metadata?: Record<string, any>;
+}
+export interface FlowOptions {
+    security?: SecurityContext;
+    metadata?: Record<string, any>;
+}
+export interface Flow<T = any> {
+    id: string;
+    name: string;
+    description?: string;
+    graph: FlowGraph<T>;
+    options?: FlowOptions;
+    state: FlowState;
+}
+export interface FlowState {
+    status: FlowStatus;
+    error?: Error;
+    startTime?: Date;
+    endTime?: Date;
+    metrics?: FlowMetrics;
+    metadata?: Record<string, any>;
+}
+export interface FlowMetrics {
+    nodeCount: number;
+    edgeCount: number;
+    runningNodes: number;
+    completedNodes: number;
+    failedNodes: number;
+    customMetrics?: Record<string, any>;
+}
+export interface FlowExecutionContext<T = any> extends ExecutionContext<T> {
+    flow: Flow<T>;
+    node: FlowNode<T>;
+}
+export interface FlowExecutionResult<T = any> extends ExecutionResult<T> {
+    flow: Flow<T>;
+    node: FlowNode<T>;
+    nextNodes: FlowNode<T>[];
+}
+export interface FlowValidationContext<T = any> {
+    flow: Flow<T>;
+    node?: FlowNode<T>;
+    edge?: FlowEdge;
+    metadata?: Record<string, any>;
+}
+export interface FlowValidator {
+    validate(context: FlowValidationContext): Promise<ValidationResult>;
+}
+export interface FlowEngine<T = any> {
+    createFlow(config: Flow<T>): Flow<T>;
+    getFlow(id: string): Flow<T> | undefined;
+    deleteFlow(id: string): void;
+    clear(): void;
+}

@@ -1,0 +1,20 @@
+import React from 'react';
+interface TableColumn {
+    key: string;
+    label: string;
+    render?: (value: unknown, row: unknown) => (React as any).ReactNode;
+    sortable?: boolean;
+    width?: string;
+}
+interface TableWidgetProps {
+    data: unknown[];
+    columns: TableColumn[];
+    title: string;
+    description?: string;
+    loading?: boolean;
+    error?: string;
+    className?: string;
+    pageSize?: number;
+}
+export declare const TableWidget: (React as any).FC<TableWidgetProps>;
+export {};

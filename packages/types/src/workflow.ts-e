@@ -1,0 +1,287 @@
+import type { Node } from 'reactflow';
+// import { z } from 'zod';
+
+// Workflow Step Schema
+export enum WorkflowStepType {
+  TASK = 'task',
+  CONDITION = 'condition',
+  LOOP = 'loop',
+  PARALLEL = 'parallel',
+  SEQUENCE = 'sequence',
+  ERROR_HANDLER = 'error_handler',
+  NOTIFICATION = 'notification',
+  CUSTOM = 'custom',
+  TRANSFORM = 'transform',
+  VALIDATE = 'validate',
+  PROCESS = 'process',
+  ANALYSIS = 'analysis',
+  SECURITY = 'security',
+  ACCESSIBILITY = 'accessibility',
+  I18N = 'i18n',
+  DATA_FLOW = 'data_flow',
+  DOCUMENTATION = 'documentation',
+  REPORT = 'report',
+  ANALYZE = 'analyze'
+}
+
+export type WorkflowStatus = 'pending' | 'started' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused' | 'stopped';
+
+export enum ErrorSeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+export enum SecuritySeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+export interface WorkflowContext {
+  workflowId: string;
+  stepId: string;
+  input: Record<string, unknown>;
+  output: Record<string, unknown>;
+  metadata: Record<string, unknown>;
+  variables: Record<string, unknown>;
+  error?: Error;
+}
+
+export interface WorkflowStep {
+  id: string;
+  type: WorkflowStepType;
+  name: string;
+  description?: string;
+  status: WorkflowStatus;
+  startTime: Date | null;
+  endTime: Date | null;
+  error?: string;
+  input?: Record<string, unknown>;
+  output?: Record<string, unknown>;
+  dependencies?: string[];
+  config?: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+  retryCount?: number;
+  maxRetries?: number;
+  timeout?: number;
+  action?: (context: WorkflowContext) => Promise<void>;
+  parameters?: Record<string, unknown>;
+}
+
+export interface WorkflowTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  steps: WorkflowStep[];
+  metadata?: Record<string, unknown>;
+  variables?: Record<string, unknown>;
+  config?: Record<string, unknown>;
+}
+
+export interface WorkflowInstance {
+  id: string;
+  templateId: string;
+  status: WorkflowStatus;
+  startTime: Date | null;
+  endTime: Date | null;
+  error?: string;
+  steps: WorkflowStep[];
+  variables: Record<string, unknown>;
+  metadata?: Record<string, unknown>;
+  input?: Record<string, unknown>;
+  output?: Record<string, unknown>;
+}
+
+export interface WorkflowResult {
+  status: WorkflowStatus;
+  output: Record<string, unknown>;
+}
+
+export interface WorkflowOutput {
+  status: WorkflowStatus;
+  data: Record<string, unknown>;
+}
+
+export interface WorkflowEdge {
+  id: string;
+  source: string;
+  target: string;
+  type: string;
+  condition?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface WorkflowGraph {
+  nodes: WorkflowStep[];
+  edges: WorkflowEdge[];
+  metadata?: Record<string, unknown>;
+}
+
+export interface WorkflowValidationError {
+  code: string;
+  message: string;
+  severity: ErrorSeverity;
+  path?: string;
+  metadata?: Record<string, unknown>;
+}
+
+export interface WorkflowValidationResult {
+  valid: boolean;
+  errors: WorkflowValidationError[];
+  warnings: WorkflowValidationError[];
+}
+
+export interface WorkflowNode extends Node {
+  type: 'input' | 'output' | 'default' | 'agent' | 'tool' | 'condition';
+  data: {
+    label: string;
+    description?: string;
+    inputs?: Record<string, unknown>;
+    outputs?: Record<string, unknown>;
+    error?: string;
+    status?: WorkflowStatus;
+    parameters?: WorkflowParameters;
+  };
+}
+
+export interface WorkflowParameters {
+  type?: string;
+  depth?: string;
+  format?: string;
+  includeGraph?: boolean;
+}
+
+export interface SystemPerformanceMetrics {
+  cpuUsage: number;
+  memoryUsage: number;
+  latency: number;
+  throughput: number;
+  errorRate: number;
+  requestCount: number;
+  responseTime: number;
+}
+
+export interface AnalysisResult {
+  id: string;
+  status: string;
+  metrics: SystemPerformanceMetrics;
+  timestamp: Date;
+}
+
+export interface SecurityVulnerability {
+  type: string;
+  id: string;
+  title: string;
+  severity: SecuritySeverity;
+  description: string;
+  cvss: number;
+  cve?: string;
+  location?: string;
+  affectedDependency?: string;
+  remediation?: string;
+  references?: string[];
+  metadata?: Record<string, any>;
+  timestamp: Date;
+}
+
+export interface SecurityScanResult {
+  vulnerabilities: SecurityVulnerability[];
+  totalVulnerabilities: number;
+  timestamp: Date;
+}
+
+export interface CodeQualityIssue {
+  type: string;
+  severity: ErrorSeverity;
+  description: string;
+  location: string;
+  rule: string;
+  fix?: string;
+}
+
+export interface DependencyNode {
+  id: string;
+  name: string;
+  version: string;
+  label: string;
+  dependencies: string[];
+}
+
+export class WorkflowExecutionError extends Error {
+  constructor(
+    message: string,
+    public readonly code?: string,
+    public readonly details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'WorkflowExecutionError';
+  }
+}
+
+export class WorkflowError extends Error {
+  constructor(
+    message: string,
+    public readonly code: string,
+    public readonly workflowId: string,
+    public readonly stepId?: string,
+    public readonly details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'WorkflowError';
+  }
+
+  static invalidStep(workflowId: string, stepId: string): WorkflowError {
+    return new WorkflowError(
+      'Invalid workflow step',
+      'INVALID_STEP',
+      workflowId,
+      stepId
+    );
+  }
+
+  static stepFailed(
+    workflowId: string,
+    stepId: string,
+    details?: Record<string, unknown>
+  ): WorkflowError {
+    return new WorkflowError(
+      'Step execution failed',
+      'STEP_FAILED',
+      workflowId,
+      stepId,
+      details
+    );
+  }
+
+  static workflowNotFound(workflowId: string): WorkflowError {
+    return new WorkflowError(
+      'Workflow not found',
+      'WORKFLOW_NOT_FOUND',
+      workflowId
+    );
+  }
+
+  static invalidStatusTransition(
+    workflowId: string,
+    from: WorkflowStatus,
+    to: WorkflowStatus
+  ): WorkflowError {
+    return new WorkflowError(
+      `Invalid workflow status transition from ${from} to ${to}`,
+      'INVALID_STATUS_TRANSITION',
+      workflowId,
+      undefined,
+      { from, to }
+    );
+  }
+}
+
+export interface WorkflowDefinition {
+  id: string;
+  steps: WorkflowStep[];
+  onError?: (error: Error) => void;
+}

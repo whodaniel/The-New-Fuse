@@ -1,0 +1,9 @@
+import React from 'react';
+import { DashboardTemplate } from './types';
+interface TemplateGalleryProps {
+    templates: DashboardTemplate[];
+    onSelect: (template: DashboardTemplate) => void;
+    className?: string;
+}
+export declare const TemplateGallery: (React as any).FC<TemplateGalleryProps>;
+export {};

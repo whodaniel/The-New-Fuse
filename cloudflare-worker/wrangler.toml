@@ -1,0 +1,28 @@
+name = "code-execution"
+main = "code-execution.ts"
+compatibility_date = "2023-10-30"
+
+[vars]
+# These are placeholder values that will be replaced in production
+API_KEY = "placeholder-api-key"
+
+# Add KV namespace for usage tracking
+[[kv_namespaces]]
+binding = "USAGE_TRACKING"
+id = "placeholder-kv-id"
+preview_id = "placeholder-preview-kv-id"
+
+# Add environment variables for different environments
+[env.production]
+# Production-specific settings
+workers_dev = false
+route = "code-execution.thefuse.workers.dev/*"
+
+[env.staging]
+# Staging-specific settings
+workers_dev = false
+route = "code-execution-staging.thefuse.workers.dev/*"
+
+[env.development]
+# Development-specific settings
+workers_dev = true

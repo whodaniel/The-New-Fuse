@@ -1,0 +1,17 @@
+import { BaseLLMProvider, LLMConfig } from './base';
+interface HuggingFaceConfig extends LLMConfig {
+    task?: 'text-generation' | 'text2text-generation' | 'conversational';
+}
+export declare class HuggingFaceProvider extends BaseLLMProvider {
+    private task;
+    constructor(config?: HuggingFaceConfig);
+    protected getDefaultApiKey(): string;
+    protected getDefaultBaseURL(): string;
+    protected getDefaultModel(): string;
+    protected getDefaultMaxTokens(): number;
+    protected getDefaultHeaders(): Record<string, string>;
+    chat(messages: unknown[]): Promise<any>;
+    complete(prompt: string): Promise<any>;
+    stream(prompt: string): AsyncGenerator<any, void, unknown>;
+}
+export {};

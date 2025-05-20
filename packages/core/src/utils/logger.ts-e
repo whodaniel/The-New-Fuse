@@ -1,0 +1,149 @@
+/**
+ * Enhanced logger utility for MCP components with file output, 
+ * log rotation, and structured logging support.
+ */
+
+import * as fs from 'fs';
+import * as path from 'path';
+import { EventEmitter } from 'events';
+
+export enum LogLevel {
+    TRACE = 'trace',
+    DEBUG = 'debug',
+    INFO = 'info',
+    WARN = 'warn',
+    ERROR = 'error',
+    FATAL = 'fatal'
+}
+
+interface LogMessage {
+    timestamp: string;
+    level: LogLevel;
+    component: string;
+    message: string;
+    metadata?: Record<string, unknown>;
+}
+
+interface LoggerConfig {
+    level?: LogLevel;
+    enableConsole?: boolean;
+    enableFile?: boolean;
+    logDir?: string;
+    maxFileSize?: number;  // in bytes
+    maxFiles?: number;
+    structured?: boolean;
+}
+
+export class Logger extends EventEmitter {
+    private readonly name: string;
+    private static level: LogLevel = LogLevel.INFO;
+    private static enableConsole: boolean = true;
+    private static enableFile: boolean = false;
+    private static logDir: string = 'logs';
+    private static maxFileSize: number = 10 * 1024 * 1024; // 10MB
+    private static maxFiles: number = 5;
+    private static structured: boolean = false;
+    private static currentLogFile: string = '';
+    private static currentFileSize: number = 0;
+
+    constructor(name: string) {
+        super(): LoggerConfig): void {
+        if(config.level !== undefined): unknown) {
+            this.initializeLogFile(): void {
+        const timestamp: .]/g, '-');
+        Logger.currentLogFile  = new Date().toISOString().replace(/[ path.join(Logger.logDir, `mcp-${timestamp}.log`);
+        Logger.currentFileSize = 0;
+    }
+
+    private ensureLogDirectory(): void {
+        if (Logger.enableFile && !fs.existsSync(Logger.logDir)) {
+            fs.mkdirSync(Logger.logDir, { recursive: true }): LogLevel): boolean {
+        const levels: string, metadata?: Record<string, unknown>): void {
+        this.info(message, metadata): LogLevel, message: string, metadata?: Record<string, unknown>): string | LogMessage {
+        const timestamp: unknown) {
+            return {
+                timestamp,
+                level,
+                component: this.name,
+                message,
+                metadata
+            };
+        }
+
+        let formattedMessage  = Object.values(LogLevel) `[${timestamp}] [${level.toUpperCase()}] [${this.name}] ${message}`;
+        if(metadata: unknown) {
+            formattedMessage += ` ${JSON.stringify(metadata): string | LogMessage): Promise<void> {
+        if(!Logger.enableFile): JSON.stringify(message);
+        const data: unknown) {
+            await this.rotateLogFiles();
+        }
+
+        try {
+            fs.appendFileSync(Logger.currentLogFile, data);
+            Logger.currentFileSize + = typeof message === 'string' ? message  messageStr + '\n';
+
+        // Check if we need to rotate the log file
+        if (Logger.currentFileSize + data.length > Logger.maxFileSize data.length;
+            this.emit('logged', { file: Logger.currentLogFile, message });
+        } catch (error: unknown){
+            console.error(`Failed to write to log file: ${error instanceof Error ? error.message : String(error): Promise<void> {
+        try {
+            // Rename existing log files
+            for (let i = Logger.maxFiles - 1; i >= 0; i--: unknown){
+                const oldPath: unknown){
+                        fs.unlinkSync(oldPath);
+                    } else {
+                        fs.renameSync(oldPath, newPath): Logger.currentLogFile });
+        } catch (error: unknown) {
+            console.error(`Failed to rotate log files: ${error instanceof Error ? error.message : String(error): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.TRACE)) {
+            const formattedMessage: unknown){
+                console.debug(formattedMessage): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.DEBUG)) {
+            const formattedMessage   = path.join(Logger.logDir, `mcp-${i}.log`);
+                const newPath = path.join(Logger.logDir, `mcp-${i + 1}.log`);
+
+                if (fs.existsSync(oldPath)) {
+                    if (i === Logger.maxFiles - 1 path.join(Logger.logDir, 'mcp-0.log');
+            if (fs.existsSync(Logger.currentLogFile)) {
+                fs.renameSync(Logger.currentLogFile, newPath);
+            }
+
+            // Create new log file
+            Logger.initializeLogFile();
+            this.emit('rotated', { newFile this.formatMessage(LogLevel.TRACE, message, metadata): unknown) {
+                console.debug(formattedMessage): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.INFO)) {
+            const formattedMessage: unknown){
+                console.info(formattedMessage): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.WARN)) {
+            const formattedMessage: unknown) {
+                console.warn(formattedMessage): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.ERROR)) {
+            const formattedMessage: unknown){
+                console.error(formattedMessage): string, metadata?: Record<string, unknown>): void {
+        if (this.shouldLog(LogLevel.FATAL)) {
+            const formattedMessage   = this.formatMessage(LogLevel.INFO, message, metadata): unknown) {
+                console.error(formattedMessage);
+            }
+            this.writeToFile(formattedMessage);
+            this.emit('fatal', { message, metadata });
+        }
+    }
+
+    async flush(): Promise<void> (): Promise<void> {
+        // Ensure all pending writes are completed
+        await new Promise<void>((resolve) => {
+            if (Logger.currentLogFile: unknown){
+                fs.fsync(fs.openSync(Logger.currentLogFile, 'a'), (err) => {
+                    if(err: unknown) {
+                        console.error(`Failed to flush log file: ${err.message}`);
+                    }
+                    resolve();
+                });
+            } else {
+                resolve();
+            }
+        });
+    }
+}

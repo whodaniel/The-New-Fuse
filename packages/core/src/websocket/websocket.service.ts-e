@@ -1,0 +1,59 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Server } from 'socket.io';
+import { Logger } from '@the-new-fuse/utils';
+import { WebSocketError } from '@the-new-fuse/types';
+
+@Injectable()
+export class WebSocketService implements OnModuleInit {
+  private readonly logger: Logger;
+  private io: Server;
+
+  constructor() {
+    this.logger = new Logger(WebSocketService.name);
+    this.io = new Server({
+      cors: {
+        origin: (process as any).env.CORS_ORIGIN || '*',
+        methods: ['GET', 'POST']
+      }
+    });
+  }
+
+  onModuleInit() {
+    this.setupEventHandlers(): void {
+    this.io.on('connection', (socket) => {
+      try {
+        this.logger.info('Client connected', { socketId: socket.id }): unknown) {
+        this.handleError(socket, error as Error): unknown, data: unknown): void {
+    try {
+      this.logger.debug('Received message', { socketId: socket.id, data });
+      // Process message
+      socket.emit('messageReceived', { success: true });
+    } catch (error: unknown){
+      this.handleError(socket, error as Error): unknown, error: Error | WebSocketError): void {
+    const errorMessage = error instanceof WebSocketError 
+      ? error.message
+      : 'Internal WebSocket error';
+
+    this.logger.error('WebSocket error:', { 
+      socketId: socket.id,
+      error: errorMessage,
+      stack: error.stack
+    });
+
+    socket.emit('error', {
+      message: errorMessage,
+      code: error instanceof WebSocketError ? error.code : 500
+    });
+  }
+
+  private handleDisconnect(socket: unknown): void {
+    this.logger.info('Client disconnected', { socketId: socket.id }): string, data: unknown): void {
+    try {
+      this.io.emit(event, data): unknown) {
+      this.logger.error('Failed to emit event', { 
+        event, 
+        error: error instanceof Error ? error.message : 'Unknown error'
+      }): Server {
+    return this.io;
+  }
+}

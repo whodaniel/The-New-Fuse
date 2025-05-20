@@ -1,0 +1,34 @@
+interface RepoLoaderParams {
+    owner: string;
+    repo: string;
+    branch?: string;
+    accessToken?: string;
+    recursive?: boolean;
+    maxFiles?: number;
+    fileExtensions?: string[];
+    excludePaths?: string[];
+}
+interface Document {
+    pageContent: string;
+    metadata: {
+        source: string;
+        [key: string]: unknown;
+    };
+}
+export default class GitHubRepoLoader {
+    private octokit;
+    private owner;
+    private repo;
+    private branch;
+    private recursive;
+    private maxFiles;
+    private fileExtensions;
+    private excludePaths;
+    constructor({ owner, repo, branch, accessToken, recursive, maxFiles, fileExtensions, excludePaths, }: RepoLoaderParams);
+    load(): Promise<Document[]>;
+    private getFiles;
+    private filterFiles;
+    private getDirectoryContent;
+    private getFileContent;
+}
+export {};

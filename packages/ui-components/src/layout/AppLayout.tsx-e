@@ -1,0 +1,16 @@
+import React, { FC } from "react";
+import { Outlet } from 'react-router-dom';
+import Navbar from '@the-new-fuse/Navbar'; // Create this if it doesn't exist
+
+const AppLayout: FC<{ : unknown }> = () => {
+  return (
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+      <Navbar />
+      <main className="container mx-auto p-8">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+export default AppLayout;

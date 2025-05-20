@@ -1,0 +1,650 @@
+import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
+import { MCPClient, AgentTool } from './mcp-client'; // Removed loadMcpConfigFromSettings import
+import { ErrorHandler, MCPError, ErrorCode } from '../core/error-handling';
+import { TelemetryService } from '../core/telemetry';
+import { MCPTool } from './types';
+import { WebhookManager } from '../../packages/core/src/mcp/WebhookManager';
+
+/**
+ * Helper to get the MCP config path from settings
+ */
+async function loadMcpConfigFromSettings(): Promise<string> {
+    const configSection = vscode.workspace.getConfiguration('thefuse.mcp');
+    const configPath = configSection.get<string>('configPath');
+    
+    if (!configPath) {
+        // Use default path if not set
+        const workspaceFolders = vscode.workspace.workspaceFolders;
+        if (!workspaceFolders || workspaceFolders.length === 0) {
+            throw new Error('No workspace folder open');
+        }
+        return path.join(workspaceFolders[0].uri.fsPath, '.mcp', 'config.json');
+    }
+    
+    return configPath;
+}
+
+/**
+ * MCP Manager - Responsible for managing MCP client and integrating with VS Code
+ */
+export class MCPManager implements vscode.Disposable {
+    private client: MCPClient;
+    private context: vscode.ExtensionContext;
+    private outputChannel: vscode.OutputChannel;
+    private statusBarItem: vscode.StatusBarItem;
+    private tools: AgentTool[] = [];
+    private isInitialized: boolean = false;
+    private inProgress: boolean = false;
+    private listeners: ((tools: AgentTool[]) => void)[] = [];
+    private disposables: vscode.Disposable[] = [];
+    private errorHandler: ErrorHandler;
+    private telemetry: TelemetryService;
+    private webhookManager: WebhookManager;
+
+    constructor(context: vscode.ExtensionContext) {
+        this.context = context;
+        this.outputChannel = vscode.window.createOutputChannel('MCP Integration');
+        this.client = new MCPClient(this.outputChannel);
+        this.errorHandler = ErrorHandler.getInstance();
+        this.telemetry = TelemetryService.getInstance();
+        this.initializeStatusBar();
+        this.webhookManager = new WebhookManager();
+
+        // Register commands
+        this.registerCommands();
+    }
+
+    private initializeStatusBar(): void {
+        this.statusBarItem = vscode.window.createStatusBarItem(
+            vscode.StatusBarAlignment.Right,
+            100
+        );
+        this.statusBarItem.text = "MCP: $(sync~spin) Initializing...";
+        this.statusBarItem.command = 'thefuse.mcp.showTools';
+        this.disposables.push(this.statusBarItem);
+    }
+
+    /**
+     * Initialize the MCP Manager
+     */
+    async initialize(): Promise<boolean> {
+        if (this.isInitialized) {
+            return true;
+        }
+
+        if (this.inProgress) {
+            vscode.window.showInformationMessage('MCP initialization already in progress');
+            return false;
+        }
+
+        this.inProgress = true;
+        this.statusBarItem.text = '$(sync~spin) MCP: Initializing...';
+
+        try {
+            // Get config path
+            let configPath: string;
+            try {
+                configPath = await loadMcpConfigFromSettings();
+            } catch (error) {
+                // If we couldn't determine the path, try to create a default config
+                configPath = await this.createDefaultConfig();
+            }
+
+            // Check if the config file exists
+            if (!fs.existsSync(configPath)) {
+                this.log(`Config file not found at ${configPath}. Creating default config.`);
+                configPath = await this.createDefaultConfig();
+            }
+
+            // Load server configurations
+            this.log(`Loading MCP servers from ${configPath}`);
+            await this.client.loadServers(configPath);
+
+            // Start MCP client and get tools
+            this.tools = await this.client.start();
+
+            // Update status based on tool count
+            if (this.tools.length > 0) {
+                this.statusBarItem.text = `$(tools) MCP: ${this.tools.length} Tools`;
+                this.log(`MCP initialized with ${this.tools.length} tools`);
+                vscode.window.showInformationMessage(`MCP initialized with ${this.tools.length} tools`);
+            } else {
+                this.statusBarItem.text = '$(tools) MCP: No Tools';
+                this.log('MCP initialized but no tools were found');
+                vscode.window.showWarningMessage('MCP initialized but no tools were found. Check your configuration.');
+            }
+
+            this.isInitialized = true;
+
+            // Notify listeners
+            this.notifyListeners();
+
+            return true;
+        } catch (error: any) {
+            this.statusBarItem.text = '$(error) MCP: Error';
+            this.log(`Error initializing MCP: ${error.message}`, true);
+            vscode.window.showErrorMessage(`Failed to initialize MCP: ${error.message}`);
+            return false;
+        } finally {
+            this.inProgress = false;
+        }
+    }
+
+    /**
+     * Create a default MCP configuration file
+     */
+    private async createDefaultConfig(): Promise<string> {
+        // Determine the config location
+        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+        const configDir = workspaceFolder
+            ? workspaceFolder.uri.fsPath
+            : this.context.extensionPath;
+
+        const configPath = path.join(configDir, 'mcp_config.json');
+
+        // Create example config
+        const defaultConfig = {
+            mcpServers: {
+                filesystem: {
+                    command: 'npx',
+                    args: [
+                        '-y',
+                        '@modelcontextprotocol/server-filesystem',
+                        '--allow-dir', './data'
+                    ]
+                },
+                shell: {
+                    command: 'npx',
+                    args: [
+                        '-y',
+                        '@modelcontextprotocol/server-shell',
+                        '--allow-commands', 'ls,cat,grep,find,echo,pwd'
+                    ]
+                },
+                http: {
+                    command: 'npx',
+                    args: [
+                        '-y',
+                        '@modelcontextprotocol/server-http',
+                        '--allow-hosts', 'api.github.com,api.openai.com'
+                    ]
+                },
+                'code-analysis': {
+                    command: 'npx',
+                    args: [
+                        '-y',
+                        '@modelcontextprotocol/server-code-analysis',
+                        '--allow-dir', './'
+                    ]
+                },
+                'vector-db': {
+                    command: 'npx',
+                    args: [
+                        '-y',
+                        '@modelcontextprotocol/server-vector-db',
+                        '--db-path', './data/vector-db'
+                    ]
+                }
+            }
+        };
+
+        // Write the default config
+        await fs.promises.writeFile(
+            configPath,
+            JSON.stringify(defaultConfig, null, 2),
+            'utf8'
+        );
+
+        this.log(`Created default MCP config at ${configPath}`);
+
+        // Also create the data directory if it doesn't exist
+        const dataDir = path.join(configDir, 'data');
+        if (!fs.existsSync(dataDir)) {
+            await fs.promises.mkdir(dataDir, { recursive: true });
+
+            // Add a README to the data directory
+            const readmePath = path.join(dataDir, 'README.md');
+            const readmeContent = `# MCP FileSystem Data Directory
+
+This directory is used by the MCP filesystem tool.
+Files placed here will be accessible to the AI agent through the filesystem MCP server.`;
+
+            await fs.promises.writeFile(readmePath, readmeContent, 'utf8');
+        }
+
+        return configPath;
+    }
+
+    /**
+     * Register commands related to MCP
+     */
+    private registerCommands() {
+        // Command to show available MCP tools
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.showTools', () => {
+                this.showToolsQuickPick();
+            })
+        );
+
+        // Command to manually initialize MCP
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.initialize', () => {
+                return this.initialize();
+            })
+        );
+
+        // Command to test a specific tool
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.testTool', async (toolName?: string) => {
+                return this.testTool(toolName);
+            })
+        );
+
+        // Command to execute a tool
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.executeTool', async (toolName: string, args: Record<string, any>) => {
+                return this.executeTool(toolName, args);
+            })
+        );
+
+        // Command to open the MCP Tools UI
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.openToolsUI', () => {
+                return this.openToolsUI();
+            })
+        );
+
+        // Command to manage webhooks
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.manageWebhooks', async (toolName?: string) => {
+                return this.manageWebhooks(toolName);
+            })
+        );
+
+        // Command to test webhook delivery
+        this.context.subscriptions.push(
+            vscode.commands.registerCommand('thefuse.mcp.testWebhook', async (toolName?: string, webhookId?: string) => {
+                return this.testWebhook(toolName, webhookId);
+            })
+        );
+    }
+
+    /**
+     * Show a QuickPick of available tools
+     */
+    private async showToolsQuickPick() {
+        if (!this.isInitialized) {
+            const shouldInit = await vscode.window.showWarningMessage(
+                'MCP is not initialized. Do you want to initialize it now?',
+                'Yes', 'No'
+            );
+
+            if (shouldInit === 'Yes') {
+                const success = await this.initialize();
+                if (!success) return;
+            } else {
+                return;
+            }
+        }
+
+        if (this.tools.length === 0) {
+            vscode.window.showInformationMessage('No MCP tools available');
+            return;
+        }
+
+        const items = this.tools.map(tool => ({
+            label: tool.name,
+            description: tool.description,
+            detail: `Parameters: ${JSON.stringify(tool.parameters)}`,
+            tool
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+            placeHolder: 'Select an MCP tool to test',
+            matchOnDescription: true
+        });
+
+        if (selected) {
+            await this.testTool(selected.tool.name);
+        }
+    }
+
+    /**
+     * Test a specific tool
+     */
+    private async testTool(toolName?: string) {
+        if (!this.isInitialized) {
+            vscode.window.showWarningMessage('MCP is not initialized. Initialize it first.');
+            return null;
+        }
+
+        if (!toolName) {
+            // If no tool name provided, show QuickPick
+            await this.showToolsQuickPick();
+            return null;
+        }
+
+        // Find the tool
+        const tool = this.tools.find(t => t.name === toolName);
+        if (!tool) {
+            vscode.window.showErrorMessage(`Tool "${toolName}" not found`);
+            return null;
+        }
+
+        try {
+            // Show an input box for JSON arguments
+            const inputArgs = await vscode.window.showInputBox({
+                prompt: `Enter arguments for "${tool.name}" as JSON`,
+                placeHolder: '{}'
+            });
+
+            if (inputArgs === undefined) {
+                return null; // User cancelled
+            }
+
+            // Parse the arguments
+            const args = inputArgs ? JSON.parse(inputArgs) : {};
+
+            // Execute the tool
+            this.log(`Testing tool "${tool.name}" with args: ${JSON.stringify(args)}`);
+            const result = await tool.execute(args);
+
+            // Show the result
+            const resultDoc = await vscode.workspace.openTextDocument({
+                content: JSON.stringify(result, null, 2),
+                language: 'json'
+            });
+
+            await vscode.window.showTextDocument(resultDoc);
+            return result;
+        } catch (error: any) {
+            this.log(`Error testing tool "${tool.name}": ${error.message}`, true);
+            vscode.window.showErrorMessage(`Error testing tool: ${error.message}`);
+            return null;
+        }
+    }
+
+    /**
+     * Execute a tool with the given arguments
+     */
+    async executeTool(toolName: string, args: Record<string, any>): Promise<any> {
+        if (!this.isInitialized) {
+            throw new Error('MCP is not initialized');
+        }
+
+        const tool = this.tools.find(t => t.name === toolName);
+        if (!tool) {
+            throw new Error(`Tool "${toolName}" not found`);
+        }
+
+        try {
+            this.log(`Executing tool "${tool.name}" with args: ${JSON.stringify(args)}`);
+            const result = await tool.execute(args);
+            return result;
+        } catch (error: any) {
+            this.log(`Error executing tool "${tool.name}": ${error.message}`, true);
+            throw error;
+        }
+    }
+
+    /**
+     * Open the enhanced MCP Tools UI
+     */
+    private async openToolsUI() {
+        const panel = vscode.window.createWebviewPanel(
+            'mcpToolsUI',
+            'MCP Tools Dashboard',
+            vscode.ViewColumn.One,
+            {
+                enableScripts: true,
+                retainContextWhenHidden: true
+            }
+        );
+
+        // Get current tools and webhooks
+        const tools = this.tools;
+        const webhooks = this.tools.reduce((acc, tool) => ({
+            ...acc,
+            [tool.name]: this.webhookManager.getWebhooks(tool.name)
+        }), {});
+
+        // Set up the HTML content
+        panel.webview.html = this.getToolsUIHtml(panel.webview, tools, webhooks);
+
+        // Handle messages from the webview
+        panel.webview.onDidReceiveMessage(async message => {
+            try {
+                switch (message.command) {
+                    case 'executeTool':
+                        await this.executeTool(message.toolName, message.params);
+                        break;
+                    case 'registerWebhook':
+                        await this.webhookManager.registerWebhook(message.toolName, message.config);
+                        break;
+                    case 'removeWebhook':
+                        await this.webhookManager.removeWebhook(message.toolName, message.webhookId);
+                        break;
+                }
+            } catch (error) {
+                vscode.window.showErrorMessage(error.message);
+            }
+        });
+    }
+
+    /**
+     * Manage webhooks for a tool
+     */
+    private async manageWebhooks(toolName?: string) {
+        if (!toolName) {
+            const tools = this.tools.map(t => ({
+                label: t.name,
+                description: t.description
+            }));
+
+            const selected = await vscode.window.showQuickPick(tools, {
+                placeHolder: 'Select a tool to manage webhooks'
+            });
+
+            if (!selected) return;
+            toolName = selected.label;
+        }
+
+        const webhooks = this.webhookManager.getWebhooks(toolName);
+        const action = await vscode.window.showQuickPick([
+            { label: 'Add Webhook', value: 'add' },
+            { label: 'Remove Webhook', value: 'remove', description: `${webhooks.length} configured` },
+            { label: 'Test Webhook', value: 'test' }
+        ], {
+            placeHolder: `Manage webhooks for ${toolName}`
+        });
+
+        if (!action) return;
+
+        switch (action.value) {
+            case 'add':
+                await this.addWebhook(toolName);
+                break;
+            case 'remove':
+                await this.removeWebhook(toolName);
+                break;
+            case 'test':
+                await this.testWebhook(toolName);
+                break;
+        }
+    }
+
+    /**
+     * Add a new webhook
+     */
+    private async addWebhook(toolName: string) {
+        const url = await vscode.window.showInputBox({
+            prompt: 'Enter webhook URL',
+            placeHolder: 'https://example.com/webhook'
+        });
+
+        if (!url) return;
+
+        const events = await vscode.window.showInputBox({
+            prompt: 'Enter events to trigger webhook (comma-separated)',
+            placeHolder: 'success, error, *',
+            value: '*'
+        });
+
+        if (!events) return;
+
+        const secret = await vscode.window.showInputBox({
+            prompt: 'Enter webhook secret (optional)',
+            password: true
+        });
+
+        await this.webhookManager.registerWebhook(toolName, {
+            url,
+            events: events.split(',').map(e => e.trim()),
+            secret
+        });
+
+        vscode.window.showInformationMessage(`Webhook registered for ${toolName}`);
+    }
+
+    /**
+     * Remove a webhook
+     */
+    private async removeWebhook(toolName: string) {
+        const webhooks = this.webhookManager.getWebhooks(toolName);
+        if (webhooks.length === 0) {
+            vscode.window.showInformationMessage(`No webhooks configured for ${toolName}`);
+            return;
+        }
+
+        const selected = await vscode.window.showQuickPick(
+            webhooks.map(w => ({
+                label: w.url,
+                description: `Events: ${w.events.join(', ')}`
+            })),
+            { placeHolder: 'Select webhook to remove' }
+        );
+
+        if (!selected) return;
+
+        await this.webhookManager.removeWebhook(toolName, selected.label);
+        vscode.window.showInformationMessage(`Webhook removed from ${toolName}`);
+    }
+
+    /**
+     * Test webhook delivery
+     */
+    private async testWebhook(toolName?: string, webhookId?: string) {
+        if (!toolName) {
+            const tools = this.tools.map(t => ({
+                label: t.name,
+                description: t.description
+            }));
+
+            const selected = await vscode.window.showQuickPick(tools, {
+                placeHolder: 'Select a tool to test webhook'
+            });
+
+            if (!selected) return;
+            toolName = selected.label;
+        }
+
+        const webhooks = this.webhookManager.getWebhooks(toolName);
+        if (webhooks.length === 0) {
+            vscode.window.showInformationMessage(`No webhooks configured for ${toolName}`);
+            return;
+        }
+
+        if (!webhookId) {
+            const selected = await vscode.window.showQuickPick(
+                webhooks.map(w => ({
+                    label: w.url,
+                    description: `Events: ${w.events.join(', ')}`
+                })),
+                { placeHolder: 'Select webhook to test' }
+            );
+
+            if (!selected) return;
+            webhookId = selected.label;
+        }
+
+        try {
+            await this.webhookManager.triggerWebhooks(toolName, 'test', {
+                message: 'Test webhook delivery',
+                timestamp: Date.now()
+            });
+            vscode.window.showInformationMessage('Webhook test triggered successfully');
+        } catch (error) {
+            vscode.window.showErrorMessage(`Webhook test failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Get all available tools
+     */
+    getTools(): AgentTool[] {
+        return [...this.tools];
+    }
+
+    /**
+     * Add a listener for tool changes
+     */
+    onToolsChanged(listener: (tools: AgentTool[]) => void): vscode.Disposable {
+        this.listeners.push(listener);
+
+        // Return a disposable to remove the listener
+        return {
+            dispose: () => {
+                const index = this.listeners.indexOf(listener);
+                if (index !== -1) {
+                    this.listeners.splice(index, 1);
+                }
+            }
+        };
+    }
+
+    /**
+     * Notify all listeners of tool changes
+     */
+    private notifyListeners() {
+        for (const listener of this.listeners) {
+            listener(this.getTools());
+        }
+    }
+
+    /**
+     * Log a message to the output channel
+     */
+    private log(message: string, isError: boolean = false): void {
+        const timestamp = new Date().toISOString();
+        const prefix = '[MCPManager]';
+
+        if (isError) {
+            this.outputChannel.appendLine(`${timestamp} ${prefix} ERROR: ${message}`);
+        } else {
+            this.outputChannel.appendLine(`${timestamp} ${prefix} ${message}`);
+        }
+    }
+
+    /**
+     * Dispose of resources
+     */
+    async dispose() {
+        try {
+            // Cleanup resources
+            for (const disposable of this.disposables) {
+                disposable.dispose();
+            }
+
+            // Cleanup MCP resources
+            await this.client.cleanup();
+
+            this.telemetry.trackEvent('mcp_disposed');
+            await this.telemetry.flush();
+
+        } catch (error) {
+            await this.errorHandler.handleError(error, 'MCP disposal');
+        }
+    }
+}

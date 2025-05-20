@@ -1,0 +1,7 @@
+import React from 'react';
+interface ChatInterfaceProps {
+    currentUser: string;
+    className?: string;
+}
+export declare const ChatInterface: (React as any).FC<ChatInterfaceProps>;
+export {};

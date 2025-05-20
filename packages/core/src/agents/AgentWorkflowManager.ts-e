@@ -1,0 +1,137 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { AgentCommunicationBridge } from './AgentCommunicationBridge';
+import { GDesignerService } from '../integrations/GDesignerService';
+import { MetricsProcessor } from '../security/metricsProcessor';
+
+const logger: Logger = getLogger('agent_workflow');
+
+export interface WorkflowConfig {
+    maxConcurrentTasks: number;
+    taskTimeout: number;
+    retryStrategy: {
+        maxAttempts: number;
+        backoffMultiplier: number;
+        initialDelay: number;
+    };
+}
+
+export class AgentWorkflowManager {
+    private readonly communicationBridge: AgentCommunicationBridge;
+    private readonly gdesignerService: GDesignerService;
+    private readonly metricsProcessor: MetricsProcessor;
+    private activeWorkflows: Map<string, WorkflowState>;
+
+    constructor(
+        private config: WorkflowConfig,
+        communicationBridge: AgentCommunicationBridge,
+        gdesignerService: GDesignerService,
+        metricsProcessor: MetricsProcessor
+    ) {
+        this.communicationBridge = communicationBridge;
+        this.gdesignerService = gdesignerService;
+        this.metricsProcessor = metricsProcessor;
+        this.activeWorkflows = new Map();
+    }
+
+    async startWorkflow(): Promise<void> (workflow: AgentWorkflow): Promise<void> {
+        const workflowId = workflow.id;
+        logger.info(`Starting workflow ${workflowId}`);
+
+        try {
+            await this.validateWorkflow(workflow);
+            const enrichedWorkflow = await this.enrichWorkflow(workflow);
+            
+            this.activeWorkflows.set(workflowId, {
+                workflow: enrichedWorkflow,
+                status: 'running',
+                startTime: Date.now(),
+                completedTasks: 0
+            });
+
+            await this.executeWorkflowTasks(enrichedWorkflow);
+            
+            await this.metricsProcessor.processWorkflowMetrics({
+                workflowId,
+                type: 'workflow_started',
+                timestamp: Date.now()
+            });
+        } catch (error) {
+            logger.error(`Failed to start workflow ${workflowId}:`, error);
+            await this.handleWorkflowError(workflow, error);
+            throw error;
+        }
+    }
+
+    private async executeWorkflowTasks(): Promise<void> (workflow: AgentWorkflow): Promise<void> {
+        const tasks = this.prepareTasks(workflow);
+        const taskGroups = this.groupTasksByDependency(tasks);
+
+        for (const taskGroup of taskGroups) {
+            await Promise.all(
+                taskGroup.map(task => this.executeTask(task, workflow.id))
+            );
+        }
+    }
+
+    private async executeTask(): Promise<void> (task: WorkflowTask, workflowId: string): Promise<void> {
+        let attempts = 0;
+        let delay = this.config.retryStrategy.initialDelay;
+
+        while (attempts < this.config.retryStrategy.maxAttempts) {
+            try {
+                await this.gdesignerService.processTask({
+                    ...task,
+                    workflowId,
+                    attempt: attempts + 1
+                });
+                return;
+            } catch (error) {
+                attempts++;
+                if (attempts < this.config.retryStrategy.maxAttempts) {
+                    await this.delay(delay);
+                    delay *= this.config.retryStrategy.backoffMultiplier;
+                } else {
+                    throw error;
+                }
+            }
+        }
+    }
+
+    private groupTasksByDependency(tasks: WorkflowTask[]): WorkflowTask[][] {
+        // Implementation of topological sort for task dependencies
+        const groups: WorkflowTask[][] = [];
+        const visited = new Set<string>();
+        const visiting = new Set<string>();
+
+        const visit = (task: WorkflowTask, group: WorkflowTask[]) => {
+            if (visiting.has(task.id)) {
+                throw new Error('Circular dependency detected');
+            }
+            if (visited.has(task.id)) {
+                return;
+            }
+
+            visiting.add(task.id);
+            for (const depId of task.dependencies || []) {
+                const depTask = tasks.find(t => t.id === depId);
+                if (depTask) {
+                    visit(depTask, group);
+                }
+            }
+            visiting.delete(task.id);
+            visited.add(task.id);
+            group.push(task);
+        };
+
+        const remainingTasks = [...tasks];
+        while (remainingTasks.length > 0) {
+            const group: WorkflowTask[] = [];
+            visit(remainingTasks[0], group);
+            groups.push(group);
+            remainingTasks.splice(0, group.length);
+        }
+
+        return groups;
+    }
+}

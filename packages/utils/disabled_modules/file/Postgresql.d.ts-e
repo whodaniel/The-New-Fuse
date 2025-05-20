@@ -1,0 +1,18 @@
+import { Client } from 'pg';
+import { QueryResult, SQLConnector } from './types';
+interface PostgresConfig {
+    connectionString: string | null;
+}
+export declare class PostgresSQLConnector implements SQLConnector {
+    private connected;
+    private connectionString;
+    private _client;
+    database_id: string;
+    constructor(config?: PostgresConfig);
+    private parseDatabase;
+    connect(): Promise<Client>;
+    runQuery(queryString?: string): Promise<QueryResult>;
+    getTablesSql(): string;
+    getTableSchemaSql(table_name: string): string;
+}
+export {};

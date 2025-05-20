@@ -1,0 +1,30 @@
+interface TokenPayload {
+    sub: string;
+    type: string;
+    roles: string[];
+    permissions: string[];
+    exp?: number;
+}
+export declare class SecurityService {
+    private logger;
+    private readonly db;
+    private config;
+    constructor();
+    private loadConfig;
+    private generateSecret;
+    hashPassword(password: string): Promise<string>;
+    verifyPassword(password: string, hash: string): Promise<boolean>;
+    generateToken(payload: TokenPayload): Promise<string>;
+    verifyToken(token: string): Promise<TokenPayload>;
+    validateAccess(userId: string, resource: string, action: string): Promise<boolean>;
+    createSession(userId: string, metadata?: Record<string, any>): Promise<string>;
+    validateSession(token: string): Promise<boolean>;
+    revokeSession(token: string): Promise<void>;
+    trackLoginAttempt(userId: string, success: boolean): Promise<boolean>;
+    isAccountLocked(userId: string): Promise<boolean>;
+    generateApiKey(): string;
+    validateApiKey(apiKey: string): Promise<boolean>;
+    rotateSecret(): Promise<void>;
+    audit(action: string, userId: string, resource: string, metadata?: Record<string, any>): Promise<void>;
+}
+export {};

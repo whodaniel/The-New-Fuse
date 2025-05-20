@@ -1,0 +1,102 @@
+openapi: 3.0.0
+info:
+  title: A2A Protocol Integration API
+  version: 1.0.0
+paths:
+  /api/workflow:
+    post:
+      summary: Create new A2A workflow
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                nodes:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/A2ANode'
+      responses:
+        '201':
+          description: Workflow created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Workflow'
+
+  /api/workflow/{workflowId}/execute:
+    post:
+      summary: Execute A2A workflow
+      parameters:
+        - name: workflowId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                input:
+                  type: object
+      responses:
+        '200':
+          description: Workflow execution result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkflowResult'
+
+components:
+  schemas:
+    A2ANode:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [A2A_AGENT]
+        config:
+          type: object
+          properties:
+            agentType:
+              type: string
+              enum: [TASK_EXECUTION, DATA_PROCESSING, COORDINATION]
+            securityLevel:
+              type: string
+              enum: [high, medium, low]
+      required:
+        - type
+        - config
+
+    Workflow:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        nodes:
+          type: array
+          items:
+            $ref: '#/components/schemas/A2ANode'
+        status:
+          type: string
+          enum: [created, running, completed, failed]
+
+    WorkflowResult:
+      type: object
+      properties:
+        workflowId:
+          type: string
+        status:
+          type: string
+        result:
+          type: object
+        metrics:
+          type: object

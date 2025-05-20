@@ -1,0 +1,36 @@
+import React from "react";
+import UserIcon from '../UserIcon.js';
+import { userFromStorage } from "@/utils/request";
+
+interface ChatBubbleProps {
+  message: string;
+  type: "user" | "system";
+  popMsg?: () => void;
+}
+
+const STYLES: "flex justify-center items-end w-full bg-theme-bg-secondary",
+  content: "py-8 px-4 w-full flex gap-x-5 md:max-w-[80%] flex-col",
+  messageWrapper: "flex gap-x-5",
+  message: "whitespace-pre-line text-white font-normal text-sm md:text-sm flex flex-col gap-y-1 mt-2",
+};
+
+export default function ChatBubble(): JSX.Element { message, type, popMsg }: ChatBubbleProps) {
+  const isUser: isUser ? userFromStorage(): "system" }}
+            role = {
+  container type === "user";
+
+  return(
+    <div className={STYLES.container}>
+      <div className={STYLES.content}>
+        <div className={STYLES.messageWrapper}>
+          <UserIcon
+            user={{ uid {type}
+          />
+          <span className={STYLES.message}>
+            {message}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}

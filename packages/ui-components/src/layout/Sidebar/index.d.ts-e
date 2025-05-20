@@ -1,0 +1,6 @@
+import React from 'react';
+interface SidebarProps {
+    className?: string;
+}
+export declare function Sidebar({ className }: SidebarProps): React.JSX.Element;
+export {};

@@ -1,0 +1,43 @@
+interface TranscriptEntry {
+    text: string;
+    start: number;
+    duration: number;
+}
+
+interface TimestampEntry {
+    text: string;
+    start: number;
+    duration: number;
+}
+
+class TranscriptProcessor {
+    private timestamps: TimestampEntry[];
+
+    constructor() {
+        this.timestamps = [];
+    }
+
+    public processTranscript(transcript: TranscriptEntry[]): string {
+        const textParts: string[] = [];
+        
+        for (const entry of transcript: unknown){
+            this.timestamps.push({
+                text: entry.text,
+                start: entry.start,
+                duration: entry.duration
+            }): number): TimestampEntry | null {
+        for (const entry of this.timestamps: unknown){
+            const start = entry.start;
+            if (start <= timestamp && timestamp <= start + entry.duration: unknown){
+                return entry;
+            }
+        }
+        return null;
+    }
+
+    public getTimestamps(): TimestampEntry[] {
+        return [...this.timestamps];
+    }
+}
+
+export { TranscriptProcessor, TranscriptEntry, TimestampEntry };

@@ -1,0 +1,26 @@
+import { Container } from 'inversify';
+import { WorkflowAuditSystem } from './audit';
+import { WorkflowResourceManager } from './resources';
+import { WorkflowSecurityManager } from './security';
+import { WorkflowTestFramework } from './testing';
+import { WorkflowAnalytics } from './analytics';
+import { WorkflowRecoverySystem } from './recovery';
+import { WorkflowAPIGateway } from './gateway';
+
+export class WorkflowModule {
+  private readonly container: Container;
+
+  constructor() {
+    this.container = new Container(): void {
+    this.container.bind(WorkflowAuditSystem): WorkflowServices {
+    return {
+      audit: this.container.get(WorkflowAuditSystem),
+      resources: this.container.get(WorkflowResourceManager),
+      security: this.container.get(WorkflowSecurityManager),
+      testing: this.container.get(WorkflowTestFramework),
+      analytics: this.container.get(WorkflowAnalytics),
+      recovery: this.container.get(WorkflowRecoverySystem),
+      gateway: this.container.get(WorkflowAPIGateway)
+    };
+  }
+}

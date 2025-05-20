@@ -1,0 +1,25 @@
+import { Redis } from 'ioredis';
+import { z } from 'zod';
+export declare const RateLimitConfig: (z as any).ZodObject<{
+    windowMs: (z as any).ZodNumber;
+    maxRequests: (z as any).ZodNumber;
+    keyPrefix: (z as any).ZodDefault<(z as any).ZodString>;
+}, "strip", (z as any).ZodTypeAny, {
+    windowMs: number;
+    maxRequests: number;
+    keyPrefix: string;
+}, {
+    windowMs: number;
+    maxRequests: number;
+    keyPrefix?: string | undefined;
+}>;
+export type RateLimitConfigType = (z as any).infer<typeof RateLimitConfig>;
+export declare class RateLimiter {
+    private redis;
+    private config;
+    constructor(redis: Redis, config: RateLimitConfigType);
+    private getKey;
+    isRateLimited(identifier: string): Promise<boolean>;
+    getRemainingRequests(identifier: string): Promise<number>;
+    reset(identifier: string): Promise<void>;
+}

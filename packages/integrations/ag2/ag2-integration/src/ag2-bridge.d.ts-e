@@ -1,0 +1,18 @@
+import type { AG2Message, AG2Tool, AG2Response, AG2Config } from './types';
+export declare class AG2Bridge {
+    private readonly pythonServiceUrl;
+    private readonly logger;
+    private readonly axiosInstance;
+    private readonly config;
+    constructor(config?: AG2Config);
+    private withRetry;
+    getFeatures(): Promise<string[]>;
+    getVersion(): Promise<string>;
+    getDependencies(): Promise<string[]>;
+    isHealthy(): Promise<boolean>;
+    sendMessage(message: AG2Message): Promise<AG2Response>;
+    getMessages(conversationId: string): Promise<AG2Message[]>;
+    registerTool(tool: AG2Tool): Promise<AG2Response>;
+    getTools(): Promise<AG2Tool[]>;
+    executeTool(toolId: string, args: Record<string, unknown>): Promise<AG2Response>;
+}

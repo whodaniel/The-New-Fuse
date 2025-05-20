@@ -1,0 +1,13 @@
+import { Router } from 'express';
+import agentRoutes from './agentRoutes';
+import memoryRoutes from './memoryRoutes';
+import socialRoutes from './socialRoutes';
+
+const router: Router = Router();
+
+// Register all routes
+router.use('/agents', agentRoutes);
+router.use('/memory', memoryRoutes);
+router.use('/social', socialRoutes);
+
+export default router;

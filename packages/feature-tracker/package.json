@@ -1,0 +1,41 @@
+{
+  "name": "@the-new-fuse/feature-tracker",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --build",
+    "clean": "rimraf dist .turbo node_modules",
+    "dev": "tsc --build --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@the-new-fuse/core": "*",
+    "@the-new-fuse/types": "*",
+    "@the-new-fuse/ui": "*",
+    "@the-new-fuse/ui-components": "*",
+    "@the-new-fuse/utils": "*",
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@types/react-router-dom": "5.3.3",
+    "@types/selenium-webdriver": "^4.1.28",
+    "@typescript-eslint/eslint-plugin": "^8.22.0",
+    "@typescript-eslint/parser": "^8.22.0",
+    "eslint": "^9.19.0",
+    "jest": "^29.0.0",
+    "rimraf": "^5.0.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  }
+}

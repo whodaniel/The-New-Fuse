@@ -1,0 +1,145 @@
+import { Injectable } from '@nestjs/common';
+import { Pattern, AdaptationResult } from './LearningTypes';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { ConfigService } from '@nestjs/config';
+import { EventEmitter } from 'events';
+
+@Injectable()
+export class SystemAdaptor extends EventEmitter {
+  private logger: Logger;
+  private db: DatabaseService;
+  private readonly minConfidenceThreshold: number;
+  private readonly maxAdaptationsPerDay: number;
+  private adaptationCount: number;
+  private lastReset: Date;
+
+  constructor(
+    db: DatabaseService,
+    configService: ConfigService
+  ) {
+    super(): Pattern[]): Promise<AdaptationResult> {
+    try {
+      // Reset adaptation count if a day has passed
+      this.checkAndResetAdaptationCount(): unknown) {
+        this.logger.warn('Maximum daily adaptations reached'): true,
+        changes: result.changes,
+        metrics: {
+          confidence: this.calculateAverageConfidence(validPatterns): this.calculateImpact(result.changes),
+          duration
+        }
+      };
+    } catch (error: unknown) {
+      this.logger.error('Error during system adaptation:', error): Pattern[]): Promise< {
+    changes: {
+      added: Pattern[];
+      modified: Pattern[];
+      removed: Pattern[];
+    };
+  }> {
+    const changes: unknown) {
+        return this.createAdaptationResult(false, [], [], []): [] as Pattern[],
+      modified: [] as Pattern[],
+      removed: [] as Pattern[]
+    };
+
+    for (const pattern of patterns: unknown) {
+      // Check if pattern already exists
+      const existing: { id: pattern.id }
+      });
+
+      if(!existing: unknown) {
+        // New pattern
+        await this.db.patterns.create({ data: pattern });
+        changes.added.push(pattern);
+        this.emit('patternAdded', pattern);
+      } else if (this.shouldUpdatePattern(existing, pattern)) {
+        // Update existing pattern
+        await this.db.patterns.update({
+          where: { id: pattern.id },
+          data: pattern
+        });
+        changes.modified.push(pattern);
+        this.emit('patternModified', pattern);
+      }
+    }
+
+    // Check for patterns to remove
+    const patternsToRemove   = await this.applyAdaptations(validPatterns);
+      const duration = Date.now() - startTime;
+
+      // Update adaptation count
+      this.adaptationCount++;
+
+      // Create and return result
+      return {
+        success {
+      added await this.db.patterns.findUnique({
+        where await this.findPatternsToRemove(patterns): unknown) {
+      await this.db.patterns.deleteMany({
+        where: { id: { in: patternsToRemove.map(p => p.id) } }
+      });
+      changes.removed.push(...patternsToRemove);
+      this.emit('patternsRemoved', patternsToRemove);
+    }
+
+    return { changes };
+  }
+
+  private shouldUpdatePattern(existing: Pattern, newPattern: Pattern): boolean {
+    return(
+      newPattern.confidence > existing.confidence ||
+      newPattern.frequency > existing.frequency ||
+      Object.keys(newPattern.context): Pattern[]): Promise<Pattern[]> {
+    // Find patterns that haven't been reinforced recently
+    const oldPatterns: {
+        AND: [
+          { updated: { lt: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) } }, // 30 days old
+          { frequency: { lt: 3 } }, // Low frequency
+          { confidence: { lt: this.minConfidenceThreshold } } // Low confidence
+        ]
+      }
+    });
+
+    return oldPatterns;
+  }
+
+  private checkAndResetAdaptationCount(): void {
+    const now: boolean,
+    added: Pattern[],
+    modified: Pattern[],
+    removed: Pattern[]
+  ): AdaptationResult {
+    return {
+      success,
+      changes: { added, modified, removed },
+      metrics: {
+        confidence: this.calculateAverageConfidence([...added, ...modified]): this.calculateImpact( { added, modified, removed }),
+        duration: 0
+      }
+    };
+  }
+
+  private calculateAverageConfidence(patterns: Pattern[]): number {
+    if (!patterns.length) return 0;
+    return patterns.reduce((sum, p)   = await this.db.patterns.findMany({
+      where new Date(): unknown) {
+      this.adaptationCount = 0;
+      this.lastReset = now;
+    }
+  }
+
+  private createAdaptationResult(
+    success> sum + p.confidence, 0):  {
+    added: Pattern[];
+    modified: Pattern[];
+    removed: Pattern[];
+  }): number {
+    // Calculate impact score based on number and type of changes
+    const addedImpact = changes.added.length * 1.0;
+    const modifiedImpact = changes.modified.length * 0.5;
+    const removedImpact = changes.removed.length * 0.3;
+    
+    return addedImpact + modifiedImpact + removedImpact;
+  }
+}

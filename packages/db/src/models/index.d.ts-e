@@ -1,0 +1,82 @@
+import { z } from 'zod';
+export declare const AgentSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    systemPrompt: (z as any).ZodString;
+    maxTokens: (z as any).ZodOptional<(z as any).ZodNumber>;
+    temperature: (z as any).ZodOptional<(z as any).ZodNumber>;
+    createdAt: (z as any).ZodDate;
+    updatedAt: (z as any).ZodDate;
+}, "strip", (z as any).ZodTypeAny, {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    systemPrompt: string;
+    description?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}, {
+    id: string;
+    name: string;
+    createdAt: Date;
+    updatedAt: Date;
+    systemPrompt: string;
+    description?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}>;
+export declare const CreateAgentDto: (z as any).ZodObject<Omit<{
+    id: (z as any).ZodString;
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    systemPrompt: (z as any).ZodString;
+    maxTokens: (z as any).ZodOptional<(z as any).ZodNumber>;
+    temperature: (z as any).ZodOptional<(z as any).ZodNumber>;
+    createdAt: (z as any).ZodDate;
+    updatedAt: (z as any).ZodDate;
+}, "id" | "createdAt" | "updatedAt">, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    systemPrompt: string;
+    description?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}, {
+    name: string;
+    systemPrompt: string;
+    description?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}>;
+export declare const UpdateAgentDto: (z as any).ZodObject<{
+    id: (z as any).ZodOptional<(z as any).ZodString>;
+    name: (z as any).ZodOptional<(z as any).ZodString>;
+    description: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodString>>;
+    systemPrompt: (z as any).ZodOptional<(z as any).ZodString>;
+    maxTokens: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodNumber>>;
+    temperature: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodNumber>>;
+    createdAt: (z as any).ZodOptional<(z as any).ZodDate>;
+    updatedAt: (z as any).ZodOptional<(z as any).ZodDate>;
+}, "strip", (z as any).ZodTypeAny, {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+    systemPrompt?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}, {
+    id?: string | undefined;
+    name?: string | undefined;
+    description?: string | undefined;
+    createdAt?: Date | undefined;
+    updatedAt?: Date | undefined;
+    systemPrompt?: string | undefined;
+    maxTokens?: number | undefined;
+    temperature?: number | undefined;
+}>;
+export type Agent = (z as any).infer<typeof AgentSchema>;
+export type CreateAgent = (z as any).infer<typeof CreateAgentDto>;
+export type UpdateAgent = (z as any).infer<typeof UpdateAgentDto>;

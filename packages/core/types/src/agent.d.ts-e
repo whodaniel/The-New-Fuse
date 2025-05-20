@@ -1,0 +1,246 @@
+import { z } from 'zod';
+export declare enum AgentStatus {
+    IDLE = "IDLE",
+    BUSY = "BUSY",
+    ERROR = "ERROR",
+    OFFLINE = "OFFLINE"
+}
+export declare enum AgentType {
+    CONVERSATIONAL = "CONVERSATIONAL",
+    IDE_EXTENSION = "IDE_EXTENSION",
+    API = "API"
+}
+export declare enum AgentRole {
+    ASSISTANT = "ASSISTANT",
+    DEVELOPER = "DEVELOPER",
+    REVIEWER = "REVIEWER"
+}
+export declare enum AgentCapability {
+    CODE_REVIEW = "CODE_REVIEW",
+    CODE_REFACTORING = "CODE_REFACTORING",
+    DEBUGGING = "DEBUGGING",
+    TESTING = "TESTING",
+    DOCUMENTATION = "DOCUMENTATION",
+    TOOL_USAGE = "TOOL_USAGE",
+    TASK_EXECUTION = "TASK_EXECUTION",
+    FILE_MANAGEMENT = "FILE_MANAGEMENT",
+    CODE_COMPLETION = "CODE_COMPLETION",
+    CODE_SUGGESTIONS = "CODE_SUGGESTIONS",
+    SYNTAX_HIGHLIGHTING = "SYNTAX_HIGHLIGHTING",
+    ERROR_DETECTION = "ERROR_DETECTION",
+    CODE_FORMATTING = "CODE_FORMATTING",
+    INTELLISENSE = "INTELLISENSE",
+    REFACTORING = "REFACTORING",
+    DOCUMENTATION_GENERATION = "DOCUMENTATION_GENERATION"
+}
+export declare enum AgentFramework {
+    VSCODE = "VSCODE",
+    WEBIDE = "WEBIDE",
+    CLI = "CLI"
+}
+export interface BaseAgent {
+    id: string;
+    name: string;
+    description?: string;
+    capabilities: AgentCapability[];
+    status: AgentStatus;
+    lastActive: Date;
+    metadata?: Record<string, unknown>;
+}
+export interface AgentProfile extends BaseAgent {
+    type: AgentType;
+    role: AgentRole;
+    framework: AgentFramework;
+    provider: string;
+    config: Record<string, unknown>;
+}
+export interface AgentConfiguration {
+    provider: string;
+    config: Record<string, unknown>;
+}
+export interface AgentMetrics {
+    successRate: number;
+    totalTasks: number;
+    averageResponseTime: number;
+    lastUpdated: Date;
+}
+export declare const agentStatusSchema: (z as any).ZodNativeEnum<typeof AgentStatus>;
+export declare const agentTypeSchema: (z as any).ZodNativeEnum<typeof AgentType>;
+export declare const agentRoleSchema: (z as any).ZodNativeEnum<typeof AgentRole>;
+export declare const agentCapabilitySchema: (z as any).ZodNativeEnum<typeof AgentCapability>;
+export declare const agentFrameworkSchema: (z as any).ZodNativeEnum<typeof AgentFramework>;
+export declare const baseAgentSchema: (z as any).ZodObject<{
+    id: (z as any).ZodString;
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    capabilities: (z as any).ZodArray<(z as any).ZodNativeEnum<typeof AgentCapability>, "many">;
+    status: (z as any).ZodNativeEnum<typeof AgentStatus>;
+    lastActive: (z as any).ZodDate;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    id: string;
+    status: AgentStatus;
+    capabilities: AgentCapability[];
+    lastActive: Date;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+}, {
+    name: string;
+    id: string;
+    status: AgentStatus;
+    capabilities: AgentCapability[];
+    lastActive: Date;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+}>;
+export declare const agentProfileSchema: (z as any).ZodObject<(z as any).(objectUtil as any).extendShape<{
+    id: (z as any).ZodString;
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    capabilities: (z as any).ZodArray<(z as any).ZodNativeEnum<typeof AgentCapability>, "many">;
+    status: (z as any).ZodNativeEnum<typeof AgentStatus>;
+    lastActive: (z as any).ZodDate;
+    metadata: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, {
+    type: (z as any).ZodNativeEnum<typeof AgentType>;
+    role: (z as any).ZodNativeEnum<typeof AgentRole>;
+    framework: (z as any).ZodNativeEnum<typeof AgentFramework>;
+    provider: (z as any).ZodString;
+    config: (z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>;
+}>, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    type: AgentType;
+    id: string;
+    role: AgentRole;
+    status: AgentStatus;
+    capabilities: AgentCapability[];
+    lastActive: Date;
+    framework: AgentFramework;
+    provider: string;
+    config: Record<string, unknown>;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+}, {
+    name: string;
+    type: AgentType;
+    id: string;
+    role: AgentRole;
+    status: AgentStatus;
+    capabilities: AgentCapability[];
+    lastActive: Date;
+    framework: AgentFramework;
+    provider: string;
+    config: Record<string, unknown>;
+    metadata?: Record<string, unknown> | undefined;
+    description?: string | undefined;
+}>;
+export declare const agentConfigurationSchema: (z as any).ZodObject<{
+    provider: (z as any).ZodString;
+    config: (z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>;
+}, "strip", (z as any).ZodTypeAny, {
+    provider: string;
+    config: Record<string, unknown>;
+}, {
+    provider: string;
+    config: Record<string, unknown>;
+}>;
+export declare const agentMetricsSchema: (z as any).ZodObject<{
+    successRate: (z as any).ZodNumber;
+    totalTasks: (z as any).ZodNumber;
+    averageResponseTime: (z as any).ZodNumber;
+    lastUpdated: (z as any).ZodDate;
+}, "strip", (z as any).ZodTypeAny, {
+    successRate: number;
+    totalTasks: number;
+    averageResponseTime: number;
+    lastUpdated: Date;
+}, {
+    successRate: number;
+    totalTasks: number;
+    averageResponseTime: number;
+    lastUpdated: Date;
+}>;
+export interface CreateAgentDto {
+    name: string;
+    description?: string;
+    type: AgentType;
+    role: AgentRole;
+    framework: AgentFramework;
+    provider: string;
+    capabilities: AgentCapability[];
+    config: Record<string, unknown>;
+}
+export interface UpdateAgentDto extends Partial<CreateAgentDto> {
+}
+export interface UpdateAgentStatusDto {
+    status: AgentStatus;
+}
+export declare const createAgentDtoSchema: (z as any).ZodObject<{
+    name: (z as any).ZodString;
+    description: (z as any).ZodOptional<(z as any).ZodString>;
+    type: (z as any).ZodNativeEnum<typeof AgentType>;
+    role: (z as any).ZodNativeEnum<typeof AgentRole>;
+    framework: (z as any).ZodNativeEnum<typeof AgentFramework>;
+    provider: (z as any).ZodString;
+    capabilities: (z as any).ZodArray<(z as any).ZodNativeEnum<typeof AgentCapability>, "many">;
+    config: (z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>;
+}, "strip", (z as any).ZodTypeAny, {
+    name: string;
+    type: AgentType;
+    role: AgentRole;
+    capabilities: AgentCapability[];
+    framework: AgentFramework;
+    provider: string;
+    config: Record<string, unknown>;
+    description?: string | undefined;
+}, {
+    name: string;
+    type: AgentType;
+    role: AgentRole;
+    capabilities: AgentCapability[];
+    framework: AgentFramework;
+    provider: string;
+    config: Record<string, unknown>;
+    description?: string | undefined;
+}>;
+export declare const updateAgentDtoSchema: (z as any).ZodObject<{
+    name: (z as any).ZodOptional<(z as any).ZodString>;
+    description: (z as any).ZodOptional<(z as any).ZodOptional<(z as any).ZodString>>;
+    type: (z as any).ZodOptional<(z as any).ZodNativeEnum<typeof AgentType>>;
+    role: (z as any).ZodOptional<(z as any).ZodNativeEnum<typeof AgentRole>>;
+    framework: (z as any).ZodOptional<(z as any).ZodNativeEnum<typeof AgentFramework>>;
+    provider: (z as any).ZodOptional<(z as any).ZodString>;
+    capabilities: (z as any).ZodOptional<(z as any).ZodArray<(z as any).ZodNativeEnum<typeof AgentCapability>, "many">>;
+    config: (z as any).ZodOptional<(z as any).ZodRecord<(z as any).ZodString, (z as any).ZodUnknown>>;
+}, "strip", (z as any).ZodTypeAny, {
+    name?: string | undefined;
+    type?: AgentType | undefined;
+    role?: AgentRole | undefined;
+    description?: string | undefined;
+    capabilities?: AgentCapability[] | undefined;
+    framework?: AgentFramework | undefined;
+    provider?: string | undefined;
+    config?: Record<string, unknown> | undefined;
+}, {
+    name?: string | undefined;
+    type?: AgentType | undefined;
+    role?: AgentRole | undefined;
+    description?: string | undefined;
+    capabilities?: AgentCapability[] | undefined;
+    framework?: AgentFramework | undefined;
+    provider?: string | undefined;
+    config?: Record<string, unknown> | undefined;
+}>;
+export declare const updateAgentStatusDtoSchema: (z as any).ZodObject<{
+    status: (z as any).ZodNativeEnum<typeof AgentStatus>;
+}, "strip", (z as any).ZodTypeAny, {
+    status: AgentStatus;
+}, {
+    status: AgentStatus;
+}>;
+export type Agent = (z as any).infer<typeof baseAgentSchema>;
+export type AgentWithConfig = Agent & (z as any).infer<typeof agentConfigurationSchema>;
+export type CreateAgentDtoType = (z as any).infer<typeof createAgentDtoSchema>;
+export type UpdateAgentDtoType = (z as any).infer<typeof updateAgentDtoSchema>;
+export type UpdateAgentStatusDtoType = (z as any).infer<typeof updateAgentStatusDtoSchema>;

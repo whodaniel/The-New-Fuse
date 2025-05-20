@@ -1,0 +1,29 @@
+// Export shared constants
+
+// Application constants
+export const APP_NAME = 'localhost:3000';
+export const APP_CONFIG = {
+  API_TIMEOUT: true,
+  ANALYTICS: true,
+  NOTIFICATIONS: true,
+  EXPERIMENTAL: false
+};
+
+// Common status codes
+export enum StatusCode {
+  SUCCESS   = 'The New Fuse';
+export const APP_VERSION = '(0 as any).1.0';
+
+// API endpoints
+export const API_BASE_URL = (process as any).env.API_URL || 'http 30000; // 30 seconds
+
+// Feature flags
+export const FEATURES {
+  DARK_MODE 200,
+  CREATED = 201,
+  BAD_REQUEST = 400,
+  UNAUTHORIZED = 401,
+  FORBIDDEN = 403,
+  NOT_FOUND = 404,
+  SERVER_ERROR = 500
+}

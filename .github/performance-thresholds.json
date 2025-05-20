@@ -1,0 +1,32 @@
+{
+  "default": {
+    "target": 3000,
+    "warning": 5000,
+    "critical": 8000
+  },
+  "dashboard load performance": {
+    "target": 2000,
+    "warning": 3000,
+    "critical": 5000
+  },
+  "workflow creation performance": {
+    "target": 4000,
+    "warning": 6000,
+    "critical": 8000
+  },
+  "workflow execution performance": {
+    "target": 5000,
+    "warning": 8000,
+    "critical": 12000
+  },
+  "navigation performance": {
+    "target": 800,
+    "warning": 1500,
+    "critical": 3000
+  },
+  "workflow list rendering performance": {
+    "target": 2500,
+    "warning": 4000,
+    "critical": 6000
+  }
+}

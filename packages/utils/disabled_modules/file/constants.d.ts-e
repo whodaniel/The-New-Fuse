@@ -1,0 +1,9 @@
+export declare const WATCH_DIRECTORY: string;
+export interface MimeExtensions {
+    [key: string]: string[];
+}
+export declare const ACCEPTED_MIMES: MimeExtensions;
+export interface FileTypeConverters {
+    [key: string]: string;
+}
+export declare const SUPPORTED_FILETYPE_CONVERTERS: FileTypeConverters;

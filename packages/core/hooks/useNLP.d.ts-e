@@ -1,0 +1,15 @@
+import { SearchEngine } from '../ai/SearchEngine';
+import { DashboardState } from '../collaboration/types';
+import { SearchResult, SearchSuggestion } from '../ai/types';
+export declare function useNLP(searchEngine: SearchEngine, dashboardState: DashboardState): {
+    processNaturalLanguageQuery: (query: string) => Promise<{
+        nlpResult: unknown;
+        searchResults: unknown;
+    }>;
+    isProcessing: boolean;
+    results: {
+        searchResults: SearchResult[];
+        total: number;
+        suggestions: SearchSuggestion[];
+    };
+};

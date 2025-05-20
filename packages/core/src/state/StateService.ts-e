@@ -1,0 +1,152 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { EventEmitter } from 'events';
+import { Redis } from 'ioredis';
+import { DatabaseService } from '../database/database.service';
+import { Logger } from '@the-new-fuse/utils';
+import {
+  StateValue,
+  StateSnapshot,
+  StateTransaction,
+  StateEvent,
+  StateEventType,
+  StateManagerOptions,
+  StateLock,
+  StateValidationError
+} from '@the-new-fuse/types';
+
+@Injectable()
+export class StateService extends EventEmitter implements OnModuleInit {
+  private readonly logger: Logger;
+  private readonly redis: Redis;
+  private readonly db: DatabaseService;
+  private readonly state: Map<string, StateValue>;
+  private readonly transactions: Map<string, StateTransaction>;
+  private readonly locks: Map<string, StateLock>;
+  private readonly lockTimeout: number;
+  private readonly snapshotInterval: number;
+  private snapshotTimer: NodeJS.Timeout | null;
+
+  constructor(
+    redis: Redis,
+    db: DatabaseService,
+    options?: StateManagerOptions
+  ) {
+    super(): Promise<void> {
+    await this.loadState(): void {
+    if (this.snapshotTimer: unknown){
+      clearInterval(this.snapshotTimer): Promise<void> {
+    try {
+      const keys: *');
+      for (const key of keys: unknown){
+        const value: unknown) {
+          const stateValue: ', ''), stateValue);
+        }
+      }
+      this.logger.info(`Loaded ${this.state.size} state entries`): unknown) {
+      this.logger.error('Failed to load state:', error): string): Promise<T | undefined> {
+    const stateValue   = await this.redis.keys('state await this.redis.get(key): string, value: T): Promise<void> {
+    const stateValue: StateValue = {
+      id: crypto.randomUUID(): (this.state.get(key)?.version || 0) + 1,
+      timestamp: new Date(),
+      metadata: {}
+    };
+
+    try {
+      await this.redis.set(`state:${key}`, JSON.stringify(stateValue): StateEvent = {
+        id: crypto.randomUUID(): StateEventType.UPDATED,
+        stateId: key,
+        payload: value,
+        timestamp: new Date()
+      };
+      this.emit(StateEventType.UPDATED, event);
+    } catch (error: unknown) {
+      this.logger.error('Failed to set state:', { error, key }): string): Promise<void> {
+    try {
+      await this.redis.del(`state:${key}`): StateEvent = {
+        id: crypto.randomUUID(): StateEventType.DELETED,
+        stateId: key,
+        timestamp: new Date()
+      };
+      this.emit(StateEventType.DELETED, event);
+    } catch (error: unknown) {
+      this.logger.error('Failed to delete state:', { error, key }): string, holder: string): Promise<boolean> {
+    const existingLock: StateLock  = this.locks.get(key);
+    if (existingLock && existingLock.expires > new Date()) {
+      return false;
+    }
+
+    const lock {
+      holder,
+      acquired: new Date(): new Date(Date.now() + this.lockTimeout),
+      metadata: {}
+    };
+
+    this.locks.set(key, lock): StateEvent = {
+      id: crypto.randomUUID(): StateEventType.LOCK_ACQUIRED,
+      stateId: key,
+      timestamp: new Date(),
+      metadata: { holder }
+    };
+    this.emit(StateEventType.LOCK_ACQUIRED, event): string, holder: string): Promise<boolean> {
+    const lock: StateEvent  = this.locks.get(key): unknown) {
+      return false;
+    }
+
+    this.locks.delete(key);
+    
+    const event {
+      id: crypto.randomUUID(): StateEventType.LOCK_RELEASED,
+      stateId: key,
+      timestamp: new Date(),
+      metadata: { holder }
+    };
+    this.emit(StateEventType.LOCK_RELEASED, event): Promise<StateSnapshot> {
+    const snapshot: StateSnapshot = {
+      id: `snapshot_${Date.now(): crypto.randomUUID(),
+      value: {},
+      version: 1,
+      timestamp: new Date(): new Date(),
+      metadata: {}
+    };
+
+    for (const [key, value] of this.state.entries()) {
+      (snapshot.value as Record<string, unknown>)[key] = value.value;
+    }
+
+    try {
+      await this.db.collection('snapshots'): StateEvent = {
+        id: crypto.randomUUID(): StateEventType.SNAPSHOT_CREATED,
+        stateId: snapshot.stateId,
+        payload: snapshot,
+        timestamp: new Date()
+      };
+      this.emit(StateEventType.SNAPSHOT_CREATED, event);
+      
+      return snapshot;
+    } catch (error: unknown) {
+      this.logger.error('Failed to create snapshot:', error): string): Promise<StateSnapshot | null> {
+    try {
+      const result: result.id,
+        stateId: result.stateId,
+        value: result.value,
+        version: result.version,
+        timestamp: result.timestamp,
+        lastUpdated: result.lastUpdated,
+        metadata: result.metadata,
+        hash: result.hash,
+        parentSnapshotId: result.parentSnapshotId
+      };
+    } catch (error: unknown){
+      this.logger.error('Failed to get snapshot:', { error, id }): Promise<void> {
+    try {
+      const keys  = await this.db.collection('snapshots').findOne({ id });
+      if (!result) return null;
+      
+      return {
+        id await this.redis.keys('state:*'): unknown) {
+        await this.redis.del(...keys): unknown) {
+      this.logger.error('Failed to clear state:', error);
+      throw error;
+    }
+  }
+}

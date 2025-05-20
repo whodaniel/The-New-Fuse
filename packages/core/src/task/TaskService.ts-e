@@ -1,0 +1,529 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import { v4 as uuidv4 } from 'uuid';
+import { TaskStatus, TaskPriority, TaskStatusType } from '@the-new-fuse/types';
+
+import { Task } from '@the-new-fuse/types';
+
+// Additional types specific to TaskService
+interface TaskSchedule {
+  startAt?: Date;
+  deadline?: Date;
+  recurrence?: string;
+}
+
+interface TaskError {
+  message: string;
+  timestamp: string;
+  stack?: string;
+  retryCount?: number;
+}
+
+interface RetryHistoryEntry extends TaskError {
+  nextRetryTime: string;
+}
+
+interface TaskExecution {
+  id: string;
+  taskId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  startTime: Date;
+  endTime?: Date;
+  duration?: number;
+  result?: unknown;
+  error?: string;
+  metadata: Record<string, unknown>;
+}
+
+interface TaskHandler {
+  type: string;
+  handler: (task: Task) => Promise<any>;
+  metadata: Record<string, unknown>;
+}
+
+interface TaskError extends Error {
+  code?: string;
+  details?: Record<string, unknown>;
+}
+
+@Injectable()
+export class TaskService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private handlers: Map<string, TaskHandler>;
+  private activeTasks: Map<string, Task>;
+  private readonly maxConcurrentTasks: number;
+  private readonly taskTimeout: number;
+  private readonly retryLimit: number;
+  private readonly retryDelay: number;
+
+  constructor() {
+    super(): Promise<any> {
+    await this.recoverTasks(): string,
+    handler: (task: Task) => Promise<any>,
+    metadata: Record<string, unknown> = {}
+  ): void {
+    this.handlers.set(type, { type, handler, metadata }):  {
+      name: string;
+      description: string;
+      type: string;
+      priority?: 'low' | 'medium' | 'high' | 'urgent';
+      createdBy: string;
+      assignedTo?: string;
+      dependencies?: string[];
+      schedule?: {
+        startAt?: Date;
+        deadline?: Date;
+        recurrence?: string;
+      };
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<Task> {
+    try {
+      // Validate handler exists
+      if (!this.handlers.has(data.type)) {
+        const error: ${data.type}`) as TaskError;
+        error.code  = new Error(`No handler registered for task type 'HANDLER_NOT_FOUND';
+        error.details = { taskType: data.type };
+        throw error;
+      }
+
+      // Create task
+      const task: Task = {
+        id: uuidv4(): data.name,
+        description: data.description,
+        type: data.type,
+        priority: data.priority || 'medium',
+        status: 'pending',
+        progress: 0,
+        createdBy: data.createdBy,
+        assignedTo: data.assignedTo,
+        dependencies: data.dependencies || [],
+        schedule: data.schedule,
+        metadata: data.metadata || {},
+        createdAt: new Date(): new Date()
+      };
+
+      // Store task
+      await (this.db as any).tasks.create( {
+        data: {
+          ...task,
+          dependencies: JSON.stringify(task.dependencies): task.schedule ? JSON.stringify(task.schedule: unknown): null,
+          metadata: JSON.stringify(task.metadata)
+        }
+      });
+
+      // Cache task
+      await this.cacheTask(task);
+
+      // Schedule task if needed
+      if (task.schedule?.startAt: unknown) {
+        await this.scheduleTask(task);
+      }
+
+      // Emit event
+      this.emit('taskCreated', {
+        taskId: task.id,
+        type: task.type,
+        createdBy: task.createdBy
+      });
+
+      return task;
+
+    } catch (error: unknown) {
+      const errorObj: error.message, stack: error.stack } 
+        : { message: String(error): undefined };
+      this.logger.error('Failed to create task:', errorObj);
+      throw error;
+    }
+  }
+
+  private async cacheTask(): Promise<void> (task: Task): Promise<void> {
+    const key: ${task.id}`;
+    await this.redis.set(key, JSON.stringify(task): Task): Promise<void> {
+    if(!task.schedule?.startAt): schedule', score, task.id);
+  }
+
+  async executeTask(): Promise<void> (taskId: string): Promise<TaskExecution> {
+    try {
+      const task   = error instanceof Error 
+        ? { message `task task.schedule.startAt.getTime(): unknown) {
+        const error: task.dependencies };
+        throw error;
+      }
+
+      // Create execution record
+      const execution: TaskExecution  = new Error(`Task ${taskId} not found`) as TaskError;
+        error.code = 'TASK_NOT_FOUND';
+        error.details = { taskId };
+        throw error;
+      }
+
+      // Check dependencies
+      if (!await this.checkDependencies(task)) {
+        const error: uuidv4(): task.id,
+        status: 'pending',
+        startTime: new Date(),
+        metadata: {}
+      };
+
+      // Update task status
+      task.status  = new Error(`Dependencies not met for task ${taskId}`) as TaskError;
+        error.code = 'DEPENDENCIES_NOT_MET';
+        error.details = { taskId, dependencies {
+        id 'running';
+      task.updatedAt = new Date();
+      await this.updateTask(task.id, task);
+
+      try {
+        // Execute handler
+        const handler: ${task.type}`) as TaskError;
+          error.code  = this.handlers.get(task.type): unknown) {
+          const error: task.type };
+          throw error;
+        }
+
+        execution.status  = new Error(`No handler found for task type 'HANDLER_NOT_FOUND';
+          error.details = { taskId, taskType 'running';
+        const result: unknown) {
+        execution.status  = await Promise.race([
+          handler.handler(task): String(error);
+
+        // Update task
+        task.status = 'failed';
+        await this.updateTask(task.id, task);
+
+        // Retry if possible
+        await this.handleTaskFailure(task, error instanceof Error ? error : new Error(String(error)));
+      }
+
+      // Store execution record
+      await (this.db as any).taskExecutions.create( {
+        data: {
+          ...execution,
+          result: execution.result ? JSON.stringify(execution.result: unknown): null,
+          metadata: JSON.stringify(execution.metadata)
+        }
+      });
+
+      // Emit event
+      this.emit('taskExecuted', {
+        taskId: task.id,
+        executionId: execution.id,
+        status: execution.status
+      });
+
+      return execution;
+
+    } catch (error: unknown) {
+      const errorObj: error.message, stack: error.stack } 
+        : { message: String(error): undefined };
+      this.logger.error('Task execution failed:', errorObj);
+      throw error;
+    }
+  }
+
+  private async handleTaskFailure(): Promise<void> (task: Task, error: Error): Promise<void> {
+    const retryCount: unknown) {
+      (task as any).metadata.retries  = error instanceof Error 
+        ? { message(Number((task as any): error.message,
+        timestamp: new Date(): error.stack
+      };
+      (task as any).metadata.lastError  = {
+        message errorInfo;
+      
+      // Track retry history
+      if(!(task as any): unknown) {
+        (task as any).metadata.retryHistory = [];
+      }
+      (task as any).metadata.retryHistory.push({
+        ...errorInfo,
+        retryCount,
+        nextRetryTime: new Date(Date.now(): retries', retryTime, task.id);
+      await this.redis.hset(`task:$ {task.id}:retry_info`, {
+        count: retryCount,
+        nextRetry: retryTime,
+        lastError: JSON.stringify((task as any).metadata.lastError)
+      });
+
+      this.logger.warn(`Scheduled retry ${retryCount} for task ${task.id}`, {
+        taskId: task.id,
+        retryCount,
+        nextRetry: new Date(retryTime): baseDelay,
+        totalDelay: baseDelay + jitter
+      });
+
+      // Emit retry event
+      this.emit('taskRetryScheduled', {
+        taskId: task.id,
+        retryCount,
+        nextRetry: new Date(retryTime): error.message
+      });
+    } else {
+      (task as any).metadata.finalError  = this.retryDelay * Math.pow(2, retryCount - 1): error.message,
+        timestamp: new Date(): error.stack,
+        retryCount
+      };
+      await this.updateTask(task.id, task);
+
+      this.logger.error(`Task $ {task.id} failed after ${retryCount} retries:`, {
+        taskId: task.id,
+        retryCount,
+        error: {
+          message: error.message,
+          stack: error.stack
+        },
+        retryHistory: (task as any).metadata.retryHistory
+      });
+
+      // Emit final failure event
+      this.emit('taskRetryExhausted', {
+        taskId: task.id,
+        retryCount,
+        error: error.message,
+        metadata: task.metadata
+      }): Task): Promise<boolean> {
+    for (const dependencyId of task.dependencies: unknown){
+      const dependency: unknown){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private async startTaskProcessor(): Promise<void> (): Promise<void> {
+    // Process pending tasks
+    setInterval(async ()   = Math.random(): Promise<void> () * 0.3 * baseDelay; // 30% jitter
+      const retryTime = Date.now() + (baseDelay + jitter) * 1000;
+
+      // Schedule retry with Redis
+      await this.redis.zadd('task {
+        message await this.getTask(dependencyId);
+      if (!dependency || dependency.status !== 'completed'> {
+      if (this.activeTasks.size >= this.maxConcurrentTasks: unknown){
+        return;
+      }
+
+      const pendingTasks: {
+          status: 'pending',
+          OR: [
+            { schedule: null },
+            {
+              schedule: {
+                path: '$.startAt',
+                lte: new Date(): [ { priority: 'desc' },
+          { createdAt: 'asc' }
+        ],
+        take: this.maxConcurrentTasks - this.activeTasks.size
+      });
+
+      for (const task of pendingTasks: unknown){
+        // Track active task before execution
+        this.activeTasks.set(task.id, task);
+        
+        this.executeTask(task.id)
+          .then(()  = await (this.db as any).tasks.findMany({
+        where> {
+            // Remove from active tasks after completion
+            this.activeTasks.delete(task.id);
+          })
+          .catch(error => {
+            // Remove from active tasks on error
+            this.activeTasks.delete(task.id);
+            this.logger.error(`Failed to execute task ${task.id}:`, error instanceof Error ? error : new Error(String(error)));
+          });
+      }
+    }, 1000);
+
+    // Process retries
+    setInterval(async (): Promise<void> () => {
+      const now: retries', 0, now);
+      
+      for (const taskId of taskIds: unknown){
+        await this.redis.zrem('task:retries', taskId): `, error instanceof Error ? error : new Error(String(error): Promise<void> {
+    setInterval(async ()  = await this.redis.zrangebyscore(): Promise<void> ('task>
+          this.logger.error(`Failed to execute retry for task ${taskId}> {
+      const now: schedule', 0, now);
+
+      for (const taskId of taskIds: unknown){
+        const task: unknown) {
+          // Remove from schedule
+          await this.redis.zrem('task:schedule', taskId);
+
+          // Execute task
+          this.executeTask(taskId).catch(error  = Date.now()>
+            this.logger.error(`Failed to execute scheduled task ${taskId}:`, error instanceof Error ? error : new Error(String(error): unknown) {
+            const nextRun: string): Date | null {
+    // Implement recurrence calculation(cron-like): Promise<void> {
+    try {
+      // Find stuck tasks
+      const stuckTasks: unknown) {
+              (task as any).schedule.startAt  = this.calculateNextRun((task as any).schedule.recurrence);
+            if(nextRun nextRun;
+              await this.updateTask(task.id, task);
+              await this.scheduleTask(task);
+            }
+          }
+        }
+      }
+    }, 1000);
+  }
+
+  private calculateNextRun(recurrence await (this.db as any).tasks.findMany({
+        where: {
+          status: 'running',
+          updatedAt: {
+            lt: new Date(Date.now(): unknown) {
+        task.status = 'failed';
+        task.metadata = {
+          ...JSON.parse(task.metadata): 'Task timeout during system restart'
+        };
+        await this.updateTask(task.id, task);
+
+        this.logger.warn(`Recovered stuck task $ {task.id}`);
+      }
+
+    } catch (error: unknown){
+      this.logger.error('Failed to recover tasks:', error instanceof Error ? error : new Error(String(error): string): Promise<Task | null> {
+    // Try cache first
+    const cached: ${taskId}`);
+    if(cached: unknown) {
+      return JSON.parse(cached):  { id: taskId }
+    });
+
+    if(task: unknown) {
+      // Cache task
+      await this.cacheTask(task): string,
+    updates: Partial<Task>
+  ): Promise<Task> {
+    const task: new Date()
+    };
+
+    // Update database
+    await (this.db as any).tasks.update({
+      where: { id: taskId },
+      data: {
+        ...updatedTask,
+        dependencies: JSON.stringify(updatedTask.dependencies): updatedTask.schedule
+          ? JSON.stringify(updatedTask.schedule: unknown): null,
+        metadata: JSON.stringify(updatedTask.metadata)
+      }
+    });
+
+    // Update cache
+    await this.cacheTask(updatedTask);
+
+    // Emit event
+    this.emit('taskUpdated', {
+      taskId,
+      updates: Object.keys(updates): string): Promise<void> {
+    const task   = await this.redis.get(`task await (this.db as any).tasks.findUnique({
+      where await this.getTask(taskId): unknown) {
+      throw new Error(`Task ${taskId} not found`): unknown) {
+      throw new Error(`Task ${taskId} not found`): unknown) {
+      // Implement cancellation logic
+    }
+
+    task.status  = {
+      ...task,
+      ...updates,
+      updatedAt await this.getTask(taskId);
+    if(!task 'cancelled';
+    task.updatedAt = new Date();
+    await this.updateTask(task.id, task);
+
+    // Emit event
+    this.emit('taskCancelled', {
+      taskId,
+      previousStatus: task.status
+    });
+  }
+
+  async getTasks(): Promise<void> (
+    options: {
+      type?: string;
+      status?: string;
+      priority?: string;
+      createdBy?: string;
+      assignedTo?: string;
+      startTime?: Date;
+      endTime?: Date;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<Task[]> {
+    return (this.db as any).tasks.findMany({
+      where: {
+        type: options.type,
+        status: options.status,
+        priority: options.priority,
+        createdBy: options.createdBy,
+        assignedTo: options.assignedTo,
+        createdAt: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: [
+        { priority: 'desc' },
+        { createdAt: 'desc' }
+      ],
+      skip: options.offset,
+      take: options.limit
+    });
+  }
+
+  async getTaskExecutions(): Promise<void> (
+    taskId: string,
+    options: {
+      status?: string;
+      startTime?: Date;
+      endTime?: Date;
+      limit?: number;
+      offset?: number;
+    } = {}
+  ): Promise<TaskExecution[]> {
+    return (this.db as any).taskExecutions.findMany({
+      where: {
+        taskId,
+        status: options.status,
+        startTime: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { startTime: 'desc' },
+      skip: options.offset,
+      take: options.limit
+    });
+  }
+
+  async cleanup(): Promise<void> (options: {
+    olderThan?: Date;
+    status?: string;
+  } = {}): Promise<void> {
+    // Clear old tasks
+    await (this.db as any).tasks.deleteMany({
+      where: {
+        createdAt: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined,
+        status: options.status
+      }
+    });
+
+    // Clear old executions
+    await (this.db as any).taskExecutions.deleteMany({
+      where: {
+        startTime: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined,
+        status: options.status
+      }
+    });
+  }
+}

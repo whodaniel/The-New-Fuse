@@ -1,0 +1,10 @@
+import React from 'react';
+interface MistralAiSettings {
+    MistralApiKey?: string;
+    EmbeddingModelPref?: string;
+}
+interface MistralAiOptionsProps {
+    settings: MistralAiSettings;
+}
+export declare function MistralAiOptions({ settings }: MistralAiOptionsProps): React.JSX.Element;
+export {};

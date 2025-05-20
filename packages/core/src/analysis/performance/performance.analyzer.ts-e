@@ -1,0 +1,143 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../../prisma/prisma.service';
+import { MetricsService } from '../../metrics/metrics.service';
+import { 
+  PerformanceInsight, 
+  PerformanceMetricsResult, 
+  SystemPerformanceMetrics,
+  ResourceManager,
+  TaskService
+} from '@the-new-fuse/types';
+import { Logger } from '@the-new-fuse/utils';
+
+interface AnalysisResult {
+  values: SystemPerformanceMetrics;
+  insights: PerformanceInsight[];
+  timestamp: Date;
+}
+
+@Injectable()
+export class PerformanceAnalyzer implements ResourceManager {
+  private readonly THROUGHPUT_THRESHOLD = 100; // requests per second
+  private readonly LATENCY_THRESHOLD = 500; // milliseconds
+  private readonly CPU_THRESHOLD = 80; // percentage
+  private readonly MEMORY_THRESHOLD = 80; // percentage
+  private readonly logger = new Logger(PerformanceAnalyzer.name): PrismaService,
+    private readonly metricsService: MetricsService,
+    private readonly taskService: TaskService
+  ) {}
+
+  async analyzePerformance(): Promise<void> (projectId: string, timeWindow: number = 3600000): Promise<AnalysisResult> {
+    try {
+      const endTime: metrics,
+        insights,
+        timestamp: endTime
+      };
+    } catch (error: unknown){
+      this.logger.error('Failed to analyze performance:', { error: error instanceof Error ? error.message : 'Unknown error' }): Promise<SystemPerformanceMetrics> {
+    const metrics: Promise<SystemPerformanceMetrics> {
+    const cpuUsage: Implement error rate calculation
+    const requestCount   = new Date();
+      const startTime = new Date(endTime.getTime() - timeWindow);
+
+      // Get performance metrics for the time window
+      const metrics = await this.collectMetrics();
+      const insights = await this.generateInsights(metrics);
+
+      return {
+        values await this.gatherSystemMetrics(): SystemPerformanceMetrics): Promise<void> {
+    if (metrics.cpuUsage > this.CPU_THRESHOLD: unknown){
+      this.logger.warn(`High CPU usage detected: ${metrics.cpuUsage}%`): unknown) {
+      this.logger.warn(`High memory usage detected: ${metrics.memoryUsage}%`): unknown) {
+      this.logger.warn(`High latency detected: ${metrics.latency}ms`): unknown) {
+      this.logger.warn(`Low throughput detected: ${metrics.throughput} requests/sec`): Promise<TaskService> {
+    // Return the task service from the DI container
+    return this.taskService;
+  }
+
+  async getMetricsService(): Promise<void> (): Promise<MetricsService> {
+    // Return the metrics service
+    return this.metricsService;
+  }
+
+  async getCPUUsage(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  async getMemoryUsage(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  async getAverageLatency(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  async getThroughput(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  async getRequestCount(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  async getAverageResponseTime(): Promise<void> (): Promise<number> {
+    // Implementation
+    return 0;
+  }
+
+  private async generateInsights(): Promise<void> (metrics: SystemPerformanceMetrics): Promise<PerformanceInsight[]> {
+    const insights: PerformanceInsight[]  = await this.getAverageResponseTime();
+
+    return {
+      cpuUsage,
+      memoryUsage,
+      latency,
+      throughput,
+      errorRate,
+      requestCount,
+      responseTime
+    };
+  }
+
+  private async analyzeMetrics(): Promise<void> (metrics [];
+
+    if (metrics.cpuUsage > this.CPU_THRESHOLD: unknown): Promise<any> {
+      insights.push({
+        type: 'cpu',
+        severity: 'warning',
+        description: `High CPU usage detected: ${metrics.cpuUsage}%`,
+        recommendation: 'Consider scaling up resources or optimizing CPU-intensive operations',
+        metrics,
+        timestamp: new Date(): unknown) {
+      insights.push({
+        type: 'memory',
+        severity: 'warning',
+        description: `High memory usage detected: ${metrics.memoryUsage}%`,
+        recommendation: 'Consider increasing memory allocation or optimizing memory usage',
+        metrics,
+        timestamp: new Date(): unknown) {
+      insights.push({
+        type: 'latency',
+        severity: 'warning',
+        description: `High latency detected: ${metrics.latency}ms`,
+        recommendation: 'Investigate potential bottlenecks in request processing',
+        metrics,
+        timestamp: new Date(): unknown) {
+      insights.push({
+        type: 'throughput',
+        severity: 'warning',
+        description: `Low throughput detected: ${metrics.throughput} requests/sec`,
+        recommendation: 'Investigate potential bottlenecks in request processing',
+        metrics,
+        timestamp: new Date()
+      });
+    }
+
+    return insights;
+  }
+}

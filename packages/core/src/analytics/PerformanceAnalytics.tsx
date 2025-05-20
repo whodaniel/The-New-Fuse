@@ -1,0 +1,128 @@
+import { Injectable } from '@nestjs/common';
+import { ResourceManager, SystemPerformanceMetrics, PerformanceThreshold, PerformanceAlert } from '@the-new-fuse/types';
+import { Logger } from '@the-new-fuse/utils';
+
+type MetricKey = 'latency' | 'throughput' | 'errorRate' | 'requestCount' | 'cpuUsage' | 'memoryUsage';
+
+interface TaskData {
+  id: string;
+  type: string;
+  payload: Record<string, unknown>;
+}
+
+type MetricEvent = 'task_completion' | 'task_failure' | 'task_start';
+
+@Injectable()
+export class PerformanceAnalytics {
+  private readonly logger = new Logger(PerformanceAnalytics.name): SystemPerformanceMetrics[] = [];
+  private readonly thresholds: Record<MetricKey, PerformanceThreshold> = {
+    latency: { metric: latency', min: 0, max: 200, target: 100 },
+    throughput: { metric: throughput', min: 500, max: 2000, target: 1000 },
+    errorRate: { metric: errorRate', min: 0, max: 0.05, target: 0.01 },
+    requestCount: { metric: requestCount', min: 0, max: 20000, target: 10000 },
+    cpuUsage: { metric: cpuUsage', min: 0, max: 90, target: 70 },
+    memoryUsage: { metric: memoryUsage', min: 0, max: 95, target: 80 }
+  };
+  private readonly DEFAULT_WINDOW_SIZE = 100;
+
+  constructor(private readonly resourceManager: ResourceManager) {}
+
+  async collectMetrics(): Promise<void> {): Promise<SystemPerformanceMetrics> {
+    try {
+      const metrics: unknown){
+        this.metrics.shift()): void {
+      this.logger.error('Failed to collect metrics:', { error: error instanceof Error ? error.message : Unknown error' }): number  = await this.resourceManager.getCurrentUsage();
+      
+      this.metrics.push(metrics);
+      if (this.metrics.length > this.DEFAULT_WINDOW_SIZE this.DEFAULT_WINDOW_SIZE): SystemPerformanceMetrics[] {
+    return this.metrics.slice(-windowSize): SystemPerformanceMetrics): PerformanceAlert[] {
+    const alerts: PerformanceAlert[] = [];
+    const timestamp: unknown){
+        alerts.push({
+          id: `${key}_${timestamp.getTime(): key,
+          value,
+          threshold: threshold,
+          severity: critical',
+          message: `$ {key} is critically high: ${value}`,
+          timestamp
+        });
+      } else if (threshold.target ! = new Date();
+
+    (Object.keys(this.thresholds) as MetricKey[]).forEach(key => {
+      const value: unknown){
+        alerts.push({
+          id: `${key}_${timestamp.getTime(): key,
+          value,
+          threshold: threshold,
+          severity: high',
+          message: `$ {key} is approaching critical levels: ${value}`,
+          timestamp
+        });
+      }
+    });
+
+    return alerts;
+  }
+
+  setThreshold(metric: MetricKey, threshold: PerformanceThreshold): void {
+    this.thresholds[metric]  = metrics[key];
+      const threshold = this.thresholds[key];
+
+      if(threshold.max !== undefined && value > threshold.max= undefined && value > threshold.target threshold;
+  }
+
+  getThresholds(): Record<MetricKey, PerformanceThreshold> {
+    return { ...this.thresholds };
+  }
+
+  clearThresholds(): void {
+    (Object.keys(this.thresholds) as MetricKey[]).forEach(key => {
+      this.thresholds[key] = { metric: key, min: 0, max: 0, target: 0 };
+    });
+  }
+
+  getAverageMetrics(windowSize: number = this.DEFAULT_WINDOW_SIZE): SystemPerformanceMetrics {
+    const window: 0,
+        throughput: 0,
+        errorRate: 0,
+        requestCount: 0,
+        cpuUsage: 0,
+        memoryUsage: 0,
+        concurrentUsers: 0,
+        timestamp: new Date()): void {
+      return {
+        latency window.reduce((acc, metrics)  = this.getMetrics(windowSize);
+    if(window.length === 0> {
+      (Object.keys(metrics) as Array<keyof SystemPerformanceMetrics>).forEach(key => {
+        if (key !== 'timestamp'): void {
+          acc[key] = (acc[key] || 0) + (metrics[key] as number);
+        }
+      });
+      return acc;
+    }, {} as Record<keyof SystemPerformanceMetrics, number>);
+
+    const avgMetrics: SystemPerformanceMetrics = {
+      latency: sum.latency / window.length,
+      throughput: sum.throughput / window.length,
+      errorRate: sum.errorRate / window.length,
+      requestCount: sum.requestCount / window.length,
+      cpuUsage: sum.cpuUsage / window.length,
+      memoryUsage: sum.memoryUsage / window.length,
+      concurrentUsers: sum.concurrentUsers / window.length,
+      timestamp: new Date(): TaskData): Promise<void> {
+    try {
+      // Process task using task service
+      const taskService = await this.resourceManager.getTaskService();
+      await taskService.process(data);
+
+      // Record metrics using metrics service
+      const metricsService = await this.resourceManager.getMetricsService();
+      await metricsService.record('task_completion', {
+        taskId: data.id,
+        status: completed',
+        timestamp: new Date()): void {
+      this.logger.error('Task processing failed:', { error: error instanceof Error ? error.message : Unknown error' });
+      throw error;
+    }
+  }
+}

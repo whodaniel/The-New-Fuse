@@ -1,0 +1,28 @@
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Agent } from './agent.entity';
+import { PromptTemplate } from './prompt.entity';
+import { AgentPromptTemplate as IAgentPromptTemplate } from '../types/prompt.types';
+
+@Entity()
+export class AgentPromptTemplate extends PromptTemplate implements IAgentPromptTemplate {
+    @Column('uuid'): string;
+
+    @ManyToOne(() => Agent)
+    @JoinColumn( { name: 'agentId' })
+    agent!: Agent;
+
+    @Column(): 'system' | 'user' | 'function' | 'response';
+
+    @Column('jsonb', { nullable: true })
+    contextRequirements?: {
+        needsHistory?: boolean;
+        needsMemory?: boolean;
+        needsTools?: boolean;
+        needsState?: boolean;
+    };
+
+    @Column('jsonb', { nullable: true }):  {
+        format: 'text' | 'json' | 'markdown' | 'code';
+        schema?: object;
+    };
+}

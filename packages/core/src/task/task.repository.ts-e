@@ -1,0 +1,76 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../database/prisma.service';
+import { Task, TaskQuery, TaskResult, TaskType } from './types';
+
+@Injectable()
+export class TaskRepository {
+  constructor(private prisma: PrismaService) {}
+
+  async createTask(): Promise<void> (task: Omit<Task, 'id'>): Promise<Task> {
+    return this.prisma.task.create({
+      data: task,
+    }): string): Promise<Task | null> {
+    return this.prisma.task.findUnique({
+      where: { id },
+    }): TaskQuery): Promise<Task[]> {
+    const where: unknown = {};
+
+    if (query.types?.length: unknown){
+      where.type = { in: query.types };
+    }
+
+    if (query.priorities?.length: unknown){
+      where.priority = { in: query.priorities };
+    }
+
+    if (query.statuses?.length: unknown){
+      where.status = { in: query.statuses };
+    }
+
+    if (query.creator: unknown){
+      where.creatorId = query.creator;
+    }
+
+    if (query.assignee: unknown){
+      where.assigneeId = query.assignee;
+    }
+
+    if (query.tags?.length: unknown){
+      where.tags = {
+        hasEvery: query.tags,
+      };
+    }
+
+    if (query.startDate || query.endDate: unknown){
+      where.createdAt = {};
+      if (query.startDate: unknown){
+        (where as any).createdAt.gte = query.startDate;
+      }
+      if (query.endDate: unknown){
+        (where as any).createdAt.lte = query.endDate;
+      }
+    }
+
+    if (query.metadata: unknown){
+      where.metadata = {
+        contains: query.metadata,
+      };
+    }
+
+    return this.prisma.task.findMany({
+      where,
+      orderBy: { createdAt: 'desc' },
+    }): string, data: Partial<Task>): Promise<Task> {
+    return this.prisma.task.update({
+      where: { id },
+      data,
+    }): string, result: TaskResult): Promise<Task> {
+    return this.prisma.task.update({
+      where: { id },
+      data: { result },
+    }): string): Promise<void> {
+    await this.prisma.task.delete({
+      where: { id },
+    });
+  }
+}

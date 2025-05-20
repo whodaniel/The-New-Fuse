@@ -1,0 +1,104 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MetricCard = void 0;
+var react_1 = require("react");
+var MetricCard = function (_a) {
+    var metric = _a.metric, _b = _a.className, className = _b === void 0 ? '' : _b;
+    var getChangeColor = function (trend) {
+        switch (trend) {
+            case 'up':
+                return 'text-green-600';
+            case 'down':
+                return 'text-red-600';
+            default:
+                return 'text-gray-600';
+        }
+    };
+    var getBackgroundColor = function (color) {
+        switch (color) {
+            case 'blue':
+                return 'bg-blue-50';
+            case 'green':
+                return 'bg-green-50';
+            case 'yellow':
+                return 'bg-yellow-50';
+            case 'red':
+                return 'bg-red-50';
+            case 'indigo':
+                return 'bg-indigo-50';
+            case 'purple':
+                return 'bg-purple-50';
+            default:
+                return 'bg-gray-50';
+        }
+    };
+    var getIconColor = function (color) {
+        switch (color) {
+            case 'blue':
+                return 'text-blue-600';
+            case 'green':
+                return 'text-green-600';
+            case 'yellow':
+                return 'text-yellow-600';
+            case 'red':
+                return 'text-red-600';
+            case 'indigo':
+                return 'text-indigo-600';
+            case 'purple':
+                return 'text-purple-600';
+            default:
+                return 'text-gray-600';
+        }
+    };
+    return className = { "relative p-6 bg-white rounded-lg shadow ": .concat(className) } >
+        className;
+    "flex items-center" >
+        { metric, : .icon && className };
+    {
+        "flex items-center justify-center w-12 h-12 rounded-lg ".concat(getBackgroundColor(metric.color));
+    }
+     >
+        className;
+    {
+        "h-6 w-6 ".concat(getIconColor(metric.color));
+    }
+     >
+        { metric, : .icon }
+        < /span>
+        < /div>;
+}
+    < div, className = { metric, : .icon ? 'ml-4' : '' } >
+    className;
+"text-sm font-medium text-gray-500" > { metric, : .label } < /h3>
+    < div;
+className = "flex items-baseline mt-1" >
+    className;
+"text-2xl font-semibold text-gray-900" >
+    { metric, : .value }
+    < /p>;
+{
+    metric.change && className;
+    {
+        "ml-2 flex items-baseline text-sm font-semibold ".concat(getChangeColor(metric.change.trend));
+    }
+     >
+        { metric, : .change.trend === 'up' ? className = "self-center flex-shrink-0 h-4 w-4" : , fill = "none", stroke = "currentColor", viewBox = "0 0 24 24" >
+                strokeLinecap, "round": strokeLinejoin = "round", strokeWidth = { 2:  }, d = "M5 10l7-7m0 0l7 7m-7-7v18" /  >
+                /svg>, metric, : .change.trend === 'down' ? className = "self-center flex-shrink-0 h-4 w-4" : , fill = "none", stroke = "currentColor", viewBox = "0 0 24 24" >
+                strokeLinecap, "round": strokeLinejoin = "round", strokeWidth = { 2:  }, d = "M19 14l-7 7m0 0l-7-7m7 7V3" /  >
+                /svg>, null:  }
+        < span;
+    className = "ml-1" >
+        { metric, : .change.value } % ({ metric, : .change.period })
+        < /span>
+        < /p>;
+}
+/div>
+    < /div>
+    < /div>
+    < /div>;
+;
+;
+exports.MetricCard = MetricCard;
+//# sourceMappingURL=MetricCard.js.map

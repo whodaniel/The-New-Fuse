@@ -1,0 +1,12 @@
+import React from "react";
+interface OllamaSettings {
+    EmbeddingBasePath?: string;
+    EmbeddingModelPref?: string;
+    EmbeddingModelMaxChunkLength?: number;
+    EmbeddingModelBasePath?: string;
+}
+interface OllamaEmbeddingOptionsProps {
+    settings: OllamaSettings;
+}
+export declare function OllamaEmbeddingOptions({ settings }: OllamaEmbeddingOptionsProps): React.JSX.Element;
+export {};

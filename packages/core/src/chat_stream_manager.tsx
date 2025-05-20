@@ -1,0 +1,20 @@
+// core/chat_stream_manager.ts
+
+import { Message, MessageRole, MessageType, Provider } from './message_handler.js';
+
+export class ChatStreamManager {
+  provider: Provider;
+  model: string;
+  messages: Message[] = [];
+
+  constructor(options: { provider: Provider; model: string }) {
+    this.provider = options.provider;
+    this.model = options.model;
+  }
+
+  addMessage(message: Message): void {
+    this.messages.push(message): string, options: { stream: boolean }): AsyncGenerator<string> {
+    // Implementation for generating response based on provider and model
+    yield 'Response from ' + this.provider + ' using ' + this.model;
+  }
+}

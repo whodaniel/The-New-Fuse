@@ -1,0 +1,141 @@
+name: MCP Benchmarks
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/vscode-extension/src/mcp-integration/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/vscode-extension/src/mcp-integration/**'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Benchmark profile to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - quick-test
+          - stress-test
+          - large-messages
+          - high-concurrency
+
+jobs:
+  benchmark:
+    name: Run MCP Benchmarks
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [18.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: |
+          cd src/vscode-extension
+          npm ci
+          
+      - name: Build project
+        run: |
+          cd src/vscode-extension
+          npm run compile
+          
+      - name: Run tests
+        run: |
+          cd src/vscode-extension
+          npm test
+          
+      - name: Run benchmarks
+        run: |
+          cd src/vscode-extension
+          npm run benchmark -- ${{ github.event.inputs.profile || 'all' }}
+          
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: benchmark-results
+          path: src/vscode-extension/benchmark-results
+          
+      - name: Parse benchmark results
+        id: benchmark
+        run: |
+          cd src/vscode-extension
+          LATEST=$(ls -t benchmark-results/*.json | head -1)
+          echo "BENCHMARK_RESULTS<<EOF" >> $GITHUB_ENV
+          cat $LATEST >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+          
+      - name: Create benchmark report comment
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            const results = JSON.parse(process.env.BENCHMARK_RESULTS);
+            let comment = '## MCP Benchmark Results\n\n';
+            
+            for (const [profile, data] of Object.entries(results.profiles)) {
+              if (data.error) {
+                comment += `### ❌ ${profile}\nError: ${data.error}\n\n`;
+                continue;
+              }
+              
+              const metrics = data.metrics;
+              comment += `### ✅ ${profile}\n`;
+              comment += `- Messages/sec: ${Math.round(metrics.messagesPerSecond)}\n`;
+              comment += `- Average latency: ${Math.round(metrics.averageLatency)}ms\n`;
+              comment += `- Error rate: ${(metrics.errorRate * 100).toFixed(2)}%\n`;
+              comment += `- Memory usage: ${Math.round(metrics.memoryUsage / 1024 / 1024)}MB\n\n`;
+            }
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+            
+      - name: Check performance regression
+        if: github.event_name == 'pull_request'
+        run: |
+          cd src/vscode-extension/benchmark-results
+          FILES=($(ls -t *.json))
+          if [ ${#FILES[@]} -lt 2 ]; then
+            echo "Not enough benchmark data for comparison"
+            exit 0
+          fi
+          
+          CURRENT="${FILES[0]}"
+          PREVIOUS="${FILES[1]}"
+          
+          node -e "
+            const current = require('./${CURRENT}');
+            const previous = require('./${PREVIOUS}');
+            
+            let hasRegression = false;
+            
+            for (const [profile, data] of Object.entries(current.profiles)) {
+              if (!data.metrics || !previous.profiles[profile]?.metrics) continue;
+              
+              const currentRate = data.metrics.messagesPerSecond;
+              const previousRate = previous.profiles[profile].metrics.messagesPerSecond;
+              const rateChange = ((currentRate - previousRate) / previousRate) * 100;
+              
+              if (rateChange < -10) {
+                console.error(\`Performance regression in \${profile}: \${rateChange.toFixed(2)}% slower\`);
+                hasRegression = true;
+              }
+            }
+            
+            process.exit(hasRegression ? 1 : 0);
+          "

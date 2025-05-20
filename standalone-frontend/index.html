@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .hero {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            letter-spacing: -0.025em;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .feature {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .feature:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .feature h2 {
+            color: #4f46e5;
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+        .feature p {
+            color: #4b5563;
+            margin-bottom: 0;
+        }
+        .cta {
+            background: #4f46e5;
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .cta h2 {
+            margin-top: 0;
+            font-size: 2rem;
+        }
+        .cta p {
+            max-width: 600px;
+            margin: 0 auto 1.5rem;
+            opacity: 0.9;
+        }
+        .button {
+            display: inline-block;
+            background: white;
+            color: #4f46e5;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+            transition: all 0.2s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .button:hover {
+            background: #f9fafb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #4f46e5;
+            display: flex;
+            align-items: center;
+        }
+        .nav-logo-icon {
+            margin-right: 0.5rem;
+            font-size: 1.75rem;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            padding: 0.5rem 0;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: #4f46e5;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: #4f46e5;
+            transition: width 0.2s;
+        }
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .footer {
+            background-color: #1f2937;
+            color: white;
+            padding: 3rem 2rem;
+            margin-top: 4rem;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        .footer-section h3 {
+            color: #e5e7eb;
+            margin-top: 0;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+        }
+        .footer-section ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .footer-section li {
+            margin-bottom: 0.5rem;
+        }
+        .footer-section a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .footer-section a:hover {
+            color: white;
+        }
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+        .dashboard {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .dashboard h2 {
+            margin-top: 0;
+            color: #1f2937;
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .dashboard-card {
+            background: #f9fafb;
+            border-radius: 6px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .dashboard-card h3 {
+            margin-top: 0;
+            font-size: 1.25rem;
+            color: #4f46e5;
+        }
+        .dashboard-card p {
+            margin-bottom: 0;
+            color: #4b5563;
+        }
+        .stat {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1f2937;
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-logo">
+            <span class="nav-logo-icon">⚡</span>
+            The New Fuse
+        </div>
+        <div class="nav-links">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">Documentation</a>
+            <a href="#" class="nav-link">GitHub</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to The New Fuse</h1>
+            <p>A next-generation platform for AI agent collaboration and communication</p>
+        </div>
+        
+        <div class="dashboard">
+            <h2>Platform Overview</h2>
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h3>Active Agents</h3>
+                    <div class="stat">24</div>
+                    <p>AI agents currently registered in the system</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Workflows</h3>
+                    <div class="stat">12</div>
+                    <p>Active agent workflows in production</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>Messages</h3>
+                    <div class="stat">1,458</div>
+                    <p>Agent-to-agent messages exchanged today</p>
+                </div>
+                <div class="dashboard-card">
+                    <h3>System Status</h3>
+                    <div class="stat" style="color: #10b981;">Healthy</div>
+                    <p>All systems operational</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h2>Agent-to-Agent Protocol</h2>
+                <p>Implement Google's A2A protocol alongside Model Context Protocol (MCP) for seamless AI agent communication across environments.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Agent Card</h2>
+                <p>Allow agents to advertise their capabilities to other agents in the network with our Agent Card system, enabling dynamic discovery.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Standardized Architecture</h2>
+                <p>Built with a service layer architecture using BaseRepository, BaseService, and BaseController patterns for maintainable code.</p>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h2>TypeScript-Python Bridges</h2>
+                <p>Seamlessly integrate with Google's ADK and Pydantic Agent framework through our TypeScript-Python bridges for cross-language compatibility.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Workflow Builder</h2>
+                <p>Create complex agent workflows with our visual workflow builder, enabling sophisticated multi-agent interactions and automation.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Comprehensive UI Components</h2>
+                <p>Leverage our extensive library of React components designed specifically for AI agent interfaces and monitoring dashboards.</p>
+            </div>
+        </div>
+        
+        <div class="cta">
+            <h2>Ready to get started?</h2>
+            <p>Explore our documentation to learn more about The New Fuse and how to integrate it into your projects for enhanced AI agent capabilities.</p>
+            <a href="#" class="button">View Documentation</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>The New Fuse</h3>
+                <ul>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Careers</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Resources</h3>
+                <ul>
+                    <li><a href="#">Documentation</a></li>
+                    <li><a href="#">API Reference</a></li>
+                    <li><a href="#">Tutorials</a></li>
+                    <li><a href="#">Examples</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Community</h3>
+                <ul>
+                    <li><a href="#">GitHub</a></li>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Stack Overflow</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Legal</h3>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">License</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 The New Fuse. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple JavaScript to make the dashboard numbers animate
+        document.addEventListener('DOMContentLoaded', function() {
+            const stats = document.querySelectorAll('.stat');
+            
+            stats.forEach(stat => {
+                if (stat.textContent !== 'Healthy') {
+                    const finalValue = parseInt(stat.textContent.replace(/,/g, ''));
+                    let startValue = 0;
+                    const duration = 1500;
+                    const startTime = performance.now();
+                    
+                    function updateNumber(currentTime) {
+                        const elapsedTime = currentTime - startTime;
+                        const progress = Math.min(elapsedTime / duration, 1);
+                        const currentValue = Math.floor(progress * finalValue);
+                        
+                        stat.textContent = currentValue.toLocaleString();
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(updateNumber);
+                        } else {
+                            stat.textContent = finalValue.toLocaleString();
+                        }
+                    }
+                    
+                    requestAnimationFrame(updateNumber);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

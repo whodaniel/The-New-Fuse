@@ -1,0 +1,55 @@
+{
+    "type": "PROTOCOL_EXERCISE",
+    "source": "local_ai_agent_001",
+    "target": "TNF_AG_MENTOR_003",
+    "content": {
+        "exercise_type": "message_formatting",
+        "implementation": {
+            "task_request": {
+                "priority_levels": ["urgent", "normal", "background"],
+                "context_inclusion": true,
+                "error_handling": {
+                    "retry_strategy": "exponential_backoff",
+                    "max_retries": 3
+                },
+                "authentication": {
+                    "mechanism": "jwt_with_rsa",
+                    "token_rotation": "1h",
+                    "inter_extension_messages": {
+                        "header_spec": {
+                            "jwt": "$token",
+                            "origin": "$extension_id",
+                            "destination": "$target_extension",
+                            "timestamp": "$iso_datetime"
+                        },
+                        "payload_schema": {
+                            "type": "request|response|event",
+                            "content_type": "application/json",
+                            "validation": {
+                                "schema_uri": "https://schemas.tnf/ai-extension/v1",
+                                "required_fields": ["type", "content_type"]
+                            }
+                        }
+                    },
+                    "jwt_params": {
+                        "issuer": "TNF_CORE",
+                        "audience": ["AI_AGENT"],
+                        "algorithm": "HS256",
+                        "secret": "${EXTENSION_JWT_SECRET}"
+                    },
+                    "signature_methods": ["HMAC-SHA256"],
+                    "allowed_signature_algorithms": ["RS256", "ES384"],
+                    "token_expiration_seconds": 300
+                },
+                "cross_extension": {
+                    "max_clock_skew": 30,
+                    "allowed_extensions": ["TNF_CORE", "AI_AGENT", "DOC_PROCESSOR"]
+                }
+            },
+            "response_formatting": {
+                "status_codes": ["success", "partial", "failed"],
+                "result_structure": "standardized_json"
+            }
+        }
+    }
+}

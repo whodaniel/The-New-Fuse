@@ -1,0 +1,226 @@
+// packages/types/src/analysis.ts
+
+// Base types for analysis
+export enum AnalysisType {
+  DEPENDENCY = 'dependency',
+  SECURITY = 'security',
+  PERFORMANCE = 'performance',
+  CODE_QUALITY = 'code_quality',
+  CUSTOM = 'custom',
+  SECURITY_SCAN = 'security_scan'
+}
+
+export enum AnalysisStatus {
+  IN_PROGRESS = 'in_progress',
+  SUCCESS = 'success',
+  FAILED = 'failed',
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed'
+}
+
+export type Severity = 'HIGH' | 'MEDIUM' | 'LOW' | 'CRITICAL';
+
+export interface Finding {
+  id: string;
+  severity: Severity;
+  message: string;
+  location?: string;
+  details?: Record<string, unknown>;
+  title?: string;
+  description?: string;
+}
+
+export interface SeverityMetrics {
+  high: number;
+  medium: number;
+  low: number;
+  critical?: number;
+}
+
+export interface AnalysisMetrics {
+  issueCount: number;
+  severity: SeverityMetrics;
+  timestamp: Date;
+  duration?: number;
+  resourceUsage?: {
+    cpu: number;
+    memory: number;
+  };
+}
+
+export interface AnalysisMetadata {
+  startTime: Date;
+  endTime: Date | null;
+  error?: string;
+  context?: Record<string, unknown>;
+  timestamp?: Date;
+  version?: string;
+  environment?: string;
+}
+
+export interface AnalysisResult {
+  id: string;
+  type: AnalysisType;
+  status: AnalysisStatus;
+  findings: Finding[];
+  metrics?: Record<string, unknown>;
+  metadata?: AnalysisMetadata;
+  securityScan?: SecurityScanResult;
+  codeQualityIssues?: CodeQualityIssue[];
+  dependencyAnalysis?: DependencyAnalysis;
+  data?: Record<string, unknown>;
+  timestamp: Date;
+}
+
+// Performance specific types
+export interface PerformanceMetric {
+  type: string;
+  value: number;
+  threshold: number;
+  timestamp: Date;
+}
+
+export interface PerformanceMetrics {
+  cpu: number;
+  memory: number;
+  latency: number;
+  errorRate: number;
+  timestamp: Date;
+  throughput?: number;
+  cpuUsage?: number;
+  memoryUsage?: number;
+  latencyP50?: number;
+  latencyP90?: number;
+  latencyP99?: number;
+}
+
+export interface AnalysisMetricsThreshold {
+  cpu: number;
+  memory: number;
+  latency: number;
+  errorRate: number;
+}
+
+// Security specific types
+export interface SecurityVulnerability {
+  severity: Severity;
+  message: string;
+  location: string;
+  cve?: string;
+  cvss?: number;
+  description?: string;
+  id?: string;
+  name?: string;
+  remediation?: string;
+}
+
+export interface SecurityScanResult {
+  vulnerabilities: SecurityVulnerability[];
+  severity: SecuritySeverity;
+  timestamp: Date;
+}
+
+export enum SecuritySeverity {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+// Code quality specific types
+export interface CodeQualityIssue {
+  severity: Severity;
+  message: string;
+  location: string;
+  rule: string;
+  suggestion?: string;
+}
+
+// Dependency specific types
+export interface DependencyIssue {
+  severity: Severity;
+  message: string;
+  location: string;
+  name: string;
+  version: string;
+  vulnerabilities?: string[];
+}
+
+export interface CodeLocation {
+  file: string;
+  line?: number;
+  column?: number;
+}
+
+export interface ValidationReport {
+  isValid: boolean;
+  errors: AnalysisValidationError[];
+  warnings: ValidationWarning[];
+}
+
+export interface AnalysisValidationError {
+  code: string;
+  message: string;
+  path?: string;
+}
+
+export interface ValidationWarning {
+  code: string;
+  message: string;
+  path?: string;
+}
+
+export interface AnalysisResults {
+  results: AnalysisResult[];
+  summary: {
+    totalIssues: number;
+    severityBreakdown: {
+      high: number;
+      medium: number;
+      low: number;
+      critical?: number;
+    };
+    duration: number;
+  };
+}
+
+export interface DependencyAnalyzer {
+  mapDependencies(): Promise<DependencyIssue[]>;
+  findCircularDependencies(): Promise<string[]>;
+  analyzeDependencyGraph(): Promise<Record<string, string[]>>;
+}
+
+export interface SecurityScanner {
+  scan(): Promise<SecurityVulnerability[]>;
+  getSeverityCount(): SeverityMetrics;
+}
+
+export interface DependencyGraph {
+  nodes: DependencyNode[];
+  edges: DependencyEdge[];
+}
+
+export interface DependencyNode {
+  id: string;
+  name: string;
+  version: string;
+}
+
+export interface DependencyEdge {
+  source: string;
+  target: string;
+  type: string;
+}
+
+export interface DependencyAnalysis {
+  graph: DependencyGraph;
+  outdated: OutdatedDependency[];
+}
+
+export interface OutdatedDependency {
+  name: string;
+  currentVersion: string;
+  latestVersion: string;
+  severity: Severity;
+}

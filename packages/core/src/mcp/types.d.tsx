@@ -1,0 +1,44 @@
+export type MCPMessageType = 'capability_request' | 'capability_response' | 'event' | 'notification';
+
+export interface MCPMessage<T = unknown> {
+    version: string;
+    messageId: string;
+    timestamp: number;
+    source: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+        capabilities: string[];
+    };
+    target: {
+        id: string;
+        type: 'ai_agent' | 'user' | 'system';
+    };
+    content: {
+        type: MCPMessageType;
+        action: string;
+        data: T;
+        priority: 'low' | 'medium' | 'high';
+    };
+    metadata: {
+        conversationId?: string;
+        parentMessageId?: string;
+        capabilities?: string[];
+        protocol: 'mcp';
+        protocolVersion: '1.0.0';
+    };
+}
+
+export interface MCPCapability {
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+    returns: Record<string, unknown>;
+    execute: (params: unknown) => Promise<any>;
+}
+
+export interface MCPAgent {
+    id: string;
+    capabilities: Map<string, MCPCapability>;
+    onMessage: (message: MCPMessage) => Promise<void>;
+    sendMessage: (message: MCPMessage) => Promise<void>;
+}

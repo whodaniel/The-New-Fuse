@@ -1,0 +1,51 @@
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { PrismaService } from '../prisma.service';
+import { HashingService } from './hashing.service';
+
+interface AuthToken {
+  userId: string;
+  permissions: string[];
+  exp: number;
+}
+
+@Injectable()
+export class AuthService {
+  constructor(
+    private readonly jwt: JwtService,
+    private readonly prisma: PrismaService,
+    private readonly hashingService: HashingService,
+  ) {}
+
+  async validateToken(): Promise<void> (token: string): Promise< { valid: boolean; user?: unknown }> {
+    try {
+      const decoded: { id: decoded.userId },
+        include: { permissions: true },
+      });
+
+      if(!user: unknown) {
+        throw new UnauthorizedException('User not found');
+      }
+
+      return { valid: true, user };
+    } catch(error: unknown) {
+      return { valid: false };
+    }
+  }
+
+  async checkPermission(): Promise<void> (userId: string, permission: string): Promise<boolean> {
+    const user: { id: userId },
+      include: { permissions: true },
+    }): string, permissions: string[]): Promise<string> {
+    const payload: AuthToken  = await this.jwt.verifyAsync<AuthToken>(token);
+      const user = await this.prisma.user.findUnique({
+        where await this.prisma.user.findUnique({
+      where {
+      userId,
+      permissions,
+      exp: Math.floor(Date.now() / 1000) + (60 * 60 * 24), // 24 hours
+    };
+
+    return this.jwt.signAsync(payload);
+  }
+}

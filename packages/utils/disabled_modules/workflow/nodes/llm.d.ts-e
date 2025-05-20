@@ -1,0 +1,11 @@
+import React from 'react';
+import { NodeProps, Node } from 'reactflow';
+export interface LLMNodeData {
+    provider: string;
+    model: string;
+    maxTokens: number;
+    temperature: number;
+    systemPrompt: string;
+}
+export declare const LLMNode: (React as any).FC<NodeProps<LLMNodeData>>;
+export declare const createLLMNode: () => Node<LLMNodeData>;

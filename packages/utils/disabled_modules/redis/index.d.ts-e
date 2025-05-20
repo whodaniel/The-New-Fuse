@@ -1,0 +1,21 @@
+export declare class RedisClient {
+    private static instance;
+    private client;
+    private subscribers;
+    private reconnectAttempts;
+    private readonly MAX_RECONNECT_ATTEMPTS;
+    private readonly RECONNECT_DELAY;
+    private connectionPool;
+    private readonly POOL_SIZE;
+    private constructor();
+    private initializeConnectionPool;
+    private handleConnectionError;
+    static getInstance(): RedisClient;
+    private getNextAvailableClient;
+    get(key: string): Promise<string | null>;
+    set(key: string, value: string, expireSeconds?: number): Promise<void>;
+    subscribe(channel: string, callback: (message: string) => void): Promise<void>;
+    unsubscribe(channel: string, callback: (message: string) => void): Promise<void>;
+    disconnect(): Promise<void>;
+}
+export default RedisClient;

@@ -1,0 +1,7 @@
+import React from 'react';
+import { Agent } from '@the-new-fuse/types';
+interface AgentStatusProps {
+    agent: Agent;
+}
+export declare const AgentStatus: React.FC<AgentStatusProps>;
+export {};

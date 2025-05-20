@@ -1,0 +1,71 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AWSBedrockProvider = void 0;
+const client_bedrock_runtime_1 = require("@aws-sdk/client-bedrock-runtime");
+const ai_provider_1 = require("./ai-provider");
+/**
+ * The agent provider for the AWS Bedrock provider.
+ */
+class AWSBedrockProvider {
+    constructor(config) {
+        this.id = 'aws-bedrock';
+        this.name = 'AWS Bedrock';
+        this.models = ['anthropic.claude-v2', 'anthropic.claude-v1', 'anthropic.claude-instant-v1'];
+        this.defaultModel = 'anthropic.claude-v2';
+        this.client = new client_bedrock_runtime_1.BedrockRuntimeClient({
+            region: config.region,
+            credentials: {
+                accessKeyId: config.credentials.accessKeyId,
+                secretAccessKey: config.credentials.secretAccessKey,
+            },
+        });
+        this.model = config.model;
+    }
+    convertToBedrockMessage(message) {
+        return {
+            role: message.role,
+            content: message.content,
+        };
+    }
+    async chat(): Promise<void> (messages) {
+        try {
+            const bedrockMessages = messages.map(msg => this.convertToBedrockMessage(msg));
+            const prompt = bedrockMessages.map(msg => `${msg.role}: ${msg.content}`).join('\n');
+            const input = {
+                modelId: this.model,
+                contentType: 'application/json',
+                accept: 'application/json',
+                body: JSON.stringify({
+                    prompt,
+                    max_tokens_to_sample: 2048,
+                    temperature: 0.7,
+                    top_p: 0.9,
+                }),
+            };
+            const command = new client_bedrock_runtime_1.InvokeModelCommand(input);
+            const response = await this.client.send(command);
+            const result = JSON.parse(new TextDecoder().decode(response.body));
+            return result.completion;
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                throw new ai_provider_1.AIError(`Bedrock chat error: ${error.message}`);
+            }
+            throw new ai_provider_1.AIError('Unknown Bedrock chat error');
+        }
+    }
+    async sendMessage(): Promise<void> (messages) {
+        return this.chat(messages);
+    }
+    async getModel(): Promise<void> () {
+        return this.model;
+    }
+    async getModels(): Promise<void> () {
+        return this.models;
+    }
+    async getDefaultModel(): Promise<void> () {
+        return this.defaultModel;
+    }
+}
+exports.AWSBedrockProvider = AWSBedrockProvider;
+//# sourceMappingURL=bedrock.js.mapexport {};

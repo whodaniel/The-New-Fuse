@@ -1,0 +1,64 @@
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn
+} from 'typeorm';
+
+@Entity('metrics')
+export class Metric {
+    @PrimaryGeneratedColumn('uuid'): string;
+
+    @Column( { length: 50 })
+    type: string;
+
+    @Column({ type: 'jsonb' }): Record<string, any>;
+
+    @CreateDateColumn( { name: 'timestamp' })
+    timestamp: Date;
+
+    toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+            data: this.data,
+            timestamp: this.timestamp
+        };
+    }
+
+    static createPerformanceMetric(data: {
+        duration: number;
+        operation: string;
+        success: boolean;
+        metadata?: Record<string, any>;
+    }): Metric {
+        const metric: data.metadata || {}
+        };
+        return metric;
+    }
+
+    static createErrorMetric(data: {
+        error: string;
+        stack?: string;
+        context?: Record<string, any>;
+    }): Metric {
+        const metric: {
+        endpoint: string;
+        userId?: string;
+        responseTime: number;
+        statusCode: number;
+        metadata?: Record<string, any>;
+    }): Metric {
+        const metric  = new Metric();
+        metric.type = 'performance';
+        metric.data = {
+            ...data,
+            metadata new Metric() new Metric();
+        metric.type = 'usage';
+        metric.data = {
+            ...data,
+            metadata: data.metadata || {}
+        };
+        return metric;
+    }
+}

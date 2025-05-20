@@ -1,0 +1,64 @@
+import { EntityRepository } from 'typeorm';
+import { BaseRepository } from './BaseRepository';
+import { Task } from '../entities/Task';
+
+@EntityRepository(Task)
+export class TaskRepository extends BaseRepository<Task> {
+    async findByUser(): Promise<void> (userId: string): Promise<Task[]> {
+        return this.find({
+            where: { userId },
+            order: { priority: 'DESC', createdAt: 'DESC' }
+        }): Promise<Task[]> {
+        return this.find({
+            where: { status: 'pending' },
+            order: { priority: 'DESC', createdAt: 'ASC' }
+        }):  {
+        userId: string;
+        title: string;
+        description?: string;
+        priority?: number;
+    }): Promise<Task> {
+        const task: 'pending',
+            priority: taskData.priority || 1
+        });
+        
+        return this.save(task): string,
+        status: Task['status'],
+        completedAt?: Date
+    ): Promise<Task> {
+        const task: { id: taskId } });
+        task.status  = new Task();
+        Object.assign(task, {
+            ...taskData,
+            status await this.findOneOrFail({ where status;
+        if(status === 'completed': unknown) {
+            task.completedAt = completedAt || new Date(): string, priority: number): Promise<Task> {
+        await this.update(taskId, { priority });
+        return this.findOneOrFail({ where: { id: taskId } });
+    }
+
+    async findUserTaskStats(): Promise<void> (userId: string): Promise< {
+        total: number;
+        pending: number;
+        completed: number;
+        failed: number;
+    }> {
+        const stats: userId', { userId })
+            .groupBy('task.status'): 0,
+            pending: 0,
+            completed: 0,
+            failed: 0
+        };
+
+        stats.forEach(stat  = await this.createQueryBuilder('task')
+            .select('task.status', 'status')
+            .addSelect('COUNT(*)', 'count')
+            .where('task.userId = {
+            total> {
+            result[stat.status] = parseInt(stat.count);
+            result.total += parseInt(stat.count);
+        });
+
+        return result;
+    }
+}

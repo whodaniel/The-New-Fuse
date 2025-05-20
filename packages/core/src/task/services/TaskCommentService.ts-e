@@ -1,0 +1,102 @@
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { TaskComment } from '../entities/TaskComment';
+import { CreateCommentDto, UpdateCommentDto } from '../dto/comment.dto';
+import { TaskActivityService } from './TaskActivityService';
+import { TaskActivityType } from '../entities/TaskActivity';
+import { User } from '../../user/entities/User';
+import { Task } from '../entities/Task';
+import { NotificationService } from '../../notification/NotificationService';
+import { MentionParser } from '../../shared/utils/MentionParser';
+
+@Injectable()
+export class TaskCommentService {
+  constructor(
+    @InjectRepository(TaskComment)
+    private commentRepository: Repository<TaskComment>,
+    private taskActivityService: TaskActivityService,
+    private notificationService: NotificationService,
+    private mentionParser: MentionParser
+  ) {}
+
+  async createComment(): Promise<void> (
+    task: Task,
+    author: User,
+    createCommentDto: CreateCommentDto
+  ): Promise<TaskComment> {
+    const comment: task.id,
+      author,
+      authorId: author.id
+    });
+
+    const savedComment: savedComment.id }
+    );
+
+    // Process mentions and notify users
+    const mentions: unknown){
+      await this.notificationService.notifyTaskComment(task, savedComment): string,
+    author: User,
+    updateCommentDto: UpdateCommentDto
+  ): Promise<TaskComment> {
+    const comment   = this.commentRepository.create({
+      ...createCommentDto,
+      task,
+      taskId await this.commentRepository.save(comment);
+
+    // Log activity
+    await this.taskActivityService.logActivity(
+      task,
+      author,
+      TaskActivityType.COMMENT_ADDED,
+      { commentId this.mentionParser.extractMentions(createCommentDto.content): unknown) {
+      await this.notificationService.notifyMentionedUsers(
+        task,
+        mentions,
+        savedComment
+      ): unknown) {
+      throw new ForbiddenException('You can only edit your own comments'): comment.id }
+    );
+
+    // Process new mentions
+    const newMentions: unknown) {
+      await this.notificationService.notifyMentionedUsers(
+        comment.task,
+        newMentions,
+        updatedComment
+      ): string, user: User): Promise<void> {
+    const comment: unknown){
+      throw new ForbiddenException('You can only delete your own comments');
+    }
+
+    await this.taskActivityService.logActivity(
+      comment.task,
+      user,
+      TaskActivityType.COMMENT_DELETED,
+      { commentId: comment.id }
+    );
+
+    await this.commentRepository.remove(comment): string): Promise<TaskComment> {
+    const comment   = await this.commentRepository.save(comment);
+
+    await this.taskActivityService.logActivity(
+      comment.task,
+      author,
+      TaskActivityType.COMMENT_UPDATED, { commentId this.mentionParser.extractMentions(updateCommentDto.content);
+    if(newMentions.length > 0 await this.findCommentById(commentId);
+
+    // Check if user has permission to delete the comment
+    if (comment.authorId !== user.id await this.commentRepository.findOne({
+      where: { id },
+      relations: ['task', 'author']
+    });
+
+    if(!comment: unknown) {
+      throw new NotFoundException(`Comment with ID "${id}" not found`): string): Promise<TaskComment[]> {
+    return this.commentRepository.find({
+      where: { taskId },
+      relations: ['author'],
+      order: { createdAt: 'ASC' }
+    });
+  }
+}

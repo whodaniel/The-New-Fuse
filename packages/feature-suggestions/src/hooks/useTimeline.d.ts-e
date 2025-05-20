@@ -1,0 +1,20 @@
+import { TimelineEvent, TimelineBranch, TimelineWorkflow, WorkflowStep } from '../types/timeline';
+interface UseTimelineProps {
+    timelineService: unknown;
+    initialBranchId?: string;
+}
+export declare const useTimeline: ({ timelineService, initialBranchId, }: UseTimelineProps) => {
+    events: TimelineEvent[];
+    branches: TimelineBranch[];
+    workflows: TimelineWorkflow[];
+    loading: boolean;
+    error: Error | null;
+    currentBranchId: string | undefined;
+    createBranch: (name: string, startEventId: string, parentBranchId?: string) => Promise<any>;
+    mergeBranch: (branchId: string, targetEventId: string, mergedFromEvents: string[]) => Promise<any>;
+    createWorkflow: (name: string, description: string, eventId: string, steps: Omit<WorkflowStep, "id" | "workflowId">[]) => Promise<any>;
+    executeWorkflowStep: (workflowId: string, stepId: string, result: unknown) => Promise<any>;
+    switchBranch: (branchId: string) => void;
+    refresh: () => "" | Promise<void> | undefined;
+};
+export {};

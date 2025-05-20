@@ -1,0 +1,87 @@
+import { z } from 'zod';
+export declare const agentSchema: z.ZodObject<{
+    name: z.ZodString;
+    description: z.ZodString;
+    capabilities: z.ZodArray<z.ZodString, "many">;
+    configuration: z.ZodObject<{
+        model: z.ZodString;
+        temperature: z.ZodNumber;
+        maxTokens: z.ZodNumber;
+        stopSequences: z.ZodArray<z.ZodString, "many">;
+        customInstructions: z.ZodString;
+    }, "strip", z.ZodTypeAny, {
+        model: string;
+        temperature: number;
+        maxTokens: number;
+        stopSequences: string[];
+        customInstructions: string;
+    }, {
+        model: string;
+        temperature: number;
+        maxTokens: number;
+        stopSequences: string[];
+        customInstructions: string;
+    }>;
+}, "strip", z.ZodTypeAny, {
+    name: string;
+    description: string;
+    configuration: {
+        model: string;
+        temperature: number;
+        maxTokens: number;
+        stopSequences: string[];
+        customInstructions: string;
+    };
+    capabilities: string[];
+}, {
+    name: string;
+    description: string;
+    configuration: {
+        model: string;
+        temperature: number;
+        maxTokens: number;
+        stopSequences: string[];
+        customInstructions: string;
+    };
+    capabilities: string[];
+}>;
+export type AgentFormData = z.infer<typeof agentSchema>;
+export interface AgentMetrics {
+    totalTasks: number;
+    completedTasks: number;
+    failedTasks: number;
+    averageResponseTime: number;
+    successRate: number;
+    lastActive: string;
+    resourceUsage: {
+        cpu: number;
+        memory: number;
+    };
+}
+export interface AgentFilters {
+    status: 'all' | 'active' | 'inactive';
+    capability?: string[];
+    model?: string[];
+    performance?: 'high' | 'medium' | 'low';
+    dateRange?: {
+        start: Date;
+        end: Date;
+    };
+}
+export interface AgentFormProps {
+    initialData?: AgentFormData;
+    onSubmit: (data: AgentFormData) => Promise<void>;
+    availableModels: string[];
+    availableCapabilities: string[];
+}
+export interface AgentMetricsProps {
+    agentId: string;
+    refreshInterval?: number;
+    onMetricsUpdate?: (metrics: AgentMetrics) => void;
+}
+export interface AgentFiltersProps {
+    filters: AgentFilters;
+    onFilterChange: (filters: AgentFilters) => void;
+    availableCapabilities: string[];
+    availableModels: string[];
+}

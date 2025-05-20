@@ -1,0 +1,37 @@
+import React, { FC } from "react";
+import { Button } from '@the-new-fuse/../../core/Button';
+import { WorkflowStatus } from '@the-new-fuse/types';
+
+interface WorkflowControlsProps {
+  status: WorkflowStatus;
+  onPause: () => void;
+  onResume: () => void;
+}
+
+export const WorkflowControls: FC<WorkflowControlsProps> = ({
+  status,
+  onPause,
+  onResume
+}) => {
+  return (
+    <div className="workflow-controls flex gap-2">
+      {status === WorkflowStatus.RUNNING ? (
+        <Button
+          variant="secondary"
+          onClick={onPause}
+          icon="pause"
+        >
+          Pause
+        </Button>
+      ) : (
+        <Button
+          variant="primary"
+          onClick={onResume}
+          icon="play"
+        >
+          Resume
+        </Button>
+      )}
+    </div>
+  );
+};

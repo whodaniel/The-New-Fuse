@@ -1,0 +1,20 @@
+{
+    "type": "TASK_ACCEPTANCE",
+    "source": "local_ai_agent_001",
+    "target": "TNF_TASK_COORDINATOR",
+    "content": {
+        "task_id": "TASK_2024_001",
+        "task_type": "code_analysis",
+        "acceptance_details": {
+            "estimated_completion_time": "10 minutes",
+            "required_resources": [
+                "typescript_analyzer",
+                "security_scanner"
+            ],
+            "collaboration_partners": [
+                "TNF_AG_SECURITY_002"
+            ]
+        },
+        "status": "accepted"
+    }
+}

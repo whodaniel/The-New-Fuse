@@ -1,0 +1,49 @@
+import { BaseServiceConfig, ServiceStatusType } from './service-types.js';
+
+export interface NotificationConfig extends BaseServiceConfig {
+  channels?: string[];
+}
+
+export interface Notification {
+  id: string;
+  type: string;
+  message: string;
+  recipient: string;
+  status: ServiceStatusType;
+}
+
+export interface NotificationChannel {
+  id: string;
+  type: 'email' | 'sms' | 'push' | 'slack' | 'webhook';
+  config: Record<string, unknown>;
+  enabled: boolean;
+  metadata: Record<string, unknown>;
+}
+
+export interface NotificationTemplate {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  content: string;
+  variables: string[];
+  metadata: Record<string, unknown>;
+}
+
+export interface NotificationPreference {
+  id: string;
+  userId: string;
+  channelPreferences: Record<string, {
+    enabled: boolean;
+    schedule?: {
+      start: string;
+      end: string;
+      timezone: string;
+    };
+  }>;
+  filters: {
+    types?: string[];
+    priorities?: string[];
+  };
+  metadata: Record<string, unknown>;
+}

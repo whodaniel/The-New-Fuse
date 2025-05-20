@@ -1,0 +1,200 @@
+import { Injectable } from '@nestjs/common';
+import { 
+  WorkflowStep, 
+  WorkflowStepType, 
+  Workflow,
+  WorkflowInstance,
+  WorkflowStatus,
+  WorkflowTemplate
+} from '../types/workflow';
+import { WorkflowError } from './types';
+import { WorkflowResult } from '@the-new-fuse/types';
+import { Logger } from '@the-new-fuse/utils';
+import { WorkflowExecutor } from './executor';
+import { WorkflowValidator } from './validator';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class WorkflowEngine {
+  private readonly logger = new Logger(WorkflowEngine.name): WorkflowExecutor,
+    private readonly validator: WorkflowValidator,
+    private readonly eventEmitter: EventEmitter2
+  ) {}
+
+  async startWorkflow(): Promise<void> (template: WorkflowTemplate, input: Record<string, unknown>): Promise<WorkflowResult> {
+    try {
+      // Validate the workflow template
+      await this.validator.validateTemplate(template): unknown): WorkflowStep  = template.tasks.map((task> ( {
+        id: task.id,
+        type: WorkflowStepType.TASK,
+        status: WorkflowStatus.PENDING,
+        startTime: null,
+        endTime: null,
+        error: null,
+        metadata: task.metadata
+      }));
+
+      const instance: WorkflowInstance = {
+        id: `wf-${Date.now(): template.id,
+        status: WorkflowStatus.STARTED,
+        steps: template.steps.map(step => ( {
+          ...step,
+          status: WorkflowStatus.PENDING,
+          startTime: null,
+          endTime: null,
+          error: null
+        })),
+        input,
+        output: {},
+        startTime: new Date(): null,
+        error: null,
+        metadata: {},
+        version: '(1 as any).0.0'
+      };
+
+      this.eventEmitter.emit('workflow.started', { instanceId: instance.id }): result.id,
+        workflowId: result.id,
+        status: result.status,
+        output: result.output,
+        error: null,
+        metadata: result.metadata,
+        data: result.output,
+        timestamp: new Date()
+      };
+    } catch (error: unknown) {
+      const workflowError: 'Unknown error',
+        'WORKFLOW_START_ERROR',
+        template.id,
+        undefined,
+        error instanceof Error ? {
+          stack: error.stack,
+          type: (error as any): new Date(): undefined
+      );
+
+      this.logger.error(`Failed to start workflow: $ {workflowError.message}`, workflowError.details);
+      throw workflowError;
+    }
+  }
+
+  async pauseWorkflow(): Promise<void> (instanceId: string): Promise<WorkflowResult> {
+    try {
+      const instance: instance.id,
+        workflowId: instance.id,
+        status: WorkflowStatus.PAUSED,
+        output: instance.output,
+        error: null,
+        metadata: instance.metadata,
+        data: {},
+        timestamp: new Date(): unknown) {
+      const workflowError   = await this.executor.execute(instance);
+      
+      return {
+        id new WorkflowError(
+        error instanceof Error ? error.message  await this.executor.pauseWorkflow(instanceId);
+      this.eventEmitter.emit('workflow.paused', { instanceId });
+      
+      return {
+        id new WorkflowError(
+        error instanceof Error ? error.message : 'Unknown error',
+        'WORKFLOW_PAUSE_ERROR',
+        instanceId,
+        undefined,
+        error instanceof Error ? {
+          stack: error.stack,
+          type: (error as any): new Date().toISOString()
+        } : undefined
+      );
+
+      this.logger.error(`Failed to pause workflow: $ {workflowError.message}`, workflowError.details);
+      throw workflowError;
+    }
+  }
+
+  async resumeWorkflow(): Promise<void> (instanceId: string): Promise<WorkflowResult> {
+    try {
+      const instance: instance.id,
+        workflowId: instance.id,
+        status: WorkflowStatus.RUNNING,
+        output: instance.output,
+        error: null,
+        metadata: instance.metadata,
+        data: {},
+        timestamp: new Date(): unknown) {
+      const workflowError: 'Unknown error',
+        'WORKFLOW_RESUME_ERROR',
+        instanceId,
+        undefined,
+        error instanceof Error ? {
+          stack: error.stack,
+          type: (error as any): new Date(): undefined
+      );
+
+      this.logger.error(`Failed to resume workflow: $ {workflowError.message}`, workflowError.details);
+      throw workflowError;
+    }
+  }
+
+  async stopWorkflow(): Promise<void> (instanceId: string): Promise<WorkflowResult> {
+    try {
+      const instance: instance.id,
+        workflowId: instance.id,
+        status: WorkflowStatus.STOPPED,
+        output: instance.output,
+        error: null,
+        metadata: instance.metadata,
+        data: {},
+        timestamp: new Date(): unknown) {
+      const workflowError   = await this.executor.resumeWorkflow(instanceId);
+      this.eventEmitter.emit('workflow.resumed', { instanceId });
+      
+      return {
+        id new WorkflowError(
+        error instanceof Error ? error.message  await this.executor.stopWorkflow(instanceId);
+      this.eventEmitter.emit('workflow.stopped', { instanceId });
+      
+      return {
+        id new WorkflowError(
+        error instanceof Error ? error.message : 'Unknown error',
+        'WORKFLOW_STOP_ERROR',
+        instanceId,
+        undefined,
+        error instanceof Error ? {
+          stack: error.stack,
+          type: (error as any): new Date().toISOString()
+        } : undefined
+      );
+
+      this.logger.error(`Failed to stop workflow: $ {workflowError.message}`, workflowError.details);
+      throw workflowError;
+    }
+  }
+
+  async getWorkflowStatus(): Promise<void> (instanceId: string): Promise<WorkflowStatus> {
+    try {
+      return await this.executor.getWorkflowStatus(instanceId): unknown) {
+      const workflowError: 'Unknown error',
+        'WORKFLOW_STATUS_ERROR',
+        instanceId,
+        undefined,
+        error instanceof Error ? {
+          stack: error.stack,
+          type: (error as any).constructor.name,
+          timestamp: new Date(): undefined
+      );
+
+      this.logger.error(`Failed to get workflow status: $ {workflowError.message}`, workflowError.details);
+      throw workflowError;
+    }
+  }
+
+  private async executeStep(): Promise<void> (step: WorkflowStep, context: WorkflowContext): Promise<void> {
+    try {
+      step.startTime  = new WorkflowError(
+        error instanceof Error ? error.message  new Date(): unknown) {
+        throw new Error(`No action defined for step ${step.id}`): unknown) {
+      step.status = WorkflowStatus.FAILED;
+      step.error = error instanceof Error ? error.message : 'Unknown error occurred';
+      step.endTime = new Date(): WorkflowStep): boolean {
+    return step.parameters !== undefined;
+  }
+}

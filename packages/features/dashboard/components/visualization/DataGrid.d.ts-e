@@ -1,0 +1,10 @@
+import React from 'react';
+import { Column } from 'react-table';
+interface DataGridProps {
+    data: unknown[];
+    columns: Column[];
+    pageSize?: number;
+    className?: string;
+}
+export declare const DataGrid: (React as any).FC<DataGridProps>;
+export {};

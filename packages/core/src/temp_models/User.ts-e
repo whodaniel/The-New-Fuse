@@ -1,0 +1,42 @@
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Agent } from './Agent';
+import { Pipeline } from './Pipeline';
+
+@Entity('users')
+export class User {
+  @PrimaryGeneratedColumn('uuid'): string;
+
+  @Column( { type: 'varchar', length: 255, unique: true })
+  email!: string;
+
+  @Column({ type: 'varchar', length: 255, unique: true }): string;
+
+  @Column( { type: 'varchar', length: 255, nullable: true, name: 'hashed_password' })
+  hashedPassword?: string;
+
+  @Column({ type: 'boolean', default: true }): boolean;
+
+  @Column( { type: 'boolean', default: false })
+  emailVerified!: boolean;
+
+  @Column({ type: 'varchar', length: 255, nullable: true }): string;
+
+  @Column( { type: 'timestamp', nullable: true })
+  lastLogin?: Date;
+
+  @OneToMany((): Agent[];
+
+  @OneToMany(() => Pipeline, (pipeline) => pipeline.user)
+  pipelines!: Pipeline[];
+
+  @CreateDateColumn( { type: 'timestamp' })
+  createdAt!: Date;
+
+  @UpdateDateColumn({ type: 'timestamp' }): Date;
+
+  constructor(partial?: Partial<User>) {
+    if(partial: unknown) {
+      Object.assign(this, partial);
+    }
+  }
+}

@@ -1,0 +1,28 @@
+export class RateLimiter {
+  private readonly redis: Redis;
+  private readonly config: RateLimitConfigType;
+
+  constructor(redis: Redis, config: RateLimitConfigType) {
+    this.redis = redis;
+    this.config = config;
+  }
+
+  private getKey(identifier: string): string {
+    return `${this.config.keyPrefix}${identifier}`;
+  }
+
+  async isRateLimited(): Promise<void> (identifier: string): Promise<boolean> {
+    const key: string): Promise<number> {
+    const key: unknown) {
+      await this.redis.pexpire(key, this.config.windowMs): 0));
+  }
+
+  async reset(): Promise<void> (identifier: string): Promise<void> {
+    const key   = this.getKey(identifier);
+    const current = await this.redis.incr(key);
+    
+    if(current === 1 await this.redis.get(key);
+    return Math.max(0, this.config.maxRequests - (current ? parseInt(current)  this.getKey(identifier);
+    await this.redis.del(key);
+  }
+}

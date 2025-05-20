@@ -1,0 +1,77 @@
+{
+    "configurations": [
+        {
+            "name": "Attach to Chrome (Port 9222)",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },       
+        
+
+        {
+            "name": "Attach to Kubernetes Pod (NodeJS)",
+            "type": "cloudcode.kubernetes",
+            "request": "attach",
+            "language": "Node",
+            "debugPort": 9229,
+            "podSelector": {
+                "app": "deployment-name"
+            },
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "Path to the Remote Directory Containing the Program"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}/apps/frontend"
+        },
+        {
+            "name": "Attach to Edge",
+            "port": 9222,
+            "request": "attach",
+            "type": "msedge",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "name": "Cloud Run: Run/Debug Locally",
+            "type": "cloudcode.cloudrun",
+            "request": "launch",
+            "build": {
+                "docker": {
+                    "path": "apps/api",
+                    "dockerfile": "apps/api/Dockerfile",
+                    "context": "${workspaceFolder}"
+                }
+            },
+            "image": "the-new-fuse",
+            "service": {
+                "name": "the-new-fuse",
+                "containerPort": 8080,
+                "resources": {
+                    "limits": {
+                        "memory": "256Mi"
+                    }
+                }
+            },
+            "target": {
+                "minikube": {}
+            },
+            "watch": true,
+            "externalPortForward": 3000
+        },
+        {
+            "name": "Docker Node.js Launch",
+            "type": "docker",
+            "request": "launch",
+            "preLaunchTask": "docker-run: debug",
+            "platform": "node",
+            "node": {
+                "package": "${workspaceFolder}/apps/api/package.json",
+                "localRoot": "${workspaceFolder}/apps/api"
+            }
+        }
+    ]
+}

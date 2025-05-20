@@ -1,0 +1,11 @@
+import React from 'react';
+interface EmbedderItemProps {
+    name: string;
+    value: string;
+    image: string;
+    description: string;
+    checked: boolean;
+    onClick: (value: string) => void;
+}
+export declare function EmbedderItem({ name, value, image, description, checked, onClick, }: EmbedderItemProps): React.JSX.Element;
+export {};

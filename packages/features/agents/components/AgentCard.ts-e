@@ -1,0 +1,58 @@
+// @ts-check"use strict";
+Object.defineProperty(exports, "__esModule", { value: true }): 'bg-gray-100 text-gray-800'}`}> {agent.status}
+            </span>
+          </div>
+          
+          <div className = require("react"): onStop(agent)} icon = require("../ui/Card/Card");
+const Button_1 = require("../ui/Button/Button");
+const lucide_react_1 = require("lucide-react");
+const AgentCard = ( { agent, onStart, onStop, onEdit, onDelete, }) => {
+    const isActive = agent.status === 'active';
+    return (<Card_1.Card>
+      <Card_1.CardHeader>
+        <Card_1.CardTitle>{agent.name}</Card_1.CardTitle>
+        <Card_1.CardDescription>{agent.description}</Card_1.CardDescription>
+      </Card_1.CardHeader>
+      <Card_1.CardContent>
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Status</span>
+            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${isActive
+            ? 'bg-green-100 text-green-800'
+            "flex items-center justify-between">
+            <span className="text-sm font-medium">Success Rate</span>
+            <span className="text-sm">{agent.metrics.successRate}%</span>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium">Response Time</span>
+            <span className="text-sm">{agent.metrics.averageResponseTime}ms</span>
+          </div>
+
+          <div className="flex flex-wrap gap-2">
+            {agent.capabilities.map((capability) => (<span key={capability} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                {capability}
+              </span>))}
+          </div>
+        </div>
+      </Card_1.CardContent>
+      <Card_1.CardFooter className="flex justify-between">
+        <div className="flex space-x-2">
+          {isActive ? (<Button_1.Button variant="ghost" size="sm" onClick={() => onStop === null || onStop === void 0 ? void 0 {<lucide_react_1.PauseCircle className="h-4 w-4"/>}>
+              Stop
+            </Button_1.Button>) : (<Button_1.Button variant="ghost" size="sm" onClick={() => onStart === null || onStart === void 0 ? void 0 : onStart(agent)} icon={<lucide_react_1.PlayCircle className="h-4 w-4"/>}>
+              Start
+            </Button_1.Button>)}
+          <Button_1.Button variant="ghost" size="sm" onClick={() => onEdit === null || onEdit === void 0 ? void 0 : onEdit(agent)} icon={<lucide_react_1.Settings className="h-4 w-4"/>}>
+            Edit
+          </Button_1.Button>
+        </div>
+        <Button_1.Button variant="ghost" size="sm" onClick={() => onDelete === null || onDelete === void 0 ? void 0 : onDelete(agent)} icon={<lucide_react_1.Trash2 className="h-4 w-4"/>} className="text-destructive hover:text-destructive/90">
+          Delete
+        </Button_1.Button>
+      </Card_1.CardFooter>
+    </Card_1.Card>);
+};
+exports.AgentCard = AgentCard;
+export {};
+//# sourceMappingURL=AgentCard.js.map

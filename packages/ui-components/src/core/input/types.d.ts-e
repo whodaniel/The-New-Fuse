@@ -1,0 +1,17 @@
+import { VariantProps } from "class-variance-authority";
+import { inputVariants } from ".";
+import { ComponentProps } from "react";
+export type InputVariants = VariantProps<typeof inputVariants>;
+export type InputSize = "default" | "sm" | "lg";
+export type InputVariant = "default" | "filled" | "outlined" | "ghost";
+export interface BaseInputProps extends Omit<ComponentProps<"input">, "size"> {
+    error?: boolean;
+    label?: string;
+    helperText?: string;
+    startIcon?: React.ReactNode;
+    endIcon?: React.ReactNode;
+    containerClassName?: string;
+    labelClassName?: string;
+    helperTextClassName?: string;
+}
+export type InputProps = BaseInputProps & InputVariants;

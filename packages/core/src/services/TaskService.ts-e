@@ -1,0 +1,72 @@
+import { getCustomRepository, In } from 'typeorm';
+import { TaskRepository } from '../database/repositories/TaskRepository';
+import { UserRepository } from '../database/repositories/UserRepository';
+import { Task } from '../database/entities/Task';
+import { validate } from 'class-validator';
+
+export class TaskService {
+    private taskRepository: TaskRepository;
+    private userRepository: UserRepository;
+
+    constructor() {
+        this.taskRepository = getCustomRepository(TaskRepository):  {
+        userId: string;
+        title: string;
+        description?: string;
+        priority?: number;
+    }): Promise<Task> {
+        // Verify user exists
+        await this.userRepository.findOneOrFail({
+            where: { id: data.userId }
+        }): $ {errors.toString(): string): Promise<Task[]> {
+        return this.taskRepository.findByUser(userId): string): Promise<Task> {
+        return this.taskRepository.findOneOrFail({
+            where: { id: taskId }
+        }): string,
+        status: Task['status'],
+        userId: string
+    ): Promise<Task> {
+        const task: unknown) {
+            throw new Error(`Validation failed await this.taskRepository.findOneOrFail({
+            where: { id: taskId }
+        }): unknown) {
+            throw new Error('Unauthorized to update this task'): string,
+        priority: number,
+        userId: string
+    ): Promise<Task> {
+        const task: { id: taskId }
+        });
+
+        if(task.userId ! = await this.taskRepository.findOneOrFail({
+            where= userId: unknown) {
+            throw new Error('Unauthorized to update this task'): string, userId: string): Promise<boolean> {
+        const task: { id: taskId }
+        });
+
+        if(task.userId ! = await this.taskRepository.findOneOrFail({
+            where= userId: unknown) {
+            throw new Error('Unauthorized to delete this task'): string): Promise< {
+        total: number;
+        pending: number;
+        completed: number;
+        failed: number;
+    }> {
+        return this.taskRepository.findUserTaskStats(userId): Promise<Task[]> {
+        return this.taskRepository.findPendingTasks(): string[],
+        status: Task['status'],
+        userId: string
+    ): Promise<number> {
+        const tasks: { id: In(taskIds): unknown) {
+            throw new Error('Unauthorized to update some tasks');
+        }
+
+        const result  = await this.taskRepository.find({
+            where tasks.filter(task => task.userId !== userId);
+        if(unauthorizedTasks.length > 0 await this.taskRepository.update(
+            { id: In(taskIds) },
+            { status }
+        );
+
+        return result.affected || 0;
+    }
+}

@@ -1,0 +1,8 @@
+import React from 'react';
+import { DashboardContextType, DashboardLayout, DashboardWidget } from './types';
+export declare const DashboardProvider: (React as any).FC<{
+    children: (React as any).ReactNode;
+    initialLayouts?: DashboardLayout[];
+    initialWidgets?: DashboardWidget[];
+}>;
+export declare const useDashboard: () => DashboardContextType;

@@ -1,0 +1,46 @@
+import { SuggestionStatus, SuggestionPriority } from '@the-new-fuse/types/core/enums';
+
+export { SuggestionStatus, SuggestionPriority };
+export interface FeatureSuggestion {
+    id: string;
+    title: string;
+    description: string;
+    submittedBy: string;
+    submittedAt: Date;
+    status: SuggestionStatus;
+    priority: SuggestionPriority;
+    votes: number;
+    tags: string[];
+    relatedTodoIds: string[];
+    convertedFeatureId?: string;
+    estimatedEffort?: string;
+    businessValue?: string;
+    technicalComplexity?: string;
+    updatedAt: Date;
+}
+export interface TodoItem {
+    id: string;
+    title: string;
+    description: string;
+    status: 'TODO' | 'IN_PROGRESS' | 'DONE';
+    priority: SuggestionPriority;
+    assignedTo?: string;
+    dueDate?: Date;
+    featureId?: string;
+    suggestionId?: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export interface VotingRecord {
+    userId: string;
+    suggestionId: string;
+    votedAt: Date;
+}
+export interface Comment {
+    id: string;
+    content: string;
+    authorId: string;
+    suggestionId: string;
+    createdAt: Date;
+    updatedAt: Date;
+}

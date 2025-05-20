@@ -1,0 +1,12 @@
+import { ExportOptions, ExportMetadata } from './types';
+import 'jspdf-autotable';
+export declare class DataExporter {
+    private metadata?;
+    constructor(metadata?: ExportMetadata);
+    export(data: unknown[], options: ExportOptions): Promise<void>;
+    private addMetadata;
+    private exportCSV;
+    private exportJSON;
+    private exportExcel;
+    private exportPDF;
+}

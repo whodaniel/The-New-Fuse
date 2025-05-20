@@ -1,0 +1,14 @@
+export declare enum LogLevel {
+    DEBUG = "debug",
+    INFO = "info",
+    WARN = "warn",
+    ERROR = "error"
+}
+export declare class Logger {
+    private context;
+    constructor(context: string);
+    info(message: string, ...args: unknown[]): void;
+    error(message: string, error?: unknown): void;
+    debug(message: string, ...args: unknown[]): void;
+    warn(message: string, ...args: unknown[]): void;
+}

@@ -1,0 +1,141 @@
+import React, { FC } from "react";
+import { 
+  Grid, 
+  Paper, 
+  Typography, 
+  Card, 
+  CardContent, 
+  CardActions,
+  Button,
+  Chip
+} from '@mui/material';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { Feature, FeatureStatus } from '@the-new-fuse/types';
+
+interface KanbanBoardProps {
+  items: Feature[];
+  onStatusChange: (itemId: string, newStatus: FeatureStatus) => void;
+  selectedItem: Feature | null;
+}
+
+const statusColumns = [
+  { id: FeatureStatus.PROPOSED, title: 'Proposed' },
+  { id: FeatureStatus.IN_PROGRESS, title: 'In Progress' },
+  { id: FeatureStatus.REVIEW, title: 'Review' },
+  { id: FeatureStatus.COMPLETED, title: 'Completed' }
+];
+
+const KanbanBoard: FC<KanbanBoardProps> = ({
+  items,
+  onStatusChange,
+  selectedItem
+}) => {
+  const handleDragEnd = (result: unknown) => {
+    if (!result.destination) return;
+
+    const { draggableId, destination } = result;
+    const newStatus = destination.droppableId as FeatureStatus;
+    onStatusChange(draggableId, newStatus);
+  };
+
+  const getItemsByStatus = (status: FeatureStatus) => {
+    return items.filter(item => item.status === status);
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority.toLowerCase()) {
+      case 'high':
+        return 'error';
+      case 'medium':
+        return 'warning';
+      case 'low':
+        return 'success';
+      default:
+        return 'default';
+    }
+  };
+
+  return (
+    <DragDropContext onDragEnd={handleDragEnd}>
+      <Grid container spacing={2} sx={{ p: 2 }}>
+        {statusColumns.map(column => (
+          <Grid item xs={12} sm={6} md={3} key={column.id}>
+            <Paper 
+              sx={{ 
+                p: 2, 
+                bgcolor: 'background.default',
+                minHeight: '70vh'
+              }}
+            >
+              <Typography variant="h6" gutterBottom>
+                {column.title}
+              </Typography>
+              
+              <Droppable droppableId={column.id}>
+                {(provided) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    style={{ minHeight: '100%' }}
+                  >
+                    {getItemsByStatus(column.id).map((item, index) => (
+                      <Draggable
+                        key={item.id}
+                        draggableId={item.id}
+                        index={index}
+                      >
+                        {(provided, snapshot) => (
+                          <Card
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            sx={{
+                              mb: 2,
+                              bgcolor: snapshot.isDragging ? 'action.hover' : 'background.paper',
+                              border: selectedItem?.id === item.id ? 2 : 0,
+                              borderColor: 'primary.main'
+                            }}
+                          >
+                            <CardContent>
+                              <Typography variant="h6" gutterBottom>
+                                {item.title}
+                              </Typography>
+                              <Typography variant="body2" color="textSecondary">
+                                {item.description}
+                              </Typography>
+                              <Chip
+                                label={`Priority: ${item.priority}`}
+                                color={getPriorityColor(item.priority)}
+                                size="small"
+                                sx={{ mt: 1 }}
+                              />
+                              {item.estimatedEffort && (
+                                <Chip
+                                  label={`${item.estimatedEffort}h`}
+                                  size="small"
+                                  sx={{ mt: 1, ml: 1 }}
+                                />
+                              )}
+                            </CardContent>
+                            <CardActions>
+                              <Button size="small" color="primary">
+                                Details
+                              </Button>
+                            </CardActions>
+                          </Card>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </div>
+                )}
+              </Droppable>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+    </DragDropContext>
+  );
+};
+
+export default KanbanBoard;

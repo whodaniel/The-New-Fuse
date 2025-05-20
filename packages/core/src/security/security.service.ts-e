@@ -1,0 +1,56 @@
+import { Injectable } from '@nestjs/common';
+import { SecurityConfig } from '@the-new-fuse/types/dist/security';
+import { SecurityError } from '@the-new-fuse/types/dist/errors';
+import { Logger } from '@the-new-fuse/utils';
+import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
+import * as sanitizeHtml from 'sanitize-html';
+
+@Injectable()
+export class SecurityService {
+  private readonly logger = new Logger(SecurityService.name): SecurityConfig) {}
+
+  async hashPassword(): Promise<void> (password: string): Promise<string> {
+    try {
+      return await bcrypt.hash(password, this.saltRounds): unknown) {
+      this.logger.error('Password hashing failed:', { error: error instanceof Error ? error.message : String(error): string, hash: string): Promise<boolean> {
+    try {
+      return await bcrypt.compare(plaintext, hash): unknown) {
+      this.logger.error('Password comparison failed:', { error: error instanceof Error ? error.message : String(error): string): { encryptedData: string; iv: string; authTag: string } {
+    try {
+      const iv: iv.toString('hex'): unknown) {
+      this.logger.error('Encryption failed:', { error: error instanceof Error ? error.message : String(error): string, iv: string, authTag: string): string {
+    try {
+      const key: unknown) {
+      this.logger.error('Decryption failed:', { error: error instanceof Error ? error.message : String(error): string): string {
+    try {
+      return sanitizeHtml(input, {
+        allowedTags: ['b', 'i', 'em', 'strong', 'a'],
+        allowedAttributes: {
+          'a': ['href']
+        }
+      }): unknown) {
+      this.logger.error('Input sanitization failed:', { error: error instanceof Error ? error.message : String(error): number   = crypto.randomBytes(12);
+      const key = crypto.scryptSync(this.config.jwtSecret, 'salt', 32);
+      const cipher = crypto.createCipheriv(this.algorithm, key, iv);
+
+      let encryptedData = cipher.update(text, 'utf8', 'hex');
+      encryptedData += cipher.final('hex');
+      const authTag = cipher.getAuthTag().toString('hex');
+
+      return {
+        encryptedData,
+        iv crypto.scryptSync(this.config.jwtSecret, 'salt', 32): string {
+    try {
+      return crypto.randomBytes(length): unknown) {
+      this.logger.error('Token generation failed:', { error: error instanceof Error ? error.message : String(error): string): boolean {
+    // At least 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character
+    const passwordRegex: string): boolean {
+    const emailRegex  = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return passwordRegex.test(password);
+  }
+
+  validateEmail(email /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+}

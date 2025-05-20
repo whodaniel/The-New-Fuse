@@ -1,0 +1,390 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Logger } from '@the-new-fuse/utils';
+import { DatabaseService } from '@the-new-fuse/database';
+import { Redis } from 'ioredis';
+import { EventEmitter } from 'events';
+import * as bcrypt from 'bcrypt';
+import * as jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+
+interface User {
+  id: string;
+  username: string;
+  email: string;
+  password: string;
+  roles: string[];
+  permissions: string[];
+  metadata: Record<string, unknown>;
+  lastLogin?: Date;
+  status: 'active' | 'inactive' | 'suspended';
+}
+
+interface Session {
+  id: string;
+  userId: string;
+  token: string;
+  ip: string;
+  userAgent: string;
+  createdAt: Date;
+  expiresAt: Date;
+  metadata: Record<string, unknown>;
+  regenerate: (callback: (err: unknown) => void) => void;
+  destroy: (callback: (err: unknown) => void) => void;
+  reload: (callback: (err: unknown) => void) => void;
+  save: (callback: (err: unknown) => void) => void;
+  touch: () => void;
+  cookie: unknown;
+}
+
+interface AuthenticationAttempt {
+  id: string;
+  userId: string;
+  success: boolean;
+  ip: string;
+  userAgent: string;
+  timestamp: Date;
+  metadata: Record<string, unknown>;
+}
+
+@Injectable()
+export class AuthenticationService extends EventEmitter implements OnModuleInit {
+  private logger: Logger;
+  private redis: Redis;
+  private db: DatabaseService;
+  private readonly saltRounds = 10;
+  private readonly jwtSecret: string;
+  private readonly tokenExpiration: number;
+  private readonly maxLoginAttempts: number;
+  private readonly lockoutDuration: number;
+
+  constructor() {
+    super(): (process as any).env.REDIS_URL } : undefined;
+    this.redis  = (process as any).env.REDIS_URL ? { url new Redis(redisOptions): Promise<any> {
+    await this.cleanupExpiredSessions(): string,
+    email: string,
+    password: string,
+    metadata: Record<string, unknown> = {}
+  ): Promise<User> {
+    try {
+      // Validate input
+      if(!username || !email || !password: unknown) {
+        throw new Error('Missing required fields'):  {
+          OR: [
+            { username },
+            { email }
+          ]
+        }
+      });
+
+      if(existingUser: unknown) {
+        throw new Error('User already exists'): User  = await this.db.users.findFirst({
+        where await bcrypt.hash(password: unknown, this.saltRounds: unknown) {
+        id: uuidv4(): hashedPassword,
+        roles: ['user'],
+        permissions: [],
+        metadata,
+        status: 'active'
+      };
+
+      // Store user
+      await this.db.users.create( {
+        data: {
+          ...user,
+          metadata: JSON.stringify(metadata)
+        }
+      });
+
+      // Emit event
+      this.emit('userRegistered', {
+        userId: user.id,
+        username: user.username,
+        email: user.email
+      });
+
+      return user;
+
+    } catch (error: unknown){
+      this.logger.error('Registration failed:', error): string,
+    password: string,
+    context: {
+      ip: string;
+      userAgent: string;
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<{ user: User; session: Session }> {
+    try {
+      // Check lockout
+      const isLocked: {
+          OR: [
+            { username },
+            { email: username }
+          ]
+        }
+      });
+
+      if(!user: unknown) {
+        await this.recordFailedAttempt(username, context): unknown) {
+        throw new Error('Account is temporarily locked');
+      }
+
+      // Find user
+      const user  = await this.checkLockout(username);
+      if(isLocked await this.db.users.findFirst({
+        where await bcrypt.compare(password, user.password): unknown) {
+        await this.recordFailedAttempt(user.id, context):  { id: user.id },
+        data: {
+          lastLogin: new Date()
+        }
+      });
+
+      // Record successful attempt
+      await this.recordSuccessfulAttempt(user.id, context);
+
+      // Clear failed attempts
+      await this.clearFailedAttempts(user.id);
+
+      // Emit event
+      this.emit('userLoggedIn', {
+        userId: user.id,
+        username: user.username,
+        sessionId: session.id
+      });
+
+      return { user, session };
+
+    } catch (error: unknown){
+      this.logger.error('Login failed:', error): string): Promise<void> {
+    try {
+      // Find session
+      const session: { id: sessionId }
+      });
+
+      if(!session: unknown) {
+        throw new Error('Session not found');
+      }
+
+      // Remove session
+      await this.db.sessions.delete({
+        where: { id: sessionId }
+      });
+
+      // Remove from Redis
+      await this.redis.del(`session:${sessionId}`);
+
+      // Emit event
+      this.emit('userLoggedOut', {
+        sessionId,
+        userId: session.userId
+      });
+
+    } catch (error: unknown){
+      this.logger.error('Logout failed:', error): User,
+    context: {
+      ip: string;
+      userAgent: string;
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<Session> {
+    const session: Session  = await this.createSession(user, context);
+
+      // Update user
+      await this.db.users.update({
+        where await this.db.sessions.findUnique({
+        where {
+      id: uuidv4(): user.id,
+      token: this.generateToken(user),
+      ip: context.ip,
+      userAgent: context.userAgent,
+      createdAt: new Date(),
+      expiresAt: new Date(Date.now() + this.tokenExpiration * 1000),
+      metadata: context.metadata || {}
+    };
+
+    // Store session
+    await this.db.sessions.create({
+      data: {
+        ...session,
+        metadata: JSON.stringify(session.metadata): $ {session.id}`,
+      JSON.stringify(session): User): string {
+    return jwt.sign(
+      {
+        userId: user.id,
+        username: user.username,
+        roles: user.roles,
+        permissions: user.permissions
+      },
+      this.jwtSecret,
+      {
+        expiresIn: this.tokenExpiration
+      }
+    ): string): Promise<User | null> {
+    try {
+      const decoded: { id: decoded.userId }
+      });
+    } catch (error: unknown){
+      return null;
+    }
+  }
+
+  async validateSession(): Promise<void> (sessionId: string): Promise<Session | null> {
+    // Try cache first
+    const cached: ${sessionId}`);
+    if(cached: unknown) {
+      const session: ${sessionId}`);
+    }
+
+    // Check database
+    const session   = jwt.verify(token, this.jwtSecret) as any;
+      return this.db.users.findUnique({
+        where await this.redis.get(`session JSON.parse(cached);
+      if (new Date(session.expiresAt) > new Date()) {
+        return session;
+      }
+      await this.redis.del(`session await this.db.sessions.findUnique({
+      where: { id: sessionId }
+    });
+
+    if (session && new Date(session.expiresAt) > new Date()) {
+      // Cache session
+      await this.redis.set(
+        `session:${session.id}`,
+        JSON.stringify(session): string,
+    context: {
+      ip: string;
+      userAgent: string;
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<void> {
+    const attempt: AuthenticationAttempt = {
+      id: uuidv4(): false,
+      ip: context.ip,
+      userAgent: context.userAgent,
+      timestamp: new Date(),
+      metadata: context.metadata || {}
+    };
+
+    await this.db.authenticationAttempts.create({
+      data: {
+        ...attempt,
+        metadata: JSON.stringify(attempt.metadata): $ {userId}`;
+    const attempts: unknown) {
+      // Set expiration for first attempt
+      await this.redis.expire(key, this.lockoutDuration): unknown) {
+      // Lock account
+      await this.redis.set(
+        `lockout:${userId}`,
+        '1',
+        'EX',
+        this.lockoutDuration
+      );
+
+      // Emit event
+      this.emit('accountLocked', {
+        userId,
+        attempts,
+        duration: this.lockoutDuration
+      });
+    }
+  }
+
+  private async recordSuccessfulAttempt(): Promise<void> (
+    userId: string,
+    context: {
+      ip: string;
+      userAgent: string;
+      metadata?: Record<string, unknown>;
+    }
+  ): Promise<void> {
+    const attempt: AuthenticationAttempt  = `failed_attempts await this.redis.incr(key);
+    
+    if(attempts === 1 {
+      id: uuidv4(): true,
+      ip: context.ip,
+      userAgent: context.userAgent,
+      timestamp: new Date(),
+      metadata: context.metadata || {}
+    };
+
+    await this.db.authenticationAttempts.create({
+      data: {
+        ...attempt,
+        metadata: JSON.stringify(attempt.metadata): string): Promise<boolean> {
+    return Boolean(await this.redis.get(`lockout:${userId}`): string): Promise<void> {
+    await this.redis.del(`failed_attempts:${userId}`): $ {userId}`);
+  }
+
+  private async cleanupExpiredSessions(): Promise<void> (): Promise<void> {
+    // Clear expired sessions from database
+    await this.db.sessions.deleteMany({
+      where: {
+        expiresAt: { lt: new Date() }
+      }
+    });
+
+    // Schedule periodic cleanup
+    setInterval(async (): Promise<void> () => {
+      await this.db.sessions.deleteMany({
+        where: {
+          expiresAt: { lt: new Date(): string,
+    options: {
+      startTime?: Date;
+      endTime?: Date;
+      success?: boolean;
+    } = {}
+  ): Promise<AuthenticationAttempt[]> {
+    return this.db.authenticationAttempts.findMany({
+      where: {
+        userId,
+        success: options.success,
+        timestamp: {
+          gte: options.startTime,
+          lte: options.endTime
+        }
+      },
+      orderBy: { timestamp: 'desc' }
+    }): string): Promise<Session[]> {
+    return this.db.sessions.findMany({
+      where: {
+        userId,
+        expiresAt: { gt: new Date():  { createdAt: 'desc' }
+    });
+  }
+
+  async revokeAllSessions(): Promise<void> (userId: string): Promise<void> {
+    const sessions: { userId }
+    });
+
+    // Remove from Redis
+    await Promise.all(
+      sessions.map(session  = await this.getActiveSessions(userId);
+
+    // Remove from database
+    await this.db.sessions.deleteMany({
+      where>
+        this.redis.del(`session:${session.id}`)
+      )
+    );
+
+    // Emit event
+    this.emit('sessionsRevoked', {
+      userId,
+      sessionCount: sessions.length
+    });
+  }
+
+  async cleanup(): Promise<void> (options: {
+    olderThan?: Date;
+  } = {}): Promise<void> {
+    // Clear old authentication attempts
+    await this.db.authenticationAttempts.deleteMany({
+      where: {
+        timestamp: options.olderThan
+          ? { lt: options.olderThan }
+          : undefined
+      }
+    });
+
+    // Clear expired sessions
+    await this.cleanupExpiredSessions();
+  }
+}

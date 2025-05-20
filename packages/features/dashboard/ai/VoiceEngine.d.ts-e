@@ -1,0 +1,39 @@
+import { NLPEngine } from './NLPEngine';
+import { DashboardState } from '../collaboration/types';
+interface VoiceCommand {
+    type: 'navigation' | 'action' | 'query' | 'control';
+    intent: string;
+    parameters: Record<string, unknown>;
+    confidence: number;
+    raw: string;
+}
+interface CommandHandler {
+    type: VoiceCommand['type'];
+    pattern: RegExp;
+    handler: (command: VoiceCommand) => Promise<void>;
+}
+export declare class VoiceEngine {
+    private nlpEngine;
+    private recognition;
+    private synthesis;
+    private isListening;
+    private commandHandlers;
+    private commandHistory;
+    private contextState;
+    constructor(nlpEngine: NLPEngine);
+    start(initialState: DashboardState): Promise<void>;
+    stop(): Promise<void>;
+    registerCommandHandler(handler: CommandHandler): Promise<void>;
+    processCommand(text: string): Promise<VoiceCommand | null>;
+    speak(text: string): Promise<void>;
+    private initializeSpeechAPI;
+    private setupRecognition;
+    private isWakeWordDetected;
+    private determineCommandType;
+    private executeCommand;
+    private handleNavigation;
+    private handleQuery;
+    private handleAction;
+    private handleControl;
+}
+export {};

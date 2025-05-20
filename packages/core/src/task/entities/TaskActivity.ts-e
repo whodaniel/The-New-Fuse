@@ -1,0 +1,41 @@
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Task } from './Task';
+import { User } from '../../user/entities/User';
+
+export enum TaskActivityType {
+  CREATED = 'created',
+  UPDATED = 'updated',
+  STATUS_CHANGED = 'status_changed',
+  ASSIGNED = 'assigned',
+  COMMENTED = 'commented',
+  ATTACHMENT_ADDED = 'attachment_added',
+  DELETED = 'deleted'
+}
+
+@Entity()
+export class TaskActivity {
+  @PrimaryGeneratedColumn('uuid'): string;
+
+  @ManyToOne(() => Task, { onDelete: 'CASCADE' })
+  task: Task;
+
+  @Column(): string;
+
+  @ManyToOne(() => User)
+  actor: User;
+
+  @Column()
+  actorId: string;
+
+  @Column( {
+    type: 'enum',
+    enum: TaskActivityType
+  })
+  type: TaskActivityType;
+
+  @Column('jsonb')
+  changes: Record<string, unknown>;
+
+  @CreateDateColumn()
+  createdAt: Date;
+}

@@ -1,0 +1,74 @@
+import { WorkflowTemplate, WorkflowStep } from '../types';
+
+export class WorkflowTemplateManager {
+  private templates: Map<string, WorkflowTemplate>;
+
+  constructor() {
+    this.templates = new Map();
+    this.initializeDefaultTemplates();
+  }
+
+  private initializeDefaultTemplates(): void {
+    this.registerTemplate({
+      id: 'sequential',
+      name: 'Sequential Workflow',
+      description: 'Simple sequential workflow template',
+      createWorkflow: (steps: WorkflowStep[]) => ({
+        steps,
+        type: 'sequential',
+        metadata: { created: new Date().toISOString() }
+      })
+    });
+
+    this.registerTemplate({
+      id: 'parallel',
+      name: 'Parallel Workflow',
+      description: 'Parallel execution workflow template',
+      createWorkflow: (steps: WorkflowStep[]) => ({
+        steps,
+        type: 'parallel',
+        metadata: {
+          created: new Date().toISOString(),
+          maxConcurrency: 3
+        }
+      })
+    });
+
+    this.registerTemplate({
+      id: 'conditional',
+      name: 'Conditional Workflow',
+      description: 'Workflow with conditional branching',
+      createWorkflow: (steps: WorkflowStep[]) => ({
+        steps,
+        type: 'conditional',
+        metadata: {
+          created: new Date().toISOString(),
+          conditions: {}
+        }
+      })
+    });
+  }
+
+  registerTemplate(template: WorkflowTemplate): void {
+    this.templates.set(template.id, template);
+  }
+
+  getTemplate(templateId: string): WorkflowTemplate | undefined {
+    return this.templates.get(templateId);
+  }
+
+  getAllTemplates(): WorkflowTemplate[] {
+    return Array.from(this.templates.values());
+  }
+
+  createWorkflowFromTemplate(
+    templateId: string,
+    steps: WorkflowStep[]
+  ): unknown {
+    const template = this.getTemplate(templateId);
+    if (!template) {
+      throw new Error(`Template not found: ${templateId}`);
+    }
+    return template.createWorkflow(steps);
+  }
+}

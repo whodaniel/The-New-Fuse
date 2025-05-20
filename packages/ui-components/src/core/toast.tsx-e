@@ -1,0 +1,97 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+var __rest = (this && this.__rest) || function(s: unknown, e: unknown) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import React, { createContext, useContext, useState } from 'react';
+import { cn } from '@/lib/utils';
+import * as ToastPrimitives from "@radix-ui/react-toast";
+const ToastContext: bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]", className)} {...props}/>);
+});
+ToastViewport.displayName  = createContext(undefined): translate-x-0 data-[swipe  = ToastPrimitives.Provider;
+const ToastViewport = React.forwardRef((_a, ref) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (<ToastPrimitives.Viewport ref={ref} className={cn("fixed bottom-0 right-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm ToastPrimitives.Viewport.displayName;
+const Toast React.forwardRef((_a, ref) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (<ToastPrimitives.Root ref={ref} className={cn("group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]end]:translate-x-[var(--radix-toast-swipe-end-x): translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full", className)} {...props}/>);
+});
+Toast.displayName = ToastPrimitives.Root.displayName;
+const ToastClose: text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100", className)} toast-close = React.forwardRef((_a, ref) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (<ToastPrimitives.Close ref={ref} className={cn("absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover"" {...props}>
+    <span className="sr-only">Close</span>
+  </ToastPrimitives.Close>):  {toast.variant}</ToastDescription>
+            <ToastClose />
+          </Toast>))}
+      </ToastViewport>
+    </ToastContext.Provider>);
+}
+export function useToast() {
+    const context: unknown) {
+    const [toasts, setToasts]  = React.forwardRef((_a, ref) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (<ToastPrimitives.Title ref={ref} className={cn("text-sm font-semibold", className)} {...props}/>);
+});
+ToastTitle.displayName = ToastPrimitives.Title.displayName;
+const ToastDescription = React.forwardRef((_a, ref) => {
+    var { className } = _a, props = __rest(_a, ["className"]);
+    return (<ToastPrimitives.Description ref={ref} className={cn("text-sm opacity-90", className)} {...props}/>);
+});
+ToastDescription.displayName = ToastPrimitives.Description.displayName;
+export function ToastProviderComponent({ children } useState([]): unknown) {
+        throw new Error('useToast must be used within a ToastProvider');
+    }
+    return context;
+}
+export { ToastProvider, ToastViewport, Toast, ToastTitle, ToastDescription, ToastClose };
+
+export function Toaster() {
+  const { toasts }  = (message, variant = 'default') => {
+        const id = Math.random().toString(36).slice(2);
+        setToasts((prev) => [...prev, { id, message, variant }]);
+        setTimeout(() => removeToast(id), 3000);
+    };
+    const removeToast = (id) => {
+        setToasts((prev) => prev.filter((toast) => toast.id !== id));
+    };
+    return (<ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+      {children}
+      <ToastViewport>
+        {toasts.map((toast) => (<Toast key={toast.id}>
+            <ToastTitle>{toast.message}</ToastTitle>
+            <ToastDescription>Variant useContext(ToastContext);
+    if(!context useToast();
+
+  return(<ToastProvider>
+      {toasts.map(function ({ id: unknown, title: unknown, description: unknown, action: unknown, ...props }: unknown) {
+        return (
+          <Toast key={id} {...props}>
+            <div className="grid gap-1">
+              {title && <ToastTitle>{title}</ToastTitle>}
+              {description && (
+                <ToastDescription>{description}</ToastDescription>
+              )}
+            </div>
+            {action}
+            <ToastClose />
+          </Toast>
+        );
+      })}
+      <ToastViewport />
+    </ToastProvider>
+  );
+}
+//# sourceMappingURL=toast.js.map

@@ -1,0 +1,55 @@
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
+import React, { forwardRef } from 'react';
+import { cn } from '@/utils/cn';
+const inputVariants = (0, class_variance_authority_1.cva)('flex rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50', {
+    variants: {
+        variant: {
+            default: '',
+            ghost: 'border-none bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
+            outline: 'border-2',
+        },
+        size: {
+            default: 'h-10',
+            sm: 'h-8 px-2',
+            lg: 'h-12 px-4',
+        },
+        state: {
+            default: '',
+            error: 'border-destructive focus-visible:ring-destructive',
+            success: 'border-success focus-visible:ring-success',
+        },
+    },
+    defaultVariants: {
+        variant: 'default',
+        size: 'default',
+        state: 'default',
+    },
+});
+const Input = forwardRef((_a, ref) => {
+    var { className, type, error, label, variant, size, state, icon } = _a, props = __rest(_a, ["className", "type", "error", "label", "variant", "size", "state", "icon"]);
+    return (<div className="relative w-full">
+                {label && (<label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" htmlFor={props.id}>
+                        {label}
+                    </label>)}
+                {icon && (<div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                        {icon}
+                    </div>)}
+                <input type={type} className={cn(inputVariants({ variant, size, state, className }), icon && 'pl-10', error && 'border-red-500 focus-visible:ring-red-500', className)} ref={ref} {...props}/>
+                {error && (<p className="mt-1 text-sm text-red-500">
+                        {error}
+                    </p>)}
+            </div>);
+});
+Input.displayName = 'Input';
+export { Input, inputVariants };
+//# sourceMappingURL=Input.js.map

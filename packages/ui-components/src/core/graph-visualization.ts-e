@@ -1,0 +1,159 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraphVisualization = GraphVisualization;
+const react_1 = require("react");
+const reactflow_1 = require("reactflow");
+require("reactflow/dist/style.css");
+const useGraphWebSocket_1 = require("../../hooks/useGraphWebSocket");
+const graph_adapters_1 = require("../../utils/graph-adapters");
+const memory_graph_adapter_1 = require("../../memory/memory-graph-adapter");
+const nodeTypes = {
+    default: ({ data }) => {
+        var _a, _b, _c;
+        return (<div className={`
+        px-4 py-2 rounded-lg shadow-md
+        ${data.status === 'running' ? 'animate-pulse' : ''}
+        ${data.status === 'error' ? 'border-red-500' : ''}
+        ${data.priority === 'high' ? 'ring-2 ring-yellow-400' : ''}
+      `} style={{
+                background: ((_a = data.style) === null || _a === void 0 ? void 0 : _a.background) || '#64748b',
+                border: `1px solid ${((_b = data.style) === null || _b === void 0 ? void 0 : _b.border) || '#475569'}`,
+                color: ((_c = data.style) === null || _c === void 0 ? void 0 : _c.color) || '#ffffff',
+            }}>
+      <div className="font-medium">{data.label}</div>
+      {data.metadata && (<div className="text-xs opacity-80 mt-1">
+          {Object.entries(data.metadata).map(([key, value]) => (<div key={key}>
+              {key}: {value}
+            </div>))}
+        </div>)}
+    </div>);
+    },
+    task: ({ data }) => {
+        var _a, _b, _c;
+        return (<div className={`
+        px-4 py-2 rounded-lg shadow-md
+        ${data.status === 'running' ? 'animate-pulse' : ''}
+        ${data.status === 'error' ? 'border-red-500' : ''}
+        ${data.priority === 'high' ? 'ring-2 ring-yellow-400' : ''}
+      `} style={{
+                background: ((_a = data.style) === null || _a === void 0 ? void 0 : _a.background) || '#3b82f6',
+                border: `1px solid ${((_b = data.style) === null || _b === void 0 ? void 0 : _b.border) || '#2563eb'}`,
+                color: ((_c = data.style) === null || _c === void 0 ? void 0 : _c.color) || '#ffffff',
+            }}>
+      <div className="font-medium">{data.label}</div>
+      {data.metadata && (<div className="text-xs opacity-80 mt-1">
+          {Object.entries(data.metadata).map(([key, value]) => (<div key={key}>
+              {key}: {value}
+            </div>))}
+        </div>)}
+    </div>);
+    },
+    agent: ({ data }) => {
+        var _a, _b, _c;
+        return (<div className="px-4 py-2 rounded-lg shadow-md" style={{
+                background: ((_a = data.style) === null || _a === void 0 ? void 0 : _a.background) || '#10b981',
+                border: `1px solid ${((_b = data.style) === null || _b === void 0 ? void 0 : _b.border) || '#059669'}`,
+                color: ((_c = data.style) === null || _c === void 0 ? void 0 : _c.color) || '#ffffff',
+            }}>
+      <div className="font-medium">{data.label}</div>
+      {data.status && (<div className="text-xs mt-1 flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${data.status === 'running' ? 'bg-green-400' : 'bg-gray-400'}`}/>
+          {data.status}
+        </div>)}
+    </div>);
+    },
+};
+function GraphVisualization({ websocketUrl = 'ws://localhost:3000/graph', className = '', showMiniMap = true, showControls = true, darkMode = false, }) {
+    var _a;
+    const { data, config, selectedNodes, loading, error, updateLayout, selectNodes, expandNode, filterGraph, } = (0, useGraphWebSocket_1.useGraphWebSocket)({
+        url: websocketUrl,
+        autoConnect: true,
+    });
+    const { fitView } = (0, reactflow_1.useReactFlow)();
+    const [memoryAdapter] = (0, react_1.useState)(() => new memory_graph_adapter_1.MemoryGraphAdapter({ dimensions: 128 }));
+    const [suggestedConnections, setSuggestedConnections] = (0, react_1.useState)([]);
+    (0, react_1.useEffect)(() => {
+        const initializeMemory = async (): Promise<void> () => {
+            await memoryAdapter.addNodes(data.nodes);
+        };
+        initializeMemory();
+    }, [data.nodes]);
+    (0, react_1.useEffect)(() => {
+        const updateSuggestions = async (): Promise<void> () => {
+            if (data.nodes.length === 0)
+                return;
+            const latestNode = data.nodes[data.nodes.length - 1];
+            const suggestions = await memoryAdapter.getSuggestedConnections(latestNode);
+            setSuggestedConnections(suggestions);
+        };
+        updateSuggestions();
+    }, [data.nodes]);
+    const allEdges = (0, react_1.useMemo)(() => {
+        return [...data.edges.map(graph_adapters_1.toReactFlowEdge), ...suggestedConnections].map(graph_adapters_1.toReactFlowEdge);
+    }, [data.edges, suggestedConnections]);
+    const onNodesChange = (0, react_1.useCallback)((changes) => {
+        changes.forEach((change) => {
+            if (change.type === 'select') {
+                selectNodes(changes
+                    .filter((c) => c.type === 'select' && c.selected)
+                    .map((c) => c.id));
+            }
+        });
+    }, [selectNodes]);
+    const onNodeClick = (0, react_1.useCallback)((_, node) => {
+        expandNode(node.id, !node.data.expanded);
+    }, [expandNode]);
+    const onLayout = (0, react_1.useCallback)((type) => {
+        updateLayout(type);
+        setTimeout(() => fitView(), 200);
+    }, [updateLayout, fitView]);
+    const graphStyles = (0, react_1.useMemo)(() => ({
+        background: darkMode ? '#1a1a1a' : '#ffffff',
+        width: '100%',
+        height: '100%',
+    }), [darkMode]);
+    const nodes = (0, react_1.useMemo)(() => {
+        return data.nodes.map(graph_adapters_1.toReactFlowNode);
+    }, [data.nodes]);
+    if (loading) {
+        return (<div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"/>
+      </div>);
+    }
+    if (error) {
+        return (<div className="flex items-center justify-center h-full text-red-500">
+        Error: {error.message}
+      </div>);
+    }
+    return (<div className={`relative w-full h-full ${className}`}>
+      <reactflow_1.default nodes={nodes} edges={allEdges} onNodesChange={onNodesChange} onNodeClick={onNodeClick} nodeTypes={nodeTypes} fitView style={graphStyles} defaultViewport={{ x: 0, y: 0, zoom: 1 }} minZoom={0.1} maxZoom={4} snapToGrid={config.snapToGrid} snapGrid={config.snapGrid} nodesDraggable={config.nodesDraggable} nodesConnectable={config.nodesConnectable} elementsSelectable={config.elementsSelectable}>
+        <reactflow_1.Background color={darkMode ? '#333' : '#aaa'} gap={16}/>
+        
+        {showControls && <reactflow_1.Controls />}
+        
+        {showMiniMap && (<reactflow_1.MiniMap nodeColor={(node) => { var _a, _b; return ((_b = (_a = node.data) === null || _a === void 0 ? void 0 : _a.style) === null || _b === void 0 ? void 0 : _b.background) || '#3b82f6'; }} maskColor={darkMode ? 'rgba(0, 0, 0, 0.7)' : 'rgba(255, 255, 255, 0.7)'}/>)}
+
+        <reactflow_1.Panel position="top-right" className="space-y-2">
+          <select className="px-3 py-1 rounded border bg-white dark:bg-gray-800" onChange={(e) => onLayout(e.target.value)} value={(_a = config.layout) === null || _a === void 0 ? void 0 : _a.type}>
+            <option value="dagre">Hierarchical</option>
+            <option value="force">Force-Directed</option>
+            <option value="layered">Layered</option>
+          </select>
+
+          <select className="px-3 py-1 rounded border bg-white dark:bg-gray-800" onChange={(e) => filterGraph({ types: e.target.value ? [e.target.value] : undefined })}>
+            <option value="">All Types</option>
+            <option value="task">Tasks</option>
+            <option value="agent">Agents</option>
+            <option value="tool">Tools</option>
+            <option value="message">Messages</option>
+            <option value="data">Data</option>
+            <option value="service">Services</option>
+            <option value="event">Events</option>
+            <option value="state">States</option>
+          </select>
+        </reactflow_1.Panel>
+      </reactflow_1.default>
+    </div>);
+}
+export {};
+//# sourceMappingURL=graph-visualization.js.map

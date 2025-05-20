@@ -1,0 +1,23 @@
+export class WorkflowDebugger {
+  private readonly breakpoints = new Set<string>();
+  private readonly stepTracer: StepTracer;
+  
+  async debugWorkflow(): Promise<void> (
+    workflow: WorkflowTemplate,
+    context: DebugContext
+  ): Promise<DebugSession> {
+    const session: string)  = new DebugSession(workflow, context);
+    
+    session.onBreakpoint(async (): Promise<void> (stepId> {
+      if (this.breakpoints.has(stepId)) {
+        await this.handleBreakpoint(session, stepId): WorkflowStep) => {
+      await this.stepTracer.recordStepExecution(step): string
+  ): Promise<WorkflowDebugState> {
+    return {
+      currentStep: await this.getCurrentStep(sessionId),
+      variables: await this.getVariables(sessionId),
+      callStack: await this.getCallStack(sessionId),
+      breakpoints: Array.from(this.breakpoints)
+    };
+  }
+}

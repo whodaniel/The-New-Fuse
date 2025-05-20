@@ -1,0 +1,86 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.safeCompare = exports.generateToken = exports.validatePassword = exports.generateBackupCodes = void 0;
+const crypto_1 = __importDefault(require("crypto"));
+/**
+ * Generates a list of backup codes for 2FA recovery
+ * @returns Array of unique backup codes
+ */
+const generateBackupCodes = (count = 8) => {
+    const codes = [];
+    const codeLength = 8;
+    while (codes.length < count) {
+        const code = crypto_1.default
+            .randomBytes(4)
+            .toString('hex')
+            .toUpperCase()
+            .slice(0, codeLength);
+        if (!codes.includes(code)) {
+            codes.push(code);
+        }
+    }
+    return codes;
+};
+exports.generateBackupCodes = generateBackupCodes;
+/**
+ * Validates password strength
+ * @param password Password to validate
+ * @returns Object containing validation result and error message
+ */
+const validatePassword = (password) => {
+    if (password.length < 8) {
+        return {
+            isValid: false,
+            message: 'Password must be at least 8 characters long',
+        };
+    }
+    if (!/[A-Z]/.test(password)) {
+        return {
+            isValid: false,
+            message: 'Password must contain at least one uppercase letter',
+        };
+    }
+    if (!/[a-z]/.test(password)) {
+        return {
+            isValid: false,
+            message: 'Password must contain at least one lowercase letter',
+        };
+    }
+    if (!/[0-9]/.test(password)) {
+        return {
+            isValid: false,
+            message: 'Password must contain at least one number',
+        };
+    }
+    if (!/[!@#$%^&*]/.test(password)) {
+        return {
+            isValid: false,
+            message: 'Password must contain at least one special character (!@#$%^&*)',
+        };
+    }
+    return { isValid: true };
+};
+exports.validatePassword = validatePassword;
+/**
+ * Generates a random token
+ * @param length Length of the token
+ * @returns Random token string
+ */
+const generateToken = (length = 32) => {
+    return crypto_1.default.randomBytes(length).toString('hex');
+};
+exports.generateToken = generateToken;
+/**
+ * Safely compares two strings in constant time
+ * @param a First string
+ * @param b Second string
+ * @returns Whether the strings are equal
+ */
+const safeCompare = (a, b) => {
+    return crypto_1.default.timingSafeEqual(Buffer.from(a, 'utf8'), Buffer.from(b, 'utf8'));
+};
+exports.safeCompare = safeCompare;
+//# sourceMappingURL=auth.utils.js.mapexport {};

@@ -1,0 +1,29 @@
+import winston from 'winston';
+import { ElasticsearchTransport } from 'winston-elasticsearch';
+
+export const logger: process.env.LOG_LEVEL || 'info',
+  format: winston.format.combine(
+    winston.format.timestamp():  { service: fuse-service' },
+  transports: [
+    new winston.transports.Console(),
+    new ElasticsearchTransport({
+      level: info',
+      clientOpts: {
+        node: process.env.ELASTICSEARCH_URL,
+        auth: {
+          username: process.env.ELASTICSEARCH_USER,
+          password: process.env.ELASTICSEARCH_PASS
+        }
+      },
+      indexPrefix: fuse-logs'
+    })
+  ]
+});
+
+export const metrics: (method: string, path: string, duration: number)  = winston.createLogger({
+  level {
+  recordApiCall> {
+    logger.info('API Call', { method, path, duration }): (error: Error, context: object) => {
+    logger.error('Error', { error: error.message, stack: error.stack, ...context });
+  }
+};

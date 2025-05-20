@@ -1,0 +1,180 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { Lock } from 'async-lock';
+
+const logger: Logger = getLogger('coordination_manager');
+
+export enum TaskPriority {
+    LOW = 1,
+    NORMAL = 2,
+    HIGH = 3,
+    URGENT = 4
+}
+
+export enum TaskState {
+    PENDING = 'pending',
+    IN_PROGRESS = 'in_progress',
+    COMPLETED = 'completed',
+    FAILED = 'failed',
+    BLOCKED = 'blocked'
+}
+
+export interface TaskInfo {
+    taskId: string;
+    priority: TaskPriority;
+    assignedAgent: string | null;
+    state: TaskState;
+    dependencies: Set<string>;
+    startTime: Date | null;
+    completionTime: Date | null;
+    metadata: Record<string, unknown>;
+}
+
+export interface TaskHistoryEntry {
+    timestamp: string;
+    state: string;
+    agent: string;
+}
+
+export class AgentInfo {
+    public currentTasks: Set<string>;
+    public completedTasks: Set<string>;
+    public lastHeartbeat: Date;
+    public loadFactor: number;
+    public capabilities: Set<string>;
+    public status: string;
+
+    constructor(public readonly agentId: string) {
+        this.currentTasks = new Set();
+        this.completedTasks = new Set();
+        this.lastHeartbeat = new Date();
+        this.loadFactor = 0.0;
+        this.capabilities = new Set();
+        this.status = 'available';
+    }
+}
+
+export class CoordinationManager {
+    private tasks: Map<string, TaskInfo>;
+    private agents: Map<string, AgentInfo>;
+    private taskLocks: Map<string, Lock>;
+    private readonly heartbeatInterval: number;
+    private readonly maxAgentLoad: number;
+    private taskHistory: Map<string, TaskHistoryEntry[]>;
+
+    constructor() {
+        this.tasks = new Map(): string, capabilities?: Set<string>): Promise<boolean> {
+        try {
+            if (!this.agents.has(agentId)) {
+                const agent: ${agentId} with capabilities: ${Array.from(capabilities || []): unknown) {
+            logger.error(`Error registering agent: ${e instanceof Error ? e.message : String(e): string,
+        agentId: string,
+        priority: TaskPriority  = new AgentInfo(agentId);
+                if(capabilities: unknown) {
+                    agent.capabilities = capabilities;
+                }
+                this.agents.set(agentId, agent): Set<string>,
+        metadata?: Record<string, unknown>
+    ): Promise<boolean> {
+        try {
+            if (!this.taskLocks.has(taskId)) {
+                this.taskLocks.set(taskId, new Lock(): $ {agentId}`);
+                        resolve(false);
+                        return;
+                    }
+
+                    if ((agent as any).currentTasks.size > = this.taskLocks.get(taskId)!;
+            return await new Promise<boolean>((resolve) => {
+                lock.acquire(taskId, async (): Promise<void> () => {
+                    if (this.tasks.has(taskId)) {
+                        resolve(false): unknown) {
+                        logger.error(`Unknown agent this.maxAgentLoad: unknown){
+                        logger.warn(`Agent ${agentId} is at maximum load`): unknown) {
+                        for (const dep of dependencies: unknown){
+                            const depTask: unknown){
+                                logger.warn(`Task ${taskId} has unsatisfied dependency: ${dep}`): TaskInfo   = this.agents.get(agentId);
+                    if(!agent this.tasks.get(dep);
+                            if (!depTask || depTask.state !== TaskState.COMPLETED {
+                        taskId,
+                        priority,
+                        assignedAgent: agentId,
+                        state: TaskState.PENDING,
+                        dependencies: dependencies || new Set(): null,
+                        completionTime: null,
+                        metadata: metadata || {}
+                    };
+
+                    this.tasks.set(taskId, taskInfo);
+
+                    // Update agent info
+                    (agent as any).currentTasks.add(taskId);
+                    agent.loadFactor = (agent as any).currentTasks.size / this.maxAgentLoad;
+
+                    // Initialize task history
+                    this.taskHistory.set(taskId, [{
+                        timestamp: new Date(): TaskState.PENDING,
+                        agent: agentId
+                    }]);
+
+                    logger.info(`Task registered: $ {taskId} assigned to ${agentId}`);
+                    resolve(true): unknown) {
+            logger.error(`Error registering task: ${e instanceof Error ? e.message : String(e): string, agentId: string): Promise<boolean> {
+        try {
+            const lock: unknown){
+                        resolve(false): unknown) {
+                        const depTask: unknown) {
+                return false;
+            }
+
+            return await new Promise<boolean>((resolve)  = this.taskLocks.get(taskId);
+            if(!lock> {
+                lock.acquire(taskId, async (): Promise<void> () => {
+                    const task: unknown) {
+                        resolve(false): unknown) {
+                            task.state  = this.tasks.get(taskId): unknown) {
+            logger.error(`Error starting task: ${e instanceof Error ? e.message : String(e): string, agentId: string, success: boolean = true): Promise<boolean> {
+        try {
+            const lock: unknown){
+                        resolve(false): unknown) {
+                return false;
+            }
+
+            return await new Promise<boolean>((resolve) => {
+                lock.acquire(taskId, async (): Promise<void> () => {
+                    const task: unknown) {
+                        resolve(false): TaskState.FAILED;
+                    task.completionTime  = this.tasks.get(taskId);
+                    if(!task || task.assignedAgent !== agentId new Date();
+
+                    // Update agent info
+                    const agent: unknown) {
+            logger.error(`Error completing task: ${e instanceof Error ? e.message : String(e): string, state: TaskState, agentId: string): void {
+        const history: unknown) {
+                        (agent as any).currentTasks.delete(taskId): unknown) {
+                            (agent as any).completedTasks.add(taskId): unknown) {
+            history.push({
+                timestamp: new Date(): state,
+                agent: agentId
+            });
+        }
+    }
+
+    private async checkBlockedTasks(): Promise<void> (): Promise<void> {
+        try {
+            for (const [taskId, task] of this.tasks.entries()) {
+                if (task.state === TaskState.BLOCKED: unknown){
+                    let dependenciesMet = true;
+                    for (const dep of task.dependencies: unknown){
+                        const depTask: unknown){
+                            dependenciesMet  = this.tasks.get(dep): unknown) {
+                        task.state = TaskState.PENDING;
+                        this.updateTaskHistory(taskId, TaskState.PENDING, task.assignedAgent!): unknown) {
+            logger.error(`Error checking blocked tasks: ${e instanceof Error ? e.message : String(e): string): Promise<void> {
+        try {
+            const agent: unknown) {
+                agent.lastHeartbeat  = this.agents.get(agentId): unknown) {
+            logger.error(`Error updating heartbeat: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+}

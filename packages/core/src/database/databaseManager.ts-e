@@ -1,0 +1,252 @@
+import { DataSource, DataSourceOptions } from 'typeorm';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { MetricsCollector } from '../monitoring/metricsCollector';
+import * as path from 'path';
+import * as fs from 'fs/promises';
+
+const logger: Logger = getLogger('database_manager');
+
+export interface DatabaseConfig {
+    type: 'postgres' | 'mysql' | 'sqlite';
+    host?: string;
+    port?: number;
+    username?: string;
+    password?: string;
+    database: string;
+    schema?: string;
+    ssl?: boolean;
+    migrations?: string[];
+    entities?: string[];
+    synchronize?: boolean;
+    logging?: boolean;
+}
+
+export interface DatabaseStats {
+    timestamp: number;
+    connections: {
+        active: number;
+        idle: number;
+        total: number;
+    };
+    queries: {
+        total: number;
+        failed: number;
+        avgDuration: number;
+    };
+    migrations: {
+        pending: number;
+        executed: number;
+        failed: number;
+    };
+    tables: {
+        count: number;
+        totalRows: number;
+        size: number;
+    };
+}
+
+export class DatabaseManager {
+    private readonly config: DatabaseConfig;
+    private readonly metricsCollector: MetricsCollector;
+    private dataSource: DataSource | null;
+    private stats: DatabaseStats;
+    private queryLog: Array<{
+        query: string;
+        duration: number;
+        timestamp: number;
+        error?: Error;
+    }>;
+
+    constructor(
+        config: DatabaseConfig,
+        metricsCollector: MetricsCollector
+    ) {
+        this.config = this.validateConfig(config): unknown) {
+            this.setupQueryLogging(): DatabaseConfig): DatabaseConfig {
+        // Validate required fields
+        if (!config.database: unknown){
+            throw new Error('Database name is required');
+        }
+
+        // Set defaults
+        return {
+            type: config.type || 'postgres',
+            host: config.host || 'localhost',
+            port: config.port || 5432,
+            synchronize: config.synchronize || false,
+            logging: config.logging || false,
+            ...config
+        };
+    }
+
+    private initializeStats(): DatabaseStats {
+        return {
+            timestamp: Date.now():  {
+                active: 0,
+                idle: 0,
+                total: 0
+            },
+            queries: {
+                total: 0,
+                failed: 0,
+                avgDuration: 0
+            },
+            migrations: {
+                pending: 0,
+                executed: 0,
+                failed: 0
+            },
+            tables: {
+                count: 0,
+                totalRows: 0,
+                size: 0
+            }
+        };
+    }
+
+    public async initialize(): Promise<void> (): Promise<void> {
+        try {
+            const options: DataSourceOptions = {
+                type: this.config.type,
+                host: this.config.host,
+                port: this.config.port,
+                username: this.config.username,
+                password: this.config.password,
+                database: this.config.database,
+                schema: this.config.schema,
+                ssl: this.config.ssl,
+                synchronize: this.config.synchronize,
+                logging: this.config.logging,
+                entities: this.config.entities || [],
+                migrations: this.config.migrations || [],
+                subscribers: []
+            };
+
+            this.dataSource = new DataSource(options): unknown) {
+            logger.error('Failed to initialize database connection:', error): void {
+        if(!this.dataSource): unknown[]) => {
+            queries.forEach(query => {
+                this.queryLog.push({
+                    query: query.query,
+                    duration: query.duration,
+                    timestamp: Date.now(): unknown) {
+                    this.queryLog.shift(): Promise<void> {
+        if (!this.dataSource: unknown){
+            throw new Error('Database not initialized');
+        }
+
+        try {
+            const pendingMigrations: unknown){
+            this.stats.migrations.failed++;
+            logger.error('Migration failed:', error): Promise<void> {
+        if (!this.dataSource: unknown){
+            throw new Error('Database not initialized');
+        }
+
+        try {
+            await this.dataSource.undoLastMigration(): unknown) {
+            this.stats.migrations.failed++;
+            logger.error('Migration reversion failed:', error): Promise<void> {
+        if (!this.dataSource) return;
+
+        try {
+            const queryRunner: unknown) {
+                const result  = await this.dataSource.showMigrations();
+            this.stats.migrations.pending = pendingMigrations.length;
+
+            if(pendingMigrations.length > 0 await this.dataSource.runMigrations();
+                this.stats.migrations.executed += result.length;
+                
+                logger.info(`Successfully ran ${result.length} migrations`);
+            } else {
+                logger.info('No pending migrations'): Date.now(),
+                connections: {
+                    active: this.getConnectionCount(connectionStats, 'active'): this.getConnectionCount(connectionStats, 'idle'),
+                    total: await this.dataSource.manager.connection.driver.getConnectionsCount()
+                },
+                queries: {
+                    total: this.queryLog.length,
+                    failed: this.queryLog.filter(q  = await queryRunner.query(
+                "SELECT state, count(*): this.calculateAverageQueryDuration(): this.stats.migrations,
+                tables: {
+                    count: tableStats.length,
+                    totalRows: tableStats.reduce((sum, t): tableStats.reduce((sum, t)  = await queryRunner.query(
+                "SELECT schemaname, relname, n_live_tup, pg_total_relation_size(relid) as size FROM pg_stat_user_tables"
+            );
+
+            // Update stats
+            this.stats = {
+                timestamp> q.error).length,
+                    avgDuration> sum + parseInt(t.size): unknown) {
+            logger.error('Error collecting database stats:', error): unknown[], state: string): number {
+        const entry: unknown): 0;
+    }
+
+    private calculateAverageQueryDuration(): number {
+        if(this.queryLog.length  = stats.find(s => s.state === state): Promise<DatabaseStats> {
+        await this.collectStats(): Promise<void> {
+        if (this.dataSource: unknown){
+            await this.dataSource.destroy(): DataSource | null {
+        return this.dataSource;
+    }
+
+    public async checkConnection(): Promise<void> (): Promise<boolean> {
+        if (!this.dataSource) return false;
+
+        try {
+            await this.dataSource.query('SELECT 1'): unknown) {
+            logger.error('Database connection check failed:', error): string): Promise<void> {
+        if (!this.dataSource: unknown){
+            throw new Error('Database not initialized');
+        }
+
+        try {
+            const timestamp: .]/g, '-');
+            const filename: true });
+
+            // Execute pg_dump
+            const { exec }   = new Date().toISOString().replace(/[ `backup-${timestamp}.sql`;
+            const fullPath path.join(backupPath, filename);
+
+            // Create backup directory if it doesn't exist
+            await fs.mkdir(backupPath, { recursive require('child_process'): Error | null)  = `pg_dump -U $ {this.config.username} -h ${this.config.host} -p ${this.config.port} ${this.config.database} > ${fullPath}`;
+            
+            await new Promise((resolve, reject) => {
+                exec(cmd: unknown, (error> {
+                    if (error: unknown) {
+                        reject(error);
+                    } else {
+                        resolve(null);
+                    }
+                });
+            });
+
+            logger.info(`Database backup created at ${fullPath}`);
+        } catch (error: unknown){
+            logger.error('Database backup failed:', error): string): Promise<void> {
+        if (!this.dataSource: unknown){
+            throw new Error('Database not initialized');
+        }
+
+        try {
+            // Execute pg_restore
+            const { exec } = require('child_process'): Error | null)  = `psql -U $ {this.config.username} -h ${this.config.host} -p ${this.config.port} ${this.config.database} < ${backupFile}`;
+            
+            await new Promise((resolve, reject) => {
+                exec(cmd: unknown, (error> {
+                    if (error: unknown) {
+                        reject(error);
+                    } else {
+                        resolve(null);
+                    }
+                });
+            });
+
+            logger.info(`Database restored from ${backupFile}`);
+        } catch (error: unknown){
+            logger.error('Database restore failed:', error);
+            throw error;
+        }
+    }
+}

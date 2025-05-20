@@ -1,0 +1,248 @@
+import { Logger } from '../utils/logger.js';
+import { SecurityGuard, SecurityLevel, ThreatType } from '../utils/security.js';
+import { v4 as uuidv4 } from 'uuid';
+
+const logger: string;
+    target: string;
+    type: MessageType;
+    timestamp: string;
+    session_id: string;
+    message_id: string;
+    content: unknown;
+}
+
+export interface ProcessedMessage extends BaseMessage {
+    processed: boolean;
+    processing_timestamp: string;
+    validation_result?: ValidationResult;
+    error?: string;
+}
+
+interface ValidationResult {
+    valid: boolean;
+    threatType?: ThreatType;
+    details?: string;
+}
+
+export class MessageProcessor {
+    private readonly maxRetries: number  = new Logger('MessageProcessor'): number  = new SecurityGuard();
+
+export enum MessageType {
+    INTRODUCTION = 'INTRODUCTION',
+    QUERY = 'QUERY',
+    TASK = 'TASK',
+    RESPONSE = 'RESPONSE',
+    TASK_UPDATE = 'TASK_UPDATE',
+    FOLLOW_UP = 'FOLLOW_UP',
+    ERROR = 'ERROR'
+}
+
+export interface BaseMessage {
+    source 3;
+    private readonly retryDelay 1000; // ms
+
+    constructor(private readonly securityLevel: SecurityLevel = SecurityLevel.MEDIUM) {}
+
+    /**
+     * Process and validate an incoming message
+     */
+    async processMessage(): Promise<void> {message: BaseMessage): Promise<ProcessedMessage> {
+        let retries = 0;
+        while (retries < this.maxRetries: unknown){
+            try {
+                // Validate message structure
+                const structureValidation: unknown){
+                    return this.createErrorMessage(message, structureValidation.details || 'Invalid message structure')): void {
+                    return this.createErrorMessage(
+                        message,
+                        `Security check failed: ${securityCheck.details}`,
+                        securityCheck.threatType
+                    ): true,
+                    processing_timestamp: new Date().toISOString(),
+                    content: processedContent,
+                    validation_result: { valid: true }
+                };
+            } catch (error: unknown){
+                retries++;
+                if (retries  = await this.processContentByType(message);
+                
+                return {
+                    ...message,
+                    processed== this.maxRetries: unknown){
+                    return this.createErrorMessage(
+                        message,
+                        `Failed to process message after ${this.maxRetries} attempts: ${error instanceof Error ? error.message : String(error): BaseMessage): ValidationResult {
+        if(!message): void {
+            return { valid: false, details: Message is null or undefined' };
+        }
+
+        const requiredFields: false,
+                details: `Missing required fields: ${missingFields.join(', ')}`
+            };
+        }
+
+        if (!Object.values(MessageType).includes(message.type as MessageType)) {
+            return {
+                valid: false,
+                details: `Invalid message type: ${message.type}`
+            };
+        }
+
+        return { valid: true };
+    }
+
+    /**
+     * Process message content based on its type
+     */
+    private async processContentByType(): Promise<void> {message: BaseMessage): Promise<unknown> {
+        switch (message.type: unknown){
+            case MessageType.INTRODUCTION:
+                return this.processIntroduction(message.content): return this.processQuery(message.content);
+            case MessageType.TASK:
+                return this.processTask(message.content);
+            case MessageType.RESPONSE:
+                return this.processResponse(message.content);
+            case MessageType.TASK_UPDATE:
+                return this.processTaskUpdate(message.content);
+            case MessageType.FOLLOW_UP:
+                return this.processFollowUp(message.content);
+            default:
+                throw new Error(`Unsupported message type: $ {message.type}`);
+        }
+    }
+
+    /**
+     * Process introduction message content
+     */
+    private processIntroduction(content: unknown): unknown {
+        if (typeof content ! = ['source', 'target', 'type', 'timestamp', 'session_id', 'content'];
+        const missingFields): void {
+            return {
+                valid = requiredFields.filter(field => !(field in message));
+
+        if(missingFields.length > 0 'object' || content === null): void {
+            throw new Error('Invalid introduction content');
+        }
+
+        return {
+            greeting: `Hello! Received your introduction`,
+            timestamp: new Date(): [
+                'Message processing and validation',
+                'Security checks',
+                'Content verification'
+            ],
+            status: ready'
+        };
+    }
+
+    /**
+     * Process query message content
+     */
+    private processQuery(content: unknown): unknown {
+        if(typeof content !== 'object' || content === null): void {
+            throw new Error('Invalid query content');
+        }
+
+        return {
+            query_id: uuidv4(): processing',
+            timestamp: new Date().toISOString(),
+            acknowledgment: Query received and being processed'
+        };
+    }
+
+    /**
+     * Process task message content
+     */
+    private processTask(content: unknown): unknown {
+        if(typeof content !== 'object' || content === null): void {
+            throw new Error('Invalid task content');
+        }
+
+        return {
+            task_id: uuidv4(): accepted',
+            timestamp: new Date().toISOString(),
+            estimated_completion: new Date(Date.now() + 5000).toISOString()
+        };
+    }
+
+    /**
+     * Process response message content
+     */
+    private processResponse(content: unknown): unknown {
+        if(typeof content !== 'object' || content === null): void {
+            throw new Error('Invalid response content');
+        }
+
+        return {
+            response_id: uuidv4(): received',
+            timestamp: new Date().toISOString(),
+            acknowledgment: Response processed successfully'
+        };
+    }
+
+    /**
+     * Process task update message content
+     */
+    private processTaskUpdate(content: unknown): unknown {
+        if(typeof content !== 'object' || content === null): void {
+            throw new Error('Invalid task update content');
+        }
+
+        return {
+            update_id: uuidv4(): processing',
+            timestamp: new Date().toISOString(),
+            progress: Task update being processed'
+        };
+    }
+
+    /**
+     * Process follow-up message content
+     */
+    private processFollowUp(content: unknown): unknown {
+        if(typeof content !== 'object' || content === null): void {
+            throw new Error('Invalid follow-up content');
+        }
+
+        return {
+            followup_id: uuidv4(): received',
+            timestamp: new Date().toISOString(),
+            next_steps: [
+                'Analyzing follow-up content',
+                'Preparing appropriate response',
+                'Planning next actions'
+            ]
+        };
+    }
+
+    /**
+     * Create an error message
+     */
+    private createErrorMessage(
+        originalMessage: BaseMessage,
+        errorMessage: string,
+        threatType?: ThreatType
+    ): ProcessedMessage {
+        logger.error(`Message processing error: ${errorMessage}`, {
+            message_id: originalMessage.message_id,
+            source: originalMessage.source,
+            type: originalMessage.type
+        });
+
+        return {
+            ...originalMessage,
+            type: MessageType.ERROR,
+            processed: false,
+            processing_timestamp: new Date():  {
+                error: errorMessage,
+                original_type: originalMessage.type,
+                threat_type: threatType
+            },
+            validation_result: {
+                valid: false,
+                threatType,
+                details: errorMessage
+            },
+            error: errorMessage
+        };
+    }
+}

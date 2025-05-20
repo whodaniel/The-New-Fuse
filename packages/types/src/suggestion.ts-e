@@ -1,0 +1,37 @@
+export interface FeatureSuggestion {
+  id: string;
+  title: string;
+  description: string;
+  status: SuggestionStatus;
+  priority: SuggestionPriority;
+  submittedBy: string;
+  submittedAt: Date;
+  updatedAt: Date;
+  votes: VotingRecord[];
+  tags: string[];
+  relatedTodoIds: string[];
+}
+
+export interface TodoItem {
+  id: string;
+  title: string;
+  description: string;
+  status: 'pending' | 'in_progress' | 'completed';
+  priority: 'low' | 'medium' | 'high';
+  completed: boolean;
+}
+
+export interface Comment {
+  id: string;
+  content: string;
+  authorId: string;
+  suggestionId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface VotingRecord {
+  suggestionId: string;
+  votedAt: Date;
+  vote: number;
+}

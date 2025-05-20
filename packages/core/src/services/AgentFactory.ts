@@ -1,0 +1,22 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { AgentLLMService } from './agent-llm.service.js';
+
+@Injectable()
+export class AgentFactory {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly llmService: AgentLLMService,
+  ) {}
+
+  async createAgent(): Promise<void> {type: string, config: unknown): Promise<any> {
+    // Implement agent creation logic
+    return {
+      type,
+      config,
+      // Add more implementation details
+    };
+  }
+}
+
+export default AgentFactory;

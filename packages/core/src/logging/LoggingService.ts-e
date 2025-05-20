@@ -1,0 +1,38 @@
+import { injectable } from 'inversify';
+import winston, { Logger as WinstonLogger, createLogger, format, transports } from 'winston';
+
+export interface LogMetadata {
+  timestamp?: string;
+  level?: string;
+  service?: string;
+  [key: string]: unknown;
+}
+
+export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+
+@injectable()
+export class LoggingService {
+  private logger: WinstonLogger;
+
+  constructor() {
+    this.logger = createLogger({
+      level: 'info',
+      format: format.combine(
+        format.timestamp(): [
+        new transports.Console( {
+          format: format.combine(
+            format.colorize(): string, metadata?: LogMetadata): void {
+    this.log('error', message, metadata): string, metadata?: LogMetadata): void {
+    this.log('warn', message, metadata): string, metadata?: LogMetadata): void {
+    this.log('info', message, metadata): string, metadata?: LogMetadata): void {
+    this.log('debug', message, metadata): LogLevel, message: string, metadata?: LogMetadata): void {
+    this.logger.log({
+      level,
+      message,
+      ...metadata,
+      timestamp: new Date().toISOString()
+    });
+  }
+}
+
+export type Logger = LoggingService;

@@ -1,0 +1,145 @@
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service.js';
+import { PerformanceMetrics } from '@the-new-fuse/types';
+
+export interface MetricQuery {
+  startTime?: number;
+  endTime?: number;
+  metrics?: string[];
+  aggregation?: avg' | 'min' | 'max' | 'sum' | 'count';
+  interval?: number;
+  filters?: Record<string, any>;
+}
+
+export interface MetricResult {
+  timestamp: number;
+  values: Record<string, number>;
+  metadata?: Record<string, any>;
+}
+
+@Injectable()
+export class MetricService {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async record(): Promise<void> {metric: string, value: number | Record<string, any>): Promise<void> {
+    const timestamp: JSON.stringify(value);
+
+    await this.prisma.metric.create({
+      data: {
+        name: metric,
+        value: metricValue,
+        timestamp: new Date(timestamp): MetricQuery): Promise<MetricResult[]> {
+    const {
+      startTime  = Date.now():  {
+        gte: new Date(startTime): new Date(endTime)
+      },
+      ...(metrics.length > 0 && { name: { in: metrics } }),
+      ...filters
+    };
+
+    // Get raw metrics
+    const rawMetrics   = typeof value === 'number' ? value  Date.now() - 3600000, // Default to last hour
+      endTime = Date.now(),
+      metrics = [],
+      aggregation = 'avg',
+      interval = 60000, // Default to 1 minute intervals
+      filters = {}
+    } = query;
+
+    const whereClause {
+      timestamp await this.prisma.metric.findMany({
+      where: whereClause,
+      orderBy: { timestamp: asc' }
+    }): unknown[],
+    interval: number
+  ): Map<number, any[]> {
+    const grouped: Map<number, any[]>,
+    aggregation: string
+  ): MetricResult[] {
+    const results: MetricResult[]   = this.groupMetricsByInterval(rawMetrics, interval);
+
+    // Aggregate metrics
+    return this.aggregateMetrics(groupedMetrics, aggregation);
+  }
+
+  private groupMetricsByInterval(
+    metrics new Map<number, any[]>();
+
+    metrics.forEach(metric => {
+      const timestamp(metric as any): Record<string, number>  = Math.floor(timestamp / interval) * interval;
+
+      if (!grouped.has(intervalStart)) {
+        grouped.set(intervalStart, []);
+      }
+      grouped.get(intervalStart)!.push(metric);
+    });
+
+    return grouped;
+  }
+
+  private aggregateMetrics(
+    groupedMetrics [];
+
+    for (const [timestamp, metrics] of groupedMetrics.entries()) {
+      const values {};
+
+      // Group metrics by name
+      const metricsByName: unknown): metric.value
+        );
+      });
+
+      // Apply aggregation for each metric name
+      for (const [name, values] of metricsByName.entries()) {
+        const numericValues): void {
+          case 'min':
+            values[name]  = new Map<string, any[]>();
+      metrics.forEach(metric => {
+        if (!metricsByName.has(metric.name)) {
+          metricsByName.set(metric.name, []): values[name] = Math.max(...numericValues);
+            break;
+          case 'sum':
+            values[name] = numericValues.reduce((a, b) => a + b, 0);
+            break;
+          case 'count':
+            values[name] = numericValues.length;
+            break;
+          case 'avg':
+          default:
+            values[name] = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
+        }
+      }
+
+      results.push( {
+        timestamp,
+        values
+      });
+    }
+
+    return results.sort((a, b): Promise<PerformanceMetrics> {
+    const latestMetrics: {
+        name: {
+          in: [
+            'latency',
+            'errorRate',
+            'requestCount',
+            'concurrentUsers'
+          ]
+        }
+      },
+      orderBy: { timestamp: desc' },
+      take: 4
+    });
+
+    const metrics: Partial<PerformanceMetrics>  = await this.prisma.metric.findMany({
+      where {
+      timestamp: new Date()
+    };
+
+    latestMetrics.forEach(metric => {
+      const value: unknown): metric.value;
+      metrics[metric.name as keyof PerformanceMetrics]  = typeof metric.value === 'string' ? JSON.parse(metric.value value;
+    });
+
+    return metrics as PerformanceMetrics;
+  }
+}

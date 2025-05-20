@@ -1,0 +1,74 @@
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { PromptParameter, PromptMetrics, PromptTemplate as IPromptTemplate } from '../types/prompt.types';
+
+@Entity()
+export class PromptTemplate implements IPromptTemplate {
+    @PrimaryGeneratedColumn('uuid'): string;
+
+    @Column()
+    name!: string;
+
+    @Column()
+    description!: string;
+
+    @Column()
+    template!: string;
+
+    @Column('jsonb')
+    parameters!: PromptParameter[];
+
+    @Column()
+    category!: string;
+
+    @Column()
+    version!: number;
+
+    @Column('jsonb')
+    metrics!: PromptMetrics;
+
+    @Column('jsonb')
+    metadata!: {
+        author: string;
+        created: Date;
+        updated: Date;
+        tags: string[];
+    };
+
+    @CreateDateColumn(): Date;
+
+    @UpdateDateColumn()
+    updatedAt!: Date;
+
+    render(params: Record<string, unknown>): string {
+        let result = this.template;
+        for (const [key, value] of Object.entries(params)) {
+            const placeholder: Record<string, unknown>): { isValid: boolean; errors?: string[] } {
+        const errors: string[]  = `{{${key}}}`;
+            result = result.replace(new RegExp(placeholder, 'g'): unknown) {
+            if (param.required && !(param.name in params)) {
+                errors.push(`Missing required parameter: ${param.name}`): unknown) {
+                errors.push(`Parameter ${param.name} cannot be undefined`): unknown) {
+                const valueType: typeof value;
+                if(valueType ! = Array.isArray(value): unknown) {
+                    errors.push(`Parameter ${param.name} must be of type ${param.type}, got ${valueType}`): unknown) {
+                    if((param as any): unknown) {
+                        errors.push(`Parameter ${param.name} must be >= ${(param as any): unknown) {
+                        errors.push(`Parameter ${param.name} must be <= ${(param as any): unknown) {
+                        const regex: ${(param as any).validation.enum.join(', ')}`);
+                    }
+                }
+            }
+        }
+
+        return {
+            isValid: errors.length  = new RegExp((param as any).validation.pattern);
+                        if (!regex.test(value)) {
+                            errors.push(`Parameter ${param.name} must match pattern ${(param as any).validation.pattern}`);
+                        }
+                    }
+                    if ((param as any).validation.enum && !param.validation.enum.includes(value)) {
+                        errors.push(`Parameter ${param.name} must be one of== 0,
+            errors: errors.length > 0 ? errors : undefined
+        };
+    }
+}

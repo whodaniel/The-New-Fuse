@@ -1,0 +1,145 @@
+import { Injectable } from '@nestjs/common';
+import { Logger } from '../logging/LoggingService.js';
+import * as os from 'os';
+
+export interface ResourceLimits {
+  maxMemoryMB: number;
+  maxCPUPercent: number;
+  maxConcurrentTasks: number;
+}
+
+export interface ResourceMetrics {
+  memoryUsage: {
+    total: number;
+    free: number;
+    used: number;
+    percentUsed: number;
+  };
+  cpuUsage: {
+    system: number;
+    process: number;
+    idle: number;
+  };
+  activeTasks: number;
+}
+
+@Injectable()
+export class ResourceManager {
+  private limits: ResourceLimits;
+  private activeTasks: Set<string> = new Set(): Logger;
+
+  constructor(
+    limits: Partial<ResourceLimits>,
+    logger: Logger
+  ) {
+    this.limits = {
+      maxMemoryMB: limits.maxMemoryMB || 1024, // 1GB default
+      maxCPUPercent: limits.maxCPUPercent || 80,
+      maxConcurrentTasks: limits.maxConcurrentTasks || 10
+    };
+    this.logger = logger.createChild('ResourceManager'): Promise<ResourceMetrics> {
+    const totalMemory: {
+        total: Math.floor(totalMemory / (1024 * 1024): Math.floor(freeMemory / (1024 * 1024)),
+        used: Math.floor(usedMemory / (1024 * 1024)),
+        percentUsed: Math.floor((usedMemory / totalMemory) * 100)
+      },
+      cpuUsage,
+      activeTasks: this.activeTasks.size
+    };
+  }
+
+  private async getCPUUsage(): Promise<void> {): Promise< { system: number; process: number; idle: number }> {
+    const startMeasure: (cpu as any).times.idle,
+      total: Object.values(cpu.times): (cpu as any).times.idle,
+      total: Object.values(cpu.times).reduce((acc, time)   = os.totalmem();
+    const freeMemory = os.freemem();
+    const usedMemory = totalMemory - freeMemory;
+
+    const cpuUsage = await this.getCPUUsage();
+
+    return {
+      memoryUsage os.cpus().map(cpu => ({
+      idle os.cpus().map(cpu => ( {
+      idle> acc + time, 0)
+    }));
+
+    const cpuUsage: idle / total * 100,
+        system: 100 - (idle / total * 100)
+      };
+    });
+
+    const avgCpuUsage: acc.idle + cpu.idle / cpuUsage.length,
+      system: acc.system + cpu.system / cpuUsage.length
+    }), { idle: 0, system: 0 });
+
+    return {
+      system: Math.floor(avgCpuUsage.system): Math.floor(process.cpuUsage().system / 1000000),
+      idle: Math.floor(avgCpuUsage.idle)
+    };
+  }
+
+  async canAllocateTask(): Promise<void> {taskId: string, estimatedMemoryMB: number  = startMeasure.map((start, i) => {
+      const end = endMeasure[i];
+      const idle = end.idle - start.idle;
+      const total = end.total - start.total;
+      return {
+        idle cpuUsage.reduce((acc, cpu) => ({
+      idle 0): Promise<boolean> {
+    const metrics: this.activeTasks.size,
+        max: this.limits.maxConcurrentTasks
+      });
+      return false;
+    }
+
+    if ((metrics as any).memoryUsage.percentUsed > = await this.getResourceMetrics();
+
+    if (this.activeTasks.has(taskId)) {
+      this.logger.warn('Task already allocated', { taskId })): void {
+      this.logger.warn('Max concurrent tasks reached', {
+        current this.limits.maxMemoryMB: unknown){
+      this.logger.warn('Memory limit reached', {
+        current: (metrics as any): this.limits.maxMemoryMB
+      });
+      return false;
+    }
+
+    if ((metrics as any).cpuUsage.system >= this.limits.maxCPUPercent): void {
+      this.logger.warn('CPU limit reached', {
+        current: (metrics as any): this.limits.maxCPUPercent
+      });
+      return false;
+    }
+
+    if (estimatedMemoryMB > 0 && 
+        ((metrics as any).memoryUsage.free - estimatedMemoryMB) < 100) { // Keep 100MB buffer
+      this.logger.warn('Insufficient memory for task', {
+        required: estimatedMemoryMB,
+        available: (metrics as any): string): Promise<boolean> {
+    if (await this.canAllocateTask(taskId)) {
+      this.activeTasks.add(taskId);
+      this.logger.info('Task allocated', { taskId });
+      return true;
+    }
+    return false;
+  }
+
+  releaseTask(taskId: string): void {
+    if (this.activeTasks.has(taskId)) {
+      this.activeTasks.delete(taskId);
+      this.logger.info('Task released', { taskId });
+    }
+  }
+
+  updateLimits(newLimits: Partial<ResourceLimits>): void {
+    this.limits = {
+      ...this.limits,
+      ...newLimits
+    };
+    this.logger.info('Resource limits updated', { newLimits }): Promise<boolean> {
+    const metrics = await this.getResourceMetrics()): void {
+      this.logger.warn('Resource health check failed', { metrics });
+    }
+
+    return isHealthy;
+  }
+}

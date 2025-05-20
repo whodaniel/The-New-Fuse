@@ -1,0 +1,32 @@
+import { Node, Edge } from 'reactflow';
+import { WorkflowExecutor } from './executor';
+import { WorkflowOptions, WorkflowExecutionResult, NodeStatus } from './types';
+export declare class PersistentWorkflowExecutor extends WorkflowExecutor {
+    private storage;
+    private workflowId;
+    constructor(dbPath: string, workflowId: string, options?: WorkflowOptions);
+    initialize(): Promise<void>;
+    execute(nodes: Node[], edges: Edge[]): Promise<WorkflowExecutionResult>;
+    getRunHistory(): Promise<{
+        id: string;
+        status: string;
+        startTime: Date;
+        endTime?: Date;
+        nodeStatuses: Record<string, NodeStatus>;
+    }[]>;
+    getRun(runId: string): Promise<import("../persistence/schema").WorkflowRun | null>;
+    saveWorkflow(name: string, description: string, nodes: Node[], edges: Edge[]): Promise<void>;
+    updateWorkflow(name?: string, description?: string, nodes?: Node[], edges?: Edge[]): Promise<void>;
+    loadWorkflow(): Promise<{
+        metadata: {
+            name: string;
+            description?: string;
+            version: number;
+        };
+        nodes: Node[];
+        edges: Edge[];
+    }>;
+    setVariable(name: string, value: string): Promise<void>;
+    getVariable(name: string): Promise<string | null>;
+    close(): Promise<void>;
+}

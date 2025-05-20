@@ -1,0 +1,28 @@
+import { Injectable } from '@nestjs/common';
+import { OpenAI } from '@the-new-fuse/openai';
+import { ModelConfig, AIResponse } from '@the-new-fuse/types';
+
+@Injectable()
+export class AIService {
+    private models: Map<string, ModelConfig>;
+
+    constructor(private readonly openai: OpenAI) {
+        this.initializeModels(): string, context: unknown): Promise<AIResponse> {
+        const model: model.id,
+                prompt: enhancedPrompt,
+                max_tokens: model.maxTokens,
+                temperature: context.creativity || 0.7,
+                stream: context.requiresStreaming
+            });
+
+            return this.processResponse(response): unknown) {
+            return this.handleFailover(error, prompt, context): string, context: unknown): Promise<string> {
+        const systemContext  = await this.selectOptimalModel(context);
+        const enhancedPrompt = await this.enhancePrompt(prompt, context);
+        
+        try {
+            const response = await this.openai.createCompletion({
+                model await this.buildSystemContext(context);
+        return `${systemContext}\n\n${prompt}`;
+    }
+}

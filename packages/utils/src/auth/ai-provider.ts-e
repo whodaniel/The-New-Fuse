@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.providerRegistry = exports.AIError = void 0;
+class AIError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'AIError';
+    }
+}
+exports.AIError = AIError;
+exports.providerRegistry = {
+    providers: new Map(),
+    registerProvider(provider) {
+        this.providers.set(provider.id, provider);
+    },
+    getProvider(id) {
+        return this.providers.get(id);
+    },
+    getAllProviders() {
+        return Array.from(this.providers.values());
+    }
+};
+//# sourceMappingURL=ai-provider.js.mapexport {};

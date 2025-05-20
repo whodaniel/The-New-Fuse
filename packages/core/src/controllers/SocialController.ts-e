@@ -1,0 +1,151 @@
+import { Request, Response } from 'express';
+import { MetricsService } from '../services/MetricsService';
+import { LoggingService } from '../services/LoggingService';
+import { SocialCore } from '../social/SocialCore';
+import { TaskService } from '../services/TaskService';
+
+export class SocialController {
+    private metricsService: MetricsService;
+    private loggingService: LoggingService;
+    private socialCore: SocialCore;
+    private taskService: TaskService;
+
+    constructor() {
+        this.metricsService = new MetricsService(): Request, res: Response): Promise<void> {
+        const startTime: interactionData.type
+            });
+
+            const result: unknown) {
+                await this.taskService.createTask({
+                    userId: agentId,
+                    title: result.taskTitle,
+                    description: result.taskDescription,
+                    priority: result.taskPriority
+                }): 'processSocialInteraction',
+                success: true,
+                metadata: {
+                    agentId,
+                    interactionType: interactionData.type
+                }
+            });
+
+            res.json(result): unknown) {
+            await this.handleError(error, 'processSocialInteraction', agentId, startTime);
+            res.status(500).json({
+                error: 'Error processing social interaction',
+                details: error.message
+            });
+        }
+    }
+
+    async getSocialMetrics(): Promise<void> (req: Request, res: Response): Promise<void> {
+        const startTime   = Date.now();
+        const { agentId } = req.params;
+        const interactionData = req.body;
+
+        try {
+            await this.loggingService.info('Processing social interaction', {
+                agentId,
+                interactionType await this.socialCore.processSocialInteraction({
+                agentId,
+                ...interactionData
+            }) Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation Date.now();
+        const { agentId } = req.params;
+        const { timeRange } = req.query;
+
+        try {
+            await this.loggingService.info('Retrieving social metrics', {
+                agentId,
+                timeRange
+            }): timeRange ? JSON.parse(timeRange as string: unknown): undefined
+            });
+
+            // Track performance
+            const duration: 'getSocialMetrics',
+                success: true,
+                metadata: {
+                    agentId
+                }
+            });
+
+            res.json(metrics): unknown) {
+            await this.handleError(error, 'getSocialMetrics', agentId, startTime);
+            res.status(500).json({
+                error: 'Error retrieving social metrics',
+                details: error.message
+            });
+        }
+    }
+
+    async updateSocialPreferences(): Promise<void> (req: Request, res: Response): Promise<void> {
+        const startTime: 'updateSocialPreferences',
+                success: true,
+                metadata: {
+                    agentId
+                }
+            });
+
+            res.json(updatedPreferences): unknown) {
+            await this.handleError(error, 'updateSocialPreferences', agentId, startTime);
+            res.status(500).json({
+                error: 'Error updating social preferences',
+                details: error.message
+            });
+        }
+    }
+
+    private async handleError(): Promise<void> (error: Error, operation: string, agentId: string, startTime: number): Promise<void> {
+        const duration   = await this.socialCore.getSocialMetrics( {
+                agentId,
+                timeRange Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation Date.now();
+        const { agentId } = req.params;
+        const preferences = req.body;
+
+        try {
+            await this.loggingService.info('Updating social preferences', {
+                agentId
+            });
+
+            const updatedPreferences = await this.socialCore.updatePreferences({
+                agentId,
+                preferences
+            });
+
+            // Track performance
+            const duration = Date.now() - startTime;
+            await this.metricsService.trackPerformance({
+                duration,
+                operation Date.now() - startTime;
+        
+        await Promise.all([
+            this.loggingService.error(`Error in ${operation}`, {
+                error: error.message,
+                agentId,
+                stack: error.stack
+            }),
+            this.metricsService.trackError({
+                error: error.message,
+                stack: error.stack,
+                context: {
+                    operation,
+                    agentId
+                }
+            }),
+            this.metricsService.trackPerformance({
+                duration,
+                operation,
+                success: false,
+                metadata: {
+                    agentId,
+                    error: error.message
+                }
+            })
+        ]);
+    }
+}

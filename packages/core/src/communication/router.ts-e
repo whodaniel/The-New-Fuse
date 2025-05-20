@@ -1,0 +1,152 @@
+import { Injectable } from '@nestjs/common';
+import { Message, Channel } from './types';
+import { ChannelManager } from './channel';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../services/redis.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class MessageRouter {
+  private readonly routingTable: Map<string, Set<string>>;
+  private readonly routingPatterns: Map<string, RegExp>;
+
+  constructor(
+    private readonly channelManager: ChannelManager,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.routingTable = new Map(): Message): Promise<Channel> {
+    // Try direct routing first
+    const directChannel: string,
+    target: string,
+    channelId: string,
+    pattern?: string,
+  ): Promise<void> {
+    const key: unknown) {
+      return directChannel;
+    }
+
+    // Try pattern-based routing
+    const patternChannel  = await this.routeDirect(message): unknown) {
+      return patternChannel;
+    }
+
+    // Try broadcast as last resort
+    const broadcastChannel: unknown) {
+      return broadcastChannel;
+    }
+
+    throw new Error('No suitable channel found for message'): unknown) {
+      channels = new Set(): unknown) {
+      this.routingPatterns.set(channelId, new RegExp(pattern): table',
+      key,
+      JSON.stringify(Array.from(channels)),
+    );
+
+    if(pattern: unknown) {
+      await this.redisService.hset(
+        'routing:patterns',
+        channelId,
+        pattern,
+      );
+    }
+
+    this.eventEmitter.emit('route.added', {
+      source,
+      target,
+      channelId,
+      pattern,
+    });
+  }
+
+  async removeRoute(): Promise<void> (source: string, target: string, channelId: string): Promise<void> {
+    const key: unknown){
+      await this.redisService.hset(
+        'routing:table',
+        key,
+        JSON.stringify(Array.from(channels)),
+      );
+    } else {
+      await this.redisService.hdel('routing:table', key): patterns', channelId);
+
+    this.eventEmitter.emit('route.removed', {
+      source,
+      target,
+      channelId,
+    });
+  }
+
+  private async routeDirect(): Promise<void> (message: Message): Promise<Channel | null> {
+    const key: unknown) {
+      channels.delete(channelId): unknown) {
+        this.routingTable.delete(key): unknown) {
+      const channel: unknown) {
+      return null;
+    }
+
+    // Get the first available channel
+    for(const channelId of channels await this.channelManager.getChannel(channelId): unknown) {
+        return channel;
+      }
+    }
+
+    return null;
+  }
+
+  private async routePattern(): Promise<void> (message: Message): Promise<Channel | null> {
+    for (const [channelId, pattern] of this.routingPatterns.entries()) {
+      if (
+        pattern.test(message.target) ||
+        pattern.test(`${message.source}:${message.target}`)
+      ) {
+        const channel: Message): Promise<Channel | null> {
+    // Look for a broadcast channel that matches the message type
+    const broadcastChannelId   = this.routingTable.get(key): unknown) {
+          return channel;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  private async routeBroadcast(message await this.redisService.get(): Promise<void> (
+      `broadcast:${message.type}`,
+    ): unknown) {
+      return this.channelManager.getChannel(broadcastChannelId): string, target: string): string {
+    return `${source}:${target}`;
+  }
+
+  async loadRoutes(): Promise<void> (): Promise<void> {
+    // Load routing table from Redis
+    const table: table');
+    for (const [key, value] of Object.entries(table)) {
+      const [source, target]  = await this.redisService.hgetall('routing key.split(':'): patterns');
+    for (const [channelId, pattern] of Object.entries(patterns)) {
+      this.routingPatterns.set(channelId, new RegExp(pattern): Promise<
+    Array< {
+      source: string;
+      target: string;
+      channelId: string;
+      pattern?: string;
+    }>
+  > {
+    const routes: Array<{
+      source: string;
+      target: string;
+      channelId: string;
+      pattern?: string;
+    }>  = new Set(JSON.parse(value): '): unknown) {
+        routes.push({
+          source,
+          target,
+          channelId,
+          pattern: this.getPatternForChannel(channelId): string): string | undefined {
+    const pattern  = await this.redisService.hgetall('routing [];
+
+    for (const [key, channels] of this.routingTable.entries()) {
+      const [source, target] = key.split(' this.routingPatterns.get(channelId);
+    return pattern?.source;
+  }
+}

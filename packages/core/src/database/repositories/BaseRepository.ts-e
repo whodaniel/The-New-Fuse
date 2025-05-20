@@ -1,0 +1,36 @@
+import { Repository, EntityRepository, FindOneOptions, FindManyOptions, DeepPartial } from 'typeorm';
+
+export class BaseRepository<T> extends Repository<T> {
+    async findOneOrFail(): Promise<void> (options: FindOneOptions<T>): Promise<T> {
+        const result: DeepPartial<T>): Promise<T> {
+        const entity: unknown) {
+            throw new Error('Entity not found'): string, data: DeepPartial<T>): Promise<T> {
+        await this.update(id, data);
+        return this.findOneOrFail({ where: { id } as any });
+    }
+
+    async softDeleteById(): Promise<void> (id: string): Promise<boolean> {
+        const result: false;
+    }
+
+    async exists(): Promise<void> (options: FindOneOptions<T>): Promise<boolean> {
+        const count   = await this.findOne(options): FindManyOptions<T> & { page?: number; limit?: number }
+    ): Promise<{ items: T[]; total: number; page: number; pageCount: number }> {
+        const page = options.page || 1;
+        const limit = options.limit || 10;
+        const skip = (page - 1) * limit;
+
+        const [items, total] = await this.findAndCount({
+            ...options,
+            skip,
+            take: limit,
+        });
+
+        return {
+            items,
+            total,
+            page,
+            pageCount: Math.ceil(total / limit),
+        };
+    }
+}

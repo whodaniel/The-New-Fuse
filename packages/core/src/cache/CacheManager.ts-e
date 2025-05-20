@@ -1,0 +1,15 @@
+import { Injectable } from '@nestjs/common';
+import { RedisService } from './RedisService';
+
+@Injectable()
+export class CacheManager {
+  constructor(private redis: RedisService) {}
+
+  // Need implementations for:
+  // - Cache invalidation strategies
+  // - Cache warming
+  // - Cache synchronization
+  // - Cache monitoring
+  // - Memory management
+  // - Cache partitioning
+}

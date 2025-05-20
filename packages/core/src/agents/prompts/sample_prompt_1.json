@@ -1,0 +1,9 @@
+{
+    "prompt_id": "sample_prompt_1",
+    "description": "Sample prompt for testing purposes",
+    "template": "Hello {domain}! Terms: {key_terms}",
+    "context": {
+        "domain": "testing",
+        "key_terms": ["unit", "test"]
+    }
+}

@@ -1,0 +1,54 @@
+# Base stage for common setup
+FROM node:20-bullseye AS base
+
+# Install development dependencies
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    postgresql-client \
+    build-essential \
+    python3 \
+    make \
+    g++ \
+    vim \
+    net-tools \
+    htop \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Setup yarn
+RUN corepack enable && \
+    yarn set version berry && \
+    yarn config set nodeLinker node-modules
+
+# Copy package.json files
+COPY package.json yarn.lock ./
+COPY apps/frontend/package.json ./apps/frontend/
+COPY apps/api/package.json ./apps/api/
+COPY packages ./packages
+COPY .yarnrc.yml .
+COPY .yarn .yarn
+
+# Install dependencies
+RUN yarn install
+
+# Frontend stage
+FROM base AS frontend
+WORKDIR /app
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/apps/frontend/node_modules ./apps/frontend/node_modules
+COPY . .
+WORKDIR /app/apps/frontend
+CMD ["yarn", "dev"]
+
+# API stage
+FROM base AS api
+WORKDIR /app
+COPY --from=base /app/node_modules ./node_modules
+COPY --from=base /app/apps/api/node_modules ./apps/api/node_modules
+COPY . .
+WORKDIR /app/apps/api
+CMD ["yarn", "dev"]

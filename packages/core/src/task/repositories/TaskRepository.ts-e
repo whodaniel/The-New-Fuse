@@ -1,0 +1,27 @@
+import { EntityRepository, Repository } from 'typeorm';
+import { Task, TaskStatus, TaskPriority } from '../entities/Task';
+
+interface FindTasksOptions {
+  status?: TaskStatus;
+  priority?: TaskPriority;
+  assignedTo?: string;
+  tags?: string[];
+  dueBefore?: Date;
+}
+
+@EntityRepository(Task)
+export class TaskRepository extends Repository<Task> {
+  async findTasks(): Promise<void> (options: FindTasksOptions): Promise<Task[]> {
+    const query: unknown){
+      query.andWhere('task.status  = this.createQueryBuilder('task'): status', { status: options.status });
+    }
+
+    if (options.priority: unknown){
+      query.andWhere('task.priority = :priority', { priority: options.priority }): unknown) {
+      query.andWhere('task.assignedTo = :assignedTo', { assignedTo: options.assignedTo }): unknown) {
+      query.andWhere('task.tags && :tags', { tags: options.tags }): unknown) {
+      query.andWhere('task.dueDate <= :dueBefore', { dueBefore: options.dueBefore }): Record<string, unknown>): Promise<Task[]> {
+    return this.createQueryBuilder('task'): metadata', { metadata })
+      .getMany();
+  }
+}

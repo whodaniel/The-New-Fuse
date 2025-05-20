@@ -1,0 +1,156 @@
+import React, { FC } from "react";
+import { WorkflowStep, WorkflowMetrics } from '@the-new-fuse/types';
+import * as d3 from 'd3';
+
+interface WorkflowVisualizerProps {
+  steps: WorkflowStep[];
+  metrics?: WorkflowMetrics;
+  onStepClick?: (step: WorkflowStep) => void;
+  highlightedStepId?: string;
+}
+
+export const WorkflowVisualizer: FC<WorkflowVisualizerProps> = ({
+  steps,
+  metrics,
+  onStepClick,
+  highlightedStepId
+}) => {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!svgRef.current || !containerRef.current || !steps.length) return;
+
+    const width = containerRef.current.clientWidth;
+    const height = containerRef.current.clientHeight;
+
+    const svg = d3.select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height);
+
+    // Clear previous content
+    svg.selectAll('*').remove();
+
+    // Create workflow graph
+    const graph = createWorkflowGraph(steps);
+    
+    // Create layout
+    const layout = d3.dagStratify()(graph);
+    const { nodes, links } = layout;
+
+    // Draw connections
+    const linkGroup = svg.append('g')
+      .attr('class', 'links');
+
+    linkGroup.selectAll('path')
+      .data(links)
+      .enter()
+      .append('path')
+      .attr('d', d3.linkHorizontal()
+        .x(d => d.x * 150)
+        .y(d => d.y * 80))
+      .attr('stroke', '#999')
+      .attr('fill', 'none')
+      .attr('marker-end', 'url(#arrow)');
+
+    // Draw nodes
+    const nodeGroup = svg.append('g')
+      .attr('class', 'nodes');
+
+    const nodes = nodeGroup.selectAll('g')
+      .data(graph.nodes)
+      .enter()
+      .append('g')
+      .attr('transform', d => `translate(${d.x * 150},${d.y * 80})`);
+
+    // Add node rectangles
+    nodes.append('rect')
+      .attr('width', 120)
+      .attr('height', 60)
+      .attr('rx', 8)
+      .attr('ry', 8)
+      .attr('fill', d => getNodeColor(d, metrics))
+      .attr('stroke', d => d.id === highlightedStepId ? '#ff6b6b' : '#666')
+      .attr('stroke-width', d => d.id === highlightedStepId ? 3 : 1)
+      .style('cursor', 'pointer')
+      .on('click', (event, d) => onStepClick?.(d));
+
+    // Add node labels
+    nodes.append('text')
+      .attr('x', 60)
+      .attr('y', 30)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'middle')
+      .style('font-size', '12px')
+      .style('pointer-events', 'none')
+      .text(d => d.name);
+
+    // Add status indicators
+    if (metrics) {
+      nodes.append('circle')
+        .attr('cx', 110)
+        .attr('cy', 10)
+        .attr('r', 5)
+        .attr('fill', d => getStatusColor(d.id, metrics));
+    }
+  }, [steps, metrics, highlightedStepId]);
+
+  return (
+    <div ref={containerRef} style={{ width: '100%', height: '100%' }}>
+      <svg ref={svgRef}>
+        <defs>
+          <marker
+            id="arrow"
+            viewBox="0 0 10 10"
+            refX="5"
+            refY="5"
+            markerWidth="6"
+            markerHeight="6"
+            orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#999"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  );
+};
+
+function createWorkflowGraph(steps: WorkflowStep[]) {
+  const nodes = steps.map(step => ({
+    id: step.id,
+    name: step.name,
+    parentIds: step.dependencies || []
+  }));
+
+  return {
+    nodes,
+    links: nodes.flatMap(node =>
+      node.parentIds.map(parentId => ({
+        source: parentId,
+        target: node.id
+      }))
+    )
+  };
+}
+
+function getNodeColor(node: WorkflowStep, metrics?: WorkflowMetrics) {
+  if (!metrics) return '#f8f9fa';
+  
+  const status = metrics.stepStatus?.[node.id];
+  switch (status) {
+    case 'completed': return '#e3fcef';
+    case 'running': return '#e3f2fd';
+    case 'failed': return '#fff5f5';
+    default: return '#f8f9fa';
+  }
+}
+
+function getStatusColor(stepId: string, metrics: WorkflowMetrics) {
+  const status = metrics.stepStatus?.[stepId];
+  switch (status) {
+    case 'completed': return '#37b24d';
+    case 'running': return '#1c7ed6';
+    case 'failed': return '#f03e3e';
+    default: return '#adb5bd';
+  }
+}

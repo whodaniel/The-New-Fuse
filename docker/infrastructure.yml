@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  database:
+    image: postgres:14-alpine
+  redis:
+    image: redis:alpine
+  elasticsearch:
+    image: elasticsearch:7.17.0
+  kibana:
+    image: kibana:7.17.0
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+
+volumes:
+  db_data:
+  es_data:

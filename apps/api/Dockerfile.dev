@@ -1,0 +1,34 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+# Install Yarn
+RUN npm install -g yarn@1.22.19 --force
+
+# Install build dependencies
+RUN apk add --no-cache python3 make g++
+
+# Copy workspace files first
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY .yarn ./.yarn
+
+# Copy packages that API might depend on
+COPY packages ./packages
+
+# Copy API package.json
+COPY apps/api/package.json ./apps/api/
+
+# Install dependencies
+RUN yarn install
+
+# Copy API source code
+COPY apps/api ./apps/api
+
+# Build API
+RUN cd apps/api && yarn build
+
+# Set environment variables
+ENV NODE_ENV=development
+
+# Start the API server
+CMD ["yarn", "workspace", "@the-new-fuse/api", "start:dev"]

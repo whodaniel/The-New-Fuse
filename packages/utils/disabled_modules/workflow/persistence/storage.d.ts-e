@@ -1,0 +1,21 @@
+import { WorkflowMetadata, WorkflowData, WorkflowRun } from './schema';
+export declare class WorkflowStorage {
+    private db;
+    private initialized;
+    constructor(dbPath: string);
+    initialize(): Promise<void>;
+    createWorkflow(metadata: WorkflowMetadata, data: WorkflowData): Promise<string>;
+    getWorkflow(id: string): Promise<{
+        metadata: WorkflowMetadata;
+        data: WorkflowData;
+    } | null>;
+    updateWorkflow(id: string, metadata: Partial<WorkflowMetadata>, data?: WorkflowData): Promise<void>;
+    deleteWorkflow(id: string): Promise<void>;
+    createRun(run: WorkflowRun): Promise<string>;
+    updateRun(id: string, updates: Partial<WorkflowRun>): Promise<void>;
+    getRun(id: string): Promise<WorkflowRun | null>;
+    getWorkflowRuns(workflowId: string): Promise<WorkflowRun[]>;
+    setVariable(workflowId: string, name: string, value: string): Promise<void>;
+    getVariable(workflowId: string, name: string): Promise<string | null>;
+    close(): Promise<void>;
+}

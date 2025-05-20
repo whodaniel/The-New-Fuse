@@ -1,0 +1,130 @@
+import { WebSocketConfig, SubscriptionConfig } from './types';
+
+export class WebSocketManager {
+  private ws: WebSocket | null = null;
+  private config: WebSocketConfig;
+  private subscriptions: Map<string, SubscriptionConfig> = new Map();
+  private reconnectTimer: NodeJS.Timeout | null = null;
+  private reconnectAttempt = 0;
+
+  constructor(config?: WebSocketConfig) {
+    this.config = {
+      reconnect: true,
+      reconnectAttempts: 5,
+      reconnectDelay: 1000,
+      ...config,
+    };
+  }
+
+  configure(config: WebSocketConfig): void {
+    this.config = {
+      ...this.config,
+      ...config
+    };
+  }
+
+  connect(): void {
+    try {
+      this.ws = new WebSocket(this.config.url, this.config.protocols);
+
+      this.ws.onopen = () => {
+        this.reconnectAttempt = 0;
+        this.notifySubscribers({ type: 'connection', status: 'connected' });
+      };
+
+      this.ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          this.notifySubscribers(data);
+        } catch (error) {
+          console.error('Failed to parse WebSocket message:', error);
+        }
+      };
+
+      this.ws.onerror = (error) => {
+        this.config.onError?.(error as Error);
+        this.notifySubscribers({ type: 'error', error });
+      };
+
+      this.ws.onclose = () => {
+        this.config.onClose?.();
+        this.notifySubscribers({ type: 'connection', status: 'disconnected' });
+        this.handleReconnect();
+      };
+    } catch (error) {
+      console.error('WebSocket connection error:', error);
+      this.handleReconnect();
+    }
+  }
+
+  private handleReconnect(): void {
+    if (
+      !this.config.reconnect ||
+      (this.config.reconnectAttempts &&
+        this.reconnectAttempt >= this.config.reconnectAttempts)
+    ) {
+      return;
+    }
+
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+    }
+
+    this.reconnectTimer = setTimeout(() => {
+      this.reconnectAttempt++;
+      this.connect();
+    }, this.config.reconnectDelay);
+  }
+
+  subscribe(config: SubscriptionConfig): () => void {
+    this.subscriptions.set(config.key, config);
+
+    return () => {
+      this.subscriptions.delete(config.key);
+    };
+  }
+
+  private notifySubscribers(data: unknown): void {
+    this.subscriptions.forEach((subscription) => {
+      try {
+        if (!subscription.filter || subscription.filter(data)) {
+          subscription.callback(data);
+        }
+      } catch (error) {
+        subscription.errorCallback?.(error as Error);
+      }
+    });
+  }
+
+  send(data: unknown): void {
+    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify(data));
+    } else {
+      throw new Error('WebSocket is not connected');
+    }
+  }
+
+  close(): void {
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
+    }
+    
+    if (this.ws) {
+      this.ws.close();
+      this.ws = null;
+    }
+  }
+
+  getStatus(): {
+    connected: boolean;
+    reconnecting: boolean;
+    reconnectAttempt: number;
+  } {
+    return {
+      connected: this.ws?.readyState === WebSocket.OPEN,
+      reconnecting: !!this.reconnectTimer,
+      reconnectAttempt: this.reconnectAttempt,
+    };
+  }
+}

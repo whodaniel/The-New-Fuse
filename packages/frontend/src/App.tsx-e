@@ -1,0 +1,26 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ChakraProvider, CSSReset } from '@chakra-ui/react';
+import { Layout } from './components/Layout';
+import { LandingPage } from './pages/LandingPage';
+import { Dashboard } from './pages/Dashboard';
+import { Login } from './pages/Login';
+import { theme } from './theme';
+
+export function App() {
+  return (
+    <ChakraProvider theme={theme}>
+      <CSSReset />
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
+    </ChakraProvider>
+  );
+}

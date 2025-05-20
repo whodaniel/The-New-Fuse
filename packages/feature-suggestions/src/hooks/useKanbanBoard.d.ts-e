@@ -1,0 +1,24 @@
+import { FeatureSuggestion, SuggestionStatus, TodoItem } from '../types';
+interface KanbanColumn {
+    id: string;
+    title: string;
+    items: (FeatureSuggestion | TodoItem)[];
+}
+interface UseKanbanBoardProps {
+    suggestionService: unknown;
+    initialSuggestions?: FeatureSuggestion[];
+    initialTodos?: TodoItem[];
+}
+export declare const useKanbanBoard: ({ suggestionService, initialSuggestions, initialTodos, }: UseKanbanBoardProps) => {
+    suggestions: FeatureSuggestion[];
+    todos: TodoItem[];
+    loading: boolean;
+    error: Error | null;
+    updateSuggestionStatus: (id: string, status: SuggestionStatus) => Promise<void>;
+    updateTodoStatus: (id: string, status: string) => Promise<void>;
+    convertSuggestionToFeature: (suggestionId: string) => Promise<any>;
+    refresh: () => Promise<void>;
+    columns: KanbanColumn[];
+    handleDragEnd: (result: unknown) => Promise<void>;
+};
+export {};

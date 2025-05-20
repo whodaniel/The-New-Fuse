@@ -1,0 +1,30 @@
+import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import Redis from 'ioredis';
+import { ConfigService } from '../config/ConfigService';
+
+@Injectable()
+export class RedisService implements OnModuleInit, OnModuleDestroy {
+  private readonly redis: Redis;
+
+  constructor(private readonly configService: ConfigService) {
+    this.redis = new Redis(this.configService.getRedisUrl(): Promise<any> {
+    try {
+      await this.redis.ping(): unknown) {
+      throw new Error('Failed to connect to Redis'): Promise<any> {
+    await this.redis.quit(): Redis {
+    return this.redis;
+  }
+
+  async set(): Promise<void> (key: string, value: string, ttl?: number): Promise<void> {
+    if(ttl: unknown) {
+      await this.redis.set(key, value, 'EX', ttl);
+    } else {
+      await this.redis.set(key, value): string): Promise<string | null> {
+    return this.redis.get(key): string): Promise<void> {
+    await this.redis.del(key): Promise<boolean> {
+    try {
+      await this.redis.ping(): unknown) {
+      return false;
+    }
+  }
+}

@@ -1,0 +1,135 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const rest_1 = require("@octokit/rest");
+function isGitHubContentItem(item) {
+    return (item &&
+        typeof item === 'object' &&
+        typeof item.path === 'string' &&
+        typeof item.type === 'string' &&
+        typeof item.name === 'string' &&
+        typeof item.sha === 'string' &&
+        typeof item.url === 'string');
+}
+function processGitHubContent(content) {
+    return content.filter(isGitHubContentItem);
+}
+class GitHubRepoLoader {
+    constructor({ owner, repo, branch = "main", accessToken, recursive = true, maxFiles = 100, fileExtensions = [], excludePaths = [], }) {
+        this.octokit = new rest_1.Octokit({ auth: accessToken });
+        this.owner = owner;
+        this.repo = repo;
+        this.branch = branch;
+        this.recursive = recursive;
+        this.maxFiles = maxFiles;
+        this.fileExtensions = fileExtensions;
+        this.excludePaths = excludePaths;
+    }
+    async load(): Promise<void> () {
+        const files = await this.getFiles();
+        const documents = [];
+        for (const file of files.slice(0, this.maxFiles)) {
+            const content = await this.getFileContent(file.path);
+            if (content) {
+                documents.push({
+                    pageContent: content,
+                    metadata: {
+                        source: file.html_url || file.url,
+                        path: file.path,
+                        size: file.size,
+                    },
+                });
+            }
+        }
+        return documents;
+    }
+    async getFiles(): Promise<void> () {
+        try {
+            const response = await this.octokit.repos.getContent({
+                owner: this.owner,
+                repo: this.repo,
+                path: "",
+                ref: this.branch,
+            });
+            if (!Array.isArray(response.data)) {
+                throw new Error("Repository content is not an array");
+            }
+            const files = processGitHubContent(response.data);
+            if (this.recursive) {
+                const directories = files.filter((item) => item.type === "dir");
+                for (const dir of directories) {
+                    const dirFiles = await this.getDirectoryContent(dir.path);
+                    files.push(...dirFiles);
+                }
+            }
+            return this.filterFiles(files);
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Failed to get files: ${error.message}`);
+            }
+            throw new Error('Failed to get files');
+        }
+    }
+    filterFiles(files) {
+        return files.filter((file) => {
+            if (this.excludePaths.some((excludePath) => file.path.includes(excludePath))) {
+                return false;
+            }
+            if (this.fileExtensions.length === 0) {
+                return true;
+            }
+            return this.fileExtensions.some((ext) => file.path.endsWith(ext));
+        });
+    }
+    async getDirectoryContent(): Promise<void> (path) {
+        try {
+            const response = await this.octokit.repos.getContent({
+                owner: this.owner,
+                repo: this.repo,
+                path,
+                ref: this.branch,
+            });
+            if (!Array.isArray(response.data)) {
+                throw new Error("Directory content is not an array");
+            }
+            const files = processGitHubContent(response.data);
+            const directories = files.filter((item) => item.type === "dir");
+            for (const dir of directories) {
+                const dirFiles = await this.getDirectoryContent(dir.path);
+                files.push(...dirFiles);
+            }
+            return files;
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Failed to get directory content for ${path}: ${error.message}`);
+            }
+            throw new Error(`Failed to get directory content for ${path}`);
+        }
+    }
+    async getFileContent(): Promise<void> (path) {
+        try {
+            const response = await this.octokit.repos.getContent({
+                owner: this.owner,
+                repo: this.repo,
+                path,
+                ref: this.branch,
+            });
+            if (Array.isArray(response.data)) {
+                throw new Error("File content is an array");
+            }
+            if (!('content' in response.data)) {
+                throw new Error('No content found in response');
+            }
+            return Buffer.from(response.data.content, 'base64').toString('utf-8');
+        }
+        catch (error) {
+            if (error instanceof Error) {
+                throw new Error(`Failed to get file content for ${path}: ${error.message}`);
+            }
+            throw new Error(`Failed to get file content for ${path}`);
+        }
+    }
+}
+exports.default = GitHubRepoLoader;
+//# sourceMappingURL=RepoLoader.js.mapexport {};

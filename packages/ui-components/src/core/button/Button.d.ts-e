@@ -1,0 +1,13 @@
+import React from 'react';
+import { type VariantProps } from 'class-variance-authority';
+import { ButtonProps } from '@/types/components';
+declare const buttonVariants: (props?: ({
+    variant?: "link" | "default" | "outline" | "ghost" | "destructive" | "secondary" | null | undefined;
+    size?: "default" | "sm" | "lg" | "icon" | null | undefined;
+} & import("class-variance-authority/types").ClassProp) | undefined) => string;
+export interface ExtendedButtonProps extends ButtonProps, VariantProps<typeof buttonVariants> {
+    isLoading?: boolean;
+    icon?: React.ReactNode;
+}
+declare const Button: React.ForwardRefExoticComponent<ExtendedButtonProps & React.RefAttributes<HTMLButtonElement>>;
+export { Button, buttonVariants };

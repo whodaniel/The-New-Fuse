@@ -1,0 +1,97 @@
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { CircuitBreaker } from '../resilience/CircuitBreaker';
+import { MetricsProcessor } from '../security/metricsProcessor';
+
+const logger: Logger = getLogger('agent_communication');
+
+export interface AgentMessage {
+    id: string;
+    type: 'task_request' | 'task_response' | 'status_update' | 'error';
+    timestamp: number;
+    sender: string;
+    recipient: string;
+    payload: unknown;
+    metadata: {
+        priority: 'low' | 'medium' | 'high';
+        timeout?: number;
+        retryCount?: number;
+    };
+}
+
+export class AgentCommunicationBridge {
+    private readonly circuitBreaker: CircuitBreaker;
+    private readonly metricsProcessor: MetricsProcessor;
+    private readonly messageHandlers: Map<string, (message: AgentMessage) => Promise<void>>;
+
+    constructor(metricsProcessor: MetricsProcessor) {
+        this.circuitBreaker = new CircuitBreaker({
+            failureThreshold: 3,
+            resetTimeout: 30000,
+            halfOpenRequests: 2
+        });
+        this.metricsProcessor = metricsProcessor;
+        this.messageHandlers = new Map();
+    }
+
+    async sendMessage(): Promise<void> (message: AgentMessage): Promise<void> {
+        return this.circuitBreaker.execute(async (): Promise<void> () => {
+            try {
+                logger.debug(`Sending message to ${message.recipient}`, { messageId: message.id });
+                
+                await this.validateMessage(message);
+                const enrichedMessage = await this.enrichMessage(message);
+                
+                await this.publishMessage(enrichedMessage);
+                
+                await this.metricsProcessor.processAgentMetrics({
+                    type: 'message_sent',
+                    agentId: message.sender,
+                    timestamp: Date.now(),
+                    success: true
+                });
+            } catch (error) {
+                logger.error('Failed to send message:', error);
+                await this.handleMessageError(message, error);
+                throw error;
+            }
+        });
+    }
+
+    async registerHandler(): Promise<void> (
+        agentId: string, 
+        handler: (message: AgentMessage) => Promise<void>
+    ): Promise<void> {
+        this.messageHandlers.set(agentId, handler);
+        logger.info(`Registered message handler for agent ${agentId}`);
+    }
+
+    private async validateMessage(): Promise<void> (message: AgentMessage): Promise<void> {
+        if (!message.id || !message.sender || !message.recipient) {
+            throw new Error('Invalid message format: missing required fields');
+        }
+
+        if (!this.messageHandlers.has(message.recipient)) {
+            throw new Error(`No handler registered for recipient ${message.recipient}`);
+        }
+    }
+
+    private async enrichMessage(): Promise<void> (message: AgentMessage): Promise<AgentMessage> {
+        return {
+            ...message,
+            metadata: {
+                ...message.metadata,
+                processedTimestamp: Date.now(),
+                systemVersion: process.env.APP_VERSION,
+                correlationId: this.generateCorrelationId()
+            }
+        };
+    }
+
+    private async publishMessage(): Promise<void> (message: AgentMessage): Promise<void> {
+        const handler = this.messageHandlers.get(message.recipient);
+        if (handler) {
+            await handler(message);
+        }
+    }
+}

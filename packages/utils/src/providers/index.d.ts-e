@@ -1,0 +1,16 @@
+import { AIProvider } from '../auth/ai-provider';
+
+export interface ProviderOptions {
+  apiKey: string;
+  baseURL?: string;
+  timeout?: number;
+}
+
+export interface Provider extends AIProvider {
+  options: ProviderOptions;
+}
+
+export * from './anthropic';
+export * from './azure';
+export * from './openai';
+export * from './ollama';

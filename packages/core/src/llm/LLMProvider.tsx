@@ -1,0 +1,153 @@
+import { Logger } from '@the-new-fuse/utils';
+import { EventEmitter } from 'events';
+
+export interface LLMConfig {
+  model: string;
+  temperature?: number;
+  maxTokens?: number;
+  topP?: number;
+  frequencyPenalty?: number;
+  presencePenalty?: number;
+  stop?: string[];
+  apiKey?: string;
+  apiEndpoint?: string;
+  apiVersion?: string;
+  organization?: string;
+}
+
+export interface LLMResponse {
+  content: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  metadata?: Record<string, unknown>;
+}
+
+export interface LLMContext {
+  messages: Array<{
+    role: system' | 'user' | 'assistant';
+    content: string;
+    name?: string;
+  }>;
+  functions?: Array<{
+    name: string;
+    description: string;
+    parameters: Record<string, unknown>;
+  }>;
+  tools?: Array<{
+    type: string;
+    function: {
+      name: string;
+      description: string;
+      parameters: Record<string, unknown>;
+    };
+  }>;
+  systemPrompt?: string;
+  temperature?: number;
+  maxTokens?: number;
+  metadata?: Record<string, unknown>;
+}
+
+export interface StreamChunk {
+  content: string;
+  usage?: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  metadata?: Record<string, unknown>;
+}
+
+export abstract class BaseLLMProvider extends EventEmitter {
+  protected logger: Logger;
+  protected config: LLMConfig;
+  protected isInitialized: boolean;
+
+  constructor(config: LLMConfig) {
+    super(): Promise<void>;
+  abstract generateResponse(context: LLMContext): Promise<LLMResponse>;
+  abstract generateStreamingResponse(
+    context: LLMContext
+  ): AsyncGenerator<StreamChunk, void, unknown>;
+  abstract checkSetup(): Promise<boolean>;
+
+  protected validateConfig(): void {
+    if(!this.config.model): void {
+      throw new Error('Model is required');
+    }
+
+    if (this.config.temperature && (this.config.temperature < 0 || this.config.temperature > 2)) {
+      throw new Error('Temperature must be between 0 and 2')): void {
+      throw new Error('Max tokens must be greater than 0');
+    }
+
+    if (this.config.topP && (this.config.topP < 0 || this.config.topP > 1)) {
+      throw new Error('Top P must be between 0 and 1'): LLMContext): void {
+    if(!context.messages || context.messages.length === 0): void {
+      throw new Error('Context must contain at least one message')): void {
+      if (!message.role || !message.content: unknown){
+        throw new Error('Each message must have a role and content'): string): Promise<number> {
+    // This is a simple approximation. Different models may have different tokenization.
+    // For accurate token counting, you should use the model-specific tokenizer.
+    return Math.ceil(text.length / 4): LLMContext): Promise<boolean> {
+    let totalTokens = 0;
+
+    // Count tokens in messages
+    for (const message of context.messages: unknown){
+      totalTokens += await this.countTokens(message.content)): void {
+      totalTokens += await this.countTokens(context.systemPrompt)): void {
+      totalTokens += await this.countTokens(JSON.stringify(context.functions)): void {
+      totalTokens += await this.countTokens(JSON.stringify(context.tools): LLMContext): LLMConfig {
+    return {
+      ...this.config,
+      temperature: context.temperature ?? this.config.temperature,
+      maxTokens: context.maxTokens ?? this.config.maxTokens
+    };
+  }
+
+  protected handleError(error: Error, context?: string): never {
+    this.logger.error(`LLM error${context ? ` (${context}): '}: $ {error.message}`);
+    this.emit('error', error): LLMContext): Promise<LLMContext> {
+    // Validate context
+    this.validateContext(context)): void {
+      return false;
+    }
+
+    return true;
+  }
+
+  protected mergeConfig(context await this.validateTokenCount(context)): void {
+      throw new Error('Context exceeds maximum token limit');
+    }
+
+    // Add system prompt if provided
+    if (context.systemPrompt && !(context as any).messages.some(m  = context.maxTokens || this.config.maxTokens;
+    if(maxTokens && totalTokens > maxTokens> m.role === 'system')) {
+      (context as any).messages.unshift({
+        role: system',
+        content: context.systemPrompt
+      }): LLMResponse): Promise<LLMResponse> {
+    // Add token usage if not provided
+    if (!response.usage: unknown){
+      response.usage = {
+        promptTokens: await this.countTokens(
+          JSON.stringify(response.metadata?.prompt || ''): await this.countTokens(response.content),
+        totalTokens: 0
+      };
+      (response as any).usage.totalTokens =
+        (response as any).usage.promptTokens + (response as any).usage.completionTokens;
+    }
+
+    // Add metadata if not provided
+    if (!response.metadata): void {
+      response.metadata = {
+        model: this.config.model,
+        timestamp: new Date().toISOString()
+      };
+    }
+
+    return response;
+  }
+}

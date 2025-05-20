@@ -1,0 +1,4 @@
+import React from 'react';
+import { CardProps } from '@/types/components';
+declare const Card: React.FC<CardProps>;
+export { Card };

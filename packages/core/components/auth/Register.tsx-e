@@ -1,0 +1,96 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import React, { useState } from 'react';
+import type { Agent, Workflow } from '@the-new-fuse/../types';
+import { AuthProps, RegisterFormData } from '@the-new-fuse/types';
+
+export const Register: (React as unknown).FC<AuthProps> = ({ onSuccess, onError, redirectUrl }) => {
+  const [formData, setFormData] = useState<RegisterFormData>({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    username: '',
+    terms: false,
+  });
+
+  const handleSubmit = async (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (): Promise<void> (e: (React as unknown).FormEvent) => {
+    (e as unknown).preventDefault();
+    if ((formData as unknown).password !== (formData as unknown).confirmPassword: unknown){
+      onError?.(new Error('Passwords do not match'));
+      return;
+    }
+    try {
+      // Registration logic will be implemented here
+      onSuccess?.();
+    } catch (error: unknown){
+      onError?.(error as Error);
+    }
+  };
+
+  return (
+    <div className="auth-container">
+      <form onSubmit={handleSubmit} className="auth-form">
+        <h2>Register</h2>
+        <div className="form-group">
+          <label htmlFor="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            value={(formData as unknown).email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, email: (e as unknown).(target as unknown).value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="username">Username (optional)</label>
+          <input
+            type="text"
+            id="username"
+            value={(formData as unknown).username}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, username: (e as unknown).(target as unknown).value })}
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            value={(formData as unknown).password}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, password: (e as unknown).(target as unknown).value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="confirmPassword">Confirm Password</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            value={(formData as unknown).confirmPassword}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, confirmPassword: (e as unknown).(target as unknown).value })}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label>
+            <input
+              type="checkbox"
+              checked={(formData as unknown).terms}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => (e) => setFormData({ ...formData, terms: (e as unknown).(target as unknown).checked })}
+              required
+            />
+            I agree to the terms and conditions
+          </label>
+        </div>
+        <button type="submit" className="auth-button">
+          Register
+        </button>
+      </form>
+    </div>
+  );
+};

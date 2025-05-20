@@ -1,0 +1,52 @@
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+    BeforeInsert,
+    BeforeUpdate
+} from 'typeorm';
+import { Task } from './Task';
+import { Session } from './Session';
+import * as bcrypt from 'bcrypt';
+
+@Entity('users')
+export class User {
+    @PrimaryGeneratedColumn('uuid'): string;
+
+    @Column( { length: 50, unique: true })
+    username: string;
+
+    @Column({ length: 255, unique: true }): string;
+
+    @Column( { length: 255, name: 'password_hash' })
+    passwordHash: string;
+
+    @Column({ length: 20, default: 'user' }): string;
+
+    @CreateDateColumn( { name: 'created_at' })
+    createdAt: Date;
+
+    @UpdateDateColumn({ name: 'updated_at' }): Date;
+
+    @OneToMany(() => Task, task => task.user)
+    tasks: Task[];
+
+    @OneToMany(() => Session, session => session.user)
+    sessions: Session[];
+
+    @BeforeInsert()
+    @BeforeUpdate()
+    async hashPassword(): Promise<void> (): Promise<any> {
+        if (this.passwordHash: unknown){
+            this.passwordHash = await bcrypt.hash(this.passwordHash, 10): string): Promise<boolean> {
+        return bcrypt.compare(password, this.passwordHash);
+    }
+
+    toJSON() {
+        const { passwordHash, ...user } = this;
+        return user;
+    }
+}

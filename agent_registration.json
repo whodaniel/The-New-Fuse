@@ -1,0 +1,21 @@
+{
+    "type": "REGISTRATION",
+    "entity_type": "ai_agent",
+    "credentials": {
+        "username": "augment_ai",
+        "authentication_method": "jwt",
+        "agent_signature": "sha256_hash_of_augment_identity"
+    },
+    "profile": {
+        "name": "Augment",
+        "type": "autonomous_agent",
+        "origin": "augment_code",
+        "primary_function": "code_assistant",
+        "capabilities": [
+            "code_analysis",
+            "software_engineering",
+            "system_integration",
+            "documentation"
+        ]
+    }
+}

@@ -1,0 +1,112 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MessageReactions = void 0;
+const react_1 = require("react");
+const material_1 = require("@mui/material");
+const icons_material_1 = require("@mui/icons-material");
+const data_1 = require("@emoji-mart/data");
+const react_2 = require("@emoji-mart/react");
+const COMMON_REACTIONS = ['👍', '❤️', '😂', '🎉', '🤔', '👀', '🚀', '💯'];
+const MessageReactions = ({ message, currentUserId, size = 'medium', onAddReaction, onRemoveReaction }) => {
+    var _a;
+    const theme = (0, material_1.useTheme)();
+    const [anchorEl, setAnchorEl] = (0, react_1.useState)(null);
+    const [showEmojiPicker, setShowEmojiPicker] = (0, react_1.useState)(false);
+    const handleAddReaction = async (): Promise<void> (emoji) => {
+        try {
+            await (onAddReaction === null || onAddReaction === void 0 ? void 0 : onAddReaction(message.id, emoji));
+        }
+        catch (error) {
+            console.error('Error adding reaction:', error);
+        }
+        setAnchorEl(null);
+    };
+    const handleRemoveReaction = async (): Promise<void> (emoji) => {
+        try {
+            await (onRemoveReaction === null || onRemoveReaction === void 0 ? void 0 : onRemoveReaction(message.id, emoji));
+        }
+        catch (error) {
+            console.error('Error removing reaction:', error);
+        }
+    };
+    const handleEmojiSelect = (emoji) => {
+        handleAddReaction(emoji.native);
+        setShowEmojiPicker(false);
+    };
+    const renderReactionButton = (reaction) => {
+        const hasReacted = reaction.users.includes(currentUserId);
+        return (<material_1.Tooltip key={reaction.emoji} title={<material_1.Box>
+            <material_1.Typography variant="caption">
+              {reaction.users
+                    .slice(0, 3)
+                    .join(', ')}
+              {reaction.users.length > 3 &&
+                    ` and ${reaction.users.length - 3} more`}
+            </material_1.Typography>
+          </material_1.Box>}>
+        <material_1.Badge badgeContent={reaction.count} color="primary" sx={{
+                '& .MuiBadge-badge': {
+                    fontSize: size === 'small' ? '0.6rem' : '0.75rem',
+                    minWidth: size === 'small' ? 16 : 20,
+                    height: size === 'small' ? 16 : 20
+                }
+            }}>
+          <material_1.IconButton size={size} onClick={() => hasReacted
+                ? handleRemoveReaction(reaction.emoji)
+                : handleAddReaction(reaction.emoji)} sx={{
+                p: size === 'small' ? 0.5 : 1,
+                bgcolor: hasReacted ? 'action.selected' : 'transparent',
+                '&:hover': {
+                    bgcolor: hasReacted
+                        ? 'action.selected'
+                        : 'action.hover'
+                }
+            }}>
+            <material_1.Typography variant={size === 'small' ? 'caption' : 'body2'} component="span">
+              {reaction.emoji}
+            </material_1.Typography>
+          </material_1.IconButton>
+        </material_1.Badge>
+      </material_1.Tooltip>);
+    };
+    return (<material_1.Box sx={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: 0.5 }}>
+      {(_a = message.reactions) === null || _a === void 0 ? void 0 : _a.map(reaction => renderReactionButton(reaction))}
+
+      <material_1.IconButton size={size} onClick={e => setAnchorEl(e.currentTarget)} sx={{
+            p: size === 'small' ? 0.5 : 1,
+            color: theme.palette.text.secondary
+        }}>
+        <icons_material_1.AddReaction fontSize={size}/>
+      </material_1.IconButton>
+
+      <material_1.Popover open={Boolean(anchorEl)} anchorEl={anchorEl} onClose={() => setAnchorEl(null)} anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'left'
+        }} transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+        }}>
+        <material_1.Paper sx={{ p: 1 }}>
+          {showEmojiPicker ? (<material_1.Box sx={{ width: 352 }}>
+              <react_2.default data={data_1.default} onEmojiSelect={handleEmojiSelect} theme={theme.palette.mode} skinTonePosition="none"/>
+            </material_1.Box>) : (<material_1.Box sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 0.5,
+                maxWidth: 280
+            }}>
+              {COMMON_REACTIONS.map(emoji => (<material_1.IconButton key={emoji} size="small" onClick={() => handleAddReaction(emoji)}>
+                  <material_1.Typography variant="body2">{emoji}</material_1.Typography>
+                </material_1.IconButton>))}
+              <material_1.IconButton size="small" onClick={() => setShowEmojiPicker(true)} sx={{ color: theme.palette.text.secondary }}>
+                <icons_material_1.Face />
+              </material_1.IconButton>
+            </material_1.Box>)}
+        </material_1.Paper>
+      </material_1.Popover>
+    </material_1.Box>);
+};
+exports.MessageReactions = MessageReactions;
+exports.default = exports.MessageReactions;
+export {};
+//# sourceMappingURL=MessageReactions.js.map

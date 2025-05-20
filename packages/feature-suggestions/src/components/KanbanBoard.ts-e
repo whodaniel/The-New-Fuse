@@ -1,0 +1,77 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const react_1 = __importDefault(require("react"));
+const dnd_1 = require("@hello-pangea/dnd");
+const types_1 = require("../types");
+const isTodoItem = (item) => {
+    return 'assignedTo' in item;
+};
+const KanbanCard = ({ item, index, onEdit }) => {
+    const isFeatureSuggestion = 'votes' in item;
+    const getPriorityColor = (priority) => {
+        switch (priority) {
+            case types_1.SuggestionPriority.CRITICAL:
+                return 'bg-red-100 text-red-800';
+            case types_1.SuggestionPriority.HIGH:
+                return 'bg-orange-100 text-orange-800';
+            case types_1.SuggestionPriority.MEDIUM:
+                return 'bg-yellow-100 text-yellow-800';
+            case types_1.SuggestionPriority.LOW:
+                return 'bg-green-100 text-green-800';
+        }
+    };
+    return (<dnd_1.Draggable draggableId={item.id} index={index}>
+      {(provided, snapshot) => (<div ref={provided.innerRef} {...provided.draggableProps} {...provided.dragHandleProps} className={`draggable-item ${snapshot.isDragging ? 'dragging' : ''} bg-white rounded-lg shadow-sm p-4 mb-2 border border-gray-200`}>
+          <div className="flex justify-between items-start">
+            <h4 className="font-medium text-gray-900">{item.title}</h4>
+            {onEdit && (<button onClick={onEdit} className="text-gray-400 hover:text-gray-600">
+                ✏️
+              </button>)}
+          </div>
+          
+          <p className="text-sm text-gray-600 mt-1">{item.description}</p>
+          
+          <div className="flex items-center mt-2 space-x-2">
+            <span className={`text-xs px-2 py-1 rounded-full ${getPriorityColor(item.priority)}`}>
+              {item.priority}
+            </span>
+            
+            {isFeatureSuggestion && (<span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+                {item.votes} votes
+              </span>)}
+          </div>
+
+          {isTodoItem(item) && item.assignedTo && (<div className="mt-2 text-sm text-gray-500">
+              👤 Assigned to: {item.assignedTo}
+            </div>)}
+
+          {isFeatureSuggestion && item.tags.length > 0 && (<div className="flex flex-wrap gap-1 mt-2">
+              {item.tags.map((tag) => (<span key={tag} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
+                  {tag}
+                </span>))}
+            </div>)}
+        </div>)}
+    </dnd_1.Draggable>);
+};
+const KanbanBoard = ({ columns, onDragEnd }) => {
+    return (<div className="kanban-board">
+      <dnd_1.DragDropContext onDragEnd={onDragEnd}>
+        <div className="columns">
+          {columns.map(column => (<div key={column.id} className="column">
+              <h3>{column.title}</h3>
+              <dnd_1.Droppable droppableId={column.id}>
+                {(provided, snapshot) => (<div ref={provided.innerRef} {...provided.droppableProps} className={`droppable-area ${snapshot.isDraggingOver ? 'dragging-over' : ''}`}>
+                    {column.items.map((item, index) => (<KanbanCard key={item.id} item={item} index={index}/>))}
+                    {provided.placeholder}
+                  </div>)}
+              </dnd_1.Droppable>
+            </div>))}
+        </div>
+      </dnd_1.DragDropContext>
+    </div>);
+};
+exports.default = KanbanBoard;
+//# sourceMappingURL=KanbanBoard.js.mapexport {};

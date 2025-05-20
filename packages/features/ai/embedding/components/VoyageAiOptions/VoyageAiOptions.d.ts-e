@@ -1,0 +1,12 @@
+import React from 'react';
+interface VoyageAiSettings {
+    VoyageAiApiKey?: string;
+    EmbeddingModelPref?: VoyageAiModel;
+}
+interface VoyageAiOptionsProps {
+    settings: VoyageAiSettings;
+}
+declare const VOYAGE_MODELS: readonly ["voyage-large-2-instruct", "voyage-finance-2", "voyage-multilingual-2", "voyage-law-2", "voyage-code-2", "voyage-large-2", "voyage-2", "voyage-3", "voyage-3-lite"];
+type VoyageAiModel = typeof VOYAGE_MODELS[number];
+export declare function VoyageAiOptions({ settings }: VoyageAiOptionsProps): React.JSX.Element;
+export {};

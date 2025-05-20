@@ -1,0 +1,92 @@
+import { BaseEntity, ISODateTime, TaskPriority, TaskStatus, TaskType, UUID } from '../core';
+
+/**
+ * Task metadata interface
+ */
+export interface TaskMetadata {
+  description?: string;
+  input?: Record<string, unknown>;
+  output?: Record<string, unknown>;
+  dependencies?: TaskDependency[];
+  scheduledAt?: ISODateTime;
+  startedAt?: ISODateTime;
+  completedAt?: ISODateTime;
+  error?: string;
+  retryCount?: number;
+  maxRetries?: number;
+  timeout?: number;
+  tags?: string[];
+  duration?: string;
+  viewCount?: number;
+  likeCount?: number;
+  resourceUsage?: {
+    cpuUsage: number;
+    memoryUsage: number;
+    networkUsage?: number;
+    diskUsage?: number;
+  };
+  customMetadata?: Record<string, unknown>;
+  creator?: string;
+  assignee?: string;
+  lastError?: string;
+  lastRetryAt?: ISODateTime;
+  [key: string]: unknown;
+}
+
+/**
+ * Task dependency interface
+ */
+export interface TaskDependency {
+  taskId: UUID;
+  type: 'REQUIRED' | 'OPTIONAL';
+  status: TaskStatus;
+}
+
+/**
+ * Task entity interface
+ */
+export interface Task extends BaseEntity {
+  title: string;
+  description?: string;
+  status: TaskStatus;
+  priority: TaskPriority;
+  type: typeof TaskType;
+  metadata: TaskMetadata;
+  dependencies?: TaskDependency[];
+  userId: UUID;
+}
+
+/**
+ * Task result interface
+ */
+export interface TaskResult {
+  id: UUID;
+  taskId: UUID;
+  status: TaskStatus;
+  output?: Record<string, unknown>;
+  error?: string;
+  metrics: {
+    duration: number;
+    resourceUsage: {
+      cpuUsage: number;
+      memoryUsage: number;
+    };
+  };
+  timestamp: ISODateTime;
+}
+
+/**
+ * Task query parameters
+ */
+export interface TaskQuery {
+  status?: TaskStatus | TaskStatus[];
+  type?: typeof TaskType | TaskType[];
+  priority?: TaskPriority | TaskPriority[];
+  userId?: UUID;
+  startDate?: ISODateTime;
+  endDate?: ISODateTime;
+  tags?: string[];
+  assignee?: string;
+  page?: number;
+  limit?: number;
+}

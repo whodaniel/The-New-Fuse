@@ -1,0 +1,12 @@
+import type { ComponentPropsWithoutRef } from 'react';
+import type { DialogProps } from '@radix-ui/react-dialog';
+export type DialogContentProps = ComponentPropsWithoutRef<'div'> & {
+    size?: 'default' | 'sm' | 'lg' | 'fullscreen';
+    position?: 'default' | 'top' | 'bottom' | 'left' | 'right';
+    showCloseButton?: boolean;
+    onClose?: () => void;
+} & DialogProps;
+export type DialogHeaderProps = ComponentPropsWithoutRef<'div'>;
+export type DialogFooterProps = ComponentPropsWithoutRef<'div'>;
+export type DialogTitleProps = ComponentPropsWithoutRef<'h2'>;
+export type DialogDescriptionProps = ComponentPropsWithoutRef<'p'>;

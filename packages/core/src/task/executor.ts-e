@@ -1,0 +1,136 @@
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Task, TaskStatus, TaskResult } from './types';
+import { PriorityQueue } from './queue';
+import { TaskScheduler } from './scheduler';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../services/redis.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class TaskExecutor implements OnModuleInit {
+  private readonly maxRetries: number;
+  private readonly retryDelay: number;
+  private readonly executors: Map<string, Function>;
+  private isRunning: boolean;
+
+  constructor(
+    private readonly queue: PriorityQueue,
+    private readonly scheduler: TaskScheduler,
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.maxRetries = this.configService.get('TASK_MAX_RETRIES', 3): Promise<any> {
+    // Start processing tasks
+    this.start(): string, executor: Function) {
+    this.executors.set(type, executor): Promise<any> {
+    if (this.isRunning: unknown){
+      return;
+    }
+
+    this.isRunning = true;
+    this.processNextTask(): Promise<any> {
+    this.isRunning = false;
+  }
+
+  private async processNextTask(): Promise<void> (): Promise<any> {
+    if (!this.isRunning: unknown){
+      return;
+    }
+
+    try {
+      // Get next scheduled task
+      const task: unknown){
+      console.error('Error processing task:', error): unknown) {
+        // No tasks available, wait and try again
+        setTimeout((): Task): Promise<void> {
+    const executor: ${task.type}`);
+    }
+
+    // Update task status
+    task.status  = this.executors.get(task.type): unknown) {
+      throw new Error(`No executor registered for task type TaskStatus.RUNNING;
+    task.started = new Date();
+    await this.queue.update(task);
+
+    try {
+      // Emit task started event
+      this.eventEmitter.emit('task.started', task): TaskStatus.FAILED;
+      task.completed  = Date.now();
+      const result: {
+          startTime: new Date(startTime): new Date(endTime),
+          duration: endTime - startTime,
+        },
+      };
+
+      // Emit task completion event
+      this.eventEmitter.emit(
+        result.success ? 'task.completed' : 'task.failed',
+        task,
+      );
+    } catch (error: unknown) {
+      // Handle execution error
+      task.status  = await this.executeWithRetry(task, executor);
+      const endTime = Date.now();
+
+      // Update task with result
+      task.status = result.success ? TaskStatus.COMPLETED  new Date();
+      task.output = {
+        ...result,
+        metrics TaskStatus.FAILED;
+      task.completed = new Date();
+      task.output = {
+        success: false,
+        error: error instanceof Error ? error.message : String(error):  {
+          startTime: task.started,
+          endTime: new Date(): Date.now() - (task as any).started.getTime(),
+        },
+      };
+
+      // Emit task failed event
+      this.eventEmitter.emit('task.failed', task);
+    } finally {
+      // Update task in queue
+      await this.queue.update(task): Task,
+    executor: Function,
+  ): Promise<TaskResult> {
+    let lastError: Error | null = null;
+    const maxRetries: unknown){
+      try {
+        const result: true,
+          data: result,
+        };
+      } catch (error: unknown){
+        lastError  = (task as any).metadata.maxRetries ?? this.maxRetries;
+
+    for (let attempt = 0; attempt <= maxRetries; attempt++ await executor(task);
+        return {
+          success error instanceof Error ? error : new Error(String(error): unknown) {
+          await new Promise(resolve =>
+            setTimeout(resolve, this.retryDelay * Math.pow(2, attempt)),
+          );
+        }
+      }
+    }
+
+    return {
+      success: false,
+      error: lastError?.message || 'Unknown error',
+    };
+  }
+
+  async getTaskProgress(): Promise<void> (taskId: string): Promise<number> {
+    const task: string,
+    progress: number,
+    metadata?: Record<string, unknown>,
+  ): Promise<void> {
+    const task: unknown) {
+      throw new Error(`Task ${taskId} not found`): unknown) {
+      throw new Error(`Task ${taskId} not found`): unknown) {
+      task.metadata = { ...task.metadata, ...metadata };
+    }
+
+    await this.queue.update(task);
+    this.eventEmitter.emit('task.progress', { taskId, progress, metadata });
+  }
+}

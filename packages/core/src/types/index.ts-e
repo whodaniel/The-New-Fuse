@@ -1,0 +1,109 @@
+import { Container, interfaces } from 'inversify';
+
+// Core exports
+export * from './agent';
+export * from './analysis';
+export {
+  type InteractionContext,
+  CommunicationPattern,
+  ModelType,
+  ResourceType,
+  TokenType,
+  WalletType
+} from './communication';
+export * from './enums';
+export {
+  type ExtendedLLMConfig,
+  type BaseMessage
+} from './interfaces';
+
+// Type definitions
+export * from './llm';
+export * from './llm.types';
+export * from './memory';
+export * from './memory.types';
+export * from './messages';
+export * from './models';
+export * from './monitoring';
+export * from './prompt.types';
+export * from './security';
+export * from './state';
+export * from './task';
+export * from './validation';
+// Named exports from analysis and agent
+export {
+  type ValidationError,
+  type ValidationWarning
+} from './analysis';
+export type { AgentState } from './agent';
+
+// Common types
+export type {
+  CommonConfig,
+  CommonError,
+  CommonEvent,
+  CommonMetadata,
+  CommonResponse
+} from './common';
+
+// Dependency Injection Types
+export const TYPES = {
+  // Core Services
+  Logger: Symbol('Logger'): Symbol('ConfigService'),
+  DatabaseService: Symbol('DatabaseService'),
+  JwtService: Symbol('JwtService'),
+  MetricsCollector: Symbol('MetricsCollector'),
+  PerformanceMonitor: Symbol('PerformanceMonitor'),
+  AuthService: Symbol('AuthService'),
+  LoggingService: Symbol('LoggingService'),
+  MemoryService: Symbol('MemoryService'),
+  EventBus: Symbol('EventBus'),
+
+  // Communication
+  MessageBroker: Symbol('MessageBroker'),
+  MessageRouter: Symbol('MessageRouter'),
+  NotificationService: Symbol('NotificationService'),
+
+  // Analysis
+  AnalysisManager: Symbol('AnalysisManager'),
+  AnalysisVisualizer: Symbol('AnalysisVisualizer')
+};
+
+// External package types
+// TODO: Re-enable when @the-new-fuse/types package is available
+// export * as Types from '@the-new-fuse/types';
+
+export type {
+  type WorkflowDefinition,
+  WorkflowDefinitionType,
+  WorkflowExecution,
+  WorkflowStatus,
+  Workflow,
+  WorkflowTask,
+  WorkflowEdge
+} from './workflow';
+
+export interface VectorStore {
+  dimensions: number;
+  similarity: 'cosine' | 'euclidean' | 'dot';
+  store(vectors: number[][], metadata: unknown[]): Promise<void>;
+  search(query: number[], k: number): Promise<SearchResult[]>;
+}
+
+export interface SearchResult {
+  id: string;
+  score: number;
+  metadata: unknown;
+}
+
+export interface ChatCompletion {
+  id: string;
+  model: string;
+  choices: Array<{
+    message: {
+      role: 'assistant' | 'user' | 'system';
+      content: string;
+    };
+    finish_reason: string;
+  }>;
+}

@@ -1,0 +1,495 @@
+/* Shared styles for The New Fuse extension WebViews */
+
+:root {
+    --container-padding: 20px;
+    --input-padding-vertical: 6px;
+    --input-padding-horizontal: 8px;
+    --input-margin-vertical: 4px;
+    --input-margin-horizontal: 0;
+}
+
+/* Base Styles */
+body {
+    padding: 0;
+    margin: 0;
+    color: var(--vscode-foreground);
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    font-weight: var(--vscode-font-weight);
+}
+
+/* Layout */
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    padding: var(--container-padding);
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-editor-foreground);
+}
+
+.content-area {
+    flex: 1;
+    overflow: auto;
+    padding: 10px 0;
+}
+
+.input-area {
+    display: flex;
+    flex-direction: row;
+    padding: 10px 0 0 0;
+}
+
+.header {
+    padding: 10px 20px;
+    background-color: var(--vscode-titleBar-activeBackground);
+    border-bottom: 1px solid var(--vscode-panel-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 1.2em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.connection-status {
+    display: flex;
+    gap: 10px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+}
+
+.status-indicator.connected {
+    background-color: var(--vscode-testing-iconPassed);
+    color: var(--vscode-editor-background);
+}
+
+.status-indicator.disconnected,
+.status-indicator.error {
+    background-color: var(--vscode-testing-iconFailed);
+    color: var(--vscode-editor-background);
+}
+
+.main-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+}
+
+.sidebar {
+    width: 300px;
+    border-right: 1px solid var(--vscode-panel-border);
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.agents-section,
+.conversations-section {
+    padding: 15px;
+}
+
+.agents-section h2,
+.conversations-section h2 {
+    margin: 0 0 10px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.agents-list,
+.conversations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.agent-item {
+    padding: 10px;
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.agent-item:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.agent-name {
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.agent-meta {
+    font-size: 0.9em;
+    color: var(--vscode-descriptionForeground);
+    display: flex;
+    gap: 8px;
+}
+
+.agent-capabilities {
+    margin-top: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.capability-badge {
+    font-size: 0.8em;
+    padding: 2px 6px;
+    background-color: var(--vscode-badge-background);
+    color: var(--vscode-badge-foreground);
+    border-radius: 3px;
+}
+
+.conversation-item {
+    padding: 10px;
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.conversation-item:hover {
+    background-color: var(--vscode-list-hoverBackground);
+}
+
+.conversation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.conversation-agents {
+    font-weight: bold;
+}
+
+.conversation-time {
+    font-size: 0.9em;
+    color: var(--vscode-descriptionForeground);
+}
+
+.conversation-status {
+    font-size: 0.8em;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+.conversation-status.active {
+    background-color: var(--vscode-testing-iconPassed);
+    color: var(--vscode-editor-background);
+}
+
+.conversation-status.idle {
+    background-color: var(--vscode-testing-iconSkipped);
+    color: var(--vscode-editor-background);
+}
+
+.conversation-status.ended {
+    background-color: var(--vscode-testing-iconFailed);
+    color: var(--vscode-editor-background);
+}
+
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.message {
+    max-width: 80%;
+    padding: 10px;
+    border-radius: 8px;
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+.message.outgoing {
+    align-self: flex-end;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+}
+
+.message.incoming {
+    align-self: flex-start;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    font-size: 0.9em;
+}
+
+.message-content {
+    margin: 8px 0;
+    white-space: pre-wrap;
+}
+
+.message-content pre {
+    background-color: var(--vscode-editor-background);
+    padding: 8px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.message-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    font-size: 0.8em;
+    color: var(--vscode-descriptionForeground);
+}
+
+.input-container {
+    padding: 15px;
+    background-color: var(--vscode-editor-background);
+    border-top: 1px solid var(--vscode-panel-border);
+}
+
+.input-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+textarea {
+    flex: 1;
+    min-height: 60px;
+    resize: vertical;
+    padding: 8px;
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border: 1px solid var(--vscode-input-border);
+    border-radius: 4px;
+}
+
+textarea:focus {
+    outline: none;
+    border-color: var(--vscode-focusBorder);
+}
+
+input, textarea, select {
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    color: var(--vscode-input-foreground);
+    background-color: var(--vscode-input-background);
+    border: 1px solid var(--vscode-input-border);
+    padding: var(--input-padding-vertical) var(--input-padding-horizontal);
+    border-radius: 2px;
+}
+
+input:focus, textarea:focus, select:focus {
+    outline: 1px solid var(--vscode-focusBorder);
+}
+
+button {
+    padding: 6px 12px;
+    background-color: var(--vscode-button-background);
+    color: var(--vscode-button-foreground);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--vscode-font-family);
+    font-size: var(--vscode-font-size);
+    padding: 6px 15px;
+    display: inline-flex;
+    justify-content: center;
+}
+
+button:hover {
+    background-color: var(--vscode-button-hoverBackground);
+}
+
+button.secondary {
+    background-color: var(--vscode-button-secondaryBackground);
+    color: var(--vscode-button-secondaryForeground);
+}
+
+button.secondary:hover {
+    background-color: var(--vscode-button-secondaryHoverBackground);
+}
+
+.send-button {
+    align-self: flex-end;
+}
+
+.footer {
+    padding: 10px 20px;
+    background-color: var(--vscode-editor-background);
+    border-top: 1px solid var(--vscode-panel-border);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.codicon {
+    font-size: 1em;
+    line-height: 1;
+}
+
+/* Card Components */
+.card {
+    background-color: var(--vscode-editor-background);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+.card-header {
+    border-bottom: 1px solid var(--vscode-panel-border);
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    font-weight: bold;
+}
+
+.card-content {
+    padding: 2px 0;
+}
+
+/* Status Badges */
+.badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.85em;
+    margin-right: 6px;
+}
+
+.badge-success {
+    background-color: var(--vscode-testing-iconPassed);
+    color: white;
+}
+
+.badge-error {
+    background-color: var(--vscode-testing-iconFailed);
+    color: white;
+}
+
+.badge-info {
+    background-color: var(--vscode-charts-blue);
+    color: white;
+}
+
+.badge-warning {
+    background-color: var(--vscode-charts-yellow);
+    color: black;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: var(--vscode-descriptionForeground);
+    text-align: center;
+    padding: 20px;
+}
+
+.empty-icon {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+/* Chat Messages */
+.message {
+    display: flex;
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.message-user {
+    background-color: var(--vscode-editor-inactiveSelectionBackground);
+}
+
+.message-ai {
+    background-color: var(--vscode-editor-selectionBackground);
+}
+
+.message-avatar {
+    flex: 0 0 30px;
+    height: 30px;
+    width: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 15px;
+    margin-right: 8px;
+}
+
+.message-content {
+    flex: 1;
+}
+
+.message-text {
+    margin-bottom: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.message-time {
+    font-size: 0.75em;
+    color: var(--vscode-descriptionForeground);
+    text-align: right;
+}
+
+/* List Components */
+.list-item {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    background-color: var(--vscode-list-hoverBackground);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.list-item:hover {
+    background-color: var(--vscode-list-activeSelectionBackground);
+}
+
+/* Section Headers */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.section-header h2, .section-header h3 {
+    margin: 0;
+}

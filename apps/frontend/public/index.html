@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .hero {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        .feature {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .feature h2 {
+            color: #4f46e5;
+            margin-top: 0;
+        }
+        .cta {
+            background: #4f46e5;
+            color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .cta h2 {
+            margin-top: 0;
+        }
+        .button {
+            display: inline-block;
+            background: white;
+            color: #4f46e5;
+            padding: 0.75rem 1.5rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+        .button:hover {
+            background: #f0f0f0;
+        }
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+        .nav-logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #4f46e5;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+        .nav-link {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        .nav-link:hover {
+            color: #4f46e5;
+        }
+        .footer {
+            background-color: #1f2937;
+            color: white;
+            padding: 2rem;
+            margin-top: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-logo">The New Fuse</div>
+        <div class="nav-links">
+            <a href="#" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Features</a>
+            <a href="#" class="nav-link">Documentation</a>
+            <a href="#" class="nav-link">GitHub</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="hero">
+            <h1>Welcome to The New Fuse</h1>
+            <p>A next-generation platform for AI agent collaboration and communication</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h2>Agent-to-Agent Protocol</h2>
+                <p>Implement Google's A2A protocol alongside Model Context Protocol (MCP) for seamless AI agent communication.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Agent Card</h2>
+                <p>Allow agents to advertise their capabilities to other agents in the network with our Agent Card system.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Standardized Architecture</h2>
+                <p>Built with a service layer architecture using BaseRepository, BaseService, and BaseController patterns.</p>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h2>TypeScript-Python Bridges</h2>
+                <p>Seamlessly integrate with Google's ADK and Pydantic Agent framework through our TypeScript-Python bridges.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Workflow Builder</h2>
+                <p>Create complex agent workflows with our visual workflow builder, enabling sophisticated multi-agent interactions.</p>
+            </div>
+            
+            <div class="feature">
+                <h2>Comprehensive UI Components</h2>
+                <p>Leverage our extensive library of React components designed specifically for AI agent interfaces.</p>
+            </div>
+        </div>
+        
+        <div class="cta">
+            <h2>Ready to get started?</h2>
+            <p>Explore our documentation to learn more about The New Fuse and how to integrate it into your projects.</p>
+            <a href="#" class="button">View Documentation</a>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2025 The New Fuse. All rights reserved.</p>
+    </footer>
+</body>
+</html>

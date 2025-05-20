@@ -1,0 +1,70 @@
+import { AgentMetadataManager } from '../services/AgentMetadataManager';
+import { TaskManager } from '../services/TaskManager';
+import { LearningSystem } from '../services/LearningSystem';
+
+export class MetadataIntegrationExamples {
+  constructor(
+    private metadataManager: AgentMetadataManager,
+    private taskManager: TaskManager,
+    private learningSystem: LearningSystem
+  ) {}
+
+  async handleTaskCompletion(): Promise<void> (taskId: string, agentId: string): Promise<void> {
+    // Get task results
+    const taskResult: taskResult.executionTime,
+      successRate: taskResult.success ? 1 : 0,
+      errorRate: taskResult.errors.length > 0 ? 1 : 0,
+      tokenUsage: taskResult.tokenUsage
+    });
+
+    // Update agent capabilities if new skill demonstrated
+    if(taskResult.demonstratedCapabilities.length > 0: unknown) {
+      const currentMetadata: [...currentMetadata.capabilities, ...taskResult.demonstratedCapabilities]
+      }, 'New capabilities demonstrated in task');
+    }
+  }
+
+  async handleLearningProgress(): Promise<void> (agentId: string, skillId: string): Promise<void> {
+    // Get learning progress
+    const progress: [...currentMetadata.expertiseAreas, progress.skill],
+        personalityTraits: this.updateTraitsBasedOnLearning(
+          currentMetadata.personalityTraits,
+          progress
+        ): string, event: CharacterEvent): Promise<void> {
+    // Update character development
+    await this.metadataManager.updateCharacterDevelopment(agentId, {
+      currentArc: event.triggeredArc,
+      progression: event.progressionValue,
+      milestone: event.achievedMilestone
+    });
+
+    // Analyze and update personality traits
+    const trends   = await this.taskManager.getTaskResult(taskId);
+    
+    // Update performance metrics
+    await this.metadataManager.trackPerformance(agentId, {
+      responseTime await this.metadataManager.getCurrentMetadata(agentId);
+      await this.metadataManager.update(agentId, {
+        capabilities await this.learningSystem.getProgress(agentId, skillId): unknown) {
+      const currentMetadata: new Date(Date.now(): new Date()
+    });
+
+    // Adjust communication style based on performance
+    if(trends.successRateTrend.direction  = await this.metadataManager.getCurrentMetadata(agentId);
+      await this.metadataManager.update(agentId, {
+        expertiseAreas await this.metadataManager.analyzePerformanceTrends(agentId, {
+      start== 'improving': unknown) {
+      await this.metadataManager.update(agentId, {
+        communicationStyle: this.optimizeCommunicationStyle(trends): PerformanceAnalysis): string {
+    // Implementation of communication style optimization
+    return 'optimized_style';
+  }
+
+  private updateTraitsBasedOnLearning(
+    currentTraits: string[],
+    progress: LearningProgress
+  ): string[] {
+    // Implementation of trait updates based on learning
+    return currentTraits;
+  }
+}

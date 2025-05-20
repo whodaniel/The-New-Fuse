@@ -1,0 +1,40 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { EncryptionService } from './EncryptionService';
+import { RateLimitingService } from './rate-limiting';
+import { AuthService } from './auth';
+import { AuditService } from './audit';
+
+@Injectable()
+export class SecurityService {
+  private readonly logger = new Logger(SecurityService.name);
+
+  constructor(
+    private readonly encryption: EncryptionService,
+    private readonly rateLimit: RateLimitingService,
+    private readonly auth: AuthService,
+    private readonly audit: AuditService
+  ) {}
+
+  async encrypt(): Promise<void> (data: string): Promise<string> {
+    return this.encryption.encrypt(data);
+  }
+
+  async decrypt(): Promise<void> (encryptedData: string): Promise<string> {
+    return this.encryption.decrypt(encryptedData);
+  }
+
+  async validateRequest(): Promise<void> (req: unknown): Promise<boolean> {
+    const rateLimitResult = await this.rateLimit.checkLimit(req);
+    if (!rateLimitResult) {
+      throw new Error('Rate limit exceeded');
+    }
+
+    const isAuthenticated = await this.auth.validateRequest(req);
+    if (!isAuthenticated) {
+      throw new Error('Invalid authentication');
+    }
+
+    await this.audit.logAccess(req);
+    return true;
+  }
+}

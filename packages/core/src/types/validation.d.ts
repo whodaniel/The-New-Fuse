@@ -1,0 +1,73 @@
+export interface ValidationRule {
+    id: string;
+    name: string;
+    description?: string;
+    type: 'schema' | 'custom' | 'regex' | 'function';
+    target: string;
+    condition: ValidationCondition;
+    message: string;
+    severity: 'error' | 'warning' | 'info';
+    metadata?: Record<string, any>;
+}
+export interface ValidationCondition {
+    type: string;
+    params: Record<string, any>;
+    options?: Record<string, any>;
+}
+export interface ValidationContext {
+    path: string;
+    value: unknown;
+    parent?: unknown;
+    root: unknown;
+    metadata?: Record<string, any>;
+}
+export interface ValidationResult {
+    isValid: boolean;
+    errors: ValidationError[];
+    warnings: ValidationWarning[];
+    info: ValidationInfo[];
+    metadata?: Record<string, any>;
+}
+export interface ValidationError {
+    rule: string;
+    message: string;
+    path: string;
+    value?: unknown;
+    metadata?: Record<string, any>;
+}
+export interface ValidationWarning {
+    rule: string;
+    message: string;
+    path: string;
+    value?: unknown;
+    metadata?: Record<string, any>;
+}
+export interface ValidationInfo {
+    rule: string;
+    message: string;
+    path: string;
+    value?: unknown;
+    metadata?: Record<string, any>;
+}
+export interface ValidationOptions {
+    stopOnFirstError?: boolean;
+    validateAllRules?: boolean;
+    includeWarnings?: boolean;
+    includeInfo?: boolean;
+    context?: Record<string, any>;
+}
+export interface ValidationSchema {
+    id: string;
+    name: string;
+    version: string;
+    rules: ValidationRule[];
+    options?: ValidationOptions;
+    metadata?: Record<string, any>;
+}
+export interface ValidationService {
+    validate(data: unknown, schema: ValidationSchema, options?: ValidationOptions): Promise<ValidationResult>;
+    addRule(rule: ValidationRule): void;
+    removeRule(ruleId: string): void;
+    getRule(ruleId: string): ValidationRule | undefined;
+    getRules(): ValidationRule[];
+}

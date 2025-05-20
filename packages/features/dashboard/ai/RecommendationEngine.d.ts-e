@@ -1,0 +1,42 @@
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
+interface UserPreference {
+    userId: string;
+    itemId: string;
+    rating: number;
+    timestamp: Date;
+}
+interface Recommendation {
+    id: string;
+    type: 'widget' | 'layout' | 'template' | 'feature';
+    title: string;
+    description: string;
+    confidence: number;
+    reasoning: string;
+    preview?: {
+        type: string;
+        data: unknown;
+    };
+    metadata: Record<string, unknown>;
+}
+export declare class RecommendationEngine {
+    private analyticsManager;
+    private userPreferences;
+    private itemSimilarities;
+    private lastUpdate;
+    constructor(analyticsManager: AnalyticsManager);
+    generateRecommendations(userId: string, dashboardState: DashboardState): Promise<Recommendation[]>;
+    recordPreference(preference: UserPreference): Promise<void>;
+    private updateSimilarityMatrix;
+    private calculateItemSimilarity;
+    private recommendWidgets;
+    private recommendLayouts;
+    private recommendTemplates;
+    private recommendFeatures;
+    private rankRecommendations;
+    private findSimilarUsers;
+    private getPopularLayouts;
+    private findSimilarTemplates;
+    private findValuableUnusedFeatures;
+}
+export {};

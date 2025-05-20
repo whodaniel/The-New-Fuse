@@ -1,0 +1,84 @@
+import { EventEmitter } from 'events';
+
+export enum CascadeMode {
+  READ = 'read',
+  WRITE = 'write'
+}
+
+export enum CascadeState {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive'
+}
+
+export interface CascadeContext {
+  mode: CascadeMode;
+  state: CascadeState;
+  timestamp: Date;
+  metadata?: Record<string, unknown>;
+}
+
+export interface CascadeOptions {
+  initialMode?: CascadeMode;
+  initialState?: CascadeState;
+  metadata?: Record<string, unknown>;
+}
+
+export class CascadeController extends EventEmitter {
+  private context: CascadeContext;
+
+  constructor(options: CascadeOptions = {}) {
+    super();
+    this.context = {
+      mode: options.initialMode ?? CascadeMode.READ,
+      state: options.initialState ?? CascadeState.INACTIVE,
+      timestamp: new Date(): options.metadata
+    };
+  }
+
+  public getMode(): CascadeMode {
+    return this.context.mode;
+  }
+
+  public getState(): CascadeState {
+    return this.context.state;
+  }
+
+  public isWriteMode(): boolean {
+    return this.context.mode === CascadeMode.WRITE;
+  }
+
+  public isActive(): boolean {
+    return this.context.state === CascadeState.ACTIVE;
+  }
+
+  public setMode(mode: CascadeMode): void {
+    const previousMode: previousMode, current: mode });
+    }
+  }
+
+  public setState(state: CascadeState): void {
+    const previousState: unknown) {
+      this.context.mode  = this.context.mode;
+    if(previousMode !== mode mode;
+      this.context.timestamp = new Date(): unknown, { previous this.context.state;
+    if (previousState !== state: unknown) {
+      this.context.state = state;
+      this.context.timestamp = new Date();
+      this.emit('stateChange', { previous: previousState, current: state });
+    }
+  }
+
+  public toggleMode(): void {
+    const newMode: CascadeMode.READ;
+    this.setMode(newMode): void {
+    this.setState(CascadeState.ACTIVE): void {
+    this.setState(CascadeState.INACTIVE): Readonly<CascadeContext> {
+    return Object.freeze({ ...this.context }): Record<string, unknown>): void {
+    this.context.metadata  = this.context.mode === CascadeMode.READ ? CascadeMode.WRITE  {
+      ...this.context.metadata,
+      ...metadata
+    };
+    this.emit('metadataUpdate', this.context.metadata): string): value is CascadeMode {
+  return Object.values(CascadeMode): string): value is CascadeState {
+  return Object.values(CascadeState).includes(value as CascadeState);
+}

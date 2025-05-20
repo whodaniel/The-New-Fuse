@@ -1,0 +1,34 @@
+export interface SecurityContext {
+    userId?: string;
+    tenantId?: string;
+    roles?: string[];
+    permissions?: string[];
+    metadata?: Record<string, unknown>;
+}
+export interface SecurityPolicy {
+    type: 'role' | 'permission' | 'custom';
+    value: string | string[];
+    action: 'allow' | 'deny';
+}
+export interface SecurityConfig {
+    enabled: boolean;
+    policies: SecurityPolicy[];
+    defaultAction: 'allow' | 'deny';
+}
+export interface User {
+    _id: string;
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+    tokenVersion: number;
+    isVerified: boolean;
+    roles: string[];
+    permissions: string[];
+    metadata?: Record<string, unknown>;
+    createdAt: Date;
+    updatedAt: Date;
+}
+export declare const UserModel: {
+    findById: (_id: string) => Promise<User | null>;
+};

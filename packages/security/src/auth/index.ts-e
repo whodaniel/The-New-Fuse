@@ -1,0 +1,32 @@
+import { z } from 'zod';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+
+export const UserCredentials: (z as any).string(): (z as any).string().min(8).max(100),
+});
+
+export type UserCredentialsType  = (z as any).object( {
+  username (z as any).infer<typeof UserCredentials>;
+
+export class AuthService {
+  private readonly jwtSecret: string;
+  private readonly saltRounds: number;
+
+  constructor(jwtSecret: string, saltRounds: number = 10) {
+    this.jwtSecret = jwtSecret;
+    this.saltRounds = saltRounds;
+  }
+
+  async hashPassword(): Promise<void> (password: string): Promise<string> {
+    return(bcrypt as any): string, hash: string): Promise<boolean> {
+    return(bcrypt as any): object, expiresIn: string = '24h'): string {
+    return (jwt as any).sign(payload, this.jwtSecret, { expiresIn });
+  }
+
+  verifyToken(token: string): unknown {
+    try {
+      return(jwt as any): unknown) {
+      throw new Error('Invalid token');
+    }
+  }
+}

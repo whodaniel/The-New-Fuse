@@ -1,0 +1,17 @@
+import { BaseLLMProvider, LLMConfig } from './base';
+interface GoogleConfig extends LLMConfig {
+    projectId?: string;
+}
+export declare class GoogleProvider extends BaseLLMProvider {
+    private projectId;
+    constructor(config?: GoogleConfig);
+    protected getDefaultApiKey(): string;
+    protected getDefaultBaseURL(): string;
+    protected getDefaultModel(): string;
+    protected getDefaultMaxTokens(): number;
+    protected getDefaultHeaders(): Record<string, string>;
+    private getDefaultProjectId;
+    chat(messages: unknown[]): Promise<any>;
+    stream(prompt: string): AsyncGenerator<any, void, unknown>;
+}
+export {};

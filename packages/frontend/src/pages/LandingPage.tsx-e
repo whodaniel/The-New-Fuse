@@ -1,0 +1,57 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { Box, Button, Heading, Text, VStack, Container, SimpleGrid, Icon } from '@chakra-ui/react';
+import { FiActivity, FiBox, FiCode } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
+
+export function LandingPage() {
+  const navigate = useNavigate();
+
+  return (
+    <Box>
+      <Container maxW="container.xl" py={20}>
+        <VStack spacing={8} textAlign="center">
+          <Heading size="2xl">Welcome to The New Fuse</Heading>
+          <Text fontSize="xl" color="gray.600">
+            Build, deploy, and scale your applications with ease
+          </Text>
+          <Button
+            size="lg"
+            colorScheme="brand"
+            onClick={() => navigate('/dashboard')}
+          >
+            Get Started
+          </Button>
+        </VStack>
+
+        <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10} mt={20}>
+          <Feature
+            icon={FiActivity}
+            title="Real-time Analytics"
+            text="Monitor your application performance in real-time"
+          />
+          <Feature
+            icon={FiBox}
+            title="Modular Architecture"
+            text="Build scalable applications with our modular components"
+          />
+          <Feature
+            icon={FiCode}
+            title="Developer First"
+            text="Built by developers, for developers"
+          />
+        </SimpleGrid>
+      </Container>
+    </Box>
+  );
+}
+
+function Feature({ icon, title, text }: { icon: unknown; title: string; text: string }) {
+  return (
+    <VStack p={5} spacing={4} align="center">
+      <Icon as={icon} w={10} h={10} color="brand.500" />
+      <Heading size="md">{title}</Heading>
+      <Text color="gray.600" textAlign="center">{text}</Text>
+    </VStack>
+  );
+}

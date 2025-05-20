@@ -1,0 +1,15 @@
+import { Node, Edge } from 'reactflow';
+import { NodeExecutor, WorkflowOptions, WorkflowExecutionResult } from './types';
+export declare class WorkflowExecutor {
+    private state;
+    private executors;
+    private nodeStates;
+    private options;
+    private logger;
+    constructor(executors: Map<string, NodeExecutor>, options?: WorkflowOptions);
+    execute(nodes: Node[], edges: Edge[]): Promise<WorkflowExecutionResult>;
+    private initializeState;
+    private determineExecutionOrder;
+    private executeNodes;
+    private executeNode;
+}

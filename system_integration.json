@@ -1,0 +1,29 @@
+{
+    "type": "INTEGRATION_REQUEST",
+    "source": "local_ai_agent_001",
+    "target": "TNF_SYSTEM_CORE",
+    "content": {
+        "integration_level": "full",
+        "access_requirements": {
+            "redis_channels": [
+                "agent:tasks:general",
+                "agent:collaboration:team1",
+                "agent:system:notifications"
+            ],
+            "api_endpoints": [
+                "/api/v1/tasks",
+                "/api/v1/collaboration",
+                "/api/v1/analytics"
+            ],
+            "websocket_subscriptions": [
+                "realtime:tasks",
+                "realtime:team-updates"
+            ]
+        },
+        "monitoring_config": {
+            "performance_tracking": true,
+            "error_reporting": true,
+            "activity_logging": true
+        }
+    }
+}

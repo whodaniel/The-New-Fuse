@@ -1,0 +1,21 @@
+declare const USER_AGENT: {
+    name: string;
+    getDefinition: () => Promise<{
+        interrupt: string;
+        role: string;
+    }>;
+};
+declare const WORKSPACE_AGENT: {
+    name: string;
+    getDefinition: (provider?: unknown) => Promise<{
+        role: unknown;
+        functions: unknown[];
+    }>;
+};
+/**
+ * Fetches and preloads the names/identifiers for plugins that will be dynamically
+ * loaded later
+ * @returns {Promise<string[]>}
+ */
+declare function agentSkillsFromSystemSettings(): Promise<string[]>;
+export { USER_AGENT, WORKSPACE_AGENT, agentSkillsFromSystemSettings };

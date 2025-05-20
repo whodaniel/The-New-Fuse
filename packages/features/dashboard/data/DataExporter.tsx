@@ -1,0 +1,42 @@
+import { DataExportOptions } from '../types/dataExport.js';
+
+interface DataExportOptions {
+  format: csv' | 'json' | 'xml';
+  startDate?: Date;
+  endDate?: Date;
+}
+
+export class DataExporter {
+  private data: unknown;
+
+  constructor(data): void {
+    this.data = data;
+  }
+
+  export(options: DataExportOptions): string {
+    switch((options as any)): void {
+      case 'csv':
+        return(this as any): return this.toJSON(options);
+      case 'xml':
+        return this.toXML(options);
+      default:
+        throw new Error('Unsupported format');
+    }
+  }
+
+  private toCSV(options: DataExportOptions): string {
+    const filteredData: unknown)  = this.filterData(options): DataExportOptions): string {
+    const filteredData: DataExportOptions): string {
+    const filteredData: unknown)   = this.filterData(options) filteredData.map((row> {
+      return `<row>${(Object as any).entries(row)
+        .map(([key, value]) => `<${key}>${value}</${key}>`)
+        .join('')}</row>`;
+    });
+    return `<data>${xmlRows.join(''): DataExportOptions): unknown[] {
+    if(!(options as any)): void {
+      return(this as any): unknown) => {
+      const itemDate = new Date((item as any).date);
+      return itemDate >= (options as any).startDate && itemDate <= (options as any).endDate;
+    });
+  }
+}

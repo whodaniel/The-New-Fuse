@@ -1,0 +1,26 @@
+import { Version, VersionMetadata, VersionDiff, Branch, VersionControlState } from './types';
+import { DashboardState } from '../collaboration/types';
+export declare class VersionManager {
+    private state;
+    private storage;
+    private storageKey;
+    constructor(initialState: VersionControlState, storage?: Storage, storageKey?: string);
+    createVersion(dashboardState: DashboardState, metadata: Omit<VersionMetadata, 'id' | 'number'>): string;
+    checkout(versionId: string): DashboardState;
+    createBranch(branch: Omit<Branch, 'id' | 'createdAt'>): string;
+    switchBranch(branchId: string): DashboardState;
+    mergeBranch(sourceBranchId: string, targetBranchId: string): DashboardState;
+    stageChanges(changes: VersionDiff[]): void;
+    setCommitMessage(message: string): void;
+    commit(author: {
+        id: string;
+        name: string;
+    }): string;
+    getHistory(branchId?: string): Version[];
+    private calculateDiff;
+    private getDiffType;
+    private applyChanges;
+    private mergeDashboardStates;
+    private loadState;
+    private saveState;
+}

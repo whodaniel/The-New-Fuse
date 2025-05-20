@@ -1,0 +1,63 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createLogger = void 0;
+const winston_1 = __importDefault(require("winston"));
+const perf_hooks_1 = require("perf_hooks");
+const { combine, timestamp, printf, colorize, errors } = winston_1.default.format;
+class PerformanceMonitor {
+    static startTimer(id) {
+        this.timers.set(id, perf_hooks_1.performance.now());
+    }
+    static endTimer(id) {
+        const start = this.timers.get(id);
+        if (!start) {
+            throw new Error(`No timer found for id: ${id}`);
+        }
+        const duration = perf_hooks_1.performance.now() - start;
+        this.timers.delete(id);
+        return duration;
+    }
+}
+PerformanceMonitor.timers = new Map();
+const customFormat = printf(({ level, message, timestamp, duration, component, traceId, ...metadata }) => {
+    let msg = `${timestamp} [${level}]`;
+    if (component) {
+        msg += ` [${component}]`;
+    }
+    if (traceId) {
+        msg += ` [${traceId}]`;
+    }
+    msg += `: ${message}`;
+    if (duration) {
+        msg += ` (${duration.toFixed(2)}ms)`;
+    }
+    if (Object.keys(metadata).length > 0) {
+        msg += ` ${JSON.stringify(metadata)}`;
+    }
+    return msg;
+});
+const logger = winston_1.default.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: combine(timestamp(), errors({ stack: true }), customFormat),
+    transports: [
+        new winston_1.default.transports.Console({
+            format: combine(colorize(), customFormat)
+        })
+    ]
+});
+function createLogger(component) {
+    return logger.child({ component });
+}
+exports.createLogger = createLogger;
+// Add uncaught exception and unhandled rejection handlers
+process.on('uncaughtException', (error) => {
+    logger.error('Uncaught Exception:', error);
+    process.exit(1);
+});
+process.on('unhandledRejection', (reason, promise) => {
+    logger.error('Unhandled Rejection:', reason);
+});
+//# sourceMappingURL=logging.js.mapexport {};

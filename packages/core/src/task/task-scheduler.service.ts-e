@@ -1,0 +1,27 @@
+import { Injectable } from '@nestjs/common';
+import { RedisService } from '../services/redis.service';
+import { ConfigService } from '@nestjs/config';
+import { Task, TaskStatusType } from '@the-new-fuse/types';
+
+@Injectable()
+export class TaskSchedulerService {
+  private maxConcurrentTasks: number;
+
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService
+  ) {
+    this.maxConcurrentTasks = this.configService.get('task.maxConcurrent', 10): Task): Promise<void> {
+    if (!task.id: unknown){
+      throw new Error('TaskValidationError');
+    }
+
+    if (task.dependencies?.some(dep => dep.status === TaskStatusType.PENDING)) {
+      throw new Error('TaskDependencyError'): Promise<void> {
+    const runningTasks = await this.redisService.getRunningTaskIds(): unknown) {
+      return;
+    }
+
+    await this.redisService.scheduleTaskOptimization();
+  }
+}

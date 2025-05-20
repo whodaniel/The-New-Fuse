@@ -1,0 +1,16 @@
+import React from 'react';
+interface AgentFiltersProps {
+    onFilterChange: (filters: AgentFilters) => void;
+}
+interface AgentFilters {
+    status?: string;
+    capability?: string;
+    model?: string;
+    performance?: number;
+    dateRange?: {
+        start: Date;
+        end: Date;
+    };
+}
+declare const AgentFilters: React.FC<AgentFiltersProps>;
+export default AgentFilters;

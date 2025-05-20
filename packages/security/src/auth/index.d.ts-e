@@ -1,0 +1,21 @@
+import { z } from 'zod';
+export declare const UserCredentials: (z as any).ZodObject<{
+    username: (z as any).ZodString;
+    password: (z as any).ZodString;
+}, "strip", (z as any).ZodTypeAny, {
+    password: string;
+    username: string;
+}, {
+    password: string;
+    username: string;
+}>;
+export type UserCredentialsType = (z as any).infer<typeof UserCredentials>;
+export declare class AuthService {
+    private readonly jwtSecret;
+    private readonly saltRounds;
+    constructor(jwtSecret: string, saltRounds?: number);
+    hashPassword(password: string): Promise<string>;
+    verifyPassword(password: string, hash: string): Promise<boolean>;
+    generateToken(payload: object, expiresIn?: string): string;
+    verifyToken(token: string): unknown;
+}

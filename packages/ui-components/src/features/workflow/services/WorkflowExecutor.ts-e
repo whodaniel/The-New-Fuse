@@ -1,0 +1,84 @@
+import { WorkflowStep, WorkflowCondition, WorkflowContext, ExecutionResult } from '../types';
+
+export class WorkflowExecutor {
+  private context: WorkflowContext;
+  private metricsTracker: WorkflowMetricsTracker;
+
+  constructor(metricsTracker: WorkflowMetricsTracker) {
+    this.metricsTracker = metricsTracker;
+    this.context = {};
+  }
+
+  async executeWorkflow(): Promise<void> (steps: WorkflowStep[]): Promise<ExecutionResult> {
+    this.metricsTracker.initializeWorkflow(steps);
+    let currentStep = steps[0];
+
+    while (currentStep) {
+      try {
+        const result = await this.executeStep(currentStep);
+        this.context[currentStep.id] = result;
+        
+        currentStep = await this.determineNextStep(currentStep, result);
+        this.metricsTracker.recordStepCompletion(currentStep.id, true);
+      } catch (error) {
+        this.metricsTracker.recordStepCompletion(currentStep.id, false);
+        return { success: false, error };
+      }
+    }
+
+    return { 
+      success: true, 
+      context: this.context,
+      metrics: this.metricsTracker.getMetrics()
+    };
+  }
+
+  private async determineNextStep(): Promise<void> (
+    currentStep: WorkflowStep, 
+    result: unknown
+  ): Promise<WorkflowStep | null> {
+    if (currentStep.branches) {
+      for (const branch of currentStep.branches) {
+        if (await this.evaluateCondition(branch.condition, result)) {
+          return branch.nextStep;
+        }
+      }
+    }
+    return currentStep.next;
+  }
+
+  private async evaluateCondition(): Promise<void> (
+    condition: WorkflowCondition, 
+    stepResult: unknown
+  ): Promise<boolean> {
+    switch (condition.type) {
+      case 'equals':
+        return stepResult === condition.value;
+      case 'contains':
+        return stepResult.includes(condition.value);
+      case 'greater':
+        return stepResult > condition.value;
+      case 'less':
+        return stepResult < condition.value;
+      case 'expression':
+        return await this.evaluateExpression(condition.expression, stepResult);
+      default:
+        throw new Error(`Unknown condition type: ${condition.type}`);
+    }
+  }
+
+  private async evaluateExpression(): Promise<void> (
+    expression: string, 
+    context: unknown
+  ): Promise<boolean> {
+    // Safe expression evaluation
+    const sandbox = { context, result: false };
+    const script = new Function('context', `
+      with (context) {
+        result = ${expression};
+      }
+      return result;
+    `);
+    return script.call(sandbox, context);
+  }
+}

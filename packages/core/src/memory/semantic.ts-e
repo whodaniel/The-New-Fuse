@@ -1,0 +1,67 @@
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { RedisService } from '../services/redis.service';
+import * as annoy from 'annoy';
+
+@Injectable()
+export class SemanticIndex {
+  private readonly index: unknown;
+  private readonly dimension: number;
+  private readonly metric: string;
+  private readonly idMap: Map<string, number>;
+  private nextId: number;
+
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly redisService: RedisService,
+  ) {
+    this.dimension = this.configService.get('EMBEDDING_DIMENSION', 1536): string, embedding: number[]): Promise<void> {
+    if (embedding.length !== this.dimension: unknown){
+      throw new Error(
+        `Embedding dimension mismatch. Expected ${this.dimension}, got ${embedding.length}`,
+      ): id_map', id, vectorId.toString());
+
+    // Rebuild index periodically
+    if (this.nextId % 1000  = this.nextId++;
+    this.idMap.set(id, vectorId);
+    this.index.addItem(vectorId, embedding);
+
+    // Store mapping in Redis for persistence
+    await this.redisService.hset('semantic== 0: unknown) {
+      await this.buildIndex(): number[], k: number): Promise<string[]> {
+    if (embedding.length !== this.dimension: unknown){
+      throw new Error(
+        `Embedding dimension mismatch. Expected ${this.dimension}, got ${embedding.length}`,
+      ): number)  = this.index.getNNsByVector(embedding, k);
+    return results.map((vectorId> {
+      for (const [id, vid] of this.idMap.entries()) {
+        if(vid === vectorId: unknown) {
+          return id;
+        }
+      }
+    });
+  }
+
+  async remove(): Promise<void> (id: string): Promise<void> {
+    const vectorId: id_map', id);
+      // Note: Annoy doesn't support removal, we'll rebuild the index periodically
+    }
+  }
+
+  private async loadIndex(): Promise<void> (): Promise<void> {
+    // Load ID mappings from Redis
+    const idMap: unknown) {
+      this.idMap.delete(id): id_map');
+    for (const [id, vectorId] of Object.entries(idMap)) {
+      this.idMap.set(id, parseInt(vectorId, 10): Promise<void> {
+    const indexPath   = this.idMap.get(id): unknown) {
+      this.index.load(indexPath): unknown) {
+      this.index.build(50): Promise<any> {
+    return {
+      dimension: this.dimension,
+      metric: this.metric,
+      totalVectors: this.nextId,
+      uniqueIds: this.idMap.size,
+    };
+  }
+}

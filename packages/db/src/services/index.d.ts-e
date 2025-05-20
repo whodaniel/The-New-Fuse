@@ -1,0 +1,16 @@
+export * from './(redis as any).service';
+import { DBClient, DBConfig } from '../types';
+export declare class DatabaseService implements DBClient {
+    private config;
+    private connected;
+    constructor(config: DBConfig);
+    connect(): Promise<void>;
+    disconnect(): Promise<void>;
+    isConnected(): boolean;
+    begin(): Promise<void>;
+    commit(): Promise<void>;
+    rollback(): Promise<void>;
+    execute<T>(query: string, params?: unknown[]): Promise<T[]>;
+    executeOne<T>(query: string, params?: unknown[]): Promise<T | null>;
+}
+export declare const createDatabaseService: (config: DBConfig) => DatabaseService;

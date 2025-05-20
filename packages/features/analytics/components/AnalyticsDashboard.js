@@ -1,0 +1,452 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+Object.defineProperty(exports, "__esModule", { value: true });
+import react_1 from 'react';
+import material_1 from '@mui/material';
+import recharts_1 from 'recharts';
+import icons_material_1 from '@mui/icons-material';
+import { format, endOfDay, startOfDay, subDays } from 'date-fns';
+import axios_1 from 'axios';
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
+const AnalyticsDashboard = () => {
+    const [timeRange, setTimeRange] = (0, react_1.useState)('7d');
+    const [analyticsData, setAnalyticsData] = (0, react_1.useState)(null);
+    const [isLoading, setIsLoading] = (0, react_1.useState)(true);
+    (0, react_1.useEffect)(() => {
+        fetchAnalyticsData();
+    }, [timeRange]);
+    const fetchAnalyticsData = async () => ;
+    () => ;
+    () => {
+        setIsLoading(true);
+        try {
+            const endDate = (0, endOfDay)(new Date());
+            const startDate = (0, startOfDay)((0, subDays)(endDate, timeRange === '7d' ? 7 : timeRange === '30d' ? 30 : 90));
+            const response = await axios_1.default.get('/api/analytics', {
+                params: {
+                    startDate: startDate.toISOString(),
+                    endDate: endDate.toISOString(),
+                },
+            });
+            setAnalyticsData(response.data);
+        }
+        catch (error) {
+            console.error('Error fetching analytics:', error);
+        }
+        finally {
+            setIsLoading(false);
+        }
+    };
+    const exportData = async () => ;
+    () => ;
+    () => {
+        try {
+            const response = await axios_1.default.get('/api/analytics/export', {
+                responseType: 'blob',
+            });
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `analytics_export_${(0, format)(new Date(), 'yyyy-MM-dd')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        }
+        catch (error) {
+            console.error('Error exporting data:', error);
+        }
+    };
+    const renderMessageStats = () => container, spacing = { 2:  } >
+        item, xs = { 12:  }, md = { 8:  } >
+        sx, {}, { p: , 2: , height: , '400px':  };
+};
+ >
+    display;
+"flex";
+justifyContent = "space-between";
+alignItems = "center";
+mb = { 2:  } >
+    variant;
+"h6" > Message;
+Volume;
+Trend < /material_1.Typography>
+    < material_1.Tooltip;
+title = "Messages sent over time" >
+    fontSize;
+"small" /  >
+    /material_1.Tooltip>
+    < /material_1.Box>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.userEngagement.weekly;
+}
+ >
+    strokeDasharray;
+"3 3" /  >
+    dataKey;
+"day" /  >
+    />
+    < recharts_1.Tooltip /  >
+    type;
+"monotone";
+dataKey = "messages";
+stroke = "#8884d8";
+fill = "#8884d8";
+fillOpacity = { 0.3:  } /  >
+    /recharts_1.AreaChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  };
+md = { 4:  } >
+    container;
+spacing = { 2:  } >
+    item;
+xs = { 6:  } >
+    color;
+"textSecondary";
+gutterBottom >
+    Total;
+Messages
+    < /material_1.Typography>
+    < material_1.Typography;
+variant = "h4" >
+    { analyticsData } === null || analyticsData === void 0 ? void 0 : analyticsData.messageStats.total.toLocaleString();
+/material_1.Typography>
+    < /material_1.CardContent>
+    < /material_1.Card>
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 6:  } >
+    color;
+"textSecondary";
+gutterBottom >
+    Active;
+Users
+    < /material_1.Typography>
+    < material_1.Typography;
+variant = "h4" >
+    { analyticsData } === null || analyticsData === void 0 ? void 0 : analyticsData.messageStats.activeUsers.toLocaleString();
+/material_1.Typography>
+    < /material_1.CardContent>
+    < /material_1.Card>
+    < /material_1.Grid>
+    < /material_1.Grid>
+    < /material_1.Grid>
+    < /material_1.Grid>;
+;
+const renderContentAnalysis = () => container, spacing = { 2:  } >
+    item, xs = { 12:  }, md = { 6:  } >
+    sx, {}, { p: , 2: , height: , '300px':  };
+ >
+    variant;
+"h6";
+gutterBottom >
+    Sentiment;
+Distribution
+    < /material_1.Typography>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    [
+        {
+            name: 'Positive',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.contentAnalysis.sentiment.positive,
+        },
+        {
+            name: 'Neutral',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.contentAnalysis.sentiment.neutral,
+        },
+        {
+            name: 'Negative',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.contentAnalysis.sentiment.negative,
+        },
+    ];
+}
+cx = "50%";
+cy = "50%";
+innerRadius = { 60:  };
+outerRadius = { 80:  };
+fill = "#8884d8";
+paddingAngle = { 5:  };
+dataKey = "value" >
+    { COLORS, : .map((color, index) => key = {} `cell-${index}`) };
+fill = { color } /  > ;
+/recharts_1.Pie>
+    < recharts_1.Legend /  >
+    />
+    < /recharts_1.PieChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  };
+md = { 6:  } >
+    sx;
+{
+    {
+        p: 2, height;
+        '300px';
+    }
+}
+ >
+    variant;
+"h6";
+gutterBottom >
+    Top;
+Topics
+    < /material_1.Typography>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.contentAnalysis.topics;
+}
+ >
+    strokeDasharray;
+"3 3" /  >
+    dataKey;
+"topic" /  >
+    />
+    < recharts_1.Tooltip /  >
+    dataKey;
+"count";
+fill = "#8884d8" >
+    { analyticsData } === null || analyticsData === void 0 ? void 0 : analyticsData.contentAnalysis.topics.map((entry, index) => key = {} `cell-${index}`, fill = { COLORS, [index % COLORS.length]:  } /  > );
+/recharts_1.Bar>
+    < /recharts_1.BarChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < /material_1.Grid>;
+;
+const renderModerationStats = () => container, spacing = { 2:  } >
+    item, xs = { 12:  }, md = { 6:  } >
+    sx, {}, { p: , 2: , height: , '300px':  };
+ >
+    variant;
+"h6";
+gutterBottom >
+    Moderation;
+Actions
+    < /material_1.Typography>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    [
+        {
+            name: 'Warns',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.actions.warns,
+        },
+        {
+            name: 'Mutes',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.actions.mutes,
+        },
+        {
+            name: 'Bans',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.actions.bans,
+        },
+        {
+            name: 'Deletes',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.actions.deletes,
+        },
+    ];
+}
+ >
+    strokeDasharray;
+"3 3" /  >
+    dataKey;
+"name" /  >
+    />
+    < recharts_1.Tooltip /  >
+    dataKey;
+"value";
+fill = "#8884d8" >
+    { COLORS, : .map((color, index) => key = {} `cell-${index}`) };
+fill = { color } /  > ;
+/recharts_1.Bar>
+    < /recharts_1.BarChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  };
+md = { 6:  } >
+    sx;
+{
+    {
+        p: 2, height;
+        '300px';
+    }
+}
+ >
+    variant;
+"h6";
+gutterBottom >
+    Appeals;
+Status
+    < /material_1.Typography>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    [
+        {
+            name: 'Pending',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.appeals.pending,
+        },
+        {
+            name: 'Approved',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.appeals.approved,
+        },
+        {
+            name: 'Rejected',
+            value: analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.moderationStats.appeals.rejected,
+        },
+    ];
+}
+cx = "50%";
+cy = "50%";
+innerRadius = { 60:  };
+outerRadius = { 80:  };
+fill = "#8884d8";
+paddingAngle = { 5:  };
+dataKey = "value" >
+    { COLORS, : .map((color, index) => key = {} `cell-${index}`) };
+fill = { color } /  > ;
+/recharts_1.Pie>
+    < recharts_1.Legend /  >
+    />
+    < /recharts_1.PieChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < /material_1.Grid>;
+;
+const renderUserEngagement = () => container, spacing = { 2:  } >
+    item, xs = { 12:  } >
+    sx, {}, { p: , 2: , height: , '300px':  };
+ >
+    variant;
+"h6";
+gutterBottom >
+    User;
+Retention
+    < /material_1.Typography>
+    < recharts_1.ResponsiveContainer >
+    data;
+{
+    analyticsData === null || analyticsData === void 0 ? void 0 : analyticsData.userEngagement.retention;
+}
+ >
+    strokeDasharray;
+"3 3" /  >
+    dataKey;
+"day" /  >
+    domain;
+{
+    [0, 100];
+}
+unit = "%" /  >
+    />
+    < recharts_1.Line;
+type = "monotone";
+dataKey = "rate";
+stroke = "#8884d8";
+strokeWidth = { 2:  };
+dot = {};
+{
+    r: 4;
+}
+/>
+    < /recharts_1.LineChart>
+    < /recharts_1.ResponsiveContainer>
+    < /material_1.Paper>
+    < /material_1.Grid>
+    < /material_1.Grid>;
+;
+return sx = {};
+{
+    p: 3;
+}
+ >
+    display;
+"flex";
+justifyContent = "space-between";
+alignItems = "center";
+mb = { 3:  } >
+    variant;
+"h4" > Analytics;
+Dashboard < /material_1.Typography>
+    < material_1.Box;
+display = "flex";
+gap = { 2:  } >
+    size;
+"small" >
+    Time;
+Range < /material_1.InputLabel>
+    < material_1.Select;
+value = { timeRange };
+label = "Time Range";
+onChange = {}(e);
+setTimeRange(e.target.value);
+ >
+    value;
+"7d" > Last;
+7;
+Days < /material_1.MenuItem>
+    < material_1.MenuItem;
+value = "30d" > Last;
+30;
+Days < /material_1.MenuItem>
+    < material_1.MenuItem;
+value = "90d" > Last;
+90;
+Days < /material_1.MenuItem>
+    < /material_1.Select>
+    < /material_1.FormControl>
+    < material_1.Button;
+variant = "outlined";
+startIcon = {} < icons_material_1.Download /  > ;
+onClick = { exportData } >
+    Export
+    < /material_1.Button>
+    < material_1.IconButton;
+onClick = { fetchAnalyticsData };
+disabled = { isLoading } >
+    />
+    < /material_1.IconButton>
+    < /material_1.Box>
+    < /material_1.Box>
+    < material_1.Grid;
+container;
+spacing = { 3:  } >
+    item;
+xs = { 12:  } >
+    {}
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  } >
+    {}
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  } >
+    {}
+    < /material_1.Grid>
+    < material_1.Grid;
+item;
+xs = { 12:  } >
+    {}
+    < /material_1.Grid>
+    < /material_1.Grid>
+    < /material_1.Box>;
+;
+;
+exports.default = AnalyticsDashboard;
+//# sourceMappingURL=AnalyticsDashboard.js.map

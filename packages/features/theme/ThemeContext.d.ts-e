@@ -1,0 +1,7 @@
+import React from 'react';
+import { ThemeConfig, ThemeContextType } from './types';
+export declare const ThemeProvider: (React as any).FC<{
+    children: (React as any).ReactNode;
+    initialTheme?: Partial<ThemeConfig>;
+}>;
+export declare const useTheme: () => ThemeContextType;

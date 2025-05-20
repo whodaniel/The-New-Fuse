@@ -1,0 +1,25 @@
+// @ts-checkimport { toast } from 'react-hot-toast';
+export const showSuccessToast = (message) => {
+    toast.success(message, {
+        duration: 4000,
+        position: 'bottom-right',
+    });
+};
+export const showErrorToast = (message) => {
+    toast.error(message, {
+        duration: 4000,
+        position: 'bottom-right',
+    });
+};
+export const showInfoToast = (message) => {
+    toast(message, {
+        duration: 4000,
+        position: 'bottom-right',
+    });
+};
+export default {
+    showSuccessToast,
+    showErrorToast,
+    showInfoToast,
+};
+//# sourceMappingURL=toast.js.map

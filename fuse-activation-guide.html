@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse Activation Guide</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            margin-top: 30px;
+        }
+        .step {
+            background-color: #f8f9fa;
+            border-left: 4px solid #3498db;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+        .step h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        code {
+            background-color: #f1f1f1;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+        }
+        .command {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: Consolas, Monaco, 'Andale Mono', monospace;
+            margin: 10px 0;
+        }
+        .note {
+            background-color: #fef9e7;
+            border-left: 4px solid #f1c40f;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .success {
+            background-color: #e9f7ef;
+            border-left: 4px solid #27ae60;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .error {
+            background-color: #fdedec;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>The New Fuse Activation Guide</h1>
+    <p>This guide will help you activate The New Fuse extension and establish communication with GitHub Copilot.</p>
+
+    <div class="note">
+        <strong>Note:</strong> The New Fuse VS Code extension is already installed in your environment, but needs to be activated to establish communication with other AI agents like GitHub Copilot.
+    </div>
+
+    <h2>Activation Steps</h2>
+
+    <div class="step">
+        <h3>Step 1: Open VS Code Command Palette</h3>
+        <p>Press <code>Cmd+Shift+P</code> (Mac) or <code>Ctrl+Shift+P</code> (Windows/Linux) to open the VS Code Command Palette.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 2: Show Discovered AI Agents</h3>
+        <p>Type the following command in the Command Palette and select it:</p>
+        <div class="command">The New Fuse: Show Discovered AI Agents</div>
+        <p>This will activate The New Fuse extension and show you the currently discovered AI agents.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 3: Refresh Agent Discovery</h3>
+        <p>Open the Command Palette again and type:</p>
+        <div class="command">The New Fuse: Refresh Agent Discovery</div>
+        <p>This will scan for available AI agents, including GitHub Copilot.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 4: Verify Communication Status</h3>
+        <p>Look for a status indicator in the VS Code status bar that shows The New Fuse is active. It should display the number of discovered agents, including Copilot.</p>
+        <p>The status bar item will look like: <code>$(search) AI Agents (X)</code> where X is the number of discovered agents.</p>
+    </div>
+
+    <div class="step">
+        <h3>Step 5: Open Workflow Builder</h3>
+        <p>Open the Command Palette again and type:</p>
+        <div class="command">The New Fuse: Open Workflow Builder</div>
+        <p>This will open the workflow builder interface where you can create workflows between AI agents.</p>
+    </div>
+
+    <h2>Verifying Communication with Copilot</h2>
+
+    <div class="step">
+        <h3>Check Discovered Agents</h3>
+        <p>In the workflow builder or agent list, you should see GitHub Copilot listed among the discovered agents.</p>
+        <p>If Copilot is properly detected, it will appear with capabilities like code-completion, code-generation, and code-explanation.</p>
+    </div>
+
+    <div class="step">
+        <h3>Create a Test Workflow</h3>
+        <p>In the workflow builder, you can create a simple workflow that includes Copilot to test the communication:</p>
+        <ol>
+            <li>Click "New Workflow" to create a new workflow</li>
+            <li>Add a step and select GitHub Copilot as the agent</li>
+            <li>Configure the step to use one of Copilot's capabilities (e.g., code generation)</li>
+            <li>Save and execute the workflow to verify communication</li>
+        </ol>
+    </div>
+
+    <div class="success">
+        <strong>Success Indicator:</strong> When communication is successfully established, you'll be able to see GitHub Copilot listed in the agent discovery list and use it in workflows.
+    </div>
+
+    <div class="error">
+        <strong>Troubleshooting:</strong> If you don't see Copilot in the list of discovered agents, try the following:
+        <ul>
+            <li>Make sure GitHub Copilot is installed and activated in VS Code</li>
+            <li>Restart VS Code and try the activation process again</li>
+            <li>Check the VS Code output panel for "The New Fuse" to see any error messages</li>
+            <li>Verify that the Redis server is running (it's a key component for communication)</li>
+        </ul>
+    </div>
+
+    <h2>Using the JavaScript Activation Helper</h2>
+    <p>Alternatively, you can use the provided JavaScript file to automate the activation process:</p>
+    <div class="step">
+        <h3>Run the Activation Script</h3>
+        <p>Open a JavaScript Debug Terminal in VS Code and run:</p>
+        <div class="command">node activate-fuse.js</div>
+        <p>This script will execute all the necessary commands to activate The New Fuse and establish communication with Copilot.</p>
+    </div>
+
+    <div class="note">
+        <strong>Note:</strong> The Redis server should already be running, which is a key component for communication between services.
+    </div>
+</body>
+</html>

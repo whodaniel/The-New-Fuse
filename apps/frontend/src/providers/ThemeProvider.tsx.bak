@@ -1,0 +1,31 @@
+import React, { ReactNode } from 'react';
+// Import from the features package
+import { ThemeProvider as FeatureThemeProvider } from '@features/theme/ThemeContext.js';
+
+// Re-export the ThemeProvider from the features package
+export function ThemeProvider({ children }: { children: ReactNode }) {
+    // Wrap the imported ThemeProvider with any additional logic if needed
+    return (
+        <FeatureThemeProvider>
+            {children}
+        </FeatureThemeProvider>
+    );
+}
+    
+    return (
+      <ThemeContext.Provider value={{ theme, setTheme }}>
+        {children}
+      </ThemeContext.Provider>
+    );
+}
+
+export function useTheme() {
+    const context = useContext(ThemeContext);
+    if (context === undefined) {
+        throw new Error('useTheme must be used within a ThemeProvider');
+    }
+    return context;
+}
+
+// Re-export the theme provider from the core package
+export { ThemeProvider, useTheme } from '@features/theme/ThemeContext';

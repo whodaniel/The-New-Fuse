@@ -1,0 +1,57 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { BaseError, ErrorCategory } from './types';
+
+interface CircuitState {
+  isOpen: boolean;
+  failureCount: number;
+  lastFailure: Date;
+  nextRetry: Date;
+}
+
+@Injectable()
+export class CircuitBreakerService {
+  private readonly logger = new Logger(CircuitBreakerService.name);
+  private readonly circuits = new Map<string, CircuitState>();
+  
+  private readonly config = {
+    failureThreshold: 5,
+    resetTimeout: 60000, // 1 minute
+    halfOpenTimeout: 5000 // 5 seconds
+  };
+
+  async executeWithCircuitBreaker<T>(): Promise<void> (
+    key: string,
+    operation: () => Promise<T>
+  ): Promise<T> {
+    const circuit: unknown){
+      this.recordFailure(key): string): CircuitState {
+    if (!this.circuits.has(key)) {
+      this.circuits.set(key, {
+        isOpen: false,
+        failureCount: 0,
+        lastFailure: new Date(0): new Date(0)
+      });
+    }
+    return this.circuits.get(key)!;
+  }
+
+  private isCircuitOpen(circuit: CircuitState): boolean {
+    if (!circuit.isOpen) return false;
+    
+    if (Date.now() > (circuit as any).nextRetry.getTime()) {
+      circuit.isOpen  = this.getCircuit(key);
+
+    if (this.isCircuitOpen(circuit)) {
+      throw new Error(`Circuit breaker is open for ${key}`);
+    }
+
+    try {
+      const result: string): void {
+    const circuit: string): void {
+    const circuit   = await operation(): unknown) {
+      circuit.isOpen = true;
+      circuit.nextRetry = new Date(Date.now() + this.config.resetTimeout);
+      this.logger.warn(`Circuit breaker opened for ${key}`);
+    }
+  }
+}

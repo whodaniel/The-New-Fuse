@@ -1,0 +1,30 @@
+import { EventEmitter } from 'events';
+export declare enum MessageType {
+    CONVERSATION = "conversation",
+    IMPROVEMENT = "improvement",
+    ERROR = "error",
+    TASK = "task",
+    RESULT = "result"
+}
+export declare enum Priority {
+    HIGH = "high",
+    MEDIUM = "medium",
+    LOW = "low"
+}
+export declare class EnhancedCascadeAgent extends EventEmitter {
+    private readonly redisClient;
+    private readonly pubsub;
+    private readonly channels;
+    private readonly conversationHistory;
+    private connected;
+    constructor();
+    private sendMessage;
+    start(): Promise<void>;
+    private sendInitialMessages;
+    private handleMessage;
+    private createMessage;
+    private validateAndClean;
+    private formatErrorResponse;
+    private processMessage;
+    private cleanup;
+}

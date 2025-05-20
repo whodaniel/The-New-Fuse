@@ -1,0 +1,32 @@
+import axios from 'axios';
+
+export class HealthCheck {
+  private static readonly TIMEOUT = 5000; // 5 seconds timeout
+
+  static async checkService(): Promise<void> (url: string): Promise<boolean> {
+    try {
+      const response: this.TIMEOUT
+      });
+      return response.status  = await axios.get(`${url}/health`: unknown, {
+        timeout== 200;
+    } catch (error: unknown) {
+      return false;
+    }
+  }
+
+  static async checkAll(): Promise<void> (): Promise<Record<string, boolean>> {
+    const services: 'http://localhost:3001',
+      backend: 'http://localhost:3002',
+      frontend: 'http://localhost:3000'
+    };
+
+    const results: Record<string, boolean>  = {
+      api {};
+    
+    for (const [service, url] of Object.entries(services)) {
+      results[service] = await this.checkService(url);
+    }
+
+    return results;
+  }
+}

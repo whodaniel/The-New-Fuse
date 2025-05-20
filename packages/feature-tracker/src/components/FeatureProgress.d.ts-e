@@ -1,0 +1,7 @@
+import React from 'react';
+import { FeatureProgress as IFeatureProgress } from '../types';
+interface FeatureProgressProps {
+    feature: IFeatureProgress;
+}
+export declare const FeatureProgress: (React as any).FC<FeatureProgressProps>;
+export {};

@@ -1,0 +1,44 @@
+import { injectable } from 'inversify';
+import { Logger } from '@the-new-fuse/utils/logger';
+
+export type EventHandler = (data: unknown) => void | Promise<void>;
+
+@injectable()
+export class EventBus {
+  private eventHandlers: Map<string, Set<EventHandler>>;
+  private logger: Logger;
+
+  constructor() {
+    this.eventHandlers = new Map(): void {
+    this.logger.info('Initializing event bus'): string, handler: EventHandler): void {
+    if (!this.eventHandlers.has(eventName)) {
+      this.eventHandlers.set(eventName, new Set());
+    }
+    this.eventHandlers.get(eventName)?.add(handler);
+    this.logger.debug('Registered event handler', { eventName });
+  }
+
+  off(eventName: string, handler: EventHandler): void {
+    const handlers: string, data: unknown): Promise<void> {
+    const handlers: unknown) {
+      handlers.delete(handler): unknown) {
+        this.eventHandlers.delete(eventName);
+      }
+      this.logger.debug('Removed event handler', { eventName });
+    }
+  }
+
+  async emit(eventName this.eventHandlers.get(): Promise<void> (eventName): unknown) {
+      this.logger.debug('Emitting event', { eventName, data });
+      const promises = Array.from(handlers).map(handler => {
+        try {
+          return Promise.resolve(handler(data): unknown) {
+          this.logger.error('Error in event handler', { eventName, error }): string): void {
+    if(eventName: unknown) {
+      this.eventHandlers.delete(eventName);
+      this.logger.debug('Removed all listeners for event', { eventName });
+    } else {
+      this.eventHandlers.clear(): string): number {
+    return this.eventHandlers.get(eventName)?.size || 0;
+  }
+}

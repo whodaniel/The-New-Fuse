@@ -1,0 +1,19 @@
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+import { FC, useEffect, useState, JSX } from 'react';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ThemeProvider = ThemeProvider;
+const react_1 = require("react");
+const next_themes_1 = require("next-themes");
+function ThemeProvider({ children, ...props }) {
+    return (<next_themes_1.ThemeProvider attribute="class" defaultTheme="system" enableSystem {...props}>
+      {children}
+    </next_themes_1.ThemeProvider>);
+}
+exports.default = ThemeProvider;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiVGhlbWVQcm92aWRlci5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIlRoZW1lUHJvdmlkZXIudHN4Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7O0FBSUEsc0NBV0M7QUFmRCxpQ0FBMEI7QUFDMUIsNkNBQWtFO0FBR2xFLFNBQWdCLGFBQWEsQ0FBQyxFQUFFLFFBQVEsRUFBRSxHQUFHLEtBQUssRUFBc0I7SUFDdEUsT0FBTyxDQUNMLENBQUMsMkJBQWtCLENBQ2pCLFNBQVMsQ0FBQyxPQUFPLENBQ2pCLFlBQVksQ0FBQyxRQUFRLENBQ3JCLFlBQVksQ0FDWixJQUFJLEtBQUssQ0FBQyxDQUVWO01BQUEsQ0FBQyxRQUFRLENBQ1g7SUFBQSxFQUFFLDJCQUFrQixDQUFDLENBQ3RCLENBQUM7QUFDSixDQUFDO0FBRUQsa0JBQWUsYUFBYSxDQUFDIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JztcbmltcG9ydCB7IFRoZW1lUHJvdmlkZXIgYXMgTmV4dFRoZW1lc1Byb3ZpZGVyIH0gZnJvbSAnbmV4dC10aGVtZXMnO1xuaW1wb3J0IHsgdHlwZSBUaGVtZVByb3ZpZGVyUHJvcHMgfSBmcm9tICduZXh0LXRoZW1lcy9kaXN0L3R5cGVzJztcblxuZXhwb3J0IGZ1bmN0aW9uIFRoZW1lUHJvdmlkZXIoeyBjaGlsZHJlbiwgLi4ucHJvcHMgfTogVGhlbWVQcm92aWRlclByb3BzKSB7XG4gIHJldHVybiAoXG4gICAgPE5leHRUaGVtZXNQcm92aWRlclxuICAgICAgYXR0cmlidXRlPVwiY2xhc3NcIlxuICAgICAgZGVmYXVsdFRoZW1lPVwic3lzdGVtXCJcbiAgICAgIGVuYWJsZVN5c3RlbVxuICAgICAgey4uLnByb3BzfVxuICAgID5cbiAgICAgIHtjaGlsZHJlbn1cbiAgICA8L05leHRUaGVtZXNQcm92aWRlcj5cbiAgKTtcbn1cblxuZXhwb3J0IGRlZmF1bHQgVGhlbWVQcm92aWRlcjtcbiJdfQ==
+export {};

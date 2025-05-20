@@ -1,0 +1,13 @@
+import React from "react";
+interface GenericOpenAiSettings {
+    EmbeddingBasePath?: string;
+    EmbeddingModelPref?: string;
+    EmbeddingModelMaxChunkLength?: number;
+    OpenAiKey?: string;
+    OpenAiOrg?: string;
+}
+interface GenericOpenAiEmbeddingOptionsProps {
+    settings: GenericOpenAiSettings;
+}
+export declare function GenericOpenAiEmbeddingOptions({ settings }: GenericOpenAiEmbeddingOptionsProps): React.JSX.Element;
+export {};

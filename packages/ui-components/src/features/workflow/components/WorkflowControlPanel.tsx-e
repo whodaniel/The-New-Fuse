@@ -1,0 +1,154 @@
+import React, { FC } from "react";
+import { Button } from '@the-new-fuse/../../core/Button';
+import { WorkflowStep, WorkflowMetrics, WorkflowStatus } from '@the-new-fuse/types';
+
+interface WorkflowControlPanelProps {
+  workflow: {
+    id: string;
+    steps: WorkflowStep[];
+    status: WorkflowStatus;
+  };
+  metrics?: WorkflowMetrics;
+  onStart: () => void;
+  onPause: () => void;
+  onResume: () => void;
+  onStop: () => void;
+  onReset: () => void;
+}
+
+export const WorkflowControlPanel: FC<WorkflowControlPanelProps> = ({
+  workflow,
+  metrics,
+  onStart,
+  onPause,
+  onResume,
+  onStop,
+  onReset
+}) => {
+  const isRunning = workflow.status === WorkflowStatus.RUNNING;
+  const isCompleted = workflow.status === WorkflowStatus.COMPLETED;
+  const isFailed = workflow.status === WorkflowStatus.FAILED;
+
+  return (
+    <div className="workflow-control-panel">
+      <div className="status-section">
+        <h3>Workflow Status</h3>
+        <div className="status-indicator">
+          <div className="status-visualization">
+            <span className={`status-dot status-${workflow.status} animated`} />
+            <span className="status-text">
+              {workflow.status}
+              {workflow.status === WorkflowStatus.RUNNING && (
+                <span className="processing-steps">
+                  ({metrics?.queuedSteps || 0} queued · {metrics?.processingSteps || 0} processing · {metrics?.retries || 0} retries)
+                </span>
+              )}
+            </span>
+          </div>
+        </div>
+        {metrics && (
+          <div className="metrics">
+            <div className="metric">
+              <label>Progress:</label>
+              <span>{metrics.progress}%</span>
+            </div>
+            <div className="metric">
+              <label>Duration:</label>
+              <span>{formatDuration(metrics.duration)}</span>
+            </div>
+            <div className="metric">
+              <label>Steps Completed:</label>
+              <span>{metrics.completedSteps}/{workflow.steps.length}</span>
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="controls-section">
+        <Button
+          onClick={onStart}
+          disabled={isRunning || isCompleted}
+          variant="primary"
+          className="control-button start"
+          icon="play"
+        >
+          Start
+        </Button>
+
+        {isRunning ? (
+          <Button
+            onClick={onPause}
+            variant="secondary"
+            className="control-button pause"
+            icon="pause"
+          >
+            Pause
+          </Button>
+        ) : (
+          <Button
+            onClick={onResume}
+            disabled={!isRunning}
+            variant="primary"
+            className="control-button resume"
+            icon="play"
+          >
+            Resume
+          </Button>
+        )}
+
+        <Button
+          onClick={onStop}
+          disabled={!isRunning}
+          variant="danger"
+          className="control-button stop"
+          icon="stop"
+        >
+          Stop
+        </Button>
+
+        <Button
+          onClick={onReset}
+          disabled={isRunning}
+          variant="ghost"
+          className="control-button reset"
+          icon="reset"
+        >
+          Reset
+        </Button>
+      </div>
+
+      {isFailed && metrics?.error && (
+        <div className="error-section">
+          <h4>Error Details</h4>
+          <div className="error-details">
+            <div className="error-header">
+              <span className="error-type">{metrics.error.type}</span>
+              <span className="error-timestamp">{metrics.error.timestamp}</span>
+            </div>
+            <pre className="error-message">{metrics.error.message}</pre>
+            {metrics.error.stack && (
+              <details className="error-stack">
+                <summary>Stack trace</summary>
+                <pre>{metrics.error.stack}</pre>
+              </details>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+function formatDuration(ms: number): string {
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  if (hours > 0) {
+    return `${hours}h ${minutes % 60}m ${seconds % 60}s`;
+  } else if (minutes > 0) {
+    return `${minutes}m ${seconds % 60}s`;
+  } else {
+    return `${seconds}s`;
+  }
+}

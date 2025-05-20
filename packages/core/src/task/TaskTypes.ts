@@ -1,0 +1,47 @@
+import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata, TaskDependency, Task } from '@the-new-fuse/types';
+import { z } from 'zod';
+
+// Define the schema for task validation
+export const TaskValidationSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  description: z.string().optional(),
+  type: z.nativeEnum(TaskTypeValue),
+  priority: z.number().int().min(1).max(4),
+  status: z.string(),
+  metadata: z.record(z.unknown()).optional(),
+  dependencies: z.array(z.object({
+    taskId: z.string(),
+    type: z.enum(['REQUIRED', 'OPTIONAL']),
+    status: z.string()
+  })).optional()
+});
+
+export type { Task, TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata, TaskDependency };
+
+export const TaskSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  type: z.nativeEnum(TaskTypeValue),
+  priority: z.nativeEnum(TaskPriorityType),
+  status: z.nativeEnum(TaskStatusType),
+  dependencies: z.array(z.string().uuid()),
+  metadata: z.object({
+    createdAt: z.date(),
+    updatedAt: z.date(),
+    estimatedDuration: z.number().optional(),
+    actualDuration: z.number().optional(),
+    retryCount: z.number().min(0),
+    maxRetries: z.number().min(0),
+    tags: z.array(z.string()),
+    source: z.string(),
+    resourceRequirements: z.object({
+      cpu: z.number().optional(),
+      memory: z.number().optional(),
+      gpu: z.boolean().optional()
+    }).optional()
+  }),
+  data: z.record(z.any()),
+  result: z.any().optional(),
+  error: z.instanceof(Error).optional()
+});

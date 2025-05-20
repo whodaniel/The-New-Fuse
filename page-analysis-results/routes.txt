@@ -1,0 +1,238 @@
+./packages/frontend/src/App.tsx:            <Route path="/" element={<LandingPage />} />
+./packages/frontend/src/App.tsx:            <Route path="/dashboard" element={<Dashboard />} />
+./packages/frontend/src/App.tsx:            <Route path="/login" element={<Login />} />
+./packages/frontend/src/routes/index.tsx:        <Route path="/" element={<Landing />} />
+./packages/frontend/src/routes/index.tsx:        <Route path="*" element={<Navigate to="/" replace />} />
+./apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./apps/frontend/src/Router.tsx:        <Route path="*" element={<NotFound />} />
+./apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/final_consolidation_20250320_014157/packages/frontend/src/App.tsx:            <Route path="/" element={<LandingPage />} />
+./backups/final_consolidation_20250320_014157/packages/frontend/src/App.tsx:            <Route path="/dashboard" element={<Dashboard />} />
+./backups/final_consolidation_20250320_014157/packages/frontend/src/App.tsx:            <Route path="/login" element={<Login />} />
+./backups/final_consolidation_20250320_014157/packages/frontend/src/routes/index.tsx:        <Route path="/" element={<Landing />} />
+./backups/final_consolidation_20250320_014157/packages/frontend/src/routes/index.tsx:        <Route path="*" element={<Navigate to="/" replace />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:        <Route path="/dashboard" element={<Dashboard />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:        <Route path="/login" element={<Login />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:        <Route path="/workspace">
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:          <Route path="overview" element={<Overview />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:          <Route path="members" element={<Members />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:          <Route path="settings" element={<WorkspaceSettings />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/Router.tsx:        <Route path="/invite" element={<Invite />} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/final_consolidation_20250320_014157/apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/components_20250311_154619/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/components_20250311_154619/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250319_030606/packages/frontend/src/App.tsx:      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+./backups/final_consolidation_20250319_030606/packages/frontend/src/App.tsx:        <Route path="*" element={<NotFound />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:        <Route path="/dashboard" element={<Dashboard />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:        <Route path="/login" element={<Login />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:        <Route path="/workspace">
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:          <Route path="overview" element={<Overview />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:          <Route path="members" element={<Members />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:          <Route path="settings" element={<WorkspaceSettings />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/Router.tsx:        <Route path="/invite" element={<Invite />} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/final_consolidation_20250319_030606/apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/components_20250311_153732/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/components_20250311_153732/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/typescript_migration_20250318_123855/packages/frontend/src/App.tsx:      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+./backups/typescript_migration_20250318_123855/packages/frontend/src/App.tsx:        <Route path="*" element={<NotFound />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:        <Route path="/dashboard" element={<Dashboard />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:        <Route path="/login" element={<Login />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:        <Route path="/workspace">
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:          <Route path="overview" element={<Overview />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:          <Route path="members" element={<Members />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:          <Route path="settings" element={<WorkspaceSettings />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/Router.tsx:        <Route path="/invite" element={<Invite />} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/typescript_migration_20250318_123855/apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/typescript_migration_20250318_123855/src/App.tsx:          <Route path="/" element={<HomePage />} />
+./backups/typescript_migration_20250318_123855/src/App.tsx:          <Route path="/about" element={<AboutPage />} />
+./backups/components_20250311_152931/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/components_20250311_152931/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250319_021143/packages/frontend/src/App.tsx:      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+./backups/final_consolidation_20250319_021143/packages/frontend/src/App.tsx:        <Route path="*" element={<NotFound />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:        <Route path="/dashboard" element={<Dashboard />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:        <Route path="/login" element={<Login />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:        <Route path="/workspace">
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:          <Route path="overview" element={<Overview />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:          <Route path="members" element={<Members />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:          <Route path="settings" element={<WorkspaceSettings />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/Router.tsx:        <Route path="/invite" element={<Invite />} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/final_consolidation_20250319_021143/apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/component_backup_20250311_150854/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/component_backup_20250311_150854/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/component_backup_20250311_150854/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/component_backup_20250311_150854/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/component_backup_20250311_150854/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/component_backup_20250311_150854/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/component_backup_20250311_150854/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/component_backup_20250311_150854/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/component_backup_20250311_150854/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/component_backup_20250311_150854/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/component_backup_20250311_150854/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/component_backup_20250311_150854/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/component_backup_20250311_150854/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/component_backup_20250311_150854/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/component_backup_20250311_150854/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/component_backup_20250311_150854/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/component_backup_20250311_150854/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/component_backup_20250311_150854/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/component_backup_20250311_150854/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./backups/final_consolidation_20250319_011835/packages/frontend/src/App.tsx:      <Route path="/login" element={!isAuthenticated ? <Login /> : <Navigate to="/" />} />
+./backups/final_consolidation_20250319_011835/packages/frontend/src/App.tsx:        <Route path="*" element={<NotFound />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/" element={<FlowPage_1.FlowPage initialNodes={nodes} initialEdges={edges} onNodesChange={handleNodesChange} onEdgesChange={handleEdgesChange}/>}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/components/flow/FlowContainer.tsx:          <react_router_dom_1.Route path="/node/:nodeId" element={<NodeDetails_1.NodeDetails nodes={nodes} onNodeUpdate={handleNodeUpdate}/>}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:        <Route path="/" element={<Landing />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:        <Route path="/dashboard" element={<Dashboard />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:        <Route path="/login" element={<Login />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:        <Route path="/workspace">
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:          <Route path="overview" element={<Overview />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:          <Route path="members" element={<Members />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:          <Route path="settings" element={<WorkspaceSettings />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/Router.tsx:        <Route path="/invite" element={<Invite />} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="general" element={<General />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="appearance" element={<Appearance />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="api" element={<API />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="security" element={<Security />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/settings/index.tsx:        <react_router_dom_1.Route path="notifications" element={<Notifications />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="login" element={<Login />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="register" element={<Register />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="forgot-password" element={<ForgotPassword />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="reset-password/:token" element={<ResetPassword />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/index.tsx:        <react_router_dom_1.Route path="sso/:provider" element={<SSO />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/auth/__tests__/GoogleCallback.test.tsx:          <Route path="/auth/google/callback" element={children} />
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:      <Route path="/" element={<Navigate to={workspaces[0].id} replace/>}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:      <Route path=":workspaceId" element={<WorkspaceLayout />}>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:        <Route path="overview" element={<WorkspaceOverview />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:        <Route path="members" element={<WorkspaceMembers />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:        <Route path="analytics" element={<WorkspaceAnalytics />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/workspace/index.tsx:        <Route path="settings" element={<WorkspaceSettings />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Admin/index.tsx:        <Route path="dashboard" element={<Dashboard />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Admin/index.tsx:        <Route path="users" element={<Users />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Admin/index.tsx:        <Route path="workspaces" element={<Workspaces />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Admin/index.tsx:        <Route path="system-health" element={<SystemHealth />}/>
+./backups/final_consolidation_20250319_011835/apps/frontend/src/pages/Admin/index.tsx:        <Route path="settings" element={<Settings />}/>
+./src/App.tsx:          <Route path="/" element={<HomePage />} />
+./src/App.tsx:          <Route path="/about" element={<AboutPage />} />

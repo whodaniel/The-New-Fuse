@@ -1,0 +1,20 @@
+import { VariantProps } from "class-variance-authority";
+import { cardVariants } from ".";
+import { ComponentProps } from "react";
+export type CardVariants = VariantProps<typeof cardVariants>;
+export type CardVariant = "default" | "ghost" | "outline" | "elevated";
+export type CardSize = "default" | "sm" | "lg";
+export interface BaseCardProps extends ComponentProps<"div"> {
+    asChild?: boolean;
+}
+export type CardProps = BaseCardProps & CardVariants;
+export interface CardHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+}
+export interface CardTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {
+}
+export interface CardDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {
+}
+export interface CardContentProps extends React.HTMLAttributes<HTMLDivElement> {
+}
+export interface CardFooterProps extends React.HTMLAttributes<HTMLDivElement> {
+}

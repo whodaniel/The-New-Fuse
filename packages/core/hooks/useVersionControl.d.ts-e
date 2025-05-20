@@ -1,0 +1,16 @@
+import { VersionDiff, VersionControlState } from '../version/types';
+import { DashboardState } from '../collaboration/types';
+import { User } from '../collaboration/types';
+export declare function useVersionControl(initialState: VersionControlState, currentUser: User): {
+    currentVersion: unknown;
+    currentBranch: unknown;
+    history: Version[];
+    createVersion: (dashboardState: DashboardState, message: string, tags?: string[]) => string;
+    checkout: (versionId: string) => DashboardState;
+    createBranch: (name: string, description?: string) => string;
+    switchBranch: (branchId: string) => DashboardState;
+    mergeBranch: (sourceBranchId: string, targetBranchId: string) => DashboardState;
+    stageChanges: (changes: VersionDiff[]) => void;
+    setCommitMessage: (message: string) => void;
+    commit: () => string;
+};

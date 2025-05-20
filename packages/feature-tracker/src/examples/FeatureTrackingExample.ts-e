@@ -1,0 +1,98 @@
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || (function () {
+    var ownKeys = function(o) {
+        ownKeys = Object.getOwnPropertyNames || function (o) {
+            var ar = [];
+            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
+            return ar;
+        };
+        return ownKeys(o);
+    };
+    return function (mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
+        __setModuleDefault(result, mod);
+        return result;
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FeatureTrackingExample = void 0;
+const react_1 = __importStar(require("react"));
+const types_1 = require("../types");
+const useFeatureTracker_1 = require("../hooks/useFeatureTracker");
+const FeatureProgress_1 = require("../components/FeatureProgress");
+const FeatureTrackingExample = () => {
+    const { feature, initializeFeature, updateStage, updateMetrics, updateQualitativeAssessment, } = (0, useFeatureTracker_1.useFeatureTracker)('auth-001');
+    (0, react_1.useEffect)(() => {
+        if (!feature) {
+            initializeFeature('User Authentication', 'Implement secure user authentication with JWT', ['database-001']);
+        }
+    }, [feature, initializeFeature]);
+    const handleStageUpdate = (stage) => {
+        updateStage(stage);
+    };
+    const handleMetricsUpdate = () => {
+        updateMetrics({
+            linesOfCode: 150,
+            filesModified: ['auth.service.ts'],
+            newFiles: ['auth.controller.ts', 'auth.module.ts'],
+            tokensUsed: 1500,
+            testCoverage: 80,
+        });
+    };
+    const handleAssessmentUpdate = () => {
+        updateQualitativeAssessment({
+            challenges: ['Implementing secure password reset flow'],
+            risks: ['Need to ensure proper JWT secret rotation'],
+            notes: 'Considering adding 2FA in future iteration',
+        });
+    };
+    if (!feature) {
+        return <div>Loading...</div>;
+    }
+    return (<div className="max-w-4xl mx-auto p-4">
+      <FeatureProgress_1.FeatureProgress feature={feature}/>
+      
+      <div className="mt-8 space-y-4">
+        <div>
+          <h3 className="font-semibold mb-2">Update Stage</h3>
+          <select className="border rounded p-2" value={feature.currentStage} onChange={(e) => handleStageUpdate(e.target.value)}>
+            {Object.values(types_1.FeatureStage).map((stage) => (<option key={stage} value={stage}>
+                {stage}
+              </option>))}
+          </select>
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2">Actions</h3>
+          <div className="space-x-4">
+            <button className="bg-blue-500 text-white px-4 py-2 rounded" onClick={handleMetricsUpdate}>
+              Update Metrics
+            </button>
+            <button className="bg-green-500 text-white px-4 py-2 rounded" onClick={handleAssessmentUpdate}>
+              Update Assessment
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>);
+};
+exports.FeatureTrackingExample = FeatureTrackingExample;
+//# sourceMappingURL=FeatureTrackingExample.js.mapexport {};

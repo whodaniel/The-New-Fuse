@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+  previewFeatures = ["driverAdapters", "metrics", "tracing", "fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  name         String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  passwordHash String
+  role         UserRole  @default(USER)
+  chats        Chat[]
+  sessions     Session[]
+}
+
+model Agent {
+  id                String              @id @default(uuid())
+  name              String
+  type              AgentType
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  metadata          AgentMetadata?
+  chats             Chat[]
+  codeExecutions    CodeExecutionUsage[]
+}
+
+model Session {
+  id        String   @id @default(uuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AgentMetadata {
+  id                 String   @id @default(uuid())
+  agentId            String   @unique
+  version            String
+  lastActive         DateTime @default(now())
+  capabilities       Json     @default("{}")
+  personalityTraits  Json     @default("{}")
+  communicationStyle String   @default("NEUTRAL")
+  expertiseAreas     Json     @default("{}")
+  config             Json?
+  currentState       Json?
+  agent              Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+}
+
+model Chat {
+  id        String    @id @default(uuid())
+  title     String?
+  userId    String
+  agentId   String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages  Message[]
+}
+
+model Message {
+  id        String     @id @default(uuid())
+  content   String
+  role      MessageRole
+  chatId    String
+  createdAt DateTime   @default(now())
+  chat      Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AgentType {
+  CHAT
+  TASK
+  ANALYSIS
+}
+
+enum MessageRole {
+  USER
+  AGENT
+  SYSTEM
+}
+
+model CodeExecutionUsage {
+  id              String                @id @default(uuid())
+  agentId         String
+  clientId        String
+  executionId     String                @unique
+  language        CodeExecutionLanguage
+  code            String
+  result          Json?
+  output          Json
+  error           Json?
+  executionTime   Int                   // in milliseconds
+  memoryUsage     Int                   // in bytes
+  computeUnits    Float
+  cost            Float
+  tier            CodeExecutionTier
+  environment     String
+  status          CodeExecutionStatus
+  createdAt       DateTime              @default(now())
+  completedAt     DateTime?
+  agent           Agent                 @relation(fields: [agentId], references: [id])
+
+  @@index([agentId])
+  @@index([clientId])
+  @@index([createdAt])
+  @@index([language])
+  @@index([tier])
+  @@index([status])
+}
+
+enum CodeExecutionLanguage {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  RUBY
+  SHELL
+  HTML
+  CSS
+}
+
+enum CodeExecutionTier {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+}
+
+enum CodeExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  TIMEOUT
+  CANCELLED
+}
+
+model CodeExecutionSession {
+  id              String                @id @default(uuid())
+  name            String
+  description     String?
+  ownerId         String
+  collaborators   String[]
+  isPublic        Boolean               @default(false)
+  files           Json                  // Array of file objects
+  environment     Json                  // Environment configuration
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  expiresAt       DateTime?
+  storageUsage    Int                   @default(0) // in bytes
+}

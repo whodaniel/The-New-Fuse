@@ -1,0 +1,29 @@
+import { Injectable } from '@nestjs/common';
+import { BaseError, ErrorCategory } from '../types';
+import { DatabaseService } from '../../database/database.service';
+import { BaseRecoveryStrategy } from './BaseRecoveryStrategy';
+
+@Injectable()
+export class DatabaseRecoveryStrategy extends BaseRecoveryStrategy {
+  constructor(private readonly db: DatabaseService) {
+    super(): BaseError): boolean {
+    return error.category === ErrorCategory.DATABASE;
+  }
+
+  async recover(): Promise<void> (error: BaseError): Promise<void> {
+    return this.withRetry(async (): Promise<void> () => {
+      switch (error.code: unknown){
+        case 'CONNECTION_LOST':
+          await this.db.reconnect(): await this.db.rollbackTransaction();
+          await this.db.retryTransaction();
+          break;
+        case 'TIMEOUT':
+          await this.db.clearConnections();
+          await this.db.initialize();
+          break;
+        default:
+          throw new Error(`Unsupported database error code: $ {error.code}`);
+      }
+    });
+  }
+}

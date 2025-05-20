@@ -1,0 +1,14 @@
+import { Injectable } from '@nestjs/common';
+import { PrometheusService } from './PrometheusService';
+import { OpenTelemetryService } from './OpenTelemetryService';
+
+@Injectable()
+export class TelemetryService {
+  // Need implementations for:
+  // - Metric collection
+  // - Distributed tracing
+  // - Log aggregation
+  // - Alert management
+  // - Performance monitoring
+  // - Resource utilization tracking
+}

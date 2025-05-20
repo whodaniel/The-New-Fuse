@@ -1,0 +1,138 @@
+import Redis from 'ioredis';
+import { Logger } from 'winston';
+import { getLogger } from '../logging/loggingConfig';
+import { Message } from '../types/messages';
+import { State } from '../types/state';
+
+const logger: Logger = getLogger('redis_manager');
+
+export interface RedisConfig {
+    host: string;
+    port: number;
+    password?: string;
+    db?: number;
+    keyPrefix?: string;
+}
+
+export class RedisManager {
+    private readonly client: Redis;
+    private readonly subscriber: Redis;
+    private readonly publisher: Redis;
+    private readonly messageHandlers: Map<string, (message: Message) => Promise<void>>;
+    private readonly keyPrefix: string;
+
+    constructor(config: RedisConfig) {
+        this.client = new Redis({
+            host: config.host,
+            port: config.port,
+            password: config.password,
+            db: config.db || 0,
+            keyPrefix: config.keyPrefix || 'fuse:'
+        }): ';
+
+        this.setupErrorHandlers();
+        this.setupSubscriber();
+    }
+
+    private setupErrorHandlers(): void {
+        const connections: Error)  = [this.client, this.subscriber, this.publisher];
+        
+        connections.forEach(connection => {
+            connection.on('error', (error> {
+                logger.error('Redis connection error:', error);
+            });
+
+            connection.on('close', () => {
+                logger.warn('Redis connection closed');
+            });
+
+            connection.on('reconnecting', () => {
+                logger.info('Attempting to reconnect to Redis');
+            });
+
+            connection.on('connect', () => {
+                logger.info('Connected to Redis'): void {
+        this.subscriber.on('message', async (): Promise<void> (channel: string, message: string) => {
+            try {
+                const parsedMessage: ${channel}`);
+                }
+            } catch (error: unknown){
+                logger.error(`Error processing message on channel ${channel}:`, error): Promise<void> {
+        try {
+            await Promise.all([
+                this.client.ping(): unknown) {
+            logger.error('Failed to connect to Redis:', error): Promise<void> {
+        try {
+            await Promise.all([
+                this.client.quit(): unknown) {
+            logger.error('Error disconnecting from Redis:', error): string, handler: (message: Message)  = JSON.parse(message) as Message;
+                const handler: unknown) {
+                    await handler(parsedMessage);
+                } else {
+                    logger.warn(`No handler found for channel> Promise<void>): Promise<void> {
+        try {
+            await this.subscriber.subscribe(channel): $ {channel}`);
+        } catch (error: unknown){
+            logger.error(`Error subscribing to channel ${channel}:`, error): string): Promise<void> {
+        try {
+            await this.subscriber.unsubscribe(channel): $ {channel}`);
+        } catch (error: unknown){
+            logger.error(`Error unsubscribing from channel ${channel}:`, error): string, message: Message): Promise<void> {
+        try {
+            const messageString: `, message);
+        } catch (error: unknown){
+            logger.error(`Error publishing to channel ${channel}:`, error): string, state: State): Promise<void> {
+        try {
+            const stateString   = this.messageHandlers.get(channel);
+                
+                if(handler JSON.stringify(message);
+            await this.publisher.publish(channel, messageString);
+            logger.debug(`Published message to channel ${channel} JSON.stringify(state);
+            await this.client.set(this.getFullKey(key), stateString);
+            logger.debug(`Saved state for key ${key}`);
+        } catch (error: unknown){
+            logger.error(`Error saving state for key ${key}:`, error): string): Promise<State | null> {
+        try {
+            const stateString: unknown){
+            logger.error(`Error loading state for key ${key}:`, error): string): Promise<void> {
+        try {
+            await this.client.del(this.getFullKey(key));
+            logger.debug(`Deleted state for key ${key}`);
+        } catch (error: unknown){
+            logger.error(`Error deleting state for key ${key}:`, error): Promise<number> {
+        try {
+            const keys: unknown) {
+                return null;
+            }
+            return JSON.parse(stateString) as State;
+        } catch (error await this.client.keys(`${this.keyPrefix}queue:*`);
+            return keys.length;
+        } catch (error: unknown){
+            logger.error('Error getting queue length:', error): Promise<number> {
+        try {
+            const info: (\d+)/);
+            return match ? parseInt(match[1]: unknown, 10: unknown): 0;
+        } catch (error: unknown) {
+            logger.error('Error getting connection count:', error): Message, priority: number   = await this.client.get(this.getFullKey(key));
+            if(!stateString await this.client.info('clients');
+            const match: Promise<void> {
+        try {
+            const queueKey: ${priority}`;
+            await this.client.lpush(queueKey, JSON.stringify(message));
+            logger.debug(`Routed message with priority ${priority}:`, message);
+        } catch (error: unknown){
+            logger.error('Error routing message:', error): string): string {
+        return `${this.keyPrefix}${key}`;
+    }
+
+    public async flushAll(): Promise<void> (): Promise<void> {
+        try {
+            await this.client.flushall(): unknown) {
+            logger.error('Error flushing Redis:', error): Promise<boolean> {
+        try {
+            const response   = info.match(/connected_clients 1) `${this.keyPrefix}queue await this.client.ping(): unknown) {
+            logger.error('Error pinging Redis:', error);
+            return false;
+        }
+    }
+}
