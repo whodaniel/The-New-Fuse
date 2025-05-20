@@ -24,6 +24,6 @@ if [ -n "$STAGED_FILES" ]; then
   #   echo "Continuing without updating the development log..."
   # fi
 
-# Run other pre-commit hooks
-yarn lint-staged
+  # Run other pre-commit hooks
+  yarn lint-staged
 fi
