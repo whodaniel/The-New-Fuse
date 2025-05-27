@@ -7,7 +7,9 @@
     "start": "node tnf-relay.js start",
     "discover": "node tnf-relay.js discover",
     "test": "node tnf-relay.js test",
-    "status": "node tnf-relay.js status"
+    "status": "node tnf-relay.js status",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "keywords": [
     "mcp",
@@ -17,5 +19,8 @@
   ],
   "author": "TNF Team",
   "license": "MIT",
+  "devDependencies": {
+    "eslint": "^8.0.0"
+  },
   "packageManager": "yarn@4.9.1+sha512.f95ce356460e05be48d66401c1ae64ef84d163dd689964962c6888a9810865e39097a5e9de748876c2e0bf89b232d583c33982773e9903ae7a76257270986538"
 }
