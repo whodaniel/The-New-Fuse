@@ -11,11 +11,11 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:17
+        image: postgres:13
         env:
-          POSTGRES_USER: test
-          POSTGRES_PASSWORD: test
-          POSTGRES_DB: test_db
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
         ports:
           - 5432:5432
         options: >-
@@ -42,7 +42,7 @@ jobs:
       - name: Run tests
         run: yarn test
         env:
-          DATABASE_URL: postgresql://test:test@localhost:5432/test_db
+          DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
           JWT_SECRET: test_secret
 
   build:
