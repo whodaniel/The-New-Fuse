@@ -27,6 +27,13 @@ file_structure.txt
 *.dylib.node
 *.wasm
 *.zip
+# Added to ignore large binaries and specific large files
+swc.darwin-x64.node
+schema-engine-darwin
+migration-engine-darwin
+*schema-engine-darwin*
+*query-engine-darwin*
+*migration-engine-darwin*
 
 # Yarn/npm cache files
 .yarn/cache/
