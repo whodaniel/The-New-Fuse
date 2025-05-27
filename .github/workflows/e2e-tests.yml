@@ -15,9 +15,9 @@ jobs:
       postgres:
         image: postgres:13
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: fuse_test
+          POSTGRES_USER: testuser
+          POSTGRES_PASSWORD: testpass
+          POSTGRES_DB: testdb
         ports:
           - 5432:5432
         options: >-
@@ -67,7 +67,7 @@ jobs:
         API_URL: http://localhost:3001
         TEST_USER: testuser
         TEST_PASSWORD: testpass123
-        DATABASE_URL: postgresql://postgres:postgres@localhost:5432/fuse_test
+        DATABASE_URL: postgresql://testuser:testpass@localhost:5432/testdb
         REDIS_URL: redis://localhost:6379
         CI: true
 
