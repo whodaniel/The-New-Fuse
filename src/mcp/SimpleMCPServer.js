@@ -12,7 +12,7 @@ try {
   // Look for config file in a few different locations
   const configPaths = [
     path.resolve(__dirname, '../../src/vscode-extension/mcp_config.json'),
-    path.resolve(__dirname, '../vscode-extension/mcp_config.json'),
+    path.resolve(__dirname, '../../src/vscode-extension/mcp_config.json'),
     path.resolve(__dirname, '../../mcp_config.json'),
     path.resolve('./mcp_config.json'),
   ];

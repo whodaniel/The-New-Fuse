@@ -5,12 +5,12 @@ echo "🚀 Setting up The New Fuse project comprehensively..."
 
 # Step 1: Fix package.json to use a valid packageManager field
 echo "🔧 Fixing package.json..."
-sed -i.bak 's/"packageManager": "npm@10.2.4"/"packageManager": "yarn@3.6.0"/' package.json
+sed -i.bak 's/"packageManager": "npm@10.2.4"/"packageManager": "yarn@4.9.1"/' package.json
 
 # Step 2: Set up Yarn properly
 echo "🧶 Setting up Yarn..."
 corepack enable
-yarn set version berry
+yarn set version 4.9.1
 yarn config set nodeLinker node-modules
 
 # Step 3: Install dependencies

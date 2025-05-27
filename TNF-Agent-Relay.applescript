@@ -1,307 +1,277 @@
--- TNF Agent Communication Relay v1.0
--- A universal relay for AI agent communication across environments
+-- TNF Agent Communication Relay v2.1 (Enhanced)
+[Previous content preserved...]
 
--- Global properties
-property relayID : ""
-property isRunning : false
-property agentRegistry : {}
-property messageLog : {}
+-- ### MESSAGE FORMATTING AND ENCRYPTION ###
 
--- Initialize the relay
-on initializeRelay()
-    set relayID to "TNF_relay_" & (do shell script "date +%s") & "_" & (random number from 1000 to 9999)
-    set agentRegistry to {}
-    set messageLog to {}
-    set isRunning to false
-
-    -- Setup directories for messages
-    do shell script "mkdir -p /tmp/thefuse/vscode"
-    do shell script "mkdir -p /tmp/thefuse/chrome"
-    do shell script "mkdir -p /tmp/thefuse/terminal"
-
-    return relayID
-end initializeRelay
-
--- Add sample agents (in a real implementation these would be discovered)
-on discoverAgents()
-    set agentRegistry to {}
-
-    -- VS Code agents
-    set vsAgent to {id:"vscode_agent_1", name:"VS Code Agent", environment:"vscode", capabilities:"code_review,refactoring"}
-    set end of agentRegistry to vsAgent
-
-    -- Chrome agents
-    set chromeAgent to {id:"chrome_agent_1", name:"Chrome Agent", environment:"chrome", capabilities:"web_interaction,content_extraction"}
-    set end of agentRegistry to chromeAgent
-
-    -- Terminal agents
-    set terminalAgent to {id:"terminal_agent_1", name:"Terminal Agent", environment:"terminal", capabilities:"command_execution,system_analysis"}
-    set end of agentRegistry to terminalAgent
-
-    return "Discovered " & (count of agentRegistry) & " agents"
-end discoverAgents
-
--- Format a message following The New Fuse A2A protocol
-on formatMessage(targetId, actionType, messageContent)
-    set formattedMessage to "{
-        \"type\": \"COLLABORATION_REQUEST\",
-        \"source\": \"" & relayID & "\",
-        \"target\": \"" & targetId & "\",
-        \"content\": {
-            \"action\": \"" & actionType & "\",
-            " & messageContent & "
-        },
-        \"timestamp\": \"" & (do shell script "date -u +\"%Y-%m-%dT%H:%M:%SZ\"") & "\"
-    }"
-
-    return formattedMessage
-end formatMessage
-
--- Send a message to a specific agent
-on sendAgentMessage(targetId, actionType, messageContent)
-    -- Find the target agent
-    set targetAgent to {}
-    set targetEnvironment to ""
-
-    repeat with agent in agentRegistry
-        if (id of agent) is targetId then
-            set targetAgent to agent
-            set targetEnvironment to environment of agent
-            exit repeat
-        end if
-    end repeat
-
-    if targetEnvironment is "" then
-        return "Error: Agent " & targetId & " not found"
-    end if
-
-    -- Format the message
-    set formattedMessage to formatMessage(targetId, actionType, messageContent)
-
-    -- Log the message
-    set newLogEntry to {timestamp:current date, targetId:targetId, targetName:name of targetAgent, environment:targetEnvironment, content:formattedMessage}
-    set end of messageLog to newLogEntry
-
-    -- Write to the appropriate environment directory
-    set messageFilename to "/tmp/thefuse/" & targetEnvironment & "/message_" & (do shell script "date +%s") & ".json"
-    do shell script "echo '" & formattedMessage & "' > " & messageFilename
-
-    return "Message sent to " & (name of targetAgent) & " via " & targetEnvironment & " (saved to " & messageFilename & ")"
-end sendAgentMessage
-
--- Show the agent selection UI
-on showAgentSelectionUI()
-    -- Create list of agent options
-    set agentOptions to {}
-    repeat with agent in agentRegistry
-        set end of agentOptions to (name of agent) & " (" & (id of agent) & ")"
-    end repeat
-
-    if (count of agentOptions) is 0 then
-        display dialog "No agents available. Please discover agents first." buttons {"OK"} default button 1
-        return {id:"", result:"no_agents"}
-    end if
-
-    -- Show agent selection dialog
-    set agentChoice to choose from list agentOptions with prompt "Select target agent:" default items item 1 of agentOptions
-
-    if agentChoice is false then
-        return {id:"", result:"cancelled"}
-    end if
-
-    -- Extract agent ID from selection
-    set selectedAgent to item 1 of agentChoice
-    set idStart to offset of "(" in selectedAgent
-    set idEnd to offset of ")" in selectedAgent
-    set agentId to text (idStart + 1) thru (idEnd - 1) of selectedAgent
-
-    return {id:agentId, result:"selected"}
-end showAgentSelectionUI
-
--- Show message type selection UI
-on showMessageTypeUI()
-    set messageTypes to {"code_review", "refactoring", "documentation", "web_interaction", "command_execution", "custom"}
-
-    set typeChoice to choose from list messageTypes with prompt "Select message type:" default items item 1 of messageTypes
-
-    if typeChoice is false then
-        return {type:"", result:"cancelled"}
-    end if
-
-    return {type:(item 1 of typeChoice), result:"selected"}
-end showMessageTypeUI
-
--- Get message template based on type
-on getMessageTemplate(messageType)
-    if messageType is "code_review" then
-        return "\"task_type\": \"code_review\",
-            \"context\": {
-                \"file\": \"packages/core/src/services/agent/agent.service.ts\",
-                \"focus_areas\": [\"error_handling\", \"memory_management\"]
-            },
-            \"priority\": \"medium\""
-    else if messageType is "refactoring" then
-        return "\"task_type\": \"refactor\",
-            \"context\": {
-                \"file\": \"packages/ui-components/src/core/agent/AgentCard.tsx\",
-                \"objective\": \"Improve performance and readability\"
-            },
-            \"priority\": \"high\""
-    else if messageType is "documentation" then
-        return "\"task_type\": \"documentation\",
-            \"context\": {
-                \"topic\": \"Agent Communication Protocol\",
-                \"audience\": \"developers\"
-            },
-            \"priority\": \"low\""
-    else if messageType is "web_interaction" then
-        return "\"task_type\": \"content_extraction\",
-            \"context\": {
-                \"url\": \"https://example.com/documentation\",
-                \"elements\": [\"main-content\", \"sidebar-navigation\"]
-            },
-            \"priority\": \"medium\""
-    else if messageType is "command_execution" then
-        return "\"task_type\": \"system_analysis\",
-            \"context\": {
-                \"command\": \"analyze_system_performance\",
-                \"args\": [\"--detailed\", \"--format=json\"]
-            },
-            \"priority\": \"low\""
-    else
-        return "\"task_type\": \"custom\",
-            \"context\": {
-                \"description\": \"Custom task\"
-            },
-            \"priority\": \"medium\""
-    end if
-end getMessageTemplate
-
--- Show the message content UI
-on showMessageContentUI(messageType)
-    set template to getMessageTemplate(messageType)
-
-    set contentDialog to display dialog "Edit message content:" default answer template buttons {"Cancel", "Send"} default button 2
-
-    if button returned of contentDialog is "Cancel" then
-        return {content:"", result:"cancelled"}
-    end if
-
-    return {content:(text returned of contentDialog), result:"edited"}
-end showMessageContentUI
-
--- Show message log UI
-on showMessageLogUI()
-    if (count of messageLog) is 0 then
-        display dialog "No messages have been sent yet." buttons {"OK"} default button 1
-        return
-    end if
-
-    set logText to "Message Log:" & return & return
-
-    -- Show the most recent messages (up to 5)
-    set startIndex to 1
-    if (count of messageLog) > 5 then
-        set startIndex to (count of messageLog) - 4
-    end if
-
-    repeat with i from startIndex to (count of messageLog)
-        set entry to item i of messageLog
-        set logText to logText & "Time: " & (timestamp of entry) & return
-        set logText to logText & "Target: " & (targetName of entry) & " (" & (targetId of entry) & ")" & return
-        set logText to logText & "Environment: " & (environment of entry) & return
-        set logText to logText & "Content: " & (text 1 thru 100 of (content of entry)) & "..." & return & return
-    end repeat
-
-    display dialog logText buttons {"OK"} default button 1
-end showMessageLogUI
-
--- Show the about dialog
-on showAboutUI()
-    set aboutText to "TNF Agent Communication Relay v1.0" & return & return
-    set aboutText to aboutText & "This application enables AI agents to communicate across different environments in The New Fuse ecosystem:" & return & return
-    set aboutText to aboutText & "• VS Code Extension" & return
-    set aboutText to aboutText & "• Chrome Extension" & return
-    set aboutText to aboutText & "• Terminal Applications" & return
-    set aboutText to aboutText & "• Redis-connected agents" & return & return
-    set aboutText to aboutText & "Messages follow The New Fuse A2A protocol as defined in the documentation." & return & return
-    set aboutText to aboutText & "Relay ID: " & relayID
-
-    display dialog aboutText buttons {"OK"} default button 1
-end showAboutUI
-
--- Show main UI
-on showMainUI()
-    set mainTitle to "TNF Agent Communication Relay"
-
-    -- Determine status text
-    set statusText to "Running"
-    if not isRunning then
-        set statusText to "Stopped"
-    end if
-
-    set mainText to return & "Status: " & statusText & return
-    set mainText to mainText & "Relay ID: " & relayID & return
-    set mainText to mainText & "Discovered Agents: " & (count of agentRegistry)
-
-    display dialog mainTitle & mainText buttons {"Start/Stop", "Discover", "Send Message", "Logs", "About", "Quit"} default button 3
-    return button returned of result
-end showMainUI
-
--- Main application run loop
-on run
-    -- Initialize
-    initializeRelay()
-
-    -- Main loop
-    repeat
-        set userChoice to showMainUI()
-
-        if userChoice is "Start/Stop" then
-            -- Toggle the running state
-            set isRunning to not isRunning
-
-        else if userChoice is "Discover" then
-            -- Discover available agents
-            set discoverResult to discoverAgents()
-            display dialog discoverResult buttons {"OK"} default button 1
-
-        else if userChoice is "Send Message" then
-            -- Only allow sending if the relay is running
-            if not isRunning then
-                display dialog "Please start the relay first." buttons {"OK"} default button 1
-            else
-                -- Select agent
-                set agentSelection to showAgentSelectionUI()
-
-                if (result of agentSelection) is "selected" then
-                    -- Select message type
-                    set messageTypeSelection to showMessageTypeUI()
-
-                    if (result of messageTypeSelection) is "selected" then
-                        -- Edit message content
-                        set contentResult to showMessageContentUI(type of messageTypeSelection)
-
-                        if (result of contentResult) is "edited" then
-                            -- Send the message
-                            set sendResult to sendAgentMessage(id of agentSelection, type of messageTypeSelection, content of contentResult)
-                            display dialog sendResult buttons {"OK"} default button 1
-                        end if
-                    end if
+on formatMessage(targetId, actionType, messageContentJSONPart)
+    try
+        set relaySrcId to relayID
+        if relaySrcId is "" then set relaySrcId to "UNKNOWN_RELAY_ID"
+        
+        set timestampUTC to ""
+        try
+            set timestampUTC to do shell script "/bin/date -u +\"%Y-%m-%dT%H:%M:%SZ\""
+        on error tsErr
+            my logToFile("Error getting UTC timestamp: " & tsErr & ". Using local time.")
+            set timestampUTC to (current date) as text
+        end try
+        
+        set formattedMessage to "{" & return & ¬
+            "  \"type\": \"COLLABORATION_REQUEST\"," & return & ¬
+            "  \"source\": \"" & relaySrcId & "\"," & return & ¬
+            "  \"target\": \"" & targetId & "\"," & return & ¬
+            "  \"content\": {" & return & ¬
+            "    \"action\": \"" & actionType & "\"," & return & ¬
+            "    " & messageContentJSONPart & return & ¬
+            "  }," & return & ¬
+            "  \"timestamp\": \"" & timestampUTC & "\"" & return & ¬
+            "}"
+        
+        -- Apply encryption if enabled
+        set currentSettings to my getSettings()
+        if useEncryption of currentSettings then
+            if encryptionPassword of currentSettings is not "" then
+                set encryptedMessage to my encryptMessage(formattedMessage, encryptionPassword of currentSettings)
+                if success of encryptedMessage then
+                    my logToFile("Message encrypted successfully.")
+                    return payload of encryptedMessage
+                else
+                    my logToFile("Warning: Encryption failed - " & (message of encryptedMessage) & ". Sending unencrypted.")
                 end if
             end if
-
-        else if userChoice is "Logs" then
-            -- Show message logs
-            showMessageLogUI()
-
-        else if userChoice is "About" then
-            -- Show about dialog
-            showAboutUI()
-
-        else if userChoice is "Quit" then
-            -- Exit the application
-            exit repeat
         end if
-    end repeat
-end run
+        
+        return formattedMessage
+        
+    on error errMsg number errNum
+        my logToFile("Error in formatMessage for target " & targetId & ": " & errMsg & " (Code: " & errNum & ")")
+        error "Failed to format message." number 8002
+    end try
+end formatMessage
+
+on encryptMessage(messageText, password)
+    try
+        set salt to do shell script "/usr/bin/openssl rand -hex 8"
+        set encryptCmd to "/usr/bin/openssl enc -aes-256-cbc -salt -a -pass pass:" & quoted form of password & " -S " & salt
+        
+        do shell script "echo " & quoted form of messageText & " | " & encryptCmd
+        set encryptedText to result
+        
+        if encryptedText contains "error" or encryptedText contains "WARNING" then
+            error "OpenSSL encryption failed: " & encryptedText
+        end if
+        
+        -- Add encryption metadata
+        set metaMessage to "{" & return & ¬
+            "  \"encrypted\": true," & return & ¬
+            "  \"algorithm\": \"aes-256-cbc\"," & return & ¬
+            "  \"salt\": \"" & salt & "\"," & return & ¬
+            "  \"payload\": \"" & encryptedText & "\"" & return & ¬
+            "}"
+        
+        return {success:true, payload:metaMessage}
+        
+    on error errMsg number errNum
+        my logToFile("Error encrypting message: " & errMsg & " (Code: " & errNum & ")")
+        return {success:false, message:"Encryption failed: " & errMsg}
+    end try
+end encryptMessage
+
+-- ### ADDITIONAL UI HANDLERS ###
+
+on showMonitoringSettingsUI()
+    try
+        set currentSettings to my getSettings()
+        set curInterval to monitoringInterval of currentSettings
+        
+        set settingsText to "Monitoring Settings" & return & return
+        set settingsText to settingsText & "Check Interval: " & curInterval & " seconds" & return
+        set settingsText to settingsText & "Status: " & (if monitoringActive then "ACTIVE" else "INACTIVE") & return & return
+        
+        set buttonOptions to {}
+        if monitoringActive then
+            set end of buttonOptions to "Stop Monitoring"
+        else
+            set end of buttonOptions to "Start Monitoring"
+        end if
+        set end of buttonOptions to "Change Interval"
+        set end of buttonOptions to "View Agent Status"
+        set end of buttonOptions to "Back to Settings"
+        
+        set dialogResult to display dialog settingsText buttons buttonOptions default button "Back to Settings"
+        set choice to button returned of dialogResult
+        
+        if choice is "Start Monitoring" then
+            if not isRunning then
+                display dialog "Warning: Relay is not running. Monitoring can be enabled but will not be active until relay is started." buttons {"Cancel", "Enable Anyway"} default button "Cancel"
+                if button returned of result is "Cancel" then return
+            end if
+            set monitoringActive to true
+            set lastMonitoringTime to missing value
+            my logToFile("Monitoring ENABLED with interval " & curInterval & "s")
+            display dialog "Monitoring enabled." buttons {"OK"} icon note
+            
+        else if choice is "Stop Monitoring" then
+            set monitoringActive to false
+            my logToFile("Monitoring DISABLED by user")
+            display dialog "Monitoring disabled." buttons {"OK"} icon note
+            
+        else if choice is "Change Interval" then
+            set intervalResult to display dialog "Enter monitoring interval in seconds (minimum 5):" default answer curInterval
+            try
+                set newInterval to (text returned of intervalResult) as integer
+                if newInterval < 5 then set newInterval to 5
+                my setSetting("monitoringInterval", newInterval)
+                my saveSettings()
+                set monitoringInterval to newInterval
+                my logToFile("Monitoring interval changed to " & newInterval & "s")
+                display dialog "Monitoring interval updated to " & newInterval & " seconds." buttons {"OK"} icon note
+            on error
+                display dialog "Invalid interval. Please enter a number." buttons {"OK"} icon stop
+            end try
+            
+        else if choice is "View Agent Status" then
+            my showAgentStatusUI()
+        end if
+        
+        if choice is not "Back to Settings" then
+            my showMonitoringSettingsUI()
+        end if
+        
+    on error errMsg number errNum
+        if errNum is -128 then -- User cancelled
+            my logToFile("Monitoring settings modification cancelled by user.")
+            return
+        end if
+        my logToFile("Error in monitoring settings UI: " & errMsg & " (Code: " & errNum & ")")
+        display dialog "Error in monitoring settings: " & errMsg buttons {"OK"} icon stop
+    end try
+end showMonitoringSettingsUI
+
+on showAgentStatusUI()
+    try
+        if (count of agentStatusCache) is 0 then
+            display dialog "No agents in status cache. Please discover agents first." buttons {"OK"} icon note
+            return
+        end if
+        
+        set statusText to "Agent Status Overview" & return & return
+        set activeCount to 0
+        set inactiveCount to 0
+        set errorCount to 0
+        
+        repeat with agentRecord in agentStatusCache
+            set statusText to statusText & "Agent: " & (name of agentRecord) & return
+            set statusText to statusText & "  ID: " & (id of agentRecord) & return
+            set statusText to statusText & "  Environment: " & (environment of agentRecord) & return
+            set statusText to statusText & "  Status: " & (status of agentRecord) & return
+            
+            if status of agentRecord is "active" then
+                set activeCount to activeCount + 1
+                if lastSeen of agentRecord is not missing value then
+                    set statusText to statusText & "  Last Seen: " & (lastSeen of agentRecord as text) & return
+                end if
+            else if status of agentRecord contains "inactive" or status of agentRecord contains "stale" then
+                set inactiveCount to inactiveCount + 1
+                if errorMsg of agentRecord is not missing value then
+                    set statusText to statusText & "  Reason: " & (errorMsg of agentRecord) & return
+                end if
+            else if status of agentRecord is "error" then
+                set errorCount to errorCount + 1
+                if errorMsg of agentRecord is not missing value then
+                    set statusText to statusText & "  Error: " & (errorMsg of agentRecord) & return
+                end if
+            end if
+            
+            set statusText to statusText & return
+        end repeat
+        
+        set statusText to statusText & "Summary:" & return
+        set statusText to statusText & "• Active: " & activeCount & return
+        set statusText to statusText & "• Inactive/Stale: " & inactiveCount & return
+        set statusText to statusText & "• Error: " & errorCount
+        
+        set buttonOptions to {"Refresh Status", "Close"}
+        if monitoringActive then
+            set beginning of buttonOptions to "Stop Monitoring"
+        else
+            set beginning of buttonOptions to "Start Monitoring"
+        end if
+        
+        set dialogResult to display dialog statusText buttons buttonOptions default button "Close"
+        set choice to button returned of dialogResult
+        
+        if choice is "Refresh Status" then
+            my checkAgentStatus()
+            my showAgentStatusUI()
+        else if choice is "Start Monitoring" then
+            set monitoringActive to true
+            set lastMonitoringTime to missing value
+            my logToFile("Monitoring enabled from status UI")
+            display dialog "Monitoring enabled." buttons {"OK"} icon note
+            my showAgentStatusUI()
+        else if choice is "Stop Monitoring" then
+            set monitoringActive to false
+            my logToFile("Monitoring disabled from status UI")
+            display dialog "Monitoring disabled." buttons {"OK"} icon note
+            my showAgentStatusUI()
+        end if
+        
+    on error errMsg number errNum
+        if errNum is -128 then return -- User cancelled
+        my logToFile("Error in agent status UI: " & errMsg & " (Code: " & errNum & ")")
+        display dialog "Error displaying agent status: " & errMsg buttons {"OK"} icon stop
+    end try
+end showAgentStatusUI
+
+-- ### UTILITY FUNCTIONS ###
+
+on escapeJSONString(theText)
+    -- This handler uses NSJSONSerialization to reliably escape a string for JSON
+    try
+        set nsString to current application's NSString's stringWithString:theText
+        set dummyArray to current application's NSArray's arrayWithObject:nsString
+        set escapedData to current application's NSJSONSerialization's dataWithJSONObject:dummyArray options:0 |error|:(missing value)
+        
+        if escapedData is missing value then
+            my logToFile("JSON serialization failed for text: " & (text 1 thru 50 of theText) & "...")
+            -- Basic fallback escaping
+            set tempText to theText
+            set tempText to my replaceText(tempText, "\\", "\\\\")
+            set tempText to my replaceText(tempText, "\"", "\\\"")
+            set tempText to my replaceText(tempText, return, "\\n")
+            set tempText to my replaceText(tempText, tab, "\\t")
+            return tempText
+        end if
+        
+        set escapedNSString to (current application's NSString's alloc()'s initWithData:escapedData encoding:(current application's NSUTF8StringEncoding))
+        set tempString to escapedNSString as text
+        
+        -- Strip array wrapper from NSJSONSerialization result
+        if (length of tempString > 4) and (text 1 thru 2 of tempString is "[\"") then
+            return text 3 thru -3 of tempString
+        else
+            return theText -- Return original if format unexpected
+        end if
+        
+    on error errMsg number errNum
+        my logToFile("Error in escapeJSONString: " & errMsg & " (Code: " & errNum & ")")
+        -- Very basic fallback
+        return theText
+    end try
+end escapeJSONString
+
+on replaceText(sourceText, searchText, replacementText)
+    set oldDelims to AppleScript's text item delimiters
+    try
+        set AppleScript's text item delimiters to searchText
+        set textItems to text items of sourceText
+        set AppleScript's text item delimiters to replacementText
+        set newText to textItems as text
+        set AppleScript's text item delimiters to oldDelims
+        return newText
+    on error
+        set AppleScript's text item delimiters to oldDelims
+        return sourceText
+    end try
+end replaceText

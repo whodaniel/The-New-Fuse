@@ -3,7 +3,7 @@
 echo "Installing specific version of yarn..."
 
 # Install yarn globally
-npm install -g yarn@3.6.3
+npm install -g yarn@4.9.1
 
 # Verify yarn version
 yarn --version

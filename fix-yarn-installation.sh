@@ -49,11 +49,11 @@ fi
 
 # Step 3: Install yarn globally with the correct version
 echo -e "${YELLOW}Step 3: Installing yarn globally with the correct version...${NC}"
-npm install -g yarn@3.6.3
+npm install -g yarn@4.9.1
 
 # Step 4: Initialize yarn
 echo -e "${YELLOW}Step 4: Initializing yarn...${NC}"
-yarn set version 3.6.3
+yarn set version 4.9.1
 
 # Step 5: Install dependencies
 echo -e "${YELLOW}Step 5: Installing dependencies...${NC}"
@@ -76,7 +76,7 @@ else
     echo -e "${RED}❌ Both yarn and npm installations failed.${NC}"
     echo -e "${YELLOW}Please try the following manual steps:${NC}"
     echo -e "1. Make sure you have the correct version of Node.js installed (v16 or higher)"
-    echo -e "2. Run: npm install -g yarn@3.6.3"
+    echo -e "2. Run: npm install -g yarn@4.9.1"
     echo -e "3. Delete node_modules and yarn.lock"
     echo -e "4. Run: yarn install --network-timeout 300000"
   fi

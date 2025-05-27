@@ -365,15 +365,72 @@ export class ConnectionManager {
    * Notify connection state
    */
   private notifyConnectionState(): void {
+    // Get WebSocket connection status from manager
+    const wsStatus = this.wsManager?.getConnectionStatus() || {
+      status: 'disconnected',
+      message: 'No WebSocket manager'
+    };
+
+    // Map connection state to status message
+    let status: 'connected' | 'disconnected' | 'connecting' | 'error' | 'authenticating' | 'uninitialized';
+    let message: string | undefined;
+
+    if (this.connectionState.vscode && this.connectionState.relay) {
+      status = 'connected';
+    } else if (this.connectionState.vscode && !this.connectionState.relay) {
+      status = 'authenticating';
+      message = 'Authenticating with relay server';
+    } else if (wsStatus.status === 'connecting' || wsStatus.status === 'authenticating') {
+      status = wsStatus.status;
+      message = wsStatus.message;
+    } else if (wsStatus.status === 'error') {
+      status = 'error';
+      message = wsStatus.message;
+    } else {
+      status = 'disconnected';
+    }
+
+    // Update extension icon based on status
+    this.updateExtensionIcon(status);
+
+    // Send status message
     chrome.runtime.sendMessage({
-      type: 'CONNECTION_STATE',
-      state: this.connectionState,
+      type: 'CONNECTION_STATUS',
+      payload: {
+        status,
+        message
+      },
       timestamp: Date.now()
     }).catch(error => {
       // Ignore errors from disconnected ports
       if (!error.message.includes('Receiving end does not exist')) {
         connectionLogger.error('Error sending connection state', error);
       }
+    });
+  }
+
+  /**
+   * Update extension icon based on connection status
+   */
+  private updateExtensionIcon(status: string): void {
+    let iconPath: string;
+    switch (status) {
+      case 'connected':
+        iconPath = 'icons/icon16-connected.png';
+        break;
+      case 'authenticating':
+      case 'connecting':
+        iconPath = 'icons/icon16-partial.png';
+        break;
+      case 'error':
+        iconPath = 'icons/icon16-error.png';
+        break;
+      default:
+        iconPath = 'icons/icon16-disconnected.png';
+    }
+
+    chrome.action.setIcon({ path: iconPath }).catch(error => {
+      connectionLogger.error('Error updating extension icon', error);
     });
   }
 
@@ -401,3 +458,32 @@ export class ConnectionManager {
     return this.authManager;
   }
 }
+
+// Listener for the extension icon click
+chrome.action.onClicked.addListener(() => {
+  // Define the popup window options
+  const popupUrl = chrome.runtime.getURL('popup.html');
+  const windowWidth = 420; // Adjusted width to better fit content
+  const windowHeight = 620; // Adjusted height
+
+  // Try to find an existing popup window
+  chrome.windows.getAll({ populate: true, windowTypes: ['popup'] }, (windows) => {
+    const existingPopup = windows.find(win => win.tabs?.some(t => t.url === popupUrl));
+
+    if (existingPopup && existingPopup.id) {
+      // If found, focus it
+      chrome.windows.update(existingPopup.id, { focused: true });
+    } else {
+      // Otherwise, create a new one
+      chrome.windows.create({
+        url: popupUrl,
+        type: 'popup',
+        width: windowWidth,
+        height: windowHeight,
+        // Position the popup (optional, example: top right)
+        // top: 0,
+        // left: screen.availWidth - windowWidth,
+      });
+    }
+  });
+});

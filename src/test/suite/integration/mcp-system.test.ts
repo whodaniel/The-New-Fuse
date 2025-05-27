@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { MCPManager } from '../../../vscode-extension/mcp-integration/mcp-manager.js';
-import { ToolRegistry } from '../../../vscode-extension/mcp-integration/tools/tool-registry.js';
-import { AICoderIntegrationManager } from '../../../vscode-extension/ai-coder/integration-manager.js';
-import { RooCoderMonitor } from '../../../vscode-extension/monitoring/roo-coder-monitor.js';
-import { ConfigurationValidator } from '../../../vscode-extension/core/config-validator.js';
-import { AICoderRole } from '../../../vscode-extension/ai-coder-integration.js';
+import { MCPManager } from '../../../src/vscode-extension/mcp-integration/mcp-manager.js';
+import { ToolRegistry } from '../../../src/vscode-extension/mcp-integration/tools/tool-registry.js';
+import { AICoderIntegrationManager } from '../../../src/vscode-extension/ai-coder/integration-manager.js';
+import { RooCoderMonitor } from '../../../src/vscode-extension/monitoring/roo-coder-monitor.js';
+import { ConfigurationValidator } from '../../../src/vscode-extension/core/config-validator.js';
+import { AICoderRole } from '../../../src/vscode-extension/ai-coder-integration.js';
 
 suite('MCP System Integration Tests', () => {
     let mcpManager: MCPManager;

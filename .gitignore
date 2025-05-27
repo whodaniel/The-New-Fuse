@@ -26,7 +26,6 @@ file_structure.txt
 .qodo/history.sqlite
 *.dylib.node
 *.wasm
-*.vsix
 *.zip
 
 # Yarn/npm cache files

@@ -1,0 +1,63 @@
+/* Fallback icons for when codicons don't load properly */
+.fallback-icons {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+/* Fallback classes for specific codicon icons */
+.fallback-icon-send::before { content: '↗️'; }
+.fallback-icon-play::before { content: '▶️'; }
+.fallback-icon-stop::before { content: '⏹️'; }
+.fallback-icon-settings-gear::before { content: '⚙️'; }
+.fallback-icon-settings::before { content: '⚙️'; }
+.fallback-icon-refresh::before { content: '🔄'; }
+.fallback-icon-plug::before { content: '🔌'; }
+.fallback-icon-clear-all::before { content: '🗑️'; }
+.fallback-icon-search::before { content: '🔍'; }
+.fallback-icon-arrow-up::before { content: '⬆️'; }
+.fallback-icon-arrow-down::before { content: '⬇️'; }
+.fallback-icon-close::before { content: '❌'; }
+.fallback-icon-menu::before { content: '☰'; }
+.fallback-icon-hubot::before { content: '🤖'; }
+.fallback-icon-comment::before { content: '💬'; }
+.fallback-icon-debug-disconnect::before { content: '🔌'; }
+.fallback-icon-pulse::before { content: '📊'; }
+.fallback-icon-check::before { content: '✓'; }
+.fallback-icon-copy::before { content: '📋'; }
+
+/* Add this class to container elements when codicons fail to load */
+.using-fallback-icons .codicon {
+    display: none !important; /* Use !important to ensure it takes precedence */
+}
+
+.using-fallback-icons .fallback-icon {
+    display: inline-block;
+    font-size: 16px; /* Ensure icon is visible */
+    margin: 0 auto; /* Center the icon */
+    line-height: 1;
+}
+
+/* Hide fallback icons by default */
+.fallback-icon {
+    display: none;
+}
+
+/* Force visible buttons even when icons fail */
+.using-fallback-icons .action-button {
+    /* Ensure button is clearly visible */
+    background-color: var(--vscode-button-background, #0E639C) !important;
+    color: var(--vscode-button-foreground, white) !important;
+    border: 1px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.4)) !important;
+    min-width: 36px;
+    min-height: 36px;
+}
+
+/* Add text labels for buttons when icons fail */
+.using-fallback-icons .action-button[title]:after {
+    content: attr(title);
+    font-size: 8px;
+    display: block;
+    text-align: center;
+    margin-top: 2px;
+}

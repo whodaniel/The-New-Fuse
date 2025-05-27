@@ -1,115 +1,94 @@
-# The New Fuse VS Code Extension
+# The New Fuse
 
-## Overview
+The New Fuse is a VS Code extension for AI agent coordination and communication within your development environment. It provides a framework for LLMs to collaborate and assist you with coding tasks.
 
-The New Fuse is a comprehensive VS Code extension for AI Agent Orchestration with features for monitoring, Model Context Protocol (MCP) integration, and AI Coder integration. It enables communication between AI agents, provides tools for monitoring LLM usage, and connects to external AI coding assistants.
+## Features
 
-## New in This Version
+- **AI Chat Interface**: Interactive chat view for communicating with AI agents
+- **Multiple LLM Providers**: Support for VS Code built-in models, OpenAI, and Ollama
+- **Auto-fallback**: Automatic provider switching on rate limits or errors
+- **Model Context Protocol**: Connect to external agent services via WebSocket or HTTP
+- **Monitoring**: Track LLM usage, performance, and generations
 
-### 🔄 AI Coder Integration
+## Model Context Protocol (MCP)
 
-The New Fuse now includes full integration with AI Coding tools:
+The Model Context Protocol enables communication between the extension and external AI services. It provides:
 
-- **Roo Monitoring**: Monitor Roo AI assistant's output directly from VS Code
-- **AI Coder View**: New sidebar view for managing AI coding tools
-- **WebSocket Communication**: Connect external tools to VS Code through secure WebSockets
+- **Robust Connectivity**: WebSocket-based communication with automatic reconnection
+- **HTTP Fallback**: Falls back to HTTP transport when WebSocket is unavailable
+- **Progress Reporting**: Real-time updates for long-running operations
+- **Error Handling**: Comprehensive error detection and recovery
 
-### 🚀 Key Features
+### MCP Commands
 
-- **AI Agent Orchestration**: Coordinate multiple AI agents working together
-- **MCP Integration**: Support for the Model Context Protocol
-- **LLM Provider Management**: Easily switch between different LLM providers and models
-- **Monitoring Dashboard**: Track LLM usage and performance
-- **WebSocket Communication**: Connect to external AI tools and browsers
-- **AI Code Assistance**: Get AI-powered code completions and explanations
+- **Connect to MCP Server**: Establish a connection to an MCP server
+- **Disconnect from MCP Server**: Close the connection to the MCP server
+- **Check MCP Server Health**: Verify that the MCP server is responding correctly
+- **Configure MCP Settings**: Open settings to customize MCP behavior
+- **MCP Server Menu**: Access all MCP-related commands in one place
 
-## Getting Started
+## LLM Provider Management
 
-1. Install the extension from the VS Code Marketplace
-2. Configure your API keys in the extension settings
-3. Access The New Fuse from the activity bar (look for the fusion icon)
-4. Start using AI agent orchestration features
+The extension supports multiple LLM providers with automatic fallback:
 
-## Using AI Coder Features
-
-To use the new AI Coder integration features:
-
-1. Open the AI Coder view from the activity bar
-2. Click "Start Monitoring" to begin monitoring Roo output
-3. External tools can connect via WebSockets to ports 3710 (main) and 3711 (Roo)
-4. Use the status bar indicators to check connection status
-
-## Commands
-
-The extension provides the following commands (accessible via Command Palette):
-
-- `The New Fuse: Open Dashboard` - Open the main dashboard
-- `The New Fuse: Open Monitoring Dashboard` - Open the monitoring interface
-- `The New Fuse: Initialize MCP Integration` - Set up the Model Context Protocol
-- `The New Fuse: Start Roo AI Code Monitoring` - Begin monitoring Roo output
-- `The New Fuse: Stop Roo AI Code Monitoring` - Stop monitoring Roo output
-- `The New Fuse: Show AI Coder Status` - Display status of AI coder connections
+- **VS Code**: Uses VS Code's built-in language models (default)
+- **OpenAI**: Connect to OpenAI's API for GPT models
+- **Ollama**: Use locally running Ollama models
 
 ## Configuration
 
-Configure the extension in VS Code settings:
+### Model Context Protocol Settings
 
-- `theFuse.mcpEnabled`: Enable Model Context Protocol integration
-- `theFuse.monitoring.enabled`: Enable monitoring of LLM usage
-- `theFuse.aiCoder.enabled`: Enable AI Coder integration
-- `theFuse.aiCoder.rooMonitoring`: Enable monitoring of Roo AI output
-- `theFuse.aiCoder.port`: Port for AI Coder WebSocket server
-- `theFuse.aiCoder.rooPort`: Port for Roo output monitoring
+- `theNewFuse.mcp.url`: URL of the MCP server (WebSocket or HTTP)
+- `theNewFuse.mcp.autoConnect`: Automatically connect to MCP server on startup
+- `theNewFuse.mcp.useEnhancedClient`: Use the enhanced client with reconnection support
+- `theNewFuse.mcp.autoReconnect`: Automatically reconnect when connection is lost
+- `theNewFuse.mcp.maxReconnectAttempts`: Maximum number of reconnection attempts
+- `theNewFuse.mcp.reconnectDelayMs`: Delay between reconnection attempts
+- `theNewFuse.mcp.enableStreamableHttp`: Enable HTTP streaming when WebSocket is unavailable
+- `theNewFuse.mcp.enableProgressReporting`: Show progress for long-running operations
+- `theNewFuse.mcp.timeoutMs`: Timeout for HTTP requests
+- `theNewFuse.mcp.commandTimeoutMs`: Timeout for individual MCP commands
 
-## Project Structure
+### LLM Provider Settings
 
-The extension is organized with the following structure:
+- `theNewFuse.llmProvider`: Select which LLM provider to use (vscode, openai, ollama)
+- `theNewFuse.openai.apiKey`: API key for OpenAI (if using OpenAI provider)
+- `theNewFuse.ollama.url`: URL of your Ollama server (if using Ollama provider)
+- `theNewFuse.ollama.model`: Default model to use with Ollama
 
-```plaintext
-src/
-├── core/                # Core functionality and shared components 
-├── utils/               # Utility functions and helpers
-│   ├── code-analyzer.ts # Code analysis functionality
-│   ├── error-utils.ts   # Error handling utilities
-│   ├── logging.ts       # Logging utilities
-│   └── performance-utils.ts # Performance monitoring utilities
-├── services/            # Service implementations
-│   ├── chrome-websocket-service.ts # WebSocket service for Chrome extension
-│   ├── rate-limiter.ts  # Rate limiting functionality 
-│   └── relay-service.ts # Communication relay service
-├── views/               # WebView providers
-│   ├── communication-hub-provider.ts # Communication hub provider
-│   ├── relay-panel-provider.js       # Relay panel provider
-│   └── settings-view-provider.ts     # Settings view provider
-├── mcp-integration/     # Model Context Protocol integration
-├── anthropic-xml/       # Anthropic XML support
-├── extension-discovery/ # Agent and extension discovery
-├── commands/            # Command implementations
-├── llm/                 # LLM provider integrations
-├── monitoring/          # Monitoring and telemetry
-└── types/               # TypeScript type definitions
-```
+## Requirements
 
-**Note:** The project structure has been refactored to improve organization. Functionality from several utility files (fs-utils, webview-utils, uri-utils, vscode-utils) has been integrated directly into the relevant service and component classes for better cohesion.
+- VS Code 1.100.0 or higher
+- Internet connection for OpenAI provider
+- Ollama installed locally for Ollama provider
+- MCP server for external agent services
 
-## For Developers
+## Development Status
 
-If you're developing or extending The New Fuse:
-
-1. Clone the repository
-2. Run `npm install` to install dependencies
-3. Use `Launch Integrated Extension` task to test the extension
-4. Check `EXTENSION-INTEGRATION.md` for details on the integration architecture
-
-## Troubleshooting
-
-If you encounter issues:
-
-- Ensure your API keys are correctly configured
-- Check that WebSocket ports (3710, 3711) are available
-- Verify that Roo is installed if using Roo monitoring features
-- Look for errors in the VS Code Developer Tools (Help > Toggle Developer Tools)
+This extension is in active development. See [MIGRATION-PLAN.md](MIGRATION-PLAN.md) for current status.
 
 ## License
 
-[LICENSE](./LICENSE)
+[MIT](LICENSE)
+
+## Following extension guidelines
+
+Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+
+* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+
+## Working with Markdown
+
+You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+
+* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
+* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
+* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+
+## For more information
+
+* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
+* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+
+**Enjoy!**

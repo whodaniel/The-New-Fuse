@@ -39,8 +39,8 @@ COPY packages/integrations/package.json packages/integrations/
 COPY apps/chrome-extension/package.json apps/chrome-extension/
 COPY apps/frontend/package.json apps/frontend/
 
-# Enable Corepack and activate Yarn 3.6.3
-RUN corepack enable && corepack prepare yarn@3.6.3 --activate
+# Enable Corepack and activate Yarn 4.9.1
+RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 # Install all dependencies to support workspaces
 RUN yarn install
 # Copy the rest of the workspace source

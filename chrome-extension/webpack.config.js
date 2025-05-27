@@ -34,11 +34,7 @@ export default (env, argv) => {
       '@utils': path.resolve(__dirname, 'src/utils'),
       '@styles': path.resolve(__dirname, 'src/styles'),
       '@components': path.resolve(__dirname, 'src/components')
-    },
-    modules: [
-      'node_modules',
-      path.resolve(__dirname, '../../node_modules'),
-    ]
+    }
   },
     module: {
       rules: [
@@ -76,19 +72,29 @@ export default (env, argv) => {
       }),
       new CopyPlugin({
         patterns: [
-          { from: './src/manifest.json', to: 'manifest.json' },
+          {
+            from: './manifest.json',
+            to: 'manifest.json',
+            transform(content) {
+              const manifest = JSON.parse(content.toString());
+              // Adjust paths to be relative to the dist directory
+              if (manifest.action && manifest.action.default_popup && manifest.action.default_popup.startsWith('dist/')) {
+                manifest.action.default_popup = manifest.action.default_popup.replace(/^dist\//, '');
+              }
+              // Ensure other paths are also relative if they are not already
+              // For example, if icons were 'dist/icons/icon16.png', they should be 'icons/icon16.png'
+              // However, current manifest.json icon paths are already 'icons/icon16.png' which is correct
+              // as 'icons' folder is copied directly into 'dist'.
+              // Same for options_ui.page which is 'options.html' and correctly copied to dist root.
+              return JSON.stringify(manifest, null, 2);
+            },
+          },
           { from: './src/popup/popup.html', to: 'popup.html' },
-          { from: './src/options/options.html', to: 'options.html' },
-          { from: './src/icons', to: 'icons' },
-          { from: './src/styles/content.css', to: 'content.css' },
           { from: './src/popup/popup.css', to: 'popup.css' },
-          { from: './src/popup/connection-enhancements.css', to: 'connection-enhancements.css' },
-          // Ensure floatingPanel.html is copied from the public directory
-          { from: './public/floatingPanel.html', to: 'floatingPanel.html' },
-          // Ensure floatingPanel.css is copied from its correct location
-          { from: './src/floatingPanel/floatingPanel.css', to: 'floatingPanel.css' },
-          // Copy WebSocket server help page
-          { from: './public/websocket-server-help.html', to: 'websocket-server-help.html' },
+          { from: './src/options/options.html', to: 'options.html' },
+          { from: './src/options/options.css', to: 'options.css' },
+          { from: './src/icons', to: 'icons', noErrorOnMissing: true },
+          { from: './src/styles', to: 'styles', noErrorOnMissing: true },
         ],
       }),
     ],

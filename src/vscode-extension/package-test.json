@@ -1,0 +1,39 @@
+{
+  "name": "the-new-fuse-test",
+  "displayName": "The New Fuse Test",
+  "description": "Test extension for debugging",
+  "version": "1.0.0",
+  "publisher": "test",
+  "engines": { 
+    "vscode": "^1.74.0" 
+  },
+  "categories": ["Other"],
+  "main": "./out/extension.js",
+  "activationEvents": ["*"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "theNewFuseTest.helloWorld",
+        "title": "Hello World Test"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "theNewFuseTest",
+          "title": "Test Extension",
+          "icon": "$(home)"
+        }
+      ]
+    },
+    "views": {
+      "theNewFuseTest": [
+        {
+          "type": "webview",
+          "id": "theNewFuseTest.testView",
+          "name": "Test View"
+        }
+      ]
+    }
+  }
+}

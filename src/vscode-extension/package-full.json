@@ -1,0 +1,221 @@
+{
+  "name": "the-new-fuse",
+  "displayName": "The New Fuse - AI Agent Communication Hub",
+  "description": "Multi-agent AI communication platform with TNF Agent Relay",
+  "version": "2.1.0",
+  "publisher": "the-new-fuse",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "AI",
+    "Chat",
+    "Machine Learning",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "*"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "the-new-fuse.startAICollab",
+        "title": "🚀 Start AI Collaboration",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.stopAICollab",
+        "title": "⏹️ Stop AI Collaboration",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.showChat",
+        "title": "💬 Show Chat",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.showCommunicationHub",
+        "title": "🌐 Show Communication Hub",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.showDashboard",
+        "title": "📊 Show Dashboard",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.showSettings",
+        "title": "⚙️ Show Settings",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.selectLLMProvider",
+        "title": "🔄 Select LLM Provider",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.checkLLMProviderHealth",
+        "title": "🏥 Check Provider Health",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.connectMCP",
+        "title": "🔌 Connect MCP",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.disconnectMCP",
+        "title": "🔌 Disconnect MCP",
+        "category": "The New Fuse"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "theNewFuse",
+          "title": "The New Fuse",
+          "icon": "$(robot)"
+        }
+      ],
+      "panel": [
+        {
+          "id": "theNewFusePanel",
+          "title": "The New Fuse",
+          "icon": "$(robot)"
+        }
+      ]
+    },
+    "views": {
+      "theNewFuse": [
+        {
+          "type": "webview",
+          "id": "theNewFuse.tabbedContainer",
+          "name": "The New Fuse",
+          "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.chatView",
+          "name": "Chat",
+          "when": "false"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.communicationHub",
+          "name": "Communication Hub",
+          "when": "false"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.dashboard",
+          "name": "Dashboard",
+          "when": "false"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.settings",
+          "name": "Settings",
+          "when": "false"
+        }
+      ],
+      "theNewFusePanel": [
+        {
+          "type": "webview",
+          "id": "theNewFuse.panelChat",
+          "name": "Chat",
+          "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.panelCommunicationHub",
+          "name": "Communication Hub",
+          "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.panelDashboard",
+          "name": "Dashboard",
+          "when": "true"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "The New Fuse",
+      "properties": {
+        "theNewFuse.llmProvider": {
+          "type": "string",
+          "default": "vscode",
+          "enum": [
+            "vscode",
+            "openai",
+            "anthropic",
+            "cerebras",
+            "ollama"
+          ],
+          "description": "Default LLM provider to use"
+        },
+        "theNewFuse.ui.viewLayout": {
+          "type": "string",
+          "default": "both",
+          "enum": [
+            "sidebar",
+            "panel",
+            "both"
+          ],
+          "description": "Where to show The New Fuse views"
+        },
+        "theNewFuse.mcp.url": {
+          "type": "string",
+          "default": "ws://localhost:3000/mcp",
+          "description": "MCP server URL"
+        },
+        "theNewFuse.mcp.autoConnect": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-connect to MCP server on startup"
+        },
+        "theNewFuse.openai.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "OpenAI API key"
+        },
+        "theNewFuse.anthropic.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Anthropic API key"
+        },
+        "theNewFuse.cerebras.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "Cerebras API key"
+        },
+        "theNewFuse.cerebras.model": {
+          "type": "string",
+          "default": "llama3.1-8b",
+          "description": "Cerebras model to use"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch:tsc": "tsc -watch -p ./",
+    "watch:esbuild": "node esbuild.js --watch",
+    "build": "npm run compile && node esbuild.js",
+    "package": "vsce package",
+    "vscode:prepublish": "npm run build"
+  },
+  "dependencies": {
+    "node-fetch": "^2.6.7",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^16.18.0",
+    "@types/uuid": "^9.0.8",
+    "@types/vscode": "^1.74.0",
+    "esbuild": "^0.19.0",
+    "typescript": "^4.9.4"
+  }
+}

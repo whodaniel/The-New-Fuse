@@ -1,0 +1,799 @@
+import * as vscode from 'vscode';
+
+/**
+ * LLM Provider Health Status
+ */
+export interface LLMProviderHealth {
+    status: 'healthy' | 'unhealthy';
+    message: string;
+    timestamp: number;
+    details?: any;
+}
+
+/**
+ * Enhanced LLM Provider Manager
+ * Uses VS Code's built-in LLM API while maintaining compatibility with previous architecture
+ */
+export class LLMProviderManager {
+    private _activeProviderId: string | undefined;
+    private _activeModelId: string | undefined;
+    private _failedProviders: Set<string> = new Set();
+    private _healthStatus: Map<string, LLMProviderHealth> = new Map();
+    
+    // For backward compatibility
+    private _initializationError: string | undefined;
+
+    constructor(private readonly context: vscode.ExtensionContext) {
+        // Load the last selected provider from configuration
+        this._activeProviderId = vscode.workspace.getConfiguration('theNewFuse').get<string>('selectedProviderId');
+        this._activeModelId = vscode.workspace.getConfiguration('theNewFuse').get<string>('selectedModelId');
+
+        // Listen for configuration changes
+        context.subscriptions.push(
+            vscode.workspace.onDidChangeConfiguration(e => {
+                if (e.affectsConfiguration('theNewFuse')) {
+                    this._activeProviderId = vscode.workspace.getConfiguration('theNewFuse').get<string>('selectedProviderId');
+                    this._activeModelId = vscode.workspace.getConfiguration('theNewFuse').get<string>('selectedModelId');
+                    console.log(`Configuration changed: Provider=${this._activeProviderId}, Model=${this._activeModelId}`);
+                }
+            })
+        );
+        
+        // Check for available language models at initialization
+        this.checkAvailableModels();
+    }
+
+    /**
+     * Check for available language models
+     */
+    private async checkAvailableModels() {
+        try {
+            const availableModels = await vscode.lm.selectChatModels({});
+            console.log(`Found ${availableModels?.length || 0} available language models`);
+            
+            if (!availableModels || availableModels.length === 0) {
+                this._initializationError = 'No language models detected';
+                console.warn('No language models detected. Ensure a provider like GitHub Copilot is installed and enabled.');
+            }
+        } catch (err: any) {
+            this._initializationError = err.message;
+            console.error('Error checking for language models:', err);
+        }
+    }
+        
+        // Add Cerebras provider
+        const cerebras = new CerebrasProvider(this.context);
+        this.providers.set(cerebras.id, cerebras);
+    }
+
+    private async loadConfiguration() {
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        const providerId = config.get<string>('llmProvider', 'vscode'); // Defaults to 'vscode'
+
+        try {
+            console.log(`Attempting to set active LLM provider to: ${providerId}`);
+            await this.setActiveProvider(providerId);
+            
+            vscode.window.showInformationMessage(`LLM provider set to: ${this.activeProvider?.name}`);
+        } catch (error) {
+            console.error(`Failed to set LLM provider ${providerId}:`, error);
+            
+            const errorDetails = error instanceof Error ? error.message : String(error);
+            const errorMessage = `Failed to initialize LLM provider: ${providerId}. ${errorDetails}`; // Moved declaration up
+            this._initializationError = errorMessage; // Store the error message
+            
+            vscode.window.showErrorMessage(errorMessage, 'Try Another Provider', 'Configure')
+                .then(selection => {
+                    if (selection === 'Try Another Provider') {
+                        this.showProviderQuickPick();
+                    } else if (selection === 'Configure') {
+                        vscode.commands.executeCommand('workbench.action.openSettings', 'theNewFuse.llmProvider');
+                    }
+                });
+            
+            // Fallback to VS Code provider if the initial one failed and wasn't VS Code itself
+            if (providerId !== 'vscode') {
+                try {
+                    console.log('Falling back to VS Code LLM provider.');
+                    await this.setActiveProvider('vscode');
+                    vscode.window.showInformationMessage('Falling back to VS Code LLM provider.');
+                    this._initializationError = undefined; // Clear error if fallback succeeds
+                } catch (fallbackError) {
+                    console.error('Failed to set fallback LLM provider vscode:', fallbackError);
+                    
+                    const fallbackErrorDetails = fallbackError instanceof Error ? fallbackError.message : String(fallbackError);
+                    this._initializationError = `Failed to initialize fallback LLM provider (VS Code). ${fallbackErrorDetails}`; // Store fallback error
+                    vscode.window.showErrorMessage(`Failed to initialize fallback LLM provider (VS Code). ${fallbackErrorDetails}`);
+                    
+                    this.activeProvider = undefined; // Ensure no provider is active
+                    vscode.window.showErrorMessage('No LLM provider is available. Please check your settings and try again.');
+                }
+            } else {
+                // If 'vscode' provider itself failed
+                this.activeProvider = undefined; // Ensure no provider is active
+                const vscodeFailMessage = 'VS Code LLM provider is not available. Please ensure you have a compatible VS Code version (1.90.0+) and GitHub Copilot installed and active.';
+                this._initializationError = vscodeFailMessage; // Store this specific error
+                
+                // Show error and then proactively offer selection or to open settings
+                vscode.window.showErrorMessage(vscodeFailMessage, 'Select LLM Provider', 'Open Settings')
+                    .then(selection => {
+                        if (selection === 'Select LLM Provider') {
+                            this.showProviderQuickPick('VS Code LLM is unavailable. Please select an alternative:');
+                        } else if (selection === 'Open Settings') {
+                            vscode.commands.executeCommand('workbench.action.openSettings', 'theNewFuse.llmProvider');
+                        }
+                    });
+            }
+        }
+    }
+
+    private async setActiveProvider(providerId: string) {
+        const provider = this.providers.get(providerId);
+        if (!provider) {
+            throw new Error(`LLM provider not found: ${providerId}`);
+        }
+
+        const isAvailable = await provider.isAvailable();
+        if (!isAvailable) {
+            // More specific error message for different providers
+            let availabilityError: string;
+            switch (providerId) {
+                case 'vscode':
+                    availabilityError = 'VS Code language models are not available. Please ensure you have VS Code 1.90.0+ and GitHub Copilot installed and active.';
+                    break;
+                case 'openai':
+                    availabilityError = 'OpenAI provider not available. Please check your API key configuration.';
+                    break;
+                case 'anthropic':
+                    availabilityError = 'Anthropic provider not available. Please check your API key configuration.';
+                    break;
+                case 'cerebras':
+                    availabilityError = 'Cerebras provider not available. Please check your API key configuration.';
+                    break;
+                case 'ollama':
+                    availabilityError = 'Ollama provider not available. Please ensure Ollama is running locally.';
+                    break;
+                default:
+                    availabilityError = `LLM provider not available: ${provider.name}. Please check its configuration or status.`;
+            }
+            throw new Error(availabilityError);
+        }
+
+        this.activeProvider = provider;
+        console.log(`Active LLM provider set to: ${provider.name} (ID: ${providerId})`);
+        
+        // Notify any listeners that the provider has changed
+        this.onProviderChanged(provider);
+        this._initializationError = undefined; // Clear any previous initialization error on success
+    }
+    
+    private onProviderChanged(provider: LLMProvider): void {
+        // Emit an event that can be listened to by other components
+        vscode.commands.executeCommand('the-new-fuse.providerChanged', provider.id, provider.name);
+    }
+    
+    /**
+     * Shows a quick pick UI to let users select an LLM provider
+     */
+    public async showProviderQuickPick(promptMessage?: string): Promise<void> {
+        const items = Array.from(this.providers.values()).map(provider => ({
+            label: provider.name,
+            description: provider.id,
+            provider: provider
+        }));
+
+        const selected = await vscode.window.showQuickPick(items, {
+            placeHolder: promptMessage || 'Select an LLM provider',
+            title: 'Available LLM Providers'
+        });
+        
+        if (selected) {
+            try {
+                await this.setActiveProvider(selected.provider.id);
+                
+                // Update the configuration
+                const config = vscode.workspace.getConfiguration('theNewFuse');
+                await config.update('llmProvider', selected.provider.id, vscode.ConfigurationTarget.Global);
+                
+                vscode.window.showInformationMessage(`LLM provider set to: ${selected.provider.name}`);
+            } catch (error) {
+                console.error(`Failed to set LLM provider ${selected.provider.id}:`, error);
+                this._initializationError = `Failed to initialize LLM provider: ${selected.provider.name}. ${error instanceof Error ? error.message : String(error)}`; // Store error
+                vscode.window.showErrorMessage(`Failed to initialize LLM provider: ${selected.provider.name}. ${error instanceof Error ? error.message : String(error)}`);
+            }
+        }
+    }
+
+    public async query(prompt: string, options?: { maxTokens?: number; temperature?: number; }): Promise<string> {
+        if (!this.activeProvider) {
+            const errorMsg = 'No active LLM provider is configured. Please check your settings.';
+            vscode.window.showErrorMessage(errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        try {
+            console.log(`Sending query to ${this.activeProvider.name} provider`);
+            const response = await this.activeProvider.query(prompt, options);
+            
+            // Reset rate limit error count on success
+            this.rateLimitErrorCount.set(this.activeProvider.id, 0);
+            
+            return response;
+        } catch (error) {
+            console.error(`LLM query failed with provider ${this.activeProvider.name}:`, error);
+            
+            // Format the error message for better user understanding
+            let errorMessage: string;
+            let isRateLimit = false;
+            
+            if (error instanceof Error) {
+                if (error.message.includes('API key')) {
+                    errorMessage = `Authentication error with ${this.activeProvider.name}: ${error.message}. Please check your API key configuration.`;
+                } else if (error.message.includes('network') || error.message.includes('connect')) {
+                    errorMessage = `Network error connecting to ${this.activeProvider.name}: ${error.message}. Please check your network connection.`;
+                } else if (error.message.includes('timeout')) {
+                    errorMessage = `Request to ${this.activeProvider.name} timed out: ${error.message}. Please try again later.`;
+                } else if (error.message.toLowerCase().includes('rate limit') || 
+                           error.message.toLowerCase().includes('quota') ||
+                           error.message.toLowerCase().includes('too many requests') ||
+                           error.message.includes('429')) {
+                    errorMessage = `Rate limit exceeded with ${this.activeProvider.name}: ${error.message}. Trying to switch to another provider.`;
+                    isRateLimit = true;
+                } else {
+                    errorMessage = `Error with ${this.activeProvider.name}: ${error.message}`;
+                }
+            } else {
+                errorMessage = `Unknown error with ${this.activeProvider.name}: ${String(error)}`;
+            }
+            
+            // Try fallback provider if this is a rate limit issue
+            if (isRateLimit) {
+                // Track rate limit errors for this provider
+                const currentCount = this.rateLimitErrorCount.get(this.activeProvider.id) || 0;
+                this.rateLimitErrorCount.set(this.activeProvider.id, currentCount + 1);                    // If we've exceeded the threshold, try a fallback provider
+                if ((this.rateLimitErrorCount.get(this.activeProvider.id) || 0) >= this.rateLimitThreshold) {
+                    // Mark this provider as failed for this session
+                    this.failedProviders.add(this.activeProvider.id);
+                    
+                    // Try to find next available provider from fallback order
+                    const currentProviderId = this.activeProvider.id;
+                    const fallbackResult = await this.switchToFallbackProvider();
+                    
+                    if (fallbackResult.success) {
+                        // Show a more detailed notification to the user
+                        const fallbackMessage = `Rate limit detected with ${currentProviderId}. Switched to ${this.activeProvider?.name}.`;
+                        
+                        vscode.window.showInformationMessage(
+                            fallbackMessage,
+                            'Check Provider Status',
+                            'Reset Provider Health'
+                        ).then(selection => {
+                            if (selection === 'Check Provider Status') {
+                                this.checkProviderHealth().then(health => {
+                                    const healthMsg = `Provider Health: ${health.status === 'healthy' ? '✅' : '❌'} ${health.message}`;
+                                    vscode.window.showInformationMessage(healthMsg);
+                                });
+                            } else if (selection === 'Reset Provider Health') {
+                                this.resetFailedProviders();
+                                vscode.window.showInformationMessage('Provider health has been reset. All providers are now available for selection.');
+                            }
+                        });
+                        
+                        // Try again with the new provider
+                        try {
+                            return await this.query(prompt, options);
+                        } catch (fallbackError) {
+                            // If the fallback also fails, continue with the original error
+                            console.error(`Fallback provider also failed:`, fallbackError);
+                        }
+                    } else {
+                        vscode.window.showErrorMessage(
+                            `Rate limit exceeded with ${currentProviderId}. ${fallbackResult.message}`,
+                            'Reset Provider Health'
+                        ).then(selection => {
+                            if (selection === 'Reset Provider Health') {
+                                this.resetFailedProviders();
+                                vscode.window.showInformationMessage('Provider health has been reset. All providers are now available for selection.');
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // Show in the UI
+            vscode.window.showErrorMessage(errorMessage);
+            
+            throw new Error(`LLM query failed: ${errorMessage}`);
+        }
+    }
+
+    public async streamResponse(prompt: string, callback: (chunk: string) => void, options?: { maxTokens?: number; temperature?: number; }): Promise<void> {
+        if (!this.activeProvider) {
+            const errorMsg = 'No active LLM provider is configured. Please check your settings.';
+            vscode.window.showErrorMessage(errorMsg);
+            callback(errorMsg);
+            throw new Error(errorMsg);
+        }
+
+        try {
+            // Check if the provider supports streaming
+            if (!this.activeProvider.streamResponse) {
+                // Fallback to non-streaming query
+                console.log(`Provider ${this.activeProvider.name} does not support streaming, falling back to regular query`);
+                vscode.window.showInformationMessage(`Using non-streaming mode with ${this.activeProvider.name}.`);
+                const response = await this.activeProvider.query(prompt, options);
+                callback(response);
+                return;
+            }
+
+            await this.activeProvider.streamResponse(prompt, callback, options);
+            
+            // If successful, reset rate limit error count for this provider
+            this.rateLimitErrorCount.set(this.activeProvider.id, 0);
+            
+        } catch (error) {
+            console.error(`LLM stream failed with provider ${this.activeProvider.name}:`, error);
+            
+            // Format the error message for better user understanding
+            let errorMessage: string;
+            let isRateLimit = false;
+            
+            if (error instanceof Error) {
+                if (error.message.includes('API key')) {
+                    errorMessage = `Authentication error with ${this.activeProvider.name}: ${error.message}. Please check your API key configuration.`;
+                } else if (error.message.includes('network') || error.message.includes('connect')) {
+                    errorMessage = `Network error connecting to ${this.activeProvider.name}: ${error.message}. Please check your network connection.`;
+                } else if (error.message.includes('timeout')) {
+                    errorMessage = `Request to ${this.activeProvider.name} timed out: ${error.message}. Please try again later.`;
+                } else if (error.message.toLowerCase().includes('rate limit') || 
+                           error.message.toLowerCase().includes('quota') ||
+                           error.message.toLowerCase().includes('too many requests') ||
+                           error.message.includes('429')) {
+                    errorMessage = `Rate limit exceeded with ${this.activeProvider.name}: ${error.message}. Trying to switch to another provider.`;
+                    isRateLimit = true;
+                } else {
+                    errorMessage = `Error with ${this.activeProvider.name}: ${error.message}`;
+                }
+            } else {
+                errorMessage = `Unknown error with ${this.activeProvider.name}: ${String(error)}`;
+            }
+            
+            // Try fallback provider if this is a rate limit issue
+            if (isRateLimit) {
+                // Track rate limit errors for this provider
+                const currentCount = this.rateLimitErrorCount.get(this.activeProvider.id) || 0;
+                this.rateLimitErrorCount.set(this.activeProvider.id, currentCount + 1);                    // If we've exceeded the threshold, try a fallback provider
+                if ((this.rateLimitErrorCount.get(this.activeProvider.id) || 0) >= this.rateLimitThreshold) {
+                    // Mark this provider as failed for this session
+                    this.failedProviders.add(this.activeProvider.id);
+                    
+                    // Try to find next available provider from fallback order
+                    const currentProviderId = this.activeProvider.id;
+                    const fallbackResult = await this.switchToFallbackProvider();
+                    
+                    if (fallbackResult.success) {
+                        // Add a message to the chat stream that we switched providers
+                        callback(`⚠️ Rate limit reached with ${currentProviderId}. Switched to ${this.activeProvider?.name}.\n\n`);
+                        
+                        // Show a more detailed notification to the user
+                        vscode.window.showInformationMessage(
+                            `Rate limit detected with ${currentProviderId}. Switched to ${this.activeProvider?.name}.`,
+                            'Check Provider Status',
+                            'Reset Provider Health'
+                        ).then(selection => {
+                            if (selection === 'Check Provider Status') {
+                                this.checkProviderHealth().then(health => {
+                                    const healthMsg = `Provider Health: ${health.status === 'healthy' ? '✅' : '❌'} ${health.message}`;
+                                    vscode.window.showInformationMessage(healthMsg);
+                                });
+                            } else if (selection === 'Reset Provider Health') {
+                                this.resetFailedProviders();
+                                vscode.window.showInformationMessage('Provider health has been reset. All providers are now available for selection.');
+                            }
+                        });
+                        
+                        // Try again with the new provider
+                        try {
+                            await this.streamResponse(prompt, callback, options);
+                            return; // Exit if the fallback successfully processes the request
+                        } catch (fallbackError) {
+                            // If the fallback also fails, continue with the original error
+                            console.error(`Fallback provider also failed:`, fallbackError);
+                        }
+                    } else {
+                        callback(`⚠️ Rate limit exceeded with ${currentProviderId}. ${fallbackResult.message}`);
+                        
+                        vscode.window.showErrorMessage(
+                            `Rate limit exceeded with ${currentProviderId}. ${fallbackResult.message}`,
+                            'Reset Provider Health'
+                        ).then(selection => {
+                            if (selection === 'Reset Provider Health') {
+                                this.resetFailedProviders();
+                                vscode.window.showInformationMessage('Provider health has been reset. All providers are now available for selection.');
+                            }
+                        });
+                    }
+                }
+            }
+            
+            // Provide a user-friendly message in the chat
+            const userMessage = `I encountered a problem while processing your request: ${errorMessage}`;
+            callback(userMessage);
+            
+            // Show in the UI
+            vscode.window.showErrorMessage(errorMessage);
+            
+            // Also throw the error for proper handling upstream
+            throw new Error(`LLM stream failed: ${errorMessage}`);
+        }
+    }
+
+    /**
+     * Attempts to switch to a fallback provider when the current provider fails
+     * @returns Object indicating success/failure and a message
+     */
+    private async switchToFallbackProvider(): Promise<{success: boolean, message: string}> {
+        if (!this.activeProvider) {
+            return { success: false, message: "No active provider to switch from." };
+        }
+
+        // Get current provider ID
+        const currentProviderId = this.activeProvider.id;
+        const currentProviderName = this.activeProvider.name;
+        
+        // Find the index of the current provider in the fallback order
+        const currentIndex = this.fallbackOrder.indexOf(currentProviderId);
+        
+        // Try each provider in the fallback order
+        for (let i = 0; i < this.fallbackOrder.length; i++) {
+            // Skip the current provider and already failed providers
+            const candidateId = this.fallbackOrder[i];
+            if (candidateId === currentProviderId || this.failedProviders.has(candidateId)) {
+                continue;
+            }
+            
+            // Try to set this provider as active
+            try {
+                await this.setActiveProvider(candidateId);
+                
+                // Update configuration to match the new provider
+                const config = vscode.workspace.getConfiguration('theNewFuse');
+                await config.update('llmProvider', candidateId, vscode.ConfigurationTarget.Global);
+                
+                console.log(`Successfully switched from ${currentProviderId} to ${candidateId} due to rate limits`);
+                
+                // Notify the chat view about the provider switch
+                try {
+                    // We need to access the chat view provider instance
+                    // This is done via a command in extension.ts
+                    vscode.commands.executeCommand('the-new-fuse.notifyProviderSwitch', currentProviderName, this.activeProvider.name);
+                } catch (notifyError) {
+                    console.error('Failed to notify chat view about provider switch:', notifyError);
+                }
+                
+                return { 
+                    success: true, 
+                    message: `Successfully switched to ${this.activeProvider.name}.` 
+                };
+            } catch (error) {
+                console.error(`Failed to switch to fallback provider ${candidateId}:`, error);
+                // Add to failed providers so we don't try it again
+                this.failedProviders.add(candidateId);
+            }
+        }
+        
+        // If we get here, all fallbacks failed
+        return { 
+            success: false, 
+            message: "All fallback providers failed. Please try again later or configure a different provider." 
+        };
+    }
+
+    /**
+     * Reset the failed providers list, allowing another attempt to use them
+     */
+    public resetFailedProviders(): void {
+        this.failedProviders.clear();
+        this.rateLimitErrorCount.clear();
+    }
+
+    public getActiveProvider(): LLMProvider | undefined {
+        return this.activeProvider;
+    }
+
+    public getCurrentProvider(): LLMProvider | undefined {
+        return this.activeProvider;
+    }
+
+    public getInitializationError(): string | undefined {
+        return this._initializationError;
+    }
+    
+    /**
+     * Shows the provider selection UI and allows switching providers
+     */
+    public async selectProvider(): Promise<void> {
+        await this.showProviderQuickPick();
+    }
+    
+    /**
+     * Checks the health of the current provider and returns diagnostic information
+     * This enhanced version also checks for rate limit issues
+     */
+    public async checkProviderHealth(): Promise<{
+        status: 'healthy' | 'unhealthy' | 'unknown',
+        provider?: string,
+        message: string,
+        details?: string
+    }> {
+        if (!this.activeProvider) {
+            return {
+                status: 'unknown',
+                message: 'No active LLM provider is configured.'
+            };
+        }
+
+        const providerName = this.activeProvider.name;
+        const providerId = this.activeProvider.id;
+        
+        // Check if this provider has had rate limit issues
+        const rateLimitCount = this.rateLimitErrorCount.get(providerId) || 0;
+        if (rateLimitCount > 0) {
+            return {
+                status: 'unhealthy',
+                provider: providerName,
+                message: `${providerName} has encountered ${rateLimitCount} rate limiting errors.`,
+                details: `You may want to switch to another provider if this continues.`
+            };
+        }
+        
+        // Check if provider is in the failed list
+        if (this.failedProviders.has(providerId)) {
+            return {
+                status: 'unhealthy',
+                provider: providerName,
+                message: `${providerName} has been marked as failing due to repeated issues.`,
+                details: `Consider switching to another provider or resetting the provider health.`
+            };
+        }
+
+        // Try a simple health check query
+        try {
+            // Verify the provider is available
+            const isAvailable = await this.activeProvider.isAvailable();
+            if (!isAvailable) {
+                return {
+                    status: 'unhealthy',
+                    provider: this.activeProvider.name,
+                    message: `${this.activeProvider.name} provider is not available.`,
+                    details: 'The provider reported it is not available. Check configuration or try another provider.'
+                };
+            }
+            
+            return {
+                status: 'healthy',
+                provider: this.activeProvider.name,
+                message: `${this.activeProvider.name} provider is available and configured.`
+            };
+        } catch (error) {
+            let errorDetails = '';
+            if (error instanceof Error) {
+                errorDetails = error.message;
+                
+                // Check for typical rate limiting messages
+                if (errorDetails.toLowerCase().includes('rate limit') || 
+                    errorDetails.toLowerCase().includes('quota') ||
+                    errorDetails.toLowerCase().includes('too many requests') ||
+                    errorDetails.includes('429')) {
+                    
+                    return {
+                        status: 'unhealthy',
+                        provider: providerName,
+                        message: `${providerName} is experiencing rate limiting issues.`,
+                        details: errorDetails
+                    };
+                }
+            }
+            
+            return {
+                status: 'unhealthy',
+                provider: this.activeProvider.name,
+                message: `${this.activeProvider.name} provider health check failed.`,
+                details: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
+     * Test a specific provider connection
+     */
+    public async testProvider(providerId: string): Promise<{ success: boolean; providerName: string; error?: string }> {
+        try {
+            const provider = this.providers.get(providerId);
+            if (!provider) {
+                return {
+                    success: false,
+                    providerName: providerId,
+                    error: `Provider not found: ${providerId}`
+                };
+            }
+
+            console.log(`Testing provider: ${provider.name} (${providerId})`);
+            
+            // Check if provider is available
+            const isAvailable = await provider.isAvailable();
+            if (!isAvailable) {
+                return {
+                    success: false,
+                    providerName: provider.name,
+                    error: 'Provider is not available or not configured properly'
+                };
+            }
+
+            // Test with a simple query
+            const testPrompt = "Hello! Please respond with 'Connection test successful' to confirm the connection.";
+            const response = await provider.query(testPrompt, { maxTokens: 50 });
+            
+            if (response && response.trim().length > 0) {
+                return {
+                    success: true,
+                    providerName: provider.name
+                };
+            } else {
+                return {
+                    success: false,
+                    providerName: provider.name,
+                    error: 'Provider returned empty response'
+                };
+            }
+        } catch (error) {
+            console.error(`Error testing provider ${providerId}:`, error);
+            return {
+                success: false,
+                providerName: providerId,
+                error: error instanceof Error ? error.message : String(error)
+            };
+        }
+    }
+
+    /**
+     * Initialize or reinitialize all providers
+     * This is useful when providers might be in a bad state
+     */
+    public async initializeProviders(): Promise<{[key: string]: boolean}> {
+        const results: {[key: string]: boolean} = {};
+        
+        for (const [providerId, provider] of this.providers.entries()) {
+            try {
+                console.log(`Initializing provider: ${providerId}`);
+                
+                if (typeof provider.initialize === 'function') {
+                    await provider.initialize();
+                    results[providerId] = true;
+                } else {
+                    console.log(`Provider ${providerId} does not have an initialize method`);
+                    results[providerId] = false;
+                }
+            } catch (error) {
+                console.error(`Failed to initialize provider ${providerId}:`, error);
+                results[providerId] = false;
+            }
+        }
+        
+        return results;
+    }
+    
+    /**
+     * Test all providers and return results
+     */
+    public async testAllProviders(): Promise<{[key: string]: {success: boolean, error?: string, response?: string}}> {
+        const results: {[key: string]: {success: boolean, error?: string, response?: string}} = {};
+        
+        for (const [providerId, provider] of this.providers.entries()) {
+            try {
+                console.log(`Testing provider: ${providerId}`);
+                const testResult = await this.testProvider(providerId);
+                
+                // If testing the provider was successful and a test query is available
+                if (testResult.success && provider.query) {
+                    try {
+                        // Try a simple query
+                        const response = await provider.query('Hello, this is a test request. Please respond with a short confirmation message.');
+                        results[providerId] = {
+                            success: true,
+                            response: response
+                        };
+                    } catch (queryError) {
+                        results[providerId] = {
+                            success: false,
+                            error: `Provider available but query failed: ${queryError instanceof Error ? queryError.message : String(queryError)}`
+                        };
+                    }
+                } else {
+                    results[providerId] = {
+                        success: testResult.success,
+                        error: testResult.error
+                    };
+                }
+            } catch (error) {
+                console.error(`Failed to test provider ${providerId}:`, error);
+                results[providerId] = {
+                    success: false,
+                    error: error instanceof Error ? error.message : String(error)
+                };
+            }
+        }
+        
+        return results;
+    }
+    
+    /**
+     * Get diagnostic information about all providers
+     */
+    public async getProvidersStatus(): Promise<{
+        activeProviderId: string | undefined,
+        providers: {
+            id: string,
+            name: string,
+            available: boolean,
+            initialized: boolean,
+            isFailed: boolean,
+            info?: any
+        }[]
+    }> {
+        const providerStatus = [];
+        
+        for (const [providerId, provider] of this.providers.entries()) {
+            try {
+                let available = false;
+                let initialized = false;
+                let info = undefined;
+                
+                // Check if provider is initialized
+                if (typeof provider.isInitialized === 'function') {
+                    initialized = await provider.isInitialized();
+                }
+                
+                // Check availability
+                try {
+                    available = await provider.isAvailable();
+                } catch (availError) {
+                    console.error(`Error checking availability for ${providerId}:`, availError);
+                }
+                
+                // Get provider info if available
+                try {
+                    if (typeof provider.getInfo === 'function') {
+                        info = await provider.getInfo();
+                    }
+                } catch (infoError) {
+                    console.error(`Error getting info for ${providerId}:`, infoError);
+                }
+                
+                providerStatus.push({
+                    id: providerId,
+                    name: provider.name,
+                    available,
+                    initialized,
+                    isFailed: this.failedProviders.has(providerId),
+                    info
+                });
+            } catch (error) {
+                console.error(`Error getting status for ${providerId}:`, error);
+                providerStatus.push({
+                    id: providerId,
+                    name: provider.name || providerId, 
+                    available: false,
+                    initialized: false,
+                    isFailed: this.failedProviders.has(providerId),
+                    error: error instanceof Error ? error.message : String(error)
+                });
+            }
+        }
+        
+        return {
+            activeProviderId: this.activeProvider?.id,
+            providers: providerStatus
+        };
+    }
+}

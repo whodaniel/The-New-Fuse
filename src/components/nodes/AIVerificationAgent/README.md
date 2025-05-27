@@ -99,5 +99,5 @@ The component provides a rich user interface:
 ## Related Documentation
 
 For more detailed information, see:
-- [Verification Agent Documentation](../../../vscode-extension/docs/verification-agent.md)
+- [Verification Agent Documentation](../../../src/vscode-extension/docs/verification-agent.md)
 - [Command Reference](../../../../COMMAND-REFERENCE.md)

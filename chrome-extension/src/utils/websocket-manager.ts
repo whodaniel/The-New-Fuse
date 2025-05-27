@@ -431,14 +431,13 @@ export class WebSocketManager extends EventEmitter {
       case 'connecting':
         this.state.connected = false;
         this.state.reconnecting = true;
-        this.state.authenticating = false; // Should not be authenticating if just 'connecting'
+        this.state.authenticating = false;
         break;
-      // 'authenticating' was not a status in shared-protocol.d.ts ConnectionStatusPayload
-      // case 'authenticating':
-      //   this.state.connected = true; // Or false, depending on definition
-      //   this.state.reconnecting = false;
-      //   this.state.authenticating = true;
-      //   break;
+      case 'authenticating':
+        this.state.connected = false;
+        this.state.reconnecting = false;
+        this.state.authenticating = true;
+        break;
       case 'error':
         this.state.connected = false;
         this.state.reconnecting = false;
@@ -458,10 +457,10 @@ export class WebSocketManager extends EventEmitter {
   getConnectionStatus(): ConnectionStatusMessage['payload'] {
     let status: ConnectionStatusMessage['payload']['status'];
 
-    if (this.state.connected) { // Removed !this.state.authenticating as 'authenticating' is not a primary state here
+    if (this.state.authenticating) {
+      status = 'authenticating';
+    } else if (this.state.connected) {
       status = 'connected';
-    // } else if (this.state.authenticating) { // 'authenticating' is not a status in ConnectionStatusPayload
-    //   status = 'authenticating'; // This was a custom state, not from protocol
     } else if (this.state.reconnecting) {
       status = 'connecting';
     } else if (this.state.lastError) {

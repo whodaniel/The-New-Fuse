@@ -1,0 +1,1241 @@
+import * as vscode from 'vscode';
+import { AgentMessage, AgentMessageType, AgentCommunicationManager } from '../types';
+import { LLMProviderManager } from '../llm/LLMProviderManager';
+import { LLMMonitoringService } from '../services/LLMMonitoringService';
+import { v4 as uuidv4 } from 'uuid'; // Add uuid import
+
+// Add interfaces for chat sessions
+export interface ChatSession {
+    id: string;
+    name: string;
+    messages: AgentMessage[];
+    createdAt: number;
+    updatedAt: number;
+}
+
+export interface StarredMessage {
+    id: string;
+    sessionId: string;
+    messageId: string;
+    content: string;
+    timestamp: number;
+    note?: string;
+}
+
+export class ChatViewProvider implements vscode.WebviewViewProvider {
+    public static readonly viewType = 'theNewFuse.chatView';
+    private _panel: vscode.WebviewView | undefined;
+    private _disposables: vscode.Disposable[] = [];
+    private _messages: AgentMessage[] = [];
+    private _llmMonitoringService?: LLMMonitoringService;
+    
+    // Add properties for chat sessions
+    private _sessions: ChatSession[] = [];
+    private _currentSessionId: string | undefined;
+    private _starredMessages: StarredMessage[] = [];
+
+    constructor(
+        private readonly _extensionUri: vscode.Uri,
+        private readonly _context: vscode.ExtensionContext,
+        private readonly _llmManager: LLMProviderManager,
+        private readonly _communicationManager?: AgentCommunicationManager,
+        llmMonitoringService?: LLMMonitoringService
+    ) {
+        // Initialize existing properties
+        this._llmMonitoringService = llmMonitoringService;
+
+        // Set up communication manager subscription if available
+        if (this._communicationManager) {
+            this._communicationManager.onMessage(message => {
+                this.handleIncomingAgentMessage(message);
+            });
+        }
+        
+        // Load saved sessions
+        this.loadSessions();
+        
+        // Load starred messages
+        this.loadStarredMessages();
+        
+        // Load starred messages
+        this.loadStarredMessages();
+    }
+
+    public async resolveWebviewView(
+        webviewView: vscode.WebviewView,
+        _context: vscode.WebviewViewResolveContext,
+        _token: vscode.CancellationToken
+    ): Promise<void> {
+        this._panel = webviewView;
+
+        // Set options
+        webviewView.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [
+                vscode.Uri.joinPath(this._extensionUri, 'media'),
+                vscode.Uri.joinPath(this._extensionUri, 'dist'),
+                vscode.Uri.joinPath(this._extensionUri, 'node_modules')
+            ]
+        };
+
+        // Load saved messages before setting HTML
+        this.loadMessages();
+
+        // Set initial HTML content
+        webviewView.webview.html = this.getHtmlForWebview(webviewView.webview);
+
+        // Set up message handling (only once)
+        webviewView.webview.onDidReceiveMessage(
+            async (message) => {
+                switch (message.type) {
+                    case 'sendMessage':
+                        await this.handleUserMessage(message.text);
+                        break;
+                    case 'executeCommand':
+                        await this.executeCommand(message.command);
+                        break;
+                    case 'clearHistory':
+                        this.clearChatHistory();
+                        break;
+                    case 'newChat':
+                        await this.handleNewChat();
+                        break;
+                    case 'viewerReady':
+                        // Display saved messages when the viewer is ready
+                        this.displaySavedMessages();
+                        // Update initial provider badge
+                        this.updateInitialProviderBadge();
+                        // Send saved chats list
+                        this.sendSavedChatsList();
+                        break;
+                    // Add handlers for saved chats functionality
+                    case 'getSavedChats':
+                        this.sendSavedChatsList();
+                        break;
+                    case 'saveChat':
+                        this.saveCurrentChatSession(message.name);
+                        break;
+                    case 'switchChat':
+                        this.switchChatSession(message.chatId);
+                        break;
+                    case 'deleteChat':
+                        this.deleteChatSession(message.chatId);
+                        break;
+                    case 'exportChatHistory':
+                        this.exportChatHistory();
+                        break;
+                    case 'importChatHistory':
+                        this.importChatHistory();
+                        break;
+                    case 'viewStarredMessages':
+                        this.viewStarredMessages();
+                        break;
+                    case 'starMessage':
+                        this.starMessage(message.messageId, message.content, message.note);
+                        break;
+                    case 'unstarMessage':
+                        this.unstarMessage(message.messageId);
+                        break;
+                    case 'openSettings':
+                        // Settings are handled by the settings.js file
+                        // No server-side handling needed
+                        break;
+                }
+            },
+            undefined,
+            this._disposables
+        );
+
+        // Handle view disposal
+        webviewView.onDidDispose(() => this.dispose(), null, this._disposables);
+    }
+
+    public getHtmlForWebview(webview: vscode.Webview): string {
+        // Get URIs for resources
+        const getUri = (path: string, ...pathSegments: string[]) => {
+            return webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, path, ...pathSegments));
+        };
+
+        // Media resources
+        const scriptUri = getUri('media', 'chat.js');
+        const styleUri = getUri('media', 'chat.css');
+        const styleEnhancementsUri = getUri('media', 'chat-enhancements.css');
+        const searchScriptUri = getUri('media', 'search.js');
+        const fallbackIconsStyleUri = getUri('media', 'fallback-icons.css');
+        const fallbackIconsScriptUri = getUri('media', 'fallback-icons.js');
+        const buttonVisibilityScriptUri = getUri('media', 'button-visibility.js');
+        const buttonVisibilityStyleUri = getUri('media', 'button-visibility.css');
+        const welcomeMessageScriptUri = getUri('media', 'welcome-message.js');
+        const savedChatsScriptUri = getUri('media', 'saved-chats.js');
+        const savedChatsStyleUri = getUri('media', 'saved-chats.css');
+        const notificationsScriptUri = getUri('media', 'notifications.js');
+        const uiEnhancementsStyleUri = getUri('media', 'ui-enhancements.css');
+        const settingsScriptUri = getUri('media', 'settings.js');
+        
+        // Load codicons directly from the extension assets
+        // This fixes the 401 Unauthorized error by using local resources instead of a CDN
+        const codiconsUri = getUri('media', 'codicons', 'codicon.css');
+        const codiconsFontUri = getUri('media', 'codicons', 'codicon.ttf');
+        const historyNavigationScriptUri = getUri('media', 'history-navigation.js');
+        const keyboardShortcutsUri = getUri('media', 'keyboard-shortcuts.js');
+        
+        // Add highlight.js for code syntax highlighting
+        const highlightJsUri = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js';
+        const highlightCssUri = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css';
+
+        const htmlContent = `<!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://cdnjs.cloudflare.com; script-src ${webview.cspSource} 'unsafe-inline' https://cdnjs.cloudflare.com; font-src ${webview.cspSource} data: https://cdnjs.cloudflare.com; img-src ${webview.cspSource} data:; connect-src ${webview.cspSource};">
+            <link href="${styleUri}" rel="stylesheet">
+            <link href="${styleEnhancementsUri}" rel="stylesheet">
+            <link href="${codiconsUri}" rel="stylesheet">
+            <link href="${fallbackIconsStyleUri}" rel="stylesheet">
+            <link href="${buttonVisibilityStyleUri}" rel="stylesheet">
+            <link href="${savedChatsStyleUri}" rel="stylesheet">
+            <link href="${uiEnhancementsStyleUri}" rel="stylesheet">
+            <link href="${highlightCssUri}" rel="stylesheet">
+            <style>
+                /* Directly embed a simple version of icons in case external loading fails */
+                @font-face {
+                    font-family: 'codicon';
+                    src: url('${codiconsFontUri}') format('truetype');
+                    font-weight: normal;
+                    font-style: normal;
+                    font-display: block; /* Ensure text is visible while font loads */
+                }
+
+                /* Emergency fallback styles for buttons */
+                .action-button {
+                    min-width: 36px !important;
+                    min-height: 36px !important;
+                    background-color: var(--vscode-button-background, #0E639C) !important;
+                    color: var(--vscode-button-foreground, white) !important;
+                    border: 1px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.4)) !important;
+                }
+            </style>
+            <title>The New Fuse Chat</title>
+        </head>
+        <body class="vscode-light">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="header-left">
+                        <h2>The New Fuse</h2>
+                        <div class="provider-badge" id="providerBadge">
+                            <i class="codicon codicon-hubot"></i>
+                            <span id="providerName">VS Code</span>
+                        </div>
+                        <button id="searchToggleButton" class="action-button" title="Search Messages">
+                            <i class="codicon codicon-search"></i>
+                        </button>
+                    </div>
+                    <div class="commands-menu">
+                        <button id="commandMenuButton" class="command-menu-button" title="Commands Menu">
+                            <i class="codicon codicon-menu"></i>
+                        </button>
+                        <div id="commandsDropdown" class="commands-dropdown">
+                            <div class="command-category">AI Collaboration</div>
+                            <button class="command-item" data-command="the-new-fuse.startAICollab">
+                                <i class="codicon codicon-play"></i> Start Collaboration
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.stopAICollab">
+                                <i class="codicon codicon-stop"></i> Stop Collaboration
+                            </button>
+                            
+                            <div class="command-category">LLM Settings</div>
+                            <button class="command-item" data-command="the-new-fuse.selectLLMProvider">
+                                <i class="codicon codicon-settings-gear"></i> Select Provider
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.checkLLMProviderHealth">
+                                <i class="codicon codicon-pulse"></i> Check Provider Health
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.resetLLMProviderHealth">
+                                <i class="codicon codicon-refresh"></i> Reset Provider Health
+                            </button>
+                            
+                            <div class="command-category">MCP Connection</div>
+                            <button class="command-item" data-command="the-new-fuse.connectMCP">
+                                <i class="codicon codicon-plug"></i> Connect to MCP
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.disconnectMCP">
+                                <i class="codicon codicon-debug-disconnect"></i> Disconnect MCP
+                            </button>
+                            
+                            <div class="command-category">Chat Management</div>
+                            <button class="command-item" data-command="the-new-fuse.exportChatHistory">
+                                <i class="codicon codicon-export"></i> Export Chat History
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.importChatHistory">
+                                <i class="codicon codicon-import"></i> Import Chat History
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.viewStarredMessages">
+                                <i class="codicon codicon-star"></i> View Starred Messages
+                            </button>
+                            
+                            <div class="command-category">UI</div>
+                            <button class="command-item" data-command="the-new-fuse.showChat">
+                                <i class="codicon codicon-comment"></i> Show Chat
+                            </button>
+                            <button class="command-item" data-command="the-new-fuse.openSettings">
+                                <i class="codicon codicon-settings"></i> Settings
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-actions">
+                    <div class="action-button-group chat-controls">
+                        <button class="action-button" id="newChatButton" title="New Chat">
+                            <i class="codicon codicon-new-file"></i>
+                        </button>
+                        <button class="action-button" id="clearChatButton" title="Clear Chat History">
+                            <i class="codicon codicon-clear-all"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="action-button-group ai-collab">
+                        <button class="action-button" data-command="the-new-fuse.startAICollab" title="Start AI Collaboration">
+                            <i class="codicon codicon-play"></i>
+                        </button>
+                        <button class="action-button" data-command="the-new-fuse.stopAICollab" title="Stop AI Collaboration">
+                            <i class="codicon codicon-stop"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="action-button-group settings">
+                        <button class="action-button" data-command="the-new-fuse.selectLLMProvider" title="Select LLM Provider">
+                            <i class="codicon codicon-settings-gear"></i>
+                        </button>
+                        <button class="action-button" data-command="the-new-fuse.connectMCP" title="Connect to MCP Server">
+                            <i class="codicon codicon-plug"></i>
+                        </button>
+                    </div>
+                    
+                    <div id="active-feature-indicator" class="active-feature-indicator">
+                        <span class="feature-name">Ready</span>
+                        <span class="status-dot"></span>
+                    </div>
+                </div>
+                <div class="search-container" id="searchContainer">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search in messages...">
+                    <button id="searchPrevButton" class="search-button" title="Previous result">
+                        <i class="codicon codicon-arrow-up"></i>
+                    </button>
+                    <button id="searchNextButton" class="search-button" title="Next result">
+                        <i class="codicon codicon-arrow-down"></i>
+                    </button>
+                    <button id="searchCloseButton" class="search-button" title="Close search">
+                        <i class="codicon codicon-close"></i>
+                    </button>
+                    <span class="search-results" id="searchResults"></span>
+                </div>
+                <div class="messages" id="messages">
+                    <div class="welcome-message">
+                        <h2>Welcome to The New Fuse</h2>
+                        <p>Ask me anything about your code or let me help you with tasks.</p>
+                    </div>
+                </div>
+                <div class="input-container">
+                    <div class="input-box">
+                        <textarea id="userInput" 
+                                placeholder="Ask a question or describe a task..."
+                                rows="1"
+                                autofocus></textarea>
+                        <button id="sendButton" class="send-button">
+                            <i class="codicon codicon-send"></i>
+                        </button>
+                        <div class="prev-message-hint">↑ for previous message</div>
+                    </div>
+                </div>
+            </div>
+            <script src="${scriptUri}"></script>
+            <script src="${searchScriptUri}"></script>
+            <script src="${fallbackIconsScriptUri}"></script>
+            <script src="${buttonVisibilityScriptUri}"></script>
+            <script src="${historyNavigationScriptUri}"></script>
+            <script src="${keyboardShortcutsUri}"></script>
+            <script src="${welcomeMessageScriptUri}"></script>
+            <script src="${notificationsScriptUri}"></script>
+            <script src="${savedChatsScriptUri}"></script>
+            <script src="${settingsScriptUri}"></script>
+            <script src="${highlightJsUri}"></script>
+        </body>
+        </html>`;
+        
+        return htmlContent;
+    }
+
+    private async handleUserMessage(text: string) {
+        if (!this._panel) { return; }
+
+        const traceName = `Chat: ${text.substring(0, 30)}${text.length > 30 ? '...' : ''}`;
+        let traceId: string | null = null;
+        if (this._llmMonitoringService?.isEnabled()) {
+            traceId = this._llmMonitoringService.startTrace({ name: traceName, tags: ['chat', 'user-interaction'] });
+        }
+
+        try {
+            // Create user message
+            const userMessage: AgentMessage = {
+                id: `msg_${Date.now()}`,
+                type: AgentMessageType.USER,
+                content: text,
+                timestamp: Date.now(),
+                metadata: { source: 'chat' }
+            };
+
+            // Add user message to the chat
+            await this.addMessage(userMessage);
+
+            // Show thinking indicator and update feature status
+            this._panel.webview.postMessage({ 
+                type: 'thinking', 
+                show: true 
+            });
+            
+            // Update the feature indicator to show we're generating a response
+            this.updateFeatureStatus('working', 'Generating response');
+
+            // Get response from LLM provider
+            let accumulatedResponse = ''; // Variable to hold the full accumulated response from the stream
+            const streamingResponseId = `msg_${Date.now()}_stream`; // Unique ID for this streaming response
+            
+            // First post an empty message shell that will be updated by streaming
+            // This ensures the message container exists in the UI.
+            this._panel.webview.postMessage({
+                type: 'updateMessage',
+                id: streamingResponseId,
+                content: '', // Start with empty content
+                role: 'assistant'
+            });
+            
+            try {
+                // If we have a communication manager, send the user message through it
+                if (this._communicationManager) {
+                    // Consider if userMessage should be sent before or after LLM call starts
+                    await this._communicationManager.sendMessage(userMessage);
+                }
+
+                // Use the LLM manager to get a response
+                if (this._llmMonitoringService?.isEnabled() && this._llmManager.getActiveProvider()) {
+                    const activeProvider = this._llmManager.getActiveProvider()!;
+                    await this._llmMonitoringService.traceGeneration(
+                        activeProvider, // This needs to be the LLMProviderConfig
+                        { prompt: text, options: { stream: true } }, // This is LLMProviderRequest
+                        async () => {
+                            // The actual streaming call
+                            await this._llmManager.streamResponse(
+                                text,
+                                async (chunk: string) => {
+                                    accumulatedResponse += chunk; // Accumulate the full response
+                                    
+                                    // Update UI with the current accumulated streaming content
+                                    this._panel?.webview.postMessage({
+                                        type: 'updateMessage',
+                                        id: streamingResponseId,
+                                        content: accumulatedResponse, // Send the full accumulated content
+                                        role: 'assistant'
+                                    });
+                                }
+                            );
+                            // Construct and return the LLMProviderResponse for monitoring
+                            return { 
+                                content: accumulatedResponse, // Final accumulated content for the trace
+                                usage: undefined, // Actual usage might be hard to get with simple streaming, needs provider support
+                                provider: activeProvider.name,
+                                model: activeProvider.modelName
+                            } as LLMProviderResponse;
+                        }
+                    );
+                } else {
+                     // Fallback to original non-monitored streaming if monitoring is disabled or provider not found
+                    await this._llmManager.streamResponse(
+                        text,
+                        async (chunk: string) => {
+                            accumulatedResponse += chunk; // Accumulate the full response
+                            
+                            // Update UI with the current accumulated streaming content
+                            this._panel?.webview.postMessage({
+                                type: 'updateMessage',
+                                id: streamingResponseId,
+                                content: accumulatedResponse, // Send the full accumulated content
+                                role: 'assistant'
+                            });
+                        }
+                    );
+                }
+                
+                // Create assistant message for history using the fully accumulated response
+                const assistantMessage: AgentMessage = {
+                    id: streamingResponseId, // Use the same ID as the streaming message for consistency
+                    type: AgentMessageType.ASSISTANT,
+                    content: accumulatedResponse, // Use the fully accumulated string
+                    timestamp: Date.now(),
+                    metadata: { source: 'llm' }
+                };
+                
+                // Only store in history (don't add to UI again since streaming already did that)
+                this._messages.push(assistantMessage);
+                this.saveMessages();
+                
+                // Send through communication manager if available (but mark to avoid duplication)
+                if (accumulatedResponse && this._communicationManager) {
+                    // Create a new message object or clone, as metadata is being added
+                    const commsAssistantMessage = { ...assistantMessage, metadata: { ...assistantMessage.metadata, skipUIUpdate: true }};
+                    await this._communicationManager.sendMessage(commsAssistantMessage);
+                }
+                
+            } catch (llmError) {
+                console.error('LLM provider error:', llmError);
+                response = `I encountered an error: ${llmError instanceof Error ? llmError.message : 'Unknown error'}`;
+                
+                // Create error message
+                const errorMessage: AgentMessage = {
+                    id: `error_${Date.now()}`,
+                    type: AgentMessageType.ERROR,
+                    content: response,
+                    timestamp: Date.now()
+                };
+                
+                // Send error through communication manager
+                if (this._communicationManager) {
+                    await this._communicationManager.sendMessage(errorMessage);
+                }
+                
+                // Add error to chat history
+                await this.addMessage(errorMessage);
+            }
+
+        } catch (error) {
+            console.error('Error handling user message:', error);
+            if (this._panel) {
+                this._panel.webview.postMessage({ 
+                    type: 'error',
+                    message: error instanceof Error ? error.message : 'Failed to process message'
+                });
+            }
+        } finally {
+            if (this._llmMonitoringService?.isEnabled() && traceId) {
+                this._llmMonitoringService.endTrace(traceId);
+            }
+            // Hide thinking indicator
+            this._panel?.webview.postMessage({ 
+                type: 'thinking', 
+                show: false 
+            });
+            
+            // Reset feature indicator to ready state
+            this.updateFeatureStatus('ready', 'Ready');
+        }
+    }
+
+    private async addMessage(message: AgentMessage, isPartial: boolean = false) {
+        if (!this._panel) { return; }
+
+        // Don't store partial messages in history
+        if (!isPartial) {
+            this._messages.push(message);
+            this.saveMessages();
+        }
+
+        // Ensure we have a timestamp
+        const timestamp = message.timestamp || Date.now();
+
+        // Include metadata for UI presentation
+        const metadata = {
+            ...(message.metadata || {}),
+            sender: message.type === AgentMessageType.USER ? 'user' : 
+                   message.type === AgentMessageType.SYSTEM ? 'system' : 'assistant'
+        };
+
+        this._panel.webview.postMessage({
+            type: 'addMessage',
+            role: message.type === AgentMessageType.USER ? 'user' : 
+                  message.type === AgentMessageType.SYSTEM ? 'system' : 'assistant',
+            content: message.content,
+            timestamp: timestamp,
+            metadata: metadata,
+            isPartial
+        });
+    }
+
+    private async handleIncomingAgentMessage(message: AgentMessage) {
+        if (!this._panel) { return; }
+
+        try {
+            // Don't display user messages that we already sent
+            if (message.type === AgentMessageType.USER && message.metadata?.source === 'chat') {
+                return;
+            }
+
+            // Skip UI update if message is marked to avoid duplication
+            if (message.metadata?.skipUIUpdate) {
+                return;
+            }
+
+            // Only display messages in the chat if they're from an agent or user
+            if (message.type === AgentMessageType.ASSISTANT || 
+                message.type === AgentMessageType.USER || 
+                message.type === AgentMessageType.ERROR) {
+                
+                // Add the message to the chat UI
+                await this.addMessage(message);
+            }
+        } catch (error) {
+            console.error('Error handling incoming agent message:', error);
+        }
+    }
+
+    private async executeCommand(commandId: string): Promise<void> {
+        try {
+            console.log(`Executing command: ${commandId}`);
+            
+            // Format the command name for display (remove prefix, convert to title case)
+            const commandName = commandId.replace('the-new-fuse.', '')
+                .split(/(?=[A-Z])/).join(' ')  // Split on capital letters
+                .replace(/([A-Z])/g, ' $1')    // Add space before capital letters
+                .replace(/^\w/, c => c.toUpperCase()) // Capitalize first letter
+                .trim(); // Remove extra whitespace
+            
+            // Update the feature indicator to show the command is working
+            this.updateFeatureStatus('working', `Running: ${commandName}`);
+            
+            // Add a system message to show that the command was executed
+            if (this._panel) {
+                this._panel.webview.postMessage({
+                    type: 'addMessage',
+                    role: 'system',
+                    content: `Executing: ${commandName}`
+                });
+            }
+            
+            // Execute the VS Code command
+            await vscode.commands.executeCommand(commandId);
+            
+            // Show success message and update feature indicator
+            setTimeout(() => {
+                if (this._panel) {
+                    this._panel.webview.postMessage({
+                        type: 'addMessage',
+                        role: 'system',
+                        content: `✓ ${commandName} completed`
+                    });
+                    
+                    // Update feature indicator to show success
+                    this.updateFeatureStatus('ready', 'Ready');
+                }
+            }, 500);
+        } catch (error) {
+            console.error(`Error executing command ${commandId}:`, error);
+            
+            // Show error in UI
+            if (this._panel) {
+                this._panel.webview.postMessage({
+                    type: 'error',
+                    message: `Failed to execute command: ${error instanceof Error ? error.message : String(error)}`
+                });
+                
+                // Update feature indicator to show error
+                this.updateFeatureStatus('error', 'Command Failed');
+            }
+        }
+    }
+
+    private saveMessages(): void {
+        if (!this._context) { return; }
+        
+        try {
+            // Only save the last 100 messages to prevent context bloat
+            const messagesToSave = this._messages.slice(-100);
+            
+            // Save to global state for backward compatibility
+            this._context.globalState.update('theNewFuse.chatHistory', messagesToSave);
+            
+            // Also update current session if available
+            const currentSession = this.getCurrentSession();
+            if (currentSession) {
+                currentSession.messages = messagesToSave;
+                currentSession.updatedAt = Date.now();
+                this.saveSessions();
+            }
+            
+            console.log(`Saved ${messagesToSave.length} messages to history`);
+        } catch (error) {
+            console.error('Error saving messages:', error);
+        }
+    }
+
+    private loadMessages(): void {
+        if (!this._context) { return; }
+        
+        try {
+            // First check if we have a current session
+            const currentSession = this.getCurrentSession();
+            if (currentSession && currentSession.messages.length > 0) {
+                this._messages = [...currentSession.messages];
+                console.log(`Loaded ${currentSession.messages.length} messages from current session`);
+                return;
+            }
+            
+            // Fall back to global state for backward compatibility
+            const savedMessages = this._context.globalState.get<AgentMessage[]>('theNewFuse.chatHistory', []);
+            if (savedMessages && savedMessages.length > 0) {
+                this._messages = savedMessages;
+                
+                // If we have a current session but it's empty, update it
+                if (currentSession) {
+                    currentSession.messages = savedMessages;
+                    currentSession.updatedAt = Date.now();
+                    this.saveSessions();
+                }
+                
+                console.log(`Loaded ${savedMessages.length} messages from global history`);
+            }
+        } catch (error) {
+            console.error('Error loading messages:', error);
+            this._messages = [];
+        }
+    }
+
+    private displaySavedMessages(): void {
+        if (!this._panel || this._messages.length === 0) { return; }
+        
+        // Display only the last 20 messages to avoid cluttering the UI
+        const messagesToDisplay = this._messages.slice(-20);
+        
+        for (const message of messagesToDisplay) {
+            this.addMessage(message);
+        }
+    }
+
+    private clearChatHistory(): void {
+        if (!this._panel || !this._context) { return; }
+        
+        // Clear message array
+        this._messages = [];
+        
+        // Clear from global state
+        this._context.globalState.update('theNewFuse.chatHistory', undefined);
+        
+        // Update current session
+        const currentSession = this.getCurrentSession();
+        if (currentSession) {
+            currentSession.messages = [];
+            currentSession.updatedAt = Date.now();
+            this.saveSessions();
+        }
+        
+        // Clear UI
+        this._panel.webview.postMessage({
+            type: 'clearMessages'
+        });
+        
+        // Add system message to confirm history cleared
+        const clearMessage: AgentMessage = {
+            id: `system_${Date.now()}`,
+            type: AgentMessageType.SYSTEM,
+            content: 'Chat history cleared',
+            timestamp: Date.now()
+        };
+        
+        this.addMessage(clearMessage);
+    }
+
+    private async dispose(): Promise<void> {
+        if (this._panel) {
+            // Don't dispose the webview view directly
+            this._panel = undefined;
+        }
+
+        while (this._disposables.length) {
+            const disposable = this._disposables.pop();
+            if (disposable) {
+                disposable.dispose();
+            }
+        }
+    }
+
+    public updateProviderBadge(providerName: string): void {
+        if (!this._panel) { return; }
+        
+        this._panel.webview.postMessage({
+            type: 'updateProvider',
+            provider: providerName
+        });
+    }
+
+    private updateInitialProviderBadge(): void {
+        if (!this._panel || !this._llmManager) { return; }
+        
+        const activeProvider = this._llmManager.getActiveProvider();
+        if (activeProvider) {
+            this.updateProviderBadge(activeProvider.name);
+        }
+    }
+    
+    /**
+     * Refreshes the chat UI with the latest provider and settings
+     */
+    public refreshChatUI(): void {
+        if (!this._panel) { return; }
+        
+        // Update provider badge
+        this.updateInitialProviderBadge();
+        
+        // Send a refresh event to the webview
+        this._panel.webview.postMessage({
+            type: 'refreshUI'
+        });
+        
+        // Add a system message to indicate the refresh
+        const activeProvider = this._llmManager.getActiveProvider();
+        if (activeProvider) {
+            const refreshMessage: AgentMessage = {
+                id: `system_${Date.now()}`,
+                type: AgentMessageType.SYSTEM,
+                content: `Using LLM provider: ${activeProvider.name}`,
+                timestamp: Date.now()
+            };
+            
+            this.addMessage(refreshMessage);
+        }
+    }
+    
+    /**
+     * Notify the user about a provider switch due to rate limiting
+     * @param previousProvider The provider ID that hit rate limits
+     * @param newProvider The new provider ID that was switched to
+     */
+    public notifyProviderSwitch(previousProvider: string, newProvider: string): void {
+        if (!this._panel) { return; }
+        
+        // Update provider badge first
+        const activeProvider = this._llmManager.getActiveProvider();
+        if (activeProvider) {
+            this.updateProviderBadge(activeProvider.name);
+        }
+        
+        // Add a system message to indicate the provider switch
+        const switchMessage: AgentMessage = {
+            id: `system_${Date.now()}`,
+            type: AgentMessageType.SYSTEM,
+            content: `⚠️ Automatically switched from ${previousProvider} to ${newProvider} due to rate limiting.`,
+            timestamp: Date.now(),
+            metadata: { 
+                isAlert: true,
+                alertType: 'warning'
+            }
+        };
+        
+        this.addMessage(switchMessage);
+        
+        // Also update the status visually
+        this._panel.webview.postMessage({
+            type: 'providerSwitched',
+            from: previousProvider,
+            to: newProvider,
+            reason: 'rate_limit'
+        });
+    }
+
+    private async handleNewChat() {
+        if (!this._panel) { return; }
+
+        // Create a new session
+        const newSession: ChatSession = {
+            id: uuidv4(),
+            name: `Chat ${new Date().toLocaleString()}`,
+            messages: [],
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+        
+        // Add to sessions
+        this._sessions.push(newSession);
+        this._currentSessionId = newSession.id;
+        this._messages = [];
+        
+        // Save state
+        this.saveSessions();
+        
+        // Update UI
+        this._panel.webview.postMessage({
+            type: 'clearMessages'
+        });
+        
+        // Show the welcome message again
+        this._panel.webview.postMessage({
+            type: 'showWelcomeMessage'
+        });
+
+        // Update the provider badge
+        this.updateInitialProviderBadge();
+        
+        // Update saved chats list
+        this.sendSavedChatsList();
+    }
+
+    /**
+     * Update the feature indicator in the UI with the current active feature and status
+     * @param state 'ready', 'working', or 'error'
+     * @param text The text to display in the feature indicator
+     */
+    public updateFeatureStatus(state: 'ready' | 'working' | 'error', text: string) {
+        if (!this._panel) { return; }
+        
+        this._panel.webview.postMessage({
+            type: 'updateFeatureStatus',
+            state,
+            text
+        });
+    }
+
+    /**
+     * Load saved chat sessions from extension context
+     */
+    private loadSessions(): void {
+        if (!this._context) { return; }
+        
+        try {
+            const savedSessions = this._context.globalState.get<ChatSession[]>('theNewFuse.chatSessions', []);
+            if (savedSessions && savedSessions.length > 0) {
+                this._sessions = savedSessions;
+                this._currentSessionId = this._context.globalState.get<string>('theNewFuse.currentChatSessionId');
+                console.log(`Loaded ${savedSessions.length} chat sessions`);
+            } else {
+                // Create a default session if none exists
+                this.createDefaultSession();
+            }
+        } catch (error) {
+            console.error('Error loading chat sessions:', error);
+            this._sessions = [];
+            this.createDefaultSession();
+        }
+    }
+    
+    /**
+     * Create a default chat session
+     */
+    private createDefaultSession(): void {
+        const defaultSession: ChatSession = {
+            id: uuidv4(),
+            name: 'Default Chat',
+            messages: [],
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+        
+        this._sessions.push(defaultSession);
+        this._currentSessionId = defaultSession.id;
+        this.saveSessions();
+    }
+    
+    /**
+     * Save chat sessions to extension context
+     */
+    private saveSessions(): void {
+        if (!this._context) { return; }
+        
+        try {
+            this._context.globalState.update('theNewFuse.chatSessions', this._sessions);
+            this._context.globalState.update('theNewFuse.currentChatSessionId', this._currentSessionId);
+        } catch (error) {
+            console.error('Error saving chat sessions:', error);
+        }
+    }
+    
+    /**
+     * Get the current chat session
+     */
+    private getCurrentSession(): ChatSession | undefined {
+        return this._sessions.find(session => session.id === this._currentSessionId);
+    }
+    
+    /**
+     * Create a new chat session with the given name
+     */
+    private saveCurrentChatSession(name: string): void {
+        // Don't create empty sessions
+        if (this._messages.length === 0) {
+            this.showNotification('Cannot save an empty chat session');
+            return;
+        }
+        
+        const session: ChatSession = {
+            id: uuidv4(),
+            name: name,
+            messages: [...this._messages], // Copy current messages
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+        
+        this._sessions.push(session);
+        this._currentSessionId = session.id;
+        
+        this.saveSessions();
+        this.sendSavedChatsList();
+        this.showNotification(`Chat saved as "${name}"`);
+    }
+    
+    /**
+     * Switch to a different chat session
+     */
+    private switchChatSession(sessionId: string): void {
+        const session = this._sessions.find(s => s.id === sessionId);
+        if (!session) {
+            console.error(`Chat session with ID ${sessionId} not found`);
+            return;
+        }
+        
+        this._currentSessionId = sessionId;
+        this._messages = [...session.messages]; // Copy session messages
+        
+        // Update UI
+        if (this._panel) {
+            // Clear current messages
+            this._panel.webview.postMessage({
+                type: 'clearMessages'
+            });
+            
+            // Display session messages
+            for (const message of session.messages) {
+                // Include metadata for UI presentation
+                const metadata = {
+                    ...(message.metadata || {}),
+                    sender: message.type === AgentMessageType.USER ? 'user' : 
+                           message.type === AgentMessageType.SYSTEM ? 'system' : 'assistant'
+                };
+                
+                this._panel.webview.postMessage({
+                    type: 'addMessage',
+                    role: message.type === AgentMessageType.USER ? 'user' : 
+                          message.type === AgentMessageType.SYSTEM ? 'system' : 'assistant',
+                    content: message.content,
+                    timestamp: message.timestamp || Date.now(),
+                    metadata: metadata
+                });
+            }
+            
+            // Update session state
+            this._panel.webview.postMessage({
+                type: 'currentChatChanged',
+                chatId: sessionId
+            });
+        }
+        
+        // Update state
+        this.saveSessions();
+        this.showNotification(`Switched to "${session.name}"`);
+    }
+    
+    /**
+     * Delete a chat session
+     */
+    private deleteChatSession(sessionId: string): void {
+        // Don't delete the current session
+        if (sessionId === this._currentSessionId) {
+            this.showNotification('Cannot delete the current chat session');
+            return;
+        }
+        
+        // Find session index
+        const index = this._sessions.findIndex(s => s.id === sessionId);
+        if (index === -1) {
+            console.error(`Chat session with ID ${sessionId} not found`);
+            return;
+        }
+        
+        // Get name for notification
+        const sessionName = this._sessions[index].name;
+        
+        // Remove session
+        this._sessions.splice(index, 1);
+        
+        // Create a default session if none left
+        if (this._sessions.length === 0) {
+            this.createDefaultSession();
+        }
+        
+        // Update state
+        this.saveSessions();
+        this.sendSavedChatsList();
+        this.showNotification(`Deleted chat "${sessionName}"`);
+    }
+    
+    /**
+     * Star a message
+     */
+    private starMessage(messageId: string, content: string, note?: string): void {
+        const starredMessage: StarredMessage = {
+            id: uuidv4(),
+            sessionId: this._currentSessionId || 'unknown',
+            messageId,
+            content,
+            timestamp: Date.now(),
+            note
+        };
+        
+        this._starredMessages.push(starredMessage);
+        this.saveStarredMessages();
+        this.showNotification('Message starred');
+    }
+    
+    /**
+     * Unstar a message
+     */
+    private unstarMessage(messageId: string): void {
+        const index = this._starredMessages.findIndex(sm => sm.messageId === messageId);
+        if (index !== -1) {
+            this._starredMessages.splice(index, 1);
+            this.saveStarredMessages();
+            this.showNotification('Message unstarred');
+        }
+    }
+    
+    /**
+     * View starred messages
+     */
+    private async viewStarredMessages(): Promise<void> {
+        if (this._starredMessages.length === 0) {
+            this.showNotification('No starred messages found');
+            return;
+        }
+        
+        // Create a formatted display of starred messages
+        const starredDisplay = this._starredMessages.map(sm => {
+            const date = new Date(sm.timestamp).toLocaleDateString();
+            const preview = sm.content.substring(0, 100) + (sm.content.length > 100 ? '...' : '');
+            return `**${date}** - ${preview}${sm.note ? `\n*Note: ${sm.note}*` : ''}`;
+        }).join('\n\n---\n\n');
+        
+        // Add a system message with starred messages
+        const starredMessage: AgentMessage = {
+            id: `starred_${Date.now()}`,
+            type: AgentMessageType.SYSTEM,
+            content: `**Starred Messages (${this._starredMessages.length})**\n\n${starredDisplay}`,
+            timestamp: Date.now(),
+            metadata: { isStarredView: true }
+        };
+        
+        this.addMessage(starredMessage);
+    }
+    
+    /**
+     * Save starred messages to context
+     */
+    private saveStarredMessages(): void {
+        if (!this._context) { return; }
+        
+        try {
+            this._context.globalState.update('theNewFuse.starredMessages', this._starredMessages);
+        } catch (error) {
+            console.error('Error saving starred messages:', error);
+        }
+    }
+    
+    /**
+     * Load starred messages from context
+     */
+    private loadStarredMessages(): void {
+        if (!this._context) { return; }
+        
+        try {
+            const saved = this._context.globalState.get<StarredMessage[]>('theNewFuse.starredMessages', []);
+            this._starredMessages = saved;
+        } catch (error) {
+            console.error('Error loading starred messages:', error);
+            this._starredMessages = [];
+        }
+    }
+
+    /**
+     * Export chat history to a JSON file
+     */
+    private async exportChatHistory(): Promise<void> {
+        try {
+            // Prepare export data
+            const exportData = {
+                sessions: this._sessions,
+                exportDate: new Date().toISOString(),
+                version: '1.0'
+            };
+            
+            // Show save dialog
+            const uri = await vscode.window.showSaveDialog({
+                defaultUri: vscode.Uri.file('the-new-fuse-chat-export.json'),
+                filters: {
+                    'JSON Files': ['json'],
+                    'All Files': ['*']
+                }
+            });
+            
+            if (uri) {
+                // Write the file
+                const content = JSON.stringify(exportData, null, 2);
+                await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf8'));
+                
+                this.showNotification(`Chat history exported to ${uri.fsPath}`);
+            }
+        } catch (error) {
+            console.error('Error exporting chat history:', error);
+            this.showNotification('Failed to export chat history');
+        }
+    }
+    
+    /**
+     * Import chat history from a JSON file
+     */
+    private async importChatHistory(): Promise<void> {
+        try {
+            // Show open dialog
+            const uris = await vscode.window.showOpenDialog({
+                canSelectFiles: true,
+                canSelectMany: false,
+                filters: {
+                    'JSON Files': ['json'],
+                    'All Files': ['*']
+                }
+            });
+            
+            if (uris && uris.length > 0) {
+                // Read the file
+                const content = await vscode.workspace.fs.readFile(uris[0]);
+                const data = JSON.parse(content.toString());
+                
+                // Validate the data structure
+                if (data.sessions && Array.isArray(data.sessions)) {
+                    // Merge imported sessions with existing ones
+                    const importedSessions = data.sessions.map((session: any) => ({
+                        ...session,
+                        id: uuidv4(), // Generate new IDs to avoid conflicts
+                        name: `${session.name} (Imported)`
+                    }));
+                    
+                    this._sessions.push(...importedSessions);
+                    this.saveSessions();
+                    this.sendSavedChatsList();
+                    
+                    this.showNotification(`Imported ${importedSessions.length} chat sessions`);
+                } else {
+                    this.showNotification('Invalid file format');
+                }
+            }
+        } catch (error) {
+            console.error('Error importing chat history:', error);
+            this.showNotification('Failed to import chat history');
+        }
+    }
+
+    /**
+     * Show a notification message in the UI
+     */
+    private showNotification(message: string): void {
+        if (!this._panel) { return; }
+        
+        this._panel.webview.postMessage({
+            type: 'notification',
+            message
+        });
+    }
+}

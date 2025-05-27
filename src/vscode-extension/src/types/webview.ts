@@ -1,30 +1,28 @@
-import { LLMProviderInfo } from './llm.js';
+import * as vscode from 'vscode';
 
-export interface WebViewMessage {
-    command: string;
-    text?: string;
-    data?: Record<string, any>;
-    timestamp?: string;
+export interface WebviewProvider {
+    createWebviewPanel(viewType: string, title: string, showOptions: vscode.ViewColumn, options?: vscode.WebviewOptions): vscode.WebviewPanel;
+    getHtmlForWebview(webview: vscode.Webview): string;
 }
 
-export interface WebViewConnection {
-    id: string;
-    status: 'connected' | 'disconnected';
-    timestamp: string;
+export interface WebviewMessage {
+    type: string;
+    payload: any;
 }
 
-export interface WebViewStatus {
-    connected: boolean;
-    provider?: LLMProviderInfo;
-    error?: string;
+export interface WebviewState {
+    viewType: string;
+    title: string;
+    visible: boolean;
+    lastMessage?: WebviewMessage;
 }
 
-export interface WebViewCommandEvent {
-    command: string;
-    args: any[];
-    timestamp: string;
+export interface WebviewPanelSerializer {
+    deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any): Thenable<void>;
 }
 
-export interface WebViewCommandHandler {
-    (message: WebViewMessage): Promise<void>;
+export interface WebviewUpdateOptions {
+    content?: string;
+    title?: string;
+    viewColumn?: vscode.ViewColumn;
 }

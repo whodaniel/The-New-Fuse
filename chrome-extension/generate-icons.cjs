@@ -1,7 +1,13 @@
-// CommonJS version of generate-icons.js
+'use strict';
+
+// Add ESLint directives to allow CommonJS syntax
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-env node */
+
+// Imports
 const fs = require('fs');
 const path = require('path');
-const { Buffer } = require('buffer');
+const { createCanvas } = require('canvas');
 
 // Simple icon generation that copies pre-made icons
 function generateIcons() {
@@ -25,9 +31,7 @@ function generateIcons() {
           fs.copyFileSync(defaultPath, targetPath);
         } else {
           // If no default icon exists, create a minimal placeholder
-          const canvas = document.createElement('canvas');
-          canvas.width = size;
-          canvas.height = size;
+          const canvas = createCanvas(size, size);
           const ctx = canvas.getContext('2d');
           
           // Fill with a color based on state
@@ -59,9 +63,8 @@ function generateIcons() {
           ctx.fillText('F', size/2, size/2);
           
           // Convert to PNG and save
-          const dataUrl = canvas.toDataURL('image/png');
-          const data = dataUrl.replace(/^data:image\/png;base64,/, '');
-          fs.writeFileSync(targetPath, Buffer.from(data, 'base64'));
+          const buffer = canvas.toBuffer('image/png');
+          fs.writeFileSync(targetPath, buffer);
         }
         
         console.log(`Generated icon${size}${state}.png`);

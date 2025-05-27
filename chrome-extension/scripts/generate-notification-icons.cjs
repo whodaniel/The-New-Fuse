@@ -1,12 +1,14 @@
+'use strict';
+
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-env node */
+
 /**
  * Generate notification icons for The New Fuse - AI Bridge
  */
 const fs = require('fs');
 const path = require('path');
 const { createCanvas } = require('canvas');
-
-// Get the directory name (CommonJS version)
-const __dirname = path.dirname(__filename);
 
 // Ensure icons directory exists
 const iconsDir = path.join(__dirname, '../icons');

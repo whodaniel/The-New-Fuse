@@ -1,0 +1,123 @@
+/* Button visibility enhancement styles */
+
+/* Ensure buttons always have a visible background and border */
+.action-button {
+    background-color: var(--vscode-button-background, #0E639C) !important;
+    color: var(--vscode-button-foreground, white) !important;
+    border: 2px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.6)) !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 4px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.action-button:hover {
+    background-color: var(--vscode-button-hoverBackground, #1177bb) !important;
+    border-color: var(--vscode-contrastActiveBorder, rgba(255, 255, 255, 0.8)) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Style for the text labels added by button-visibility.js */
+.button-text-label, .enhanced-button-label, .emergency-button-label {
+    font-size: 10px !important;
+    margin-top: 3px !important;
+    display: block !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    max-width: 100% !important;
+    line-height: 1.1 !important;
+    text-align: center !important;
+    font-weight: bold !important;
+    letter-spacing: 0.5px !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3) !important;
+    color: var(--vscode-button-foreground, white) !important;
+}
+
+/* Ensure command menu button is visible */
+#commandMenuButton {
+    background-color: var(--vscode-button-background, #0E639C) !important;
+    color: var(--vscode-button-foreground, white) !important;
+    border: 2px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.6)) !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Make search button visible too */
+#searchToggleButton {
+    background-color: var(--vscode-button-background, #0E639C) !important;
+    color: var(--vscode-button-foreground, white) !important;
+    border: 2px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.6)) !important;
+    padding: 4px 8px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Send button needs to be super visible */
+#sendButton {
+    background-color: var(--vscode-button-background, #0E639C) !important;
+    color: var(--vscode-button-foreground, white) !important;
+    border: 2px solid var(--vscode-contrastBorder, rgba(255, 255, 255, 0.6)) !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Fallback for text inside buttons */
+.action-button .codicon,
+#commandMenuButton .codicon,
+#searchToggleButton .codicon,
+#sendButton .codicon {
+    color: var(--vscode-button-foreground, white) !important;
+    font-size: 16px !important;
+    margin-bottom: 2px !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3) !important;
+}
+
+/* Fallback class for when icons aren't loaded properly */
+.button-fallback-text {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: bold !important;
+    height: 100% !important;
+    font-size: 14px !important;
+}
+
+/* Special handling for common actions */
+.button-fallback-text[data-icon="play"]::before { content: "▶"; }
+.button-fallback-text[data-icon="stop"]::before { content: "⏹"; }
+.button-fallback-text[data-icon="settings"]::before { content: "⚙"; }
+.button-fallback-text[data-icon="plug"]::before { content: "🔌"; }
+.button-fallback-text[data-icon="clear"]::before { content: "🗑️"; }
+.button-fallback-text[data-icon="send"]::before { content: "📤"; }
+.button-fallback-text[data-icon="search"]::before { content: "🔍"; }
+.button-fallback-text[data-icon="menu"]::before { content: "☰"; }
+
+/* Provider switched notification */
+.provider-switch-notification {
+    background-color: var(--vscode-notificationCenterHeader-background, #2D2D30) !important;
+    color: var(--vscode-notificationCenterHeader-foreground, white) !important;
+    padding: 8px 12px !important;
+    margin: 8px 0 !important;
+    border-radius: 4px !important;
+    border-left: 4px solid var(--vscode-notificationsWarningIcon-foreground, #FC0) !important;
+    font-style: italic !important;
+}

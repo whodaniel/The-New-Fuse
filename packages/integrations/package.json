@@ -1,6 +1,6 @@
 {
   "name": "integrations",
-  "packageManager": "yarn@3.6.0",
+  "packageManager": "yarn@4.9.1",
   "scripts": {
     "clean": "rimraf dist .turbo node_modules"
   }

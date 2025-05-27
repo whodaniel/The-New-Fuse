@@ -284,11 +284,11 @@ If you encounter issues with workspace dependencies, try:
 
 ```bash
 # Fix package.json
-sed -i.bak 's/"packageManager": "npm@10.2.4"/"packageManager": "yarn@3.6.0"/' package.json
+sed -i.bak 's/"packageManager": "npm@10.2.4"/"packageManager": "yarn@4.9.1"/' package.json
 
 # Set up Yarn properly
 corepack enable
-yarn set version berry
+yarn set version 4.9.1
 yarn config set nodeLinker node-modules
 
 # Install dependencies

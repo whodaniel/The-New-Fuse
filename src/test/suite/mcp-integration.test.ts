@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { MCPManager } from '../../vscode-extension/mcp-integration/mcp-manager.js';
-import { ErrorCode, MCPError } from '../../vscode-extension/core/error-handling.js';
+import { MCPManager } from '../../src/vscode-extension/mcp-integration/mcp-manager.js';
+import { ErrorCode, MCPError } from '../../src/vscode-extension/core/error-handling.js';
 
 suite('MCP Integration Test Suite', () => {
     let mcpManager: MCPManager;

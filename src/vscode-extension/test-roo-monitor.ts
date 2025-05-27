@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { RooOutputMonitor } from './roo-output-monitor.js';
+import { RooOutputMonitor } from './roo-output-monitor';
 import * as WebSocket from 'ws';
 
 /**
@@ -22,7 +22,7 @@ export class RooMonitorTester {
         this.outputChannel.appendLine('Starting Roo monitor test...');
         
         // Create a test WebSocket client
-        this.testWs = new WebSocket.WebSocket('ws://localhost:3710');
+        this.testWs = new WebSocket('ws://localhost:3710');
         
         this.testWs.on('open', () => {
             this.outputChannel.appendLine('Test WebSocket connected');

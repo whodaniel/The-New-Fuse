@@ -49,7 +49,7 @@ ARG NGINX_VERSION=alpine
 ### Shared Build Stage ###
 FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
-RUN corepack enable && corepack prepare yarn@3.6.0 --activate
+RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 
 ### Development Image ###
 FROM builder AS dev

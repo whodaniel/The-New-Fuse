@@ -1,176 +1,194 @@
-import { getLogger } from '../../core/logging.js';
-import { LLMProvider, LLMProviderInfo, GenerateOptions } from '../../types.js';
+import * as vscode from 'vscode';
+import * as http from 'http';
+import * as https from 'https';
+import { LLMProvider, LLMQueryOptions } from '../../types';
 
 /**
- * Ollama LLM Provider implementation
- * Provides integration with locally running Ollama models
+ * Ollama LLM Provider
+ * Implements communication with locally running Ollama server
  */
 export class OllamaProvider implements LLMProvider {
-  private readonly logger = getLogger();
-  private readonly availableModels = [
-    'llama3',
-    'llama3:8b',
-    'llama3:70b',
-    'codellama',
-    'codellama:7b',
-    'codellama:13b',
-    'mistral',
-    'mistral:7b',
-    'mistral-openorca',
-    'mixtral',
-    'falcon'
-  ];
-  private model = 'llama3';
-  private readonly baseUrl: string;
-  
-  // Required properties by LLMProvider interface
-  public readonly id: string = 'ollama';
-  public readonly name: string = 'Ollama';
-  
-  constructor(baseUrl = 'http://localhost:11434') {
-    this.baseUrl = baseUrl;
-    this.logger.debug('Ollama provider initialized');
-  }
-  
-  public async isAvailable(): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/version`);
-      return response.ok;
-    } catch (error) {
-      this.logger.error('Ollama availability check failed:', error);
-      return false;
+    id = 'ollama';
+    name = 'Ollama';
+    private baseUrl: string = 'http://localhost:11434';
+
+    constructor(private readonly context: vscode.ExtensionContext) {
+        // Load configuration
+        this.loadConfiguration();
+        
+        // Listen for configuration changes
+        context.subscriptions.push(
+            vscode.workspace.onDidChangeConfiguration(e => {
+                if (e.affectsConfiguration('theNewFuse.ollama')) {
+                    this.loadConfiguration();
+                }
+            })
+        );
     }
-  }
-  
-  public async generate(prompt: string, options?: GenerateOptions): Promise<string> {
-    try {
-      this.logger.debug(`Sending prompt to Ollama: ${prompt.substring(0, 50)}...`);
-      
-      // Check if Ollama is available
-      if (!await this.isOllamaAvailable()) {
-        return "Ollama is not available. Please make sure it's running on your machine.";
-      }
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60-second timeout
-      
-      const response = await fetch(`${this.baseUrl}/api/generate`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          model: this.model,
-          prompt: prompt,
-          stream: false,
-          options: {
-            temperature: options?.temperature ?? 0.7,
-            num_predict: options?.maxTokens ?? 1000
-          }
-        }),
-        signal: controller.signal
-      });
-      
-      clearTimeout(timeoutId);
-      
-      if (!response.ok) {
-        const errorData = await response.text();
-        throw new Error(`Ollama API error: ${errorData || response.statusText}`);
-      }
-      
-      const data = await response.json();
-      return data.response;
-    } catch (error) {
-      this.logger.error('Ollama generation failed', error);
-      if (error.name === 'AbortError') {
-        return 'Request timed out. Please try again.';
-      }
-      
-      // Special case for network errors (likely Ollama not running)
-      if (error.message.includes('Failed to fetch') || error.message.includes('ECONNREFUSED')) {
-        return "Could not connect to Ollama. Please make sure it's running on your machine.";
-      }
-      
-      throw error;
+
+    private loadConfiguration(): void {
+        const config = vscode.workspace.getConfiguration('theNewFuse.ollama');
+        this.baseUrl = config.get<string>('url', 'http://localhost:11434');
     }
-  }
-  
-  public async getInfo(): Promise<LLMProviderInfo> {
-    // Try to get actual models from Ollama
-    const actualModels = await this.fetchAvailableModels();
-    
-    return {
-      id: this.id,
-      name: this.name,
-      version: '1.0.0',
-      description: 'Local LLM models via Ollama',
-      maxTokens: 32000, // Typical context window for many Ollama models
-      isAvailable: await this.isAvailable(),
-      models: actualModels.length > 0 ? actualModels : this.availableModels,
-      status: await this.isAvailable() ? 'available' : 'unavailable',
-      metadata: {
-        currentModel: this.model,
-        baseUrl: this.baseUrl
-      }
-    };
-  }
-  
-  public async setModel(modelId: string): Promise<boolean> {
-    // Get available models
-    const models = await this.fetchAvailableModels();
-    
-    if (models.length > 0 && !models.includes(modelId)) {
-      return false;
-    }
-    
-    this.model = modelId;
-    return true;
-  }
-  
-  /**
-   * Check if Ollama is available
-   */
-  private async isOllamaAvailable(): Promise<boolean> {
-    try {
-      const response = await fetch(`${this.baseUrl}/api/version`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+
+    async isAvailable(): Promise<boolean> {
+        try {
+            // Check if Ollama is running by querying the list of models
+            const result = await this.makeRequest('/api/tags', 'GET');
+            return !!result.models && result.models.length > 0;
+        } catch (error) {
+            console.error('Ollama availability check failed:', error);
+            return false;
         }
-      });
-      
-      return response.ok;
-    } catch (error) {
-      this.logger.warn('Ollama availability check failed', error);
-      return false;
     }
-  }
-  
-  /**
-   * Fetch available models from Ollama
-   */
-  private async fetchAvailableModels(): Promise<string[]> {
-    try {
-      if (!await this.isOllamaAvailable()) {
-        return [];
-      }
-      
-      const response = await fetch(`${this.baseUrl}/api/tags`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
+
+    async query(prompt: string, options?: LLMQueryOptions): Promise<string> {
+        try {
+            const model = options?.model || 'llama2';
+            const temperature = options?.temperature || 0.7;
+            const maxTokens = options?.maxTokens;
+            
+            const response = await this.makeRequest('/api/generate', 'POST', {
+                model,
+                prompt,
+                temperature,
+                ...(maxTokens && { num_predict: maxTokens }),
+                stream: false
+            });
+
+            return response.response;
+        } catch (error) {
+            console.error('Ollama query failed:', error);
+            throw new Error(`Failed to query Ollama: ${error instanceof Error ? error.message : String(error)}`);
         }
-      });
-      
-      if (!response.ok) {
-        return [];
-      }
-      
-      const data = await response.json();
-      return data.models?.map((model: any) => model.name) || [];
-    } catch (error) {
-      this.logger.warn('Failed to fetch Ollama models', error);
-      return [];
     }
-  }
+
+    async streamResponse(prompt: string, callback: (chunk: string) => void, options?: LLMQueryOptions): Promise<void> {
+        try {
+            const model = options?.model || 'llama2';
+            const temperature = options?.temperature || 0.7;
+            const maxTokens = options?.maxTokens;
+            
+            let fullResponse = '';
+            
+            await this.makeStreamingRequest('/api/generate', 'POST', {
+                model,
+                prompt,
+                temperature,
+                ...(maxTokens && { num_predict: maxTokens }),
+                stream: true
+            }, (chunk) => {
+                if (chunk.response) {
+                    fullResponse += chunk.response;
+                    callback(fullResponse);
+                }
+            });
+        } catch (error) {
+            console.error('Ollama stream failed:', error);
+            throw new Error(`Failed to stream Ollama response: ${error instanceof Error ? error.message : String(error)}`);
+        }
+    }
+    
+    private async makeRequest(endpoint: string, method: string, body?: any): Promise<any> {
+        return new Promise((resolve, reject) => {
+            const url = new URL(this.baseUrl + endpoint);
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            const req = (url.protocol === 'https:' ? https : http).request(url, options, (res) => {
+                let data = '';
+                res.on('data', (chunk) => {
+                    data += chunk;
+                });
+                res.on('end', () => {
+                    try {
+                        if (res.statusCode && res.statusCode >= 200 && res.statusCode < 300) {
+                            const parsedData = JSON.parse(data);
+                            resolve(parsedData);
+                        } else {
+                            reject(new Error(`Request failed with status ${res.statusCode}: ${data}`));
+                        }
+                    } catch (error) {
+                        reject(error);
+                    }
+                });
+            });
+            
+            req.on('error', (error) => {
+                reject(error);
+            });
+            
+            if (body) {
+                req.write(JSON.stringify(body));
+            }
+            req.end();
+        });
+    }
+    
+    private async makeStreamingRequest(
+        endpoint: string, 
+        method: string, 
+        body: any, 
+        onChunk: (chunk: any) => void
+    ): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const url = new URL(this.baseUrl + endpoint);
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            };
+            
+            const req = (url.protocol === 'https:' ? https : http).request(url, options, (res) => {
+                let buffer = '';
+                
+                res.on('data', (chunk) => {
+                    const chunkStr = chunk.toString();
+                    buffer += chunkStr;
+                    
+                    // Process complete JSON objects
+                    let newlineIndex;
+                    while ((newlineIndex = buffer.indexOf('\n')) !== -1) {
+                        const line = buffer.substring(0, newlineIndex);
+                        buffer = buffer.substring(newlineIndex + 1);
+                        
+                        if (line.trim()) {
+                            try {
+                                const data = JSON.parse(line);
+                                onChunk(data);
+                                
+                                // If this is the final chunk
+                                if (data.done) {
+                                    resolve();
+                                    return;
+                                }
+                            } catch (error) {
+                                console.error('Error parsing JSON chunk:', error);
+                            }
+                        }
+                    }
+                });
+                
+                res.on('end', () => {
+                    resolve();
+                });
+                
+                res.on('error', (error) => {
+                    reject(error);
+                });
+            });
+            
+            req.on('error', (error) => {
+                reject(error);
+            });
+            
+            req.write(JSON.stringify(body));
+            req.end();
+        });
+    }
 }

@@ -1,0 +1,39 @@
+{
+  "name": "the-new-fuse",
+  "displayName": "The New Fuse - Minimal Test",
+  "description": "Minimal test version",
+  "version": "2.1.0",
+  "publisher": "the-new-fuse",
+  "engines": { 
+    "vscode": "^1.74.0" 
+  },
+  "categories": ["Other"],
+  "main": "./out/extension-minimal.js",
+  "activationEvents": ["*"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "theNewFuse.testCommand",
+        "title": "Test Command"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "theNewFuse",
+          "title": "The New Fuse Test",
+          "icon": "$(home)"
+        }
+      ]
+    },
+    "views": {
+      "theNewFuse": [
+        {
+          "type": "webview",
+          "id": "theNewFuse.testView",
+          "name": "Test View"
+        }
+      ]
+    }
+  }
+}

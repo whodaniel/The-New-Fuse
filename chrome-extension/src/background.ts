@@ -107,6 +107,7 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 // Handle messages from content scripts or popup
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  backgroundLogger.info('Background script received message:', message.type, message);
   try {
     if (!webSocketManager || !fileTransferManager) {
       backgroundLogger.error('Managers not initialized, cannot handle message:', message.type);
@@ -115,20 +116,35 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     }
 
     switch (message.type) {
-      case 'GET_WEBSOCKET_STATUS': // Changed from GET_SERVER_STATUS for clarity
+      case 'GET_CONNECTION_STATUS': // Corrected from GET_WEBSOCKET_STATUS
+        backgroundLogger.info('Handling GET_CONNECTION_STATUS');
         sendResponse(webSocketManager.getConnectionStatus());
         break;
-      case 'WEBSOCKET_CONNECT': // Changed from START_SERVER
+      case 'RECONNECT': // Corrected from WEBSOCKET_CONNECT
+        backgroundLogger.info('Handling RECONNECT');
         webSocketManager.connect().then(success => sendResponse({ success }));
         return true; // Async
-      case 'WEBSOCKET_DISCONNECT': // Changed from STOP_SERVER
+      case 'ENABLE_DEBUG_MODE': // Added handler
+        backgroundLogger.info('Handling ENABLE_DEBUG_MODE');
+        // Add logic to enable debug mode if needed in background
+        sendResponse({ success: true });
+        break;
+      case 'DISABLE_DEBUG_MODE': // Added handler
+        backgroundLogger.info('Handling DISABLE_DEBUG_MODE');
+        // Add logic to disable debug mode if needed in background
+        sendResponse({ success: true });
+        break;
+      case 'WEBSOCKET_DISCONNECT':
+        backgroundLogger.info('Handling WEBSOCKET_DISCONNECT');
         webSocketManager.disconnect();
         sendResponse({ success: true });
         break;
       case 'GET_ACTIVE_TRANSFERS':
+        backgroundLogger.info('Handling GET_ACTIVE_TRANSFERS');
         sendResponse(Array.from(fileTransferManager.getActiveTransfers()));
         break;
       case 'GET_FLOATING_PANEL_STATE':
+        backgroundLogger.info('Handling GET_FLOATING_PANEL_STATE');
         chrome.storage.local.get(FLOATING_PANEL_STATE_KEY, (result) => {
           if (chrome.runtime.lastError) {
             backgroundLogger.error('Error getting floating panel state:', chrome.runtime.lastError);
@@ -141,6 +157,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true; // Indicates an asynchronous response
       case 'SET_FLOATING_PANEL_STATE':
+        backgroundLogger.info('Handling SET_FLOATING_PANEL_STATE');
         if (message.state) {
           chrome.storage.local.set({ [FLOATING_PANEL_STATE_KEY]: message.state }, () => {
             if (chrome.runtime.lastError) {
@@ -157,6 +174,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         }
         return true; // Indicates an asynchronous response
       case 'TOGGLE_FLOATING_PANEL': // This message might be sent from popup to background, then to content
+        backgroundLogger.info('Handling TOGGLE_FLOATING_PANEL, forwarding to content script');
         // Forward this to the active tab's content script
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
           if (tabs[0] && tabs[0].id) {
@@ -173,6 +191,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true; // Indicates an asynchronous response
       case 'START_WEBSOCKET_SERVER':
+        backgroundLogger.info('Handling START_WEBSOCKET_SERVER');
         backgroundLogger.info('Starting WebSocket server...');
         
         // Use chrome.runtime.getURL to get the extension path
@@ -185,54 +204,57 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
           // 1. Set a localStorage flag that the VS Code extension will check
           // 2. If VS Code extension is installed, it will see this flag and start the server
           
-          chrome.storage.local.set({ 
+          chrome.storage.local.set({
             'websocketServerStartRequested': true,
-            'websocketServerStartTime': new Date().toISOString() 
+            'websocketServerStartTime': new Date().toISOString()
           }, () => {
             // Try to open VS Code with a URL scheme that the VS Code extension can handle
-            chrome.tabs.create({ 
+            chrome.tabs.create({
               url: 'vscode://thefuse.startwebsocketserver',
-              active: true 
+              active: true
             }, (tab) => {
               if (chrome.runtime.lastError) {
                 backgroundLogger.error('Error opening VS Code:', chrome.runtime.lastError);
                 // If opening VS Code fails, maybe VS Code is not installed or protocol not registered
                 // Fallback to opening a help page
-                chrome.tabs.create({ 
+                chrome.tabs.create({
                   url: chrome.runtime.getURL('websocket-server-help.html'),
-                  active: true 
+                  active: true
                 });
-                sendResponse({ 
-                  success: false, 
+                sendResponse({
+                  success: false,
                   error: 'Failed to start WebSocket server. VS Code integration might not be installed.',
-                  fallbackLaunched: true 
+                  fallbackLaunched: true
                 });
               } else {
                 // Success opening VS Code with the protocol
-                sendResponse({ 
-                  success: true, 
-                  message: 'Request to start WebSocket server sent to VS Code extension.' 
+                sendResponse({
+                  success: true,
+                  message: 'Request to start WebSocket server sent to VS Code extension.'
                 });
               }
             });
           });
         } catch (error) {
           backgroundLogger.error('Error starting WebSocket server:', error);
-          sendResponse({ 
-            success: false, 
-            error: `Failed to start WebSocket server: ${(error as Error).message}` 
+          sendResponse({
+            success: false,
+            error: `Failed to start WebSocket server: ${(error as Error).message}`
           });
         }
         return true; // Indicates an asynchronous response
       default:
         backgroundLogger.warn('Unknown message type in background:', message.type, message);
-        sendResponse({ success: false, error: `Unknown message type: ${message.type}` });
+        // sendResponse({ success: false, error: `Unknown message type: ${message.type}` });
+        // Do not send response for unknown types to avoid "Receiving end does not exist" if no listener is expecting one.
+        break; // Do not return true if not sending a response
     }
   } catch (error) {
     backgroundLogger.error('Error handling message in background:', error, message);
     sendResponse({ success: false, error: (error as Error).message || 'Unknown error in background script' });
   }
-  return true; // Keep the message channel open for async responses
+  // Only return true if sendResponse is called asynchronously
+  return false; // Default to false if no async response is expected
 });
 
 backgroundLogger.info('Background script loaded and listeners attached.');

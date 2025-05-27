@@ -7,7 +7,7 @@ WORKDIR /app
 RUN apk add --no-cache python3 make g++
 
 # Enable corepack for yarn version management
-RUN corepack enable && corepack prepare yarn@3.6.3 --activate
+RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 
 # Note: The build context is set to the project root in compose.yaml
 # So we don't need to use ../../ path prefixes
@@ -61,7 +61,7 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Enable corepack for yarn version management
-RUN corepack enable && corepack prepare yarn@3.6.3 --activate
+RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 
 # Install production dependencies only
 COPY --from=builder /app/package.json /app/yarn.lock /app/.yarnrc.yml ./
