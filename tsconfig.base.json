@@ -1,7 +1,8 @@
 {
   "references": [
     { "path": "packages/types" },
-    { "path": "apps/api" }
+    { "path": "apps/api" },
+    { "path": "packages/agency-hub" }
   ],
   "compilerOptions": {
     "target": "ES2022",

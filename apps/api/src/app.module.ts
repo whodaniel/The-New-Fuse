@@ -16,6 +16,7 @@ import { MonitoringService } from './services/monitoring.service.js';
 import { DataSource } from 'typeorm';
 import { MonitoringController } from './controllers/monitoring.controller.js';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module.js';
+import { AgencyHubModule } from './modules/agency-hub/agency-hub.module.js';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.modu
     ChatModule,
     TaskModule,
     EntityDiscoveryModule, // Add entity discovery module
+    AgencyHubModule, // Add Agency Hub module
   ],
   controllers: [AppController, MonitoringController],
   providers: [AppService, CacheService, MonitoringService, WebsocketGateway],

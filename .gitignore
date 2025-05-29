@@ -3,6 +3,10 @@ node_modules/
 .pnp
 .pnp.js
 
+# Node.js distribution files (prevent accidental staging)
+node-v*.tar.xz
+node-v*/
+
 # Build outputs
 build/
 dist/
