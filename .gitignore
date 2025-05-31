@@ -35,6 +35,10 @@ migration-engine-darwin
 *query-engine-darwin*
 *migration-engine-darwin*
 
+# Node.js runtime directories
+node-v*/
+node-v*-*/
+
 # Yarn/npm cache files
 .yarn/cache/
 **/node_modules/@esbuild/
