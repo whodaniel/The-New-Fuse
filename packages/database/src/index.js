@@ -14,6 +14,6 @@ var __exportStar = (this && this.__exportStar) || function(m, exports) {
     for (var p in m) if (p !== "default" && !Object.prototype.hasOwnProperty.call(exports, p)) __createBinding(exports, m, p);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-__exportStar(require("./database.module"), exports);
-__exportStar(require("./prisma.service"), exports);
+__exportStar(require("./database.module.js"), exports);
+__exportStar(require("./prisma.service.js"), exports);
 //# sourceMappingURL=index.js.map

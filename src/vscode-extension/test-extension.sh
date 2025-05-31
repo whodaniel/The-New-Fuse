@@ -29,19 +29,12 @@ else
     exit 1
 fi
 
-echo "4️⃣ Testing extension structure..."
-if grep -q "theNewFuse" package.json; then
-    echo "✅ Package.json contains view configurations"
+echo "4️⃣ Running VSCode Extension Tests with @vscode/test-electron..."
+npx vscode-test --extensionDevelopmentPath="$(pwd)" --extensionTestsPath="$(pwd)/out/test"
+
+if [ $? -eq 0 ]; then
+    echo "✅ VSCode extension tests passed!"
 else
-    echo "❌ Package.json missing view configurations"
+    echo "❌ VSCode extension tests failed!"
     exit 1
 fi
-
-echo "5️⃣ Launching Extension Development Host..."
-echo "📋 To test the extension:"
-echo "   - Press F5 in VS Code"
-echo "   - Or open Command Palette (Cmd+Shift+P) and run 'Debug: Start Debugging'"
-echo "   - Look for 'The New Fuse' robot icon in the Activity Bar (sidebar)"
-echo "   - Check the Panel area for 'The New Fuse' tab"
-
-echo "✅ Extension is ready for testing!"

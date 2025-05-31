@@ -9,11 +9,21 @@
 // Core client exports
 export {
   ApiClient,
-  TokenStorage,
   type ApiClientOptions,
   type ApiResponse,
   type ApiError
 } from './client/ApiClient.js';
+
+// Token storage exports
+export {
+  TokenStorage,
+  type TokenStorage as TokenStorageInterface
+} from './auth/TokenStorage.js';
+
+// Base service exports
+export {
+  BaseService
+} from './services/BaseService.js';
 
 // Configuration exports
 export {
@@ -82,7 +92,7 @@ export async function createApiClient(config: {
   timeout?: number;
   headers?: Record<string, string>;
   options?: Record<string, any>;
-  tokenStorage?: import('./client/ApiClient.js').TokenStorage;
+  tokenStorage?: import('./auth/TokenStorage.js').TokenStorage;
 }) {
   const { baseURL, timeout, headers, options, tokenStorage } = config;
   const ApiClientModule = await import('./client/ApiClient.js');

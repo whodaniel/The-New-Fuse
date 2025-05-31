@@ -1,0 +1,1 @@
+export * from '@the-new-fuse/ui-components/src/core/input';

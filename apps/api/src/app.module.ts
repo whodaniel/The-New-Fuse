@@ -3,20 +3,19 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
-import llmProviderConfig from './config/llm-provider.config.js';
+import llmProviderConfig from './config/llm-provider.config';
 import { DataSourceOptions } from 'typeorm';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { AuthModule } from './modules/auth/auth.module.js';
-import { ChatModule } from './modules/chat/chat.module.js';
-import { TaskModule } from './modules/task/task.module.js';
-import { CacheService } from './cache/cache.service.js';
-import { WebsocketGateway } from './websocket/websocket.gateway.js';
-import { MonitoringService } from './services/monitoring.service.js';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './modules/auth/auth.module';
+import { ChatModule } from './modules/chat/chat.module';
+import { TaskModule } from './modules/task/task.module';
+import { CacheService } from './cache/cache.service';
+import { WebsocketGateway } from './websocket/websocket.gateway';
+import { MonitoringService } from './services/monitoring.service';
 import { DataSource } from 'typeorm';
-import { MonitoringController } from './controllers/monitoring.controller.js';
-import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module.js';
-import { AgencyHubModule } from './modules/agency-hub/agency-hub.module.js';
+import { MonitoringController } from './controllers/monitoring.controller';
+import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 
 @Module({
   imports: [
@@ -50,7 +49,6 @@ import { AgencyHubModule } from './modules/agency-hub/agency-hub.module.js';
     ChatModule,
     TaskModule,
     EntityDiscoveryModule, // Add entity discovery module
-    AgencyHubModule, // Add Agency Hub module
   ],
   controllers: [AppController, MonitoringController],
   providers: [AppService, CacheService, MonitoringService, WebsocketGateway],

@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import { PrismaClient, User } from '@the-new-fuse/database/client';
+import { PrismaClient, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/token.js';
 

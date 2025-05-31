@@ -1,6 +1,9 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "globalDependencies": ["**/.env.*local"],
+  "globalEnv": ["NODE_ENV"],
+  "concurrency": "20",
+  "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "lib/**", "build/**", "out/**", "types/**", "esm/**", "cjs/**"]

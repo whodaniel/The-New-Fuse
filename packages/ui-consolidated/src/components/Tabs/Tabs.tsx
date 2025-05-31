@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../../utils.js';
+import { cn } from '../../utils';
 
 /**
  * Tabs list variants using class-variance-authority

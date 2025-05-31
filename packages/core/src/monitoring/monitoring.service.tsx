@@ -1,3 +1,40 @@
+interface AgentMetrics {
+  cpuUsage: number;
+  memoryUsage: number;
+  averageLatency: number;
+}
+
+interface WorkflowProgress {
+  tasks: WorkflowTask[];
+  resourceLimits: Record<string, number>;
+}
+
+interface WorkflowTask {
+  status: 'pending' | 'running' | 'completed' | 'failed';
+  duration?: number;
+}
+
+interface WorkflowMetrics {
+  completionRate: number;
+  errorRate: number;
+  averageDuration: number;
+  resourceUtilization: number;
+}
+
+interface TraeMetrics {
+  responseTime: number;
+  memoryUsage: number;
+  activeTasks: number;
+  successRate: number;
+}
+
+interface LLMMetrics {
+  latency: number;
+  activeRequests: number;
+  errorCount: number;
+  errorRate: number;
+}
+
 export class MonitoringService {
   constructor(
     private readonly metrics: MetricsRegistry,
@@ -6,8 +43,13 @@ export class MonitoringService {
     private readonly logger: Logger
   ) {}
 
-  async trackAgentMetrics(): Promise<void> {agentId: string, metrics: AgentMetrics): Promise<void> {
-    const timestamp: metrics.cpuUsage
+  async trackAgentMetrics(agentId: string, metrics: AgentMetrics): Promise<void> {
+    const timestamp = Date.now();
+    
+    await Promise.all([
+      this.storage.record('agent_cpu', timestamp, {
+        agentId,
+        value: metrics.cpuUsage
       }),
       this.storage.record('agent_memory', timestamp, {
         agentId,
@@ -19,66 +61,84 @@ export class MonitoringService {
       })
     ]);
 
-    await this.checkThresholds(agentId, metrics): string,
-    progress: WorkflowProgress
-  ): Promise<void> {
-    const metrics): void {
-      await this.alerting.raise({
-        level: warning',
-        source: workflow',
-        message: `High error rate detected in workflow ${workflowId}`,
-        context: metrics
-      }): WorkflowProgress
-  ): WorkflowMetrics {
-    const totalTasks: completedTasks / totalTasks,
-      errorRate: failedTasks / totalTasks,
-      averageDuration: this.calculateAverageDuration(progress.tasks): this.calculateResourceUtilization(progress)
-    };
+    await this.checkThresholds(agentId, metrics);
   }
 
-  private async checkThresholds(): Promise<void> {
-    agentId: string,
-    metrics: AgentMetrics
+  async trackWorkflowProgress(
+    workflowId: string,
+    progress: WorkflowProgress
   ): Promise<void> {
-    const thresholds   = Date.now();
-    
-    await Promise.all([
-      this.storage.record('agent_cpu', timestamp, {
-        agentId,
-        value this.calculateWorkflowMetrics(progress);
+    const metrics = this.calculateWorkflowMetrics(progress);
     
     await this.storage.record('workflow_progress', Date.now(), {
       workflowId,
       ...metrics
     });
 
-    if(metrics.errorRate > 0.1 progress.tasks.length;
-    const completedTasks: critical',
-          source: agent',
-          message: `Critical threshold exceeded for ${metric} on agent ${agentId}`,
-          context: { metric, value, threshold: threshold.critical }
-        })): void {
-        await this.alerting.raise({
-          level: warning',
-          source: agent',
-          message: `Warning threshold exceeded for ${metric} on agent ${agentId}`,
-          context: { metric, value, threshold: threshold.warning }
-        }): WorkflowTask[]): number {
-    const completedTasks   = progress.tasks.filter(t => t.status === 'completed').length;
+    if (metrics.errorRate > 0.1) {
+      await this.alerting.raise({
+        level: 'warning',
+        source: 'workflow',
+        message: `High error rate detected in workflow ${workflowId}`,
+        context: metrics
+      });
+    }
+  }
+
+  private calculateWorkflowMetrics(
+    progress: WorkflowProgress
+  ): WorkflowMetrics {
+    const totalTasks = progress.tasks.length;
+    const completedTasks = progress.tasks.filter(t => t.status === 'completed').length;
     const failedTasks = progress.tasks.filter(t => t.status === 'failed').length;
     
     return {
-      completionRate await this.loadThresholds(agentId);
+      completionRate: completedTasks / totalTasks,
+      errorRate: failedTasks / totalTasks,
+      averageDuration: this.calculateAverageDuration(progress.tasks),
+      resourceUtilization: this.calculateResourceUtilization(progress)
+    };
+  }
+
+  private async checkThresholds(
+    agentId: string,
+    metrics: AgentMetrics
+  ): Promise<void> {
+    const thresholds = await this.loadThresholds(agentId);
     
     for (const [metric, threshold] of Object.entries(thresholds)) {
-      const value metrics[metric as keyof AgentMetrics];
+      const value = metrics[metric as keyof AgentMetrics];
       
-      if(value > threshold.critical): void {
+      if (value > threshold.critical) {
         await this.alerting.raise({
-          level tasks.filter(t => t.status === 'completed'): WorkflowProgress): number {
-    const allocatedResources: TraeMetrics): Promise<void> {
-    const timestamp   = completedTasks.reduce(
-      (sum, task) progress.resourceLimits;
+          level: 'critical',
+          source: 'agent',
+          message: `Critical threshold exceeded for ${metric} on agent ${agentId}`,
+          context: { metric, value, threshold: threshold.critical }
+        });
+      } else if (value > threshold.warning) {
+        await this.alerting.raise({
+          level: 'warning',
+          source: 'agent',
+          message: `Warning threshold exceeded for ${metric} on agent ${agentId}`,
+          context: { metric, value, threshold: threshold.warning }
+        });
+      }
+    }
+  }
+
+  private calculateAverageDuration(tasks: WorkflowTask[]): number {
+    const completedTasks = tasks.filter(t => t.status === 'completed');
+    
+    return completedTasks.reduce(
+      (sum, task) => sum + (task.duration || 0),
+      0
+    ) / completedTasks.length;
+  }
+
+  private calculateResourceUtilization(progress: WorkflowProgress): number {
+    const allocatedResources = progress.resourceLimits;
+    const availableResources = progress.resourceLimits;
     
     return Object.entries(allocatedResources).reduce(
       (total, [resource, allocated]) => 
@@ -87,7 +147,8 @@ export class MonitoringService {
     ) / Object.keys(allocatedResources).length;
   }
 
-  async trackTraeMetrics(metrics Date.now(): Promise<void> {);
+  async trackTraeMetrics(metrics: TraeMetrics): Promise<void> {
+    const timestamp = Date.now();
     
     await Promise.all([
       this.storage.record('trae_response_time', timestamp, {
@@ -101,24 +162,33 @@ export class MonitoringService {
       }),
       this.storage.record('trae_success_rate', timestamp, {
         value: metrics.successRate
-      }): TraeMetrics): Promise<void> {
-    if(metrics.responseTime > 5000): void { // 5s threshold
+      })
+    ]);
+
+    await this.checkTraeThresholds(metrics);
+  }
+
+  private async checkTraeThresholds(metrics: TraeMetrics): Promise<void> {
+    if (metrics.responseTime > 5000) { // 5s threshold
       await this.alerting.raise({
-        level: warning',
-        source: trae',
-        message: High response time detected',
+        level: 'warning',
+        source: 'trae',
+        message: 'High response time detected',
         context: metrics
-      })): void { // 90% success rate threshold
+      });
+    }
+
+    if (metrics.successRate < 0.9) { // 90% success rate threshold
       await this.alerting.raise({
-        level: error',
-        source: trae',
-        message: Low success rate detected',
+        level: 'error',
+        source: 'trae',
+        message: 'Low success rate detected',
         context: metrics
       });
     }
   }
 
-  async trackLLMMetrics(): Promise<void> {metrics: LLMMetrics): Promise<void> {
+  async trackLLMMetrics(metrics: LLMMetrics): Promise<void> {
     const timestamp = Date.now();
     
     await Promise.all([
@@ -136,9 +206,9 @@ export class MonitoringService {
     // Alert on high latency
     if (metrics.latency > 2000) { // 2s threshold
       await this.alerting.raise({
-        level: warning',
-        source: trae-llm',
-        message: High LLM response time detected',
+        level: 'warning',
+        source: 'trae-llm',
+        message: 'High LLM response time detected',
         context: metrics
       });
     }
@@ -146,11 +216,20 @@ export class MonitoringService {
     // Alert on high error rate
     if (metrics.errorRate > 0.1) { // 10% threshold
       await this.alerting.raise({
-        level: error',
-        source: trae-llm',
-        message: High LLM error rate detected',
+        level: 'error',
+        source: 'trae-llm',
+        message: 'High LLM error rate detected',
         context: metrics
       });
     }
+  }
+
+  private async loadThresholds(agentId: string): Promise<any> {
+    // Implementation for loading thresholds
+    return {
+      cpuUsage: { warning: 80, critical: 95 },
+      memoryUsage: { warning: 80, critical: 95 },
+      averageLatency: { warning: 1000, critical: 2000 }
+    };
   }
 }

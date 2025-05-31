@@ -1,4 +1,5 @@
 import { ApiClient } from '../client/ApiClient.js';
+import { BaseService } from './BaseService.js';
 
 /**
  * Agent capability interface
@@ -76,23 +77,22 @@ export interface AgentExecutionResult {
 /**
  * Agent service for managing agents and their capabilities
  */
-export class AgentService {
-  private api: ApiClient;
-
+export class AgentService extends BaseService {
   /**
    * Create a new agent service
    * @param api API client instance
    */
   constructor(api: ApiClient) {
-    this.api = api;
+    super(api, '/agents');
   }
 
   /**
    * Get all agents
+   * @param options Query options (page, limit, status, type, etc.)
    * @returns Promise with agents list
    */
-  async getAgents(): Promise<Agent[]> {
-    return this.api.get<Agent[]>('/agents');
+  async getAgents(options: Record<string, any> = {}): Promise<Agent[]> {
+    return this.list<Agent[]>('', options);
   }
 
   /**
@@ -101,7 +101,7 @@ export class AgentService {
    * @returns Promise with agent data
    */
   async getAgentById(id: string): Promise<Agent> {
-    return this.api.get<Agent>(`/agents/${id}`);
+    return this.getById<Agent>(id);
   }
 
   /**
@@ -110,7 +110,8 @@ export class AgentService {
    * @returns Promise with created agent data
    */
   async createAgent(data: AgentCreateData): Promise<Agent> {
-    return this.api.post<Agent>('/agents', data);
+    this.validateRequired({ name: data.name, type: data.type, capabilities: data.capabilities }, ['name', 'type', 'capabilities']);
+    return this.create<Agent>(data);
   }
 
   /**
@@ -120,7 +121,7 @@ export class AgentService {
    * @returns Promise with updated agent data
    */
   async updateAgent(id: string, data: AgentUpdateData): Promise<Agent> {
-    return this.api.put<Agent>(`/agents/${id}`, data);
+    return this.updateById<Agent>(id, data);
   }
 
   /**
@@ -129,16 +130,19 @@ export class AgentService {
    * @returns Promise with deletion response
    */
   async deleteAgent(id: string): Promise<{ success: boolean; message: string }> {
-    return this.api.delete<{ success: boolean; message: string }>(`/agents/${id}`);
+    return this.deleteById<{ success: boolean; message: string }>(id);
   }
 
   /**
    * Get agents by capability
    * @param capability Agent capability name
+   * @param options Query options (page, limit, etc.)
    * @returns Promise with agents list
    */
-  async getAgentsByCapability(capability: string): Promise<Agent[]> {
-    return this.api.get<Agent[]>(`/agents/capability/${capability}`);
+  async getAgentsByCapability(capability: string, options: Record<string, any> = {}): Promise<Agent[]> {
+    this.validateRequired({ capability }, ['capability']);
+    const queryString = this.buildQueryString(options);
+    return this.get<Agent[]>(`/capability/${capability}${queryString}`);
   }
 
   /**
@@ -149,7 +153,31 @@ export class AgentService {
    * @returns Promise with execution response
    */
   async executeAction(id: string, action: string, params: Record<string, any> = {}): Promise<AgentExecutionResult> {
-    return this.api.post<AgentExecutionResult>(`/agents/${id}/execute`, { action, params });
+    this.validateRequired({ id, action }, ['id', 'action']);
+    return this.post<AgentExecutionResult>(`/${id}/execute`, { action, params });
+  }
+
+  /**
+   * Get agent execution history
+   * @param id Agent ID
+   * @param options Query options (page, limit, status, etc.)
+   * @returns Promise with execution history
+   */
+  async getExecutionHistory(id: string, options: Record<string, any> = {}): Promise<AgentExecutionResult[]> {
+    this.validateRequired({ id }, ['id']);
+    const queryString = this.buildQueryString(options);
+    return this.get<AgentExecutionResult[]>(`/${id}/executions${queryString}`);
+  }
+
+  /**
+   * Update agent status
+   * @param id Agent ID
+   * @param status New status
+   * @returns Promise with updated agent data
+   */
+  async updateStatus(id: string, status: AgentStatus): Promise<Agent> {
+    this.validateRequired({ id, status }, ['id', 'status']);
+    return this.patch<Agent>(`/${id}`, { status });
   }
 }
 

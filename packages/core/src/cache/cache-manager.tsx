@@ -6,13 +6,16 @@ export class CacheManager {
   constructor() {
     this.client = createClient({
       url: process.env.REDIS_URL
-    }): string, value: unknown, ttl?: number) {
+    });
+  }
+
+  async set(key: string, value: unknown, ttl?: number): Promise<void> {
     await this.client.set(key, JSON.stringify(value), {
       EX: ttl
     });
   }
 
-  async get(): Promise<void> {key: string): Promise<any> {
+  async get(key: string): Promise<any> {
     const value = await this.client.get(key);
     return value ? JSON.parse(value) : null;
   }

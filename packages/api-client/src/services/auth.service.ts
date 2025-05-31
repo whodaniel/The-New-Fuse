@@ -1,4 +1,5 @@
 import { ApiClient } from '../client/ApiClient.js';
+import { BaseService } from './BaseService.js';
 
 /**
  * Authentication response interface
@@ -24,15 +25,13 @@ export interface UserData {
 /**
  * Authentication service for user management
  */
-export class AuthService {
-  private api: ApiClient;
-
+export class AuthService extends BaseService {
   /**
    * Create a new authentication service
    * @param api API client instance
    */
   constructor(api: ApiClient) {
-    this.api = api;
+    super(api, '/auth');
   }
 
   /**
@@ -42,7 +41,8 @@ export class AuthService {
    * @returns Promise with login response containing auth tokens and user data
    */
   async login(email: string, password: string): Promise<AuthResponse> {
-    return this.api.post<AuthResponse>('/auth/login', { email, password });
+    this.validateRequired({ email, password }, ['email', 'password']);
+    return this.post<AuthResponse>('/login', { email, password });
   }
 
   /**
@@ -53,7 +53,8 @@ export class AuthService {
    * @returns Promise with registration response containing auth tokens and user data
    */
   async register(name: string, email: string, password: string): Promise<AuthResponse> {
-    return this.api.post<AuthResponse>('/auth/register', { name, email, password });
+    this.validateRequired({ name, email, password }, ['name', 'email', 'password']);
+    return this.post<AuthResponse>('/register', { name, email, password });
   }
 
   /**
@@ -61,7 +62,7 @@ export class AuthService {
    * @returns Promise with logout response
    */
   async logout(): Promise<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>('/auth/logout');
+    return this.post<{ success: boolean; message: string }>('/logout');
   }
 
   /**
@@ -70,7 +71,8 @@ export class AuthService {
    * @returns Promise with password reset response
    */
   async forgotPassword(email: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>('/auth/forgot-password', { email });
+    this.validateRequired({ email }, ['email']);
+    return this.post<{ success: boolean; message: string }>('/forgot-password', { email });
   }
 
   /**
@@ -80,7 +82,8 @@ export class AuthService {
    * @returns Promise with password reset response
    */
   async resetPassword(token: string, password: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>('/auth/reset-password', { token, password });
+    this.validateRequired({ token, password }, ['token', 'password']);
+    return this.post<{ success: boolean; message: string }>('/reset-password', { token, password });
   }
 
   /**
@@ -89,7 +92,8 @@ export class AuthService {
    * @returns Promise with email verification response
    */
   async verifyEmail(token: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>('/auth/verify-email', { token });
+    this.validateRequired({ token }, ['token']);
+    return this.post<{ success: boolean; message: string }>('/verify-email', { token });
   }
 
   /**
@@ -97,7 +101,7 @@ export class AuthService {
    * @returns Promise with new token
    */
   async refreshToken(): Promise<string> {
-    const response = await this.api.post<{ token: string }>('/auth/refresh-token');
+    const response = await this.post<{ token: string }>('/refresh-token');
     return response.token || '';
   }
 
@@ -106,7 +110,7 @@ export class AuthService {
    * @returns Promise with current user data
    */
   async getCurrentUser(): Promise<UserData> {
-    return this.api.get<UserData>('/auth/me');
+    return this.get<UserData>('/me');
   }
 }
 

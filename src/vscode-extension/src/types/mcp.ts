@@ -25,6 +25,35 @@ export interface MCPResponse {
     success: boolean;
     data?: any;
     error?: string;
+    result?: any; // Add result property for MCP2025Client compatibility
+}
+
+export interface MCPRequest {
+    id: string;
+    method: string;
+    params?: any;
+    jsonrpc?: string;
+}
+
+export interface MCPTool {
+    name: string;
+    description?: string;
+    inputSchema?: any;
+    annotations?: {
+        audience?: string[];
+        priority?: number;
+    };
+}
+
+export interface MCPResource {
+    uri: string;
+    name?: string;
+    description?: string;
+    mimeType?: string;
+    annotations?: {
+        audience?: string[];
+        priority?: number;
+    };
 }
 
 export interface MCPStatus {

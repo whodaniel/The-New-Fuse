@@ -1,4 +1,4 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@prisma/client';
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 const prisma = new PrismaClient();

@@ -20,7 +20,6 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@the-new-fuse/api-client": ["../api-client/src"],
       "@the-new-fuse/hooks": ["../hooks/src"],
       "@the-new-fuse/types": ["../types/src"]
     }

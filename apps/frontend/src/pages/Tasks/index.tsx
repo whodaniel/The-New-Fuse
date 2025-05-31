@@ -299,7 +299,7 @@ const Tasks: React.FC = () => {
                   value={filterAssignee}
                   onChange={(e) => setFilterAssignee(e.target.value)}
                 >
-                  {taskAssignees.map(assigne(e: any) => (
+                  {taskAssignees.map(assignee => (
                     <option key={assignee} value={assignee}>{assignee}</option>
                   ))}
                 </select>

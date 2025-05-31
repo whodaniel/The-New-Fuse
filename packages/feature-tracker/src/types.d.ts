@@ -40,4 +40,3 @@ export interface FeatureProgress {
     estimatedCompletion?: Date;
     completionPercentage: number;
 }
-//# sourceMappingURL=types.d.ts.map

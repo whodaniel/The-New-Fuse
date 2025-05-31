@@ -2,7 +2,7 @@ import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 // import { cva, type VariantProps } from 'class-variance-authority'; // Removed VariantProps
 import * as React from 'react';
 import { cva } from 'class-variance-authority';
-import { cn } from '../../utils.js';
+import { cn } from '../../utils';
 
 /**
  * Tooltip variants using class-variance-authority
@@ -98,106 +98,47 @@ export interface TooltipProps extends Omit<React.HTMLAttributes<HTMLDivElement>,
  * </Tooltip>
  */
 const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>(
-  ({
-    children,
-    content,
-    position = 'top',
-    delayDuration = 700,
-    disabled = false,
-    open: controlledOpen,
-    onOpenChange,
-    skipDelayDuration = false,
-    className,
-    ...props
-  }, ref) => {
-    const [uncontrolledOpen, setUncontrolledOpen] = React.useState(false);
-    const [hovering, setHovering] = React.useState(false);
-    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-    
-    const open = controlledOpen !== undefined ? controlledOpen : uncontrolledOpen;
-    const setOpen = React.useCallback((value: boolean) => {
-      if (controlledOpen === undefined) {
-        setUncontrolledOpen(value);
-      }
-      onOpenChange?.(value);
-    }, [controlledOpen, onOpenChange]);
-    
-    // Handle mouse enter
-    const handleMouseEnter = React.useCallback(() => {
-      if (disabled) return;
-      
-      setHovering(true);
-      
-      if (skipDelayDuration) {
-        setOpen(true);
-        return;
-      }
-      
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
-      
-      timeoutRef.current = setTimeout(() => {
-        setOpen(true);
-      }, delayDuration);
-    }, [disabled, skipDelayDuration, delayDuration, setOpen]);
-    
-    // Handle mouse leave
-    const handleMouseLeave = React.useCallback(() => {
-      setHovering(false);
-      
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-      
-      setOpen(false);
-    }, [setOpen]);
-    
-    // Clean up timeout on unmount
-    React.useEffect(() => {
-      return () => {
-        if (timeoutRef.current) {
-          clearTimeout(timeoutRef.current);
-        }
-      };
-    }, []);
-    
-    // Handle controlled open state
-    React.useEffect(() => {
-      if (controlledOpen === undefined) return;
-      
-      if (controlledOpen && !hovering) {
-        setHovering(true);
-      } else if (!controlledOpen && hovering) {
-        setHovering(false);
-      }
-    }, [controlledOpen, hovering]);
-    
+  (
+    {
+      children,
+      content,
+      position = 'top',
+      delayDuration = 700,
+      disabled = false,
+      open,
+      onOpenChange,
+      className,
+      ...props
+    },
+    ref
+  ) => {
     return (
-      <div className="relative inline-block" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-        {children}
-        {open && (
-          <div
-            ref={ref}
-            role="tooltip"
-            className={cn(
-              tooltipVariants({ position }),
-              'absolute',
-              position === 'top' && 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-              position === 'right' && 'left-full top-1/2 -translate-y-1/2 ml-2',
-              position === 'bottom' && 'top-full left-1/2 -translate-x-1/2 mt-2',
-              position === 'left' && 'right-full top-1/2 -translate-y-1/2 mr-2',
-              className
-            )}
-            data-state={open ? 'open' : 'closed'}
-            data-side={position}
-            {...props}
-          >
-            {content}
-          </div>
-        )}
-      </div>
+      <TooltipPrimitive.Provider>
+        <TooltipPrimitive.Root
+          open={open}
+          onOpenChange={onOpenChange}
+          delayDuration={delayDuration}
+          disableHoverableContent={disabled}
+        >
+          <TooltipPrimitive.Trigger asChild>
+            {children}
+          </TooltipPrimitive.Trigger>
+          <TooltipPrimitive.Portal>
+            <TooltipPrimitive.Content
+              ref={ref}
+              side={position}
+              className={cn(
+                tooltipVariants({ position }),
+                className
+              )}
+              {...props}
+            >
+              {content}
+              <TooltipPrimitive.Arrow className="fill-current text-popover" />
+            </TooltipPrimitive.Content>
+          </TooltipPrimitive.Portal>
+        </TooltipPrimitive.Root>
+      </TooltipPrimitive.Provider>
     );
   }
 );

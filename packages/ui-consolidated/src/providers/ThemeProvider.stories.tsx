@@ -3,9 +3,9 @@ import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider.js';
 import { Button } from '../components/Button.js';
 import { Card } from '../components/Card.js';
 import { Input } from '../components/Input.js';
-import { Select } from '../components/Select.js';
-import { Checkbox } from '../components/Checkbox.js';
-import { Switch } from '../components/Switch.js';
+import { Select } from '../components/Select';
+import { Checkbox } from '../components/Checkbox';
+import { Switch } from '../components/Switch';
 
 const meta: Meta<typeof ThemeProvider> = {
   title: 'Providers/ThemeProvider',

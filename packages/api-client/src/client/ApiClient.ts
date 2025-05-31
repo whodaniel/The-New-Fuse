@@ -22,6 +22,8 @@ export interface ApiError {
 /**
  * API client options
  */
+import type { TokenStorage } from '../auth/TokenStorage.js';
+
 export interface ApiClientOptions {
   /**
    * Base URL for API requests
@@ -261,12 +263,4 @@ export class ApiClient {
       throw error;
     }
   }
-}
-
-// Minimal TokenStorage interface for type safety
-export interface TokenStorage {
-  getAccessToken(): Promise<string | null>;
-  getRefreshToken(): Promise<string | null>;
-  setTokens(access: string, refresh: string): Promise<void>;
-  clearTokens(): Promise<void>;
 }

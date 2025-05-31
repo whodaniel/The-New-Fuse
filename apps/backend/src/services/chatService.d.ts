@@ -1,4 +1,4 @@
-import { Prisma } from '@the-new-fuse/database/client';
+import { Prisma } from '@prisma/client';
 export declare const ChatService: {
     addMessage(userId: string, role: "user" | "assistant", content: string): Promise<Prisma.ChatMessageCreateInput>;
     getChatHistory(userId: string, page?: number): Promise<{

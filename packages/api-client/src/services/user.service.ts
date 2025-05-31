@@ -1,4 +1,5 @@
 import { ApiClient } from '../client/ApiClient.js';
+import { BaseService } from './BaseService.js';
 
 /**
  * User interface
@@ -38,23 +39,22 @@ export interface UserUpdateData {
 /**
  * User service for managing users
  */
-export class UserService {
-  private api: ApiClient;
-
+export class UserService extends BaseService {
   /**
    * Create a new user service
    * @param api API client instance
    */
   constructor(api: ApiClient) {
-    this.api = api;
+    super(api, '/users');
   }
 
   /**
    * Get all users
+   * @param options Query options (page, limit, search, etc.)
    * @returns Promise with users list
    */
-  async getUsers(): Promise<User[]> {
-    return this.api.get<User[]>('/users');
+  async getUsers(options: Record<string, any> = {}): Promise<User[]> {
+    return this.list<User[]>('', options);
   }
 
   /**
@@ -63,7 +63,7 @@ export class UserService {
    * @returns Promise with user data
    */
   async getUserById(id: string): Promise<User> {
-    return this.api.get<User>(`/users/${id}`);
+    return this.getById<User>(id);
   }
 
   /**
@@ -73,7 +73,7 @@ export class UserService {
    * @returns Promise with updated user data
    */
   async updateUser(id: string, data: UserUpdateData): Promise<User> {
-    return this.api.put<User>(`/users/${id}`, data);
+    return this.updateById<User>(id, data);
   }
 
   /**
@@ -82,7 +82,7 @@ export class UserService {
    * @returns Promise with deletion response
    */
   async deleteUser(id: string): Promise<{ success: boolean; message: string }> {
-    return this.api.delete<{ success: boolean; message: string }>(`/users/${id}`);
+    return this.deleteById<{ success: boolean; message: string }>(id);
   }
 
   /**
@@ -91,7 +91,8 @@ export class UserService {
    * @returns Promise with updated profile data
    */
   async updateProfile(data: UserProfile): Promise<User> {
-    return this.api.put<User>('/users/profile', data);
+    this.validateRequired({ name: data.name, email: data.email }, ['name', 'email']);
+    return this.put<User>('/profile', data);
   }
 
   /**
@@ -101,7 +102,8 @@ export class UserService {
    * @returns Promise with password change response
    */
   async changePassword(currentPassword: string, newPassword: string): Promise<{ success: boolean; message: string }> {
-    return this.api.post<{ success: boolean; message: string }>('/users/change-password', {
+    this.validateRequired({ currentPassword, newPassword }, ['currentPassword', 'newPassword']);
+    return this.post<{ success: boolean; message: string }>('/change-password', {
       currentPassword,
       newPassword,
     });

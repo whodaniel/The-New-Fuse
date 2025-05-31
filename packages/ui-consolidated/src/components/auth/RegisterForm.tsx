@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useAuthContext } from '../../providers/AuthProvider.js';
-import { Button } from '../Button.js';
-import { Input } from '../Input.js';
+import { useAuthContext } from '../../providers/AuthProvider';
+import { Button } from '../Button';
+import { Input } from '../Input';
 import { 
   Card, 
   CardHeader, 
@@ -9,8 +9,8 @@ import {
   CardDescription, 
   CardContent, 
   CardFooter 
-} from '../Card.js';
-import { Alert, AlertTitle, AlertDescription } from '../Alert/Alert.js';
+} from '../Card';
+import { Alert, AlertTitle, AlertDescription } from '../Alert/Alert';
 
 /**
  * Register form props

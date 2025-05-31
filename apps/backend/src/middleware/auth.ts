@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { User } from '@the-new-fuse/types';
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@prisma/client';
 
-import { RedisService } from '../services/redis.service.js';
+import { RedisService } from '../services/redis.service';
+import { ConfigService } from '@nestjs/config';
 
 const prisma = new PrismaClient();
-const redisService = new RedisService();
+const configService = new ConfigService();
+const redisService = new RedisService(configService);
 
 declare global {
   namespace Express {
@@ -55,10 +57,13 @@ const user = await prisma.user.findUnique({
     req.user = user;
     req.userId = user.id;
     // Cache user in Redis for 1 hour
-    await redisService.set(`user:${user.id}`, JSON.stringify(user), 'EX', 3600);
+    await redisService.setex(`user:${user.id}`, 3600, JSON.stringify(user));
     
     next();
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Invalid token' });
   }
 };
+
+// Export as authMiddleware for compatibility
+export const authMiddleware = auth;

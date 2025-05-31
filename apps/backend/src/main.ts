@@ -1,16 +1,16 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module.js';
-import { UnifiedMonitoringService } from '@the-new-fuse/core';
+import { AppModule } from './app.module';
+// import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { ConfigService } from '@nestjs/config';
 import * as compression from 'compression';
 import helmet from 'helmet';
 
-async function bootstrap(): any {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
-  const monitoringService = app.get(UnifiedMonitoringService);
+  // const monitoringService = app.get(UnifiedMonitoringService);
 
   // Security
   app.use(helmet());

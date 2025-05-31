@@ -1,1 +1,1 @@
-export * from './Split.js';
+export * from './Split';

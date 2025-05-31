@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { AgentRegistry } from './AgentRegistry.js';
-import { AgentFactory } from './AgentFactory.js';
-import { AgentCommunicationBus } from './AgentCommunicationBus.js';
+// import { AgentRegistry } from './AgentRegistry.js';
+// import { AgentFactory } from './AgentFactory.js';
+// import { AgentCommunicationBus } from './AgentCommunicationBus.js';
 
 @Injectable()
 export class AgentSystem {
   constructor(
-    private readonly registry: AgentRegistry,
-    private readonly factory: AgentFactory,
-    private readonly communicationBus: AgentCommunicationBus
+    // private readonly registry: AgentRegistry,
+    // private readonly factory: AgentFactory,
+    // private readonly communicationBus: AgentCommunicationBus
   ) {}
 
   // - Agent lifecycle management

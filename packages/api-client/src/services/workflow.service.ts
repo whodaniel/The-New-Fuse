@@ -1,4 +1,5 @@
 import { ApiClient } from '../client/ApiClient.js';
+import { BaseService } from './BaseService.js';
 
 /**
  * Workflow step interface
@@ -90,23 +91,22 @@ export interface WorkflowUpdateData {
 /**
  * Workflow service for managing workflows and their executions
  */
-export class WorkflowService {
-  private api: ApiClient;
-
+export class WorkflowService extends BaseService {
   /**
    * Create a new workflow service
    * @param api API client instance
    */
   constructor(api: ApiClient) {
-    this.api = api;
+    super(api, '/workflows');
   }
 
   /**
    * Get all workflows
+   * @param options Query options (page, limit, search, tags, etc.)
    * @returns Promise with workflows list
    */
-  async getWorkflows(): Promise<Workflow[]> {
-    return this.api.get<Workflow[]>('/workflows');
+  async getWorkflows(options: Record<string, any> = {}): Promise<Workflow[]> {
+    return this.list<Workflow[]>('', options);
   }
 
   /**
@@ -115,7 +115,7 @@ export class WorkflowService {
    * @returns Promise with workflow data
    */
   async getWorkflowById(id: string): Promise<Workflow> {
-    return this.api.get<Workflow>(`/workflows/${id}`);
+    return this.getById<Workflow>(id);
   }
 
   /**
@@ -124,7 +124,8 @@ export class WorkflowService {
    * @returns Promise with created workflow data
    */
   async createWorkflow(data: WorkflowCreateData): Promise<Workflow> {
-    return this.api.post<Workflow>('/workflows', data);
+    this.validateRequired({ name: data.name, steps: data.steps }, ['name', 'steps']);
+    return this.create<Workflow>(data);
   }
 
   /**
@@ -134,7 +135,7 @@ export class WorkflowService {
    * @returns Promise with updated workflow data
    */
   async updateWorkflow(id: string, data: WorkflowUpdateData): Promise<Workflow> {
-    return this.api.put<Workflow>(`/workflows/${id}`, data);
+    return this.updateById<Workflow>(id, data);
   }
 
   /**
@@ -143,7 +144,7 @@ export class WorkflowService {
    * @returns Promise with deletion response
    */
   async deleteWorkflow(id: string): Promise<{ success: boolean; message: string }> {
-    return this.api.delete<{ success: boolean; message: string }>(`/workflows/${id}`);
+    return this.deleteById<{ success: boolean; message: string }>(id);
   }
 
   /**
@@ -153,7 +154,8 @@ export class WorkflowService {
    * @returns Promise with execution response
    */
   async executeWorkflow(id: string, params: Record<string, any> = {}): Promise<WorkflowExecution> {
-    return this.api.post<WorkflowExecution>(`/workflows/${id}/execute`, params);
+    this.validateRequired({ id }, ['id']);
+    return this.post<WorkflowExecution>(`/${id}/execute`, params);
   }
 
   /**
@@ -162,16 +164,40 @@ export class WorkflowService {
    * @returns Promise with execution data
    */
   async getExecutionById(id: string): Promise<WorkflowExecution> {
-    return this.api.get<WorkflowExecution>(`/workflow-executions/${id}`);
+    this.validateRequired({ id }, ['id']);
+    return this.get<WorkflowExecution>(`/executions/${id}`);
   }
 
   /**
    * Get workflow executions by workflow ID
    * @param workflowId Workflow ID
+   * @param options Query options (page, limit, status, etc.)
    * @returns Promise with executions list
    */
-  async getExecutionsByWorkflowId(workflowId: string): Promise<WorkflowExecution[]> {
-    return this.api.get<WorkflowExecution[]>(`/workflows/${workflowId}/executions`);
+  async getExecutionsByWorkflowId(workflowId: string, options: Record<string, any> = {}): Promise<WorkflowExecution[]> {
+    this.validateRequired({ workflowId }, ['workflowId']);
+    const queryString = this.buildQueryString(options);
+    return this.get<WorkflowExecution[]>(`/${workflowId}/executions${queryString}`);
+  }
+
+  /**
+   * Cancel workflow execution
+   * @param executionId Execution ID
+   * @returns Promise with cancellation response
+   */
+  async cancelExecution(executionId: string): Promise<{ success: boolean; message: string }> {
+    this.validateRequired({ executionId }, ['executionId']);
+    return this.post<{ success: boolean; message: string }>(`/executions/${executionId}/cancel`);
+  }
+
+  /**
+   * Get workflow execution logs
+   * @param executionId Execution ID
+   * @returns Promise with execution logs
+   */
+  async getExecutionLogs(executionId: string): Promise<string[]> {
+    this.validateRequired({ executionId }, ['executionId']);
+    return this.get<string[]>(`/executions/${executionId}/logs`);
   }
 }
 

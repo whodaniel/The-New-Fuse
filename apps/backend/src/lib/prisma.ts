@@ -1,4 +1,4 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@prisma/client';
 
 declare global {
   var prisma: PrismaClient | undefined;

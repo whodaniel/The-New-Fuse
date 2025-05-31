@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from './redisService.js';
+import { RedisService } from './redis.service';
 
 @Injectable()
 export class CacheService {

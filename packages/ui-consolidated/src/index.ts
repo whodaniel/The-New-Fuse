@@ -1,11 +1,11 @@
 // Export all components
-export * from './components.js';
+export * from './components';
 
 // Export providers
-export * from './providers.js';
+export * from './providers';
 
 // Export utilities
-export * from './utils/index.js';
+export * from './utils';
 
 // Export styles
 import './styles/theme.css';

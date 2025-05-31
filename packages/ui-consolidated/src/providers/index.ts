@@ -1,3 +1,3 @@
-export * from './ThemeProvider.js';
-export * from './ApiProvider.js';
-export * from './AuthProvider.js';
+export * from './ThemeProvider';
+export * from './ApiProvider';
+export * from './AuthProvider';

@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ThemeProvider as ChakraThemeProvider } from '@chakra-ui/react';
-import { baseTheme, darkTheme, customTheme } from './themes.js';
+import { baseTheme, darkTheme } from './themes';
 
 interface ThemeContextType {
   currentTheme: string;

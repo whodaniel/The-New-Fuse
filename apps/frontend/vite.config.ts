@@ -15,7 +15,7 @@ export default defineConfig({
       '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
       '@the-new-fuse/utils': path.resolve(__dirname, '../../packages/utils/src'),
       '@the-new-fuse/feature-suggestions': path.resolve(__dirname, '../../packages/feature-suggestions/src'),
-      '@the-new-fuse/api-client': path.resolve(__dirname, '../../packages/api-client/src'),
+      // Removed '@the-new-fuse/api-client' alias to let Vite resolve to built package
     }
   },
   server: {

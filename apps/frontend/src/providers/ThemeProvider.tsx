@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { ThemeProvider as FeatureThemeProvider } from "@features/theme/ThemeContext.js";
+import { ThemeProvider as FeatureThemeProvider } from "@/shared/theme/ThemeContext";
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
   return (

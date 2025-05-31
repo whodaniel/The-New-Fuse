@@ -4,14 +4,12 @@
   "description": "AI-powered chat extension with LLM fallback",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.74.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
   ],
-  "activationEvents": [
-    "*"
-  ],
+  "activationEvents": [],
   "main": "./out/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -29,6 +27,7 @@
           "type": "webview",
           "id": "theNewFuse.tabbedContainer",
           "name": "The New Fuse",
+          "icon": "$(comment-discussion)",
           "when": "true"
         }
       ]
@@ -58,6 +57,56 @@
         "command": "the-new-fuse.selectLLMModel",
         "title": "Select Language Model",
         "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.discoverAgents",
+        "title": "🔍 Discover Agents",
+        "category": "The New Fuse - A2A"
+      },
+      {
+        "command": "the-new-fuse.delegateTask",
+        "title": "📋 Delegate Task",
+        "category": "The New Fuse - Orchestration"
+      },
+      {
+        "command": "the-new-fuse.connectMCP2025",
+        "title": "🔗 Connect MCP 2025",
+        "category": "The New Fuse - MCP"
+      },
+      {
+        "command": "the-new-fuse.batchMCPRequests",
+        "title": "📦 Batch MCP Requests",
+        "category": "The New Fuse - MCP"
+      },
+      {
+        "command": "the-new-fuse.createWorkflow",
+        "title": "🔄 Create Workflow",
+        "category": "The New Fuse - Orchestration"
+      },
+      {
+        "command": "the-new-fuse.viewOrchestrationStatus",
+        "title": "📊 View Orchestration Status",
+        "category": "The New Fuse - Orchestration"
+      },
+      {
+        "command": "the-new-fuse.viewSecurityMetrics",
+        "title": "🔒 View Security Metrics",
+        "category": "The New Fuse - Security"
+      },
+      {
+        "command": "the-new-fuse.viewPerformanceMetrics",
+        "title": "⚡ View Performance Metrics",
+        "category": "The New Fuse - Performance"
+      },
+      {
+        "command": "the-new-fuse.viewConnectionPool",
+        "title": "🔌 View Connection Pool",
+        "category": "The New Fuse - Performance"
+      },
+      {
+        "command": "the-new-fuse.clearCache",
+        "title": "🗑️ Clear Cache",
+        "category": "The New Fuse - Performance"
       }
     ],
     "menus": {
@@ -82,14 +131,21 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
+    "@types/jest": "29.0.0",
     "@types/node": "^16.18.126",
     "@types/uuid": "^9.0.8",
     "@types/vscode": "^1.74.0",
     "@types/ws": "^8.5.10",
+    "jest": "29.0.0",
+    "ts-jest": "29.0.0",
     "typescript": "^4.9.4"
   },
   "dependencies": {
     "axios": "^1.6.7",
+    "crypto": "^1.0.1",
+    "events": "^3.3.0",
+    "jsonrpc-lite": "^2.2.0",
+    "node-fetch": "^3.3.0",
     "uuid": "^9.0.1",
     "ws": "^8.16.0"
   }

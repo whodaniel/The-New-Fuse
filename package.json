@@ -1,30 +1,46 @@
 {
-  "name": "tnf-agent-relay",
+  "name": "the-new-fuse",
   "version": "2.1.0",
-  "description": "TNF Agent Communication Relay - Node.js Implementation",
-  "main": "tnf-relay.js",
+  "description": "The New Fuse - AI Agency Platform with Multi-Tenant Architecture",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "start": "node tnf-relay.js start",
-    "discover": "node tnf-relay.js discover",
-    "test": "node tnf-relay.js test",
-    "status": "node tnf-relay.js status",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "build": "turbo run build",
+    "build:api": "turbo run build --filter=@the-new-fuse/api-server",
+    "dev": "turbo run dev",
+    "dev:api": "turbo run dev --filter=@the-new-fuse/api-server",
+    "start": "turbo run start",
+    "start:api": "turbo run start --filter=@the-new-fuse/api-server",
+    "test": "turbo run test",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "clean": "turbo run clean",
+    "db:generate": "turbo run db:generate",
+    "db:migrate": "turbo run db:migrate"
   },
   "keywords": [
-    "mcp",
-    "agent",
-    "communication",
-    "relay"
+    "ai-agency",
+    "multi-tenant",
+    "nestjs",
+    "agency-hub",
+    "swarm-orchestration",
+    "typescript"
   ],
-  "author": "TNF Team",
+  "author": "The New Fuse Team",
   "license": "MIT",
   "devDependencies": {
+    "@turbo/gen": "^2.5.3",
     "eslint": "^8.0.0",
-    "prisma": "6.8.2"
+    "prisma": "6.8.2",
+    "turbo": "^2.5.3",
+    "typescript": "^5.8.3"
   },
   "packageManager": "yarn@4.9.1+sha512.f95ce356460e05be48d66401c1ae64ef84d163dd689964962c6888a9810865e39097a5e9de748876c2e0bf89b232d583c33982773e9903ae7a76257270986538",
   "dependencies": {
-    "@prisma/client": "6.8.2"
+    "@prisma/client": "6.8.2",
+    "cross-env": "^7.0.3"
   }
 }

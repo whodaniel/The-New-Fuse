@@ -1,9 +1,10 @@
 import * as DialogPrimitive from '@radix-ui/react-dialog';
-import { type VariantProps, cva } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 import { X } from 'lucide-react';
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 
-import { cn } from '../../utils.js';
+import { cn } from '../../utils';
 
 /**
  * Modal overlay variants using class-variance-authority
@@ -140,16 +141,16 @@ const useModal = () => {
  * Modal component for displaying a modal dialog
  */
 const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
-  ({ 
-    children, 
+  ({
+    children,
     open = false,
     onOpenChange,
     closeOnClickOutside = true,
     closeOnEscape = true,
     showCloseButton = true,
     position = 'default',
-    ...props
-  }, ref) => {
+    ..._props
+  }, _ref) => {
     // Remove unused state variables
     
     // Handle escape key
@@ -217,24 +218,21 @@ ModalComponent.displayName = 'Modal';
 const ModalContent = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
-  <ModalPortal>
-    <ModalOverlay />
-    <DialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        // ...existing styles...
-      )}
-      {...props} // Pass props down
-    >
-      {children}
-      <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-        <X className="h-4 w-4" />
-        <span className="sr-only">Close</span>
-      </DialogPrimitive.Close>
-    </DialogPrimitive.Content>
-  </ModalPortal>
-));
+>(_args => {
+  const { children, ...props } = _args;
+  return (
+    <ModalPortal>
+      <ModalOverlay />
+      <DialogPrimitive.Content {...props}>
+        {children}
+        <DialogPrimitive.Close className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+          <X className="h-4 w-4" />
+          <span className="sr-only">Close</span>
+        </DialogPrimitive.Close>
+      </DialogPrimitive.Content>
+    </ModalPortal>
+  );
+});
 ModalContent.displayName = DialogPrimitive.Content.displayName;
 
 /**
@@ -351,6 +349,23 @@ const ModalCloseButton = React.forwardRef<HTMLButtonElement, ModalCloseButtonPro
 ModalCloseButton.displayName = 'ModalCloseButton';
 
 // Export using a single pattern to avoid duplicate exports
+/**
+ * ModalPortal renders children into a React portal attached to document.body.
+ */
+const ModalPortal: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  if (typeof window === 'undefined') return null;
+  return ReactDOM.createPortal(children, document.body);
+};
+ModalPortal.displayName = 'ModalPortal';
+
+/**
+ * ModalOverlay renders the modal overlay using the modalOverlayVariants.
+ */
+const ModalOverlay: React.FC<{ position?: 'default' | 'top' | 'bottom' }> = ({ position = 'default' }) => (
+  <div className={cn(modalOverlayVariants({ position }))} />
+);
+ModalOverlay.displayName = 'ModalOverlay';
+
 export {
   ModalComponent as Modal,
   ModalContent,
@@ -359,4 +374,6 @@ export {
   ModalDescription,
   ModalFooter,
   ModalCloseButton,
+  ModalPortal,
+  ModalOverlay,
 };

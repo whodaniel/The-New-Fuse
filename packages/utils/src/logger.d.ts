@@ -1,14 +1,16 @@
-export declare enum LogLevel {
-    DEBUG = "debug",
-    INFO = "info",
-    WARN = "warn",
-    ERROR = "error"
-}
+/**
+ * Lightweight logger utility for the application
+ */
 export declare class Logger {
     private context;
-    constructor(context: string);
-    info(message: string, ...args: unknown[]): void;
-    error(message: string, error?: unknown): void;
-    debug(message: string, ...args: unknown[]): void;
-    warn(message: string, ...args: unknown[]): void;
+    private enableTimestamp;
+    constructor(context: string, enableTimestamp?: boolean);
+    private getPrefix;
+    log(message: any, ...optionalParams: any[]): void;
+    error(message: any, ...optionalParams: any[]): void;
+    warn(message: any, ...optionalParams: any[]): void;
+    debug(message: any, ...optionalParams: any[]): void;
+    verbose(message: any, ...optionalParams: any[]): void;
+    setContext(context: string): void;
 }
+//# sourceMappingURL=Logger.d.ts.map

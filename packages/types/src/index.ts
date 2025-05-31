@@ -1,5 +1,7 @@
 // Export all service types
-export * from './services.js';
+export type {
+  ServiceStatus
+} from './services.js';
 
 // Re-export base types
 export type {
@@ -49,8 +51,19 @@ export * from './agent.js';
 // Export everything else
 export * from './agent.types.js';
 export * from './marketplace.js';
-export * from './performance.js';
+export type {
+  ResourceManager
+} from './performance.js';
 export * from './routes.js';
 export * from './state.js';
 export * from './validation.js';
 export * from './workflow.js';
+export * from './chat.js';
+export * from './models.js';
+export * from './metrics.js';
+export type { ServiceStatus as MonitoringServiceStatus } from './monitoring.js';
+export type { ResourceManager as ResourceModuleManager } from './resource.js';
+export * from './security.js';
+export * from './session.js';
+export * from './suggestion.js';
+export * from './user.js';

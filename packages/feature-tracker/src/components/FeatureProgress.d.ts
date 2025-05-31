@@ -5,4 +5,3 @@ interface FeatureProgressProps {
 }
 export declare const FeatureProgress: FC<FeatureProgressProps>;
 export {};
-//# sourceMappingURL=FeatureProgress.d.ts.map

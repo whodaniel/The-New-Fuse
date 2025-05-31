@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { SplitPane } from './SplitPane.js';
-import { cn } from '../../utils.js';
+import { cn } from '../../utils';
 import './Split.css';
 
 /**

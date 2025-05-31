@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
-import { Pipeline } from './Pipeline.js';
-import { TaskExecution } from './TaskExecution.js';
+import { Pipeline } from './Pipeline';
+import { TaskExecution } from './TaskExecution';
 
 @Entity()
 export class Task {

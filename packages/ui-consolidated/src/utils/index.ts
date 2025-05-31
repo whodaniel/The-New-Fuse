@@ -1,1 +1,1 @@
-export * from './cn.js';
+export * from './cn';

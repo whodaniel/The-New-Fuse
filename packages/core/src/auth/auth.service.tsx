@@ -12,50 +12,75 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService
   ) {
-    this.logger = new Logger(AuthService.name): string, password: string): Promise<any> {
+    this.logger = new Logger(AuthService.name);
+  }
+
+  async validateUser(email: string, password: string): Promise<any> {
     try {
-      const user: { email } });
+      const user = await this.prisma.user.findUnique({ where: { email } });
       if (user?.password && await bcrypt.compare(password, user.password)) {
-        const { password: _, ...result }  = await this.prisma.user.findUnique({ where user;
+        const { password: _, ...result } = user;
         return result;
       }
       return null;
-    } catch (error: unknown){
+    } catch (error: unknown) {
       this.logger.error('Error validating user:', {
-        error: error instanceof Error ? error.message : Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
         email
-      }): string, password: string): Promise<any> {
+      });
+      throw error;
+    }
+  }
+
+  async createUser(email: string, password: string): Promise<any> {
     try {
-      const hashedPassword: {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const user = await this.prisma.user.create({
+        data: {
           email,
           password: hashedPassword,
-          role: USER'
+          role: 'USER'
         }
       });
 
-      const { password: _, ...result }  = await bcrypt.hash(password, 10)): void {
-      this.logger.error('Error creating user:', {
-        error: error instanceof Error ? error.message : Unknown error',
-        email
-      })): void {
-    const payload  = await this.prisma.user.create({
-        data user;
+      const { password: _, ...result } = user;
       return result;
-    } catch (error { email: user.email, sub: user.id };
+    } catch (error: unknown) {
+      this.logger.error('Error creating user:', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        email
+      });
+      throw error;
+    }
+  }
+
+  async login(user: any): Promise<{ access_token: string }> {
+    const payload = { email: user.email, sub: user.id };
     return {
-      access_token: this.jwtService.sign(payload): string): Promise<any> {
+      access_token: this.jwtService.sign(payload)
+    };
+  }
+
+  async validateToken(token: string): Promise<any> {
     try {
-      return this.jwtService.verify(token)): void {
+      return this.jwtService.verify(token);
+    } catch (error: unknown) {
       this.logger.error('Error validating token:', {
-        error: error instanceof Error ? error.message : Unknown error'
-      }): string): Promise<void> {
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+      throw error;
+    }
+  }
+
+  async revokeToken(userId: string): Promise<void> {
     try {
       await this.prisma.user.update({
         where: { id: userId },
         data: { tokenVersion: { increment: 1 } }
-      })): void {
+      });
+    } catch (error: unknown) {
       this.logger.error('Error revoking token:', {
-        error: error instanceof Error ? error.message : Unknown error',
+        error: error instanceof Error ? error.message : 'Unknown error',
         userId
       });
       throw error;

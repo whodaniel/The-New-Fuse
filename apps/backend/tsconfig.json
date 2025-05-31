@@ -4,6 +4,7 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "baseUrl": ".",
+    "noEmit": false,
     "paths": {
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],

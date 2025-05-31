@@ -10,4 +10,5 @@ export interface Config {
         format: string;
     };
 }
-export declare function loadConfig(): any Config;
+export declare function loadConfig(): Config;
+//# sourceMappingURL=config.d.ts.map

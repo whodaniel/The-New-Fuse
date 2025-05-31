@@ -1,75 +1,76 @@
 import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { Suspense, lazy, useState, useEffect } from 'react';
-import Landing from './pages/Landing.js';
-import MainLayout from './components/layout/MainLayout.js';
-import ProtectedRoute from './components/core/ProtectedRoute.js';
-import PublicRoute from './components/core/PublicRoute.js';
-import Loading from './components/Loading.js';
+import Landing from './pages/Landing';
+import MainLayout from './components/layout/MainLayout';
+import ProtectedRoute from './components/core/ProtectedRoute';
+import PublicRoute from './components/core/PublicRoute';
+import Loading from './components/Loading';
 
 // Import directly loaded pages
-import TestPage from './pages/Test.js';
-import DebugPage from './pages/Debug.js';
+import TestPage from './pages/Test';
+import DebugPage from './pages/Debug';
 
 // Lazy-loaded components
-const Login = lazy(() => import('./pages/auth/Login.js'));
-const Register = lazy(() => import('./pages/auth/Register.js'));
-const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword.js'));
-const ResetPassword = lazy(() => import('./pages/auth/ResetPassword.js'));
-const SSO = lazy(() => import('./pages/auth/SSO.js'));
-const Dashboard = lazy(() => import('./pages/Dashboard.js'));
-const Home = lazy(() => import('./pages/Home.js'));
-const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal.js'));
+const Login = lazy(() => import('./pages/auth/Login'));
+const Register = lazy(() => import('./pages/auth/Register'));
+const ForgotPassword = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
+const SSO = lazy(() => import('./pages/auth/SSO'));
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const Home = lazy(() => import('./pages/Home'));
+const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal'));
 
 // UI Component pages
-const ComponentsNav = lazy(() => import('./pages/ComponentsNav.js'));
-const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase.js'));
-const LayoutExample = lazy(() => import('./pages/LayoutExample.js'));
+const ComponentsNav = lazy(() => import('./pages/ComponentsNav'));
+const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
+const LayoutExample = lazy(() => import('./pages/LayoutExample'));
 
+const Chat = lazy(() => import('./pages/Chat'));
 // Feature pages
-const TimelineDemo = lazy(() => import('./pages/TimelineDemo.js'));
-const GraphDemo = lazy(() => import('./pages/graph-demo.js'));
-const Analytics = lazy(() => import('./pages/Analytics.js'));
+const TimelineDemo = lazy(() => import('./pages/TimelineDemo'));
+const GraphDemo = lazy(() => import('./pages/graph-demo'));
+const Analytics = lazy(() => import('./pages/Analytics'));
 
 
 
 // Task pages
-const Tasks = lazy(() => import('./pages/Tasks.js'));
-const TaskDetail = lazy(() => import('./pages/Tasks/Detail.js'));
-const NewTask = lazy(() => import('./pages/Tasks/New.js'));
-const EditTask = lazy(() => import('./pages/Tasks/Edit.js'));
+const Tasks = lazy(() => import('./pages/Tasks'));
+const TaskDetail = lazy(() => import('./pages/Tasks/Detail'));
+const NewTask = lazy(() => import('./pages/Tasks/New'));
+const EditTask = lazy(() => import('./pages/Tasks/Edit'));
 
 // Suggestion pages
-const Suggestions = lazy(() => import('./pages/Suggestions.js'));
-const SuggestionDetail = lazy(() => import('./pages/Suggestions/Detail.js'));
-const NewSuggestion = lazy(() => import('./pages/Suggestions/New.js'));
+const Suggestions = lazy(() => import('./pages/Suggestions'));
+const SuggestionDetail = lazy(() => import('./pages/Suggestions/Detail'));
+const NewSuggestion = lazy(() => import('./pages/Suggestions/New'));
 
 // Admin pages
-const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard.js'));
-const Users = lazy(() => import('./pages/Admin/Users.js'));
-const Workspaces = lazy(() => import('./pages/Admin/Workspaces.js'));
-const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth.js'));
-const AdminSettings = lazy(() => import('./pages/Admin/Settings.js'));
+const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
+const Users = lazy(() => import('./pages/Admin/Users'));
+const Workspaces = lazy(() => import('./pages/Admin/Workspaces'));
+const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
 
 // Settings pages
-const General = lazy(() => import('./pages/settings/General.js'));
-const Appearance = lazy(() => import('./pages/settings/Appearance.js'));
-const API = lazy(() => import('./pages/settings/API.js'));
-const Security = lazy(() => import('./pages/settings/Security.js'));
-const Notifications = lazy(() => import('./pages/settings/Notifications.js'));
-const EmbeddingPreference = lazy(() => import('./pages/GeneralSettings/EmbeddingPreference.js'));
+const General = lazy(() => import('./pages/settings/General'));
+const Appearance = lazy(() => import('./pages/settings/Appearance'));
+const API = lazy(() => import('./pages/settings/API'));
+const Security = lazy(() => import('./pages/settings/Security'));
+const Notifications = lazy(() => import('./pages/settings/Notifications'));
+const EmbeddingPreference = lazy(() => import('./pages/GeneralSettings/EmbeddingPreference'));
 
 // Workspace pages
-const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview.js'));
-const WorkspaceMembers = lazy(() => import('./pages/workspace/Members.js'));
-const WorkspaceAnalytics = lazy(() => import('./pages/workspace/Analytics.js'));
-const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings.js'));
+const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
+const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
+const WorkspaceAnalytics = lazy(() => import('./pages/workspace/Analytics'));
+const WorkspaceSettings = lazy(() => import('./pages/workspace/Settings'));
 
 // Legal pages
-const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy.js'));
-const TermsOfService = lazy(() => import('./pages/legal/TermsOfService.js'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService'));
 
 // Onboarding pages
-const OnboardingFlow = lazy(() => import('./pages/OnboardingFlow.js'));
+const OnboardingFlow = lazy(() => import('./pages/OnboardingFlow'));
 
 // Simple error boundary component
 function ErrorFallback({ error }: { error: Error }) {
@@ -134,6 +135,11 @@ export default function Router() {
         <Route path="/layout-example" element={
           <Suspense fallback={<Loading />}>
             <LayoutExample />
+          </Suspense>
+        } />
+        <Route path="/chat" element={
+          <Suspense fallback={<Loading />}>
+            <Chat />
           </Suspense>
         } />
 

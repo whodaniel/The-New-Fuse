@@ -767,7 +767,7 @@ export class ChatViewProvider {
         // Dispose of all disposables
         while (this._disposables.length) {
             const x = this._disposables.pop();
-            if x) {
+            if (x) {
                 x.dispose();
             }
         }

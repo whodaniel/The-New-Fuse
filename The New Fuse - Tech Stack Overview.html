@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Fuse - Tech Stack Overview</title>
+    <style>
+        body { font-family: sans-serif; line-height: 1.6; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; border-bottom: 2px solid #3498db; padding-bottom: 10px; }
+        h2 { color: #3498db; margin-top: 30px; }
+        h3 { color: #2980b9; margin-top: 20px; }
+        ul { list-style-type: disc; margin-left: 20px; }
+        li { margin-bottom: 8px; }
+        code { background-color: #e8e8e8; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        a { color: #3498db; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>The New Fuse - Tech Stack Overview</h1>
+
+        <h2>Key Documentation & Configuration Files</h2>
+        <p>The following documents and configuration files provide detailed insights into the project's architecture, protocols, and setup. The tech stack summary below is derived from these and other source files.</p>
+        <ul>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/README.md" target="_blank">Project README.md (Root)</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/docs/architecture/ARCHITECTURE.md" target="_blank">ARCHITECTURE.md</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/docs/TECH-STACK.md" target="_blank">TECH-STACK.md</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/docs/MCP-GUIDE.md" target="_blank">MCP-GUIDE.md</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/AGENT-COMMUNICATION-GUIDE.md" target="_blank">AGENT-COMMUNICATION-GUIDE.md</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/docs/architecture/mcp-integration.md" target="_blank">mcp-integration.md</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/src/mcp/README.md" target="_blank">MCP Module README (src/mcp/README.md)</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/src/components/nodes/AIVerificationAgent/README.md" target="_blank">AIVerificationAgent Component README</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/package.json" target="_blank">Root package.json</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/src/vscode-extension/package.json" target="_blank">VS Code Extension package.json</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/apps/frontend/package.json" target="_blank">Frontend package.json (apps/frontend)</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/apps/api/package.json" target="_blank">API package.json (apps/api)</a></li>
+            <li><a href="https://github.com/whodaniel/fuse/blob/main/src/mcp/package.json" target="_blank">MCP Module package.json (src/mcp)</a></li>
+        </ul>
+
+        <h2>Consolidated Tech Stack</h2>
+
+        <h3>I. Architecture & Monorepo Management</h3>
+        <ul>
+            <li><strong>Package Manager:</strong> Yarn (specifically Yarn 4.9.1 with Berry mentioned in <a href="https://github.com/whodaniel/fuse/blob/main/docs/TECH-STACK.md" target="_blank">TECH-STACK.md</a> and root <a href="https://github.com/whodaniel/fuse/blob/main/package.json" target="_blank">package.json</a>)</li>
+            <li><strong>Workspace Structure:</strong> Multi-package monorepo (<code>apps/</code> and <code>packages/</code> structure)</li>
+            <li><strong>Build System:</strong> Yarn workspaces</li>
+        </ul>
+
+        <h3>II. Frontend (<a href="https://github.com/whodaniel/fuse/blob/main/apps/frontend/package.json" target="_blank">apps/frontend</a>)</h3>
+        <ul>
+            <li><strong>Core Framework:</strong> React 18 (Functional Components, Hooks)</li>
+            <li><strong>Language:</strong> TypeScript</li>
+            <li><strong>Build Tool:</strong> Vite</li>
+            <li><strong>UI Component Libraries:</strong>
+                <ul>
+                    <li>Primary: Chakra UI</li>
+                    <li>Headless: Radix UI</li>
+                    <li>Secondary/Legacy: Material-UI (MUI)</li>
+                </ul>
+            </li>
+            <li><strong>Icons:</strong> Heroicons, Phosphor Icons, Lucide React</li>
+            <li><strong>Styling:</strong>
+                <ul>
+                    <li>Tailwind CSS (utility-first)</li>
+                    <li>Emotion (CSS-in-JS)</li>
+                </ul>
+            </li>
+            <li><strong>Animations:</strong> Framer Motion</li>
+            <li><strong>State Management:</strong>
+                <ul>
+                    <li>Global: Redux Toolkit</li>
+                    <li>Local/Component: Zustand</li>
+                </ul>
+            </li>
+            <li><strong>Server State/Caching:</strong> TanStack Query (React Query)</li>
+            <li><strong>Forms:</strong> React Hook Form</li>
+            <li><strong>Routing:</strong> React Router DOM</li>
+            <li><strong>HTTP Client:</strong> Axios</li>
+            <li><strong>Real-time Communication:</strong> WebSockets (<code>ws</code> library, Socket.IO client-side if backend uses it)</li>
+            <li><strong>In-browser Code Editor:</strong> Monaco Editor (<code>@monaco-editor/react</code>)</li>
+            <li><strong>Data Visualization:</strong>
+                <ul>
+                    <li>D3.js</li>
+                    <li>Recharts</li>
+                    <li>ReactFlow (for flow/diagrams)</li>
+                </ul>
+            </li>
+            <li><strong>Internationalization (i18n):</strong> i18next, react-i18next</li>
+        </ul>
+
+        <h3>III. Backend (<a href="https://github.com/whodaniel/fuse/blob/main/apps/api/package.json" target="_blank">apps/api</a>, <a href="https://github.com/whodaniel/fuse/blob/main/apps/backend/package.json" target="_blank">apps/backend</a> - often NestJS based)</h3>
+        <ul>
+            <li><strong>Core Framework:</strong> NestJS</li>
+            <li><strong>Language:</strong> TypeScript</li>
+            <li><strong>Runtime:</strong> Node.js (ES Modules support)</li>
+            <li><strong>Database & ORM:</strong>
+                <ul>
+                    <li>Primary Database: PostgreSQL</li>
+                    <li>Secondary/Other: MongoDB (mentioned in <a href="https://github.com/whodaniel/fuse/blob/main/docs/architecture/ARCHITECTURE.md" target="_blank">ARCHITECTURE.md</a>)</li>
+                    <li>ORM/Query Builders: Prisma (modern toolkit), TypeORM (decorator-based)</li>
+                </ul>
+            </li>
+            <li><strong>Caching:</strong> Redis (<code>ioredis</code> client)</li>
+            <li><strong>Authentication & Authorization:</strong>
+                <ul>
+                    <li>JWT (JSON Web Tokens)</li>
+                    <li>Passport.js with strategies (JWT, Google OAuth)</li>
+                    <li>Password Hashing: bcrypt</li>
+                </ul>
+            </li>
+            <li><strong>Real-time Communication:</strong>
+                <ul>
+                    <li>WebSockets (Socket.IO via <code>@nestjs/websockets</code>, <code>@nestjs/platform-socket.io</code>)</li>
+                    <li>Redis Pub/Sub (for distributed messaging, mentioned in <a href="https://github.com/whodaniel/fuse/blob/main/docs/architecture/ARCHITECTURE.md" target="_blank">ARCHITECTURE.md</a> and <a href="https://github.com/whodaniel/fuse/blob/main/AGENT-COMMUNICATION-GUIDE.md" target="_blank">AGENT-COMMUNICATION-GUIDE.md</a>)</li>
+                    <li>Redis Streams (for reliable, persistent messaging as per <a href="https://github.com/whodaniel/fuse/blob/main/AGENT-COMMUNICATION-GUIDE.md" target="_blank">AGENT-COMMUNICATION-GUIDE.md</a>)</li>
+                </ul>
+            </li>
+            <li><strong>API Documentation:</strong> OpenAPI (Swagger via <code>@nestjs/swagger</code>)</li>
+            <li><strong>Validation:</strong> class-validator, class-transformer, Zod</li>
+            <li><strong>Configuration:</strong> dotenv</li>
+        </ul>
+
+        <h3>IV. VS Code Extension (<a href="https://github.com/whodaniel/fuse/blob/main/src/vscode-extension/package.json" target="_blank">src/vscode-extension</a>)</h3>
+        <ul>
+            <li><strong>Language:</strong> TypeScript</li>
+            <li><strong>Core:</strong> VS Code API (<code>@types/vscode</code>)</li>
+            <li><strong>HTTP Client:</strong> Axios</li>
+            <li><strong>Real-time Communication:</strong> WebSockets (<code>ws</code> library)</li>
+            <li><strong>Dependencies:</strong> uuid</li>
+        </ul>
+
+        <h3>V. Browser Extensions (e.g., Chrome Extension)</h3>
+        <ul>
+            <li><strong>Language:</strong> TypeScript</li>
+            <li><strong>Build Tool:</strong> Webpack (mentioned in <a href="https://github.com/whodaniel/fuse/blob/main/docs/TECH-STACK.md" target="_blank">TECH-STACK.md</a>)</li>
+            <li><strong>Manifest:</strong> Manifest V3</li>
+            <li><strong>Communication:</strong> WebSocket-based</li>
+        </ul>
+
+        <h3>VI. Development Tools & Quality</h3>
+        <ul>
+            <li><strong>Testing:</strong>
+                <ul>
+                    <li>Jest (with <code>ts-jest</code>)</li>
+                    <li>React Testing Library</li>
+                    <li>Vitest (for Vite projects)</li>
+                    <li>Selenium WebDriver (for E2E)</li>
+                    <li>jsdom</li>
+                </ul>
+            </li>
+            <li><strong>Linting & Formatting:</strong>
+                <ul>
+                    <li>ESLint (with <code>@typescript-eslint</code>)</li>
+                    <li>Prettier</li>
+                </ul>
+            </li>
+            <li><strong>Git Hooks:</strong> Husky, lint-staged</li>
+            <li><strong>Commit Standards:</strong> Commitlint</li>
+            <li><strong>Component Documentation/Development:</strong> Storybook</li>
+            <li><strong>Version Management:</strong> Changesets (<code>@changesets/cli</code>)</li>
+        </ul>
+
+        <h3>VII. Infrastructure & Deployment</h3>
+        <ul>
+            <li><strong>Containerization:</strong> Docker (multi-stage builds)</li>
+            <li><strong>Orchestration:</strong> Docker Compose</li>
+            <li><strong>Web Server/Reverse Proxy:</strong> Nginx</li>
+            <li><strong>Process Management (Dev):</strong> Nodemon</li>
+            <li><strong>Environment Variables:</strong> cross-env</li>
+        </ul>
+
+        <h3>VIII. External Services & Integrations</h3>
+        <ul>
+            <li><strong>Firebase:</strong>
+                <ul>
+                    <li>Authentication (<code>@firebase/auth</code>)</li>
+                    <li>Firestore (<code>@firebase/firestore</code>)</li>
+                    <li>Admin SDK (<code>firebase-admin</code>)</li>
+                </ul>
+            </li>
+            <li><strong>Google Cloud Platform (GCP):</strong>
+                <ul>
+                    <li>Google Cloud Storage (<code>@google-cloud/storage</code>)</li>
+                </ul>
+            </li>
+            <li><strong>AI/LLM:</strong> Integrations with Ollama, OpenAI, Anthropic, Cerebras (as seen in <code>CONFIGURATION-FIXES.md</code> which can be found at <a href="https://github.com/whodaniel/fuse/blob/main/src/vscode-extension/CONFIGURATION-FIXES.md" target="_blank">src/vscode-extension/CONFIGURATION-FIXES.md</a>)</li>
+        </ul>
+
+        <h3>IX. Protocols & Communication Systems</h3>
+        <ul>
+            <li><strong>Model Context Protocol (MCP):</strong> A core protocol for AI agent communication, tool usage, and context sharing. The New Fuse acts as both an MCP server and client.
+                <ul>
+                    <li>Uses WebSocket and JSON-RPC.</li>
+                    <li>Features include agent registration, capability declaration/assessment, tool discovery, and execution.</li>
+                    <li><code>MCPBrokerService</code> and <code>DirectorAgentService</code> are key backend components.</li>
+                    <li>Refer to <a href="https://github.com/whodaniel/fuse/blob/main/docs/MCP-GUIDE.md" target="_blank">MCP-GUIDE.md</a> and <a href="https://github.com/whodaniel/fuse/blob/main/src/mcp/README.md" target="_blank">src/mcp/README.md</a>.</li>
+                </ul>
+            </li>
+            <li><strong>Agent-to-Agent (A2A) Communication:</strong>
+                <ul>
+                    <li>Relies heavily on Redis Streams for reliable, persistent, asynchronous messaging.</li>
+                    <li>Uses standardized JSON message formats.</li>
+                    <li>Supports task distribution, event broadcasting, and direct messaging.</li>
+                    <li>Refer to <a href="https://github.com/whodaniel/fuse/blob/main/AGENT-COMMUNICATION-GUIDE.md" target="_blank">AGENT-COMMUNICATION-GUIDE.md</a>.</li>
+                </ul>
+            </li>
+            <li><strong>Redis:</strong> Used extensively for:
+                <ul>
+                    <li>Message Queuing (Streams)</li>
+                    <li>Caching (Strings with expiration)</li>
+                    <li>Pub/Sub (though Streams are preferred for A2A)</li>
+                    <li>Shared State Management (Hashes for task registries, LLM memory)</li>
+                    <li>Distributed Locking (SET NX PX)</li>
+                    <li>Vector Database capabilities (RediSearch/Redis Stack for indexing code and semantic search)</li>
+                </ul>
+            </li>
+        </ul>
+        <p style="margin-top: 30px; text-align: center; font-size: 0.9em; color: #777;">
+            This tech stack overview is based on the information available as of May 27, 2025.
+        </p>
+    </div>
+</body>
+</html>

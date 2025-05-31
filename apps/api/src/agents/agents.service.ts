@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaService } from '@the-new-fuse/database/src/prisma.service';
 import { ConfigService } from '@nestjs/config';
-import { AgentFactory } from './agent.factory.js';
-import { CreateAgentDto, UpdateAgentDto } from './dto.js';
+import { AgentFactory } from './agent.factory';
+import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
 
 @Injectable()

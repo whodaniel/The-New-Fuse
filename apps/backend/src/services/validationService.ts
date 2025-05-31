@@ -1,7 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { validate, ValidationError as ClassValidatorError } from 'class-validator';
 import { plainToClass } from 'class-transformer';
-import { ValidationError } from '@the-new-fuse/core/error/types';
+// import { ValidationError } from '@the-new-fuse/core/error/types';
+
+// Define ValidationError locally since core package doesn't export it
+interface ValidationError {
+  message: string;
+  field?: string;
+  value?: any;
+}
 
 interface ValidationConfig {
   enableDebugLogs: boolean;
