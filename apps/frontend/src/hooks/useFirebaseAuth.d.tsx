@@ -1,12 +1,12 @@
 import { User } from 'firebase/auth';
-export interface AuthError {
-    code: string;
-    message: string;
-}
+import { AuthenticationError } from '../../../types/error.tsx'; // Import AuthenticationError
+
+// Local AuthError interface removed
+
 export declare function useFirebaseAuth(): {
     user: User | null;
     loading: boolean;
-    error: AuthError | null;
+    error: AuthenticationError | null; // Use AuthenticationError
     signIn: (email: string, password: string) => Promise<User>;
     signInWithGoogle: () => Promise<User>;
     signUp: (email: string, password: string) => Promise<User>;

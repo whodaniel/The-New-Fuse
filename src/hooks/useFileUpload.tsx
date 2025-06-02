@@ -1,6 +1,6 @@
 import { useState, useCallback } from "react";
 import { api } from '../lib/api.js';
-import { FileUploadError } from '../lib/errors.js';
+import { FileUploadError } from '../types/error.js'; // Updated import path
 import { useToast } from '../components/ui/toast.js';
 
 export interface UploadProgress {

@@ -173,21 +173,57 @@ export class Logger extends EventEmitter {
         const data = typeof message === 'string' ? message : JSON.stringify(message);
         const messageStr = data + '\n';
 
-        try {
-            // Check if we need to rotate the log files
-            if (Logger.currentFileSize + messageStr.length > Logger.maxFileSize) {
+        // Check if we need to rotate the log files before attempting to write
+        if (Logger.currentLogFile && Logger.currentFileSize + messageStr.length > Logger.maxFileSize) {
+            try {
                 await this.rotateLogFiles();
+            } catch (rotationError) {
+                // If rotation fails, we might still try to write to the current file or handle error
+                // For now, log it and proceed with write attempt to current (possibly old) file.
+                const rotationErrorMessage = `Log rotation failed: ${rotationError instanceof Error ? rotationError.message : String(rotationError)}. Attempting to write to current log file.`;
+                console.error(rotationErrorMessage);
+                this.emit('error.rotate', { error: rotationError, message: rotationErrorMessage });
             }
+        }
 
-            fs.appendFileSync(Logger.currentLogFile, messageStr);
-            Logger.currentFileSize += messageStr.length;
-            this.emit('logged', { file: Logger.currentLogFile, message });
-        } catch (error) {
-            console.error(`Failed to write to log file: ${error instanceof Error ? error.message : String(error)}`);
+        const MAX_RETRIES = 3;
+        let attempts = 0;
+        let success = false;
+
+        while (attempts < MAX_RETRIES && !success) {
+            try {
+                // Ensure currentLogFile is still valid (could have changed if rotation happened mid-process by another call)
+                if (!Logger.currentLogFile) {
+                    this.initializeLogFile(); // Re-initialize if null
+                    if (!Logger.currentLogFile) { // If still null, critical error
+                        throw new Error("Log file not initialized after attempting re-initialization.");
+                    }
+                }
+                fs.appendFileSync(Logger.currentLogFile, messageStr);
+                Logger.currentFileSize += messageStr.length; // Only update if successful
+                this.emit('logged', { file: Logger.currentLogFile, message });
+                success = true;
+            } catch (error) {
+                attempts++;
+                if (attempts >= MAX_RETRIES) {
+                    const errorMessage = `Failed to write to log file ${Logger.currentLogFile} after ${MAX_RETRIES} attempts: ${error instanceof Error ? error.message : String(error)}`;
+                    console.error(errorMessage); // Prominent error message
+                    this.emit('error.file', { error, message: errorMessage, filePath: Logger.currentLogFile });
+                } else {
+                    // console.warn(`Attempt ${attempts} failed to write to log file. Retrying in ${200 * attempts}ms...`);
+                    await new Promise(resolve => setTimeout(resolve, 200 * attempts)); // Delay
+                }
+            }
         }
     }
 
     private async rotateLogFiles(): Promise<void> {
+        // This method itself needs to be robust. Errors here are caught by the caller or handled internally.
+        // The original try-catch in rotateLogFiles will handle its own errors.
+        // For the purpose of this subtask, the main change is to ensure its errors are caught if it's called from writeToFile.
+        // The try-catch in the original rotateLogFiles should be sufficient for its internal operations.
+        // Let's ensure it's robust enough.
+
         try {
             // Rename existing log files
             for (let i = Logger.maxFiles - 1; i >= 0; i--) {
@@ -206,9 +242,15 @@ export class Logger extends EventEmitter {
             }
 
             // Create new log file
-            this.initializeLogFile();
+            this.initializeLogFile(); // This sets currentLogFile and resets currentFileSize
         } catch (error) {
-            console.error(`Failed to rotate log files: ${error instanceof Error ? error.message : String(error)}`);
+            // This error will be caught by the caller if rotateLogFiles is awaited,
+            // or needs to be handled here if not.
+            // Emitting an event here for direct rotation failures could also be useful.
+            const rotationErrorMessage = `Failed to rotate log files: ${error instanceof Error ? error.message : String(error)}`;
+            console.error(rotationErrorMessage);
+            this.emit('error.rotate', { error, message: rotationErrorMessage });
+            throw error; // Re-throw to allow caller (writeToFile) to know rotation failed
         }
     }
 
@@ -216,14 +258,18 @@ export class Logger extends EventEmitter {
     // For simplicity with appendFileSync, an explicit flush is often not strictly needed
     // or can be simplified.
     async flush(): Promise<void> {
+        // No retries needed for flush as per current requirement, just try-catch
         return new Promise<void>((resolve) => {
             if (Logger.enableFile && Logger.currentLogFile) {
                 try {
                     const fd = fs.openSync(Logger.currentLogFile, 'a');
-                    fs.fsyncSync(fd); // Use synchronous version
+                    fs.fsyncSync(fd);
                     fs.closeSync(fd);
+                    this.emit('flushed', { file: Logger.currentLogFile });
                 } catch (err) {
-                    console.error(`Failed to flush log file: ${err instanceof Error ? err.message : String(err)}`);
+                    const errorMessage = `Failed to flush log file ${Logger.currentLogFile}: ${err instanceof Error ? err.message : String(err)}`;
+                    console.error(errorMessage);
+                    this.emit('error.flush', { error: err, message: errorMessage, filePath: Logger.currentLogFile });
                 }
             }
             resolve();

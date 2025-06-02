@@ -141,22 +141,7 @@ export interface VerificationResponse {
 }
 
 // Error Types
-export interface AuthError {
-  code: AuthErrorCode;
-  message: string;
-  details?: Record<string, unknown>;
-}
-
-export type AuthErrorCode = 
-  | 'INVALID_CREDENTIALS'
-  | 'ACCOUNT_LOCKED'
-  | 'EMAIL_NOT_VERIFIED'
-  | 'MFA_REQUIRED'
-  | 'INVALID_TOKEN'
-  | 'SESSION_EXPIRED'
-  | 'RATE_LIMITED'
-  | 'INVALID_CAPTCHA'
-  | 'WEAK_PASSWORD'
-  | 'EMAIL_IN_USE'
-  | 'INVALID_RESET_CODE'
-  | 'SERVER_ERROR';
+// Local AuthError and AuthErrorCode removed
+// Re-exporting AuthenticationError from src/types/error.tsx as AuthError for compatibility
+import { AuthenticationError } from '../../types/error.tsx';
+export type { AuthenticationError as AuthError };
