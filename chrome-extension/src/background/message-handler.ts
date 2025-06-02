@@ -25,14 +25,17 @@ const messageLogger = new Logger({
 export class MessageHandler {
   private connectionManager: ConnectionManager;
   private securityManager: SecurityManager;
+  private backgroundLogger: Logger; // Add this property
 
   /**
    * Create a new MessageHandler
    * @param connectionManager - Connection manager
+   * @param backgroundLoggerInstance - Logger instance from background script
    */
-  constructor(connectionManager: ConnectionManager) {
+  constructor(connectionManager: ConnectionManager, backgroundLoggerInstance: Logger) { // Modified
     this.connectionManager = connectionManager;
     this.securityManager = new SecurityManager();
+    this.backgroundLogger = backgroundLoggerInstance; // Assign to property
     messageLogger.info('MessageHandler initialized');
   }
 
@@ -113,6 +116,22 @@ export class MessageHandler {
           this.handleSetSharedSecret(message as SetSharedSecretRequestMessage, sendResponse);
           return true;
 
+        case 'GET_ALL_LOGS':
+          this.handleGetAllLogs(sendResponse);
+          return true; // Indicates asynchronous response
+
+        case 'ENABLE_DEBUG_MODE':
+          this.handleEnableDebugMode(sendResponse);
+          return false; // Or true if any async operations were needed
+
+        case 'DISABLE_DEBUG_MODE':
+          this.handleDisableDebugMode(sendResponse);
+          return false;
+
+        case 'BG_INJECT_SCRIPT_REQUEST':
+          this.handleBgInjectScriptRequest(message.payload, sender, sendResponse);
+          return true; // Indicates asynchronous response
+
         default:
           // Forward message to WebSocket server
           this.handleForwardMessage(message, sendResponse);
@@ -123,6 +142,124 @@ export class MessageHandler {
       sendResponse({ success: false, error: (error as Error).message });
       return false;
     }
+  }
+
+  /**
+   * Handle Background Inject Script Request message with retry logic
+   * @param payload - Message payload
+   * @param sender - Message sender
+   * @param sendResponse - Response callback
+   */
+  private async handleBgInjectScriptRequest(
+    payload: { tabId: number; chatInputSelector: string; chatOutputSelector: string; sendButtonSelector: string },
+    sender: chrome.runtime.MessageSender,
+    sendResponse: (response?: any) => void
+  ): Promise<void> {
+    const { tabId, ...originalPayload } = payload;
+    messageLogger.info(`Background: Received BG_INJECT_SCRIPT_REQUEST for tab ${tabId}`);
+
+    const maxRetries = 3;
+    const retryDelay = 500; // ms
+
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const responseFromTab = await new Promise((resolve, reject) => {
+          chrome.tabs.sendMessage(tabId, {
+            type: 'INJECT_SCRIPT_REQUEST', // The original message type for the content script
+            payload: originalPayload
+          }, response => {
+            if (chrome.runtime.lastError) {
+              reject(new Error(chrome.runtime.lastError.message));
+            } else {
+              resolve(response);
+            }
+          });
+        });
+
+        // If successful, send response to popup and exit loop
+        messageLogger.info(`Background: Successfully sent INJECT_SCRIPT_REQUEST to tab ${tabId} on attempt ${attempt}`);
+        sendResponse(responseFromTab); // Forward the content script's response
+        return;
+
+      } catch (error: any) {
+        messageLogger.warn(`Background: Attempt ${attempt} failed for INJECT_SCRIPT_REQUEST to tab ${tabId}: ${error.message}`);
+        if (error.message && error.message.includes("Receiving end does not exist")) {
+          if (attempt < maxRetries) {
+            // Wait before retrying
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+            continue; // Next attempt
+          } else {
+            // Max retries reached
+            messageLogger.error(`Background: Max retries reached for INJECT_SCRIPT_REQUEST to tab ${tabId}.`);
+            sendResponse({ success: false, message: `Failed to connect to content script in tab ${tabId} after ${maxRetries} attempts. The page might be restricted or not fully loaded.` });
+            return;
+          }
+        } else {
+          // Other error, not a "Receiving end does not exist" error
+          messageLogger.error(`Background: Non-retryable error for INJECT_SCRIPT_REQUEST to tab ${tabId}: ${error.message}`);
+          sendResponse({ success: false, message: `Error sending message to tab ${tabId}: ${error.message}` });
+          return;
+        }
+      }
+    }
+  }
+
+  /**
+   * Handle get all logs
+   * @param sendResponse - Response callback
+   */
+  private async handleGetAllLogs(sendResponse: (response?: any) => void): Promise<void> {
+    messageLogger.info('Received GET_ALL_LOGS request');
+    try {
+      const result = await chrome.storage.local.get(null);
+      const allLogs: any[] = []; // Using any[] for LogEntry type from logger.ts
+      Object.keys(result).forEach(key => {
+        if (key.startsWith('logs_') && Array.isArray(result[key])) {
+          allLogs.push(...result[key]);
+        }
+      });
+
+      // Sort logs by timestamp
+      allLogs.sort((a, b) => {
+        // Ensure timestamps are valid Date strings before comparing
+        const dateA = new Date(a.timestamp).getTime();
+        const dateB = new Date(b.timestamp).getTime();
+        if (isNaN(dateA) || isNaN(dateB)) {
+          // Handle invalid timestamps if necessary, e.g., by treating them as older or newer
+          return 0;
+        }
+        return dateA - dateB;
+      });
+
+      sendResponse({ success: true, logs: allLogs });
+    } catch (error) {
+      messageLogger.error('Error exporting logs for GET_ALL_LOGS', error);
+      sendResponse({ success: false, error: (error as Error).message, logs: [] });
+    }
+  }
+
+  /**
+   * Handle Enable Debug Mode message
+   * @param sendResponse - Response callback
+   */
+  private handleEnableDebugMode(sendResponse: (response?: any) => void): void {
+    messageLogger.info('Enabling Debug Mode');
+    messageLogger.setLevel('debug');
+    this.backgroundLogger.setLevel('debug'); // Control backgroundLogger
+    this.connectionManager.setDebugMode(true);
+    sendResponse({ success: true, message: 'Debug mode enabled.' });
+  }
+
+  /**
+   * Handle Disable Debug Mode message
+   * @param sendResponse - Response callback
+   */
+  private handleDisableDebugMode(sendResponse: (response?: any) => void): void {
+    messageLogger.info('Disabling Debug Mode');
+    messageLogger.setLevel('info');
+    this.backgroundLogger.setLevel('info'); // Control backgroundLogger
+    this.connectionManager.setDebugMode(false);
+    sendResponse({ success: true, message: 'Debug mode disabled.' });
   }
 
   /**

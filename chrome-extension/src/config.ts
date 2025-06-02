@@ -22,5 +22,8 @@ export const CONFIG = {
     
     // Security
     AUTH_TOKEN_EXPIRY: 3600000, // 1 hour
-    REFRESH_TOKEN_EXPIRY: 86400000 // 24 hours
+    REFRESH_TOKEN_EXPIRY: 86400000, // 24 hours
+
+    // Debug
+    DEBUG_MODE_DEFAULT: false,
 };

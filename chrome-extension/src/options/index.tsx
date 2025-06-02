@@ -1,10 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './options.css';
+import { CONFIG } from '../config';
 
 const Options: React.FC = () => {
   const [settings, setSettings] = React.useState({
-    port: 8080,
+    port: CONFIG.WS_PORT,
     autoStart: false,
     debug: false,
   });
@@ -17,10 +18,15 @@ const Options: React.FC = () => {
 
   React.useEffect(() => {
     // Load settings on mount
-    chrome.storage.sync.get(['port', 'autoStart', 'debug'], (result) => {
+    chrome.storage.sync.get(['port', 'autoStart', 'debug'], (result: { [key: string]: any }) => {
+      const loadedSettings: any = {};
+      if (result.port !== undefined) loadedSettings.port = result.port;
+      if (result.autoStart !== undefined) loadedSettings.autoStart = result.autoStart;
+      if (result.debug !== undefined) loadedSettings.debug = result.debug;
+
       setSettings(prev => ({
-        ...prev,
-        ...result,
+        ...prev, // This now includes CONFIG.WS_PORT as the initial default for port
+        ...loadedSettings // Override with any loaded settings
       }));
     });
   }, []);

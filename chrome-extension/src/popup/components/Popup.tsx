@@ -23,9 +23,11 @@ import { lightTheme, darkTheme } from '../../styles/theme';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import SettingsIcon from '@mui/icons-material/Settings';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import { useStore } from '../../utils/store'; // Import useStore
 import LightModeIcon from '@mui/icons-material/LightMode';
 import BugReportIcon from '@mui/icons-material/BugReport';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
+import { CONFIG } from '../../config';
 import HelpIcon from '@mui/icons-material/Help';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LanguageIcon from '@mui/icons-material/Language'; // For Web Integration
@@ -69,7 +71,7 @@ const Popup: React.FC = () => {
     message: 'Initializing connection...'
   });
   const [settings, setSettings] = useState({
-    port: 3711,
+    port: CONFIG.WS_PORT,
     autoReconnect: true,
     debugMode: false,
     darkMode: false
@@ -93,17 +95,25 @@ const Popup: React.FC = () => {
         setWebInteractionStatus(`Failed to load settings: ${chrome.runtime.lastError.message}`);
         setWebInteractionStatusType('error');
         // Keep default settings if loading fails
+        // Still hydrate with default if settings load fails, so Zustand is in sync with Popup's initial state
+        useStore.getState().hydrateDarkMode(settings.darkMode);
         return;
       }
 
       if (result.connectionSettings) {
+        const loadedDarkMode = !!result.connectionSettings.darkMode;
         setSettings(prev => ({
           ...prev,
-          port: result.connectionSettings.wsPort || 3711,
+          port: result.connectionSettings.wsPort || CONFIG.WS_PORT,
           autoReconnect: result.connectionSettings.autoConnect !== false,
           debugMode: !!result.connectionSettings.debug,
-          darkMode: !!result.connectionSettings.darkMode
+          darkMode: loadedDarkMode // This is Popup.tsx's local React state for the theme
         }));
+        useStore.getState().hydrateDarkMode(loadedDarkMode); // Hydrate Zustand store
+      } else {
+        // If no connectionSettings found, hydrate Zustand with its own initial default
+        // or the default from Popup.tsx's initial settings state.
+        useStore.getState().hydrateDarkMode(settings.darkMode);
       }
       if (result.webIntegrationSettings) {
         setChatInputSelector(result.webIntegrationSettings.chatInputSelector || '');
@@ -259,20 +269,29 @@ const Popup: React.FC = () => {
 
   const handleToggleTheme = () => {
     const newDarkMode = !settings.darkMode;
-    setSettings(prev => ({
-      ...prev,
-      darkMode: newDarkMode
-    }));
-    // Save theme preference immediately
+    // setSettings(prev => ({ ...prev, darkMode: newDarkMode })); // This updates local React state for UI
+
     chrome.storage.local.get(['connectionSettings'], (result) => {
-        const currentSettings = result.connectionSettings || {};
-        chrome.storage.local.set({
-            connectionSettings: { ...currentSettings, darkMode: newDarkMode }
-        }, () => {
+        const currentSettings = result.connectionSettings || {
+            wsPort: settings.port, // ensure other settings are preserved
+            autoConnect: settings.autoReconnect,
+            debug: settings.debugMode
+            // darkMode will be set by newDarkMode
+        };
+        const newConnectionSettings = {
+          ...currentSettings,
+          darkMode: newDarkMode
+        };
+        chrome.storage.local.set({ connectionSettings: newConnectionSettings }, () => {
             if (chrome.runtime.lastError) {
                 console.error('Failed to save dark mode setting:', chrome.runtime.lastError.message);
                 setWebInteractionStatus(`Failed to save theme preference: ${chrome.runtime.lastError.message}`);
                 setWebInteractionStatusType('error');
+                // Potentially revert UI state if save fails
+            } else {
+                // Successfully saved to storage, now update React state and Zustand state
+                setSettings(prev => ({ ...prev, darkMode: newDarkMode }));
+                useStore.getState().setDarkMode(newDarkMode); // Update Zustand store
             }
         });
     });
@@ -322,29 +341,34 @@ const Popup: React.FC = () => {
     setWebInteractionStatusType('info');
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (tabs[0]?.id) {
-        console.log('Popup: Sending INJECT_SCRIPT_REQUEST message to tab', tabs[0].id);
-        chrome.tabs.sendMessage(tabs[0].id, {
-          type: 'INJECT_SCRIPT_REQUEST',
+        const tabId = tabs[0].id;
+        console.log('Popup: Sending BG_INJECT_SCRIPT_REQUEST message to background for tab', tabId);
+        // Send a message to the background script
+        chrome.runtime.sendMessage({
+          type: 'BG_INJECT_SCRIPT_REQUEST',
           payload: {
+            tabId: tabId,
             chatInputSelector,
             chatOutputSelector,
             sendButtonSelector
           }
         }, response => {
+          // The existing response handling logic can be adapted here
           if (chrome.runtime.lastError) {
-            setWebInteractionStatus(`Error syncing with page: ${chrome.runtime.lastError.message}. Ensure the page is not a restricted URL (e.g., chrome:// pages) and try reloading the page.`);
+            setWebInteractionStatus(`Error communicating with background script: ${chrome.runtime.lastError.message}.`);
             setWebInteractionStatusType('error');
-            console.error("Error in handleInjectScript:", chrome.runtime.lastError.message);
+            console.error("Error sending BG_INJECT_SCRIPT_REQUEST to background:", chrome.runtime.lastError.message);
             return;
           }
+          // Assuming background script sends back a similar response structure
           if (response && response.success) {
             setWebInteractionStatus(response.message || 'Successfully synced with page content script.');
             setWebInteractionStatusType('success');
           } else if (response) {
-            setWebInteractionStatus(response.message || 'Failed to confirm content script activity. Try reloading the page.');
-            setWebInteractionStatusType('warning');
+            setWebInteractionStatus(response.message || 'Failed to sync with page content script after retries.');
+            setWebInteractionStatusType(response.isRetrying ? 'warning' : 'error'); // Optional: indicate retrying
           } else {
-            setWebInteractionStatus('No response from content script. The extension might not have permissions for this page, or the page needs a reload.');
+            setWebInteractionStatus('No response from background script for sync request.');
             setWebInteractionStatusType('error');
           }
         });

@@ -1,6 +1,7 @@
 /**
  * Connection manager for The New Fuse - AI Bridge
  */
+import { CONFIG } from '../config'; // Adjust path if necessary
 import { WebSocketManager } from '../utils/websocket-manager.js';
 import { Logger } from '../utils/logger.js';
 import { AuthManager } from './auth-manager.js';
@@ -26,20 +27,22 @@ export interface ConnectionSettings {
   autoConnect: boolean;
   maxRetryAttempts: number;
   retryDelay: number;
+  debugMode: boolean;
 }
 
 /**
  * Default connection settings
  */
 export const DEFAULT_CONNECTION_SETTINGS: ConnectionSettings = {
-  wsProtocol: 'ws',
-  wsHost: 'localhost',
-  wsPort: 3711,
-  useCompression: true,
-  relayUrl: 'https://localhost:3000',
-  autoConnect: true,
-  maxRetryAttempts: 5,
-  retryDelay: 1000
+  wsProtocol: CONFIG.WS_PROTOCOL,
+  wsHost: CONFIG.WS_HOST,
+  wsPort: CONFIG.WS_PORT,
+  useCompression: CONFIG.ENABLE_COMPRESSION,
+  relayUrl: 'https://localhost:3000', // This setting is not in CONFIG, keep as is for now
+  autoConnect: true, // This setting is not in CONFIG, keep as is for now
+  maxRetryAttempts: CONFIG.MAX_RETRY_ATTEMPTS,
+  retryDelay: CONFIG.RETRY_DELAY,
+  debugMode: CONFIG.DEBUG_MODE_DEFAULT, // Use new default from CONFIG
 };
 
 /**
@@ -58,6 +61,7 @@ export class ConnectionManager {
     vscode: false,
     relay: false
   };
+  private lastEncryptionError: string | null = null;
 
   /**
    * Create a new ConnectionManager
@@ -159,15 +163,17 @@ export class ConnectionManager {
         useCompression: this.settings.useCompression,
         reconnectAttempts: this.settings.maxRetryAttempts,
         reconnectDelay: this.settings.retryDelay,
-        debug: true,
+        debug: this.settings.debugMode, // Use settings.debugMode
         securityManager: this.securityManager
       });
 
       // Set up event listeners - Changed addEventListener to addListener
       this.wsManager.addListener('open', this.handleOpen.bind(this));
       this.wsManager.addListener('close', this.handleClose.bind(this));
-      this.wsManager.addListener('error', this.handleError.bind(this));
+      this.wsManager.addListener('error', this.handleError.bind(this)); // General errors
       this.wsManager.addListener('message', this.handleMessage.bind(this));
+      this.wsManager.addListener('encryption_unavailable', this.handleEncryptionUnavailable.bind(this)); // New
+      this.wsManager.addListener('encryption_error', this.handleEncryptionError.bind(this)); // New
 
       // Connect to WebSocket server with timeout
       const connectPromise = this.wsManager.connect();
@@ -218,10 +224,11 @@ export class ConnectionManager {
    */
   private handleOpen(): void {
     connectionLogger.info('WebSocket connection opened');
+    this.lastEncryptionError = null; // Clear any previous encryption error
     this.connectionState.vscode = true;
-    this.notifyConnectionState();
-
-    // Send authentication message
+    // notifyConnectionState will be called after auth, or if auth is not part of this connection step
+    // For now, let's send an initial "connected, authenticating"
+    this.notifyConnectionState(); // This will show "Authenticating" or "Connected"
     this.sendAuthMessage();
   }
 
@@ -365,40 +372,57 @@ export class ConnectionManager {
    * Notify connection state
    */
   private notifyConnectionState(): void {
-    // Get WebSocket connection status from manager
-    const wsStatus = this.wsManager?.getConnectionStatus() || {
+    const wsFullStatus = this.wsManager?.getConnectionStatus() || {
       status: 'disconnected',
-      message: 'No WebSocket manager'
+      message: this.wsManager ? 'WebSocket is not connected.' : 'No WebSocket manager',
+      retriesExhausted: false
     };
 
-    // Map connection state to status message
-    let status: 'connected' | 'disconnected' | 'connecting' | 'error' | 'authenticating' | 'uninitialized';
-    let message: string | undefined;
+    let finalStatus: 'connected' | 'disconnected' | 'connecting' | 'error' | 'authenticating' | 'uninitialized' = wsFullStatus.status;
+    let finalMessage: string | undefined = wsFullStatus.message;
 
-    if (this.connectionState.vscode && this.connectionState.relay) {
-      status = 'connected';
-    } else if (this.connectionState.vscode && !this.connectionState.relay) {
-      status = 'authenticating';
-      message = 'Authenticating with relay server';
-    } else if (wsStatus.status === 'connecting' || wsStatus.status === 'authenticating') {
-      status = wsStatus.status;
-      message = wsStatus.message;
-    } else if (wsStatus.status === 'error') {
-      status = 'error';
-      message = wsStatus.message;
-    } else {
-      status = 'disconnected';
+    // Prioritize encryption errors for the message if one occurred
+    if (this.lastEncryptionError) {
+      finalStatus = 'error';
+      finalMessage = this.lastEncryptionError;
+      // Clear the error after reporting so it doesn't stick if a subsequent connection attempt is made
+      // Or, only clear it if a connection becomes successful. For now, let's clear it.
+      // this.lastEncryptionError = null; // Decide on strategy: clear or let it persist until successful connect
+    } else if (this.connectionState.vscode && this.connectionState.relay && finalStatus === 'connected') {
+      finalStatus = 'connected';
+      finalMessage = 'Successfully connected and authenticated.';
+    } else if (this.connectionState.vscode && !this.connectionState.relay && finalStatus !== 'error' && finalStatus !== 'disconnected') {
+      finalStatus = 'authenticating';
+      finalMessage = wsFullStatus.retriesExhausted ?
+                       `Authentication failed. Connection attempts to server exhausted. Please check settings and server status.` :
+                       (finalMessage || 'Authenticating with relay server...');
+    } else if (wsFullStatus.retriesExhausted) {
+      finalStatus = 'error';
+      finalMessage = `Connection failed. Max retries reached. Please check server and settings, then try reconnecting manually.`;
+    } else if (finalStatus === 'disconnected' && !this.connectionState.vscode) {
+       finalMessage = finalMessage || 'Disconnected. Auto-reconnect may be active.';
     }
 
-    // Update extension icon based on status
-    this.updateExtensionIcon(status);
+    // Reset lastEncryptionError after it has been used to formulate the message
+    // This ensures that a successful subsequent connection attempt shows a success message
+    // rather than an old encryption error.
+    if (finalStatus !== 'error' || (finalStatus === 'error' && !this.lastEncryptionError) ) {
+       // If status is not error, or if it is an error but not from lastEncryptionError, clear it.
+    }
+    // More simply: always clear after using it for one notification cycle,
+    // if it happens again, it will be set again.
+    // Let's clear it *after* sending the message if the status reflects the error,
+    // or if the connection becomes healthy.
 
-    // Send status message
+    this.updateExtensionIcon(finalStatus);
+
+    const currentLastEncryptionError = this.lastEncryptionError; // Capture before potential clear
+
     chrome.runtime.sendMessage({
       type: 'CONNECTION_STATUS',
       payload: {
-        status,
-        message
+        status: finalStatus,
+        message: finalMessage
       },
       timestamp: Date.now()
     }).catch(error => {
@@ -407,6 +431,12 @@ export class ConnectionManager {
         connectionLogger.error('Error sending connection state', error);
       }
     });
+
+    // If the error was primarily due to encryption and has been reported, clear it
+    // so that subsequent status updates (e.g. user manually reconnects and it works) are fresh.
+    if (currentLastEncryptionError && finalMessage === currentLastEncryptionError) {
+        this.lastEncryptionError = null;
+    }
   }
 
   /**
@@ -456,6 +486,37 @@ export class ConnectionManager {
    */
   getAuthManager(): AuthManager {
     return this.authManager;
+  }
+
+  public setDebugMode(enabled: boolean): void {
+    this.settings.debugMode = enabled;
+    connectionLogger.setLevel(enabled ? 'debug' : 'info');
+    connectionLogger.info(`ConnectionManager debug mode set to: ${enabled}`);
+    if (this.wsManager) {
+      this.wsManager.setDebug(enabled);
+    }
+    // Optionally, save this setting if it should persist like other settings
+    this.saveSettings({ debugMode: enabled });
+  }
+
+  private handleEncryptionUnavailable(errorEvent: { message: string }): void {
+    const errorMessage = errorEvent.message || 'Encryption key is not set or available. Cannot send/receive secure messages.';
+    connectionLogger.error(`Encryption Unavailable: ${errorMessage}`);
+    this.lastEncryptionError = errorMessage;
+    // Update overall connection state if necessary, e.g. treat as a critical connection error
+    this.connectionState.vscode = false; // Indicate that secure connection is not possible
+    this.connectionState.relay = false;
+    this.notifyConnectionState();
+  }
+
+  private handleEncryptionError(errorEvent: { message: string }): void {
+    const errorMessage = errorEvent.message || 'A failure occurred during message encryption.';
+    connectionLogger.error(`Encryption Error: ${errorMessage}`);
+    this.lastEncryptionError = errorMessage;
+    // Update overall connection state
+    this.connectionState.vscode = false;
+    this.connectionState.relay = false;
+    this.notifyConnectionState();
   }
 }
 

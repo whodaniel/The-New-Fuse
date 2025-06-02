@@ -89,8 +89,10 @@ export class SecurityManager {
   public async encryptMessage(message: string): Promise<string | null> {
     await this.ensureKeyIsReady();
     if (!this.derivedKey) {
-      console.warn('[SecurityManager] Encryption enabled but key is not available. Bypassing encryption.');
-      return message; // Return plain message
+      console.warn('[SecurityManager] Encryption key is not available. Cannot encrypt message.');
+      // It's crucial that the caller (WebSocketManager) checks for null
+      // and decides not to send, or to send an error, or handle accordingly.
+      return null; // Indicate encryption failure
     }
 
     try {
@@ -123,7 +125,7 @@ export class SecurityManager {
       return JSON.stringify({ iv: ivHex, data: dataHex, tag: tagHex });
     } catch (error) {
       console.error('[SecurityManager] Encryption failed:', error);
-      return null;
+      return null; // Indicate encryption failure
     }
   }
 
@@ -170,6 +172,11 @@ export class SecurityManager {
       console.warn('[SecurityManager] Decryption failed:', error);
       return null;
     }
+  }
+
+  public async isKeyReady(): Promise<boolean> {
+    await this.ensureKeyIsReady();
+    return !!this.derivedKey;
   }
 
   /**
