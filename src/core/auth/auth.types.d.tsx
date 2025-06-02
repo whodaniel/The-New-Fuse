@@ -89,8 +89,7 @@ export interface PasswordResetRequest {
   newPassword: string;
   confirmPassword: string;
 }
-export interface AuthError extends Error {
-  code: string;
-  statusCode: number;
-  details?: unknown;
-}
+// Local AuthError interface removed
+// Re-exporting AuthenticationError from src/types/error.tsx as AuthError for compatibility
+import { AuthenticationError } from '../../types/error.js'; // .js for .d.ts compatibility if types are not emitted for .tsx
+export type { AuthenticationError as AuthError };

@@ -3,12 +3,8 @@ import { User } from '../temp_models/User.js';
  * Authentication and authorization module for the API.
  * Handles user registration, login, and session management.
  */
-export declare class AuthError extends Error {
-    constructor(message: string);
-}
-export declare class UserExistsError extends AuthError {
-    constructor(message: string);
-}
+// AuthError and UserExistsError declarations removed as they are no longer defined in the .tsx file.
+// Consumers should use AuthenticationError from src/types/error.tsx.
 interface JWTPayload {
     sub: string;
     exp: number;

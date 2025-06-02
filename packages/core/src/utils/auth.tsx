@@ -1,26 +1,12 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { User } from '../temp_models/User.js';
+import { AuthenticationError } from '../../../../src/types/error.tsx';
 
 /**
  * Authentication and authorization module for the API.
  * Handles user registration, login, and session management.
  */
-
-// Custom error types
-export class AuthError extends Error {
-    constructor(message: string) {
-        super(message);
-        this.name = 'AuthError';
-    }
-}
-
-export class UserExistsError extends AuthError {
-    constructor(message: string) {
-        super(message);
-        this.name = 'UserExistsError';
-    }
-}
 
 // JWT payload type
 interface JWTPayload {
@@ -67,7 +53,8 @@ class AuthManagerImpl implements AuthManager {
             .first();
 
         if (existingUser) {
-            throw new UserExistsError('User already exists');
+            // Using 409 Conflict status code, and a specific error code for user exists
+            throw new AuthenticationError('User already exists', 409, undefined, undefined, 'USER_EXISTS');
         }
 
         // Hash password
@@ -90,7 +77,7 @@ class AuthManagerImpl implements AuthManager {
             .first();
 
         if (!user || !user.hashedPassword || !(await bcrypt.compare(password, user.hashedPassword))) {
-            throw new AuthError('Invalid credentials');
+            throw new AuthenticationError('Invalid credentials', 401);
         }
 
         const payload = {
@@ -107,7 +94,7 @@ class AuthManagerImpl implements AuthManager {
             const decoded = jwt.verify(token, this.secretKey) as JWTPayload;
             return decoded;
         } catch (error) {
-            throw new AuthError('Invalid token');
+            throw new AuthenticationError('Invalid token', 401);
         }
     }
 }

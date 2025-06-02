@@ -10,6 +10,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
 import { CodeExecutionService } from '../../packages/core/src/services/code-execution/code-execution.service.js';
+import { BaseError } from '../../types/error.js'; // Added BaseError import
 
 // --- Interfaces (can be moved to a types.ts file) ---
 interface Logger {
@@ -156,7 +157,16 @@ app.get('/mcp/tools', (req: Request, res: Response) => {
     res.status(200).json(mcpServer.getToolDefinitions());
   } catch (error) {
     logger.error('Error getting tool definitions:', error);
-    res.status(500).json({ status: 'error', error: { message: 'Internal server error' } });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({ status: 'error', error: { message: 'Failed to get tool definitions.' } });
+    }
   }
 });
 
@@ -166,7 +176,16 @@ app.get('/mcp/capabilities', (req: Request, res: Response) => {
     res.status(200).json(mcpServer.getCapabilityDefinitions());
   } catch (error) {
     logger.error('Error getting capability definitions:', error);
-    res.status(500).json({ status: 'error', error: { message: 'Internal server error' } });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({ status: 'error', error: { message: 'Failed to get capability definitions.' } });
+    }
   }
 });
 
@@ -186,11 +205,22 @@ app.post('/mcp/request', async (req: Request, res: Response) => {
     res.status(200).json({ status: 'success', data: result });
   } catch (error: unknown) {
     logger.error(`Error executing tool ${toolName}:`, error);
-    const errorMessage = error instanceof Error ? error.message : 'Unknown execution error';
-    // Distinguish between validation errors and execution errors based on message content
-    const isValidationError = errorMessage.startsWith('Validation error') || errorMessage.includes('not found');
-    const statusCode = isValidationError ? 400 : 500;
-    res.status(statusCode).json({ status: 'error', error: { message: errorMessage } });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) { // Standard JS Error
+        // Distinguish between validation errors and execution errors based on message content (heuristic)
+        const isValidationError = error.message.startsWith('Validation error') ||
+                                  error.message.includes('not found') ||
+                                  error.message.includes('Invalid parameters') ||
+                                  error.message.includes('Missing or invalid toolName'); // Added this from the pre-try check
+        const statusCode = isValidationError ? 400 : 500;
+        res.status(statusCode).json({ status: 'error', error: { message: error.message } });
+    } else { // Unknown error type
+        res.status(500).json({ status: 'error', error: { message: 'An unexpected error occurred during tool execution.' } });
+    }
   }
 });
 
@@ -209,8 +239,17 @@ app.post('/mcp/conversation', (req: Request, res: Response) => {
       }
     });
   } catch (error) {
-    logger.error('Error creating conversation:', error);
-    res.status(500).json({ status: 'error', error: { message: 'Failed to create conversation' } });
+    logger.error('Error creating or getting conversation:', error);
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } }); // Expose specific error message if it's a standard Error
+    } else {
+        res.status(500).json({ status: 'error', error: { message: 'Failed to process conversation request.' } });
+    }
   }
 });
 
@@ -234,10 +273,19 @@ app.post('/mcp/conversation/:conversationId/message', (req: Request, res: Respon
     });
   } catch (error) {
     logger.error('Error adding message to conversation:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to add message to conversation' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to add message to conversation.' } // Generic message for unknown errors
+        });
+    }
   }
 });
 
@@ -252,10 +300,19 @@ app.get('/mcp/conversation/:conversationId/history', (req: Request, res: Respons
     });
   } catch (error) {
     logger.error('Error retrieving conversation history:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to retrieve conversation history' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to retrieve conversation history.' }
+        });
+    }
   }
 });
 
@@ -269,10 +326,19 @@ app.get('/mcp/conversations', (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error retrieving conversations:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to retrieve conversations' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to retrieve conversations.' }
+        });
+    }
   }
 });
 
@@ -297,10 +363,19 @@ app.post('/mcp/agent/:agentId/state', (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error setting agent state:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to set agent state' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to set agent state.' }
+        });
+    }
   }
 });
 
@@ -315,10 +390,19 @@ app.get('/mcp/agent/:agentId/state/:key', (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error retrieving agent state:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to retrieve agent state' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to retrieve agent state.' }
+        });
+    }
   }
 });
 
@@ -419,10 +503,19 @@ app.get('/mcp/capabilities/details', (req: Request, res: Response) => {
     });
   } catch (error) {
     logger.error('Error retrieving capability details:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to retrieve capability details' }
-    });
+    if (error instanceof BaseError) {
+        res.status(error.statusCode || 500).json({
+            status: 'error',
+            error: { message: error.message, code: error.code, details: error.details }
+        });
+    } else if (error instanceof Error) {
+        res.status(500).json({ status: 'error', error: { message: error.message } });
+    } else {
+        res.status(500).json({
+          status: 'error',
+          error: { message: 'Failed to retrieve capability details.' }
+        });
+    }
   }
 });
 
