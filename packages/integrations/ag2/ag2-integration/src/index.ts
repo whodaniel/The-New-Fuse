@@ -1,6 +1,2 @@
 
-export {}
-exports.AG2Bridge = void 0;
-var ag2_bridge_1 = require("./ag2-bridge");
-Object.defineProperty(exports, "AG2Bridge", { enumerable: true, get: function (): any { return ag2_bridge_1.AG2Bridge; } });
-export {};
+export { AG2Bridge } from './ag2-bridge.js';

@@ -1,16 +1,172 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The New Fuse</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
-    <link rel="stylesheet" href="popup.css" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { 
+            width: 380px; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
+            padding: 16px; 
+            margin: 0;
+            background: #f8f9fa;
+        }
+        .header { 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between; 
+            border-bottom: 1px solid #e9ecef; 
+            padding-bottom: 12px; 
+            margin-bottom: 16px;
+        }
+        .header h1 { 
+            font-size: 18px; 
+            margin: 0; 
+            color: #212529;
+            font-weight: 600;
+        }
+        .status-light { 
+            width: 12px; 
+            height: 12px; 
+            border-radius: 50%; 
+            background-color: #dc3545; 
+            transition: background-color 0.3s ease;
+        }
+        .status-light.connected { background-color: #28a745; }
+        .section { 
+            margin-bottom: 20px; 
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        .section-title { 
+            font-weight: 600; 
+            margin-bottom: 12px; 
+            color: #495057;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        button { 
+            width: 100%; 
+            padding: 10px 16px; 
+            margin-top: 8px; 
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #007bff;
+            color: white;
+        }
+        button:hover:not(:disabled) { 
+            background: #0056b3; 
+            transform: translateY(-1px);
+        }
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+        .element-status { 
+            font-size: 12px; 
+            color: #6c757d; 
+            margin-bottom: 12px; 
+            background: #f8f9fa; 
+            padding: 12px; 
+            border-radius: 6px; 
+            border: 1px solid #e9ecef;
+        }
+        .element-status div { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 6px;
+        }
+        .element-status div:last-child { margin-bottom: 0; }
+        .element-status .status-indicator { 
+            font-size: 14px; 
+            font-weight: bold;
+        }
+        .element-status .success { color: #28a745; }
+        .element-status .failure { color: #dc3545; }
+        .element-status .pending { color: #ffc107; }
+        .auto-detect-btn {
+            background: #28a745 !important;
+        }
+        .auto-detect-btn:hover:not(:disabled) {
+            background: #1e7e34 !important;
+        }
+        .select-btn {
+            background: #6f42c1 !important;
+        }
+        .select-btn:hover:not(:disabled) {
+            background: #5a32a3 !important;
+        }
+        .session-start {
+            background: #fd7e14 !important;
+        }
+        .session-start:hover:not(:disabled) {
+            background: #e55a00 !important;
+        }
+        .session-end {
+            background: #dc3545 !important;
+        }
+        .session-end:hover:not(:disabled) {
+            background: #bd2130 !important;
+        }
+        .url-display {
+            font-size: 11px;
+            color: #6c757d;
+            background: #e9ecef;
+            padding: 6px 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+            word-break: break-all;
+        }
+    </style>
 </head>
 <body>
-    <div id="root"></div>
-    <script src="vendor.js"></script>
-    <script src="commons.js"></script>
-    <script src="popup.js"></script>
+    <div class="header">
+        <h1>The New Fuse</h1>
+        <div id="connection-status" class="status-light" title="Disconnected"></div>
+    </div>
+
+    <div class="section">
+        <div class="section-title">Element Detection</div>
+        <div id="element-status-display" class="element-status">
+            <div>Input Field: <span class="status-indicator failure">●</span></div>
+            <div>Send Button: <span class="status-indicator failure">●</span></div>
+            <div>Output Area: <span class="status-indicator failure">●</span></div>
+        </div>
+        <button id="auto-detect-btn" class="auto-detect-btn">🤖 Auto-Detect Elements</button>
+        <button id="select-input-btn" class="select-btn">📝 Select Chat Input</button>
+        <button id="select-button-btn" class="select-btn">📤 Select Send Button</button>
+        <button id="select-output-btn" class="select-btn">💬 Select Chat Output</button>
+        <button id="validate-btn">✅ Validate Elements</button>
+    </div>
+
+    <div class="section">
+        <div class="section-title">AI Session</div>
+        <div id="current-url" class="url-display">Loading current page...</div>
+        <button id="start-session-btn" class="session-start">🚀 Start AI Session</button>
+        <button id="end-session-btn" class="session-end">🛑 End AI Session</button>
+    </div>
+
+    <div class="section">
+        <div class="section-title">WebSocket Connection</div>
+        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+            <span id="websocket-status" class="status-value offline">Disconnected</span>
+            <button id="websocket-connect-btn">Connect</button>
+            <button id="websocket-disconnect-btn">Disconnect</button>
+        </div>
+        <div id="websocket-log" style="font-size: 12px; color: #666; max-height: 60px; overflow-y: auto;"></div>
+    </div>
+
+    <script src="popup-enhanced.js"></script>
 </body>
 </html>

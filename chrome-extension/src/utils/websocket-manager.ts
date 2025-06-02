@@ -28,23 +28,46 @@ interface WebSocketManagerOptions {
   useCompression?: boolean;
   logger?: any;
   securityManager?: SecurityManager;
+  heartbeatInterval?: number;
+  connectionTimeout?: number;
+  maxRetryDelay?: number;
+}
+
+interface ConnectionHealth {
+  latency: number;
+  lastHeartbeat: number;
+  missedHeartbeats: number;
+  connectionQuality: 'excellent' | 'good' | 'poor' | 'disconnected';
 }
 
 export class WebSocketManager extends EventEmitter {
   private ws: WebSocket | null = null;
   private reconnectAttempts = 0;
   private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+  private heartbeatTimer: ReturnType<typeof setTimeout> | null = null;
+  private connectionTimeout: ReturnType<typeof setTimeout> | null = null;
   private securityManager: SecurityManager | null = null;
+  private connectionStartTime: number = 0;
+  private health: ConnectionHealth = {
+    latency: 0,
+    lastHeartbeat: 0,
+    missedHeartbeats: 0,
+    connectionQuality: 'disconnected'
+  };
   private state: {
     connected: boolean;
     reconnecting: boolean;
     lastError: Error | null;
     authenticating: boolean;
+    connectionAttempts: number;
+    lastConnectTime: number;
   } = {
     connected: false,
     reconnecting: false,
     lastError: null,
-    authenticating: false
+    authenticating: false,
+    connectionAttempts: 0,
+    lastConnectTime: 0
   };
 
   /**
@@ -62,6 +85,9 @@ export class WebSocketManager extends EventEmitter {
       reconnectDelay: 1000,
       debug: false,
       useCompression: false,
+      heartbeatInterval: 30000, // 30 seconds
+      connectionTimeout: 10000, // 10 seconds
+      maxRetryDelay: 30000, // 30 seconds max
       ...options
     };
 
@@ -475,3 +501,14 @@ export class WebSocketManager extends EventEmitter {
     };
   }
 }
+
+/**
+ * Usage:
+ * // Option 1: Singleton instance
+ * import { webSocketManager } from './websocket-manager';
+ *
+ * // Option 2: Create your own instance
+ * import { WebSocketManager } from './websocket-manager';
+ * const myManager = new WebSocketManager();
+ */
+export const webSocketManager = new WebSocketManager();

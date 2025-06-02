@@ -161,7 +161,7 @@ export class EnhancedIntegrationService extends EventEmitter {
     private cache: Map<string, CacheEntry> = new Map();
     private rateLimits: Map<string, RateLimitEntry> = new Map();
     
-    private isInitialized: boolean = false;
+    private _isInitialized: boolean = false; // Renamed to avoid conflict
     private healthCheckTimer: NodeJS.Timeout | null = null;
     private cacheCleanupTimer: NodeJS.Timeout | null = null;
     private rateLimitCleanupTimer: NodeJS.Timeout | null = null;
@@ -176,7 +176,7 @@ export class EnhancedIntegrationService extends EventEmitter {
     }
 
     async initialize(): Promise<void> {
-        if (this.isInitialized) {
+        if (this._isInitialized) { // Use renamed property
             return;
         }
 
@@ -201,7 +201,7 @@ export class EnhancedIntegrationService extends EventEmitter {
             // Setup event handlers
             this.setupEventHandlers();
             
-            this.isInitialized = true;
+            this._isInitialized = true; // Use renamed property
             this.finishTrace(initSpan, 'ok');
             this.emit('initialized');
             
@@ -289,36 +289,31 @@ export class EnhancedIntegrationService extends EventEmitter {
         const span = this.startTrace('a2a_initialization');
         
         try {
-            this.a2aClient = new A2AProtocolClient({
-                agentId: 'enhanced_integration_service',
-                name: 'Enhanced Integration Service',
-                capabilities: [
-                    'mcp_integration',
-                    'orchestration',
-                    'security',
-                    'observability'
-                ],
-                discovery: this.config.a2a.discovery,
-                heartbeat: this.config.a2a.heartbeat
-            });
+            // this.a2aClient is expected to be injected/set externally, not instantiated here.
+            if (!this.a2aClient) {
+                throw new Error('A2AProtocolClient is not initialized or injected.');
+            }
 
-            // Setup A2A event handlers
-            this.a2aClient.on('agentDiscovered', (agent) => {
+            // Setup A2A event handlers on the existing this.a2aClient instance
+            this.a2aClient.on('agentDiscovered', (agent: import('../protocols/A2AProtocol').A2AAgent) => {
                 this.emit('agentDiscovered', agent);
                 this.logAuditEvent('agent_discovered', 'success', { agentId: agent.id });
+                // Emitting agentJoined here as A2AProtocolClient discovered an agent
+                this.emit('agentJoined', agent.id, agent.metadata);
             });
 
-            this.a2aClient.on('taskDelegated', (task) => {
+            this.a2aClient.on('taskDelegated', (task: import('../protocols/A2AProtocol').A2ATask) => {
                 this.emit('taskDelegated', task);
                 this.logAuditEvent('task_delegated', 'success', { taskId: task.id });
             });
 
-            this.a2aClient.on('taskCompleted', (taskId, result) => {
+            this.a2aClient.on('taskCompleted', (taskId: string, result: any) => {
                 this.emit('taskCompleted', taskId, result);
                 this.logAuditEvent('task_completed', 'success', { taskId });
             });
 
-            await this.a2aClient.connect(this.agentCommunication);
+            // Removed: await this.a2aClient.connect(this.agentCommunication);
+            // A2AProtocolClient does not have a 'connect' method. It initializes itself.
 
             // Add to connection pool
             this.addToConnectionPool({
@@ -406,21 +401,12 @@ export class EnhancedIntegrationService extends EventEmitter {
     }
 
     private setupEventHandlers(): void {
-        // Agent communication events
-        this.agentCommunication.on('agentJoined', (agentId, metadata) => {
-            this.emit('agentJoined', agentId, metadata);
-            this.logAuditEvent('agent_joined', 'success', { agentId, metadata });
-        });
-
-        this.agentCommunication.on('agentLeft', (agentId) => {
-            this.emit('agentLeft', agentId);
-            this.logAuditEvent('agent_left', 'success', { agentId });
-        });
-
-        this.agentCommunication.on('error', (error) => {
-            this.emit('communicationError', error);
-            this.logAuditEvent('communication_error', 'error', { error: error.message });
-        });
+        // Agent communication events:
+        // 'agentJoined' is now emitted from initializeA2AProtocol when a2aClient discovers an agent.
+        // AgentCommunicationService uses 'subscribe', not 'on', for general message handling.
+        // Specific 'agentLeft' or general 'error' events from AgentCommunicationService via 'on' are not present.
+        // If AgentCommunicationService needs to signal errors, it would typically throw them or use specific event emissions.
+        // For now, removing these direct .on listeners from agentCommunication.
     }
 
     // Enhanced MCP Operations with Connection Pooling
@@ -676,8 +662,9 @@ export class EnhancedIntegrationService extends EventEmitter {
 
                     case 'a2a':
                         // Check A2A client health
-                        const a2aClient = pool.connection as A2AProtocolClient;
-                        isHealthy = a2aClient.isConnected();
+                        const a2aClient = pool.connection as import('../protocols/A2AProtocol').A2AProtocolClient;
+                        // Use the new public getter
+                        isHealthy = a2aClient.getLocalAgent().status === 'online';
                         break;
 
                     default:
@@ -848,7 +835,7 @@ export class EnhancedIntegrationService extends EventEmitter {
 
     // Public API Methods
     isInitialized(): boolean {
-        return this.isInitialized;
+        return this._isInitialized; // Use renamed property
     }
 
     getStatus(): Record<string, any> {
@@ -898,7 +885,10 @@ export class EnhancedIntegrationService extends EventEmitter {
 
         // Disconnect A2A client
         if (this.a2aClient) {
-            await this.a2aClient.disconnect();
+            // A2AProtocolClient has a dispose method, not disconnect.
+            // Assuming dispose is synchronous or if async, it should be awaited if it returns Promise.
+            // For now, calling dispose as per A2AProtocol.ts.
+            this.a2aClient.dispose();
         }
 
         // Dispose services
@@ -906,6 +896,6 @@ export class EnhancedIntegrationService extends EventEmitter {
         this.securityService?.dispose();
 
         this.removeAllListeners();
-        this.isInitialized = false;
+        this._isInitialized = false; // Assign to the private property
     }
 }

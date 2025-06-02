@@ -33,6 +33,9 @@ function initializePopup() {
   // Set up message listeners for background script communication
   setupMessageListeners();
 
+  // --- WebSocket Connection UI ---
+  setupWebSocketUI();
+
   console.log('Popup UI initialized');
 }
 
@@ -1000,6 +1003,56 @@ function initializeSettingsTab() {
       }
     });
   }
+}
+
+// --- WebSocket Connection UI ---
+function setupWebSocketUI() {
+  const statusEl = document.getElementById('websocket-status');
+  const connectBtn = document.getElementById('websocket-connect-btn');
+  const disconnectBtn = document.getElementById('websocket-disconnect-btn');
+  const logEl = document.getElementById('websocket-log');
+
+  function updateStatus(connected) {
+    if (statusEl) {
+      statusEl.textContent = connected ? 'Connected' : 'Disconnected';
+      statusEl.className = 'status-value ' + (connected ? 'online' : 'offline');
+    }
+  }
+
+  function log(msg) {
+    if (logEl) {
+      logEl.textContent += `[${new Date().toLocaleTimeString()}] ${msg}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  }
+
+  if (connectBtn) {
+    connectBtn.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ type: 'RECONNECT' }, (resp) => {
+        if (resp && resp.success) {
+          updateStatus(true);
+          log('WebSocket connected.');
+        } else {
+          updateStatus(false);
+          log('Failed to connect WebSocket.');
+        }
+      });
+    });
+  }
+  if (disconnectBtn) {
+    disconnectBtn.addEventListener('click', () => {
+      chrome.runtime.sendMessage({ type: 'WEBSOCKET_DISCONNECT' }, (resp) => {
+        updateStatus(false);
+        log('WebSocket disconnected.');
+      });
+    });
+  }
+
+  // Initial status check
+  chrome.runtime.sendMessage({ type: 'GET_CONNECTION_STATUS' }, (resp) => {
+    updateStatus(resp && resp.connected);
+    log('WebSocket status checked.');
+  });
 }
 
 // Set up message listeners

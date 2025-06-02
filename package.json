@@ -19,7 +19,12 @@
     "lint:fix": "turbo run lint:fix",
     "clean": "turbo run clean",
     "db:generate": "turbo run db:generate",
-    "db:migrate": "turbo run db:migrate"
+    "db:migrate": "turbo run db:migrate",
+    "mcp:build": "./build-mcp.sh",
+    "mcp:dev": "./dev-mcp.sh",
+    "mcp:start": "./run-mcp-local.sh",
+    "mcp:start:remote": "./run-mcp-remote.sh",
+    "mcp:test": "./test-mcp.sh"
   },
   "keywords": [
     "ai-agency",
@@ -40,7 +45,10 @@
   },
   "packageManager": "yarn@4.9.1+sha512.f95ce356460e05be48d66401c1ae64ef84d163dd689964962c6888a9810865e39097a5e9de748876c2e0bf89b232d583c33982773e9903ae7a76257270986538",
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^0.6.0",
     "@prisma/client": "6.8.2",
-    "cross-env": "^7.0.3"
+    "cross-env": "^7.0.3",
+    "express": "^4.21.2",
+    "zod": "^3.22.4"
   }
 }

@@ -12,6 +12,7 @@ import * as vscode from 'vscode';
 import { EventEmitter } from 'events';
 import { AgentCommunicationService } from './AgentCommunicationService';
 import { A2AProtocolClient } from '../protocols/A2AProtocol';
+import { AgentMessageType } from '../types/agent-communication'; // Added import
 
 export interface Agent {
     id: string;
@@ -274,27 +275,29 @@ export class MultiAgentOrchestrationService extends EventEmitter {
     }
 
     private setupEventHandlers(): void {
-        this.agentCommunication.on('agentJoined', (agentId: string, metadata: any) => {
-            this.registerAgent({
-                id: agentId,
-                name: metadata.name || agentId,
-                capabilities: metadata.capabilities || [],
-                status: 'idle',
-                load: 0,
-                lastSeen: new Date(),
-                metadata
-            });
+        // AgentCommunicationService uses `subscribe`
+        this.agentCommunication.subscribe(async (message: import('../types/agent-communication').AgentMessage) => {
+            // Assuming 'agentJoined' and 'agentLeft' are signaled via specific message actions or types
+            if (message.action === 'agentJoined' && message.payload) {
+                const agentData = message.payload as any; // Cast or validate payload
+                this.registerAgent({
+                    id: agentData.id,
+                    name: agentData.name || agentData.id,
+                    capabilities: agentData.capabilities || [],
+                    status: 'idle',
+                    load: 0,
+                    lastSeen: new Date(),
+                    metadata: agentData.metadata || {}
+                });
+            } else if (message.action === 'agentLeft' && message.payload) {
+                 const agentData = message.payload as any;
+                this.unregisterAgent(agentData.id);
+            } else if (message.source && message.type !== AgentMessageType.SYSTEM) { // Use imported enum
+                this.handleAgentMessage(message.source, message);
+            }
         });
 
-        this.agentCommunication.on('agentLeft', (agentId: string) => {
-            this.unregisterAgent(agentId);
-        });
-
-        this.agentCommunication.on('agentMessage', (agentId: string, message: any) => {
-            this.handleAgentMessage(agentId, message);
-        });
-
-        this.a2aClient.on('taskDelegated', (task: any) => {
+        this.a2aClient.on('taskDelegated', (task: import('../protocols/A2AProtocol').A2ATask) => {
             this.handleDelegatedTask(task);
         });
 
@@ -302,6 +305,9 @@ export class MultiAgentOrchestrationService extends EventEmitter {
             this.handleTaskCompletion(taskId, result);
         });
 
+        // This assumes a2aClient emits 'taskFailed'. If not, failure handling needs to be
+        // integrated with how a2aClient signals task errors (e.g., via task_response with an error).
+        // For now, keeping it as is, assuming the event exists or will be added.
         this.a2aClient.on('taskFailed', (taskId: string, error: any) => {
             this.handleTaskFailure(taskId, error);
         });
@@ -438,14 +444,22 @@ export class MultiAgentOrchestrationService extends EventEmitter {
         this.runningTasks.set(task.id, task);
         
         // Send task to agent via A2A protocol
-        this.a2aClient.delegateTask(agent.id, {
-            id: task.id,
-            type: task.type,
-            description: task.description,
-            input: task.input,
-            timeout: task.timeout,
-            priority: task.priority
-        });
+        // A2AProtocolClient.delegateTask expects: targetAgentId, capability, payload, options
+        // Assuming task.type is the capability name.
+        this.a2aClient.delegateTask(
+            agent.id,       // targetAgentId
+            task.type,      // capability (e.g., task.type or a specific capability string)
+            {               // payload for the A2A task
+                taskId: task.id, // Include original task ID for context if needed by the agent
+                description: task.description,
+                input: task.input,
+                // any other data the agent needs from the WorkflowTask
+            },
+            {               // options for A2A delegation
+                timeout: task.timeout,
+                priority: task.priority === 'critical' ? 'urgent' : task.priority
+            }
+        );
         
         this.emit('taskAssigned', task, agent);
     }
@@ -604,16 +618,24 @@ export class MultiAgentOrchestrationService extends EventEmitter {
         
         // Send consensus request to all participants
         for (const participantId of participants) {
-            this.agentCommunication.sendMessage(participantId, {
-                type: 'consensus-request',
-                requestId,
-                topic,
-                proposal,
-                config: {
-                    type: config.type,
-                    timeout: config.timeout
-                }
-            });
+            const agentMessage: import('../types/agent-communication').AgentMessage = {
+                id: this.generateId(), // Unique ID for this specific message
+                type: 'COMMAND' as import('../types/agent-communication').AgentMessageType, // Or a more specific type like 'CONSENSUS_REQUEST'
+                source: this.a2aClient.getLocalAgent().id, // Use public getter
+                recipient: participantId,
+                action: 'consensus-request', // Define a clear action
+                payload: { // The actual content for the consensus request
+                    requestId, // ID of the consensus process
+                    topic,
+                    proposal,
+                    config: { // Relevant parts of the consensus config for the agent
+                        type: config.type,
+                        timeout: config.timeout
+                    }
+                },
+                timestamp: Date.now()
+            };
+            this.agentCommunication.sendMessage(agentMessage);
         }
         
         // Set timeout

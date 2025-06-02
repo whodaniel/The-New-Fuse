@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Extension Test Page</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status-indicator {
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .test-chat {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .test-output {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔗 The New Fuse Extension Test Page</h1>
+    
+    <div class="test-section">
+        <h2>📊 System Status</h2>
+        <div id="relay-status" class="status-indicator warning">Checking TNF Relay connection...</div>
+        <div id="extension-status" class="status-indicator warning">Checking extension status...</div>
+        <div id="websocket-status" class="status-indicator warning">Checking WebSocket connection...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎯 Element Detection Test</h2>
+        <p>Use this mock chat interface to test element detection:</p>
+        
+        <div class="test-chat">
+            <div class="test-output" id="mock-chat-output">
+                <div><strong>Assistant:</strong> Hello! This is a test chat interface for TNF element detection.</div>
+                <div><strong>User:</strong> Testing the extension...</div>
+            </div>
+            
+            <textarea 
+                class="test-input" 
+                id="mock-chat-input" 
+                placeholder="Type your message here..."
+                rows="3"></textarea>
+            
+            <button class="test-button" id="mock-send-button">Send Message</button>
+        </div>
+        
+        <div style="margin-top: 16px;">
+            <button onclick="testAutoDetection()" class="test-button">Test Auto-Detection</button>
+            <button onclick="testManualSelection()" class="test-button">Test Manual Selection</button>
+            <button onclick="clearHighlights()" class="test-button">Clear Highlights</button>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🤖 AI Automation Test</h2>
+        <div id="automation-status" class="status-indicator warning">No active session</div>
+        <button onclick="startTestSession()" class="test-button">Start Test Session</button>
+        <button onclick="sendTestMessage()" class="test-button">Send Test Message</button>
+        <button onclick="stopTestSession()" class="test-button">Stop Session</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Extension Instructions</h2>
+        <ol>
+            <li><strong>Install Extension:</strong> Load unpacked from chrome://extensions/</li>
+            <li><strong>Click Extension Icon:</strong> Should show TNF popup interface</li>
+            <li><strong>Test Auto-Detection:</strong> Should identify the chat elements above</li>
+            <li><strong>Test Manual Selection:</strong> Click elements in order (input → button → output)</li>
+            <li><strong>Start AI Session:</strong> Should enable automation features</li>
+            <li><strong>Test on Real Sites:</strong> Try on ChatGPT, Claude, or Gemini</li>
+        </ol>
+    </div>
+
+    <script>
+        // Test functions
+        let testSession = null;
+        
+        async function checkRelayStatus() {
+            try {
+                const response = await fetch('http://localhost:3000/status');
+                const data = await response.json();
+                document.getElementById('relay-status').className = 'status-indicator success';
+                document.getElementById('relay-status').textContent = `✅ TNF Relay v${data.version} - ${data.stats.chromeExtensions} extensions connected`;
+            } catch (error) {
+                document.getElementById('relay-status').className = 'status-indicator error';
+                document.getElementById('relay-status').textContent = '❌ TNF Relay not available - Start with: ./start-enhanced-relay.sh';
+            }
+        }
+        
+        function checkExtensionStatus() {
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                document.getElementById('extension-status').className = 'status-indicator success';
+                document.getElementById('extension-status').textContent = '✅ Chrome Extension API available';
+            } else {
+                document.getElementById('extension-status').className = 'status-indicator error';
+                document.getElementById('extension-status').textContent = '❌ Chrome Extension not detected';
+            }
+        }
+        
+        function checkWebSocketStatus() {
+            try {
+                const ws = new WebSocket('ws://localhost:3001');
+                
+                ws.onopen = () => {
+                    document.getElementById('websocket-status').className = 'status-indicator success';
+                    document.getElementById('websocket-status').textContent = '✅ WebSocket connection successful';
+                    ws.close();
+                };
+                
+                ws.onerror = () => {
+                    document.getElementById('websocket-status').className = 'status-indicator error';
+                    document.getElementById('websocket-status').textContent = '❌ WebSocket connection failed';
+                };
+            } catch (error) {
+                document.getElementById('websocket-status').className = 'status-indicator error';
+                document.getElementById('websocket-status').textContent = '❌ WebSocket not available';
+            }
+        }
+        
+        function testAutoDetection() {
+            // Simulate auto-detection by highlighting elements
+            highlightElement('mock-chat-input', 'Chat Input Detected', '#10b981');
+            highlightElement('mock-send-button', 'Send Button Detected', '#3b82f6');
+            highlightElement('mock-chat-output', 'Chat Output Detected', '#f59e0b');
+            
+            alert('✅ Auto-detection simulation complete! Check highlighted elements.');
+        }
+        
+        function testManualSelection() {
+            alert('Manual selection mode would start here. Click elements in order: Input → Button → Output');
+        }
+        
+        function highlightElement(id, label, color) {
+            const element = document.getElementById(id);
+            element.style.outline = `3px solid ${color}`;
+            element.style.boxShadow = `0 0 10px ${color}50`;
+            element.setAttribute('data-tnf-label', label);
+        }
+        
+        function clearHighlights() {
+            document.querySelectorAll('[data-tnf-label]').forEach(el => {
+                el.style.outline = '';
+                el.style.boxShadow = '';
+                el.removeAttribute('data-tnf-label');
+            });
+        }
+        
+        function startTestSession() {
+            testSession = { active: true, startTime: Date.now() };
+            document.getElementById('automation-status').className = 'status-indicator success';
+            document.getElementById('automation-status').textContent = '✅ Test session active';
+        }
+        
+        function sendTestMessage() {
+            if (!testSession?.active) {
+                alert('Start a test session first!');
+                return;
+            }
+            
+            const input = document.getElementById('mock-chat-input');
+            const output = document.getElementById('mock-chat-output');
+            
+            const message = input.value || 'Test message from TNF Extension';
+            
+            // Simulate typing
+            input.value = '';
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                input.value = message.substring(0, i + 1);
+                i++;
+                if (i >= message.length) {
+                    clearInterval(typeInterval);
+                    
+                    // Simulate send
+                    setTimeout(() => {
+                        const newMessage = document.createElement('div');
+                        newMessage.innerHTML = `<strong>User:</strong> ${message}`;
+                        output.appendChild(newMessage);
+                        input.value = '';
+                    }, 500);
+                }
+            }, 50);
+        }
+        
+        function stopTestSession() {
+            testSession = null;
+            document.getElementById('automation-status').className = 'status-indicator warning';
+            document.getElementById('automation-status').textContent = 'No active session';
+        }
+        
+        // Mock send button functionality
+        document.getElementById('mock-send-button').addEventListener('click', () => {
+            const input = document.getElementById('mock-chat-input');
+            const output = document.getElementById('mock-chat-output');
+            
+            if (input.value.trim()) {
+                const newMessage = document.createElement('div');
+                newMessage.innerHTML = `<strong>User:</strong> ${input.value}`;
+                output.appendChild(newMessage);
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
+            }
+        });
+        
+        // Initialize status checks
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRelayStatus();
+            checkExtensionStatus();
+            checkWebSocketStatus();
+        });
+        
+        // Show extension connection status
+        window.addEventListener('message', (event) => {
+            if (event.data.source === 'tnf_extension') {
+                console.log('TNF Extension message:', event.data);
+            }
+        });
+    </script>
+</body>
+</html>

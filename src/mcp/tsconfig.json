@@ -1,26 +1,24 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "ES2022",                 // Target modern Node.js version
-    "module": "ES2022",                 // Changed from NodeNext to ES2022 for pure ESM output
-    "moduleResolution": "Bundler",       // Changed from NodeNext to Bundler
-    "outDir": "./dist",                 // Output directory for compiled JS
-    "rootDir": ".",                    // Root directory of source TS files
-    "strict": true,                    // Enable all strict type-checking options
-    "esModuleInterop": true,           // Enables emit interoperability between CommonJS and ES Modules
-    "skipLibCheck": true,             // Skip type checking of declaration files
-    "forceConsistentCasingInFileNames": true, // Disallow inconsistently-cased references to the same file
-    "resolveJsonModule": true,         // Allow importing JSON files
-    "declaration": true,               // Generate corresponding '.d.ts' file
-    "sourceMap": true,                 // Generate corresponding '.map' file
-    "baseUrl": ".",                    // Base directory to resolve non-absolute module names
-    "experimentalDecorators": true,    // Enables experimental support for ES7 decorators (might be needed for NestJS remnants? Check MCPServer.ts)
-    "emitDecoratorMetadata": true      // Enables experimental support for emitting type metadata for decorators (might be needed for NestJS remnants? Check MCPServer.ts)
+    "outDir": "../../dist/mcp",
+    "rootDir": "./",
+    "target": "ES2022",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "declaration": true,
+    "sourceMap": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
-    "**/*.ts"                        // Include all TypeScript files in the src/mcp directory
+    "./**/*"
   ],
   "exclude": [
-    "node_modules",                  // Exclude node_modules
-    "dist"                           // Exclude the output directory
+    "node_modules",
+    "dist",
+    "**/*.test.ts"
   ]
 }

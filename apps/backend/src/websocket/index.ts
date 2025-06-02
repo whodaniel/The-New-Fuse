@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import { verifyToken } from '../utils/auth';
+import { verifyToken } from '../utils/auth.js';
 // import { UnifiedMonitorService } from '@the-new-fuse/core';
-import { AgentService } from '../services/agent.service';
-import { ChatService } from '../services/chatService';
+import { AgentService } from '../services/agent.service.js';
+import { ChatService } from '../services/chatService.js';
 
 // Services instances
 let agentService: AgentService;

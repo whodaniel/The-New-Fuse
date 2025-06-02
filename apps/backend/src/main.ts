@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 // import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { ConfigService } from '@nestjs/config';
 import * as compression from 'compression';

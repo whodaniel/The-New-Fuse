@@ -1,91 +1,109 @@
+import { z } from 'zod';
+import { FlowStatus } from './flow/index.js';
 
-export {}
-exports.workflowSchema = exports.updateWorkflowSchema = exports.createWorkflowSchema = exports.workflowExecutionResultSchema = exports.workflowExecutionContextSchema = exports.workflowConfigSchema = exports.workflowNodeSchema = exports.workflowEdgeSchema = exports.workflowStateSchema = exports.WorkflowStatus = void 0;
-import zod_1 from 'zod';
-import index_1 from './flow/index.js';
-Object.defineProperty(exports, "WorkflowStatus", { enumerable: true, get: function (): any { return index_1.FlowStatus; } });
+// Re-export FlowStatus as WorkflowStatus for compatibility
+export const WorkflowStatus = FlowStatus;
+
 // Workflow state schema
-exports.workflowStateSchema = zod_1.z.object({
-    status: zod_1.z.nativeEnum(index_1.FlowStatus),
-    error: zod_1.z.instanceof(Error).optional(),
-    startTime: zod_1.z.date().optional(),
-    endTime: zod_1.z.date().optional(),
-    metrics: zod_1.z.object({
-        nodeCount: zod_1.z.number(),
-        edgeCount: zod_1.z.number(),
-        runningNodes: zod_1.z.number(),
-        completedNodes: zod_1.z.number(),
-        failedNodes: zod_1.z.number(),
-        customMetrics: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowStateSchema = z.object({
+    status: z.nativeEnum(FlowStatus),
+    error: z.instanceof(Error).optional(),
+    startTime: z.date().optional(),
+    endTime: z.date().optional(),
+    metrics: z.object({
+        nodeCount: z.number(),
+        edgeCount: z.number(),
+        runningNodes: z.number(),
+        completedNodes: z.number(),
+        failedNodes: z.number(),
+        customMetrics: z.record(z.unknown()).optional(),
     }).optional(),
-    lastExecutedNode: zod_1.z.string().optional(),
-    executionPath: zod_1.z.array(zod_1.z.string()).optional(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+    lastExecutedNode: z.string().optional(),
+    executionPath: z.array(z.string()).optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
 // Workflow edge schema
-exports.workflowEdgeSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    source: zod_1.z.string(),
-    target: zod_1.z.string(),
-    data: zod_1.z.record(zod_1.z.unknown()).optional(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowEdgeSchema = z.object({
+    id: z.string(),
+    source: z.string(),
+    target: z.string(),
+    data: z.record(z.unknown()).optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
 // Workflow node schema
-exports.workflowNodeSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    type: zod_1.z.string(),
-    data: zod_1.z.unknown(),
-    config: zod_1.z.unknown().optional(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowNodeSchema = z.object({
+    id: z.string(),
+    type: z.string(),
+    data: z.unknown(),
+    config: z.unknown().optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
 // Workflow config schema
-exports.workflowConfigSchema = zod_1.z.object({
-    maxRetries: zod_1.z.number().optional(),
-    timeout: zod_1.z.number().optional(),
-    concurrency: zod_1.z.number().optional(),
-    autoStart: zod_1.z.boolean().optional(),
-    validateBeforeRun: zod_1.z.boolean().optional(),
-    stopOnError: zod_1.z.boolean().optional(),
-    customConfig: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowConfigSchema = z.object({
+    maxRetries: z.number().optional(),
+    timeout: z.number().optional(),
+    concurrency: z.number().optional(),
+    autoStart: z.boolean().optional(),
+    validateBeforeRun: z.boolean().optional(),
+    stopOnError: z.boolean().optional(),
+    customConfig: z.record(z.unknown()).optional(),
 });
+
 // Workflow execution context schema
-exports.workflowExecutionContextSchema = zod_1.z.object({
-    workflowId: zod_1.z.string(),
-    nodeId: zod_1.z.string().optional(),
-    state: exports.workflowStateSchema,
-    variables: zod_1.z.record(zod_1.z.unknown()).optional(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowExecutionContextSchema = z.object({
+    workflowId: z.string(),
+    nodeId: z.string().optional(),
+    state: workflowStateSchema,
+    variables: z.record(z.unknown()).optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
 // Workflow execution result schema
-exports.workflowExecutionResultSchema = zod_1.z.object({
-    success: zod_1.z.boolean(),
-    error: zod_1.z.string().optional(),
-    data: zod_1.z.unknown().optional(),
-    nodeResults: zod_1.z.record(zod_1.z.unknown()).optional(),
-    metrics: zod_1.z.object({
-        duration: zod_1.z.number(),
-        nodesExecuted: zod_1.z.number(),
-        customMetrics: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const workflowExecutionResultSchema = z.object({
+    success: z.boolean(),
+    error: z.string().optional(),
+    data: z.unknown().optional(),
+    nodeResults: z.record(z.unknown()).optional(),
+    metrics: z.object({
+        duration: z.number(),
+        nodesExecuted: z.number(),
+        customMetrics: z.record(z.unknown()).optional(),
     }).optional(),
 });
+
 // Create workflow schema
-exports.createWorkflowSchema = zod_1.z.object({
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    nodes: zod_1.z.array(exports.workflowNodeSchema),
-    edges: zod_1.z.array(exports.workflowEdgeSchema),
-    config: exports.workflowConfigSchema.optional(),
-    version: zod_1.z.string().optional(),
-    tags: zod_1.z.array(zod_1.z.string()).optional(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+export const createWorkflowSchema = z.object({
+    name: z.string(),
+    description: z.string().optional(),
+    nodes: z.array(workflowNodeSchema),
+    edges: z.array(workflowEdgeSchema),
+    config: workflowConfigSchema.optional(),
+    version: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
+
 // Update workflow schema
-exports.updateWorkflowSchema = exports.createWorkflowSchema.partial();
+export const updateWorkflowSchema = createWorkflowSchema.partial();
+
 // Full workflow schema
-exports.workflowSchema = exports.createWorkflowSchema.extend({
-    id: zod_1.z.string(),
-    state: exports.workflowStateSchema,
-    createdAt: zod_1.z.date(),
-    updatedAt: zod_1.z.date(),
+export const workflowSchema = createWorkflowSchema.extend({
+    id: z.string(),
+    state: workflowStateSchema,
+    createdAt: z.date(),
+    updatedAt: z.date(),
 });
-//# sourceMappingURL=workflow.js.mapexport {};
+
+// Type exports
+export type WorkflowState = z.infer<typeof workflowStateSchema>;
+export type WorkflowEdge = z.infer<typeof workflowEdgeSchema>;
+export type WorkflowNode = z.infer<typeof workflowNodeSchema>;
+export type WorkflowConfig = z.infer<typeof workflowConfigSchema>;
+export type WorkflowExecutionContext = z.infer<typeof workflowExecutionContextSchema>;
+export type WorkflowExecutionResult = z.infer<typeof workflowExecutionResultSchema>;
+export type CreateWorkflow = z.infer<typeof createWorkflowSchema>;
+export type UpdateWorkflow = z.infer<typeof updateWorkflowSchema>;
+export type Workflow = z.infer<typeof workflowSchema>;

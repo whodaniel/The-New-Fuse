@@ -1,120 +1,184 @@
-# MCP Integration in The New Fuse
+# The New Fuse MCP Server
 
-This directory contains the implementation of the Model Context Protocol (MCP) in The New Fuse.
+Complete Model Context Protocol implementation for The New Fuse platform.
 
-## Overview
+## Features
 
-The New Fuse serves as the primary MCP server in this architecture, while also being able to act as an MCP client to other MCP servers. This dual role creates a powerful ecosystem for AI agent coordination and communication.
+- **Agent Management**: Create, update, and control AI agents
+- **Chat Operations**: Manage chat rooms and messaging
+- **Workflow Execution**: Create and execute complex workflows
+- **Monitoring**: System health and performance metrics
+- **Automation**: Claude Dev automation templates
 
-## Directory Structure
+## Quick Start
 
-- `MCPServer.ts` - Base class for all MCP servers
-- `MCPAgentServer.ts` - MCP server for agent-related capabilities
-- `MCPChatServer.ts` - MCP server for chat-related capabilities
-- `MCPWorkflowServer.ts` - MCP server for workflow-related capabilities
-- `MCPFuseServer.ts` - MCP server for Fuse-specific capabilities
-- `mcp.module.ts` - NestJS module that provides all MCP server implementations
-- `mcp.controller.ts` - NestJS controller that exposes MCP capabilities via REST API
-- `services/` - Directory containing MCP-related services
-  - `mcp-broker.service.ts` - Central broker for all MCP communication
-  - `director-agent.service.ts` - Main agent that coordinates all MCP operations
-
-## Key Components
-
-### MCP Broker Service
-
-The `MCPBrokerService` is the central hub for all MCP communication. It:
-
-- Provides a unified interface for executing MCP directives
-- Routes messages to the appropriate MCP server
-- Handles communication via Redis for distributed setups
-- Manages message passing between MCP servers and agents
-
-### Director Agent Service
-
-The `DirectorAgentService` is the primary agent that coordinates all MCP operations. It:
-
-- Manages tasks and their lifecycle
-- Assigns tasks to appropriate agents
-- Monitors task execution
-- Provides a high-level interface for task management
-
-### MCP Servers
-
-The MCP servers provide the actual implementation of MCP capabilities and tools:
-
-- `MCPAgentServer`: Agent-related capabilities
-- `MCPChatServer`: Chat-related capabilities
-- `MCPWorkflowServer`: Workflow-related capabilities
-- `MCPFuseServer`: Fuse-specific capabilities
-
-## Client-Server Relationships
-
-The New Fuse can act as both an MCP server and an MCP client:
-
-- As a server, it provides MCP capabilities to external systems
-- As a client, it consumes MCP capabilities from external systems
-- All agents within The New Fuse inherit these client-server relationships
-
-## Adding a New MCP Server
-
-To add a new MCP server:
-
-1. Create a new class that extends `MCPServer`
-2. Register it in the `MCPModule`
-3. Add it to the `MCPBrokerService` constructor
-
-Example:
-
-```typescript
-// 1. Create the server
-@Injectable()
-export class MCPNewServer extends MCPServer {
-  constructor() {
-    super({
-      capabilities: {
-        // Define capabilities
-      },
-      tools: {
-        // Define tools
-      }
-    });
-  }
-}
-
-// 2. Register in MCPModule
-@Module({
-  providers: [
-    // ...
-    MCPNewServer
-  ],
-  exports: [
-    // ...
-    MCPNewServer
-  ]
-})
-export class MCPModule {}
-
-// 3. Add to MCPBrokerService
-constructor(
-  // ...
-  private readonly newServer: MCPNewServer
-) {
-  // ...
-  this.servers.set('new', this.newServer);
-}
+### 1. Install Dependencies
+```bash
+yarn install
 ```
+
+### 2. Build the MCP Server
+```bash
+npm run mcp:build
+```
+
+### 3. Start Development Mode
+```bash
+npm run mcp:dev
+```
+
+### 4. Test the Server
+```bash
+npm run mcp:test
+```
+
+## Usage
+
+### Local Development (stdio)
+```bash
+npm run mcp:start
+```
+
+### Production (HTTP/SSE)
+```bash
+npm run mcp:start:remote [port]
+```
+
+### Development with Auto-reload
+```bash
+npm run mcp:dev
+```
+
+## Available Tools
+
+The MCP server exposes 20+ tools across different categories:
+
+### Agent Management
+- `tnf_create_agent` - Create new AI agents
+- `tnf_list_agents` - List all agents
+- `tnf_get_agent` - Get agent details
+- `tnf_update_agent` - Update agent configuration
+- `tnf_execute_agent_task` - Execute tasks with agents
+- `tnf_delete_agent` - Remove agents
+
+### Chat Operations
+- `tnf_create_chat_room` - Create chat rooms
+- `tnf_list_chat_rooms` - List available rooms
+- `tnf_send_message` - Send messages
+- `tnf_get_messages` - Retrieve chat history
+- `tnf_get_chat_analytics` - Chat statistics
+
+### Workflow Management
+- `tnf_create_workflow` - Create new workflows
+- `tnf_list_workflows` - List all workflows
+- `tnf_execute_workflow` - Execute workflows
+- `tnf_get_workflow_status` - Check execution status
+- `tnf_control_workflow` - Control workflow execution
+
+### Monitoring & Analytics
+- `tnf_get_system_health` - System health status
+- `tnf_get_metrics` - Performance metrics
+- `tnf_get_usage_stats` - Usage statistics
+
+### Automation
+- `tnf_list_automation_templates` - List templates
+- `tnf_execute_automation` - Execute automations
 
 ## Configuration
 
-The MCP integration uses Redis for distributed communication. The Redis connection is configured through environment variables:
+The server uses environment variables for configuration:
+- `DATABASE_URL`: PostgreSQL connection string
+- `REDIS_URL`: Redis connection string  
+- `LOG_LEVEL`: Logging level (debug, info, warn, error)
+- `NODE_ENV`: Environment (development, production)
 
-- `REDIS_URL`: URL of the Redis server (default: `redis://localhost:6379`)
-- `INSTANCE_ID`: Unique identifier for this instance (default: `default`)
+## Claude Desktop Integration
 
-## Further Documentation
+The server is automatically configured for Claude Desktop. After setup:
 
-For more detailed information about the MCP integration, see:
+1. Restart Claude Desktop
+2. The server will appear as "the-new-fuse-main" in your MCP servers
+3. You can use all TNF tools directly in Claude
 
-- [MCP NestJS Integration](../../docs/mcp-nestjs-integration.md) - Detailed documentation of the MCP architecture
-- [MCP Configuration](../../mcp_config.README.md) - Documentation of the MCP configuration file
+## Example Usage in Claude
+
+```
+# Create a new agent
+Create an agent named "DataAnalyst" of type "analysis" with capabilities for data processing
+
+# Send a chat message
+Send a message "Hello team!" to room "general-chat"
+
+# Execute a workflow
+Execute workflow "data-processing-pipeline" with input data from the uploaded CSV
+
+# Get system health
+Show me the current system health status with deep checks enabled
+
+# Create automation
+Execute the "code-review" automation template with the current repository as input
+```
+
+## Development
+
+### File Structure
+```
+src/mcp/
+├── TheNewFuseMCPServer.ts  # Main server implementation
+├── server.ts               # Entry point
+├── tsconfig.json          # TypeScript config
+└── README.md              # This file
+
+dist/mcp/
+├── TheNewFuseMCPServer.js  # Compiled server
+└── server.js              # Compiled entry point
+```
+
+### Adding New Tools
+
+1. Define schema in `TheNewFuseMCPServer.ts`
+2. Add tool definition to `setupToolHandlers()`
+3. Implement handler method
+4. Add case in tool call router
+5. Rebuild and test
+
+### Testing
+
+Use the MCP Inspector for interactive testing:
+```bash
+npx @modelcontextprotocol/inspector dist/mcp/server.js
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Build Errors**: Ensure TypeScript dependencies are installed
+2. **Permission Errors**: Run `chmod +x` on shell scripts
+3. **Connection Issues**: Check database and Redis connectivity
+4. **Claude Desktop Not Seeing Server**: Restart Claude Desktop after config changes
+
+### Debug Mode
+
+Set `LOG_LEVEL=debug` for detailed logging:
+```bash
+LOG_LEVEL=debug npm run mcp:start
+```
+
+## Integration with Your Services
+
+To integrate with your actual services, modify the service injection in `TheNewFuseMCPServer.ts`:
+
+```typescript
+// In your NestJS module
+const mcpServer = new TheNewFuseMCPServer();
+mcpServer.setServices({
+  agent: agentService,
+  chat: chatService,
+  workflow: workflowService,
+  monitoring: monitoringService,
+  claudeDev: claudeDevService
+});
+```
+
+This replaces the mock implementations with your actual service instances.

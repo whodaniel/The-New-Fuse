@@ -1,6 +1,6 @@
-import express, { Request, Response } from 'express';
-import { ChatService } from '../services/chatService';
-import { authMiddleware } from '../middleware/auth';
+import express, { Request, Response, NextFunction } from 'express';
+import { ChatService } from '../services/chatService.js';
+import { authMiddleware } from '../middleware/auth.js';
 
 // Define interface to extend Express Request
 interface AuthenticatedRequest extends Request {
@@ -15,9 +15,16 @@ interface AuthenticatedRequest extends Request {
 
 const router = express.Router();
 
+// Wrapper function to handle async route handlers
+const asyncHandler = (fn: (req: AuthenticatedRequest, res: Response, next?: NextFunction) => Promise<any>) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req as AuthenticatedRequest, res, next)).catch(next);
+  };
+};
+
 router.use(authMiddleware);
 
-router.get('/history', async (req: AuthenticatedRequest, res: Response) => {
+router.get('/history', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Check if user exists in the request
     if (!req.user) {
@@ -32,9 +39,9 @@ router.get('/history', async (req: AuthenticatedRequest, res: Response) => {
     console.error('Error retrieving chat history:', errorMessage);
     res.status(500).json({ error: 'Failed to retrieve chat history' });
   }
-});
+}));
 
-router.post('/message', async (req: AuthenticatedRequest, res: Response) => {
+router.post('/message', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Check if user exists in the request
     if (!req.user) {
@@ -49,9 +56,9 @@ router.post('/message', async (req: AuthenticatedRequest, res: Response) => {
     console.error('Error adding message:', errorMessage);
     res.status(400).json({ error: 'Invalid message data' });
   }
-});
+}));
 
-router.delete('/history', async (req: AuthenticatedRequest, res: Response) => {
+router.delete('/history', asyncHandler(async (req: AuthenticatedRequest, res: Response) => {
   try {
     // Check if user exists in the request
     if (!req.user) {
@@ -65,6 +72,6 @@ router.delete('/history', async (req: AuthenticatedRequest, res: Response) => {
     console.error('Error clearing chat history:', errorMessage);
     res.status(500).json({ error: 'Failed to clear chat history' });
   }
-});
+}));
 
 export default router;

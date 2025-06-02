@@ -13,6 +13,7 @@ import { AIModelsManager } from '../utils/ai-models.js';
 import { WebSocketManager } from '../utils/websocket-manager.js';
 import { serverManagement } from './server-management.js'; // Import server management module
 import { HeaderConnectionManager } from './header-connection.js'; // Import header connection manager
+import { ElementSelectionManager } from './element-selection-manager.js'; // Import element selection manager
 
 // Create a popup-specific logger
 const popupLogger = new Logger({
@@ -31,6 +32,7 @@ const tabManager = new TabManager();
 const chatManager = new ChatManager(connectionManager);
 const headerConnectionManager = new HeaderConnectionManager(connectionManager);
 const accessibilityManager = new AccessibilityManager();
+const elementSelectionManager = new ElementSelectionManager();
 
 // Initialize popup when the page is loaded
 document.addEventListener('DOMContentLoaded', () => {
@@ -39,6 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
   chatManager.initialize();
   serverManagement.initialize(); // Initialize server management
   headerConnectionManager.initialize(); // Initialize header connection UI
+  elementSelectionManager.initialize(); // Initialize element selection UI
 
   // Initialize accessibility features
   accessibilityManager.setupKeyboardNavigation();

@@ -1,11 +1,5 @@
-exports.AIError = void 0;
-class AIError extends Error {
-    constructor(message) {
-        super(message);
-        this.name = 'AIError';
-    }
-}
-exports.AIError = AIError;
-export {};
-//# sourceMappingURL=error.js.mapexport {};
+/**
+ * DEPRECATED: Use AIError from @the-new-fuse/core/src/error/exceptions instead.
+ */
+export { AIError } from '@the-new-fuse/core/src/error/exceptions';
 //# sourceMappingURL=error.js.map

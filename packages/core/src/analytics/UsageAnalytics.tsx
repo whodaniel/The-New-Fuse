@@ -29,134 +29,179 @@ export interface UsageMetrics {
 @Injectable()
 export class UsageAnalytics {
   private events: UsageEvent[] = [];
-  private sessions: Map<string, UserSession> = new Map(): Logger;
+  private sessions: Map<string, UserSession> = new Map();
+  private logger: Logger;
 
   constructor(
     private readonly eventBus: EventBusService,
     logger: Logger
   ) {
-    this.logger = logger.createChild('UsageAnalytics'): string,
+    this.logger = logger.createChild('UsageAnalytics');
+  }
+
+  async trackEvent(
+    eventType: string,
     userId: string,
     metadata: Record<string, unknown> = {}
   ): Promise<void> {
     const event: UsageEvent = {
       eventType,
       userId,
-      timestamp: Date.now(): string): Promise<string> {
-    const sessionId): void {
+      timestamp: Date.now(),
+      metadata,
+    };
+    this.events.push(event);
+
+    const session = this.sessions.get(userId);
+    if (session) {
       session.events.push(event);
     }
 
     this.logger.debug('Usage event tracked', { eventType, userId });
   }
 
-  async startSession(userId this.generateSessionId(): Promise<void> {): UserSession  = this.sessions.get(userId);
-    if(session {
+  async startSession(userId: string): Promise<string> {
+    const sessionId = this.generateSessionId();
+    const session: UserSession = {
       sessionId,
       userId,
-      startTime: Date.now(): []
+      startTime: Date.now(),
+      events: []
     };
 
-    this.sessions.set(sessionId, session);
-    await this.eventBus.publish('(usage as any).session.start', session);
+    this.sessions.set(userId, session); // Store session by userId for easy lookup
+    await this.eventBus.publish('usage.session.start', session);
 
     this.logger.info('User session started', { userId, sessionId });
     return sessionId;
   }
 
-  async endSession(): Promise<void> {sessionId: string): Promise<void> {
-    const session: session.userId,
+  async endSession(sessionId: string): Promise<void> {
+    const session = Array.from(this.sessions.values()).find(s => s.sessionId === sessionId);
+    if (!session) {
+      this.logger.warn('Session not found', { sessionId });
+      return;
+    }
+
+    session.endTime = Date.now();
+    await this.eventBus.publish('usage.session.end', session);
+
+    this.logger.info('User session ended', {
+      userId: session.userId,
       sessionId,
       duration: session.endTime - session.startTime
     });
   }
 
-  private generateSessionId(): string {
-    return `session-${Date.now()}-${Math.random(): string
-  ): Promise< {
+  async getSessionMetrics(
+    sessionId: string
+  ): Promise<{
     duration: number;
     eventCount: number;
     eventsByType: Record<string, number>;
-  }> {
-    const session): void {
+  } | undefined> {
+    const session = Array.from(this.sessions.values()).find(s => s.sessionId === sessionId);
+    if (!session) {
       this.logger.warn('Session not found', { sessionId });
-      return;
+      return undefined;
     }
 
-    session.endTime  = this.sessions.get(sessionId);
-    if(!session Date.now();
-    await this.eventBus.publish('(usage as any).session.end', session);
+    const duration = (session.endTime || Date.now()) - session.startTime;
+    const eventsByType = this.countEventsByType(session.events);
 
-    this.logger.info('User session ended', {
-      userId this.sessions.get(sessionId)): void {
-      throw new Error(`Session not found: ${sessionId}`): session.events.length,
+    return {
+      duration,
+      eventCount: session.events.length,
       eventsByType
     };
   }
 
-  async getUserMetrics(): Promise<void> {
+
+  async getUserMetrics(
     userId: string,
     timeWindow?: number
-  ): Promise< {
+  ): Promise<{
     totalSessions: number;
     averageSessionDuration: number;
     totalEvents: number;
     eventsByType: Record<string, number>;
   }> {
-    const userSessions): void {
-      const cutoffTime: 0;
+    const userSessions = Array.from(this.sessions.values()).filter(session => session.userId === userId);
 
-    const userEvents   = (session.endTime || Date.now()) - session.startTime;
-    const eventsByType = this.countEventsByType(session.events);
+    let relevantSessions = userSessions;
+    if (timeWindow) {
+      const cutoffTime = Date.now() - timeWindow;
+      relevantSessions = userSessions.filter(session => session.startTime >= cutoffTime);
+    }
 
-    return {
-      duration,
-      eventCount Array.from(this.sessions.values(): userSessions.length,
-      averageSessionDuration,
-      totalEvents: userEvents.length,
-      eventsByType: this.countEventsByType(userEvents): number
-  ): Promise<UsageMetrics> {
-    let relevantEvents  = userSessions
-      .map(session => (session.endTime || Date.now()) - session.startTime);
+    const sessionDurations = relevantSessions
+      .filter(session => session.endTime)
+      .map(session => session.endTime! - session.startTime);
 
     const averageSessionDuration = sessionDurations.length > 0
       ? sessionDurations.reduce((a, b) => a + b) / sessionDurations.length
-       userSessions.flatMap(session => session.events);
+      : 0;
+
+    const userEvents = relevantSessions.flatMap(session => session.events);
+    const eventsByType = this.countEventsByType(userEvents);
 
     return {
-      totalSessions this.events;
-    let relevantSessions = Array.from(this.sessions.values()): void {
-      const cutoffTime: uniqueUsers.size,
-      activeUsers: activeSessions.length,
-      averageSessionDuration: sessionDurations.length > 0
-        ? sessionDurations.reduce((a, b): 0,
-      totalEvents: relevantEvents.length,
-      eventsByType: this.countEventsByType(relevantEvents): UsageEvent[]): Record<string, number> {
-    return events.reduce((acc, event)  = new Set(relevantEvents.map(event => event.userId));
+      totalSessions: relevantSessions.length,
+      averageSessionDuration,
+      totalEvents: userEvents.length,
+      eventsByType
+    };
+  }
+
+  async getOverallMetrics(
+    timeWindow?: number
+  ): Promise<UsageMetrics> {
+    let relevantEvents = this.events;
+    let relevantSessions = Array.from(this.sessions.values());
+
+    if (timeWindow) {
+      const cutoffTime = Date.now() - timeWindow;
+      relevantEvents = this.events.filter(event => event.timestamp >= cutoffTime);
+      relevantSessions = relevantSessions.filter(session => session.startTime >= cutoffTime);
+    }
+
+    const uniqueUsers = new Set(relevantEvents.map(event => event.userId));
     const activeSessions = relevantSessions.filter(session => !session.endTime);
 
     const sessionDurations = relevantSessions
       .filter(session => session.endTime)
       .map(session => session.endTime! - session.startTime);
 
+    const averageSessionDuration = sessionDurations.length > 0
+      ? sessionDurations.reduce((a, b) => a + b) / sessionDurations.length
+      : 0;
+
     return {
-      totalUsers> a + b) / sessionDurations.length
-        > {
+      totalUsers: uniqueUsers.size,
+      activeUsers: activeSessions.length,
+      averageSessionDuration,
+      totalEvents: relevantEvents.length,
+      eventsByType: this.countEventsByType(relevantEvents)
+    };
+  }
+
+  private countEventsByType(events: UsageEvent[]): Record<string, number> {
+    return events.reduce((acc, event) => {
       acc[event.eventType] = (acc[event.eventType] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);
   }
 
-  async generateUsageReport(): Promise<void> {
+  async generateUsageReport(
     timeWindow: number
-  ): Promise< {
+  ): Promise<{
     metrics: UsageMetrics;
     topUsers: Array<{ userId: string; eventCount: number }>;
     popularFeatures: Array<{ feature: string; useCount: number }>;
   }> {
-    const metrics: count }))
-      .sort((a, b)): void {
-        acc[(event as any).metadata.feature]   = Date.now() - timeWindow;
+    const metrics = await this.getOverallMetrics(timeWindow);
+
+    const cutoffTime = Date.now() - timeWindow;
     const relevantEvents = this.events.filter(event => event.timestamp >= cutoffTime);
 
     // Calculate top users
@@ -166,16 +211,21 @@ export class UsageAnalytics {
     }, {} as Record<string, number>);
 
     const topUsers = Object.entries(userEventCounts)
-      .map(([userId, count]) => ({ userId, eventCount> b.eventCount - a.eventCount)
-      .slice(0, 10) relevantEvents.reduce((acc, event) => {
-      if ((event as any).metadata.feature (acc[(event as any).metadata.feature] || 0) + 1;
+      .map(([userId, count]) => ({ userId, eventCount: count }))
+      .sort((a, b) => b.eventCount - a.eventCount)
+      .slice(0, 10);
+
+    // Calculate popular features (assuming feature is in metadata)
+    const featureCounts = relevantEvents.reduce((acc, event) => {
+      if ((event as any).metadata.feature) { // Use any for now due to unknown metadata structure
+        acc[(event as any).metadata.feature] = (acc[(event as any).metadata.feature] || 0) + 1;
       }
       return acc;
     }, {} as Record<string, number>);
 
-    const popularFeatures: count }))
-      .sort((a, b)  = Object.entries(featureCounts)
-      .map(([feature, count]) => ({ feature, useCount> b.useCount - a.useCount)
+    const popularFeatures = Object.entries(featureCounts)
+      .map(([feature, count]) => ({ feature, useCount: count }))
+      .sort((a, b) => b.useCount - a.useCount)
       .slice(0, 10);
 
     return {
@@ -185,16 +235,19 @@ export class UsageAnalytics {
     };
   }
 
-  async cleanup(): Promise<void> {retentionPeriod: number): Promise<void> {
+  async cleanup(retentionPeriod: number): Promise<void> {
     const cutoffTime = Date.now() - retentionPeriod;
 
     // Clean up events
     this.events = this.events.filter(event => event.timestamp > cutoffTime);
 
     // Clean up sessions
-    for (const [sessionId, session] of this.sessions.entries()) {
-      if (session.startTime < cutoffTime: unknown){
-        this.sessions.delete(sessionId);
+    for (const [userId, session] of this.sessions.entries()) {
+      if (session.endTime && session.endTime < cutoffTime) {
+        this.sessions.delete(userId);
+      } else {
+        // Clean up events within active sessions
+        session.events = session.events.filter(event => event.timestamp > cutoffTime);
       }
     }
 
@@ -202,5 +255,9 @@ export class UsageAnalytics {
       eventsCount: this.events.length,
       sessionsCount: this.sessions.size
     });
+  }
+
+  private generateSessionId(): string {
+    return `session-${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
   }
 }

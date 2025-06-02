@@ -1,100 +1,107 @@
 {
-  "version": "1.0",
+  "version": "2.1.0",
   "servers": {
-    "the-new-fuse-mcp": {
-      "host": "localhost",
-      "port": 3000,
-      "protocol": "http",
+    "the-new-fuse-main": {
       "type": "mcp",
-      "transport": "streamable-http",
-      "capabilities": ["file-operations", "build-operations", "agent-coordination", "state-management"],
-      "description": "Model-Controller-Provider server for The New Fuse with file, build, and agent coordination capabilities",
-      "enabled": true
-    },
-    "main": {
-      "host": "localhost",
-      "port": 3000,
+      "transport": "stdio",
+      "host": "localhost", 
+      "port": 3001,
       "protocol": "http",
-      "enabled": true
+      "capabilities": [
+        "agent-management",
+        "chat-operations", 
+        "workflow-execution",
+        "monitoring",
+        "automation",
+        "file-operations"
+      ],
+      "description": "Complete The New Fuse platform MCP server",
+      "enabled": true,
+      "config": {
+        "logLevel": "info",
+        "enableAuth": true,
+        "enableMetrics": true,
+        "enableWebSocket": true
+      }
     },
-    "postgres": {
+    "database": {
       "type": "database",
-      "POSTGRES_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/fuse",
-      "enabled": true
+      "provider": "postgresql",
+      "connection": "postgresql://postgres:postgres@localhost:5432/fuse",
+      "enabled": true,
+      "capabilities": ["read", "write", "schema"]
     },
-    "redis": {
-      "type": "cache",
-      "REDIS_HOST": "localhost",
-      "REDIS_PORT": 6379,
-      "REDIS_PASSWORD": "",
-      "enabled": true
-    },
-    "openai": {
-      "type": "llm",
-      "provider": "openai",
-      "OPENAI_API_KEY": "YOUR_OPENAI_API_KEY",
-      "models": ["gpt-3.5-turbo", "gpt-4"],
-      "enabled": true
-    },
-    "anthropic": {
-      "type": "llm",
-      "provider": "anthropic",
-      "ANTHROPIC_API_KEY": "YOUR_ANTHROPIC_API_KEY",
-      "models": ["claude-2", "claude-instant-1"],
-      "enabled": false
-    },
-    "brave-search": {
-      "type": "search",
-      "provider": "brave",
-      "BRAVE_API_KEY": "YOUR_BRAVE_SEARCH_API_KEY",
-      "enabled": false
-    },
-    "text-analysis": {
-      "type": "agent",
-      "capabilities": ["text-analysis", "sentiment-analysis", "entity-extraction"],
-      "enabled": true
-    },
-    "code-generation": {
-      "type": "agent",
-      "capabilities": ["code-generation", "code-review", "code-explanation"],
-      "enabled": true
-    },
-    "workflow-engine": {
-      "type": "orchestration",
-      "enabled": true
+    "cache": {
+      "type": "cache", 
+      "provider": "redis",
+      "connection": "redis://localhost:6379",
+      "enabled": true,
+      "capabilities": ["read", "write", "expire"]
     }
   },
   "agent-discovery": {
     "auto-discovery": true,
     "scan-interval": 300,
-    "capability-validation": true
+    "capability-validation": true,
+    "health-check-interval": 60
   },
   "security": {
-    "jwt-secret": "CHANGE_THIS_TO_A_SECURE_SECRET_KEY",
+    "jwt-secret": "your-secure-jwt-secret-key-change-in-production",
     "jwt-expiration": 3600,
     "rate-limit": {
       "window-ms": 60000,
-      "max-requests": 100
+      "max-requests": 200
     },
     "cors": {
-      "allowed-origins": ["http://localhost:3000", "http://localhost:5173"],
+      "allowed-origins": [
+        "http://localhost:3000",
+        "http://localhost:5173", 
+        "http://localhost:3001"
+      ],
       "allowed-methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      "allowed-headers": ["Content-Type", "Authorization"]
+      "allowed-headers": ["Content-Type", "Authorization", "X-MCP-Protocol"]
     }
   },
-  "logging": {
-    "level": "info",
-    "format": "json",
-    "file": "./mcp/logs/mcp-server.log"
+  "monitoring": {
+    "enabled": true,
+    "metrics": {
+      "enabled": true,
+      "endpoint": "/metrics",
+      "interval": 30
+    },
+    "health": {
+      "enabled": true,
+      "endpoint": "/health", 
+      "deep-check": true
+    },
+    "logging": {
+      "level": "info",
+      "format": "json",
+      "file": "./logs/mcp-server.log",
+      "rotation": {
+        "enabled": true,
+        "maxFiles": "7d",
+        "maxSize": "10m"
+      }
+    }
   },
   "ui": {
     "dashboard-enabled": true,
-    "theme": "light"
+    "theme": "dark",
+    "port": 3002,
+    "enabled": true
+  },
+  "features": {
+    "real-time-updates": true,
+    "batch-operations": true,
+    "streaming": true,
+    "caching": true,
+    "compression": true
   },
   "mcpServers": {
-    "the-new-fuse-mcp": {
+    "the-new-fuse-main": {
       "command": "node",
-      "args": ["./src/mcp/server.js"],
+      "args": ["./dist/mcp/server.js"],
       "env": {
         "PORT": "3000",
         "WORKSPACE_ROOT": "./",
@@ -103,7 +110,7 @@
         "ENABLE_PROGRESS_NOTIFICATIONS": "true",
         "ENHANCED_UI": "true"
       },
-      "description": "The New Fuse MCP Server with file, build, and agent coordination capabilities"
+      "description": "The New Fuse MCP Server with complete platform capabilities"
     },
     "filesystem": {
       "command": "npx",
@@ -126,41 +133,6 @@
         "BRAVE_API_KEY": "YOUR_ACTUAL_BRAVE_SEARCH_API_KEY"
       }
     },
-    "sqlite": {
-      "command": "docker",
-      "args": [
-        "run",
-        "--rm",
-        "-i",
-        "-v", "./db:/data/mcp/sqlite",
-        "--db-path", "/data/mcp/sqlite/ai_data.db",
-        "modelcontextprotocol/sqlite"
-      ]
-    },
-    "shell": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-shell",
-        "--allow-commands", "ls,cat,grep,find,echo,pwd"
-      ]
-    },
-    "http": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-http",
-        "--allow-hosts", "api.github.com,api.openai.com"
-      ]
-    },
-    "code-analysis": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-code-analysis",
-        "--allow-dir", "./"
-      ]
-    },
     "postgres": {
       "command": "docker",
       "args": [
@@ -174,62 +146,10 @@
         "POSTGRES_CONNECTION_STRING": "postgresql://postgres:postgres@localhost:5432/fuse"
       }
     },
-    "vector-db": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-vector-db",
-        "--db-path", "./data/vector-db"
-      ]
-    },
-    "gdrive": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-i",
-        "--rm",
-        "-v",
-        "mcp-gdrive:/gdrive-server",
-        "-e",
-        "GDRIVE_CREDENTIALS_PATH=/gdrive-server/credentials.json",
-        "mcp/gdrive"
-      ]
-    },
-    "context7-server": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Documents/Cline/MCP/context7-server/build/index.js"
-      ]
-    },
-    "applescript_execute": {
-      "command": "/Users/<owner>/.nvm/versions/node/v18.20.5/bin/npx",
-      "args": [
-        "@peakmojo/applescript-mcp"
-      ]
-    },
-    "mcp-config-manager": {
-      "command": "node",
-      "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js"
-      ]
-    },
     "browsermcp": {
       "command": "npx",
       "args": [
         "@browsermcp/mcp@latest"
-      ]
-    },
-    "MCP_DOCKER": {
-      "command": "docker",
-      "args": [
-        "run",
-        "-l",
-        "mcp.client=claude-desktop",
-        "--rm",
-        "-i",
-        "alpine/socat",
-        "STDIO",
-        "TCP:host.docker.internal:8811"
       ]
     }
   }

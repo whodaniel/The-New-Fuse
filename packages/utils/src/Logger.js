@@ -1,34 +1,6 @@
 /**
- * Lightweight logger utility for the application
+ * DEPRECATED: Use LoggingService from @the-new-fuse/core instead.
+ * This file now re-exports the core LoggingService for compatibility.
  */
-export class Logger {
-    context;
-    enableTimestamp;
-    constructor(context, enableTimestamp = true) {
-        this.context = context;
-        this.enableTimestamp = enableTimestamp;
-    }
-    getPrefix() {
-        const timestamp = this.enableTimestamp ? `[${new Date().toISOString()}] ` : '';
-        return `${timestamp}[${this.context}] `;
-    }
-    log(message, ...optionalParams) {
-        console.log(this.getPrefix() + message, ...optionalParams);
-    }
-    error(message, ...optionalParams) {
-        console.error(this.getPrefix() + message, ...optionalParams);
-    }
-    warn(message, ...optionalParams) {
-        console.warn(this.getPrefix() + message, ...optionalParams);
-    }
-    debug(message, ...optionalParams) {
-        console.debug(this.getPrefix() + message, ...optionalParams);
-    }
-    verbose(message, ...optionalParams) {
-        console.info(this.getPrefix() + message, ...optionalParams);
-    }
-    setContext(context) {
-        this.context = context;
-    }
-}
+export { LoggingService as Logger } from '@the-new-fuse/core/src/services/LoggingService';
 //# sourceMappingURL=Logger.js.map

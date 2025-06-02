@@ -16,6 +16,8 @@ import { MonitoringService } from './services/monitoring.service';
 import { DataSource } from 'typeorm';
 import { MonitoringController } from './controllers/monitoring.controller';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
+import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
+import { TNFMCPModule } from './mcp/TNFMCPModule';
 
 @Module({
   imports: [
@@ -48,7 +50,9 @@ import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.modu
     AuthModule,
     ChatModule,
     TaskModule,
-    EntityDiscoveryModule, // Add entity discovery module
+    EntityDiscoveryModule,
+    ClaudeDevAutomationModule,
+    TNFMCPModule, // Add The New Fuse MCP Module
   ],
   controllers: [AppController, MonitoringController],
   providers: [AppService, CacheService, MonitoringService, WebsocketGateway],

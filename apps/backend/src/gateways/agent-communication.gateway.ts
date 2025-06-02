@@ -2,7 +2,7 @@ import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, 
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
 import { RedisService } from '../services/redis.service.js';
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 
 @WebSocketGateway({
   cors: {

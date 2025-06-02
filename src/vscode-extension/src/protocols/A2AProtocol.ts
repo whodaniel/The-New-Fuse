@@ -520,6 +520,13 @@ export class A2AProtocolClient extends EventEmitter {
     }
 
     /**
+     * Get the local agent's information.
+     */
+    public getLocalAgent(): A2AAgent {
+        return this.localAgent;
+    }
+
+    /**
      * Get all active tasks
      */
     getTasks(): A2ATask[] {

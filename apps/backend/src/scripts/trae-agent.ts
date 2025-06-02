@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import axios from 'axios';
 import { Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';

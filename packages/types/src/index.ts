@@ -1,7 +1,7 @@
 // Export all service types
 export type {
   ServiceStatus
-} from './services.js';
+} from './services';
 
 // Re-export base types
 export type {
@@ -15,13 +15,13 @@ export type {
   BaseConfig,
   BaseResponse,
   ValidationResult
-} from './core/base-types.js';
+} from './core/base-types';
 
 // Re-export common types
 export type {
   ApiResponse,
   Handler
-} from './common-types.js';
+} from './common-types';
 
 // Re-export task types
 export type {
@@ -36,34 +36,34 @@ export type {
   TaskQuery,
   TaskResult,
   TaskFilter
-} from './tasks.js';
+} from './tasks';
 
 // Re-export WebSocket types
 export type {
   WebSocketMessage,
   WebSocketConfig,
   WebSocketHandler
-} from './ws.js';
+} from './ws';
 
 // Re-export agent core types
-export * from './agent.js';
+export * from './agent';
 
 // Export everything else
-export * from './agent.types.js';
-export * from './marketplace.js';
+export * from './agent.types';
+export * from './marketplace';
 export type {
   ResourceManager
-} from './performance.js';
-export * from './routes.js';
-export * from './state.js';
-export * from './validation.js';
-export * from './workflow.js';
-export * from './chat.js';
-export * from './models.js';
-export * from './metrics.js';
-export type { ServiceStatus as MonitoringServiceStatus } from './monitoring.js';
-export type { ResourceManager as ResourceModuleManager } from './resource.js';
-export * from './security.js';
-export * from './session.js';
-export * from './suggestion.js';
-export * from './user.js';
+} from './performance';
+export * from './routes';
+export * from './state';
+export * from './validation';
+export * from './workflow';
+export * from './chat';
+export * from './models';
+export * from './metrics';
+export type { ServiceStatus as MonitoringServiceStatus } from './monitoring';
+export type { ResourceManager as ResourceModuleManager } from './resource';
+export * from './security';
+export * from './session';
+export * from './suggestion';
+export * from './user';

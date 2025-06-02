@@ -3,6 +3,7 @@
   "displayName": "The New Fuse",
   "description": "AI-powered chat extension with LLM fallback",
   "version": "0.0.1",
+  "publisher": "the-new-fuse",
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -10,7 +11,7 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./out/extension.js",
+  "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
       "activitybar": [

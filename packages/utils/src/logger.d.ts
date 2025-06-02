@@ -1,16 +1,6 @@
 /**
- * Lightweight logger utility for the application
+ * DEPRECATED: Use LoggingService from @the-new-fuse/core instead.
+ * This file now re-exports the core LoggingService for compatibility.
  */
-export declare class Logger {
-    private context;
-    private enableTimestamp;
-    constructor(context: string, enableTimestamp?: boolean);
-    private getPrefix;
-    log(message: any, ...optionalParams: any[]): void;
-    error(message: any, ...optionalParams: any[]): void;
-    warn(message: any, ...optionalParams: any[]): void;
-    debug(message: any, ...optionalParams: any[]): void;
-    verbose(message: any, ...optionalParams: any[]): void;
-    setContext(context: string): void;
-}
+export { LoggingService as Logger } from '@the-new-fuse/core/src/services/LoggingService';
 //# sourceMappingURL=Logger.d.ts.map

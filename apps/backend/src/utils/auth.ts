@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 // Generate a JWT token
 export function generateToken(payload: any, expiresIn: string = '24h'): string {
   const secret = process.env.JWT_SECRET || 'your-secret-key-for-development-only';
-  return jwt.sign(payload, secret, { expiresIn });
+  return jwt.sign(payload, secret, { expiresIn } as jwt.SignOptions);
 }
 
 // Verify a JWT token

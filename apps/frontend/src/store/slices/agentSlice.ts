@@ -1,77 +1,85 @@
-var _a;
-export {}
-exports.createAgent = exports.updateAgent = exports.fetchAgents = exports.createAgentSuccess = exports.updateAgentSuccess = exports.fetchAgentsFailure = exports.fetchAgentsSuccess = exports.fetchAgentsStart = void 0;
-import toolkit_1 from '@reduxjs/toolkit';
-import fetcher_1 from '../../services/api/fetcher.js';
-import agent_1 from '../../types/agent.js';
-const agentSlice = (0, toolkit_1.createSlice)({
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppThunk } from '../index.js';
+import fetcher from '../../services/api/fetcher.js';
+import { transformApiToStoreAgent, Agent } from '../../types/agent.js';
+
+interface AgentState {
+    agents: Agent[];
+    loading: boolean;
+    error: string | null;
+}
+
+const initialState: AgentState = {
+    agents: [],
+    loading: false,
+    error: null,
+};
+
+const agentSlice = createSlice({
     name: 'agent',
-    initialState: {
-        agents: [],
-        loading: false,
-        error: null,
-    },
+    initialState,
     reducers: {
         fetchAgentsStart(state) {
             state.loading = true;
             state.error = null;
         },
-        fetchAgentsSuccess(state, action) {
+        fetchAgentsSuccess(state, action: PayloadAction<Agent[]>) {
             state.agents = action.payload;
             state.loading = false;
         },
-        fetchAgentsFailure(state, action) {
+        fetchAgentsFailure(state, action: PayloadAction<string>) {
             state.error = action.payload;
             state.loading = false;
         },
-        updateAgentSuccess(state, action) {
+        updateAgentSuccess(state, action: PayloadAction<Agent>) {
             const index = state.agents.findIndex(agent => agent.id === action.payload.id);
             if (index !== -1) {
                 state.agents[index] = action.payload;
             }
         },
-        createAgentSuccess(state, action) {
+        createAgentSuccess(state, action: PayloadAction<Agent>) {
             state.agents.push(action.payload);
         },
     },
 });
-_a = agentSlice.actions, exports.fetchAgentsStart = _a.fetchAgentsStart, exports.fetchAgentsSuccess = _a.fetchAgentsSuccess, exports.fetchAgentsFailure = _a.fetchAgentsFailure, exports.updateAgentSuccess = _a.updateAgentSuccess, exports.createAgentSuccess = _a.createAgentSuccess;
-const fetchAgents = (): any => async (dispatch) => {
+
+export const { 
+    fetchAgentsStart, 
+    fetchAgentsSuccess, 
+    fetchAgentsFailure, 
+    updateAgentSuccess, 
+    createAgentSuccess 
+} = agentSlice.actions;
+
+export const fetchAgents = (): AppThunk => async (dispatch) => {
     try {
-        dispatch((0, exports.fetchAgentsStart)());
-        const response = await fetcher_1.default.get('/agents');
-        const storeAgents = response.data.map(agent_1.transformApiToStoreAgent);
-        dispatch((0, exports.fetchAgentsSuccess)(storeAgents));
-    }
-    catch (error) {
-        dispatch((0, exports.fetchAgentsFailure)(error.message));
+        dispatch(fetchAgentsStart());
+        const response = await fetcher.get('/agents');
+        const storeAgents = response.data.map(transformApiToStoreAgent);
+        dispatch(fetchAgentsSuccess(storeAgents));
+    } catch (error) {
+        dispatch(fetchAgentsFailure(error instanceof Error ? error.message : 'An error occurred'));
     }
 };
-exports.fetchAgents = fetchAgents;
-const updateAgent = (agentId, agentData): any => async (dispatch) => {
+
+export const updateAgent = (agentId: string, agentData: Partial<Agent>): AppThunk => async (dispatch) => {
     try {
-        const apiAgentData = (0, agent_1.transformStoreToApiAgent)(agentData);
-        const response = await fetcher_1.default.put(`/agents/${agentId}`, apiAgentData);
-        const finalAgent = (0, agent_1.transformApiToStoreAgent)(response.data);
-        dispatch((0, exports.updateAgentSuccess)(finalAgent));
-    }
-    catch (error) {
-        dispatch((0, exports.fetchAgentsFailure)(error.message));
+        const response = await fetcher.put(`/agents/${agentId}`, agentData);
+        const updatedAgent = transformApiToStoreAgent(response.data);
+        dispatch(updateAgentSuccess(updatedAgent));
+    } catch (error) {
+        dispatch(fetchAgentsFailure(error instanceof Error ? error.message : 'An error occurred'));
     }
 };
-exports.updateAgent = updateAgent;
-const createAgent = (fullAgentData): any => async (dispatch) => {
+
+export const createAgent = (agentData: Omit<Agent, 'id'>): AppThunk => async (dispatch) => {
     try {
-        const apiAgentData = (0, agent_1.transformStoreToApiAgent)(fullAgentData);
-        const response = await fetcher_1.default.post('/agents', apiAgentData);
-        const newAgent = (0, agent_1.transformApiToStoreAgent)(response.data);
-        dispatch((0, exports.createAgentSuccess)(newAgent));
-    }
-    catch (error) {
-        dispatch((0, exports.fetchAgentsFailure)(error.message));
+        const response = await fetcher.post('/agents', agentData);
+        const newAgent = transformApiToStoreAgent(response.data);
+        dispatch(createAgentSuccess(newAgent));
+    } catch (error) {
+        dispatch(fetchAgentsFailure(error instanceof Error ? error.message : 'An error occurred'));
     }
 };
-exports.createAgent = createAgent;
-exports.default = agentSlice.reducer;
-export {};
-//# sourceMappingURL=agentSlice.js.map
+
+export default agentSlice.reducer;

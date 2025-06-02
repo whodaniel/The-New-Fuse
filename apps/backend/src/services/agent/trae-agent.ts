@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import { Redis } from 'ioredis';
 import { Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
 

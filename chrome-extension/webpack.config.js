@@ -73,7 +73,7 @@ export default (env, argv) => {
       new CopyPlugin({
         patterns: [
           {
-            from: './manifest.json',
+            from: './src/manifest.json',
             to: 'manifest.json',
             transform(content) {
               const manifest = JSON.parse(content.toString());
@@ -93,6 +93,8 @@ export default (env, argv) => {
           { from: './src/popup/popup.css', to: 'popup.css' },
           { from: './src/options/options.html', to: 'options.html' },
           { from: './src/options/options.css', to: 'options.css' },
+          { from: './src/styles/content.css', to: 'content.css' },
+          { from: './src/styles/element-selection.css', to: 'element-selection.css' },
           { from: './src/icons', to: 'icons', noErrorOnMissing: true },
           { from: './src/styles', to: 'styles', noErrorOnMissing: true },
         ],

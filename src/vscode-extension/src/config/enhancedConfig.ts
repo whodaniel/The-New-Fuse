@@ -430,7 +430,7 @@ function mergeConfigs(base: IntegrationConfig, override: Partial<IntegrationConf
     function deepMerge(target: any, source: any): any {
         for (const key in source) {
             if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
-                if (!target[key]) target[key] = {};
+                if (!target[key]) {target[key] = {};}
                 deepMerge(target[key], source[key]);
             } else {
                 target[key] = source[key];

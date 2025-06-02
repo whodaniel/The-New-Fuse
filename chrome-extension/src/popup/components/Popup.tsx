@@ -29,9 +29,11 @@ import KeyboardIcon from '@mui/icons-material/Keyboard';
 import HelpIcon from '@mui/icons-material/Help';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LanguageIcon from '@mui/icons-material/Language'; // For Web Integration
+import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'; // For Enhanced Features
 
 import { ConnectionStatusMessage } from '../../shared-protocol';
 import ErrorBoundary from './ErrorBoundary';
+import EnhancedFeaturesTab from './EnhancedFeaturesTab';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -458,7 +460,7 @@ const Popup: React.FC = () => {
                 <IconButton onClick={handleToggleTheme} title={settings.darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}>
                   {settings.darkMode ? <LightModeIcon /> : <DarkModeIcon />}
                 </IconButton>
-                <IconButton onClick={() => setActiveTab(2)} title="Settings"> {/* Tab index 2 for Settings */}
+                <IconButton onClick={() => setActiveTab(3)} title="Settings"> {/* Tab index 3 for Settings */}
                   <SettingsIcon />
                 </IconButton>
               </Box>
@@ -502,9 +504,10 @@ const Popup: React.FC = () => {
         
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={activeTab} onChange={handleTabChange} aria-label="main navigation tabs" variant="fullWidth">
-              <Tab icon={<DashboardIcon />} label="Dashboard" id="tab-0" aria-controls="tabpanel-0" sx={{minWidth: "33%"}} />
-              <Tab icon={<LanguageIcon />} label="Web" id="tab-1" aria-controls="tabpanel-1" sx={{minWidth: "33%"}} />
-              <Tab icon={<SettingsIcon />} label="Settings" id="tab-2" aria-controls="tabpanel-2" sx={{minWidth: "33%"}}/>
+              <Tab icon={<DashboardIcon />} label="Dashboard" id="tab-0" aria-controls="tabpanel-0" sx={{minWidth: "25%"}} />
+              <Tab icon={<LanguageIcon />} label="Web" id="tab-1" aria-controls="tabpanel-1" sx={{minWidth: "25%"}} />
+              <Tab icon={<AutoAwesomeIcon />} label="Enhanced" id="tab-2" aria-controls="tabpanel-2" sx={{minWidth: "25%"}}/>
+              <Tab icon={<SettingsIcon />} label="Settings" id="tab-3" aria-controls="tabpanel-3" sx={{minWidth: "25%"}}/>
             </Tabs>
           </Box>
 
@@ -613,6 +616,10 @@ const Popup: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={activeTab} index={2}>
+              <EnhancedFeaturesTab />
+            </TabPanel>
+
+            <TabPanel value={activeTab} index={3}>
               <Typography variant="subtitle1" gutterBottom>Connection Settings</Typography>
               <TextField
                 fullWidth

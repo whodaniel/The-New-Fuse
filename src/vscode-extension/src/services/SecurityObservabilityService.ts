@@ -500,7 +500,7 @@ export class SecurityObservabilityService extends EventEmitter {
     }
 
     // Audit Logging
-    private logAuditEvent(eventData: Omit<AuditEvent, 'id' | 'timestamp'>): void {
+    public logAuditEvent(eventData: Omit<AuditEvent, 'id' | 'timestamp'>): void { // Changed to public
         if (!this.securityConfig.audit.enabled) {
             return;
         }

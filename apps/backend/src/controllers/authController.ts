@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import passport from 'passport';
-import jwt from 'jsonwebtoken';
+import jwt, { SignOptions } from 'jsonwebtoken';
 import { PrismaClient, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/token.js';
@@ -27,7 +27,7 @@ export const googleAuthCallback = [
       const token = jwt.sign(
         { id: user.id },
         process.env.JWT_SECRET || 'your-secret-key',
-        { expiresIn: '24h' }
+        { expiresIn: '24h' } as SignOptions
       );
 
       await prisma.session.create({

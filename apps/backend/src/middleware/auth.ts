@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 import { User } from '@the-new-fuse/types';
 import { PrismaClient } from '@prisma/client';
 
-import { RedisService } from '../services/redis.service';
+import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 
 const prisma = new PrismaClient();

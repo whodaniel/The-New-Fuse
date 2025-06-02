@@ -10,3 +10,4 @@ export declare class FeatureTracker {
     updateQualitativeAssessment(featureId: string, assessment: Partial<QualitativeAssessment>): FeatureProgress;
     getProgressSummary(featureId: string): string;
 }
+//# sourceMappingURL=FeatureTracker.d.ts.map

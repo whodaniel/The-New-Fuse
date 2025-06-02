@@ -1,22 +1,23 @@
 {
   "manifest_version": 3,
-  "name": "The New Fuse - Text Input Manager",
-  "version": "1.0.0",
-  "description": "Manage text inputs on web pages with VS Code integration",
+  "name": "The New Fuse - AI Bridge & Element Selector",
+  "version": "2.0.0",
+  "description": "Advanced AI-powered browser automation with element selection and TNF integration",
   "permissions": [
     "storage",
     "activeTab",
     "scripting",
     "contextMenus",
     "notifications",
-    "tabs"
+    "tabs",
+    "webNavigation",
+    "debugger"
   ],
   "host_permissions": [
     "<all_urls>"
   ],
   "background": {
-    "service_worker": "background.js",
-    "type": "module"
+    "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
@@ -35,7 +36,8 @@
     {
       "matches": ["<all_urls>"],
       "js": ["content.js"],
-      "css": ["content.css"]
+      "css": ["content.css", "element-selection.css"],
+      "run_at": "document_start"
     }
   ],
   "web_accessible_resources": [
@@ -47,13 +49,35 @@
         "*.css.map",
         "floatingPanel.html",
         "floatingPanel.js",
-        "floatingPanel.css"
+        "floatingPanel.css",
+        "element-selection.css",
+        "icons/*.png"
       ],
       "matches": ["<all_urls>"]
     }
   ],
   "options_page": "options.html",
   "content_security_policy": {
-    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' https://chat.openai.com https://claude.ai https://gemini.google.com;"
+    "extension_pages": "script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; object-src 'self'; connect-src 'self' http://localhost:* ws://localhost:* wss://localhost:* https://chat.openai.com https://claude.ai https://gemini.google.com;"
+  },
+  "commands": {
+    "toggle-element-selection": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+E"
+      },
+      "description": "Toggle element selection mode"
+    },
+    "auto-detect-elements": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+D"
+      },
+      "description": "Auto-detect chat elements"
+    },
+    "start-ai-session": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+A"
+      },
+      "description": "Start AI automation session"
+    }
   }
 }

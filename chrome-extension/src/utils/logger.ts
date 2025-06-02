@@ -160,4 +160,102 @@ export class Logger {
         });
      });
   }
+
+  // Performance monitoring
+  async trackPerformance<T>(
+    operation: string,
+    fn: () => Promise<T> | T,
+    context?: string
+  ): Promise<T> {
+    const startTime = performance.now();
+    const name = context ? `${context}:${operation}` : operation;
+    
+    this.debug(`Starting operation: ${operation}`, { context });
+
+    try {
+      const result = await fn();
+      const duration = performance.now() - startTime;
+      
+      this.info(`Operation completed: ${operation}`, {
+        duration: `${duration.toFixed(2)}ms`,
+        context
+      });
+
+      return result;
+    } catch (error) {
+      const duration = performance.now() - startTime;
+      
+      this.error(`Operation failed: ${operation}`, {
+        error: error instanceof Error ? error.message : String(error),
+        duration: `${duration.toFixed(2)}ms`,
+        context,
+        stack: error instanceof Error ? error.stack : undefined
+      });
+
+      throw error;
+    }
+  }
+
+  // Error boundary for async operations
+  async safeExecute<T>(
+    operation: () => Promise<T>,
+    fallback?: T,
+    context?: string
+  ): Promise<T | undefined> {
+    try {
+      return await operation();
+    } catch (error) {
+      this.error(`Safe execution failed`, {
+        error: error instanceof Error ? error.message : String(error),
+        context,
+        stack: error instanceof Error ? error.stack : undefined
+      });
+      return fallback;
+    }
+  }
+
+  // Memory usage tracking
+  getMemoryUsage(): any {
+    if ('memory' in performance) {
+      return (performance as any).memory;
+    }
+    return null;
+  }
+
+  // Extension-specific error reporting
+  async reportError(error: Error, context: string, additionalData?: any) {
+    const errorReport = {
+      message: error.message,
+      stack: error.stack,
+      context,
+      timestamp: Date.now(),
+      userAgent: navigator.userAgent,
+      url: window.location?.href,
+      memory: this.getMemoryUsage(),
+      additionalData
+    };
+
+    this.error('Extension error reported', errorReport);
+
+    // Send to background script for potential relay to VS Code
+    try {
+      await chrome.runtime.sendMessage({
+        action: 'ERROR_REPORT',
+        data: errorReport
+      });
+    } catch (sendError) {
+      this.error('Failed to send error report', sendError);
+    }
+  }
+
+  // Export logs for debugging
+  async exportLogs(): Promise<string> {
+    const logs = await this.getLogs();
+    const exportData = {
+      timestamp: new Date().toISOString(),
+      name: this.name,
+      logs
+    };
+    return JSON.stringify(exportData, null, 2);
+  }
 }

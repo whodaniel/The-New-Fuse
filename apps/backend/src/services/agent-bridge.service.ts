@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RedisService } from './redis.service';
+import { RedisService } from './redis.service.js';
 
 @WebSocketGateway({
   cors: {

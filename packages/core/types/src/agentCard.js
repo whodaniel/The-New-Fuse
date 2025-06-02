@@ -24,3 +24,4 @@ exports.agentCardSchema = zod_1.z.object({
     }),
     metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
 });
+//# sourceMappingURL=agentCard.js.map
