@@ -143,8 +143,20 @@ class Logger {
    * Save logs to storage
    */
   saveLogs() {
-    chrome.storage.local.set({
-      [`logs_${this.name}`]: this.logs
+    const dataToSave = {};
+    dataToSave[`logs_${this.name}`] = this.logs; // Use template literal for clarity
+
+    chrome.storage.local.set(dataToSave, () => {
+      if (chrome.runtime.lastError) {
+        // Constructing a more informative error message
+        let errorMessage = `[${this.name}] Error saving logs to chrome.storage.`;
+        if (typeof chrome.runtime.lastError === 'object' && chrome.runtime.lastError !== null && 'message' in chrome.runtime.lastError) {
+          errorMessage += ` Message: ${chrome.runtime.lastError.message}`;
+        } else if (typeof chrome.runtime.lastError === 'string') {
+          errorMessage += ` Details: ${chrome.runtime.lastError}`;
+        }
+        console.error(errorMessage);
+      }
     });
   }
   
