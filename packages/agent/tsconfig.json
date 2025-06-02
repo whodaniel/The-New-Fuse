@@ -5,11 +5,22 @@
     "rootDir": "./src",
     "composite": true,
     "declaration": true,
-    "noEmit": false
+    "noEmit": false,
+    "baseUrl": ".",
+    "traceResolution": true,
+    "paths": {
+      "@the-new-fuse/core": [
+        "../core/dist"
+      ],
+      "@the-new-fuse/core/*": [
+        "../core/dist/*"
+      ]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
-    { "path": "../types" }
+    { "path": "../types" },
+    { "path": "../core" }
   ]
 }

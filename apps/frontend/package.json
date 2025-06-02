@@ -10,7 +10,7 @@
     "build:frontend": "yarn build",
     "build:force": "vite build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview --host 0.0.0.0 --port 3001",
+    "preview": "vite preview --host 0.0.0.0 --port 3000",
     "clean": "rimraf dist .turbo node_modules"
   },
   "dependencies": {
@@ -53,6 +53,7 @@
     "@tanstack/react-query": "^5.67.2",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/feature-suggestions": "workspace:*",
+    "@the-new-fuse/port-management": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/ui-components": "workspace:*",
     "@types/d3": "^7.4.3",

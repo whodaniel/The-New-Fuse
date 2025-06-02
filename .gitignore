@@ -78,3 +78,8 @@ packages/database/prisma/client/
 # Misc
 .DS_Store
 *.pem
+
+# Port Management
+.port-management-backups/
+*.port-backup
+node_modules/.port-registry

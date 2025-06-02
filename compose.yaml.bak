@@ -1,0 +1,93 @@
+services:
+  typescript-frontend:
+    build:
+      context: .
+      dockerfile: ./apps/frontend/Dockerfile
+    container_name: typescript-frontend
+    restart: unless-stopped
+    init: true
+    # env_file: ./frontend/.env  # Uncomment if .env file exists
+    ports:
+      - "3000:3000"
+    networks:
+      - fuse-app
+    # The frontend is a static server (see Dockerfile: npx serve)
+
+  typescript-backend:
+    build:
+      context: .
+      dockerfile: ./apps/backend/Dockerfile
+    container_name: typescript-backend
+    restart: unless-stopped
+    init: true
+    # env_file: ./backend/.env  # Uncomment if .env file exists
+    ports:
+      - "3002:3000"
+    networks:
+      - fuse-app
+    depends_on:
+      - redis
+      - postgres
+    # The backend exposes port 3000 (see Dockerfile)
+
+  typescript-api:
+    build:
+      context: .
+      dockerfile: ./apps/api/Dockerfile
+    container_name: typescript-api
+    restart: unless-stopped
+    init: true
+    # env_file: ./apps/api/.env  # Uncomment if .env file exists
+    ports:
+      - "3001:3001"
+    networks:
+      - fuse-app
+    depends_on:
+      - redis
+      - postgres
+    # The API exposes port 3001 (see Dockerfile)
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - fuse-app
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Used for caching and pub/sub (see backend/src/config/redis.config.ts and other redis usage)
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fuse
+      POSTGRES_PASSWORD: fusepassword
+      POSTGRES_DB: fuse
+    ports:
+      - "5432:5432"
+    networks:
+      - fuse-app
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuse"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Used as the main database (see prisma/schema.prisma and backend/lib/prisma)
+    # For production, mount a volume for data persistence
+    # volumes:
+    #   - postgres-data:/var/lib/postgresql/data
+
+networks:
+  fuse-app:
+    driver: bridge
+
+# volumes:
+#   postgres-data:
+#     driver: local

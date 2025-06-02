@@ -1,8 +1,12 @@
 {
   "name": "db",
+  "version": "1.0.0",
   "packageManager": "yarn@4.9.1",
   "type": "module",
   "scripts": {
     "clean": "rimraf dist .turbo node_modules"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.5"
   }
 }

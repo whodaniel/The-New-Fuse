@@ -1,1 +1,3 @@
-export * from './.js';
+export * from './Button';
+export * from './Card';
+export * from './Modal';

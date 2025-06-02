@@ -1,0 +1,26 @@
+{
+  "name": "@the-new-fuse/port-manager-cli",
+  "version": "1.0.0",
+  "description": "CLI tool for The New Fuse port management",
+  "type": "module",
+  "bin": {
+    "tnf-ports": "./cli.js"
+  },
+  "scripts": {
+    "build": "echo 'No build needed'",
+    "dev": "node cli.js",
+    "install-global": "npm install -g ."
+  },
+  "dependencies": {
+    "@the-new-fuse/port-management": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^11.0.0",
+    "ora": "^8.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^18.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

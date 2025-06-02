@@ -1,93 +1,106 @@
 services:
-  typescript-frontend:
+  ts-api:
     build:
-      context: .
-      dockerfile: ./apps/frontend/Dockerfile
-    container_name: typescript-frontend
+      context: ./apps/api
+      dockerfile: ../api/Dockerfile
+    container_name: ts-api
     restart: unless-stopped
     init: true
-    # env_file: ./frontend/.env  # Uncomment if .env file exists
-    ports:
-      - "3000:3000"
-    networks:
-      - fuse-app
-    # The frontend is a static server (see Dockerfile: npx serve)
-
-  typescript-backend:
-    build:
-      context: .
-      dockerfile: ./apps/backend/Dockerfile
-    container_name: typescript-backend
-    restart: unless-stopped
-    init: true
-    # env_file: ./backend/.env  # Uncomment if .env file exists
-    ports:
-      - "3002:3000"
-    networks:
-      - fuse-app
-    depends_on:
-      - redis
-      - postgres
-    # The backend exposes port 3000 (see Dockerfile)
-
-  typescript-api:
-    build:
-      context: .
-      dockerfile: ./apps/api/Dockerfile
-    container_name: typescript-api
-    restart: unless-stopped
-    init: true
-    # env_file: ./apps/api/.env  # Uncomment if .env file exists
+    # Exposes the API on port 3001 as per Dockerfile
     ports:
       - "3001:3001"
+    # Use env_file if .env exists in ./apps/api
+    env_file:
+      - ./apps/api/.env
     networks:
-      - fuse-app
+      - fuse-net
     depends_on:
       - redis
       - postgres
-    # The API exposes port 3001 (see Dockerfile)
+
+  ts-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ts-backend
+    restart: unless-stopped
+    init: true
+    # Exposes the backend on port 3000 as per Dockerfile
+    ports:
+      - "3002:3000"
+    # Use env_file if .env exists in ./backend
+    env_file:
+      - ./backend/.env
+    networks:
+      - fuse-net
+    depends_on:
+      - redis
+      - postgres
+
+  ts-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ts-frontend
+    restart: unless-stopped
+    init: true
+    # Exposes the frontend on port 3000 as per Dockerfile
+    ports:
+      - "3000:3000"
+    # Use env_file if .env exists in ./frontend
+    env_file:
+      - ./frontend/.env
+    networks:
+      - fuse-net
+    depends_on:
+      - ts-api
+      - ts-backend
+
+  # --- External Services ---
+  postgres:
+    image: postgres:latest
+    container_name: fuse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fuseuser
+      POSTGRES_PASSWORD: fusepass
+      POSTGRES_DB: fusedb
+    ports:
+      - "5432:5432"
+    networks:
+      - fuse-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuseuser"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    # Uncomment the following to persist data
+    # volumes:
+    #   - postgres_data:/var/lib/postgresql/data
 
   redis:
     image: redis:latest
-    container_name: redis
+    container_name: fuse-redis
     restart: unless-stopped
     ports:
       - "6379:6379"
     networks:
-      - fuse-app
+      - fuse-net
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5
-    # Used for caching and pub/sub (see backend/src/config/redis.config.ts and other redis usage)
-
-  postgres:
-    image: postgres:latest
-    container_name: postgres
-    restart: unless-stopped
-    environment:
-      POSTGRES_USER: fuse
-      POSTGRES_PASSWORD: fusepassword
-      POSTGRES_DB: fuse
-    ports:
-      - "5432:5432"
-    networks:
-      - fuse-app
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U fuse"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    # Used as the main database (see prisma/schema.prisma and backend/lib/prisma)
-    # For production, mount a volume for data persistence
+    # Uncomment the following to persist data
     # volumes:
-    #   - postgres-data:/var/lib/postgresql/data
+    #   - redis_data:/data
 
+# Networks
 networks:
-  fuse-app:
+  fuse-net:
     driver: bridge
 
-# volumes:
-#   postgres-data:
-#     driver: local
+# Uncomment the following if you want to persist database/cache data
+#volumes:
+#  postgres_data:
+#  redis_data:

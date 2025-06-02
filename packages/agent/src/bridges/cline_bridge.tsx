@@ -1,8 +1,8 @@
 import { Logger } from 'winston';
-import { getLogger } from '../../core/src/logging/loggingConfig.js';
-import { ClineBridgeClient } from '../../core/src/services/client.js';
-import { DirectCommunication } from '../../core/src/communication/directCommunication.js';
-import { AgentRole } from '../../core/src/types/agent.js';
+import { getLogger } from '@the-new-fuse/core/dist/logging/loggingConfig.js';
+import { ClineBridgeClient } from '@the-new-fuse/core/dist/services/client.js';
+import { DirectCommunication } from '@the-new-fuse/core/dist/communication/directCommunication.js';
+import { AgentRole } from '@the-new-fuse/core/dist/types/agent.js';
 
 export class ClineBridge {
     private client: ClineBridgeClient;

@@ -10,15 +10,19 @@
     "test": "jest"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.8.0",
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
     "@the-new-fuse/core": "*",
     "@the-new-fuse/types": "*",
     "@the-new-fuse/ui": "*",
     "@the-new-fuse/ui-components": "*",
     "@the-new-fuse/utils": "*",
     "date-fns": "^2.30.0",
+    "framer-motion": "^10.16.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "reflect-metadata": "^0.2.2",
+    "reflect-metadata": "^0.1.14",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
