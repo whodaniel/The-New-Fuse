@@ -25,6 +25,37 @@ export class ElementSelectionManager {
   }
 
   /**
+   * Toggle floating panel visibility
+   */
+  private async toggleFloatingPanel(): Promise<void> {
+    try {
+      const tabs = await chrome.tabs.query({ active: true, currentWindow: true });
+      if (!tabs[0]?.id) {
+        throw new Error('No active tab found');
+      }
+
+      // Send message to content script to toggle floating panel
+      const response = await chrome.tabs.sendMessage(tabs[0].id, {
+        type: 'TOGGLE_FLOATING_PANEL'
+      });
+
+      if (response?.success) {
+        this.showNotification(
+          response.visible 
+            ? 'Floating panel activated! Check the page for the overlay interface.' 
+            : 'Floating panel hidden.',
+          'success'
+        );
+      } else {
+        this.showNotification('Failed to toggle floating panel', 'error');
+      }
+    } catch (error) {
+      this.logger.error('Failed to toggle floating panel:', error);
+      this.showNotification('Floating panel toggle failed', 'error');
+    }
+  }
+
+  /**
    * Setup the element selection interface
    */
   private setupElementSelectionUI(): void {
@@ -93,6 +124,9 @@ export class ElementSelectionManager {
         <div class="ai-integration">
           <h4>🧠 AI Integration</h4>
           <div class="ai-actions">
+            <button id="toggle-floating-panel-btn" class="btn btn-feature">
+              🎯 Toggle Floating Panel
+            </button>
             <button id="test-send-message-btn" class="btn btn-success">
               📨 Test Send Message
             </button>
@@ -190,6 +224,11 @@ export class ElementSelectionManager {
     });
 
     // AI Integration buttons
+    const toggleFloatingPanelBtn = document.getElementById('toggle-floating-panel-btn');
+    if (toggleFloatingPanelBtn) {
+      toggleFloatingPanelBtn.addEventListener('click', () => this.toggleFloatingPanel());
+    }
+
     const testSendBtn = document.getElementById('test-send-message-btn');
     if (testSendBtn) {
       testSendBtn.addEventListener('click', () => this.testSendMessage());

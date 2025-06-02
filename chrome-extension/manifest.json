@@ -45,7 +45,7 @@
   ],
   "web_accessible_resources": [
     {
-      "resources": ["websocket-server-worker.html"],
+      "resources": ["websocket-server-worker.html", "ui-html-css/*"],
       "matches": ["chrome-extension://*/*"]
     }
   ]

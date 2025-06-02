@@ -1,6 +1,6 @@
 /**
  * Enhanced Content Script for The New Fuse Chrome Extension
- * Includes element selection, AI automation, and relay integration
+ * Includes element selection, AI automation, relay integration, and floating panel
  */
 
 import { ElementSelector, ElementInfo, PageElementMapping } from './element-selector';
@@ -10,8 +10,9 @@ import { Logger } from '../utils/logger';
 import { settingsManager } from '../utils/settings-manager';
 import { performanceOptimizer } from '../utils/performance-optimizer';
 import { webSocketManager } from '../utils/websocket-manager';
+import { floatingPanelManager } from '../utils/floating-panel-manager';
 
-console.log("The New Fuse enhanced content script loaded with advanced features.");
+console.log("The New Fuse enhanced content script loaded with floating panel support.");
 
 // Initialize components
 const logger = new Logger({
@@ -672,6 +673,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         handleControlIframeVisibility(request, sendResponse);
         break;
 
+      case 'TEST_SELECTORS':
+        handleTestSelectors(request, sendResponse);
+        break;
+
+      case 'AUTO_DETECT_SELECTORS':
+        handleAutoDetectSelectors(request, sendResponse);
+        break;
+
+      case 'TOGGLE_FLOATING_PANEL':
+        // Forward to floating panel manager
+        chrome.runtime.sendMessage(request, sendResponse);
+        break;
+
+      case 'SHOW_FLOATING_PANEL':
+        // Forward to floating panel manager  
+        chrome.runtime.sendMessage(request, sendResponse);
+        break;
+
+      case 'HIDE_FLOATING_PANEL':
+        // Forward to floating panel manager
+        chrome.runtime.sendMessage(request, sendResponse);
+        break;
+
       default:
         logger.warn("Content script received unhandled message type:", request.type);
         return false;
@@ -1274,6 +1298,198 @@ function generateSimpleSelector(element: HTMLElement): string {
   }
   
   return element.tagName.toLowerCase();
+}
+
+/**
+ * Handle testing selectors on the current page
+ */
+function handleTestSelectors(request: any, sendResponse: Function): void {
+  try {
+    const { chatInputSelector, chatOutputSelector, sendButtonSelector } = request.payload;
+    const results: string[] = [];
+    
+    // Test chat input selector
+    if (chatInputSelector) {
+      try {
+        const inputElements = document.querySelectorAll(chatInputSelector);
+        results.push(`Input: ${inputElements.length} element(s) found`);
+        if (inputElements.length > 0) {
+          const firstElement = inputElements[0] as HTMLElement;
+          results.push(`  - Type: ${firstElement.tagName}, ID: ${firstElement.id || 'none'}, Classes: ${firstElement.className || 'none'}`);
+        }
+      } catch (error) {
+        results.push(`Input: Invalid selector - ${(error as Error).message}`);
+      }
+    }
+    
+    // Test chat output selector
+    if (chatOutputSelector) {
+      try {
+        const outputElements = document.querySelectorAll(chatOutputSelector);
+        results.push(`Output: ${outputElements.length} element(s) found`);
+        if (outputElements.length > 0) {
+          const firstElement = outputElements[0] as HTMLElement;
+          results.push(`  - Type: ${firstElement.tagName}, ID: ${firstElement.id || 'none'}, Classes: ${firstElement.className || 'none'}`);
+        }
+      } catch (error) {
+        results.push(`Output: Invalid selector - ${(error as Error).message}`);
+      }
+    }
+    
+    // Test send button selector
+    if (sendButtonSelector) {
+      try {
+        const buttonElements = document.querySelectorAll(sendButtonSelector);
+        results.push(`Button: ${buttonElements.length} element(s) found`);
+        if (buttonElements.length > 0) {
+          const firstElement = buttonElements[0] as HTMLElement;
+          results.push(`  - Type: ${firstElement.tagName}, ID: ${firstElement.id || 'none'}, Classes: ${firstElement.className || 'none'}`);
+        }
+      } catch (error) {
+        results.push(`Button: Invalid selector - ${(error as Error).message}`);
+      }
+    }
+    
+    sendResponse({
+      success: true,
+      results: results.join('\n')
+    });
+    
+  } catch (error) {
+    logger.error('Error testing selectors:', error);
+    sendResponse({
+      success: false,
+      error: `Failed to test selectors: ${(error as Error).message}`
+    });
+  }
+}
+
+/**
+ * Handle auto-detecting chat selectors on the current page
+ */
+function handleAutoDetectSelectors(request: any, sendResponse: Function): void {
+  try {
+    const selectors = {
+      input: null as string | null,
+      output: null as string | null,
+      button: null as string | null
+    };
+    
+    // Auto-detect input fields (prioritize chat-like inputs)
+    const inputCandidates = [
+      'input[type="text"][placeholder*="message" i]',
+      'input[type="text"][placeholder*="chat" i]',
+      'textarea[placeholder*="message" i]',
+      'textarea[placeholder*="chat" i]',
+      'input[type="text"][id*="message" i]',
+      'input[type="text"][id*="chat" i]',
+      'textarea[id*="message" i]',
+      'textarea[id*="chat" i]',
+      'input[type="text"][class*="message" i]',
+      'input[type="text"][class*="chat" i]',
+      'textarea[class*="message" i]',
+      'textarea[class*="chat" i]',
+      '.chat-input, #chat-input, [data-testid*="chat" i] input',
+      'textarea:not([readonly]):not([disabled])',
+      'input[type="text"]:not([readonly]):not([disabled])'
+    ];
+    
+    for (const selector of inputCandidates) {
+      try {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length > 0) {
+          selectors.input = generateSimpleSelector(elements[0] as HTMLElement);
+          break;
+        }
+      } catch (error) {
+        // Ignore invalid selectors
+      }
+    }
+    
+    // Auto-detect output/chat log areas
+    const outputCandidates = [
+      '.chat-log, .chat-messages, .message-list',
+      '[id*="chat" i][id*="log" i], [id*="message" i][id*="log" i]',
+      '[class*="chat" i][class*="log" i], [class*="message" i][class*="log" i]',
+      '[data-testid*="chat" i], [data-testid*="message" i]',
+      '.messages, .conversation, .chat-container',
+      'main [role="log"], main [role="feed"]',
+      'div[class*="chat" i]:not(input):not(button)',
+      'div[class*="message" i]:not(input):not(button)'
+    ];
+    
+    for (const selector of outputCandidates) {
+      try {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length > 0) {
+          selectors.output = generateSimpleSelector(elements[0] as HTMLElement);
+          break;
+        }
+      } catch (error) {
+        // Ignore invalid selectors
+      }
+    }
+    
+    // Auto-detect send buttons
+    const buttonCandidates = [
+      'button[type="submit"]',
+      'input[type="submit"]',
+      'button[aria-label*="send" i]',
+      'button[title*="send" i]',
+      'button:has(svg[class*="send" i])',
+      'button[class*="send" i]',
+      'button[id*="send" i]',
+      '.send-button, #send-button',
+      '[data-testid*="send" i]',
+      'button:contains("Send")',
+      'button[class*="submit" i]'
+    ];
+    
+    for (const selector of buttonCandidates) {
+      try {
+        const elements = document.querySelectorAll(selector);
+        if (elements.length > 0) {
+          // Filter for visible buttons
+          const visibleElements = Array.from(elements).filter(el => {
+            const element = el as HTMLElement;
+            const style = window.getComputedStyle(element);
+            return style.display !== 'none' && style.visibility !== 'hidden' && element.offsetParent !== null;
+          });
+          
+          if (visibleElements.length > 0) {
+            selectors.button = generateSimpleSelector(visibleElements[0] as HTMLElement);
+            break;
+          }
+        }
+      } catch (error) {
+        // Ignore invalid selectors
+      }
+    }
+    
+    // Check if we found any selectors
+    const foundCount = Object.values(selectors).filter(s => s !== null).length;
+    
+    if (foundCount > 0) {
+      sendResponse({
+        success: true,
+        selectors: selectors,
+        message: `Auto-detected ${foundCount} selector(s)`
+      });
+    } else {
+      sendResponse({
+        success: false,
+        error: 'No suitable chat elements found on this page',
+        selectors: selectors
+      });
+    }
+    
+  } catch (error) {
+    logger.error('Error auto-detecting selectors:', error);
+    sendResponse({
+      success: false,
+      error: `Failed to auto-detect selectors: ${(error as Error).message}`
+    });
+  }
 }
 
 // Start enhanced initialization

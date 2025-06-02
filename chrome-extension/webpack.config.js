@@ -4,6 +4,7 @@ import CopyPlugin from 'copy-webpack-plugin';
 import TerserPlugin from 'terser-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -70,6 +71,12 @@ export default (env, argv) => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
       }),
+      new HtmlWebpackPlugin({
+        filename: 'popup.html',
+        template: path.resolve(__dirname, 'src/popup/popup-template.html'),
+        chunks: ['popup'],
+        minify: false
+      }),
       new CopyPlugin({
         patterns: [
           {
@@ -81,22 +88,16 @@ export default (env, argv) => {
               if (manifest.action && manifest.action.default_popup && manifest.action.default_popup.startsWith('dist/')) {
                 manifest.action.default_popup = manifest.action.default_popup.replace(/^dist\//, '');
               }
-              // Ensure other paths are also relative if they are not already
-              // For example, if icons were 'dist/icons/icon16.png', they should be 'icons/icon16.png'
-              // However, current manifest.json icon paths are already 'icons/icon16.png' which is correct
-              // as 'icons' folder is copied directly into 'dist'.
-              // Same for options_ui.page which is 'options.html' and correctly copied to dist root.
               return JSON.stringify(manifest, null, 2);
             },
           },
-          { from: './src/popup/popup.html', to: 'popup.html' },
-          { from: './src/popup/popup.css', to: 'popup.css' },
           { from: './src/options/options.html', to: 'options.html' },
           { from: './src/options/options.css', to: 'options.css' },
           { from: './src/styles/content.css', to: 'content.css' },
           { from: './src/styles/element-selection.css', to: 'element-selection.css' },
           { from: './src/icons', to: 'icons', noErrorOnMissing: true },
           { from: './src/styles', to: 'styles', noErrorOnMissing: true },
+          { from: '../ui-html-css', to: 'ui-html-css', noErrorOnMissing: true }, // Added to copy HTML showcase
         ],
       }),
     ],

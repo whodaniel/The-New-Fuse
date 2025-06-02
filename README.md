@@ -4,7 +4,33 @@
 
 ## Overview
 
-The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems, with a particular focus on integration with VS Code and other development environments.
+The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems, with a particular focus on integration with VS Code and other development environments. Now featuring **Yarn Berry workspace integration** and **comprehensive Chrome extension automation**.
+
+## 🎆 Latest Features
+
+### Chrome Extension with Yarn Berry Workspace
+- **Unified Build System**: Chrome extension integrated with main project using Yarn Berry workspaces
+- **Browser Automation**: AI-powered element selection and cross-platform automation
+- **One-Command Building**: Build everything with `yarn build:all`
+- **Development Workflow**: `yarn dev:chrome` for hot reloading during development
+- **Distribution Ready**: `yarn release:chrome` creates Chrome Web Store packages
+
+### Quick Chrome Extension Setup
+```bash
+# Build the Chrome extension
+yarn build:chrome
+
+# Or build everything (main project + Chrome extension)
+yarn build:all
+
+# Development mode with file watching
+yarn dev:chrome
+
+# Package for Chrome Web Store
+yarn release:chrome
+```
+
+**Load in Chrome**: Go to `chrome://extensions/` → Enable "Developer mode" → "Load unpacked" → Select `chrome-extension/dist/`
 
 ## MCP Configuration
 

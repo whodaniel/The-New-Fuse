@@ -16,7 +16,16 @@ import {
   ListItemIcon,
   ListItemText,
   Tabs,
-  Tab
+  Tab,
+  Tooltip,
+  Chip,
+  Grid,
+  Card,
+  CardContent,
+  Divider,
+  Badge,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import { lightTheme, darkTheme } from '../../styles/theme';
@@ -32,6 +41,24 @@ import HelpIcon from '@mui/icons-material/Help';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import LanguageIcon from '@mui/icons-material/Language'; // For Web Integration
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome'; // For Enhanced Features
+import BuildIcon from '@mui/icons-material/Build'; // For Tools tab
+import MonitorIcon from '@mui/icons-material/Monitor';
+import HistoryIcon from '@mui/icons-material/History';
+import CodeIcon from '@mui/icons-material/Code';
+import StorageIcon from '@mui/icons-material/Storage';
+import SecurityIcon from '@mui/icons-material/Security';
+import SpeedIcon from '@mui/icons-material/Speed';
+import MemoryIcon from '@mui/icons-material/Memory';
+import NetworkCheckIcon from '@mui/icons-material/NetworkCheck';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
+import FileUploadIcon from '@mui/icons-material/FileUpload';
+import ClearIcon from '@mui/icons-material/Clear';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import TuneIcon from '@mui/icons-material/Tune';
 
 import { ConnectionStatusMessage } from '../../shared-protocol';
 import ErrorBoundary from './ErrorBoundary';
@@ -85,6 +112,19 @@ const Popup: React.FC = () => {
   const [capturedOutputDisplay, setCapturedOutputDisplay] = useState(''); // For "Capture Output"
   const [webInteractionStatus, setWebInteractionStatus] = useState(''); // For status/errors
   const [webInteractionStatusType, setWebInteractionStatusType] = useState<'success' | 'error' | 'info' | 'warning'>('info');
+  
+  // New state for enhanced UI controls
+  const [performanceStats, setPerformanceStats] = useState({
+    memoryUsage: 0,
+    cpuUsage: 0,
+    networkStatus: 'unknown'
+  });
+  const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [connectionHistory, setConnectionHistory] = useState<Array<{timestamp: string, status: string, message: string}>>([]);
+  const [extensionLogs, setExtensionLogs] = useState<Array<{timestamp: string, level: string, message: string}>>([]);
+  const [notifications, setNotifications] = useState(true);
+  const [autoCapture, setAutoCapture] = useState(false);
+  const [debugPanelOpen, setDebugPanelOpen] = useState(false);
 
 
   useEffect(() => {
@@ -310,9 +350,153 @@ const Popup: React.FC = () => {
         // Open documentation in a new tab
         chrome.tabs.create({ url: 'https://github.com/your-repo/docs' });
         break;
+      case 'monitor':
+        // Toggle performance monitoring
+        setPerformanceStats(prev => ({...prev, networkStatus: 'monitoring'}));
+        break;
+      case 'history':
+        // Show connection history
+        setActiveTab(3); // Switch to Tools tab
+        break;
+      case 'restart':
+        // Restart extension background script
+        chrome.runtime.sendMessage({ type: 'RESTART_BACKGROUND' });
+        break;
+      case 'export':
+        // Export settings and logs
+        handleExportData();
+        break;
+      case 'clear-logs':
+        // Clear all logs
+        setExtensionLogs([]);
+        setConnectionHistory([]);
+        break;
       default:
         console.log('Unknown quick action:', action);
     }
+  };
+
+  const handleExportData = () => {
+    const exportData = {
+      settings,
+      connectionHistory,
+      extensionLogs,
+      webSelectors: {
+        chatInputSelector,
+        chatOutputSelector,
+        sendButtonSelector
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    chrome.downloads.download({
+      url: url,
+      filename: `new-fuse-export-${new Date().toISOString().split('T')[0]}.json`,
+      saveAs: true
+    });
+  };
+
+  const handleImportData = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const importData = JSON.parse(e.target?.result as string);
+        
+        // Import settings
+        if (importData.settings) {
+          setSettings(prev => ({ ...prev, ...importData.settings }));
+        }
+        
+        // Import selectors
+        if (importData.webSelectors) {
+          setChatInputSelector(importData.webSelectors.chatInputSelector || '');
+          setChatOutputSelector(importData.webSelectors.chatOutputSelector || '');
+          setSendButtonSelector(importData.webSelectors.sendButtonSelector || '');
+        }
+        
+        setWebInteractionStatus('Settings imported successfully!');
+        setWebInteractionStatusType('success');
+      } catch (error) {
+        setWebInteractionStatus('Error importing data: Invalid file format');
+        setWebInteractionStatusType('error');
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleTestSelectors = () => {
+    if (!chatInputSelector.trim() && !chatOutputSelector.trim() && !sendButtonSelector.trim()) {
+      setWebInteractionStatus('At least one selector must be provided for testing');
+      setWebInteractionStatusType('error');
+      return;
+    }
+
+    setWebInteractionStatus('Testing selectors on current page...');
+    setWebInteractionStatusType('info');
+    
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: 'TEST_SELECTORS',
+          payload: {
+            chatInputSelector,
+            chatOutputSelector,
+            sendButtonSelector
+          }
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            setWebInteractionStatus(`Error testing selectors: ${chrome.runtime.lastError.message}`);
+            setWebInteractionStatusType('error');
+            return;
+          }
+          
+          if (response?.success) {
+            setWebInteractionStatus(`Selectors tested: ${response.results}`);
+            setWebInteractionStatusType('success');
+          } else {
+            setWebInteractionStatus(`Selector test failed: ${response?.error || 'Unknown error'}`);
+            setWebInteractionStatusType('error');
+          }
+        });
+      }
+    });
+  };
+
+  const handleAutoDetectSelectors = () => {
+    setWebInteractionStatus('Auto-detecting selectors on current page...');
+    setWebInteractionStatusType('info');
+    
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: 'AUTO_DETECT_SELECTORS'
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            setWebInteractionStatus(`Error auto-detecting: ${chrome.runtime.lastError.message}`);
+            setWebInteractionStatusType('error');
+            return;
+          }
+          
+          if (response?.success) {
+            if (response.selectors.input) setChatInputSelector(response.selectors.input);
+            if (response.selectors.output) setChatOutputSelector(response.selectors.output);
+            if (response.selectors.button) setSendButtonSelector(response.selectors.button);
+            
+            setWebInteractionStatus('Selectors auto-detected and applied!');
+            setWebInteractionStatusType('success');
+          } else {
+            setWebInteractionStatus(`Auto-detection failed: ${response?.error || 'No suitable elements found'}`);
+            setWebInteractionStatusType('warning');
+          }
+        });
+      }
+    });
   };
 
   const getStatusColor = () => {
@@ -524,44 +708,154 @@ const Popup: React.FC = () => {
             {connectionStatus.message}
           </Alert>
         )}
-        </Box>
-        
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-            <Tabs value={activeTab} onChange={handleTabChange} aria-label="main navigation tabs" variant="fullWidth">
-              <Tab icon={<DashboardIcon />} label="Dashboard" id="tab-0" aria-controls="tabpanel-0" sx={{minWidth: "25%"}} />
-              <Tab icon={<LanguageIcon />} label="Web" id="tab-1" aria-controls="tabpanel-1" sx={{minWidth: "25%"}} />
-              <Tab icon={<AutoAwesomeIcon />} label="Enhanced" id="tab-2" aria-controls="tabpanel-2" sx={{minWidth: "25%"}}/>
-              <Tab icon={<SettingsIcon />} label="Settings" id="tab-3" aria-controls="tabpanel-3" sx={{minWidth: "25%"}}/>
+        </Box>          <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={activeTab} onChange={handleTabChange} aria-label="main navigation tabs" variant="scrollable" scrollButtons="auto">
+              <Tab icon={<DashboardIcon />} label="Dashboard" id="tab-0" aria-controls="tabpanel-0" sx={{minWidth: "20%"}} />
+              <Tab icon={<LanguageIcon />} label="Web" id="tab-1" aria-controls="tabpanel-1" sx={{minWidth: "20%"}} />
+              <Tab icon={<AutoAwesomeIcon />} label="Enhanced" id="tab-2" aria-controls="tabpanel-2" sx={{minWidth: "20%"}}/>
+              <Tab icon={<BuildIcon />} label="Tools" id="tab-3" aria-controls="tabpanel-3" sx={{minWidth: "20%"}}/>
+              <Tab icon={<SettingsIcon />} label="Settings" id="tab-4" aria-controls="tabpanel-4" sx={{minWidth: "20%"}}/>
             </Tabs>
           </Box>
 
           <Box sx={{ flex: 1, overflow: 'hidden' /* Changed from auto to hidden to let TabPanel handle scroll */ }}>
             <TabPanel value={activeTab} index={0}>
+              {/* Status Overview Cards */}
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={6}>
+                  <Card sx={{ p: 1, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">VS Code</Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.5 }}>
+                      <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: getStatusColor() }} />
+                      <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                        {connectionStatus.status.charAt(0).toUpperCase() + connectionStatus.status.slice(1)}
+                      </Typography>
+                    </Box>
+                  </Card>
+                </Grid>
+                <Grid item xs={6}>
+                  <Card sx={{ p: 1, textAlign: 'center' }}>
+                    <Typography variant="caption" color="text.secondary">Port</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.75rem', fontWeight: 'medium' }}>
+                      {settings.port}
+                    </Typography>
+                  </Card>
+                </Grid>
+              </Grid>
+
               {/* Quick Actions */}
-              <Typography variant="subtitle1" gutterBottom sx={{mt: -1 /* Adjust if AI platforms removed */}}>Quick Actions</Typography>
+              <Typography variant="subtitle1" gutterBottom sx={{ mt: 1 }}>Quick Actions</Typography>
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={6}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<MonitorIcon />}
+                    onClick={() => handleQuickAction('monitor')}
+                    sx={{ justifyContent: 'flex-start' }}
+                  >
+                    Monitor
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<HistoryIcon />}
+                    onClick={() => handleQuickAction('history')}
+                    sx={{ justifyContent: 'flex-start' }}
+                  >
+                    History
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<RestartAltIcon />}
+                    onClick={() => handleQuickAction('restart')}
+                    sx={{ justifyContent: 'flex-start' }}
+                  >
+                    Restart
+                  </Button>
+                </Grid>
+                <Grid item xs={6}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<FileDownloadIcon />}
+                    onClick={() => handleQuickAction('export')}
+                    sx={{ justifyContent: 'flex-start' }}
+                  >
+                    Export
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* Traditional List Actions */}
               <List dense>
                 <ListItem button onClick={() => handleQuickAction('debug')}>
                   <ListItemIcon>
                     <BugReportIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Debug Console" />
+                  <ListItemText primary="Debug Console" secondary="Open debugging tools" />
                 </ListItem>
                 <ListItem button onClick={() => handleQuickAction('shortcuts')}>
                   <ListItemIcon>
                     <KeyboardIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Keyboard Shortcuts" />
+                  <ListItemText primary="Keyboard Shortcuts" secondary="Manage extension shortcuts" />
                 </ListItem>
                 <ListItem button onClick={() => handleQuickAction('docs')}>
                   <ListItemIcon>
                     <HelpIcon />
                   </ListItemIcon>
-                  <ListItemText primary="Documentation" />
+                  <ListItemText primary="Documentation" secondary="View help and guides" />
+                </ListItem>
+                <ListItem button onClick={() => handleQuickAction('clear-logs')}>
+                  <ListItemIcon>
+                    <ClearIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Clear Logs" secondary="Reset connection history" />
                 </ListItem>
               </List>
-              <Typography variant="caption" color="text.secondary" sx={{ display:'block', textAlign:'center', mt: 1 }}>
-                WebSocket Port: {settings.port}
-              </Typography>
+
+              {/* Performance Stats */}
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle2" gutterBottom>Performance</Typography>
+              <Grid container spacing={1}>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <MemoryIcon color="action" sx={{ fontSize: 16 }} />
+                    <Typography variant="caption" display="block">Memory</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.7rem' }}>
+                      {performanceStats.memoryUsage}MB
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <SpeedIcon color="action" sx={{ fontSize: 16 }} />
+                    <Typography variant="caption" display="block">CPU</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.7rem' }}>
+                      {performanceStats.cpuUsage}%
+                    </Typography>
+                  </Box>
+                </Grid>
+                <Grid item xs={4}>
+                  <Box sx={{ textAlign: 'center' }}>
+                    <NetworkCheckIcon color="action" sx={{ fontSize: 16 }} />
+                    <Typography variant="caption" display="block">Network</Typography>
+                    <Typography variant="body2" sx={{ fontSize: '0.7rem' }}>
+                      {performanceStats.networkStatus}
+                    </Typography>
+                  </Box>
+                </Grid>
+              </Grid>
             </TabPanel>
 
             <TabPanel value={activeTab} index={1}>
@@ -569,40 +863,139 @@ const Popup: React.FC = () => {
               <Typography variant="body2" color="text.secondary" sx={{mb:2}}>
                 Define CSS selectors to interact with elements on the current web page.
               </Typography>
-              <TextField
-                fullWidth
-                label="Chat Input Selector"
-                value={chatInputSelector}
-                onChange={(e) => setChatInputSelector(e.target.value)}
-                sx={{ mb: 2 }}
-                size="small"
-                placeholder=".chat-input, #inputField"
+
+              {/* Enhanced Selector Configuration */}
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    label="Chat Input Selector"
+                    value={chatInputSelector}
+                    onChange={(e) => setChatInputSelector(e.target.value)}
+                    size="small"
+                    placeholder=".chat-input, #inputField"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<VisibilityIcon />}
+                    onClick={() => handleTestSelectors()}
+                    sx={{ height: '40px' }}
+                  >
+                    Test
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    label="Chat Output/Log Selector"
+                    value={chatOutputSelector}
+                    onChange={(e) => setChatOutputSelector(e.target.value)}
+                    size="small"
+                    placeholder=".chat-log, #outputArea"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<CodeIcon />}
+                    onClick={handleAutoDetectSelectors}
+                    sx={{ height: '40px' }}
+                  >
+                    Auto
+                  </Button>
+                </Grid>
+              </Grid>
+
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={8}>
+                  <TextField
+                    fullWidth
+                    label="Send Button Selector"
+                    value={sendButtonSelector}
+                    onChange={(e) => setSendButtonSelector(e.target.value)}
+                    size="small"
+                    placeholder=".send-button, #submitBtn"
+                  />
+                </Grid>
+                <Grid item xs={4}>
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    startIcon={<ContentCopyIcon />}
+                    onClick={() => {
+                      navigator.clipboard.writeText(sendButtonSelector);
+                      setWebInteractionStatus('Selector copied to clipboard');
+                      setWebInteractionStatusType('info');
+                    }}
+                    sx={{ height: '40px' }}
+                  >
+                    Copy
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* Enhanced Controls */}
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={4}>
+                  <Button 
+                    variant="contained" 
+                    size="small" 
+                    fullWidth
+                    startIcon={<NetworkCheckIcon />}
+                    onClick={handleInjectScript}
+                  >
+                    Sync
+                  </Button>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button 
+                    variant="contained" 
+                    size="small" 
+                    fullWidth
+                    startIcon={<VisibilityIcon />}
+                    onClick={handleCaptureOutput} 
+                    disabled={!chatOutputSelector.trim()}
+                  >
+                    Capture
+                  </Button>
+                </Grid>
+                <Grid item xs={4}>
+                  <Button 
+                    variant="contained" 
+                    size="small" 
+                    fullWidth
+                    startIcon={<FileUploadIcon />}
+                    onClick={handleSendToPage} 
+                    disabled={!chatInputSelector.trim() || !sendButtonSelector.trim() || !textToSendInput.trim()}
+                  >
+                    Send
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* Auto-capture toggle */}
+              <FormControlLabel
+                control={
+                  <Switch
+                    checked={autoCapture}
+                    onChange={(e) => setAutoCapture(e.target.checked)}
+                    size="small"
+                  />
+                }
+                label="Auto-capture output changes"
+                sx={{ mb: 1 }}
               />
-              <TextField
-                fullWidth
-                label="Chat Output/Log Selector"
-                value={chatOutputSelector}
-                onChange={(e) => setChatOutputSelector(e.target.value)}
-                sx={{ mb: 2 }}
-                size="small"
-                placeholder=".chat-log, #outputArea"
-              />
-              <TextField
-                fullWidth
-                label="Send Button Selector"
-                value={sendButtonSelector}
-                onChange={(e) => setSendButtonSelector(e.target.value)}
-                sx={{ mb: 2 }}
-                size="small"
-                placeholder=".send-button, #submitBtn"
-              />
-              <Box sx={{ display: 'flex', justifyContent: 'center', gap: 1, mb: 2}}>
-                <Button variant="outlined" onClick={handleInjectScript} size="small" sx={{flexGrow:1, maxWidth: 'calc(50% - 4px)' }} title="Ensure content script is active and selectors are up-to-date on the page. Useful if page interaction isn't working.">Sync with Page</Button>
-              </Box>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', gap: 1, mb: 1.5}}>
-                <Button variant="contained" onClick={handleCaptureOutput} size="small" sx={{flex:1}} disabled={!chatOutputSelector.trim()}>Capture Output</Button>
-                <Button variant="contained" onClick={handleSendToPage} size="small" sx={{flex:1}} disabled={!chatInputSelector.trim() || !sendButtonSelector.trim() || !textToSendInput.trim()}>Send to Page</Button>
-              </Box>
+
               <TextField
                 fullWidth
                 label="Text to Send to Page"
@@ -614,29 +1007,72 @@ const Popup: React.FC = () => {
                 multiline
                 minRows={2}
                 maxRows={4}
+                InputProps={{
+                  endAdornment: (
+                    <IconButton
+                      onClick={() => setTextToSendInput('')}
+                      size="small"
+                      sx={{ mt: -2 }}
+                    >
+                      <ClearIcon fontSize="small" />
+                    </IconButton>
+                  )
+                }}
               />
+
               {capturedOutputDisplay && (
-                <Box sx={{ mt: 1.5, mb: 1, p:1.5, border: '1px solid', borderColor: 'divider', borderRadius: 1, background: (theme) => theme.palette.action.hover }}>
-                  <Typography variant="caption" display="block" gutterBottom sx={{fontWeight: 'medium'}}>Captured Output:</Typography>
-                  <Typography variant="body2" sx={{whiteSpace: 'pre-wrap', wordBreak: 'break-all', maxHeight: '100px', overflowY: 'auto'}}>{capturedOutputDisplay}</Typography>
-                </Box>
+                <Card sx={{ mt: 1.5, mb: 1 }}>
+                  <CardContent sx={{ p: 1.5, '&:last-child': { pb: 1.5 } }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                      <Typography variant="caption" sx={{ fontWeight: 'medium' }}>Captured Output:</Typography>
+                      <IconButton
+                        size="small"
+                        onClick={() => {
+                          navigator.clipboard.writeText(capturedOutputDisplay);
+                          setWebInteractionStatus('Output copied to clipboard');
+                          setWebInteractionStatusType('info');
+                        }}
+                      >
+                        <ContentCopyIcon fontSize="small" />
+                      </IconButton>
+                    </Box>
+                    <Typography 
+                      variant="body2" 
+                      sx={{ 
+                        whiteSpace: 'pre-wrap', 
+                        wordBreak: 'break-word', 
+                        maxHeight: '100px', 
+                        overflowY: 'auto',
+                        backgroundColor: (theme) => theme.palette.action.hover,
+                        p: 1,
+                        borderRadius: 1,
+                        fontSize: '0.75rem'
+                      }}
+                    >
+                      {capturedOutputDisplay}
+                    </Typography>
+                  </CardContent>
+                </Card>
               )}
+
               {webInteractionStatus && (
-                <Alert severity={webInteractionStatusType} sx={{ mt: 1.5, mb:0, fontSize: '0.8rem', p: '4px 10px' }}>
+                <Alert severity={webInteractionStatusType} sx={{ mt: 1.5, mb: 1, fontSize: '0.8rem', p: '4px 10px' }}>
                   {webInteractionStatus}
                 </Alert>
               )}
-               <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleSaveWebSelectors}
-                    fullWidth
-                    sx={{ mt: 2.5 }}
-                    disabled={loading}
-                    size="small"
-                  >
-                    {loading ? <CircularProgress size={20} color="inherit" /> : 'Save Web Selectors'}
-                  </Button>
+
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSaveWebSelectors}
+                fullWidth
+                sx={{ mt: 2 }}
+                disabled={loading}
+                size="small"
+                startIcon={<StorageIcon />}
+              >
+                {loading ? <CircularProgress size={20} color="inherit" /> : 'Save Web Selectors'}
+              </Button>
             </TabPanel>
 
             <TabPanel value={activeTab} index={2}>
@@ -644,45 +1080,364 @@ const Popup: React.FC = () => {
             </TabPanel>
 
             <TabPanel value={activeTab} index={3}>
-              <Typography variant="subtitle1" gutterBottom>Connection Settings</Typography>
-              <TextField
-                fullWidth
-                type="number"
-                label="WebSocket Port"
-                value={settings.port}
-                onChange={(e) => setSettings(prev => ({ ...prev, port: parseInt(e.target.value, 10) || 0 }))}
-                sx={{ mb: 2 }}
-                size="small"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.autoReconnect}
-                    onChange={(e) => setSettings(prev => ({ ...prev, autoReconnect: e.target.checked }))}
+              <Typography variant="subtitle1" gutterBottom>Developer Tools</Typography>
+              
+              {/* Connection History */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="subtitle2">Connection History</Typography>
+                    <Badge badgeContent={connectionHistory.length} color="primary" max={99}>
+                      <HistoryIcon />
+                    </Badge>
+                  </Box>
+                  {connectionHistory.length > 0 ? (
+                    <Box sx={{ maxHeight: '120px', overflowY: 'auto' }}>
+                      {connectionHistory.slice(-5).reverse().map((entry, index) => (
+                        <Box key={index} sx={{ mb: 1, p: 1, bgcolor: 'action.hover', borderRadius: 1 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {entry.timestamp}
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontSize: '0.75rem' }}>
+                            {entry.status}: {entry.message}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                      No connection history yet
+                    </Typography>
+                  )}
+                  <Button
                     size="small"
-                  />
-                }
-                label="Auto Reconnect to VS Code"
-              />
-              <FormControlLabel
-                control={
-                  <Switch
-                    checked={settings.debugMode}
-                    onChange={(e) => setSettings(prev => ({ ...prev, debugMode: e.target.checked }))}
+                    startIcon={<ClearIcon />}
+                    onClick={() => setConnectionHistory([])}
+                    sx={{ mt: 1 }}
+                  >
+                    Clear History
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Debug Panel */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="subtitle2">Debug Panel</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => setDebugPanelOpen(!debugPanelOpen)}
+                    >
+                      {debugPanelOpen ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                    </IconButton>
+                  </Box>
+                  {debugPanelOpen && (
+                    <Box>
+                      <Grid container spacing={1} sx={{ mb: 1 }}>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            startIcon={<BugReportIcon />}
+                            onClick={() => chrome.tabs.create({ url: 'chrome-extension://' + chrome.runtime.id + '/debug.html' })}
+                          >
+                            Debug Console
+                          </Button>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <Button
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            startIcon={<CodeIcon />}
+                            onClick={() => chrome.tabs.create({ url: 'chrome://extensions/' })}
+                          >
+                            Extensions
+                          </Button>
+                        </Grid>
+                      </Grid>
+                      <Typography variant="caption" color="text.secondary">
+                        Extension ID: {chrome.runtime.id}
+                      </Typography>
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Data Management */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>Data Management</Typography>
+                  <Grid container spacing={1}>
+                    <Grid item xs={6}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        startIcon={<FileDownloadIcon />}
+                        onClick={handleExportData}
+                      >
+                        Export Data
+                      </Button>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        fullWidth
+                        startIcon={<FileUploadIcon />}
+                        component="label"
+                      >
+                        Import Data
+                        <input
+                          type="file"
+                          accept=".json"
+                          hidden
+                          onChange={handleImportData}
+                        />
+                      </Button>
+                    </Grid>
+                  </Grid>
+                  <Button
+                    variant="outlined"
                     size="small"
+                    fullWidth
+                    startIcon={<ClearIcon />}
+                    onClick={() => {
+                      chrome.storage.local.clear();
+                      setWebInteractionStatus('All extension data cleared');
+                      setWebInteractionStatusType('info');
+                    }}
+                    sx={{ mt: 1 }}
+                    color="error"
+                  >
+                    Clear All Data
+                  </Button>
+                </CardContent>
+              </Card>
+
+              {/* Extension Logs */}
+              <Card>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="subtitle2">Extension Logs</Typography>
+                    <Badge badgeContent={extensionLogs.length} color="secondary" max={99}>
+                      <CodeIcon />
+                    </Badge>
+                  </Box>
+                  {extensionLogs.length > 0 ? (
+                    <Box sx={{ maxHeight: '100px', overflowY: 'auto' }}>
+                      {extensionLogs.slice(-3).reverse().map((log, index) => (
+                        <Box key={index} sx={{ mb: 0.5, p: 0.5, bgcolor: 'action.hover', borderRadius: 1 }}>
+                          <Typography variant="caption" color="text.secondary">
+                            {log.timestamp} [{log.level}]
+                          </Typography>
+                          <Typography variant="body2" sx={{ fontSize: '0.7rem' }}>
+                            {log.message}
+                          </Typography>
+                        </Box>
+                      ))}
+                    </Box>
+                  ) : (
+                    <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                      No logs available
+                    </Typography>
+                  )}
+                </CardContent>
+              </Card>
+            </TabPanel>
+
+            <TabPanel value={activeTab} index={4}>
+              <Typography variant="subtitle1" gutterBottom>Settings</Typography>
+              
+              {/* Connection Settings */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>Connection</Typography>
+                  <TextField
+                    fullWidth
+                    type="number"
+                    label="WebSocket Port"
+                    value={settings.port}
+                    onChange={(e) => setSettings(prev => ({ ...prev, port: parseInt(e.target.value, 10) || 0 }))}
+                    sx={{ mb: 2 }}
+                    size="small"
+                    InputProps={{
+                      endAdornment: (
+                        <Tooltip title="Default port is 8765">
+                          <HelpIcon fontSize="small" color="action" />
+                        </Tooltip>
+                      )
+                    }}
                   />
-                }
-                label="Enable Debug Mode"
-              />
+                  
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={settings.autoReconnect}
+                        onChange={(e) => setSettings(prev => ({ ...prev, autoReconnect: e.target.checked }))}
+                        size="small"
+                      />
+                    }
+                    label="Auto Reconnect to VS Code"
+                  />
+                  
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={settings.debugMode}
+                        onChange={(e) => setSettings(prev => ({ ...prev, debugMode: e.target.checked }))}
+                        size="small"
+                      />
+                    }
+                    label="Enable Debug Mode"
+                  />
+                </CardContent>
+              </Card>
+
+              {/* UI Preferences */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Typography variant="subtitle2" gutterBottom>User Interface</Typography>
+                  
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={notifications}
+                        onChange={(e) => setNotifications(e.target.checked)}
+                        size="small"
+                      />
+                    }
+                    label="Enable Notifications"
+                  />
+                  
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={autoCapture}
+                        onChange={(e) => setAutoCapture(e.target.checked)}
+                        size="small"
+                      />
+                    }
+                    label="Auto-capture Web Output"
+                  />
+                  
+                  <Box sx={{ mt: 2 }}>
+                    <Typography variant="body2" gutterBottom>Theme</Typography>
+                    <Button
+                      variant={settings.darkMode ? "contained" : "outlined"}
+                      size="small"
+                      startIcon={settings.darkMode ? <DarkModeIcon /> : <LightModeIcon />}
+                      onClick={handleToggleTheme}
+                      fullWidth
+                    >
+                      {settings.darkMode ? 'Dark Mode' : 'Light Mode'}
+                    </Button>
+                  </Box>
+                </CardContent>
+              </Card>
+
+              {/* Advanced Settings */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
+                    <Typography variant="subtitle2">Advanced</Typography>
+                    <IconButton
+                      size="small"
+                      onClick={() => setShowAdvancedSettings(!showAdvancedSettings)}
+                    >
+                      {showAdvancedSettings ? <VisibilityOffIcon /> : <TuneIcon />}
+                    </IconButton>
+                  </Box>
+                  
+                  {showAdvancedSettings && (
+                    <Box>
+                      <TextField
+                        fullWidth
+                        label="Connection Timeout (ms)"
+                        type="number"
+                        defaultValue="5000"
+                        size="small"
+                        sx={{ mb: 2 }}
+                      />
+                      
+                      <TextField
+                        fullWidth
+                        label="Retry Attempts"
+                        type="number"
+                        defaultValue="3"
+                        size="small"
+                        sx={{ mb: 2 }}
+                      />
+                      
+                      <FormControlLabel
+                        control={<Switch size="small" />}
+                        label="Enable Performance Monitoring"
+                      />
+                      
+                      <FormControlLabel
+                        control={<Switch size="small" />}
+                        label="Verbose Logging"
+                      />
+                    </Box>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Security Settings */}
+              <Card sx={{ mb: 2 }}>
+                <CardContent sx={{ p: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
+                    <SecurityIcon sx={{ mr: 1, fontSize: 20 }} />
+                    <Typography variant="subtitle2">Security</Typography>
+                  </Box>
+                  
+                  <Alert severity="info" sx={{ mb: 2, fontSize: '0.75rem', p: '4px 8px' }}>
+                    Extension uses secure WebSocket connections to VS Code
+                  </Alert>
+                  
+                  <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.8rem' }}>
+                    • All communication is local to your machine<br/>
+                    • No data is sent to external servers<br/>
+                    • WebSocket connections are authenticated
+                  </Typography>
+                </CardContent>
+              </Card>
+
+              {/* Save Button */}
               <Button
                 variant="contained"
                 onClick={handleSaveConnectionSettings}
                 fullWidth
-                sx={{ mt: 2 }}
                 disabled={loading}
-                size="small"
+                size="medium"
+                startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <StorageIcon />}
+                sx={{ mb: 1 }}
               >
-                {loading ? <CircularProgress size={24} /> : 'Save Connection & Reconnect'}
+                {loading ? 'Saving...' : 'Save Settings & Reconnect'}
+              </Button>
+
+              {/* Reset Button */}
+              <Button
+                variant="outlined"
+                onClick={() => {
+                  setSettings({
+                    port: CONFIG.WS_PORT,
+                    autoReconnect: true,
+                    debugMode: false,
+                    darkMode: false
+                  });
+                  setWebInteractionStatus('Settings reset to defaults');
+                  setWebInteractionStatusType('info');
+                }}
+                fullWidth
+                size="small"
+                startIcon={<RestartAltIcon />}
+                color="secondary"
+              >
+                Reset to Defaults
               </Button>
             </TabPanel>
           </Box>

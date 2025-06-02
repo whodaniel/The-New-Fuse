@@ -7,19 +7,25 @@
     "apps/*",
     "packages/*",
     "packages/port-management",
-    "tools/port-manager"
+    "tools/port-manager",
+    "chrome-extension"
   ],
   "scripts": {
     "build": "turbo run build",
     "build:api": "turbo run build --filter=@the-new-fuse/api-server",
+    "build:chrome": "yarn workspace the-new-fuse-chrome-extension run build",
+    "build:all": "turbo run build && yarn build:chrome",
     "dev": "turbo run dev",
     "dev:api": "turbo run dev --filter=@the-new-fuse/api-server",
+    "dev:chrome": "yarn workspace the-new-fuse-chrome-extension run dev",
     "start": "turbo run start",
     "start:api": "turbo run start --filter=@the-new-fuse/api-server",
     "test": "turbo run test",
+    "test:chrome": "yarn workspace the-new-fuse-chrome-extension run test",
     "lint": "turbo run lint",
     "lint:fix": "turbo run lint:fix",
     "clean": "turbo run clean",
+    "clean:chrome": "yarn workspace the-new-fuse-chrome-extension run clean",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
     "mcp:build": "./build-mcp.sh",
@@ -31,7 +37,9 @@
     "ports:conflicts": "tnf-ports conflicts",
     "ports:dev": "tnf-ports dev --optimize",
     "ports:health": "tnf-ports health",
-    "dev:optimized": "yarn ports:dev && yarn dev"
+    "dev:optimized": "yarn ports:dev && yarn dev",
+    "package:chrome": "yarn workspace the-new-fuse-chrome-extension run package:extension",
+    "release:chrome": "yarn workspace the-new-fuse-chrome-extension run build:package"
   },
   "keywords": [
     "ai-agency",
@@ -48,9 +56,12 @@
     "@the-new-fuse/port-manager-cli": "workspace:*",
     "@turbo/gen": "^2.5.3",
     "eslint": "^8.0.0",
+    "html-webpack-plugin": "^5.6.0",
     "prisma": "6.8.2",
     "turbo": "^2.5.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "webpack": "^5.90.3",
+    "webpack-cli": "^5.1.4"
   },
   "packageManager": "yarn@4.9.1+sha512.f95ce356460e05be48d66401c1ae64ef84d163dd689964962c6888a9810865e39097a5e9de748876c2e0bf89b232d583c33982773e9903ae7a76257270986538",
   "dependencies": {

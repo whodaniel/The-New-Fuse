@@ -156,7 +156,7 @@ function handleDisconnectMessage(ws) {
 }
 
 // Start HTTP server
-const PORT = 3711; // Changed from 3710 to avoid conflicts
+const PORT = 3712; // Set to port 3712 as requested
 server.listen(PORT, () => {
     console.log(`WebSocket server running on ws://localhost:${PORT}`);
 });

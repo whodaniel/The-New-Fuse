@@ -16,6 +16,7 @@ import {
 } from '@chakra-ui/react';
 import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
 import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory } from 'react-icons/fa';
+import { FileText } from 'lucide-react';
 
 interface NodeToolbarProps {
   onAddNode: (nodeType: string, position: { x: number, y: number }) => void;
@@ -27,6 +28,7 @@ const nodeCategories = [
     nodes: [
       { type: 'llm', label: 'LLM Completion', icon: FaRobot, description: 'Generate text using an LLM' },
       { type: 'tool', label: 'Tool Execution', icon: FaTools, description: 'Execute an AI tool' },
+      { type: 'promptTemplate', label: 'Prompt Template', icon: FileText, description: 'Use a versioned prompt template' },
     ]
   },
   {
@@ -55,12 +57,15 @@ const nodeCategories = [
   }
 ];
 
-export const NodeToolbar: React.React.FC<NodeToolbarProps> = ({ onAddNode }) => {
+export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
 
   const handleAddNode = (nodeType: string) => {
     // Calculate position - in a real app this might be based on the current view
-    const position = { x: 100, y: 100 };
+    const position = { 
+      x: Math.random() * 300 + 100, 
+      y: Math.random() * 200 + 100 
+    };
     onAddNode(nodeType, position);
   };
 

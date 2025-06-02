@@ -63,3 +63,4 @@ export declare const agentCardSchema: z.ZodObject<{
     metadata?: unknown;
 }>;
 export type AgentCard = z.infer<typeof agentCardSchema>;
+//# sourceMappingURL=agentCard.d.ts.map

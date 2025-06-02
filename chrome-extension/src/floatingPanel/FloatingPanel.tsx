@@ -5,51 +5,30 @@ import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import Tooltip from '@mui/material/Tooltip'; // Added Tooltip
-import CircularProgress from '@mui/material/CircularProgress'; // Added CircularProgress
+import Tooltip from '@mui/material/Tooltip';
+import CircularProgress from '@mui/material/CircularProgress';
 import {
   Wifi as WifiIcon,
   WifiOff as WifiOffIcon,
   ErrorOutline as ErrorIcon,
   Sync as SyncIcon,
-  LockOpen as LockOpenIcon
-} from '@mui/icons-material'; // Added icons
+  LockOpen as LockOpenIcon,
+  SmartToy as AIIcon,
+  Settings as SettingsIcon
+} from '@mui/icons-material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { Logger } from '../utils/logger';
 import ErrorBoundary from '../popup/components/ErrorBoundary';
-import { ConnectionStatusMessage } from '../shared-protocol'; // For status type
+import { themeManager } from '../utils/enhanced-theme';
+import { ConnectionStatusMessage } from '../shared-protocol';
 
 const panelLogger = new Logger({ name: 'FloatingPanel', level: 'info' });
 
 type WebSocketStatus = ConnectionStatusMessage['payload']['status'];
 
-// A simple theme for the panel, can be expanded
-const panelTheme = createTheme({
-  palette: {
-    mode: 'light', // Default to light, can be made dynamic
-    primary: {
-      main: '#1976d2',
-    },
-    background: {
-      paper: '#ffffff',
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          width: '360px', // Slightly less than iframe width to avoid scrollbars
-          height: '580px', // Slightly less than iframe height
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'hidden', // Content within paper will scroll if needed
-          borderRadius: '8px', // Match iframe border radius if any
-        },
-      },
-    },
-  },
-});
+// Enhanced theme with purple/blue gradient
+const panelTheme = themeManager.getMaterialUITheme();
 
 const FloatingPanel: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);

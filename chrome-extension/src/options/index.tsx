@@ -80,6 +80,16 @@ const Options: React.FC = () => {
       <div className="actions">
         <button onClick={handleSave}>Save Settings</button>
       </div>
+
+      <div className="option-group developer-tools-group">
+        <h2>Developer Tools</h2>
+        <button id="openHtmlShowcase" onClick={() => {
+          const url = chrome.runtime.getURL('ui-html-css/index.html');
+          chrome.tabs.create({ url });
+        }}>
+          Open HTML Showcase
+        </button>
+      </div>
     </div>
   );
 };

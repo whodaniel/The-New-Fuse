@@ -8,7 +8,7 @@
   "scripts": {
     "generate-icons": "node generate-icons.cjs",
     "generate-notification-icons": "node scripts/generate-notification-icons.cjs",
-    "build": "webpack --mode production",
+    "build": "webpack --config webpack.config.cjs --mode production",
     "prebuild": "yarn generate-icons && yarn generate-notification-icons",
     "dev": "webpack --mode development --watch",
     "package": "node scripts/package-extension.js",
@@ -22,7 +22,9 @@
     "clean:cache": "rimraf node_modules/.cache .turbo",
     "typecheck": "tsc --noEmit",
     "build:ts": "./build.sh",
-    "dev:ts": "./dev.sh"
+    "dev:ts": "./dev.sh",
+    "package:extension": "./package-extension.sh",
+    "build:package": "yarn build && yarn package:extension"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",

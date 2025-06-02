@@ -62,3 +62,24 @@ button:hover {
 button:active {
     background-color: #3d8b40;
 }
+
+.developer-tools-group h2 {
+    font-size: 18px;
+    color: #34495e;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ecf0f1;
+    padding-bottom: 5px;
+}
+
+.developer-tools-group button {
+    background-color: #3498db; /* A different color for dev tools button */
+    margin-top: 5px; /* Add some space if needed */
+}
+
+.developer-tools-group button:hover {
+    background-color: #2980b9;
+}
+
+.developer-tools-group button:active {
+    background-color: #2471a3;
+}

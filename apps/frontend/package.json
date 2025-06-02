@@ -54,6 +54,7 @@
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/feature-suggestions": "workspace:*",
     "@the-new-fuse/port-management": "workspace:*",
+    "@the-new-fuse/prompt-templating": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/ui-components": "workspace:*",
     "@types/d3": "^7.4.3",
