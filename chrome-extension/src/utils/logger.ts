@@ -96,7 +96,23 @@ export class Logger {
           logs.splice(0, logs.length - this.maxStoredLogs);
         }
 
-        chrome.storage.local.set({ [storageKey]: logs });
+        chrome.storage.local.set({ [storageKey]: logs }, () => {
+          // After successfully saving to storage, send a message
+          if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.sendMessage) {
+            try {
+                chrome.runtime.sendMessage({
+                    type: 'NEW_LOG_ENTRY',
+                    payload: logEntry // The LogEntry object
+                });
+            } catch (e) {
+                // Ignore errors if the runtime is not available (e.g. popup closed)
+                // or if there's no listener.
+                if (e.message && !e.message.includes("Could not establish connection") && !e.message.includes("Receiving end does not exist")) {
+                    console.warn(`Logger [${this.name}]: Failed to send NEW_LOG_ENTRY message`, e);
+                }
+            }
+          }
+        });
       });
     }
   }

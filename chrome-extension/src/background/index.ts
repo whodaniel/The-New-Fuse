@@ -19,7 +19,7 @@ backgroundLogger.info('Background script loaded');
 const connectionManager = new ConnectionManager();
 
 // Create message handler
-const messageHandler = new MessageHandler(connectionManager);
+const messageHandler = new MessageHandler(connectionManager, backgroundLogger);
 
 // Initialize
 async function initialize() {

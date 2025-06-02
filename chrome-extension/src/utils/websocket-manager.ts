@@ -40,11 +40,13 @@ export class WebSocketManager extends EventEmitter {
     reconnecting: boolean;
     lastError: Error | null;
     authenticating: boolean;
+    retriesExhausted: boolean; // New state property
   } = {
     connected: false,
     reconnecting: false,
     lastError: null,
-    authenticating: false
+    authenticating: false,
+    retriesExhausted: false, // Initialize
   };
 
   /**
@@ -115,6 +117,9 @@ export class WebSocketManager extends EventEmitter {
     if (this.ws?.readyState === WebSocket.OPEN) {
       return true;
     }
+    // Reset flags before attempting a new connection sequence
+    this.state.retriesExhausted = false;
+    this.reconnectAttempts = 0; // Reset attempts for a fresh connect call
 
     return new Promise((resolve) => {
       try {
@@ -132,9 +137,10 @@ export class WebSocketManager extends EventEmitter {
 
         this.ws.onopen = () => {
           this.log('Connected to WebSocket server');
-          this.reconnectAttempts = 0;
+          this.reconnectAttempts = 0; // Reset on successful open
           this.state.connected = true;
           this.state.reconnecting = false;
+          this.state.retriesExhausted = false; // Reset on successful open
           this.emit('open');
           resolve(true);
         };
@@ -254,12 +260,21 @@ export class WebSocketManager extends EventEmitter {
         this.ws.onclose = (event) => {
           this.log(`WebSocket closed: ${event.code} ${event.reason}`);
           this.state.connected = false;
-          this.emit('close', event);
+          this.state.authenticating = false; // Also reset authenticating
 
           if (!event.wasClean && this.reconnectAttempts < this.options.reconnectAttempts!) {
             this.scheduleReconnect();
+          } else if (!event.wasClean && this.reconnectAttempts >= this.options.reconnectAttempts!) {
+            this.log(`Max reconnect attempts reached (${this.reconnectAttempts}/${this.options.reconnectAttempts}). Not rescheduling.`);
+            this.state.reconnecting = false;
+            this.state.retriesExhausted = true; // Set the new flag
+            this.emit('retries_exhausted', { code: event.code, reason: event.reason }); // Emit a specific event
+          } else {
+            // Clean close or reconnects not attempted/applicable
+            this.state.reconnecting = false;
           }
-          resolve(false);
+          this.emit('close', event); // Still emit the general 'close' event
+          resolve(false); // From the connect() promise
         };
 
         this.ws.onerror = (error) => {
@@ -297,40 +312,44 @@ export class WebSocketManager extends EventEmitter {
 
     try {
       const jsonMessage = typeof data === 'string' ? data : JSON.stringify(data);
+      let messageToSend: string | ArrayBuffer = jsonMessage; // Default to jsonMessage if no encryption/compression
 
-      let encryptedMessage = jsonMessage;
       if (this.securityManager) {
-        try {
-          const encrypted = await this.securityManager.encryptMessage(jsonMessage);
-          if (encrypted !== null) {
-            encryptedMessage = encrypted;
-            this.log('Message encrypted successfully before potential compression.');
-          } else {
-            this.log('Encryption failed, will send unencrypted (if compression also fails or is off).');
-          }
-        } catch (encryptionError) {
-          this.log('Failed to encrypt message. Error:', encryptionError instanceof Error ? encryptionError.message : encryptionError);
-          // Decide if to proceed with unencrypted or fail
+        if (!(await this.securityManager.isKeyReady())) {
+          this.log('Error: Encryption key is not available. Message will not be sent.');
+          this.emit('error', new Error('Encryption key unavailable; message not sent.')); // Generic error
+          this.emit('encryption_unavailable', { message: 'Encryption key unavailable; message not sent.'}); // Specific event
+          return false;
         }
+
+        const encrypted = await this.securityManager.encryptMessage(jsonMessage);
+        if (encrypted === null) {
+          this.log('Error: Message encryption failed. Message will not be sent.');
+          this.emit('error', new Error('Message encryption failed; message not sent.')); // Generic error
+          this.emit('encryption_error', { message: 'Message encryption failed; message not sent.' }); // Specific event
+          return false;
+        }
+        this.log('Message encrypted successfully before potential compression.');
+        messageToSend = encrypted;
       }
 
-      let dataToSend: string | ArrayBuffer = encryptedMessage;
-
-      if (this.options.useCompression) {
+      // Compression logic (operates on messageToSend, which is either jsonMessage or encrypted string)
+      if (this.options.useCompression && typeof messageToSend === 'string') {
         try {
-          // compressString expects a string and returns Uint8Array
-          const compressedData = compressString(encryptedMessage);
-          dataToSend = compressedData.buffer.slice(compressedData.byteOffset, compressedData.byteOffset + compressedData.byteLength); // Send as ArrayBuffer
-          this.log(`Message compressed successfully. Original (encrypted) length: ${encryptedMessage.length}, Compressed length: ${dataToSend.byteLength}`);
+          const compressedData = compressString(messageToSend as string); // Cast is safe here
+          messageToSend = compressedData.buffer.slice(compressedData.byteOffset, compressedData.byteOffset + compressedData.byteLength);
+          this.log(`Message compressed successfully. Original (encrypted/plain) length: ${(messageToSend as string).length}, Compressed length: ${messageToSend.byteLength}`);
         } catch (compressionError) {
-          this.log('Failed to compress message, sending uncompressed (but encrypted if successful). Error:', compressionError instanceof Error ? compressionError.message : compressionError);
-          // dataToSend remains encryptedMessage (string)
+          this.log('Failed to compress message, sending uncompressed. Error:', compressionError instanceof Error ? compressionError.message : compressionError);
+          // messageToSend remains the string (encrypted or plain)
         }
+      } else if (this.options.useCompression && !(typeof messageToSend === 'string')) {
+          this.log('Compression enabled, but message is not a string (already binary?). Skipping compression.');
       } else {
-        this.log('Compression not enabled. Sending encrypted (if successful) or plain message.');
+        this.log('Compression not enabled or message not suitable for string compression.');
       }
       
-      this.ws.send(dataToSend);
+      this.ws.send(messageToSend);
       return true;
     } catch (error) {
       if (error instanceof Error) {
@@ -338,6 +357,7 @@ export class WebSocketManager extends EventEmitter {
       } else {
         this.log('Failed to send message: Unknown error');
       }
+      this.emit('error', error); // Emit error if any part of try block fails
       return false;
     }
   }
@@ -451,10 +471,19 @@ export class WebSocketManager extends EventEmitter {
   }
 
   /**
+   * Set debug mode
+   * @param enabled - Whether debug mode is enabled
+   */
+  public setDebug(enabled: boolean): void {
+    this.options.debug = enabled;
+    this.log(`Debug mode ${enabled ? 'enabled' : 'disabled'}`);
+  }
+
+  /**
    * Get connection status
    * @returns Connection status message payload
    */
-  getConnectionStatus(): ConnectionStatusMessage['payload'] {
+  getConnectionStatus(): ConnectionStatusMessage['payload'] & { retriesExhausted?: boolean } {
     let status: ConnectionStatusMessage['payload']['status'];
 
     if (this.state.authenticating) {
@@ -471,7 +500,8 @@ export class WebSocketManager extends EventEmitter {
 
     return {
       status,
-      message: this.state.lastError?.message
+      message: this.state.lastError?.message,
+      retriesExhausted: this.state.retriesExhausted // Add the new flag
     };
   }
 }

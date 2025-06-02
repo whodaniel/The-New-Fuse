@@ -475,11 +475,13 @@ function initializeConnectionTab() {
       const wsPortInput = document.getElementById('ws-port');
       const wsCompressionCheckbox = document.getElementById('ws-compression');
 
+      // SIMULATED: const CONFIG = { WS_PROTOCOL: 'ws', WS_HOST: 'localhost', WS_PORT: 3712, ENABLE_COMPRESSION: true };
       const connectionSettings = {
-        wsProtocol: wsProtocolSelect?.value || 'ws',
-        wsHost: wsHostInput?.value || 'localhost',
-        wsPort: parseInt(wsPortInput?.value || '3712'),
-        useCompression: wsCompressionCheckbox?.checked || false
+        wsProtocol: wsProtocolSelect?.value || 'ws', // Default from CONFIG.WS_PROTOCOL
+        wsHost: wsHostInput?.value || 'localhost', // Default from CONFIG.WS_HOST
+        wsPort: parseInt(wsPortInput?.value || '3712'), // Default from CONFIG.WS_PORT
+        // If wsCompressionCheckbox is present, use its value, otherwise default to CONFIG.ENABLE_COMPRESSION
+        useCompression: wsCompressionCheckbox ? wsCompressionCheckbox.checked : true
       };
 
       // Save connection settings
@@ -948,18 +950,19 @@ function initializeSettingsTab() {
   if (resetSettingsBtn) {
     resetSettingsBtn.addEventListener('click', () => {
       if (confirm('Are you sure you want to reset all settings to defaults?')) {
+        // SIMULATED: const CONFIG = { WS_PROTOCOL: 'ws', WS_HOST: 'localhost', WS_PORT: 3712, ENABLE_COMPRESSION: true, MAX_RETRY_ATTEMPTS: 5, RETRY_DELAY: 2000 };
         const defaultSettings = {
-          wsProtocol: 'ws',
-          wsHost: 'localhost',
-          wsPort: 3712,
-          useCompression: true,
-          relayUrl: 'http://localhost:3000',
+          wsProtocol: 'ws', // From CONFIG.WS_PROTOCOL
+          wsHost: 'localhost', // From CONFIG.WS_HOST
+          wsPort: 3712, // From CONFIG.WS_PORT
+          useCompression: true, // From CONFIG.ENABLE_COMPRESSION
+          relayUrl: 'http://localhost:3000', // This seems unrelated to direct WS config from CONFIG
           autoConnect: true,
           showNotifications: true,
           saveChatHistory: true,
           debugMode: false,
-          maxRetryAttempts: 5,
-          retryDelay: 2000
+          maxRetryAttempts: 5, // From CONFIG.MAX_RETRY_ATTEMPTS
+          retryDelay: 2000 // From CONFIG.RETRY_DELAY
         };
 
         // Send settings update message

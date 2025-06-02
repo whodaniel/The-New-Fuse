@@ -3,29 +3,26 @@ import { create } from 'zustand';
 interface PopupState {
   isDarkMode: boolean;
   connectionStatus: 'connected' | 'disconnected' | 'error' | 'connecting';
+  // Keep setDarkMode to allow other components to request a mode change,
+  // which Popup.tsx will then persist.
   setDarkMode: (mode: boolean) => void;
   setConnectionStatus: (status: 'connected' | 'disconnected' | 'error' | 'connecting') => void;
+  // Method to initialize/update from persisted settings
+  hydrateDarkMode: (persistedMode: boolean) => void;
 }
 
-// Use chrome.storage.local to persist dark mode preference
-const getInitialDarkMode = (): boolean => {
-  // Default to system preference if available
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    return true;
-  }
-  return false;
-};
-
 export const useStore = create<PopupState>((set) => ({
-  isDarkMode: getInitialDarkMode(),
+  // Initial value can be a non-committal default, Popup.tsx will hydrate it.
+  isDarkMode: window.matchMedia?.('(prefers-color-scheme: dark)')?.matches || false,
   connectionStatus: 'disconnected',
   setDarkMode: (mode: boolean) => {
     set({ isDarkMode: mode });
-    // Also save to storage for persistence
-    if (chrome.storage) {
-      chrome.storage.local.set({ isDarkMode: mode });
-    }
+    // Persistence is now handled by Popup.tsx, which will call this
+    // after successfully saving to chrome.storage.
   },
   setConnectionStatus: (status: 'connected' | 'disconnected' | 'error' | 'connecting') => 
     set({ connectionStatus: status }),
+  hydrateDarkMode: (persistedMode: boolean) => { // New action
+    set({ isDarkMode: persistedMode });
+  }
 }));
