@@ -28,6 +28,7 @@
     "clean:chrome": "yarn workspace the-new-fuse-chrome-extension run clean",
     "db:generate": "turbo run db:generate",
     "db:migrate": "turbo run db:migrate",
+    "validate:env": "bash scripts/validate-env.sh",
     "mcp:build": "./build-mcp.sh",
     "mcp:dev": "./dev-mcp.sh",
     "mcp:start": "./run-mcp-local.sh",
