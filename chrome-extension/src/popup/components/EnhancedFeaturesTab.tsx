@@ -116,6 +116,15 @@ const EnhancedFeaturesTab: React.FC = () => {
 
       const defaultFeatures: EnhancedFeature[] = [
         {
+          id: 'floating-panel-ui',
+          name: 'Floating Panel UI Injection',
+          description: 'Direct page injection with draggable floating interface panel',
+          enabled: response?.features?.['floating-panel-ui'] ?? true,
+          category: 'integration',
+          dependencies: ['ai-element-detection'],
+          healthStatus: 'healthy',
+          metrics: { usage: 67, success: 95, errors: 1, lastUsed: new Date() }
+        },
           id: 'ai-element-detection',
           name: 'AI Element Detection',
           description: 'Advanced AI-powered detection of chat elements using ML models',

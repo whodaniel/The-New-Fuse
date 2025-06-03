@@ -10,6 +10,7 @@
 
 import * as vscode from 'vscode';
 import { EventEmitter } from 'events';
+import WebSocket from 'ws';
 import { MCPClient, MCPRequest, MCPResponse, MCPTool, MCPResource, MCPCommand } from '../types/mcp';
 
 // Enhanced MCP 2025 Types
@@ -172,6 +173,13 @@ export class MCP2025Client extends EventEmitter implements MCPClient {
     }
 
     private async authenticateOAuth2(): Promise<void> {
+        // Bypass OAuth2 flow in development
+        if (process.env.NODE_ENV === 'development') {
+            this.accessToken = 'mock_access_token';
+            this.refreshToken = 'mock_refresh_token';
+            this.tokenExpiry = new Date(Date.now() + 3600 * 1000);
+            return;
+        }
         const oauthConfig = this.config.authentication?.config as MCPOAuth2Config;
         if (!oauthConfig) {
             throw new Error('OAuth2 config required');
@@ -331,16 +339,14 @@ export class MCP2025Client extends EventEmitter implements MCPClient {
             // The previous attempt with undefined as the second arg was likely the issue.
             // Directly passing options as the second argument.
             this.connection = new WebSocket(this.config.endpoint, { headers } as any);
-            // Using 'as any' for options if type definitions are very strict,
-            // but { headers } should conform to ClientOptions from 'ws'.
-            // If 'ws' is not directly used and it's the browser's WebSocket, headers are not set this way.
-            // However, given the context of a VS Code extension, 'ws' is more likely for backend/Node.js parts.
-            // For this specific error (TS2554 expected 1-2 args, got 3), this change should resolve it
-            // by making it 2 arguments: endpoint and options.
 
             this.connection.onopen = () => resolve();
             this.connection.onerror = (error) => reject(error);
-            this.connection.onmessage = (event) => this.handleMessage(event.data);
+            this.connection.onmessage = (event) => {
+                // Convert data to string if it's not already
+                const data = typeof event.data === 'string' ? event.data : event.data.toString();
+                this.handleMessage(data);
+            };
             this.connection.onclose = () => this.emit('disconnected');
         });
     }
@@ -463,16 +469,17 @@ export class MCP2025Client extends EventEmitter implements MCPClient {
                 reject(new Error('Batch request timeout'));
             }, 30000);
 
-            const responseHandler = (event: MessageEvent) => {
-                const response = JSON.parse(event.data);
+            const responseHandler = (data: any) => {
+                const messageStr = typeof data === 'string' ? data : data.toString();
+                const response = JSON.parse(messageStr);
                 if (response.id === requestId) {
                     clearTimeout(timeout);
-                    this.connection?.removeEventListener('message', responseHandler);
+                    this.connection?.off('message', responseHandler);
                     resolve(response.result || []);
                 }
             };
 
-            this.connection.addEventListener('message', responseHandler);
+            this.connection.on('message', responseHandler);
             this.connection.send(JSON.stringify(message));
         });
     }
@@ -575,11 +582,12 @@ export class MCP2025Client extends EventEmitter implements MCPClient {
                 reject(new Error('Request timeout'));
             }, timeout);
 
-            const responseHandler = (event: MessageEvent) => {
-                const response = JSON.parse(event.data);
+            const responseHandler = (data: any) => {
+                const messageStr = typeof data === 'string' ? data : data.toString();
+                const response = JSON.parse(messageStr);
                 if (response.id === request.id) {
                     clearTimeout(timeoutId);
-                    this.connection?.removeEventListener('message', responseHandler);
+                    this.connection?.off('message', responseHandler);
                     
                     if (response.error) {
                         reject(new Error(response.error.message || 'Request failed'));
@@ -589,7 +597,7 @@ export class MCP2025Client extends EventEmitter implements MCPClient {
                 }
             };
 
-            this.connection.addEventListener('message', responseHandler);
+            this.connection.on('message', responseHandler);
             this.connection.send(JSON.stringify(request));
         });
     }

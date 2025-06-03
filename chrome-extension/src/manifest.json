@@ -51,6 +51,7 @@
         "floatingPanel.js",
         "floatingPanel.css",
         "element-selection.css",
+        "enhanced-theme.css",
         "icons/*.png"
       ],
       "matches": ["<all_urls>"]

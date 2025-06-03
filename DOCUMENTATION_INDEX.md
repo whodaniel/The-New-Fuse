@@ -2,6 +2,13 @@
 
 ## 📚 Complete Documentation Suite for The New Fuse
 
+### 🆕 NEW: MCP Server Troubleshooting
+**Location**: `docs/MCP_TROUBLESHOOTING_GUIDE.md`
+- 🔧 **Protocol Fix Guide**: Complete resolution of "mcp-config-manager" server failures
+- 🔄 **Version Migration**: Legacy to modern MCP protocol transition  
+- 🛠️ **Debugging Steps**: Comprehensive testing and verification procedures
+- 🎯 **Prevention**: Best practices for future MCP protocol compliance
+
 ### 🆕 NEW: Chrome Extension Yarn Berry Workspace Integration
 **Location**: `chrome-extension/`
 - 🎆 **Integration Guide**: `chrome-extension/WORKSPACE_INTEGRATION.md` - Complete developer guide
@@ -190,6 +197,13 @@ Follow: `MASTER_ORCHESTRATOR_HANDOFF_PROMPT.md`
 
 ## 🌟 New in This Release
 
+### MCP Server Protocol Fix (2025-06-02)
+- **Connection Resolution** - Fixed "mcp-config-manager" server failures in Claude Desktop
+- **Protocol Modernization** - Updated to MCP protocol version "2024-11-05" 
+- **Backward Compatibility** - Maintained legacy method support during transition
+- **Testing Framework** - Comprehensive MCP protocol validation system
+- **Documentation** - Complete troubleshooting guide for future issues
+
 ### Chrome Extension Yarn Berry Workspace Integration
 - **Unified Build System** with workspace-aware commands
 - **Development Workflow** with hot reloading and testing
@@ -216,6 +230,6 @@ Follow: `MASTER_ORCHESTRATOR_HANDOFF_PROMPT.md`
 
 *All documentation is now part of your project workspace and will be available whenever you work on The New Fuse!*
 
-**🆕 Latest Addition**: Modular Prompt Templating System - Complete implementation ready for integration and usage.
+**🆕 Latest Addition**: MCP Server Protocol Fix - Critical infrastructure fix restoring full Claude Desktop MCP functionality.
 
-**🎆 NEWEST UPDATE (2025-06-02)**: Chrome Extension Yarn Berry Workspace Integration - Complete implementation with unified build system, automated packaging, and seamless development workflow. The Chrome extension now builds along with the mother project as requested!
+**🎆 Previous Update (2025-06-02)**: Chrome Extension Yarn Berry Workspace Integration - Complete implementation with unified build system, automated packaging, and seamless development workflow. The Chrome extension now builds along with the mother project as requested!

@@ -468,6 +468,36 @@ const Popup: React.FC = () => {
     });
   };
 
+  const handleToggleFloatingPanel = () => {
+    setWebInteractionStatus('Toggling floating panel...');
+    setWebInteractionStatusType('info');
+    
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(tabs[0].id, {
+          type: 'TOGGLE_FLOATING_PANEL'
+        }, (response) => {
+          if (chrome.runtime.lastError) {
+            setWebInteractionStatus(`Error toggling floating panel: ${chrome.runtime.lastError.message}`);
+            setWebInteractionStatusType('error');
+            return;
+          }
+          
+          if (response?.success) {
+            setWebInteractionStatus(response.message || 'Floating panel toggled successfully!');
+            setWebInteractionStatusType('success');
+          } else {
+            setWebInteractionStatus(`Failed to toggle floating panel: ${response?.error || 'Unknown error'}`);
+            setWebInteractionStatusType('error');
+          }
+        });
+      } else {
+        setWebInteractionStatus('No active tab found to toggle floating panel.');
+        setWebInteractionStatusType('error');
+      }
+    });
+  };
+
   const handleAutoDetectSelectors = () => {
     setWebInteractionStatus('Auto-detecting selectors on current page...');
     setWebInteractionStatusType('info');
@@ -944,7 +974,6 @@ const Popup: React.FC = () => {
                 </Grid>
               </Grid>
 
-              {/* Enhanced Controls */}
               <Grid container spacing={1} sx={{ mb: 2 }}>
                 <Grid item xs={4}>
                   <Button 
@@ -979,6 +1008,30 @@ const Popup: React.FC = () => {
                     disabled={!chatInputSelector.trim() || !sendButtonSelector.trim() || !textToSendInput.trim()}
                   >
                     Send
+                  </Button>
+                </Grid>
+              </Grid>
+
+              {/* Floating Panel Control */}
+              <Grid container spacing={1} sx={{ mb: 2 }}>
+                <Grid item xs={12}>
+                  <Button 
+                    variant="outlined" 
+                    size="small" 
+                    fullWidth
+                    startIcon={<AutoAwesomeIcon />}
+                    onClick={handleToggleFloatingPanel}
+                    sx={{ 
+                      borderStyle: 'dashed',
+                      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                      borderColor: '#8b5cf6',
+                      '&:hover': {
+                        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+                        borderColor: '#7c3aed'
+                      }
+                    }}
+                  >
+                    🎯 Toggle Floating Panel (Direct UI Injection)
                   </Button>
                 </Grid>
               </Grid>

@@ -103,9 +103,19 @@ function handleRequest(request, respond) {
     case 'initialize':
       handleInitialize(request.id, request.params, respond);
       break;
-    case 'rpc.discover':
-      handleDiscover(request.id, respond);
+    case 'initialized':
+      // Acknowledgment that initialization is complete
+      respond({
+        jsonrpc: '2.0',
+        id: request.id,
+        result: {}
+      });
       break;
+    case 'tools/list':
+    case 'rpc.discover':
+      handleToolsList(request.id, respond);
+      break;
+    case 'tools/call':
     case 'call_tool':
       handleCallTool(request.id, request.params, respond);
       break;
@@ -130,118 +140,97 @@ function handleInitialize(id, params, respond) {
     jsonrpc: '2.0',
     id: id,
     result: {
+      protocolVersion: '2024-11-05',
       capabilities: {
-        version: '1.0.0',
+        tools: {},
+        logging: {}
+      },
+      serverInfo: {
         name: 'mcp-config-manager',
-        description: 'MCP Configuration Manager Server'
+        version: '1.0.0'
       }
     }
   });
 }
 
 /**
- * Handle discovery requests
+ * Handle tools list requests (modern MCP protocol)
  */
-function handleDiscover(id, respond) {
-  const response = {
+function handleToolsList(id, respond) {
+  const tools = [
+    {
+      name: 'list_mcp_servers',
+      description: 'List all registered MCP servers in a configuration file',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          config_path: {
+            type: 'string',
+            description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
+          }
+        }
+      }
+    },
+    {
+      name: 'add_mcp_server',
+      description: 'Add or update an MCP server in a configuration file',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          config_path: {
+            type: 'string',
+            description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
+          },
+          name: {
+            type: 'string',
+            description: 'Name of the MCP server'
+          },
+          command: {
+            type: 'string',
+            description: 'Command to execute the MCP server'
+          },
+          args: {
+            type: 'array',
+            items: { type: 'string' },
+            description: 'Arguments for the MCP server command'
+          },
+          env: {
+            type: 'object',
+            description: 'Environment variables for the MCP server'
+          },
+          description: {
+            type: 'string',
+            description: 'Description of the MCP server'
+          }
+        },
+        required: ['name', 'command']
+      }
+    },
+    {
+      name: 'remove_mcp_server',
+      description: 'Remove an MCP server from a configuration file',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          config_path: {
+            type: 'string',
+            description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
+          },
+          name: {
+            type: 'string',
+            description: 'Name of the MCP server to remove'
+          }
+        },
+        required: ['name']
+      }
+    }
+  ];  respond({
     jsonrpc: '2.0',
     id: id,
     result: {
-      tool_schema: [
-        {
-          name: 'list_mcp_servers',
-          description: 'List all registered MCP servers in a configuration file',
-          parameters: {
-            type: 'object',
-            properties: {
-              config_path: {
-                type: 'string',
-                description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
-              }
-            },
-            required: []
-          },
-          returns: {
-            type: 'object',
-            properties: {
-              servers: {
-                type: 'array',
-                items: {
-                  type: 'object',
-                  properties: {
-                    name: { type: 'string' },
-                    command: { type: 'string' },
-                    args: { type: 'array', items: { type: 'string' } }
-                  }
-                }
-              }
-            }
-          }
-        },
-        {
-          name: 'add_mcp_server',
-          description: 'Add or update an MCP server in a configuration file',
-          parameters: {
-            type: 'object',
-            properties: {
-              config_path: {
-                type: 'string',
-                description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
-              },
-              name: {
-                type: 'string',
-                description: 'Name of the MCP server'
-              },
-              command: {
-                type: 'string',
-                description: 'Command to execute the MCP server'
-              },
-              args: {
-                type: 'array',
-                items: { type: 'string' },
-                description: 'Arguments to pass to the command'
-              }
-            },
-            required: ['name', 'command', 'args']
-          },
-          returns: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-              message: { type: 'string' }
-            }
-          }
-        },
-        {
-          name: 'remove_mcp_server',
-          description: 'Remove an MCP server from a configuration file',
-          parameters: {
-            type: 'object',
-            properties: {
-              config_path: {
-                type: 'string',
-                description: 'Path to the configuration file. Leave empty for Claude Desktop config.'
-              },
-              name: {
-                type: 'string',
-                description: 'Name of the MCP server to remove'
-              }
-            },
-            required: ['name']
-          },
-          returns: {
-            type: 'object',
-            properties: {
-              success: { type: 'boolean' },
-              message: { type: 'string' }
-            }
-          }
-        }
-      ]
+      tools: tools
     }
-  };
-  
-  respond(response);
+  });
 }
 
 /**

@@ -1,4 +1,10 @@
 import * as vscode from 'vscode';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
+
+// Load environment variables from .env file
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
+
 import { ChatViewProvider } from './views/ChatViewProvider';
 import { LLMProviderManager } from './llm/LLMProviderManager';
 import { AgentCommunicationService } from './services/AgentCommunicationService';

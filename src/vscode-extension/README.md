@@ -66,7 +66,7 @@ The extension supports multiple LLM providers with automatic fallback:
 
 ## Development Status
 
-This extension is in active development. See [MIGRATION-PLAN.md](MIGRATION-PLAN.md) for current status.
+This extension is in active development. Check the project documentation for current status and development progress.
 
 ## License
 

@@ -682,8 +682,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
 
       case 'TOGGLE_FLOATING_PANEL':
-        // Forward to floating panel manager
-        chrome.runtime.sendMessage(request, sendResponse);
+        handleToggleFloatingPanel(request, sendResponse);
         break;
 
       case 'SHOW_FLOATING_PANEL':
@@ -1360,6 +1359,93 @@ function handleTestSelectors(request: any, sendResponse: Function): void {
     sendResponse({
       success: false,
       error: `Failed to test selectors: ${(error as Error).message}`
+    });
+  }
+}
+
+/**
+ * Handle toggle floating panel
+ */
+function handleToggleFloatingPanel(request: any, sendResponse: (response: any) => void): void {
+  try {
+    logger.info('Toggling floating panel');
+    
+    // Check if floating panel iframe already exists
+    let floatingPanel = document.getElementById('tnf-floating-panel') as HTMLIFrameElement;
+    let isVisible = false;
+    
+    if (!floatingPanel) {
+      // Create floating panel iframe
+      floatingPanel = document.createElement('iframe');
+      floatingPanel.id = 'tnf-floating-panel';
+      floatingPanel.src = chrome.runtime.getURL('floatingPanel.html');
+      floatingPanel.style.cssText = `
+        position: fixed !important;
+        top: 20px !important;
+        right: 20px !important;
+        width: 350px !important;
+        height: 500px !important;
+        border: none !important;
+        border-radius: 12px !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+        z-index: 2147483647 !important;
+        background: white !important;
+        display: block !important;
+        transition: all 0.3s ease !important;
+      `;
+      
+      // Add drag functionality
+      let isDragging = false;
+      let dragOffset = { x: 0, y: 0 };
+      
+      floatingPanel.addEventListener('mousedown', (e) => {
+        if (e.target === floatingPanel) {
+          isDragging = true;
+          dragOffset.x = e.clientX - floatingPanel.offsetLeft;
+          dragOffset.y = e.clientY - floatingPanel.offsetTop;
+          floatingPanel.style.cursor = 'grabbing';
+        }
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (isDragging) {
+          floatingPanel.style.left = (e.clientX - dragOffset.x) + 'px';
+          floatingPanel.style.top = (e.clientY - dragOffset.y) + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+        floatingPanel.style.cursor = 'grab';
+      });
+      
+      document.body.appendChild(floatingPanel);
+      isVisible = true;
+      logger.info('Floating panel created and shown');
+    } else {
+      // Toggle existing panel visibility
+      if (floatingPanel.style.display === 'none') {
+        floatingPanel.style.display = 'block';
+        isVisible = true;
+        logger.info('Floating panel shown');
+      } else {
+        floatingPanel.style.display = 'none';
+        isVisible = false;
+        logger.info('Floating panel hidden');
+      }
+    }
+    
+    sendResponse({
+      success: true,
+      visible: isVisible,
+      message: isVisible ? 'Floating panel activated' : 'Floating panel hidden'
+    });
+    
+  } catch (error) {
+    logger.error('Error toggling floating panel:', error);
+    sendResponse({
+      success: false,
+      error: (error as Error).message
     });
   }
 }

@@ -630,6 +630,14 @@
                     }
                     break;
                     
+                case 'updateMetrics':
+                    try {
+                        handleMetricsUpdate(message.data);
+                    } catch (error) {
+                        console.error('Error handling metrics update:', error);
+                    }
+                    break;
+                    
                 case 'savedChatsUpdated':
                     try {
                         if (window.savedChatsManager) {
@@ -860,6 +868,34 @@
             type: 'unstarMessage',
             messageId: messageId
         });
+    }
+    
+    // Handle metrics update from the extension
+    function handleMetricsUpdate(data) {
+        try {
+            console.log('Metrics updated:', data);
+            
+            // Store metrics in a global variable for debugging
+            window.extensionMetrics = data;
+            
+            // Update any UI elements that show metrics
+            const metricsIndicator = document.getElementById('metrics-indicator');
+            if (metricsIndicator && data.metrics) {
+                const { totalGenerations, successfulGenerations, errorRate } = data.metrics;
+                metricsIndicator.innerHTML = `
+                    <span class="metric-item">Generations: ${totalGenerations}</span>
+                    <span class="metric-item">Success: ${successfulGenerations}</span>
+                    <span class="metric-item">Error Rate: ${(errorRate * 100).toFixed(1)}%</span>
+                `;
+            }
+            
+            // Optionally show performance notifications for high error rates
+            if (data.metrics && data.metrics.errorRate > 0.5) {
+                console.warn('High error rate detected:', data.metrics.errorRate);
+            }
+        } catch (error) {
+            console.error('Error processing metrics update:', error);
+        }
     }
 
     // Event listeners

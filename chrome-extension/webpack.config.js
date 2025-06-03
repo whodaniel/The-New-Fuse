@@ -17,6 +17,7 @@ export default (env, argv) => {
     mode: isProduction ? 'production' : 'development',
     devtool: isProduction ? 'source-map' : 'cheap-module-source-map',
     entry: {
+      'popup-enhanced': './src/popup/element-selection-manager.ts',
       popup: './src/popup/index.tsx',
       background: './src/background.ts',
       content: './src/content/index.ts',
@@ -71,12 +72,6 @@ export default (env, argv) => {
       new MiniCssExtractPlugin({
         filename: '[name].css',
       }),
-      new HtmlWebpackPlugin({
-        filename: 'popup.html',
-        template: path.resolve(__dirname, 'src/popup/popup-template.html'),
-        chunks: ['popup'],
-        minify: false
-      }),
       new CopyPlugin({
         patterns: [
           {
@@ -95,6 +90,9 @@ export default (env, argv) => {
           { from: './src/options/options.css', to: 'options.css' },
           { from: './src/styles/content.css', to: 'content.css' },
           { from: './src/styles/element-selection.css', to: 'element-selection.css' },
+          { from: './src/styles/enhanced-theme.css', to: 'enhanced-theme.css' },
+          { from: './src/floatingPanel/floatingPanel.html', to: 'floatingPanel.html' },
+          { from: './src/popup/popup.html', to: 'popup.html' },
           { from: './src/icons', to: 'icons', noErrorOnMissing: true },
           { from: './src/styles', to: 'styles', noErrorOnMissing: true },
           { from: '../ui-html-css', to: 'ui-html-css', noErrorOnMissing: true }, // Added to copy HTML showcase

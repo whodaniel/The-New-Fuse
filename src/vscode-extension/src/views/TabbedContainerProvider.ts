@@ -55,6 +55,11 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
             tabId: tabId,
             html: htmlContent
           });
+        } else if (message.command === 'tabChanged') { // ADDED THIS BLOCK
+          console.log(`TabbedContainerProvider: Tab changed to "${message.tabId}". Content loading should be initiated by client-side 'requestTabContent'.`);
+          // This message is informational from the client; actual content loading
+          // is triggered by 'requestTabContent' from tabbed-container.js.
+          // No further action needed here for tabChanged itself.
         } else if (message.source === 'chatView') {
             // Chat view messages are handled directly by the chat provider via its webview message handler
             console.log('Chat message received via tabbed container');
@@ -217,7 +222,7 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; font-src ${webview.cspSource};">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'nonce-${nonce}'; font-src ${webview.cspSource} https://cdnjs.cloudflare.com;">
         <link href="${styleUri}" rel="stylesheet">
         <link href="${codiconsUri}" rel="stylesheet">
         <title>The New Fuse</title>
