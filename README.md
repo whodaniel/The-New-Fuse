@@ -120,6 +120,76 @@ yarn fuse log watch
 
 For more information, see the [AI Documentation Guide](docs/AI_DOCUMENTATION_GUIDE.md).
 
+## Environment Variable Validation
+
+Ensuring that all necessary environment variables are correctly configured is crucial for the stable operation of The New Fuse platform. Missing or incorrect variables can lead to unexpected behavior, startup failures, or security vulnerabilities.
+
+To help with this, a validation script is provided to check for the existence of required `.env.example` files and critical variables within them.
+
+**How to run the validation:**
+
+Use the following command from the root of the project:
+
+```bash
+yarn validate:env
+```
+
+Or, if you are using npm:
+
+```bash
+npm run validate:env
+```
+
+**Example Output:**
+
+*Successful Validation:*
+
+```
+Starting environment variable validation...
+
+Checking for required .env files...
+Found: .env.example
+Found: .env.development.example
+Found: .env.production.example
+Found: apps/api/.env.example
+Found: apps/backend/.env.example
+Found: apps/frontend/.env.example
+
+Checking for critical variables in existing .env.example files...
+Checking variables in: .env.example
+  Found variable: APP_ENV
+  Found variable: PORT
+Checking variables in: .env.development.example
+  Found variable: DATABASE_URL
+  Found variable: JWT_SECRET
+  Found variable: SENTRY_DSN
+... (output continues for all files)
+
+All environment checks passed successfully!
+```
+
+*Failed Validation:*
+
+```
+Starting environment variable validation...
+
+Checking for required .env files...
+Found: .env.example
+Missing: .env.development.example
+Found: .env.production.example
+...
+
+Checking for critical variables in existing .env.example files...
+Checking variables in: .env.example
+  Found variable: APP_ENV
+  Missing variable: PORT
+...
+
+Some environment checks failed. Please review the messages above.
+```
+
+This script helps ensure that your development and production environments are set up correctly before you run the application.
+
 ## Documentation
 
 All documentation has been organized into the `docs/` directory. See the [Documentation Index](docs/README.md) for a complete list of available documentation.
