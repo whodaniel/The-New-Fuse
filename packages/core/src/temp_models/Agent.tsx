@@ -8,22 +8,23 @@ export class Agent {
     @PrimaryGeneratedColumn('uuid')
     id!: string;
 
-    @Column( { type: 'varchar', length: 255 })
+    @Column({ type: 'varchar', length: 255 })
     name!: string;
 
     @Column({ type: 'text', nullable: true })
     description?: string;
 
-    @Column( { type: 'jsonb', nullable: true })
+    @Column({ type: 'jsonb', nullable: true })
     config!: AgentConfig;
 
     @Column({ default: 'active' })
     status!: 'active' | 'inactive' | 'error';
 
-    @CreateDateColumn( { type: 'timestamp' })
+    @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;
 
-    @UpdateDateColumn({ type: 'timestamp' }): Date;
+    @UpdateDateColumn({ type: 'timestamp' })
+    updatedAt!: Date;
 
     @ManyToOne(() => User, user => user.agents, { onDelete: 'CASCADE' })
     owner!: User;
@@ -32,7 +33,7 @@ export class Agent {
     pipelines!: Pipeline[];
 
     constructor(partial?: Partial<Agent>) {
-        if(partial): void {
+        if (partial) {
             Object.assign(this, partial);
         }
     }

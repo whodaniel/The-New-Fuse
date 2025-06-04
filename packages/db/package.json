@@ -4,9 +4,11 @@
   "packageManager": "yarn@4.9.1",
   "type": "module",
   "scripts": {
-    "clean": "rimraf dist .turbo node_modules"
+    "clean": "rimraf dist .turbo node_modules",
+    "build": "yarn tsc -b"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5"
+    "rimraf": "^5.0.5",
+    "typescript": "^5.8.3"
   }
 }

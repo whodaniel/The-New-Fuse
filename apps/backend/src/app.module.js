@@ -38,8 +38,8 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
 };
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
 // Create a minimal module to get the backend running
 // We'll add proper functionality later
 let AppModule = (() => {

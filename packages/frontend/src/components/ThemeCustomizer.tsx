@@ -2,7 +2,6 @@ import React from 'react';
 import {
   Box,
   VStack,
-  Text,
   Select,
   Switch,
   useColorMode,
@@ -17,17 +16,17 @@ export function ThemeCustomizer() {
   const { colorMode, setColorMode } = useColorMode();
 
   const toggleReducedMotion = () => {
-    setThemeConfig((prev: ThemeConfig) => ({
-      ...prev,
-      reducedMotion: !prev.reducedMotion
-    }));
+    setThemeConfig({
+      ...themeConfig,
+      reducedMotion: !themeConfig.reducedMotion
+    });
   };
 
   const toggleHighContrast = () => {
-    setThemeConfig((prev: ThemeConfig) => ({
-      ...prev,
-      highContrast: !prev.highContrast
-    }));
+    setThemeConfig({
+      ...themeConfig,
+      highContrast: !themeConfig.highContrast
+    });
   };
 
   return (

@@ -1,18 +1,11 @@
-import { RedisService } from './redis.service.js';
+import { OnModuleInit } from '@nestjs/common';
+import { RedisService } from './RedisService.js';
 import { AgentService } from './agent.service.js';
-export declare class ComposerService {
+export declare class ComposerService implements OnModuleInit {
     private readonly redisService;
     private readonly agentService;
-    private readonly logger;
-    private readonly agentId;
     constructor(redisService: RedisService, agentService: AgentService);
-    private initialize;
-    private sendInitialInstructions;
-    private handleRooCoderMessage;
-    private handleTaskRequest;
-    private handleTaskUpdate;
-    private handleTaskComplete;
-    assignTask(task: any): Promise<void>;
-    requestCodeReview(codeDetails: any): Promise<void>;
-    suggestImprovement(suggestion: any): Promise<void>;
+    onModuleInit(): Promise<void>;
+    handleStatusUpdate(data: any): Promise<void>;
+    handleCommunication(data: any): Promise<void>;
 }

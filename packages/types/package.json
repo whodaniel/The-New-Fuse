@@ -12,5 +12,8 @@
   "devDependencies": {
     "rimraf": "^5.0.5",
     "typescript": "^5.4.2"
+  },
+  "dependencies": {
+    "@the-new-fuse/prompt-templating": "workspace:*"
   }
 }

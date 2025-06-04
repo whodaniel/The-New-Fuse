@@ -2,10 +2,7 @@
 
 import { EventEmitter } from 'events';
 import * as net from 'net';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 
-const execAsync = promisify(exec);
 
 export interface PortRegistration {
   id: string;
@@ -68,7 +65,7 @@ export class PortRegistryService extends EventEmitter {
   async registerPort(config: {
     serviceName: string;
     serviceType: PortRegistration['serviceType'];
-    environment: string;
+    environment: PortRegistration['environment'];
     port?: number;
     host?: string;
     protocol?: PortRegistration['protocol'];
@@ -97,7 +94,7 @@ export class PortRegistryService extends EventEmitter {
       port,
       serviceName,
       serviceType,
-      environment,
+      environment: environment as PortRegistration['environment'],
       status: 'active',
       host,
       protocol,
@@ -116,7 +113,7 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Find an available port for a service
    */
-  async findAvailablePort(serviceName: string, environment: string): Promise<number> {
+  async findAvailablePort(serviceName: string, environment: PortRegistration['environment']): Promise<number> {
     const config = this.getServiceConfiguration(serviceName, environment);
     
     // Try preferred port first
@@ -183,7 +180,7 @@ export class PortRegistryService extends EventEmitter {
   /**
    * Get service configuration
    */
-  private getServiceConfiguration(serviceName: string, environment: string): ServiceConfiguration {
+  private getServiceConfiguration(serviceName: string, environment: PortRegistration['environment']): ServiceConfiguration {
     const key = `${serviceName}-${environment}`;
     return this.configurations.get(key) || {
       serviceName,

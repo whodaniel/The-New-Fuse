@@ -1,11 +1,30 @@
-
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 // const thisObj = (typeof globalThis !== 'undefined' ? globalThis : {});
 export {}
 exports.AuthManagerImpl = void 0; // Cleaned up exports
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { AuthenticationError } from '../../../../src/types/error.tsx'; // Import AuthenticationError
+
+// Create a local AuthenticationError class since the import is broken
+export class AuthenticationError extends Error {
+    public statusCode?: number;
+    public code?: string;
+    public cause?: Error;
+    
+    constructor(message: string, statusCode?: number, cause?: Error, stack?: string, code?: string) {
+        super(message);
+        this.name = 'AuthenticationError';
+        this.statusCode = statusCode;
+        this.code = code;
+        if (cause) {
+            this.cause = cause;
+        }
+        if (stack) {
+            this.stack = stack;
+        }
+    }
+}
+
 // Mock Database type since the actual module is not available
 interface Database {
     query<T = any>(): {
@@ -17,12 +36,11 @@ interface Database {
     commit: () => Promise<void>;
     rollback: () => Promise<void>;
 }
+
 /**
  * Authentication and authorization module for the API.
  * Handles user registration, login, and session management.
  */
-// Custom error types AuthError and UserExistsError removed
-
 interface User {
     id: number;
     username: string;
@@ -54,7 +72,7 @@ export class AuthManagerImpl {
             .first();
 
         if (existingUser) {
-            throw new AuthenticationError('User with this username or email already exists', 409, undefined, undefined, 'USER_EXISTS');
+            throw new AuthenticationError('User with this username or email already exists');
         }
 
         // Hash password
@@ -74,7 +92,7 @@ export class AuthManagerImpl {
             return newUser;
         } catch (error) {
             await this.db.rollback();
-            throw new AuthenticationError('Failed to create user', 500);
+            throw new AuthenticationError('Failed to create user');
         }
     }
 
@@ -84,12 +102,12 @@ export class AuthManagerImpl {
             .first();
 
         if (!user) {
-            throw new AuthenticationError('Invalid username or password', 401);
+            throw new AuthenticationError('Invalid username or password');
         }
 
         const validPassword = await bcrypt.compare(password, user.hashedPassword);
         if (!validPassword) {
-            throw new AuthenticationError('Invalid username or password', 401);
+            throw new AuthenticationError('Invalid username or password');
         }
 
         // Generate JWT
@@ -105,7 +123,7 @@ export class AuthManagerImpl {
             const decoded = jwt.verify(token, this.secretKey) as TokenPayload;
             return decoded;
         } catch (error) {
-            throw new AuthenticationError('Invalid or expired token', 401);
+            throw new AuthenticationError('Invalid or expired token');
         }
     }
 
@@ -118,5 +136,6 @@ export class AuthManagerImpl {
         }
     }
 }
+
 exports.AuthManagerImpl = AuthManagerImpl;
 //# sourceMappingURL=auth.js.map

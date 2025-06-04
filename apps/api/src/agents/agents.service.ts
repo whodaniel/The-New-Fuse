@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database/src/prisma.service';
 import { ConfigService } from '@nestjs/config';
-import { AgentFactory } from './agent.factory';
-import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
-import { UnifiedMonitoringService } from '@the-new-fuse/core';
+import { AgentFactory } from './agent.factory.js';
+import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto.js';
+import { UnifiedMonitorService } from '@the-new-fuse/core';
 
 @Injectable()
 export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
-    private monitoring: UnifiedMonitoringService,
+    private monitoring: UnifiedMonitorService,
     private agentFactory: AgentFactory,
   ) {}
 

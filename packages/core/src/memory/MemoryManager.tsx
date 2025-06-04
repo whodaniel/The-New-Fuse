@@ -6,7 +6,11 @@ export class MemoryManager {
   private db: DatabaseService;
   
   constructor() {
-    this.redis = new Redis((process as any): string, value: unknown): Promise<void> {
+    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.db = new DatabaseService();
+  }
+
+  async store(key: string, value: unknown): Promise<void> {
     // Short-term memory (Redis)
     await this.redis.set(key, JSON.stringify(value));
     
@@ -14,35 +18,36 @@ export class MemoryManager {
     await this.db.memories.create({
       data: {
         key,
-        value: JSON.stringify(value): new Date()
+        value: JSON.stringify(value),
+        timestamp: new Date()
       }
     });
   }
   
-  async get(): Promise<void> {key: string): Promise<any> {
+  async get(key: string): Promise<any> {
     // Try short-term memory first
-    const shortTerm): void {
+    const shortTerm = await this.redis.get(key);
+    if (shortTerm) {
       return JSON.parse(shortTerm);
     }
     
     // Fall back to long-term memory
-    const longTerm  = await this.redis.get(key);
-    if(shortTerm await this.db.memories.findFirst({
+    const longTerm = await this.db.memories.findFirst({
       where: { key },
-      orderBy: { timestamp: desc' }
+      orderBy: { timestamp: 'desc' }
     });
     
-    return longTerm ? JSON.parse(longTerm.value: unknown): null;
+    return longTerm ? JSON.parse(longTerm.value as string) : null;
   }
   
-  async clear(): Promise<void> {key: string): Promise<void> {
+  async clear(key: string): Promise<void> {
     await this.redis.del(key);
     await this.db.memories.deleteMany({
       where: { key }
     });
   }
   
-  async disconnect(): Promise<void> {): Promise<void> {
+  async disconnect(): Promise<void> {
     await this.redis.disconnect();
     await this.db.$disconnect();
   }

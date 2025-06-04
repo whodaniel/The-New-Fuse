@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { TNFMCPService } from './TNFMCPService';
-import { TNFMCPController } from './TNFMCPController';
-import { AgentService } from '../services/agent.service';
-import { ChatService } from '../services/chat.service';
-import { WorkflowService } from '../services/workflow.service';
-import { MonitoringService } from '../services/monitoring.service';
-import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
+import { TNFMCPService } from './TNFMCPService.js';
+import { TNFMCPController } from './TNFMCPController.js';
+import { AgentService } from '../services/agent.service.js';
+import { ChatService } from '../services/chat.service.js';
+import { WorkflowService } from '../services/workflow.service.js';
+import { MonitoringService } from '../services/monitoring.service.js';
+import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService.js';
 
 @Module({
   providers: [

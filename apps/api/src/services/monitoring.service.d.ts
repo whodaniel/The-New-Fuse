@@ -12,5 +12,19 @@ export declare class MonitoringService {
     getPerformance(): Promise<any>;
     getErrors(): Promise<any>;
     getResources(): Promise<any>;
+    getMemoryItems(): Promise<{
+        items: any[];
+        stats: {
+            totalItems: number;
+            hitRate: number;
+        };
+    }>;
+    getCustomMetrics(): Promise<{
+        stepMetrics: any[];
+        memoryMetrics: {
+            totalItems: number;
+            hitRate: number;
+        };
+    }>;
     private checkDatabaseHealth;
 }

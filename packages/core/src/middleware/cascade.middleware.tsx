@@ -7,10 +7,22 @@ import { REQUIRES_CASCADE_MODE, REQUIRES_CASCADE_STATE, CASCADE_CONTROLLER_ID } 
 export class CascadeMiddleware implements NestMiddleware {
   constructor(private readonly cascadeService: CascadeService) {}
 
-  async use(): Promise<void> {req: Request, res: Response, next: NextFunction): Promise<any> {
-    const handler): void {
-      return next()): void {
-      return next()): void {
+  async use(req: Request, res: Response, next: NextFunction): Promise<void> {
+    const handler = req.route?.stack?.[0]?.handle;
+    if (!handler) {
+      return next();
+    }
+
+    const controllerId = Reflect.getMetadata(CASCADE_CONTROLLER_ID, handler);
+    const requiredMode = Reflect.getMetadata(REQUIRES_CASCADE_MODE, handler);
+    const requiredState = Reflect.getMetadata(REQUIRES_CASCADE_STATE, handler);
+
+    if (!controllerId) {
+      return next();
+    }
+
+    const controller = this.cascadeService.getController(controllerId);
+    if (!controller) {
       throw new ForbiddenException(`Cascade controller '${controllerId}' not found`);
     }
 

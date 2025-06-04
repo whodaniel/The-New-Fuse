@@ -1,2 +1,2 @@
-declare const Dashboard: () => import("react/jsx-runtime").JSX.Element;
+declare const Dashboard: () => React.JSX.Element;
 export { Dashboard };

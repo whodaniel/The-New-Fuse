@@ -1,6 +1,6 @@
 import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@packages/utils'; // Assuming Logger is available
-import { UUID, Message, MessageType } from '@packages/types'; // Assuming types are available
+import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { UUID, Message, MessageType } from '@the-new-fuse/types'; // Assuming types are available
 
 // Define specific message structures for inter-agent chat if needed
 export interface ChatMessage extends Message {

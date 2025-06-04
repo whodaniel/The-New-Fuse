@@ -3,7 +3,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext.js';
 import { ThemeProvider } from './contexts/ThemeContext.js';
-import { AppRoutes } from './routes.js';
+import { AppRoutes } from './routes';
 import theme from './theme.js';
 
 export default function App() {

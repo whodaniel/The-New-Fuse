@@ -55,33 +55,45 @@ export class FeatureProcessor {
     private impactScores: Map<string, number>;
 
     constructor() {
-        this.processedFeatures = new Map(): SiteData): Promise< {
+        this.processedFeatures = new Map();
+        this.featureDependencies = new Map();
+        this.impactScores = new Map();
+    }
+
+    public async processNewFeatures(siteData: SiteData): Promise<{
         status: string;
         proposal?: FeatureProposal;
     }> {
         try {
-            const extractedFeatures: "superior_features_found",
+            const extractedFeatures = await this.extractFeatures(siteData);
+            const analysis = await this.analyzeFeatures(extractedFeatures);
+            const comparison = await this.compareWithExisting(analysis);
+
+            const superiorFeatures = this.identifySuperiorFeatures(comparison);
+            if (superiorFeatures.length > 0) {
+                const proposal = await this.prepareFeatureProposal(superiorFeatures);
+                return {
+                    status: "superior_features_found",
                     proposal
                 };
             }
 
             return { status: "no_superior_features_found" };
-        } catch (e: unknown){
-            logger.error(`Error processing new features: ${e instanceof Error ? e.message : String(e): SiteData): Promise<FeatureSet[]> {
-        try {
-            const features: FeatureSet[]  = await this.extractFeatures(siteData)): void {
-                const proposal  = await this.analyzeFeatures(extractedFeatures);
-            const comparison = await this.compareWithExisting(analysis);
+        } catch (e: unknown) {
+            logger.error(`Error processing new features: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
 
-            const superiorFeatures = this.identifySuperiorFeatures(comparison);
-            if(superiorFeatures.length > 0 await this.prepareFeatureProposal(superiorFeatures);
-                return {
-                    status [];
+    private async extractFeatures(siteData: SiteData): Promise<FeatureSet[]> {
+        try {
+            const features: FeatureSet[] = [];
             
-            for (const featureData of siteData.features || []: unknown){
+            for (const featureData of siteData.features || []) {
                 const feature: FeatureSet = {
-                    id: this.generateFeatureId(featureData): featureData.name,
-                    description: featureData.description,
+                    id: this.generateFeatureId(featureData),
+                    name: (featureData as any).name || 'Unnamed Feature',
+                    description: (featureData as any).description || 'No description',
                     category: this.determineCategory(featureData),
                     components: await this.identifyComponents(featureData),
                     dependencies: await this.analyzeDependencies(featureData),
@@ -92,34 +104,42 @@ export class FeatureProcessor {
             }
 
             return features;
-        } catch (e): void {
-            logger.error(`Error extracting features: ${e instanceof Error ? e.message : String(e): Record<string, unknown>): string {
-        return uuidv4(): Record<string, unknown>): AssetCategory {
+        } catch (e: unknown) {
+            logger.error(`Error extracting features: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+
+    private generateFeatureId(_featureData: Record<string, unknown>): string {
+        return uuidv4();
+    }
+
+    private determineCategory(_featureData: Record<string, unknown>): AssetCategory {
         // Implementation for determining category
         return AssetCategory.COMPONENT; // Placeholder
     }
 
-    private async identifyComponents(): Promise<void> {featureData: Record<string, unknown>): Promise<string[]> {
+    private async identifyComponents(_featureData: Record<string, unknown>): Promise<string[]> {
         // Implementation for identifying components
         return [];
     }
 
-    private async analyzeDependencies(): Promise<void> {featureData: Record<string, unknown>): Promise<string[]> {
+    private async analyzeDependencies(_featureData: Record<string, unknown>): Promise<string[]> {
         // Implementation for analyzing dependencies
         return [];
     }
 
-    private calculateComplexity(featureData: Record<string, unknown>): number {
+    private calculateComplexity(_featureData: Record<string, unknown>): number {
         // Implementation for calculating complexity
         return 0.5; // Placeholder
     }
 
-    private estimateImpact(featureData: Record<string, unknown>): number {
+    private estimateImpact(_featureData: Record<string, unknown>): number {
         // Implementation for estimating impact
         return 0.7; // Placeholder
     }
 
-    private async analyzeFeatures(): Promise<void> {features: FeatureSet[]): Promise<Array< {
+    private async analyzeFeatures(features: FeatureSet[]): Promise<Array<{
         feature: FeatureSet;
         analysis: {
             complexity: number;
@@ -129,36 +149,42 @@ export class FeatureProcessor {
         };
     }>> {
         try {
-            return await Promise.all(features.map(async feature => (): Promise<void> {{
+            return await Promise.all(features.map(async feature => ({
                 feature,
                 analysis: {
-                    complexity: await this.analyzeComplexity(feature): await this.analyzeImpact(feature),
+                    complexity: await this.analyzeComplexity(feature),
+                    impact: await this.analyzeImpact(feature),
                     risks: await this.analyzeRisks(feature),
                     benefits: await this.analyzeBenefits(feature)
                 }
             })));
-        } catch (e): void {
-            logger.error(`Error analyzing features: ${e instanceof Error ? e.message : String(e): FeatureSet): Promise<number> {
+        } catch (e: unknown) {
+            logger.error(`Error analyzing features: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+
+    private async analyzeComplexity(feature: FeatureSet): Promise<number> {
         // Implementation for analyzing complexity
         return feature.implementationComplexity;
     }
 
-    private async analyzeImpact(): Promise<void> {feature: FeatureSet): Promise<number> {
+    private async analyzeImpact(feature: FeatureSet): Promise<number> {
         // Implementation for analyzing impact
         return feature.potentialImpact;
     }
 
-    private async analyzeRisks(): Promise<void> {feature: FeatureSet): Promise<string[]> {
+    private async analyzeRisks(_feature: FeatureSet): Promise<string[]> {
         // Implementation for analyzing risks
         return [];
     }
 
-    private async analyzeBenefits(): Promise<void> {feature: FeatureSet): Promise<string[]> {
+    private async analyzeBenefits(_feature: FeatureSet): Promise<string[]> {
         // Implementation for analyzing benefits
         return [];
     }
 
-    private async compareWithExisting(): Promise<void> {
+    private async compareWithExisting(
         analysisResults: Array<{
             feature: FeatureSet;
             analysis: {
@@ -171,18 +197,24 @@ export class FeatureProcessor {
     ): Promise<FeatureComparison[]> {
         try {
             return analysisResults.map(result => ({
-                featureId: (result as any): this.getExistingScore((result as any).feature.category),
+                featureId: result.feature.id,
+                existingScore: this.getExistingScore(result.feature.category),
                 newScore: this.calculateNewScore(result.analysis),
                 improvements: this.identifyImprovements(result),
                 tradeoffs: this.identifyTradeoffs(result)
             }));
-        } catch (e): void {
-            logger.error(`Error comparing with existing: ${e instanceof Error ? e.message : String(e): AssetCategory): number {
+        } catch (e: unknown) {
+            logger.error(`Error comparing with existing: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+
+    private getExistingScore(_category: AssetCategory): number {
         // Implementation for getting existing score
         return 0.5; // Placeholder
     }
 
-    private calculateNewScore(analysis: {
+    private calculateNewScore(_analysis: {
         complexity: number;
         impact: number;
         risks: string[];
@@ -192,7 +224,7 @@ export class FeatureProcessor {
         return 0.8; // Placeholder
     }
 
-    private identifyImprovements(result: {
+    private identifyImprovements(_result: {
         feature: FeatureSet;
         analysis: {
             complexity: number;
@@ -205,7 +237,7 @@ export class FeatureProcessor {
         return [];
     }
 
-    private identifyTradeoffs(result: {
+    private identifyTradeoffs(_result: {
         feature: FeatureSet;
         analysis: {
             complexity: number;
@@ -221,30 +253,47 @@ export class FeatureProcessor {
     private identifySuperiorFeatures(comparisons: FeatureComparison[]): FeatureSet[] {
         try {
             const superiorFeatures: FeatureSet[] = [];
-            for (const comparison of comparisons: unknown){
-                if (comparison.newScore > comparison.existingScore * 1.2: unknown){ // 20% improvement threshold
-                    const feature = this.processedFeatures.get(comparison.featureId)): void {
-                        superiorFeatures.push(feature)): void {
-            logger.error(`Error identifying superior features: ${e instanceof Error ? e.message : String(e): FeatureSet[]): Promise<FeatureProposal> {
+            for (const comparison of comparisons) {
+                if (comparison.newScore > comparison.existingScore * 1.2) { // 20% improvement threshold
+                    const feature = this.processedFeatures.get(comparison.featureId);
+                    if (feature) {
+                        superiorFeatures.push(feature);
+                    }
+                }
+            }
+            return superiorFeatures;
+        } catch (e: unknown) {
+            logger.error(`Error identifying superior features: ${e instanceof Error ? e.message : String(e)}`);
+            return [];
+        }
+    }
+
+    private async prepareFeatureProposal(features: FeatureSet[]): Promise<FeatureProposal> {
         try {
             return {
                 features,
-                benefits: await this.aggregateBenefits(features): await this.aggregateRisks(features),
+                benefits: await this.aggregateBenefits(features),
+                risks: await this.aggregateRisks(features),
                 implementationPlan: await this.createImplementationPlan(features),
                 estimatedImpact: await this.estimateOverallImpact(features)
             };
-        } catch (e): void {
-            logger.error(`Error preparing feature proposal: ${e instanceof Error ? e.message : String(e): FeatureSet[]): Promise<string[]> {
+        } catch (e: unknown) {
+            logger.error(`Error preparing feature proposal: ${e instanceof Error ? e.message : String(e)}`);
+            throw e;
+        }
+    }
+
+    private async aggregateBenefits(_features: FeatureSet[]): Promise<string[]> {
         // Implementation for aggregating benefits
         return [];
     }
 
-    private async aggregateRisks(): Promise<void> {features: FeatureSet[]): Promise<string[]> {
+    private async aggregateRisks(_features: FeatureSet[]): Promise<string[]> {
         // Implementation for aggregating risks
         return [];
     }
 
-    private async createImplementationPlan(): Promise<void> {features: FeatureSet[]): Promise< {
+    private async createImplementationPlan(_features: FeatureSet[]): Promise<{
         phases: Array<{
             name: string;
             duration: number;
@@ -261,7 +310,7 @@ export class FeatureProcessor {
         };
     }
 
-    private async estimateOverallImpact(): Promise<void> {features: FeatureSet[]): Promise< {
+    private async estimateOverallImpact(_features: FeatureSet[]): Promise<{
         performance: number;
         userExperience: number;
         maintainability: number;

@@ -29,68 +29,108 @@ export class MetricsCollector {
     this.config = {
       enabled: true,
       interval: 60000, // 1 minute
-      prefix: app_'
+      prefix: 'app_'
     };
-    this.startPeriodicCollection(): void {
+    this.startPeriodicCollection();
+  }
+
+  private startPeriodicCollection(): void {
     if (!this.config.enabled) return;
 
     setInterval(() => {
       const snapshot: MetricSnapshot = {
-        timestamp: new Date(): Object.fromEntries(this.metrics)
+        timestamp: new Date(),
+        values: Object.fromEntries(this.metrics)
       };
       this.metricsHistory.push(snapshot);
 
       // Keep last 24 hours of metrics (assuming 1-minute intervals)
-      const maxSnapshots): void {
-        this.metricsHistory  = 24 * 60;
-      if(this.metricsHistory.length > maxSnapshots this.metricsHistory.slice(-maxSnapshots): string): void {
-    this.startTime.set(label, Date.now(): string): number {
-    const start: string, value: number  = this.startTime.get(label)): void {
-      throw new Error(`Timer ${label} was not started`): void {
-    if(!this.config.enabled): $ {metric}`, { value: currentValue + value });
+      const maxSnapshots = 24 * 60;
+      if (this.metricsHistory.length > maxSnapshots) {
+        this.metricsHistory = this.metricsHistory.slice(-maxSnapshots);
+      }
+    }, this.config.interval);
   }
 
-  public decrement(metric: string, value: number  = this.metrics.get(metric): void {
-    if(!this.config.enabled): $ {metric}`, { value: currentValue - value });
+  public startTimer(label: string): void {
+    this.startTime.set(label, Date.now());
+  }
+
+  public endTimer(label: string): number {
+    const start = this.startTime.get(label);
+    if (!start) {
+      throw new Error(`Timer ${label} was not started`);
+    }
+
+    const duration = Date.now() - start;
+    this.startTime.delete(label);
+    return duration;
+  }
+
+  public incrementCounter(name: string, _tags: Record<string, string> = {}): void {
+    if (!this.config.enabled) return;
+
+    const currentValue = this.metrics.get(name) || 0;
+    this.metrics.set(name, currentValue + 1);
+    this.logger.debug(`Incremented metric ${name}`, { value: currentValue + 1 });
+  }
+
+  public decrementCounter(name: string, _tags: Record<string, string> = {}): void {
+    if (!this.config.enabled) return;
+
+    const currentValue = this.metrics.get(name) || 0;
+    this.metrics.set(name, Math.max(0, currentValue - 1));
+    this.logger.debug(`Decremented metric ${name}`, { value: currentValue - 1 });
   }
 
   public setValue(metric: string, value: number): void {
-    if(!this.config.enabled): $ {metric}`, { value });
+    if (!this.config.enabled) return;
+
+    this.metrics.set(metric, value);
+    this.logger.debug(`Set metric ${metric}`, { value });
   }
 
-  public getValue(metric: string): number {
-    return this.metrics.get(metric): Map<string, number> {
-    return new Map(this.metrics): Promise<Record<string, number>> {
-    const result: Record<string, number>  = this.metrics.get(metric) || 0;
-    this.metrics.set(metric, currentValue - value);
-    this.logger.debug(`Decremented metric {};
-    this.metrics.forEach((value, key) => {
-      result[key] = value;
-    });
-    return result;
+  public collectMetric(name: string, value: number, tags: Record<string, string> = {}): void {
+    if (!this.config.enabled) return;
+
+    const currentValue = this.metrics.get(name) || 0;
+    this.metrics.set(name, currentValue + value);
+    this.logger.info('Collecting metric', { name, value, tags });
   }
 
-  public reset(): void {
-    this.metrics.clear(): Partial<MetricsConfig>): void {
-    this.config = { ...this.config, ...config };
-    this.logger.debug('Updated metrics configuration', { config: this.config }): void {
-    this.logger.info('Initializing metrics collector'): string, value: number, tags: Record<string, string> = {}): void {
-    this.logger.info('Collecting metric', { name, value, tags }): string, data: Record<string, unknown> = {}): void {
-    this.logger.info('Recording event', { name, data }): string): () => void {
-    const startTime: string, tags: Record<string, string>  = process.hrtime();
+  public recordEvent(name: string, data: Record<string, unknown> = {}): void {
+    if (!this.config.enabled) return;
+
+    this.logger.info('Recording event', { name, data });
+  }
+
+  public timeOperation(name: string, _tags: Record<string, string> = {}): () => void {
+    const startTime = process.hrtime();
     return () => {
-      const [seconds, nanoseconds] = process.hrtime(startTime): void {
-    this.collectMetric(name, 1, tags): string, tags: Record<string, string>  = seconds * 1000 + nanoseconds / 1e6;
-      this.collectMetric(`$ {name}_duration_ms`, duration);
+      const [seconds, nanoseconds] = process.hrtime(startTime);
+      const duration = seconds * 1000 + nanoseconds / 1e6;
+      this.collectMetric(`${name}_duration_ms`, duration);
     };
   }
 
-  incrementCounter(name {}): void {}): void {
-    this.collectMetric(name, -1, tags): string, value: number, tags: Record<string, string> = {}): void {
-    this.collectMetric(name, value, tags): string, value: number, tags: Record<string, string> = {}): void {
-    this.collectMetric(name, value, tags): Date, endTime: Date): Promise<MetricSnapshot[]> {
-    return this.metricsHistory.filter(snapshot => 
-      snapshot.timestamp >= startTime && snapshot.timestamp <= endTime
+  public getMetrics(): Record<string, number> {
+    return Object.fromEntries(this.metrics);
+  }
+
+  public clearMetrics(): void {
+    this.metrics.clear();
+  }
+
+  public updateConfig(config: Partial<MetricsConfig>): void {
+    this.config = { ...this.config, ...config };
+    this.logger.debug('Updated metrics configuration', { config: this.config });
+  }
+
+  public getMetricsHistory(startTime: Date, endTime: Date): Promise<MetricSnapshot[]> {
+    return Promise.resolve(
+      this.metricsHistory.filter(snapshot =>
+        snapshot.timestamp >= startTime && snapshot.timestamp <= endTime
+      )
     );
   }
 }

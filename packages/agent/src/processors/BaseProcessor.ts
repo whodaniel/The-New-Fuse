@@ -1,6 +1,6 @@
 // filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/agent/src/processors/BaseProcessor.ts
-import { Logger } from '@packages/utils';
-import { Message } from '@packages/types';
+import { Logger } from '@the-new-fuse/utils';
+import { Message } from '@the-new-fuse/types';
 
 /**
  * Abstract base class for message processors.

@@ -1,6 +1,6 @@
 import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@packages/utils'; // Assuming Logger is available
-import { Message, MessageType } from '@packages/types'; // Assuming types are available
+import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { Message, MessageType } from '@the-new-fuse/types'; // Assuming types are available
 import Ajv, { Schema, ValidateFunction } from 'ajv';
 import addFormats from 'ajv-formats';
 

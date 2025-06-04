@@ -1,301 +1,193 @@
 import * as vscode from 'vscode';
+import { WebviewMessageRouter } from '../services/communication/WebviewMessageRouter'; // Adjusted path
+import { ChatService } from '../services/features/ChatService';
+import { NotificationService } from '../services/core/NotificationService';
 import { ChatViewProvider } from './ChatViewProvider';
-import { CommunicationHubProvider } from './CommunicationHubProvider';
-import { DashboardProvider } from './DashboardProvider';
-import { SettingsViewProvider } from './SettingsViewProvider';
-import { WebviewMessageRouter } from '../services/WebviewMessageRouter';
 
 /**
- * Provider for the tabbed container webview that houses all other views
+ * Provider for the tabbed container webview.
+ * This class is responsible for rendering the main tabbed UI and delegating
+ * messages from the webview to the WebviewMessageRouter.
  */
 export class TabbedContainerProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'theNewFuse.tabbedContainer';
   private _view?: vscode.WebviewView;
+  private _extensionUri: vscode.Uri;
+  private chatViewProvider: ChatViewProvider;
 
   constructor(
-    private readonly _extensionUri: vscode.Uri,
-    private readonly _extensionContext: vscode.ExtensionContext,
-    private readonly _chatProvider: ChatViewProvider,
-    private readonly _communicationHubProvider: CommunicationHubProvider,
-    private readonly _dashboardProvider: DashboardProvider,
-    private readonly _settingsProvider: SettingsViewProvider,
-    private readonly _messageRouter: WebviewMessageRouter
-  ) {}
+    private readonly context: vscode.ExtensionContext,
+    private readonly webviewMessageRouter: WebviewMessageRouter,
+    private readonly chatService: ChatService, // For initial data or state if needed by the container
+    private readonly notificationService: NotificationService, // For container-level notifications
+  ) {
+    this._extensionUri = context.extensionUri;
+    this.chatViewProvider = new ChatViewProvider(this.chatService, this.notificationService);
+  }
 
   resolveWebviewView(
     webviewView: vscode.WebviewView,
-    context: vscode.WebviewViewResolveContext,
+    _context: vscode.WebviewViewResolveContext, // Renamed to avoid conflict with class member
     _token: vscode.CancellationToken,
   ) {
     this._view = webviewView;
-    // Pass the host webview to child providers
-    if (this._view) {
-        this._chatProvider.setHostWebview(this._view.webview);
-        this._communicationHubProvider.setHostWebview(this._view.webview);
-        this._dashboardProvider.setHostWebview(this._view.webview);
-        this._settingsProvider.setHostWebview(this._view.webview);
-    }
 
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this._extensionUri]
+      localResourceRoots: [this._extensionUri, vscode.Uri.joinPath(this._extensionUri, 'media')]
     };
+
+    // Set the webview for ChatViewProvider
+    if (this.chatViewProvider) {
+        this.chatViewProvider.setWebview(webviewView.webview);
+    }
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
     // Handle messages from the webview
-    webviewView.webview.onDidReceiveMessage(async message => {
-      try {
-        if (message.command === 'requestTabContent' && this._view) {
-          const tabId = message.tabId;
-          const nonce = getNonce(); // Important: generate nonce for dynamically loaded content
-          const htmlContent = this._getTabContent(tabId, this._view.webview, nonce);
-          this._view.webview.postMessage({
-            command: 'updateTabContent',
-            tabId: tabId,
-            html: htmlContent
-          });
-        } else if (message.command === 'tabChanged') { // ADDED THIS BLOCK
-          console.log(`TabbedContainerProvider: Tab changed to "${message.tabId}". Content loading should be initiated by client-side 'requestTabContent'.`);
-          // This message is informational from the client; actual content loading
-          // is triggered by 'requestTabContent' from tabbed-container.js.
-          // No further action needed here for tabChanged itself.
-        } else if (message.source === 'chatView') {
-            // Chat view messages are handled directly by the chat provider via its webview message handler
-            console.log('Chat message received via tabbed container');
-        } else if (message.source === 'communicationHubView' && this._communicationHubProvider.handleHubMessage) {
-            await this._communicationHubProvider.handleHubMessage(message);
-        } else if (message.source === 'dashboardView' && this._dashboardProvider.handleDashboardMessage) {
-            await this._dashboardProvider.handleDashboardMessage(message);
-        } else if (message.source === 'settingsView' && this._settingsProvider.handleSettingsMessage) {
-            await this._settingsProvider.handleSettingsMessage(message);
-        } else {
-          // Ensure message router can pass the webview for replies if needed
-          // The message router might need to be aware of the host webview to post replies
-          if (this._view && typeof (this._messageRouter as any).setHostWebview === 'function') {
-            (this._messageRouter as any).setHostWebview(this._view.webview);
-          }
-          await this._messageRouter.handleMessage(message);
-        }
-      } catch (error) {
-        console.error('Error handling tabbed container message:', error);
-      }
-    });
-
-    // Update webview when configuration changes
-    vscode.workspace.onDidChangeConfiguration(e => {
-      if (e.affectsConfiguration('theNewFuse')) {
-        // Instead of full HTML re-render, post a message to the client-side JS
-        // to request an update for the currently active tab, or for specific components.
-        // Or, if a full re-render of the current tab is simple enough:
-        this._updateCurrentTabContent();
-      }
-    });
+    webviewView.webview.onDidReceiveMessage(
+        async (message) => {
+            // Delegate all messages to the WebviewMessageRouter
+            if (this.webviewMessageRouter) {
+                await this.webviewMessageRouter.handleMessage(webviewView.webview, message);
+            }
+        },
+        undefined,
+        this.context.subscriptions
+    );
   }
 
   /**
-   * Update the webview content
-   */
-  private _updateWebview(): void {
-    // This method re-renders the entire tabbed container, which might be too disruptive.
-    // Consider updating only the active tab's content or posting a message.
-    if (this._view) {
-      this._view.webview.html = this._getHtmlForWebview(this._view.webview);
-    }
-  }
-
-  private _updateCurrentTabContent(): void {
-    if (this._view && this._view.visible) {
-        // This is a simplified way; ideally, the client-side JS would tell us the active tab.
-        // For now, we could re-post the 'updateTabContent' for the default 'chat' tab or a stored active tab.
-        // This needs a robust way to know the current active tab from the webview's perspective.
-    }
-  }
-
-  /**
-   * Handle tab change
-   */
-  // private async _handleTabChange(tab: string): Promise<void> {
-  //   console.log(`Switching to tab: ${tab}`);
-  //   // This logic is now effectively handled by 'requestTabContent' and posting 'updateTabContent'
-  // }
-
-  /**
-   * Get the content for a specific tab
-   */
-  private _getTabContent(tab: string, webview: vscode.Webview, nonce: string): string {
-    switch (tab) {
-      case 'chat':
-        // Assuming ChatViewProvider has getHtmlBodySnippet(webview, nonce)
-        return this._chatProvider.getHtmlBodySnippet(webview, nonce);
-      case 'communication':
-        return this._communicationHubProvider.getHtmlBodySnippet(webview, nonce);
-      case 'dashboard':
-        return this._dashboardProvider.getHtmlBodySnippet(webview, nonce);
-      case 'settings':
-        return this._settingsProvider.getHtmlBodySnippet(webview, nonce);
-      default:
-        return '<div class="tab-content-error">Unknown tab</div>';
-    }
-  }
-
-  /**
-   * Get communication hub tab content
-   */
-  private _getCommunicationTabContent(): string {
-    return `
-      <div class="communication-container">
-        <div class="communication-header">
-          <h3>Communication Hub</h3>
-          <div class="status-indicator">
-            <span id="connectionStatus">Disconnected</span>
-          </div>
-        </div>
-        <div class="agent-list">
-          <h4>Connected Agents</h4>
-          <div id="agentsList"></div>
-        </div>
-        <div class="protocol-status">
-          <h4>Protocol Status</h4>
-          <div id="protocolStatus"></div>
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Get dashboard tab content
-   */
-  private _getDashboardTabContent(): string {
-    return `
-      <div class="dashboard-container">
-        <div class="dashboard-header">
-          <h3>Monitoring Dashboard</h3>
-          <div class="dashboard-controls">
-            <button id="refreshStatsBtn" class="btn btn-secondary">Refresh</button>
-            <button id="clearDataBtn" class="btn btn-danger">Clear Data</button>
-          </div>
-        </div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <h4>LLM Requests</h4>
-            <div id="llmRequestCount" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <h4>Agent Messages</h4>
-            <div id="agentMessageCount" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <h4>Active Sessions</h4>
-            <div id="activeSessionCount" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <h4>Errors</h4>
-            <div id="errorCount" class="stat-value">0</div>
-          </div>
-        </div>
-        <div class="monitoring-logs">
-          <h4>Recent Activity</h4>
-          <div id="monitoringLogs"></div>
-        </div>
-      </div>
-    `;
-  }
-
-  /**
-   * Generate the HTML for the webview
+   * Generate the HTML for the webview.
    */
   private _getHtmlForWebview(webview: vscode.Webview): string {
-    // Get the local path to main script and CSS files
-    const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'tabbed-container.js'));
-    const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'tabbed-container.css'));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'codicons', 'codicon.css'));
-    
-    // Use a nonce to only allow specific scripts to be run
     const nonce = getNonce();
-
-    // Get initial content for the default 'chat' tab
-    const initialChatContent = this._getTabContent('chat', webview, nonce);
+    const mainScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'tabbed-container.js')); // Updated to tabbed-container.js as per typical naming, assuming main.js was a placeholder or old name
+    const chatPanelScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'chat-panel.js'));
+    const mainStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'codicons', 'codicon.css'));
 
     return `<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline' https://cdnjs.cloudflare.com; script-src 'nonce-${nonce}'; font-src ${webview.cspSource} https://cdnjs.cloudflare.com;">
-        <link href="${styleUri}" rel="stylesheet">
+        <meta http-equiv="Content-Security-Policy" content="
+            default-src 'none';
+            style-src ${webview.cspSource} 'unsafe-inline';
+            font-src ${webview.cspSource};
+            img-src ${webview.cspSource} https: data:;
+            script-src 'nonce-${nonce}';
+        ">
+        <link href="${mainStyleUri}" rel="stylesheet">
         <link href="${codiconsUri}" rel="stylesheet">
         <title>The New Fuse</title>
     </head>
     <body>
-        <div class="container">
-            <div class="tab-header">
-                <div class="tab-nav">
-                    <button class="tab-button active" data-tab="chat" title="AI Chat (Ctrl+Shift+1)">
-                        <span class="codicon codicon-comment-discussion"></span>
-                        AI Chat
-                    </button>
-                    <button class="tab-button" data-tab="communication" title="Communication Hub (Ctrl+Shift+2)">
-                        <span class="codicon codicon-radio-tower"></span>
-                        Communication Hub
-                    </button>
-                    <button class="tab-button" data-tab="dashboard" title="Dashboard (Ctrl+Shift+3)">
-                        <span class="codicon codicon-graph"></span>
-                        Dashboard
-                    </button>
-                    <button class="tab-button" data-tab="settings" title="Settings (Ctrl+Shift+4)">
-                        <span class="codicon codicon-settings-gear"></span>
-                        Settings
-                    </button>
-                </div>
+        <div class="tab-container">
+            <nav class="tab-nav">
+                <button class="tab-button active" data-tab-id="chat">
+                    <span class="codicon codicon-comment-discussion"></span> Chat
+                </button>
+                <button class="tab-button" data-tab-id="communication">
+                    <span class="codicon codicon-radio-tower"></span> Communication
+                </button>
+                <button class="tab-button" data-tab-id="dashboard">
+                    <span class="codicon codicon-dashboard"></span> Dashboard
+                </button>
+                <button class="tab-button" data-tab-id="settings">
+                    <span class="codicon codicon-settings-gear"></span> Settings
+                </button>
+            </nav>
+
+            <div id="chat-content" class="tab-content-area active">
+                ${this.chatViewProvider ? this.chatViewProvider.getHtmlForChatPanel(webview, nonce) : '<p>Chat panel loading...</p>'}
             </div>
-            <div class="tab-content-container">
-                <div id="tab-chat" class="tab-content active">
-                    ${initialChatContent}
-                </div>
-                <div id="tab-communication" class="tab-content">
-                    <!-- Communication Hub content will be loaded dynamically -->
-                </div>
-                <div id="tab-dashboard" class="tab-content">
-                    <!-- Dashboard content will be loaded dynamically -->
-                </div>
-                <div id="tab-settings" class="tab-content">
-                    <!-- Settings content will be loaded dynamically -->
-                </div>
+            <div id="communication-content" class="tab-content-area">
+                <!-- Communication content will be rendered by main.js -->
+                <p>Loading Communication Hub...</p>
+            </div>
+            <div id="dashboard-content" class="tab-content-area">
+                <!-- Dashboard content will be rendered by main.js -->
+                <p>Loading Dashboard...</p>
+            </div>
+            <div id="settings-content" class="tab-content-area">
+                <!-- Settings content will be rendered by main.js -->
+                <p>Loading Settings...</p>
             </div>
         </div>
         
-        <script nonce="${nonce}" src="${scriptUri}"></script>
+        <!-- Connection Status Indicator (Example) -->
+        <div id="connection-status-indicator" style="position: fixed; bottom: 5px; right: 10px; padding: 5px; background-color: #333; color: white; border-radius: 3px;">
+            Status: Disconnected
+        </div>
+
+        <!-- Notification Area (Example) -->
+        <div id="webview-notification-area" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
+            <!-- Notifications will be appended here by main.js -->
+        </div>
+
+        <script nonce="${nonce}" src="${mainScriptUri}"></script>
+        <script nonce="${nonce}" src="${chatPanelScriptUri}"></script>
     </body>
     </html>`;
   }
 
   /**
-   * Public method to switch to a specific tab
+   * Sends a message to the webview to switch to the specified tab.
+   * @param tabId The ID of the tab to switch to.
    */
-  public switchToTab(tab: string) {
+  public switchToTab(tabId: 'chat' | 'communication' | 'dashboard' | 'settings'): void {
     if (this._view) {
       this._view.webview.postMessage({
-        command: 'switchTab',
-        tab: tab
+        command: 'switchToTab',
+        payload: { tabId }
       });
     }
   }
 
   /**
+   * Sends a message to the webview to display a notification.
+   * @param type The type of notification ('success', 'error', 'warning').
+   * @param message The message to display.
+   */
+  public showNotification(type: 'success' | 'error' | 'warning', message: string): void {
+    if (this._view) {
+      this._view.webview.postMessage({
+        command: 'showNotification',
+        payload: { type, message }
+      });
+    }
+  }
+
+  /**
+   * Sends a message to the webview to update a connection status indicator.
+   * @param isConnected Whether the connection is active.
+   */
+  public updateConnectionStatus(isConnected: boolean): void {
+    if (this._view) {
+      this._view.webview.postMessage({
+        command: 'updateConnectionStatus',
+        payload: { isConnected }
+      });
+    }
+  }
+  
+  /**
    * Public method to focus the view
    */
   public focus() {
     if (this._view) {
-      this._view.show(true);
+      this._view.show(true); // The `true` argument preserves focus.
     }
   }
 
   public dispose() {
-    this._chatProvider.dispose?.();
-    this._communicationHubProvider.dispose?.();
-    this._dashboardProvider.dispose?.();
-    this._settingsProvider.dispose?.();
+    // Any disposables managed by this provider directly would be disposed here.
+    // For example, if we had created any event listeners on vscode objects
+    // not automatically handled by context.subscriptions.
+    // In this refactored version, most heavy lifting and resource management
+    // are delegated or handled by `context.subscriptions` for the message listener.
   }
 }
 

@@ -1,2 +1,2 @@
-declare const Login: () => import("react/jsx-runtime").JSX.Element;
+declare const Login: () => React.JSX.Element;
 export { Login };

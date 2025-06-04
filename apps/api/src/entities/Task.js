@@ -37,8 +37,8 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
     return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 };
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
-import { Pipeline } from './Pipeline.js';
-import { TaskExecution } from './TaskExecution.js';
+import { Pipeline } from './Pipeline';
+import { TaskExecution } from './TaskExecution';
 let Task = (() => {
     let _classDecorators = [Entity()];
     let _classDescriptor;

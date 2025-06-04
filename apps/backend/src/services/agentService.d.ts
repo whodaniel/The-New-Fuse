@@ -1,18 +1,14 @@
-import { Agent, AgentStatus, CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
-import { PrismaService } from '../lib/prisma.service.js';
-import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../../prisma/prisma.service.js';
 export declare class AgentService {
-    private readonly prisma;
-    private readonly configService;
-    private readonly logger;
-    constructor(prisma: PrismaService, configService: ConfigService);
-    private transformPrismaAgent;
-    createAgent(data: CreateAgentDto, userId: string): Promise<Agent>;
-    getAgents(userId: string): Promise<Agent[]>;
-    getAgentById(id: string, userId: string): Promise<Agent>;
-    updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<Agent>;
-    deleteAgent(id: string, userId: string): Promise<void>;
-    getAgentsByCapability(capability: string, userId: string): Promise<Agent[]>;
-    getActiveAgents(userId: string): Promise<Agent[]>;
-    updateAgentStatus(id: string, status: AgentStatus, userId: string): Promise<Agent>;
+    private prisma;
+    constructor(prisma: PrismaService);
+    createAgent(data: any, userId: string): Promise<any>;
+    getAgents(userId: string): Promise<any>;
+    getAgentById(id: string, userId: string): Promise<any>;
+    createAgentsInTransaction(agents: any[]): Promise<any>;
+    updateAgentStatus(id: string, status: string, userId: string): Promise<any>;
+    getActiveAgents(userId: string): Promise<any>;
+    getAgentsByCapability(capability: string, userId: string): Promise<any>;
+    updateAgent(id: string, data: any, userId: string): Promise<any>;
+    deleteAgent(id: string, userId: string): Promise<boolean>;
 }

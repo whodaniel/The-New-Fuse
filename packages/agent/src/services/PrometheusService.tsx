@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@packages/utils'; // Assuming Logger is available
+import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
 import client, { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
 
 /**

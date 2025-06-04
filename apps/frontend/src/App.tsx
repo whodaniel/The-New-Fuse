@@ -14,13 +14,11 @@ export function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <LayoutProvider>
-          <SessionProvider>
-            <ErrorBoundary>
-              <Router />
-              <Toaster />
-              {/* {process.env.NODE_ENV === 'development' && <DevTools />} */}
-            </ErrorBoundary>
-          </SessionProvider>
+          <ErrorBoundary>
+            <Router />
+            <Toaster />
+            {/* {process.env.NODE_ENV === 'development' && <DevTools />} */}
+          </ErrorBoundary>
         </LayoutProvider>
       </ThemeProvider>
     </QueryClientProvider>

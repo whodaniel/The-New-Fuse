@@ -1,5 +1,5 @@
 import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
-import { Logger } from '@packages/utils';
+import { Logger } from '@the-new-fuse/utils';
 import {
   Message,
   MessageType,
@@ -9,7 +9,7 @@ import {
   UUID,
   // LLMConfig, // Removed unused import
   // ToolDefinition, // Removed unused import
-} from '@packages/types';
+} from '@the-new-fuse/types';
 import { AlertService } from '../services/AlertService.js'; // Corrected import
 import { RedisService } from '../services/RedisService.js'; // Corrected import
 // Import other necessary services like LLMService, ToolService, etc.

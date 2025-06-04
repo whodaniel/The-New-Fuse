@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The New Fuse – Unified AI Platform</title>
+    <meta name="description" content="The New Fuse: Orchestrate, automate, and scale AI-driven workflows with world-class agent collaboration, secure integration, and seamless extensibility." />
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+      html, body {
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', Arial, sans-serif;
+        background: linear-gradient(135deg, #0f2027 0%, #2c5364 100%);
+        color: #fff;
+        min-height: 100vh;
+        height: 100%;
+      }
+      .hero {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 90vh;
+        text-align: center;
+        padding: 0 2rem;
+      }
+      .logo {
+        width: 80px;
+        height: 80px;
+        margin-bottom: 2rem;
+      }
+      h1 {
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 0 0 1rem 0;
+        letter-spacing: -2px;
+        background: linear-gradient(90deg, #00c6ff, #0072ff, #00f2fe);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .subtitle {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        color: #e0e0e0;
+      }
+      .features {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 2rem;
+        margin: 3rem 0;
+      }
+      .feature-card {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 18px;
+        padding: 2rem 1.5rem;
+        width: 320px;
+        box-shadow: 0 4px 24px 0 rgba(0,0,0,0.12);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .feature-card:hover {
+        transform: translateY(-6px) scale(1.03);
+        box-shadow: 0 8px 32px 0 rgba(0,0,0,0.18);
+        border-color: #00c6ff;
+      }
+      .feature-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        color: #00c6ff;
+      }
+      .feature-desc {
+        font-size: 1rem;
+        color: #cfd8dc;
+      }
+      .cta {
+        margin-top: 2rem;
+      }
+      .cta-btn {
+        background: linear-gradient(90deg, #00c6ff, #0072ff);
+        color: #fff;
+        font-size: 1.2rem;
+        font-weight: 700;
+        padding: 1rem 2.5rem;
+        border: none;
+        border-radius: 32px;
+        cursor: pointer;
+        box-shadow: 0 2px 12px 0 rgba(0,198,255,0.18);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .cta-btn:hover {
+        background: linear-gradient(90deg, #0072ff, #00c6ff);
+        box-shadow: 0 4px 24px 0 rgba(0,198,255,0.28);
+      }
+      @media (max-width: 900px) {
+        .features {
+          flex-direction: column;
+          align-items: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="hero">
+      <img src="/logo.svg" alt="The New Fuse Logo" class="logo" />
+      <h1>The New Fuse</h1>
+      <div class="subtitle">Unify, Orchestrate, and Scale AI Agents & Workflows</div>
+      <div class="features">
+        <div class="feature-card">
+          <div class="feature-title">Agent Collaboration</div>
+          <div class="feature-desc">Seamlessly connect and coordinate multiple AI agents for complex, multi-step workflows.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">Secure Integrations</div>
+          <div class="feature-desc">Integrate with APIs, databases, and cloud services using robust security and permission controls.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">Extensible Platform</div>
+          <div class="feature-desc">Plug in new agents, tools, and modules with a modular architecture designed for rapid innovation.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">Real-Time Monitoring</div>
+          <div class="feature-desc">Visualize agent activity, workflow status, and system health with advanced dashboards and alerts.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">Prompt Engineering</div>
+          <div class="feature-desc">Design, test, and optimize prompts for every agent and scenario with a powerful templating system.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">Enterprise-Ready</div>
+          <div class="feature-desc">Built for scale, reliability, and compliance—trusted by leading organizations for mission-critical AI.</div>
+        </div>
+      </div>
+      <div class="cta">
+        <button class="cta-btn" onclick="window.location.href='/dashboard'">Get Started</button>
+      </div>
+    </main>
+  </body>
+</html>

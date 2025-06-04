@@ -82,7 +82,7 @@ export class PerformanceMonitor {
                 errorCount: this.collector['errorCount']
             };
 
-        } catch (e): void {
+        } catch (e: unknown) {
             logger.error(`Error gathering metrics: ${e instanceof Error ? e.message : String(e): Promise<number> {
         try {
             const startTime: PING',

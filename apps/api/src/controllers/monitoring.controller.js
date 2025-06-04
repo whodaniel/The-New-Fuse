@@ -44,26 +44,26 @@ let MonitoringController = (() => {
     let _classExtraInitializers = [];
     let _classThis;
     let _instanceExtraInitializers = [];
-    let _getMemory_decorators;
-    let _getCustomMetrics_decorators;
+    let _getMetrics_decorators;
+    let _getHealth_decorators;
     var MonitoringController = _classThis = class {
         constructor(monitoringService) {
             this.monitoringService = (__runInitializers(this, _instanceExtraInitializers), monitoringService);
         }
-        async getMemory() {
-            return this.monitoringService.getMemoryItems();
+        async getMetrics() {
+            return this.monitoringService.getMetrics();
         }
-        async getCustomMetrics() {
-            return this.monitoringService.getCustomMetrics();
+        async getHealth() {
+            return this.monitoringService.getHealth();
         }
     };
     __setFunctionName(_classThis, "MonitoringController");
     (() => {
         const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _getMemory_decorators = [Get('memory'), ApiOperation({ summary: 'Get memory items and stats' })];
-        _getCustomMetrics_decorators = [Get('metrics'), ApiOperation({ summary: 'Get custom metrics: step and memory' })];
-        __esDecorate(_classThis, null, _getMemory_decorators, { kind: "method", name: "getMemory", static: false, private: false, access: { has: obj => "getMemory" in obj, get: obj => obj.getMemory }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getCustomMetrics_decorators, { kind: "method", name: "getCustomMetrics", static: false, private: false, access: { has: obj => "getCustomMetrics" in obj, get: obj => obj.getCustomMetrics }, metadata: _metadata }, null, _instanceExtraInitializers);
+        _getMetrics_decorators = [Get('metrics'), ApiOperation({ summary: 'Get system metrics' })];
+        _getHealth_decorators = [Get('health'), ApiOperation({ summary: 'Get system health' })];
+        __esDecorate(_classThis, null, _getMetrics_decorators, { kind: "method", name: "getMetrics", static: false, private: false, access: { has: obj => "getMetrics" in obj, get: obj => obj.getMetrics }, metadata: _metadata }, null, _instanceExtraInitializers);
+        __esDecorate(_classThis, null, _getHealth_decorators, { kind: "method", name: "getHealth", static: false, private: false, access: { has: obj => "getHealth" in obj, get: obj => obj.getHealth }, metadata: _metadata }, null, _instanceExtraInitializers);
         __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
         MonitoringController = _classThis = _classDescriptor.value;
         if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });

@@ -37,7 +37,7 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
     return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
 };
 import { Injectable, Logger } from '@nestjs/common';
-import { createClient } from 'ioredis';
+import Redis from 'ioredis';
 let CacheService = (() => {
     let _classDecorators = [Injectable()];
     let _classDescriptor;
@@ -46,9 +46,8 @@ let CacheService = (() => {
     var CacheService = _classThis = class {
         constructor() {
             this.logger = new Logger(CacheService.name);
-            this.client = createClient();
+            this.client = new Redis();
             this.client.on('error', (err) => this.logger.error('Redis error', err));
-            this.client.connect().catch((err) => this.logger.error('Redis connection error', err));
         }
         async get(key) {
             return this.client.get(key);

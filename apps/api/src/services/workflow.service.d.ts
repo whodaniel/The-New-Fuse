@@ -1,16 +1,18 @@
 import { Repository } from 'typeorm';
 import { Workflow } from '../entities/workflow.entity.js';
 import { WorkflowEngine, WorkflowExecutor } from '@the-new-fuse/core';
+import { CreateWorkflowDto, WorkflowExecutionStatus, WorkflowInput } from '@the-new-fuse/types';
 export declare class WorkflowService {
     private readonly workflowRepository;
     private readonly workflowEngine;
     private readonly workflowExecutor;
     constructor(workflowRepository: Repository<Workflow>, workflowEngine: WorkflowEngine, workflowExecutor: WorkflowExecutor);
-    createWorkflow(data: any): Promise<Workflow>;
+    createWorkflow(data: CreateWorkflowDto): Promise<Workflow>;
     getWorkflow(id: string): Promise<Workflow>;
     getWorkflows(): Promise<Workflow[]>;
-    executeWorkflow(workflowId: string, input: any): Promise<string>;
-    getExecutionStatus(executionId: string): Promise<any>;
-    updateWorkflow(id: string, data: any): Promise<Workflow>;
+    executeWorkflow(workflowId: string, input: WorkflowInput): Promise<string>;
+    getExecutionStatus(executionId: string): Promise<WorkflowExecutionStatus>;
+    updateWorkflow(id: string, data: Partial<CreateWorkflowDto>): Promise<Workflow>;
     deleteWorkflow(id: string): Promise<void>;
+    handleWorkflowResult(_result: WorkflowExecutionStatus): void;
 }

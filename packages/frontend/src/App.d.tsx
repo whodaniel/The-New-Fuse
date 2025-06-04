@@ -1,1 +1,1 @@
-export declare function App(): import("react/jsx-runtime").JSX.Element;
+export declare function App(): React.JSX.Element;

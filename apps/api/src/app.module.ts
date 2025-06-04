@@ -3,21 +3,21 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ThrottlerModule } from '@nestjs/throttler';
-import llmProviderConfig from './config/llm-provider.config';
+import llmProviderConfig from './config/llm-provider.config.js';
 import { DataSourceOptions } from 'typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './modules/auth/auth.module';
-import { ChatModule } from './modules/chat/chat.module';
-import { TaskModule } from './modules/task/task.module';
-import { CacheService } from './cache/cache.service';
-import { WebsocketGateway } from './websocket/websocket.gateway';
-import { MonitoringService } from './services/monitoring.service';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { ChatModule } from './modules/chat/chat.module.js';
+import { TaskModule } from './modules/task/task.module.js';
+import { CacheService } from './cache/cache.service.js';
+import { WebsocketGateway } from './websocket/websocket.gateway.js';
+import { MonitoringService } from './services/monitoring.service.js';
 import { DataSource } from 'typeorm';
-import { MonitoringController } from './controllers/monitoring.controller';
-import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
-import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
-import { TNFMCPModule } from './mcp/TNFMCPModule';
+import { MonitoringController } from './controllers/monitoring.controller.js';
+import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module.js';
+import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule.js';
+import { TNFMCPModule } from './mcp/TNFMCPModule.js';
 
 @Module({
   imports: [
@@ -43,10 +43,10 @@ import { TNFMCPModule } from './mcp/TNFMCPModule';
       }),
       inject: [ConfigService],
     }),
-    ThrottlerModule.forRoot({
-      ttl: 60,
+    ThrottlerModule.forRoot([{
+      ttl: 60000, // 60 seconds in milliseconds
       limit: 10,
-    }),
+    }]),
     AuthModule,
     ChatModule,
     TaskModule,

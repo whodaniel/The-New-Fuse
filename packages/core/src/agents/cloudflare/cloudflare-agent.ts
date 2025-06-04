@@ -1,4 +1,4 @@
-import { Agent, AgentNamespace } from 'agents';
+import { Agent } from 'agents';
 import { ExtendedAgentConfig } from '../../types/agent.js';
 import { RedisService } from '../../services/redis.service.js';
 
@@ -16,7 +16,7 @@ export class NewFuseAgent extends Agent {
     // Set initial agent state
     await this.setState({
       id: this.config.id,
-      status: active',
+      status: 'active',
       capabilities: this.config.capabilities,
       metrics: {
         requestsHandled: 0,
@@ -75,7 +75,7 @@ export class NewFuseAgent extends Agent {
     });
   }
 
-  private async executeTask(task: any) {
+  private async executeTask(_task: any) {
     // Implement task execution logic
     return {};
   }

@@ -1,66 +1,60 @@
 {
+    "version": "0.2.0",
     "configurations": [
         {
-            "name": "Attach to Chrome (Port 9222)",
-            "port": 9222,
-            "request": "attach",
+            "name": "🔧 Attach to Chrome (Port 9222)",
             "type": "chrome",
-            "webRoot": "${workspaceFolder}"
+            "request": "attach",
+            "port": 9222,
+            "webRoot": "${workspaceFolder}",
+            "sourceMaps": true,
+            "trace": true,
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },       
         
 
         {
             "name": "Attach to Kubernetes Pod (NodeJS)",
-            "type": "cloudcode.kubernetes",
+            "type": "node",
             "request": "attach",
-            "language": "Node",
-            "debugPort": 9229,
-            "podSelector": {
-                "app": "deployment-name"
-            },
+            "port": 9229,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "Path to the Remote Directory Containing the Program"
         },
         {
-            "name": "Launch Chrome",
-            "request": "launch",
+            "name": "🚀 Launch Chrome with App",
             "type": "chrome",
+            "request": "launch",
             "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}/apps/frontend"
+            "webRoot": "${workspaceFolder}",
+            "runtimeArgs": [
+                "--remote-debugging-port=9222",
+                "--disable-web-security",
+                "--user-data-dir=${workspaceFolder}/.vscode/chrome-debug"
+            ],
+            "sourceMaps": true,
+            "smartStep": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         },
         {
             "name": "Attach to Edge",
             "port": 9222,
             "request": "attach",
             "type": "msedge",
-            "webRoot": "${workspaceFolder}"
-        },
-        {
-            "name": "Cloud Run: Run/Debug Locally",
-            "type": "cloudcode.cloudrun",
-            "request": "launch",
-            "build": {
-                "docker": {
-                    "path": "apps/api",
-                    "dockerfile": "apps/api/Dockerfile",
-                    "context": "${workspaceFolder}"
-                }
-            },
-            "image": "the-new-fuse",
-            "service": {
-                "name": "the-new-fuse",
-                "containerPort": 8080,
-                "resources": {
-                    "limits": {
-                        "memory": "256Mi"
-                    }
-                }
-            },
-            "target": {
-                "minikube": {}
-            },
-            "watch": true,
-            "externalPortForward": 3000
+            "outFiles": [
+                "${workspaceFolder}/dist/apps/api/**/*.js"
+            ],
+            "sourceMaps": true,
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "internalConsoleOptions": "neverOpen",
+            "preLaunchTask": "npm: build -w api" // Example: build the api before launching
         },
         {
             "name": "Docker Node.js Launch",

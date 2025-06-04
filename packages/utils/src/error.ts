@@ -1,4 +1,9 @@
 /**
- * DEPRECATED: Use AIError from @the-new-fuse/core/src/error/exceptions instead.
+ * Temporary stub for AIError until core package is built
  */
-export { AIError } from '@the-new-fuse/core/src/error/exceptions';
+export class AIError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'AIError';
+    }
+}

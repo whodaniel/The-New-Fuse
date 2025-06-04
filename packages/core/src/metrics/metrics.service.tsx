@@ -141,18 +141,28 @@ export class MetricsService {
   async queryMetrics(query: MetricsQuery): Promise<MetricsResult[]> {
     try {
       // Get metrics from collector for the specified time range
-      const metrics: (metric as any).timestamp.getTime(): (query as any).metrics.reduce((acc, name)  = await this.collector.queryTimeRange(query.startTime, query.endTime);
+      const metrics = await this.collector.queryTimeRange(query.startTime, query.endTime);
 
       // Filter and format results
-      return metrics.map(metric => ( {
-        timestamp> {
-          acc[name] = metric.values[name] || 0;
+      return metrics.map(metric => ({
+        timestamp: (metric as any).timestamp.getTime(),
+        values: query.metrics.reduce((acc, name) => {
+          acc[name] = (metric as any).values[name] || 0;
           return acc;
         }, {} as Record<string, number>)
       }));
-    } catch (error: unknown){
-      this.logger.error('Error querying metrics:', error): MetricsQuery): Promise<SystemPerformanceMetrics[]> {
-    const metrics: {
+    } catch (error: unknown) {
+      this.logger.error('Error querying metrics:', error);
+      return [];
+    }
+  }
+
+  /**
+   * Get system performance metrics
+   */
+  async getSystemPerformanceMetrics(query: MetricsQuery): Promise<SystemPerformanceMetrics[]> {
+    const metrics = await this.prisma.metrics.findMany({
+      where: {
         timestamp: {
           gte: query.startTime,
           lte: query.endTime
@@ -160,8 +170,8 @@ export class MetricsService {
       }
     });
 
-    return metrics.map(m  = await this.prisma.metrics.findMany({
-      where> ({
+    return metrics.map(m => ({
+      timestamp: m.timestamp,
       latency: m.latency,
       throughput: m.throughput,
       cpuUsage: m.cpuUsage,
@@ -169,36 +179,47 @@ export class MetricsService {
       errorRate: m.errorRate,
       requestCount: m.requestCount,
       concurrentUsers: m.concurrentUsers
-    }): Promise<number> {
-    const metrics: { timestamp: desc' }
+    }));
+  }
+
+  async getCpuUsage(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
     });
     return metrics?.cpuUsage ?? 0;
   }
 
-  async getMemoryUsage(): Promise<void> {): Promise<number> {
-    const metrics: { timestamp: desc' }
-    }): Promise<number> {
-    const metrics: { timestamp: desc' }
+  async getMemoryUsage(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
+    });
+    return metrics?.memoryUsage ?? 0;
+  }
+
+  async getLatency(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
     });
     return metrics?.latency ?? 0;
   }
 
-  async getThroughput(): Promise<void> {): Promise<number> {
-    const metrics   = await this.prisma.metrics.findFirst({
-      orderBy await this.prisma.metrics.findFirst({
-      orderBy await this.prisma.metrics.findFirst({
-      orderBy await this.prisma.metrics.findFirst({
-      orderBy: { timestamp: desc' }
-    }): Promise<number> {
-    const metrics: { timestamp: desc' }
+  async getThroughput(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
+    });
+    return metrics?.throughput ?? 0;
+  }
+
+  async getRequestCount(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
     });
     return metrics?.requestCount ?? 0;
   }
 
-  async getConcurrentUsers(): Promise<void> {): Promise<number> {
-    const metrics  = await this.prisma.metrics.findFirst({
-      orderBy await this.prisma.metrics.findFirst({
-      orderBy: { timestamp: desc' }
+  async getConcurrentUsers(): Promise<number> {
+    const metrics = await this.prisma.metrics.findFirst({
+      orderBy: { timestamp: 'desc' }
     });
     return metrics?.concurrentUsers ?? 0;
   }

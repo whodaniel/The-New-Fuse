@@ -47,7 +47,7 @@ export class Task {
   @Column('simple-array', { nullable: true })
   tags: string[];
 
-  @Column({ type: timestamp', nullable: true }): Date;
+  @Column({ type: timestamp', nullable: true })!
 
   @Column( { type: timestamp', nullable: true })
   completedAt: Date;

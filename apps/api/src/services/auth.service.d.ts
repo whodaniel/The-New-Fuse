@@ -13,6 +13,6 @@ export declare class AuthService {
     register(registerDto: RegisterDto): Promise<TokenDto>;
     refresh(refreshToken: string): Promise<TokenDto>;
     logout(): Promise<void>;
-    getCurrentUser(): Promise<User>;
+    getCurrentUser(): Promise<User | null>;
     private generateTokens;
 }

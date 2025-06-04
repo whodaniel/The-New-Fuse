@@ -46,7 +46,7 @@ export const executions = {
   updateAgentCapabilities: async ({ capabilities }: { capabilities: string[] }) => {
     // Requires confirmation due to system-level changes
     await redis.publish('AI_COORDINATION_CHANNEL', {
-      type: capability_update',
+      type: 'capability_update',
       capabilities
     });
     return { success: true, updatedCapabilities: capabilities };

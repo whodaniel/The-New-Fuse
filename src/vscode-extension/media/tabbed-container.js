@@ -1,428 +1,104 @@
-(function() {
-    const vscode = acquireVsCodeApi();
-    
-    // Tab management
-    let activeTab = 'chat';
-    
-    // Elements
+// media/tabbed-container.js
+
+// 1. VS Code API
+const vscode = acquireVsCodeApi();
+
+// 3. Message Posting Utility
+function postMessageToExtension(command, payload, expectsResponse = false) {
+    const message = { command, payload };
+    if (expectsResponse) {
+        message.requestId = `req-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    }
+    vscode.postMessage(message);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // 2. Tab Navigation Logic
     const tabButtons = document.querySelectorAll('.tab-button');
-    const tabContents = document.querySelectorAll('.tab-content');
-    
-    // Chat elements
-    const chatInput = document.getElementById('chatInput');
-    const sendMessageBtn = document.getElementById('sendMessageBtn');
-    const chatMessages = document.getElementById('chatMessages');
-    const startCollabBtn = document.getElementById('startCollabBtn');
-    const clearChatBtn = document.getElementById('clearChatBtn');
-    
-    // Settings elements
-    const saveSettingsBtn = document.getElementById('saveSettingsBtn');
-    
-    // Dashboard elements
-    const refreshStatsBtn = document.getElementById('refreshStatsBtn');
-    const clearDataBtn = document.getElementById('clearDataBtn');
-    
-    // Initialize
-    initializeTabHandlers();
-    initializeChatHandlers();
-    initializeSettingsHandlers();
-    initializeDashboardHandlers();
-    requestStatus();
-    
-    /**
-     * Initialize tab switching functionality
-     */
-    function initializeTabHandlers() {
+    const tabContentAreas = document.querySelectorAll('.tab-content-area');
+
+    function setActiveTab(tabId) {
         tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const tab = button.getAttribute('data-tab');
-                switchTab(tab);
-            });
-        });
-    }
-    
-    /**
-     * Switch to a specific tab
-     */
-    function switchTab(tab) {
-        if (tab === activeTab) return;
-        
-        // Update active tab
-        activeTab = tab;
-        
-        // Update button states
-        tabButtons.forEach(button => {
-            const buttonTab = button.getAttribute('data-tab');
-            button.classList.toggle('active', buttonTab === tab);
-        });
-        
-        // Update content visibility
-        tabContents.forEach(content => {
-            const contentTab = content.id.replace('tab-', '');
-            content.classList.toggle('active', contentTab === tab);
-        });
-        
-        // Notify extension of tab change
-        vscode.postMessage({
-            command: 'tabChanged',
-            tab: tab
-        });
-        
-        // Load tab-specific data
-        loadTabData(tab);
-    }
-    
-    /**
-     * Load data for specific tab
-     */
-    function loadTabData(tab) {
-        switch (tab) {
-            case 'chat':
-                // Load chat history if needed
-                break;
-            case 'communication':
-                requestConnectionStatus();
-                break;
-            case 'dashboard':
-                requestDashboardStats();
-                break;
-            case 'settings':
-                // Settings are loaded on page load
-                break;
-        }
-    }
-    
-    /**
-     * Initialize chat functionality
-     */
-    function initializeChatHandlers() {
-        if (sendMessageBtn) {
-            sendMessageBtn.addEventListener('click', sendMessage);
-        }
-        
-        if (chatInput) {
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    sendMessage();
-                }
-            });
-        }
-        
-        if (startCollabBtn) {
-            startCollabBtn.addEventListener('click', () => {
-                vscode.postMessage({
-                    command: 'startCollaboration'
-                });
-            });
-        }
-        
-        if (clearChatBtn) {
-            clearChatBtn.addEventListener('click', () => {
-                clearChat();
-            });
-        }
-    }
-    
-    /**
-     * Send a chat message
-     */
-    function sendMessage() {
-        if (!chatInput) return;
-        
-        const message = chatInput.value.trim();
-        if (!message) return;
-        
-        // Add message to chat display
-        addMessageToChat('user', message);
-        
-        // Clear input
-        chatInput.value = '';
-        
-        // Send to extension
-        vscode.postMessage({
-            command: 'sendMessage',
-            text: message,
-            timestamp: new Date().toISOString()
-        });
-    }
-    
-    /**
-     * Add a message to the chat display
-     */
-    function addMessageToChat(sender, message, timestamp) {
-        if (!chatMessages) return;
-        
-        const messageElement = document.createElement('div');
-        messageElement.className = `message message-${sender}`;
-        
-        const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-        
-        messageElement.innerHTML = `
-            <div class="message-header">
-                <span class="message-sender">${sender === 'user' ? 'You' : 'AI'}</span>
-                <span class="message-time">${timeStr}</span>
-            </div>
-            <div class="message-content">${escapeHtml(message)}</div>
-        `;
-        
-        chatMessages.appendChild(messageElement);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-    
-    /**
-     * Clear chat messages
-     */
-    function clearChat() {
-        if (chatMessages) {
-            chatMessages.innerHTML = '';
-        }
-    }
-    
-    /**
-     * Initialize settings functionality
-     */
-    function initializeSettingsHandlers() {
-        if (saveSettingsBtn) {
-            saveSettingsBtn.addEventListener('click', saveSettings);
-        }
-        
-        // Add test connection button handler
-        const testConnectionBtn = document.getElementById('testConnectionBtn');
-        if (testConnectionBtn) {
-            testConnectionBtn.addEventListener('click', testConnection);
-        }
-        
-        // Add change handlers for provider selection
-        const llmProviderSelect = document.getElementById('llmProvider');
-        if (llmProviderSelect) {
-            llmProviderSelect.addEventListener('change', onProviderChange);
-        }
-    }
-    
-    /**
-     * Handle provider selection change
-     */
-    function onProviderChange() {
-        const llmProviderSelect = document.getElementById('llmProvider');
-        if (!llmProviderSelect) return;
-        
-        const selectedProvider = llmProviderSelect.value;
-        
-        // Hide all provider configs
-        const providerConfigs = document.querySelectorAll('.provider-config');
-        providerConfigs.forEach(config => {
-            config.style.display = 'none';
-        });
-        
-        // Show the selected provider config
-        const activeConfig = document.getElementById(`${selectedProvider}-config`);
-        if (activeConfig) {
-            activeConfig.style.display = 'block';
-        }
-    }
-    
-    /**
-     * Test connection with current provider
-     */
-    function testConnection() {
-        const llmProviderSelect = document.getElementById('llmProvider');
-        if (!llmProviderSelect) return;
-        
-        vscode.postMessage({
-            command: 'testConnection',
-            provider: llmProviderSelect.value
-        });
-    }
-    
-    /**
-     * Save settings
-     */
-    function saveSettings() {
-        const settings = {};
-        
-        // Collect all form values
-        const formElements = document.querySelectorAll('#tab-settings input, #tab-settings select');
-        formElements.forEach(element => {
-            const key = element.id;
-            let value;
-            
-            if (element.type === 'checkbox') {
-                value = element.checked;
-            } else if (element.type === 'password' && element.value === '') {
-                // Don't save empty passwords (keep existing values)
-                return;
+            if (button.dataset.tabId === tabId) {
+                button.classList.add('active');
             } else {
-                value = element.value;
-            }
-            
-            // Map form fields to configuration keys
-            const configKey = mapFormFieldToConfig(key);
-            if (configKey) {
-                settings[configKey] = value;
+                button.classList.remove('active');
             }
         });
-        
-        vscode.postMessage({
-            command: 'saveSettings',
-            data: settings
-        });
-    }
-    
-    /**
-     * Map form field IDs to configuration keys
-     */
-    function mapFormFieldToConfig(fieldId) {
-        const mapping = {
-            'llmProvider': 'llmProvider',  // Fix: use correct config key
-            'enableChat': 'chat.enabled',
-            'mcpUrl': 'mcp.url',
-            'autoConnect': 'mcp.autoConnect',
-            'openaiApiKey': 'openai.apiKey',
-            'anthropicApiKey': 'anthropic.apiKey',
-            'cerebrasApiKey': 'cerebras.apiKey',
-            'cerebrasModel': 'cerebras.model',
-            'ollamaUrl': 'ollama.url',
-            'ollamaModel': 'ollama.model'
-        };
-        return mapping[fieldId];
-    }
-    
-    /**
-     * Initialize dashboard functionality
-     */
-    function initializeDashboardHandlers() {
-        if (refreshStatsBtn) {
-            refreshStatsBtn.addEventListener('click', () => {
-                requestDashboardStats();
-            });
-        }
-        
-        if (clearDataBtn) {
-            clearDataBtn.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear all monitoring data?')) {
-                    vscode.postMessage({
-                        command: 'clearMonitoringData'
-                    });
-                }
-            });
-        }
-    }
-    
-    /**
-     * Request dashboard statistics
-     */
-    function requestDashboardStats() {
-        vscode.postMessage({
-            command: 'getDashboardStats'
-        });
-    }
-    
-    /**
-     * Request connection status
-     */
-    function requestConnectionStatus() {
-        vscode.postMessage({
-            command: 'getConnectionStatus'
-        });
-    }
-    
-    /**
-     * Request general status
-     */
-    function requestStatus() {
-        vscode.postMessage({
-            command: 'status'
-        });
-    }
-    
-    /**
-     * Update dashboard stats display
-     */
-    function updateDashboardStats(stats) {
-        const elements = {
-            'llmRequestCount': stats.llmRequests || 0,
-            'agentMessageCount': stats.agentMessages || 0,
-            'activeSessionCount': stats.activeSessions || 0,
-            'errorCount': stats.errors || 0
-        };
-        
-        Object.entries(elements).forEach(([id, value]) => {
-            const element = document.getElementById(id);
-            if (element) {
-                element.textContent = value;
+
+        tabContentAreas.forEach(area => {
+            if (area.dataset.tabId === tabId) {
+                area.classList.add('active');
+            } else {
+                area.classList.remove('active');
             }
         });
     }
-    
-    /**
-     * Update connection status display
-     */
-    function updateConnectionStatus(status) {
-        const statusElement = document.getElementById('connectionStatus');
-        if (statusElement) {
-            statusElement.textContent = status.connected ? 'Connected' : 'Disconnected';
-            statusElement.className = status.connected ? 'status-connected' : 'status-disconnected';
-        }
-    }
-    
-    /**
-     * Handle messages from the extension
-     */
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const tabId = button.dataset.tabId;
+            setActiveTab(tabId);
+            postMessageToExtension('container:tabChanged', { tabId });
+        });
+    });
+
+    // 4. Message Receiving Logic
+    const notificationsArea = document.getElementById('webview-notifications');
+    const connectionStatusIndicator = document.getElementById('connection-status-indicator');
+
     window.addEventListener('message', event => {
-        const message = event.data;
-        
+        const message = event.data; // The JSON data our extension sent
+
         switch (message.command) {
-            case 'switchTab':
-                switchTab(message.tab);
-                break;
-                
-            case 'message':
-                addMessageToChat('ai', message.text, message.timestamp);
-                break;
-                
-            case 'llm-response':
-                addMessageToChat('ai', message.text, new Date().toISOString());
-                break;
-                
-            case 'llm-error':
-                addMessageToChat('system', `Error: ${message.data.error}`, new Date().toISOString());
-                break;
-                
-            case 'status':
-                if (message.data.connected !== undefined) {
-                    updateConnectionStatus(message.data);
+            case 'container:switchToTab':
+                if (message.payload && message.payload.tabId) {
+                    setActiveTab(message.payload.tabId);
                 }
                 break;
-                
-            case 'dashboardStats':
-                updateDashboardStats(message.data);
+            case 'container:showNotification':
+                if (message.payload && notificationsArea) {
+                    const notificationDiv = document.createElement('div');
+                    notificationDiv.className = `notification ${message.payload.type || 'info'}`; // 'success', 'error', 'info'
+                    notificationDiv.textContent = message.payload.text;
+                    notificationsArea.appendChild(notificationDiv);
+
+                    // Auto-remove notification after a few seconds
+                    setTimeout(() => {
+                        notificationDiv.remove();
+                    }, 5000); // Remove after 5 seconds
+                }
                 break;
-                
-            case 'settings-updated':
-                // Could refresh settings display here
+            case 'container:updateConnectionStatus':
+                if (message.payload && connectionStatusIndicator) {
+                    connectionStatusIndicator.textContent = message.payload.isConnected ? 'Connected' : 'Disconnected';
+                    connectionStatusIndicator.className = message.payload.isConnected ? 'status-connected' : 'status-disconnected';
+                }
+                break;
+            case 'response': // Basic response handling
+                if (message.requestId) {
+                    // For now, just log. Future: resolve promises.
+                    console.log('Received response for requestId:', message.requestId, 'Payload:', message.payload);
+                }
+                break;
+            default:
+                // Potentially log unknown commands for debugging
+                // console.warn('Unknown message command received:', message.command);
                 break;
         }
     });
-    
-    /**
-     * Escape HTML to prevent XSS
-     */
-    function escapeHtml(text) {
-        const map = {
-            '&': '&amp;',
-            '<': '&lt;',
-            '>': '&gt;',
-            '"': '&quot;',
-            "'": '&#039;'
-        };
-        return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+
+    // 5. Initial State
+    const defaultTabId = 'chat'; // Default tab to activate
+    const defaultTabButton = document.querySelector(`.tab-button[data-tab-id="${defaultTabId}"]`);
+
+    if (defaultTabButton) {
+        setActiveTab(defaultTabId);
+    } else if (tabButtons.length > 0) {
+        // Fallback to the first tab button if the default is not found
+        setActiveTab(tabButtons[0].dataset.tabId);
     }
-    
-    /**
-     * Handle external tab switching
-     */
-    vscode.postMessage({
-        command: 'ready'
-    });
-})();
+
+    // Post a message to the extension indicating the webview is ready
+    postMessageToExtension('container:webviewReady');
+});

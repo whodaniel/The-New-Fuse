@@ -1,5 +1,22 @@
 /**
- * DEPRECATED: Use LoggingService from @the-new-fuse/core instead.
- * This file now re-exports the core LoggingService for compatibility.
+ * Temporary stub for LoggingService until core package is built
  */
-export { LoggingService as Logger } from '@the-new-fuse/core/src/services/LoggingService';
+export class LoggingService {
+    log(message: string) {
+        console.log(message);
+    }
+    
+    error(message: string) {
+        console.error(message);
+    }
+    
+    warn(message: string) {
+        console.warn(message);
+    }
+    
+    info(message: string) {
+        console.info(message);
+    }
+}
+
+export { LoggingService as Logger };

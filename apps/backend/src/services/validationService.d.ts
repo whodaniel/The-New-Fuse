@@ -1,22 +1,20 @@
-import { ValidatorOptions, ValidationError } from 'class-validator';
-import { LoggingService } from './loggingService.js';
-export interface ValidationResult {
-    isValid: boolean;
-    errors: ValidationError[];
+interface ValidationConfig {
+    enableDebugLogs: boolean;
+    skipMissingProperties: boolean;
+    whitelist: boolean;
+    forbidNonWhitelisted: boolean;
 }
-export interface ValidationConfig extends ValidatorOptions {
-    enableDebugLogs?: boolean;
+interface ValidationResult {
+    success: boolean;
+    errors?: Record<string, string[]>;
 }
 export declare class ValidationService {
     private readonly logger;
     private readonly defaultConfig;
-    constructor(logger: LoggingService);
-    validateRequest<T extends object>(data: any, dto: new () => T, config?: Partial<ValidationConfig>): Promise<ValidationResult>;
+    validateRequest<T extends object>(data: unknown, dto: new () => T, config?: Partial<ValidationConfig>): Promise<ValidationResult>;
+    validateSchema(data: unknown, schema: object): boolean;
+    validateValue(data: unknown, rules: object): boolean;
+    validateSync<T extends object>(data: unknown, dto: new () => T, config?: Partial<ValidationConfig>): Promise<ValidationResult>;
     private formatValidationErrors;
-    validateSync<T extends object>(data: any, dto: new () => T, config?: Partial<ValidationConfig>): ValidationResult;
-    validateValue(value: any, rules: {
-        [key: string]: (value: any) => boolean | Promise<boolean>;
-    }): Promise<boolean>;
-    validateSchema(data: any, schema: object): boolean;
-    private validateObject;
 }
+export {};

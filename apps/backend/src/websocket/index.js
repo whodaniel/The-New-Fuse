@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { verifyToken } from '../utils/auth';
+import { verifyToken } from '../utils/auth.js';
 // Services instances
 let agentService;
 let chatService;

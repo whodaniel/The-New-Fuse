@@ -1,7 +1,7 @@
 // import { DatabaseService } from '@the-new-fuse/core/database';
 // import { ConfigService } from '@the-new-fuse/core/config';
 // import { TYPES } from '@the-new-fuse/core/di/types';
-import { createTestContainer } from './test-container';
+import { createTestContainer } from './test-container.js';
 let container;
 let connection;
 beforeAll(async () => {

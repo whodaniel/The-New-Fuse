@@ -1,1 +1,1 @@
-export declare function LandingPage(): import("react/jsx-runtime").JSX.Element;
+export declare function LandingPage(): React.JSX.Element;

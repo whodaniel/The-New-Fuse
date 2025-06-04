@@ -38,11 +38,11 @@ var __setFunctionName = (this && this.__setFunctionName) || function (f, name, p
 };
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Agent } from './Agent.js';
-import { Pipeline } from './Pipeline.js';
-import { AuthSession } from './AuthSession.js';
-import { LoginAttempt } from './LoginAttempt.js';
-import { AuthEvent } from './AuthEvent.js';
+import { Agent } from './Agent';
+import { Pipeline } from './Pipeline';
+import { AuthSession } from './AuthSession';
+import { LoginAttempt } from './LoginAttempt';
+import { AuthEvent } from './AuthEvent';
 let User = (() => {
     let _classDecorators = [Entity('users')];
     let _classDescriptor;

@@ -7,23 +7,46 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly redis: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis(this.configService.getRedisUrl(): Promise<any> {
+    this.redis = new Redis(this.configService.getRedisUrl());
+  }
+
+  async onModuleInit(): Promise<void> {
     try {
-      await this.redis.ping()): void {
-      throw new Error('Failed to connect to Redis'): Promise<any> {
-    await this.redis.quit(): Redis {
+      await this.redis.ping();
+    } catch {
+      throw new Error('Failed to connect to Redis');
+    }
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.redis.quit();
+  }
+
+  getRedis(): Redis {
     return this.redis;
   }
 
-  async set(): Promise<void> {key: string, value: string, ttl?: number): Promise<void> {
-    if(ttl): void {
+  async set(key: string, value: string, ttl?: number): Promise<void> {
+    if (ttl) {
       await this.redis.set(key, value, 'EX', ttl);
     } else {
-      await this.redis.set(key, value): string): Promise<string | null> {
-    return this.redis.get(key): string): Promise<void> {
-    await this.redis.del(key): Promise<boolean> {
+      await this.redis.set(key, value);
+    }
+  }
+
+  async get(key: string): Promise<string | null> {
+    return this.redis.get(key);
+  }
+
+  async del(key: string): Promise<void> {
+    await this.redis.del(key);
+  }
+
+  async isHealthy(): Promise<boolean> {
     try {
-      await this.redis.ping()): void {
+      await this.redis.ping();
+      return true;
+    } catch {
       return false;
     }
   }

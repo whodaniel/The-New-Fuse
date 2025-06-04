@@ -13,6 +13,20 @@
 			"group": "build",
 			"isBackground": false,
 			"problemMatcher": []
+		},
+		{
+			"label": "Start Chrome for Debugging",
+			"type": "shell",
+			"command": "${workspaceFolder}/scripts/start-chrome-debug.sh",
+			"group": "build",
+			"isBackground": true,
+			"problemMatcher": [],
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "new"
+			}
 		}
 	]
 }

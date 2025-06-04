@@ -1,4 +1,4 @@
-import { ColorScheme, ThemeConfig } from '../types/theme.js'; // Corrected import path and added ThemeConfig
+import { CustomColorPalette, ThemeConfig, ThemeColorScheme } from '../types/theme';
 
 // Assuming ColorConfig and FontConfig are part of ThemeConfig structure
 // If ThemeConfig is defined as { colors: ColorConfig, fonts: FontConfig, ... }
@@ -9,8 +9,8 @@ import { ColorScheme, ThemeConfig } from '../types/theme.js'; // Corrected impor
 // For now, let's assume they are structured and ThemeConfig provides them.
 // If ColorScheme is the type for themeConfig.colors, we can use that.
 
-export function validateColorScheme(colors: Partial<ColorScheme>): boolean {
-  const requiredColors: Array<keyof ColorScheme> = [
+export function validateColorScheme(colors: Partial<CustomColorPalette>): boolean {
+  const requiredColors: Array<keyof CustomColorPalette> = [
     'primary',
     'secondary',
     'background',
@@ -19,7 +19,7 @@ export function validateColorScheme(colors: Partial<ColorScheme>): boolean {
     'warning',
     'success'
   ];
-  
+
   // Ensure that colors is an object before proceeding
   if (typeof colors !== 'object' || colors === null) {
     return false;
@@ -45,18 +45,16 @@ export const validateThemeConfig = (themeConfig: ThemeConfig): string[] => {
 
   // Validate colors if they exist on themeConfig
   // Assuming colors are nested under a `colors` property within the extended ChakraThemeConfig
-  if (themeConfig.colors) {
-    const colorScheme = themeConfig.colors as Partial<ColorScheme>; // Cast to ColorScheme
-    const colorKeys = Object.keys(colorScheme) as Array<keyof ColorScheme>;
+  if (themeConfig.colors && typeof themeConfig.colors === 'object') {
+    const colorPalette = themeConfig.colors as Partial<CustomColorPalette>;
+    const colorKeys = Object.keys(colorPalette) as Array<keyof CustomColorPalette>;
     for (const colorName of colorKeys) {
-      errors.push(...validateColor(colorScheme[colorName], String(colorName))); // Ensure colorName is a string
+      errors.push(...validateColor(colorPalette[colorName], String(colorName)));
     }
   }
-  
-  // Validate fonts if they exist on themeConfig
-  // Assuming fonts are nested under a `fonts` property within the extended ChakraThemeConfig
-  if (themeConfig.fonts) {
-    const fontStyle = themeConfig.fonts as Partial<{[key: string]: string}>; // Cast to appropriate font type
+
+  if (themeConfig.fonts && typeof themeConfig.fonts === 'object') {
+    const fontStyle = themeConfig.fonts as Partial<{ [key: string]: string }>;
     const fontKeys = Object.keys(fontStyle);
     for (const fontName of fontKeys) {
       const fontValue = fontStyle[fontName];
@@ -72,7 +70,7 @@ export const validateThemeConfig = (themeConfig: ThemeConfig): string[] => {
     errors.push(`Invalid fontSize: ${themeConfig.fontSize}. Must be 'sm', 'md', or 'lg'.`);
   }
 
-  if (!['light', 'dark', 'system'].includes(themeConfig.colorScheme)) {
+  if (!['light', 'dark', 'system'].includes(themeConfig.colorScheme as ThemeColorScheme)) {
     errors.push(`Invalid colorScheme: ${themeConfig.colorScheme}. Must be 'light', 'dark', or 'system'.`);
   }
 

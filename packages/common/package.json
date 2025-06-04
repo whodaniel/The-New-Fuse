@@ -5,5 +5,8 @@
   "scripts": {
     "build": "mkdir -p dist && echo '// Common utilities' > dist/index.js",
     "clean": "rimraf dist .turbo node_modules"
+  },
+  "devDependencies": {
+    "rimraf": "^6.0.1"
   }
 }

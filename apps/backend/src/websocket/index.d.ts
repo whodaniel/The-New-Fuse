@@ -1,2 +1,7 @@
 import { Server } from 'socket.io';
-export declare const setupWebSocketHandlers: (io: Server) => void;
+import { AgentService } from '../services/agent.service.js';
+import { ChatService } from '../services/chatService.js';
+export declare function initializeWebSocket(server: any, deps: {
+    agentService: AgentService;
+    chatService: ChatService;
+}): Server<import("socket.io").DefaultEventsMap, import("socket.io").DefaultEventsMap, import("socket.io").DefaultEventsMap, any>;
