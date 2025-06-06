@@ -11,6 +11,7 @@
     "packages/fairtable-components",
     "packages/fairtable-utils",
     "packages/fairtable-adapters",
+    "packages/core-vector-db",
     "tools/port-manager",
     "chrome-extension"
   ],
