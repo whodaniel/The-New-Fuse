@@ -265,6 +265,17 @@ export class FileProtocolService extends EventEmitter {
         };
     }
 
+    /**
+     * Register a handler for specific message types
+     */
+    public onMessage(messageType: string, callback: (message: AgentMessage) => void): void {
+        this.on('message', (message: AgentMessage) => {
+            if (message.type === messageType) {
+                callback(message);
+            }
+        });
+    }
+
     public dispose(): void {
         if (this.fileWatcher) {
             this.fileWatcher.dispose();

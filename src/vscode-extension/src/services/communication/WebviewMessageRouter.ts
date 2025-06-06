@@ -3,6 +3,7 @@ import { ChatService } from '../features/ChatService';
 import { LLMService } from '../features/LLMService';
 import { ConfigurationService } from '../core/ConfigurationService';
 import { NotificationService } from '../core/NotificationService';
+import { CommunicationHubProvider } from '../../views/CommunicationHubProvider';
 
 // Define a generic handler function type
 type MessageHandler = (payload: any, webview: vscode.Webview) => Promise<any>;
@@ -31,50 +32,57 @@ export class WebviewMessageRouter {
 
     /**
      * Creates an instance of WebviewMessageRouter.
-     * @param chatService - Instance of ChatService.
-     * @param llmService - Instance of LLMService.
-     * @param configurationService - Instance of ConfigurationService.
-     * @param notificationService - Instance of NotificationService.
-     *
-     * Note: Services are injected here, and their methods can be exposed
-     * via the registerHandler method.
+     * Services can be set later via setter methods or passed in registerHandler calls.
      */
     constructor(
-        private chatService: ChatService,
-        private llmService: LLMService,
-        private configurationService: ConfigurationService,
-        private notificationService: NotificationService
+        private chatService?: ChatService,
+        private llmService?: LLMService,
+        private configurationService?: ConfigurationService,
+        private notificationService?: NotificationService,
+        private communicationHubProvider?: CommunicationHubProvider
     ) {
-        // Example registrations - these would typically be more specific
-        // and might involve more complex logic or direct method calls.
-        this.registerHandler('chat:sendMessage', async (payload) => {
-            // Assuming ChatService has a method like `handleIncomingMessage`
-            // This is a placeholder for actual implementation
-            return this.chatService.handleWebviewMessage(payload);
-        });
+        // Register default handlers if services are available
+        if (this.chatService) {
+            this.registerHandler('chat:sendMessage', async (payload) => {
+                // Assuming ChatService has a method like `handleIncomingMessage`
+                // This is a placeholder for actual implementation
+                return this.chatService!.handleWebviewMessage(payload);
+            });
+        }
 
-        this.registerHandler('llm:generateResponse', async (payload) => {
-            // Assuming LLMService has a method like `processGenerationRequest`
-            // This is a placeholder for actual implementation
-            return this.llmService.handleWebviewMessage(payload);
-        });
+        if (this.llmService) {
+            this.registerHandler('llm:generateResponse', async (payload) => {
+                // Assuming LLMService has a method like `processGenerationRequest`
+                // This is a placeholder for actual implementation
+                return this.llmService!.handleWebviewMessage(payload);
+            });
+        }
 
-        this.registerHandler('config:getSetting', async (payload) => {
-            // Example: Get a configuration setting
-            if (payload && typeof payload.key === 'string') {
-                return this.configurationService.get(payload.key);
-            }
-            throw new Error('Invalid payload for config:getSetting. "key" is required.');
-        });
+        if (this.configurationService) {
+            this.registerHandler('config:getSetting', async (payload) => {
+                // Example: Get a configuration setting
+                if (payload && typeof payload.key === 'string') {
+                    return this.configurationService!.get(payload.key);
+                }
+                throw new Error('Invalid payload for config:getSetting. "key" is required.');
+            });
+        }
 
-        this.registerHandler('notification:showInfo', async (payload) => {
-            // Example: Show an information message
-            if (payload && typeof payload.message === 'string') {
-                this.notificationService.showInformation(payload.message);
-                return { success: true };
-            }
-            throw new Error('Invalid payload for notification:showInfo. "message" is required.');
-        });
+        if (this.notificationService) {
+            this.registerHandler('notification:showInfo', async (payload) => {
+                // Example: Show an information message
+                if (payload && typeof payload.message === 'string') {
+                    this.notificationService!.showInformation(payload.message);
+                    return { success: true };
+                }
+                throw new Error('Invalid payload for notification:showInfo. "message" is required.');
+            });
+        }
+
+        // Register communication hub handlers if provider is available
+        if (this.communicationHubProvider) {
+            this.registerCommunicationHubHandlers();
+        }
     }
 
     /**
@@ -114,6 +122,70 @@ export class WebviewMessageRouter {
         }
     }
 
+    /**
+     * Set the chat service
+     */
+    public setChatService(chatService: ChatService): void {
+        this.chatService = chatService;
+    }
+
+    /**
+     * Set the LLM service
+     */
+    public setLLMService(llmService: LLMService): void {
+        this.llmService = llmService;
+    }
+
+    /**
+     * Set the configuration service
+     */
+    public setConfigurationService(configurationService: ConfigurationService): void {
+        this.configurationService = configurationService;
+    }
+
+    /**
+     * Set the notification service
+     */
+    public setNotificationService(notificationService: NotificationService): void {
+        this.notificationService = notificationService;
+    }
+
+    /**
+     * Set the communication hub provider
+     */
+    public setCommunicationHubProvider(communicationHubProvider: CommunicationHubProvider): void {
+        this.communicationHubProvider = communicationHubProvider;
+        this.registerCommunicationHubHandlers();
+    }
+
+    /**
+     * Register handlers for communication hub commands
+     */
+    private registerCommunicationHubHandlers(): void {
+        if (!this.communicationHubProvider) {
+            return;
+        }
+
+        // Register all communication hub command handlers
+        const hubCommands = [
+            'sendMessage', 'createSession', 'joinSession', 'registerAgent', 'getAgents',
+            'getSessions', 'getPerformanceMetrics', 'getHubState', 'getFeatures',
+            'toggleFeature', 'getNetworkConnections', 'testConnection', 'exportSessions',
+            'importSessions', 'clearSessions', 'clearPerformanceData', 'optimizePerformance',
+            'hubReady', 'switchTab', 'joinSessionById', 'refreshData'
+        ];
+
+        hubCommands.forEach(command => {
+            this.registerHandler(command, async (payload, webview) => {
+                return await this.communicationHubProvider!.handleHubMessage({
+                    command,
+                    ...payload
+                });
+            });
+        });
+
+        console.log('[WebviewMessageRouter] Registered communication hub handlers');
+    }
 
     /**
      * Handles an incoming message from a webview.

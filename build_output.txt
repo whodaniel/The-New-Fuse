@@ -1,86 +1,63 @@
-turbo 2.5.0
 
-• Packages in scope: @the-new-fuse/api, @the-new-fuse/api-client, @the-new-fuse/api-core, @the-new-fuse/api-types, @the-new-fuse/backend, @the-new-fuse/backend-app, @the-new-fuse/client, @the-new-fuse/common, @the-new-fuse/core, @the-new-fuse/database, @the-new-fuse/feature-suggestions, @the-new-fuse/feature-tracker, @the-new-fuse/frontend, @the-new-fuse/frontend-app, @the-new-fuse/hooks, @the-new-fuse/security, @the-new-fuse/shared, @the-new-fuse/testing, @the-new-fuse/types, @the-new-fuse/ui, @the-new-fuse/ui-components, @the-new-fuse/ui-consolidated, @the-new-fuse/utils, @the-new-fuse/vscode-extension, agent, chrome-extension, db, features, integrations, layout, monitoring, vscode-ai-coder-connector
-• Running build in 32 packages
+> the-new-fuse@2.1.0 build
+> turbo run build
+
+turbo 2.5.4
+
+• Packages in scope: @the-new-fuse/agent, @the-new-fuse/api, @the-new-fuse/api-client, @the-new-fuse/api-core, @the-new-fuse/api-server, @the-new-fuse/api-types, @the-new-fuse/backend, @the-new-fuse/backend-app, @the-new-fuse/client, @the-new-fuse/common, @the-new-fuse/core, @the-new-fuse/database, @the-new-fuse/feature-suggestions, @the-new-fuse/feature-tracker, @the-new-fuse/frontend, @the-new-fuse/frontend-app, @the-new-fuse/hooks, @the-new-fuse/port-management, @the-new-fuse/port-manager-cli, @the-new-fuse/prompt-templating, @the-new-fuse/security, @the-new-fuse/shared, @the-new-fuse/testing, @the-new-fuse/types, @the-new-fuse/ui, @the-new-fuse/ui-components, @the-new-fuse/ui-consolidated, @the-new-fuse/utils, db, eslint-config-custom, features, integrations, layout, monitoring, the-new-fuse-chrome-extension
+• Running build in 35 packages
 • Remote caching disabled
-@the-new-fuse/api-client:build: cache hit, replaying logs c8d5bf98e4fe5fa6
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: [34mCLI[39m Building entry: src/index.ts
-@the-new-fuse/api-client:build: [34mCLI[39m Using tsconfig: tsconfig.json
-@the-new-fuse/api-client:build: [34mCLI[39m tsup v8.4.0
-@the-new-fuse/api-client:build: [34mCLI[39m Target: es2020
-@the-new-fuse/api-client:build: [34mCJS[39m Build start
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: [90m[[90m4:22:26 PM[90m][39m [43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:31:6:
-@the-new-fuse/api-client:build: [37m      31 │       [32m"types"[37m: "./dist/index.d.ts"
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:   The "import" condition comes earlier and will be used for all "import" statements:
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:29:6:
-@the-new-fuse/api-client:build: [37m      29 │       [32m"import"[37m: "./dist/index.js",
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:   The "require" condition comes earlier and will be used for all "require" calls:
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:30:6:
-@the-new-fuse/api-client:build: [37m      30 │       [32m"require"[37m: "./dist/index.js",
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: [90m[[90m4:22:27 PM[90m][39m [43m[30m WARN [39m[49m [33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mThe condition "types" here will never be used as it comes after both "import" and "require"[0m [package.json]
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:36:6:
-@the-new-fuse/api-client:build: [37m      36 │       [32m"types"[37m: "./dist/auth/TokenStorage.d.ts"
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:   The "import" condition comes earlier and will be used for all "import" statements:
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:34:6:
-@the-new-fuse/api-client:build: [37m      34 │       [32m"import"[37m: "./dist/auth/TokenStorage.js",
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:   The "require" condition comes earlier and will be used for all "require" calls:
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build:     package.json:35:6:
-@the-new-fuse/api-client:build: [37m      35 │       [32m"require"[37m: "./dist/auth/TokenStorage.js",
-@the-new-fuse/api-client:build:          ╵       [32m~~~~~~~~~[0m
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: 
-@the-new-fuse/api-client:build: [32mCJS[39m [1mdist/index.cjs [22m[32m19.05 KB[39m
-@the-new-fuse/api-client:build: [32mCJS[39m ⚡️ Build success in 624ms
-@the-new-fuse/types:build: cache miss, executing 5a30d64a3bb54f90
-@the-new-fuse/core:build: cache miss, executing 1a87fabe66ce9f99
-@the-new-fuse/utils:build: cache miss, executing f4f95f00cf09b13b
-@the-new-fuse/database:db:generate: cache bypass, force executing 05d1d84a29c7e64e
-@the-new-fuse/testing:build: cache miss, executing c2f531426048418c
-@the-new-fuse/client:build: cache hit, replaying logs 6ce191d7dbacb064
-@the-new-fuse/client:build: 
-@the-new-fuse/client:build: 
-@the-new-fuse/common:build: cache hit, replaying logs 6752664212d6dfb2
-@the-new-fuse/common:build: 
-@the-new-fuse/common:build: 
+@the-new-fuse/database:db:generate: cache bypass, force executing a007dab70ec484da
+@the-new-fuse/testing:build: cache hit, replaying logs a46ac388ad088269
 @the-new-fuse/testing:build: 
+@the-new-fuse/testing:build: 
 @the-new-fuse/testing:build: > @the-new-fuse/testing@1.0.0 clean
 @the-new-fuse/testing:build: > rimraf dist coverage test-results playwright-report
 @the-new-fuse/testing:build: 
-@the-new-fuse/types:build: src/core/index.ts(9,15): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
-@the-new-fuse/types:build: src/index.ts(6,10): error TS1205: Re-exporting a type when 'isolatedModules' is enabled requires using 'export type'.
-@the-new-fuse/types:build: src/index.ts(6,24): error TS1205: Re-exporting a type when 'isolatedModules' is enabled requires using 'export type'.
-@the-new-fuse/types:build: src/index.ts(6,49): error TS1205: Re-exporting a type when 'isolatedModules' is enabled requires using 'export type'.
-@the-new-fuse/types:build: src/index.ts(6,69): error TS5097: An import path can only end with a '.tsx' extension when 'allowImportingTsExtensions' is enabled.
+@the-new-fuse/testing:build: [1G[0K[1G[0K⠙[1G[0K
+@the-new-fuse/database:build: cache hit, replaying logs 7603c908d687f487
+@the-new-fuse/database:build: 
+@the-new-fuse/database:build: 
+@the-new-fuse/client:build: cache hit, replaying logs 5c9c3058d83cba29
+@the-new-fuse/client:build: 
+@the-new-fuse/client:build: 
+db:build: cache hit, replaying logs 10ec9b5221c49b41
+db:build: 
+db:build: 
+@the-new-fuse/frontend:build: cache miss, executing 63da49a24be18cd0
+@the-new-fuse/core:build: cache miss, executing 4a7b6045ea145440
+@the-new-fuse/prompt-templating:build: cache hit, replaying logs 9c0c97bf30044605
+@the-new-fuse/prompt-templating:build: 
+@the-new-fuse/prompt-templating:build: 
+@the-new-fuse/utils:build: cache hit, replaying logs c407efe09cdfd2f4
+@the-new-fuse/utils:build: 
+@the-new-fuse/utils:build: 
+the-new-fuse-chrome-extension:build: cache miss, executing 69f630e0063e5ba1
+@the-new-fuse/common:build: cache hit, replaying logs 652bef912655de93
+@the-new-fuse/common:build: 
+@the-new-fuse/common:build: 
+@the-new-fuse/types:build: cache miss, executing 46bdd80089a078b6
 @the-new-fuse/database:db:generate: Environment variables loaded from .env
-@the-new-fuse/types:build: ERROR: command finished with error: command (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/types) /private/var/folders/tr/dm8vp49j06x047vp19yt_91w0000gn/T/xfs-9d00fe08/yarn run build exited (2)
-@the-new-fuse/types#build: command (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/types) /private/var/folders/tr/dm8vp49j06x047vp19yt_91w0000gn/T/xfs-9d00fe08/yarn run build exited (2)
+@the-new-fuse/database:db:generate: Prisma schema loaded from prisma/schema.prisma
+@the-new-fuse/database:db:generate: 
+@the-new-fuse/database:db:generate: ✔ Generated Prisma Client (4.16.2 | library) to ./generated/prisma in 765ms
+@the-new-fuse/database:db:generate: You can now start using Prisma Client in your code. Reference: https://pris.ly/d/client
+@the-new-fuse/database:db:generate: ```
+@the-new-fuse/database:db:generate: import { PrismaClient } from './generated/prisma'
+@the-new-fuse/database:db:generate: const prisma = new PrismaClient()
+@the-new-fuse/database:db:generate: ```
+@the-new-fuse/security:build: cache miss, executing 8b04a20b167eee83
+@the-new-fuse/types:build: src/index.ts(65,3): error TS2304: Cannot find name 'WorkflowDefinition'.
+@the-new-fuse/types:build: src/index.ts(66,3): error TS2304: Cannot find name 'WorkflowInstance'.
+@the-new-fuse/types:build: src/index.ts(67,3): error TS2304: Cannot find name 'CreateWorkflowDefinitionDto'.
+@the-new-fuse/types:build: src/index.ts(68,3): error TS2304: Cannot find name 'UpdateWorkflowDefinitionDto'.
+@the-new-fuse/types:build: src/index.ts(69,3): error TS2304: Cannot find name 'StartWorkflowInstanceDto'.
+@the-new-fuse/types:build: ERROR: command finished with error: command (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/types) /Users/<owner>/.nvm/versions/node/v22.16.0/bin/yarn run build exited (2)
+@the-new-fuse/types#build: command (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/types) /Users/<owner>/.nvm/versions/node/v22.16.0/bin/yarn run build exited (2)
 
- Tasks:    3 successful, 8 total
-Cached:    3 cached, 8 total
-  Time:    48.95s 
+ Tasks:    8 successful, 13 total
+Cached:    7 cached, 13 total
+  Time:    27.818s 
 Failed:    @the-new-fuse/types#build
 
  ERROR  run failed: command  exited (2)

@@ -62,7 +62,8 @@ Created a centralized agent registry:
 
 **Decision**: Created a unified ICommunicationProtocol interface that all protocol implementations must adhere to.
 
-**Consequences**: 
+**Consequences**:
+
 - Positive: Consistent API across all protocols
 - Positive: Ability to swap protocols without changing higher-level code
 - Positive: Simplified testing with protocol mockability
@@ -75,6 +76,7 @@ Created a centralized agent registry:
 **Decision**: Created separate services for A2A and MCP with a MessageRouter to coordinate between them.
 
 **Consequences**:
+
 - Positive: Clear separation of concerns
 - Positive: Easier to reason about each communication type
 - Positive: Better alignment with protocol specifications
@@ -87,6 +89,7 @@ Created a centralized agent registry:
 **Decision**: Implemented a centralized ConfigService with environment variable support and defaults.
 
 **Consequences**:
+
 - Positive: Single source of truth for configuration
 - Positive: Environment-specific configuration is easier
 - Positive: Sensible defaults reduce configuration burden
@@ -99,6 +102,7 @@ Created a centralized agent registry:
 **Decision**: Created a centralized AgentRegistry for managing agent metadata and capabilities.
 
 **Consequences**:
+
 - Positive: Simplified agent discovery
 - Positive: Standardized agent metadata
 - Positive: Capability-based routing is now possible

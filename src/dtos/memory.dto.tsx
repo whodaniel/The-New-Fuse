@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class MemoryContentDto {
     @ApiProperty()
-    content: string;
+    content: string = '';
 
     @ApiProperty( { required: false })
     @IsObject()
@@ -18,7 +18,7 @@ export class MemoryContentDto {
 
 export class MemoryQueryDto {
     @ApiProperty()
-    query: string;
+    query: string = '';
 
     @ApiProperty( { required: false })
     @IsNumber()
@@ -37,19 +37,19 @@ export class MemoryQueryDto {
 
 export class MemoryResponseDto {
     @ApiProperty()
-    id: string;
+    id: string = '';
 
     @ApiProperty()
-    content: string;
+    content: string = '';
 
     @ApiProperty( { required: false })
     metadata?: Record<string, any>;
 
     @ApiProperty({ type: [String] })
-    tags: string[];
+    tags: string[] = [];
 
     @ApiProperty()
-    createdAt: Date;
+    createdAt: Date = new Date();
 
     @ApiProperty( { required: false })
     @IsNumber()

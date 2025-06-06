@@ -4,5 +4,17 @@
     "source.fixAll.eslint": "explicit"
   },
   "portManagement.autoResolveConflicts": true,
-  "portManagement.monitorInterval": 30000
+  "portManagement.monitorInterval": 30000,
+  "json.schemas": [
+    {
+      "fileMatch": ["**/package.json"],
+      "url": "https://json.schemastore.org/package"
+    },
+    {
+      "fileMatch": ["**/src/vscode-extension/package.json"],
+      "url": "https://raw.githubusercontent.com/microsoft/vscode/main/extensions/package/package.schema.json"
+    }
+  ],
+  "json.validate.enable": true,
+  "json.schemaDownload.enable": true
 }

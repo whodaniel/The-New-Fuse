@@ -6,12 +6,12 @@ export class CreateEntityDto {
   @ApiProperty({ description: 'Unique identifier/name for the entity', example: 'openai-gpt4' })
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string = '';
 
   @ApiProperty({ description: "Type discriminator (e.g., 'AIModel', 'VSCodeExtension')", example: 'AIModel' })
   @IsString()
   @IsNotEmpty()
-  type: string;
+  type: string = '';
 
   @ApiProperty({ description: 'Specific details about the entity', required: false, type: 'object', example: { modelId: 'gpt-4', provider: 'OpenAI' } })
   @IsOptional()

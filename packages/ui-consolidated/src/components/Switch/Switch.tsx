@@ -117,7 +117,7 @@ const Switch = React.forwardRef<HTMLInputElement, SwitchProps>(
     labelPosition = 'right',
     ...props
   }, ref) => {
-    const id = React.useId();
+    const id = React.useMemo(() => `switch-${Math.random().toString(36).substr(2, 9)}`, []);
     const [checked, setChecked] = React.useState(props.defaultChecked || props.checked || false);
     
     React.useEffect(() => {

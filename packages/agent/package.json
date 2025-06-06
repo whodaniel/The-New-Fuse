@@ -7,7 +7,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npx tsc",
-    "clean": "rimraf dist build .turbo .next node_modules .cache .eslintcache .tsbuildinfo .yarn/cache .pnp.* *.log",
+    "clean": "rimraf dist build .turbo .next node_modules .cache .eslintcache .tsbuildinfo .yarn/cache && rimraf --glob \".pnp.*\" \"*.log\"",
     "lint": "eslint src --ext .ts,.tsx",
     "test": "jest"
   },

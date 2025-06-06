@@ -2,20 +2,20 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "jsx": "react-jsx",
     "composite": true,
     "declaration": true,
+    "baseUrl": ".",
     "paths": {
       "@the-new-fuse/feature-tracker": ["../feature-tracker/src"],
       "@the-new-fuse/types/*": ["../types/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../types/**/*", "../feature-tracker/src/**/*"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../types" },
-    { "path": "../utils" }
-    // Removed reference to feature-tracker to avoid TS6310 error
+    { "path": "../utils" },
+    { "path": "../feature-tracker" }
   ]
 }

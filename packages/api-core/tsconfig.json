@@ -11,12 +11,14 @@
     "forceConsistentCasingInFileNames": true,
     "declaration": true,
     "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "paths": {
       "@the-new-fuse/types": ["../types/dist"],
       "@the-new-fuse/types/*": ["../types/dist/*"],
       "@the-new-fuse/database": ["../db/dist"],
       "@the-new-fuse/database/*": ["../db/dist/*"]
-    },
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"],

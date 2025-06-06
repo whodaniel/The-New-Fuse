@@ -11,7 +11,6 @@ import {
   Delete, 
   Body, 
   Param, 
-  Query, 
   UseGuards,
   HttpStatus,
   HttpCode
@@ -27,6 +26,7 @@ import {
 } from '@the-new-fuse/types';
 import { CreateWorkflowDto } from './dto/create-workflow.dto.js';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto.js';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/swagger-dto.js';
 import { 
   ApiTags, 
   ApiOperation, 
@@ -50,7 +50,7 @@ export class WorkflowController extends BaseController {
    */
   @Get()
   @ApiOperation({ summary: 'Get all workflows for the current user' })
-  @SwaggerResponse({ status: 200, description: 'List of workflows', type: [Workflow] })
+  @SwaggerResponse({ status: 200, description: 'List of workflows', type: [WorkflowDto] })
   async getWorkflows(
     @CurrentUser() user: any
   ): Promise<ApiResponse<Workflow[]>> {
@@ -69,7 +69,7 @@ export class WorkflowController extends BaseController {
   @Get(':id')
   @ApiOperation({ summary: 'Get workflow by ID' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
-  @SwaggerResponse({ status: 200, description: 'Workflow details', type: Workflow })
+  @SwaggerResponse({ status: 200, description: 'Workflow details', type: WorkflowDto })
   @SwaggerResponse({ status: 404, description: 'Workflow not found' })
   async getWorkflow(
     @Param('id') id: string,
@@ -91,7 +91,7 @@ export class WorkflowController extends BaseController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new workflow' })
   @ApiBody({ type: CreateWorkflowDto })
-  @SwaggerResponse({ status: 201, description: 'Workflow created', type: Workflow })
+  @SwaggerResponse({ status: 201, description: 'Workflow created', type: WorkflowDto })
   async createWorkflow(
     @Body() data: CreateWorkflowDto,
     @CurrentUser() user: any
@@ -113,7 +113,7 @@ export class WorkflowController extends BaseController {
   @ApiOperation({ summary: 'Update a workflow' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
   @ApiBody({ type: UpdateWorkflowDto })
-  @SwaggerResponse({ status: 200, description: 'Workflow updated', type: Workflow })
+  @SwaggerResponse({ status: 200, description: 'Workflow updated', type: WorkflowDto })
   @SwaggerResponse({ status: 404, description: 'Workflow not found' })
   async updateWorkflow(
     @Param('id') id: string,
@@ -159,7 +159,7 @@ export class WorkflowController extends BaseController {
   @ApiOperation({ summary: 'Execute a workflow' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
   @ApiBody({ schema: { type: 'object', additionalProperties: true } })
-  @SwaggerResponse({ status: 200, description: 'Workflow executed', type: WorkflowExecution })
+  @SwaggerResponse({ status: 200, description: 'Workflow executed', type: WorkflowExecutionDto })
   async executeWorkflow(
     @Param('id') id: string,
     @Body() inputs: Record<string, any> = {},
@@ -180,7 +180,7 @@ export class WorkflowController extends BaseController {
   @Get(':id/executions')
   @ApiOperation({ summary: 'Get workflow executions' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
-  @SwaggerResponse({ status: 200, description: 'List of workflow executions', type: [WorkflowExecution] })
+  @SwaggerResponse({ status: 200, description: 'List of workflow executions', type: [WorkflowExecutionDto] })
   async getWorkflowExecutions(
     @Param('id') id: string,
     @CurrentUser() user: any
@@ -202,7 +202,7 @@ export class WorkflowController extends BaseController {
   @ApiOperation({ summary: 'Get workflow execution by ID' })
   @ApiParam({ name: 'id', description: 'Workflow ID' })
   @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @SwaggerResponse({ status: 200, description: 'Workflow execution details', type: WorkflowExecution })
+  @SwaggerResponse({ status: 200, description: 'Workflow execution details', type: WorkflowExecutionDto })
   @SwaggerResponse({ status: 404, description: 'Execution not found' })
   async getExecution(
     @Param('id') id: string,

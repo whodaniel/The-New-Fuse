@@ -1,0 +1,310 @@
+# Agency Hub Remote Files Catalog
+
+## Repository Information
+- **Main Repository**: A1-Inter-LLM-Com/The New Fuse
+- **Branch**: main
+- **Last Updated**: 2025-06-06
+- **Remote URL**: https://github.com/danielgoldberg/A1-Inter-LLM-Com
+
+## Core Agency Hub Components
+
+### Controllers
+- `agency.controller.ts` - Main agency management controller
+- `packages/agency-hub/src/controllers/agency.controller.ts`
+- `packages/agency-hub/src/controllers/swarm.controller.ts`
+- `packages/agency-hub/src/controllers/auth.controller.ts`
+
+### Services
+- `agency-template.service.ts` - Template service for agencies
+- `agent-swarm-orchestration.service.ts` - Swarm coordination service
+- `packages/agency-hub/src/services/agency.service.ts`
+- `packages/agency-hub/src/services/agent-discovery.service.ts`
+- `packages/agency-hub/src/services/communication.service.ts`
+- `packages/agency-hub/src/services/message-router.service.ts`
+
+### Data Transfer Objects
+- `agency.dto.ts` - Agency data transfer objects
+- `packages/agency-hub/src/dto/agent-registration.dto.ts`
+- `packages/agency-hub/src/dto/message.dto.ts`
+- `packages/agency-hub/src/dto/swarm-config.dto.ts`
+
+### Guards and Middleware
+- `packages/agency-hub/src/guards/auth.guard.ts`
+- `packages/agency-hub/src/guards/agency-access.guard.ts`
+- `packages/agency-hub/src/middleware/logging.middleware.ts`
+- `packages/agency-hub/src/middleware/rate-limit.middleware.ts`
+
+### Models and Interfaces
+- `packages/agency-hub/src/models/agent.model.ts`
+- `packages/agency-hub/src/models/agency.model.ts`
+- `packages/agency-hub/src/models/message.model.ts`
+- `packages/agency-hub/src/models/swarm.model.ts`
+- `packages/agency-hub/src/interfaces/communication.interface.ts`
+- `packages/agency-hub/src/interfaces/protocol.interface.ts`
+
+## Configuration Files
+- `packages/agency-hub/package.json`
+- `packages/agency-hub/tsconfig.json`
+- `packages/agency-hub/nest-cli.json`
+- `packages/agency-hub/.env.example`
+- `packages/agency-hub/src/config/database.config.ts`
+- `packages/agency-hub/src/config/auth.config.ts`
+
+## Protocol Implementations
+- `packages/agency-hub/src/protocols/websocket.protocol.ts`
+- `packages/agency-hub/src/protocols/http.protocol.ts`
+- `packages/agency-hub/src/protocols/mcp.protocol.ts`
+- `packages/agency-hub/src/protocols/base.protocol.ts`
+
+## Testing Files
+- `test-agency-hub-integration.js` - Main integration test suite
+- `packages/agency-hub/src/tests/unit/agency.service.spec.ts`
+- `packages/agency-hub/src/tests/unit/swarm.orchestrator.spec.ts`
+- `packages/agency-hub/src/tests/integration/api.spec.ts`
+- `packages/agency-hub/src/tests/e2e/workflow.spec.ts`
+
+## Documentation
+- `docs/AGENT-COMMUNICATION-GUIDE.md` - Comprehensive communication guide
+- `docs/IMPLEMENTATION-PLAN.md` - Implementation roadmap
+- `packages/agency-hub/README.md`
+- `packages/agency-hub/docs/API.md`
+- `packages/agency-hub/docs/DEPLOYMENT.md`
+
+## Build and Deployment
+- `build-all.sh` - Master build script
+- `packages/agency-hub/Dockerfile`
+- `packages/agency-hub/docker-compose.yml`
+- `packages/agency-hub/.github/workflows/ci.yml`
+- `packages/agency-hub/scripts/start.sh`
+- `packages/agency-hub/scripts/migrate.sh`
+
+## Utilities and Helpers
+- `packages/agency-hub/src/utils/logger.util.ts`
+- `packages/agency-hub/src/utils/crypto.util.ts`
+- `packages/agency-hub/src/utils/message.util.ts`
+- `packages/agency-hub/src/utils/validation.util.ts`
+- `packages/agency-hub/src/helpers/agent.helper.ts`
+- `packages/agency-hub/src/helpers/swarm.helper.ts`
+
+## Database and Migrations
+- `packages/agency-hub/src/database/migrations/001_initial_schema.sql`
+- `packages/agency-hub/src/database/migrations/002_add_swarm_tables.sql`
+- `packages/agency-hub/src/database/seeds/default_agencies.sql`
+- `packages/agency-hub/src/database/entities/agent.entity.ts`
+- `packages/agency-hub/src/database/entities/agency.entity.ts`
+
+## Monitoring and Observability
+- `packages/agency-hub/src/monitoring/metrics.service.ts`
+- `packages/agency-hub/src/monitoring/health.controller.ts`
+- `packages/agency-hub/src/monitoring/tracing.service.ts`
+- `packages/agency-hub/prometheus.yml`
+- `packages/agency-hub/grafana/dashboards/agency-hub.json`
+
+## External Dependencies
+### NPM Packages
+- `@nestjs/core` - NestJS framework
+- `@nestjs/websockets` - WebSocket support
+- `@nestjs/platform-socket.io` - Socket.IO integration
+- `@nestjs/typeorm` - Database ORM
+- `@nestjs/jwt` - JWT authentication
+- `@nestjs/passport` - Authentication strategies
+- `class-validator` - DTO validation
+- `class-transformer` - Object transformation
+- `socket.io` - Real-time communication
+- `ioredis` - Redis client
+- `winston` - Logging framework
+- `prometheus-client` - Metrics collection
+
+### Development Dependencies
+- `@types/node` - Node.js type definitions
+- `@types/jest` - Jest testing framework types
+- `@nestjs/testing` - NestJS testing utilities
+- `jest` - Testing framework
+- `supertest` - HTTP testing
+- `ts-node` - TypeScript execution
+- `nodemon` - Development server
+
+## API Endpoints
+
+### Agent Management
+- `POST /api/agents/register` - Register new agent
+- `DELETE /api/agents/:id` - Deregister agent
+- `GET /api/agents` - List all agents
+- `GET /api/agents/:id` - Get agent details
+- `PUT /api/agents/:id/status` - Update agent status
+
+### Agency Operations
+- `POST /api/agencies` - Create new agency
+- `GET /api/agencies` - List agencies
+- `GET /api/agencies/:id` - Get agency details
+- `PUT /api/agencies/:id` - Update agency
+- `DELETE /api/agencies/:id` - Delete agency
+
+### Swarm Coordination
+- `POST /api/swarms` - Create swarm
+- `POST /api/swarms/:id/join` - Join swarm
+- `DELETE /api/swarms/:id/leave` - Leave swarm
+- `POST /api/swarms/:id/coordinate` - Coordinate task
+- `GET /api/swarms/:id/status` - Get swarm status
+
+### Messaging
+- `POST /api/messages/send` - Send message
+- `GET /api/messages/:id` - Get message details
+- `GET /api/agents/:id/messages` - Get agent messages
+- `WebSocket /ws/agents/:id` - Real-time messaging
+
+### Health and Monitoring
+- `GET /health` - Health check endpoint
+- `GET /metrics` - Prometheus metrics
+- `GET /api/monitoring/status` - System status
+- `GET /api/monitoring/agents` - Agent health status
+
+## Environment Configuration
+
+### Required Environment Variables
+```bash
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/agency_hub
+REDIS_URL=redis://localhost:6379
+
+# Authentication
+JWT_SECRET=your-jwt-secret
+AUTH_EXPIRY=3600
+
+# Server
+PORT=3000
+HOST=0.0.0.0
+NODE_ENV=production
+
+# External Services
+MCP_SERVER_URL=http://localhost:3001
+WEBSOCKET_PORT=3002
+
+# Monitoring
+METRICS_ENABLED=true
+LOG_LEVEL=info
+PROMETHEUS_PORT=9090
+```
+
+## Remote Repository URLs
+
+### GitHub Repository
+- **Main**: https://github.com/danielgoldberg/A1-Inter-LLM-Com
+- **Agency Hub Package**: https://github.com/danielgoldberg/A1-Inter-LLM-Com/tree/main/packages/agency-hub
+- **Documentation**: https://github.com/danielgoldberg/A1-Inter-LLM-Com/tree/main/docs
+- **Tests**: https://github.com/danielgoldberg/A1-Inter-LLM-Com/tree/main/tests
+
+### Raw File URLs
+- **Agency Controller**: https://raw.githubusercontent.com/danielgoldberg/A1-Inter-LLM-Com/main/agency.controller.ts
+- **Agency Service**: https://raw.githubusercontent.com/danielgoldberg/A1-Inter-LLM-Com/main/agency-template.service.ts
+- **Swarm Orchestrator**: https://raw.githubusercontent.com/danielgoldberg/A1-Inter-LLM-Com/main/agent-swarm-orchestration.service.ts
+- **Agency DTO**: https://raw.githubusercontent.com/danielgoldberg/A1-Inter-LLM-Com/main/agency.dto.ts
+
+### Package Information
+- **Package Name**: @a1-inter-llm-com/agency-hub
+- **Version**: 1.0.0
+- **License**: MIT
+- **Author**: Daniel Goldberg
+- **Repository**: git+https://github.com/danielgoldberg/A1-Inter-LLM-Com.git
+
+## Deployment Information
+
+### Docker Configuration
+- **Base Image**: node:18-alpine
+- **Exposed Ports**: 3000 (HTTP), 3002 (WebSocket)
+- **Health Check**: GET /health
+- **Environment**: Production-ready configuration
+
+### Kubernetes Resources
+- **Deployment**: agency-hub-deployment.yaml
+- **Service**: agency-hub-service.yaml
+- **ConfigMap**: agency-hub-config.yaml
+- **Secret**: agency-hub-secrets.yaml
+- **Ingress**: agency-hub-ingress.yaml
+
+### CI/CD Pipeline
+- **Build**: GitHub Actions workflow
+- **Test**: Automated test suite
+- **Deploy**: Kubernetes deployment
+- **Monitor**: Prometheus + Grafana stack
+
+## Development Setup
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 13+
+- Redis 6+
+- Docker (optional)
+
+### Quick Start
+```bash
+# Clone repository
+git clone https://github.com/danielgoldberg/A1-Inter-LLM-Com.git
+cd A1-Inter-LLM-Com
+
+# Install dependencies
+npm install
+
+# Setup environment
+cp .env.example .env
+
+# Run database migrations
+npm run migrate
+
+# Start development server
+npm run dev
+
+# Run tests
+npm run test
+```
+
+### File Structure
+```
+packages/agency-hub/
+├── src/
+│   ├── controllers/
+│   ├── services/
+│   ├── dto/
+│   ├── guards/
+│   ├── models/
+│   ├── protocols/
+│   ├── utils/
+│   └── main.ts
+├── tests/
+├── docs/
+├── scripts/
+└── package.json
+```
+
+## Contributing
+
+### Development Guidelines
+- Follow TypeScript best practices
+- Write comprehensive tests
+- Update documentation
+- Use conventional commit messages
+
+### Code Review Process
+1. Create feature branch
+2. Implement changes
+3. Write/update tests
+4. Submit pull request
+5. Code review
+6. Merge to main
+
+## Support and Resources
+
+### Documentation
+- **API Docs**: /api/docs (Swagger)
+- **Architecture**: docs/ARCHITECTURE.md
+- **Contributing**: CONTRIBUTING.md
+
+### Community
+- **Issues**: GitHub Issues
+- **Discussions**: GitHub Discussions
+- **Discord**: Agency Hub Development
+
+### Maintenance
+- **Maintainer**: Daniel Goldberg
+- **Last Updated**: 2025-06-06
+- **Status**: Active Development

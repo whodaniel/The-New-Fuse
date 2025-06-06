@@ -1,0 +1,12 @@
+import { BaseEntity, TaskStatus, TaskType } from '../core.js';
+/**
+ * Represents a task entity
+ */
+export interface Task extends BaseEntity {
+    title: string;
+    description?: string;
+    status: TaskStatus;
+    type: typeof TaskType;
+    assigneeId?: string;
+    dueDate?: string;
+}

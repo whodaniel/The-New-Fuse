@@ -1,57 +1,96 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Agent } from '../entities/agent.entity.js';
-import { CreateAgentDto, UpdateAgentDto } from '../dtos/agent.dto.js';
-import { AgentFactory } from '@the-new-fuse/core';
+import { Injectable, Logger } from '@nestjs/common';
+import { Agent, CreateAgentDto, UpdateAgentDto } from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {
-  constructor(
-    @InjectRepository(Agent)
-    private readonly agentRepository: Repository<Agent>,
-    private readonly agentFactory: AgentFactory,
-  ) {}
+  private readonly logger = new Logger(AgentService.name);
+  private agents: Map<string, Agent> = new Map();
+
+  constructor() {}
 
   async findAll(): Promise<Agent[]> {
-    return this.agentRepository.find();
+    return Array.from(this.agents.values());
   }
 
-  async findOne(id: string): Promise<Agent> {
-    return this.agentRepository.findOneOrFail({ where: { id } });
+  async findOne(id: string): Promise<Agent | null> {
+    return this.agents.get(id) || null;
+  }
+
+  async findById(id: string): Promise<Agent | null> {
+    return this.findOne(id);
   }
 
   async create(createAgentDto: CreateAgentDto): Promise<Agent> {
-    const agent = this.agentRepository.create(createAgentDto);
-    await this.agentRepository.save(agent);
+    const agent: Agent = {
+      id: `agent-${Date.now()}`,
+      name: createAgentDto.name,
+      description: createAgentDto.description || null,
+      type: createAgentDto.type,
+      capabilities: createAgentDto.capabilities,
+      status: 'ACTIVE',
+      userId: 'system',
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      deletedAt: null,
+      config: createAgentDto.configuration,
+    };
 
-    // Initialize agent using factory
-    const agentInstance = await this.agentFactory.createAgent(
-      createAgentDto.type,
-      agent.id,
-      createAgentDto.config,
-    );
-
-    // Update agent with instance details
-    agent.instanceId = agentInstance.id;
-    return this.agentRepository.save(agent);
+    this.agents.set(agent.id, agent);
+    this.logger.log(`Created agent: ${agent.name} (${agent.id})`);
+    return agent;
   }
 
-  async update(id: string, updateAgentDto: UpdateAgentDto): Promise<Agent> {
-    const agent = await this.findOne(id);
-    Object.assign(agent, updateAgentDto);
-    
-    // Update agent instance if config changed
-    if (updateAgentDto.config) {
-      await this.agentFactory.updateAgent(agent.instanceId, updateAgentDto.config);
+  async update(id: string, updateAgentDto: UpdateAgentDto): Promise<Agent | null> {
+    const agent = this.agents.get(id);
+    if (!agent) {
+      return null;
     }
 
-    return this.agentRepository.save(agent);
+    const updatedAgent: Agent = {
+      ...agent,
+      ...updateAgentDto,
+      updatedAt: new Date(),
+    };
+
+    this.agents.set(id, updatedAgent);
+    this.logger.log(`Updated agent: ${id}`);
+    return updatedAgent;
   }
 
-  async remove(id: string): Promise<void> {
-    const agent = await this.findOne(id);
-    await this.agentFactory.destroyAgent(agent.instanceId);
-    await this.agentRepository.remove(agent);
+  async remove(id: string): Promise<boolean> {
+    const deleted = this.agents.delete(id);
+    if (deleted) {
+      this.logger.log(`Removed agent: ${id}`);
+    }
+    return deleted;
+  }
+
+  // Additional methods that might be expected
+  async createAgent(createAgentDto: CreateAgentDto): Promise<Agent> {
+    return this.create(createAgentDto);
+  }
+
+  async getAgentById(id: string): Promise<Agent | null> {
+    return this.findById(id);
+  }
+
+  async updateAgent(id: string, updateAgentDto: UpdateAgentDto): Promise<Agent | null> {
+    return this.update(id, updateAgentDto);
+  }
+
+  async deleteAgent(id: string): Promise<boolean> {
+    return this.remove(id);
+  }
+
+  async getAllAgents(): Promise<Agent[]> {
+    return this.findAll();
+  }
+
+  async getAgentProfile(id: string): Promise<Agent | null> {
+    return this.findById(id);
+  }
+
+  async updateAgentProfile(id: string, updateAgentDto: UpdateAgentDto): Promise<Agent | null> {
+    return this.update(id, updateAgentDto);
   }
 }

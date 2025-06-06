@@ -4,27 +4,27 @@ import { ApiProperty } from '@nestjs/swagger';
 export class LoginDto {
   @ApiProperty()
   @IsEmail()
-  email: string;
+  email: string = '';
 
   @ApiProperty()
   @IsString()
   @MinLength(8)
-  password: string;
+  password: string = '';
 }
 
 export class RegisterDto {
   @ApiProperty()
   @IsString()
-  username: string;
+  username: string = '';
 
   @ApiProperty()
   @IsEmail()
-  email: string;
+  email: string = '';
 
   @ApiProperty()
   @IsString()
   @MinLength(8)
-  password: string;
+  password: string = '';
 
   @ApiProperty({ required: false })
   @IsString()
@@ -40,9 +40,9 @@ export class RegisterDto {
 export class TokenDto {
   @ApiProperty()
   @IsString()
-  accessToken: string;
+  accessToken: string = '';
 
   @ApiProperty()
   @IsString()
-  refreshToken: string;
+  refreshToken: string = '';
 }

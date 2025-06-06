@@ -68,7 +68,7 @@
     "build": "tsc -b",
     "build:api": "tsc && vite build",
     "format": "prettier --write \"src/**/*.ts\"",
-    "start": "node dist/index.js",
+    "start": "node dist/src/index.js",
     "dev": "cross-env PORT=3001 nodemon --config nodemon.json",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",

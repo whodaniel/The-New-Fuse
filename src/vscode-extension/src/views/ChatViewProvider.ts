@@ -1,25 +1,6 @@
 import * as vscode from 'vscode';
-import { ChatService } from '../services/features/ChatService';
+import { ChatService, ChatMessage, ChatSession } from '../services/features/ChatService';
 import { NotificationService } from '../services/core/NotificationService';
-
-// Define ChatMessage and ChatSession interfaces
-// These might be moved to a central types file or be part of ChatService in the future
-export interface ChatMessage {
-    id: string;
-    role: 'user' | 'assistant' | 'system'; // Simplified role
-    source: string; // e.g., 'user', 'llm', 'tool'
-    content: string;
-    timestamp: number;
-    metadata?: any;
-}
-
-export interface ChatSession {
-    id: string;
-    name: string;
-    messages: ChatMessage[];
-    createdAt: number;
-    updatedAt: number;
-}
 
 export class ChatViewProvider {
     private webview?: vscode.Webview;

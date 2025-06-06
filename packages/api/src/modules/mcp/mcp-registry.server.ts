@@ -33,8 +33,10 @@ export class MCPRegistryServer implements OnModuleInit {
           const validate = this.ajv.compile(tool.parameters);
           this.validatorCache.set(tool.name, validate);
           this.logger.debug(`Compiled validator for tool: ${tool.name}`);
-        } catch (error) {
-          this.logger.error(`Failed to compile schema for tool ${tool.name}: ${error.message}`, error.stack);
+        } catch (error: unknown) {
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+          const errorStack = error instanceof Error ? error.stack : undefined;
+          this.logger.error(`Failed to compile schema for tool ${tool.name}: ${errorMessage}`, errorStack);
           // Decide how to handle compilation errors - skip tool? throw? For now, just log.
         }
       } else {

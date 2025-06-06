@@ -4,7 +4,7 @@ import { ApiProperty } from '@nestjs/swagger';
 export class CreateMessageDto {
   @ApiProperty()
   @IsString()
-  content: string;
+  content: string = '';
 
   @ApiProperty({ required: false })
   @IsObject()
@@ -24,16 +24,16 @@ export class CreateMessageDto {
 
 export class MessageResponseDto {
   @ApiProperty()
-  id: string;
+  id: string = '';
 
   @ApiProperty()
-  content: string;
+  content: string = '';
 
   @ApiProperty()
-  sender: string;
+  sender: string = '';
 
   @ApiProperty()
-  timestamp: Date;
+  timestamp: Date = new Date();
 
   @ApiProperty({ required: false })
   metadata?: Record<string, any>;

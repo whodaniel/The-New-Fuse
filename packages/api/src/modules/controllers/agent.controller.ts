@@ -24,6 +24,7 @@ import { CurrentUser } from '../decorators/current-user.decorator.js';
 import { Agent, AgentStatus, ApiResponse } from '@the-new-fuse/types';
 import { CreateAgentDto } from './dto/create-agent.dto.js';
 import { UpdateAgentDto } from './dto/update-agent.dto.js';
+import { AgentDto } from './dto/swagger-dto.js';
 import { ApiTags, ApiOperation, ApiResponse as SwaggerApiResponse, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('agents')
@@ -44,7 +45,7 @@ export class AgentController extends BaseController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ summary: 'Create a new agent' })
   @ApiBody({ type: CreateAgentDto })
-  @SwaggerApiResponse({ status: 201, description: 'Agent created', type: Agent })
+  @SwaggerApiResponse({ status: 201, description: 'Agent created', type: AgentDto })
   async createAgent(
     @Body() data: CreateAgentDto,
     @CurrentUser() user?: any // Mark user as potentially undefined
@@ -74,7 +75,7 @@ export class AgentController extends BaseController {
    */
   @Get()
   @ApiOperation({ summary: 'Get all agents for the current user' })
-  @SwaggerApiResponse({ status: 200, description: 'List of agents', type: [Agent] })
+  @SwaggerApiResponse({ status: 200, description: 'List of agents', type: [AgentDto] })
   @ApiQuery({ name: 'capability', required: false, type: String, description: 'Optional capability filter' })
   async getAgents(
     @CurrentUser() user?: any, // Mark user as potentially undefined
@@ -107,13 +108,10 @@ export class AgentController extends BaseController {
    */
   @Get('active')
   @ApiOperation({ summary: 'Get active agents for the current user' })
-  @SwaggerApiResponse({ status: 200, description: 'List of active agents', type: [Agent] })
+  @SwaggerApiResponse({ status: 200, description: 'List of active agents', type: [AgentDto] })
   // This endpoint seems user-specific, might not make sense for service calls?
   // Or maybe it means active agents the service *owns* or *manages*?
   // Let's keep it user-focused for now and potentially add a different endpoint for services if needed.
-  @Get('active')
-  @ApiOperation({ summary: 'Get active agents for the current user' })
-  @SwaggerApiResponse({ status: 200, description: 'List of active agents', type: [Agent] })
   async getActiveAgents(
     @CurrentUser() user: any // Keep requiring user for this specific endpoint
   ): Promise<ApiResponse<Agent[]>> {
@@ -135,7 +133,7 @@ export class AgentController extends BaseController {
   @Get(':id')
   @ApiOperation({ summary: 'Get agent by ID' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
-  @SwaggerApiResponse({ status: 200, description: 'Agent details', type: Agent })
+  @SwaggerApiResponse({ status: 200, description: 'Agent details', type: AgentDto })
   @SwaggerApiResponse({ status: 404, description: 'Agent not found' })
   async getAgentById(
     @Param('id') id: string,
@@ -161,7 +159,7 @@ export class AgentController extends BaseController {
   @ApiOperation({ summary: 'Update an agent' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiBody({ type: UpdateAgentDto })
-  @SwaggerApiResponse({ status: 200, description: 'Agent updated', type: Agent })
+  @SwaggerApiResponse({ status: 200, description: 'Agent updated', type: AgentDto })
   @SwaggerApiResponse({ status: 404, description: 'Agent not found' })
   async updateAgent(
     @Param('id') id: string,
@@ -192,7 +190,7 @@ export class AgentController extends BaseController {
   @ApiOperation({ summary: 'Update agent status' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @ApiBody({ schema: { properties: { status: { type: 'string' } }, required: ['status'] } })
-  @SwaggerApiResponse({ status: 200, description: 'Agent status updated', type: Agent })
+  @SwaggerApiResponse({ status: 200, description: 'Agent status updated', type: AgentDto })
   @SwaggerApiResponse({ status: 404, description: 'Agent not found' })
   async updateAgentStatus(
     @Param('id') id: string,
@@ -216,17 +214,11 @@ export class AgentController extends BaseController {
    */
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Delete an agent' })
-  @ApiParam({ name: 'id', description: 'Agent ID' })
-  @SwaggerApiResponse({ status: 204, description: 'Agent deleted' })
-  @SwaggerApiResponse({ status: 404, description: 'Agent not found' })
-  // Deleting agents via API key seems risky. Let's keep this user-only for now.
-  @Delete(':id')
-  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Delete an agent (User only)' })
   @ApiParam({ name: 'id', description: 'Agent ID' })
   @SwaggerApiResponse({ status: 204, description: 'Agent deleted' })
   @SwaggerApiResponse({ status: 404, description: 'Agent not found' })
+  // Deleting agents via API key seems risky. Let's keep this user-only for now.
   async deleteAgent(
     @Param('id') id: string,
     @CurrentUser() user: any // Keep requiring user for delete

@@ -1,0 +1,28 @@
+{
+  "name": "@the-new-fuse/fairtable-adapters",
+  "version": "1.0.0",
+  "description": "Migration adapters for transitioning from legacy components to fairtable-based implementations",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@the-new-fuse/fairtable-components": "workspace:*",
+    "@the-new-fuse/fairtable-core": "workspace:*",
+    "@the-new-fuse/fairtable-utils": "workspace:*",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  }
+}

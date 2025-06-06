@@ -1,0 +1,45 @@
+{
+  "name": "@the-new-fuse/fairtable-components",
+  "version": "1.0.0",
+  "description": "React components for Fairtable functionality",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "fairtable",
+    "components",
+    "react",
+    "kanban",
+    "timeline",
+    "grid"
+  ],
+  "author": "The New Fuse Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.1",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "@the-new-fuse/fairtable-core": "workspace:*",
+    "@the-new-fuse/fairtable-utils": "workspace:*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0",
+    "react-dom": ">=18.0.0"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    }
+  }
+}

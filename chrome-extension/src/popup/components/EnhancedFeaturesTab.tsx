@@ -125,6 +125,7 @@ const EnhancedFeaturesTab: React.FC = () => {
           healthStatus: 'healthy',
           metrics: { usage: 67, success: 95, errors: 1, lastUsed: new Date() }
         },
+        {
           id: 'ai-element-detection',
           name: 'AI Element Detection',
           description: 'Advanced AI-powered detection of chat elements using ML models',

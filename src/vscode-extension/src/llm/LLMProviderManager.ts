@@ -331,7 +331,89 @@ export class LLMProviderManager {
     public getInitializationError(): string | undefined {
         return undefined; // Simple version doesn't track initialization errors
     }
-    
+
+    // Additional missing methods for backward compatibility
+
+    /**
+     * Initialize the LLM provider manager
+     */
+    public async initialize(): Promise<void> {
+        // Load saved configuration
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        this._activeProviderId = config.get<string>('selectedProviderId');
+    }
+
+    /**
+     * Get all available providers
+     */
+    public async getProviders(): Promise<any[]> {
+        try {
+            const availableModels = await vscode.lm.selectChatModels({});
+            const providerMap = new Map<string, any>();
+            
+            for (const model of availableModels) {
+                if (!providerMap.has(model.vendor)) {
+                    providerMap.set(model.vendor, {
+                        id: model.vendor,
+                        name: model.vendor,
+                        vendor: model.vendor,
+                        models: []
+                    });
+                }
+                providerMap.get(model.vendor)!.models.push({
+                    id: model.id,
+                    name: model.name || model.id
+                });
+            }
+            
+            return Array.from(providerMap.values());
+        } catch (error) {
+            console.error('Error getting providers:', error);
+            return [];
+        }
+    }
+
+    /**
+     * Select a provider by ID
+     */
+    public async selectProvider(providerId: string): Promise<void> {
+        this._activeProviderId = providerId;
+        await vscode.workspace.getConfiguration('theNewFuse').update('selectedProviderId', providerId, vscode.ConfigurationTarget.Global);
+    }
+
+    /**
+     * Get provider by ID
+     */
+    public async getProviderById(providerId: string): Promise<any> {
+        const providers = await this.getProviders();
+        return providers.find(p => p.id === providerId);
+    }
+
+    /**
+     * Set current provider model
+     */
+    public async setCurrentProviderModel(modelId: string): Promise<void> {
+        await vscode.workspace.getConfiguration('theNewFuse').update('selectedModelId', modelId, vscode.ConfigurationTarget.Global);
+    }
+
+    /**
+     * Get provider models
+     */
+    public async getProviderModels(providerId: string): Promise<any[]> {
+        try {
+            const models = await vscode.lm.selectChatModels({
+                vendor: providerId
+            });
+            return models.map(m => ({
+                id: m.id,
+                name: m.name || m.id
+            }));
+        } catch (error) {
+            console.error('Error getting provider models:', error);
+            return [];
+        }
+    }
+
     /**
      * Query the language model with messages
      * For backward compatibility

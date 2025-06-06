@@ -26,11 +26,11 @@ export declare const agentCardSchema: z.ZodObject<{
         encryption: z.ZodBoolean;
         rateLimit: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        authentication: "none" | "api_key" | "oauth2" | "jwt";
+        authentication: "oauth2" | "none" | "api_key" | "jwt";
         encryption: boolean;
         rateLimit?: number | undefined;
     }, {
-        authentication: "none" | "api_key" | "oauth2" | "jwt";
+        authentication: "oauth2" | "none" | "api_key" | "jwt";
         encryption: boolean;
         rateLimit?: number | undefined;
     }>;
@@ -63,3 +63,4 @@ export declare const agentCardSchema: z.ZodObject<{
     metadata?: unknown;
 }>;
 export type AgentCard = z.infer<typeof agentCardSchema>;
+//# sourceMappingURL=agentCard.d.ts.map

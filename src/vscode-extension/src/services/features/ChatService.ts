@@ -310,4 +310,47 @@ export class ChatService {
     public getAllSessions(): ChatSession[] {
         return Array.from(this.activeSessions.values()).sort((a,b) => b.createdAt.getTime() - a.createdAt.getTime());
     }
+
+    /**
+     * Handle webview messages for chat operations
+     */
+    public async handleWebviewMessage(payload: any): Promise<any> {
+        if (!payload || !payload.type) {
+            throw new Error('Invalid payload: type is required');
+        }
+
+        switch (payload.type) {
+            case 'sendMessage':
+                if (!payload.sessionId || !payload.content) {
+                    throw new Error('Invalid payload: sessionId and content are required for sendMessage');
+                }
+                const message = await this.sendMessage(payload.sessionId, payload.content, payload.role || 'user');
+                return { success: true, message };
+
+            case 'createSession':
+                const session = this.createSession(payload.sessionName);
+                return { success: true, session };
+
+            case 'getSession':
+                if (!payload.sessionId) {
+                    throw new Error('Invalid payload: sessionId is required for getSession');
+                }
+                const foundSession = this.getSession(payload.sessionId);
+                return { success: true, session: foundSession };
+
+            case 'getAllSessions':
+                const sessions = this.getAllSessions();
+                return { success: true, sessions };
+
+            case 'deleteSession':
+                if (!payload.sessionId) {
+                    throw new Error('Invalid payload: sessionId is required for deleteSession');
+                }
+                this.deleteSession(payload.sessionId);
+                return { success: true };
+
+            default:
+                throw new Error(`Unsupported chat operation: ${payload.type}`);
+        }
+    }
 }

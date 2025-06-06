@@ -69,3 +69,10 @@ export interface LLMHealthStatus {
     message: string;
     details?: string;
 }
+
+export interface LLMProviderHealth {
+    status: 'healthy' | 'unhealthy';
+    message: string;
+    timestamp: number;
+    details?: any;
+}

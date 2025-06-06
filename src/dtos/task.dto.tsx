@@ -1,11 +1,11 @@
-import { IsString, IsEnum, IsOptional, IsUUID, IsArray, IsDate, IsObject } from 'class-validator';
+import { IsString, IsEnum, IsOptional, IsUUID, IsArray, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskStatus, TaskPriority, TaskType } from '@the-new-fuse/types';
 
 export class CreateTaskDto {
     @ApiProperty()
-    title: string;
+    title: string = '';
 
     @ApiProperty( { required: false })
     @IsString()
@@ -79,22 +79,22 @@ export class UpdateTaskDto {
 
 export class TaskResponseDto {
     @ApiProperty()
-    id: string;
+    id: string = '';
 
     @ApiProperty()
-    title: string;
+    title: string = '';
 
     @ApiProperty( { required: false })
     description?: string;
 
     @ApiProperty({ enum: TaskStatus })
-    status: TaskStatus;
+    status: TaskStatus = TaskStatus.PENDING;
 
     @ApiProperty( { enum: TaskPriority })
-    priority: TaskPriority;
+    priority: TaskPriority = TaskPriority.MEDIUM;
 
     @ApiProperty({ enum: TaskType })
-    type: TaskType;
+    type: TaskType = TaskType.GENERAL;
 
     @ApiProperty( { required: false })
     dueDate?: Date;
@@ -103,13 +103,13 @@ export class TaskResponseDto {
     assignedTo?: string;
 
     @ApiProperty( { type: [String] })
-    dependencies: string[];
+    dependencies: string[] = [];
 
     @ApiProperty()
-    createdAt: Date;
+    createdAt: Date = new Date();
 
     @ApiProperty()
-    updatedAt: Date;
+    updatedAt: Date = new Date();
 
     @ApiProperty( { required: false })
     completedAt?: Date;

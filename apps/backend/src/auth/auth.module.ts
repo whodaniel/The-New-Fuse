@@ -5,6 +5,7 @@ import { PrismaModule } from '../prisma/prisma.module.js';
 import { ConfigModule } from '@nestjs/config';
 import { RolesGuard } from './guards/roles.guard.js';
 import { FirebaseAuthGuard } from './firebase-auth.guard.js';
+import { AgentJwtStrategy } from './agent-jwt.strategy.js';
 
 @Module({
   imports: [
@@ -15,8 +16,9 @@ import { FirebaseAuthGuard } from './firebase-auth.guard.js';
     AuthService,
     RolesGuard,
     FirebaseAuthGuard,
+    AgentJwtStrategy,
   ],
   controllers: [AuthController],
-  exports: [AuthService, RolesGuard, FirebaseAuthGuard],
+  exports: [AuthService, RolesGuard, FirebaseAuthGuard, AgentJwtStrategy],
 })
 export class AuthModule {}

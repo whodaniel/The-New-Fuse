@@ -3,11 +3,10 @@
  * Provides health check endpoints for the application
  */
 
-import { Controller, Get, Res } from '@nestjs/common';
-import { HealthIndicatorResult } from '@nestjs/terminus';
-import { Response } from 'express';
-import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '@nestjs/terminus';
+import { Controller, Get } from '@nestjs/common';
 import { PrismaService } from '../services/prisma.service.js';
+// Use our local implementation instead of @nestjs/terminus
+import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '../modules/health/terminus.js';
 
 @Controller('health')
 export class HealthController {

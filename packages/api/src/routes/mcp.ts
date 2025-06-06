@@ -8,11 +8,9 @@ interface User {
 }
 
 // Extend the Express Request type to include the updated User interface
-declare global {
-  namespace Express {
-    interface Request {
-      user?: User;
-    }
+declare module 'express-serve-static-core' {
+  interface Request {
+    user?: User;
   }
 }
 
@@ -41,7 +39,7 @@ router.get('/servers', async (req, res) => {
         status
       }
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error getting MCP servers:', error);
     res.status(500).json({
       success: false,
@@ -69,7 +67,7 @@ router.get('/servers/status', async (req, res) => {
       success: true,
       data: status
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error getting MCP server status:', error);
     res.status(500).json({
       success: false,
@@ -97,7 +95,7 @@ router.get('/capabilities', (req, res) => {
       success: true,
       data: capabilities
     });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error getting MCP capabilities:', error);
     res.status(500).json({
       success: false,

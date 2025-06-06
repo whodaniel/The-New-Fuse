@@ -60,10 +60,13 @@ export const ScriptRunner: React.FC = () => {
           <FormLabel htmlFor="script-select">Select Script</FormLabel>
           <Select
             id="script-select"
-            placeholder="Select script"
+            placeholder="Select a script to run"
             value={selectedScript}
             onChange={(e) => setSelectedScript(e.target.value)}
-            aria-label="Select Script"
+            name="script-select"
+            aria-label="Select a script to run"
+            title="Choose a script from the list to execute"
+            required
           >
             {Object.entries(AVAILABLE_SCRIPTS).map(([value, label]) => (
               <option key={value} value={value}>{label}</option>

@@ -1,12 +1,22 @@
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { 
-  FeatureSuggestion, 
-  TodoItem, 
-  SuggestionStatus, 
+import {
+  FeatureSuggestion,
+  TodoItem,
+  SuggestionStatus,
   SuggestionService,
-  TaskStatus 
+  TaskStatus
 } from '../types/index.js';
 import { useUndoRedo } from './useUndoRedo.js';
+import {
+  Table,
+  View,
+  Row,
+  Column,
+  AppState,
+  KanbanViewOptions,
+  DataType,
+  ViewType
+} from '@the-new-fuse/fairtable-core';
 
 interface DraggableLocation {
   droppableId: string;
@@ -369,7 +379,146 @@ export const useKanbanBoard = ({
     }
   }, [suggestionService, setState, suggestions, todos]);
 
+  // Add airtable-compatible data structures for gradual migration
+  const airtableData = useMemo(() => {
+    // Create columns for the airtable
+    const titleColumn: Column = {
+      id: 'title',
+      name: 'Title',
+      type: DataType.TEXT,
+      width: 200
+    };
+
+    const descriptionColumn: Column = {
+      id: 'description',
+      name: 'Description',
+      type: DataType.LONG_TEXT,
+      width: 300
+    };
+
+    const priorityColumn: Column = {
+      id: 'priority',
+      name: 'Priority',
+      type: DataType.SINGLE_SELECT,
+      width: 120,
+      options: [
+        { id: 'LOW', name: 'Low', colorClass: 'bg-blue-100 text-blue-800' },
+        { id: 'MEDIUM', name: 'Medium', colorClass: 'bg-yellow-100 text-yellow-800' },
+        { id: 'HIGH', name: 'High', colorClass: 'bg-orange-100 text-orange-800' },
+        { id: 'CRITICAL', name: 'Critical', colorClass: 'bg-red-100 text-red-800' }
+      ]
+    };
+
+    const statusColumn: Column = {
+      id: 'status',
+      name: 'Status',
+      type: DataType.SINGLE_SELECT,
+      width: 150,
+      options: filteredColumns.map(col => ({
+        id: col.id,
+        name: col.title,
+        colorClass: 'bg-gray-100 text-gray-800'
+      }))
+    };
+
+    const tableColumns = [titleColumn, descriptionColumn, priorityColumn, statusColumn];
+
+    // Convert legacy items to rows
+    const rows: Row[] = [];
+    filteredColumns.forEach(column => {
+      column.items.forEach(item => {
+        const suggestion = item as FeatureSuggestion;
+        const todo = item as TodoItem;
+        
+        rows.push({
+          id: item.id,
+          data: {
+            title: item.title,
+            description: suggestion.description || todo.description || '',
+            priority: suggestion.priority || todo.priority || 'MEDIUM',
+            status: column.id,
+            // Preserve additional properties
+            ...Object.fromEntries(
+              Object.entries(item).filter(([key]) =>
+                !['id', 'title', 'description', 'priority'].includes(key)
+              )
+            )
+          },
+          createdAt: suggestion.createdAt ? (suggestion.createdAt instanceof Date ? suggestion.createdAt.toISOString() : suggestion.createdAt) :
+                     todo.createdAt ? (todo.createdAt instanceof Date ? todo.createdAt.toISOString() : todo.createdAt) :
+                     new Date().toISOString(),
+          updatedAt: suggestion.updatedAt ? (suggestion.updatedAt instanceof Date ? suggestion.updatedAt.toISOString() : suggestion.updatedAt) :
+                     todo.updatedAt ? (todo.updatedAt instanceof Date ? todo.updatedAt.toISOString() : todo.updatedAt) :
+                     new Date().toISOString(),
+          parentId: null,
+          depth: 0,
+          isCollapsed: false
+        });
+      });
+    });
+
+    // Create table
+    const table: Table = {
+      id: 'kanban-board-table',
+      name: 'Kanban Board',
+      columns: tableColumns,
+      rows,
+      columnOrder: ['title', 'description', 'priority', 'status'],
+      views: [],
+      activeViewId: 'kanban-view'
+    };
+
+    // Create kanban view
+    const kanbanViewOptions: KanbanViewOptions = {
+      groupByColumnId: 'status'
+    };
+
+    const view: View = {
+      id: 'kanban-view',
+      name: 'Kanban View',
+      type: ViewType.KANBAN,
+      filters: [],
+      sorts: [],
+      groupBy: [],
+      columnOrder: ['title', 'description', 'priority'],
+      columnVisibility: {
+        title: true,
+        description: true,
+        priority: true,
+        status: false // Hidden since it's used for grouping
+      },
+      viewSpecificOptions: kanbanViewOptions
+    };
+
+    table.views = [view];
+
+    const appState: AppState = {
+      tables: [table],
+      activeTableId: table.id
+    };
+
+    return {
+      table,
+      view,
+      appState,
+      columnsToDisplay: [titleColumn, descriptionColumn, priorityColumn],
+      rowsToDisplay: rows
+    };
+  }, [filteredColumns, suggestions, todos]);
+
+  // Show migration notice in development
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.info(
+        '🔄 [MIGRATION] useKanbanBoard now provides airtable-compatible data via .airtableData property. ' +
+        'Consider migrating to direct airtable integration for better performance. ' +
+        'See migration guide: docs/migration/kanban-board.md'
+      );
+    }
+  }, []);
+
   return {
+    // Legacy API
     suggestions,
     todos,
     loading,
@@ -389,6 +538,8 @@ export const useKanbanBoard = ({
     canUndo,
     canRedo,
     undo,
-    redo
+    redo,
+    // New airtable-compatible API
+    airtableData
   };
 };

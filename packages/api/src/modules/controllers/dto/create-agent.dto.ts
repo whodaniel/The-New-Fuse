@@ -1,15 +1,23 @@
-import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
 import type { CreateAgentDto as ICreateAgentDto } from '@the-new-fuse/types';
 
 export class CreateAgentDto implements ICreateAgentDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string = '';
 
   @IsString()
   @IsNotEmpty()
-  type: string;
+  type: string = '';
+
+  @IsArray()
+  @IsOptional()
+  capabilities: string[] = [];
 
   @IsOptional()
   metadata?: Record<string, any>;
+
+  @IsString()
+  @IsOptional()
+  ownerId?: string;
 }

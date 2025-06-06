@@ -4,7 +4,18 @@ import OpenAI from "openai";
 import Anthropic from '@anthropic-ai/sdk';
 import { Redis } from 'ioredis';
 import { PromptTemplate } from '../types/prompt.types.js';
-import { LLMProviderConfig, CompletionConfig, CompletionResult, Message } from '../types/llm.types.js';
+import { LLMProviderConfig, CompletionConfig, CompletionResult } from '../types/llm.types.js';
+
+export interface Message {
+    id: string;
+    role: string;
+    content: string;
+    usage: {
+        promptTokens: number;
+        completionTokens: number;
+        totalTokens: number;
+    };
+}
 
 @Injectable()
 export class LLMService {
@@ -25,54 +36,85 @@ export class LLMService {
         });
     }
 
-    private async initializeProviders(): Promise<void> {): Promise<any> {
-        const providers: unknown){
+    private async initializeProviders(): Promise<void> {
+        const providers = this.configService.get<Record<string, LLMProviderConfig>>('llm.providers', {});
+        
+        for (const [name, config] of Object.entries(providers)) {
+            switch(name) {
                 case 'openai':
                     this.providers.set(name, new OpenAI({
                         apiKey: config.apiKey,
                         baseURL: config.baseUrl,
-                    }): this.providers.set(name, new Anthropic( {
+                    }));
+                    break;
+                case 'anthropic':
+                    this.providers.set(name, new Anthropic({
                         apiKey: config.apiKey,
                     }));
                     break;
                 default:
-                    console.warn(`Unsupported LLM provider: ${name}`): string | PromptTemplate,
+                    console.warn(`Unsupported LLM provider: ${name}`);
+            }
+        }
+    }
+
+    public async complete(
+        prompt: string | PromptTemplate,
         config?: CompletionConfig
     ): Promise<CompletionResult> {
-        const provider: ${provider}`);
+        const provider = config?.provider || this.defaultProvider;
+        const llm = this.providers.get(provider);
+        
+        if (!llm) {
+            throw new Error(`LLM provider not found: ${provider}`);
         }
 
         // Check cache first
-        const cacheKey   = this.configService.get<Record<string, LLMProviderConfig>>('llm.providers', {});
-        
-        for (const [name, config] of Object.entries(providers)) {
-            switch(name config?.provider || this.defaultProvider;
-        const llm this.providers.get(provider)): void {
-            throw new Error(`LLM provider not found this.getCacheKey(prompt, config): CompletionResult;
-            
-            switch (provider): void {
-                case 'openai':
-                    result  = await this.cache.get(cacheKey)): void {
+        const cacheKey = this.getCacheKey(prompt, config);
+        const cached = await this.cache.get(cacheKey);
+        if (cached) {
             return JSON.parse(cached);
         }
 
         try {
-            let result await this.completeWithOpenAI(llm, prompt, config): result = await this.completeWithAnthropic(llm, prompt, config);
+            let result: CompletionResult;
+            
+            switch (provider) {
+                case 'openai':
+                    result = await this.completeWithOpenAI(llm, prompt, config);
+                    break;
+                case 'anthropic':
+                    result = await this.completeWithAnthropic(llm, prompt, config);
                     break;
                 default:
-                    throw new Error(`Unsupported provider: $ {provider}`);
+                    throw new Error(`Unsupported provider: ${provider}`);
             }
 
             // Cache the result
             await this.cache.set(
                 cacheKey,
-                JSON.stringify(result)): void {
-            console.error('LLM completion failed:', error): OpenAI,
+                JSON.stringify(result),
+                'EX',
+                3600 // 1 hour cache
+            );
+
+            return result;
+        } catch (error) {
+            console.error('LLM completion failed:', error);
+            throw error;
+        }
+    }
+
+    private async completeWithOpenAI(
+        llm: OpenAI,
         prompt: string | PromptTemplate,
         config?: CompletionConfig
     ): Promise<CompletionResult> {
-        const promptText: prompt.render({}): config?.model || 'gpt-4',
-            messages: [ { role: user', content: promptText }],
+        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
+        
+        const response = await llm.chat.completions.create({
+            model: config?.model || 'gpt-4',
+            messages: [{ role: 'user', content: promptText }],
             temperature: config?.temperature || 0.7,
             max_tokens: config?.maxTokens || 2000,
             top_p: config?.topP || 1,
@@ -81,64 +123,64 @@ export class LLMService {
         });
 
         return {
-            text: response.choices[0].message.content,
-            provider: openai',
+            text: response.choices[0].message.content || '',
+            provider: 'openai',
             model: config?.model || 'gpt-4',
             usage: {
-                promptTokens: (response as any).usage.prompt_tokens,
-                completionTokens: (response as any).usage.completion_tokens,
-                totalTokens: (response as any).usage.total_tokens,
+                promptTokens: response.usage?.prompt_tokens || 0,
+                completionTokens: response.usage?.completion_tokens || 0,
+                totalTokens: response.usage?.total_tokens || 0,
             },
             raw: response,
         };
     }
 
-    private async completeWithAnthropic(): Promise<void> {
+    private async completeWithAnthropic(
         llm: Anthropic,
         prompt: string | PromptTemplate,
         config?: CompletionConfig
     ): Promise<CompletionResult> {
-        const promptText: prompt.render({});
+        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
         
-        const response   = typeof prompt === 'string' ? prompt  await llm.chat.completions.create({
-            model typeof prompt === 'string' ? prompt  await (llm as any).messages.create({
-            model: config?.model || 'claude-3',
+        const response = await llm.messages.create({
+            model: config?.model || 'claude-3-sonnet-20240229',
             max_tokens: config?.maxTokens || 2000,
-            messages: [{ role: user', content: promptText }],
+            messages: [{ role: 'user', content: promptText }],
             temperature: config?.temperature || 0.7,
             top_p: config?.topP || 1,
         });
 
-        const message: message.content,
-            provider: anthropic',
-            model: config?.model || 'claude-3',
+        const message = this.mapResponseToMessage(response);
+
+        return {
+            text: message.content,
+            provider: 'anthropic',
+            model: config?.model || 'claude-3-sonnet-20240229',
             usage: {
-                promptTokens: (message as any).usage.promptTokens,
-                completionTokens: (message as any).usage.completionTokens,
-                totalTokens: (message as any).usage.totalTokens,
+                promptTokens: message.usage.promptTokens,
+                completionTokens: message.usage.completionTokens,
+                totalTokens: message.usage.totalTokens,
             },
             raw: response,
         };
     }
 
-    private mapResponseToMessage(response: unknown): Message {
+    private mapResponseToMessage(response: any): Message {
         return {
-          id: response.id,
-          role: response.role,
-          content: response.content[0].value,
-          usage: {
-            promptTokens: (response as any).usage.input_tokens,
-            completionTokens: (response as any).usage.output_tokens,
-            totalTokens: (response as any).usage.total_tokens,
-          },
+            id: response.id,
+            role: response.role,
+            content: response.content[0].text,
+            usage: {
+                promptTokens: response.usage.input_tokens,
+                completionTokens: response.usage.output_tokens,
+                totalTokens: response.usage.input_tokens + response.usage.output_tokens,
+            },
         };
     }
 
     private getCacheKey(prompt: string | PromptTemplate, config?: CompletionConfig): string {
-        const promptText  = this.mapResponseToMessage(response);
-
-        return {
-            text typeof prompt === 'string' ? prompt : prompt.render({}): unknown): ';
-        return `llm:$ {promptText}:${configStr}`;
+        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
+        const configStr = JSON.stringify(config || {});
+        return `llm:${promptText}:${configStr}`;
     }
 }

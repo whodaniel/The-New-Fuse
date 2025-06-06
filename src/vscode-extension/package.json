@@ -18,8 +18,20 @@
   "homepage": "https://github.com/danielgoldberg/the-new-fuse#readme",
   "license": "MIT",
   "keywords": [
-    "ai", "llm", "assistant", "chat", "copilot", "anthropic", "openai", 
-    "claude", "gpt", "development", "productivity", "agent", "mcp", "orchestration"
+    "ai",
+    "llm",
+    "assistant",
+    "chat",
+    "copilot",
+    "anthropic",
+    "openai",
+    "claude",
+    "gpt",
+    "development",
+    "productivity",
+    "agent",
+    "mcp",
+    "orchestration"
   ],
   "engines": {
     "vscode": "^1.90.0"
@@ -27,12 +39,10 @@
   "categories": [
     "Machine Learning",
     "Other",
-    "Chat",
-    "Productivity"
+    "Chat"
   ],
-  "activationEvents": ["*"],
+  "activationEvents": [],
   "main": "./dist/extension.js",
-  "icon": "media/icon.svg",
   "contributes": {
     "configuration": {
       "title": "The New Fuse",
@@ -40,7 +50,13 @@
         "theNewFuse.llmProvider": {
           "type": "string",
           "default": "vscode",
-          "enum": ["vscode", "openai", "anthropic", "cerebras", "ollama"],
+          "enum": [
+            "vscode",
+            "openai",
+            "anthropic",
+            "cerebras",
+            "ollama"
+          ],
           "enumDescriptions": [
             "VS Code Language Models (Copilot/Built-in)",
             "OpenAI GPT-4 and variants",
@@ -55,9 +71,17 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["vscode", "openai", "anthropic", "cerebras", "ollama"]
+            "enum": [
+              "vscode",
+              "openai",
+              "anthropic",
+              "cerebras",
+              "ollama"
+            ]
           },
-          "default": ["vscode"],
+          "default": [
+            "vscode"
+          ],
           "description": "Fallback providers to use if primary provider fails",
           "order": 2
         },
@@ -66,9 +90,18 @@
           "default": {},
           "description": "API keys for various LLM providers (stored securely)",
           "properties": {
-            "openai": {"type": "string", "description": "OpenAI API key"},
-            "anthropic": {"type": "string", "description": "Anthropic API key"},
-            "cerebras": {"type": "string", "description": "Cerebras API key"}
+            "openai": {
+              "type": "string",
+              "description": "OpenAI API key"
+            },
+            "anthropic": {
+              "type": "string",
+              "description": "Anthropic API key"
+            },
+            "cerebras": {
+              "type": "string",
+              "description": "Cerebras API key"
+            }
           },
           "order": 3
         },
@@ -115,8 +148,16 @@
         "theNewFuse.theme": {
           "type": "string",
           "default": "auto",
-          "enum": ["auto", "light", "dark"],
-          "enumDescriptions": ["Follow VS Code theme", "Light theme", "Dark theme"],
+          "enum": [
+            "auto",
+            "light",
+            "dark"
+          ],
+          "enumDescriptions": [
+            "Follow VS Code theme",
+            "Light theme",
+            "Dark theme"
+          ],
           "description": "UI theme preference",
           "order": 10
         },
@@ -144,6 +185,13 @@
           "id": "theNewFuse.tabbedContainer",
           "name": "The New Fuse",
           "icon": "$(comment-discussion)",
+          "when": "true"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.copilotCoordination",
+          "name": "Copilot Coordination",
+          "icon": "$(organization)",
           "when": "true"
         }
       ]
@@ -178,6 +226,51 @@
         "command": "the-new-fuse.runDiagnostic",
         "title": "🔍 Run System Diagnostic",
         "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.copilot.startCoordination",
+        "title": "🤖 Start Copilot Coordination",
+        "category": "The New Fuse - Copilot"
+      },
+      {
+        "command": "theNewFuse.copilot.stopCoordination",
+        "title": "🛑 Stop Copilot Coordination",
+        "category": "The New Fuse - Copilot"
+      },
+      {
+        "command": "theNewFuse.copilot.shareContext",
+        "title": "📤 Share Context with Copilot Instances",
+        "category": "The New Fuse - Copilot"
+      },
+      {
+        "command": "theNewFuse.copilot.requestSuggestion",
+        "title": "💡 Request Suggestion from Copilot Instances",
+        "category": "The New Fuse - Copilot"
+      },
+      {
+        "command": "theNewFuse.copilot.showStatus",
+        "title": "📊 Show Copilot Coordination Status",
+        "category": "The New Fuse - Copilot"
+      },
+      {
+        "command": "theNewFuse.trigger.demonstrateSystem",
+        "title": "🎯 Demonstrate Universal Trigger System",
+        "category": "The New Fuse - Triggers"
+      },
+      {
+        "command": "theNewFuse.trigger.pingClaude",
+        "title": "📤 Ping Claude Desktop",
+        "category": "The New Fuse - Triggers"
+      },
+      {
+        "command": "theNewFuse.trigger.startClaudeHeartbeat",
+        "title": "💓 Start Claude Desktop Heartbeat",
+        "category": "The New Fuse - Triggers"
+      },
+      {
+        "command": "theNewFuse.trigger.stopClaudeHeartbeat",
+        "title": "🛑 Stop Claude Desktop Heartbeat",
+        "category": "The New Fuse - Triggers"
       }
     ],
     "menus": {
@@ -192,6 +285,42 @@
         },
         {
           "command": "theFuse.checkLLM",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.copilot.startCoordination",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.copilot.stopCoordination",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.copilot.shareContext",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "theNewFuse.copilot.requestSuggestion",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "theNewFuse.copilot.showStatus",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.trigger.demonstrateSystem",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.trigger.pingClaude",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.trigger.startClaudeHeartbeat",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.trigger.stopClaudeHeartbeat",
           "when": "true"
         }
       ]
@@ -220,10 +349,10 @@
     "@types/uuid": "^9.0.8",
     "@types/vscode": "^1.75.0",
     "@types/ws": "^8.5.10",
-    "esbuild": "^0.19.0",
-    "typescript": "^4.9.4",
     "@vscode/vsce": "^2.20.0",
-    "rimraf": "^5.0.0"
+    "esbuild": "^0.19.0",
+    "rimraf": "^5.0.0",
+    "typescript": "^4.9.4"
   },
   "dependencies": {
     "axios": "^1.6.7",

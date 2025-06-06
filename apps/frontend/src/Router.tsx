@@ -50,6 +50,7 @@ const Users = lazy(() => import('./pages/Admin/Users'));
 const Workspaces = lazy(() => import('./pages/Admin/Workspaces'));
 const SystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
 const AdminSettings = lazy(() => import('./pages/Admin/Settings'));
+const PortManagement = lazy(() => import('./pages/Admin/PortManagement'));
 
 // Settings pages
 const General = lazy(() => import('./pages/settings/General'));
@@ -181,6 +182,7 @@ export default function Router() {
             <Route path="workspaces" element={<Suspense fallback={<Loading />}><Workspaces /></Suspense>} />
             <Route path="system-health" element={<Suspense fallback={<Loading />}><SystemHealth /></Suspense>} />
             <Route path="settings" element={<Suspense fallback={<Loading />}><AdminSettings /></Suspense>} />
+            <Route path="ports" element={<Suspense fallback={<Loading />}><PortManagement /></Suspense>} />
           </Route>
 
           {/* Settings section */}

@@ -5,28 +5,28 @@ import { ApiProperty } from '@nestjs/swagger';
  */
 export class AgentDto {
   @ApiProperty({ description: 'Unique identifier for the agent' })
-  id: string;
+  id: string = '';
 
   @ApiProperty({ description: 'Name of the agent' })
-  name: string;
+  name: string = '';
 
   @ApiProperty({ description: 'Type of the agent' })
-  type: string;
+  type: string = '';
 
   @ApiProperty({ description: 'Current status of the agent', example: 'IDLE' })
-  status: string;
+  status: string = '';
 
   @ApiProperty({ description: 'ID of the user who owns this agent' })
-  userId: string;
+  userId: string = '';
 
   @ApiProperty({ description: 'List of capabilities this agent has', type: [String] })
-  capabilities: string[];
+  capabilities: string[] = [];
 
   @ApiProperty({ description: 'When the agent was created' })
-  createdAt: Date;
+  createdAt: Date = new Date();
 
   @ApiProperty({ description: 'When the agent was last updated' })
-  updatedAt: Date;
+  updatedAt: Date = new Date();
 }
 
 /**
@@ -34,22 +34,22 @@ export class AgentDto {
  */
 export class WorkflowDto {
   @ApiProperty({ description: 'Unique identifier for the workflow' })
-  id: string;
+  id: string = '';
 
   @ApiProperty({ description: 'Name of the workflow' })
-  name: string;
+  name: string = '';
 
   @ApiProperty({ description: 'Description of the workflow' })
-  description: string;
+  description: string = '';
 
   @ApiProperty({ description: 'Steps in the workflow represented as JSON' })
-  steps: Record<string, any>;
+  steps: Record<string, any> = {};
 
   @ApiProperty({ description: 'When the workflow was created' })
-  createdAt: Date;
+  createdAt: Date = new Date();
 
   @ApiProperty({ description: 'When the workflow was last updated' })
-  updatedAt: Date;
+  updatedAt: Date = new Date();
 }
 
 /**
@@ -57,19 +57,19 @@ export class WorkflowDto {
  */
 export class WorkflowExecutionDto {
   @ApiProperty({ description: 'Unique identifier for the execution' })
-  id: string;
+  id: string = '';
 
   @ApiProperty({ description: 'ID of the workflow being executed' })
-  workflowId: string;
+  workflowId: string = '';
 
   @ApiProperty({ description: 'Current status of the execution', example: 'RUNNING' })
-  status: string;
+  status: string = '';
 
   @ApiProperty({ description: 'Result of the workflow execution', required: false })
   result?: Record<string, any>;
 
   @ApiProperty({ description: 'When the execution started' })
-  startedAt: Date;
+  startedAt: Date = new Date();
 
   @ApiProperty({ description: 'When the execution completed', required: false })
   completedAt?: Date;
@@ -80,16 +80,16 @@ export class WorkflowExecutionDto {
  */
 export class MessageDto {
   @ApiProperty({ description: 'Unique identifier for the message' })
-  id: string;
+  id: string = '';
 
   @ApiProperty({ description: 'Content of the message' })
-  content: string;
+  content: string = '';
 
   @ApiProperty({ description: 'Role of the message sender', example: 'user' })
-  role: string;
+  role: string = '';
 
   @ApiProperty({ description: 'ID of the user who owns this message' })
-  userId: string;
+  userId: string = '';
 
   @ApiProperty({ description: 'ID of the agent who sent this message', required: false })
   fromAgentId?: string;
@@ -98,5 +98,5 @@ export class MessageDto {
   toAgentId?: string;
 
   @ApiProperty({ description: 'When the message was created' })
-  createdAt: Date;
+  createdAt: Date = new Date();
 }

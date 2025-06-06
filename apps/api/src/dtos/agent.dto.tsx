@@ -6,11 +6,11 @@ import { AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/types';
 export class CreateAgentDto {
     @ApiProperty()
     @IsString()
-    name: string;
+    name: string = '';
 
     @ApiProperty({ enum: AgentType })
     @IsEnum(AgentType)
-    type: AgentType;
+    type: AgentType = AgentType.BASIC;
 
     @ApiProperty({ required: false })
     @IsArray()
@@ -67,26 +67,26 @@ export class UpdateAgentDto {
 
 export class AgentResponseDto {
     @ApiProperty()
-    id: string;
+    id: string = '';
 
     @ApiProperty()
-    name: string;
+    name: string = '';
 
     @ApiProperty({ enum: AgentType })
-    type: AgentType;
+    type: AgentType = AgentType.BASIC;
 
     @ApiProperty({ enum: AgentStatus })
-    status: AgentStatus;
+    status: AgentStatus = AgentStatus.IDLE;
 
     @ApiProperty({ type: [String] })
-    capabilities: AgentCapability[];
+    capabilities: AgentCapability[] = [];
 
     @ApiProperty({ required: false })
     description?: string;
 
     @ApiProperty()
-    createdAt: Date;
+    createdAt: Date = new Date();
 
     @ApiProperty()
-    updatedAt: Date;
+    updatedAt: Date = new Date();
 }

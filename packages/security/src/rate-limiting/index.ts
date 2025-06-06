@@ -1,62 +1,71 @@
-import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
-import { Logger } from '@the-new-fuse/utils';
+import { Injectable } from '@nestjs/common';
+// import { Logger } from '@the-new-fuse/utils';
 
-export interface RateLimitResult {
+interface RateLimitConfig {
+  windowMs: number;
+  maxRequests: number;
+}
+
+interface RateLimitResult {
   allowed: boolean;
   remaining: number;
   resetTime: Date;
 }
 
-@Injectable()
 export class RateLimitingService {
-  private readonly logger: Logger;
-  private readonly store: Map<string, { count: number; resetTime: Date }>;
-  private readonly windowMs: number;
-  private readonly maxRequests: number;
+  private store: Map<string, { count: number; resetTime: Date }>;
+  private readonly config: RateLimitConfig;
+  // private readonly logger: Logger;
 
-  constructor() {
-    this.logger = new Logger('RateLimitingService');
+  constructor(config: Partial<RateLimitConfig> = {}) {
+    this.config = {
+      windowMs: config.windowMs || 60000, // 1 minute default
+      maxRequests: config.maxRequests || 100
+    };
     this.store = new Map();
-    this.windowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10); // 15 minutes default
-    this.maxRequests = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100', 10); // 100 requests default
+    // this.logger = new Logger('RateLimitingService');
   }
 
-  async isAllowed(req: Request): Promise<RateLimitResult> {
+  async checkRateLimit(req: Request): Promise<RateLimitResult> {
     const key = this.getKey(req);
     const now = new Date();
     const record = this.store.get(key);
 
-    if (!record || record.resetTime < now) {
-      // First request or expired window
-      this.store.set(key, {
-        count: 1,
-        resetTime: new Date(now.getTime() + this.windowMs)
-      });
-      return {
-        allowed: true,
-        remaining: this.maxRequests - 1,
-        resetTime: new Date(now.getTime() + this.windowMs)
-      };
+    if (!record || now > record.resetTime) {
+      const resetTime = new Date(now.getTime() + this.config.windowMs);
+      this.store.set(key, { count: 1, resetTime });
+      return { allowed: true, remaining: this.config.maxRequests - 1, resetTime };
     }
 
-    if (record.count >= this.maxRequests) {
-      return {
-        allowed: false,
-        remaining: 0,
-        resetTime: record.resetTime
-      };
+    if (record.count >= this.config.maxRequests) {
+      return { allowed: false, remaining: 0, resetTime: record.resetTime };
     }
 
-    record.count += 1;
+    record.count++;
     return {
       allowed: true,
-      remaining: this.maxRequests - record.count,
+      remaining: this.config.maxRequests - record.count,
       resetTime: record.resetTime
     };
   }
 
+  async isAllowed(req: Request): Promise<RateLimitResult> {
+    return this.checkRateLimit(req);
+  }
+
   private getKey(req: Request): string {
-    return `${req.ip}-${req.path}`;
+    // Use IP as default key, but could be extended to use other identifiers
+    return req.ip || req.connection.remoteAddress || '';
+  }
+
+  // Clean up old records periodically
+  private cleanup(): void {
+    const now = new Date();
+    for (const [key, record] of this.store.entries()) {
+      if (now > record.resetTime) {
+        this.store.delete(key);
+      }
+    }
   }
 }

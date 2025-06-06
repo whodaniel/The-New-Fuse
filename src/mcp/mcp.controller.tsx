@@ -4,6 +4,9 @@ import { MCPAgentServer } from './MCPAgentServer.js';
 import { MCPChatServer } from './MCPChatServer.js';
 import { MCPWorkflowServer } from './MCPWorkflowServer.js';
 import { MCPFuseServer } from './MCPFuseServer.js';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.js';
+import { MCPRAGServer } from './MCPRAGServer.js';
+import { DocumentationOrchestrationService } from './services/documentation-orchestration.service.js';
 import { MCPBrokerService } from './services/mcp-broker.service.js';
 import { DirectorAgentService } from './services/director-agent.service.js';
 
@@ -49,6 +52,9 @@ export class MCPController {
     private readonly chatServer: MCPChatServer,
     private readonly workflowServer: MCPWorkflowServer,
     private readonly fuseServer: MCPFuseServer,
+    private readonly fileCoordinationServer: MCPFileCoordinationServer,
+    private readonly ragServer: MCPRAGServer,
+    private readonly documentationOrchestrator: DocumentationOrchestrationService,
     private readonly mcpBroker: MCPBrokerService,
     private readonly directorAgent: DirectorAgentService,
   ) {}
@@ -153,5 +159,111 @@ export class MCPController {
   @Post("fuse/tools/:name")
   executeFuseTool(@Param("name") name: string, @Body() dto: ExecuteToolDto) {
     return this.fuseServer.executeTool(name, dto.params);
+  }
+
+  // File Coordination Server endpoints
+  @Get("file-coordination/tools")
+  getFileCoordinationTools() {
+    return this.fileCoordinationServer.getTools();
+  }
+
+  @Post("file-coordination/tools/:name")
+  executeFileCoordinationTool(
+    @Param("name") name: string,
+    @Body() dto: ExecuteToolDto,
+  ) {
+    return this.fileCoordinationServer.executeTool(name, dto.params);
+  }
+
+  // RAG Server endpoints
+  @Get("rag/tools")
+  getRAGTools() {
+    return this.ragServer.getTools();
+  }
+
+  @Post("rag/tools/:name")
+  executeRAGTool(
+    @Param("name") name: string,
+    @Body() dto: ExecuteToolDto,
+  ) {
+    return this.ragServer.callTool(name, dto.params);
+  }
+
+  @Get("rag/status")
+  async getRAGStatus() {
+    return await this.ragServer.callTool('get_rag_status', {});
+  }
+
+  @Get("rag/collections")
+  getRAGCollections() {
+    return this.ragServer.getCollections();
+  }
+
+  @Post("rag/crawl-all")
+  crawlAllDocumentation() {
+    return this.ragServer.crawlAllDocumentation();
+  }
+
+  @Post("rag/query")
+  performRAGQuery(@Body() dto: { query: string; collection_name?: string; max_results?: number; include_code?: boolean }) {
+    return this.ragServer.callTool('perform_rag_query', dto);
+  }
+
+  @Post("rag/search-code")
+  searchCodeExamples(@Body() dto: { query: string; language?: string; framework?: string; max_results?: number }) {
+    return this.ragServer.callTool('search_code_examples', dto);
+  }
+
+  @Post("rag/search-vscode-api")
+  searchVSCodeAPI(@Body() dto: { api_name: string; include_examples?: boolean; max_results?: number }) {
+    return this.ragServer.callTool('search_vscode_api', dto);
+  }
+
+  @Post("rag/search-copilot")
+  searchCopilotDocs(@Body() dto: { topic: string; include_examples?: boolean; max_results?: number }) {
+    return this.ragServer.callTool('search_copilot_docs', dto);
+  }
+
+  // Documentation Orchestration endpoints
+  @Post("docs/update-all")
+  updateAllDocumentation() {
+    return this.documentationOrchestrator.updateAllDocumentation();
+  }
+
+  @Post("docs/update/:source")
+  updateSpecificDocumentation(
+    @Param("source") source: string,
+    @Body() dto: { url?: string; max_depth?: number; max_pages?: number }
+  ) {
+    return this.documentationOrchestrator.updateSpecificDocumentation(source, dto);
+  }
+
+  @Get("docs/status")
+  getDocumentationStatus() {
+    return this.documentationOrchestrator.getUpdateStatus();
+  }
+
+  @Get("docs/health")
+  getDocumentationHealth() {
+    return this.documentationOrchestrator.performDocumentationHealthCheck();
+  }
+
+  @Post("docs/search")
+  searchAllDocumentation(@Body() dto: {
+    query: string;
+    maxResults?: number;
+    includeCode?: boolean;
+    sourceFilter?: string[];
+  }) {
+    return this.documentationOrchestrator.searchAllDocumentation(dto.query, {
+      maxResults: dto.maxResults,
+      includeCode: dto.includeCode,
+      sourceFilter: dto.sourceFilter
+    });
+  }
+
+  @Get("docs/recommendations")
+  getDocumentationRecommendations() {
+    return this.documentationOrchestrator.getDocumentationRecommendations();
   }
 }

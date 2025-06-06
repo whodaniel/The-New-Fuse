@@ -33,4 +33,21 @@ export class NotificationService {
     public showError(message: string, ...items: string[]): Thenable<string | undefined> {
         return vscode.window.showErrorMessage(message, ...items);
     }
+
+    // Alias methods for backward compatibility
+    public showInformationMessage(message: string, ...items: string[]): Thenable<string | undefined> {
+        return this.showInfo(message, ...items);
+    }
+
+    public showInformation(message: string, ...items: string[]): Thenable<string | undefined> {
+        return this.showInfo(message, ...items);
+    }
+
+    public showWarningMessage(message: string, ...items: string[]): Thenable<string | undefined> {
+        return this.showWarning(message, ...items);
+    }
+
+    public showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined> {
+        return this.showError(message, ...items);
+    }
 }

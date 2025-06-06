@@ -5,26 +5,26 @@ import { ApiProperty } from '@nestjs/swagger';
 export class WorkflowStepDto {
   @ApiProperty()
   @IsString()
-  id: string;
+  id: string = '';
 
   @ApiProperty()
   @IsString()
-  type: string;
+  type: string = '';
 
   @ApiProperty()
   @IsObject()
-  config: Record<string, any>;
+  config: Record<string, any> = {};
 
   @ApiProperty({ type: [String] })
   @IsArray()
   @IsString({ each: true })
-  nextSteps: string[];
+  nextSteps: string[] = [];
 }
 
 export class CreateWorkflowDto {
   @ApiProperty()
   @IsString()
-  name: string;
+  name: string = '';
 
   @ApiProperty({ required: false })
   @IsString()
@@ -35,7 +35,7 @@ export class CreateWorkflowDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => WorkflowStepDto)
-  steps: WorkflowStepDto[];
+  steps: WorkflowStepDto[] = [];
 
   @ApiProperty({ required: false })
   @IsObject()
@@ -69,23 +69,23 @@ export class UpdateWorkflowDto {
 
 export class WorkflowResponseDto {
   @ApiProperty()
-  id: string;
+  id: string = '';
 
   @ApiProperty()
-  name: string;
+  name: string = '';
 
   @ApiProperty({ required: false })
   description?: string;
 
   @ApiProperty({ type: [WorkflowStepDto] })
-  steps: WorkflowStepDto[];
+  steps: WorkflowStepDto[] = [];
 
   @ApiProperty({ required: false })
   metadata?: Record<string, any>;
 
   @ApiProperty()
-  createdAt: Date;
+  createdAt: Date = new Date();
 
   @ApiProperty()
-  updatedAt: Date;
+  updatedAt: Date = new Date();
 }

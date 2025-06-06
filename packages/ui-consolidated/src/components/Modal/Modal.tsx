@@ -96,27 +96,27 @@ export interface ModalContentProps extends React.HTMLAttributes<HTMLDivElement> 
 /**
  * Modal header component props
  */
-export interface ModalHeaderProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type ModalHeaderProps = React.HTMLAttributes<HTMLDivElement>;
 
 /**
  * Modal title component props
  */
-export interface ModalTitleProps extends React.HTMLAttributes<HTMLHeadingElement> {}
+export type ModalTitleProps = React.HTMLAttributes<HTMLHeadingElement>;
 
 /**
  * Modal description component props
  */
-export interface ModalDescriptionProps extends React.HTMLAttributes<HTMLParagraphElement> {}
+export type ModalDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>;
 
 /**
  * Modal footer component props
  */
-export interface ModalFooterProps extends React.HTMLAttributes<HTMLDivElement> {}
+export type ModalFooterProps = React.HTMLAttributes<HTMLDivElement>;
 
 /**
  * Modal close button component props
  */
-export interface ModalCloseButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+export type ModalCloseButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 /**
  * Modal context
@@ -149,8 +149,8 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
     closeOnEscape = true,
     showCloseButton = true,
     position = 'default',
-    ..._props
-  }, _ref) => {
+    ...props
+  }, ref) => {
     // Remove unused state variables
     
     // Handle escape key
@@ -194,9 +194,11 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
         }}
       >
         <div
+          ref={ref}
           className="fixed inset-0 z-50"
           role="dialog"
           aria-modal="true"
+          {...props}
         >
           <div
             className={cn(modalOverlayVariants({ position }))}

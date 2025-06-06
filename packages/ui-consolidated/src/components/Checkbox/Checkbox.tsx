@@ -2,6 +2,10 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils';
 
+// Generate unique IDs for checkbox components
+let idCounter = 0;
+const generateId = () => `checkbox-${++idCounter}`;
+
 /**
  * Checkbox variants using class-variance-authority
  */
@@ -90,7 +94,7 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
     helperTextClassName,
     ...props
   }, ref) => {
-    const id = React.useId();
+    const id = React.useMemo(() => generateId(), []);
     
     return (
       <div className={cn('flex flex-col space-y-2', containerClassName)}>

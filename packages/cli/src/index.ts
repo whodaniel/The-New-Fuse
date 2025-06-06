@@ -2,6 +2,7 @@
 
 import { Command } from 'commander';
 import { createLogCommand } from './commands/log.js';
+import { createPortCommand } from './commands/port.js';
 
 // Create the main program
 const program = new Command()
@@ -11,6 +12,7 @@ const program = new Command()
 
 // Add commands
 program.addCommand(createLogCommand());
+program.addCommand(createPortCommand());
 
 // Parse command line arguments
 program.parse(process.argv);

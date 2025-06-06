@@ -3,6 +3,9 @@ import { WebviewMessageRouter } from '../services/communication/WebviewMessageRo
 import { ChatService } from '../services/features/ChatService';
 import { NotificationService } from '../services/core/NotificationService';
 import { ChatViewProvider } from './ChatViewProvider';
+import { CommunicationHubProvider } from './CommunicationHubProvider';
+import { DashboardProvider } from './DashboardProvider';
+import { SettingsViewProvider } from './SettingsViewProvider';
 
 /**
  * Provider for the tabbed container webview.
@@ -13,16 +16,17 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
   public static readonly viewType = 'theNewFuse.tabbedContainer';
   private _view?: vscode.WebviewView;
   private _extensionUri: vscode.Uri;
-  private chatViewProvider: ChatViewProvider;
 
   constructor(
     private readonly context: vscode.ExtensionContext,
     private readonly webviewMessageRouter: WebviewMessageRouter,
-    private readonly chatService: ChatService, // For initial data or state if needed by the container
-    private readonly notificationService: NotificationService, // For container-level notifications
+    private readonly chatViewProvider: ChatViewProvider,
+    private readonly communicationHubProvider: CommunicationHubProvider,
+    private readonly dashboardProvider: DashboardProvider,
+    private readonly settingsProvider: SettingsViewProvider,
+    private readonly notificationService: NotificationService,
   ) {
     this._extensionUri = context.extensionUri;
-    this.chatViewProvider = new ChatViewProvider(this.chatService, this.notificationService);
   }
 
   resolveWebviewView(
@@ -37,9 +41,20 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
       localResourceRoots: [this._extensionUri, vscode.Uri.joinPath(this._extensionUri, 'media')]
     };
 
-    // Set the webview for ChatViewProvider
+    // Set the webview for all providers
     if (this.chatViewProvider) {
         this.chatViewProvider.setWebview(webviewView.webview);
+    }
+    if (this.communicationHubProvider) {
+        this.communicationHubProvider.setHostWebview(webviewView.webview);
+        // Register the communication hub provider with the message router
+        this.webviewMessageRouter.setCommunicationHubProvider(this.communicationHubProvider);
+    }
+    if (this.dashboardProvider) {
+        this.dashboardProvider.setHostWebview(webviewView.webview);
+    }
+    if (this.settingsProvider) {
+        this.settingsProvider.setHostWebview(webviewView.webview);
     }
 
     webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
@@ -100,20 +115,17 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
                 </button>
             </nav>
 
-            <div id="chat-content" class="tab-content-area active">
+            <div id="chat-content" class="tab-content-area active" data-tab-id="chat">
                 ${this.chatViewProvider ? this.chatViewProvider.getHtmlForChatPanel(webview, nonce) : '<p>Chat panel loading...</p>'}
             </div>
-            <div id="communication-content" class="tab-content-area">
-                <!-- Communication content will be rendered by main.js -->
-                <p>Loading Communication Hub...</p>
+            <div id="communication-content" class="tab-content-area" data-tab-id="communication">
+                ${this.communicationHubProvider ? this.communicationHubProvider.getHtmlBodySnippet(webview, nonce) : '<p>Communication Hub loading...</p>'}
             </div>
-            <div id="dashboard-content" class="tab-content-area">
-                <!-- Dashboard content will be rendered by main.js -->
-                <p>Loading Dashboard...</p>
+            <div id="dashboard-content" class="tab-content-area" data-tab-id="dashboard">
+                ${this.dashboardProvider ? this.dashboardProvider.getHtmlBodySnippet(webview, nonce) : '<p>Dashboard loading...</p>'}
             </div>
-            <div id="settings-content" class="tab-content-area">
-                <!-- Settings content will be rendered by main.js -->
-                <p>Loading Settings...</p>
+            <div id="settings-content" class="tab-content-area" data-tab-id="settings">
+                ${this.settingsProvider ? this.settingsProvider.getHtmlBodySnippet(webview, nonce) : '<p>Settings loading...</p>'}
             </div>
         </div>
         

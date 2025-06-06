@@ -2,10 +2,14 @@
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
   "globalEnv": ["NODE_ENV"],
-  "concurrency": "20",
+  "concurrency": "30",
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
+      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "lib/**", "build/**", "out/**", "types/**", "esm/**", "cjs/**"]
+    },
+    "build:production": {
+      "dependsOn": ["^build:production", "^db:generate"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**", "lib/**", "build/**", "out/**", "types/**", "esm/**", "cjs/**"]
     },
     "lint": {

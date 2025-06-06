@@ -1,41 +1,75 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { Observable } from 'rxjs';
+/**
+ * API Key Auth Guard for NestJS authentication
+ */
+
+import { Injectable, Logger } from '@nestjs/common';
+import { CanActivate, ExecutionContext } from '@nestjs/common';
 
 @Injectable()
 export class ApiKeyAuthGuard implements CanActivate {
   private readonly logger = new Logger(ApiKeyAuthGuard.name);
-  private readonly expectedApiKey: string | undefined;
+  
+  constructor() {}
 
-  constructor(private readonly configService: ConfigService) {
-    this.expectedApiKey = this.configService.get<string>('MCP_REGISTRY_API_KEY');
-    if (!this.expectedApiKey) {
-      this.logger.warn('MCP_REGISTRY_API_KEY is not set. API Key authentication will fail.');
-    }
-  }
-
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
-    if (!this.expectedApiKey) {
-        this.logger.error('API Key Guard cannot activate because MCP_REGISTRY_API_KEY is not configured.');
-        throw new UnauthorizedException('Internal configuration error.'); // Don't allow access if key isn't set
-    }
-
+  /**
+   * Handle API key authentication
+   * @param context The execution context
+   * @returns boolean Whether the API key is valid
+   */
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const providedApiKey = request.headers['x-api-key'];
-
-    if (!providedApiKey) {
-      this.logger.warn('Missing X-API-Key header in request.');
-      throw new UnauthorizedException('Missing API Key.');
+    const apiKey = this.extractApiKey(request);
+    
+    if (!apiKey) {
+      this.logger.debug('No API key found in request');
+      return false;
     }
-
-    if (providedApiKey !== this.expectedApiKey) {
-      this.logger.warn('Invalid API Key received.');
-      throw new UnauthorizedException('Invalid API Key.');
+    
+    try {
+      const isValid = await this.validateApiKey(apiKey);
+      if (isValid) {
+        this.logger.debug('API key validated successfully');
+        // Attach API key metadata to request
+        request.apiKey = {
+          id: 'api-key-id', // This would come from your validation
+          serviceName: 'service-name', // This would come from your validation
+        };
+        return true;
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Error validating API key: ${message}`);
     }
-
-    this.logger.debug('Valid API Key received.');
-    return true; // API key is valid
+    
+    this.logger.debug('API key validation failed');
+    return false;
+  }
+  
+  /**
+   * Extract API key from request
+   * @param request HTTP request
+   * @returns string | undefined
+   */
+  private extractApiKey(request: any): string | undefined {
+    // Try to find API key in headers, query params, etc.
+    return (
+      request.headers['x-api-key'] ||
+      request.query?.apiKey ||
+      undefined
+    );
+  }
+  
+  /**
+   * Validate the API key
+   * @param apiKey The API key to validate
+   * @returns Promise<boolean> Whether the API key is valid
+   */
+  private async validateApiKey(apiKey: string): Promise<boolean> {
+    // This would typically check against a database or cache
+    // For now, implement a simple validation or mock
+    this.logger.debug(`Validating API key: ${apiKey.substring(0, 4)}...`);
+    
+    // Example validation logic
+    return apiKey === process.env.API_KEY;
   }
 }

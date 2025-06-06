@@ -1,28 +1,75 @@
-name = "code-execution"
-main = "code-execution.ts"
-compatibility_date = "2023-10-30"
+name = "business-events-worker"
+main = "src/index.ts"
+compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
 
-[vars]
-# These are placeholder values that will be replaced in production
-API_KEY = "placeholder-api-key"
-
-# Add KV namespace for usage tracking
-[[kv_namespaces]]
-binding = "USAGE_TRACKING"
-id = "placeholder-kv-id"
-preview_id = "placeholder-preview-kv-id"
-
-# Add environment variables for different environments
-[env.production]
-# Production-specific settings
-workers_dev = false
-route = "code-execution.thefuse.workers.dev/*"
+# Environment variables
+[env.development]
+vars = { ENVIRONMENT = "development", LOGGING_LEVEL = "DEBUG" }
 
 [env.staging]
-# Staging-specific settings
-workers_dev = false
-route = "code-execution-staging.thefuse.workers.dev/*"
+vars = { ENVIRONMENT = "staging", LOGGING_LEVEL = "INFO" }
 
-[env.development]
-# Development-specific settings
-workers_dev = true
+[env.production]
+vars = { ENVIRONMENT = "production", LOGGING_LEVEL = "WARN" }
+
+# KV namespaces
+[[kv_namespaces]]
+binding = "KV"
+id = "your-kv-namespace-id"
+preview_id = "your-preview-kv-namespace-id"
+
+# Durable Objects
+[[durable_objects.bindings]]
+name = "SSE_CONNECTIONS"
+class_name = "SSEConnectionManager"
+
+# R2 bindings (if needed for file storage)
+[[r2_buckets]]
+binding = "EVENTS_BUCKET"
+bucket_name = "business-events-storage"
+
+# Workers configuration
+[build]
+command = "npm run build"
+
+# Limits and performance
+[limits]
+cpu_ms = 50
+
+# Routes (configure based on your domain)
+routes = [
+  { pattern = "api.yourdomain.com/webhooks/*", zone_name = "yourdomain.com" },
+  { pattern = "api.yourdomain.com/sse/*", zone_name = "yourdomain.com" }
+]
+
+# Secrets (set via wrangler secret put)
+# Example commands to set secrets:
+# wrangler secret put STRIPE_WEBHOOK_SECRET
+# wrangler secret put PAYPAL_WEBHOOK_SECRET
+# wrangler secret put SALESFORCE_WEBHOOK_SECRET
+# wrangler secret put HUBSPOT_WEBHOOK_SECRET
+# wrangler secret put NETSUITE_WEBHOOK_SECRET
+# wrangler secret put SENDGRID_API_KEY
+# wrangler secret put CRM_API_KEY
+# wrangler secret put ANALYTICS_API_KEY
+# wrangler secret put SLACK_WEBHOOK_URL
+
+# Additional configuration for production
+[env.production.vars]
+METRICS_ENDPOINT = "https://api.yourdomain.com/metrics"
+CRM_API_ENDPOINT = "https://crm.yourdomain.com/api"
+ANALYTICS_ENDPOINT = "https://analytics.yourdomain.com/api"
+SSE_REDIS_CHANNEL = "sse-notifications"
+
+# Development configuration
+[env.development.vars]
+METRICS_ENDPOINT = "http://localhost:3000/metrics"
+CRM_API_ENDPOINT = "http://localhost:3001/api"
+ANALYTICS_ENDPOINT = "http://localhost:3002/api"
+
+# Staging configuration
+[env.staging.vars]
+METRICS_ENDPOINT = "https://staging-api.yourdomain.com/metrics"
+CRM_API_ENDPOINT = "https://staging-crm.yourdomain.com/api"
+ANALYTICS_ENDPOINT = "https://staging-analytics.yourdomain.com/api"

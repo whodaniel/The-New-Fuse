@@ -28,8 +28,10 @@ export class EntityService {
       });
       this.logger.log(`Successfully created/updated entity with ID: ${entity.id}`);
       return entity;
-    } catch (error) {
-      this.logger.error(`Failed to create/update entity ${data.type} - ${data.name}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Failed to create/update entity ${data.type} - ${data.name}: ${errorMessage}`, errorStack);
       // Consider more specific error handling (e.g., Prisma known errors)
       throw error;
     }

@@ -1,0 +1,757 @@
+# Integration Testing Suite for A1-Inter-LLM-Com
+
+## Overview
+This document outlines the comprehensive integration testing strategy for the A1-Inter-LLM-Com multi-agent communication platform.
+
+## Test Environment Setup
+
+### Prerequisites
+- Node.js 18+
+- PostgreSQL 13+ (or SQLite for development)
+- Redis 6+ (optional, for advanced features)
+- Chrome/Chromium (for extension testing)
+- Docker (for containerized testing)
+
+### Environment Configuration
+```bash
+# Test environment variables
+export NODE_ENV=test
+export TEST_DATABASE_URL=postgresql://test:test@localhost:5432/agency_hub_test
+export TEST_REDIS_URL=redis://localhost:6379/1
+export TEST_PORT=3010
+export TEST_WS_PORT=3012
+export LOG_LEVEL=warn
+```
+
+### Setup Commands
+```bash
+# Install test dependencies
+npm install --dev
+
+# Setup test database
+npm run db:create:test
+npm run migrate:test
+
+# Start test services
+npm run test:setup
+
+# Run integration tests
+npm run test:integration
+```
+
+## Test Categories
+
+### 1. Agency Hub Integration Tests
+
+#### Service Registration & Discovery
+```javascript
+describe('Agent Registration', () => {
+  test('should register new agent successfully', async () => {
+    const agentData = {
+      agentId: 'test-agent-001',
+      name: 'Test Agent',
+      role: 'assistant',
+      capabilities: ['text-processing', 'web-search']
+    };
+    
+    const response = await request(app)
+      .post('/api/agents/register')
+      .send(agentData)
+      .expect(201);
+      
+    expect(response.body.agentId).toBe(agentData.agentId);
+    expect(response.body.status).toBe('registered');
+  });
+  
+  test('should discover agents by capability', async () => {
+    // Setup: Register multiple agents with different capabilities
+    await registerTestAgents();
+    
+    const response = await request(app)
+      .get('/api/agents/discover')
+      .query({ capability: 'text-processing' })
+      .expect(200);
+      
+    expect(response.body.agents.length).toBeGreaterThan(0);
+    expect(response.body.agents[0].capabilities).toContain('text-processing');
+  });
+});
+```
+
+#### Authentication & Authorization
+```javascript
+describe('Authentication Flow', () => {
+  test('should authenticate agent with valid credentials', async () => {
+    const credentials = {
+      agentId: 'test-agent-001',
+      apiKey: 'test-api-key',
+      signature: generateSignature()
+    };
+    
+    const response = await request(app)
+      .post('/api/auth/authenticate')
+      .send(credentials)
+      .expect(200);
+      
+    expect(response.body.token).toBeDefined();
+    expect(response.body.expiresIn).toBe(3600);
+  });
+  
+  test('should reject invalid credentials', async () => {
+    const invalidCredentials = {
+      agentId: 'nonexistent-agent',
+      apiKey: 'invalid-key'
+    };
+    
+    await request(app)
+      .post('/api/auth/authenticate')
+      .send(invalidCredentials)
+      .expect(401);
+  });
+});
+```
+
+### 2. Message Routing Integration Tests
+
+#### Point-to-Point Communication
+```javascript
+describe('Message Routing', () => {
+  test('should route message between registered agents', async () => {
+    // Setup agents
+    const sender = await registerAgent('sender-agent');
+    const recipient = await registerAgent('recipient-agent');
+    
+    const message = {
+      type: 'TASK_REQUEST',
+      senderId: sender.agentId,
+      recipientId: recipient.agentId,
+      payload: { task: 'process-text', data: 'Hello World' }
+    };
+    
+    const response = await request(app)
+      .post('/api/messages/send')
+      .set('Authorization', `Bearer ${sender.token}`)
+      .send(message)
+      .expect(200);
+      
+    expect(response.body.messageId).toBeDefined();
+    expect(response.body.status).toBe('delivered');
+  });
+  
+  test('should handle message delivery failures gracefully', async () => {
+    const message = {
+      type: 'TASK_REQUEST',
+      senderId: 'sender-agent',
+      recipientId: 'nonexistent-agent',
+      payload: { task: 'test' }
+    };
+    
+    const response = await request(app)
+      .post('/api/messages/send')
+      .send(message)
+      .expect(404);
+      
+    expect(response.body.error).toContain('Agent not found');
+  });
+});
+```
+
+#### Broadcast & Multicast
+```javascript
+describe('Broadcast Messaging', () => {
+  test('should broadcast message to all agents in role', async () => {
+    // Setup multiple agents with same role
+    const agents = await registerMultipleAgents('assistant', 3);
+    
+    const broadcastMessage = {
+      type: 'SYSTEM_ANNOUNCEMENT',
+      senderId: 'system',
+      targetRole: 'assistant',
+      payload: { announcement: 'System maintenance in 30 minutes' }
+    };
+    
+    const response = await request(app)
+      .post('/api/messages/broadcast')
+      .send(broadcastMessage)
+      .expect(200);
+      
+    expect(response.body.deliveredCount).toBe(3);
+    expect(response.body.failedCount).toBe(0);
+  });
+});
+```
+
+### 3. Swarm Orchestration Integration Tests
+
+#### Swarm Creation & Management
+```javascript
+describe('Swarm Orchestration', () => {
+  test('should create swarm and add members', async () => {
+    const coordinator = await registerAgent('coordinator-agent');
+    const members = await registerMultipleAgents('worker', 3);
+    
+    // Create swarm
+    const swarmConfig = {
+      purpose: 'collaborative-task',
+      coordinatorId: coordinator.agentId,
+      maxMembers: 5,
+      coordination: 'centralized'
+    };
+    
+    const createResponse = await request(app)
+      .post('/api/swarms')
+      .set('Authorization', `Bearer ${coordinator.token}`)
+      .send(swarmConfig)
+      .expect(201);
+      
+    const swarmId = createResponse.body.swarmId;
+    
+    // Add members
+    for (const member of members) {
+      const joinResponse = await request(app)
+        .post(`/api/swarms/${swarmId}/join`)
+        .set('Authorization', `Bearer ${member.token}`)
+        .send({ agentId: member.agentId })
+        .expect(200);
+        
+      expect(joinResponse.body.status).toBe('joined');
+    }
+    
+    // Verify swarm state
+    const statusResponse = await request(app)
+      .get(`/api/swarms/${swarmId}`)
+      .expect(200);
+      
+    expect(statusResponse.body.memberCount).toBe(3);
+    expect(statusResponse.body.status).toBe('active');
+  });
+  
+  test('should coordinate task execution across swarm members', async () => {
+    const swarm = await createTestSwarm();
+    
+    const coordinationTask = {
+      taskId: 'collaborative-analysis',
+      description: 'Analyze large dataset collaboratively',
+      subtasks: [
+        { id: 'preprocess', assignedTo: 'worker-1' },
+        { id: 'analyze', assignedTo: 'worker-2' },
+        { id: 'summarize', assignedTo: 'worker-3' }
+      ]
+    };
+    
+    const response = await request(app)
+      .post(`/api/swarms/${swarm.swarmId}/coordinate`)
+      .send(coordinationTask)
+      .expect(200);
+      
+    expect(response.body.coordinationId).toBeDefined();
+    expect(response.body.subtasksAssigned).toBe(3);
+  });
+});
+```
+
+### 4. WebSocket Communication Tests
+
+#### Real-time Messaging
+```javascript
+describe('WebSocket Communication', () => {
+  test('should establish WebSocket connection and exchange messages', (done) => {
+    const client1 = new WebSocket('ws://localhost:3012');
+    const client2 = new WebSocket('ws://localhost:3012');
+    
+    let connectionsEstablished = 0;
+    
+    const handleConnection = () => {
+      connectionsEstablished++;
+      if (connectionsEstablished === 2) {
+        // Both clients connected, start test
+        const testMessage = {
+          type: 'DIRECT_MESSAGE',
+          recipientId: 'client2',
+          payload: { text: 'Hello from client1' }
+        };
+        
+        client2.on('message', (data) => {
+          const message = JSON.parse(data);
+          expect(message.payload.text).toBe('Hello from client1');
+          
+          client1.close();
+          client2.close();
+          done();
+        });
+        
+        client1.send(JSON.stringify(testMessage));
+      }
+    };
+    
+    client1.on('open', handleConnection);
+    client2.on('open', handleConnection);
+  });
+  
+  test('should handle connection drops gracefully', async () => {
+    const client = new WebSocket('ws://localhost:3012');
+    
+    await new Promise((resolve) => {
+      client.on('open', resolve);
+    });
+    
+    // Simulate connection drop
+    client.terminate();
+    
+    // Verify cleanup
+    const response = await request(app)
+      .get('/api/websocket/connections')
+      .expect(200);
+      
+    expect(response.body.activeConnections).toBe(0);
+  });
+});
+```
+
+### 5. Chrome Extension Integration Tests
+
+#### Extension-Hub Communication
+```javascript
+describe('Chrome Extension Integration', () => {
+  test('should register browser as agent via extension', async () => {
+    // This test requires Chrome/Chromium with extension loaded
+    const puppeteer = require('puppeteer');
+    
+    const browser = await puppeteer.launch({
+      headless: false,
+      args: ['--load-extension=./chrome-extension']
+    });
+    
+    const page = await browser.newPage();
+    
+    // Trigger extension registration
+    await page.evaluate(() => {
+      chrome.runtime.sendMessage({
+        action: 'register',
+        agentData: {
+          name: 'Browser Agent',
+          role: 'browser-automation',
+          capabilities: ['web-scraping', 'form-filling']
+        }
+      });
+    });
+    
+    // Wait for registration to complete
+    await page.waitForTimeout(2000);
+    
+    // Verify agent is registered
+    const response = await request(app)
+      .get('/api/agents')
+      .query({ role: 'browser-automation' })
+      .expect(200);
+      
+    expect(response.body.agents.length).toBeGreaterThan(0);
+    
+    await browser.close();
+  });
+});
+```
+
+### 6. MCP Server Integration Tests
+
+#### Protocol Compliance
+```javascript
+describe('MCP Server Integration', () => {
+  test('should handle MCP protocol messages correctly', async () => {
+    const mcpClient = new MCPClient('http://localhost:3011');
+    
+    const request = {
+      jsonrpc: '2.0',
+      id: 1,
+      method: 'initialize',
+      params: {
+        protocolVersion: '2024-11-05',
+        capabilities: {
+          tools: {}
+        }
+      }
+    };
+    
+    const response = await mcpClient.send(request);
+    
+    expect(response.jsonrpc).toBe('2.0');
+    expect(response.id).toBe(1);
+    expect(response.result.protocolVersion).toBe('2024-11-05');
+  });
+  
+  test('should execute tool calls through MCP', async () => {
+    const mcpClient = new MCPClient('http://localhost:3011');
+    
+    const toolCall = {
+      jsonrpc: '2.0',
+      id: 2,
+      method: 'tools/call',
+      params: {
+        name: 'agent-communication',
+        arguments: {
+          recipientId: 'test-agent',
+          message: 'Hello via MCP'
+        }
+      }
+    };
+    
+    const response = await mcpClient.send(toolCall);
+    
+    expect(response.result.success).toBe(true);
+    expect(response.result.messageId).toBeDefined();
+  });
+});
+```
+
+## End-to-End Workflow Tests
+
+### Complete Agent Lifecycle
+```javascript
+describe('End-to-End Agent Lifecycle', () => {
+  test('should complete full agent interaction workflow', async () => {
+    // 1. Register agents
+    const coordinator = await registerAgent('coordinator', ['task-coordination']);
+    const worker1 = await registerAgent('worker1', ['data-processing']);
+    const worker2 = await registerAgent('worker2', ['data-analysis']);
+    
+    // 2. Create swarm
+    const swarm = await createSwarm(coordinator.agentId, {
+      purpose: 'data-pipeline',
+      maxMembers: 3
+    });
+    
+    // 3. Add workers to swarm
+    await joinSwarm(swarm.swarmId, worker1.agentId);
+    await joinSwarm(swarm.swarmId, worker2.agentId);
+    
+    // 4. Initiate collaborative task
+    const task = {
+      id: 'process-dataset',
+      data: generateTestDataset(),
+      pipeline: [
+        { stage: 'preprocess', assignedTo: worker1.agentId },
+        { stage: 'analyze', assignedTo: worker2.agentId }
+      ]
+    };
+    
+    const coordinationResult = await coordinateTask(swarm.swarmId, task);
+    
+    // 5. Monitor task execution
+    const executionResult = await waitForTaskCompletion(coordinationResult.coordinationId);
+    
+    // 6. Verify results
+    expect(executionResult.status).toBe('completed');
+    expect(executionResult.results.preprocess).toBeDefined();
+    expect(executionResult.results.analyze).toBeDefined();
+    
+    // 7. Cleanup
+    await disbandSwarm(swarm.swarmId);
+    await deregisterAgent(coordinator.agentId);
+    await deregisterAgent(worker1.agentId);
+    await deregisterAgent(worker2.agentId);
+  });
+});
+```
+
+## Performance & Load Testing
+
+### Concurrent Agent Connections
+```javascript
+describe('Performance Tests', () => {
+  test('should handle 100 concurrent agent registrations', async () => {
+    const registrationPromises = [];
+    
+    for (let i = 0; i < 100; i++) {
+      const agentData = {
+        agentId: `load-test-agent-${i}`,
+        name: `Load Test Agent ${i}`,
+        role: 'load-tester'
+      };
+      
+      registrationPromises.push(
+        request(app)
+          .post('/api/agents/register')
+          .send(agentData)
+      );
+    }
+    
+    const results = await Promise.all(registrationPromises);
+    
+    const successfulRegistrations = results.filter(r => r.status === 201);
+    expect(successfulRegistrations.length).toBe(100);
+    
+    // Verify all agents are discoverable
+    const discoveryResponse = await request(app)
+      .get('/api/agents')
+      .query({ role: 'load-tester' })
+      .expect(200);
+      
+    expect(discoveryResponse.body.agents.length).toBe(100);
+  });
+  
+  test('should handle high message throughput', async () => {
+    const agents = await registerMultipleAgents('throughput-tester', 10);
+    const messagePromises = [];
+    
+    const startTime = Date.now();
+    
+    // Send 1000 messages between random agents
+    for (let i = 0; i < 1000; i++) {
+      const sender = agents[Math.floor(Math.random() * agents.length)];
+      const recipient = agents[Math.floor(Math.random() * agents.length)];
+      
+      if (sender.agentId !== recipient.agentId) {
+        messagePromises.push(
+          sendMessage(sender.agentId, recipient.agentId, {
+            type: 'LOAD_TEST',
+            sequenceId: i
+          })
+        );
+      }
+    }
+    
+    const results = await Promise.all(messagePromises);
+    const endTime = Date.now();
+    
+    const duration = endTime - startTime;
+    const throughput = results.length / (duration / 1000); // messages per second
+    
+    expect(throughput).toBeGreaterThan(50); // At least 50 messages/sec
+    expect(results.filter(r => r.status === 'delivered').length).toBe(results.length);
+  });
+});
+```
+
+## Test Utilities & Helpers
+
+### Agent Registration Helpers
+```javascript
+async function registerAgent(name, capabilities = []) {
+  const agentData = {
+    agentId: `${name}-${Date.now()}`,
+    name: name,
+    role: 'test-agent',
+    capabilities: capabilities
+  };
+  
+  const response = await request(app)
+    .post('/api/agents/register')
+    .send(agentData);
+    
+  const authResponse = await request(app)
+    .post('/api/auth/authenticate')
+    .send({
+      agentId: agentData.agentId,
+      apiKey: 'test-api-key'
+    });
+    
+  return {
+    ...agentData,
+    token: authResponse.body.token
+  };
+}
+
+async function registerMultipleAgents(baseName, count) {
+  const agents = [];
+  for (let i = 0; i < count; i++) {
+    const agent = await registerAgent(`${baseName}-${i}`);
+    agents.push(agent);
+  }
+  return agents;
+}
+```
+
+### Swarm Management Helpers
+```javascript
+async function createSwarm(coordinatorId, config) {
+  const swarmData = {
+    coordinatorId: coordinatorId,
+    purpose: config.purpose || 'test-swarm',
+    maxMembers: config.maxMembers || 5,
+    coordination: config.coordination || 'centralized'
+  };
+  
+  const response = await request(app)
+    .post('/api/swarms')
+    .send(swarmData);
+    
+  return response.body;
+}
+
+async function joinSwarm(swarmId, agentId) {
+  return await request(app)
+    .post(`/api/swarms/${swarmId}/join`)
+    .send({ agentId: agentId });
+}
+```
+
+### Message Testing Helpers
+```javascript
+async function sendMessage(senderId, recipientId, payload) {
+  const message = {
+    type: payload.type || 'TEST_MESSAGE',
+    senderId: senderId,
+    recipientId: recipientId,
+    payload: payload
+  };
+  
+  return await request(app)
+    .post('/api/messages/send')
+    .send(message);
+}
+
+async function waitForMessage(agentId, timeout = 5000) {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(new Error('Message timeout'));
+    }, timeout);
+    
+    // Setup message listener for agent
+    const listener = (message) => {
+      if (message.recipientId === agentId) {
+        clearTimeout(timeoutId);
+        resolve(message);
+      }
+    };
+    
+    messageRouter.on('message', listener);
+  });
+}
+```
+
+## Test Configuration
+
+### Jest Configuration
+```javascript
+// jest.config.js
+module.exports = {
+  testEnvironment: 'node',
+  setupFilesAfterEnv: ['<rootDir>/tests/setup.js'],
+  testMatch: ['<rootDir>/tests/integration/**/*.test.js'],
+  collectCoverageFrom: [
+    'src/**/*.js',
+    'packages/**/*.js',
+    '!**/node_modules/**'
+  ],
+  coverageThreshold: {
+    global: {
+      branches: 80,
+      functions: 80,
+      lines: 80,
+      statements: 80
+    }
+  }
+};
+```
+
+### Test Database Setup
+```javascript
+// tests/setup.js
+const { Pool } = require('pg');
+
+beforeAll(async () => {
+  // Setup test database
+  const pool = new Pool({
+    connectionString: process.env.TEST_DATABASE_URL
+  });
+  
+  await pool.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+  
+  // Run migrations
+  await require('../scripts/migrate-test').run();
+});
+
+afterAll(async () => {
+  // Cleanup test database
+  await require('../scripts/cleanup-test').run();
+});
+
+beforeEach(async () => {
+  // Reset test data
+  await require('../scripts/reset-test-data').run();
+});
+```
+
+## Continuous Integration
+
+### GitHub Actions Workflow
+```yaml
+name: Integration Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  integration-tests:
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: agency_hub_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+          
+      redis:
+        image: redis:6
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Setup test environment
+      run: |
+        cp .env.test .env
+        npm run db:migrate:test
+    
+    - name: Run integration tests
+      run: npm run test:integration
+      env:
+        NODE_ENV: test
+        TEST_DATABASE_URL: postgresql://postgres:test@localhost:5432/agency_hub_test
+        TEST_REDIS_URL: redis://localhost:6379/1
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+```
+
+## Reporting & Monitoring
+
+### Test Results Dashboard
+- Test execution summary
+- Coverage reports
+- Performance metrics
+- Failure analysis
+
+### Integration Health Monitoring
+- Service availability checks
+- Response time monitoring
+- Error rate tracking
+- Resource usage analysis
+
+---
+
+**Last Updated**: 2025-06-06  
+**Version**: 1.0.0  
+**Maintainer**: Daniel Goldberg

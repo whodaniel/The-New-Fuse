@@ -2,6 +2,10 @@ import * as React from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils';
 
+// Generate unique IDs for dropdown components
+let dropdownIdCounter = 0;
+const generateDropdownId = () => `dropdown-${++dropdownIdCounter}`;
+
 /**
  * Dropdown variants using class-variance-authority
  */
@@ -364,6 +368,7 @@ const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
     const { open, setOpen } = useDropdown();
     const contentRef = React.useRef<HTMLDivElement>(null);
     const mergedRef = useMergeRefs(forwardedRef, contentRef); // Merge refs
+    const contentId = React.useMemo(() => generateDropdownId(), []);
 
     // Effect to handle closing on outside click
     React.useEffect(() => {
@@ -467,7 +472,7 @@ const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
           role="menu"
           aria-orientation="vertical"
           // Generate an ID if not provided, link with trigger via aria-controls
-          id={props.id || `dropdown-content-${React.useId()}`}
+          id={props.id || `dropdown-content-${contentId}`}
           {...props}
         >
           <ul className="list-none p-0 m-0">{children}</ul> {/* Wrap items in ul */}

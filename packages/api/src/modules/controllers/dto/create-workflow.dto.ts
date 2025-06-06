@@ -1,22 +1,33 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum, ValidateNested, IsObject } from 'class-validator';
 import { Type } from 'class-transformer';
-import type { CreateWorkflowDto as ICreateWorkflowDto } from '@the-new-fuse/types';
+import type { CreateWorkflowDefinitionDto } from '@the-new-fuse/types';
 
-export class CreateWorkflowDto implements ICreateWorkflowDto {
+export class CreateWorkflowDto implements CreateWorkflowDefinitionDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  name: string = '';
 
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsOptional()
-  metadata?: Record<string, any>;
+  @IsEnum(['manual', 'event', 'schedule'])
+  triggerType: 'manual' | 'event' | 'schedule' = 'manual';
 
   @IsOptional()
+  @IsObject()
+  triggerConfig?: Record<string, any>;
+
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => Object)
-  steps?: any[];
+  steps: any[] = [];
+
+  @IsOptional()
+  @IsObject()
+  initialContext?: Record<string, any>;
+
+  @IsOptional()
+  @IsArray()
+  tags?: string[];
 }

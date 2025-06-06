@@ -35,4 +35,11 @@ export class CommandService {
         this.disposables.forEach(disposable => disposable.dispose());
         this.disposables = [];
     }
+
+    /**
+     * Dispose method for VS Code subscription compatibility.
+     */
+    public dispose(): void {
+        this.disposeAll();
+    }
 }

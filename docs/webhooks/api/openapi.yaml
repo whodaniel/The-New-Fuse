@@ -1,0 +1,597 @@
+openapi: 3.1.0
+info:
+  title: The New Fuse - Webhooks & SSE API
+  description: |
+    Comprehensive API for managing webhooks, real-time events, and business intelligence
+    in The New Fuse platform. This API handles incoming webhooks from major business
+    platforms and provides real-time event streaming via Server-Sent Events (SSE).
+  version: 1.0.0
+  contact:
+    name: The New Fuse API Support
+    url: https://thenewfuse.com/support
+    email: api-support@thenewfuse.com
+  license:
+    name: Proprietary
+    url: https://thenewfuse.com/license
+
+servers:
+  - url: https://api.thenewfuse.com
+    description: Production server
+  - url: https://staging-api.thenewfuse.com
+    description: Staging server
+  - url: http://localhost:3000
+    description: Development server
+
+security:
+  - BearerAuth: []
+
+paths:
+  /webhooks/register:
+    post:
+      tags:
+        - Webhook Management
+      summary: Register a new webhook configuration
+      description: Register a webhook configuration for a specific business platform integration
+      operationId: registerWebhook
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRegistrationRequest'
+            examples:
+              stripe:
+                summary: Stripe webhook registration
+                value:
+                  source: "stripe"
+                  endpoint_url: "https://api.thenewfuse.com/webhooks/incoming/stripe"
+                  secret_key: "whsec_stripe_webhook_secret"
+                  configuration:
+                    events: ["payment_intent.succeeded", "invoice.payment_succeeded"]
+                    api_version: "2023-10-16"
+              salesforce:
+                summary: Salesforce webhook registration
+                value:
+                  source: "salesforce"
+                  endpoint_url: "https://api.thenewfuse.com/webhooks/incoming/salesforce"
+                  secret_key: "sf_webhook_secret_123"
+                  configuration:
+                    objects: ["Lead", "Opportunity", "Account"]
+                    events: ["created", "updated"]
+      responses:
+        '201':
+          description: Webhook registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookRegistrationResponse'
+              example:
+                id: "webhook_123456789"
+                status: "registered"
+                webhook_url: "https://api.thenewfuse.com/webhooks/incoming/stripe"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /webhooks/incoming/{source}:
+    post:
+      tags:
+        - Webhook Ingestion
+      summary: Handle incoming webhook from integration source
+      description: |
+        Receive and process webhook payloads from various business platforms.
+        Each platform has specific signature validation requirements.
+      operationId: handleWebhook
+      parameters:
+        - name: source
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/IntegrationSource'
+          description: The source platform of the webhook
+        - name: stripe-signature
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Stripe webhook signature (required for Stripe webhooks)
+        - name: paypal-transmission-sig
+          in: header
+          required: false
+          schema:
+            type: string
+          description: PayPal webhook signature (required for PayPal webhooks)
+        - name: x-salesforce-webhook-signature
+          in: header
+          required: false
+          schema:
+            type: string
+          description: Salesforce webhook signature (required for Salesforce webhooks)
+        - name: x-hubspot-signature
+          in: header
+          required: false
+          schema:
+            type: string
+          description: HubSpot webhook signature (required for HubSpot webhooks)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              description: Platform-specific webhook payload
+            examples:
+              stripe_payment:
+                summary: Stripe payment succeeded
+                value:
+                  id: "evt_1234567890"
+                  object: "event"
+                  type: "payment_intent.succeeded"
+                  data:
+                    object:
+                      id: "pi_1234567890"
+                      amount: 2000
+                      currency: "usd"
+                      status: "succeeded"
+              salesforce_lead:
+                summary: Salesforce lead created
+                value:
+                  Id: "00Q1234567890"
+                  ObjectType: "Lead"
+                  EventType: "created"
+                  NewValue:
+                    FirstName: "John"
+                    LastName: "Doe"
+                    Email: "john.doe@example.com"
+                    Company: "Acme Corp"
+      responses:
+        '200':
+          description: Webhook processed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEventResponse'
+              example:
+                received: true
+                event_id: "event_123456789"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /webhooks/status/{id}:
+    get:
+      tags:
+        - Webhook Management
+      summary: Get webhook configuration status
+      description: Retrieve the current status and statistics for a webhook configuration
+      operationId: getWebhookStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Webhook configuration ID
+      responses:
+        '200':
+          description: Webhook status retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookStatusResponse'
+              example:
+                id: "webhook_123456789"
+                status: "active"
+                last_received: "2024-01-15T10:30:00Z"
+                event_count: 1247
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /webhooks/events/history:
+    get:
+      tags:
+        - Event History
+      summary: Get event history for organization
+      description: Retrieve paginated event history with filtering options
+      operationId: getEventHistory
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: start_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: Start date for event history (ISO 8601)
+        - name: end_date
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: End date for event history (ISO 8601)
+        - name: event_types
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of event types to filter
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1000
+            default: 100
+          description: Maximum number of events to return
+      responses:
+        '200':
+          description: Event history retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventHistoryResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+
+  /webhooks/events/stream:
+    get:
+      tags:
+        - Real-time Events
+      summary: Stream real-time events via SSE
+      description: |
+        Establish a Server-Sent Events (SSE) connection to receive real-time
+        business events as they occur. Supports filtering by event types and
+        custom filters.
+      operationId: streamEvents
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: event_types
+          in: query
+          required: false
+          schema:
+            type: string
+          description: Comma-separated list of event types to subscribe to
+        - name: filters
+          in: query
+          required: false
+          schema:
+            type: string
+          description: JSON-encoded filters object
+      responses:
+        '200':
+          description: SSE stream established
+          content:
+            text/event-stream:
+              schema:
+                type: string
+              example: |
+                data: {"type": "connection", "status": "connected"}
+                
+                data: {"type": "event", "event_type": "payment_received", "data": {...}}
+                
+                data: {"type": "heartbeat", "timestamp": "2024-01-15T10:30:00Z"}
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /webhooks/events/{id}/retry:
+    post:
+      tags:
+        - Event Management
+      summary: Retry failed event processing
+      description: Retry processing of a failed business event
+      operationId: retryEvent
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Event ID to retry
+      responses:
+        '200':
+          description: Event retry initiated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from authentication endpoint
+
+  schemas:
+    IntegrationSource:
+      type: string
+      enum:
+        - salesforce
+        - hubspot
+        - pipedrive
+        - stripe
+        - paypal
+        - square
+        - netsuite
+        - sap
+        - quickbooks
+        - zapier
+        - workato
+        - power_automate
+      description: Supported business platform integrations
+
+    BusinessEventType:
+      type: string
+      enum:
+        - lead_created
+        - payment_received
+        - invoice_generated
+        - workflow_triggered
+        - customer_updated
+        - product_sold
+        - subscription_changed
+      description: Types of business events
+
+    EventPriority:
+      type: string
+      enum:
+        - low
+        - medium
+        - high
+        - critical
+      description: Event processing priority
+
+    ProcessingStatus:
+      type: string
+      enum:
+        - pending
+        - processing
+        - completed
+        - failed
+        - retrying
+      description: Event processing status
+
+    WebhookRegistrationRequest:
+      type: object
+      required:
+        - source
+        - endpoint_url
+        - secret_key
+        - configuration
+      properties:
+        source:
+          $ref: '#/components/schemas/IntegrationSource'
+        endpoint_url:
+          type: string
+          format: uri
+          description: The webhook endpoint URL
+        secret_key:
+          type: string
+          description: Secret key for webhook signature validation
+        configuration:
+          type: object
+          description: Platform-specific configuration options
+          additionalProperties: true
+
+    WebhookRegistrationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique webhook configuration ID
+        status:
+          type: string
+          enum: [registered, error]
+          description: Registration status
+        webhook_url:
+          type: string
+          format: uri
+          description: The registered webhook URL
+
+    WebhookEventResponse:
+      type: object
+      properties:
+        received:
+          type: boolean
+          description: Whether the webhook was successfully received
+        event_id:
+          type: string
+          description: Unique event ID (if processing succeeded)
+
+    WebhookStatusResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Webhook configuration ID
+        status:
+          type: string
+          enum: [active, inactive, error]
+          description: Current webhook status
+        last_received:
+          type: string
+          format: date-time
+          description: Timestamp of last received webhook
+        event_count:
+          type: integer
+          description: Total number of events received
+
+    BusinessEvent:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique event ID
+        type:
+          $ref: '#/components/schemas/BusinessEventType'
+        source:
+          $ref: '#/components/schemas/IntegrationSource'
+        timestamp:
+          type: string
+          format: date-time
+          description: Event timestamp
+        data:
+          type: object
+          description: Event-specific data payload
+          additionalProperties: true
+        metadata:
+          $ref: '#/components/schemas/EventMetadata'
+        processing_status:
+          $ref: '#/components/schemas/ProcessingStatus'
+
+    EventMetadata:
+      type: object
+      properties:
+        correlation_id:
+          type: string
+          description: Correlation ID for tracking related events
+        user_id:
+          type: string
+          description: Associated user ID (if applicable)
+        organization_id:
+          type: string
+          description: Organization ID
+        priority:
+          $ref: '#/components/schemas/EventPriority'
+        retry_count:
+          type: integer
+          description: Number of retry attempts
+        max_retries:
+          type: integer
+          description: Maximum retry attempts allowed
+
+    EventHistoryRequest:
+      type: object
+      required:
+        - start_date
+        - end_date
+      properties:
+        start_date:
+          type: string
+          format: date-time
+          description: Start date for event history
+        end_date:
+          type: string
+          format: date-time
+          description: End date for event history
+        event_types:
+          type: string
+          description: Comma-separated event types filter
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 100
+          description: Maximum events to return
+
+    EventHistoryResponse:
+      type: object
+      properties:
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/BusinessEvent'
+        total:
+          type: integer
+          description: Total number of events matching criteria
+        has_more:
+          type: boolean
+          description: Whether more events are available
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Error message
+        code:
+          type: string
+          description: Error code
+        details:
+          type: object
+          description: Additional error details
+          additionalProperties: true
+
+  responses:
+    BadRequest:
+      description: Bad request - invalid parameters or payload
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Invalid request parameters"
+            code: "INVALID_PARAMETERS"
+
+    Unauthorized:
+      description: Unauthorized - invalid or missing authentication
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Authentication required"
+            code: "UNAUTHORIZED"
+
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Resource not found"
+            code: "NOT_FOUND"
+
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          example:
+            error: "Internal server error"
+            code: "INTERNAL_ERROR"
+
+tags:
+  - name: Webhook Management
+    description: Operations for managing webhook configurations
+  - name: Webhook Ingestion
+    description: Endpoints for receiving webhooks from external platforms
+  - name: Event History
+    description: Operations for retrieving historical event data
+  - name: Real-time Events
+    description: Server-Sent Events (SSE) for real-time event streaming
+  - name: Event Management
+    description: Operations for managing and processing events

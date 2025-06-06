@@ -48,6 +48,29 @@ export type {
 // Re-export agent core types
 export * from './agent.js';
 
+// Re-export workflow types
+export type {
+  WorkflowStep,
+  WorkflowDefinition,
+  WorkflowInstance,
+  CreateWorkflowDefinitionDto,
+  UpdateWorkflowDefinitionDto,
+  StartWorkflowInstanceDto,
+  WorkflowService
+} from './workflow.js';
+
+// Export workflow status enum
+export { WorkflowStatus } from './workflow.js';
+
+// Export workflow aliases for backward compatibility
+export type {
+  WorkflowDefinition as Workflow,
+  WorkflowInstance as WorkflowExecution,
+  CreateWorkflowDefinitionDto as CreateWorkflowDto,
+  UpdateWorkflowDefinitionDto as UpdateWorkflowDto,
+  StartWorkflowInstanceDto as StartWorkflowDto
+} from './workflow.js';
+
 // Export everything else
 export * from './agent.types.js';
 export * from './marketplace.js';
@@ -57,7 +80,6 @@ export type {
 export * from './routes.js';
 export * from './state.js';
 export * from './validation.js';
-export * from './workflow.js';
 export * from './chat.js';
 export * from './models.js';
 export * from './metrics.js';
@@ -67,3 +89,6 @@ export * from './security.js';
 export * from './session.js';
 export * from './suggestion.js';
 export * from './user.js';
+export * from './webhooks.js';
+export * from './export.js';
+export * from './mcp.js';

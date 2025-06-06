@@ -38,7 +38,9 @@ export abstract class BaseService<T> {
     try {
       return await this.repository.findAll(filter);
     } catch (error) {
-      this.logger.error(`Error finding all entities: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding all entities: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -54,7 +56,9 @@ export abstract class BaseService<T> {
       }
       return entity;
     } catch (error) {
-      this.logger.error(`Error finding entity with ID ${id}: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding entity with ID ${id}: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -66,7 +70,9 @@ export abstract class BaseService<T> {
     try {
       return await this.repository.findOne(filter);
     } catch (error) {
-      this.logger.error(`Error finding entity: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding entity: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -80,7 +86,9 @@ export abstract class BaseService<T> {
       this.logger.log(`Created new entity with ID ${(entity as any).id || 'unknown'}`);
       return entity;
     } catch (error) {
-      this.logger.error(`Error creating entity: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error creating entity: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -97,7 +105,9 @@ export abstract class BaseService<T> {
       this.logger.log(`Updated entity with ID ${id}`);
       return entity;
     } catch (error) {
-      this.logger.error(`Error updating entity with ID ${id}: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error updating entity with ID ${id}: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -111,7 +121,9 @@ export abstract class BaseService<T> {
       this.logger.log(`Deleted entity with ID ${id}`);
       return result;
     } catch (error) {
-      this.logger.error(`Error deleting entity with ID ${id}: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error deleting entity with ID ${id}: ${errorMessage}`, errorStack);
       throw error;
     }
   }
@@ -123,7 +135,9 @@ export abstract class BaseService<T> {
     try {
       return await this.repository.count(filter);
     } catch (error) {
-      this.logger.error(`Error counting entities: ${error.message}`, error.stack);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error counting entities: ${errorMessage}`, errorStack);
       throw error;
     }
   }

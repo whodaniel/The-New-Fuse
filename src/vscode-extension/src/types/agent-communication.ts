@@ -23,8 +23,28 @@ export enum AgentMessageType {
     STATUS_UPDATE = 'status_update',
     COMMAND = 'command',
     RESPONSE = 'response',
-    TOOL_CODE = 'tool_code', // Add new message type
-    TOOL_OUTPUT = 'tool_output' // Add new message type
+    TOOL_CODE = 'tool_code',
+    TOOL_OUTPUT = 'tool_output',
+    COPILOT_COORDINATION = 'copilot-coordination',
+    // Communication hub message types
+    STATUS = 'status',
+    MESSAGE = 'message',
+    USER_MESSAGE = 'user-message',
+    LLM_RESPONSE = 'llm-response',
+    LLM_ERROR = 'llm-error',
+    SETTINGS_UPDATED = 'settings-updated',
+    DASHBOARD_STATS = 'dashboardStats',
+    CONNECTION_STATUS = 'connectionStatus',
+    MONITORING_DATA_CLEARED = 'monitoringDataCleared',
+    COLLABORATION_STARTED = 'collaborationStarted',
+    TEST_CONNECTION_RESULT = 'test-connection-result',
+    // Universal Trigger System message types
+    TRIGGER_REQUEST = 'trigger_request',
+    TRIGGER_RESULT = 'trigger_result',
+    HEARTBEAT_REQUEST = 'heartbeat_request',
+    HEARTBEAT_STARTED = 'heartbeat_started',
+    HEARTBEAT_STOPPED = 'heartbeat_stopped',
+    AGENT_DORMANT = 'agent_dormant'
 }
 
 // Enhanced agent registration interface

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { LLMProviderManager } from '../llm/LLMProviderManager';
 import { AgentCommunicationService } from './AgentCommunicationService';
+import { AgentMessageType } from '../types/agent-communication';
 
 export interface WebViewMessage {
     command: string;
@@ -81,14 +82,14 @@ export class WebviewMessageRouter {
             const connected = this.communicationService ? this.communicationService.isConnected() : false;
 
             // Send status back to all webviews through the communication service
-            await this.communicationService.broadcastMessage('status', {
+            await this.communicationService.broadcastMessage(AgentMessageType.STATUS, {
                 connected: connected,
                 provider: providerInfo
             });
         } catch (error) {
             console.error('WebviewMessageRouter: Error handling status request:', error);
             
-            await this.communicationService.broadcastMessage('status', {
+            await this.communicationService.broadcastMessage(AgentMessageType.STATUS, {
                 connected: false,
                 error: 'Failed to get provider status'
             });
@@ -100,7 +101,7 @@ export class WebviewMessageRouter {
      */
     private async handleSendMessage(message: WebViewMessage): Promise<void> {
         if (message.text) {
-            await this.communicationService.broadcastMessage('message', {
+            await this.communicationService.broadcastMessage(AgentMessageType.MESSAGE, {
                 text: message.text,
                 timestamp: new Date().toISOString()
             });
@@ -135,14 +136,14 @@ export class WebviewMessageRouter {
                 throw new Error('Provider does not support text generation or querying.');
             }
             
-            await this.communicationService.broadcastMessage('llm-response', {
+            await this.communicationService.broadcastMessage(AgentMessageType.LLM_RESPONSE, {
                 text: response.text,
                 metadata: response.metadata
             });
         } catch (error) {
             console.error('WebviewMessageRouter: Error handling LLM request:', error);
             
-            await this.communicationService.broadcastMessage('llm-error', {
+            await this.communicationService.broadcastMessage(AgentMessageType.LLM_ERROR, {
                 error: error instanceof Error ? error.message : 'Unknown error'
             });
         }
@@ -182,7 +183,7 @@ export class WebviewMessageRouter {
             vscode.window.showInformationMessage('The New Fuse settings saved successfully!');
             
             // Notify all webviews that settings were updated
-            await this.communicationService.broadcastMessage('settings-updated', settings);
+            await this.communicationService.broadcastMessage(AgentMessageType.SETTINGS_UPDATED, settings);
         } catch (error) {
             console.error('WebviewMessageRouter: Error saving settings:', error);
             vscode.window.showErrorMessage(`Failed to save settings: ${error instanceof Error ? error.message : 'Unknown error'}`);
@@ -202,7 +203,7 @@ export class WebviewMessageRouter {
                 errors: 0
             };
 
-            await this.communicationService.broadcastMessage('dashboardStats', stats);
+            await this.communicationService.broadcastMessage(AgentMessageType.DASHBOARD_STATS, stats);
         } catch (error) {
             console.error('WebviewMessageRouter: Error getting dashboard stats:', error);
         }
@@ -215,7 +216,7 @@ export class WebviewMessageRouter {
         try {
             const connected = this.communicationService.isConnected();
             
-            await this.communicationService.broadcastMessage('connectionStatus', { connected });
+            await this.communicationService.broadcastMessage(AgentMessageType.CONNECTION_STATUS, { connected });
         } catch (error) {
             console.error('WebviewMessageRouter: Error getting connection status:', error);
         }
@@ -227,7 +228,7 @@ export class WebviewMessageRouter {
     private async handleClearMonitoringData(): Promise<void> {
         try {
             // Clear monitoring data
-            await this.communicationService.broadcastMessage('monitoringDataCleared', { success: true });
+            await this.communicationService.broadcastMessage(AgentMessageType.MONITORING_DATA_CLEARED, { success: true });
             
             vscode.window.showInformationMessage('Monitoring data cleared successfully!');
         } catch (error) {
@@ -242,7 +243,7 @@ export class WebviewMessageRouter {
     private async handleStartCollaboration(): Promise<void> {
         try {
             // Start collaboration - this could trigger various initialization
-            await this.communicationService.broadcastMessage('collaborationStarted', { timestamp: new Date().toISOString() });
+            await this.communicationService.broadcastMessage(AgentMessageType.COLLABORATION_STARTED, { timestamp: new Date().toISOString() });
             
             vscode.window.showInformationMessage('AI Collaboration started!');
         } catch (error) {
@@ -276,16 +277,16 @@ export class WebviewMessageRouter {
             
             if (testResult.status === 'healthy') {
                 vscode.window.showInformationMessage(`✅ Provider connection successful!`);
-                await this.communicationService.broadcastMessage('test-connection-result', { success: true, provider, message: 'Connection successful!' });
+                await this.communicationService.broadcastMessage(AgentMessageType.TEST_CONNECTION_RESULT, { success: true, provider, message: 'Connection successful!' });
             } else {
                 vscode.window.showErrorMessage(`❌ Provider connection failed: ${testResult.message}`);
-                await this.communicationService.broadcastMessage('test-connection-result', { success: false, provider, error: testResult.message });
+                await this.communicationService.broadcastMessage(AgentMessageType.TEST_CONNECTION_RESULT, { success: false, provider, error: testResult.message });
             }
         } catch (error) {
             console.error('WebviewMessageRouter: Error testing connection:', error);
             const errorMessage = error instanceof Error ? error.message : 'Unknown error';
             vscode.window.showErrorMessage(`Connection test failed: ${errorMessage}`);
-            await this.communicationService.broadcastMessage('test-connection-result', { success: false, error: errorMessage });
+            await this.communicationService.broadcastMessage(AgentMessageType.TEST_CONNECTION_RESULT, { success: false, error: errorMessage });
         }
     }
 }

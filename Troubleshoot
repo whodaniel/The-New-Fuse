@@ -1,0 +1,458 @@
+# A1-Inter-LLM-Com Troubleshooting Guide
+
+## Quick Diagnostic Commands
+
+### System Health Check
+```bash
+# Check all services status
+./check-services.sh
+
+# Test Agency Hub connectivity
+curl -f http://localhost:3000/health || echo "Agency Hub: OFFLINE"
+
+# Test MCP Server
+curl -f http://localhost:3001/health || echo "MCP Server: OFFLINE"
+
+# Check WebSocket connectivity
+nc -z localhost 3002 && echo "WebSocket: ONLINE" || echo "WebSocket: OFFLINE"
+
+# Process check
+ps aux | grep -E "(agency|mcp|websocket)" | grep -v grep
+```
+
+### Port Conflicts
+```bash
+# Check what's using common ports
+lsof -i :3000  # Agency Hub
+lsof -i :3001  # MCP Server
+lsof -i :3002  # WebSocket
+lsof -i :8080  # Frontend
+
+# Kill processes on specific ports
+sudo lsof -ti:3000 | xargs kill -9
+```
+
+### Log Analysis
+```bash
+# View real-time logs
+tail -f logs/agency-hub.log
+tail -f logs/mcp-server.log
+tail -f logs/websocket.log
+
+# Search for errors
+grep -i error logs/*.log
+grep -i "failed\|exception\|timeout" logs/*.log
+
+# Check system logs
+journalctl -u agency-hub --since "1 hour ago"
+```
+
+## Common Issues & Solutions
+
+### 1. Agency Hub Won't Start
+
+**Symptoms:**
+- Port 3000 connection refused
+- "Agency Hub: OFFLINE" in health check
+- Empty or missing logs/agency-hub.log
+
+**Debugging Steps:**
+```bash
+# Check if port is in use
+lsof -i :3000
+
+# Try manual start with verbose logging
+NODE_ENV=development DEBUG=* npm run start:agency-hub
+
+# Check environment variables
+cat .env | grep -E "(PORT|HOST|DATABASE)"
+
+# Verify database connection
+npm run db:test
+```
+
+**Common Fixes:**
+- Kill existing process: `pkill -f agency-hub`
+- Reset environment: `cp .env.example .env`
+- Clear node_modules: `rm -rf node_modules && npm install`
+- Check database permissions
+- Verify Node.js version (requires 16+)
+
+### 2. Chrome Extension Not Working
+
+**Symptoms:**
+- Extension icon shows "disconnected"
+- Can't register browser as agent
+- WebSocket connection failures
+
+**Debugging Steps:**
+```bash
+# Check extension in Chrome
+1. Open chrome://extensions/
+2. Enable "Developer mode"
+3. Check for error messages
+4. Click "Inspect views: background page"
+
+# Verify WebSocket server
+nc -z localhost 3002
+netstat -an | grep 3002
+
+# Test extension API
+curl -X POST http://localhost:3000/api/agents/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"test-browser","role":"browser","capabilities":["web-automation"]}'
+```
+
+**Common Fixes:**
+- Reload extension in Chrome
+- Clear extension data: Chrome Settings > Privacy > Clear browsing data
+- Restart WebSocket server: `pkill -f websocket && npm run start:ws`
+- Check Chrome extension manifest version
+- Verify CORS settings in agency hub
+
+### 3. Agent Registration Failures
+
+**Symptoms:**
+- 401/403 errors during registration
+- "Agent registration rejected" messages
+- Empty agent list in dashboard
+
+**Debugging Steps:**
+```bash
+# Check authentication service
+curl -X POST http://localhost:3000/api/auth/test \
+  -H "Content-Type: application/json" \
+  -d '{"agentId":"test","apiKey":"test-key"}'
+
+# Verify JWT configuration
+grep JWT_SECRET .env
+
+# Check agent database
+npm run db:query "SELECT * FROM agents LIMIT 10"
+
+# Test registration endpoint
+curl -v -X POST http://localhost:3000/api/agents/register \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -d '{"agentId":"test-agent","name":"Test Agent","role":"assistant"}'
+```
+
+**Common Fixes:**
+- Reset JWT secret: Generate new secret in .env
+- Clear agent database: `npm run db:reset`
+- Verify API key format
+- Check authentication middleware
+- Update agent registration schema
+
+### 4. Message Routing Issues
+
+**Symptoms:**
+- Messages not delivered between agents
+- Timeout errors in communication
+- Missing messages in logs
+
+**Debugging Steps:**
+```bash
+# Check message queue
+curl http://localhost:3000/api/messages/queue
+
+# Test direct message sending
+curl -X POST http://localhost:3000/api/messages/send \
+  -H "Content-Type: application/json" \
+  -d '{
+    "senderId": "agent1",
+    "recipientId": "agent2",
+    "type": "test",
+    "payload": {"message": "Hello"}
+  }'
+
+# Monitor WebSocket connections
+netstat -an | grep :3002
+ss -tuln | grep :3002
+
+# Check message logs
+grep "message" logs/agency-hub.log | tail -20
+```
+
+**Common Fixes:**
+- Restart message router: `npm run restart:router`
+- Clear message queue: `npm run queue:clear`
+- Verify WebSocket connections
+- Check message format validation
+- Update message routing tables
+
+### 5. Swarm Orchestration Problems
+
+**Symptoms:**
+- Swarm creation fails
+- Agents can't join swarms
+- Coordination timeouts
+
+**Debugging Steps:**
+```bash
+# Check swarm status
+curl http://localhost:3000/api/swarms
+
+# Test swarm creation
+curl -X POST http://localhost:3000/api/swarms \
+  -H "Content-Type: application/json" \
+  -d '{
+    "purpose": "test-swarm",
+    "coordinatorId": "agent1",
+    "maxMembers": 5
+  }'
+
+# Monitor swarm logs
+grep -i swarm logs/*.log
+
+# Check coordination service
+curl http://localhost:3000/api/swarms/health
+```
+
+**Common Fixes:**
+- Reset swarm state: `npm run swarm:reset`
+- Check coordinator availability
+- Verify swarm configuration
+- Update coordination algorithms
+- Clear stale swarm data
+
+### 6. Performance Issues
+
+**Symptoms:**
+- High CPU/memory usage
+- Slow response times
+- Connection timeouts
+
+**Debugging Steps:**
+```bash
+# Monitor system resources
+top -p $(pgrep -f "agency\|mcp\|websocket")
+htop
+
+# Check memory usage
+ps aux --sort=-%mem | head -10
+
+# Monitor network connections
+netstat -i
+iostat 1 5
+
+# Profile Node.js applications
+npm run profile:agency-hub
+npm run profile:mcp-server
+```
+
+**Common Fixes:**
+- Restart services: `./stop-development.sh && ./start-development.sh`
+- Optimize database queries
+- Implement connection pooling
+- Add caching layers
+- Upgrade system resources
+
+### 7. Database Issues
+
+**Symptoms:**
+- Connection refused errors
+- Data persistence failures
+- Migration errors
+
+**Debugging Steps:**
+```bash
+# Check database service
+sudo systemctl status postgresql  # Linux
+brew services list | grep postgres  # macOS
+
+# Test database connection
+npm run db:test
+psql -h localhost -p 5432 -U username -d database_name
+
+# Check database logs
+tail -f /var/log/postgresql/postgresql.log  # Linux
+tail -f /usr/local/var/log/postgres.log    # macOS
+
+# Run migrations
+npm run migrate:status
+npm run migrate:up
+```
+
+**Common Fixes:**
+- Start database service: `sudo systemctl start postgresql`
+- Reset database: `npm run db:reset`
+- Fix migration conflicts
+- Check database permissions
+- Verify connection string
+
+## Environment-Specific Issues
+
+### Development Environment
+
+**Node.js Version Issues:**
+```bash
+# Check current version
+node --version
+
+# Install correct version (use nvm)
+nvm install 18
+nvm use 18
+
+# Verify npm compatibility
+npm --version
+```
+
+**Package Dependencies:**
+```bash
+# Clear npm cache
+npm cache clean --force
+
+# Reinstall dependencies
+rm -rf node_modules package-lock.json
+npm install
+
+# Check for security vulnerabilities
+npm audit
+npm audit fix
+```
+
+### Production Environment
+
+**Docker Issues:**
+```bash
+# Check container status
+docker ps
+docker logs agency-hub
+docker logs mcp-server
+
+# Restart containers
+docker-compose restart
+docker-compose up -d
+
+# Check resource usage
+docker stats
+```
+
+**Load Balancer Issues:**
+```bash
+# Check nginx configuration
+nginx -t
+sudo systemctl reload nginx
+
+# Monitor connections
+netstat -an | grep :80
+netstat -an | grep :443
+```
+
+## Monitoring & Alerts
+
+### Health Check Endpoints
+```bash
+# Agency Hub health
+curl http://localhost:3000/health
+
+# MCP Server health  
+curl http://localhost:3001/health
+
+# WebSocket health
+curl http://localhost:3002/health
+
+# Database health
+curl http://localhost:3000/api/db/health
+```
+
+### Metrics Collection
+```bash
+# System metrics
+curl http://localhost:3000/metrics
+
+# Application metrics
+curl http://localhost:3000/api/metrics
+
+# Custom metrics
+curl http://localhost:3000/api/metrics/agents
+curl http://localhost:3000/api/metrics/messages
+```
+
+### Log Aggregation
+```bash
+# Centralized logging
+journalctl -f -u agency-hub
+journalctl -f -u mcp-server
+
+# Log rotation
+logrotate /etc/logrotate.d/agency-hub
+
+# Remote logging
+rsyslog configuration for central log server
+```
+
+## Recovery Procedures
+
+### Quick Recovery
+```bash
+# Stop all services
+./stop-development.sh
+
+# Clear temporary data
+rm -rf logs/* tmp/* .pids/*
+
+# Reset environment
+cp .env.example .env
+
+# Restart services
+./start-development.sh
+```
+
+### Full System Reset
+```bash
+# Backup important data
+mkdir -p backup/$(date +%Y%m%d)
+cp -r logs/ backup/$(date +%Y%m%d)/
+cp .env backup/$(date +%Y%m%d)/
+
+# Reset everything
+npm run system:reset
+
+# Rebuild from source
+npm run build:clean
+npm run build:all
+
+# Restart with fresh configuration
+./start-development.sh
+```
+
+### Data Recovery
+```bash
+# Database backup/restore
+pg_dump database_name > backup.sql
+psql database_name < backup.sql
+
+# Configuration backup
+tar -czf config-backup.tar.gz .env config/ logs/
+
+# Recovery from backup
+tar -xzf config-backup.tar.gz
+```
+
+## Getting Help
+
+### Internal Documentation
+- [Architecture Overview](docs/ARCHITECTURE.md)
+- [API Documentation](docs/API.md)
+- [Development Guide](docs/DEVELOPMENT.md)
+- [Deployment Guide](docs/DEPLOYMENT.md)
+
+### External Resources
+- GitHub Issues: Report bugs and get help
+- Community Forum: Ask questions and share solutions
+- Documentation Wiki: Comprehensive guides
+- Video Tutorials: Step-by-step walkthroughs
+
+### Emergency Contacts
+- **Development Team**: dev-team@company.com
+- **DevOps Team**: devops@company.com
+- **On-Call Engineer**: +1-555-123-4567
+- **System Administrator**: sysadmin@company.com
+
+---
+
+**Last Updated**: 2025-06-06  
+**Version**: 1.0.0  
+**Maintainer**: Daniel Goldberg

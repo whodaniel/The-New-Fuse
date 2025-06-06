@@ -2,9 +2,19 @@
  * API services module
  */
 
-import { RedisService } from '@the-new-fuse/database';
-import type { Agent, Workflow, WorkflowExecution } from '@the-new-fuse/types';
-import { ApiResponse, PaginatedResponse, PaginationParams } from '../types.js';
+// Import types from @the-new-fuse/types package
+import type { 
+  Agent, 
+  Workflow, 
+  WorkflowExecution
+} from '@the-new-fuse/types';
+import { RedisService } from './redis.service.js';
+// Import types from our own package to avoid duplication
+import type { ApiResponse, PaginationParams, PaginationMeta } from '../types/index.js';
+
+export interface PaginatedResponse<T = unknown> extends ApiResponse<T[]> {
+  meta: PaginationMeta & Record<string, unknown>;
+}
 
 /**
  * Base API service with common functionality
@@ -77,7 +87,7 @@ export class AgentService extends BaseService {
   /**
    * Get an agent by ID
    */
-  async getAgentById(id: string): Promise<ApiResponse<Agent | null>> {
+  async getAgentById(_id: string): Promise<ApiResponse<Agent | null>> {
     try {
       // This would be implemented with actual database calls
       return this.formatSuccess(null);
@@ -128,7 +138,7 @@ export class WorkflowService extends BaseService {
   /**
    * Get a workflow execution by ID
    */
-  async getWorkflowExecutionById(id: string): Promise<ApiResponse<WorkflowExecution | null>> {
+  async getWorkflowExecutionById(_id: string): Promise<ApiResponse<WorkflowExecution | null>> {
     try {
       // This would be implemented with actual database calls
       return this.formatSuccess(null);

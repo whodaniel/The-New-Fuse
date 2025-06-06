@@ -1,6 +1,7 @@
 import { Logger } from "@/utils/logger";
 import { MCPAgentServer, MCPChatServer, MCPWorkflowServer } from './servers.js';
 import { MCPServerOptions, MCPToolParams, MCPServer } from './types.js';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.js';
 
 export class MCPFuseServer {
   protected readonly logger = new Logger(MCPFuseServer.name);
@@ -9,6 +10,7 @@ export class MCPFuseServer {
     private readonly agentServer: MCPAgentServer,
     private readonly chatServer: MCPChatServer,
     private readonly workflowServer: MCPWorkflowServer,
+    private readonly fileCoordinationServer: MCPFileCoordinationServer,
     private readonly options: MCPServerOptions = {},
   ) {}
 
@@ -17,6 +19,7 @@ export class MCPFuseServer {
       ...this.wrapServerTools(this.agentServer, "agentServer"),
       ...this.wrapServerTools(this.chatServer, "chatServer"),
       ...this.wrapServerTools(this.workflowServer, "workflowServer"),
+      ...this.wrapServerTools(this.fileCoordinationServer, "fileCoordination"),
     };
   }
 

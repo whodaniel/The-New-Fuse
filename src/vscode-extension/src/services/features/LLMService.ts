@@ -8,6 +8,25 @@ import { LLMProvider, LLMProviderHealth } from '../../types/llm';
  * Service to act as an intermediary for all LLM interactions.
  */
 export class LLMService {
+
+    /**
+     * Ask the LLM a question about a code snippet.
+     * @param code The selected code.
+     * @param question The user's question.
+     * @param languageId The language of the code.
+     * @returns The LLM's answer as a string.
+     */
+    async askAboutCode(code: string, question: string, languageId: string): Promise<string> {
+        const prompt = `You are an expert developer assistant. The user has selected the following code (${languageId}):\n\n${code}\n\nQuestion: ${question}\n\nPlease provide a concise, clear answer.`;
+        // Use your existing completion/generation method
+        const response = await this.getCompletion({
+            prompt,
+            languageId,
+            type: 'code_explanation'
+        });
+        return response?.content || 'No answer available.';
+    }
+
     private llmProviderManager: LLMProviderManager;
     private configurationService: ConfigurationService;
     private notificationService: NotificationService;
@@ -168,6 +187,41 @@ export class LLMService {
         } catch (error: any) {
             this.notificationService.showErrorMessage(`Error fetching models for ${currentProvider.name}: ${error.message}`);
             return [];
+        }
+    }
+
+    /**
+     * Handle webview messages for LLM operations
+     */
+    public async handleWebviewMessage(payload: any): Promise<any> {
+        if (!payload || !payload.type) {
+            throw new Error('Invalid payload: type is required');
+        }
+
+        switch (payload.type) {
+            case 'generateText':
+                if (!payload.prompt) {
+                    throw new Error('Invalid payload: prompt is required for generateText');
+                }
+                return await this.generateResponse(payload.prompt, payload.options);
+
+            case 'getProviders':
+                return this.llmProviderManager.getAvailableProviders();
+
+            case 'getCurrentProvider':
+                return this.llmProviderManager.getCurrentProvider();
+
+            case 'setProvider':
+                if (!payload.providerId) {
+                    throw new Error('Invalid payload: providerId is required for setProvider');
+                }
+                return await this.llmProviderManager.selectProvider(payload.providerId);
+
+            case 'getModels':
+                return await this.getAvailableModels();
+
+            default:
+                throw new Error(`Unsupported LLM operation: ${payload.type}`);
         }
     }
 }

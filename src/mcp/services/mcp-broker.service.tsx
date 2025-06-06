@@ -6,6 +6,8 @@ import { MCPAgentServer } from '../MCPAgentServer.js';
 import { MCPChatServer } from '../MCPChatServer.js';
 import { MCPWorkflowServer } from '../MCPWorkflowServer.js';
 import { MCPFuseServer } from '../MCPFuseServer.js';
+import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer.js';
+import { MCPRAGServer } from '../MCPRAGServer.js';
 
 /**
  * Message interface for MCP communication
@@ -54,12 +56,16 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
     private readonly chatServer: MCPChatServer,
     private readonly workflowServer: MCPWorkflowServer,
     private readonly fuseServer: MCPFuseServer,
+    private readonly fileCoordinationServer: MCPFileCoordinationServer,
+    private readonly ragServer: MCPRAGServer,
   ) {
     // Register all MCP servers
     this.servers.set('agent', this.agentServer);
     this.servers.set('chat', this.chatServer);
     this.servers.set('workflow', this.workflowServer);
     this.servers.set('fuse', this.fuseServer);
+    this.servers.set('fileCoordination', this.fileCoordinationServer);
+    this.servers.set('rag', this.ragServer);
   }
 
   async onModuleInit() {
