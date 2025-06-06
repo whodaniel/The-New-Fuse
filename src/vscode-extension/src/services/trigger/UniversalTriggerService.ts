@@ -22,7 +22,7 @@ export interface TriggerRequest {
 export interface TriggerResult {
     success: boolean;
     error?: string;
-    timestamp: Date.now();
+    timestamp: number;
     method: string;
     responseTime?: number;
     platform?: string;
@@ -185,7 +185,7 @@ export class UniversalTriggerService extends EventEmitter {
             if (method === 'ui_elements' || method === 'auto') {
                 try {
                     const result = await this.injectToClaudeViaUIElements(trigger.message);
-                    if (result.success) return result;
+                    if (result.success) {return result;}
                 } catch (error) {
                     console.warn('[UniversalTriggerService] UI element injection failed, falling back to coordinates');
                 }
@@ -234,7 +234,7 @@ export class UniversalTriggerService extends EventEmitter {
             if (trigger.method === 'command_palette' || trigger.method === 'auto') {
                 try {
                     const result = await this.injectToCopilotViaCommandPalette(trigger.message);
-                    if (result.success) return result;
+                    if (result.success) {return result;}
                 } catch (error) {
                     console.warn('[UniversalTriggerService] Command palette injection failed');
                 }
@@ -351,7 +351,7 @@ export class UniversalTriggerService extends EventEmitter {
      */
     private async sendHeartbeat(agentId: string): Promise<void> {
         const config = this.heartbeatConfigs.get(agentId);
-        if (!config) return;
+        if (!config) {return;}
 
         const result = await this.triggerAgent(agentId, {
             type: 'heartbeat',

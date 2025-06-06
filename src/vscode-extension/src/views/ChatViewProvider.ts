@@ -36,7 +36,9 @@ export class ChatViewProvider {
 
         // Basic HTML structure for the chat panel
         const chatPanelJs = getUri(['media', 'chat-panel.js']);
+        const chatPanelCss = getUri(['media', 'chat-panel.css']);
         return `
+            <link href="${chatPanelCss}" rel="stylesheet" nonce="${nonce}">
             <div id="chat-panel-container">
                 <div id="chat-messages">
                     <!-- Chat messages will be rendered here by client-side JavaScript -->

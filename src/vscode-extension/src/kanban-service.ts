@@ -150,27 +150,31 @@ export class KanbanService {
     try {
         if (isSuggestion) {
             let newStatus: SuggestionStatus;
-            if (newColumnId === 'suggestions') newStatus = SuggestionStatus.SUBMITTED;
-            else if (newColumnId === 'under-review') newStatus = SuggestionStatus.UNDER_REVIEW;
-            // Add other suggestion statuses if your Kanban board has more columns for suggestions
- else {
-                console.warn(\`[KanbanService] Unknown column ID '\${newColumnId}' for suggestion '\${itemId}'.\`);
+            if (newColumnId === 'suggestions') {
+                newStatus = SuggestionStatus.SUBMITTED;
+            } else if (newColumnId === 'under-review') {
+                newStatus = SuggestionStatus.UNDER_REVIEW;
+            } else {
+                console.warn(`[KanbanService] Unknown column ID '${newColumnId}' for suggestion '${itemId}'.`);
                 return;
             }
             await this.updateSuggestionStatus(itemId, newStatus);
         } else { // It's a TodoItem
             let newStatus: TaskStatus;
-            if (newColumnId === 'todo') newStatus = TaskStatus.PENDING;
-            else if (newColumnId === 'in-progress') newStatus = TaskStatus.IN_PROGRESS;
-            else if (newColumnId === 'done') newStatus = TaskStatus.COMPLETED;
-            else {
-                console.warn(\`[KanbanService] Unknown column ID '\${newColumnId}' for todo '\${itemId}'.\`);
+            if (newColumnId === 'todo') {
+                newStatus = TaskStatus.PENDING;
+            } else if (newColumnId === 'in-progress') {
+                newStatus = TaskStatus.IN_PROGRESS;
+            } else if (newColumnId === 'done') {
+                newStatus = TaskStatus.COMPLETED;
+            } else {
+                console.warn(`[KanbanService] Unknown column ID '${newColumnId}' for todo '${itemId}'.`);
                 return;
             }
             await this.updateTodoStatus(itemId, newStatus);
         }
     } catch (error) {
-        console.error(\`[KanbanService] Failed to move item \${itemId} to \${newColumnId}:\`, error);
+        console.error(`[KanbanService] Failed to move item ${itemId} to ${newColumnId}:`, error);
         throw error; // Re-throw to allow caller to handle
     }
   }
@@ -354,7 +358,7 @@ export class KanbanService {
             }
           }
         } else if (result.status === 'rejected') {
-            console.error(\`[KanbanService] Batch operation '\${operation}' failed for item '\${itemId}':\`, result.reason);
+            console.error(`[KanbanService] Batch operation '${operation}' failed for item '${itemId}':`, result.reason);
         }
       });
 
@@ -367,8 +371,8 @@ export class KanbanService {
       this.state = newState;
 
     } catch (err) {
-      this.error = err instanceof Error ? err : new Error(\`Failed to perform batch \${operation}\`);
-      console.error(\`[KanbanService] Error in batch \${operation}:\`, this.error);
+      this.error = err instanceof Error ? err : new Error(`Failed to perform batch ${operation}`);
+      console.error(`[KanbanService] Error in batch ${operation}:`, this.error);
       throw this.error;
     }
   }

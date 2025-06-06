@@ -317,7 +317,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
                 {attachments.map(file => (
                     <div key={file.id} className="flex items-center justify-between text-xs bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded-full group">
                         <span className="truncate">{file.name}</span>
-                        <button onClick={() => removeAttachment(file.id)} className="ml-1 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100">
+                        <button onClick={() => removeAttachment(file.id)} className="ml-1 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100" aria-label={`Remove attachment ${file.name}`}>
                             <TrashIcon className="w-3 h-3"/>
                         </button>
                     </div>

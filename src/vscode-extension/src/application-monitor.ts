@@ -14,8 +14,11 @@ interface MonitoredApplication {
 export class ApplicationMonitor {
   private monitoredApps: MonitoredApplication[] = [
     // Example: Add applications you want to monitor here
-    // { id: 'claudeDesktop', displayName: 'Claude Desktop', processName: 'Claude', ports: [3000] },
-    // { id: 'myDockerService', displayName: 'My Docker Service', dockerServiceNames: ['my_mcp_service_in_docker'], ports: [8080] }
+    { id: 'claudeDesktop', displayName: 'Claude Desktop', processName: 'Claude', ports: [3000] },
+    { id: 'dockerMcpService', displayName: 'MCP Docker Service', dockerServiceNames: ['mcp_service_container', 'mcp-server'], ports: [8080, 3001] },
+    { id: 'nodeApp', displayName: 'Node.js Development Server', ports: [3000, 8000, 5173] },
+    { id: 'pythonApp', displayName: 'Python Development Server', ports: [8080, 5000, 8888] },
+    { id: 'dockerCompose', displayName: 'Docker Compose Services', dockerServiceNames: ['web', 'db', 'redis', 'api'] }
   ];
   private detectedServices: Map<string, boolean> = new Map();
   private pollInterval: number = 15000; // 15 seconds
@@ -76,11 +79,12 @@ export class ApplicationMonitor {
             }
         }
 
-        // TODO: Add Docker checks using app.dockerServiceNames
+        // Check Docker services using app.dockerServiceNames
         if (app.dockerServiceNames && app.dockerServiceNames.length > 0) {
             console.log(`[ApplicationMonitor] ${app.displayName} checking Docker services: ${app.dockerServiceNames}`);
-            // const dockerDetected = await this.checkDockerServices(app.dockerServiceNames);
-            // if (dockerDetected) isDetected = true; // Or handle Docker detection logic appropriately
+            const dockerDetected = await this.checkDockerServices(app.dockerServiceNames);
+            console.log(`[ApplicationMonitor] ${app.displayName} Docker services detected: ${dockerDetected}`);
+            if (dockerDetected) {isDetected = true;}
         }
 
         const previouslyDetected = this.detectedServices.get(app.id);
@@ -151,10 +155,110 @@ export class ApplicationMonitor {
     });
   }
 
-  // Placeholder for Docker check
-  // private async checkDockerServices(serviceNames: string[]): Promise<boolean> {
-  //   // Implement Docker checks, e.g., using 'docker ps' and 'docker inspect'
-  //   console.log('[ApplicationMonitor] Checking Docker services:', serviceNames); // Uncommented
-  //   return false;
-  // }
+  // Docker service monitoring implementation
+  private async checkDockerServices(serviceNames: string[]): Promise<boolean> {
+    console.log('[ApplicationMonitor] Checking Docker services:', serviceNames);
+    
+    try {
+      // First check if Docker is available
+      const dockerAvailable = await this.isDockerAvailable();
+      if (!dockerAvailable) {
+        console.warn('[ApplicationMonitor] Docker is not available on this system');
+        return false;
+      }
+
+      // Check each service
+      for (const serviceName of serviceNames) {
+        const isRunning = await this.isDockerServiceRunning(serviceName);
+        console.log(`[ApplicationMonitor] Docker service '${serviceName}' running: ${isRunning}`);
+        if (isRunning) {
+          return true; // At least one service is running
+        }
+      }
+      
+      return false; // No services are running
+    } catch (error) {
+      console.error('[ApplicationMonitor] Error checking Docker services:', error);
+      return false;
+    }
+  }
+
+  private isDockerAvailable(): Promise<boolean> {
+    return new Promise((resolve) => {
+      cp.exec('docker --version', (error, stdout, stderr) => {
+        if (error) {
+          console.warn('[ApplicationMonitor] Docker not available:', error.message);
+          resolve(false);
+        } else {
+          console.log('[ApplicationMonitor] Docker version:', stdout.trim());
+          resolve(true);
+        }
+      });
+    });
+  }
+
+  private isDockerServiceRunning(serviceName: string): Promise<boolean> {
+    return new Promise((resolve) => {
+      // Check if container is running using docker ps
+      const command = `docker ps --filter "name=${serviceName}" --format "{{.Names}}"`;
+      
+      cp.exec(command, (error, stdout, stderr) => {
+        if (error) {
+          console.warn(`[ApplicationMonitor] Error checking Docker service '${serviceName}':`, error.message);
+          resolve(false);
+          return;
+        }
+
+        const runningContainers = stdout.trim().split('\n').filter(name => name.trim() !== '');
+        const isRunning = runningContainers.some(name => 
+          name.includes(serviceName) || name === serviceName
+        );
+        
+        console.log(`[ApplicationMonitor] Docker service '${serviceName}' containers: [${runningContainers.join(', ')}]`);
+        resolve(isRunning);
+      });
+    });
+  }
+
+  public getMonitoringStatus(): { isRunning: boolean; pollInterval: number; appsCount: number } {
+    return {
+      isRunning: this.intervalId !== undefined,
+      pollInterval: this.pollInterval,
+      appsCount: this.monitoredApps.length
+    };
+  }
+
+  public getDetectedServices(): Map<string, boolean> {
+    return new Map(this.detectedServices);
+  }
+
+  public getMonitoredApplications(): MonitoredApplication[] {
+    return [...this.monitoredApps];
+  }
+
+  public addMonitoredApplication(app: MonitoredApplication): void {
+    this.monitoredApps.push(app);
+    console.log(`[ApplicationMonitor] Added application: ${app.displayName}`);
+  }
+
+  public removeMonitoredApplication(appId: string): boolean {
+    const index = this.monitoredApps.findIndex(app => app.id === appId);
+    if (index !== -1) {
+      const removedApp = this.monitoredApps.splice(index, 1)[0];
+      this.detectedServices.delete(appId);
+      console.log(`[ApplicationMonitor] Removed application: ${removedApp.displayName}`);
+      return true;
+    }
+    return false;
+  }
+
+  public setPollInterval(intervalMs: number): void {
+    this.pollInterval = Math.max(5000, intervalMs); // Minimum 5 seconds
+    if (this.intervalId) {
+      // Restart monitoring with new interval
+      this.stopMonitoring();
+      this.startMonitoring();
+    }
+    console.log(`[ApplicationMonitor] Poll interval set to ${this.pollInterval}ms`);
+  }
 }

@@ -271,6 +271,46 @@
         "command": "theNewFuse.trigger.stopClaudeHeartbeat",
         "title": "🛑 Stop Claude Desktop Heartbeat",
         "category": "The New Fuse - Triggers"
+      },
+      {
+        "command": "theNewFuse.monitoring.showStatus",
+        "title": "📊 Show Application Monitoring Status",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.showDetectedServices",
+        "title": "🔍 Show Detected Services",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.startMonitoring",
+        "title": "▶️ Start Application Monitoring",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.stopMonitoring",
+        "title": "⏹️ Stop Application Monitoring",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.addApplication",
+        "title": "➕ Add Application to Monitor",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.removeApplication",
+        "title": "➖ Remove Application from Monitoring",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.configurePollInterval",
+        "title": "⏱️ Configure Monitoring Poll Interval",
+        "category": "The New Fuse - Monitoring"
+      },
+      {
+        "command": "theNewFuse.monitoring.openDashboard",
+        "title": "📋 Open Monitoring Dashboard",
+        "category": "The New Fuse - Monitoring"
       }
     ],
     "menus": {
@@ -321,6 +361,38 @@
         },
         {
           "command": "theNewFuse.trigger.stopClaudeHeartbeat",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.showStatus",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.showDetectedServices",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.startMonitoring",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.stopMonitoring",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.addApplication",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.removeApplication",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.configurePollInterval",
+          "when": "true"
+        },
+        {
+          "command": "theNewFuse.monitoring.openDashboard",
           "when": "true"
         }
       ]

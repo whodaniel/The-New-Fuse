@@ -25,3 +25,6 @@ export {
 // Driver exports
 export { PgVectorDriver } from './drivers/pgvector.driver';
 export { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
+
+// Adapter exports
+export { LegacyVectorAdapter, createLegacyAdapter, TypeConverter } from './adapters/legacy-adapter';

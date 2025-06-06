@@ -184,7 +184,11 @@ const GridView: React.FC<GridViewProps> = ({
                     <div className="flex items-center justify-start h-full">
                     {hasChildren ? (
                         <button onClick={() => onToggleRowCollapse(row.id)} className="p-0.5 text-slate-500 hover:bg-slate-200 rounded">
-                        {row.isCollapsed ? <ChevronRightIcon className="w-3.5 h-3.5" /> : <ChevronDownIcon className="w-3.5 h-3.5" />}
+                        {row.isCollapsed ? (
+                            <ChevronRightIcon className="w-3.5 h-3.5" aria-label="Expand row" />
+                        ) : (
+                            <ChevronDownIcon className="w-3.5 h-3.5" aria-label="Collapse row" />
+                        )}
                         </button>
                     ) : (
                         <span className="w-[18px] h-[18px] inline-block"></span> // Placeholder for alignment

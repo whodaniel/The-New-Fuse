@@ -420,6 +420,262 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
         applicationMonitor.startMonitoring();
         console.log('   ✅ Application Monitor started');
 
+        // Register Application Monitor Commands
+        console.log('📊 Registering Application Monitor Commands...');
+        
+        commandService.registerCommand('theNewFuse.monitoring.showStatus', async () => {
+            const status = applicationMonitor.getMonitoringStatus();
+            const detectedCount = Array.from(applicationMonitor.getDetectedServices().values()).filter(Boolean).length;
+            const message = `Application Monitoring Status:
+• Running: ${status.isRunning ? 'Yes' : 'No'}
+• Poll Interval: ${status.pollInterval / 1000} seconds
+• Applications Monitored: ${status.appsCount}
+• Services Detected: ${detectedCount}`;
+            
+            vscode.window.showInformationMessage(message, { modal: true });
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.showDetectedServices', async () => {
+            const detectedServices = applicationMonitor.getDetectedServices();
+            const monitoredApps = applicationMonitor.getMonitoredApplications();
+            
+            const items = monitoredApps.map(app => {
+                const isDetected = detectedServices.get(app.id) || false;
+                return {
+                    label: `${isDetected ? '✅' : '❌'} ${app.displayName}`,
+                    description: isDetected ? 'Detected and Available' : 'Not Currently Detected',
+                    detail: `ID: ${app.id} | Process: ${app.processName || 'N/A'} | Ports: ${app.ports?.join(', ') || 'N/A'} | Docker: ${app.dockerServiceNames?.join(', ') || 'N/A'}`
+                };
+            });
+
+            if (items.length === 0) {
+                vscode.window.showInformationMessage('No applications are currently being monitored.');
+                return;
+            }
+
+            await vscode.window.showQuickPick(items, {
+                placeHolder: 'Detected Services and Applications',
+                title: 'Application Monitoring - Detected Services'
+            });
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.startMonitoring', async () => {
+            const status = applicationMonitor.getMonitoringStatus();
+            if (status.isRunning) {
+                vscode.window.showWarningMessage('Application monitoring is already running.');
+                return;
+            }
+            
+            applicationMonitor.startMonitoring();
+            notificationService.showInfo('🔍 Application monitoring started successfully!');
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.stopMonitoring', async () => {
+            const status = applicationMonitor.getMonitoringStatus();
+            if (!status.isRunning) {
+                vscode.window.showWarningMessage('Application monitoring is not currently running.');
+                return;
+            }
+            
+            applicationMonitor.stopMonitoring();
+            notificationService.showInfo('⏹️ Application monitoring stopped.');
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.addApplication', async () => {
+            const id = await vscode.window.showInputBox({
+                prompt: 'Enter a unique ID for the application',
+                placeholder: 'e.g., myapp',
+                validateInput: (value) => {
+                    if (!value || value.trim().length === 0) {
+                        return 'ID cannot be empty';
+                    }
+                    const existing = applicationMonitor.getMonitoredApplications().find(app => app.id === value.trim());
+                    if (existing) {
+                        return 'An application with this ID already exists';
+                    }
+                    return null;
+                }
+            });
+            
+            if (!id) {return;}
+
+            const displayName = await vscode.window.showInputBox({
+                prompt: 'Enter a display name for the application',
+                placeholder: 'e.g., My Application',
+                validateInput: (value) => value && value.trim().length > 0 ? null : 'Display name cannot be empty'
+            });
+            
+            if (!displayName) {return;}
+
+            const processName = await vscode.window.showInputBox({
+                prompt: 'Enter the process name to monitor (optional)',
+                placeholder: 'e.g., myapp, myapp.exe'
+            });
+
+            const portsInput = await vscode.window.showInputBox({
+                prompt: 'Enter comma-separated ports to monitor (optional)',
+                placeholder: 'e.g., 3000, 8080'
+            });
+
+            const dockerServices = await vscode.window.showInputBox({
+                prompt: 'Enter comma-separated Docker service names (optional)',
+                placeholder: 'e.g., web, api, db'
+            });
+
+            const newApp = {
+                id: id.trim(),
+                displayName: displayName.trim(),
+                processName: processName?.trim() || undefined,
+                ports: portsInput?.split(',').map(p => parseInt(p.trim())).filter(p => !isNaN(p)) || undefined,
+                dockerServiceNames: dockerServices?.split(',').map(s => s.trim()).filter(s => s.length > 0) || undefined
+            };
+
+            applicationMonitor.addMonitoredApplication(newApp);
+            notificationService.showInfo(`✅ Added "${displayName}" to application monitoring.`);
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.removeApplication', async () => {
+            const monitoredApps = applicationMonitor.getMonitoredApplications();
+            
+            if (monitoredApps.length === 0) {
+                vscode.window.showInformationMessage('No applications are currently being monitored.');
+                return;
+            }
+
+            const items = monitoredApps.map(app => ({
+                label: app.displayName,
+                description: app.id,
+                detail: `Process: ${app.processName || 'N/A'} | Ports: ${app.ports?.join(', ') || 'N/A'}`,
+                app
+            }));
+
+            const selected = await vscode.window.showQuickPick(items, {
+                placeHolder: 'Select an application to remove from monitoring',
+                title: 'Remove Application from Monitoring'
+            });
+
+            if (!selected) {return;}
+
+            const confirm = await vscode.window.showWarningMessage(
+                `Are you sure you want to remove "${selected.app.displayName}" from monitoring?`,
+                { modal: true },
+                'Remove',
+                'Cancel'
+            );
+
+            if (confirm === 'Remove') {
+                const removed = applicationMonitor.removeMonitoredApplication(selected.app.id);
+                if (removed) {
+                    notificationService.showInfo(`🗑️ Removed "${selected.app.displayName}" from monitoring.`);
+                } else {
+                    notificationService.showError('Failed to remove application from monitoring.');
+                }
+            }
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.configurePollInterval', async () => {
+            const currentStatus = applicationMonitor.getMonitoringStatus();
+            const currentSeconds = currentStatus.pollInterval / 1000;
+            
+            const newInterval = await vscode.window.showInputBox({
+                prompt: 'Enter the new polling interval in seconds (minimum 5)',
+                placeholder: `Current: ${currentSeconds} seconds`,
+                value: currentSeconds.toString(),
+                validateInput: (value) => {
+                    const num = parseInt(value);
+                    if (isNaN(num) || num < 5) {
+                        return 'Please enter a number of 5 or greater';
+                    }
+                    return null;
+                }
+            });
+
+            if (!newInterval) {return;}
+
+            const intervalMs = parseInt(newInterval) * 1000;
+            applicationMonitor.setPollInterval(intervalMs);
+            notificationService.showInfo(`⏱️ Monitoring poll interval set to ${newInterval} seconds.`);
+        });
+
+        commandService.registerCommand('theNewFuse.monitoring.openDashboard', async () => {
+            // Create a simple monitoring dashboard webview
+            const panel = vscode.window.createWebviewPanel(
+                'applicationMonitoringDashboard',
+                'Application Monitoring Dashboard',
+                vscode.ViewColumn.One,
+                {
+                    enableScripts: true,
+                    retainContextWhenHidden: true
+                }
+            );
+
+            const status = applicationMonitor.getMonitoringStatus();
+            const detectedServices = applicationMonitor.getDetectedServices();
+            const monitoredApps = applicationMonitor.getMonitoredApplications();
+
+            panel.webview.html = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Monitoring Dashboard</title>
+    <style>
+        body { font-family: var(--vscode-font-family); padding: 20px; }
+        .status-card { background: var(--vscode-editor-background); border: 1px solid var(--vscode-panel-border); border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .status-running { border-left: 4px solid var(--vscode-testing-iconPassed); }
+        .status-stopped { border-left: 4px solid var(--vscode-testing-iconFailed); }
+        .app-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; border-bottom: 1px solid var(--vscode-panel-border); }
+        .app-item:last-child { border-bottom: none; }
+        .detected { color: var(--vscode-testing-iconPassed); }
+        .not-detected { color: var(--vscode-testing-iconFailed); }
+        .refresh-btn { background: var(--vscode-button-background); color: var(--vscode-button-foreground); border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+        .refresh-btn:hover { background: var(--vscode-button-hoverBackground); }
+    </style>
+</head>
+<body>
+    <h1>🔍 Application Monitoring Dashboard</h1>
+    
+    <div class="status-card ${status.isRunning ? 'status-running' : 'status-stopped'}">
+        <h2>Monitoring Status</h2>
+        <p><strong>Status:</strong> ${status.isRunning ? '✅ Running' : '❌ Stopped'}</p>
+        <p><strong>Poll Interval:</strong> ${status.pollInterval / 1000} seconds</p>
+        <p><strong>Applications Monitored:</strong> ${status.appsCount}</p>
+        <p><strong>Services Detected:</strong> ${Array.from(detectedServices.values()).filter(Boolean).length}</p>
+        <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+    </div>
+
+    <div class="status-card">
+        <h2>📱 Monitored Applications</h2>
+        ${monitoredApps.length === 0 ? '<p>No applications configured for monitoring.</p>' : 
+            monitoredApps.map(app => {
+                const isDetected = detectedServices.get(app.id) || false;
+                return `
+                <div class="app-item">
+                    <div>
+                        <strong>${app.displayName}</strong> <span class="${isDetected ? 'detected' : 'not-detected'}">${isDetected ? '✅' : '❌'}</span>
+                        <br>
+                        <small>Process: ${app.processName || 'N/A'} | Ports: ${app.ports?.join(', ') || 'N/A'} | Docker: ${app.dockerServiceNames?.join(', ') || 'N/A'}</small>
+                    </div>
+                    <div class="${isDetected ? 'detected' : 'not-detected'}">
+                        ${isDetected ? 'Available' : 'Not Detected'}
+                    </div>
+                </div>`;
+            }).join('')
+        }
+    </div>
+
+    <script>
+        function refreshData() {
+            location.reload();
+        }
+    </script>
+</body>
+</html>`;
+        });
+
+        console.log('   ✅ Application Monitor Commands registered');
+
         // Initialize KanbanService
         console.log('📋 Initializing Kanban Service...');
         const kanbanService = new KanbanService({ suggestionService });

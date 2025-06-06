@@ -257,7 +257,7 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
                 {editingOptions.map((opt) => (
                   <div key={opt.id} className="flex items-center justify-between p-2 bg-slate-50 rounded">
                     <span className={`px-2 py-0.5 text-xs rounded-full ${opt.colorClass}`}>{opt.name}</span>
-                    <button onClick={() => handleRemoveOption(opt.id)} className="text-red-500 hover:text-red-700">
+                    <button onClick={() => handleRemoveOption(opt.id)} className="text-red-500 hover:text-red-700" aria-label="Remove option">
                       <TrashIcon className="w-4 h-4" />
                     </button>
                   </div>
