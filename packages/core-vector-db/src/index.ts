@@ -24,6 +24,7 @@ export {
 
 // Driver exports
 export { PgVectorDriver } from './drivers/pgvector.driver';
+export { QdrantDriver } from './drivers/qdrant.driver';
 export { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 
 // Adapter exports

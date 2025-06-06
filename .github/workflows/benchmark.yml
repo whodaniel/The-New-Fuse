@@ -30,15 +30,15 @@ jobs:
     
     strategy:
       matrix:
-        node-version: [18.x]
+        bun-version: [18.x]
 
     steps:
       - uses: actions/checkout@v3
       
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          bun-version: ${{ matrix.node-version }}
           cache: 'npm'
           
       - name: Install dependencies

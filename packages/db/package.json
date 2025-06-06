@@ -1,11 +1,11 @@
 {
   "name": "db",
   "version": "1.0.0",
-  "packageManager": "yarn@4.9.1",
+  "packageManager": "bun@1.0.0",
   "type": "module",
   "scripts": {
     "clean": "rimraf dist .turbo node_modules",
-    "build": "yarn tsc -b"
+    "build": "bun tsc -b"
   },
   "devDependencies": {
     "rimraf": "^5.0.5",

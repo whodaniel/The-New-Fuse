@@ -9,7 +9,7 @@
     "build:force": "tsc --build --force",
     "build:ignore-errors": "tsc --skipLibCheck --skipDefaultLibCheck --noEmitOnError",
     "build:js-only": "./scripts/build-js-only.sh",
-    "build:production": "yarn build:js-only && (tsc --noEmit || echo 'TypeScript check failed but JS build succeeded')",
+    "build:production": "bun build:js-only && (tsc --noEmit || echo 'TypeScript check failed but JS build succeeded')",
     "clean": "rimraf dist .turbo node_modules",
     "dev": "nest start --watch",
     "start": "nest start",

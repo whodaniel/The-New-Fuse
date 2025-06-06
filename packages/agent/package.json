@@ -2,7 +2,7 @@
   "name": "@the-new-fuse/agent",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "yarn@4.9.1",
+  "packageManager": "bun@1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

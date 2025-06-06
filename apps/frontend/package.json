@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0 --port 3000",
     "dev:smart": "node scripts/dev.js",
     "build": "vite build",
-    "build:frontend": "yarn build",
+    "build:frontend": "bun build",
     "build:force": "vite build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host 0.0.0.0 --port 3000",

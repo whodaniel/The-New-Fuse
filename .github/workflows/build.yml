@@ -14,16 +14,16 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: '18'
+          bun-version: '18'
           cache: 'yarn'
           
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: bun install --frozen-lockfile
         
       - name: Build Packages
-        run: yarn build
+        run: bun run build
         
       - name: Build Docker Images
         run: docker compose build 
