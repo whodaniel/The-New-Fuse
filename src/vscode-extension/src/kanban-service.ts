@@ -153,7 +153,7 @@ export class KanbanService {
             if (newColumnId === 'suggestions') newStatus = SuggestionStatus.SUBMITTED;
             else if (newColumnId === 'under-review') newStatus = SuggestionStatus.UNDER_REVIEW;
             // Add other suggestion statuses if your Kanban board has more columns for suggestions
-            else { 
+ else {
                 console.warn(\`[KanbanService] Unknown column ID '\${newColumnId}' for suggestion '\${itemId}'.\`);
                 return;
             }

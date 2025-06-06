@@ -27,6 +27,30 @@ export class LLMService {
         return response?.content || 'No answer available.';
     }
 
+    /**
+     * Get multiple code completion suggestions from the LLM.
+     * @param options Options for the completion request, including prompt, languageId, n, etc.
+     * @returns An array of completion objects: [{ content: string }]
+     */
+    async getCompletions(options: any): Promise<Array<{ content: string }>> {
+        // If your provider supports n completions, use it; otherwise, call getCompletion n times.
+        const n = options.n || 3;
+        if (typeof this.getCompletion === 'function' && this.getCompletion.length > 0) {
+            // Try to call provider with n completions if supported
+            if (this.llmProviderManager.getCurrentProvider()?.supportsMultipleCompletions) {
+                const completions = await this.llmProviderManager.getCurrentProvider().getCompletions(options);
+                return completions || [];
+            }
+        }
+        // Fallback: call getCompletion n times in parallel
+        const promises = [];
+        for (let i = 0; i < n; i++) {
+            promises.push(this.getCompletion(options));
+        }
+        const results = await Promise.all(promises);
+        return results.filter(r => r && r.content);
+    }
+
     private llmProviderManager: LLMProviderManager;
     private configurationService: ConfigurationService;
     private notificationService: NotificationService;

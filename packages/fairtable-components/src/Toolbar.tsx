@@ -1,12 +1,8 @@
 
-import React, { useState, useEffect, useRef } from 'react';
-import { Table, View, ViewType, Filter, Sort, FilterOperator, Column, DataType, KanbanViewOptions, TimelineViewOptions, ViewSpecificOptions } from "@the-new-fuse/fairtable-core";
-import { PlusIcon, FilterIcon, SortAscendingIcon, EyeIcon, PencilIcon, TrashIcon, ChevronDownIcon, TableCellsIcon, KanbanIcon, CalendarIcon, GalleryIcon, TimelineIcon } from './Icons';
-import Modal from './Modal';
-import SelectInput, { SelectOptionItem } from './SelectInput';
-import EditableText from './EditableText';
-import { generateId } from '@the-new-fuse/fairtable-utils';
-import { FILTER_OPERATOR_OPTIONS, NEW_VIEW_DEFAULT_NAME } from '@the-new-fuse/fairtable-core';
+import React, { useState, useEffect, useRef } from 'react'; // Column is not used
+import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "@the-new-fuse/fairtable-core";
+import { PlusIcon, FilterIcon, SortAscendingIcon, EyeIcon, PencilIcon, TrashIcon, ChevronDownIcon, TableCellsIcon, KanbanIcon, CalendarIcon, GalleryIcon, TimelineIcon } from './Icons'; // NEW_VIEW_DEFAULT_NAME is not used
+// import EditableText from './EditableText'; // EditableText is used, but not imported here. It's imported in ColumnHeader.tsx and TableTabs.tsx
 
 
 interface ToolbarProps {

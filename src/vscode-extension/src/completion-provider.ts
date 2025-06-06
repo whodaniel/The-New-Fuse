@@ -20,24 +20,27 @@ export class FuseCompletionProvider implements vscode.InlineCompletionItemProvid
         const prompt = document.getText(new vscode.Range(new vscode.Position(0, 0), position));
 
         try {
-            // Query the LLM for a completion suggestion
-            const suggestion = await this.llmService.getCompletion({
+            // Query the LLM for multiple completion suggestions
+            const suggestions = await this.llmService.getCompletions({
                 prompt,
                 languageId: document.languageId,
                 position,
                 linePrefix,
-                context: context.selectedCompletionInfo
+                context: context.selectedCompletionInfo,
+                n: 3 // Number of suggestions to return for cycling
             });
 
-            if (suggestion && suggestion.content) {
-                const completionItem = new vscode.InlineCompletionItem(
-                    suggestion.content,
-                    new vscode.Range(position, position)
-                );
-                return new vscode.InlineCompletionList([completionItem]);
+            if (Array.isArray(suggestions) && suggestions.length > 0) {
+                const items = suggestions
+                    .filter(s => s && s.content)
+                    .map(s => new vscode.InlineCompletionItem(
+                        s.content,
+                        new vscode.Range(position, position)
+                    ));
+                return new vscode.InlineCompletionList(items);
             }
         } catch (err) {
-            console.error('[FuseCompletionProvider] Error fetching completion:', err);
+            console.error('[FuseCompletionProvider] Error fetching completions:', err);
         }
         return undefined;
     }

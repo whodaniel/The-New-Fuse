@@ -35,7 +35,7 @@ export class ChatViewProvider {
         // <link href="${chatPanelCss}" rel="stylesheet" nonce="${nonce}">
 
         // Basic HTML structure for the chat panel
-        // Client-side JS (e.g., in TabbedContainerProvider's main.js) will handle message rendering and interactions.
+        const chatPanelJs = getUri(['media', 'chat-panel.js']);
         return `
             <div id="chat-panel-container">
                 <div id="chat-messages">
@@ -47,10 +47,8 @@ export class ChatViewProvider {
                 </div>
                 <div id="thinking-indicator" style="display:none;">Thinking...</div>
             </div>
+            <script nonce="${nonce}" src="${chatPanelJs}"></script>
         `;
-        // Note: If a dedicated chat-panel.js is needed, it would be included similarly:
-        // <script nonce="${nonce}" src="${getUri(['media', 'chat-panel.js'])}"></script>
-        // For now, assuming main.js in TabbedContainerProvider handles this.
     }
 
     public updateChatMessages(messages: ChatMessage[], currentSessionId: string): void {
