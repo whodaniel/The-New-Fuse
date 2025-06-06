@@ -1,0 +1,209 @@
+syntax = "proto3";
+
+package vectorstore.v1;
+
+import "google/protobuf/struct.proto";
+import "google/protobuf/empty.proto";
+
+// Vector Store Service Definition
+service VectorStoreService {
+  // Collection Management
+  rpc CreateCollection(CreateCollectionRequest) returns (CreateCollectionResponse);
+  rpc DeleteCollection(DeleteCollectionRequest) returns (DeleteCollectionResponse);
+  rpc ListCollections(google.protobuf.Empty) returns (ListCollectionsResponse);
+  rpc CollectionExists(CollectionExistsRequest) returns (CollectionExistsResponse);
+
+  // Document Operations
+  rpc UpsertDocuments(UpsertDocumentsRequest) returns (UpsertDocumentsResponse);
+  rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
+  rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
+  rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+
+  // Search Operations
+  rpc SimilaritySearch(SimilaritySearchRequest) returns (SimilaritySearchResponse);
+  rpc HybridSearch(HybridSearchRequest) returns (HybridSearchResponse);
+
+  // Batch Operations
+  rpc BatchUpsert(BatchUpsertRequest) returns (BatchUpsertResponse);
+  rpc BatchDelete(BatchDeleteRequest) returns (BatchDeleteResponse);
+
+  // Health & Stats
+  rpc HealthCheck(google.protobuf.Empty) returns (HealthCheckResponse);
+  rpc GetStats(GetStatsRequest) returns (GetStatsResponse);
+}
+
+// Message Definitions
+
+// Collection Messages
+message CreateCollectionRequest {
+  string name = 1;
+  int32 dimension = 2;
+  string metric = 3; // cosine, euclidean, dot
+  map<string, string> config = 4;
+}
+
+message CreateCollectionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteCollectionRequest {
+  string name = 1;
+}
+
+message DeleteCollectionResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ListCollectionsResponse {
+  repeated string collections = 1;
+}
+
+message CollectionExistsRequest {
+  string name = 1;
+}
+
+message CollectionExistsResponse {
+  bool exists = 1;
+}
+
+// Document Messages
+message VectorDocument {
+  string id = 1;
+  string content = 2;
+  google.protobuf.Struct metadata = 3;
+  repeated float embedding = 4;
+}
+
+message UpsertDocumentsRequest {
+  string collection = 1;
+  repeated VectorDocument documents = 2;
+  bool generate_embeddings = 3;
+}
+
+message UpsertDocumentsResponse {
+  bool success = 1;
+  string message = 2;
+  int32 documents_processed = 3;
+}
+
+message GetDocumentRequest {
+  string collection = 1;
+  string id = 2;
+}
+
+message GetDocumentResponse {
+  VectorDocument document = 1;
+  bool found = 2;
+}
+
+message UpdateDocumentRequest {
+  string collection = 1;
+  string id = 2;
+  VectorDocument document = 3;
+  bool generate_embeddings = 4;
+}
+
+message UpdateDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteDocumentRequest {
+  string collection = 1;
+  string id = 2;
+}
+
+message DeleteDocumentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// Search Messages
+message SimilaritySearchRequest {
+  string collection = 1;
+  oneof query {
+    repeated float embedding = 2;
+    string text = 3;
+  }
+  int32 limit = 4;
+  float threshold = 5;
+  google.protobuf.Struct metadata_filter = 6;
+}
+
+message SimilaritySearchResponse {
+  repeated SearchResult results = 1;
+}
+
+message HybridSearchRequest {
+  string collection = 1;
+  oneof query {
+    repeated float embedding = 2;
+    string text = 3;
+  }
+  int32 limit = 4;
+  float threshold = 5;
+  google.protobuf.Struct metadata_filter = 6;
+  float alpha = 7; // Weight for vector vs text search
+}
+
+message HybridSearchResponse {
+  repeated SearchResult results = 1;
+}
+
+message SearchResult {
+  string id = 1;
+  string content = 2;
+  google.protobuf.Struct metadata = 3;
+  float score = 4;
+  float distance = 5;
+}
+
+// Batch Messages
+message BatchUpsertRequest {
+  string collection = 1;
+  repeated VectorDocument documents = 2;
+  bool generate_embeddings = 3;
+  int32 batch_size = 4;
+}
+
+message BatchUpsertResponse {
+  bool success = 1;
+  string message = 2;
+  int32 documents_processed = 3;
+  int32 batches_processed = 4;
+}
+
+message BatchDeleteRequest {
+  string collection = 1;
+  repeated string ids = 2;
+}
+
+message BatchDeleteResponse {
+  bool success = 1;
+  string message = 2;
+  int32 documents_deleted = 3;
+}
+
+// Health & Stats Messages
+message HealthCheckResponse {
+  bool healthy = 1;
+  string status = 2;
+  map<string, string> details = 3;
+}
+
+message GetStatsRequest {
+  string collection = 1; // Optional: specific collection stats
+}
+
+message GetStatsResponse {
+  google.protobuf.Struct stats = 1;
+}
+
+// Error Handling
+message Error {
+  string code = 1;
+  string message = 2;
+  map<string, string> details = 3;
+}

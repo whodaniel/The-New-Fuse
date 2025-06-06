@@ -1,6 +1,10 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { VectorDatabaseService } from './vector-database.service';
 import { VectorDatabaseConfig, EmbeddingConfig } from './interface/vector-database.interface';
+import { VectorStoreGrpcController } from './grpc/vector-store-grpc.controller';
+import { PgVectorDriver } from './drivers/pgvector.driver';
+import { QdrantDriver } from './drivers/qdrant.driver';
+import { OpenAIEmbeddingProvider } from './drivers/openai-embedding.provider';
 
 export interface VectorDatabaseModuleOptions {
   vectorDbConfig: VectorDatabaseConfig;
@@ -12,6 +16,7 @@ export class VectorDatabaseModule {
   static forRoot(options: VectorDatabaseModuleOptions): DynamicModule {
     return {
       module: VectorDatabaseModule,
+      controllers: [VectorStoreGrpcController],
       providers: [
         {
           provide: 'VECTOR_DB_CONFIG',
@@ -28,8 +33,11 @@ export class VectorDatabaseModule {
           },
           inject: ['VECTOR_DB_CONFIG', 'EMBEDDING_CONFIG'],
         },
+        PgVectorDriver,
+        QdrantDriver,
+        OpenAIEmbeddingProvider,
       ],
-      exports: [VectorDatabaseService],
+      exports: [VectorDatabaseService, PgVectorDriver, QdrantDriver, OpenAIEmbeddingProvider],
       global: true,
     };
   }
@@ -40,6 +48,7 @@ export class VectorDatabaseModule {
   }): DynamicModule {
     return {
       module: VectorDatabaseModule,
+      controllers: [VectorStoreGrpcController],
       providers: [
         {
           provide: 'VECTOR_DB_MODULE_OPTIONS',
@@ -56,8 +65,11 @@ export class VectorDatabaseModule {
           },
           inject: ['VECTOR_DB_MODULE_OPTIONS'],
         },
+        PgVectorDriver,
+        QdrantDriver,
+        OpenAIEmbeddingProvider,
       ],
-      exports: [VectorDatabaseService],
+      exports: [VectorDatabaseService, PgVectorDriver, QdrantDriver, OpenAIEmbeddingProvider],
       global: true,
     };
   }

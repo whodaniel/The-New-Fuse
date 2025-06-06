@@ -7,7 +7,9 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "start": "node dist/index.js",
+    "start": "node dist/main.js",
+    "start:grpc": "node dist/main.js",
+    "dev:grpc": "bun run build && bun run start:grpc",
     "test": "jest",
     "lint": "eslint src/**/*.ts",
     "clean": "rimraf dist"
@@ -42,6 +44,7 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
-    "@the-new-fuse/types": "workspace:*"
+    "@the-new-fuse/types": "workspace:*",
+    "@the-new-fuse/proto-definitions": "workspace:*"
   }
 }
