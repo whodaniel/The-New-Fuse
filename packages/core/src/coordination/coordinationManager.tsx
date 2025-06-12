@@ -1,4 +1,4 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
 import { Lock } from 'async-lock';
 
@@ -293,7 +293,7 @@ export class CoordinationManager {
                     // Check if any blocked tasks can now proceed
                     this.checkBlockedTasks();
                     
-                    logger.info(`Task completed: ${taskId} by agent ${agentId} with ${success ? 'success' : 'failure'}`);
+                    logger.info(`Task completed: ${taskId} by agent ${agentId} with ${success ? success' : 'failure'}`);
                     resolve(true);
                 });
             });

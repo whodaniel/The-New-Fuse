@@ -1,7 +1,7 @@
 import React from "react";
 import * as SwitchPrimitive from "@radix-ui/react-switch";
-import { cn } from '../../utils/cn.js'; // Added file extension
-import { SwitchProps } from '../types.js'; // Added file extension
+import { cn } from '../../utils/cn.tsx'; // Added file extension
+import { SwitchProps } from '../types.tsx'; // Added file extension
 
 const Switch = React.forwardRef<HTMLButtonElement, SwitchProps>(
   ({ className, checked, onCheckedChange, disabled, label, description, ...props }, ref) => (

@@ -1,2 +1,2 @@
-export { OllamaEmbeddingOptions } from './OllamaOptions.js';
+export { OllamaEmbeddingOptions } from './OllamaOptions.tsx';
 //# sourceMappingURL=index.js.map

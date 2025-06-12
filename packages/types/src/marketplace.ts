@@ -1,24 +1,15 @@
-import type { Agent } from './agent.js';
-
-// TODO: Define marketplace-specific types here if needed.
-// For example:
-/*
-export interface MarketplaceListing {
+// Marketplace types
+export interface MarketplaceItem {
   id: string;
-  agentId: string; // Assuming agents are listed
-  description: string;
-  price?: number; // Optional pricing
-  tags?: string[];
-  createdAt: Date;
-  updatedAt: Date;
+  name: string;
+  description?: string;
+  version: string;
+  author: string;
+  price?: number;
 }
 
-export interface MarketplaceQuery {
-  tags?: string[];
-  keywords?: string;
-  // ... other filter criteria
+export interface MarketplaceFilter {
+  category?: string;
+  priceRange?: [number, number];
+  rating?: number;
 }
-*/
-
-// Re-export Agent if it's the primary focus, or define specific marketplace types.
-export type { Agent }; // Example re-export

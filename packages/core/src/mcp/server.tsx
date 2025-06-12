@@ -1,4 +1,4 @@
-import { createServer, Server } from 'http';
+import { createServer, Server } from ''http';
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
 import { 
@@ -8,7 +8,7 @@ import {
   McpPrompt,
   JsonRpcRequest, 
   JsonRpcResponse 
-} from './types.js';
+} from './types.tsx';
 import { Logger } from '../logging.js';
 
 export class McpServer extends EventEmitter {
@@ -82,18 +82,18 @@ export class McpServer extends EventEmitter {
       try {
         const request = JSON.parse(data.toString()) as JsonRpcRequest;
         const response = await this.handleRequest(request);
-        process.stdout.write(JSON.stringify(response) + '\n');
+        process.stdout.write(JSON.stringify(response) + \n');
       } catch (error) {
         this.logger.error('Error processing stdin request', error);
         // Send error response
         process.stdout.write(JSON.stringify({
-          jsonrpc: '2.0',
+          jsonrpc:2.0',
           id: null,
           error: {
             code: -32700,
-            message: 'Parse error'
+            message: Parse 'error'
           }
-        }) + '\n');
+        }) + \n');
       }
     });
   }
@@ -111,14 +111,14 @@ export class McpServer extends EventEmitter {
       }
 
       // Handle SSE endpoint
-      if (req.url === '/events') {
+      if (req.url === /events') {
         this.setupSseConnection(req, res);
         return;
       }
 
       // Handle JSON-RPC endpoint
-      if (req.url === '/rpc' && req.method === 'POST') {
-        let body = '';
+      if (req.url === /rpc' && req.method === 'POST') {
+        let body = ;
         req.on('data', chunk => {
           body += chunk.toString();
         });
@@ -126,17 +126,17 @@ export class McpServer extends EventEmitter {
           try {
             const request = JSON.parse(body) as JsonRpcRequest;
             const response = await this.handleRequest(request);
-            res.writeHead(200, { 'Content-Type': 'application/json' });
+            res.writeHead(200, { Content-Type': application/'json' });
             res.end(JSON.stringify(response));
           } catch (error) {
             this.logger.error('Error processing RPC request', error);
-            res.writeHead(400, { 'Content-Type': 'application/json' });
+            res.writeHead(400, { Content-Type': application/'json' });
             res.end(JSON.stringify({
-              jsonrpc: '2.0',
+              jsonrpc:2.0',
               id: null,
               error: {
                 code: -32700,
-                message: 'Parse error'
+                message: Parse 'error'
               }
             }));
           }
@@ -160,9 +160,9 @@ export class McpServer extends EventEmitter {
 
   private setupSseConnection(req: any, res: any): void {
     res.writeHead(200, {
-      'Content-Type': 'text/event-stream',
-      'Cache-Control': 'no-cache',
-      'Connection': 'keep-alive',
+      Content-Type': text/event-stream,
+      Cache-Control': no-cache,
+      Connection': keep-alive,
     });
 
     const clientId = uuidv4();
@@ -185,9 +185,9 @@ export class McpServer extends EventEmitter {
       this.logger.debug(`Handling request: ${request.method}`, request);
 
       // Standard discovery method
-      if (request.method === 'mcp.listCapabilities') {
+      if (request.method === mcp.listCapabilities') {
         return {
-          jsonrpc: '2.0',
+          jsonrpc:2.0',
           id: request.id,
           result: this.getCapabilities()
         };
@@ -200,7 +200,7 @@ export class McpServer extends EventEmitter {
         
         if (!tool) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             error: {
               code: -32601,
@@ -212,17 +212,17 @@ export class McpServer extends EventEmitter {
         try {
           const result = await tool.handler(request.params || {});
           return {
-            jsonrpc: '2.0',
+            jsonrpc: 2.0',
             id: request.id,
             result
           };
         } catch (error: any) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             error: {
               code: -32000,
-              message: error.message || 'Tool execution error'
+              message: error.message || Tool execution 'error'
             }
           };
         }
@@ -235,7 +235,7 @@ export class McpServer extends EventEmitter {
         
         if (!resource) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             error: {
               code: -32601,
@@ -247,7 +247,7 @@ export class McpServer extends EventEmitter {
         try {
           const result = await resource.handler();
           return {
-            jsonrpc: '2.0',
+            jsonrpc: 2.0',
             id: request.id,
             result: {
               content: result instanceof Buffer ? result.toString('base64') : result,
@@ -256,11 +256,11 @@ export class McpServer extends EventEmitter {
           };
         } catch (error: any) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             error: {
               code: -32000,
-              message: error.message || 'Resource fetch error'
+              message: error.message || Resource fetch 'error'
             }
           };
         }
@@ -273,7 +273,7 @@ export class McpServer extends EventEmitter {
         
         if (!prompt) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             error: {
               code: -32601,
@@ -298,17 +298,17 @@ export class McpServer extends EventEmitter {
           }
           
           return {
-            jsonrpc: '2.0',
+            jsonrpc:2.0',
             id: request.id,
             result: { text: result }
           };
         } catch (error: any) {
           return {
-            jsonrpc: '2.0',
+            jsonrpc: 2.0',
             id: request.id,
             error: {
               code: -32000,
-              message: error.message || 'Prompt generation error'
+              message: error.message || Prompt generation 'error'
             }
           };
         }
@@ -316,7 +316,7 @@ export class McpServer extends EventEmitter {
 
       // Method not found
       return {
-        jsonrpc: '2.0',
+        jsonrpc:2.0',
         id: request.id,
         error: {
           code: -32601,
@@ -326,11 +326,11 @@ export class McpServer extends EventEmitter {
     } catch (error: any) {
       this.logger.error('Error handling request', error);
       return {
-        jsonrpc: '2.0',
+        jsonrpc:2.0',
         id: request.id,
         error: {
           code: -32603,
-          message: error.message || 'Internal error'
+          message: error.message || Internal 'error'
         }
       };
     }
@@ -364,7 +364,7 @@ export class McpServer extends EventEmitter {
         id: this.config.id,
         name: this.config.name,
         version: this.config.version,
-        description: this.config.description || ''
+        description: this.config.description || 
       },
       capabilities: [...tools, ...resources, ...prompts]
     };

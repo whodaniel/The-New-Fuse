@@ -6,7 +6,7 @@ export interface BaseMessage {
     target?: string;
 }
 export interface TaskMessage extends BaseMessage {
-    type: TASK';
+    type: 'TASK';
     payload: {
         taskId: string;
         action: string;
@@ -14,15 +14,15 @@ export interface TaskMessage extends BaseMessage {
     };
 }
 export interface StateMessage extends BaseMessage {
-    type: STATE';
+    type:STATE';
     payload: {
         stateId: string;
-        action: UPDATE' | 'DELETE';
+        action: UPDATE' | DELETE';
         data: unknown;
     };
 }
 export interface ControlMessage extends BaseMessage {
-    type: CONTROL';
+    type:CONTROL';
     payload: {
         command: string;
         parameters?: unknown;

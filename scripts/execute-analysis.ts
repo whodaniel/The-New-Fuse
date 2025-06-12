@@ -1,4 +1,4 @@
-import { ProjectAnalyzer } from './utils/analyzer.js';
+import { ProjectAnalyzer } from './utils/analyzer.tsx';
 import { writeFileSync } from 'fs';
 
 async function executeAnalysisPhase(): any {

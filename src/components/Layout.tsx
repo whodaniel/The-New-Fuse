@@ -5,8 +5,8 @@ import {
   chakra,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { Navigation } from './Navigation.js';
-import { Sidebar } from './Sidebar.js';
+import { Navigation } from './Navigation.tsx';
+import { Sidebar } from './Sidebar.tsx';
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const bgColor = useColorModeValue('gray.50', 'gray.800');

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { MCPMessage, MCPCapability, ProtocolVersion } from './types.js';
+import { Logger } from '../utils/logger.tsx';
+import { MCPMessage, MCPCapability, ProtocolVersion } from './types.tsx';
 import { validateVersion, compareVersions } from '../utils/version.js';
 
 interface ProtocolNegotiation {
@@ -14,8 +14,8 @@ interface ProtocolNegotiation {
 export class MCPAgentServer {
   private logger = new Logger(MCPAgentServer.name);
   private protocolNegotiations = new Map<string, ProtocolNegotiation>();
-  private supportedVersions = ['2.0.0', '1.0.0'];
-  private defaultVersion = '2.0.0';
+  private supportedVersions = ['2.0.0', 1.0.0'];
+  private defaultVersion = 2.0.0';
 
   // ...existing code...
 
@@ -61,14 +61,14 @@ export class MCPAgentServer {
   private getVersionFeatures(version: string): Set<string> {
     const features = new Set<string>();
     
-    if (compareVersions(version, '2.0.0') >= 0) {
+    if (compareVersions(version, 2.0.0') >= 0) {
       features.add('header-body-structure');
       features.add('streaming');
       features.add('encryption');
       features.add('capability-discovery');
     }
     
-    if (compareVersions(version, '1.0.0') >= 0) {
+    if (compareVersions(version, 1.0.0') >= 0) {
       features.add('basic-messaging');
       features.add('capability-registration');
     }

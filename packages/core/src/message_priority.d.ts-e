@@ -1,5 +1,0 @@
-export enum MessagePriority {
-  LOW = 'low',
-  MEDIUM = 'medium',
-  HIGH = 'high',
-}

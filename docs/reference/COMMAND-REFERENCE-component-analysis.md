@@ -52,16 +52,16 @@ This command displays the results of the most recent component analysis in a rea
 - Opens the component analysis log file
 - Creates a new document with a summary of the analysis results
 
-## Integration with Yarn Scripts
+## Integration with Bun Scripts
 
-These commands are also available as Yarn scripts:
+These commands are also available as Bun scripts:
 
 ```bash
 # Run component analysis
-yarn analyze:components
+bun run analyze:components
 
 # Run component analysis and show summary report
-yarn analyze:components:report
+bun run analyze:components:report
 ```
 
 ## Integration with MCP

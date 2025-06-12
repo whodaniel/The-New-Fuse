@@ -1,5 +1,5 @@
 import React, { createContext, useState, useCallback } from 'react';
-import { Toast, Toaster } from './Toast.js';
+import { Toast, Toaster } from './Toast.tsx';
 
 // Define toast props
 export interface ToastProps {

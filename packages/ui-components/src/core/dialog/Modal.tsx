@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './index.js';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './index.tsx';
 
 export interface ModalProps {
   isOpen: boolean;

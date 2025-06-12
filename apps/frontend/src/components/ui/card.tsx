@@ -24,6 +24,14 @@ export function CardTitle({ children, className = "", ...props }: React.HTMLAttr
   );
 }
 
+export function CardDescription({ children, className = "", ...props }: React.HTMLAttributes<HTMLParagraphElement>) {
+  return (
+    <p className={`text-sm text-gray-600 ${className}`} {...props}>
+      {children}
+    </p>
+  );
+}
+
 export function CardContent({ children, className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div className={`p-4 ${className}`} {...props}>

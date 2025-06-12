@@ -99,7 +99,7 @@ export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
       score: result.score,
       content: result.content,
       metadata: result.metadata || {},
-      embedding: options.includeVectors ? result.embedding : undefined
+      embedding: options.includeVectors && 'embedding' in result ? (result as any).embedding : undefined
     }));
   }
 
@@ -194,7 +194,7 @@ export class TypeConverter {
     return {
       id: result.id,
       content: result.content,
-      metadata: result.metadata,
+      metadata: result.metadata || {},
       score: result.score,
       embedding: undefined // Legacy format doesn't include embeddings by default
     };

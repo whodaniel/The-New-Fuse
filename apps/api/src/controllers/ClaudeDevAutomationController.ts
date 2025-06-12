@@ -80,7 +80,7 @@ export class ClaudeDevAutomationController {
     try {
       const templates = await this.claudeDevService.listTemplates(category);
       return { templates };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to list templates:', error);
       throw new HttpException(
         'Failed to retrieve templates',
@@ -182,7 +182,7 @@ export class ClaudeDevAutomationController {
       
       this.logger.error(`Failed to delete template ${templateId}:`, error);
       throw new HttpException(
-        error.message || 'Failed to delete template',
+        (error as Error).message || 'Failed to delete template',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
@@ -228,12 +228,12 @@ export class ClaudeDevAutomationController {
       this.logger.log(`User ${automationRequest.userId} started automation ${automation.id}`);
       
       return { automation };
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof HttpException) throw error;
       
       this.logger.error('Failed to execute automation:', error);
       throw new HttpException(
-        error.message || 'Failed to execute automation',
+        (error as Error).message || 'Failed to execute automation',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

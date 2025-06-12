@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from './DatabaseService.js';
+import { DatabaseService } from './DatabaseService.tsx';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 
 interface VectorSearchOptions {
   limit?: number;
@@ -12,7 +12,7 @@ interface VectorSearchOptions {
 
 interface VectorIndexConfig {
   dimensions: number;
-  metric: 'euclidean' | 'cosine' | 'inner_product';
+  metric:euclidean' | cosine' | inner_product';
   listSize?: number;
   probeMultiplier?: number;
 }
@@ -46,7 +46,7 @@ export class VectorOperationsService {
       this.logger.info(`Created vector index ${indexName}`);
     } catch (error) {
       this.metrics.increment('database.vector.index.failed');
-      this.logger.error('Failed to create vector index:', error);
+      this.logger.error('Failed to create vector index:, error);
       throw error;
     }
   }
@@ -89,16 +89,16 @@ export class VectorOperationsService {
       );
 
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.vector.search.duration', duration);
+      this.metrics.timing('database.vector.search.'duration', duration);
       this.metrics.increment('database.vector.search.success');
 
       return withMetadata ? results : results.map(r => r.vector);
     } catch (error) {
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.vector.search.duration', duration);
+      this.metrics.timing('database.vector.search.'duration', duration);
       this.metrics.increment('database.vector.search.failed');
       
-      this.logger.error('Vector search failed:', error);
+      this.logger.error('Vector search failed:, error);
       throw error;
     }
   }
@@ -112,9 +112,9 @@ export class VectorOperationsService {
       await this.db.withTransaction(async (entityManager) => {
         for (const batch of this.chunk(vectors, 1000)) {
           const values = batch.map(v => `(
-            '${v.id}',
-            '${JSON.stringify(v.vector)}'::vector,
-            '${JSON.stringify(v.metadata || {})}'::jsonb
+            ${v.id}',
+            ${JSON.stringify(v.vector)}'::vector,
+            ${JSON.stringify(v.metadata || {})}'::jsonb
           )`).join(',');
 
           await entityManager.query(`
@@ -129,14 +129,14 @@ export class VectorOperationsService {
       });
 
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.vector.upsert.duration', duration);
+      this.metrics.timing('database.vector.upsert.'duration', duration);
       this.metrics.increment('database.vector.upsert.success');
     } catch (error) {
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.vector.upsert.duration', duration);
+      this.metrics.timing('database.vector.upsert.'duration', duration);
       this.metrics.increment('database.vector.upsert.failed');
       
-      this.logger.error('Batch vector upsert failed:', error);
+      this.logger.error('Batch vector upsert failed:, error);
       throw error;
     }
   }
@@ -151,7 +151,7 @@ export class VectorOperationsService {
       this.metrics.increment('database.vector.delete.success');
     } catch (error) {
       this.metrics.increment('database.vector.delete.failed');
-      this.logger.error('Vector deletion failed:', error);
+      this.logger.error('Vector deletion failed:, error);
       throw error;
     }
   }
@@ -162,7 +162,7 @@ export class VectorOperationsService {
       this.metrics.increment('database.vector.reindex.success');
     } catch (error) {
       this.metrics.increment('database.vector.reindex.failed');
-      this.logger.error('Vector reindexing failed:', error);
+      this.logger.error('Vector reindexing failed:, error);
       throw error;
     }
   }
@@ -182,11 +182,11 @@ export class VectorOperationsService {
         count(*) as total_vectors,
         avg(array_length(${column}, 1)) as avg_dimensions,
         pg_size_pretty(pg_relation_size('idx_${table}_${column}_vector')) as index_size,
-        (SELECT count(*) FROM pg_stat_statements WHERE query LIKE '%${column} <=>%') as total_searches,
-        (SELECT avg(mean_exec_time) FROM pg_stat_statements WHERE query LIKE '%${column} <=>%') as avg_search_time,
+        (SELECT count(*) FROM pg_stat_statements WHERE query LIKE %${column} <=>%') as total_searches,
+        (SELECT avg(mean_exec_time) FROM pg_stat_statements WHERE query LIKE %${column} <=>%') as avg_search_time,
         (SELECT local_blks_hit::float / nullif(local_blks_hit + local_blks_read, 0)
          FROM pg_statio_user_tables
-         WHERE relname = '${table}') as cache_hit_rate
+         WHERE relname = ${table}') as cache_hit_rate
       FROM ${table}
     `);
 
@@ -210,7 +210,7 @@ export class VectorOperationsService {
 
   private async estimateRowCount(table: string): Promise<number> {
     const result = await this.db.executeQuery(
-      'SELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = $1',
+      SELECT reltuples::bigint AS estimate FROM pg_class WHERE relname = $1',
       [table]
     );
     return result[0].estimate;

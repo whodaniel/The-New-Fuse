@@ -1,4 +1,4 @@
-import { errorTracker } from '../services/error-tracking.service.js';
+import { errorTracker } from '../services/error-tracking.service.tsx';
 import { ErrorCategory, ErrorPriority } from '../shared/types/errors.js';
 
 // 1. Basic API Error Handling

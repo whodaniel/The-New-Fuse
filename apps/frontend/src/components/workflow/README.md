@@ -155,10 +155,10 @@ const WorkflowEditor = () => {
 
 ```bash
 # Run tests
-yarn test
+bun test
 
 # Run tests with coverage
-yarn test --coverage
+bun test --coverage
 ```
 
 ## Documentation

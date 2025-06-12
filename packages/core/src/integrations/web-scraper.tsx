@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from ''axios';
 import * as cheerio from 'cheerio';
 import { Logger } from '../logging.js';
 
@@ -19,12 +19,12 @@ export class WebScraper {
   constructor(logger: Logger, options?: ScraperOptions) {
     this.logger = logger;
     this.options = {
-      userAgent: 'Mozilla/5.0 (compatible; NewFuseBot/1.0)',
+      userAgent:Mozilla/5.0 (compatible; NewFuseBot/1.0)',
       timeout: 30000,
       selectors: {
         content: 'body',
         title: 'title',
-        metaDescription: 'meta[name="description"]'
+        metaDescription: meta[name="description"]'
       },
       ...options
     };
@@ -47,7 +47,7 @@ export class WebScraper {
       
       const response = await axios.get(url, {
         headers: {
-          'User-Agent': options.userAgent
+          User-Agent': options.userAgent
         },
         timeout: options.timeout
       });
@@ -58,8 +58,8 @@ export class WebScraper {
       $('script, style, iframe, nav, footer, header, noscript').remove();
       
       const title = $(options.selectors.title).text().trim();
-      const content = $(options.selectors.content).text().trim().replace(/\s+/g, ' ');
-      const description = $(options.selectors.metaDescription).attr('content') || '';
+      const content = $(options.selectors.content).text().trim().replace(/\s+/g, );
+      const description = $(options.selectors.metaDescription).attr('content') || ;
       
       // Extract additional metadata
       const metadata: Record<string, any> = {};

@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+/* eslint-disable */
 const detect = require('detect-port');
 const { execSync, spawn } = require('child_process');
 const readline = require('readline');

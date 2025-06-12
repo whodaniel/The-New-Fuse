@@ -1,11 +1,11 @@
 // Export hooks
-export { useFeatureSuggestions } from './hooks/useFeatureSuggestions.js';
-export { useKanbanBoard } from './hooks/useKanbanBoard.js';
-export { useTimeline } from './hooks/useTimeline.js';
+export { useFeatureSuggestions } from './hooks/useFeatureSuggestions.tsx';
+export { useKanbanBoard } from './hooks/useKanbanBoard.tsx';
+export { useTimeline } from './hooks/useTimeline.tsx';
 
 // Export components
-export { default as TimelineSlider } from './components/TimelineSlider.js';
-export { default as TimelineView } from './components/TimelineView.js';
+export { default as TimelineSlider } from './components/TimelineSlider.tsx';
+export { default as TimelineView } from './components/TimelineView.tsx';
 
 // Export types - explicitly export SuggestionStatus from types to resolve ambiguity
 export { SuggestionStatus, SuggestionPriority, FeatureStage } from './types.js';
@@ -32,4 +32,4 @@ export type {
 } from './types/timeline.js';
 
 // Export service types
-export * from './services/types.js';
+export * from './services/types.tsx';

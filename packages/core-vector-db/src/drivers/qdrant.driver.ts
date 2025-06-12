@@ -16,7 +16,7 @@ export class QdrantDriver implements IVectorDatabase {
 
   constructor(private readonly config: VectorDatabaseConfig) {
     this.client = new QdrantClient({
-      url: config.url || config.host || 'http://localhost:6333',
+      url: config.host || 'http://localhost:6333',
       apiKey: config.apiKey,
       timeout: config.timeout || 30000,
     });
@@ -26,7 +26,7 @@ export class QdrantDriver implements IVectorDatabase {
 
   private async initializeConnection(): Promise<void> {
     try {
-      await this.client.api('cluster').clusterStatus();
+      await this.client.getCollections();
       this.logger.log('Qdrant connection established successfully');
     } catch (error) {
       this.logger.error('Failed to connect to Qdrant', error);
@@ -51,7 +51,7 @@ export class QdrantDriver implements IVectorDatabase {
       await this.client.createCollection(config.name, collectionConfig);
       this.logger.log(`Collection "${config.name}" created successfully`);
     } catch (error) {
-      if (error.message?.includes('already exists')) {
+      if (error instanceof Error && error.message?.includes('already exists')) {
         this.logger.warn(`Collection "${config.name}" already exists`);
         return;
       }
@@ -85,7 +85,7 @@ export class QdrantDriver implements IVectorDatabase {
       await this.client.getCollection(name);
       return true;
     } catch (error) {
-      if (error.status === 404) {
+      if (typeof error === 'object' && error !== null && 'status' in error && (error as any).status === 404) {
         return false;
       }
       this.logger.error(`Failed to check if collection "${name}" exists`, error);
@@ -249,7 +249,7 @@ export class QdrantDriver implements IVectorDatabase {
 
   async isHealthy(): Promise<boolean> {
     try {
-      await this.client.api('cluster').clusterStatus();
+      await this.client.getCollections();
       return true;
     } catch (error) {
       this.logger.error('Health check failed', error);
@@ -289,13 +289,14 @@ export class QdrantDriver implements IVectorDatabase {
     }
   }
 
-  private mapDistanceMetric(metric: string): string {
+  private mapDistanceMetric(metric: string): "Cosine" | "Euclid" | "Dot" {
     switch (metric.toLowerCase()) {
       case 'cosine':
         return 'Cosine';
       case 'euclidean':
         return 'Euclid';
       case 'dot':
+      case 'dot_product':
       case 'dotproduct':
         return 'Dot';
       default:

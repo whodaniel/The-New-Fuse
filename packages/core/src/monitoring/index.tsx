@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
-import { AlertManager } from './alerts.js';
-import { TracingService } from './tracing.js';
-import { PerformanceProfiler } from './profiler.js';
+import { MetricCollector } from './metrics.tsx';
+import { AlertManager } from './alerts.tsx';
+import { TracingService } from './tracing.tsx';
+import { PerformanceProfiler } from './profiler.tsx';
 import {
   MonitoringConfig,
   Dashboard,
   DashboardPanel,
   HealthCheck,
-} from './types.js';
+} from './types.tsx';
 
 @Injectable()
 export class SystemMonitor {
@@ -85,7 +85,7 @@ export class SystemMonitor {
     this.setupDefaultAlerts();
 
     // Subscribe to metric events for alert checking
-    this.eventEmitter.on('metric.recorded', metric => {
+    this.eventEmitter.on('metric.'recorded', metric => {
       // Alert manager will handle checking conditions
     });
   }
@@ -152,9 +152,9 @@ export class SystemMonitor {
   private async collectCPUMetrics(): Promise<void> {
     const usage = process.cpuUsage();
     this.metricCollector.gauge(
-      'system_cpu_usage',
+      system_cpu_usage',
       (usage.user + usage.system) / 1000000,
-      'percentage',
+      percentage',
       [{ name: 'type', value: 'total' }],
     );
   }
@@ -162,9 +162,9 @@ export class SystemMonitor {
   private async collectMemoryMetrics(): Promise<void> {
     const usage = process.memoryUsage();
     this.metricCollector.gauge(
-      'system_memory_usage',
+      system_memory_usage',
       usage.heapUsed,
-      'bytes',
+      bytes',
       [{ name: 'type', value: 'heap_used' }],
     );
   }
@@ -180,9 +180,9 @@ export class SystemMonitor {
   private async collectHeapMetrics(): Promise<void> {
     const heap = process.memoryUsage();
     this.metricCollector.gauge(
-      'process_heap_size',
+      process_heap_size',
       heap.heapTotal,
-      'bytes',
+      bytes',
       [{ name: 'type', value: 'total' }],
     );
   }
@@ -206,9 +206,9 @@ export class SystemMonitor {
   private setupDefaultAlerts(): void {
     // Set up CPU usage alert
     this.alertManager.createAlert({
-      name: 'High CPU Usage',
-      description: 'CPU usage is above 80%',
-      condition: 'system_cpu_usage > 80',
+      name:High CPU Usage',
+      description:CPU usage is above 80%',
+      condition: system_cpu_usage > 80',
       severity: 'warning',
       metadata: {
         source: 'system',
@@ -219,9 +219,9 @@ export class SystemMonitor {
 
     // Set up memory usage alert
     this.alertManager.createAlert({
-      name: 'High Memory Usage',
-      description: 'Memory usage is above 90%',
-      condition: 'system_memory_usage > 90',
+      name: High Memory 'Usage',
+      description:Memory usage is above 90%',
+      condition: system_memory_usage > 90',
       severity: 'critical',
       metadata: {
         source: 'system',
@@ -270,7 +270,7 @@ export class SystemMonitor {
     return dashboard;
   }
 
-  public async registerHealthCheck(check: Omit<HealthCheck, 'id' | 'lastCheck' | 'status'>): Promise<HealthCheck> {
+  public async registerHealthCheck(check: Omit<HealthCheck, 'id' | lastCheck' | 'status'>): Promise<HealthCheck> {
     const healthCheck: HealthCheck = {
       ...check,
       id: `health_check_${Date.now()}`,
@@ -295,9 +295,9 @@ export class SystemMonitor {
 
         // Record metrics
         this.metricCollector.gauge(
-          'health_check_duration',
+          health_check_duration',
           duration,
-          'milliseconds',
+          milliseconds',
           [
             { name: 'check', value: check.name },
             { name: 'status', value: status },
@@ -305,7 +305,7 @@ export class SystemMonitor {
         );
 
         // Emit event
-        this.eventEmitter.emit('health.check.completed', {
+        this.eventEmitter.emit('health.check.'completed', {
           checkId: check.id,
           status,
           duration,
@@ -314,7 +314,7 @@ export class SystemMonitor {
         check.status = 'down';
         check.lastCheck = new Date();
 
-        this.eventEmitter.emit('health.check.failed', {
+        this.eventEmitter.emit('health.check.'failed', {
           checkId: check.id,
           error,
         });
@@ -322,32 +322,32 @@ export class SystemMonitor {
     }
   }
 
-  private async executeHealthCheck(check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+  private async executeHealthCheck(check: HealthCheck): Promise<'up' | down' | degraded'> {
     switch (check.type) {
-      case 'http':
+      case http':
         return this.executeHttpHealthCheck(check);
-      case 'tcp':
+      case tcp':
         return this.executeTcpHealthCheck(check);
-      case 'custom':
+      case custom':
         return this.executeCustomHealthCheck(check);
       default:
         throw new Error(`Unknown health check type: ${check.type}`);
     }
   }
 
-  private async executeHttpHealthCheck(check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+  private async executeHttpHealthCheck(check: HealthCheck): Promise<'up' | down' | degraded'> {
     // Implement HTTP health check
-    return 'up';
+    return up';
   }
 
-  private async executeTcpHealthCheck(check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+  private async executeTcpHealthCheck(check: HealthCheck): Promise<'up' | down' | degraded'> {
     // Implement TCP health check
-    return 'up';
+    return up';
   }
 
-  private async executeCustomHealthCheck(check: HealthCheck): Promise<'up' | 'down' | 'degraded'> {
+  private async executeCustomHealthCheck(check: HealthCheck): Promise<'up' | down' | degraded'> {
     // Implement custom health check
-    return 'up';
+    return up';
   }
 
   onModuleDestroy() {
@@ -358,14 +358,14 @@ export class SystemMonitor {
 }
 
 export { SystemMonitor };
-export { MetricCollector } from './metrics.js';
-export { PerformanceProfiler as PerformanceMonitor } from './profiler.js';
-export * from './types.js';
-export * from './interfaces.js';
-export * from './MetricsService.js';
+export { MetricCollector } from './metrics.tsx';
+export { PerformanceProfiler as PerformanceMonitor } from './profiler.tsx';
+export * from './types.tsx';
+export * from './interfaces.tsx';
+export * from './MetricsService.tsx';
 export * from './MetricsModule.js';
-export * from './RedisMetricsStorage.js';
-export * from './RealTimeMetricsAggregator.js';
+export * from './RedisMetricsStorage.tsx';
+export * from './RealTimeMetricsAggregator.tsx';
 
 // Re-export common types for convenience
 export type {
@@ -384,4 +384,4 @@ export type {
   MetricsStorage,
   MetricsQuery,
   AggregatedMetric
-} from './types.js';
+} from './types.tsx';

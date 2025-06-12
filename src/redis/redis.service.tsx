@@ -2,8 +2,8 @@ import Redis from "ioredis";
 import {
   createRedisClient,
   RedisConnectionOptions,
-} from '../utils/redis/connection.js';
-import { RedisService } from '../types/redis/service.js';
+} from '../utils/redis/connection.tsx';
+import { RedisService } from '../types/redis/service.tsx';
 
 export class RedisServiceImpl implements RedisService {
   client: Redis;

@@ -1,31 +1,31 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DatabaseService } from './DatabaseService.js';
-import { ConnectionPoolManager } from './ConnectionPoolManager.js';
-import { CacheManager } from './CacheManager.js';
-import { HealthCheckService } from './HealthCheckService.js';
-import { IndexManager } from './IndexManager.js';
-import { VectorOperationsService } from './VectorOperationsService.js';
+import { DatabaseService } from './DatabaseService.tsx';
+import { ConnectionPoolManager } from './ConnectionPoolManager.tsx';
+import { CacheManager } from './CacheManager.tsx';
+import { HealthCheckService } from './HealthCheckService.tsx';
+import { IndexManager } from './IndexManager.tsx';
+import { VectorOperationsService } from './VectorOperationsService.tsx';
 
 interface SystemHealth {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status:healthy' | degraded' | unhealthy';
   components: {
     database: {
-      status: 'healthy' | 'degraded' | 'unhealthy';
+      status:healthy' | degraded' | unhealthy';
       details: Record<string, any>;
     };
     cache: {
-      status: 'healthy' | 'degraded' | 'unhealthy';
+      status:healthy' | degraded' | unhealthy';
       details: Record<string, any>;
     };
     connectionPool: {
-      status: 'healthy' | 'degraded' | 'unhealthy';
+      status:healthy' | degraded' | unhealthy';
       details: Record<string, any>;
     };
     vector: {
-      status: 'healthy' | 'degraded' | 'unhealthy';
+      status:healthy' | degraded' | unhealthy';
       details: Record<string, any>;
     };
   };
@@ -76,10 +76,10 @@ export class ObservabilityService implements OnModuleInit {
   private startHealthChecks() {
     this.healthCheckInterval = setInterval(async () => {
       const health = await this.getSystemHealth();
-      this.eventEmitter.emit('system.health', health);
+      this.eventEmitter.emit('system.'health', health);
 
       if (health.status !== 'healthy') {
-        this.logger.warn('System health check detected issues:', health);
+        this.logger.warn('System health check detected issues:, health);
       }
 
       // Store metrics
@@ -98,19 +98,19 @@ export class ObservabilityService implements OnModuleInit {
   }
 
   private setupEventListeners() {
-    this.eventEmitter.on('database.error', (error) => {
+    this.eventEmitter.on('database.'error', (error) => {
       this.metrics.increment('database.errors');
-      this.logger.error('Database error detected:', error);
+      this.logger.error('Database error detected:, error);
     });
 
-    this.eventEmitter.on('cache.error', (error) => {
+    this.eventEmitter.on('cache.'error', (error) => {
       this.metrics.increment('cache.errors');
-      this.logger.error('Cache error detected:', error);
+      this.logger.error('Cache error detected:, error);
     });
 
-    this.eventEmitter.on('vector.error', (error) => {
+    this.eventEmitter.on('vector.'error', (error) => {
       this.metrics.increment('vector.errors');
-      this.logger.error('Vector operation error detected:', error);
+      this.logger.error('Vector operation error detected:, error);
     });
   }
 
@@ -121,13 +121,13 @@ export class ObservabilityService implements OnModuleInit {
     }
 
     // Record metrics
-    this.metrics.gauge('system.query_latency', metrics.avgQueryTime);
-    this.metrics.gauge('system.error_rate', metrics.errorCount);
-    this.metrics.gauge('system.throughput', metrics.queryCount);
-    this.metrics.gauge('system.cache_hit_rate', 
+    this.metrics.gauge('system.'query_latency', metrics.avgQueryTime);
+    this.metrics.gauge('system.'error_rate', metrics.errorCount);
+    this.metrics.gauge('system.'throughput', metrics.queryCount);
+    this.metrics.gauge('system.'cache_hit_rate', 
       metrics.cacheHits / (metrics.cacheHits + metrics.cacheMisses)
     );
-    this.metrics.gauge('system.connection_utilization',
+    this.metrics.gauge('system.'connection_utilization',
       metrics.activeConnections / (metrics.activeConnections + metrics.waitingConnections)
     );
   }
@@ -159,11 +159,11 @@ export class ObservabilityService implements OnModuleInit {
           details: cacheHealth,
         },
         connectionPool: {
-          status: poolHealth.healthy ? 'healthy' : 'degraded',
+          status: poolHealth.healthy ? healthy' : 'degraded',
           details: poolHealth.details,
         },
         vector: {
-          status: vectorHealth.healthy ? 'healthy' : 'degraded',
+          status: vectorHealth.healthy ? healthy' : 'degraded',
           details: vectorHealth,
         },
       },
@@ -180,31 +180,31 @@ export class ObservabilityService implements OnModuleInit {
     const statuses = [
       dbHealth.status,
       this.determineCacheHealth(cacheHealth),
-      poolHealth.healthy ? 'healthy' : 'degraded',
-      vectorHealth.healthy ? 'healthy' : 'degraded',
+      poolHealth.healthy ? healthy' : 'degraded',
+      vectorHealth.healthy ? healthy' : 'degraded',
     ];
 
     if (statuses.includes('unhealthy')) {
-      return 'unhealthy';
+      return unhealthy';
     }
 
     if (statuses.includes('degraded')) {
-      return 'degraded';
+      return degraded';
     }
 
-    return 'healthy';
+    return healthy';
   }
 
-  private determineCacheHealth(metrics: any): 'healthy' | 'degraded' | 'unhealthy' {
+  private determineCacheHealth(metrics: any):healthy' | degraded' | unhealthy' {
     if (metrics.hitRate < 0.5 || metrics.evictionRate > 0.1) {
-      return 'degraded';
+      return degraded';
     }
 
     if (metrics.hitRate < 0.2 || metrics.evictionRate > 0.3) {
-      return 'unhealthy';
+      return unhealthy';
     }
 
-    return 'healthy';
+    return healthy';
   }
 
   private async calculateSystemMetrics(): Promise<SystemHealth['metrics']> {
@@ -249,7 +249,7 @@ export class ObservabilityService implements OnModuleInit {
     const result = await this.db.executeQuery(`
       SELECT count(*) as count 
       FROM pg_stat_statements 
-      WHERE query NOT LIKE '%pg_stat_statements%'
+      WHERE query NOT LIKE %pg_stat_statements%'
     `);
     return parseInt(result[0].count, 10);
   }
@@ -258,18 +258,18 @@ export class ObservabilityService implements OnModuleInit {
     const result = await this.db.executeQuery(`
       SELECT avg(mean_exec_time) as avg_time 
       FROM pg_stat_statements 
-      WHERE query NOT LIKE '%pg_stat_statements%'
+      WHERE query NOT LIKE %pg_stat_statements%'
     `);
-    return parseFloat(result[0].avg_time || '0');
+    return parseFloat(result[0].avg_time || 0');
   }
 
   async getErrorCount(): Promise<number> {
     const result = await this.db.executeQuery(`
       SELECT count(*) as count 
       FROM pg_stat_activity 
-      WHERE state = 'active' 
-        AND state_change < NOW() - interval '30 seconds'
-        AND query NOT LIKE '%pg_stat_activity%'
+      WHERE state = active' 
+        AND state_change < NOW() - interval 30 'seconds'
+        AND query NOT LIKE %pg_stat_activity%'
     `);
     return parseInt(result[0].count, 10);
   }
@@ -297,7 +297,7 @@ export class ObservabilityService implements OnModuleInit {
   private async getVectorSearchLatency(): Promise<number> {
     // Sample vector search latency with a test query
     const startTime = Date.now();
-    await this.vectorOps.findNearest('test_vectors', 'embedding', new Array(1536).fill(0), { limit: 1 });
+    await this.vectorOps.findNearest('test_vectors', embedding', new Array(1536).fill(0), { limit: 1 });
     return Date.now() - startTime;
   }
 
@@ -330,7 +330,7 @@ export class ObservabilityService implements OnModuleInit {
       for (let i = 0; i < 5; i++) {
         const startTime = Date.now();
         try {
-          await this.vectorOps.findNearest('test_vectors', 'embedding', new Array(1536).fill(0), { limit: 1 });
+          await this.vectorOps.findNearest('test_vectors', embedding', new Array(1536).fill(0), { limit: 1 });
           latencies.push(Date.now() - startTime);
         } catch (error) {
           errors.push(1);
@@ -362,11 +362,11 @@ export class ObservabilityService implements OnModuleInit {
       const result = await this.db.executeQuery(`
         SELECT indexname, status 
         FROM pg_indexes 
-        WHERE indexname LIKE '%vector%'
+        WHERE indexname LIKE %vector%'
       `);
-      return result[0]?.status || 'unknown';
+      return result[0]?.status || unknown';
     } catch {
-      return 'unknown';
+      return unknown';
     }
   }
 

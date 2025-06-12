@@ -1,7 +1,7 @@
-import { z } from 'zod';
+import { z } from ''zod';
 import { v4 as uuidv4 } from 'uuid';
 import { AgentToolType } from '../../types/src/agent.js';
-import { McpTool } from './types.js';
+import { McpTool } from './types.tsx';
 
 /**
  * Registry for MCP tools
@@ -113,7 +113,7 @@ export class McpToolRegistry {
         properties: {
           path: {
             type: 'string',
-            description: 'File path',
+            description:File path',
             required: true
           }
         },
@@ -144,7 +144,7 @@ export class McpToolRegistry {
         properties: {
           command: {
             type: 'string',
-            description: 'Command to execute',
+            description:Command to execute',
             required: true
           }
         },
@@ -175,7 +175,7 @@ export class McpToolRegistry {
         properties: {
           url: {
             type: 'string',
-            description: 'URL to interact with',
+            description:URL to interact with',
             required: true
           }
         },
@@ -206,7 +206,7 @@ export class McpToolRegistry {
         properties: {
           query: {
             type: 'string',
-            description: 'Query for code analysis',
+            description:Query for code analysis',
             required: true
           }
         },

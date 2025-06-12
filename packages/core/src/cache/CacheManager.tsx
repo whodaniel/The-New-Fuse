@@ -6,12 +6,12 @@ import * as crypto from 'crypto';
 interface CacheConfig {
   ttl: number;
   maxSize: number;
-  evictionPolicy: 'LRU' | 'LFU';
+  evictionPolicy:LRU' | LFU';
 }
 
 @Injectable()
 export class CacheManager implements OnModuleInit {
-  private redis: Redis;
+  private redis: any;
   private logger = new Logger('CacheManager');
   private metrics: Map<string, number> = new Map();
   private warmupKeys: Set<string> = new Set();
@@ -25,15 +25,15 @@ export class CacheManager implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
-    this.redis = new Redis({
-      host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
+    this.redis = new (Redis as any)({
+      host: process.env.REDIS_HOST || localhost',
+      port: parseInt(process.env.REDIS_PORT || 6379'),
       maxRetriesPerRequest: 3,
       retryStrategy: (times) => Math.min(times * 50, 2000),
       enableReadyCheck: true
     });
 
-    this.redis.on('error', (err) => this.logger.error('Redis error:', err));
+    this.redis.on('error', (err) => this.logger.error('Redis error:, err));
     await this.setupMonitoring();
     await this.warmCache();
   }
@@ -67,7 +67,7 @@ export class CacheManager implements OnModuleInit {
       await this.redis.set(
         cacheKey,
         JSON.stringify(value),
-        'EX',
+        EX',
         ttl || this.config.ttl
       );
       this.metrics.set(cacheKey, (this.metrics.get(cacheKey) || 0) + 1);
@@ -113,7 +113,7 @@ export class CacheManager implements OnModuleInit {
         info: this.parseRedisInfo(info)
       };
     } catch (error) {
-      this.logger.error('Error getting cache stats:', error);
+      this.logger.error('Error getting cache stats:, error);
       return null;
     }
   }

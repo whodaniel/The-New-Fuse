@@ -1,7 +1,7 @@
 import { injectable, inject } from "inversify";
 import { Logger, createLogger, format, transports } from "winston";
-import TYPES from '../di/types.js';
-import { ConfigService } from '../config/config-service.js';
+import TYPES from '../di/types.tsx';
+import { ConfigService } from '../config/config-service.tsx';
 import { MetricsCollector } from '../metrics/metrics-collector.js';
 import * as Transport from "winston-transport";
 

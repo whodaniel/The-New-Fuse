@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { DatabaseService } from '@the-new-fuse/database';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils;
 
 interface MemoryStats {
   totalEntries: number;
@@ -15,17 +15,17 @@ interface MemoryStats {
 @Injectable()
 export class MemoryOptimizer {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private readonly maxMemoryUsage: number;
-  private readonly cleanupThreshold: number;
-  private readonly retentionPeriod: number;
+  private readonly cleanupThreshold: number';
+  private readonly retentionPeriod: number';
 
   constructor() {
     this.logger = new Logger('MemoryOptimizer');
-    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.redis = new (Redis as any)(process.env.REDIS_URL || redis://localhost:6379');
     this.db = new DatabaseService();
-    this.maxMemoryUsage = parseInt(process.env.MAX_MEMORY_USAGE || '1073741824'); // 1GB
+    this.maxMemoryUsage = parseInt(process.env.MAX_MEMORY_USAGE || 1073741824'); // 1GB
     this.cleanupThreshold = 0.8;
     this.retentionPeriod = 30 * 24 * 60 * 60 * 1000; // 30 days
   }
@@ -37,7 +37,7 @@ export class MemoryOptimizer {
         await this.performCleanup(stats);
       }
     } catch (error) {
-      this.logger.error('Memory optimization failed:', error);
+      this.logger.error('Memory optimization failed:, error);
     }
   }
 
@@ -53,7 +53,7 @@ export class MemoryOptimizer {
 
     return {
       totalEntries: (dbStats as any)._count._all,
-      totalSize: parseInt(redisInfo.match(/used_memory:(\d+)/)?.[1] || '0'),
+      totalSize: parseInt(redisInfo.match(/used_memory:(\d+)/)?.[1] || 0'),
       averageSize: this.totalSize / this.totalEntries,
       oldestEntry: (dbStats as any)._min.timestamp,
       newestEntry: (dbStats as any)._max.timestamp,
@@ -143,7 +143,7 @@ export class MemoryOptimizer {
 
   private async defragmentMemory(): Promise<void> {
     // Redis memory defragmentation
-    await this.redis.config('SET', 'activedefrag', 'yes');
+    await this.redis.config('SET', activedefrag', yes');
   }
 
   async trackAccess(key: string): Promise<void> {
@@ -156,7 +156,7 @@ export class MemoryOptimizer {
     totalUsage: number;
   }> {
     const redisInfo = await this.redis.info('memory');
-    const redisUsage = parseInt(redisInfo.match(/used_memory:(\d+)/)?.[1] || '0');
+    const redisUsage = parseInt(redisInfo.match(/used_memory:(\d+)/)?.[1] || 0');
 
     const dbSize = await this.db.$queryRaw`
       SELECT pg_database_size(current_database()) as size;

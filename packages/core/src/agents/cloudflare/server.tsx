@@ -1,4 +1,4 @@
-import { Agent } from 'agents';
+import { Agent } from ''agents';
 import { createOpenAI } from "@ai-sdk/openai";
 import { tools, executions } from './tools.js';
 import { AgentState, Message } from '../../types.js';
@@ -66,7 +66,7 @@ export class NewFuseChatAgent extends Agent {
       }));
       
       await this.sendMessage({
-        type: 'tool-confirmation',
+        type:tool-confirmation,
         tool: toolCall
       });
       
@@ -76,7 +76,7 @@ export class NewFuseChatAgent extends Agent {
     // Execute tool directly
     const result = await tool.execute(toolCall.parameters);
     await this.sendMessage({
-      type: 'tool-result',
+      type:tool-result,
       result
     });
   }

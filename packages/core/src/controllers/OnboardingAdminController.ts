@@ -25,8 +25,8 @@ export class OnboardingAdminController {
    */
   @Get('general')
   @Roles('admin')
-  @ApiOperation({ summary: 'Get general onboarding settings' })
-  @ApiResponse({ status: 200, description: 'Returns general onboarding settings' })
+  @ApiOperation({ summary:Get general onboarding settings' })
+  @ApiResponse({ status: 200, description:Returns general onboarding settings' })
   async getGeneralSettings(@Req() req: Request) {
     this.logger.log('Getting general onboarding settings', { userId: req.user?.id });
     return this.onboardingConfigService.getGeneralSettings();
@@ -37,8 +37,8 @@ export class OnboardingAdminController {
    */
   @Put('general')
   @Roles('admin')
-  @ApiOperation({ summary: 'Update general onboarding settings' })
-  @ApiResponse({ status: 200, description: 'General onboarding settings updated successfully' })
+  @ApiOperation({ summary:Update general onboarding settings' })
+  @ApiResponse({ status: 200, description:General onboarding settings updated successfully' })
   async updateGeneralSettings(@Body() data: any, @Req() req: Request) {
     this.logger.log('Updating general onboarding settings', { userId: req.user?.id });
     return this.onboardingConfigService.updateGeneralSettings(data);
@@ -49,8 +49,8 @@ export class OnboardingAdminController {
    */
   @Get('user-types')
   @Roles('admin')
-  @ApiOperation({ summary: 'Get user types configuration' })
-  @ApiResponse({ status: 200, description: 'Returns user types configuration' })
+  @ApiOperation({ summary:Get user types configuration' })
+  @ApiResponse({ status: 200, description:Returns user types configuration' })
   async getUserTypes(@Req() req: Request) {
     this.logger.log('Getting user types configuration', { userId: req.user?.id });
     return this.onboardingConfigService.getUserTypes();
@@ -61,8 +61,8 @@ export class OnboardingAdminController {
    */
   @Put('user-types')
   @Roles('admin')
-  @ApiOperation({ summary: 'Update user types configuration' })
-  @ApiResponse({ status: 200, description: 'User types configuration updated successfully' })
+  @ApiOperation({ summary:Update user types configuration' })
+  @ApiResponse({ status: 200, description:User types configuration updated successfully' })
   async updateUserTypes(@Body() data: any, @Req() req: Request) {
     this.logger.log('Updating user types configuration', { userId: req.user?.id });
     return this.onboardingConfigService.updateUserTypes(data);
@@ -73,8 +73,8 @@ export class OnboardingAdminController {
    */
   @Get('steps')
   @Roles('admin')
-  @ApiOperation({ summary: 'Get onboarding steps configuration' })
-  @ApiResponse({ status: 200, description: 'Returns onboarding steps configuration' })
+  @ApiOperation({ summary:Get onboarding steps configuration' })
+  @ApiResponse({ status: 200, description:Returns onboarding steps configuration' })
   async getSteps(@Req() req: Request) {
     this.logger.log('Getting onboarding steps configuration', { userId: req.user?.id });
     return this.onboardingConfigService.getSteps();
@@ -85,8 +85,8 @@ export class OnboardingAdminController {
    */
   @Put('steps')
   @Roles('admin')
-  @ApiOperation({ summary: 'Update onboarding steps configuration' })
-  @ApiResponse({ status: 200, description: 'Onboarding steps configuration updated successfully' })
+  @ApiOperation({ summary:Update onboarding steps configuration' })
+  @ApiResponse({ status: 200, description:Onboarding steps configuration updated successfully' })
   async updateSteps(@Body() data: any, @Req() req: Request) {
     this.logger.log('Updating onboarding steps configuration', { userId: req.user?.id });
     return this.onboardingConfigService.updateSteps(data);
@@ -97,8 +97,8 @@ export class OnboardingAdminController {
    */
   @Get('ai-settings')
   @Roles('admin')
-  @ApiOperation({ summary: 'Get AI settings for onboarding' })
-  @ApiResponse({ status: 200, description: 'Returns AI settings for onboarding' })
+  @ApiOperation({ summary:Get AI settings for onboarding' })
+  @ApiResponse({ status: 200, description:Returns AI settings for onboarding' })
   async getAISettings(@Req() req: Request) {
     this.logger.log('Getting AI settings for onboarding', { userId: req.user?.id });
     return this.onboardingConfigService.getAISettings();
@@ -109,8 +109,8 @@ export class OnboardingAdminController {
    */
   @Put('ai-settings')
   @Roles('admin')
-  @ApiOperation({ summary: 'Update AI settings for onboarding' })
-  @ApiResponse({ status: 200, description: 'AI settings for onboarding updated successfully' })
+  @ApiOperation({ summary:Update AI settings for onboarding' })
+  @ApiResponse({ status: 200, description:AI settings for onboarding updated successfully' })
   async updateAISettings(@Body() data: any, @Req() req: Request) {
     this.logger.log('Updating AI settings for onboarding', { userId: req.user?.id });
     return this.onboardingConfigService.updateAISettings(data);
@@ -121,8 +121,8 @@ export class OnboardingAdminController {
    */
   @Post('validate')
   @Roles('admin')
-  @ApiOperation({ summary: 'Validate onboarding configuration' })
-  @ApiResponse({ status: 200, description: 'Validation results' })
+  @ApiOperation({ summary:Validate onboarding configuration' })
+  @ApiResponse({ status: 200, description:Validation results' })
   async validateConfiguration(@Req() req: Request) {
     this.logger.log('Validating onboarding configuration', { userId: req.user?.id });
     return this.onboardingConfigService.validateConfiguration();
@@ -133,8 +133,8 @@ export class OnboardingAdminController {
    */
   @Get('analytics')
   @Roles('admin')
-  @ApiOperation({ summary: 'Get onboarding analytics' })
-  @ApiResponse({ status: 200, description: 'Returns onboarding analytics' })
+  @ApiOperation({ summary:Get onboarding analytics' })
+  @ApiResponse({ status: 200, description:Returns onboarding analytics' })
   async getAnalytics(@Req() req: Request) {
     this.logger.log('Getting onboarding analytics', { userId: req.user?.id });
     return this.onboardingConfigService.getAnalytics();

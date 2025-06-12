@@ -1,2 +1,2 @@
-export { MistralAiOptions } from './MistralAiOptions.js';
+export { MistralAiOptions } from './MistralAiOptions.tsx';
 //# sourceMappingURL=index.js.map

@@ -1,14 +1,14 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from '@the-new-fuse/utils';
 import { Task, TaskPriority, TaskStatus } from '@the-new-fuse/types';
 import { v4 as uuidv4 } from 'uuid';
 
 export class TaskQueue {
-  private redis: Redis;
+  private redis: any;
   private logger: Logger;
-  private readonly queueKey = 'task:queue';
-  private readonly processingKey = 'task:processing';
-  private readonly completedKey = 'task:completed';
+  private readonly queueKey = task:queue';
+  private readonly processingKey = task:processing';
+  private readonly completedKey = task:completed';
   private isProcessing = false;
 
   constructor(private config: {
@@ -17,7 +17,7 @@ export class TaskQueue {
     processingTimeout: number;
     batchSize: number;
   }) {
-    this.redis = new Redis(config.redisUrl);
+    this.redis = new (Redis as any)(config.redisUrl);
     this.logger = new Logger('CoreQueueTaskQueue');
   }
 

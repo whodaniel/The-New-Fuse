@@ -28,10 +28,10 @@ import {
 import { Observable } from 'rxjs';
 
 import { AgentSwarmOrchestrationService } from '../services/agent-swarm-orchestration.service';
-import { TenantGuard } from '../guards/tenant.guard';
-import { AgencyRoleGuard } from '../guards/agency-role.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { TenantContext } from '../decorators/tenant-context.decorator';
+import { TenantGuard } from '../guards/tenant.'guard';
+import { AgencyRoleGuard } from '../guards/agency-role.'guard';
+import { Roles } from '../decorators/roles.'decorator';
+import { TenantContext } from '../decorators/tenant-context.'decorator';
 
 @ApiTags('Swarm Orchestration')
 @Controller('api/swarm')
@@ -48,15 +48,15 @@ export class SwarmOrchestrationController {
    */
 
   @Post('execute')
-  @ApiOperation({ summary: 'Execute a swarm task' })
-  @ApiResponse({ status: 201, description: 'Swarm execution started' })
-  @ApiResponse({ status: 400, description: 'Invalid execution parameters' })
+  @ApiOperation({ summary:Execute a swarm task' })
+  @ApiResponse({ status: 201, description:Swarm execution started' })
+  @ApiResponse({ status: 400, description:Invalid execution parameters' })
   @HttpCode(HttpStatus.CREATED)
   async executeSwarm(
     @TenantContext() tenantContext: any,
     @Body() executionParams: {
       task: string;
-      priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+      priority?:LOW' | MEDIUM' | HIGH' | URGENT';
       requiredCapabilities?: string[];
       maxExecutionTime?: number;
       qualityThreshold?: number;
@@ -76,16 +76,16 @@ export class SwarmOrchestrationController {
     return {
       success: true,
       data: execution,
-      message: 'Swarm execution started successfully'
+      message:Swarm execution started successfully'
     };
   }
 
   @Get('executions')
-  @ApiOperation({ summary: 'Get swarm executions for agency' })
+  @ApiOperation({ summary:Get swarm executions for agency' })
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Executions retrieved successfully' })
+  @ApiResponse({ status: 200, description: Executions retrieved 'successfully' })
   async getSwarmExecutions(
     @TenantContext() tenantContext: any,
     @Query('status') status?: string,
@@ -104,10 +104,10 @@ export class SwarmOrchestrationController {
   }
 
   @Get('executions/:executionId')
-  @ApiOperation({ summary: 'Get specific swarm execution details' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @ApiResponse({ status: 200, description: 'Execution details retrieved' })
-  @ApiResponse({ status: 404, description: 'Execution not found' })
+  @ApiOperation({ summary:Get specific swarm execution details' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
+  @ApiResponse({ status: 200, description:Execution details retrieved' })
+  @ApiResponse({ status: 404, description:Execution not found' })
   async getSwarmExecution(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string
@@ -124,11 +124,11 @@ export class SwarmOrchestrationController {
   }
 
   @Put('executions/:executionId/cancel')
-  @ApiOperation({ summary: 'Cancel a swarm execution' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @ApiResponse({ status: 200, description: 'Execution cancelled successfully' })
+  @ApiOperation({ summary:Cancel a swarm execution' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
+  @ApiResponse({ status: 200, description:Execution cancelled successfully' })
   @UseGuards(AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async cancelSwarmExecution(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string
@@ -140,14 +140,14 @@ export class SwarmOrchestrationController {
 
     return {
       success: true,
-      message: 'Swarm execution cancelled successfully'
+      message:Swarm execution cancelled successfully'
     };
   }
 
   @Put('executions/:executionId/retry')
-  @ApiOperation({ summary: 'Retry a failed swarm execution' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @ApiResponse({ status: 200, description: 'Execution retried successfully' })
+  @ApiOperation({ summary:Retry a failed swarm execution' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
+  @ApiResponse({ status: 200, description:Execution retried successfully' })
   async retrySwarmExecution(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string
@@ -160,7 +160,7 @@ export class SwarmOrchestrationController {
     return {
       success: true,
       data: execution,
-      message: 'Swarm execution retried successfully'
+      message:Swarm execution retried successfully'
     };
   }
 
@@ -169,8 +169,8 @@ export class SwarmOrchestrationController {
    */
 
   @Sse('executions/:executionId/stream')
-  @ApiOperation({ summary: 'Stream real-time execution updates' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
+  @ApiOperation({ summary:Stream real-time execution updates' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
   streamExecutionUpdates(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string
@@ -184,9 +184,9 @@ export class SwarmOrchestrationController {
   }
 
   @Get('executions/:executionId/steps')
-  @ApiOperation({ summary: 'Get execution steps' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @ApiResponse({ status: 200, description: 'Execution steps retrieved' })
+  @ApiOperation({ summary:Get execution steps' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
+  @ApiResponse({ status: 200, description:Execution steps retrieved' })
   async getExecutionSteps(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string
@@ -203,10 +203,10 @@ export class SwarmOrchestrationController {
   }
 
   @Get('executions/:executionId/messages')
-  @ApiOperation({ summary: 'Get execution messages' })
-  @ApiParam({ name: 'executionId', description: 'Execution ID' })
-  @ApiQuery({ name: 'agentId', required: false, description: 'Filter by agent ID' })
-  @ApiResponse({ status: 200, description: 'Execution messages retrieved' })
+  @ApiOperation({ summary:Get execution messages' })
+  @ApiParam({ name: 'executionId', description: Execution 'ID' })
+  @ApiQuery({ name: 'agentId', required: false, description: Filter by agent 'ID' })
+  @ApiResponse({ status: 200, description:Execution messages retrieved' })
   async getExecutionMessages(
     @TenantContext() tenantContext: any,
     @Param('executionId') executionId: string,
@@ -229,8 +229,8 @@ export class SwarmOrchestrationController {
    */
 
   @Get('hierarchy')
-  @ApiOperation({ summary: 'Get agency swarm hierarchy' })
-  @ApiResponse({ status: 200, description: 'Swarm hierarchy retrieved' })
+  @ApiOperation({ summary:Get agency swarm hierarchy' })
+  @ApiResponse({ status: 200, description:Swarm hierarchy retrieved' })
   async getSwarmHierarchy(@TenantContext() tenantContext: any) {
     const hierarchy = await this.swarmService.getSwarmHierarchy(
       tenantContext.agencyId
@@ -243,8 +243,8 @@ export class SwarmOrchestrationController {
   }
 
   @Post('hierarchy/rebuild')
-  @ApiOperation({ summary: 'Rebuild swarm hierarchy' })
-  @ApiResponse({ status: 200, description: 'Hierarchy rebuilt successfully' })
+  @ApiOperation({ summary:Rebuild swarm hierarchy' })
+  @ApiResponse({ status: 200, description:Hierarchy rebuilt successfully' })
   @UseGuards(AgencyRoleGuard)
   @Roles('AGENCY_ADMIN')
   async rebuildSwarmHierarchy(@TenantContext() tenantContext: any) {
@@ -252,15 +252,15 @@ export class SwarmOrchestrationController {
 
     return {
       success: true,
-      message: 'Swarm hierarchy rebuilt successfully'
+      message:Swarm hierarchy rebuilt successfully'
     };
   }
 
   @Get('agents')
-  @ApiOperation({ summary: 'Get available swarm agents' })
-  @ApiQuery({ name: 'capability', required: false, description: 'Filter by capability' })
-  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
-  @ApiResponse({ status: 200, description: 'Swarm agents retrieved' })
+  @ApiOperation({ summary:Get available swarm agents' })
+  @ApiQuery({ name: 'capability', required: false, description: Filter by 'capability' })
+  @ApiQuery({ name: 'status', required: false, description: Filter by 'status' })
+  @ApiResponse({ status: 200, description:Swarm agents retrieved' })
   async getSwarmAgents(
     @TenantContext() tenantContext: any,
     @Query('capability') capability?: string,
@@ -278,11 +278,11 @@ export class SwarmOrchestrationController {
   }
 
   @Put('agents/:agentId/assign-role')
-  @ApiOperation({ summary: 'Assign role to swarm agent' })
-  @ApiParam({ name: 'agentId', description: 'Agent ID' })
-  @ApiResponse({ status: 200, description: 'Role assigned successfully' })
+  @ApiOperation({ summary:Assign role to swarm agent' })
+  @ApiParam({ name: 'agentId', description: Agent 'ID' })
+  @ApiResponse({ status: 200, description:Role assigned successfully' })
   @UseGuards(AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async assignAgentRole(
     @TenantContext() tenantContext: any,
     @Param('agentId') agentId: string,
@@ -300,7 +300,7 @@ export class SwarmOrchestrationController {
 
     return {
       success: true,
-      message: 'Agent role assigned successfully'
+      message:Agent role assigned successfully'
     };
   }
 
@@ -309,12 +309,12 @@ export class SwarmOrchestrationController {
    */
 
   @Get('analytics/performance')
-  @ApiOperation({ summary: 'Get swarm performance analytics' })
-  @ApiQuery({ name: 'period', required: false, description: 'Time period (7d, 30d, 90d)' })
-  @ApiResponse({ status: 200, description: 'Performance analytics retrieved' })
+  @ApiOperation({ summary:Get swarm performance analytics' })
+  @ApiQuery({ name: 'period', required: false, description: Time period (7d, 30d, 90d)' })
+  @ApiResponse({ status: 200, description:Performance analytics retrieved' })
   async getSwarmPerformance(
     @TenantContext() tenantContext: any,
-    @Query('period') period = '30d'
+    @Query('period') period = 30'd'
   ) {
     const analytics = await this.swarmService.getSwarmPerformanceAnalytics(
       tenantContext.agencyId,
@@ -328,8 +328,8 @@ export class SwarmOrchestrationController {
   }
 
   @Get('analytics/efficiency')
-  @ApiOperation({ summary: 'Get swarm efficiency metrics' })
-  @ApiResponse({ status: 200, description: 'Efficiency metrics retrieved' })
+  @ApiOperation({ summary:Get swarm efficiency metrics' })
+  @ApiResponse({ status: 200, description:Efficiency metrics retrieved' })
   async getSwarmEfficiency(@TenantContext() tenantContext: any) {
     const efficiency = await this.swarmService.getSwarmEfficiencyMetrics(
       tenantContext.agencyId
@@ -342,8 +342,8 @@ export class SwarmOrchestrationController {
   }
 
   @Get('health')
-  @ApiOperation({ summary: 'Get swarm health status' })
-  @ApiResponse({ status: 200, description: 'Health status retrieved' })
+  @ApiOperation({ summary:Get swarm health status' })
+  @ApiResponse({ status: 200, description:Health status retrieved' })
   async getSwarmHealth(@TenantContext() tenantContext: any) {
     const health = await this.swarmService.getSwarmHealthStatus(
       tenantContext.agencyId

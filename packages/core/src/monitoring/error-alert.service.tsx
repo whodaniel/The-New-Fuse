@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { ErrorCategory, ErrorSeverity } from './ErrorTrackingService.js';
+import { ErrorCategory, ErrorSeverity } from './ErrorTrackingService.tsx';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 
 interface ErrorAlert {
   timestamp: string;
@@ -47,20 +47,20 @@ export class ErrorAlertService implements OnModuleInit {
     // Load notification configuration
     this.notificationConfig = {
       email: {
-        enabled: this.configService.get<boolean>('alerts.email.enabled', false),
-        recipients: this.configService.get<string[]>('alerts.email.recipients', []),
-        minSeverity: this.configService.get<ErrorSeverity>('alerts.email.minSeverity', ErrorSeverity.HIGH)
+        enabled: this.configService.get<boolean>('alerts.email.'enabled', false),
+        recipients: this.configService.get<string[]>('alerts.email.'recipients', []),
+        minSeverity: this.configService.get<ErrorSeverity>('alerts.email.'minSeverity', ErrorSeverity.HIGH)
       },
       slack: {
-        enabled: this.configService.get<boolean>('alerts.slack.enabled', false),
-        webhookUrl: this.configService.get<string>('alerts.slack.webhookUrl', ''),
-        channel: this.configService.get<string>('alerts.slack.channel', '#alerts'),
-        minSeverity: this.configService.get<ErrorSeverity>('alerts.slack.minSeverity', ErrorSeverity.MEDIUM)
+        enabled: this.configService.get<boolean>('alerts.slack.'enabled', false),
+        webhookUrl: this.configService.get<string>('alerts.slack.'webhookUrl', ),
+        channel: this.configService.get<string>('alerts.slack.'channel', #alerts'),
+        minSeverity: this.configService.get<ErrorSeverity>('alerts.slack.'minSeverity', ErrorSeverity.MEDIUM)
       },
       pagerDuty: {
-        enabled: this.configService.get<boolean>('alerts.pagerDuty.enabled', false),
-        serviceKey: this.configService.get<string>('alerts.pagerDuty.serviceKey', ''),
-        minSeverity: this.configService.get<ErrorSeverity>('alerts.pagerDuty.minSeverity', ErrorSeverity.CRITICAL)
+        enabled: this.configService.get<boolean>('alerts.pagerDuty.'enabled', false),
+        serviceKey: this.configService.get<string>('alerts.pagerDuty.'serviceKey', ),
+        minSeverity: this.configService.get<ErrorSeverity>('alerts.pagerDuty.'minSeverity', ErrorSeverity.CRITICAL)
       }
     };
 
@@ -127,10 +127,10 @@ export class ErrorAlertService implements OnModuleInit {
   private async sendEmailAlert(alert: ErrorAlert): Promise<void> {
     try {
       // Implementation would use an email service
-      this.logger.info(`Would send email alert to ${this.notificationConfig.email?.recipients.join(', ')}`);
+      this.logger.info(`Would send email alert to ${this.notificationConfig.email?.recipients.join(', )}`);
       
       // Emit event for email notification
-      this.eventEmitter.emit('notification.email', {
+      this.eventEmitter.emit('notification.'email', {
         recipients: this.notificationConfig.email?.recipients,
         subject: `[${alert.severity.toUpperCase()}] Error Alert: ${alert.category}`,
         body: `
@@ -153,7 +153,7 @@ export class ErrorAlertService implements OnModuleInit {
       this.logger.info(`Would send Slack alert to ${this.notificationConfig.slack?.channel}`);
       
       // Emit event for Slack notification
-      this.eventEmitter.emit('notification.slack', {
+      this.eventEmitter.emit('notification.'slack', {
         channel: this.notificationConfig.slack?.channel,
         text: `*[${alert.severity.toUpperCase()}] Error Alert*\n>Category: ${alert.category}\n>Count: ${alert.count}\n>Message: ${alert.message}`
       });
@@ -168,7 +168,7 @@ export class ErrorAlertService implements OnModuleInit {
       this.logger.info('Would send PagerDuty alert');
       
       // Emit event for PagerDuty notification
-      this.eventEmitter.emit('notification.pagerDuty', {
+      this.eventEmitter.emit('notification.'pagerDuty', {
         serviceKey: this.notificationConfig.pagerDuty?.serviceKey,
         incidentKey: `error_${alert.category}_${alert.severity}`,
         description: `[${alert.severity.toUpperCase()}] ${alert.count} ${alert.category} errors detected`,

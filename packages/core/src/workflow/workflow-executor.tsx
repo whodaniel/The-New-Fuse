@@ -9,9 +9,9 @@ import {
   NodeExecutionResult,
   ExecutionContext,
   NodeHandler
-} from './types.js';
-import { ToolRegistry } from '../tools/tool-registry.js';
-import { SmartAPIGateway } from '../api-management/SmartAPIGateway.js';
+} from './types.tsx';
+import { ToolRegistry } from '../tools/tool-registry.tsx';
+import { SmartAPIGateway } from '../api-management/SmartAPIGateway.tsx';
 import { pluginManager } from '../extensibility/plugin-manager.js';
 
 export class WorkflowExecutor extends EventEmitter {
@@ -136,7 +136,7 @@ export class WorkflowExecutor extends EventEmitter {
       
       this.emit('workflow:complete', executionResult);
       return executionResult;
-    } catch (error) {
+    } catch (error: unknown) {
       const executionResult: WorkflowExecutionResult = {
         executionId,
         workflowId: workflow.id,
@@ -144,7 +144,7 @@ export class WorkflowExecutor extends EventEmitter {
         startTime,
         endTime: Date.now(),
         duration: Date.now() - startTime,
-        error: error.message,
+        error: (error as Error).message,
         outputs: {},
         nodeResults: Array.from(context.nodeResults.entries()).map(([id, result]) => ({
           nodeId: id,
@@ -242,10 +242,10 @@ export class WorkflowExecutor extends EventEmitter {
         endTime: Date.now(),
         duration: Date.now() - startTime
       };
-    } catch (error) {
+    } catch (error: unknown) {
       const nodeResult = {
         success: false,
-        error: error.message,
+        error: (error as Error).message,
         startTime,
         endTime: Date.now(),
         duration: Date.now() - startTime

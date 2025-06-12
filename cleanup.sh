@@ -25,7 +25,7 @@ while [[ "$#" -gt 0 ]]; do
         --cache) CLEAN_CACHE=true; CLEAN_DEPS=false; CLEAN_BUILD=false; CLEAN_DOCKER=false ;;
         --no-docker) CLEAN_DOCKER=false ;;
         --force) FORCE=true ;;
-        --direct) DIRECT_MODE=true ;; # Allow direct execution without yarn
+        --direct) DIRECT_MODE=true ;; # Allow direct execution without bun
         *) echo "Unknown parameter: $1"; exit 1 ;;
     esac
     shift
@@ -33,11 +33,11 @@ done
 
 echo -e "${GREEN}Starting enhanced cleanup process...${NC}"
 
-# When executing through yarn, check if we have a lockfile issue
+# When executing through bun, check if we have a lockfile issue
 # If we do, execute the script directly in direct mode
 if [ "$DIRECT_MODE" = false ] && [ -f "package.json" ]; then
-    # Check for yarn error from lockfile
-    if yarn check 2>&1 | grep -q "This package doesn't seem to be present in your lockfile"; then
+    # Check for bun error from lockfile
+    if bun install --dry-run 2>&1 | grep -q "package doesn't seem to be present"; then
         echo -e "${YELLOW}Detected lockfile issues. Switching to direct execution mode...${NC}"
         # Re-execute this script directly with all the same arguments plus --direct
         exec bash "$0" "$@" --direct
@@ -70,14 +70,14 @@ if [ "$CLEAN_DEV" = true ]; then
     find . -name "__snapshots__" -type d -prune -exec rm -rf '{}' +
 fi
 
-# Clean dependencies (node_modules, yarn cache)
+# Clean dependencies (node_modules, bun cache)
 if [ "$CLEAN_DEPS" = true ]; then
     echo -e "\n${GREEN}Cleaning dependencies...${NC}"
-    # Yarn/npm
-    if [ "$DIRECT_MODE" = true ] || ! command -v yarn &> /dev/null; then
-        echo "Skipping yarn cache clean (direct mode or yarn not available)"
+    # Bun/npm
+    if [ "$DIRECT_MODE" = true ] || ! command -v bun &> /dev/null; then
+        echo "Skipping bun cache clean (direct mode or bun not available)"
     else
-        yarn cache clean || true
+        bun pm cache rm || true
     fi
     rm -rf .yarn/cache
     rm -rf .yarn/build-state.yml
@@ -132,7 +132,7 @@ if [ "$CLEAN_CACHE" = true ]; then
     find . -type f -name "*copy*" -delete
     find . -type f -name "*.log" -mtime +7 -delete
     find . -type f -name "*.pid" -delete
-    find . -type f -name "*.lock" ! -name "yarn.lock" -delete
+    find . -type f -name "*.lock" ! -name "bun.lockb" -delete
     find . -type f -name ".DS_Store" -delete
     find . -type f -name "Thumbs.db" -delete
     
@@ -151,12 +151,12 @@ fi
 echo -e "\n${GREEN}Cleanup complete!${NC}"
 
 if [ "$CLEAN_DEV" = true ]; then
-    echo -e "${YELLOW}Development environment cleaned. Run 'yarn install' and 'yarn dev' to restart development servers${NC}"
+    echo -e "${YELLOW}Development environment cleaned. Run 'bun install' and 'bun run dev' to restart development servers${NC}"
 elif [ "$CLEAN_DEPS" = true ]; then
-    echo -e "${YELLOW}Run 'yarn install' to reinstall dependencies${NC}"
+    echo -e "${YELLOW}Run 'bun install' to reinstall dependencies${NC}"
 fi
 
-# If we deleted the lockfile or have lockfile issues, suggest running yarn install
-if [ ! -f "yarn.lock" ] || [ "$DIRECT_MODE" = true ]; then
-    echo -e "${YELLOW}Yarn lockfile issues detected. Run 'yarn install' to regenerate the lockfile${NC}"
+# If we deleted the lockfile or have lockfile issues, suggest running bun install
+if [ ! -f "bun.lockb" ] || [ "$DIRECT_MODE" = true ]; then
+    echo -e "${YELLOW}Bun lockfile issues detected. Run 'bun install' to regenerate the lockfile${NC}"
 fi

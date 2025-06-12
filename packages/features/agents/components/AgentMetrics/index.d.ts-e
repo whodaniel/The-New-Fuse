@@ -1,3 +1,0 @@
-import React from 'react';
-import { type AgentMetricsProps } from '../types';
-export declare const AgentMetricsDisplay: React.FC<AgentMetricsProps>;

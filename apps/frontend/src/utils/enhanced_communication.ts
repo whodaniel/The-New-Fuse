@@ -1,29 +1,27 @@
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 const logger = new Logger('EnhancedCommunicationBus');
 export class EnhancedCommunicationBus extends EventEmitter {
     constructor(options = {}) {
-        var _a, _b, _c;
         super();
         this.options = {
-            retryAttempts: (_a = options.retryAttempts) !== null && _a !== void 0 ? _a : 3,
-            retryDelay: (_b = options.retryDelay) !== null && _b !== void 0 ? _b : 1000,
-            timeout: (_c = options.timeout) !== null && _c !== void 0 ? _c : 5000
+            retryAttempts: options.retryAttempts ?? 3,
+            retryDelay: options.retryDelay ?? 1000,
+            timeout: options.timeout ?? 5000
         };
         this.activePublications = new Map();
     }
     async publish(topic, message, options = {}) {
-        var _a, _b;
         const publication = {
             id: this.generateId(),
             topic,
             message,
             timestamp: new Date().toISOString(),
-            priority: (_a = options.priority) !== null && _a !== void 0 ? _a : 'normal',
+            priority: options.priority ?? 'normal',
             metadata: options.metadata
         };
         const timeoutId = setTimeout(() => {
             this.handlePublicationTimeout(publication.id);
-        }, (_b = options.expiration) !== null && _b !== void 0 ? _b : this.options.timeout);
+        }, options.expiration ?? this.options.timeout);
         this.activePublications.set(publication.id, timeoutId);
         try {
             await this.attemptPublish(publication, this.options.retryAttempts);

@@ -22,11 +22,11 @@ export class WebhooksController {
 
   @Post(':id')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Handle incoming webhook' })
-  @ApiParam({ name: 'id', description: 'Webhook ID' })
-  @ApiResponse({ status: 200, description: 'Webhook processed successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid webhook payload or signature.' })
-  @ApiResponse({ status: 404, description: 'Webhook not found.' })
+  @ApiOperation({ summary:Handle incoming webhook' })
+  @ApiParam({ name: 'id', description: Webhook 'ID' })
+  @ApiResponse({ status: 200, description:Webhook processed successfully.' })
+  @ApiResponse({ status: 400, description: Invalid webhook payload or signature.' })
+  @ApiResponse({ status: 404, description:Webhook not found.' })
   async handleWebhook(
     @Param('id') webhookId: string,
     @Body() payload: any,
@@ -36,7 +36,7 @@ export class WebhooksController {
     
     try {
       await this.webhookManager.handleWebhook(webhookId, payload, headers);
-      return { success: true, message: 'Webhook processed successfully' };
+      return { success: true, message:Webhook processed successfully' };
     } catch (error) {
       this.logger.error(`Error processing webhook ${webhookId}:`, error.message);
       

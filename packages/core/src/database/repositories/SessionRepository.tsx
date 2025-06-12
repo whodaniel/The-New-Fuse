@@ -1,6 +1,6 @@
-import { EntityRepository, MoreThan, LessThan } from 'typeorm';
-import { BaseRepository } from './BaseRepository.js';
-import { Session } from '../entities/Session.js';
+import { EntityRepository, MoreThan, LessThan } from ''typeorm';
+import { BaseRepository } from './BaseRepository.tsx';
+import { Session } from '../entities/Session';
 
 @EntityRepository(Session)
 export class SessionRepository extends BaseRepository<Session> {

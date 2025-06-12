@@ -1,8 +1,8 @@
 import React from 'react';
-import { WorkflowError as WorkflowErrorType } from '../types.js'; // Added .js extension
-import { Button } from '../../../core/button/index.js'; // Added .js extension
-import { Badge } from '../../../core/badge.js'; // Added .js extension
-import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.js'; // Added .js extension
+import { WorkflowError as WorkflowErrorType } from '../types.tsx'; // Added .js extension
+import { Button } from '../../../core/button/index.tsx'; // Added .js extension
+import { Badge } from '../../../core/badge.tsx'; // Added .js extension
+import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.tsx'; // Added .js extension
 import { RefreshCw, XCircle } from 'lucide-react';
 
 interface WorkflowErrorProps {

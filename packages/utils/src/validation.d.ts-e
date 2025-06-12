@@ -1,2 +1,0 @@
-export declare function sanitizeInput(input: string): string;
-export declare function validateEmail(email: string): boolean;

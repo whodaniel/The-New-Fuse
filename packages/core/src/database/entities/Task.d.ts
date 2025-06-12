@@ -1,10 +1,10 @@
-import { User } from './User.js';
+import { User } from './User.tsx';
 export declare class Task {
     : string;
     userId: string;
     : string;
     description: string;
-    : pending' | 'in_progress' | 'completed' | 'failed';
+    : pending' | in_progress' | completed' | failed';
     priority: number;
     : Date;
     updatedAt: Date;

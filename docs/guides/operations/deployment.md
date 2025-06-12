@@ -4,7 +4,7 @@
 
 Ensure your environment meets these requirements:
 - Node.js 18+
-- Yarn 4.6.0+
+- Bun 1.1.38+
 - Docker 24.0+
 - Docker Compose 2.20+
 - PostgreSQL 17.0+

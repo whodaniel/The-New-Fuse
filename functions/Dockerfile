@@ -1,19 +1,15 @@
-FROM node:18-alpine
+FROM oven/bun:1
 
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache python3 make g++
+RUN apt-get update && apt-get install -y python3 make g++
 
 # Install Firebase Tools globally and TypeScript
 RUN npm install -g firebase-tools typescript
 
-# Enable corepack for yarn version management
-RUN corepack enable
-
 # Copy package files first for better caching
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY package.json bun.lockb ./
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/
 COPY packages/core/package.json ./packages/core/
@@ -23,19 +19,19 @@ COPY packages/feature-tracker/package.json ./packages/feature-tracker/
 COPY functions/package.json ./functions/
 
 # Install dependencies
-RUN yarn install
+RUN bun install
 
 # Copy source code
 COPY . .
 
 # Build packages in order
-RUN yarn workspace @the-new-fuse/types build && \
-    yarn workspace @the-new-fuse/utils build && \
-    yarn workspace @the-new-fuse/core build && \
-    yarn workspace @the-new-fuse/database build && \
-    yarn workspace @the-new-fuse/feature-tracker build && \
-    yarn workspace @the-new-fuse/feature-suggestions build && \
-    yarn workspace @the-new-fuse/functions build
+RUN cd packages/types && bun run build && cd ../.. && \
+    cd packages/utils && bun run build && cd ../.. && \
+    cd packages/core && bun run build && cd ../.. && \
+    cd packages/database && bun run build && cd ../.. && \
+    cd packages/feature-tracker && bun run build && cd ../.. && \
+    cd packages/feature-suggestions && bun run build && cd ../.. && \
+    cd functions && bun run build && cd ..
 
 # Start the Firebase Functions emulator
-CMD ["yarn", "workspace", "@the-new-fuse/functions", "serve"]
+CMD ["cd", "functions", "&&", "bun", "run", "serve"]

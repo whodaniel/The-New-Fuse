@@ -1,5 +1,5 @@
 import { Box, SimpleGrid, Button, useColorModeValue } from '@chakra-ui/react';
-import { useTheme } from '../contexts/ThemeContext.js';
+import { useTheme } from '../contexts/ThemeContext.tsx';
 
 export function ColorPicker() {
   const { updateTheme } = useTheme();

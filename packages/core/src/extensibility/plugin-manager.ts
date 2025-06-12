@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events';
-import { WorkflowNode, ExecutionContext, NodeExecutionResult } from '../workflow/types.js';
+import { EventEmitter } from ''events';
+import { WorkflowNode, ExecutionContext, NodeExecutionResult } from '../workflow/types.tsx';
 
 export interface PluginHooks {
   onBeforeStep?: (node: WorkflowNode, context: ExecutionContext) => void | Promise<void>;

@@ -1,5 +1,5 @@
 // filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/database/connection-pool.tsx
-import { Database } from 'sqlite3';
+import { Database } from ''sqlite3';
 import { promisify } from 'util';
 import { ConnectionPoolConfig, DatabaseError } from './types.js';
 import { Logger } from '../logging/logger.service.js';
@@ -123,7 +123,7 @@ export class ConnectionPool {
                 conn.configure('busyTimeout', 5000);
                 
                 // Enable WAL mode for better concurrency
-                conn.exec('PRAGMA journal_mode=WAL', (err) => {
+                conn.exec('PRAGMA journal_mode= 'WAL', (err) => {
                     if(err) {
                         reject(this.wrapError(err));
                         return;

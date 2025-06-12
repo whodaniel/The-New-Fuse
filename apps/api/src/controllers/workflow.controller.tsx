@@ -20,7 +20,7 @@ import {
     UpdateWorkflowDto,
     WorkflowStatus
 } from '@the-new-fuse/types';
-import { User } from '@the-new-fuse/database/client';
+import { User } from '@the-new-fuse/database';
 
 @ApiTags('Workflows')
 @Controller('workflows')
@@ -37,9 +37,9 @@ export class WorkflowController {
     ): Promise<Workflow> {
         try {
             return await this.workflowService.createWorkflow(data, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to create workflow',
+                (error as Error).message || 'Failed to create workflow',
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -54,9 +54,9 @@ export class WorkflowController {
     ): Promise<void> {
         try {
             await this.workflowService.executeWorkflow(id, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to execute workflow',
+                (error as Error).message || 'Failed to execute workflow',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -71,9 +71,9 @@ export class WorkflowController {
     ): Promise<WorkflowStatus> {
         try {
             return await this.workflowService.getWorkflowStatus(id, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to get workflow status',
+                (error as Error).message || 'Failed to get workflow status',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -88,9 +88,9 @@ export class WorkflowController {
     ): Promise<any> {
         try {
             return await this.workflowService.getWorkflowResults(id, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to get workflow results',
+                (error as Error).message || 'Failed to get workflow results',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -106,9 +106,9 @@ export class WorkflowController {
     ): Promise<Workflow> {
         try {
             return await this.workflowService.updateWorkflow(id, updates, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to update workflow',
+                (error as Error).message || 'Failed to update workflow',
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -123,9 +123,9 @@ export class WorkflowController {
     ): Promise<void> {
         try {
             await this.workflowService.deleteWorkflow(id, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to delete workflow',
+                (error as Error).message || 'Failed to delete workflow',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

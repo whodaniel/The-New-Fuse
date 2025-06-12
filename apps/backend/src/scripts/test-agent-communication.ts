@@ -22,9 +22,9 @@ class AgentCommunicationTester {
 
   constructor() {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.redis = new Redis(redisUrl);
-    this.pubClient = new Redis(redisUrl);
-    this.subClient = new Redis(redisUrl);
+    this.redis = new (Redis as any)(redisUrl);
+    this.pubClient = new (Redis as any)(redisUrl);
+    this.subClient = new (Redis as any)(redisUrl);
   }
 
   async initialize(): Promise<void> {

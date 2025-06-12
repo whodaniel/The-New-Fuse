@@ -17,7 +17,7 @@ export enum PricingModel {
 export interface PricingTier {
   name: string;
   price: number;
-  billingPeriod?: 'monthly' | 'yearly';
+  billingPeriod?:monthly' | yearly';
   features: string[];
   limits?: Record<string, number>;
 }

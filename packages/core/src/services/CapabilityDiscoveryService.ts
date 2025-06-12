@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { Logger } from '../utils/logger.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import { ReliabilityMetricsService } from './ReliabilityMetricsService.js';
 import { CapabilitySecurityService } from './CapabilitySecurityService.js';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -56,11 +56,11 @@ export class CapabilityDiscoveryService {
   }
 
   private setupEventListeners(): void {
-    this.eventEmitter.on('capability.registered', async (data: SemanticCapability) => {
+    this.eventEmitter.on('capability.'registered', async (data: SemanticCapability) => {
       await this.indexCapability(data);
     });
 
-    this.eventEmitter.on('capability.deprecated', async (data: { id: string, replacedBy?: string }) => {
+    this.eventEmitter.on('capability.'deprecated', async (data: { id: string, replacedBy?: string }) => {
       await this.handleDeprecation(data);
     });
   }
@@ -164,7 +164,7 @@ export class CapabilityDiscoveryService {
       this.compositions.set(key, composition);
       return composition;
     } catch (error) {
-      this.logger.error('Error composing capabilities:', error);
+      this.logger.error('Error composing capabilities:, error);
       return null;
     }
   }
@@ -203,7 +203,7 @@ export class CapabilityDiscoveryService {
     return new Set(
       text
         .toLowerCase()
-        .replace(/[^\w\s]/g, ' ')
+        .replace(/[^\w\s]/g, )
         .split(/\s+/)
         .filter(term => term.length > 2)
     );

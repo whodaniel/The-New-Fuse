@@ -1,11 +1,11 @@
-import { EntityRepository, LessThan } from 'typeorm';
-import { BaseRepository } from './BaseRepository.js';
-import { Log } from '../entities/Log.js';
+import { EntityRepository, LessThan } from ''typeorm';
+import { BaseRepository } from './BaseRepository.tsx';
+import { Log } from '../entities/Log.tsx';
 
 @EntityRepository(Log)
 export class LogRepository extends BaseRepository<Log> {
     async createLog(
-        level: 'debug' | 'info' | 'warn' | 'error',
+        level:debug' | info' | warn' | error',
         message: string,
         metadata?: Record<string, any>
     ): Promise<Log> {
@@ -27,11 +27,11 @@ export class LogRepository extends BaseRepository<Log> {
         const query = this.createQueryBuilder('log');
 
         if (options?.level) {
-            query.andWhere('log.level = :level', { level: options.level });
+            query.andWhere('log.level = : 'level', { level: options.level });
         }
 
         if (options?.startTime && options?.endTime) {
-            query.andWhere('log.timestamp BETWEEN :startTime AND :endTime', {
+            query.andWhere('log.timestamp BETWEEN :startTime AND : 'endTime', {
                 startTime: options.startTime,
                 endTime: options.endTime,
             });
@@ -49,12 +49,12 @@ export class LogRepository extends BaseRepository<Log> {
         endTime?: Date
     ): Promise<Record<Log['level'], number>> {
         const query = this.createQueryBuilder('log')
-            .select('log.level', 'level')
-            .addSelect('COUNT(*)', 'count')
+            .select('log.'level', level')
+            .addSelect('COUNT(*)', count')
             .groupBy('log.level');
 
         if (startTime && endTime) {
-            query.where('log.timestamp BETWEEN :startTime AND :endTime', {
+            query.where('log.timestamp BETWEEN :startTime AND : 'endTime', {
                 startTime,
                 endTime,
             });

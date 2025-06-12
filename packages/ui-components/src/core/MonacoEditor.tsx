@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { cn } from '../lib/utils.js';
+import { cn } from '../lib/utils.tsx';
 
 interface MonacoEditorProps {
   value: string;

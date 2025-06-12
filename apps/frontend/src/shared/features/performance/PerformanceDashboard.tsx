@@ -1,7 +1,7 @@
 import React from 'react';
 import { Alert } from '@/shared/ui/core/Alert';
 import { Progress } from '@/shared/ui/core/Progress';
-import { MetricCard } from './MetricCard.js';
+import { MetricCard } from './MetricCard.tsx';
 export function PerformanceDashboard({ className }) {
     const [metrics, setMetrics] = React.useState(null);
     const [connected, setConnected] = React.useState(false);

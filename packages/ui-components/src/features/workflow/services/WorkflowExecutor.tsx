@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowCondition, WorkflowContext, ExecutionResult } from '../types.js';
+import { WorkflowStep, WorkflowCondition, WorkflowContext, ExecutionResult } from '../types.tsx';
 
 // Define WorkflowMetricsTracker interface
 export interface WorkflowMetricsTracker {

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RedisManager } from '../redis_manager.js';
-import { Logger } from '../utils/logger.js';
+import { RedisManager } from '../redis_manager.tsx';
+import { Logger } from '../utils/logger.tsx';
 import { Message, MessageType, Priority } from '@the-new-fuse/types';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -9,7 +9,7 @@ import {
   ChannelOptions,
   MessageHandler,
   Subscription,
-} from './types.js';
+} from './types.tsx';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -135,7 +135,7 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
       // Optionally, handle messages with no subscribers (e.g., dead-letter queue or log)
     }
 
-    this.eventEmitter.emit('message.published', {
+    this.eventEmitter.emit('message.'published', {
       channelId,
       messageId: message.id, // Corrected property name
       // any other relevant data
@@ -155,7 +155,7 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
   ): Promise<void> {
     const maxRetries = options?.retryPolicy?.maxRetries || 3;
     const backoff = options?.retryPolicy?.backoff || {
-      type: 'exponential' as 'exponential' | 'fixed', // Added type assertion
+      type:exponential' as exponential' | fixed', // Added type assertion
       delay: 1000,
     };
 
@@ -165,7 +165,7 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
         message.status = MessageStatus.PROCESSED; // Corrected status
         // Log success or emit event
         this.logger.debug(`Message ${message.id} processed successfully by handler.`);
-        this.eventEmitter.emit('message.processed', { messageId: message.id });
+        this.eventEmitter.emit('message.'processed', { messageId: message.id });
         return; // Exit if successful
       } catch (error: any) { // Added type for error
         this.logger.error(`Handler error for message ${message.id}, attempt ${attempt + 1}:`, error);
@@ -177,14 +177,14 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
         };
 
         if (attempt < maxRetries) {
-          const delay = backoff.type === 'exponential'
+          const delay = backoff.type === exponential'
             ? backoff.delay * Math.pow(2, attempt)
             : backoff.delay;
           this.logger.info(`Retrying message ${message.id} in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
         } else {
           this.logger.error(`Max retries reached for message ${message.id}. Giving up.`);
-          this.eventEmitter.emit('message.failed', {
+          this.eventEmitter.emit('message.'failed', {
             messageId: message.id,
             error: message.error,
             final: true, // Indicate final failure
@@ -201,7 +201,7 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
       id: channel.id,
       name: channel.name,
       type: channel.type,
-      pattern: channel.pattern || '',
+      pattern: channel.pattern || ,
       metadata: JSON.stringify(channel.metadata),
     };
   }
@@ -221,7 +221,7 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
       id: subscription.id,
       channelId: subscription.channelId,
       subscriberId: subscription.subscriberId,
-      pattern: subscription.pattern || '',
+      pattern: subscription.pattern || ,
       filters: JSON.stringify(subscription.filters || {}),
       metadata: JSON.stringify(subscription.metadata),
     };
@@ -241,9 +241,9 @@ const data = await this.redisManager.hgetall(`subscription:${subscriptionId}`);
   private serializeOptions(options: ChannelOptions): Record<string, string> {
     return {
       bufferSize: options.bufferSize?.toString() || '',
-      persistent: options.persistent?.toString() || '',
+      persistent: options.persistent?.toString() || ,
       encrypted: options.encrypted?.toString() || '',
-      compression: options.compression?.toString() || '',
+      compression: options.compression?.toString() || ,
       qos: options.qos?.toString() || '',
       retryPolicy: JSON.stringify(options.retryPolicy || {}),
     };

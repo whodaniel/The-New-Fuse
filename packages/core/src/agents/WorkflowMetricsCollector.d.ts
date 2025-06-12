@@ -1,5 +1,5 @@
-import { MetricsProcessor } from '../security/metricsProcessor.js';
-import { WorkflowState } from './types.js';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
+import { WorkflowState } from './types.tsx';
 export interface WorkflowMetrics {
     workflowId: string;
     startTime: number;
@@ -17,7 +17,7 @@ export interface TaskMetrics {
     endTime?: number;
     duration?: number;
     attempts: number;
-    status: pending' | 'running' | 'completed' | 'failed';
+    status: pending' | running' | completed' | failed';
     resourceUtilization: ResourceMetrics;
 }
 export interface ResourceMetrics {

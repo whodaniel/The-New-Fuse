@@ -1,4 +1,4 @@
-import { PrismaClient, TaskStatus } from '@the-new-fuse/database/client'
+import { PrismaClient, TaskStatus } from '@the-new-fuse/database'
 
 export type ExtendedPrismaClient = PrismaClient & {
   $extends: (extension: {

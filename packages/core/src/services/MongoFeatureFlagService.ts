@@ -1,4 +1,4 @@
-import { FeatureFlag, FeatureFlagDocument } from '../models/FeatureFlag.js';
+import { FeatureFlag, FeatureFlagDocument } from '../models/FeatureFlag.tsx';
 import { FeatureFlagContext } from '../types/featureFlags.js';
 import { FeatureFlagService } from './FeatureFlagService.js';
 import * as crypto from 'crypto';
@@ -39,7 +39,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
 
     Object.assign(feature, {
       ...data,
-      'metadata.lastModifiedAt': new Date()
+      metadata.lastModifiedAt': new Date()
     });
 
     return feature.save();
@@ -58,8 +58,8 @@ export class MongoFeatureFlagService extends FeatureFlagService {
     await FeatureFlag.updateOne(
       { _id: id },
       { 
-        $inc: { 'metadata.metrics.exposures': 1 },
-        $set: { 'metadata.metrics.lastUsed': new Date() }
+        $inc: { metadata.metrics.exposures': 1 },
+        $set: { metadata.metrics.lastUsed': new Date() }
       }
     );
 
@@ -87,8 +87,8 @@ export class MongoFeatureFlagService extends FeatureFlagService {
       await FeatureFlag.updateOne(
         { _id: id },
         { 
-          $inc: { 'metadata.metrics.positiveEvaluations': 1 },
-          $set: { 'metadata.metrics.lastUsed': new Date() }
+          $inc: { metadata.metrics.positiveEvaluations': 1 },
+          $set: { metadata.metrics.lastUsed': new Date() }
         }
       );
     }
@@ -99,7 +99,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
   async recordError(id: string): Promise<void> {
     await FeatureFlag.updateOne(
       { _id: id },
-      { $inc: { 'metadata.metrics.errors': 1 } }
+      { $inc: { metadata.metrics.errors': 1 } }
     );
   }
 
@@ -126,7 +126,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
         filter: { _id: id },
         update: {
           ...data,
-          'metadata.lastModifiedAt': new Date()
+          metadata.lastModifiedAt': new Date()
         }
       }
     }));

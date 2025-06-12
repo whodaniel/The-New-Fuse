@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseError, ErrorSeverity } from './types.js';
+import { BaseError, ErrorSeverity } from './types.tsx';
 import { Db } from 'mongodb';
 import { NotificationService } from './notification.service.js';
 
@@ -36,8 +36,8 @@ export class ErrorReportingService {
     return {
       timestamp: new Date(),
       error,
-      context: context || 'unknown',
-      environment: (process as any).env.NODE_ENV || 'development',
+      context: context || unknown',
+      environment: (process as any).env.NODE_ENV || development',
       metadata: {
         stack: error.stack,
         cause: error.cause,

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from ''zod';
 import { DataSourceOptions } from 'typeorm';
 
 // Zod schema for runtime validation
@@ -26,9 +26,9 @@ export const DatabaseConfigSchema = z.object({
     ttl: z.number().min(0).default(300),
   }).optional(),
   vector: z.object({
-    indexType: z.enum(['ivfflat', 'hnsw']),
+    indexType: z.enum(['ivfflat', hnsw']),
     dimensions: z.number().min(1),
-    metric: z.enum(['euclidean', 'cosine', 'inner_product']),
+    metric: z.enum(['euclidean', cosine', inner_product']),
   }).optional(),
 });
 
@@ -66,30 +66,30 @@ export function toTypeOrmConfig(config: DatabaseConfig): DataSourceOptions {
 // Default configuration
 export const DEFAULT_CONFIG: DatabaseConfig = {
   type: 'postgres',
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'postgres',
-  database: process.env.DB_DATABASE || 'fuse',
-  schema: process.env.DB_SCHEMA || 'public',
+  host: process.env.DB_HOST || localhost',
+  port: parseInt(process.env.DB_PORT || 5432', 10),
+  username: process.env.DB_USERNAME || postgres',
+  password: process.env.DB_PASSWORD || postgres',
+  database: process.env.DB_DATABASE || fuse',
+  schema: process.env.DB_SCHEMA || public',
   ssl: process.env.DB_SSL === 'true',
-  poolSize: parseInt(process.env.DB_POOL_SIZE || '20', 10),
-  maxRetries: parseInt(process.env.DB_MAX_RETRIES || '3', 10),
-  retryDelay: parseInt(process.env.DB_RETRY_DELAY || '1000', 10),
-  timeout: parseInt(process.env.DB_TIMEOUT || '5000', 10),
+  poolSize: parseInt(process.env.DB_POOL_SIZE || 20', 10),
+  maxRetries: parseInt(process.env.DB_MAX_RETRIES || 3', 10),
+  retryDelay: parseInt(process.env.DB_RETRY_DELAY || 1000', 10),
+  timeout: parseInt(process.env.DB_TIMEOUT || 5000', 10),
   logging: process.env.DB_LOGGING === 'true',
   metricsEnabled: process.env.DB_METRICS_ENABLED !== 'false',
-  metricsInterval: parseInt(process.env.DB_METRICS_INTERVAL || '10000', 10),
+  metricsInterval: parseInt(process.env.DB_METRICS_INTERVAL || 10000', 10),
   cache: process.env.REDIS_HOST ? {
     type: 'redis',
     host: process.env.REDIS_HOST,
-    port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    port: parseInt(process.env.REDIS_PORT || 6379', 10),
     password: process.env.REDIS_PASSWORD,
-    ttl: parseInt(process.env.REDIS_TTL || '300', 10),
+    ttl: parseInt(process.env.REDIS_TTL || 300', 10),
   } : undefined,
   vector: {
-    indexType: (process.env.VECTOR_INDEX_TYPE || 'hnsw') as 'ivfflat' | 'hnsw',
-    dimensions: parseInt(process.env.VECTOR_DIMENSIONS || '1536', 10),
-    metric: (process.env.VECTOR_METRIC || 'cosine') as 'euclidean' | 'cosine' | 'inner_product',
+    indexType: (process.env.VECTOR_INDEX_TYPE || hnsw') as ivfflat' | hnsw',
+    dimensions: parseInt(process.env.VECTOR_DIMENSIONS || 1536', 10),
+    metric: (process.env.VECTOR_METRIC || cosine') as euclidean' | cosine' | inner_product',
   },
 };

@@ -53,9 +53,9 @@ export class ExtensibilitySystem {
     return {
       id: 'dynamic-extension-' + Date.now(),
       point: {
-        id: 'dynamic-point',
-        name: 'Dynamic Extension Point',
-        version: '1.0.0',
+        id:dynamic-point,
+        name:Dynamic Extension Point',
+        version:1.0.0',
         capabilities: []
       },
       implementation: {}

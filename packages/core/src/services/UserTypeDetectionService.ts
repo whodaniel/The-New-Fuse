@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 /**
  * User types supported by the system
@@ -26,9 +26,9 @@ export class UserTypeDetectionService {
     this.logger.debug('Detecting user type', { signals });
 
     // Check for explicit AI agent signals
-    if (signals.headers?.['x-agent-id'] || 
-        signals.headers?.['x-agent-type'] || 
-        signals.headers?.['x-agent-capabilities']) {
+    if (signals.headers?.['x-agent-id] || 
+        signals.headers?.['x-agent-type] || 
+        signals.headers?.['x-agent-capabilities]) {
       return UserType.AI_AGENT;
     }
 
@@ -38,8 +38,8 @@ export class UserTypeDetectionService {
     }
 
     // Check for human signals
-    if (signals.authMethod === 'oauth' || 
-        signals.authMethod === 'password' ||
+    if (signals.authMethod === oauth' || 
+        signals.authMethod === password' ||
         signals.userAgent?.includes('Mozilla') ||
         signals.hasInteractiveSession) {
       return UserType.HUMAN;
@@ -50,12 +50,12 @@ export class UserTypeDetectionService {
       const { requestFrequency, requestVariability, interactionComplexity } = signals.communicationPatterns;
       
       // AI agents typically have high request frequency, low variability, and medium complexity
-      if (requestFrequency === 'high' && requestVariability === 'low') {
+      if (requestFrequency === high' && requestVariability === 'low') {
         return UserType.AI_AGENT;
       }
       
       // Humans typically have low-medium request frequency, high variability, and high complexity
-      if (requestFrequency !== 'high' && requestVariability === 'high') {
+      if (requestFrequency !== high' && requestVariability === 'high') {
         return UserType.HUMAN;
       }
     }
@@ -137,27 +137,27 @@ export class UserTypeDetectionService {
   }
 
   private categorizeFrequency(avgTimeGapMs: number): FrequencyCategory {
-    if (avgTimeGapMs < 1000) return 'very_high';
-    if (avgTimeGapMs < 5000) return 'high';
-    if (avgTimeGapMs < 30000) return 'medium';
-    if (avgTimeGapMs < 300000) return 'low';
-    return 'very_low';
+    if (avgTimeGapMs < 1000) return very_high';
+    if (avgTimeGapMs < 5000) return high';
+    if (avgTimeGapMs < 30000) return medium';
+    if (avgTimeGapMs < 300000) return low';
+    return very_low';
   }
 
   private categorizeVariability(coefficientOfVariation: number): VariabilityCategory {
-    if (coefficientOfVariation < 0.1) return 'very_low';
-    if (coefficientOfVariation < 0.3) return 'low';
-    if (coefficientOfVariation < 0.7) return 'medium';
-    if (coefficientOfVariation < 1.0) return 'high';
-    return 'very_high';
+    if (coefficientOfVariation < 0.1) return very_low';
+    if (coefficientOfVariation < 0.3) return low';
+    if (coefficientOfVariation < 0.7) return medium';
+    if (coefficientOfVariation < 1.0) return high';
+    return very_high';
   }
 
   private categorizeComplexity(complexityScore: number): ComplexityCategory {
-    if (complexityScore < 2) return 'very_low';
-    if (complexityScore < 5) return 'low';
-    if (complexityScore < 10) return 'medium';
-    if (complexityScore < 20) return 'high';
-    return 'very_high';
+    if (complexityScore < 2) return very_low';
+    if (complexityScore < 5) return low';
+    if (complexityScore < 10) return medium';
+    if (complexityScore < 20) return high';
+    return very_high';
   }
 }
 
@@ -166,7 +166,7 @@ export class UserTypeDetectionService {
  */
 export interface UserTypeDetectionSignals {
   headers?: Record<string, string>;
-  authMethod?: 'api_key' | 'oauth' | 'password' | 'none';
+  authMethod?:api_key' | oauth' | password' | none';
   userAgent?: string;
   hasInteractiveSession?: boolean;
   communicationPatterns?: CommunicationPatternAnalysis;
@@ -178,7 +178,7 @@ export interface UserTypeDetectionSignals {
 export interface UserInteraction {
   timestamp: number;
   requestSize: number;
-  requestStructure: 'simple' | 'medium' | 'complex';
+  requestStructure:simple' | medium' | complex';
 }
 
 /**
@@ -193,14 +193,14 @@ export interface CommunicationPatternAnalysis {
 /**
  * Frequency categories
  */
-export type FrequencyCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_high' | 'unknown';
+export type FrequencyCategory = very_low' | low' | medium' | high' | very_high' | unknown';
 
 /**
  * Variability categories
  */
-export type VariabilityCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_high' | 'unknown';
+export type VariabilityCategory = very_low' | low' | medium' | high' | very_high' | unknown';
 
 /**
  * Complexity categories
  */
-export type ComplexityCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_high' | 'unknown';
+export type ComplexityCategory = very_low' | low' | medium' | high' | very_high' | unknown';

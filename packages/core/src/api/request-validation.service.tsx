@@ -1,7 +1,7 @@
 import { Injectable, BadRequestException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { ErrorTrackingService, ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { ErrorTrackingService, ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.tsx';
 import { z } from 'zod';
 import { Request } from 'express';
 
@@ -31,9 +31,9 @@ export class RequestValidationService {
     
     // Load default options
     this.defaultOptions = {
-      abortEarly: this.configService.get<boolean>('api.validation.abortEarly', false),
-      stripUnknown: this.configService.get<boolean>('api.validation.stripUnknown', true),
-      allowUnknown: this.configService.get<boolean>('api.validation.allowUnknown', false)
+      abortEarly: this.configService.get<boolean>('api.validation.'abortEarly', false),
+      stripUnknown: this.configService.get<boolean>('api.validation.'stripUnknown', true),
+      allowUnknown: this.configService.get<boolean>('api.validation.'allowUnknown', false)
     };
     
     this.logger.info('Request validation service initialized');
@@ -121,7 +121,7 @@ export class RequestValidationService {
     if (!result.success) {
       throw new BadRequestException({
         statusCode: 400,
-        message: 'Validation failed',
+        message:Validation failed',
         errors: result.errors
       });
     }

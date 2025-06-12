@@ -1,4 +1,4 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { accelerate } from '@prisma/extension-accelerate';
 
 const prisma = new PrismaClient().$extends(accelerate());

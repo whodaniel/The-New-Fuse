@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service.js';
-import { OnboardingAnalytics } from './OnboardingAnalytics.js';
+import { OnboardingAnalytics } from './OnboardingAnalytics.tsx';
 import {
   Box,
   VStack,

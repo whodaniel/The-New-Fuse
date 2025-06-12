@@ -16,7 +16,7 @@ export class AgentCommunicationGateway implements OnGatewayInit, OnGatewayConnec
 
   constructor(private readonly redisService: RedisService) {
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.subscriber = new Redis(redisUrl);
+    this.subscriber = new (Redis as any)(redisUrl);
   }
 
   afterInit() {
@@ -54,8 +54,8 @@ export class AgentCommunicationGateway implements OnGatewayInit, OnGatewayConnec
       });
       
       this.logger.log('Redis subscriptions established');
-    } catch (error) {
-      this.logger.error(`Failed to setup Redis subscriptions: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to setup Redis subscriptions: ${(error as Error).message}`);
     }
   }
 }

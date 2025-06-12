@@ -9,8 +9,8 @@ import {
   ManyToMany,
   JoinTable,
 } from 'typeorm';
-import { User } from './user.entity.js';
-import { Message } from './message.entity.js';
+import { User } from './user.entity.tsx';
+import { Message } from './message.entity.tsx';
 
 @Entity('chat_rooms')
 export class ChatRoom {

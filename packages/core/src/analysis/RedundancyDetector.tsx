@@ -39,7 +39,7 @@ export class RedundancyDetector {
     const suggestions: string[]  = new Set([...setA].filter(x => setB.has(x)): void {
       suggestions.push(
         `Consider consolidating ${component} with ${
-          similarities.map(s  = new Set([...setA, ...setB]): $ {sharedFunctionality.join(', ')}`
+          similarities.map(s  = new Set([...setA, ...setB]): $ {sharedFunctionality.join(', )}`
       );
     }
 

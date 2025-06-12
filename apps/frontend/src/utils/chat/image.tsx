@@ -1,4 +1,4 @@
-import { getFileExtension } from '../directories.js';
+import { getFileExtension } from '../directories.tsx';
 
 export interface ImageDimensions {
   width: number;

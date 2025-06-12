@@ -1,4 +1,4 @@
-import { TranscriptSegment } from '../youtube_integrator.js';
+import { TranscriptSegment } from '../youtube_integrator.tsx';
 
 export class TranscriptProcessor {
   constructor() {

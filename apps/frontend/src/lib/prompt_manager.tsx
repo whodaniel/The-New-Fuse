@@ -115,14 +115,14 @@ class PromptManager {
             });
 
             return result;
-        } catch (error) {
+        } catch (error: unknown) {
             const responseTime = Date.now() - startTime;
             prompt.updateMetrics(false, responseTime);
             
             this.history.push({
                 id,
                 params,
-                error: error.message,
+                error: (error as Error).message,
                 timestamp: new Date(),
                 success: false,
                 responseTime

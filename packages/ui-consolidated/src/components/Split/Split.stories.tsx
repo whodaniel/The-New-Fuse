@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Split } from './Split.js';
+import { Split } from './Split.tsx';
 
 const meta: Meta<typeof Split> = {
   title: 'Components/Split',

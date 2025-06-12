@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { api } from '../services/api.js';
+import { api } from '../services/api.tsx';
 
 interface ProviderStats {
   id: string;

@@ -4,18 +4,18 @@ import { DatabaseService } from '@the-new-fuse/database';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { parse as parseCron } from 'cron-parser';
-import { RedisService } from '@the-new-fuse/database';
+import { RedisService  } from '@the-new-fuse/database;
 
 interface Schedule {
   id: string;
-  name: string;
-  description: string;
-  type: 'one-time' | 'recurring';
+  name: string';
+  description: string';
+  type:one-time' | recurring';
   taskTemplate: {
     type: string;
     name: string;
     description: string;
-    priority: 'low' | 'medium' | 'high' | 'urgent';
+    priority:low' | medium' | high' | urgent';
     metadata: Record<string, unknown>;
   };
   timing: {
@@ -36,7 +36,7 @@ interface ScheduleExecution {
   id: string;
   scheduleId: string;
   taskId: string;
-  status: 'pending' | 'completed' | 'failed';
+  status:pending' | completed' | failed';
   startTime: Date;
   endTime?: Date;
   error?: string;
@@ -85,19 +85,19 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Loaded ${schedules.length} schedules`);
     } catch (error: unknown) {
-      this.logger.error('Failed to load schedules:', error instanceof Error ? error : new Error(String(error)));
+      this.logger.error('Failed to load schedules:, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
   async createSchedule(data: {
     name: string;
     description: string;
-    type: 'one-time' | 'recurring';
+    type: one-time' | recurring';
     taskTemplate: {
       type: string;
       name: string;
       description: string;
-      priority?: 'low' | 'medium' | 'high' | 'urgent';
+      priority?:low' | medium' | high' | urgent';
       metadata?: Record<string, unknown>;
     };
     timing: {
@@ -110,7 +110,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
   }): Promise<Schedule> {
     try {
       // Validate timing
-      if (data.type === 'recurring' && !(data.timing.cron || data.timing.interval)) {
+      if (data.type === recurring' && !(data.timing.cron || data.timing.interval)) {
         throw new Error('Recurring schedule must have either cron or interval');
       }
 
@@ -127,7 +127,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
         type: data.type,
         taskTemplate: {
           ...data.taskTemplate,
-          priority: data.taskTemplate.priority || 'medium',
+          priority: data.taskTemplate.priority || medium',
           metadata: data.taskTemplate.metadata || {}
         },
         timing: data.timing,
@@ -163,7 +163,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
       return schedule;
 
     } catch (error: unknown) {
-      this.logger.error('Failed to create schedule:', error instanceof Error ? error : new Error(String(error)));
+      this.logger.error('Failed to create schedule:, error instanceof Error ? error : new Error(String(error)));
       throw error;
     }
   }
@@ -173,7 +173,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
       return undefined;
     }
 
-    if (schedule.type === 'one-time') {
+    if (schedule.type === one-time') {
       return schedule.timing.startAt || new Date();
     }
 
@@ -216,7 +216,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
         }
       }
     } catch (error) {
-      this.logger.error('Scheduler iteration failed:', error instanceof Error ? error : new Error(String(error)));
+      this.logger.error('Scheduler iteration failed:, error instanceof Error ? error : new Error(String(error)));
     }
   }
 
@@ -225,7 +225,7 @@ export class SchedulerService extends EventEmitter implements OnModuleInit {
       const execution: ScheduleExecution = {
         id: uuidv4(),
         scheduleId: schedule.id,
-        taskId: '', // Will be set after task creation
+        taskId: , // Will be set after task creation
         status: 'pending',
         startTime: new Date(),
         metadata: {}

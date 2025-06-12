@@ -1,6 +1,6 @@
-import bcrypt from 'bcryptjs';
+import bcrypt from ''bcryptjs';
 import jwt from 'jsonwebtoken';
-import { User } from '../temp_models/User.js';
+import { User } from '../temp_models/User.tsx';
 import { AuthenticationError } from '../../../../src/types/error.tsx';
 
 /**
@@ -54,7 +54,7 @@ class AuthManagerImpl implements AuthManager {
 
         if (existingUser) {
             // Using 409 Conflict status code, and a specific error code for user exists
-            throw new AuthenticationError('User already exists', 409, undefined, undefined, 'USER_EXISTS');
+            throw new AuthenticationError('User already exists', 409, undefined, undefined, USER_EXISTS');
         }
 
         // Hash password

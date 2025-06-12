@@ -1,7 +1,7 @@
 import * as React from "react";
 import { type ComponentProps } from "react";
 import { type VariantProps } from "class-variance-authority";
-import type { inputVariants } from './Input.js';
+import type { inputVariants } from './Input.tsx';
 
 export type InputVariants = VariantProps<typeof inputVariants>;
 

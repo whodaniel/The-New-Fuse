@@ -1,2 +1,2 @@
-export * from './Input.js';
-export * from './Card.js';
+export * from './Input.tsx';
+export * from './Card.tsx';

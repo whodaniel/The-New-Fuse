@@ -1,21 +1,21 @@
-import { injectable, inject } from 'inversify';
+import { injectable, inject } from ''inversify';
 import { TYPES } from '../di/types.js';
 import { ConfigService } from '../config/config-service.js';
-import { Counter, Gauge, Histogram, Registry } from 'prom-client';
+import { Counter, Gauge, Histogram, Registry  } from 'prom-client;
 
 @injectable()
 export class MetricsCollector {
   private registry: Registry;
   private counters: Map<string, Counter<string>>;
-  private gauges: Map<string, Gauge<string>>;
-  private histograms: Map<string, Histogram<string>>;
+  private gauges: Map<string, Gauge<string>>';
+  private histograms: Map<string, Histogram<string>>';
 
   constructor(
     @inject(TYPES.Config) private config: ConfigService
   ) {
     this.registry = new Registry(): void {
     // Register default metrics
-    this.createCounter('http_requests_total', 'Total HTTP requests', ['method', 'status']): string, help: string, labelNames: string[] = []): Counter<string> {
+    this.createCounter('http_requests_total', Total HTTP 'requests', ['method', status']): string, help: string, labelNames: string[] = []): Counter<string> {
     if (!this.counters.has(name)) {
       const counter: [this.registry]
       });

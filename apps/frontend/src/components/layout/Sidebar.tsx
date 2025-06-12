@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useLayout } from '../../contexts/LayoutContext.js';
-import { useAuth } from '../../providers/AuthProvider.js';
+import { useLayout } from '../../contexts/LayoutContext.tsx';
+import { useAuth } from '../../providers/AuthProvider.tsx';
 
 interface SidebarProps {
     className?: string;
@@ -107,6 +107,28 @@ export function Sidebar({ className = '' }: SidebarProps) {
                 </svg>
             ),
             requiresAuth: true,
+        },
+        {
+            name: 'Multi-Agent Chat',
+            path: '/multi-agent-chat',
+            icon: (
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d="M12 3C7.03 3 3 7.03 3 12s4.03 9 9 9 9-4.03 9-9-4.03-9-9-9z" />
+                    <path d="M8 14v-4l4 2v4l-4-2z" />
+                    <path d="M16 10v4l-4-2v-4l4 2z" />
+                </svg>
+            ),
+            requiresAuth: false,
         },
         {
             name: 'Settings',

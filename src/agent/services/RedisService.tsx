@@ -27,7 +27,7 @@ export class RedisService {
       },
     };
 
-    this.client = new Redis(options);
+    this.client = new (Redis as any)(options);
     this.setupEventHandlers();
   }
 

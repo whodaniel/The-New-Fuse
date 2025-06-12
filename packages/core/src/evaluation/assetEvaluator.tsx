@@ -1,4 +1,4 @@
-import { AssetQuality, AssetCategory, AssetMetrics } from '../classification/assetClassifier.js';
+import { AssetQuality, AssetCategory, AssetMetrics } from '../classification/assetClassifier.tsx';
 
 interface EvaluationHistory {
     [key: string]: Array<Record<string, unknown>>;
@@ -30,7 +30,7 @@ interface Risk {
 
 interface Recommendation {
     viability_score: number;
-    decision: 'proceed' | 'review' | 'reject';
+    decision:proceed' | review' | reject';
     key_factors: string[];
     next_steps: string[];
     integration_plan?: Record<string, unknown>;
@@ -191,7 +191,7 @@ export class AssetEvaluator {
 
         const recommendation: Recommendation = {
             viability_score: viability,
-            decision: viability > 0.7 ? 'proceed' : viability > 0.4 ? 'review' : 'reject',
+            decision: viability > 0.7 ? proceed' : viability > 0.4 ? review' : 'reject',
             key_factors: this.identifyKeyFactors(compatibility, effort, risks),
             next_steps: this.suggestNextSteps(viability, risks)
         };

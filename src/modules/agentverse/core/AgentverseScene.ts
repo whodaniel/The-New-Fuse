@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
-import { AgentManager } from '../managers/AgentManager.js';
-import { EnvironmentManager } from '../managers/EnvironmentManager.js';
+import { AgentManager } from '../managers/AgentManager.tsx';
+import { EnvironmentManager } from '../managers/EnvironmentManager.tsx';
 import { InteractionManager } from '../managers/InteractionManager.js';
 import { IsometricPlugin } from '../plugins/IsometricPlugin.js';
 

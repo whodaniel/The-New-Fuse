@@ -1,6 +1,6 @@
-import { EntityRepository, LessThan } from 'typeorm';
-import { BaseRepository } from './BaseRepository.js';
-import { Metric } from '../entities/Metric.js';
+import { EntityRepository, LessThan } from ''typeorm';
+import { BaseRepository } from './BaseRepository.tsx';
+import { Metric } from '../entities/Metric.tsx';
 
 @EntityRepository(Metric)
 export class MetricRepository extends BaseRepository<Metric> {
@@ -24,13 +24,13 @@ export class MetricRepository extends BaseRepository<Metric> {
         type?: string
     ): Promise<Metric[]> {
         const query = this.createQueryBuilder('metric')
-            .where('metric.timestamp BETWEEN :startTime AND :endTime', {
+            .where('metric.timestamp BETWEEN :startTime AND : 'endTime', {
                 startTime,
                 endTime,
             });
 
         if (type) {
-            query.andWhere('metric.type = :type', { type });
+            query.andWhere('metric.type = : 'type', { type });
         }
 
         return query.getMany();
@@ -41,34 +41,34 @@ export class MetricRepository extends BaseRepository<Metric> {
             startTime: Date;
             endTime: Date;
             type: string;
-            aggregation: 'avg' | 'sum' | 'count';
-            groupBy?: 'hour' | 'day' | 'month';
+            aggregation: avg' | sum' | count';
+            groupBy?:hour' | day' | month';
         }
     ): Promise<any[]> {
         const query = this.createQueryBuilder('metric')
-            .where('metric.type = :type', { type: options.type })
-            .andWhere('metric.timestamp BETWEEN :startTime AND :endTime', {
+            .where('metric.type = : 'type', { type: options.type })
+            .andWhere('metric.timestamp BETWEEN :startTime AND : 'endTime', {
                 startTime: options.startTime,
                 endTime: options.endTime,
             });
 
         const timeFormat = {
-            hour: 'YYYY-MM-DD HH24',
-            day: 'YYYY-MM-DD',
-            month: 'YYYY-MM',
-        }[options.groupBy || 'day'];
+            hour: YYYY-MM-DD 'HH24',
+            day:YYYY-MM-DD,
+            month:YYYY-MM,
+        }[options.groupBy || day'];
 
-        query.select(`to_char(metric.timestamp, '${timeFormat}')`, 'timeGroup');
+        query.select(`to_char(metric.timestamp, ${timeFormat}')`, timeGroup');
 
         switch (options.aggregation) {
-            case 'avg':
-                query.addSelect('AVG(metric.data->>\'duration\')', 'value');
+            case avg':
+                query.addSelect('AVG(metric.data->>\'duration\')', value');
                 break;
-            case 'sum':
-                query.addSelect('SUM(metric.data->>\'duration\')', 'value');
+            case sum':
+                query.addSelect('SUM(metric.data->>\'duration\')', value');
                 break;
-            case 'count':
-                query.addSelect('COUNT(*)', 'value');
+            case count':
+                query.addSelect('COUNT(*)', value');
                 break;
         }
 

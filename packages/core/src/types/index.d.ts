@@ -37,7 +37,7 @@ export declare const TYPES: {
 export type { type WorkflowDefinition, WorkflowDefinitionType, WorkflowExecution, WorkflowStatus, Workflow, WorkflowTask, WorkflowEdge } from './workflow.js';
 export interface VectorStore {
     dimensions: number;
-    similarity: 'cosine' | 'euclidean' | 'dot';
+    similarity:cosine' | euclidean' | dot';
     store(vectors: number[][], metadata: unknown[]): Promise<void>;
     search(query: number[], k: number): Promise<SearchResult[]>;
 }
@@ -51,7 +51,7 @@ export interface ChatCompletion {
     model: string;
     choices: Array<{
         message: {
-            role: 'assistant' | 'user' | 'system';
+            role:assistant' | user' | system';
             content: string;
         };
         finish_reason: string;

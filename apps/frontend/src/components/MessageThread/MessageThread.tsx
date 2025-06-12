@@ -6,7 +6,7 @@ import { format } from 'date-fns';
 import ui_1 from '../../shared/components/ui.js';
 import icons_material_1 from '@mui/icons-material';
 import MessageReactions_1 from '../MessageReactions/MessageReactions.js';
-import MarkdownRenderer_1 from '../MarkdownRenderer.js';
+import MarkdownRenderer_1 from '../MarkdownRenderer.tsx';
 const MessageThread = ({ parentMessage, replies, onReply, onClose, currentUserId }) => {
     const [replyContent, setReplyContent] = (0, react_1.useState)('');
     const [isSubmitting, setIsSubmitting] = (0, react_1.useState)(false);

@@ -1,5 +1,5 @@
 import { Injectable, Scope } from "@nestjs/common";
-import type { ILogger, ICacheService } from '../core/di/types.js';
+import type { ILogger, ICacheService } from '../core/di/types.tsx';
 import { TimeService } from '../utils/time.service.js';
 
 // Define Session interfaces

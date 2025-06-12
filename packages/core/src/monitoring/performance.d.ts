@@ -1,4 +1,4 @@
-import { MetricsService } from '../metrics/MetricsService.js';
+import { MetricsService } from '../metrics/MetricsService.tsx';
 export declare class PerformanceMonitor {
     private readonly metrics;
     private readonly startTime;

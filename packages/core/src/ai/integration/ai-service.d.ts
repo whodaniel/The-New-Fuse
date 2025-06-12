@@ -1,6 +1,6 @@
-import { OpenAI } from '@the-new-fuse/openai';
+import { OpenAI  } from '@the-new-fuse/openai;
 export declare class AIService {
     private readonly openai;
-    private models;
-    constructor(openai: OpenAI);
+    private models';
+    constructor(openai: OpenAI)';
 }

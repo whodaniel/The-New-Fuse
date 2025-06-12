@@ -1,14 +1,23 @@
-import { test as base, Page, TestInfo } from '@playwright/test'; // Import Page and TestInfo types
-import { AuthUtils, AuthUser } from '../utils/auth.utils.js';
-import { LoginPage } from '../pages/login.page.js';
+import { test as base, Page, TestInfo } from '@playwright/test';
+import { AuthUtils, AuthUser } from '../utils/auth.utils';
+import { LoginPage } from '../pages/login.page';
+import { DashboardPage } from '../pages/dashboard.page';
+import { WorkflowEditorPage } from '../pages/workflow-editor.page';
+import { SettingsPage } from '../pages/settings.page';
+import { TestHelpers } from '../utils/test-helpers';
 import { TestReporter } from '../utils/test-reporter.js';
 
 // Define the types for the extended fixtures
 interface CustomFixtures {
   authUtils: AuthUtils;
   loginPage: LoginPage;
-  authenticatedPage: Page; // Use Page type
+  dashboardPage: DashboardPage;
+  workflowEditorPage: WorkflowEditorPage;
+  settingsPage: SettingsPage;
+  testHelpers: TestHelpers;
+  authenticatedPage: Page;
   testReporter: TestReporter;
+  testInfo: TestInfo;
 }
 
 // Extend basic test fixtures
@@ -21,8 +30,23 @@ export const test = base.extend<CustomFixtures>({
     await use(new LoginPage(page));
   },
 
-  // Fixture that provides an authenticated page
-  authenticatedPage: async ({ page, authUtils }, use) => { // Correct dependency injection
+  dashboardPage: async ({ page }, use) => {
+    await use(new DashboardPage(page));
+  },
+
+  workflowEditorPage: async ({ page }, use) => {
+    await use(new WorkflowEditorPage(page));
+  },
+
+  settingsPage: async ({ page }, use) => {
+    await use(new SettingsPage(page));
+  },
+
+  testHelpers: async ({ page }, use) => {
+    await use(new TestHelpers(page));
+  },
+
+  authenticatedPage: async ({ page, authUtils }, use) => {
     const testUser: AuthUser = {
       username: process.env.TEST_USER || 'testuser',
       password: process.env.TEST_PASSWORD || 'testpass'
@@ -30,13 +54,14 @@ export const test = base.extend<CustomFixtures>({
 
     await authUtils.loginAsUser(testUser);
     await use(page);
-    // Consider if clearAuth should run after each test using this fixture
-    // await authUtils.clearAuth();
   },
 
-  // Fixture providing a TestReporter instance
   testReporter: async ({ page, testInfo }, use) => {
     await use(new TestReporter(page, testInfo));
+  },
+
+  testInfo: async ({ testInfo }, use) => {
+    await use(testInfo);
   }
 });
 

@@ -8,7 +8,7 @@ import {
   WorkflowContext
 } from '@the-new-fuse/types';
 import { Logger } from '@the-new-fuse/utils';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter';
 
 @Injectable()
 export class WorkflowExecutor {

@@ -5,9 +5,9 @@ import {
   AgentStatus,
 } from "@the-new-fuse/types";
 import { Injectable, Logger } from "@nestjs/common";
-import { PrismaService } from '../lib/prisma.service.js';
+import { PrismaService } from '../lib/prisma.service.tsx';
 import { ConfigService } from "@nestjs/config";
-import { Prisma, Agent as PrismaAgent } from "@the-new-fuse/database/client";
+import { Prisma, Agent as PrismaAgent } from "@the-new-fuse/database";
 
 @Injectable()
 export class AgentService {

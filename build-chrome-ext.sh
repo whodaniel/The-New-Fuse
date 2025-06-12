@@ -27,7 +27,7 @@ else
   echo "Removing workspace references from package.json..."
   # More aggressive workspace reference removal
   sed -i '' 's/"workspace:[^"]*"/"latest"/g' package.json
-  # Also clean up any yarn workspace configurations
+  # Also clean up any bun workspace configurations
   sed -i '' '/"workspaces"/,/}/d' package.json
 fi
 
@@ -35,9 +35,9 @@ fi
 echo "Creating icons directory..."
 mkdir -p icons
 
-# Install dependencies with yarn
-echo "Installing dependencies with yarn..."
-yarn install --frozen-lockfile
+# Install dependencies with bun
+echo "Installing dependencies with bun..."
+bun install --frozen-lockfile
 
 # Run the build
 echo "Building extension..."

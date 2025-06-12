@@ -15,8 +15,8 @@ export class WebSocketManager
     try {
       await this.authenticateClient(client);
       await this.initializeClientSession(client);
-    } catch (error) {
-      this.logger.error(`Connection failed: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Connection failed: ${(error as Error).message}`);
       client.disconnect();
     }
   }

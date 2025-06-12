@@ -1,9 +1,9 @@
-import { InterAgentChatService } from '../services/InterAgentChatService.js';
+import { InterAgentChatService } from '../services/InterAgentChatService.tsx';
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { MonitoringService } from '../services/MonitoringService.js';
-import { AlertService } from '../services/AlertService.js';
-import { PrometheusService } from '../services/PrometheusService.js';
-import { RedisService } from '../services/RedisService.js';
+import { MonitoringService } from '../services/MonitoringService.tsx';
+import { AlertService } from '../services/AlertService.tsx';
+import { PrometheusService } from '../services/PrometheusService.tsx';
+import { RedisService } from '../services/RedisService.tsx';
 
 interface MetricsData {
   type: string;

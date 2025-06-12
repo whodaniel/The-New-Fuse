@@ -1,14 +1,14 @@
 import { Controller, Post, Body, Get, Param, UseGuards, Query } from "@nestjs/common";
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import { MCPAgentServer } from './MCPAgentServer.js';
-import { MCPChatServer } from './MCPChatServer.js';
-import { MCPWorkflowServer } from './MCPWorkflowServer.js';
-import { MCPFuseServer } from './MCPFuseServer.js';
-import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.js';
-import { MCPRAGServer } from './MCPRAGServer.js';
+import { MCPAgentServer } from './MCPAgentServer.tsx';
+import { MCPChatServer } from './MCPChatServer.tsx';
+import { MCPWorkflowServer } from './MCPWorkflowServer.tsx';
+import { MCPFuseServer } from './MCPFuseServer.tsx';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.tsx';
+import { MCPRAGServer } from './MCPRAGServer.tsx';
 import { DocumentationOrchestrationService } from './services/documentation-orchestration.service.js';
-import { MCPBrokerService } from './services/mcp-broker.service.js';
-import { DirectorAgentService } from './services/director-agent.service.js';
+import { MCPBrokerService } from './services/mcp-broker.service.tsx';
+import { DirectorAgentService } from './services/director-agent.service.tsx';
 
 interface ExecuteCapabilityDto {
   params: Record<string, any>;

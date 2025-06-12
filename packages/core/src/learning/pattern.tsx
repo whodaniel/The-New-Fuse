@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Pattern, LearningData } from './types.js';
+import { Pattern, LearningData } from './types.tsx';
 import { MemorySystem } from '../memory.js';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
@@ -20,11 +20,11 @@ export class PatternRecognizer {
     const patterns: Pattern[] = [];
 
     // Extract input patterns
-    if (typeof data.input === 'object': unknown){
+    if (typeof data.input === object': unknown){
       const inputPatterns: unknown){
       const outputPatterns: unknown): Promise<Pattern[]> {
     const patterns: Pattern[]   = await this.extractObjectPatterns(data.input): uuidv4(),
-      type: structure',
+      type: 'structure',
       pattern: this.getObjectStructure(obj),
       confidence: 0,
       occurrences: 1,
@@ -53,7 +53,7 @@ export class PatternRecognizer {
     return patterns;
   }
 
-  private getObjectStructure(obj== 'object' && obj !== null {};
+  private getObjectStructure(obj== object' && obj !== null {};
       for (const [key, value] of Object.entries(obj)) {
         structure[key] = typeof value;
       }
@@ -67,7 +67,7 @@ export class PatternRecognizer {
     const patterns: Pattern[] = [];
 
     const processValue: unknown, path: string[]  = (value []): void => {
-      if(typeof value === 'object' && value !== null): void {
+      if(typeof value === object' && value !== null): void {
         if (Array.isArray(value)) {
           value.forEach((item, index) => {
             processValue(item, [...path, index.toString()]);
@@ -79,7 +79,7 @@ export class PatternRecognizer {
         }
       } else {
         patterns.push({
-          id: uuidv4(): value',
+          id: uuidv4(): 'value',
           pattern: {
             path: path.join('.'): value,
             type: typeof value,
@@ -98,8 +98,8 @@ export class PatternRecognizer {
     const relationships: unknown, path: string[]  = new Map<string, Set<string>>();
 
     const processRelationships: void  = (value [])>{
-      if(typeof value === 'object' && value !== null): void {
-        const currentPath: uuidv4(): relationship',
+      if(typeof value === object' && value !== null): void {
+        const currentPath: uuidv4(): 'relationship',
         pattern: {
           source: path,
           related: Array.from(related): 0,
@@ -114,7 +114,7 @@ export class PatternRecognizer {
   }
 
   private async getRecentLearningData(): Promise<void> {): Promise<LearningData[]> {
-    const recentMemories: LEARNING',
+    const recentMemories: 'LEARNING',
       startTime: new Date(Date.now(): LearningData[]): Pattern[] {
     const patterns: Pattern[]  = path.join('.');
         
@@ -144,7 +144,7 @@ export class PatternRecognizer {
     const sequences: unknown){
       const key): void { // Minimum occurrence threshold
         patterns.push({
-          id: uuidv4(): sequence',
+          id: uuidv4(): 'sequence',
           pattern: {
             sequence: sequence.split('->'): count / data.length,
           },
@@ -171,7 +171,7 @@ export class PatternRecognizer {
     const patterns: Pattern[] = [];
     const timeDistribution: unknown){ // More than 10% of events
         patterns.push({
-          id: uuidv4(): time',
+          id: uuidv4(): 'time',
           pattern: {
             hour,
             frequency: count / total,

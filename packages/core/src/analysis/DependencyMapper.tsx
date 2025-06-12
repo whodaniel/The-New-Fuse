@@ -7,28 +7,53 @@ export interface DependencyNode {
 }
 
 export class DependencyMapper {
-  private nodes: Map<string, DependencyNode> = new Map(): string, type: string) {
+  private nodes: Map<string, DependencyNode> = new Map();
+
+  addNode(id: string, type: string) {
     if (!this.nodes.has(id)) {
       this.nodes.set(id, {
         id,
         type,
         dependencies: [],
         dependents: []
-      }): string, toId: string) {
-    const from: string[][] {
-    const cycles: string[][]  = this.nodes.get(fromId)): void {
-      if (!(from as any).dependencies.includes(toId)) {
+      });
+    }
+  }
+
+  addDependency(fromId: string, toId: string) {
+    const from = this.nodes.get(fromId);
+    const to = this.nodes.get(toId);
+
+    if (from && to) {
+      if (!from.dependencies.includes(toId)) {
         from.dependencies.push(toId);
       }
-      if (!(to as any).dependents.includes(fromId)) {
-        to.dependents.push(fromId): string[]   = this.nodes.get(toId);
+      if (!to.dependents.includes(fromId)) {
+        to.dependents.push(fromId);
+      }
+    }
+  }
 
-    if(from && to new Set<string>();
-    const path [];
+  findCircularDependencies(): string[][] {
+    const cycles: string[][] = [];
+    const visited = new Set<string>();
+    const path: string[] = [];
 
-    const dfs: string): unknown  = (nodeId> {
+    const dfs = (nodeId: string) => {
       if (path.includes(nodeId)) {
-        const cycle: unknown){
+        const cycle = path.slice(path.indexOf(nodeId));
+        cycles.push(cycle);
+        return;
+      }
+
+      if (visited.has(nodeId)) return;
+      
+      visited.add(nodeId);
+      path.push(nodeId);
+
+      const node = this.nodes.get(nodeId);
+      if (node) {
+        for (const depId of node.dependencies) {
           dfs(depId);
         }
       }
@@ -37,24 +62,29 @@ export class DependencyMapper {
     };
 
     for (const nodeId of this.nodes.keys()) {
-      dfs(nodeId): string {
-    let report  = path.slice(path.indexOf(nodeId)): void {
-        for(const depId of node.dependencies '# Dependency Analysis Report\n\n';
+      dfs(nodeId);
+    }
+
+    return cycles;
+  }
+
+  generateReport(): string {
+    let report = '# Dependency Analysis Report\n\n';
 
     // Add component summary
-    report + = this.nodes.get(nodeId): $ {count} components\n`;
-    });
-
-    // Add circular dependencies
-    const cycles): void {
-      report + = new Map<string, number>();
+    const typeCount = new Map<string, number>();
     this.nodes.forEach(node => {
       typeCount.set(node.type, (typeCount.get(node.type) || 0) + 1);
     });
     
     typeCount.forEach((count, type) => {
-      report += `- ${type} this.findCircularDependencies();
-    if(cycles.length > 0 '\n## Circular Dependencies\n\n';
+      report += `- ${type}: ${count} components\n`;
+    });
+
+    // Add circular dependencies
+    const cycles = this.findCircularDependencies();
+    if (cycles.length > 0) {
+      report += '\n## Circular Dependencies\n\n';
       cycles.forEach(cycle => {
         report += `- ${cycle.join(' -> ')} -> ${cycle[0]}\n`;
       });

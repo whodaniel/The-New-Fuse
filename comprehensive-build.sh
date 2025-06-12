@@ -20,51 +20,51 @@ node ./scripts/kill-port-processes.js || echo "No processes to kill"
 
 # Step 2: Clean previous builds
 echo -e "\n${YELLOW}Step 2: Cleaning previous builds${NC}"
-yarn clean:build || echo "No previous builds to clean"
+bun run clean:build || echo "No previous builds to clean"
 
 # Step 3: Install dependencies if needed
 echo -e "\n${YELLOW}Step 3: Installing dependencies${NC}"
-yarn install || echo "Dependencies already installed"
+bun install || echo "Dependencies already installed"
 
 # Step 4: Build core packages first
 echo -e "\n${YELLOW}Step 4: Building core packages${NC}"
 echo -e "${BLUE}Building types package...${NC}"
-cd packages/types && yarn build && cd ../..
+cd packages/types && bun run build && cd ../..
 echo -e "${BLUE}Building api-types package...${NC}"
-cd packages/api-types && yarn build && cd ../..
+cd packages/api-types && bun run build && cd ../..
 echo -e "${BLUE}Building utils package...${NC}"
-cd packages/utils && yarn build && cd ../..
+cd packages/utils && bun run build && cd ../..
 echo -e "${BLUE}Building shared package...${NC}"
-cd packages/shared && yarn build && cd ../..
+cd packages/shared && bun run build && cd ../..
 echo -e "${BLUE}Building features package...${NC}"
-cd packages/features && yarn build && cd ../..
+cd packages/features && bun run build && cd ../..
 echo -e "${BLUE}Building core package...${NC}"
-cd packages/core && yarn build && cd ../..
+cd packages/core && bun run build && cd ../..
 
 # Step 5: Build API and client packages
 echo -e "\n${YELLOW}Step 5: Building API and client packages${NC}"
 echo -e "${BLUE}Building API package...${NC}"
-cd packages/api && yarn build && cd ../..
+cd packages/api && bun run build && cd ../..
 echo -e "${BLUE}Building client package...${NC}"
-cd packages/client && yarn build && cd ../..
+cd packages/client && bun run build && cd ../..
 echo -e "${BLUE}Building hooks package...${NC}"
-cd packages/hooks && yarn build && cd ../..
+cd packages/hooks && bun run build && cd ../..
 
 # Step 6: Build API server
 echo -e "\n${YELLOW}Step 6: Building API server${NC}"
 echo -e "${BLUE}Building API server...${NC}"
-cd apps/api && yarn build && cd ../..
+cd apps/api && bun run build && cd ../..
 
 # Step 7: Build backend
 echo -e "\n${YELLOW}Step 7: Building backend server${NC}"
 echo -e "${BLUE}Building backend server...${NC}"
-cd apps/backend && yarn build && cd ../..
+cd apps/backend && bun run build && cd ../..
 
 # Step 8: Build frontend
 echo -e "\n${YELLOW}Step 8: Building frontend application${NC}"
 echo -e "${BLUE}Building frontend application...${NC}"
-cd apps/frontend && yarn build && cd ../..
-cd apps/api && yarn build && cd ../..
+cd apps/frontend && bun run build && cd ../..
+cd apps/api && bun run build && cd ../..
 
 echo -e "\n${GREEN}========================================${NC}"
 echo -e "${GREEN}Comprehensive build complete!${NC}"

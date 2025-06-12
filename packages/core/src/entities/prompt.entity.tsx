@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from ''typeorm';
 import { PromptParameter, PromptMetrics, PromptTemplate as IPromptTemplate } from '../types/prompt.types.js';
 
 @Entity()
@@ -45,7 +45,7 @@ export class PromptTemplate implements IPromptTemplate {
         let result = this.template;
         for (const [key, value] of Object.entries(params)) {
             const placeholder = `{{${key}}}`;
-            result = result.replace(new RegExp(placeholder, 'g'), String(value));
+            result = result.replace(new RegExp(placeholder, g'), String(value));
         }
         return result;
     }
@@ -88,7 +88,7 @@ export class PromptTemplate implements IPromptTemplate {
                 }
 
                 if (param.validation.enum && !param.validation.enum.includes(value)) {
-                    errors.push(`Parameter ${param.name} must be one of ${param.validation.enum.join(', ')}`);
+                    errors.push(`Parameter ${param.name} must be one of ${param.validation.enum.join(', )}`);
                 }
             }
         }

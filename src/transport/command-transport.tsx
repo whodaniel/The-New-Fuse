@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { ITransport, TransportMessage, TransportOptions } from './transport-interface.js';
+import { ITransport, TransportMessage, TransportOptions } from './transport-interface.tsx';
 
 export class CommandTransport implements ITransport {
     private readonly commandPrefix = 'newFuse.transport';

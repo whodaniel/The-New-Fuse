@@ -3,7 +3,7 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 import axios from 'axios';
 import { v4 as uuid4 } from 'uuid';
-import { MCPServer } from './mcp/MCPServer.js';
+import { MCPServer } from './mcp/MCPServer.tsx';
 import path from 'path';
 
 // MCP client for The New Fuse

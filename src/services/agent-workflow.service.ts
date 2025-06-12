@@ -3,7 +3,7 @@ import { AgentBridgeService } from './AgentCommunicationBridge.js';
 import { TaskQueueService } from '../task/TaskQueueService.js';
 import { StateManagerService } from './state-manager.service.js';
 import { MonitoringService } from '../monitoring/monitoring.service.js';
-import { MCPAgentServer } from '../mcp/MCPAgentServer.js';
+import { MCPAgentServer } from '../mcp/MCPAgentServer.tsx';
 import { AgentCapabilityDiscoveryService, CapabilityRequirement } from './AgentCapabilityDiscoveryService.js';
 import { WorkflowMonitoringService } from './WorkflowMonitoringService.js';
 import { Logger } from '../common/logger.service.js';

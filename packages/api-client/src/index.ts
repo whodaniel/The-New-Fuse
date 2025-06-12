@@ -12,23 +12,23 @@ export {
   type ApiClientOptions,
   type ApiResponse,
   type ApiError
-} from './client/ApiClient.js';
+} from './client/ApiClient';
 
 // Token storage exports
 export {
   TokenStorage,
   type TokenStorage as TokenStorageInterface
-} from './auth/TokenStorage.js';
+} from './auth/TokenStorage';
 
 // Base service exports
 export {
   BaseService
-} from './services/BaseService.js';
+} from './services/BaseService';
 
 // Configuration exports
 export {
   type ApiConfig
-} from './config/ApiConfig.js';
+} from './config/ApiConfig';
 
 // Authentication service exports
 export {
@@ -36,7 +36,7 @@ export {
   createAuthService,
   type AuthResponse,
   type UserData
-} from './services/auth.service.js';
+} from './services/auth.service';
 
 // Workflow service exports
 export {
@@ -49,7 +49,7 @@ export {
   type WorkflowCreateData,
   type WorkflowUpdateData,
   WorkflowExecutionStatus
-} from './services/workflow.service.js';
+} from './services/workflow.service';
 
 // Agent service exports
 export {
@@ -61,7 +61,7 @@ export {
   type AgentUpdateData,
   type AgentExecutionResult,
   AgentStatus
-} from './services/agent.service.js';
+} from './services/agent.service';
 
 // User service exports
 export {
@@ -70,7 +70,7 @@ export {
   type User,
   type UserProfile,
   type UserUpdateData
-} from './services/user.service.js';
+} from './services/user.service';
 
 /**
  * Create a new API client with the given configuration
@@ -92,10 +92,10 @@ export async function createApiClient(config: {
   timeout?: number;
   headers?: Record<string, string>;
   options?: Record<string, any>;
-  tokenStorage?: import('./auth/TokenStorage.js').TokenStorage;
+  tokenStorage?: import('./auth/TokenStorage').TokenStorage;
 }) {
   const { baseURL, timeout, headers, options, tokenStorage } = config;
-  const ApiClientModule = await import('./client/ApiClient.js');
+  const ApiClientModule = await import('./client/ApiClient');
   return new ApiClientModule.ApiClient({
     baseURL,
     timeout,

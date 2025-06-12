@@ -1,8 +1,8 @@
-import * as vscode from 'vscode';
+import * as vscode from ''vscode';
 
 interface Participant {
     id: string;
-    type: 'user' | 'ai_agent';
+    type:user' | ai_agent';
     capabilities: string[];
 }
 
@@ -28,7 +28,7 @@ export class UniversalChannel {
         this.registerParticipant({
             id: 'augment',
             type: 'ai_agent',
-            capabilities: ['code_analysis', 'communication', 'workspace_monitoring']
+            capabilities: ['code_analysis', communication', workspace_monitoring']
         });
 
         // Listen for new participants

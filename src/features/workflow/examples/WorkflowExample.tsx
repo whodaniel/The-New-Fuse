@@ -1,4 +1,4 @@
-import { WorkflowBuilder } from '../services/WorkflowBuilder.js';
-import { WorkflowEditor } from '../components/WorkflowEditor.js';
+import { WorkflowBuilder } from '../services/WorkflowBuilder.tsx';
+import { WorkflowEditor } from '../components/WorkflowEditor.tsx';
 import WorkflowControlPanel from '../components/WorkflowControlPanel.js';
 import { WorkflowDefinition } from '../types.js';

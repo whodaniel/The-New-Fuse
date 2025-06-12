@@ -64,7 +64,7 @@ export interface VectorSimilarityOptions {
     maxResults?: number;
     includeMetadata?: boolean;
     filterTags?: string[];
-    sortBy?: similarity' | 'importance' | 'timestamp';
+    sortBy?: similarity' | importance' | timestamp';
 }
 
 export interface VectorClusterConfig {
@@ -99,7 +99,7 @@ export type Vector = Float32Array;
 
 export interface MemoryHealth {
     name: string;
-    status: HEALTHY' | 'DEGRADED' | 'FAILED';
+    status: HEALTHY' | DEGRADED' | FAILED';
     lastCheck: Date;
     details: {
         shortTermMemorySize: number;
@@ -137,7 +137,7 @@ export interface MemoryMetrics {
 }
 
 export interface MemoryHealthReport {
-    status: 'HEALTHY' | 'WARNING' | 'CRITICAL';
+    status:HEALTHY' | WARNING' | CRITICAL';
     memoryGrowthRate: number;
     potentialLeaks: boolean;
     largestObjects: Array<{
@@ -203,13 +203,13 @@ export interface MemoryProfile {
 }
 
 export interface MemoryThresholdEvent {
-    type: 'heap_usage' | 'fragmentation' | 'growth_rate';
+    type:heap_usage' | fragmentation' | growth_rate';
     value: number;
     threshold: number;
 }
 
 export interface MemoryLeakWarning {
-    type: 'memory_leak_warning';
+    type:memory_leak_warning';
     growthRate: number;
     currentHeapUsed: number;
     currentHeapTotal: number;

@@ -1,0 +1,1 @@
+export { communicationFlowTemplate } from '../communicationFlowTemplate';

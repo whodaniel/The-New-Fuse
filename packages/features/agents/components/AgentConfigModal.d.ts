@@ -4,5 +4,5 @@ interface AgentConfigModalProps {
     agentId?: string;
     initialData?: AgentConfig;
 }
-export declare function AgentConfigModal({ isOpen, onClose, agentId, initialData }: AgentConfigModalProps): any void;
+export declare function AgentConfigModal({ isOpen, onClose, agentId, initialData }: AgentConfigModalProps): void;
 export {};

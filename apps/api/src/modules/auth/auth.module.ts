@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthController } from '../../controllers/auth.controller.js';
+import { AuthController } from '../../controllers/auth.controller.tsx';
 import { AuthService } from '../../services/auth.service.js';
-import { User } from '../../entities/User.js';
+import { User } from '../../entities/User';
 
 @Module({
   imports: [

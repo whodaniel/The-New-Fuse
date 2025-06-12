@@ -1,13 +1,13 @@
-import { MetricsProcessor } from '../security/metricsProcessor.js';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
 export interface AgentMessage {
     id: string;
-    type: task_request' | 'task_response' | 'status_update' | 'error';
+    type: task_request' | task_response' | status_update' | error';
     timestamp: number;
     sender: string;
     recipient: string;
     payload: unknown;
     metadata: {
-        priority: low' | 'medium' | 'high';
+        priority: low' | medium' | high';
         timeout?: number;
         retryCount?: number;
     };

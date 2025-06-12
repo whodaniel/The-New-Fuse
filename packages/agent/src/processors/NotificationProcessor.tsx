@@ -1,7 +1,7 @@
 import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
 import { Logger } from '@the-new-fuse/utils';
 import { Message, MessageType, Notification, UUID } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService.js'; // Corrected import
+import { AlertService } from '../services/AlertService.tsx'; // Corrected import
 // Import other necessary services or types (e.g., UI update service, logging service)
 
 /**

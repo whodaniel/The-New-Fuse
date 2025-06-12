@@ -1,4 +1,4 @@
-import { RedisManager } from '../redis/redisManager.js';
+import { RedisManager } from '../redis/redisManager.tsx';
 export declare class RateLimiter {
     private readonly windowMs;
     private readonly maxRequests;

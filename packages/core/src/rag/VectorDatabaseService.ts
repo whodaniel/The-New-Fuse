@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { ConfigService } from '@nestjs/config';
 
 /**
@@ -13,7 +13,7 @@ export enum VectorDatabaseProvider {
   WEAVIATE = 'weaviate',
   MILVUS = 'milvus',
   QDRANT = 'qdrant',
-  IN_MEMORY = 'in_memory' // For development/testing
+  IN_MEMORY = in_memory' // For development/testing
 }
 
 /**
@@ -64,8 +64,8 @@ export class VectorDatabaseService {
 
   constructor(private configService: ConfigService) {
     this.provider = this.configService.get<VectorDatabaseProvider>('VECTOR_DB_PROVIDER', VectorDatabaseProvider.IN_MEMORY);
-    this.embeddingModel = this.configService.get<string>('EMBEDDING_MODEL', 'text-embedding-3-small');
-    this.namespace = this.configService.get<string>('VECTOR_DB_NAMESPACE', 'the-new-fuse');
+    this.embeddingModel = this.configService.get<string>('EMBEDDING_MODEL', text-embedding-3-small');
+    this.namespace = this.configService.get<string>('VECTOR_DB_NAMESPACE', the-new-fuse');
     this.dimensions = this.configService.get<number>('VECTOR_DB_DIMENSIONS', 1536);
     
     this.initializeClient();
@@ -98,8 +98,8 @@ export class VectorDatabaseService {
       }
       
       this.logger.log(`Vector database initialized with provider: ${this.provider}`);
-    } catch (error) {
-      this.logger.error(`Failed to initialize vector database: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize vector database: ${(error as Error).message}`, error.stack);
       this.logger.warn('Falling back to in-memory vector database');
       await this.initializeInMemory();
     }
@@ -132,8 +132,8 @@ export class VectorDatabaseService {
       }
       
       this.client = pinecone.Index(indexName);
-    } catch (error) {
-      this.logger.error(`Failed to initialize Pinecone: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize Pinecone: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -149,16 +149,16 @@ export class VectorDatabaseService {
         path: this.configService.get<string>('CHROMA_URL')
       });
       
-      const collectionName = this.configService.get<string>('CHROMA_COLLECTION', 'the-new-fuse');
+      const collectionName = this.configService.get<string>('CHROMA_COLLECTION', the-new-fuse');
       
       // Get or create collection
       try {
         await this.client.getCollection({ name: collectionName });
-      } catch (error) {
+      } catch (error: unknown) {
         await this.client.createCollection({ name: collectionName });
       }
     } catch (error) {
-      this.logger.error(`Failed to initialize Chroma: ${error.message}`, error.stack);
+      this.logger.error(`Failed to initialize Chroma: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -176,8 +176,8 @@ export class VectorDatabaseService {
       });
       
       await this.client.connect();
-    } catch (error) {
-      this.logger.error(`Failed to initialize Redis: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize Redis: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -193,8 +193,8 @@ export class VectorDatabaseService {
         this.configService.get<string>('SUPABASE_URL'),
         this.configService.get<string>('SUPABASE_KEY')
       );
-    } catch (error) {
-      this.logger.error(`Failed to initialize Supabase: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize Supabase: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -282,8 +282,8 @@ export class VectorDatabaseService {
       });
       
       return response.data[0].embedding;
-    } catch (error) {
-      this.logger.error(`Failed to generate embedding: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to generate embedding: ${(error as Error).message}`, error.stack);
       
       // Return a random embedding for development/testing
       if (this.provider === VectorDatabaseProvider.IN_MEMORY) {
@@ -328,8 +328,8 @@ export class VectorDatabaseService {
         default:
           throw new Error(`Unsupported vector database provider: ${this.provider}`);
       }
-    } catch (error) {
-      this.logger.error(`Failed to store documents: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to store documents: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -362,7 +362,7 @@ export class VectorDatabaseService {
    */
   private async storeChromaDocuments(documents: VectorDocument[]): Promise<string[]> {
     const collection = await this.client.getCollection({ 
-      name: this.configService.get<string>('CHROMA_COLLECTION', 'the-new-fuse') 
+      name: this.configService.get<string>('CHROMA_COLLECTION', the-new-fuse') 
     });
     
     const ids = documents.map(doc => doc.id || crypto.randomUUID());
@@ -388,7 +388,7 @@ export class VectorDatabaseService {
       const id = doc.id || crypto.randomUUID();
       const key = `${this.namespace}:${id}`;
       
-      await this.client.json.set(key, '$', {
+      await this.client.json.set(key, $', {
         embedding: doc.embedding,
         content: doc.content,
         metadata: doc.metadata
@@ -437,7 +437,7 @@ export class VectorDatabaseService {
   async search(query: string | number[], options: SearchOptions = {}): Promise<SearchResult[]> {
     try {
       // Generate embedding if query is text
-      const embedding = typeof query === 'string' 
+      const embedding = typeof query === string' 
         ? await this.generateEmbedding(query)
         : query;
       
@@ -456,8 +456,8 @@ export class VectorDatabaseService {
         default:
           throw new Error(`Unsupported vector database provider: ${this.provider}`);
       }
-    } catch (error) {
-      this.logger.error(`Failed to search: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to search: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -492,7 +492,7 @@ export class VectorDatabaseService {
     const { limit = 5 } = options;
     
     const collection = await this.client.getCollection({ 
-      name: this.configService.get<string>('CHROMA_COLLECTION', 'the-new-fuse') 
+      name: this.configService.get<string>('CHROMA_COLLECTION', the-new-fuse') 
     });
     
     const response = await collection.query({

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { Logger } from '../logging.js';
 import { LLMProvider } from '../types/providers.js';
 
@@ -20,7 +20,7 @@ export class ProviderRegistry extends EventEmitter {
   registerProvider(provider: LLMProvider): void {
     this.providers.set(provider.id, provider);
     this.logger.info(`Registered provider: ${provider.name} (${provider.id})`);
-    this.emit('provider:added', provider);
+    this.emit('provider: 'added', provider);
   }
 
   /**
@@ -35,7 +35,7 @@ export class ProviderRegistry extends EventEmitter {
     const updatedProvider = { ...provider, ...updates };
     this.providers.set(providerId, updatedProvider);
     this.logger.info(`Updated provider: ${updatedProvider.name} (${updatedProvider.id})`);
-    this.emit('provider:updated', updatedProvider);
+    this.emit('provider: 'updated', updatedProvider);
     return true;
   }
 
@@ -50,7 +50,7 @@ export class ProviderRegistry extends EventEmitter {
     const provider = this.providers.get(providerId)!;
     this.providers.delete(providerId);
     this.logger.info(`Removed provider: ${provider.name} (${provider.id})`);
-    this.emit('provider:removed', provider);
+    this.emit('provider: 'removed', provider);
     return true;
   }
 
@@ -92,11 +92,11 @@ export class ProviderRegistry extends EventEmitter {
     this.registerProvider({
       id: 'openai',
       name: 'OpenAI',
-      baseUrl: 'https://api.openai.com/v1',
+      baseUrl: https://api.openai.com/'v1',
       models: [
-        { id: 'gpt-4o', name: 'GPT-4o', contextWindow: 128000, costPer1kTokens: { input: 0.01, output: 0.03 } },
-        { id: 'gpt-4-turbo', name: 'GPT-4 Turbo', contextWindow: 128000, costPer1kTokens: { input: 0.01, output: 0.03 } },
-        { id: 'gpt-3.5-turbo', name: 'GPT-3.5 Turbo', contextWindow: 16384, costPer1kTokens: { input: 0.0005, output: 0.0015 } }
+        { id:gpt-4'o', name:GPT-4'o', contextWindow: 128000, costPer1kTokens: { input: 0.01, output: 0.03 } },
+        { id:gpt-4-turbo, name:GPT-4 Turbo', contextWindow: 128000, costPer1kTokens: { input: 0.01, output: 0.03 } },
+        { id:gpt-3.5-turbo, name:GPT-3.5 Turbo', contextWindow: 16384, costPer1kTokens: { input: 0.0005, output: 0.0015 } }
       ],
       available: true,
       maxRatePerMinute: 500
@@ -106,11 +106,11 @@ export class ProviderRegistry extends EventEmitter {
     this.registerProvider({
       id: 'anthropic',
       name: 'Anthropic',
-      baseUrl: 'https://api.anthropic.com/v1',
+      baseUrl:https://api.anthropic.com/'v1',
       models: [
-        { id: 'claude-3-opus', name: 'Claude 3 Opus', contextWindow: 200000, costPer1kTokens: { input: 0.015, output: 0.075 } },
-        { id: 'claude-3-sonnet', name: 'Claude 3 Sonnet', contextWindow: 200000, costPer1kTokens: { input: 0.003, output: 0.015 } },
-        { id: 'claude-3-haiku', name: 'Claude 3 Haiku', contextWindow: 200000, costPer1kTokens: { input: 0.00025, output: 0.00125 } }
+        { id:claude-3-opus, name:Claude 3 Opus', contextWindow: 200000, costPer1kTokens: { input: 0.015, output: 0.075 } },
+        { id:claude-3-sonnet, name:Claude 3 Sonnet', contextWindow: 200000, costPer1kTokens: { input: 0.003, output: 0.015 } },
+        { id:claude-3-haiku, name:Claude 3 Haiku', contextWindow: 200000, costPer1kTokens: { input: 0.00025, output: 0.00125 } }
       ],
       available: true,
       maxRatePerMinute: 300

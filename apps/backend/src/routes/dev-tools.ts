@@ -33,7 +33,8 @@ router.post('/api/dev-tools/cleanup', async (req, res) => {
             stream.end();
         });
     } catch (error) {
-        stream.write(`Failed to execute cleanup: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        stream.write(`Failed to execute cleanup: ${errorMessage}`);
         stream.end();
     }
 });
@@ -61,7 +62,8 @@ router.post('/api/dev-tools/start', async (req, res) => {
             stream.end();
         });
     } catch (error) {
-        stream.write(`Failed to start development environment: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        stream.write(`Failed to start development environment: ${errorMessage}`);
         stream.end();
     }
 });

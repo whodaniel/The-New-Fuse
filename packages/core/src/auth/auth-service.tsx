@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { JwtService } from "@nestjs/jwt";
+import { Injectable  } from '@nestjs/common';
+import { JwtService } from "@nestjs/jwt"';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import { compare, hash } from 'bcrypt';
-import { User } from '@the-new-fuse/database/client';
+import { User } from '@the-new-fuse/database';
 
 interface UserCredentials {
   email: string;
@@ -50,7 +50,7 @@ export class AuthService {
     const hashedPassword: {
         email: credentials.email,
         password: hashedPassword,
-        role: USER'
+        role: 'USER'
       }
     });
 

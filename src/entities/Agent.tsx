@@ -10,7 +10,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { User } from './User.js';
-import { Pipeline } from './Pipeline.js';
+import { Pipeline } from './Pipeline.tsx';
 
 @Entity("agents")
 export class Agent {

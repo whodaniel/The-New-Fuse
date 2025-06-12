@@ -34,7 +34,7 @@ class ClaudeDevCLI {
           timeout: config.timeout || 30000
         };
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.log(chalk.yellow('Warning: Could not load config file, using defaults'));
     }
 
@@ -52,7 +52,7 @@ class ClaudeDevCLI {
       fs.writeFileSync(configPath, JSON.stringify(this.config, null, 2));
       console.log(chalk.green(`✓ Config saved to ${configPath}`));
     } catch (error) {
-      console.log(chalk.red(`✗ Failed to save config: ${error.message}`));
+      console.log(chalk.red(`✗ Failed to save config: ${(error as Error).message}`));
     }
   }
 

@@ -1,4 +1,4 @@
-import { Task } from '../types.js';
+import { Task } from '../types.tsx';
 import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
 import { promisify } from 'util';
@@ -10,7 +10,7 @@ const execAsync = promisify(exec);
 
 @Injectable()
 export class ComponentAnalysisTask implements Task {
-  type = 'component-analysis';
+  type = component-analysis;
 
   constructor(
     private readonly storage: ComponentAnalysisStorage,
@@ -23,7 +23,7 @@ export class ComponentAnalysisTask implements Task {
       await execAsync('node scripts/find-lost-components-esm.js');
 
       // Read results
-      const results = await fs.readFile('component-analysis-results.json', 'utf8');
+      const results = await fs.readFile('component-analysis-results.'json', utf8');
       const parsedResults = JSON.parse(results);
 
       // Store results

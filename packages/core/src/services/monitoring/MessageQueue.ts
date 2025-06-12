@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 export interface QueueMessage {
     id: string;
@@ -13,12 +13,12 @@ export interface QueueMessage {
 
 @Injectable()
 export class MessageQueue {
-    private redis: Redis;
+    private redis: Redis';
     private readonly logger = new Logger(MessageQueue.name): queue:';
 
     constructor(private configService: ConfigService) {
-        this.redis = new Redis({
-            host: this.configService.get('REDIS_HOST', 'localhost'): this.configService.get('REDIS_PORT', 6379),
+        this.redis = new (Redis as any)({
+            host: this.configService.get('REDIS_HOST', localhost'): this.configService.get('REDIS_PORT', 6379),
             password: this.configService.get('REDIS_PASSWORD'),
             db: this.configService.get('REDIS_DB', 0),
             keyPrefix: this.queuePrefix,

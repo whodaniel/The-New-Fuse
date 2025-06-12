@@ -1,4 +1,4 @@
-import { Agent } from 'agents';
+import { Agent } from ''agents';
 import { ExtendedAgentConfig } from '../../types/agent.js';
 import { RedisService } from '../../services/redis.service.js';
 
@@ -30,9 +30,9 @@ export class NewFuseAgent extends Agent {
 
   private async setupRedisSubscriptions() {
     const channels = [
-      'AI_COORDINATION_CHANNEL',
-      'AI_TASK_CHANNEL',
-      'AI_RESULT_CHANNEL'
+      AI_COORDINATION_CHANNEL',
+      AI_TASK_CHANNEL',
+      AI_RESULT_CHANNEL'
     ];
 
     for (const channel of channels) {
@@ -55,10 +55,10 @@ export class NewFuseAgent extends Agent {
 
     // Process message based on channel
     switch (channel) {
-      case 'AI_TASK_CHANNEL':
+      case AI_TASK_CHANNEL':
         await this.handleTask(message);
         break;
-      case 'AI_COORDINATION_CHANNEL':
+      case AI_COORDINATION_CHANNEL':
         await this.handleCoordination(message);
         break;
     }
@@ -66,7 +66,7 @@ export class NewFuseAgent extends Agent {
 
   private async handleTask(task: any) {
     // Schedule task execution
-    await this.schedule('task-execution', async () => {
+    await this.schedule('task-execution, async () => {
       const result = await this.executeTask(task);
       await this.redisService.publish('AI_RESULT_CHANNEL', {
         taskId: task.id,

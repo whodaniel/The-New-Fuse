@@ -1,6 +1,6 @@
 import React from "react";
-import { cn } from '../utils/cn.js'; // Added file extension
-import { LabelProps } from './types.js'; // Added file extension
+import { cn } from '../utils/cn.tsx'; // Added file extension
+import { LabelProps } from './types.tsx'; // Added file extension
 
 const Label = React.forwardRef<HTMLLabelElement, LabelProps>(
   ({ className, optional, children, ...props }, ref) => (

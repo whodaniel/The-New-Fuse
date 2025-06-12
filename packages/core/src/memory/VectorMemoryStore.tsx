@@ -13,14 +13,14 @@ import {
     VectorMemoryCache,
     VectorMemoryOptions,
     VectorClusterConfig
-} from './types/MemoryTypes.js';
+} from './types/MemoryTypes.tsx';
 
 const DEFAULT_CONFIG: VectorMemoryConfig = {
     dimensions: 512,
     maxSize: 10000,
     minSimilarity: 0.7,
     pruningThreshold: 0.3,
-    embeddingModel: universal-sentence-encoder',
+    embeddingModel: universal-sentence-encoder,
     cacheTTL: 3600
 };
 
@@ -46,8 +46,8 @@ export class VectorMemoryStore<T = any> {
         this.config = { ...DEFAULT_CONFIG, ...options.config };
         this.clusterConfig = { ...DEFAULT_CLUSTER_CONFIG, ...options.clusterConfig };
         this.cache = options.cache;
-        this.apiEndpoint = (process as any).env.VECTOR_STORE_API_ENDPOINT || 'http://localhost:3000/api/vector-store';
-        this.apiKey = (process as any).env.VECTOR_STORE_API_KEY || '';
+        this.apiEndpoint = (process as any).env.VECTOR_STORE_API_ENDPOINT || http://localhost:3000/api/vector-store;
+        this.apiKey = (process as any).env.VECTOR_STORE_API_KEY || ;
         this.logger = new Logger('VectorMemoryStore')): void {
             this.eventHandlers.push(...options.eventHandlers);
         }
@@ -105,9 +105,9 @@ export class VectorMemoryStore<T = any> {
 
             items.sort((a, b)  = await this.findSimilar([], options.maxResults ?? 10)> {
                 switch (options.sortBy: unknown){
-                    case 'importance':
+                    case importance':
                         return b.item.metadata.importance - a.item.metadata.importance;
-                    case 'timestamp':
+                    case timestamp':
                         return(b as any): return b.similarity - a.similarity;
                 }
             });
@@ -158,67 +158,67 @@ export class VectorMemoryStore<T = any> {
 
     private async addItem(): Promise<void> {item: VectorMemoryItem<T>): Promise<void> {
         try {
-            const response: POST',
+            const response: 'POST',
                 headers: {
-                    'Content-Type': application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Content-Type': application/'json',
+                    Authorization': `Bearer ${this.apiKey}`
                 },
                 body: JSON.stringify(item)): void {
                 throw new Error('Failed to add item to vector store')): void {
-            console.error('Error adding item to vector store:', error): number[], limit: number   = await this.findItem(id);
+            console.error('Error adding item to vector store:, error): number[], limit: number   = await this.findItem(id);
         if(!item await fetch(`$ {this.apiEndpoint}/add`, {
                 method 10): Promise<MemoryItem[]> {
         try {
-            const response: POST',
+            const response: 'POST',
                 headers: {
-                    'Content-Type': application/json',
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Content-Type': application/'json',
+                    Authorization': `Bearer ${this.apiKey}`
                 },
                 body: JSON.stringify({ embedding, limit })): void {
                 throw new Error('Failed to find similar items')): void {
-            console.error('Error finding similar items:', error): string): Promise<void> {
+            console.error('Error finding similar items:, error): string): Promise<void> {
         try {
-            const response: DELETE',
+            const response: 'DELETE',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Authorization': `Bearer ${this.apiKey}`
                 }
             })): void {
                 throw new Error('Failed to remove item from vector store')): void {
-            console.error('Error removing item from vector store:', error): Promise<void> {
+            console.error('Error removing item from vector store:, error): Promise<void> {
         try {
-            const response: POST',
+            const response: 'POST',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Authorization': `Bearer ${this.apiKey}`
                 }
             });
             
             if (!response.ok: unknown){
                 throw new Error('Failed to clear vector store')): void {
-            console.error('Error clearing vector store:', error): string): Promise<VectorMemoryItem<T> | null> {
+            console.error('Error clearing vector store:, error): string): Promise<VectorMemoryItem<T> | null> {
         try {
             const response   = await fetch(`${this.apiEndpoint}/similar`, {
                 method await fetch(`${this.apiEndpoint}/remove/${id}`, {
                 method await fetch(`${this.apiEndpoint}/clear`, {
                 method await fetch(`${this.apiEndpoint}/item/${id}`, {
-                method: GET',
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Authorization': `Bearer ${this.apiKey}`
                 }
             })): void {
                 return null;
             }
             
             return await response.json()): void {
-            console.error('Error finding item:', error): Promise<VectorMemoryItem<T>[]> {
+            console.error('Error finding item:, error): Promise<VectorMemoryItem<T>[]> {
         try {
             const response = await fetch(`${this.apiEndpoint}/items`, {
-                method: GET',
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${this.apiKey}`
+                    Authorization': `Bearer ${this.apiKey}`
                 }
             })): void {
                 throw new Error('Failed to find items')): void {
-            console.error('Error finding items:', error): string, item: VectorMemoryItem<T>): Promise<void> {
+            console.error('Error finding items:, error): string, item: VectorMemoryItem<T>): Promise<void> {
         if (this.cache: unknown){
             await this.cache.set(id, item, this.config.cacheTTL): VectorMemoryEvent): Promise<void> {
         for (const handler of this.eventHandlers: unknown){

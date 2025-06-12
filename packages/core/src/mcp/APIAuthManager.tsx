@@ -1,4 +1,4 @@
-import { APISpec } from '../agents/types/workflow.types.js';
+import { APISpec } from '../agents/types/workflow.types.tsx';
 
 export class APIAuthManager {
     private static instance: APIAuthManager;
@@ -15,22 +15,22 @@ export class APIAuthManager {
         if (!auth) return {};
 
         switch (auth.type) {
-            case 'bearer':
+            case bearer':
                 const token = await this.getBearerToken(agentId, auth.config);
-                return { 'Authorization': `Bearer ${token}` };
+                return { Authorization': `Bearer ${token}` };
 
-            case 'basic':
+            case basic':
                 const { username, password } = auth.config;
                 const basicAuth = Buffer.from(`${username}:${password}`).toString('base64');
-                return { 'Authorization': `Basic ${basicAuth}` };
+                return { Authorization': `Basic ${basicAuth}` };
 
-            case 'apiKey':
-                const { key, headerName = 'X-API-Key' } = auth.config;
+            case apiKey':
+                const { key, headerName = X-API-Key } = auth.config;
                 return { [headerName]: key };
 
-            case 'oauth2':
+            case oauth2':
                 const oauthToken = await this.getOAuth2Token(agentId, auth.config);
-                return { 'Authorization': `Bearer ${oauthToken}` };
+                return { Authorization': `Bearer ${oauthToken}` };
 
             default:
                 return {};
@@ -58,7 +58,7 @@ export class APIAuthManager {
     private async refreshBearerToken(config: any): Promise<any> {
         const response = await fetch(config.tokenUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { Content-Type': application/'json' },
             body: JSON.stringify({
                 client_id: config.clientId,
                 client_secret: config.clientSecret,
@@ -78,7 +78,7 @@ export class APIAuthManager {
     private async refreshOAuth2Token(config: any): Promise<any> {
         const response = await fetch(config.tokenUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            headers: { Content-Type': application/x-www-form-urlencoded },
             body: new URLSearchParams({
                 grant_type: 'refresh_token',
                 refresh_token: config.refreshToken,

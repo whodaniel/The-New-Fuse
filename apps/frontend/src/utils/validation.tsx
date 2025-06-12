@@ -140,8 +140,8 @@ export function validate<T>(
   rules: ValidationRule<T>[]
 ): ValidationResult {
   const errors = rules
-    .filter(rul(e: any) => !rule.validate(value))
-    .map(rul(e: any) => rule.message);
+    .filter((rule: ValidationRule<T>) => !rule.validate(value))
+    .map((rule: ValidationRule<T>) => rule.message);
 
   return {
     isValid: errors.length === 0,

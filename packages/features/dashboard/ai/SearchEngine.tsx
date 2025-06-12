@@ -2,9 +2,9 @@ import {
   SearchConfig,
   SearchResult,
   SearchSuggestion,
-} from './types.js';
-import { DashboardState } from '../collaboration/types.js';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
+} from './types.tsx';
+import { DashboardState } from '../collaboration/types.tsx';
+import { AnalyticsManager } from '../analytics/AnalyticsManager.tsx';
 
 export class SearchEngine {
   private analyticsManager: AnalyticsManager;

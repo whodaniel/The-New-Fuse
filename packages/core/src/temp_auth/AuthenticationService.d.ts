@@ -1,8 +1,8 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { DatabaseService } from '@the-new-fuse/database';
-import { TokenManager } from './TokenManager.js';
+import { TokenManager } from './TokenManager.tsx';
 import { UserService } from '../services/UserService.js';
-import { AuthConfig } from './AuthTypes.js';
+import { AuthConfig } from './AuthTypes.tsx';
 export declare class AuthenticationService extends EventEmitter {
     private readonly config;
     private readonly tokenManager;

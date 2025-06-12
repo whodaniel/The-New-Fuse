@@ -1,0 +1,11 @@
+{
+  "timestamp": "2025-06-12T21:50:39.637Z",
+  "filesProcessed": 0,
+  "replacementsMade": 0,
+  "errors": [],
+  "replacements": {
+    "@tnf/types": "@the-new-fuse/types",
+    "@tnf/core": "@the-new-fuse/core",
+    "@tnf/shared": "@the-new-fuse/shared"
+  }
+}

@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Pool, PoolClient, PoolConfig } from 'pg';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface PoolMetrics {
   totalConnections: number;
@@ -54,19 +54,19 @@ export class ConnectionPoolManager implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     if (this.metricsInterval) {
-      clearInterval(this.metricsInterval);
+      clearInterval(this.metricsInterval)';
     }
-    await this.pool.end();
+    await this.pool.end()';
   }
 
   private async initializePool() {
     const options = {
       ...this.defaultOptions,
-      host: process.env.DB_HOST || 'localhost',
-      port: parseInt(process.env.DB_PORT || '5432', 10),
-      user: process.env.DB_USER || 'postgres',
-      password: process.env.DB_PASSWORD || 'postgres',
-      database: process.env.DB_NAME || 'fuse',
+      host: process.env.DB_HOST || localhost',
+      port: parseInt(process.env.DB_PORT || 5432', 10),
+      user: process.env.DB_USER || postgres',
+      password: process.env.DB_PASSWORD || postgres',
+      database: process.env.DB_NAME || fuse',
     };
 
     this.pool = new Pool(options);
@@ -111,17 +111,17 @@ export class ConnectionPoolManager implements OnModuleInit, OnModuleDestroy {
       try {
         const metrics = await this.getPoolMetrics();
         
-        this.metrics.gauge('database.pool.total_connections', metrics.totalConnections);
-        this.metrics.gauge('database.pool.active_connections', metrics.activeConnections);
-        this.metrics.gauge('database.pool.idle_connections', metrics.idleConnections);
-        this.metrics.gauge('database.pool.waiting_clients', metrics.waitingClients);
+        this.metrics.gauge('database.pool.'total_connections', metrics.totalConnections);
+        this.metrics.gauge('database.pool.'active_connections', metrics.activeConnections);
+        this.metrics.gauge('database.pool.'idle_connections', metrics.idleConnections);
+        this.metrics.gauge('database.pool.'waiting_clients', metrics.waitingClients);
         
-        this.eventEmitter.emit('database.pool.metrics', metrics);
+        this.eventEmitter.emit('database.pool.'metrics', metrics);
 
         // Reset query durations after processing
         this.queryDurations = [];
       } catch (error) {
-        this.logger.error('Failed to collect pool metrics:', error);
+        this.logger.error('Failed to collect pool metrics:, error);
       }
     }, 60000); // Collect metrics every minute
   }
@@ -206,14 +206,14 @@ export class ConnectionPoolManager implements OnModuleInit, OnModuleDestroy {
     const longRunningQueries = await this.pool.query(`
       SELECT COUNT(*) as count 
       FROM pg_stat_activity 
-      WHERE state = 'active' 
-        AND NOW() - query_start > interval '30 seconds'
+      WHERE state = active' 
+        AND NOW() - query_start > interval 30 'seconds'
     `);
 
     const deadConnections = await this.pool.query(`
       SELECT COUNT(*) as count 
       FROM pg_stat_activity 
-      WHERE state = 'idle in transaction (aborted)'
+      WHERE state = idle in transaction (aborted)'
     `);
 
     const details = {
@@ -235,8 +235,8 @@ export class ConnectionPoolManager implements OnModuleInit, OnModuleDestroy {
       SELECT pg_terminate_backend(pid)
       FROM pg_stat_activity
       WHERE datname = current_database()
-        AND state = 'idle'
-        AND state_change < NOW() - interval '${idleTimeout} milliseconds'
+        AND state = idle'
+        AND state_change < NOW() - interval ${idleTimeout} 'milliseconds'
     `);
 
     return result.rowCount;

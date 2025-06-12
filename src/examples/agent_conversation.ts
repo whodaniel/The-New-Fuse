@@ -5,7 +5,7 @@
  * using the Model Context Protocol (MCP) in The New Fuse framework.
  */
 
-import { AgentMCPIntegration } from '../agent_mcp_integration.js';
+import { AgentMCPIntegration } from '../agent_mcp_integration.tsx';
 import * as fs from 'fs';
 import * as path from 'path';
 

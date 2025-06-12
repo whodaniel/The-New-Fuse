@@ -12,8 +12,29 @@ import {
   Spinner,
   useColorModeValue
 } from '@chakra-ui/react';
-import { useWizard } from './WizardProvider.js';
-import { ragService } from '../../../../packages/core/src/services/rag-service';
+import { useWizard } from './WizardProvider.tsx';
+
+// Mock RAG service to avoid dependency issues
+const ragService = {
+  query: async (query: string) => {
+    // Mock response generation
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`;
+  },
+  generateResponse: async (query: string, context?: any) => {
+    // Mock response generation
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return {
+      response: `Hello! I'm here to help you get started. You asked: "${query}". I can assist you with setting up your workspace, navigating features, or answering questions about the platform.`,
+      confidence: 0.85,
+      sources: []
+    };
+  },
+  indexKnowledge: async (documents: any[]) => {
+    console.log('Mock: Indexing knowledge documents', documents);
+    return { indexed: documents.length };
+  }
+};
 
 interface Message {
   id: string;

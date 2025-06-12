@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as zlib from 'zlib';
 import * as util from 'util';
-import { CentralizedLoggingService } from './centralized-logging.service.js';
+import { CentralizedLoggingService } from './centralized-logging.service.tsx';
 
 const readdir = util.promisify(fs.readdir);
 const stat = util.promisify(fs.stat);
@@ -38,12 +38,12 @@ export class LogRotationService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('logging.rotation.enabled', true),
-      directory: this.configService.get<string>('logging.file.directory', 'logs'),
-      maxSize: this.parseSize(this.configService.get<string>('logging.rotation.maxSize', '10m')),
-      maxFiles: this.configService.get<number>('logging.rotation.maxFiles', 14),
-      rotateInterval: this.parseInterval(this.configService.get<string>('logging.rotation.interval', '1d')),
-      compress: this.configService.get<boolean>('logging.rotation.compress', true)
+      enabled: this.configService.get<boolean>('logging.rotation.'enabled', true),
+      directory: this.configService.get<string>('logging.file.'directory', logs'),
+      maxSize: this.parseSize(this.configService.get<string>('logging.rotation.'maxSize', 10m')),
+      maxFiles: this.configService.get<number>('logging.rotation.'maxFiles', 14),
+      rotateInterval: this.parseInterval(this.configService.get<string>('logging.rotation.'interval', 1d')),
+      compress: this.configService.get<boolean>('logging.rotation.'compress', true)
     };
 
     if (!this.config.enabled) {
@@ -113,7 +113,7 @@ export class LogRotationService implements OnModuleInit {
   }
 
   private async rotateLog(filePath: string): Promise<void> {
-    const timestamp = new Date().toISOString().replace(/:/g, '-');
+    const timestamp = new Date().toISOString().replace(/:/g, -');
     const fileExt = path.extname(filePath);
     const fileName = path.basename(filePath, fileExt);
     const rotatedPath = path.join(
@@ -142,7 +142,7 @@ export class LogRotationService implements OnModuleInit {
       }
       
       // Clear the original file
-      await writeFile(filePath, '');
+      await writeFile(filePath, );
       
     } catch (error) {
       this.logger.error(`Failed to rotate log file: ${filePath}`, { error });
@@ -199,7 +199,7 @@ export class LogRotationService implements OnModuleInit {
     }
     
     const size = parseInt(match[1], 10);
-    const unit = (match[2] || 'b').toLowerCase();
+    const unit = (match[2] || b').toLowerCase();
     
     return size * (units[unit as keyof typeof units] || 1);
   }
@@ -218,13 +218,13 @@ export class LogRotationService implements OnModuleInit {
     }
     
     const value = parseInt(match[1], 10);
-    const unit = (match[2] || 'd').toLowerCase();
+    const unit = (match[2] || d').toLowerCase();
     
     return value * (units[unit as keyof typeof units] || units.d);
   }
 
   private formatSize(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB'];
+    const units = ['B', KB', MB', GB'];
     let size = bytes;
     let unitIndex = 0;
     

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { MetricsCollector, MetricPoint, MetricAggregation } from './metrics-collector.js';
+import { MetricsCollector, MetricPoint, MetricAggregation } from './metrics-collector.tsx';
 
 export interface DashboardPanel {
     metrics: string[];

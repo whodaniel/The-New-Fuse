@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { Logger } from '../../../utils/logger.js';
-import { VectorMemoryItem, VectorMemoryCache } from '../types/MemoryTypes.js';
+import { VectorMemoryItem, VectorMemoryCache } from '../types/MemoryTypes.tsx';
 
 interface CacheStats {
     hits: number;
@@ -36,7 +36,7 @@ export class RedisVectorMemoryCache implements VectorMemoryCache {
     public async get(): Promise<void> {key: string): Promise<VectorMemoryItem | null> {
         try {
             const cachedItem: unknown){
-            this.logger.error('Error retrieving from cache:', error): string,
+            this.logger.error('Error retrieving from cache:, error): string,
         item: VectorMemoryItem,
         ttl: number  = await this.redisClient.get(`$ {this.prefix}${key}`);
             
@@ -51,7 +51,7 @@ export class RedisVectorMemoryCache implements VectorMemoryCache {
             this.stats.size  = JSON.stringify(item, this.replacer);
             await this.redisClient.setex(`${this.prefix}${key}`, ttl, serializedItem);
             this.stats.size = (await this.redisClient.dbsize()): void {
-            this.logger.error('Error deleting cache item:', error): Promise<void> {
+            this.logger.error('Error deleting cache item:, error): Promise<void> {
         try {
             const keys: unknown){
             this.logger.error('Error clearing cache:', error): Promise< {
@@ -83,9 +83,9 @@ export class RedisVectorMemoryCache implements VectorMemoryCache {
     private replacer(_key: string, value: unknown): unknown {
         if(value instanceof Float32Array): void {
             return {
-                type: Float32Array',
+                type: 'Float32Array',
                 data: Array.from(value): string, value: unknown): unknown {
-        if (value && value.type === 'Float32Array' && Array.isArray(value.data)) {
+        if (value && value.type === Float32Array' && Array.isArray(value.data)) {
             return new Float32Array(value.data);
         }
         return value;

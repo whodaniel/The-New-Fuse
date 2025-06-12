@@ -1,5 +1,5 @@
 
-import { UnifiedControlInterface } from '../unified_controls.js';
+import { UnifiedControlInterface } from '../unified_controls.tsx';
 
 describe('UI Accessibility Tests', () => {
   let ui;

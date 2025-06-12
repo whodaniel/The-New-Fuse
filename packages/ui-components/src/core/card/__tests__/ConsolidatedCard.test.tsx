@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
   CardFooter,
-} from '../ConsolidatedCard.js';
+} from '../ConsolidatedCard.tsx';
 
 describe('Card', () => {
   it('renders correctly with default props', () => {

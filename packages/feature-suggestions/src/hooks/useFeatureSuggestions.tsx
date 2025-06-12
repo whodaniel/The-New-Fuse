@@ -5,7 +5,7 @@ import {
   SuggestionPriority,
   TodoItem
 } from '../types.js';
-import { SuggestionService } from '../services/types.js';
+import { SuggestionService } from '../services/types.tsx';
 
 /**
  * Props for the useFeatureSuggestions hook

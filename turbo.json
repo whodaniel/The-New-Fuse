@@ -1,40 +1,183 @@
 {
   "$schema": "https://turbo.build/schema.json",
   "globalDependencies": ["**/.env.*local"],
-  "globalEnv": ["NODE_ENV"],
+  "globalEnv": [
+    "NODE_ENV",
+    "DATABASE_URL",
+    "REDIS_URL",
+    "JWT_SECRET",
+    "API_PORT",
+    "FRONTEND_PORT"
+  ],
+  "remoteCache": {
+    "signature": true
+  },
   "concurrency": "30",
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "lib/**", "build/**", "out/**", "types/**", "esm/**", "cjs/**"]
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**"
+      ]
     },
     "build:production": {
       "dependsOn": ["^build:production", "^db:generate"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**", "lib/**", "build/**", "out/**", "types/**", "esm/**", "cjs/**"]
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**"
+      ],
+      "env": ["NODE_ENV=production"]
+    },
+    "build:types": {
+      "dependsOn": ["^build:types"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "types/**"]
+    },
+    "build:utils": {
+      "dependsOn": ["^build:utils", "build:types"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "lib/**"]
+    },
+    "build:core": {
+      "dependsOn": ["^build:core", "build:types", "build:utils"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "lib/**"]
+    },
+    "build:database": {
+      "dependsOn": ["^build:database", "build:types", "db:generate"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json", "prisma/**"],
+      "outputs": ["dist/**", "lib/**"]
+    },
+    "build:api": {
+      "dependsOn": ["^build:api", "build:core", "build:database", "build:types"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "lib/**"]
+    },
+    "build:ui": {
+      "dependsOn": ["^build:ui", "build:types"],
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", "package.json", "tsconfig.json"],
+      "outputs": ["dist/**", "lib/**", "esm/**", "cjs/**"]
     },
     "lint": {
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", ".eslintrc*", "package.json"],
+      "outputs": []
+    },
+    "lint:fix": {
+      "inputs": ["src/**/*.{ts,tsx,js,jsx}", ".eslintrc*", "package.json"],
+      "outputs": [],
+      "cache": false
+    },
+    "type-check": {
+      "dependsOn": ["^build:types"],
+      "inputs": ["src/**/*.{ts,tsx}", "package.json", "tsconfig.json"],
       "outputs": []
     },
     "dev": {
+      "dependsOn": ["^build:types", "^db:generate"],
+      "cache": false,
+      "persistent": true
+    },
+    "start": {
+      "dependsOn": ["build"],
       "cache": false,
       "persistent": true
     },
     "test": {
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*",
+        "vitest.config.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:unit": {
       "dependsOn": ["^build"],
-      "outputs": []
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:integration": {
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "package.json"
+      ],
+      "outputs": ["coverage/**"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "e2e/**/*.{ts,js}",
+        "playwright.config.*"
+      ],
+      "outputs": ["test-results/**", "playwright-report/**"]
     },
     "test:ci": {
-      "dependsOn": ["^build"],
-      "outputs": []
+      "dependsOn": ["^build", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "test/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "jest.config.*"
+      ],
+      "outputs": ["coverage/**"]
     },
     "clean": {
       "cache": false
     },
     "db:generate": {
+      "inputs": ["prisma/schema.prisma"],
+      "outputs": ["node_modules/.prisma/**", "prisma/generated/**"],
       "cache": false
     },
     "db:migrate": {
+      "inputs": ["prisma/migrations/**", "prisma/schema.prisma"],
       "cache": false
+    },
+    "db:studio": {
+      "cache": false,
+      "persistent": true
+    },
+    "docker:build": {
+      "dependsOn": ["build:production"],
+      "inputs": ["Dockerfile*", "docker-compose*.yml"],
+      "outputs": []
     }
   }
 }

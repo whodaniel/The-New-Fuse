@@ -1,6 +1,6 @@
-import { Node, NodeConfig, NodeInput, NodeOutput } from './types.js';
-import { VectorDatabase } from './vector-database.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
+import { Node, NodeConfig, NodeInput, NodeOutput } from './types.tsx';
+import { VectorDatabase } from './vector-database.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
 
 export interface VectorStoreNodeConfig extends NodeConfig {
   operation: 'store' | 'retrieve' | 'update' | 'delete' | 'similarity' | 'cluster';
@@ -80,7 +80,7 @@ export class VectorStoreNode implements Node {
       }
       
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       // Track error if tracker is provided
       if (this.apiUsageTracker) {
         await this.apiUsageTracker.trackUsage({
@@ -96,7 +96,7 @@ export class VectorStoreNode implements Node {
       
       return {
         success: false,
-        error: error.message
+        error: (error as Error).message
       };
     }
   }

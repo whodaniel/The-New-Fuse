@@ -5,7 +5,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui-components/src/core/card.jsx';
+} from '@/components/ui/card';
 import { useWorkspace } from '@/hooks/useWorkspace';
 
 const WorkspaceOverview = () => {

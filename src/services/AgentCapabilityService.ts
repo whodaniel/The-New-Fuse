@@ -20,8 +20,8 @@ export class AgentCapabilityService {
         try {
             const capabilities = await this.queryAgent(agentId, message);
             return this.parseCapabilities(capabilities);
-        } catch (error) {
-            return { error: 'Capability discovery failed', details: error.message };
+        } catch (error: unknown) {
+            return { error: 'Capability discovery failed', details: (error as Error).message };
         }
     }
 

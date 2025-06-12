@@ -1,5 +1,5 @@
-import { User } from './user.entity.js';
-import { WorkflowStep } from './workflow-step.entity.js';
+import { User } from './user.entity.tsx';
+import { WorkflowStep } from './workflow-step.entity.tsx';
 export declare class Workflow {
     id: string;
     name: string;

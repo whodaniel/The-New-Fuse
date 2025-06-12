@@ -1,4 +1,4 @@
-import { CollaborationState } from './types.js';
+import { CollaborationState } from './types.tsx';
 export declare class CollaborationManager {
     private ws;
     private state;

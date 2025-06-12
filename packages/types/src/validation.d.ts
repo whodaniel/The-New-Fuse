@@ -1,4 +1,4 @@
-import { JsonValue, ValidationResult } from './common-types.js';
+import { JsonValue, ValidationResult } from './common-types.tsx';
 export interface ValidationRule {
     id: string;
     name: string;

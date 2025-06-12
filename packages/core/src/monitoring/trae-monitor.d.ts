@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 export declare class TraeMonitor extends EventEmitter {
     private commandHistory;
     private fileChangeHistory;

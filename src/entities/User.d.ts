@@ -1,7 +1,7 @@
-import { Pipeline } from './Pipeline.js';
-import { AuthSession } from './AuthSession.js';
-import { LoginAttempt } from './LoginAttempt.js';
-import { AuthEvent } from './AuthEvent.js';
+import { Pipeline } from './Pipeline.tsx';
+import { AuthSession } from './AuthSession.tsx';
+import { LoginAttempt } from './LoginAttempt.tsx';
+import { AuthEvent } from './AuthEvent.tsx';
 export declare class User {
   id: string;
   email: string;

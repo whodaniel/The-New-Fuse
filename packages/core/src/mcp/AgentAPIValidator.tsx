@@ -1,4 +1,4 @@
-import { APISpec } from '../agents/types/workflow.types.js';
+import { APISpec } from '../agents/types/workflow.types.tsx';
 import { AgentMetadata } from '../types/agent.metadata.js';
 
 export class AgentAPIValidator {
@@ -49,13 +49,13 @@ export class AgentAPIValidator {
     private generateCapabilityName(apiSpec: APISpec): string {
         if (apiSpec.specUrl) {
             const url = new URL(apiSpec.specUrl);
-            return `api_${url.hostname.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            return `api_${url.hostname.replace(/[^a-zA-Z0-9]/g, _')}`;
         }
         
         // For manual endpoint definitions, use first endpoint
         if (apiSpec.endpoints && apiSpec.endpoints.length > 0) {
             const firstEndpoint = apiSpec.endpoints[0];
-            return `api_${firstEndpoint.method.toLowerCase()}_${firstEndpoint.path.replace(/[^a-zA-Z0-9]/g, '_')}`;
+            return `api_${firstEndpoint.method.toLowerCase()}_${firstEndpoint.path.replace(/[^a-zA-Z0-9]/g, _')}`;
         }
 
         return `api_${Date.now()}`;

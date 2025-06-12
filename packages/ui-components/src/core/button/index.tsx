@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from '../../utils/cn.js'; // Updated import path with file extension
+import { cn } from '../../utils/cn.tsx'; // Updated import path with file extension
 
 // Define ButtonProps with expected properties
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

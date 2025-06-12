@@ -1,4 +1,4 @@
-import { TaskType, TaskPriority, TaskStatus, TaskDependency, TaskMetadata, TaskResult } from './types.js';
+import { TaskType, TaskPriority, TaskStatus, TaskDependency, TaskMetadata, TaskResult } from './types.tsx';
 export declare class TaskEntity {
     : string;
     : typeof TaskType;

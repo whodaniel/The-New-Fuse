@@ -1,16 +1,16 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Redis } from 'ioredis';
-import { MetricValue, MetricType, MetricUnit } from './types.js';
-import { Logger } from '@nestjs/common';
+import { MetricValue, MetricType, MetricUnit } from './types.tsx';
+import { Logger  } from '@nestjs/common;
 
 interface AggregatedMetric {
   count: number;
   sum: number;
   min: number;
   max: number;
-  last: number;
-  timestamp: number;
+  last: number';
+  timestamp: number';
 }
 
 @Injectable()
@@ -90,7 +90,7 @@ export class RealTimeMetricsAggregator implements OnModuleInit, OnModuleDestroy 
       pipeline.expire(windowKey, Math.ceil(this.retentionTime / 1000));
 
       // Emit real-time updates
-      this.eventBus.emit('metrics.aggregated', {
+      this.eventBus.emit('metrics.'aggregated', {
         key,
         metrics: {
           avg: aggregation.sum / aggregation.count,
@@ -103,7 +103,7 @@ export class RealTimeMetricsAggregator implements OnModuleInit, OnModuleDestroy 
       await pipeline.exec();
       this.aggregationWindows.clear();
     } catch (error) {
-      this.logger.error('Failed to flush aggregations:', error);
+      this.logger.error('Failed to flush aggregations:, error);
     }
   }
 
@@ -140,7 +140,7 @@ export class RealTimeMetricsAggregator implements OnModuleInit, OnModuleDestroy 
   private getMetricKey(metric: MetricValue): string {
     const labels = metric.labels
       ? `:${metric.labels.map(l => `${l.name}=${l.value}`).join(',')}`
-      : '';
+      : ;
     return `${metric.type}:${metric.name}${labels}`;
   }
 

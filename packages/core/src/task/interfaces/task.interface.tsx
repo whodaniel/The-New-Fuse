@@ -1,4 +1,4 @@
-import { TaskStatus, TaskPriority } from '../entities/Task.js';
+import { TaskStatus, TaskPriority } from '../entities/Task.tsx';
 
 export interface TaskFilter {
   status?: TaskStatus[];

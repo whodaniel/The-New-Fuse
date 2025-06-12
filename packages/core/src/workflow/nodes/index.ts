@@ -3,11 +3,11 @@ import { ToolNodeHandler } from './tool-node.js';
 import { ConditionNodeHandler } from './condition-node.js';
 import { TransformNodeHandler } from './transform-node.js';
 import { DataNodeHandler } from './data-node.js';
-import { APINodeHandler } from './api-node.js';
-import { WebhookNodeHandler } from './webhook-node.js';
+import { APINodeHandler } from './api-node.tsx';
+import { WebhookNodeHandler } from './webhook-node.tsx';
 import { NotificationNodeHandler } from './notification-node.js';
-import { VectorStoreNodeHandler } from './vector-store-node.js';
-import { DocumentProcessingNodeHandler } from './document-processing-node.js';
+import { VectorStoreNodeHandler } from './vector-store-node.tsx';
+import { DocumentProcessingNodeHandler } from './document-processing-node.tsx';
 import { StorageNodeHandler } from './storage-node.js';
 
 export {

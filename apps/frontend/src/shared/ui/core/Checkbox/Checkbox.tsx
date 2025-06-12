@@ -1,9 +1,9 @@
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+const __rest = (this && this.__rest) || function (s, e) {
+    const t = {};
+    for (const p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
         t[p] = s[p];
     if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+        for (let i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
             if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
                 t[p[i]] = s[p[i]];
         }
@@ -40,7 +40,7 @@ const checkboxVariants = cva('peer h-4 w-4 shrink-0 rounded-sm border border-pri
     },
 });
 const Checkbox = React.forwardRef((_a, ref) => {
-    var { className, variant, size, state, error, success, label, description, indeterminate, containerClassName, labelClassName, descriptionClassName } = _a, props = __rest(_a, ["className", "variant", "size", "state", "error", "success", "label", "description", "indeterminate", "containerClassName", "labelClassName", "descriptionClassName"]);
+    const { className, variant, size, state, error, success, label, description, indeterminate, containerClassName, labelClassName, descriptionClassName } = _a, props = __rest(_a, ["className", "variant", "size", "state", "error", "success", "label", "description", "indeterminate", "containerClassName", "labelClassName", "descriptionClassName"]);
     const checkboxState = error ? 'error' : success ? 'success' : state;
     return (<div className={cn('flex items-start space-x-2', containerClassName)}>
         <CheckboxPrimitive.Root ref={ref} className={cn(checkboxVariants({ variant, size, state: checkboxState }), className)} {...props}>

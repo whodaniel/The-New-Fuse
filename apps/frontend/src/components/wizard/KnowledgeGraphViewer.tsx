@@ -5,7 +5,7 @@ import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import WizardProvider_1 from './WizardProvider.js';
+import WizardProvider_1 from './WizardProvider.tsx';
 const nodeTypes = {
     concept: ConceptNode,
     relation: RelationNode,

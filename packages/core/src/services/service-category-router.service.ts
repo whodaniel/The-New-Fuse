@@ -8,12 +8,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { AgencyHubCacheService } from './agency-hub-cache.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { 
-  Agent, 
+import { Agent, 
   Agency, 
   AgencyTier,
   User 
-} from '@prisma/client';
+ } from '@prisma/client;
 
 // =====================================================
 // SERVICE CATEGORY SYSTEM
@@ -24,9 +23,9 @@ export interface ServiceCategory {
   name: string;
   description: string;
   parentCategoryId?: string;
-  subcategories: string[];
-  requiredCapabilities: string[];
-  complexityLevel: 'SIMPLE' | 'MODERATE' | 'COMPLEX' | 'EXPERT';
+  subcategories: string[]';
+  requiredCapabilities: string[]';
+  complexityLevel:SIMPLE' | MODERATE' | COMPLEX' | EXPERT';
   estimatedDuration: {
     min: number; // hours
     max: number;
@@ -60,7 +59,7 @@ export interface ServiceProvider {
 
 export interface ProviderCapability {
   categoryId: string;
-  skillLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+  skillLevel:BEGINNER' | INTERMEDIATE' | ADVANCED' | EXPERT';
   specializations: string[];
   tools: string[];
   certifications: string[];
@@ -68,7 +67,7 @@ export interface ProviderCapability {
 }
 
 export interface ProviderAvailability {
-  status: 'AVAILABLE' | 'BUSY' | 'OFFLINE' | 'MAINTENANCE';
+  status:AVAILABLE' | BUSY' | OFFLINE' | MAINTENANCE';
   capacity: number; // 0-100%
   schedule: TimeSlot[];
   timezone: string;
@@ -113,7 +112,7 @@ export interface ProviderPricing {
 }
 
 export interface PricingDiscount {
-  type: 'VOLUME' | 'LOYALTY' | 'FIRST_TIME' | 'SEASONAL';
+  type:VOLUME' | LOYALTY' | FIRST_TIME' | SEASONAL';
   threshold: number;
   discountPercent: number;
   validUntil?: Date;
@@ -125,7 +124,7 @@ export interface ProviderCertification {
   issuedDate: Date;
   expiryDate?: Date;
   verificationUrl?: string;
-  level: 'BASIC' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+  level:BASIC' | INTERMEDIATE' | ADVANCED' | EXPERT';
 }
 
 export interface ServiceMatchingRequest {
@@ -139,12 +138,12 @@ export interface ServiceMatchingRequest {
 }
 
 export interface ServiceRequirements {
-  complexity: 'SIMPLE' | 'MODERATE' | 'COMPLEX' | 'EXPERT';
+  complexity:SIMPLE' | MODERATE' | COMPLEX' | EXPERT';
   skills: string[];
-  experience: 'ANY' | 'JUNIOR' | 'SENIOR' | 'EXPERT';
+  experience:ANY' | JUNIOR' | SENIOR' | EXPERT';
   tools: string[];
   deliverables: string[];
-  qualityLevel: 'BASIC' | 'STANDARD' | 'HIGH' | 'PREMIUM';
+  qualityLevel:BASIC' | STANDARD' | HIGH' | PREMIUM';
 }
 
 export interface ServiceConstraints {
@@ -156,7 +155,7 @@ export interface ServiceConstraints {
   timeline: {
     startDate?: Date;
     deadline: Date;
-    flexibility: 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH';
+    flexibility:NONE' | LOW' | MEDIUM' | HIGH';
   };
   location?: {
     required: boolean;
@@ -166,9 +165,9 @@ export interface ServiceConstraints {
 }
 
 export interface ServicePreferences {
-  providerType: 'ANY' | 'INDIVIDUAL' | 'TEAM' | 'SPECIALIST';
-  communication: 'MINIMAL' | 'REGULAR' | 'FREQUENT';
-  reporting: 'BASIC' | 'DETAILED' | 'COMPREHENSIVE';
+  providerType:ANY' | INDIVIDUAL' | TEAM' | SPECIALIST';
+  communication:MINIMAL' | REGULAR' | FREQUENT';
+  reporting:BASIC' | DETAILED' | COMPREHENSIVE';
   priorityFactors: {
     cost: number; // weight 0-1
     quality: number;
@@ -218,10 +217,10 @@ export class ServiceCategoryRouterService {
     const defaultCategories: ServiceCategory[] = [
       {
         id: 'business_analysis',
-        name: 'Business Analysis',
-        description: 'Business research, market analysis, competitive intelligence',
-        subcategories: ['market_research', 'competitive_analysis', 'business_planning'],
-        requiredCapabilities: ['research', 'analysis', 'reporting'],
+        name: Business 'Analysis',
+        description:Business research, market analysis, competitive intelligence',
+        subcategories: ['market_research', competitive_analysis', business_planning'],
+        requiredCapabilities: ['research', analysis', reporting'],
         complexityLevel: 'MODERATE',
         estimatedDuration: { min: 4, max: 40, typical: 16 },
         pricing: {
@@ -240,10 +239,10 @@ export class ServiceCategoryRouterService {
       },
       {
         id: 'content_creation',
-        name: 'Content Creation',
-        description: 'Content writing, blog posts, marketing materials, documentation',
-        subcategories: ['blog_writing', 'technical_writing', 'marketing_copy', 'documentation'],
-        requiredCapabilities: ['writing', 'creativity', 'research', 'editing'],
+        name: Content 'Creation',
+        description:Content writing, blog posts, marketing materials, documentation',
+        subcategories: ['blog_writing', technical_writing', marketing_copy', documentation'],
+        requiredCapabilities: ['writing', creativity', research', editing'],
         complexityLevel: 'MODERATE',
         estimatedDuration: { min: 2, max: 20, typical: 8 },
         pricing: {
@@ -262,10 +261,10 @@ export class ServiceCategoryRouterService {
       },
       {
         id: 'technical_development',
-        name: 'Technical Development',
-        description: 'Software development, system integration, technical implementation',
-        subcategories: ['web_development', 'api_development', 'system_integration', 'automation'],
-        requiredCapabilities: ['programming', 'system_design', 'testing', 'deployment'],
+        name: Technical 'Development',
+        description:Software development, system integration, technical implementation',
+        subcategories: ['web_development', api_development', system_integration', automation'],
+        requiredCapabilities: ['programming', system_design', testing', deployment'],
         complexityLevel: 'COMPLEX',
         estimatedDuration: { min: 8, max: 200, typical: 50 },
         pricing: {
@@ -284,10 +283,10 @@ export class ServiceCategoryRouterService {
       },
       {
         id: 'social_media_management',
-        name: 'Social Media Management',
-        description: 'Social media strategy, content scheduling, community management',
-        subcategories: ['strategy', 'content_scheduling', 'community_management', 'analytics'],
-        requiredCapabilities: ['social_media', 'marketing', 'communication', 'analytics'],
+        name: Social Media 'Management',
+        description:Social media strategy, content scheduling, community management',
+        subcategories: ['strategy', content_scheduling', community_management', analytics'],
+        requiredCapabilities: ['social_media', marketing', communication', analytics'],
         complexityLevel: 'MODERATE',
         estimatedDuration: { min: 1, max: 10, typical: 4 },
         pricing: {
@@ -306,10 +305,10 @@ export class ServiceCategoryRouterService {
       },
       {
         id: 'customer_support',
-        name: 'Customer Support',
-        description: 'Customer service, technical support, issue resolution',
-        subcategories: ['general_support', 'technical_support', 'escalation_handling'],
-        requiredCapabilities: ['communication', 'problem_solving', 'patience', 'technical_knowledge'],
+        name: Customer 'Support',
+        description:Customer service, technical support, issue resolution',
+        subcategories: ['general_support', technical_support', escalation_handling'],
+        requiredCapabilities: ['communication', problem_solving', patience', technical_knowledge'],
         complexityLevel: 'SIMPLE',
         estimatedDuration: { min: 0.25, max: 4, typical: 1 },
         pricing: {
@@ -589,16 +588,16 @@ export class ServiceCategoryRouterService {
    */
   private calculateExperienceScore(provider: ServiceProvider, requirements: ServiceRequirements): number {
     const experienceMap = {
-      'ANY': 0.5,
-      'JUNIOR': 0.6,
-      'SENIOR': 0.8,
-      'EXPERT': 1.0
+      ANY': 0.5,
+      JUNIOR': 0.6,
+      SENIOR': 0.8,
+      EXPERT': 1.0
     };
 
     const requiredLevel = experienceMap[requirements.experience] || 0.5;
     
     const avgSkillLevel = provider.capabilities.reduce((sum, cap) => {
-      const levelMap = { 'BEGINNER': 0.25, 'INTERMEDIATE': 0.5, 'ADVANCED': 0.75, 'EXPERT': 1.0 };
+      const levelMap = { BEGINNER': 0.25, INTERMEDIATE': 0.5, ADVANCED': 0.75, EXPERT': 1.0 };
       return sum + (levelMap[cap.skillLevel] || 0.5);
     }, 0) / provider.capabilities.length;
 
@@ -651,10 +650,9 @@ export class ServiceCategoryRouterService {
   private checkExperienceLevel(provider: ServiceProvider, requiredExperience: string): boolean {
     if (requiredExperience === 'ANY') return true;
     
-    const experienceOrder = ['ANY', 'JUNIOR', 'SENIOR', 'EXPERT'];
-    const providerLevel = provider.capabilities.some(cap => cap.skillLevel === 'EXPERT') ? 'EXPERT' :
-                         provider.capabilities.some(cap => cap.skillLevel === 'ADVANCED') ? 'SENIOR' :
-                         'JUNIOR';
+    const experienceOrder = ['ANY', JUNIOR', SENIOR', EXPERT'];
+    const providerLevel = provider.capabilities.some(cap => cap.skillLevel === 'EXPERT') ? EXPERT' :
+                         provider.capabilities.some(cap => cap.skillLevel === 'ADVANCED') ? 'SENIOR' :'JUNIOR';
     
     const requiredIndex = experienceOrder.indexOf(requiredExperience);
     const providerIndex = experienceOrder.indexOf(providerLevel);
@@ -752,7 +750,7 @@ export class ServiceCategoryRouterService {
       risks.push('Tight deadline');
     }
     
-    if (request.requirements.complexity === 'EXPERT' && 
+    if (request.requirements.complexity === EXPERT' && 
         !provider.capabilities.some(cap => cap.skillLevel === 'EXPERT')) {
       risks.push('Complexity mismatch');
     }
@@ -838,8 +836,8 @@ export class ServiceCategoryRouterService {
     for (let day = 0; day < 7; day++) {
       schedule.push({
         dayOfWeek: day,
-        startTime: '09:00',
-        endTime: '17:00',
+        startTime:09:00',
+        endTime: 17:00',
         available: day < 5 // Monday to Friday
       });
     }
@@ -848,20 +846,20 @@ export class ServiceCategoryRouterService {
 
   private getComplexityMultiplier(complexity: string): number {
     const multipliers = {
-      'SIMPLE': 0.8,
-      'MODERATE': 1.0,
-      'COMPLEX': 1.5,
-      'EXPERT': 2.0
+      SIMPLE': 0.8,
+      MODERATE': 1.0,
+      COMPLEX': 1.5,
+      EXPERT': 2.0
     };
     return multipliers[complexity] || 1.0;
   }
 
   private getComplexityPenalty(complexity: string): number {
     const penalties = {
-      'SIMPLE': 0,
-      'MODERATE': 0.05,
-      'COMPLEX': 0.1,
-      'EXPERT': 0.15
+      SIMPLE': 0,
+      MODERATE': 0.05,
+      COMPLEX': 0.1,
+      EXPERT': 0.15
     };
     return penalties[complexity] || 0;
   }

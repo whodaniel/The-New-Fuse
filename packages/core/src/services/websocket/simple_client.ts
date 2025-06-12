@@ -1,5 +1,5 @@
 // @ts-nocheck
-import { createClient, RedisClientType } from 'redis';
+import { createClient, RedisClientType } from ''redis';
 import { v4 as uuidv4 } from 'uuid';
 import { createHash } from 'crypto';
 import { Logger } from 'winston';
@@ -113,7 +113,7 @@ class AIInstance {
     try {
       await this.redisClient.connect();
     } catch (error) {
-      logger.error('Error initializing:', error instanceof Error ? error.message : String(error));
+      logger.error('Error initializing:, error instanceof Error ? error.message : String(error));
       throw error;
     }
   }
@@ -184,7 +184,7 @@ class AIInstance {
         }
       }
     } catch (error) {
-      logger.error('Error handling message:', error instanceof Error ? error.message : String(error));
+      logger.error('Error handling message:, error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -227,7 +227,7 @@ class AIInstance {
       await this.redisClient.publish('cascade_bridge', JSON.stringify(response));
       logger.info('Sent response', { response });
     } catch (error) {
-      logger.error('Error sending response:', error instanceof Error ? error.message : String(error));
+      logger.error('Error sending response:, error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -243,7 +243,7 @@ class AIInstance {
     try {
       await this.redisClient.publish('cascade_bridge', JSON.stringify(registration));
     } catch (error) {
-      logger.error('Error registering:', error instanceof Error ? error.message : String(error));
+      logger.error('Error registering:, error instanceof Error ? error.message : String(error));
     }
   }
 
@@ -254,7 +254,7 @@ class AIInstance {
       }
       await this.redisClient.quit();
     } catch (error) {
-      logger.error('Error disconnecting:', error instanceof Error ? error.message : String(error));
+      logger.error('Error disconnecting:, error instanceof Error ? error.message : String(error));
     }
   }
 }
@@ -276,7 +276,7 @@ async function main(): Promise<void> {
     // Prevent the process from exiting
     await new Promise(() => {});
   } catch (error) {
-    logger.error('Error in main:', error instanceof Error ? error.message : String(error));
+    logger.error('Error in main:, error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
 }

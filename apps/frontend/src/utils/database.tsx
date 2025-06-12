@@ -50,7 +50,7 @@ export class DatabaseConfig extends EventEmitter {
 
   async initializeRedis(): Promise<void> {
     try {
-      this.redis = new Redis({
+      this.redis = new (Redis as any)({
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379'),
         password: process.env.REDIS_PASSWORD

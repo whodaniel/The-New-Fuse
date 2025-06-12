@@ -7,12 +7,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface Message {
   id: string;
-  type: 'direct' | 'group' | 'broadcast';
+  type:direct' | group' | broadcast';
   senderId: string;
   recipients: string[];
   content: string;
   metadata: Record<string, unknown>;
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status:pending' | sent' | delivered' | read' | failed';
   timestamp: Date;
   expiresAt?: Date;
 }
@@ -21,7 +21,7 @@ interface Channel {
   id: string;
   name: string;
   description: string;
-  type: 'public' | 'private' | 'direct';
+  type:public' | private' | direct';
   members: string[];
   metadata: Record<string, unknown>;
   createdAt: Date;
@@ -32,7 +32,7 @@ interface Subscription {
   id: string;
   userId: string;
   channelId: string;
-  status: 'active' | 'muted' | 'blocked';
+  status:active' | muted' | blocked';
   metadata: Record<string, unknown>;
   createdAt: Date;
   updatedAt: Date;
@@ -41,7 +41,7 @@ interface Subscription {
 @Injectable()
 export class MessagingService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private readonly messageRetention: number;
   private readonly maxRecipientsPerMessage: number;
@@ -53,14 +53,14 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     this.db = db;
     this.redis = redis;
     // Initialize these from config or defaults
-    this.messageRetention = parseInt(process.env.MESSAGE_RETENTION_SECONDS || '604800', 10); // 7 days
-    this.maxRecipientsPerMessage = parseInt(process.env.MAX_RECIPIENTS_PER_MESSAGE || '100', 10);
-    this.maxMessageLength = parseInt(process.env.MAX_MESSAGE_LENGTH || '10000', 10);
+    this.messageRetention = parseInt(process.env.MESSAGE_RETENTION_SECONDS || 604800', 10); // 7 days
+    this.maxRecipientsPerMessage = parseInt(process.env.MAX_RECIPIENTS_PER_MESSAGE || 100', 10);
+    this.maxMessageLength = parseInt(process.env.MAX_MESSAGE_LENGTH || 10000', 10);
   }
 
   async onModuleInit(): Promise<void> {
     if (!this.db || !this.redis) {
-      const errorMessage = 'DatabaseService or Redis client is not initialized. Check dependency injection setup.';
+      const errorMessage = DatabaseService or Redis client is not initialized. Check dependency injection setup.';
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
@@ -77,7 +77,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     recipients: string[],
     content: string,
     options: {
-      type?: 'direct' | 'group' | 'broadcast';
+      type?:direct' | group' | broadcast';
       metadata?: Record<string, unknown>;
       expiresIn?: number; // in seconds
     } = {}
@@ -96,7 +96,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
 
       const message: Message = {
         id: uuidv4(),
-        type: options.type || 'direct',
+        type: options.type || direct',
         senderId,
         recipients,
         content,
@@ -122,7 +122,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
 
       // Update message status
       message.status = 'sent';
-      await this.updateMessageStatus(message.id, 'sent');
+      await this.updateMessageStatus(message.id, sent');
 
       // Notify recipients (e.g., via Redis pub/sub or WebSocket)
       await this.notifyRecipients(message);
@@ -136,8 +136,8 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
 
       return message;
     } catch (error: unknown) {
-      this.logger.error('Failed to send message:', error);
-      // Optionally, update message status to 'failed' in DB
+      this.logger.error('Failed to send message:, error);
+      // Optionally, update message status to failed' in DB
       // Rethrow or handle as appropriate for your application
       throw error; // Rethrowing for now
     }
@@ -148,7 +148,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     await this.redis.set(
       key,
       JSON.stringify(message),
-      'EX', // Set expiration
+      EX', // Set expiration
       this.messageRetention // Use configured retention time
     );
   }
@@ -172,7 +172,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     name: string,
     options: {
       description?: string;
-      type?: 'public' | 'private' | 'direct';
+      type?:public' | private' | direct';
       members?: string[];
       metadata?: Record<string, unknown>;
     } = {}
@@ -181,7 +181,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
       const channel: Channel = {
         id: uuidv4(),
         name,
-        description: options.description || '',
+        description: options.description || ,
         type: options.type || 'public',
         members: options.members || [],
         metadata: options.metadata || {},
@@ -213,7 +213,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
 
       return channel;
     } catch (error: unknown) {
-      this.logger.error('Failed to create channel:', error);
+      this.logger.error('Failed to create channel:, error);
       throw error;
     }
   }
@@ -222,7 +222,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     userId: string,
     channelId: string,
     options: {
-      status?: 'active' | 'muted' | 'blocked';
+      status?: active' | muted' | blocked';
       metadata?: Record<string, unknown>;
     } = {}
   ): Promise<Subscription> {
@@ -231,7 +231,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
         id: uuidv4(),
         userId,
         channelId,
-        status: options.status || 'active',
+        status: options.status || active',
         metadata: options.metadata || {},
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -249,7 +249,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
       // Prisma specific update for JSON array:
       const channel = await this.db.channels.findUnique({ where: { id: channelId } });
       if (channel) {
-        const members = JSON.parse(channel.members as string || '[]') as string[];
+        const members = JSON.parse(channel.members as string || []') as string[];
         if (!members.includes(userId)) {
           members.push(userId);
           await this.db.channels.update({
@@ -266,7 +266,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
       });
       return subscription;
     } catch (error: unknown) {
-      this.logger.error('Failed to create subscription:', error);
+      this.logger.error('Failed to create subscription:, error);
       throw error;
     }
   }
@@ -283,7 +283,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
       // Remove user from channel members list
       const channel = await this.db.channels.findUnique({ where: { id: channelId } });
       if (channel) {
-        let members = JSON.parse(channel.members as string || '[]') as string[];
+        let members = JSON.parse(channel.members as string || []') as string[];
         members = members.filter(id => id !== userId);
         await this.db.channels.update({
           where: { id: channelId },
@@ -296,7 +296,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
         channelId,
       });
     } catch (error: unknown) {
-      this.logger.error('Failed to delete subscription:', error);
+      this.logger.error('Failed to delete subscription:, error);
       throw error;
     }
   }
@@ -305,7 +305,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     options: {
       channelId?: string;
       userId?: string; // To get messages for a specific user (sent or received)
-      status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+      status?: pending' | sent' | delivered' | read' | failed';
       startTime?: Date;
       endTime?: Date;
       limit?: number;
@@ -337,15 +337,15 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     // Parse recipients and metadata back to objects
     return dbMessages.map(msg => ({
         ...msg,
-        recipients: JSON.parse(msg.recipients as string || '[]'),
-        metadata: JSON.parse(msg.metadata as string || '{}'),
+        recipients: JSON.parse(msg.recipients as string || []'),
+        metadata: JSON.parse(msg.metadata as string || {}'),
     })) as Message[];
   }
 
   async getChannels(
     options: {
       userId?: string; // Get channels a user is a member of
-      type?: 'public' | 'private' | 'direct';
+      type?:public' | private' | direct';
       limit?: number;
       offset?: number;
     } = {}
@@ -364,14 +364,14 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     });
     return dbChannels.map(ch => ({
         ...ch,
-        members: JSON.parse(ch.members as string || '[]'),
-        metadata: JSON.parse(ch.metadata as string || '{}'),
+        members: JSON.parse(ch.members as string || []'),
+        metadata: JSON.parse(ch.metadata as string || {}'),
     })) as Channel[];
   }
 
   async updateMessageStatus(
     messageId: string,
-    status: 'sent' | 'delivered' | 'read' | 'failed'
+    status:sent' | delivered' | read' | failed'
   ): Promise<void> {
     try {
       await this.db.messages.update({
@@ -400,7 +400,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
     try {
       await Promise.all(
         messageIds.map(id =>
-          this.updateMessageStatus(id, 'read')
+          this.updateMessageStatus(id, read')
         )
       );
 
@@ -409,7 +409,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
         messageCount: messageIds.length,
       });
     } catch (error: unknown) {
-      this.logger.error('Failed to mark messages as read:', error);
+      this.logger.error('Failed to mark messages as read:, error);
       throw error;
     }
   }
@@ -434,7 +434,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
       });
       this.logger.info('Expired messages cleaned up.');
     } catch (error: unknown) {
-      this.logger.error('Failed to cleanup expired messages:', error);
+      this.logger.error('Failed to cleanup expired messages:, error);
       // Do not rethrow, as this is a background task
     }
   }
@@ -442,7 +442,7 @@ export class MessagingService extends EventEmitter implements OnModuleInit {
   async clearHistory(
     options: {
       olderThan?: Date;
-      status?: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+      status?: pending' | sent' | delivered' | read' | failed';
       channelId?: string; // Optional: clear history for a specific channel
     } = {}
   ): Promise<void> {

@@ -1,4 +1,4 @@
-import { AssetCategory } from '../classification/assetClassifier.js';
+import { AssetCategory } from '../classification/assetClassifier.tsx';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
 import { v4 as uuidv4 } from 'uuid';

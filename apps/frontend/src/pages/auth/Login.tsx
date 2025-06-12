@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../../providers/AuthProvider.js';
+import { useAuth } from '../../providers/AuthProvider.tsx';
 import { Navigate, useNavigate, Link } from 'react-router-dom';
 
 const Login: React.FC = () => {

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CommunicationService } from './CommunicationService.js';
-import { MessageBroker } from './MessageBroker.js';
-import { CommunicationProtocol } from './Protocol.js';
+import { CommunicationService } from './CommunicationService.tsx';
+import { MessageBroker } from './MessageBroker.tsx';
+import { CommunicationProtocol } from './Protocol.tsx';
 
 @Module({
   providers: [

@@ -46,8 +46,8 @@ export class TenantGuard implements CanActivate {
       this.logger.debug(`Tenant context resolved for agency: ${tenantContext.agencyId}`);
       
       return true;
-    } catch (error) {
-      this.logger.error(`Tenant guard error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Tenant guard error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -56,7 +56,7 @@ export class TenantGuard implements CanActivate {
     // Try to get agency from subdomain
     const subdomain = this.extractSubdomain(request.get('host'));
     
-    if (subdomain && subdomain !== 'www' && subdomain !== 'api') {
+    if (subdomain && subdomain !== www' && subdomain !== 'api') {
       return this.resolveAgencyBySubdomain(subdomain);
     }
 
@@ -169,34 +169,34 @@ export class TenantGuard implements CanActivate {
 
   private getAgencyFeatures(tier: string): string[] {
     const featureMap = {
-      TRIAL: ['basic_agents', 'basic_workspaces'],
-      STARTER: ['basic_agents', 'basic_workspaces', 'swarm_orchestration'],
+      TRIAL: ['basic_agents', basic_workspaces'],
+      STARTER: ['basic_agents', basic_workspaces', swarm_orchestration'],
       PROFESSIONAL: [
-        'basic_agents', 
-        'basic_workspaces', 
-        'swarm_orchestration',
-        'service_routing',
-        'advanced_analytics'
+        basic_agents', 
+        basic_workspaces', 
+        swarm_orchestration',
+        service_routing',
+        advanced_analytics'
       ],
       ENTERPRISE: [
-        'basic_agents', 
-        'basic_workspaces', 
-        'swarm_orchestration',
-        'service_routing',
-        'advanced_analytics',
-        'custom_branding',
-        'priority_support'
+        basic_agents', 
+        basic_workspaces', 
+        swarm_orchestration',
+        service_routing',
+        advanced_analytics',
+        custom_branding',
+        priority_support'
       ],
       WHITE_LABEL: [
-        'basic_agents', 
-        'basic_workspaces', 
-        'swarm_orchestration',
-        'service_routing',
-        'advanced_analytics',
-        'custom_branding',
-        'priority_support',
-        'white_label_removal',
-        'custom_domains'
+        basic_agents', 
+        basic_workspaces', 
+        swarm_orchestration',
+        service_routing',
+        advanced_analytics',
+        custom_branding',
+        priority_support',
+        white_label_removal',
+        custom_domains'
       ]
     };
 

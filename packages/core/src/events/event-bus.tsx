@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from ''inversify';
 import { Logger } from '@the-new-fuse/utils/logger';
 
 export type EventHandler = (data: unknown) => void | Promise<void>;

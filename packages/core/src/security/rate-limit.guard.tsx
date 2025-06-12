@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { Reflector } from '@nestjs/core';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { IpBlockingService } from './ip-blocking.service.js';
+import { IpBlockingService } from './ip-blocking.service.tsx';
 import { Request } from 'express';
 
 export interface RateLimitOptions {
@@ -41,10 +41,10 @@ export class RateLimitGuard implements CanActivate {
   ) {
     // Load default options from config
     this.defaultOptions = {
-      limit: this.configService.get<number>('security.rateLimit.limit', 100),
-      windowMs: this.configService.get<number>('security.rateLimit.windowMs', 60000), // 1 minute
-      message: this.configService.get<string>('security.rateLimit.message', 'Too many requests, please try again later'),
-      keyPrefix: this.configService.get<string>('security.rateLimit.keyPrefix', 'rl:')
+      limit: this.configService.get<number>('security.rateLimit.'limit', 100),
+      windowMs: this.configService.get<number>('security.rateLimit.'windowMs', 60000), // 1 minute
+      message: this.configService.get<string>('security.rateLimit.'message', Too many requests, please try again later'),
+      keyPrefix: this.configService.get<string>('security.rateLimit.'keyPrefix', rl:)
     };
 
     // Set up cleanup interval
@@ -102,7 +102,7 @@ export class RateLimitGuard implements CanActivate {
       this.logger.warn(`Rate limit exceeded for IP: ${ip}, route: ${route}`);
       
       // Emit event
-      this.eventEmitter.emit('security.rateLimitExceeded', {
+      this.eventEmitter.emit('security.'rateLimitExceeded', {
         ip,
         path: route,
         limit: options.limit,
@@ -111,10 +111,10 @@ export class RateLimitGuard implements CanActivate {
       
       // Set headers
       const response = context.switchToHttp().getResponse();
-      response.header('Retry-After', Math.ceil((entry.resetTime - now) / 1000));
-      response.header('X-RateLimit-Limit', options.limit);
-      response.header('X-RateLimit-Remaining', 0);
-      response.header('X-RateLimit-Reset', Math.ceil(entry.resetTime / 1000));
+      response.header('Retry-After, Math.ceil((entry.resetTime - now) / 1000));
+      response.header('X-RateLimit-Limit, options.limit);
+      response.header('X-RateLimit-Remaining, 0);
+      response.header('X-RateLimit-Reset, Math.ceil(entry.resetTime / 1000));
       
       throw new HttpException(options.message, HttpStatus.TOO_MANY_REQUESTS);
     }
@@ -125,9 +125,9 @@ export class RateLimitGuard implements CanActivate {
     
     // Set headers
     const response = context.switchToHttp().getResponse();
-    response.header('X-RateLimit-Limit', options.limit);
-    response.header('X-RateLimit-Remaining', options.limit - entry.count);
-    response.header('X-RateLimit-Reset', Math.ceil(entry.resetTime / 1000));
+    response.header('X-RateLimit-Limit, options.limit);
+    response.header('X-RateLimit-Remaining, options.limit - entry.count);
+    response.header('X-RateLimit-Reset, Math.ceil(entry.resetTime / 1000));
     
     return true;
   }

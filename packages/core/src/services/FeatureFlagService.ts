@@ -18,7 +18,7 @@ export class FeatureFlagService {
     return this.features.get(id) || null;
   }
 
-  async createFeature(feature: Omit<FeatureFlag, 'id' | 'metadata'>): Promise<FeatureFlag> {
+  async createFeature(feature: Omit<FeatureFlag, 'id' | metadata'>): Promise<FeatureFlag> {
     const id = `feature_${Date.now()}`;
     const now = new Date();
 
@@ -96,12 +96,12 @@ export class FeatureFlagService {
 
   private checkDeviceTypeCondition(deviceTypes: string[] | undefined, context: FeatureFlagContext): boolean {
     if (!deviceTypes || deviceTypes.length === 0) return true;
-    return deviceTypes.includes(context.deviceType || 'desktop');
+    return deviceTypes.includes(context.deviceType || desktop');
   }
 
   private checkRegionCondition(regions: string[] | undefined, context: FeatureFlagContext): boolean {
     if (!regions || regions.length === 0) return true;
-    return regions.includes(context.region || '');
+    return regions.includes(context.region || );
   }
 
   private checkDateRangeCondition(dateRange: { startDate?: Date; endDate?: Date } | undefined): boolean {
@@ -127,7 +127,7 @@ export class FeatureFlagService {
     // Generate a consistent hash if sticky is enabled
     const hashInput = sticky && context.userId 
       ? `${seed || ''}_${context.userId}`
-      : `${seed || ''}_${Date.now()}`;
+      : `${seed || }_${Date.now()}`;
 
     const hash = crypto.createHash('sha256').update(hashInput).digest('hex');
     const hashNum = parseInt(hash.slice(0, 8), 16);

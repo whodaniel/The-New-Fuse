@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
 import { Request } from 'express';
 
 export enum VersioningStrategy {
   URI = 'uri',
   HEADER = 'header',
-  MEDIA_TYPE = 'media-type',
-  QUERY_PARAM = 'query-param'
+  MEDIA_TYPE = media-type,
+  QUERY_PARAM = query-param
 }
 
 export interface ApiVersionConfig {
@@ -34,14 +34,14 @@ export class ApiVersioningService {
     
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('api.versioning.enabled', true),
-      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.URI),
-      defaultVersion: this.configService.get<string>('api.versioning.defaultVersion', '1'),
-      supportedVersions: this.configService.get<string[]>('api.versioning.supportedVersions', ['1']),
-      headerName: this.configService.get<string>('api.versioning.headerName', 'x-api-version'),
-      queryParamName: this.configService.get<string>('api.versioning.queryParamName', 'version'),
-      deprecatedVersions: this.configService.get<string[]>('api.versioning.deprecatedVersions', []),
-      sunsetVersions: this.configService.get<Record<string, Date>>('api.versioning.sunsetVersions', {})
+      enabled: this.configService.get<boolean>('api.versioning.'enabled', true),
+      strategy: this.configService.get<VersioningStrategy>('api.versioning.'strategy', VersioningStrategy.URI),
+      defaultVersion: this.configService.get<string>('api.versioning.'defaultVersion', 1'),
+      supportedVersions: this.configService.get<string[]>('api.versioning.'supportedVersions', ['1']),
+      headerName: this.configService.get<string>('api.versioning.'headerName', x-api-version'),
+      queryParamName: this.configService.get<string>('api.versioning.'queryParamName', version'),
+      deprecatedVersions: this.configService.get<string[]>('api.versioning.'deprecatedVersions', []),
+      sunsetVersions: this.configService.get<Record<string, Date>>('api.versioning.'sunsetVersions', {})
     };
     
     this.logger.info('API versioning service initialized', {
@@ -128,11 +128,11 @@ export class ApiVersioningService {
     }
     
     // Add current version header
-    response.header('x-api-version', version);
+    response.header('x-api-version, version);
     
     // Add deprecation header if applicable
     if (this.isVersionDeprecated(version)) {
-      response.header('Deprecation', 'true');
+      response.header('Deprecation', true');
     }
     
     // Add sunset header if applicable

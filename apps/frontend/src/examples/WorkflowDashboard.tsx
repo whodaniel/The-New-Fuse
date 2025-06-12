@@ -1,8 +1,8 @@
 import React from 'react';
-import { ConnectionManager } from '../components/ConnectionManager.js';
-import { StatusMonitor } from '../components/StatusMonitor.js';
-import { ActivityFeed } from '../components/ActivityFeed.js';
-import { AgentWorkflowManager } from '../components/AgentWorkflowManager.js';
+import { ConnectionManager } from '../components/ConnectionManager.tsx';
+import { StatusMonitor } from '../components/StatusMonitor.tsx';
+import { ActivityFeed } from '../components/ActivityFeed.tsx';
+import { AgentWorkflowManager } from '../components/AgentWorkflowManager.tsx';
 
 export function WorkflowDashboard() {
   return (

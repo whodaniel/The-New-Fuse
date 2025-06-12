@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Toast } from './index.js';
-import { ToastProps, ToasterToast } from '../types.js';
+import { Toast } from './index.tsx';
+import { ToastProps, ToasterToast } from '../types.tsx';
 
 // Define toast context
 interface ToastContextType {

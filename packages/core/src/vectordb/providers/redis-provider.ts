@@ -1,5 +1,5 @@
-import { createClient, RedisClientType } from 'redis';
-import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.js';
+import { createClient, RedisClientType } from ''redis';
+import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.tsx';
 
 export class RedisProvider implements VectorStoreProvider {
   public readonly name = 'redis';

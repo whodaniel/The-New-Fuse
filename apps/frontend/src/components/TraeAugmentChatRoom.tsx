@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@ui-components/consolidated";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import AgentMessage from './agent-message.js';
+import AgentMessage from './agent-message.tsx';
 import { webSocketService } from '../services/websocket.js';
 
 interface Message {

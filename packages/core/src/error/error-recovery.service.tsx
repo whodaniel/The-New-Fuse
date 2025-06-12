@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseError, ErrorCategory, DatabaseError, NetworkError } from './types.js';
+import { BaseError, ErrorCategory, DatabaseError, NetworkError } from './types.tsx';
 import { RetryStrategy } from '../utils/retry.js';
 
 @Injectable()
@@ -47,18 +47,18 @@ export class ErrorRecoveryService {
 
   private async handleDatabaseError(error: DatabaseError): Promise<void> {
     switch (error.code) {
-      case 'CONNECTION_LOST':
+      case CONNECTION_LOST':
         await this.retryStrategy.execute(async () => {
           await this.db.reconnect();
         }, 3);
         break;
 
-      case 'TRANSACTION_FAILED':
+      case TRANSACTION_FAILED':
         await this.db.rollbackTransaction();
         await this.retryStrategy.execute(() => this.db.retryTransaction(), 2);
         break;
 
-      case 'TIMEOUT':
+      case TIMEOUT':
         await this.db.clearConnections();
         await this.db.initialize();
         break;
@@ -70,7 +70,7 @@ export class ErrorRecoveryService {
 
   private async handleNetworkError(error: NetworkError): Promise<void> {
     switch (error.code) {
-      case 'REQUEST_TIMEOUT':
+      case REQUEST_TIMEOUT':
         await this.retryStrategy.execute(async () => {
           await this.network.resetConnection();
           const backoffTime = Math.min(1000 * Math.pow(2, error.attempts || 0), 32000);
@@ -78,7 +78,7 @@ export class ErrorRecoveryService {
         }, 3);
         break;
 
-      case 'SERVICE_UNAVAILABLE':
+      case SERVICE_UNAVAILABLE':
         await this.network.switchToFallbackService();
         break;
 

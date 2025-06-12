@@ -1,5 +1,5 @@
 import { NodeTypes } from 'reactflow';
-import AINewsAgentNode from './AINewsAgentNode.js';
+import AINewsAgentNode from './AINewsAgentNode.tsx';
 import { defaultNewsAgentData } from './types.js';
 
 /**
@@ -25,5 +25,5 @@ export const createAINewsAgentNode = (x: number, y: number) => {
 };
 
 // Export components and types for direct usage
-export { default as AINewsAgentNode } from './AINewsAgentNode.js';
+export { default as AINewsAgentNode } from './AINewsAgentNode.tsx';
 export * from './types.js';

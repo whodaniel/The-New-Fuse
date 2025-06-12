@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from '@the-new-fuse/utils';
 import { 
   MetricsCollectorOptions, 
@@ -30,7 +30,7 @@ interface CounterMetric {
 }
 
 export class MetricsCollector {
-  private redis: Redis;
+  private redis: any;
   private readonly options: Required<MetricsCollectorOptions>;
   private metricsHistory: MetricsHistoryEntry[] = [];
   private collectionInterval: NodeJS.Timeout | null = null;
@@ -40,7 +40,7 @@ export class MetricsCollector {
   constructor(redis: Redis, options: MetricsCollectorOptions = {}) {
     this.redis = redis;
     this.options = {
-      metricsPrefix: options.metricsPrefix ?? 'metrics:',
+      metricsPrefix: options.metricsPrefix ?? metrics:,
       retentionPeriod: options.retentionPeriod ?? 86400,
       aggregationInterval: options.aggregationInterval ?? 60000,
       maxDataPoints: options.maxDataPoints ?? 1000
@@ -56,7 +56,7 @@ export class MetricsCollector {
       await this.collectMetrics();
       this.collectionInterval = setInterval(() => {
         this.collectMetrics().catch(error => {
-          logger.error('Error collecting metrics:', error);
+          logger.error('Error collecting metrics:, error);
         });
       }, this.options.aggregationInterval);
     } catch (error) {
@@ -89,7 +89,7 @@ export class MetricsCollector {
       await this.storeMetricsInRedis(snapshot);
 
     } catch (error) {
-      logger.error('Error collecting metrics:', error);
+      logger.error('Error collecting metrics:, error);
       throw error;
     }
   }
@@ -141,10 +141,10 @@ export class MetricsCollector {
 
     const lines = info.split('\n');
     for (const line of lines) {
-      if (line.includes('connected_clients:')) {
+      if (line.includes('connected_clients:)) {
         metrics.connectedClients = parseInt(line.split(':')[1]);
       }
-      if (line.includes('used_memory:')) {
+      if (line.includes('used_memory:)) {
         metrics.usedMemoryBytes = parseInt(line.split(':')[1]);
       }
       // Parse other metrics...
@@ -170,7 +170,7 @@ export class MetricsCollector {
     try {
       return await this.getMetricsSnapshot();
     } catch (error) {
-      logger.error('Error getting latest metrics:', error);
+      logger.error('Error getting latest metrics:, error);
       return null;
     }
   }
@@ -199,7 +199,7 @@ export class MetricsCollector {
         this.redis.expire(`${key}:tags:${Date.now()}`, this.options.retentionPeriod)
       ]);
     } catch (error) {
-      logger.error('Failed to record request size:', error);
+      logger.error('Failed to record request size:, error);
     }
   }
 

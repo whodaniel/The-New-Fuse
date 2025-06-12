@@ -5,7 +5,7 @@
 Ensure your system meets these requirements:
 
 - Node.js 18+
-- Yarn 4.6.0+
+- Bun 1.1.38+
 - Docker 24.0+
 - Docker Compose 2.20+
 - PostgreSQL 17.0+
@@ -37,10 +37,10 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 ```bash
 # Install all dependencies
-yarn install
+bun install
 
 # Generate Prisma client
-yarn workspace @the-new-fuse/database generate
+bun run --filter @the-new-fuse/database generate
 ```
 
 ### 4. Database Setup
@@ -50,21 +50,21 @@ yarn workspace @the-new-fuse/database generate
 docker-compose up -d postgres
 
 # Run migrations
-yarn workspace @the-new-fuse/database migrate:deploy
+bun run --filter @the-new-fuse/database migrate:deploy
 
 # Seed database (optional)
-yarn workspace @the-new-fuse/database seed
+bun run --filter @the-new-fuse/database seed
 ```
 
 ### 5. Start Services
 
 ```bash
 # Development mode
-yarn dev
+bun dev
 
 # Production mode
-yarn build
-yarn start
+bun run build
+bun start
 ```
 
 ## Docker Installation
@@ -112,11 +112,11 @@ curl http://localhost:8000/health
 
 ```bash
 # Run all tests
-yarn test
+bun test
 
 # Run specific tests
-yarn test:api
-yarn test:frontend
+bun run test:api
+bun run test:frontend
 ```
 
 ## Troubleshooting

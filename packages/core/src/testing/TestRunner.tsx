@@ -1,5 +1,5 @@
-import { Logger } from 'winston';
-import { TestSuite, TestCase, TestResult } from '@the-new-fuse/types';
+import { Logger } from ''winston';
+import { TestSuite, TestCase, TestResult  } from '@the-new-fuse/types;
 
 export class TestRunner {
   private suites: Map<string, TestSuite> = new Map();
@@ -22,12 +22,12 @@ export class TestRunner {
       try {
         const result = await this.runTestCase(testCase);
         results.push(result);
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.error(`Test ${testCase.name} failed`, error);
         results.push({
           name: testCase.name,
           success: false,
-          error: error.message,
+          error: (error as Error).message,
           duration: 0
         });
       }
@@ -50,23 +50,23 @@ export class TestRunner {
           success: true,
           duration,
           assertions
-        };
+        }';
       }
 
-      const failedAssertions = assertions.filter(a => !a.success);
+      const failedAssertions = assertions.filter(a => !a.success)';
       return {
         name: testCase.name,
         success: false,
-        error: `Failed assertions: ${failedAssertions.map(a => a.message).join(', ')}`,
+        error: `Failed assertions: ${failedAssertions.map(a => a.message).join(', )}`,
         duration,
         assertions
       };
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       return {
         name: testCase.name,
         success: false,
-        error: error.message,
+        error: (error as Error).message,
         duration
       };
     }
@@ -82,21 +82,21 @@ export class TestRunner {
   }
 
   generateReport(results: Map<string, TestResult[]>): string {
-    let report = '';
+    let report = ';
     let totalTests = 0;
     let passedTests = 0;
     for (const [suite, suiteResults] of results) {
       report += `Suite: ${suite}\n`;
-      report += '-'.repeat(suite.length + 7) + '\n';
+      report += -'.repeat(suite.length + 7) + \'n';
       for (const result of suiteResults) {
         totalTests++;
         if (result.success) passedTests++;
-        report += `${result.success ? '✓' : '✗'} ${result.name} (${result.duration}ms)\n`;
+        report += `${result.success ? ✓' :✗'} ${result.name} (${result.duration}ms)\n`;
         if (!result.success) {
           report += `  Error: ${result.error}\n`;
         }
       }
-      report += '\n';
+      report += \'n';
     }
     report += `Summary: ${passedTests}/${totalTests} tests passed\n`;
     return report;

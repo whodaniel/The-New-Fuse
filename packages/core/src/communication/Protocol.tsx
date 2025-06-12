@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from ''zod';
 import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/utils';
 import crypto from 'crypto'; // Import crypto for UUID
@@ -8,8 +8,8 @@ export const MessageHeaderSchema = z.object({
   id: z.string().uuid(),
   timestamp: z.date(),
   version: z.string(),
-  priority: z.enum(['low', 'medium', 'high', 'critical']),
-  type: z.enum(['request', 'response', 'event', 'error']),
+  priority: z.enum(['low', medium', high', critical']),
+  type: z.enum(['request', response', event', error']),
   source: z.object({
     id: z.string(),
     type: z.string(), // Added type for source/target
@@ -59,7 +59,7 @@ export enum MessageType {
 // Protocol Implementation
 export class CommunicationProtocol extends EventEmitter {
   private logger: Logger;
-  private version: string = '1.0.0'; // Example version
+  private version: string = 1.0.0'; // Example version
   private handlers: Map<string, Set<(message: Message) => Promise<void>>> = new Map();
 
   constructor() {
@@ -71,9 +71,9 @@ export class CommunicationProtocol extends EventEmitter {
     try {
       return MessageSchema.parse(message);
     } catch (error) {
-      this.logger.error('Message validation failed:', error);
+      this.logger.error('Message validation failed:, error);
       // Re-throw or handle specific validation errors as needed
-      throw new Error(`Message validation failed: ${error instanceof z.ZodError ? error.errors.map(e => e.message).join(', ') : error}`);
+      throw new Error(`Message validation failed: ${error instanceof z.ZodError ? error.errors.map(e => e.message).join(', ) : error}`);
     }
   }
 
@@ -115,7 +115,7 @@ export class CommunicationProtocol extends EventEmitter {
     try {
       this.validateMessage(message);
     } catch (validationError) {
-      this.logger.error('Failed to create valid message:', validationError);
+      this.logger.error('Failed to create valid message:, validationError);
       // Decide how to handle this - throw, return null, etc.
       throw validationError;
     }
@@ -171,7 +171,7 @@ export class CommunicationProtocol extends EventEmitter {
       }
 
     } catch (error) {
-      this.logger.error('Error handling message:', error);
+      this.logger.error('Error handling message:, error);
       this.emit('messageError', { message, error });
       // If validation failed or other error occurred, potentially create an error response
       if (validatedMessage!) { // Only if validation succeeded before error
@@ -186,11 +186,11 @@ export class CommunicationProtocol extends EventEmitter {
   createErrorResponse(originalMessage: Message, error: Error): Message {
     return this.createMessage(
       MessageType.ERROR,
-      'error',
+      error',
       {
         message: error.message,
         // Optionally include stack in dev mode
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+        stack: process.env.NODE_ENV === development' ? error.stack : undefined,
         originalAction: originalMessage.payload.action
       },
       {

@@ -1,24 +1,24 @@
 import { Type } from '@nestjs/common';
-import { SchemaValidator } from './schemaValidator.js';
-// Correct the import path for ApiEnums
-import { ProtocolType, SecurityScheme } from '@the-new-fuse/database'; // Corrected import path
+import { SchemaValidator } from './schemaValidator';
+import { ProtocolType } from '@the-new-fuse/core';
+import { SecurityScheme } from '@the-new-fuse/types';
 
-export interface ContractDefinition<T> {
+export interface ContractDefinition<T = any> { // Added default type for T
   method: string;
   path: string;
-  requestSchema: Type<any>;
-  responseSchema: Type<any>;
+  requestSchema: Type<any>; // Consider using T here if appropriate
+  responseSchema: Type<any>; // Consider using T here if appropriate
   protocol: ProtocolType;
   security?: SecurityScheme;
 }
 
 export class ContractEnforcer {
-  private contracts: Map<string, ContractDefinition<any>> = new Map();
+  private contracts: Map<string, ContractDefinition<any>> = new Map(); // Use <any> here
 
   /**
    * Register a new API contract
    */
-  registerContract(name: string, contract: ContractDefinition): void { // Ensure <T> is removed
+  registerContract(name: string, contract: ContractDefinition): void { // Removed <T> from ContractDefinition here
     this.contracts.set(name, contract);
   }
 
@@ -58,7 +58,7 @@ export class ContractEnforcer {
     return `
 import { Test } from '@nestjs/testing';
 import { ${contract.requestSchema.name}, ${contract.responseSchema.name} } from './types.js';
-import { SchemaValidator } from './schemaValidator.js';
+import { SchemaValidator } from './schemaValidator';
 
 describe('${contractName} Contract Tests', () => {
   let validator: SchemaValidator;

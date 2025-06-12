@@ -1,4 +1,4 @@
-import { User } from '../entities/User.js';
+import { User } from '../entities/User';
 export declare const authService: {
     register({ name, email, password }: {
         name: string;

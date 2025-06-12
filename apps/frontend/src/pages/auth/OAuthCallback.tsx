@@ -1,5 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth.js';
+import { useAuth } from '../../hooks/useAuth.tsx';
 const OAuthCallback = () => {
     const navigate = useNavigate();
     const location = useLocation();

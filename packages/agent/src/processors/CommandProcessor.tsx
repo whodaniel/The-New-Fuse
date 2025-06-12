@@ -1,8 +1,8 @@
 import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
 import { Logger } from '@the-new-fuse/utils';
 import { Command, CommandResult, Message, MessageType, UUID } from '@the-new-fuse/types';
-import { InterAgentChatService } from '../services/InterAgentChatService.js'; // Corrected import
-import { RedisService } from '../services/RedisService.js'; // Corrected import
+import { InterAgentChatService } from '../services/InterAgentChatService.tsx'; // Corrected import
+import { RedisService } from '../services/RedisService.tsx'; // Corrected import
 // Import other necessary services or types
 
 /**

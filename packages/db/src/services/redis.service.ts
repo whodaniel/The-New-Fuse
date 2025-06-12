@@ -5,7 +5,7 @@ class RedisService {
     private subscribers: Map<string, any>;
 
     constructor(config: { host: string; port: number; password: string; db?: number }) {
-        this.client = new Redis({
+        this.client = new (Redis as any)({
             host: config.host,
             port: config.port,
             password: config.password,
@@ -62,14 +62,14 @@ class RedisService {
     }
 
     async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
-        const subscriber = new Redis({
+        const subscriber = new (Redis as any)({
             host: this.client.options.host,
             port: this.client.options.port,
             password: this.client.options.password,
             db: this.client.options.db,
         });
         await subscriber.subscribe(channel);
-        subscriber.on('message', (ch, message) => {
+        subscriber.on('message', (ch: string, message: string) => {
             if (ch === channel) {
                 callback(message);
             }

@@ -1,8 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MarketplaceGrid = void 0;
 import react_1 from 'react';
-import MarketplaceCard_1 from './MarketplaceCard.js';
-import FilterBar_1 from './FilterBar.js';
+import MarketplaceCard_1 from './MarketplaceCard.tsx';
+import FilterBar_1 from './FilterBar.tsx';
 import useToast_1 from '@/hooks/useToast';
 const MarketplaceGrid = ({ initialItems, categories, tags, }) => {
     const [items, setItems] = (0, react_1.useState)(initialItems);

@@ -7,7 +7,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import Redis from 'ioredis';
+import * as Redis from 'ioredis';
 
 export interface StreamMessage {
   id: string;
@@ -52,7 +52,7 @@ export interface StreamStats {
 @Injectable()
 export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(RedisStreamsService.name);
-  private redis: Redis;
+  private redis: any;
   private subscriber: Redis;
   private consumers = new Map<string, boolean>();
   private streamStats = new Map<string, StreamStats>();
@@ -87,15 +87,15 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       lazyConnect: true,
     };
 
-    this.redis = new Redis(redisConfig);
-    this.subscriber = new Redis(redisConfig);
+    this.redis = new Redis.Redis(redisConfig);
+    this.subscriber = new Redis.Redis(redisConfig);
 
     // Setup connection event handlers
     this.redis.on('connect', () => {
       this.logger.log('Redis streams connection established');
     });
 
-    this.redis.on('error', (error) => {
+    this.redis.on('error', (error: any) => {
       this.logger.error('Redis streams connection error:', error);
     });
 
@@ -125,7 +125,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
         await this.redis.xgroup('CREATE', streamKey, 'processors', '0', 'MKSTREAM');
         this.logger.log(`Created stream and consumer group: ${streamKey}`);
       } catch (error) {
-        if (!error.message.includes('BUSYGROUP')) {
+        if (error instanceof Error && !error.message.includes('BUSYGROUP')) {
           this.logger.error(`Error creating stream ${streamKey}:`, error);
         }
       }
@@ -191,7 +191,7 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       // Create consumer group if it doesn't exist
       await this.redis.xgroup('CREATE', streamKey, groupName, '0', 'MKSTREAM');
     } catch (error) {
-      if (!error.message.includes('BUSYGROUP')) {
+      if (error instanceof Error && !error.message.includes('BUSYGROUP')) {
         this.logger.error(`Error creating consumer group ${groupName} for stream ${streamKey}:`, error);
       }
     }

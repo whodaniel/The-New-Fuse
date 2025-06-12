@@ -1,8 +1,8 @@
-import * as fs from 'fs';
+import * as fs from ''fs';
 import * as path from 'path';
 import * as winston from 'winston';
 import { Express } from 'express';
-import 'winston-daily-rotate-file';
+import winston-daily-rotate-file;
 
 interface LogConfig {
   level: string;
@@ -16,9 +16,9 @@ interface LogConfig {
  * Default logging configuration
  */
 const DEFAULT_CONFIG: LogConfig = {
-  level: info',
+  level: 'info',
   format: ${timestamp} - ${service} - ${level}: ${message}',
-  file: logs/app.log',
+  file: logs/app.'log',
   maxSize: 10 * 1024 * 1024, // 10MB
   maxFiles: 5
 };
@@ -42,7 +42,7 @@ export function setupLogging(app: Express, config: Partial<LogConfig> = {}): voi
 
   // Create Winston logger
   const logger: logConfig.level,
-    format: (winston as any): { service: app' },
+    format: (winston as any): { service: 'app' },
     transports: [
       // Console transport
       new (winston as any).transports.Console({
@@ -64,7 +64,7 @@ export function setupLogging(app: Express, config: Partial<LogConfig> = {}): voi
       // Rotating file transport
       new (winston as any).transports.DailyRotateFile({
         filename: logConfig.file,
-        datePattern: YYYY-MM-DD',
+        datePattern: YYYY-MM-DD,
         maxSize: logConfig.maxSize,
         maxFiles: logConfig.maxFiles,
         format: (winston as any).format.combine(

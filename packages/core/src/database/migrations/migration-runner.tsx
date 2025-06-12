@@ -1,5 +1,5 @@
 import { Logger } from '../../logging/logger.service.js';
-import { EnhancedDatabaseService } from '../enhanced-database.service.js';
+import { EnhancedDatabaseService } from '../enhanced-database.service.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as path from 'path';
 import * as fs from 'fs/promises';
@@ -57,7 +57,7 @@ export class MigrationRunner {
                     success: true
                 });
 
-                this.eventEmitter.emit('database.migration.success', {
+                this.eventEmitter.emit('database.migration.'success', {
                     migration: migration.name,
                     duration: Date.now() - startTime
                 });
@@ -73,7 +73,7 @@ export class MigrationRunner {
                     error: error.message
                 });
 
-                this.eventEmitter.emit('database.migration.error', {
+                this.eventEmitter.emit('database.migration.'error', {
                     migration: migration.name,
                     error
                 });
@@ -108,7 +108,7 @@ export class MigrationRunner {
                     success: true
                 });
 
-                this.eventEmitter.emit('database.migration.rollback.success', {
+                this.eventEmitter.emit('database.migration.rollback.'success', {
                     migration: migration.name,
                     duration: Date.now() - startTime
                 });
@@ -123,7 +123,7 @@ export class MigrationRunner {
                     error: error.message
                 });
 
-                this.eventEmitter.emit('database.migration.rollback.error', {
+                this.eventEmitter.emit('database.migration.rollback.'error', {
                     migration: migration.name,
                     error
                 });
@@ -159,7 +159,7 @@ export class MigrationRunner {
 
     private async getCompletedCount(): Promise<number> {
         const result = await this.db.executeQuery<{ count: number }[]>(
-            'SELECT COUNT(*) as count FROM migrations WHERE success = TRUE'
+            SELECT COUNT(*) as count FROM migrations WHERE success = 'TRUE'
         );
         return result[0].count;
     }
@@ -179,7 +179,7 @@ export class MigrationRunner {
 
         // Get completed migrations
         const completed = await this.db.executeQuery<{ id: string }[]>(
-            'SELECT id FROM migrations WHERE success = TRUE'
+            SELECT id FROM migrations WHERE success = 'TRUE'
         );
         const completedIds = new Set(completed.map(m => m.id));
         
@@ -216,7 +216,7 @@ export class MigrationRunner {
 
     private async removeMigration(id: string): Promise<void> {
         await this.db.executeQuery(
-            'DELETE FROM migrations WHERE id = ?',
+            DELETE FROM migrations WHERE id = ?',
             [id]
         );
     }
@@ -226,7 +226,7 @@ export class MigrationRunner {
         const migrationModule = await import(migrationPath);
         
         if (typeof migrationModule.up !== 'function') {
-            throw new Error(`Migration ${migration.name} does not export an 'up' function`);
+            throw new Error(`Migration ${migration.name} does not export an up' function`);
         }
 
         await migrationModule.up(this.db);
@@ -237,7 +237,7 @@ export class MigrationRunner {
         const migrationModule = await import(migrationPath);
         
         if (typeof migrationModule.down !== 'function') {
-            throw new Error(`Migration ${migration.name} does not export a 'down' function`);
+            throw new Error(`Migration ${migration.name} does not export a down' function`);
         }
 
         await migrationModule.down(this.db);

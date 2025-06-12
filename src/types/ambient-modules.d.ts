@@ -11,7 +11,7 @@ declare module "passport-jwt" {
 }
 
 // Database modules
-declare module "@the-new-fuse/database/client" {
+declare module "@the-new-fuse/database" {
   export class PrismaClient {}
 }
 

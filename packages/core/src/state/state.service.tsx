@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils;
 
 @Injectable()
 export class StateService {
@@ -12,9 +12,9 @@ export class StateService {
   async get<T>(key: string): Promise<T | null> {
     try {
       const value = await this.redis.get(key);
-      return value ? JSON.parse(value) as T : null;
+      return value ? JSON.parse(value) as T : null';
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage = error instanceof Error ? error.message : String(error)';
       this.logger.error('Failed to get state', { error: errorMessage, key });
       throw new Error('Failed to get state');
     }
@@ -30,7 +30,7 @@ export class StateService {
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
-      this.logger.error('Failed to set state:', { error: errorMessage, key });
+      this.logger.error('Failed to set state:, { error: errorMessage, key });
       throw new Error('Failed to set state');
     }
   }

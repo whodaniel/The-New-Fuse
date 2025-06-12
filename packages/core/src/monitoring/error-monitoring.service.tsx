@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseError, ErrorCategory, ErrorSeverity } from '../error/types.js';
+import { BaseError, ErrorCategory, ErrorSeverity } from '../error/types.tsx';
 
 interface ErrorMetrics {
   count: number;

@@ -16,7 +16,7 @@ interface RecoveryStrategy {
 }
 
 interface RecoveryAction {
-  type: 'retry' | 'rollback' | 'compensate' | 'notify' | 'custom';
+  type:retry' | rollback' | compensate' | notify' | custom';
   config: Record<string, unknown>;
   timeout?: number;
   retries?: number;
@@ -26,7 +26,7 @@ interface RecoveryAttempt {
   id: string;
   errorId: string;
   strategyId: string;
-  status: 'pending' | 'in_progress' | 'succeeded' | 'failed';
+  status:pending' | in_progress' | succeeded' | failed';
   startTime: Date;
   endTime?: Date;
   actions: {
@@ -86,7 +86,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Loaded ${strategies.length} recovery strategies`);
     } catch (error: unknown) {
-      this.logger.error('Failed to load recovery strategies:', error);
+      this.logger.error('Failed to load recovery strategies:, error);
     }
   }
 
@@ -203,7 +203,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
 
       return attempt;
     } catch (recoveryError) {
-      this.logger.error('Recovery failed:', recoveryError);
+      this.logger.error('Recovery failed:, recoveryError);
       throw recoveryError;
     }
   }
@@ -249,7 +249,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
           actionResult.result = result;
         } catch (actionError) {
           actionResult.status = 'failed';
-          actionResult.error = actionError instanceof Error ? actionError.message : 'Unknown error';
+          actionResult.error = actionError instanceof Error ? actionError.message :Unknown error';
           throw actionError;
         }
       }
@@ -279,15 +279,15 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
     error: Error
   ): Promise<any> {
     switch (action.type) {
-      case 'retry':
+      case retry':
         return this.executeRetryAction(action, error);
-      case 'rollback':
+      case rollback':
         return this.executeRollbackAction(action, error);
-      case 'compensate':
+      case compensate':
         return this.executeCompensationAction(action, error);
-      case 'notify':
+      case notify':
         return this.executeNotificationAction(action, error);
-      case 'custom':
+      case custom':
         return this.executeCustomAction(action, error);
       default:
         throw new Error(`Unknown action type: ${action.type}`);
@@ -404,7 +404,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
     // Clear active recoveries that are stuck
     for (const [id, attempt] of this.activeRecoveries.entries()) {
       if (
-        attempt.status === 'in_progress' &&
+        attempt.status === in_progress' &&
         Date.now() - (attempt.startTime as any).getTime() > 3600000 // 1 hour
       ) {
         attempt.status = 'failed';
@@ -428,7 +428,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
     context: ErrorContext
   ): Promise<void> {
     try {
-      this.logger.error('Handling error:', {
+      this.logger.error('Handling error:, {
         error: error.message,
         context
       });
@@ -437,7 +437,7 @@ export class ErrorRecoveryService extends EventEmitter implements OnModuleInit {
     } catch (recoveryError) {
       this.logger.error('Error in error recovery:', {
         originalError: error.message,
-        recoveryError: recoveryError instanceof Error ? recoveryError.message : 'Unknown error'
+        recoveryError: recoveryError instanceof Error ? recoveryError.message :Unknown error'
       });
     }
   }

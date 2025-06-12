@@ -19,8 +19,8 @@ class MockAgentHandler {
       try {
         const result = await this.adkBridgeService.callTool(message.payload.toolName, message.payload.toolInput);
         return { success: true, result };
-      } catch (error) {
-        return { success: false, error: error.message };
+      } catch (error: unknown) {
+        return { success: false, error: (error as Error).message };
       }
     }
     return { success: false, error: 'Unknown action' };

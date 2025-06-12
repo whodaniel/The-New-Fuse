@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { StatusMonitor } from '../StatusMonitor.js';
+import { StatusMonitor } from '../StatusMonitor.tsx';
 import { useWebSocket } from '../../hooks/useWebSocket.js';
 
 jest.mock('../../hooks/useWebSocket');

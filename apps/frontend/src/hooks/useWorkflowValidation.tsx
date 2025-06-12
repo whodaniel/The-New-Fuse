@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Node, Edge } from '../types/workflow.js';
+import type { Node, Edge } from '../types/workflow.tsx';
 
 export const useWorkflowValidation = (): any => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);

@@ -74,8 +74,8 @@ export class MessageValidator extends BaseService {
       const validate = this.ajv.compile(schema);
       this.validators.set(messageType, validate);
       this.logger.info(`Schema added/updated for message type: ${messageType}`);
-    } catch (error) {
-      this.logger.error(`Failed to compile schema for type ${messageType}: ${error.message}`, { schema, error });
+    } catch (error: unknown) {
+      this.logger.error(`Failed to compile schema for type ${messageType}: ${(error as Error).message}`, { schema, error });
       // Decide how to handle schema compilation errors
     }
   }

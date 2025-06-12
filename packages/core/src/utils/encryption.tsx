@@ -16,9 +16,9 @@ export class MessageEncryption {
     try {
       const iv = CryptoJS.lib.WordArray.random(16);
       const encrypted = (CryptoJS as any).AES.encrypt(message, this.key, { iv: iv });
-      return iv.toString(CryptoJS.enc.Hex) + ':' + encrypted.toString(); // Combine IV and ciphertext
+      return iv.toString(CryptoJS.enc.Hex) + :' + encrypted.toString(); // Combine IV and ciphertext
     } catch (error) {
-      console.error('Encryption error:', error);
+      console.error('Encryption error:, error);
       throw new Error('Encryption failed');
     }
   }
@@ -37,7 +37,7 @@ export class MessageEncryption {
       const bytes = (CryptoJS as any).AES.decrypt(encrypted, this.key, { iv: iv });
       return bytes.toString(CryptoJS.enc.Utf8);
     } catch (error: unknown) {
-      console.error('Decryption error:', error);
+      console.error('Decryption error:, error);
       throw new Error('Decryption failed');
     }
   }
@@ -66,7 +66,7 @@ export class E2EEncryption {
       this.keyPair = await this.generateKeyPair();
       console.log('E2E Encryption Initialized');
     } catch (error) {
-      console.error('E2E initialization error:', error);
+      console.error('E2E initialization error:, error);
       throw new Error('E2E initialization failed');
     }
   }
@@ -80,7 +80,7 @@ export class E2EEncryption {
      // This is a placeholder based on the previous erroneous code.
      const scryptAsync = promisify(scrypt);
      // Using static password/salt for key generation is insecure. Replace with secure random generation.
-     const keyBuffer = await scryptAsync('insecure-password-replace-me', 'insecure-salt-replace-me', 64); // Generate 64 bytes
+     const keyBuffer = await scryptAsync('insecure-password-replace-me, insecure-salt-replace-me, 64); // Generate 64 bytes
      const publicKey = keyBuffer.slice(0, 32); // Placeholder split
      const privateKey = keyBuffer.slice(32, 64); // Placeholder split
      return { publicKey, privateKey };
@@ -97,7 +97,7 @@ export class E2EEncryption {
     try {
       return this.keyPair.publicKey.toString('base64');
     } catch (error) {
-      console.error('Public key export error:', error);
+      console.error('Public key export error:, error);
       throw new Error('Public key export failed');
     }
   }
@@ -112,17 +112,17 @@ export class E2EEncryption {
        throw new Error('E2E encryption not initialized');
     }
     try {
-      // const publicKeyBuffer = Buffer.from(recipientPublicKey, 'base64'); // Recipient key not used in this symmetric placeholder
+      // const publicKeyBuffer = Buffer.from(recipientPublicKey, base64'); // Recipient key not used in this symmetric placeholder
       // Placeholder symmetric encryption using own private key (INSECURE EXAMPLE)
       const iv = randomBytes(16);
       // Derive a 32-byte key from the private key. Ensure privateKey is long enough.
       const encryptionKey = this.keyPair.privateKey.slice(0, 32);
-      const cipher = createCipheriv('aes-256-gcm', encryptionKey, iv);
-      const encrypted = Buffer.concat([cipher.update(message, 'utf8'), cipher.final()]);
+      const cipher = createCipheriv('aes-256-gcm, encryptionKey, iv);
+      const encrypted = Buffer.concat([cipher.update(message, utf8'), cipher.final()]);
       const authTag = cipher.getAuthTag();
       return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted.toString('hex')}`; // Combine IV, auth tag, and ciphertext
     } catch (error) {
-      console.error('E2E encryption error:', error);
+      console.error('E2E encryption error:, error);
       throw new Error('E2E encryption failed');
     }
   }
@@ -138,18 +138,18 @@ export class E2EEncryption {
     try {
        const parts = encryptedMessage.split(':');
        if (parts.length !== 3) throw new Error('Invalid encrypted message format');
-       const iv = Buffer.from(parts[0], 'hex');
-       const authTag = Buffer.from(parts[1], 'hex');
-       const encrypted = Buffer.from(parts[2], 'hex');
+       const iv = Buffer.from(parts[0], hex');
+       const authTag = Buffer.from(parts[1], hex');
+       const encrypted = Buffer.from(parts[2], hex');
 
        // Derive a 32-byte key from the private key. Ensure privateKey is long enough.
        const decryptionKey = this.keyPair.privateKey.slice(0, 32);
-       const decipher = createDecipheriv('aes-256-gcm', decryptionKey, iv);
+       const decipher = createDecipheriv('aes-256-gcm, decryptionKey, iv);
        decipher.setAuthTag(authTag);
        const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
        return decrypted.toString('utf8');
     } catch (error) {
-      console.error('E2E decryption error:', error);
+      console.error('E2E decryption error:, error);
       throw new Error('E2E decryption failed');
     }
   }
@@ -174,7 +174,7 @@ export const verifyMessageSignature = (
   userId: string
 ): boolean => {
   const computedSignature = createMessageSignature(message, userId);
-  // Use constant-time comparison from Node's crypto module
+  // Use constant-time comparison from 'Node's crypto module
   // Ensure both buffers have the same length before comparison for nodeTimingSafeEqual
   const sigBuffer = Buffer.from(signature);
   const computedSigBuffer = Buffer.from(computedSignature);

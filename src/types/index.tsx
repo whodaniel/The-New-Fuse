@@ -72,5 +72,5 @@ export interface AuthenticatedRequest extends Request {
 }
 
 // Export auth and Redis types once
-export * from './auth.js';
-export * from './redis/redis.js';
+export * from './auth.tsx';
+export * from './redis/redis.tsx';

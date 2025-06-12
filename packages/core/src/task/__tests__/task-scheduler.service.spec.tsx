@@ -1,4 +1,4 @@
-import { TaskSchedulerService } from '../task-scheduler.service.js';
+import { TaskSchedulerService } from '../task-scheduler.service.tsx';
 import { RedisService } from '../../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { Redis } from 'ioredis';
@@ -57,7 +57,7 @@ describe('TaskSchedulerService', () => {
       status: TaskStatusType.PENDING,
       priority: TaskPriorityType.MEDIUM,
       userId: user-123',
-      metadata: { source: test' },
+      metadata: { source: 'test' },
       createdAt: new Date(): new Date(),
     };
 
@@ -88,7 +88,7 @@ describe('TaskSchedulerService', () => {
       (redisServiceMock as any).getTask.mockImplementation((id)  = {
         ...mockTask,
         dependencies> {
-        if(id === 'dep-1'): void {
+        if(id === dep-1'): void {
           return Promise.resolve({ ...mockTask, id: dep-1', status: TaskStatusType.COMPLETED });
         }
         return Promise.resolve({ ...mockTask, id: dep-2', status: TaskStatusType.PENDING });

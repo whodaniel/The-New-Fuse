@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 export interface ServiceEndpoint {
   serviceName: string;
   endpoint: string;
-  capabilities: string[];
-  protocol: string;
-  status: 'active' | 'inactive' | 'error';
+  capabilities: string[]';
+  protocol: string';
+  status:active' | inactive' | error';
   lastHealthCheck?: Date;
 }
 
@@ -15,7 +15,7 @@ export interface ServiceConnection {
   sourceService: string;
   targetService: string;
   protocol: string;
-  status: 'connected' | 'disconnected' | 'error';
+  status:connected' | disconnected' | error';
   lastActivity?: Date;
 }
 
@@ -160,7 +160,7 @@ export class BridgeService {
       // Perform health check based on protocol
       const isHealthy = await this.performHealthCheck(endpoint);
       
-      endpoint.status = isHealthy ? 'active' : 'error';
+      endpoint.status = isHealthy ? 'active' :'error';
       endpoint.lastHealthCheck = new Date();
       
       return isHealthy;
@@ -182,7 +182,7 @@ export class BridgeService {
       .filter(conn => 
         conn.sourceService === sourceService && 
         conn.targetService === targetService &&
-        conn.status === 'connected' &&
+        conn.status === connected' &&
         (!protocol || conn.protocol === protocol)
       );
 
@@ -210,28 +210,28 @@ export class BridgeService {
 
   private detectProtocol(endpoint: string): string {
     if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-      return 'http';
+      return http';
     } else if (endpoint.startsWith('ws://') || endpoint.startsWith('wss://')) {
-      return 'websocket';
+      return websocket';
     } else if (endpoint.startsWith('tcp://')) {
-      return 'tcp';
+      return tcp';
     } else if (endpoint.includes(':')) {
-      return 'tcp'; // Assume TCP for host:port format
+      return tcp'; // Assume TCP for host:port format
     }
-    return 'unknown';
+    return unknown';
   }
 
   private async performHealthCheck(endpoint: ServiceEndpoint): Promise<boolean> {
     // Placeholder health check implementation
     // In a real implementation, this would make actual requests to the service
     switch (endpoint.protocol) {
-      case 'http':
+      case http':
         // HTTP health check
         return true; // Placeholder
-      case 'websocket':
+      case websocket':
         // WebSocket health check
         return true; // Placeholder
-      case 'tcp':
+      case tcp':
         // TCP health check
         return true; // Placeholder
       default:

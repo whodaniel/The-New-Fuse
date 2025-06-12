@@ -82,7 +82,7 @@ export class AssetTracker {
 
     async analyzeIntegrationPatterns(assetId: string): Promise<any> { // Corrected method signature
         if (!this.trackedAssets.has(assetId)) {
-            return { error: 'Asset not found' };
+            return { error:Asset not found' };
         }
 
         const assetData = this.trackedAssets.get(assetId)!;
@@ -100,7 +100,7 @@ export class AssetTracker {
 
     private _analyzePerformanceMetrics(metrics: any[]): PerformanceAnalysis | { error: string } { // Changed unknown[] to any[]
         if (metrics.length === 0) { // Corrected condition: metrics.length === 0
-            return { error: 'No metrics available' };
+            return { error:No metrics available' };
         }
 
         const latest = metrics[metrics.length - 1];
@@ -116,24 +116,24 @@ export class AssetTracker {
 
     private _calculateTrend(metrics: any[]): string { // Changed unknown[] to any[]
         if (metrics.length < 3) { // Corrected condition: metrics.length < 3
-            return 'insufficient_data';
+            return insufficient_data';
         }
 
         const recentThreeMetrics = metrics.slice(-3); // Corrected variable name
-        // Assuming metrics are numbers or objects with a 'value' property
-        const values = recentThreeMetrics.map(m => typeof m === 'number' ? m : m.value).filter(v => typeof v === 'number');
+        // Assuming metrics are numbers or objects with a value' property
+        const values = recentThreeMetrics.map(m => typeof m === number' ? m : m.value).filter(v => typeof v === 'number');
 
-        if (values.length < 3) return 'insufficient_data';
+        if (values.length < 3) return insufficient_data';
 
 
         if (values.every((v, i, arr) => i === 0 || v > arr[i - 1])) {
-            return 'improving';
+            return improving';
         }
         if (values.every((v, i, arr) => i === 0 || v < arr[i - 1])) {
-            return 'declining';
+            return declining';
         }
 
-        return 'stable';
+        return stable';
     }
 
     private _calculateImprovement(latest: any, baseline: any): any { // Changed unknown to any
@@ -164,9 +164,9 @@ export class AssetTracker {
     private _generateRecommendation(assetData: AssetData): string {
         // Placeholder implementation
         if (assetData.usageCount < 5) {
-            return 'Asset is new, monitor further for more concrete recommendations.';
+            return Asset is new, monitor further for more concrete recommendations.';
         }
-        return 'Recommendation based on analysis';
+        return Recommendation based on 'analysis';
     }
 
     private _calculateFrequency(usageHistory: any[]): number { // Changed unknown[] to any[]
@@ -194,7 +194,7 @@ export class AssetTracker {
     }
 
     private _calculateSuccessRate(usageHistory: any[]): number { // Changed unknown[] to any[]
-        // Placeholder implementation - assuming some 'success' field in usageHistory items
+        // Placeholder implementation - assuming some success' field in usageHistory items
         const successfulUsages = usageHistory.filter(use => use.success === true).length;
         return usageHistory.length > 0 ? (successfulUsages / usageHistory.length) * 100 : 0;
     }
@@ -211,8 +211,8 @@ export class AssetTracker {
     private _generateIntegrationRecommendation(assetData: AssetData): string {
         // Placeholder implementation
         if (assetData.dependencies.size > 3) {
-            return 'Consider simplifying integrations due to high number of dependencies.';
+            return Consider simplifying integrations due to high number of dependencies.';
         }
-        return 'Integration recommendation based on analysis';
+        return Integration recommendation based on 'analysis';
     }
 }

@@ -1,4 +1,4 @@
-import { Task } from './index.js';
+import { Task } from './index.tsx';
 import { TaskStatus, TaskType, TaskPriority } from './types/enums.js';
 
 export interface TaskComment {

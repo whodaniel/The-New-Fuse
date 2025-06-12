@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { IsometricTileMap } from '../core/IsometricTileMap.js';
+import { IsometricTileMap } from '../core/IsometricTileMap.tsx';
 import { ZoneRenderer } from '../renderers/ZoneRenderer.js';
 
 export class EnvironmentManager {

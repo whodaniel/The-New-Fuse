@@ -7,8 +7,8 @@ import {
 } from '../types/agent.types.js';
 import { CacheService } from '../cache/CacheService.js';
 import { ErrorRecoveryService } from '../error/ErrorRecoveryService.js';
-import { AgentProcessorConfig } from './config/AgentProcessorConfig.js';
-import { TaskProcessor } from './processors/TaskProcessor.js';
+import { AgentProcessorConfig } from './config/AgentProcessorConfig.tsx';
+import { TaskProcessor } from './processors/TaskProcessor.tsx';
 
 interface ProcessingOptions {
   timeout?: number;

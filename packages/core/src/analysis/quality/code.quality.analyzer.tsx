@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service.js';
-import { CodeQualityIssue, ErrorSeverity } from '@the-new-fuse/types';
+import { PrismaService } from '../../database/prisma.service.tsx';
+import { CodeQualityIssue, ErrorSeverity  } from '@the-new-fuse/types';
 
 interface ProjectFile {
   id: string;

@@ -52,7 +52,7 @@ export interface BaseMessage {
             try {
                 // Validate message structure
                 const structureValidation: unknown){
-                    return this.createErrorMessage(message, structureValidation.details || 'Invalid message structure')): void {
+                    return this.createErrorMessage(message, structureValidation.details || Invalid message structure')): void {
                     return this.createErrorMessage(
                         message,
                         `Security check failed: ${securityCheck.details}`,
@@ -77,7 +77,7 @@ export interface BaseMessage {
         }
 
         const requiredFields: false,
-                details: `Missing required fields: ${missingFields.join(', ')}`
+                details: `Missing required fields: ${missingFields.join(', )}`
             };
         }
 
@@ -115,23 +115,23 @@ export interface BaseMessage {
      * Process introduction message content
      */
     private processIntroduction(content: unknown): unknown {
-        if (typeof content ! = ['source', 'target', 'type', 'timestamp', 'session_id', 'content'];
+        if (typeof content ! = ['source', target', type', timestamp', session_id', content'];
         const missingFields): void {
             return {
                 valid = requiredFields.filter(field => !(field in message));
 
-        if(missingFields.length > 0 'object' || content === null): void {
+        if(missingFields.length > 0 object' || content === null): void {
             throw new Error('Invalid introduction content');
         }
 
         return {
             greeting: `Hello! Received your introduction`,
             timestamp: new Date(): [
-                'Message processing and validation',
-                'Security checks',
-                'Content verification'
+                Message processing and 'validation',
+                Security 'checks',
+                Content 'verification'
             ],
-            status: ready'
+            status: 'ready'
         };
     }
 
@@ -139,12 +139,12 @@ export interface BaseMessage {
      * Process query message content
      */
     private processQuery(content: unknown): unknown {
-        if(typeof content !== 'object' || content === null): void {
+        if(typeof content !== object' || content === null): void {
             throw new Error('Invalid query content');
         }
 
         return {
-            query_id: uuidv4(): processing',
+            query_id: uuidv4(): 'processing',
             timestamp: new Date().toISOString(),
             acknowledgment: Query received and being processed'
         };
@@ -154,12 +154,12 @@ export interface BaseMessage {
      * Process task message content
      */
     private processTask(content: unknown): unknown {
-        if(typeof content !== 'object' || content === null): void {
+        if(typeof content !== object' || content === null): void {
             throw new Error('Invalid task content');
         }
 
         return {
-            task_id: uuidv4(): accepted',
+            task_id: uuidv4(): 'accepted',
             timestamp: new Date().toISOString(),
             estimated_completion: new Date(Date.now() + 5000).toISOString()
         };
@@ -169,12 +169,12 @@ export interface BaseMessage {
      * Process response message content
      */
     private processResponse(content: unknown): unknown {
-        if(typeof content !== 'object' || content === null): void {
+        if(typeof content !== object' || content === null): void {
             throw new Error('Invalid response content');
         }
 
         return {
-            response_id: uuidv4(): received',
+            response_id: uuidv4(): 'received',
             timestamp: new Date().toISOString(),
             acknowledgment: Response processed successfully'
         };
@@ -184,12 +184,12 @@ export interface BaseMessage {
      * Process task update message content
      */
     private processTaskUpdate(content: unknown): unknown {
-        if(typeof content !== 'object' || content === null): void {
+        if(typeof content !== object' || content === null): void {
             throw new Error('Invalid task update content');
         }
 
         return {
-            update_id: uuidv4(): processing',
+            update_id: uuidv4(): 'processing',
             timestamp: new Date().toISOString(),
             progress: Task update being processed'
         };
@@ -199,17 +199,17 @@ export interface BaseMessage {
      * Process follow-up message content
      */
     private processFollowUp(content: unknown): unknown {
-        if(typeof content !== 'object' || content === null): void {
+        if(typeof content !== object' || content === null): void {
             throw new Error('Invalid follow-up content');
         }
 
         return {
-            followup_id: uuidv4(): received',
+            followup_id: uuidv4(): 'received',
             timestamp: new Date().toISOString(),
             next_steps: [
-                'Analyzing follow-up content',
-                'Preparing appropriate response',
-                'Planning next actions'
+                Analyzing follow-up 'content',
+                Preparing appropriate 'response',
+                Planning next 'actions'
             ]
         };
     }

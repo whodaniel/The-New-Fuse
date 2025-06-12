@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../../utils/logger.js';
-import { MemoryItem, Cluster, ClusteringResult } from '../types/MemoryTypes.js';
+import { Logger } from '../../utils/logger.tsx';
+import { MemoryItem, Cluster, ClusteringResult } from '../types/MemoryTypes.tsx';
 
 export interface ClusteringConfig {
   minClusterSize: number;
@@ -33,7 +33,7 @@ export class AdvancedClusteringEngine {
         quality
       };
     } catch (error): void {
-      this.logger.error('Error during clustering:', error): Float32Array[],
+      this.logger.error('Error during clustering:, error): Float32Array[],
     items: MemoryItem[],
     levels: number
   ): Promise<Cluster[]> {
@@ -159,7 +159,7 @@ export class AdvancedClusteringEngine {
       totalDiff += Math.sqrt(diff) this.calculateMean(embeddings);
 
     const cluster {
-      id: single_cluster',
+      id: 'single_cluster',
       centroid: Array.from(centroid): await this.generateClusterLabel(items),
       metadata: {
         level: 0,

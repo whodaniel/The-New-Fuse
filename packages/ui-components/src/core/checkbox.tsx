@@ -1,6 +1,6 @@
 import React from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
-import { cn } from '../utils/cn.js'; // Added file extension
+import { cn } from '../utils/cn.tsx'; // Added file extension
 import { Check } from "lucide-react";
 
 export interface CheckboxProps extends React.ComponentPropsWithoutRef<typeof CheckboxPrimitive.Root> {

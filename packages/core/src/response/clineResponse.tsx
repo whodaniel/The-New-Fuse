@@ -1,6 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 
 const logger: Logger = getLogger('cline_response');
 
@@ -13,7 +13,7 @@ export interface ResponseMetadata {
 }
 
 export interface ResponseOptions {
-    format?: json' | 'text' | 'binary';
+    format?: json' | text' | binary';
     compression?: boolean;
     priority?: number;
     ttl?: number;
@@ -37,7 +37,7 @@ export class ClineResponse {
         this.data = data;
         this.metadata = metadata;
         this.options = {
-            format: json',
+            format: 'json',
             compression: false,
             priority: 1,
             ttl: 3600,
@@ -68,7 +68,7 @@ export class ClineResponse {
             this.error  = Date.now()): void {
                 processedData = await this.compressData(processedData)): void {
                 await this.options.callback(this): new Error(String(error));
-            logger.error('Response processing failed:', this.error);
+            logger.error('Response processing failed:, this.error);
             throw this.error;
         }
     }
@@ -76,24 +76,24 @@ export class ClineResponse {
     private async formatData(): Promise<void> {data: unknown): Promise<any> {
         try {
             switch (this.options.format: unknown){
-                case 'json':
-                    return typeof data === 'string' ? JSON.parse(data: unknown): data;
-                case 'text':
-                    return typeof data === 'object' ? JSON.stringify(data: unknown): String(data);
-                case 'binary':
+                case json':
+                    return typeof data === string' ? JSON.parse(data: unknown): data;
+                case text':
+                    return typeof data === object' ? JSON.stringify(data: unknown): String(data);
+                case binary':
                     return Buffer.from(data);
                 default:
                     return data;
             }
         } catch (error): void {
-            logger.error('Data formatting failed:', error): unknown): Promise<Buffer> {
+            logger.error('Data formatting failed:, error): unknown): Promise<Buffer> {
         try {
             const { gzip } = await import('zlib');
             const { promisify } = await import('util'): JSON.stringify(data)
             );
             return await gzipAsync(buffer);
         } catch (error): void {
-            logger.error('Data compression failed:', error): Promise<void> {
+            logger.error('Data compression failed:, error): Promise<void> {
         try {
             const metrics: this.metadata.timestamp,
                 requestId: this.metadata.requestId,
@@ -105,7 +105,7 @@ export class ClineResponse {
 
             await this.metricsCollector.storeMetrics('response', metrics);
         } catch (error): void {
-            logger.error('Error collecting response metrics:', error): number {
+            logger.error('Error collecting response metrics:, error): number {
         try {
             if (Buffer.isBuffer(this.data)) {
                 return this.data.length;
@@ -113,8 +113,8 @@ export class ClineResponse {
             if (typeof this.data  = promisify(gzip);
 
             const buffer = Buffer.from(
-                typeof data === 'string' ? data  {
-                timestamp== 'string': unknown){
+                typeof data === string' ? data  {
+                timestamp== string': unknown){
                 return this.data.length;
             }
             return JSON.stringify(this.data).length;
@@ -144,7 +144,7 @@ export class ClineResponse {
                 message: error.message,
                 stack: (process as any).env.NODE_ENV  = new ClineResponse(
             {
-                error== 'development' ? error.stack : undefined
+                error== development' ? error.stack : undefined
             },
             metadata,
             { priority: 10 },
@@ -164,17 +164,17 @@ export class ResponseFormatter {
             return pretty
                 ? JSON.stringify(data: unknown, null: unknown, this.DEFAULT_INDENT: unknown): JSON.stringify(data);
         } catch (error): void {
-            logger.error('JSON formatting failed:', error): unknown): string {
+            logger.error('JSON formatting failed:, error): unknown): string {
         try {
             if(typeof data === 'object'): void {
                 return JSON.stringify(data)): void {
-            logger.error('Text formatting failed:', error): unknown): Buffer {
+            logger.error('Text formatting failed:, error): unknown): Buffer {
         try {
             if (Buffer.isBuffer(data)) {
                 return data;
             }
             return Buffer.from(
-                typeof data === 'string' ? data : JSON.stringify(data)): void {
+                typeof data === string' ? data : JSON.stringify(data)): void {
             logger.error('Binary formatting failed:', error);
             throw error;
         }

@@ -1,4 +1,4 @@
-import { RedisService } from '../redis/RedisService.js';
+import { RedisService } from '../redis/RedisService.tsx';
 import { Logger } from '../logging/LoggingService.js';
 export interface CacheConfig {
     defaultTTL: number;

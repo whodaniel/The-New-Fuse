@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Pattern, Adaptation, LearningConfig } from './types.js';
+import { Pattern, Adaptation, LearningConfig } from './types.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -16,13 +16,15 @@ export class SystemAdaptor {
     private readonly eventEmitter: EventEmitter2,
   ) {
     this.config = {
-      enabled: this.configService.get('LEARNING_ENABLED', true): this.configService.get('ADAPTATION_THRESHOLD', 0.8),
+      enabled: this.configService.get('LEARNING_ENABLED', true),
+      adaptationThreshold: this.configService.get('ADAPTATION_THRESHOLD', 0.8),
       minConfidence: this.configService.get('LEARNING_MIN_CONFIDENCE', 0.6),
       maxPatterns: this.configService.get('LEARNING_MAX_PATTERNS', 1000),
       learningRate: this.configService.get('LEARNING_RATE', 0.1),
       decayFactor: this.configService.get('LEARNING_DECAY_FACTOR', 0.95),
       features: {
-        patternRecognition: this.configService.get('FEATURE_PATTERN_RECOGNITION', true): this.configService.get('FEATURE_ERROR_LEARNING', true),
+        patternRecognition: this.configService.get('FEATURE_PATTERN_RECOGNITION', true),
+        errorLearning: this.configService.get('FEATURE_ERROR_LEARNING', true),
         performanceOptimization: this.configService.get('FEATURE_PERFORMANCE_OPTIMIZATION', true),
         userAdaptation: this.configService.get('FEATURE_USER_ADAPTATION', true),
       },
@@ -30,37 +32,53 @@ export class SystemAdaptor {
     this.adaptationThreshold = this.config.adaptationThreshold;
   }
 
-  async adjust(): Promise<void> {patterns: Pattern[]): Promise<void> {
-    if(!this.config.enabled): void {
+  async adjustPatterns(patterns: Pattern[]): Promise<void> {
+    if (!this.config.enabled) {
       return;
     }
 
-    for (const pattern of patterns: unknown){
-      if (pattern.confidence >= this.adaptationThreshold: unknown){
-        const adaptation: Pattern): Promise<Adaptation | null> {
-    const adaptationType): void {
-          await this.applyAdaptation(adaptation)): void {
+    for (const pattern of patterns) {
+      if (pattern.confidence >= this.adaptationThreshold) {
+        const adaptation = await this.createAdaptation(pattern);
+        if (adaptation) {
+          await this.applyAdaptation(adaptation);
+        }
+      }
+    }
+  }
+
+  private async createAdaptation(pattern: Pattern): Promise<Adaptation | null> {
+    const adaptationType = this.getAdaptationType(pattern);
+    if (!adaptationType) {
       return null;
     }
 
-    const adaptation: Adaptation  = await this.createAdaptation(pattern);
-        if(adaptation {
-      id: uuidv4(): adaptationType,
+    const adaptation: Adaptation = {
+      id: uuidv4(),
+      type: adaptationType,
       trigger: {
         pattern: pattern,
         threshold: this.adaptationThreshold,
       },
-      action: await this.determineAction(pattern, adaptationType): pending',
+      action: await this.determineAction(pattern, adaptationType),
+      status: 'pending',
       metadata: {
-        created: new Date(): new Date(),
+        created: new Date(),
+        lastModified: new Date(),
       },
     };
 
     // Store adaptation
     await this.redisService.set(
-      `adaptation:$ {adaptation.id}`,
-      JSON.stringify(adaptation): Pattern): string | null {
-    switch (pattern.type: unknown){
+      `adaptation:${adaptation.id}`,
+      JSON.stringify(adaptation)
+    );
+
+    return adaptation;
+  }
+
+  private getAdaptationType(pattern: Pattern): string | null {
+    switch (pattern.type) {
       case 'structure':
         return 'schema_adaptation';
       case 'value':
@@ -76,13 +94,15 @@ export class SystemAdaptor {
     }
   }
 
-  private async determineAction(): Promise<void> {
+  private async determineAction(
     pattern: Pattern,
     adaptationType: string,
-  ): Promise< { type: string; parameters: Record<string, unknown> }> {
-    switch (adaptationType: unknown){
+  ): Promise<{ type: string; parameters: Record<string, unknown> }> {
+    switch (adaptationType) {
       case 'schema_adaptation':
-        return this.createSchemaAdaptation(pattern): return this.createValueOptimization(pattern);
+        return this.createSchemaAdaptation(pattern);
+      case 'value_optimization':
+        return this.createValueOptimization(pattern);
       case 'relationship_optimization':
         return this.createRelationshipOptimization(pattern);
       case 'workflow_optimization':
@@ -90,141 +110,170 @@ export class SystemAdaptor {
       case 'scheduling_optimization':
         return this.createSchedulingOptimization(pattern);
       default:
-        throw new Error(`Unknown adaptation type: $ {adaptationType}`);
+        throw new Error(`Unknown adaptation type: ${adaptationType}`);
     }
   }
 
-  private async applyAdaptation(): Promise<void> {adaptation: Adaptation): Promise<void> {
+  private async applyAdaptation(adaptation: Adaptation): Promise<void> {
     try {
       // Emit pre-adaptation event
-      this.eventEmitter.emit('adaptation.starting', adaptation)): void {
+      this.eventEmitter.emit('adaptation.starting', adaptation);
+
+      switch (adaptation.type) {
         case 'schema_adaptation':
-          success  = Date.now(): success = await this.applyValueOptimization(adaptation);
+          await this.applySchemaAdaptation(adaptation);
+          break;
+        case 'value_optimization':
+          await this.applyValueOptimization(adaptation);
           break;
         case 'relationship_optimization':
-          success = await this.applyRelationshipOptimization(adaptation);
+          await this.applyRelationshipOptimization(adaptation);
           break;
         case 'workflow_optimization':
-          success = await this.applyWorkflowOptimization(adaptation);
+          await this.applyWorkflowOptimization(adaptation);
           break;
         case 'scheduling_optimization':
-          success = await this.applySchedulingOptimization(adaptation);
+          await this.applySchedulingOptimization(adaptation);
           break;
+        default:
+          throw new Error(`Unknown adaptation type: ${adaptation.type}`);
       }
 
-      const endTime: disabled';
-      (adaptation as any).metadata.updated  = Date.now();
-      const duration: success ? 1 : 0,
-        failureRate: success ? 0 : 1,
-        averageLatency: duration,
-      };
+      // Update adaptation status
+      adaptation.status = 'completed';
+      adaptation.metadata.lastModified = new Date();
 
-      // Store updated adaptation
       await this.redisService.set(
-        `adaptation:$ {adaptation.id}`,
-        JSON.stringify(adaptation): adaptation.failure',
-        adaptation,
+        `adaptation:${adaptation.id}`,
+        JSON.stringify(adaptation)
       );
-    } catch (error): void {
-      console.error('Error applying adaptation:', error): $ {adaptation.id}`,
-        JSON.stringify(adaptation),
+
+      // Emit completion event
+      this.eventEmitter.emit('adaptation.completed', adaptation);
+
+    } catch (error) {
+      adaptation.status = 'failed';
+      adaptation.metadata.lastModified = new Date();
+      adaptation.metadata.error = error instanceof Error ? error.message : 'Unknown error';
+
+      await this.redisService.set(
+        `adaptation:${adaptation.id}`,
+        JSON.stringify(adaptation)
       );
-      this.eventEmitter.emit('adaptation.error', { adaptation, error });
+
+      this.eventEmitter.emit('adaptation.failed', { adaptation, error });
+      throw error;
     }
   }
 
-  private createSchemaAdaptation(pattern: Pattern):  { type: string; parameters: Record<string, unknown> } {
+  private async createSchemaAdaptation(pattern: Pattern): Promise<{ type: string; parameters: Record<string, unknown> }> {
     return {
-      type: update_schema',
+      type: 'schema_modification',
       parameters: {
-        structure: pattern.pattern,
-        confidence: pattern.confidence,
+        pattern: pattern,
+        changes: await this.analyzeSchemaChanges(pattern),
       },
     };
   }
 
-  private createValueOptimization(pattern: Pattern):  { type: string; parameters: Record<string, unknown> } {
+  private async createValueOptimization(pattern: Pattern): Promise<{ type: string; parameters: Record<string, unknown> }> {
     return {
-      type: optimize_value',
+      type: 'value_adjustment',
       parameters: {
-        path: (pattern as any).pattern.path,
-        value: (pattern as any).pattern.value,
-        type: (pattern as any).pattern.type,
+        pattern: pattern,
+        optimizations: await this.analyzeValueOptimizations(pattern),
       },
     };
   }
 
-  private createRelationshipOptimization(pattern: Pattern):  { type: string; parameters: Record<string, unknown> } {
+  private async createRelationshipOptimization(pattern: Pattern): Promise<{ type: string; parameters: Record<string, unknown> }> {
     return {
-      type: optimize_relationship',
+      type: 'relationship_adjustment',
       parameters: {
-        source: (pattern as any).pattern.source,
-        related: (pattern as any).pattern.related,
+        pattern: pattern,
+        relationships: await this.analyzeRelationshipOptimizations(pattern),
       },
     };
   }
 
-  private createWorkflowOptimization(pattern: Pattern):  { type: string; parameters: Record<string, unknown> } {
+  private async createWorkflowOptimization(pattern: Pattern): Promise<{ type: string; parameters: Record<string, unknown> }> {
     return {
-      type: optimize_workflow',
+      type: 'workflow_adjustment',
       parameters: {
-        sequence: (pattern as any).pattern.sequence,
-        frequency: (pattern as any).pattern.frequency,
+        pattern: pattern,
+        workflows: await this.analyzeWorkflowOptimizations(pattern),
       },
     };
   }
 
-  private createSchedulingOptimization(pattern: Pattern):  { type: string; parameters: Record<string, unknown> } {
+  private async createSchedulingOptimization(pattern: Pattern): Promise<{ type: string; parameters: Record<string, unknown> }> {
     return {
-      type: optimize_scheduling',
+      type: 'scheduling_adjustment',
       parameters: {
-        hour: (pattern as any).pattern.hour,
-        frequency: (pattern as any).pattern.frequency,
+        pattern: pattern,
+        schedules: await this.analyzeSchedulingOptimizations(pattern),
       },
     };
   }
 
-  private async applySchemaAdaptation(): Promise<void> {adaptation: Adaptation): Promise<boolean> {
-    // Implementation would depend on your specific schema management system
-    return true;
+  // Implementation methods for applying adaptations
+  private async applySchemaAdaptation(_adaptation: Adaptation): Promise<void> {
+    // Implementation logic for schema adaptation
   }
 
-  private async applyValueOptimization(): Promise<void> {adaptation: Adaptation): Promise<boolean> {
-    // Implementation would depend on your specific value optimization strategy
-    return true;
+  private async applyValueOptimization(_adaptation: Adaptation): Promise<void> {
+    // Implementation logic for value optimization
   }
 
-  private async applyRelationshipOptimization(): Promise<void> {adaptation: Adaptation): Promise<boolean> {
-    // Implementation would depend on your specific relationship optimization strategy
-    return true;
+  private async applyRelationshipOptimization(_adaptation: Adaptation): Promise<void> {
+    // Implementation logic for relationship optimization
   }
 
-  private async applyWorkflowOptimization(): Promise<void> {adaptation: Adaptation): Promise<boolean> {
-    // Implementation would depend on your specific workflow optimization strategy
-    return true;
+  private async applyWorkflowOptimization(_adaptation: Adaptation): Promise<void> {
+    // Implementation logic for workflow optimization
   }
 
-  private async applySchedulingOptimization(): Promise<void> {adaptation: Adaptation): Promise<boolean> {
-    // Implementation would depend on your specific scheduling optimization strategy
-    return true;
+  private async applySchedulingOptimization(_adaptation: Adaptation): Promise<void> {
+    // Implementation logic for scheduling optimization
   }
 
-  async getActiveAdaptations(): Promise<void> {): Promise<Adaptation[]> {
-    const keys: *');
-    const adaptations   = endTime - startTime;
+  // Analysis methods
+  private async analyzeSchemaChanges(_pattern: Pattern): Promise<Record<string, unknown>> {
+    // Implementation logic for analyzing schema changes
+    return {};
+  }
 
-      // Update adaptation metadata
-      adaptation.status = success ? 'active'  new Date();
-      (adaptation as any).metadata.performance = {
-        successRate await this.redisService.keys('adaptation await Promise.all(
+  private async analyzeValueOptimizations(_pattern: Pattern): Promise<Record<string, unknown>> {
+    // Implementation logic for analyzing value optimizations
+    return {};
+  }
+
+  private async analyzeRelationshipOptimizations(_pattern: Pattern): Promise<Record<string, unknown>> {
+    // Implementation logic for analyzing relationship optimizations
+    return {};
+  }
+
+  private async analyzeWorkflowOptimizations(_pattern: Pattern): Promise<Record<string, unknown>> {
+    // Implementation logic for analyzing workflow optimizations
+    return {};
+  }
+
+  private async analyzeSchedulingOptimizations(_pattern: Pattern): Promise<Record<string, unknown>> {
+    // Implementation logic for analyzing scheduling optimizations
+    return {};
+  }
+
+  async findActiveAdaptations(): Promise<Adaptation[]> {
+    const keys = await this.redisService.keys('adaptation:*');
+    const adaptations = await Promise.all(
       keys.map(async key => {
-        const data: unknown): null;
+        const data = await this.redisService.get(key);
+        return data ? JSON.parse(data) as Adaptation : null;
       }),
     );
 
     return adaptations
-      .filter((a: unknown): a is Adaptation  = await this.redisService.get(key);
-        return data ? JSON.parse(data> a !== null && a.status === 'active')
+      .filter((a): a is Adaptation => a !== null && a.status === 'active')
       .sort((a, b) => {
         const aPerf = (a as any).metadata.performance?.successRate || 0;
         const bPerf = (b as any).metadata.performance?.successRate || 0;

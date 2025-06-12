@@ -1,8 +1,8 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 import { SecurityConfig } from '../types/config.js';
-import { MonitoringService } from '../../monitoring/monitoring.service.js';
+import { MonitoringService } from '../../monitoring/monitoring.service.tsx';
 export declare class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private readonly redisService;
     private readonly securityConfig;

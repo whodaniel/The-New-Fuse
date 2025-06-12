@@ -4,7 +4,7 @@ export interface LogMetadata {
     service?: string;
     [key: string]: unknown;
 }
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+export type LogLevel = 'error' | warn' | info' | debug';
 export declare class LoggingService {
     private logger;
     constructor();

@@ -4,16 +4,16 @@ import {
   LLMContext,
   LLMResponse,
   StreamChunk
-} from '../llm/LLMProvider.js';
-import { LLMRegistry } from '../llm/LLMRegistry.js';
-import { MonitoringService } from '../monitoring/MonitoringService.js';
-import { ErrorRecoveryService } from '../error/ErrorRecoveryService.js';
+} from '../llm/LLMProvider.tsx';
+import { LLMRegistry } from '../llm/LLMRegistry.tsx';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
+import { ErrorRecoveryService } from '../error/ErrorRecoveryService.tsx';
 import { EventEmitter } from 'events';
 
 export interface ProcessedMessage {
   id: string;
   content: string;
-  role: 'system' | 'user' | 'assistant';
+  role:system' | user' | assistant';
   timestamp: Date;
   metadata: Record<string, unknown>;
 }
@@ -229,7 +229,7 @@ export class AgentProcessor extends EventEmitter {
     processingId: string
   ): Promise<AsyncGenerator<StreamChunk, void, unknown>> {
     try {
-      this.logger.debug('Processing stream request:', { context, processingId });
+      this.logger.debug('Processing stream request:, { context, processingId });
 
       const model = context.metadata?.model as string;
       if (!model) {
@@ -262,7 +262,7 @@ export class AgentProcessor extends EventEmitter {
   ): Promise<LLMContext> {
     const systemMessage = agent.systemPrompt
       ? [{
-          role: 'system' as const,
+          role:system' as const,
           content: agent.systemPrompt
         }]
       : [];
@@ -294,7 +294,7 @@ export class AgentProcessor extends EventEmitter {
 
   private async handleError(error: Error, processingId: string): Promise<void> {
     try {
-      this.logger.error('Error during LLM processing:', {
+      this.logger.error('Error during LLM processing:, {
         error: error.message,
         processingId
       });
@@ -314,9 +314,9 @@ export class AgentProcessor extends EventEmitter {
           timestamp: new Date()
         });
       } catch (monitoringError) {
-        this.logger.error('Failed to record error:', {
+        this.logger.error('Failed to record error:, {
           originalError: error.message,
-          monitoringError: monitoringError instanceof Error ? monitoringError.message : 'Unknown error'
+          monitoringError: monitoringError instanceof Error ? monitoringError.message : Unknown 'error'
         });
       }
 
@@ -327,9 +327,9 @@ export class AgentProcessor extends EventEmitter {
           component: 'AgentProcessor'
         });
       } catch (innerError) {
-        this.logger.error('Error in error handler:', {
+        this.logger.error('Error in error handler:, {
           originalError: error.message,
-          handlerError: innerError instanceof Error ? innerError.message : 'Unknown error'
+          handlerError: innerError instanceof Error ? innerError.message : Unknown 'error'
         });
       }
     } catch (e) {
@@ -353,8 +353,8 @@ export class AgentProcessor extends EventEmitter {
         timestamp: new Date()
       });
     } catch (error) {
-      this.logger.error('Failed to update metrics:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger.error('Failed to update metrics:, {
+        error: error instanceof Error ? error.message : Unknown 'error',
         model,
         metrics
       });

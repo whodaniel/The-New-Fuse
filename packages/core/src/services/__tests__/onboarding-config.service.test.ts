@@ -9,112 +9,112 @@ const mockGeneralSettings = {
   skipForReturningUsers: true,
   allowSkipping: false,
   requireEmailVerification: true,
-  logoUrl: '/assets/images/logo.png',
-  primaryColor: '#3182CE',
-  secondaryColor: '#4FD1C5',
-  backgroundImage: '',
-  welcomeTitle: 'Welcome to The New Fuse',
-  welcomeMessage: 'The New Fuse is an AI agent coordination platform.',
+  logoUrl:/assets/images/logo.'png',
+  primaryColor:#3182'CE',
+  secondaryColor:#4'FD1C5',
+  backgroundImage:,
+  welcomeTitle: Welcome to The New 'Fuse',
+  welcomeMessage:The New Fuse is an AI agent coordination platform.',
   timeoutMinutes: 30,
   saveProgressAutomatically: true,
-  redirectAfterCompletion: '/dashboard',
+  redirectAfterCompletion: /'dashboard',
   analyticsEnabled: true
 };
 
 const mockUserTypes = [
   {
     id: 'human',
-    name: 'Human User',
-    description: 'Regular human users of the platform',
+    name: Human 'User',
+    description:Regular human users of the platform',
     enabled: true,
     detectionMethod: 'behavior',
     detectionConfig: {
-      behaviorPattern: 'human-like interaction patterns'
+      behaviorPattern: human-like interaction 'patterns'
     },
-    onboardingFlow: 'human-onboarding',
+    onboardingFlow:human-onboarding,
     priority: 10
   },
   {
     id: 'ai_agent',
-    name: 'AI Agent',
-    description: 'AI agents that integrate with the platform',
+    name: AI 'Agent',
+    description:AI agents that integrate with the platform',
     enabled: true,
     detectionMethod: 'header',
     detectionConfig: {
-      headerName: 'X-Agent-Type',
+      headerName: X-Agent-Type,
       headerValue: 'ai_agent'
     },
-    onboardingFlow: 'ai-agent-onboarding',
+    onboardingFlow: ai-agent-onboarding,
     priority: 20
   }
 ];
 
 const mockSteps = [
   {
-    id: '1',
+    id:1',
     type: 'welcome',
     title: 'Welcome',
-    description: 'Introduction to The New Fuse platform',
+    description: Introduction to The New Fuse 'platform',
     enabled: true,
     required: true,
-    userTypes: ['human', 'ai_agent'],
+    userTypes: ['human', ai_agent'],
     content: {
-      heading: 'Welcome to The New Fuse',
-      subheading: 'The AI agent coordination platform.',
-      imageUrl: '/assets/images/welcome.png',
-      buttonText: 'Get Started'
+      heading:Welcome to The New Fuse',
+      subheading:The AI agent coordination platform.',
+      imageUrl: /assets/images/welcome.'png',
+      buttonText:Get Started'
     }
   },
   {
-    id: '2',
+    id:2',
     type: 'completion',
     title: 'Complete',
-    description: 'Onboarding completion',
+    description: Onboarding 'completion',
     enabled: true,
     required: true,
-    userTypes: ['human', 'ai_agent'],
+    userTypes: ['human', ai_agent'],
     content: {
-      heading: 'All Set!',
-      subheading: 'You\'re ready to start using The New Fuse.',
-      buttonText: 'Get Started'
+      heading:All Set!',
+      subheading: You\'re ready to start using The New Fuse.',
+      buttonText:Get Started'
     }
   }
 ];
 
 const mockAISettings = {
   ragEnabled: true,
-  defaultEmbeddingModel: 'text-embedding-3-large',
+  defaultEmbeddingModel:text-embedding-3-large,
   vectorDatabaseType: 'pinecone',
   vectorDatabaseConfig: {
-    pineconeApiKey: 'test-api-key',
-    pineconeEnvironment: 'test-env',
-    pineconeIndex: 'onboarding-knowledge'
+    pineconeApiKey: test-api-key,
+    pineconeEnvironment:test-env,
+    pineconeIndex:onboarding-knowledge
   },
   defaultLLMProvider: 'openai',
-  defaultLLMModel: 'gpt-4',
+  defaultLLMModel: gpt-4',
   defaultTemperature: 0.7,
   defaultMaxTokens: 1000,
   greeterAgentEnabled: true,
-  greeterAgentName: 'Fuse Assistant',
-  greeterAgentAvatar: '/assets/images/greeter-avatar.png',
-  greeterAgentPrompt: 'You are Fuse Assistant, a helpful AI assistant.',
+  greeterAgentName:Fuse Assistant',
+  greeterAgentAvatar:/assets/images/greeter-avatar.'png',
+  greeterAgentPrompt:You are Fuse Assistant, a helpful AI assistant.',
   greeterAgentKnowledgeBase: [
     {
-      id: 'kb-1',
-      name: 'Platform Overview',
-      description: 'General information about The New Fuse platform',
+      id: kb-1',
+      name:Platform Overview',
+      description:General information about The New Fuse platform',
       enabled: true
     }
   ],
   multimodalEnabled: true,
-  supportedModalities: ['text', 'image'],
-  imageAnalysisModel: 'gpt-4-vision',
-  audioTranscriptionModel: 'whisper-large-v3',
+  supportedModalities: ['text', image'],
+  imageAnalysisModel:gpt-4-vision,
+  audioTranscriptionModel:whisper-large-v3,
   enableDebugMode: false,
   logUserInteractions: true,
   maxConcurrentRequests: 5,
   requestTimeout: 30,
-  fallbackBehavior: 'graceful-degradation'
+  fallbackBehavior:graceful-degradation
 };
 
 describe('OnboardingConfigService', () => {
@@ -138,7 +138,7 @@ describe('OnboardingConfigService', () => {
           provide: ConfigService,
           useValue: {
             get: jest.fn().mockImplementation((key) => {
-              if (key === 'DATABASE_URL') return 'test-db-url';
+              if (key === 'DATABASE_URL') return test-db-url;
               return null;
             })
           }
@@ -219,7 +219,7 @@ describe('OnboardingConfigService', () => {
       const result = await service.getUserTypes();
       expect(result).toEqual(mockUserTypes);
       expect(prismaService.onboardingConfig.findFirst).toHaveBeenCalledWith({
-        where: { type: 'user-types' }
+        where: { type:user-types }
       });
     });
 
@@ -229,7 +229,7 @@ describe('OnboardingConfigService', () => {
       const result = await service.getUserTypes();
       expect(result).toBeDefined();
       expect(prismaService.onboardingConfig.findFirst).toHaveBeenCalledWith({
-        where: { type: 'user-types' }
+        where: { type:user-types }
       });
     });
   });
@@ -243,10 +243,10 @@ describe('OnboardingConfigService', () => {
       const result = await service.updateUserTypes(mockUserTypes);
       expect(result).toEqual({ success: true, data: mockUserTypes });
       expect(prismaService.onboardingConfig.upsert).toHaveBeenCalledWith({
-        where: { type: 'user-types' },
+        where: { type:user-types },
         update: { data: mockUserTypes },
         create: {
-          type: 'user-types',
+          type:user-types,
           data: mockUserTypes
         }
       });
@@ -305,7 +305,7 @@ describe('OnboardingConfigService', () => {
       const result = await service.getAISettings();
       expect(result).toEqual(mockAISettings);
       expect(prismaService.onboardingConfig.findFirst).toHaveBeenCalledWith({
-        where: { type: 'ai-settings' }
+        where: { type:ai-settings }
       });
     });
 
@@ -315,7 +315,7 @@ describe('OnboardingConfigService', () => {
       const result = await service.getAISettings();
       expect(result).toBeDefined();
       expect(prismaService.onboardingConfig.findFirst).toHaveBeenCalledWith({
-        where: { type: 'ai-settings' }
+        where: { type:ai-settings }
       });
     });
   });
@@ -329,10 +329,10 @@ describe('OnboardingConfigService', () => {
       const result = await service.updateAISettings(mockAISettings);
       expect(result).toEqual({ success: true, data: mockAISettings });
       expect(prismaService.onboardingConfig.upsert).toHaveBeenCalledWith({
-        where: { type: 'ai-settings' },
+        where: { type:ai-settings },
         update: { data: mockAISettings },
         create: {
-          type: 'ai-settings',
+          type:ai-settings,
           data: mockAISettings
         }
       });
@@ -341,10 +341,10 @@ describe('OnboardingConfigService', () => {
 
   describe('validateConfiguration', () => {
     beforeEach(() => {
-      jest.spyOn(service, 'getGeneralSettings').mockResolvedValue(mockGeneralSettings);
-      jest.spyOn(service, 'getUserTypes').mockResolvedValue(mockUserTypes);
-      jest.spyOn(service, 'getSteps').mockResolvedValue(mockSteps);
-      jest.spyOn(service, 'getAISettings').mockResolvedValue(mockAISettings);
+      jest.spyOn(service, getGeneralSettings').mockResolvedValue(mockGeneralSettings);
+      jest.spyOn(service, getUserTypes').mockResolvedValue(mockUserTypes);
+      jest.spyOn(service, getSteps').mockResolvedValue(mockSteps);
+      jest.spyOn(service, getAISettings').mockResolvedValue(mockAISettings);
     });
 
     it('should validate configuration and return success if valid', async () => {
@@ -355,9 +355,9 @@ describe('OnboardingConfigService', () => {
 
     it('should validate configuration and return error if invalid', async () => {
       // Mock invalid configuration
-      jest.spyOn(service, 'getGeneralSettings').mockResolvedValue({
+      jest.spyOn(service, getGeneralSettings').mockResolvedValue({
         ...mockGeneralSettings,
-        welcomeTitle: '' // Missing required field
+        welcomeTitle: // Missing required field
       });
 
       const result = await service.validateConfiguration();

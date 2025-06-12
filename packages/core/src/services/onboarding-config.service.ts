@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from './prisma.service.js';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config';
 
 /**
  * Service for managing onboarding configuration settings
  */
 @Injectable()
 export class OnboardingConfigService {
-  private readonly logger = new Logger(OnboardingConfigService.name);
+  private readonly logger = new Logger(OnboardingConfigService.name)';
 
   constructor(
     private readonly prisma: PrismaService,
@@ -57,7 +57,7 @@ export class OnboardingConfigService {
   async getUserTypes() {
     try {
       const settings = await this.prisma.onboardingConfig.findFirst({
-        where: { type: 'user-types' }
+        where: { type:user-types }
       });
 
       return settings?.data || this.getDefaultUserTypes();
@@ -73,10 +73,10 @@ export class OnboardingConfigService {
   async updateUserTypes(data: any) {
     try {
       const settings = await this.prisma.onboardingConfig.upsert({
-        where: { type: 'user-types' },
+        where: { type:user-types },
         update: { data },
         create: {
-          type: 'user-types',
+          type:user-types,
           data
         }
       });
@@ -131,7 +131,7 @@ export class OnboardingConfigService {
   async getAISettings() {
     try {
       const settings = await this.prisma.onboardingConfig.findFirst({
-        where: { type: 'ai-settings' }
+        where: { type:ai-settings }
       });
 
       return settings?.data || this.getDefaultAISettings();
@@ -147,10 +147,10 @@ export class OnboardingConfigService {
   async updateAISettings(data: any) {
     try {
       const settings = await this.prisma.onboardingConfig.upsert({
-        where: { type: 'ai-settings' },
+        where: { type:ai-settings },
         update: { data },
         create: {
-          type: 'ai-settings',
+          type:ai-settings,
           data
         }
       });
@@ -197,12 +197,12 @@ export class OnboardingConfigService {
       }
 
       // Check for required steps
-      const hasWelcomeStep = steps.some(step => step.type === 'welcome' && step.enabled);
+      const hasWelcomeStep = steps.some(step => step.type === welcome' && step.enabled);
       if (!hasWelcomeStep) {
         issues.push('A welcome step is required');
       }
 
-      const hasCompletionStep = steps.some(step => step.type === 'completion' && step.enabled);
+      const hasCompletionStep = steps.some(step => step.type === completion' && step.enabled);
       if (!hasCompletionStep) {
         issues.push('A completion step is required');
       }
@@ -241,12 +241,12 @@ export class OnboardingConfigService {
       // Return validation results
       return {
         valid: issues.length === 0,
-        status: issues.length > 0 ? 'error' : warnings.length > 0 ? 'warning' : 'success',
+        status: issues.length > 0 ? error' : warnings.length > 0 ? warning' : 'success',
         message: issues.length > 0 
-          ? 'Configuration has errors' 
+          ? Configuration has 'errors' 
           : warnings.length > 0 
-            ? 'Configuration has warnings' 
-            : 'Configuration is valid',
+            ? Configuration has 'warnings' 
+            :Configuration is valid',
         details: [...issues, ...warnings]
       };
     } catch (error) {
@@ -292,15 +292,15 @@ export class OnboardingConfigService {
       skipForReturningUsers: true,
       allowSkipping: false,
       requireEmailVerification: true,
-      logoUrl: '/assets/images/logo.png',
-      primaryColor: '#3182CE',
-      secondaryColor: '#4FD1C5',
-      backgroundImage: '',
-      welcomeTitle: 'Welcome to The New Fuse',
-      welcomeMessage: 'The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems.',
+      logoUrl:/assets/images/logo.'png',
+      primaryColor:#3182'CE',
+      secondaryColor:#4'FD1C5',
+      backgroundImage:,
+      welcomeTitle: Welcome to The New 'Fuse',
+      welcomeMessage:The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems.',
       timeoutMinutes: 30,
       saveProgressAutomatically: true,
-      redirectAfterCompletion: '/dashboard',
+      redirectAfterCompletion: /'dashboard',
       analyticsEnabled: true
     };
   }
@@ -312,25 +312,25 @@ export class OnboardingConfigService {
     return [
       {
         id: 'human',
-        name: 'Human User',
-        description: 'Regular human users of the platform',
+        name: Human 'User',
+        description:Regular human users of the platform',
         enabled: true,
         detectionMethod: 'behavior',
         detectionConfig: {
-          behaviorPattern: 'human-like interaction patterns'
+          behaviorPattern: human-like interaction 'patterns'
         },
         onboardingFlow: 'human',
         priority: 1
       },
       {
         id: 'ai_agent',
-        name: 'AI Agent',
-        description: 'AI agents that integrate with the platform',
+        name:AI Agent',
+        description:AI agents that integrate with the platform',
         enabled: true,
         detectionMethod: 'header',
         detectionConfig: {
-          headerName: 'X-Agent-Type',
-          headerValue: 'ai-agent'
+          headerName: X-Agent-Type,
+          headerValue:ai-agent
         },
         onboardingFlow: 'ai_agent',
         priority: 2
@@ -344,97 +344,97 @@ export class OnboardingConfigService {
   private getDefaultSteps() {
     return [
       {
-        id: '1',
+        id: 1',
         type: 'welcome',
         title: 'Welcome',
-        description: 'Introduction to The New Fuse platform',
+        description:Introduction to The New Fuse platform',
         enabled: true,
         required: true,
-        userTypes: ['human', 'ai_agent'],
+        userTypes: ['human', ai_agent'],
         content: {
-          heading: 'Welcome to The New Fuse',
-          subheading: 'The AI agent coordination platform that enables intelligent interaction between different AI systems.',
-          imageUrl: '/assets/images/welcome.png',
-          buttonText: 'Get Started'
+          heading:Welcome to The New Fuse',
+          subheading:The AI agent coordination platform that enables intelligent interaction between different AI systems.',
+          imageUrl: /assets/images/welcome.'png',
+          buttonText:Get Started'
         }
       },
       {
-        id: '2',
+        id:2',
         type: 'profile',
-        title: 'User Profile',
-        description: 'Collect user information',
+        title:User Profile',
+        description:Collect user information',
         enabled: true,
         required: true,
         userTypes: ['human'],
         content: {
-          heading: 'Tell us about yourself',
-          subheading: 'This information helps us personalize your experience.'
+          heading:Tell us about yourself',
+          subheading:This information helps us personalize your experience.'
         }
       },
       {
-        id: '3',
+        id: 3',
         type: 'ai_preferences',
-        title: 'AI Preferences',
-        description: 'Configure AI settings',
+        title: AI 'Preferences',
+        description:Configure AI settings',
         enabled: true,
         required: false,
         userTypes: ['human'],
         content: {
-          heading: 'AI Preferences',
-          subheading: 'Configure how AI agents work for you.'
+          heading:AI Preferences',
+          subheading:Configure how AI agents work for you.'
         }
       },
       {
-        id: '4',
+        id: 4',
         type: 'workspace',
-        title: 'Workspace Setup',
-        description: 'Set up workspace preferences',
+        title: Workspace 'Setup',
+        description:Set up workspace preferences',
         enabled: true,
         required: true,
-        userTypes: ['human', 'ai_agent'],
+        userTypes: ['human', ai_agent'],
         content: {
-          heading: 'Set Up Your Workspace',
-          subheading: 'Configure your workspace to suit your needs.'
+          heading:Set Up Your Workspace',
+          subheading:Configure your workspace to suit your needs.'
         }
       },
       {
-        id: '5',
+        id: 5',
         type: 'tools',
-        title: 'Tools & Integrations',
-        description: 'Select tools and integrations',
+        title: Tools & 'Integrations',
+        description:Select tools and integrations',
         enabled: true,
         required: false,
         userTypes: ['human'],
         content: {
-          heading: 'Tools & Integrations',
-          subheading: 'Select the tools you want to use with The New Fuse.'
+          heading:Tools & Integrations',
+          subheading:Select the tools you want to use with The New Fuse.'
         }
       },
       {
-        id: '6',
+        id: 6',
         type: 'greeter',
-        title: 'Meet Your Assistant',
-        description: 'Introduction to the Greeter Agent',
+        title: Meet Your 'Assistant',
+        description:Introduction to the Greeter Agent',
         enabled: true,
         required: false,
         userTypes: ['human'],
         content: {
-          heading: 'Meet Your Assistant',
-          subheading: 'Your AI assistant will help you navigate The New Fuse.'
+          heading:Meet Your Assistant',
+          subheading:Your AI assistant will help you navigate The New Fuse.'
         }
       },
       {
-        id: '7',
+        id: 7',
         type: 'completion',
         title: 'Complete',
-        description: 'Onboarding completion',
+        description:Onboarding completion',
         enabled: true,
         required: true,
-        userTypes: ['human', 'ai_agent'],
+        userTypes: ['human', ai_agent'],
         content: {
-          heading: 'All Set!',
-          subheading: 'You\'re ready to start using The New Fuse.',
-          buttonText: 'Get Started'
+          heading:All Set!',
+          subheading: You\'re ready to start using The New Fuse.',
+          buttonText:Get Started'
         }
       }
     ];
@@ -446,50 +446,50 @@ export class OnboardingConfigService {
   private getDefaultAISettings() {
     return {
       ragEnabled: true,
-      defaultEmbeddingModel: 'text-embedding-3-large',
+      defaultEmbeddingModel:text-embedding-3-large,
       vectorDatabaseType: 'pinecone',
       vectorDatabaseConfig: {
-        pineconeApiKey: '',
-        pineconeEnvironment: '',
-        pineconeIndex: 'onboarding-knowledge'
+        pineconeApiKey: ,
+        pineconeEnvironment:,
+        pineconeIndex: 'onboarding-knowledge
       },
       defaultLLMProvider: 'openai',
-      defaultLLMModel: 'gpt-4',
+      defaultLLMModel: gpt-4',
       defaultTemperature: 0.7,
       defaultMaxTokens: 1000,
       greeterAgentEnabled: true,
-      greeterAgentName: 'Fuse Assistant',
-      greeterAgentAvatar: '/assets/images/greeter-avatar.png',
-      greeterAgentPrompt: 'You are Fuse Assistant, a helpful AI assistant designed to help users get started with The New Fuse platform. Your goal is to be friendly, informative, and guide users through the onboarding process.',
+      greeterAgentName:Fuse Assistant',
+      greeterAgentAvatar:/assets/images/greeter-avatar.'png',
+      greeterAgentPrompt:You are Fuse Assistant, a helpful AI assistant designed to help users get started with The New Fuse platform. Your goal is to be friendly, informative, and guide users through the onboarding process.',
       greeterAgentKnowledgeBase: [
         {
-          id: 'kb-1',
-          name: 'Platform Overview',
-          description: 'General information about The New Fuse platform',
+          id: kb-1',
+          name:Platform Overview',
+          description:General information about The New Fuse platform',
           enabled: true
         },
         {
-          id: 'kb-2',
-          name: 'Getting Started Guide',
-          description: 'Step-by-step guide for new users',
+          id:kb-2',
+          name: Getting Started 'Guide',
+          description:Step-by-step guide for new users',
           enabled: true
         },
         {
-          id: 'kb-3',
+          id:kb-3',
           name: 'FAQ',
-          description: 'Frequently asked questions',
+          description:Frequently asked questions',
           enabled: true
         }
       ],
       multimodalEnabled: true,
-      supportedModalities: ['text', 'image', 'audio'],
-      imageAnalysisModel: 'gpt-4-vision',
-      audioTranscriptionModel: 'whisper-large-v3',
+      supportedModalities: ['text', image', audio'],
+      imageAnalysisModel:gpt-4-vision,
+      audioTranscriptionModel:whisper-large-v3,
       enableDebugMode: false,
       logUserInteractions: true,
       maxConcurrentRequests: 5,
       requestTimeout: 30,
-      fallbackBehavior: 'graceful-degradation'
+      fallbackBehavior:graceful-degradation
     };
   }
 }

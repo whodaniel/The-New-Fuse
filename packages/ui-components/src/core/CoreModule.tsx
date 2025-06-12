@@ -3,9 +3,9 @@ import React from 'react';
 // Import components from their correct paths
 import { Layout } from '../layout/BaseLayout.js';
 import { Navigation } from '../layout/Navigation.js';
-import { Table } from './data-table.js';
-import { Chart } from './graph-chart.js';
-import { Form } from './form.js';
+import { Table } from './data-table.tsx';
+import { Chart } from './graph-chart.tsx';
+import { Form } from './form.tsx';
 
 export {
   Layout,

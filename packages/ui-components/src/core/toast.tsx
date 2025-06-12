@@ -1,6 +1,6 @@
 import * as React from "react";
-import { ToastProps, ToastActionElement } from './types.js';
-import { cn } from '../lib/utils.js';
+import { ToastProps, ToastActionElement } from './types.tsx';
+import { cn } from '../lib/utils.tsx';
 
 const Toast = React.forwardRef<
   HTMLDivElement,

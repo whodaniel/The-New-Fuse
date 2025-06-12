@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import AdminLayout from './AdminLayout.js';
+import AdminLayout from './AdminLayout.tsx';
 const Dashboard = React.lazy(() => import('./Dashboard.js'));
 const Users = React.lazy(() => import('./Users.js'));
 const Workspaces = React.lazy(() => import('./Workspaces.js'));

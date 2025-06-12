@@ -6,12 +6,12 @@ import { MonitoringService } from '@the-new-fuse/core';
 
 class NewFuseLauncher {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private monitoring: MonitoringService;
 
   constructor() {
     this.logger = new Logger('NewFuseLauncher');
-    this.redis = new Redis();
+    this.redis = new (Redis as any)();
     this.monitoring = new MonitoringService();
   }
 
@@ -35,8 +35,8 @@ class NewFuseLauncher {
 
       this.logger.log('The New Fuse system is now running');
 
-    } catch (error) {
-      this.logger.error('Failed to launch The New Fuse:', error.message);
+    } catch (error: unknown) {
+      this.logger.error('Failed to launch The New Fuse:', (error as Error).message);
       process.exit(1);
     }
   }

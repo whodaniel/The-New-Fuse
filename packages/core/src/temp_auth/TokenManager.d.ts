@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { DatabaseService } from '@the-new-fuse/database';
 import { EventEmitter } from 'events';
-import { AuthConfig } from './AuthTypes.js';
+import { AuthConfig } from './AuthTypes.tsx';
 export declare class TokenManager extends EventEmitter {
     private readonly jwtService;
     private readonly db;

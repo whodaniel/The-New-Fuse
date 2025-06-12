@@ -10,7 +10,7 @@ interface Module {
 interface ProcessingGoal {
   targetOutput: string;
   constraints: Record<string, unknown>;
-  priority: 'high' | 'medium' | 'low';
+  priority: 'high' | medium' | low';
 }
 
 interface Pipeline {
@@ -78,7 +78,7 @@ export class ModularSystem {
   private incrementVersion(version: string): string {
     // Simple version incrementing
     const parts = version.split('.');
-    const patchVersion = parseInt(parts[2] || '0', 10) + 1;
+    const patchVersion = parseInt(parts[2] || 0', 10) + 1;
     return `${parts[0]}.${parts[1]}.${patchVersion}`;
   }
 }

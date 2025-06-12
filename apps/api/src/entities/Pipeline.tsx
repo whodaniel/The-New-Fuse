@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from './User.js';
-import { Agent } from './Agent.js';
+import { Agent } from './Agent.tsx';
 import { Task } from './Task.js';
 
 @Entity()

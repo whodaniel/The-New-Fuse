@@ -1,4 +1,4 @@
-import { FeatureSet } from './feature_processor.js';
+import { FeatureSet } from './feature_processor.tsx';
 import { IntegrationMonitor } from '../monitoring/integration_monitor.js';
 import { createLogger } from '../../loggingConfig.js';
 
@@ -78,7 +78,7 @@ export class AdaptiveImplementer {
                     await this.adaptImplementation(task);
                 }
             } catch (error: unknown) {
-                logger.error('Error executing task:', {
+                logger.error('Error executing task:, {
                     phaseId: phase.phaseId,
                     taskId: task.id,
                     error
@@ -101,7 +101,7 @@ export class AdaptiveImplementer {
 
     private async executeStep(step: Record<string, unknown>): Promise<void> {
         // Implementation would depend on the specific step type
-        logger.debug('Executing step:', { step });
+        logger.debug('Executing step:, { step });
     }
 
     private async verifyPhase(phase: ImplementationPhase): Promise<void> {
@@ -146,7 +146,7 @@ export class AdaptiveImplementer {
             }
             logger.info('Rollback completed successfully', { phaseId: phase.phaseId });
         } catch (error: unknown) {
-            logger.error('Rollback failed:', {
+            logger.error('Rollback failed:, {
                 phaseId: phase.phaseId,
                 error
             });
@@ -242,7 +242,7 @@ export class AdaptiveImplementer {
         error: Error,
         phases: ImplementationPhase[]
     ): Promise<void> {
-        logger.error('Implementation error:', error);
+        logger.error('Implementation error:, error);
         
         // Attempt rollback for all active phases
         const activePhases = Array.from(this.activeImplementations.values());
@@ -273,20 +273,20 @@ export class AdaptiveImplementer {
         task: Task
     ): Promise<void> {
         switch(issue.type as string) {
-            case 'DEPENDENCY_CONFLICT':
+            case DEPENDENCY_CONFLICT':
                 await this.resolveDependencyConflict(issue, task);
                 break;
                 
-            case 'RESOURCE_CONSTRAINT':
+            case RESOURCE_CONSTRAINT':
                 await this.resolveResourceConstraint(issue, task);
                 break;
                 
-            case 'INTEGRATION_FAILURE':
+            case INTEGRATION_FAILURE':
                 await this.resolveIntegrationFailure(issue, task);
                 break;
                 
             default:
-                logger.warn('Unknown issue type:', {
+                logger.warn('Unknown issue type:, {
                     taskId: task.id,
                     issueType: issue.type
                 });
@@ -300,7 +300,7 @@ export class AdaptiveImplementer {
         const conflictingDep = issue.dependency as string;
         const resolution = await this.dependencyResolver.resolve(conflictingDep);
         
-        await this.monitor.trackResolution(task.id, 'DEPENDENCY_CONFLICT', {
+        await this.monitor.trackResolution(task.id, DEPENDENCY_CONFLICT', {
             dependency: conflictingDep,
             resolution
         });
@@ -318,7 +318,7 @@ export class AdaptiveImplementer {
             await this.scaleResource(resource, required);
         }
         
-        await this.monitor.trackResolution(task.id, 'RESOURCE_CONSTRAINT', {
+        await this.monitor.trackResolution(task.id, RESOURCE_CONSTRAINT', {
             resource,
             scaled: true
         });
@@ -331,7 +331,7 @@ export class AdaptiveImplementer {
 
     private reprioritizeTasks(phase: ImplementationPhase, previousPhase: ImplementationPhase): void {
         // Implementation for reprioritizing tasks based on new insights or changes in strategy
-        logger.info('Reprioritizing tasks for phase:', { phaseId: phase.phaseId });
+        logger.info('Reprioritizing tasks for phase:, { phaseId: phase.phaseId });
     }
 
     private increaseResourceAllocation(phase: ImplementationPhase): void {

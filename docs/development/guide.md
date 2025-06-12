@@ -70,7 +70,7 @@ cd fuse
 3. Start the development server:
 
 ```bash
-npm run dev
+bun dev
 ```
 
 This will start the frontend at http://localhost:3000 and the API at http://localhost:3001.
@@ -105,22 +105,22 @@ To build specific packages:
 
 ```bash
 # Build types package
-npm run build:types
+bun run build:types
 
 # Build utils package
-npm run build:utils
+bun run build:utils
 
 # Build core package
-npm run build:core
+bun run build:core
 
 # Build UI package
-npm run build:ui
+bun run build:ui
 
 # Build feature-tracker package
-npm run build:feature-tracker
+bun run build:feature-tracker
 
 # Build feature-suggestions package
-npm run build:feature-suggestions
+bun run build:feature-suggestions
 ```
 
 ### Running in Development Mode
@@ -128,7 +128,7 @@ npm run build:feature-suggestions
 To run the project in development mode:
 
 ```bash
-npm run dev
+bun dev
 ```
 
 This will start all services in parallel using Turbo.
@@ -156,18 +156,18 @@ If you prefer to build manually:
 
 ```bash
 # Install dependencies
-npm install
+bun install
 
 # Build packages in the correct order
-npm run build:types
-npm run build:utils
-npm run build:core
-npm run build:ui
-npm run build:feature-tracker
-npm run build:feature-suggestions
+bun run build:types
+bun run build:utils
+bun run build:core
+bun run build:ui
+bun run build:feature-tracker
+bun run build:feature-suggestions
 
 # Build all applications
-npm run build
+bun run build
 ```
 
 ## Testing
@@ -177,23 +177,23 @@ npm run build
 To run all tests:
 
 ```bash
-npm run test
+bun test
 ```
 
 To run specific test suites:
 
 ```bash
 # Run unit tests
-npm run test:unit
+bun run test:unit
 
 # Run integration tests
-npm run test:integration
+bun run test:integration
 
 # Run end-to-end tests
-npm run test:e2e
+bun run test:e2e
 
 # Run tests with coverage
-npm run test:coverage
+bun run test:coverage
 ```
 
 ## Deployment

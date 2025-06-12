@@ -1,4 +1,4 @@
-import { BaseError } from '../types.js';
+import { BaseError } from '../types.tsx';
 
 export interface IRecoveryStrategy {
   canHandle(error: BaseError): boolean;

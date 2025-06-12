@@ -3,7 +3,7 @@
  */
 
 import { CodeExecutionAgent } from './code-execution-agent.js';
-import { MCPClient } from '../../packages/core/src/mcp/MCPClient.js'; // Replace with actual import
+import { MCPClient } from '../../packages/core/src/mcp/MCPClient.tsx'; // Replace with actual import
 
 async function main() {
   // Create MCP client

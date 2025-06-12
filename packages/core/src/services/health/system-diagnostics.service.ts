@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config';
 
 export interface SystemHealthCheck {
-  component: string;
-  status: 'healthy' | 'warning' | 'critical' | 'unknown';
+  component: string';
+  status:healthy' | warning' | critical' | unknown';
   message?: string;
   details?: Record<string, any>;
   timestamp: Date;
@@ -11,7 +11,7 @@ export interface SystemHealthCheck {
 }
 
 export interface SystemDiagnosticReport {
-  overall: 'healthy' | 'warning' | 'critical';
+  overall:healthy' | warning' | critical';
   timestamp: Date;
   checks: SystemHealthCheck[];
   summary: {
@@ -25,7 +25,7 @@ export interface SystemDiagnosticReport {
 export interface ServiceTroubleshootingResult {
   serviceName: string;
   issues: Array<{
-    severity: 'low' | 'medium' | 'high' | 'critical';
+    severity:low' | medium' | high' | critical';
     description: string;
     recommendations: string[];
   }>;
@@ -69,7 +69,7 @@ export class SystemDiagnosticsService {
         checks.push({
           component: name,
           status: 'critical',
-          message: error instanceof Error ? error.message : 'Unknown error',
+          message: error instanceof Error ? error.message : Unknown 'error',
           timestamp: new Date(),
           responseTime: Date.now() - startTime
         });
@@ -85,7 +85,7 @@ export class SystemDiagnosticsService {
     };
 
     // Determine overall status
-    let overall: 'healthy' | 'warning' | 'critical' = 'healthy';
+    let overall:healthy' | warning' | critical' = 'healthy';
     if (summary.critical > 0) {
       overall = 'critical';
     } else if (summary.warning > 0) {
@@ -102,7 +102,7 @@ export class SystemDiagnosticsService {
 
   public async troubleshootService(serviceName: string): Promise<ServiceTroubleshootingResult> {
     const issues: Array<{
-      severity: 'low' | 'medium' | 'high' | 'critical';
+      severity:low' | medium' | high' | critical';
       description: string;
       recommendations: string[];
     }> = [];
@@ -114,9 +114,9 @@ export class SystemDiagnosticsService {
         severity: 'high',
         description: `Service ${serviceName} not found in health check registry`,
         recommendations: [
-          'Verify service name spelling',
-          'Check if service is properly registered',
-          'Ensure service is deployed and running'
+          Verify service name 'spelling',
+          Check if service is properly 'registered',
+          Ensure service is deployed and 'running'
         ]
       });
     } else {
@@ -128,10 +128,10 @@ export class SystemDiagnosticsService {
             severity: 'critical',
             description: `Service ${serviceName} is in critical state: ${result.message}`,
             recommendations: [
-              'Check service logs for errors',
-              'Verify service configuration',
-              'Restart service if necessary',
-              'Check database connectivity if applicable'
+              Check service logs for 'errors',
+              Verify service 'configuration',
+              Restart service if 'necessary',
+              Check database connectivity if 'applicable'
             ]
           });
         } else if (result.status === 'warning') {
@@ -139,20 +139,20 @@ export class SystemDiagnosticsService {
             severity: 'medium',
             description: `Service ${serviceName} has warnings: ${result.message}`,
             recommendations: [
-              'Monitor service performance',
-              'Check for resource constraints',
-              'Review recent configuration changes'
+              Monitor service 'performance',
+              Check for resource 'constraints',
+              Review recent configuration 'changes'
             ]
           });
         }
       } catch (error) {
         issues.push({
           severity: 'critical',
-          description: `Failed to check service ${serviceName}: ${error instanceof Error ? error.message : 'Unknown error'}`,
+          description: `Failed to check service ${serviceName}: ${error instanceof Error ? error.message : Unknown 'error'}`,
           recommendations: [
-            'Check if service is running',
-            'Verify network connectivity',
-            'Check service endpoint configuration'
+            Check if service is 'running',
+            Verify network 'connectivity',
+            Check service endpoint 'configuration'
           ]
         });
       }
@@ -167,9 +167,9 @@ export class SystemDiagnosticsService {
         severity: 'high',
         description: `High CPU usage: ${systemMetrics.cpu}%`,
         recommendations: [
-          'Identify processes consuming high CPU',
-          'Scale up resources if needed',
-          'Optimize service performance'
+          Identify processes consuming high 'CPU',
+          Scale up resources if 'needed',
+          Optimize service 'performance'
         ]
       });
     }
@@ -179,9 +179,9 @@ export class SystemDiagnosticsService {
         severity: 'high',
         description: `High memory usage: ${systemMetrics.memory}%`,
         recommendations: [
-          'Check for memory leaks',
-          'Increase available memory',
-          'Optimize memory usage in applications'
+          Check for memory 'leaks',
+          Increase available 'memory',
+          Optimize memory usage in 'applications'
         ]
       });
     }
@@ -191,10 +191,10 @@ export class SystemDiagnosticsService {
         severity: 'critical',
         description: `Critical disk usage: ${systemMetrics.disk}%`,
         recommendations: [
-          'Clean up unnecessary files',
-          'Archive old logs',
-          'Increase disk space',
-          'Implement log rotation'
+          Clean up unnecessary 'files',
+          Archive old 'logs',
+          Increase disk 'space',
+          Implement log 'rotation'
         ]
       });
     }
@@ -232,7 +232,7 @@ export class SystemDiagnosticsService {
       return {
         component: componentName,
         status: 'critical',
-        message: error instanceof Error ? error.message : 'Unknown error',
+        message: error instanceof Error ? error.message : Unknown 'error',
         timestamp: new Date()
       };
     }
@@ -245,11 +245,11 @@ export class SystemDiagnosticsService {
       return {
         component: 'database',
         status: 'healthy',
-        message: 'Database connection is healthy',
+        message:Database connection is healthy',
         timestamp: new Date(),
         details: {
           connectionPool: 'healthy',
-          responseTime: '< 100ms'
+          responseTime: < 100'ms'
         }
       };
     });
@@ -259,11 +259,11 @@ export class SystemDiagnosticsService {
       return {
         component: 'redis',
         status: 'healthy',
-        message: 'Redis connection is healthy',
+        message:Redis connection is healthy',
         timestamp: new Date(),
         details: {
           connected: true,
-          memoryUsage: '45%'
+          memoryUsage:45%'
         }
       };
     });
@@ -273,7 +273,7 @@ export class SystemDiagnosticsService {
       return {
         component: 'external_apis',
         status: 'healthy',
-        message: 'External APIs are responding',
+        message:External APIs are responding',
         timestamp: new Date(),
         details: {
           openai: 'healthy',
@@ -290,7 +290,7 @@ export class SystemDiagnosticsService {
     network?: number;
   }> {
     // Placeholder system metrics
-    // In a real implementation, you would use libraries like 'systeminformation' or 'node-os-utils'
+    // In a real implementation, you would use libraries like systeminformation' or node-os-utils
     return {
       cpu: Math.random() * 100,
       memory: Math.random() * 100,

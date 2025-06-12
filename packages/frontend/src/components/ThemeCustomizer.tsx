@@ -9,7 +9,7 @@ import {
   FormLabel,
   Heading,
 } from '@chakra-ui/react';
-import { useTheme, ThemeConfig } from '../contexts/ThemeContext.js';
+import { useTheme, ThemeConfig } from '../contexts/ThemeContext.tsx';
 
 export function ThemeCustomizer() {
   const { themeConfig, setThemeConfig } = useTheme();

@@ -36,8 +36,8 @@ import {
   Progress,
   Tooltip
 } from '@chakra-ui/react';
-import { useAPIMonitoring } from '../../hooks/useAPIMonitoring.js';
-import { LineChart } from '../Charts/LineChart.js';
+import { useAPIMonitoring } from '../../hooks/useAPIMonitoring.tsx';
+import { LineChart } from '../Charts/LineChart.tsx';
 
 export const APIMonitoring: React.FC = () => {
   const { 

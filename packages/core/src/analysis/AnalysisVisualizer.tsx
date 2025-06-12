@@ -3,7 +3,7 @@ import { Logger } from '@the-new-fuse/utils';
 import { AnalysisResult, AnalysisType, SystemPerformanceMetrics } from '@the-new-fuse/types';
 
 interface VisualizationOptions {
-  format?: 'json' | 'html' | 'svg';
+  format?:json' | html' | svg';
   includeMetadata?: boolean;
   colorScheme?: string;
   width?: number;
@@ -76,11 +76,11 @@ export class AnalysisVisualizer {
       const visualizationData = await this.createVisualizationDataForAnalysis(analysisResult);
 
       switch (options.format) {
-        case 'json':
+        case json':
           return this.generateJsonVisualization(visualizationData, options);
-        case 'html':
+        case html':
           return this.generateHtmlVisualization(visualizationData, options);
-        case 'svg':
+        case svg':
           return this.generateSvgVisualization(visualizationData, options);
         default:
           // Default to json if format is not specified or unsupported
@@ -91,7 +91,7 @@ export class AnalysisVisualizer {
           throw new Error(`Unsupported visualization format: ${options.format}`);
       }
     } catch (error: unknown) {
-      this.logger.error('Visualization failed:', { error: error as Error });
+      this.logger.error('Visualization failed:, { error: error as Error });
       throw error; // Re-throw the error after logging
     }
   }
@@ -178,9 +178,9 @@ export class AnalysisVisualizer {
     }));
 
     return this.createVisualizationData(
-      'dependency',
-      'Dependency Analysis',
-      'This visualization shows the dependencies between components.',
+      dependency',
+      Dependency 'Analysis',
+      This visualization shows the dependencies between components.',
       analysisResult.metrics,
       analysisResult.findings || [],
       [],
@@ -207,9 +207,9 @@ export class AnalysisVisualizer {
     ];
 
     return this.createVisualizationData(
-      'security',
-      'Security Analysis',
-      'This visualization shows security findings and vulnerabilities.',
+      security',
+      Security 'Analysis',
+      This visualization shows security findings and vulnerabilities.',
       analysisResult.metrics,
       analysisResult.findings || [],
       visualElements
@@ -235,9 +235,9 @@ export class AnalysisVisualizer {
 
 
     return this.createVisualizationData(
-      'performance',
-      'Performance Analysis',
-      'This visualization shows performance metrics and bottlenecks.',
+      performance',
+      Performance 'Analysis',
+      This visualization shows performance metrics and bottlenecks.',
       analysisResult.metrics || {},
       analysisResult.findings || [],
       visualElements
@@ -262,9 +262,9 @@ export class AnalysisVisualizer {
     ];
 
     return this.createVisualizationData(
-      'code-quality',
-      'Code Quality Analysis',
-      'This visualization shows code quality metrics and issues.',
+      code-quality,
+      Code Quality 'Analysis',
+      This visualization shows code quality metrics and issues.',
       analysisResult.metrics,
       analysisResult.findings || [],
       visualElements
@@ -276,60 +276,60 @@ export class AnalysisVisualizer {
     return `
 Performance Metrics:
 ------------------
-CPU Usage: ${metrics.cpuUsage !== undefined ? metrics.cpuUsage + '%' : 'N/A'}
-Memory Usage: ${metrics.memoryUsage !== undefined ? metrics.memoryUsage + 'MB' : 'N/A'}
-Throughput: ${metrics.throughput !== undefined ? metrics.throughput + ' req/s' : 'N/A'}
-Error Rate: ${metrics.errorRate !== undefined ? metrics.errorRate + '%' : 'N/A'}
-Request Count: ${metrics.requestCount !== undefined ? metrics.requestCount : 'N/A'}
+CPU Usage: ${metrics.cpuUsage !== undefined ? metrics.cpuUsage + %' :N/'A'}
+Memory Usage: ${metrics.memoryUsage !== undefined ? metrics.memoryUsage + MB' :N/'A'}
+Throughput: ${metrics.throughput !== undefined ? metrics.throughput +  req/s' :N/'A'}
+Error Rate: ${metrics.errorRate !== undefined ? metrics.errorRate + %' :N/'A'}
+Request Count: ${metrics.requestCount !== undefined ? metrics.requestCount :N/'A'}
 `;
   }
 
-  private visualizeSecurityIssues(securityScan: any): string { // Use 'any' for now due to unknown structure
+  private visualizeSecurityIssues(securityScan: any): string { // Use any' for now due to unknown structure
     if (!securityScan?.vulnerabilities?.length) {
-      return 'No security issues found.';
+      return No security issues found.';
     }
 
     return `
 Security Issues:
 --------------
-${securityScan.vulnerabilities.map((vuln: any) => ` // Use 'any' for now
+${securityScan.vulnerabilities.map((vuln: any) => ` // Use any' for now
 - ${vuln.severity}: ${vuln.title}
   Description: ${vuln.description}
-  Location: ${vuln.location || 'N/A'}
-  Fix: ${vuln.remediation || 'N/A'}
+  Location: ${vuln.location || N/'A'}
+  Fix: ${vuln.remediation || N/'A'}
 `).join('\n')}
 `;
   }
 
-  private visualizeCodeQuality(issues: any[]): string { // Use 'any' for now
+  private visualizeCodeQuality(issues: any[]): string { // Use any' for now
     if (!issues?.length) {
-      return 'No code quality issues found.';
+      return No code quality issues found.';
     }
 
     return `
 Code Quality Issues:
 -----------------
-${issues.map((issue: any) => ` // Use 'any' for now
+${issues.map((issue: any) => ` // Use any' for now
 - ${issue.severity}: ${issue.type}
   Description: ${issue.description}
   Location: ${issue.location}
   Rule: ${issue.rule}
-  ${issue.fix ? `Fix: ${issue.fix}` : ''}
+  ${issue.fix ? `Fix: ${issue.fix}` :}
 `).join('\n')}
 `;
   }
 
-   private visualizeDependencies(dependencies: any[]): string { // Use 'any' for now
+   private visualizeDependencies(dependencies: any[]): string { // Use any' for now
     if (!dependencies?.length) {
-      return 'No dependencies found.';
+      return No dependencies found.';
     }
 
     return `
 Dependencies:
 -----------
-${dependencies.map((dep: any) => ` // Use 'any' for now
+${dependencies.map((dep: any) => ` // Use any' for now
 - ${dep.name}@${dep.version}
-  Dependencies: ${dep.dependencies.join(', ') || 'None'}
+  Dependencies: ${dep.dependencies.join(', ) || 'None'}
 `).join('\n')}
 `;
   }

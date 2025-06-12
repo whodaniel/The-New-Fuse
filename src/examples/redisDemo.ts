@@ -5,7 +5,7 @@ import { RooCodeCommunication } from '../services/RooCodeCommunication.js';
 async function main() {
   // Initialize Redis client
   const redisUrl = config.get<string>('communication.redis.url');
-  const redisClient = new Redis(redisUrl);
+  const redisClient = new (Redis as any)(redisUrl);
 
   // Create two agents: A -> B
   const agentA = new RooCodeCommunication({ agentId: 'agentA', targetAgentId: 'agentB', redisClient });

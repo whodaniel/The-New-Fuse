@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
 import { ConfigService } from './config/config.service.js';
-import { SecurityService } from './security/security.service.js';
-import { StateService } from './state/state.service.js';
-import { MetricsService } from './metrics/metrics.service.js';
-import { TaskService } from './task/task.service.js';
-import { RedisService } from './redis/redis.service.js';
-import { PrismaService } from './prisma/prisma.service.js';
+import { SecurityService } from './security/security.service.tsx';
+import { StateService } from './state/state.service.tsx';
+import { MetricsService } from './metrics/metrics.service.tsx';
+import { TaskService } from './task/task.service.tsx';
+import { RedisService } from './redis/redis.service.tsx';
+import { PrismaService } from './prisma/prisma.service.tsx';
 import Redis from 'ioredis';
 
 interface SecurityConfig {
@@ -27,7 +27,7 @@ interface TaskData {
   payload: Record<string, unknown>;
 }
 
-type MetricEvent = 'task_completion' | 'task_failure' | 'task_start';
+type MetricEvent = task_completion' | task_failure' | task_start';
 
 @Injectable()
 export class ApplicationFactory {
@@ -58,15 +58,15 @@ export class ApplicationFactory {
     return typeof service.init  = new StateService(this.redis): Promise<void> {
     try {
       this.logger.info('Starting application services...')): void {
-      this.logger.error('Failed to start services:', { error: error instanceof Error ? error.message : Unknown error' }): Promise<void> {
+      this.logger.error('Failed to start services:, { error: error instanceof Error ? error.message : Unknown error' }): Promise<void> {
     try {
       this.logger.info('Stopping application services...')): void {
-      this.logger.error('Failed to stop services:', { error: error instanceof Error ? error.message : Unknown error' }): TaskData): Promise<void> {
+      this.logger.error('Failed to stop services:, { error: error instanceof Error ? error.message : Unknown error' }): TaskData): Promise<void> {
     try {
       await this.taskService.process(data);
       await this.metricsService.record<MetricEvent>('task_completion', {
         taskId: data.id,
-        status: completed',
+        status: 'completed',
         timestamp: new Date()): void {
       this.logger.error('Task processing failed:', error);
       throw error;

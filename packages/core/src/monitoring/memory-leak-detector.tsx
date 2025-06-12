@@ -63,8 +63,8 @@ export class MemoryLeakDetector {
     const retainedSizeGrowthRate = (latest.retainedSize - previous.retainedSize) / previous.retainedSize;
 
     // Record metrics
-    this.metricCollector.gauge('memory_heap_growth_rate', heapGrowthRate, 'percentage');
-    this.metricCollector.gauge('memory_retained_growth_rate', retainedSizeGrowthRate, 'percentage');
+    this.metricCollector.gauge('memory_heap_growth_rate', heapGrowthRate, percentage');
+    this.metricCollector.gauge('memory_retained_growth_rate', retainedSizeGrowthRate, percentage');
 
     // Detect potential leaks
     if (this.detectLeakPattern()) {

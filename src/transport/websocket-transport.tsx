@@ -1,6 +1,6 @@
 import * as WebSocket from 'ws';
 import * as vscode from 'vscode';
-import { ITransport, TransportMessage, TransportOptions } from './transport-interface.js';
+import { ITransport, TransportMessage, TransportOptions } from './transport-interface.tsx';
 
 export class WebSocketTransport implements ITransport {
     private ws: WebSocket | null = null;

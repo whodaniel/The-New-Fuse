@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Memory, MemoryQuery } from './types.js';
-import { MemoryEntity } from './memory.entity.js';
+import { Memory, MemoryQuery } from './types.tsx';
+import { MemoryEntity } from './memory.entity.tsx';
 import { RedisService } from '../services/redis.service.js';
 
 @Injectable()
@@ -33,13 +33,13 @@ export class MemoryStore {
 
     const uncachedIds: MemoryQuery): Promise<Memory[]> {
     const queryBuilder): void {
-      queryBuilder.andWhere('memory.type  = ids.filter((_, index): type', { type: query.type })): void {
-      queryBuilder.andWhere('memory.tags @> :tags', { tags: query.tags })): void {
-      queryBuilder.andWhere('memory.source = :source', { source: query.source })): void {
-      queryBuilder.andWhere('memory.timestamp >= :startTime', {
+      queryBuilder.andWhere('memory.type  = ids.filter((_, index): 'type', { type: query.type })): void {
+      queryBuilder.andWhere('memory.tags @> : 'tags', { tags: query.tags })): void {
+      queryBuilder.andWhere('memory.source = : 'source', { source: query.source })): void {
+      queryBuilder.andWhere('memory.timestamp >= : 'startTime', {
         startTime: query.startTime,
       })): void {
-      queryBuilder.andWhere('memory.timestamp <= :endTime', {
+      queryBuilder.andWhere('memory.timestamp <= : 'endTime', {
         endTime: query.endTime,
       })): void {
       Object.entries(query.metadata).forEach(([key, value]) => {

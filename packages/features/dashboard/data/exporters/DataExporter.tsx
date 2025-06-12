@@ -1,4 +1,4 @@
-import { ExportFormat, ExportOptions, ExportMetadata } from './types.js';
+import { ExportFormat, ExportOptions, ExportMetadata } from './types.tsx';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 import { jsPDF } from 'jspdf';

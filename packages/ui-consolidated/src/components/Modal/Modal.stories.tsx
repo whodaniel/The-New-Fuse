@@ -8,7 +8,7 @@ import {
   ModalDescription,
   ModalFooter,
   ModalCloseButton,
-} from './Modal.js';
+} from './Modal.tsx';
 import { Button } from '../Button.js';
 
 const meta: Meta<typeof Modal> = {

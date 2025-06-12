@@ -1,4 +1,4 @@
-import { ResourceManager } from '@the-new-fuse/types';
+import { ResourceManager  } from '@the-new-fuse/types;
 export declare class PerformanceAnalyzer implements ResourceManager {
     private readonly THROUGHPUT_THRESHOLD;
     private readonly LATENCY_THRESHOLD;
@@ -6,6 +6,6 @@ export declare class PerformanceAnalyzer implements ResourceManager {
     private readonly MEMORY_THRESHOLD;
     private readonly logger;
     PrismaService: any;
-    private readonly metricsService;
-    private readonly taskService;
+    private readonly metricsService';
+    private readonly taskService';
 }

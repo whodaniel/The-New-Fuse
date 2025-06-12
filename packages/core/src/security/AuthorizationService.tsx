@@ -48,7 +48,7 @@ interface AccessRequest {
 @Injectable()
 export class AuthorizationService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private roles: Map<string, Role>;
   private permissions: Map<string, Permission>;
@@ -68,7 +68,7 @@ export class AuthorizationService extends EventEmitter implements OnModuleInit {
         });
       }
     } catch (error): void {
-      this.logger.error('Failed to load roles:', error): Promise<void> {
+      this.logger.error('Failed to load roles:, error): Promise<void> {
     try {
       const permissions): void {
         this.permissions.set(permission.id, {
@@ -81,7 +81,7 @@ export class AuthorizationService extends EventEmitter implements OnModuleInit {
     } catch (error): void {
       this.logger.error('Failed to load permissions:', error): Promise<void> {
     try {
-      const policies: { priority: desc' }
+      const policies: { priority: 'desc' }
       });
       for (const policy of policies: unknown){
         this.policies.set(policy.id, {
@@ -93,7 +93,7 @@ export class AuthorizationService extends EventEmitter implements OnModuleInit {
         });
       }
     } catch (error): void {
-      this.logger.error('Failed to load policies:', error): Omit<Role, 'id'>): Promise<Role> {
+      this.logger.error('Failed to load policies:, error): Omit<Role, 'id'>): Promise<Role> {
     const id   = await this.db.roles.findMany() await this.db.accessPolicies.findMany({
         orderBy uuidv4(): Role = { ...role, id };
 
@@ -231,7 +231,7 @@ export class AuthorizationService extends EventEmitter implements OnModuleInit {
 
       // Record access request
       await this.recordAccessRequest(request)): void {
-      this.logger.error('Access check failed:', error): AccessPolicy,
+      this.logger.error('Access check failed:, error): AccessPolicy,
     userId: string,
     resource: string,
     action: string,
@@ -308,7 +308,7 @@ export class AuthorizationService extends EventEmitter implements OnModuleInit {
           lte: options.endTime
         }
       },
-      orderBy: { timestamp: desc' }
+      orderBy: { timestamp: 'desc' }
     }):  {
     olderThan?: Date;
   } = {}): Promise<void> {

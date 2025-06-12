@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 import { Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface TaskAssignment {
   taskId: string;
   assignedTo: string;
-  assignedBy: string;
-  taskType: string;
-  status: 'assigned' | 'started' | 'completed' | 'failed';
+  assignedBy: string';
+  taskType: string';
+  status:assigned' | started' | completed' | failed';
   timestamp: string;
   duration?: number;
 }
@@ -25,9 +25,9 @@ interface DirectorMetrics {
 @Injectable()
 export class DirectorMonitoringService {
   private readonly logger = new Logger(DirectorMonitoringService.name);
-  private readonly DIRECTOR_KEY = 'ai:director:metrics';
-  private readonly TASK_KEY = 'ai:director:tasks';
-  private readonly WORKER_KEY = 'ai:director:workers';
+  private readonly DIRECTOR_KEY = ai:director:metrics';
+  private readonly TASK_KEY = ai:director:tasks';
+  private readonly WORKER_KEY = ai:director:workers';
 
   constructor(
     private readonly redisService: RedisService,
@@ -52,9 +52,9 @@ export class DirectorMonitoringService {
       await this.analyzeDelegationPatterns(assignment);
 
       // Emit monitoring event
-      this.eventEmitter.emit('director.task_assigned', assignment);
+      this.eventEmitter.emit('director.'task_assigned', assignment);
     } catch (error) {
-      this.logger.error('Failed to record task assignment:', error);
+      this.logger.error('Failed to record task assignment:, error);
       throw error;
     }
   }
@@ -72,11 +72,11 @@ export class DirectorMonitoringService {
     });
 
     // Update success rates
-    if (status === 'completed' || status === 'failed') {
+    if (status === completed' || status === 'failed') {
       await this.updateSuccessRates(task.assignedBy, task.assignedTo, status);
     }
 
-    this.eventEmitter.emit('director.task_updated', {
+    this.eventEmitter.emit('director.'task_updated', {
       taskId,
       status,
       duration,
@@ -88,7 +88,7 @@ export class DirectorMonitoringService {
     const workerKey = `${this.WORKER_KEY}:${assignment.assignedTo}`;
 
     // Update task count
-    await this.redisService.hincrby(workerKey, 'total_tasks', 1);
+    await this.redisService.hincrby(workerKey, total_tasks', 1);
     await this.redisService.hincrby(workerKey, `type:${assignment.taskType}`, 1);
 
     // Track current load
@@ -102,7 +102,7 @@ export class DirectorMonitoringService {
     const directorKey = `${this.DIRECTOR_KEY}:${assignment.assignedBy}`;
 
     // Update assignment count
-    await this.redisService.hincrby(directorKey, 'total_assignments', 1);
+    await this.redisService.hincrby(directorKey, total_assignments', 1);
     await this.redisService.hincrby(directorKey, `type:${assignment.taskType}`, 1);
 
     // Track active directors
@@ -117,16 +117,16 @@ export class DirectorMonitoringService {
     
     // Update director success rate
     const directorKey = `${this.DIRECTOR_KEY}:${directorId}`;
-    await this.redisService.hincrby(directorKey, 'total_completed', 1);
+    await this.redisService.hincrby(directorKey, total_completed', 1);
     if (isSuccess) {
-      await this.redisService.hincrby(directorKey, 'successful', 1);
+      await this.redisService.hincrby(directorKey, successful', 1);
     }
 
     // Update worker success rate
     const workerKey = `${this.WORKER_KEY}:${workerId}`;
-    await this.redisService.hincrby(workerKey, 'total_completed', 1);
+    await this.redisService.hincrby(workerKey, total_completed', 1);
     if (isSuccess) {
-      await this.redisService.hincrby(workerKey, 'successful', 1);
+      await this.redisService.hincrby(workerKey, successful', 1);
     }
   }
 
@@ -139,7 +139,7 @@ export class DirectorMonitoringService {
     // Analyze load balancing
     const workerLoad = await this.getWorkerLoad(assignment.assignedTo);
     if (workerLoad > 10) { // Threshold for high load
-      this.eventEmitter.emit('director.high_worker_load', {
+      this.eventEmitter.emit('director.'high_worker_load', {
         workerId: assignment.assignedTo,
         load: workerLoad
       });
@@ -149,7 +149,7 @@ export class DirectorMonitoringService {
     const delegationPatterns = await this.getDelegationPatterns();
     const bottlenecks = this.identifyBottlenecks(delegationPatterns);
     if (bottlenecks.length > 0) {
-      this.eventEmitter.emit('director.bottleneck_detected', {
+      this.eventEmitter.emit('director.'bottleneck_detected', {
         bottlenecks
       });
     }
@@ -158,9 +158,9 @@ export class DirectorMonitoringService {
   private async getWorkerLoad(workerId: string): Promise<number> {
     const tasks = await this.redisService.hget(
       `${this.WORKER_KEY}:${workerId}`,
-      'total_tasks'
+      total_tasks'
     );
-    return parseInt(tasks || '0');
+    return parseInt(tasks || 0');
   }
 
   private async getDelegationPatterns(): Promise<Record<string, number>> {
@@ -229,9 +229,9 @@ export class DirectorMonitoringService {
         `${this.DIRECTOR_KEY}:${director}`
       );
       Object.entries(tasks)
-        .filter(([k]) => k.startsWith('type:'))
+        .filter(([k]) => k.startsWith('type:))
         .forEach(([type, count]) => {
-          const taskType = type.replace('type:', '');
+          const taskType = type.replace('type:', );
           distribution[taskType] = (distribution[taskType] || 0) + parseInt(count);
         });
     }
@@ -276,8 +276,8 @@ export class DirectorMonitoringService {
         `${this.DIRECTOR_KEY}:${director}`
       );
       
-      const total = parseInt(metrics.total_completed || '0');
-      const successful = parseInt(metrics.successful || '0');
+      const total = parseInt(metrics.total_completed || 0');
+      const successful = parseInt(metrics.successful || 0');
       
       rates[director] = total ? successful / total : 1;
     }
@@ -301,10 +301,10 @@ export class DirectorMonitoringService {
     for (const director of activeDirectors) {
       const lastActive = await this.redisService.hget(
         `${this.DIRECTOR_KEY}:${director}`,
-        'last_active'
+        last_active'
       );
       
-      if (parseInt(lastActive || '0') < cutoff) {
+      if (parseInt(lastActive || 0') < cutoff) {
         await this.redisService.srem(`${this.DIRECTOR_KEY}:active`, director);
       }
     }

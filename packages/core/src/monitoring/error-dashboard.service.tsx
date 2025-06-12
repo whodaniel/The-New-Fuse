@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseError, ErrorSeverity, ErrorCategory } from '../error/types.js';
+import { BaseError, ErrorSeverity, ErrorCategory } from '../error/types.tsx';
 import { MetricsService } from './metrics.service.js';
 import { AlertingService } from './alerting.service.js';
 

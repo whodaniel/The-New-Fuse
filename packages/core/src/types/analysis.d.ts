@@ -25,7 +25,7 @@ export interface ValidationWarning {
     code: string;
     message: string;
     path?: string;
-    severity: 'warning'; // Corrected string literal
+    severity:warning'; // Corrected string literal
     metadata?: Record<string, unknown>;
 }
 export interface AnalysisMetrics {

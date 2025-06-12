@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ExportButton } from './ExportButton.js';
+import { ExportButton } from './ExportButton.tsx';
 
 const initialConversation = `User: Hello!\nAssistant: Hi, how can I help you today?\nUser: Please export this conversation to PDF.\nAssistant: Sure!`;
 

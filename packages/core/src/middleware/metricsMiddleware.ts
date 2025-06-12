@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { Request, Response, NextFunction } from ''express';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 import { Logger } from '@the-new-fuse/utils';
 
 const logger = new Logger('MetricsMiddleware');
@@ -9,7 +9,7 @@ export function createMetricsMiddleware(metrics: MetricsCollector): any {
     const startTime = Date.now();
     const originalEnd = res.end;
     const originalWrite = res.write;
-    let responseBody = '';
+    let responseBody = ;
 
     // Track response size
     res.write = function(chunk: any, ...args: any[]) {
@@ -23,7 +23,7 @@ export function createMetricsMiddleware(metrics: MetricsCollector): any {
     res.end = function(chunk: any, ...args: any[]) {
       const responseTime = Date.now() - startTime;
 
-      if (chunk && (typeof chunk === 'string' || chunk instanceof Buffer)) {
+      if (chunk && (typeof chunk === string' || chunk instanceof Buffer)) {
         responseBody += chunk;
       }
 
@@ -42,7 +42,7 @@ export function createMetricsMiddleware(metrics: MetricsCollector): any {
           metrics.recordRequestSize(Buffer.byteLength(JSON.stringify(req.body)), tags),
           metrics.recordResponseSize(Buffer.byteLength(responseBody), tags)
         ]).catch(error => {
-          logger.error('Failed to record metrics:', error);
+          logger.error('Failed to record metrics:, error);
         });
 
       } catch (error) {

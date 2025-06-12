@@ -38,8 +38,8 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       this.logger.log(`Client connected: ${user.id}`);
       this.broadcastUserStatus(user.id, 'online');
       
-    } catch (error) {
-      this.logger.error(`Connection error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Connection error: ${(error as Error).message}`);
       client.disconnect();
     }
   }

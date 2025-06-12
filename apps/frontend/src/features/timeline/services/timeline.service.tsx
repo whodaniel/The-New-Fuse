@@ -1,6 +1,6 @@
-import { TimelineService as ITimelineService } from '../../../types/services.js';
+import { TimelineService as ITimelineService } from '../../../types/services.tsx';
 import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../../../types/timeline.js';
-import { api } from '../../../utils/api.js';
+import { api } from '../../../utils/api.tsx';
 
 export class TimelineService implements ITimelineService {
   async getEventTimeline(branchId: string, includeDetails = false): Promise<TimelineEvent[]> {

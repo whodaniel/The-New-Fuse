@@ -1,4 +1,4 @@
-import { WorkflowStep } from '../types.js';
+import { WorkflowStep } from '../types.tsx';
 
 export interface WorkflowMetrics {
   totalSteps: number;
@@ -40,7 +40,7 @@ export class WorkflowMetricsTracker {
     this.metrics.startTime = Date.now();
     
     // Initialize step metrics
-    steps.forEach(step: WorkflowStep => {
+    steps.forEach((step: WorkflowStep) => {
       this.stepMap.set(step.id, step);
       this.metrics.stepMetrics[step.id] = {
         id: step.id,

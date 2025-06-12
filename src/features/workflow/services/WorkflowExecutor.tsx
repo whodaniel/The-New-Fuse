@@ -6,7 +6,7 @@ import {
   WorkflowStep, 
   WorkflowStepResult 
 } from '../types.js';
-import { WorkflowPersistenceService } from './WorkflowPersistence.js';
+import { WorkflowPersistenceService } from './WorkflowPersistence.tsx';
 
 /**
  * Service responsible for executing workflows

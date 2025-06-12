@@ -1,9 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuthService } from './auth.js';
-import { EncryptionService } from './encryption.js';
-import { SecurityPolicyManager } from './policy.js';
-import { SecurityAuditService } from './audit.js';
+import { AuthService } from './auth.tsx';
+import { EncryptionService } from './encryption.tsx';
+import { SecurityPolicyManager } from './policy.tsx';
+import { SecurityAuditService } from './audit.tsx';
 export declare class SecurityService {
     private readonly configService;
     private readonly eventEmitter;

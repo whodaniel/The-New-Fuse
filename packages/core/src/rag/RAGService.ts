@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { ConfigService } from '@nestjs/config';
 import { VectorDatabaseService, VectorDocument, SearchOptions } from './VectorDatabaseService.js';
 
@@ -59,11 +59,11 @@ export class RAGService {
     private configService: ConfigService,
     private vectorDatabaseService: VectorDatabaseService
   ) {
-    this.llmProvider = this.configService.get<string>('LLM_PROVIDER', 'openai');
-    this.llmModel = this.configService.get<string>('LLM_MODEL', 'gpt-4');
+    this.llmProvider = this.configService.get<string>('LLM_PROVIDER', openai');
+    this.llmModel = this.configService.get<string>('LLM_MODEL', gpt-4');
     this.systemPrompt = this.configService.get<string>(
-      'RAG_SYSTEM_PROMPT',
-      'You are a helpful assistant for The New Fuse platform. Use the provided context to answer the user\'s question. If you don\'t know the answer, say so.'
+      RAG_SYSTEM_PROMPT',
+      You are a helpful assistant for The New Fuse platform. Use the provided context to answer the user\'s question. If you don\'t know the answer, say so.'
     );
   }
 
@@ -85,8 +85,8 @@ export class RAGService {
       
       // Store in vector database
       return await this.vectorDatabaseService.storeDocuments(vectorDocuments);
-    } catch (error) {
-      this.logger.error(`Failed to index documents: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to index documents: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -124,7 +124,7 @@ export class RAGService {
       // Format context from search results
       const context = searchResults
         .map(result => {
-          const source = result.metadata?.source || 'Unknown';
+          const source = result.metadata?.source || Unknown';
           return `[Source: ${source}]\n${result.content}`;
         })
         .join('\n\n');
@@ -143,8 +143,8 @@ export class RAGService {
         answer,
         sources
       };
-    } catch (error) {
-      this.logger.error(`Failed to query RAG: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to query RAG: ${(error as Error).message}`, error.stack);
       
       return {
         answer: "I'm sorry, I encountered an error while trying to answer your question. Please try again later.",
@@ -162,15 +162,15 @@ export class RAGService {
   private async generateAnswer(query: string, context: string): Promise<string> {
     try {
       switch (this.llmProvider) {
-        case 'openai':
+        case openai':
           return this.generateOpenAIAnswer(query, context);
-        case 'anthropic':
+        case anthropic':
           return this.generateAnthropicAnswer(query, context);
         default:
           throw new Error(`Unsupported LLM provider: ${this.llmProvider}`);
       }
-    } catch (error) {
-      this.logger.error(`Failed to generate answer: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to generate answer: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -197,8 +197,8 @@ export class RAGService {
       });
       
       return response.choices[0].message.content;
-    } catch (error) {
-      this.logger.error(`OpenAI error: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`OpenAI error: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -225,8 +225,8 @@ export class RAGService {
       });
       
       return response.content[0].text;
-    } catch (error) {
-      this.logger.error(`Anthropic error: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Anthropic error: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }

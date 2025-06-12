@@ -14,8 +14,8 @@ export class EnvironmentValidationService {
   ) {}
 
   async validateEnvironmentTransition(
-    fromEnv: 'development' | 'staging' | 'production',
-    toEnv: 'development' | 'staging' | 'production'
+    fromEnv:development' | staging' | production',
+    toEnv:development' | staging' | production'
   ): Promise<ValidationResult> {
     const errors: string[] = [];
     const warnings: string[] = [];
@@ -49,7 +49,7 @@ export class EnvironmentValidationService {
     fromEnv: string,
     toEnv: string
   ): boolean {
-    const order = ['development', 'staging', 'production'];
+    const order = ['development', staging', production'];
     const fromIndex = order.indexOf(fromEnv);
     const toIndex = order.indexOf(toEnv);
     return toIndex > fromIndex;
@@ -86,7 +86,7 @@ export class EnvironmentValidationService {
     // Validate all required env vars are set
     const missingEnvVars = this.checkRequiredEnvVars();
     if (missingEnvVars.length > 0) {
-      errors.push(`Missing required environment variables: ${missingEnvVars.join(', ')}`);
+      errors.push(`Missing required environment variables: ${missingEnvVars.join(', )}`);
     }
 
     // Check security scans
@@ -123,10 +123,10 @@ export class EnvironmentValidationService {
 
   private checkRequiredEnvVars(): string[] {
     const required = [
-      'DATABASE_URL',
-      'REDIS_URL',
-      'SECRET_KEY',
-      'ENCRYPTION_KEY'
+      DATABASE_URL',
+      REDIS_URL',
+      SECRET_KEY',
+      ENCRYPTION_KEY'
     ];
     return required.filter(key => !process.env[key]);
   }

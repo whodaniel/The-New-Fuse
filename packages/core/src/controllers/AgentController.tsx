@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from ''express';
 import { TaskService } from '../services/TaskService.js';
 import { MetricsService } from '../services/MetricsService.js';
 import { LoggingService } from '../services/LoggingService.js';
@@ -59,7 +59,7 @@ export class AgentController {
             this.updateAgentState(agentId, interactionData);
 
             // Process through each system
-            // Ensure these methods return specific types if possible, or handle 'any' carefully
+            // Ensure these methods return specific types if possible, or handle any' carefully
             const [cognitiveResult, learningResult, socialResult, emergenceResult] = await Promise.all([
                 this.cognitiveCore.processInput(interactionData),
                 this.metaLearner.learnFromInteraction(interactionData),
@@ -72,7 +72,7 @@ export class AgentController {
                 await this.taskService.createTask({
                     userId: agentId, // Assuming agentId can be used as userId
                     title: interactionData.taskTitle,
-                    description: interactionData.taskDescription || '',
+                    description: interactionData.taskDescription || ,
                     // Add other necessary fields for task creation if any
                 });
             }
@@ -98,7 +98,7 @@ export class AgentController {
             res.json(result);
         } catch (e: unknown) { // Specify error type
             const duration = Date.now() - startTime;
-            let errorMessage = 'Unknown error during interaction processing';
+            let errorMessage = Unknown error during interaction 'processing';
             let errorStack: string | undefined = undefined;
             if (e instanceof Error) {
                 errorMessage = e.message;
@@ -133,7 +133,7 @@ export class AgentController {
             ]);
 
             res.status(500).json({
-                error: 'Error processing interaction',
+                error: Error processing 'interaction',
                 details: errorMessage
             });
         }
@@ -172,10 +172,10 @@ export class AgentController {
             if (state) {
                 res.json(state);
             } else {
-                res.status(404).json({ error: 'Agent state not found' });
+                res.status(404).json({ error:Agent state not found' });
             }
         } catch (e: unknown) { // Specify error type
-            let errorMessage = 'Unknown error retrieving agent state';
+            let errorMessage = Unknown error retrieving agent 'state';
             if (e instanceof Error) {
                 errorMessage = e.message;
             } else if (typeof e === 'string') {
@@ -186,7 +186,7 @@ export class AgentController {
                 agentId
             });
             res.status(500).json({
-                error: 'Error retrieving agent state',
+                error:Error retrieving agent state',
                 details: errorMessage
             });
         }
@@ -198,12 +198,12 @@ export class AgentController {
             if (this.agentStates.has(agentId)) {
                 this.agentStates.delete(agentId);
                 await this.loggingService.info('Agent state reset', { agentId });
-                res.json({ message: 'Agent state reset successfully' });
+                res.json({ message:Agent state reset successfully' });
             } else {
-                res.status(404).json({ error: 'Agent state not found for reset' });
+                res.status(404).json({ error:Agent state not found for reset' });
             }
         } catch (e: unknown) { // Specify error type
-            let errorMessage = 'Unknown error resetting agent state';
+            let errorMessage = Unknown error resetting agent 'state';
             if (e instanceof Error) {
                 errorMessage = e.message;
             } else if (typeof e === 'string') {
@@ -214,7 +214,7 @@ export class AgentController {
                 agentId
             });
             res.status(500).json({
-                error: 'Error resetting agent state',
+                error:Error resetting agent state',
                 details: errorMessage
             });
         }

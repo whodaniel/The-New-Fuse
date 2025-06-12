@@ -1,6 +1,6 @@
-export { WorkflowCanvas } from './WorkflowCanvas.js';
-export { NodeToolbox } from './NodeToolbox.js';
-export { NodeProperties } from './NodeProperties.js';
-export { WorkflowExecutionContext } from './WorkflowExecutionContext.js';
-export { WorkflowAnalytics } from './WorkflowAnalytics.js';
+export { WorkflowCanvas } from './WorkflowCanvas.tsx';
+export { NodeToolbox } from './NodeToolbox.tsx';
+export { NodeProperties } from './NodeProperties.tsx';
+export { WorkflowExecutionContext } from './WorkflowExecutionContext.tsx';
+export { WorkflowAnalytics } from './WorkflowAnalytics.tsx';
 export * from './nodes.js';

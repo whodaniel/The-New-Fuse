@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface AuditLogEntry {
   id: string;
@@ -19,14 +19,14 @@ interface AuditLogEntry {
 interface AuditConfig {
   excludeTables?: string[];
   includeData?: boolean;
-  logMetadata?: boolean;
-  retention?: number;
+  logMetadata?: boolean';
+  retention?: number';
 }
 
 @Injectable()
 export class AuditLogManager implements OnModuleInit {
   private readonly defaultConfig: AuditConfig = {
-    excludeTables: ['audit_logs', 'migrations'],
+    excludeTables: ['audit_logs', migrations'],
     includeData: true,
     logMetadata: true,
     retention: 90, // days
@@ -72,7 +72,7 @@ export class AuditLogManager implements OnModuleInit {
     const tables = await this.dataSource.query(`
       SELECT tablename 
       FROM pg_tables 
-      WHERE schemaname = 'public' 
+      WHERE schemaname = public' 
         AND tablename NOT IN (${this.defaultConfig.excludeTables!.map(t => `'${t}'`).join(',')})
     `);
 
@@ -90,9 +90,9 @@ export class AuditLogManager implements OnModuleInit {
         client_info jsonb;
       BEGIN
         client_info := json_build_object(
-          'application_name', current_setting('application_name'),
-          'ip_address', inet_client_addr(),
-          'session_id', current_setting('app.session_id', true)
+          application_name', current_setting('application_name'),
+          ip_address', inet_client_addr(),
+          session_id', current_setting('app.'session_id', true)
         );
 
         audit_row = ROW(
@@ -101,15 +101,15 @@ export class AuditLogManager implements OnModuleInit {
           TG_OP,                        -- action
           TG_TABLE_NAME::TEXT,          -- table_name
           CASE TG_OP
-            WHEN 'DELETE' THEN OLD.id::TEXT
+            WHEN DELETE' THEN OLD.id::TEXT
             ELSE NEW.id::TEXT
           END,                          -- record_id
-          current_setting('app.user_id', true), -- user_id
-          CASE WHEN TG_OP = 'DELETE' OR TG_OP = 'UPDATE'
+          current_setting('app.'user_id', true), -- user_id
+          CASE WHEN TG_OP = DELETE' OR TG_OP = UPDATE'
             THEN to_jsonb(OLD)
             ELSE NULL
           END,                          -- old_value
-          CASE WHEN TG_OP = 'INSERT' OR TG_OP = 'UPDATE'
+          CASE WHEN TG_OP = INSERT' OR TG_OP = UPDATE'
             THEN to_jsonb(NEW)
             ELSE NULL
           END,                          -- new_value
@@ -140,7 +140,7 @@ export class AuditLogManager implements OnModuleInit {
   }
 
   async logManualEntry(
-    entry: Omit<AuditLogEntry, 'id' | 'timestamp'>,
+    entry: Omit<AuditLogEntry, 'id' | timestamp'>,
     metadata?: Record<string, any>
   ): Promise<void> {
     try {
@@ -162,7 +162,7 @@ export class AuditLogManager implements OnModuleInit {
 
       this.metrics.increment('database.audit.manual_entries');
     } catch (error) {
-      this.logger.error('Failed to create manual audit log entry:', error);
+      this.logger.error('Failed to create manual audit log entry:, error);
       this.metrics.increment('database.audit.errors');
     }
   }
@@ -179,7 +179,7 @@ export class AuditLogManager implements OnModuleInit {
       offset?: number;
     } = {}
   ): Promise<AuditLogEntry[]> {
-    let query = 'SELECT * FROM audit_logs WHERE 1=1';
+    let query = SELECT * FROM audit_logs WHERE 1=1';
     const params: any[] = [];
     let paramIndex = 1;
 
@@ -213,7 +213,7 @@ export class AuditLogManager implements OnModuleInit {
       params.push(options.endDate);
     }
 
-    query += ' ORDER BY timestamp DESC';
+    query +=  ORDER BY timestamp 'DESC';
 
     if (options.limit) {
       query += ` LIMIT $${paramIndex++}`;
@@ -230,7 +230,7 @@ export class AuditLogManager implements OnModuleInit {
       this.metrics.increment('database.audit.queries');
       return results;
     } catch (error) {
-      this.logger.error('Failed to retrieve audit history:', error);
+      this.logger.error('Failed to retrieve audit history:, error);
       this.metrics.increment('database.audit.query_errors');
       throw error;
     }
@@ -267,20 +267,20 @@ export class AuditLogManager implements OnModuleInit {
     try {
       const result = await this.dataSource.query(`
         DELETE FROM audit_logs 
-        WHERE timestamp < NOW() - INTERVAL '${this.defaultConfig.retention} days'
+        WHERE timestamp < NOW() - INTERVAL ${this.defaultConfig.retention} 'days'
       `);
 
       this.metrics.increment('database.audit.cleanup.success');
       this.logger.info(`Cleaned up ${result.rowCount} old audit records`);
     } catch (error) {
       this.metrics.increment('database.audit.cleanup.failed');
-      this.logger.error('Failed to clean up old audit records:', error);
+      this.logger.error('Failed to clean up old audit records:, error);
     }
   }
 
   async exportAuditLogs(
     options: {
-      format: 'csv' | 'json';
+      format: csv' | json';
       startDate: Date;
       endDate: Date;
       tables?: string[];
@@ -314,7 +314,7 @@ export class AuditLogManager implements OnModuleInit {
 
     if (options.format === 'csv') {
       // Convert to CSV format
-      const fields = ['id', 'timestamp', 'action', 'table_name', 'record_id', 'user_id'];
+      const fields = ['id', timestamp', action', table_name', record_id', user_id'];
       const csv = results.map((row: any) => 
         fields.map(field => JSON.stringify(row[field])).join(',')
       );

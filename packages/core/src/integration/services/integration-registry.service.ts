@@ -56,7 +56,7 @@ export class IntegrationRegistryService implements OnModuleInit {
         this.registerIntegration(createHuggingFaceIntegration({
           apiKey: this.configService.get<string>('integrations.huggingface.apiKey'),
           model: this.configService.get<string>('integrations.huggingface.defaultModel'),
-          useInferenceEndpoint: this.configService.get<boolean>('integrations.huggingface.useInferenceEndpoint', true)
+          useInferenceEndpoint: this.configService.get<boolean>('integrations.huggingface.'useInferenceEndpoint', true)
         }));
       } else {
          this.logger.warn('Hugging Face API key not found, skipping registration.');
@@ -66,9 +66,9 @@ export class IntegrationRegistryService implements OnModuleInit {
         this.registerIntegration(createOpenAIIntegration({
           apiKey: this.configService.get<string>('integrations.openai.apiKey'),
           organization: this.configService.get<string>('integrations.openai.organization'),
-          model: this.configService.get<string>('integrations.openai.defaultModel', 'gpt-4'),
-          defaultMaxTokens: this.configService.get<number>('integrations.openai.defaultMaxTokens', 1000),
-          defaultTemperature: this.configService.get<number>('integrations.openai.defaultTemperature', 0.7)
+          model: this.configService.get<string>('integrations.openai.'defaultModel', gpt-4'),
+          defaultMaxTokens: this.configService.get<number>('integrations.openai.'defaultMaxTokens', 1000),
+          defaultTemperature: this.configService.get<number>('integrations.openai.'defaultTemperature', 0.7)
         }));
       } else {
          this.logger.warn('OpenAI API key not found, skipping registration.');
@@ -164,9 +164,9 @@ export class IntegrationRegistryService implements OnModuleInit {
       this.logger.info('Default integrations registration attempt finished.', {
         registeredCount: this.integrations.size
       });
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to register default integrations', {
-        error: error.message,
+        error: (error as Error).message,
         stack: error.stack
       });
       // Decide if this should halt application startup
@@ -309,10 +309,10 @@ export class IntegrationRegistryService implements OnModuleInit {
         this.logger.info('Integration connected successfully', { integrationId });
       }
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to connect integration', {
         integrationId,
-        error: error.message
+        error: (error as Error).message
       });
       throw error;
     }
@@ -342,10 +342,10 @@ export class IntegrationRegistryService implements OnModuleInit {
           this.logger.warn('Integration disconnect() returned false without throwing error.', { integrationId });
        }
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to disconnect integration', {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
         // stack: error.stack
       });
       throw error; // Re-throw
@@ -363,16 +363,16 @@ export class IntegrationRegistryService implements OnModuleInit {
       throw new Error(`Integration not found: ${integrationId}`);
     }
 
-    // Allow 'connect' action even if not connected
+    // Allow connect' action even if not connected
     if (!integration.isConnected && action !== 'connect') {
        this.logger.error(`Execute failed: Integration ${integrationId} is not connected. Action: ${action}`);
-      throw new Error(`Integration ${integrationId} is not connected. Call connect() first or execute the 'connect' action.`);
+      throw new Error(`Integration ${integrationId} is not connected. Call connect() first or execute the connect' action.`);
     }
 
     // Check if the action is supported by the integration's capabilities
     if (!integration.capabilities?.actions?.includes(action)) {
         this.logger.error(`Execute failed: Action "${action}" not supported by integration ${integrationId}.`);
-        throw new Error(`Action "${action}" is not supported by integration ${integrationId}. Supported actions: ${integration.capabilities?.actions?.join(', ')}`);
+        throw new Error(`Action "${action}" is not supported by integration ${integrationId}. Supported actions: ${integration.capabilities?.actions?.join(', )}`);
     }
 
 
@@ -386,15 +386,15 @@ export class IntegrationRegistryService implements OnModuleInit {
         integrationId,
         action,
         durationMs: duration,
-        // resultSummary: typeof result === 'object' ? Object.keys(result) : typeof result // Avoid logging potentially large results
+        // resultSummary: typeof result === object' ? Object.keys(result) : typeof result // Avoid logging potentially large results
       });
 
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to execute integration action', {
         integrationId,
         action,
-        error: error.message,
+        error: (error as Error).message,
         // stack: error.stack
       });
       throw error; // Re-throw
@@ -429,10 +429,10 @@ export class IntegrationRegistryService implements OnModuleInit {
              capabilities: integration.capabilities,
           };
        }
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to get integration metadata', {
         integrationId,
-        error: error.message,
+        error: (error as Error).message,
         // stack: error.stack
       });
       throw error; // Re-throw
@@ -452,12 +452,12 @@ export class IntegrationRegistryService implements OnModuleInit {
       try {
         const metadata = await this.getIntegrationMetadata(integrationId);
         results.push(metadata);
-      } catch (error) {
+      } catch (error: unknown) {
         // Log error but continue fetching metadata for other integrations
         this.logger.error(`Failed to get metadata for integration ${integrationId}, skipping.`, {
-           error: error.message
+           error: (error as Error).message
         });
-        // Optionally push partial/error metadata: results.push({ id: integrationId, error: 'Failed to fetch metadata' });
+        // Optionally push partial/error metadata: results.push({ id: integrationId, error:Failed to fetch metadata' });
       }
     }
 

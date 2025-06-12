@@ -55,7 +55,7 @@ export interface CodeExecutionRequest {
      * Optional execution environment
      * Default: 'sandbox'
      */
-    environment?: 'sandbox' | 'container' | 'serverless';
+    environment?:sandbox' | container' | serverless';
     /**
      * Session ID for collaborative code execution
      */
@@ -180,5 +180,5 @@ export interface CodeExecutionUsageRecord {
     /**
      * Execution environment used
      */
-    environment: 'sandbox' | 'container' | 'serverless';
+    environment:sandbox' | container' | serverless';
 }

@@ -1,13 +1,13 @@
-import * as fs from 'fs';
+import * as fs from ''fs';
 import * as path from 'path';
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 
 /**
  * Interface for file change information
  */
 export interface FileChange {
   filePath: string;
-  changeType: 'create' | 'modify' | 'delete' | 'move';
+  changeType:create' | modify' | delete' | move';
   description: string;
 }
 
@@ -29,7 +29,7 @@ export interface DevelopmentLogEntry {
  * Utility class for logging development activities
  */
 export class DevelopmentLogger {
-  private static readonly LOG_FILE_PATH = 'docs/DEVELOPMENT_LOG.md';
+  private static readonly LOG_FILE_PATH = docs/DEVELOPMENT_LOG.'md';
   private static readonly logger = new Logger('DevelopmentLogger');
 
   /**
@@ -45,17 +45,17 @@ export class DevelopmentLogger {
       
       // Read the current log file
       const logFilePath = path.resolve(process.cwd(), this.LOG_FILE_PATH);
-      let logContent = '';
+      let logContent = ;
       
       try {
         logContent = await fs.promises.readFile(logFilePath, 'utf-8');
-      } catch (error) {
-        this.logger.error(`Failed to read log file: ${error.message}`);
+      } catch (error: unknown) {
+        this.logger.error(`Failed to read log file: ${(error as Error).message}`);
         return false;
       }
       
       // Find the insertion point (after the existing entries section header)
-      const insertionPoint = logContent.indexOf('## Log Entries') + '## Log Entries'.length;
+      const insertionPoint = logContent.indexOf('## Log Entries') + ## Log Entries'.length;
       
       if (insertionPoint === -1) {
         this.logger.error('Failed to find insertion point in log file');
@@ -65,16 +65,16 @@ export class DevelopmentLogger {
       // Insert the new entry
       const newLogContent = 
         logContent.slice(0, insertionPoint) + 
-        '\n\n' + formattedEntry + 
+        \n\n' + formattedEntry + 
         logContent.slice(insertionPoint);
       
       // Write the updated log file
-      await fs.promises.writeFile(logFilePath, newLogContent, 'utf-8');
+      await fs.promises.writeFile(logFilePath, newLogContent, utf-8');
       
       this.logger.info(`Added log entry: ${entry.title}`);
       return true;
-    } catch (error) {
-      this.logger.error(`Failed to add log entry: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to add log entry: ${(error as Error).message}`);
       return false;
     }
   }
@@ -103,7 +103,7 @@ export class DevelopmentLogger {
       for (const decision of entry.decisions) {
         markdown += `- ${decision.decision}: ${decision.rationale}\n`;
       }
-      markdown += '\n';
+      markdown += \'n';
     }
     
     if (entry.challenges && entry.challenges.length > 0) {
@@ -111,7 +111,7 @@ export class DevelopmentLogger {
       for (const challenge of entry.challenges) {
         markdown += `- ${challenge.challenge}: ${challenge.solution}\n`;
       }
-      markdown += '\n';
+      markdown += \'n';
     }
     
     if (entry.nextSteps && entry.nextSteps.length > 0) {
@@ -158,9 +158,9 @@ export class DevelopmentLogger {
   public static async getLogContent(): Promise<string | null> {
     try {
       const logFilePath = path.resolve(process.cwd(), this.LOG_FILE_PATH);
-      return await fs.promises.readFile(logFilePath, 'utf-8');
-    } catch (error) {
-      this.logger.error(`Failed to read log file: ${error.message}`);
+      return await fs.promises.readFile(logFilePath, utf-8');
+    } catch (error: unknown) {
+      this.logger.error(`Failed to read log file: ${(error as Error).message}`);
       return null;
     }
   }
@@ -182,7 +182,7 @@ export class FileChangeTracker {
    */
   public static trackChange(
     filePath: string,
-    changeType: 'create' | 'modify' | 'delete' | 'move',
+    changeType:create' | modify' | delete' | move',
     description: string
   ): void {
     this.fileChanges.set(filePath, { filePath, changeType, description });

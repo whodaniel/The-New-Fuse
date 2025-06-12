@@ -1,6 +1,6 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Message } from '../entities/message.entity.js';
+import { Message } from '../entities/message.entity.tsx';
 export declare class WebSocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     server: Server;
     private logger;

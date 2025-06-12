@@ -1,8 +1,8 @@
 
 export {}
 exports.AzureProvider = void 0;
-import { BaseLLMProvider, LLMConfig } from './base.js';
-import { providerRegistry } from './registry.js';
+import { BaseLLMProvider, LLMConfig } from './base.tsx';
+import { providerRegistry } from './registry.tsx';
 
 interface AzureConfig extends LLMConfig {
     endpoint?: string;

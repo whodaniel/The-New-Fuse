@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
-import { LearningEvent, LearningPattern } from './LearningSystem.js';
-import { DatabaseService } from '@the-new-fuse/database';
+import { LearningEvent, LearningPattern } from './LearningSystem.tsx';
+import { DatabaseService  } from '@the-new-fuse/database;
 
 export interface PatternMatch {
   pattern: LearningPattern;
@@ -13,8 +13,8 @@ export interface PatternMatch {
 export class PatternRecognition {
   private logger: Logger;
   private readonly db: DatabaseService;
-  private readonly minConfidence: number = 0.7;
-  private readonly maxPatternAge: number = 30; // days
+  private readonly minConfidence: number = 0.7';
+  private readonly maxPatternAge: number = 30'; // days
 
   constructor(db: DatabaseService) {
     this.logger = new Logger('PatternRecognition');
@@ -36,7 +36,7 @@ export class PatternRecognition {
 
       return patterns;
     } catch (error) {
-      this.logger.error('Error finding patterns:', error);
+      this.logger.error('Error finding patterns:, error);
       return [];
     }
   }

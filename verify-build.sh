@@ -7,7 +7,7 @@ cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The\ New\ Fuse
 # Build the api-client package specifically
 echo "Building api-client package..."
 cd packages/api-client
-yarn tsc
+bun run tsc
 BUILD_RESULT=$?
 
 if [ $BUILD_RESULT -eq 0 ]; then

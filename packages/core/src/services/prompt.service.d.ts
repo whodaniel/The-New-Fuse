@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
-import { PromptTemplate } from '../entities/prompt.entity.js';
-import { AgentPromptTemplate } from '../entities/agent-prompt.entity.js';
+import { PromptTemplate } from '../entities/prompt.entity.tsx';
+import { AgentPromptTemplate } from '../entities/agent-prompt.entity';
 export declare class PromptService {
     private readonly configService;
     private promptRepository;

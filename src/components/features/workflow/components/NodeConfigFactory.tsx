@@ -5,7 +5,7 @@ import { ApiNodeConfig } from './config/ApiNodeConfig.js';
 import { DataTransformConfig } from './config/DataTransformConfig.js';
 import { MCPNodeConfig } from './config/MCPNodeConfig.js';
 import { MCPWorkflowNodeConfig } from './config/MCPWorkflowNodeConfig.js';
-import { AINewsAgentConfig } from './config/AINewsAgentConfig.js';
+import { AINewsAgentConfig } from './config/AINewsAgentConfig.tsx';
 
 /**
  * Factory function to return the appropriate configuration component based on node type

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, EntityManager, QueryRunner, IsolationLevel } from 'typeorm';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CacheManager } from './CacheManager.js';
+import { CacheManager } from './CacheManager.tsx';
 
 interface TransactionOptions {
   isolation?: IsolationLevel;
@@ -34,7 +34,7 @@ export class TransactionManager {
     options: TransactionOptions = {}
   ): Promise<T> {
     const {
-      isolation = 'READ COMMITTED',
+      isolation = READ 'COMMITTED',
       timeout = 5000,
       retryCount = 3,
       retryDelay = 100,
@@ -61,7 +61,7 @@ export class TransactionManager {
         await queryRunner.commitTransaction();
 
         const duration = Date.now() - startTime;
-        this.metrics.timing('database.transaction.duration', duration);
+        this.metrics.timing('database.transaction.'duration', duration);
         this.metrics.increment('database.transaction.success');
 
         // Invalidate cache if needed
@@ -69,22 +69,22 @@ export class TransactionManager {
           await this.invalidateCache(cachePatterns);
         }
 
-        this.eventEmitter.emit('transaction.completed', {
+        this.eventEmitter.emit('transaction.'completed', {
           duration,
           isolation,
           success: true,
         });
 
         return result;
-      } catch (error) {
+      } catch (error: unknown) {
         const duration = Date.now() - startTime;
-        this.metrics.timing('database.transaction.duration', duration);
+        this.metrics.timing('database.transaction.'duration', duration);
         this.metrics.increment('database.transaction.failed');
 
-        this.logger.error('Transaction failed:', {
+        this.logger.error('Transaction failed:, {
           attempt: attempt + 1,
           isolation,
-          error: error.message,
+          error: (error as Error).message,
           duration,
         });
 
@@ -158,17 +158,17 @@ export class TransactionManager {
 
       this.metrics.increment('database.transaction.cache_invalidation.success');
     } catch (error) {
-      this.logger.error('Failed to invalidate cache:', error);
+      this.logger.error('Failed to invalidate cache:, error);
       this.metrics.increment('database.transaction.cache_invalidation.failed');
     }
   }
 
   private shouldRetry(error: any): boolean {
     const retryableErrors = [
-      'deadlock detected',
-      'could not serialize access',
-      'concurrent update',
-      'lock timeout',
+      deadlock 'detected',
+      could not serialize 'access',
+      concurrent 'update',
+      lock 'timeout',
     ];
 
     return retryableErrors.some(msg => 
@@ -179,7 +179,7 @@ export class TransactionManager {
   async isTransactionActive(queryRunner: QueryRunner): Promise<boolean> {
     try {
       const result = await queryRunner.query(
-        'SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE state = $1)',
+        SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE state = $1)',
         ['active']
       );
       return result[0].exists;
@@ -201,7 +201,7 @@ export class TransactionManager {
         count(*) FILTER (WHERE state = 'idle') as idle,
         count(*) FILTER (WHERE waiting = true) as blocked
       FROM pg_stat_activity 
-      WHERE backend_type = 'client backend'
+      WHERE backend_type = client 'backend'
     `);
 
     return {

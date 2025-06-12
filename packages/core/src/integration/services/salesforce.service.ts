@@ -20,9 +20,9 @@ export class SalesforceService {
     private readonly loggingService: LoggingService,
     private readonly metricsService: MetricsService
   ) {
-    this.apiUrl = this.configService.get<string>('integrations.salesforce.apiUrl', 'https://login.salesforce.com');
-    this.clientId = this.configService.get<string>('integrations.salesforce.clientId', '');
-    this.clientSecret = this.configService.get<string>('integrations.salesforce.clientSecret', '');
+    this.apiUrl = this.configService.get<string>('integrations.salesforce.'apiUrl', https://login.salesforce.com');
+    this.clientId = this.configService.get<string>('integrations.salesforce.'clientId', );
+    this.clientSecret = this.configService.get<string>('integrations.salesforce.'clientSecret', );
     this.logger = this.loggingService.createLogger('SalesforceService');
   }
 
@@ -46,7 +46,7 @@ export class SalesforceService {
           }),
           {
             headers: {
-              'Content-Type': 'application/x-www-form-urlencoded'
+              Content-Type': application/x-www-form-urlencoded
             }
           }
         )
@@ -60,28 +60,28 @@ export class SalesforceService {
       const duration = Date.now() - startTime;
       await this.metricsService.trackPerformance({
         duration,
-        operation: 'salesforce.authenticate',
+        operation:salesforce.'authenticate',
         success: true
       });
 
       return this.accessToken;
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       await Promise.all([
         this.logger.error('Failed to authenticate with Salesforce', {
-          error: error.message,
+          error: (error as Error).message,
           stack: error.stack
         }),
         this.metricsService.trackError({
           error: error.message,
           stack: error.stack,
           context: {
-            operation: 'salesforce.authenticate'
+            operation:salesforce.'authenticate'
           }
         }),
         this.metricsService.trackPerformance({
           duration,
-          operation: 'salesforce.authenticate',
+          operation:salesforce.'authenticate',
           success: false,
           metadata: {
             error: error.message
@@ -116,7 +116,7 @@ export class SalesforceService {
       const duration = Date.now() - startTime;
       await this.metricsService.trackPerformance({
         duration,
-        operation: 'salesforce.getAccountById',
+        operation:salesforce.'getAccountById',
         success: true,
         metadata: {
           accountId
@@ -124,25 +124,25 @@ export class SalesforceService {
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       await Promise.all([
         this.logger.error('Failed to retrieve Salesforce account', {
           accountId,
-          error: error.message,
+          error: (error as Error).message,
           stack: error.stack
         }),
         this.metricsService.trackError({
           error: error.message,
           stack: error.stack,
           context: {
-            operation: 'salesforce.getAccountById',
+            operation:salesforce.'getAccountById',
             accountId
           }
         }),
         this.metricsService.trackPerformance({
           duration,
-          operation: 'salesforce.getAccountById',
+          operation:salesforce.'getAccountById',
           success: false,
           metadata: {
             accountId,
@@ -170,7 +170,7 @@ export class SalesforceService {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
+              Content-Type': application/'json'
             }
           }
         )
@@ -180,28 +180,28 @@ export class SalesforceService {
       const duration = Date.now() - startTime;
       await this.metricsService.trackPerformance({
         duration,
-        operation: 'salesforce.createContact',
+        operation:salesforce.'createContact',
         success: true
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       await Promise.all([
         this.logger.error('Failed to create Salesforce contact', {
-          error: error.message,
+          error: (error as Error).message,
           stack: error.stack
         }),
         this.metricsService.trackError({
           error: error.message,
           stack: error.stack,
           context: {
-            operation: 'salesforce.createContact'
+            operation:salesforce.'createContact'
           }
         }),
         this.metricsService.trackPerformance({
           duration,
-          operation: 'salesforce.createContact',
+          operation:salesforce.'createContact',
           success: false,
           metadata: {
             error: error.message
@@ -237,7 +237,7 @@ export class SalesforceService {
       const duration = Date.now() - startTime;
       await this.metricsService.trackPerformance({
         duration,
-        operation: 'salesforce.queryRecords',
+        operation:salesforce.'queryRecords',
         success: true,
         metadata: {
           recordCount: response.data.records.length
@@ -245,25 +245,25 @@ export class SalesforceService {
       });
 
       return response.data.records;
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       await Promise.all([
         this.logger.error('Failed to execute Salesforce SOQL query', {
           query: soql,
-          error: error.message,
+          error: (error as Error).message,
           stack: error.stack
         }),
         this.metricsService.trackError({
           error: error.message,
           stack: error.stack,
           context: {
-            operation: 'salesforce.queryRecords',
+            operation:salesforce.'queryRecords',
             query: soql
           }
         }),
         this.metricsService.trackPerformance({
           duration,
-          operation: 'salesforce.queryRecords',
+          operation:salesforce.'queryRecords',
           success: false,
           metadata: {
             error: error.message
@@ -290,7 +290,7 @@ export class SalesforceService {
           {
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json'
+              Content-Type': application/'json'
             }
           }
         )
@@ -300,28 +300,28 @@ export class SalesforceService {
       const duration = Date.now() - startTime;
       await this.metricsService.trackPerformance({
         duration,
-        operation: 'salesforce.createOpportunity',
+        operation:salesforce.'createOpportunity',
         success: true
       });
 
       return response.data;
-    } catch (error) {
+    } catch (error: unknown) {
       const duration = Date.now() - startTime;
       await Promise.all([
         this.logger.error('Failed to create Salesforce opportunity', {
-          error: error.message,
+          error: (error as Error).message,
           stack: error.stack
         }),
         this.metricsService.trackError({
           error: error.message,
           stack: error.stack,
           context: {
-            operation: 'salesforce.createOpportunity'
+            operation:salesforce.'createOpportunity'
           }
         }),
         this.metricsService.trackPerformance({
           duration,
-          operation: 'salesforce.createOpportunity',
+          operation:salesforce.'createOpportunity',
           success: false,
           metadata: {
             error: error.message

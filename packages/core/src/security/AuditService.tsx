@@ -1,4 +1,4 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
 
 const logger: Logger = getLogger('audit_service');
@@ -6,7 +6,7 @@ const logger: Logger = getLogger('audit_service');
 export interface AuditConfig {
     retention: number;
     sensitiveFields: string[];
-    storageType: database' | 'file';
+    storageType: database' | file';
 }
 
 export class AuditService {
@@ -23,7 +23,7 @@ export class AuditService {
                 await this.notifyAuditors(enrichedEvent);
             }
         } catch (error) {
-            logger.error('Failed to log audit event:', error);
+            logger.error('Failed to log audit event:, error);
             throw error;
         }
     }
@@ -32,7 +32,7 @@ export class AuditService {
         const sanitized = { ...event };
         for (const field of this.config.sensitiveFields) {
             if (field in sanitized.data) {
-                sanitized.data[field] = '[REDACTED]';
+                sanitized.data[field] = [REDACTED]';
             }
         }
         return sanitized;
@@ -51,8 +51,8 @@ export class AuditService {
     }
 
     private isSignificantEvent(event: EnrichedAuditEvent): boolean {
-        return event.severity === 'high' || 
-               event.type === 'security_breach' ||
+        return event.severity === high' || 
+               event.type === security_breach' ||
                event.type === 'compliance_violation';
     }
 }

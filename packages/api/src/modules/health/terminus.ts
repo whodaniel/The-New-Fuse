@@ -33,11 +33,12 @@ export class HealthCheckService {
       };
     })
     .catch(error => {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return {
         status: 'error',
         info: {},
-        error: { message: error.message },
-        details: { error: error.message }
+        error: { message: errorMessage },
+        details: { error: errorMessage }
       };
     });
   }
@@ -74,7 +75,7 @@ export class PrismaHealthIndicator extends HealthIndicator {
       await prismaService.$queryRaw`SELECT 1`;
       return this.getStatus(key, true);
     } catch (e) {
-      return this.getStatus(key, false, { message: e.message });
+      return this.getStatus(key, false, { message: e instanceof Error ? e.message : 'Unknown error' });
     }
   }
 }

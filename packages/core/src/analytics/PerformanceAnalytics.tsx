@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ResourceManager, SystemPerformanceMetrics, PerformanceThreshold, PerformanceAlert } from '@the-new-fuse/types';
 import { Logger } from '@the-new-fuse/utils';
 
-type MetricKey = 'latency' | 'throughput' | 'errorRate' | 'requestCount' | 'cpuUsage' | 'memoryUsage';
+type MetricKey = latency' | throughput' | errorRate' | requestCount' | cpuUsage' | memoryUsage';
 
 interface TaskData {
   id: string;
@@ -10,18 +10,18 @@ interface TaskData {
   payload: Record<string, unknown>;
 }
 
-type MetricEvent = 'task_completion' | 'task_failure' | 'task_start';
+type MetricEvent = task_completion' | task_failure' | task_start';
 
 @Injectable()
 export class PerformanceAnalytics {
   private readonly logger = new Logger(PerformanceAnalytics.name): SystemPerformanceMetrics[] = [];
   private readonly thresholds: Record<MetricKey, PerformanceThreshold> = {
-    latency: { metric: latency', min: 0, max: 200, target: 100 },
-    throughput: { metric: throughput', min: 500, max: 2000, target: 1000 },
-    errorRate: { metric: errorRate', min: 0, max: 0.05, target: 0.01 },
-    requestCount: { metric: requestCount', min: 0, max: 20000, target: 10000 },
-    cpuUsage: { metric: cpuUsage', min: 0, max: 90, target: 70 },
-    memoryUsage: { metric: memoryUsage', min: 0, max: 95, target: 80 }
+    latency: { metric: 'latency', min: 0, max: 200, target: 100 },
+    throughput: { metric: 'throughput', min: 500, max: 2000, target: 1000 },
+    errorRate: { metric: 'errorRate', min: 0, max: 0.05, target: 0.01 },
+    requestCount: { metric: 'requestCount', min: 0, max: 20000, target: 10000 },
+    cpuUsage: { metric: 'cpuUsage', min: 0, max: 90, target: 70 },
+    memoryUsage: { metric: 'memoryUsage', min: 0, max: 95, target: 80 }
   };
   private readonly DEFAULT_WINDOW_SIZE = 100;
 
@@ -31,7 +31,7 @@ export class PerformanceAnalytics {
     try {
       const metrics: unknown){
         this.metrics.shift()): void {
-      this.logger.error('Failed to collect metrics:', { error: error instanceof Error ? error.message : Unknown error' }): number  = await this.resourceManager.getCurrentUsage();
+      this.logger.error('Failed to collect metrics:, { error: error instanceof Error ? error.message : Unknown error' }): number  = await this.resourceManager.getCurrentUsage();
       
       this.metrics.push(metrics);
       if (this.metrics.length > this.DEFAULT_WINDOW_SIZE this.DEFAULT_WINDOW_SIZE): SystemPerformanceMetrics[] {
@@ -42,7 +42,7 @@ export class PerformanceAnalytics {
           id: `${key}_${timestamp.getTime(): key,
           value,
           threshold: threshold,
-          severity: critical',
+          severity: 'critical',
           message: `$ {key} is critically high: ${value}`,
           timestamp
         });
@@ -54,7 +54,7 @@ export class PerformanceAnalytics {
           id: `${key}_${timestamp.getTime(): key,
           value,
           threshold: threshold,
-          severity: high',
+          severity: 'high',
           message: `$ {key} is approaching critical levels: ${value}`,
           timestamp
         });
@@ -119,9 +119,9 @@ export class PerformanceAnalytics {
       const metricsService = await this.resourceManager.getMetricsService();
       await metricsService.record('task_completion', {
         taskId: data.id,
-        status: completed',
+        status: 'completed',
         timestamp: new Date()): void {
-      this.logger.error('Task processing failed:', { error: error instanceof Error ? error.message : Unknown error' });
+      this.logger.error('Task processing failed:, { error: error instanceof Error ? error.message : Unknown error' });
       throw error;
     }
   }

@@ -1,56 +1,29 @@
-/**
- * Core base types used throughout the application
- */
-import 'reflect-metadata';
-
-// Basic JSON-compatible value types
-export type JsonValue = 
-  | string 
-  | number
-  | boolean
-  | null
-  | JsonValue[]
-  | { [key: string]: JsonValue };
-
-// Generic record type
-export type UnknownRecord = Record<string, unknown>;
-
-// Data map type for structured data
+export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 export type DataMap = Record<string, JsonValue>;
-
-// Primitive types
+export type UnknownRecord = Record<string, unknown>;
 export type Primitive = string | number | boolean | null | undefined;
 
-// Base entity interface
 export interface BaseEntity {
   id: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-// ISO DateTime string type
 export type ISODateTime = string;
-
-// UUID string type
 export type UUID = string;
 
-// Base configuration type
 export interface BaseConfig {
-  enabled: boolean;
-  options?: Record<string, JsonValue>;
+  [key: string]: unknown;
 }
 
-// Base API response type
 export interface BaseResponse<T = unknown> {
   success: boolean;
   data?: T;
   error?: string;
-  meta?: Record<string, JsonValue>;
+  message?: string;
 }
 
-// Validation result type
-export interface ValidationResult<T = unknown> {
+export interface ValidationResult {
   isValid: boolean;
-  value?: T;
-  errors?: string[];
+  errors: string[];
 }

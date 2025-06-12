@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MCPServer } from '../mcp/MCPServer.js';
+import { MCPServer } from '../mcp/MCPServer.tsx';
 import { LLMProtocolTranslator, ProtocolBridge, ProtocolType } from './llm-protocol-translator.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 /**
  * MCP Protocol Translation Server

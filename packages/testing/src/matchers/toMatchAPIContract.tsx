@@ -1,4 +1,4 @@
-import { createMatcher } from './utils.js';
+import { createMatcher } from './utils';
 import { z } from 'zod';
 
 export type APIContract = {

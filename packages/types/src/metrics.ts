@@ -1,13 +1,11 @@
-export interface SystemPerformanceMetrics {
-  cpuUsage: number;
-  memoryUsage: number;
-  heapUsage: number;
-  threadCount: number;
-  activeConnections: number;
-  requestsPerSecond: number;
-  errorRate: number;
-  averageResponseTime: number;
-  uptime: number;
-  loadAverage: number[];
+// Metrics types
+export interface MetricData {
+  name: string;
+  value: number;
   timestamp: Date;
+  tags?: Record<string, string>;
+}
+
+export interface MetricsCollector {
+  collect(): Promise<MetricData[]>;
 }

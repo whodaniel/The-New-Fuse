@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 import { Request } from 'express';
 
 export interface AuditLogEntry {
@@ -45,15 +45,15 @@ export class AuditLoggingService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('security.auditLogging.enabled', true),
-      sensitiveFields: this.configService.get<string[]>('security.auditLogging.sensitiveFields', [
-        'password', 'token', 'secret', 'key', 'credential', 'ssn', 'creditCard'
+      enabled: this.configService.get<boolean>('security.auditLogging.'enabled', true),
+      sensitiveFields: this.configService.get<string[]>('security.auditLogging.'sensitiveFields', [
+        password', token', secret', key', credential', ssn', creditCard'
       ]),
-      logToConsole: this.configService.get<boolean>('security.auditLogging.logToConsole', true),
-      logToDatabase: this.configService.get<boolean>('security.auditLogging.logToDatabase', true),
+      logToConsole: this.configService.get<boolean>('security.auditLogging.'logToConsole', true),
+      logToDatabase: this.configService.get<boolean>('security.auditLogging.'logToDatabase', true),
       retention: {
-        days: this.configService.get<number>('security.auditLogging.retention.days', 90),
-        enabled: this.configService.get<boolean>('security.auditLogging.retention.enabled', true)
+        days: this.configService.get<number>('security.auditLogging.retention.'days', 90),
+        enabled: this.configService.get<boolean>('security.auditLogging.retention.'enabled', true)
       }
     };
 
@@ -96,10 +96,10 @@ export class AuditLoggingService implements OnModuleInit {
     
     // Log to console if enabled
     if (this.config.logToConsole) {
-      const logLevel = fullEntry.success ? 'info' : 'warn';
-      this.logger[logLevel](`AUDIT: ${fullEntry.action} ${fullEntry.resource}${fullEntry.resourceId ? `/${fullEntry.resourceId}` : ''}`, {
+      const logLevel = fullEntry.success ? 'info' :'warn';
+      this.logger[logLevel](`AUDIT: ${fullEntry.action} ${fullEntry.resource}${fullEntry.resourceId ? `/${fullEntry.resourceId}` : }`, {
         userId: fullEntry.userId || 'anonymous',
-        ip: fullEntry.ip || 'unknown',
+        ip: fullEntry.ip || unknown',
         success: fullEntry.success,
         correlationId
       });
@@ -128,7 +128,7 @@ export class AuditLoggingService implements OnModuleInit {
     }
     
     // Emit event
-    this.eventEmitter.emit('security.audit', fullEntry);
+    this.eventEmitter.emit('security.'audit', fullEntry);
   }
 
   /**
@@ -155,10 +155,10 @@ export class AuditLoggingService implements OnModuleInit {
       resource,
       resourceId,
       ip: request.ip,
-      userAgent: request.headers['user-agent'],
+      userAgent: request.headers['user-agent],
       success,
       details,
-      correlationId: (request as any).correlationId || request.headers['x-correlation-id'] as string
+      correlationId: (request as any).correlationId || request.headers['x-correlation-id] as string
     });
   }
 
@@ -285,7 +285,7 @@ export class AuditLoggingService implements OnModuleInit {
   private sanitizeDetails(details: Record<string, any>): Record<string, any> {
     const sanitized = { ...details };
     
-    const sanitizeObject = (obj: Record<string, any>, path: string = ''): Record<string, any> => {
+    const sanitizeObject = (obj: Record<string, any>, path: string = ): Record<string, any> => {
       const result: Record<string, any> = {};
       
       for (const [key, value] of Object.entries(obj)) {
@@ -298,7 +298,7 @@ export class AuditLoggingService implements OnModuleInit {
         
         if (shouldRedact) {
           result[key] = '[REDACTED]';
-        } else if (typeof value === 'object' && value !== null) {
+        } else if (typeof value === object' && value !== null) {
           // Recursively sanitize nested objects
           result[key] = sanitizeObject(value, fullPath);
         } else {

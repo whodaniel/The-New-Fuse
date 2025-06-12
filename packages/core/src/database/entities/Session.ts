@@ -6,8 +6,8 @@ import {
     ManyToOne,
     JoinColumn,
     BeforeInsert
-} from 'typeorm';
-import { User } from './User.js';
+} from ''typeorm';
+import { User } from './User.tsx';
 import { v4 as uuidv4 } from 'uuid';
 
 @Entity('sessions')

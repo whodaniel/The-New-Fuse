@@ -1,2 +1,2 @@
-export { AppStacker } from './AppStacker.js';
+export { AppStacker } from './AppStacker.tsx';
 //# sourceMappingURL=index.js.map

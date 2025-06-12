@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { useWebSocket } from './useWebSocket.js';
+import { useWebSocket } from './useWebSocket.tsx';
 import { useAuth } from './useAuth.js';
 import { api } from '../lib/api.js';
 import { Message, ChatState } from '../types/chat.js';

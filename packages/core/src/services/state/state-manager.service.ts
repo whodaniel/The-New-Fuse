@@ -4,7 +4,7 @@ import { DatabaseService } from '../database/database.service.js';
 
 interface State {
   serviceId: string;
-  status: 'active' | 'inactive' | 'error';
+  status:active' | inactive' | error';
   lastUpdated: Date;
   data: unknown;
 }

@@ -1,12 +1,12 @@
-import { AgentWorkflow, WorkflowTask, WorkflowState } from '../types.js';
-import { AgentBridgeService } from '../AgentCommunicationBridge.js';
+import { AgentWorkflow, WorkflowTask, WorkflowState } from '../types.tsx';
+import { AgentBridgeService } from '../AgentCommunicationBridge.tsx';
 import { TaskQueueService } from '../../task/TaskQueueService.js';
 import { StateManagerService } from '../../services/state/state-manager.service.js';
-import { MonitoringService } from '../../monitoring/monitoring.service.js';
+import { MonitoringService } from '../../monitoring/monitoring.service.tsx';
 import { WorkflowError, WorkflowValidationError, AgentAssignmentError } from '../../errors/workflow.errors.js';
-import { Agent, AgentRequirement } from '../types.js';
+import { Agent, AgentRequirement } from '../types.tsx';
 import { WorkflowGraph } from './workflow-graph.js';
-import { MCPAgentServer } from '../../mcp/MCPAgentServer.js';
+import { MCPAgentServer } from '../../mcp/MCPAgentServer.tsx';
 
 export class AgentWorkflowService {
   constructor(

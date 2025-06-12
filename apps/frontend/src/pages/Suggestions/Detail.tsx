@@ -361,11 +361,15 @@ const SuggestionDetail: React.FC = () => {
                               <p className="text-sm mb-2">{comment.content}</p>
                               <div className="flex items-center text-sm text-muted-foreground">
                                 <button className="flex items-center hover:text-green-600 mr-2">
-                                  <ThumbsUp className="h-3 w-3 mr-1" />
+ <ThumbsUp className="h-3 w-3 mr-1" title="Upvote comment" />
                                 </button>
+                                <span className="sr-only">Upvote comment</span>
                                 <span>{comment.votes}</span>
-                                <button className="flex items-center hover:text-red-600 ml-2">
-                                  <ThumbsDown className="h-3 w-3" />
+                                <button
+ className="flex items-center hover:text-red-600 ml-2"
+ title="Downvote comment"
+ >
+ <ThumbsDown className="h-3 w-3" />
                                 </button>
                               </div>
                             </div>

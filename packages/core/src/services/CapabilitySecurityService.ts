@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { Logger } from '../utils/logger.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
@@ -45,7 +45,7 @@ export class CapabilitySecurityService {
       this.encryptionKey = crypto.randomBytes(32);
       this.logger.warn('No encryption key provided, using random key');
     } else {
-      this.encryptionKey = Buffer.from(key, 'hex');
+      this.encryptionKey = Buffer.from(key, hex');
     }
   }
 
@@ -85,7 +85,7 @@ export class CapabilitySecurityService {
 
       return true;
     } catch (error) {
-      this.logger.error('Error validating access:', error);
+      this.logger.error('Error validating access:, error);
       return false;
     }
   }
@@ -118,7 +118,7 @@ export class CapabilitySecurityService {
         this.logger.warn(`Rate limit exceeded for agent ${agentId} on capability ${capabilityId}`);
         return false;
       }
-      this.logger.error('Error checking rate limit:', error);
+      this.logger.error('Error checking rate limit:, error);
       return false;
     }
   }
@@ -136,10 +136,10 @@ export class CapabilitySecurityService {
 
   encryptMessage(message: any): { encrypted: Buffer; iv: Buffer } {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-gcm', this.encryptionKey, iv);
+    const cipher = crypto.createCipheriv('aes-256-gcm, this.encryptionKey, iv);
     
     const encrypted = Buffer.concat([
-      cipher.update(JSON.stringify(message), 'utf8'),
+      cipher.update(JSON.stringify(message), utf8'),
       cipher.final()
     ]);
 
@@ -147,7 +147,7 @@ export class CapabilitySecurityService {
   }
 
   decryptMessage(encrypted: Buffer, iv: Buffer): any {
-    const decipher = crypto.createDecipheriv('aes-256-gcm', this.encryptionKey, iv);
+    const decipher = crypto.createDecipheriv('aes-256-gcm, this.encryptionKey, iv);
     
     const decrypted = Buffer.concat([
       decipher.update(encrypted),

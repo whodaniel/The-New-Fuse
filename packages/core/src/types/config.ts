@@ -8,7 +8,7 @@ export interface ConfigOptions {
 
 export interface DatabaseConfig {
   url: string;
-  type: 'postgres' | 'mysql' | 'sqlite'; // Added missing quote
+  type: 'postgres' | mysql' | sqlite'; // Added missing quote
   synchronize: boolean;
   logging: boolean;
 }

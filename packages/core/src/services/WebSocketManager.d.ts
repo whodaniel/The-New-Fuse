@@ -1,4 +1,4 @@
-import { Server } from 'ws';
+import { Server } from ''ws';
 import { Logger } from '../logging.js';
 export declare class WebSocketManager {
     private readonly wss;

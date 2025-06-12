@@ -27,12 +27,12 @@ cd "$SCRIPT_DIR/apps/frontend"
 
 # Install dependencies if needed
 echo -e "${YELLOW}Step 2: Ensuring dependencies are installed${NC}"
-yarn install
+bun install
 
 # Build and start the frontend
 echo -e "${YELLOW}Step 3: Starting the frontend service${NC}"
 echo -e "${BLUE}Running frontend in development mode...${NC}"
-yarn dev
+bun run dev
 
 # This will start the frontend on port 3000
 echo -e "${GREEN}Frontend started on http://localhost:3000${NC}"

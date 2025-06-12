@@ -57,7 +57,7 @@ export interface Message {
 export interface Channel {
   id: string;
   name: string;
-  type: 'direct' | 'broadcast' | 'topic';
+  type:direct' | broadcast' | topic';
   pattern?: string;
   metadata?: {
     description?: string;
@@ -100,24 +100,24 @@ export interface ChannelOptions {
   retryPolicy?: {
     maxRetries: number;
     backoff: {
-      type: 'fixed' | 'exponential';
+      type:fixed' | exponential';
       delay: number;
     };
   };
 }
 
 export type MessageValidationErrorCode =
-  | 'SIZE_EXCEEDED'
-  | 'INVALID_TYPE'
-  | 'SCHEMA_VALIDATION_ERROR'
-  | 'FUTURE_TIMESTAMP'
-  | 'INVALID_TTL'
-  | 'INVALID_RETRIES'
-  | 'MAX_RETRIES_EXCEEDED'
-  | 'CORRELATION_DEPTH_EXCEEDED'
-  | 'MISSING_SIGNATURE'
-  | 'INVALID_SIGNATURE'
-  | 'UNKNOWN_ERROR';
+  | SIZE_EXCEEDED'
+  | INVALID_TYPE'
+  | SCHEMA_VALIDATION_ERROR'
+  | FUTURE_TIMESTAMP'
+  | INVALID_TTL'
+  | INVALID_RETRIES'
+  | MAX_RETRIES_EXCEEDED'
+  | CORRELATION_DEPTH_EXCEEDED'
+  | MISSING_SIGNATURE'
+  | INVALID_SIGNATURE'
+  | UNKNOWN_ERROR';
 
 export interface MessageValidationError {
   field: string;

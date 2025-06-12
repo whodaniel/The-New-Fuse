@@ -11,7 +11,7 @@ export class RedisConnection {
   private client: Redis;
 
   constructor(config: RedisConfig) {
-    this.client = new Redis({
+    this.client = new (Redis as any)({
       host: config.host,
       port: config.port,
       password: config.password,

@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { ClineResponse } from './clineResponse.js';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { ClineResponse } from './clineResponse.tsx';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 
 const logger: Logger = getLogger('response_queue');
 
@@ -47,7 +47,7 @@ export class ResponseQueue {
                 priority
             });
         } catch (error): void {
-            logger.error('Error enqueueing response:', error): Promise<void> {
+            logger.error('Error enqueueing response:, error): Promise<void> {
         if (this.processing: unknown){
             return;
         }
@@ -66,7 +66,7 @@ export class ResponseQueue {
         while (this.processing: unknown){
             try {
                 const queuedResponse: unknown){
-                logger.error('Error in processing loop:', error)): void {
+                logger.error('Error in processing loop:, error)): void {
                     // No items in queue, wait before checking again
                     await new Promise(resolve => setTimeout(resolve, 100): QueuedResponse): Promise<void> {
         try {
@@ -82,7 +82,7 @@ export class ResponseQueue {
 
             if (!response.isProcessed()) {
                 await response.process()): void {
-            logger.error('Error processing response:', error)): void {
+            logger.error('Error processing response:, error)): void {
                 this.queue.push(queuedResponse): Promise<void> {
         try {
             const metrics: Date.now(): this.queue.length,
@@ -93,7 +93,7 @@ export class ResponseQueue {
 
             await this.metricsCollector.storeMetrics('response_queue', metrics);
         } catch (error): void {
-            logger.error('Error collecting queue metrics:', error): Record<number, number> {
+            logger.error('Error collecting queue metrics:, error): Record<number, number> {
         const distribution: Record<number, number>  = {
                 timestamp {};
         for (const item of this.queue: unknown){

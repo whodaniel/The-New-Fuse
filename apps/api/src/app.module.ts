@@ -18,6 +18,7 @@ import { MonitoringController } from './controllers/monitoring.controller.js';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module.js';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule.js';
 import { TNFMCPModule } from './mcp/TNFMCPModule.js';
+import { A2ACoreModule, A2AController } from '@the-new-fuse/a2a-core';
 
 @Module({
   imports: [
@@ -53,8 +54,9 @@ import { TNFMCPModule } from './mcp/TNFMCPModule.js';
     EntityDiscoveryModule,
     ClaudeDevAutomationModule,
     TNFMCPModule, // Add The New Fuse MCP Module
+    A2ACoreModule.forRoot(), // Add A2A Protocol Module
   ],
-  controllers: [AppController, MonitoringController],
+  controllers: [AppController, MonitoringController, A2AController],
   providers: [AppService, CacheService, MonitoringService, WebsocketGateway],
 })
 export class AppModule {}

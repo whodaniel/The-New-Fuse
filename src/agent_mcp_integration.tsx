@@ -1,4 +1,4 @@
-import { MCPClient, AgentTool } from './mcp_client.js';
+import { MCPClient, AgentTool } from './mcp_client.tsx';
 import path from 'path';
 
 /**

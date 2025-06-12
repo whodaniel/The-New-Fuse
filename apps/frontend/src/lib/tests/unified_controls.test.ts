@@ -1,4 +1,4 @@
-import { UnifiedControlInterface } from '../unified_controls.js';
+import { UnifiedControlInterface } from '../unified_controls.tsx';
 
 describe('UnifiedControlInterface', () => {
   let uiControl;

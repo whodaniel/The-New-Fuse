@@ -1,8 +1,8 @@
 import React from 'react';
-import { WorkflowBuilder } from '../services/WorkflowBuilder.js';
-import { WorkflowEditor } from '../components/WorkflowEditor.js';
-import WorkflowControlPanel from '../components/WorkflowControlPanel.js';
-import { WorkflowDefinition } from '../types.js';
+import { WorkflowBuilder } from '../services/WorkflowBuilder.tsx';
+import { WorkflowEditor } from '../components/WorkflowEditor.tsx';
+import WorkflowControlPanel from '../components/WorkflowControlPanel.tsx';
+import { WorkflowDefinition } from '../types.tsx';
 
 const WorkflowExample: React.FC = () => {
   // Example Workflow Definition

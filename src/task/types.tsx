@@ -1,4 +1,4 @@
-import { JsonValue } from "@the-new-fuse/database/client/runtime/library";
+import { JsonValue } from "@the-new-fuse/database/runtime/library";
 
 export enum TaskStatus {
   PENDING = "pending",

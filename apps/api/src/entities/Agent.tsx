@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, DeleteDateColumn } from 'typeorm';
 import { User } from './User.js';
-import { Pipeline } from './Pipeline.js';
+import { Pipeline } from './Pipeline.tsx';
 
 @Entity()
 export class Agent {

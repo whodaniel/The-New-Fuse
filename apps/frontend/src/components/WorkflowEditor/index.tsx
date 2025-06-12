@@ -3,7 +3,7 @@ import ReactFlow, { Controls, Background, addEdge, useNodesState, useEdgesState,
 import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 import './styles/WorkflowEditor.css';
-import { DynamicNode } from './components/DynamicNode.js';
+import { DynamicNode } from './components/DynamicNode.tsx';
 import n8nMetadataService from '../services/n8n-metadata.service.js';
 import { convertReactFlowToN8n } from './utils/converter.js';
 import { validateN8nWorkflow, createDynamicValidator } from './utils/validation.js';

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskPriority, TaskStatus, TaskType } from './types.js';
+import { Task, TaskPriority, TaskStatus, TaskType } from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 @Injectable()
 export class PriorityQueue {
@@ -11,11 +11,11 @@ export class PriorityQueue {
     private readonly redisService: RedisService,
     private readonly configService: ConfigService,
   ) {
-    this.prefix = 'task:queue:';
+    this.prefix = task:queue:';
   }
 
   async enqueue(task: Task, priority?: number): Promise<void> {
-    const score = this.calculateScore(task, priority || 0);
+    const score = this.calculateScore(task, priority || 0)';
     await this.redisService.zadd(
       this.getQueueKey(task.type || 'default'),
       score,
@@ -28,7 +28,7 @@ export class PriorityQueue {
   }
 
   async dequeue(type?: string): Promise<Task | null> {
-    const queueKey = this.getQueueKey(type || '*');
+    const queueKey = this.getQueueKey(type || *');
     const taskIds = await this.redisService.zpopmax(queueKey, 1);
     
     if (!taskIds || !taskIds.length) {
@@ -46,8 +46,8 @@ export class PriorityQueue {
   }
 
   async peek(type?: string): Promise<Task | null> {
-    const queueKey = this.getQueueKey(type || '*');
-    const taskIds = await this.redisService.zrange(queueKey, -1, -1, 'WITHSCORES');
+    const queueKey = this.getQueueKey(type || *');
+    const taskIds = await this.redisService.zrange(queueKey, -1, -1, WITHSCORES');
     
     if (!taskIds || !taskIds.length) {
       return null;
@@ -71,7 +71,7 @@ export class PriorityQueue {
     }
     
     await Promise.all([
-      this.redisService.zrem(this.getQueueKey(task.type || 'default'), taskId),
+      this.redisService.zrem(this.getQueueKey(task.type || default'), taskId),
       this.redisService.del(this.getTaskKey(taskId))
     ]);
   }
@@ -135,17 +135,17 @@ export class PriorityQueue {
   private serializeTask(task: Task): Record<string, string> {
     return {
       id: task.id,
-      type: task.type || 'default',
+      type: task.type || default',
       priority: String(task.priority || 0),
       status: task.status,
       dependencies: JSON.stringify(task.dependencies || []),
       metadata: JSON.stringify(task.metadata || {}),
       input: JSON.stringify(task.payload || {}),
-      output: task.result ? JSON.stringify(task.result) : '',
+      output: task.result ? JSON.stringify(task.result) :,
       createdAt: task.createdAt ? task.createdAt.toISOString() : new Date().toISOString(),
       updatedAt: task.updatedAt ? task.updatedAt.toISOString() : new Date().toISOString(),
-      startedAt: task.startedAt ? task.startedAt.toISOString() : '',
-      completedAt: task.completedAt ? task.completedAt.toISOString() : ''
+      startedAt: task.startedAt ? task.startedAt.toISOString() : ,
+      completedAt: task.completedAt ? task.completedAt.toISOString() : '
     };
   }
 
@@ -155,9 +155,9 @@ export class PriorityQueue {
       type: data.type,
       priority: parseInt(data.priority, 10) || 0,
       status: data.status,
-      dependencies: JSON.parse(data.dependencies || '[]'),
-      metadata: JSON.parse(data.metadata || '{}'),
-      payload: JSON.parse(data.input || '{}'),
+      dependencies: JSON.parse(data.dependencies || []'),
+      metadata: JSON.parse(data.metadata || {}'),
+      payload: JSON.parse(data.input || {}'),
       result: data.output ? JSON.parse(data.output) : undefined,
       createdAt: new Date(data.createdAt),
       updatedAt: new Date(data.updatedAt),
@@ -168,7 +168,7 @@ export class PriorityQueue {
   }
 
   async getLength(type?: string): Promise<number> {
-    const queueKey = this.getQueueKey(type || '*');
+    const queueKey = this.getQueueKey(type || *');
     return this.redisService.zcard(queueKey);
   }
   

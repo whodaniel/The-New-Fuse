@@ -66,14 +66,14 @@ export class RooIntegration {
                     try {
                         const message = JSON.parse(data.toString());
                         this.handleIncomingWebSocketMessage(message);
-                    } catch (error) {
+                    } catch (error: unknown) {
                         this.outputChannel.appendLine(`Failed to parse WebSocket message: ${error}`);
                     }
                 });
             });
 
             this.wss.on('error', (error) => {
-                this.outputChannel.appendLine(`WebSocket Server error: ${error.message}`);
+                this.outputChannel.appendLine(`WebSocket Server error: ${(error as Error).message}`);
             });
 
             this.outputChannel.appendLine(`Roo WebSocket server started on port ${ROO_WEBSOCKET_PORT}`);

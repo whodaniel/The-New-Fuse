@@ -1,7 +1,7 @@
-import { DashboardState } from '../collaboration/types.js';
-import { VoiceEngine } from '../ai/VoiceEngine.js';
-import { GestureEngine } from '../ai/GestureEngine.js';
-import { XREngine } from '../ai/XREngine.js';
+import { DashboardState } from '../collaboration/types.tsx';
+import { VoiceEngine } from '../ai/VoiceEngine.tsx';
+import { GestureEngine } from '../ai/GestureEngine.tsx';
+import { XREngine } from '../ai/XREngine.tsx';
 
 export interface CoreFeatures {
   voice: VoiceEngine;

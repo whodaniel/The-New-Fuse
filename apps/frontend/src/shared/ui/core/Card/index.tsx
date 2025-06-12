@@ -7,4 +7,4 @@ export {
   CardContent,
   type CardProps,
   cardVariants,
-} from './Card.js'
+} from './Card.tsx'

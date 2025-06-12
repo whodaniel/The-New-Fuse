@@ -1,6 +1,6 @@
-import { z } from 'zod';
+import { z } from ''zod';
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { AnthropicXmlAdapter } from '../protocols/adapters/AnthropicXmlAdapter.js';
 
 /**
@@ -24,7 +24,7 @@ export class AnthropicXmlTools {
    */
   async parseXmlFunctionCall(xmlString: string): Promise<any> {
     try {
-      const message = await this.adapter.adaptMessage(xmlString as any, 'a2a-v2.0');
+      const message = await this.adapter.adaptMessage(xmlString as any, a2a-v2.0');
       return {
         name: message.header.type,
         parameters: message.body.content,
@@ -47,9 +47,9 @@ export class AnthropicXmlTools {
         header: {
           id: crypto.randomUUID(),
           type: functionName,
-          version: '2.0',
+          version:2.0',
           priority: 'medium',
-          source: 'anthropic-xml-tools',
+          source:anthropic-xml-tools,
           target: undefined,
         },
         body: {
@@ -63,7 +63,7 @@ export class AnthropicXmlTools {
         },
       };
 
-      return await this.adapter.adaptMessage(message, 'anthropic-xml-v1.0') as string;
+      return await this.adapter.adaptMessage(message, anthropic-xml-v1.0') as string;
     } catch (error) {
       this.logger.error(`Error creating XML function call: ${error.message}`);
       throw new Error(`Failed to create XML function call: ${error.message}`);
@@ -99,7 +99,7 @@ export class AnthropicXmlTools {
     description: string;
     parameters: Record<string, any>;
   }): string {
-    let xmlString = '<function>\n';
+    let xmlString = <function>\'n';
     xmlString += `{"description": "${tool.description}", "name": "${tool.name}", "parameters": `;
     
     // Convert parameters to JSON string
@@ -111,7 +111,7 @@ export class AnthropicXmlTools {
       type: 'object',
     });
     
-    xmlString += '}\n</function>';
+    xmlString += }\n</function>';
     
     return xmlString;
   }
@@ -126,13 +126,13 @@ export class AnthropicXmlTools {
     description: string;
     parameters: Record<string, any>;
   }>): string {
-    let xmlString = '<functions>\n';
+    let xmlString = <functions>\'n';
     
     for (const tool of tools) {
-      xmlString += this.convertToolToXmlFormat(tool) + '\n';
+      xmlString += this.convertToolToXmlFormat(tool) + \'n';
     }
     
-    xmlString += '</functions>';
+    xmlString += </functions>';
     
     return xmlString;
   }

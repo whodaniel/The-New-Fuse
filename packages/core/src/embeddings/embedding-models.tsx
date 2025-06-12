@@ -13,7 +13,7 @@ export interface EmbeddingModel {
 }
 
 export class USEEmbeddingModel implements EmbeddingModel {
-    public readonly name = 'universal-sentence-encoder';
+    public readonly name = 'universal-sentence-encoder;
     public readonly dimensions = 512;
 
     async initialize(): Promise<void> {
@@ -22,7 +22,7 @@ export class USEEmbeddingModel implements EmbeddingModel {
     }
 
     async embed(content: string | Record<string, unknown>): Promise<Float32Array> {
-        const text = typeof content === 'string' ? content : JSON.stringify(content);
+        const text = typeof content === string' ? content : JSON.stringify(content);
         const words = text.toLowerCase().split(/\s+/);
         const embedding = new Float32Array(this.dimensions).fill(0);
         
@@ -69,7 +69,7 @@ export class USEEmbeddingModel implements EmbeddingModel {
 }
 
 export class CustomBERTEmbeddingModel implements EmbeddingModel {
-    public readonly name = 'custom-bert';
+    public readonly name = custom-bert;
     public readonly dimensions = 768;
 
     async initialize(): Promise<void> {
@@ -92,7 +92,7 @@ export class EmbeddingModelFactory {
     private static models: Map<string, EmbeddingModel> = new Map();
 
     static async getModel(config: EmbeddingModelConfig | string): Promise<EmbeddingModel> {
-        const modelName = typeof config === 'string' ? config : config.modelName;
+        const modelName = typeof config === string' ? config : config.modelName;
 
         if (this.models.has(modelName)) {
             return this.models.get(modelName)!;
@@ -101,11 +101,11 @@ export class EmbeddingModelFactory {
         let model: EmbeddingModel;
         
         switch (modelName) {
-            case 'universal-sentence-encoder':
+            case universal-sentence-encoder':
                 model = new USEEmbeddingModel();
                 await model.initialize();
                 break;
-            case 'custom-bert':
+            case custom-bert':
                 model = new CustomBERTEmbeddingModel();
                 await model.initialize();
                 break;

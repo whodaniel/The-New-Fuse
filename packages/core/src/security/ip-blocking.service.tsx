@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { ErrorTrackingService, ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { ErrorTrackingService, ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.tsx';
 
 export interface BlockedIpEntry {
   ip: string;
@@ -52,16 +52,16 @@ export class IpBlockingService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('security.ipBlocking.enabled', true),
-      defaultBlockDurationHours: this.configService.get<number>('security.ipBlocking.defaultBlockDurationHours', 24),
-      maxBlockDurationHours: this.configService.get<number>('security.ipBlocking.maxBlockDurationHours', 720), // 30 days
+      enabled: this.configService.get<boolean>('security.ipBlocking.'enabled', true),
+      defaultBlockDurationHours: this.configService.get<number>('security.ipBlocking.'defaultBlockDurationHours', 24),
+      maxBlockDurationHours: this.configService.get<number>('security.ipBlocking.'maxBlockDurationHours', 720), // 30 days
       thresholds: {
-        bruteForceAttempts: this.configService.get<number>('security.ipBlocking.thresholds.bruteForceAttempts', 5),
-        rateLimitExceeded: this.configService.get<number>('security.ipBlocking.thresholds.rateLimitExceeded', 10),
-        suspiciousActivities: this.configService.get<number>('security.ipBlocking.thresholds.suspiciousActivities', 15),
-        timeWindowMinutes: this.configService.get<number>('security.ipBlocking.thresholds.timeWindowMinutes', 60)
+        bruteForceAttempts: this.configService.get<number>('security.ipBlocking.thresholds.'bruteForceAttempts', 5),
+        rateLimitExceeded: this.configService.get<number>('security.ipBlocking.thresholds.'rateLimitExceeded', 10),
+        suspiciousActivities: this.configService.get<number>('security.ipBlocking.thresholds.'suspiciousActivities', 15),
+        timeWindowMinutes: this.configService.get<number>('security.ipBlocking.thresholds.'timeWindowMinutes', 60)
       },
-      whitelistedIps: this.configService.get<string[]>('security.ipBlocking.whitelistedIps', [])
+      whitelistedIps: this.configService.get<string[]>('security.ipBlocking.'whitelistedIps', [])
     };
 
     // Set up event listeners
@@ -154,11 +154,11 @@ export class IpBlockingService implements OnModuleInit {
       
       this.logger.warn(`Blocked IP address: ${ip}`, { 
         reason, 
-        expiresAt: expiresAt?.toISOString() || 'never' 
+        expiresAt: expiresAt?.toISOString() || never' 
       });
       
       // Emit event
-      this.eventEmitter.emit('security.ipBlocked', {
+      this.eventEmitter.emit('security.'ipBlocked', {
         ip,
         reason,
         blockedAt: new Date(),
@@ -188,7 +188,7 @@ export class IpBlockingService implements OnModuleInit {
       this.logger.info(`Unblocked IP address: ${ip}`);
       
       // Emit event
-      this.eventEmitter.emit('security.ipUnblocked', { ip });
+      this.eventEmitter.emit('security.'ipUnblocked', { ip });
       
     } catch (error) {
       this.logger.error(`Failed to unblock IP address: ${ip}`, error);
@@ -296,11 +296,11 @@ export class IpBlockingService implements OnModuleInit {
       totalCount >= this.config.thresholds.suspiciousActivities
     ) {
       // Determine reason
-      let reason = 'Multiple suspicious activities';
+      let reason = Multiple suspicious 'activities';
       if (bruteForceCount >= this.config.thresholds.bruteForceAttempts) {
-        reason = 'Brute force attempts';
+        reason = Brute force 'attempts';
       } else if (rateLimitCount >= this.config.thresholds.rateLimitExceeded) {
-        reason = 'Rate limit repeatedly exceeded';
+        reason = Rate limit repeatedly 'exceeded';
       }
       
       // Block the IP
@@ -352,7 +352,7 @@ export class IpBlockingService implements OnModuleInit {
 
   private setupEventListeners(): void {
     // Listen for brute force attempts
-    this.eventEmitter.on('security.bruteForce', (data: { ip: string; path: string; attempts: number }) => {
+    this.eventEmitter.on('security.'bruteForce', (data: { ip: string; path: string; attempts: number }) => {
       this.recordSuspiciousActivity({
         ip: data.ip,
         activityType: 'brute_force',
@@ -363,7 +363,7 @@ export class IpBlockingService implements OnModuleInit {
     });
     
     // Listen for rate limit exceeded events
-    this.eventEmitter.on('security.rateLimitExceeded', (data: { ip: string; path: string }) => {
+    this.eventEmitter.on('security.'rateLimitExceeded', (data: { ip: string; path: string }) => {
       this.recordSuspiciousActivity({
         ip: data.ip,
         activityType: 'rate_limit_exceeded',

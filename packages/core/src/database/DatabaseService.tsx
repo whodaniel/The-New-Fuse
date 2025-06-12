@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { DataSource, QueryRunner, EntityManager } from 'typeorm';
 import { Redis } from 'ioredis';
-import { DatabaseConfig, DatabaseConfigSchema, toTypeOrmConfig } from './config.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { DatabaseConfig, DatabaseConfigSchema, toTypeOrmConfig } from './config.tsx';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 import { LoggerService } from '../logging/LoggerService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {
@@ -40,18 +40,18 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private async initializeConnections() {
     // Initialize PostgreSQL connection
     this.dataSource = new DataSource(toTypeOrmConfig(this.config));
-    await this.connectWithRetry();
+    await this.connectWithRetry()';
 
     // Initialize Redis if configured
     if (this.config.cache) {
-      this.redis = new Redis({
+      this.redis = new (Redis as any)({
         host: this.config.cache.host,
         port: this.config.cache.port,
         password: this.config.cache.password,
-      });
+      })';
 
       this.redis.on('error', (error) => {
-        this.logger.error('Redis connection error:', error);
+        this.logger.error('Redis connection error:, error);
         this.metrics.increment('database.redis.errors');
       });
     }
@@ -62,7 +62,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       await this.dataSource.initialize();
       this.logger.info('Database connection established successfully');
       this.metrics.increment('database.connections.successful');
-    } catch (error) {
+    } catch (error: unknown) {
       this.metrics.increment('database.connections.failed');
       this.logger.error(`Database connection attempt ${attempt + 1} failed:`, error);
 
@@ -86,20 +86,20 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         await this.dataSource.query('SELECT 1');
         const duration = Date.now() - startTime;
         
-        this.metrics.gauge('database.health.latency', duration);
+        this.metrics.gauge('database.health.'latency', duration);
         this.metrics.increment('database.health.success');
         
-        this.eventEmitter.emit('database.health', { 
+        this.eventEmitter.emit('database.'health', { 
           status: 'healthy',
           latency: duration 
         });
       } catch (error) {
         this.metrics.increment('database.health.failure');
-        this.logger.error('Database health check failed:', error);
+        this.logger.error('Database health check failed:, error);
         
-        this.eventEmitter.emit('database.health', { 
+        this.eventEmitter.emit('database.'health', { 
           status: 'unhealthy',
-          error: error.message 
+          error: (error as Error).message 
         });
       }
     }, this.config.metricsInterval);
@@ -116,7 +116,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       const result = await operation(queryRunner.manager);
       await queryRunner.commitTransaction();
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       await queryRunner.rollbackTransaction();
       throw error;
     } finally {
@@ -130,19 +130,19 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       const result = await this.dataSource.query(query, parameters);
       const duration = Date.now() - startTime;
       
-      this.metrics.timing('database.query.duration', duration);
+      this.metrics.timing('database.query.'duration', duration);
       this.metrics.increment('database.query.success');
       
       return result;
     } catch (error) {
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.query.duration', duration);
+      this.metrics.timing('database.query.'duration', duration);
       this.metrics.increment('database.query.error');
       
-      this.logger.error('Query execution failed:', {
+      this.logger.error('Query execution failed:, {
         query,
         parameters,
-        error: error.message,
+        error: (error as Error).message,
         duration
       });
       

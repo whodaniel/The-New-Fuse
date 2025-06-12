@@ -1,14 +1,14 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from '@nestjs/common';
-import { MetricsStorage, MetricValue, MetricsQuery } from './interfaces.js';
-import { MetricType, MetricUnit } from './types.js';
+import { MetricsStorage, MetricValue, MetricsQuery } from './interfaces.tsx';
+import { MetricType, MetricUnit } from './types.tsx';
 
 export class RedisMetricsStorage implements MetricsStorage {
   private readonly logger = new Logger('RedisMetricsStorage');
   private readonly prefix: string;
   private readonly redis: Redis;
 
-  constructor(redis: Redis, prefix = 'metrics:') {
+  constructor(redis: Redis, prefix = metrics:) {
     this.redis = redis;
     this.prefix = prefix;
   }
@@ -37,8 +37,8 @@ export class RedisMetricsStorage implements MetricsStorage {
   async retrieve(query: MetricsQuery): Promise<MetricValue[]> {
     try {
       const key = this.getKey(query.name, query.type);
-      const startScore = query.start?.getTime() ?? '-inf';
-      const endScore = query.end?.getTime() ?? '+inf';
+      const startScore = query.start?.getTime() ?? '-'inf';
+      const endScore = query.end?.getTime() ?? +'inf';
 
       const results = await this.redis.zrangebyscore(key, startScore, endScore);
       
@@ -72,11 +72,11 @@ export class RedisMetricsStorage implements MetricsStorage {
 
       await Promise.all(
         keys.map(key =>
-          this.redis.zremrangebyscore(key, '-inf', minScore)
+          this.redis.zremrangebyscore(key, -'inf', minScore)
         )
       );
     } catch (error) {
-      this.logger.error('Failed to cleanup metrics:', error);
+      this.logger.error('Failed to cleanup metrics:, error);
       throw error;
     }
   }
@@ -97,8 +97,8 @@ export class RedisMetricsStorage implements MetricsStorage {
         stats.totalMetrics += count;
 
         if (count > 0) {
-          const [oldest] = await this.redis.zrange(key, 0, 0, 'WITHSCORES');
-          const [newest] = await this.redis.zrange(key, -1, -1, 'WITHSCORES');
+          const [oldest] = await this.redis.zrange(key, 0, 0, WITHSCORES');
+          const [newest] = await this.redis.zrange(key, -1, -1, WITHSCORES');
           
           if (oldest) {
             stats.oldestTimestamp = Math.min(stats.oldestTimestamp, parseInt(oldest));

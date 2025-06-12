@@ -1,11 +1,11 @@
-import { LLMRegistry } from '../llm/LLMRegistry.js';
-import { MonitoringService } from '../monitoring/MonitoringService.js';
-import { ErrorRecoveryService } from '../error/ErrorRecoveryService.js';
+import { LLMRegistry } from '../llm/LLMRegistry.tsx';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
+import { ErrorRecoveryService } from '../error/ErrorRecoveryService.tsx';
 import { EventEmitter } from 'events';
 export interface ProcessedMessage {
     id: string;
     content: string;
-    role: system' | 'user' | 'assistant';
+    role: system' | user' | assistant';
     timestamp: Date;
     metadata: Record<string, unknown>;
 }

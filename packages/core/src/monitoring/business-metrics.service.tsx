@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { PerformanceMonitoringService } from './performance-monitoring.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 
 export interface BusinessMetric {
   name: string;
@@ -37,7 +37,7 @@ export class BusinessMetricsService implements OnModuleInit {
 
   onModuleInit() {
     // Load metric definitions from configuration
-    const definitions = this.configService.get<BusinessMetricDefinition[]>('metrics.business', []);
+    const definitions = this.configService.get<BusinessMetricDefinition[]>('metrics.'business', []);
     
     for (const definition of definitions) {
       this.metricDefinitions.set(definition.name, definition);
@@ -53,7 +53,7 @@ export class BusinessMetricsService implements OnModuleInit {
     const definition = this.metricDefinitions.get(metric.name);
     
     // Use definition unit if not provided in the metric
-    const unit = metric.unit || definition?.unit || '';
+    const unit = metric.unit || definition?.unit || ;
     
     // Record in performance monitoring system
     await this.performanceMonitor.recordMetric({
@@ -70,7 +70,7 @@ export class BusinessMetricsService implements OnModuleInit {
     }
     
     // Emit event for the metric
-    this.eventEmitter.emit('business.metric', {
+    this.eventEmitter.emit('business.'metric', {
       ...metric,
       unit
     });
@@ -128,7 +128,7 @@ export class BusinessMetricsService implements OnModuleInit {
       dimensions: {
         featureId,
         action,
-        userId: userId || 'anonymous',
+        userId: userId || anonymous',
         ...this.flattenProperties(properties)
       }
     });
@@ -142,7 +142,7 @@ export class BusinessMetricsService implements OnModuleInit {
     startTime: Date,
     endTime: Date = new Date(),
     dimensions?: Record<string, string>,
-    aggregation: 'sum' | 'avg' | 'min' | 'max' | 'count' = 'avg'
+    aggregation:sum' | avg' | min' | max' | count' = 'avg'
   ): Promise<number> {
     const whereClause: any = {
       name: `business.${metricName}`,
@@ -174,15 +174,15 @@ export class BusinessMetricsService implements OnModuleInit {
     const values = metrics.map(m => m.value);
     
     switch (aggregation) {
-      case 'sum':
+      case sum':
         return values.reduce((sum, value) => sum + value, 0);
-      case 'min':
+      case min':
         return Math.min(...values);
-      case 'max':
+      case max':
         return Math.max(...values);
-      case 'count':
+      case count':
         return values.length;
-      case 'avg':
+      case avg':
       default:
         return values.reduce((sum, value) => sum + value, 0) / values.length;
     }
@@ -213,11 +213,11 @@ export class BusinessMetricsService implements OnModuleInit {
   }
 
   private triggerAlert(
-    level: 'warning' | 'critical',
+    level:warning' | critical',
     metric: BusinessMetric,
     definition: BusinessMetricDefinition
   ): void {
-    const threshold = level === 'critical' 
+    const threshold = level === critical' 
       ? definition.thresholds?.critical 
       : definition.thresholds?.warning;
     
@@ -233,10 +233,10 @@ export class BusinessMetricsService implements OnModuleInit {
     };
     
     this.logger.warn(`Business metric alert: ${alert.message}`, alert);
-    this.eventEmitter.emit('business.alert', alert);
+    this.eventEmitter.emit('business.'alert', alert);
   }
 
-  private flattenProperties(properties: Record<string, any>, prefix: string = ''): Record<string, string> {
+  private flattenProperties(properties: Record<string, any>, prefix: string = ): Record<string, string> {
     const result: Record<string, string> = {};
     
     for (const [key, value] of Object.entries(properties)) {

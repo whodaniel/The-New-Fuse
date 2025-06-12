@@ -1,5 +1,5 @@
-import { generateId, generateTimestamp, pickRandom } from './utils.js';
-import type { GeneratedUser } from './userGenerator.js';
+import { generateId, generateTimestamp, pickRandom } from './utils';
+import type { GeneratedUser } from './userGenerator';
 
 export interface GenerateWorkflowOptions {
   nodeCount?: number;

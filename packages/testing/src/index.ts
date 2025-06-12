@@ -6,4 +6,4 @@
  */
 
 // Export artifact utilities
-export * from './artifacts/artifact-manager.js';
+export * from './artifacts/artifact-manager';

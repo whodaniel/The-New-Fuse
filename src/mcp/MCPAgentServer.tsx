@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
-import { MCPServer } from './MCPServer.js';
+import { MCPServer } from './MCPServer.tsx';
 import { AgentService } from '../agents/agent.service.js';
 import { APIToolRegistrar } from './APIToolRegistrar.js';
 import { AgentAPIValidator } from './AgentAPIValidator.js';

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 import { A2AMessage, A2AMessageContent } from '../A2AProtocolHandler.js';
 
 /**

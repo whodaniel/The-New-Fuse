@@ -1,4 +1,4 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 export interface QueueMessage {
     id: string;
     type: string;
@@ -11,6 +11,6 @@ export declare class MessageQueue {
     private configService;
     private redis;
     private readonly logger;
-    queue: ;;
-    constructor(configService: ConfigService);
+    queue: ;';
+    constructor(configService: ConfigService)';
 }

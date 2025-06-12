@@ -1,3 +1,3 @@
-export * from './types.js';
-export * from './ThemeContext.js';
-export * from './components/ThemeCustomizer.js';
+export * from './types.tsx';
+export * from './ThemeContext.tsx';
+export * from './components/ThemeCustomizer.tsx';

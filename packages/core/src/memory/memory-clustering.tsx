@@ -1,6 +1,6 @@
-import { Logger } from '../utils/logger.js';
-import { EmbeddingModelFactory, EmbeddingModel } from '../embeddings/embedding-models.js';
-import { MemoryItem } from './types/MemoryTypes.js';
+import { Logger } from '../utils/logger.tsx';
+import { EmbeddingModelFactory, EmbeddingModel } from '../embeddings/embedding-models.tsx';
+import { MemoryItem } from './types/MemoryTypes.tsx';
 
 const logger: string;
     centroid: Float32Array;
@@ -28,7 +28,7 @@ export interface Cluster {
             numClusters: 10,
             minClusterSize: 3,
             similarityThreshold: 0.7,
-            embeddingModel: universal-sentence-encoder',
+            embeddingModel: universal-sentence-encoder,
             ...config
         };
         this.initializeModel(): Promise<void> {
@@ -36,7 +36,7 @@ export interface Cluster {
             this.embeddingModel = await EmbeddingModelFactory.getModel({
                 modelName: this.config.embeddingModel
             })): void {
-            logger.error('Failed to initialize embedding model:', { error }): MemoryItem[]): Promise<Map<string, Cluster>> {
+            logger.error('Failed to initialize embedding model:, { error }): MemoryItem[]): Promise<Map<string, Cluster>> {
         if (!this.embeddingModel: unknown){
             throw new Error('Embedding model not initialized')): void {
             return new Map();
@@ -63,7 +63,7 @@ export interface Cluster {
                 embeddings,
                 this.config.numClusters
             )): void {
-            logger.error('Error clustering memories:', { error }): number[][],
+            logger.error('Error clustering memories:, { error }): number[][],
         k: number,
         maxIterations: number  = new Map<string, Cluster>();
             assignments.forEach((clusterId, index) => {
@@ -136,7 +136,7 @@ export interface Cluster {
             )
         );
 
-        return commonTerms.slice(0, 3).join(', ');
+        return commonTerms.slice(0, 3).join(', );
     }
 
     private extractCommonTerms(texts: string[]): string[] {

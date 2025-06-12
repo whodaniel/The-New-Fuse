@@ -3,7 +3,7 @@
  * and providing deprecation warnings for smooth transitions.
  */
 
-import { Table, Column, Row, DataType, View, ViewType } from '@the-new-fuse/airtable-core';
+import { Table, Column, Row, DataType, View, ViewType } from '@the-new-fuse/fairtable-core';
 
 // Migration warning system
 interface MigrationWarning {
@@ -241,12 +241,12 @@ export const createEventHandlerAdapter = <T extends Record<string, any>>(
     const translator = translationMap[handlerKey];
 
     if (originalHandler && translator) {
-      adaptedHandlers[handlerKey] = (...args: any[]) => {
+      (adaptedHandlers as any)[handlerKey] = (...args: any[]) => {
         const translatedArgs = translator(args);
         return originalHandler(...translatedArgs);
       };
     } else {
-      adaptedHandlers[handlerKey] = originalHandler;
+      (adaptedHandlers as any)[handlerKey] = originalHandler;
     }
   });
 

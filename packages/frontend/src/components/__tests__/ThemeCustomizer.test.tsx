@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { ThemeProvider } from '../../contexts/ThemeContext.js';
-import { ThemeCustomizer } from '../ThemeCustomizer.js';
+import { ThemeProvider } from '../../contexts/ThemeContext.tsx';
+import { ThemeCustomizer } from '../ThemeCustomizer.tsx';
 import { axe } from 'jest-axe';
 
 const customTheme = extendTheme({ colors: { brand: { 900: '#1a365d', 800: '#153e75', 700: '#2a69ac' } } });

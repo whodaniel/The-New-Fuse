@@ -2,7 +2,7 @@ import React from "react";
 import { AgentList } from './components/AgentList.js';
 import { AgentDetails } from './components/AgentDetails.js';
 import { AgentControls } from './components/AgentControls.js';
-import { useAgentStore } from './store/agentStore.js';
+import { useAgentStore } from './store/agentStore.tsx';
 export const AgentModule = (): any => {
     const { agents, selectedAgent, loading, error } = useAgentStore();
     if (loading) {

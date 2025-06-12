@@ -1,6 +1,6 @@
 import React from "react";
-import { cn } from '../../utils/cn.js';
-import { ToastProps } from '../types.js';
+import { cn } from '../../utils/cn.tsx';
+import { ToastProps } from '../types.tsx';
 import { X } from "lucide-react";
 
 /**
@@ -74,6 +74,6 @@ ToastClose.displayName = "ToastClose";
 export { Toast, ToastClose };
 
 // Re-export from other files
-export { ToastProvider } from './toast-provider.js';
-export { useToast, toast } from './use-toast.js';
-export { Toaster } from './toaster.js';
+export { ToastProvider } from './toast-provider.tsx';
+export { useToast, toast } from './use-toast.tsx';
+export { Toaster } from './toaster.tsx';

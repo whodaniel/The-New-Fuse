@@ -1,4 +1,4 @@
-export type Environment = 'development' | 'staging' | 'production';
+export type Environment = 'development' | staging' | production';
 
 export interface ValidationResult {
   valid: boolean;

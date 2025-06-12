@@ -1,7 +1,7 @@
-import { MCPServer, MCPServerOptions } from './MCPServer.js';
-import { MCPAgentServer } from './MCPAgentServer.js';
-import { MCPChatServer } from './MCPChatServer.js';
-import { MCPWorkflowServer } from './MCPWorkflowServer.js';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
+import { MCPAgentServer } from './MCPAgentServer.tsx';
+import { MCPChatServer } from './MCPChatServer.tsx';
+import { MCPWorkflowServer } from './MCPWorkflowServer.tsx';
 export declare class MCPFuseServer extends MCPServer {
   private readonly agentServer;
   private readonly chatServer;

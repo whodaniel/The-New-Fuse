@@ -53,8 +53,8 @@ class E2EEncryption {
         }
     }
     async exportPublicKey() {
-        var _a;
-        if (!((_a = this.keyPair) === null || _a === void 0 ? void 0 : _a.publicKey)) {
+        const keyPair = this.keyPair;
+        if (!(keyPair?.publicKey)) {
             throw new Error('E2E encryption not initialized');
         }
         try {
@@ -84,8 +84,8 @@ class E2EEncryption {
         }
     }
     async decrypt(encryptedData) {
-        var _a;
-        if (!((_a = this.keyPair) === null || _a === void 0 ? void 0 : _a.privateKey)) {
+        const keyPair = this.keyPair;
+        if (!(keyPair?.privateKey)) {
             throw new Error('E2E encryption not initialized');
         }
         try {

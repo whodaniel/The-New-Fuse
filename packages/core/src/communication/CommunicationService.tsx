@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
-import { MessageBroker } from './MessageBroker.js';
-import { Message, MessageType, MessagePriority } from './Protocol.js';
+import { MessageBroker } from './MessageBroker.tsx';
+import { Message, MessageType, MessagePriority } from './Protocol.tsx';
 import { EventEmitter } from 'events';
 
 interface SendOptions {
@@ -39,7 +39,7 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     // Subscribe to response messages
     await this.messageBroker.subscribe({
-      pattern: '*.responses', // Assuming a pattern for all responses
+      pattern:*.'responses', // Assuming a pattern for all responses
       priority: MessagePriority.HIGH,
       handler: async (message: Message) => {
         await this.handleResponse(message);
@@ -75,7 +75,7 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
       });
       this.logger.debug(`Message sent to ${target.type}.${target.id}: ${action}`, message);
     } catch (error: unknown) {
-      this.logger.error('Error sending message:', error);
+      this.logger.error('Error sending message:, error);
       throw error; // Re-throw or handle as per application needs
     }
   }
@@ -126,7 +126,7 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
         this.logger.debug(`Request sent to ${target.type}.${target.id}: ${action}`, message);
       });
     } catch (error: unknown) {
-      this.logger.error('Error sending request:', error);
+      this.logger.error('Error sending request:, error);
       if (message) {
         const messageId = (message as any).header?.id || message.id;
         if (messageId) {
@@ -165,7 +165,7 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
       });
       this.logger.debug(`Message broadcasted: ${action}`, message);
     } catch (error: unknown) {
-      this.logger.error('Error broadcasting message:', error);
+      this.logger.error('Error broadcasting message:, error);
       throw error;
     }
   }
@@ -207,9 +207,9 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
     this.pendingRequests.delete(messageId);
 
     if (message.type === MessageType.ERROR || (message as any).payload?.error || (message as any).error) {
-      const errorPayload = (message as any).payload?.error || (message as any).error || { message: 'Unknown error in response' };
-      const error = new Error(typeof errorPayload === 'string' ? errorPayload : errorPayload.message || 'Unknown error');
-      if (typeof errorPayload === 'object' && errorPayload !== null) {
+      const errorPayload = (message as any).payload?.error || (message as any).error || { message:Unknown error in response' };
+      const error = new Error(typeof errorPayload === string' ? errorPayload : errorPayload.message || Unknown error');
+      if (typeof errorPayload === object' && errorPayload !== null) {
         Object.assign(error, errorPayload);
       }
       pendingRequest.reject(error);
@@ -235,7 +235,7 @@ export class CommunicationService extends EventEmitter implements OnModuleInit {
     if (retries >= maxRetries) {
       this.logger.error(`Max retries reached for message ${message.id}. Giving up.`);
       // Optionally, move to a dead-letter queue or emit a final failure event
-      this.emit('messageFailed', { messageId: message.id, error: 'Max retries reached', final: true });
+      this.emit('messageFailed', { messageId: message.id, error:Max retries reached', final: true });
       return;
     }
 

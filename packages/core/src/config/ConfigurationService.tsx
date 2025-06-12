@@ -11,7 +11,7 @@ import { z } from 'zod';
 interface ConfigValue {
   key: string;
   value: unknown;
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  type:string' | number' | boolean' | object' | array';
   environment: string;
   version: number;
   description?: string;
@@ -22,7 +22,7 @@ interface ConfigValue {
 }
 
 interface ConfigSchema {
-  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  type:string' | number' | boolean' | object' | array';
   required: boolean;
   default?: unknown;
   description?: string;
@@ -42,11 +42,11 @@ interface ConfigHistory {
 @Injectable()
 export class ConfigurationService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis; // Assume injected by NestJS
+  private redis: any; // Assume injected by NestJS
   private db: DatabaseService; // Assume injected by NestJS
   private config: Map<string, ConfigValue>;
   private schemas: Map<string, ConfigSchema>;
-  private readonly cachePrefix: string = 'config:';
+  private readonly cachePrefix: string = config:;
   private readonly configPath: string;
 
   constructor(
@@ -65,7 +65,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
 
   async onModuleInit(): Promise<void> {
     if (!this.db || !this.redis) {
-      const errorMessage = 'DatabaseService or Redis client is not initialized. Check dependency injection setup.';
+      const errorMessage = DatabaseService or Redis client is not initialized. Check dependency injection setup.';
       this.logger.error(errorMessage);
       throw new Error(errorMessage);
     }
@@ -81,7 +81,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       for (const file of schemaFiles) {
         if (file.endsWith('.schema.yaml') || file.endsWith('.schema.yml')) {
           const filePath = path.join(this.configPath, file);
-          const content = await fs.readFile(filePath, 'utf-8');
+          const content = await fs.readFile(filePath, utf-8');
           const schema = yaml.load(content) as Record<string, ConfigSchema>;
           for (const [key, value] of Object.entries(schema)) {
             // Potentially validate schema structure here
@@ -91,7 +91,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       }
       this.logger.info(`Loaded ${this.schemas.size} configuration schemas`);
     } catch (e: unknown) {
-      let errorMessage = 'Failed to load configuration schemas';
+      let errorMessage = Failed to load configuration 'schemas';
       if (e instanceof Error) {
         errorMessage = e.message;
         // Check for specific error code if available on the error object
@@ -110,7 +110,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
     try {
       // Load from database
       const dbConfigs = await this.db.configurations.findMany({
-        where: { environment: process.env.NODE_ENV || 'development' },
+        where: { environment: process.env.NODE_ENV || development' },
       });
 
       for (const dbConfig of dbConfigs) {
@@ -134,12 +134,12 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           try {
             if (schema?.type === 'number') parsedValue = parseFloat(value);
             else if (schema?.type === 'boolean') parsedValue = value.toLowerCase() === 'true';
-            else if (schema?.type === 'object' || schema?.type === 'array') parsedValue = JSON.parse(value);
+            else if (schema?.type === object' || schema?.type === 'array') parsedValue = JSON.parse(value);
           } catch (e) {
             this.logger.warn(`Failed to parse env var ${key} based on schema type ${schema?.type}. Using as string.`);
             parsedValue = value; // Fallback to string
           }
-          await this.set(key, parsedValue, { reason: 'Loaded from environment variable' });
+          await this.set(key, parsedValue, { reason:Loaded from environment variable' });
         }
       }
       
@@ -150,7 +150,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
         for (const file of configFiles) {
           if (file.endsWith('.config.yaml') || file.endsWith('.config.yml')) {
             const filePath = path.join(this.configPath, file);
-            const content = await fs.readFile(filePath, 'utf-8');
+            const content = await fs.readFile(filePath, utf-8');
             const fileConfigs = yaml.load(content) as Record<string, unknown>;
             for (const [key, value] of Object.entries(fileConfigs)) {
               if (this.schemas.has(key)) { // Only load if a schema exists
@@ -162,7 +162,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           }
         }
       } catch (e: unknown) {
-        let errorMessage = 'Failed to load .config.yaml files';
+        let errorMessage = Failed to load .config.yaml 'files';
         if (e instanceof Error) {
           errorMessage = e.message;
           if ((e as NodeJS.ErrnoException).code === 'ENOENT') {
@@ -178,7 +178,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Loaded ${this.config.size} configuration values`);
     } catch (e: unknown) {
-      let errorMessage = 'Failed to load configurations';
+      let errorMessage = Failed to load 'configurations';
        if (e instanceof Error) {
            errorMessage = e.message;
        } else if (typeof e === 'string') {
@@ -208,14 +208,14 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           }
         });
       }).catch(err => { // Changed error to err
-        if (err && typeof err === 'object' && 'code' in err && err.code === 'ENOENT') {
+        if (err && typeof err === object' && code' in err && err.code === 'ENOENT') {
           this.logger.warn(`Directory ${this.configPath} not found. File watching disabled.`);
         } else {
           this.logger.error(`Error setting up watch on ${this.configPath}:`, err);
         }
       });
     } catch (error) {
-        this.logger.error('Failed to initialize configuration file watcher:', error);
+        this.logger.error('Failed to initialize configuration file watcher:, error);
     }
   }
 
@@ -237,7 +237,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
         where: { 
           key_environment: { 
             key, 
-            environment: process.env.NODE_ENV || 'development' 
+            environment: process.env.NODE_ENV || development' 
           } 
         }
       });
@@ -304,7 +304,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
 
       const current = this.config.get(key);
       const version = current ? current.version + 1 : 1;
-      const environment = process.env.NODE_ENV || 'development';
+      const environment = process.env.NODE_ENV || development';
 
       const newConfig: ConfigValue = {
         key,
@@ -329,7 +329,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           version: newConfig.version,
           description: newConfig.description,
           tags: newConfig.tags,
-          metadata: newConfig.metadata as any, // Prisma might need 'any' for JSON fields
+          metadata: newConfig.metadata as any, // Prisma might need any' for JSON fields
           updatedAt: newConfig.updatedAt,
         },
         create: {
@@ -340,7 +340,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           version: newConfig.version,
           description: newConfig.description,
           tags: newConfig.tags,
-          metadata: newConfig.metadata as any, // Prisma might need 'any' for JSON fields
+          metadata: newConfig.metadata as any, // Prisma might need any' for JSON fields
           createdAt: newConfig.createdAt,
           updatedAt: newConfig.updatedAt,
         },
@@ -352,7 +352,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           value: JSON.stringify(value), // Store value as JSON string
           version: newConfig.version,
           environment,
-          changedBy: process.env.USER || process.env.USERNAME || 'system', // Added USERNAME as a fallback
+          changedBy: process.env.USER || process.env.USERNAME || system', // Added USERNAME as a fallback
           changedAt: new Date(),
           reason: options.reason,
         },
@@ -372,7 +372,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       await this.redis.set(
         `${this.cachePrefix}${key}`,
         JSON.stringify(config.value), // Cache only the value
-        'EX', 3600, // Example: cache for 1 hour
+        EX', 3600, // Example: cache for 1 hour
       );
     } else {
       this.logger.warn(`Attempted to cache non-existent config key: ${key}`);
@@ -400,9 +400,9 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
           value: null, // Indicate deletion
           version: configToDelete.version + 1,
           environment,
-          changedBy: process.env.USER || process.env.USERNAME || 'system', // Added USERNAME as a fallback
+          changedBy: process.env.USER || process.env.USERNAME || system', // Added USERNAME as a fallback
           changedAt: new Date(),
-          reason: reason || 'Deleted',
+          reason: reason || Deleted',
         },
       });
 
@@ -426,7 +426,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
     const historyEntries = await this.db.configurationHistory.findMany({
       where: {
         key,
-        environment: process.env.NODE_ENV || 'development',
+        environment: process.env.NODE_ENV || development',
         changedAt: {
           gte: options.startTime,
           lte: options.endTime,
@@ -435,7 +435,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       orderBy: { changedAt: 'desc' },
       take: options.limit || 100, // Default limit
     });
-    // Parse 'value' from JSON string if it's stored that way
+    // Parse value' from JSON string if it's stored that way
     return historyEntries.map(entry => ({
         ...entry,
         value: entry.value !== null ? JSON.parse(entry.value as string) : null,
@@ -445,7 +445,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
   async find(
     options: {
       pattern?: string;
-      type?: 'string' | 'number' | 'boolean' | 'object' | 'array';
+      type?:string' | number' | boolean' | object' | array';
       environment?: string;
       tags?: string[];
       metadata?: Record<string, unknown>;
@@ -503,7 +503,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
 
   async exportConfigs(
     options: {
-      format?: 'json' | 'yaml';
+      format?:json' | yaml';
       environment?: string;
       includeMetadata?: boolean;
     } = {},
@@ -529,13 +529,13 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
   async importConfigs(
     content: string,
     options: {
-      format?: 'json' | 'yaml';
+      format?:json' | yaml';
       overwrite?: boolean;
     } = {},
   ): Promise<void> {
     try {
       const configsToImport: Record<string, unknown> =
-        options.format === 'yaml'
+        options.format === yaml'
           ? (yaml.load(content) as Record<string, unknown>)
           : JSON.parse(content);
 
@@ -551,9 +551,9 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
         // If value is a full ConfigValue object (e.g. from an export with metadata)
         // extract the actual value, otherwise use the value directly.
         let actualValue = value;
-        let importOptions: any = { reason: 'Imported configuration' };
+        let importOptions: any = { reason:Imported configuration' };
 
-        if (typeof value === 'object' && value !== null && 'value' in value && 'type' in value) {
+        if (typeof value === object' && value !== null && value' in value && type' in value) {
             const configObject = value as ConfigValue;
             actualValue = configObject.value;
             importOptions = {
@@ -568,7 +568,7 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       }
       this.logger.info('Configurations imported successfully.');
     } catch (error) {
-      this.logger.error('Failed to import configurations:', error);
+      this.logger.error('Failed to import configurations:, error);
       throw error;
     }
   }
@@ -584,13 +584,13 @@ export class ConfigurationService extends EventEmitter implements OnModuleInit {
       if (options.olderThan) {
         whereClause.changedAt = { lt: options.olderThan };
       }
-      whereClause.environment = options.environment || process.env.NODE_ENV || 'development';
+      whereClause.environment = options.environment || process.env.NODE_ENV || development';
       
       const deleteResult = await this.db.configurationHistory.deleteMany({ where: whereClause });
       this.logger.info(`Cleaned up ${deleteResult.count} history entries.`);
 
     } catch (error) {
-      this.logger.error('Failed to cleanup configuration history:', error);
+      this.logger.error('Failed to cleanup configuration history:, error);
       throw error;
     }
   }

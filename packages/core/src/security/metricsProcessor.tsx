@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { SystemMetrics, ApplicationMetrics, AgentMetrics } from './metricsCollector.js';
-import { GDesignerTask } from '../integrations/GDesignerService.js';
+import { SystemMetrics, ApplicationMetrics, AgentMetrics } from './metricsCollector.tsx';
+import { GDesignerTask } from '../integrations/GDesignerService.tsx';
 
 const logger: Logger = getLogger('metrics_processor');
 
@@ -80,7 +80,7 @@ export class MetricsProcessor {
             await this.handleAlerts(alerts);
             return alerts;
         } catch (error) {
-            logger.error('Error processing system metrics:', error);
+            logger.error('Error processing system metrics:, error);
             throw error;
         }
     }
@@ -128,7 +128,7 @@ export class MetricsProcessor {
             await this.handleAlerts(alerts);
             return alerts;
         } catch (error) {
-            logger.error('Error processing application metrics:', error);
+            logger.error('Error processing application metrics:, error);
             throw error;
         }
     }
@@ -144,7 +144,7 @@ export class MetricsProcessor {
             // Implementation would process and store agent metrics
             // and generate alerts based on thresholds
         } catch (error) {
-            logger.error('Error processing agent metrics:', error);
+            logger.error('Error processing agent metrics:, error);
             throw error;
         }
     }
@@ -163,7 +163,7 @@ export class MetricsProcessor {
             });
             // Implementation would process and store task metrics
         } catch (error) {
-            logger.error('Error processing task metrics:', error);
+            logger.error('Error processing task metrics:, error);
             throw error;
         }
     }

@@ -61,8 +61,8 @@ export function warning(message: string, title?: string): void {
   });
 }
 
-export function useNotifications(callback: (notification: NotificationOptions): any => void): () => void {
-  const handler = ((event: NotificationEvent): any => {
+export function useNotifications(callback: (notification: NotificationOptions) => void): () => void {
+  const handler = ((event: NotificationEvent) => {
     callback(event.detail);
   }) as EventListener;
 

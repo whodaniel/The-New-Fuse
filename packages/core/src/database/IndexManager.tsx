@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface IndexInfo {
   name: string;
@@ -37,18 +37,18 @@ export class IndexManager {
 
   async analyzeIndexes(): Promise<{
     current: IndexInfo[];
-    suggestions: IndexSuggestion[];
+    suggestions: IndexSuggestion[]';
   }> {
     try {
       const [currentIndexes, suggestions] = await Promise.all([
         this.getCurrentIndexes(),
         this.generateIndexSuggestions(),
-      ]);
+      ])';
 
       this.metrics.increment('database.index.analysis.success');
       return { current: currentIndexes, suggestions };
     } catch (error) {
-      this.logger.error('Failed to analyze indexes:', error);
+      this.logger.error('Failed to analyze indexes:, error);
       this.metrics.increment('database.index.analysis.failed');
       throw error;
     }
@@ -70,7 +70,7 @@ export class IndexManager {
         pg_stat_user_indexes.schemaname = pg_indexes.schemaname
         AND pg_stat_user_indexes.tablename = pg_indexes.tablename
         AND pg_stat_user_indexes.indexrelname = pg_indexes.indexname
-      WHERE pg_stat_user_indexes.schemaname = 'public'
+      WHERE pg_stat_user_indexes.schemaname = public'
     `);
 
     return indexStats.map((stat: any) => ({
@@ -102,7 +102,7 @@ export class IndexManager {
         n_live_tup,
         n_dead_tup
       FROM pg_stat_user_tables
-      WHERE schemaname = 'public'
+      WHERE schemaname = public'
     `);
 
     for (const stat of tableStats) {
@@ -115,7 +115,7 @@ export class IndexManager {
             table: stat.relname,
             columns,
             type: 'btree',
-            reason: 'High number of sequential scans detected',
+            reason: High number of sequential scans 'detected',
             estimatedBenefit: this.calculateBenefit(stat),
           });
         }
@@ -155,7 +155,7 @@ export class IndexManager {
       FROM information_schema.table_constraints tc
       JOIN information_schema.key_column_usage kcu
         ON tc.constraint_name = kcu.constraint_name
-      WHERE tc.constraint_type = 'FOREIGN KEY'
+      WHERE tc.constraint_type = FOREIGN 'KEY'
         AND tc.table_name = $1
     `, [table]);
 
@@ -168,7 +168,7 @@ export class IndexManager {
           table,
           columns: [fk.column_name],
           type: 'btree',
-          reason: 'Missing index on foreign key',
+          reason: Missing index on foreign 'key',
           estimatedBenefit: 0.8, // High benefit for FK indexes
         });
       }
@@ -199,23 +199,23 @@ export class IndexManager {
     } = {}
   ): Promise<void> {
     const indexName = options.name || `idx_${table}_${columns.join('_')}`;
-    const indexType = options.type || 'btree';
-    const concurrent = options.concurrent ? 'CONCURRENTLY' : '';
-    const unique = options.unique ? 'UNIQUE' : '';
+    const indexType = options.type || btree';
+    const concurrent = options.concurrent ? CONCURRENTLY' :;
+    const unique = options.unique ? UNIQUE' :;
 
     try {
       const startTime = Date.now();
       
       await this.dataSource.query(`
         CREATE ${unique} INDEX ${concurrent} ${indexName}
-        ON ${table} USING ${indexType} (${columns.join(', ')})
+        ON ${table} USING ${indexType} (${columns.join(', )})
       `);
 
       const duration = Date.now() - startTime;
-      this.metrics.timing('database.index.creation', duration);
+      this.metrics.timing('database.index.'creation', duration);
       this.metrics.increment('database.index.created');
 
-      this.eventEmitter.emit('database.index.created', {
+      this.eventEmitter.emit('database.index.'created', {
         table,
         columns,
         name: indexName,
@@ -242,7 +242,7 @@ export class IndexManager {
         idx_scan
       FROM pg_stat_user_indexes
       WHERE idx_scan < $1
-        AND schemaname = 'public'
+        AND schemaname = public'
         AND NOT EXISTS (
           SELECT 1
           FROM pg_constraint c
@@ -257,7 +257,7 @@ export class IndexManager {
         this.metrics.increment('database.index.dropped');
         this.logger.info(`Dropped unused index ${index.indexname}`);
         
-        this.eventEmitter.emit('database.index.dropped', {
+        this.eventEmitter.emit('database.index.'dropped', {
           name: index.indexname,
           table: index.tablename,
           scans: index.idx_scan,
@@ -277,7 +277,7 @@ export class IndexManager {
 
   private determineIndexType(indexDef: string): string {
     const match = indexDef.match(/USING (\w+)/);
-    return match ? match[1].toLowerCase() : 'btree';
+    return match ? match[1].toLowerCase() :btree';
   }
 
   private calculateBenefit(tableStats: any): number {
@@ -297,7 +297,7 @@ export class IndexManager {
     const columnMatches = conditions.match(/(\w+)\s*[=<>]/g);
     
     return columnMatches 
-      ? columnMatches.map(match => match.replace(/[=<>]/g, '').trim())
+      ? columnMatches.map(match => match.replace(/[=<>]/g, ).trim())
       : [];
   }
 }

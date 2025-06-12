@@ -1,5 +1,5 @@
 import { Logger } from "winston";
-import { ConfigService } from '../config/config-service.js';
+import { ConfigService } from '../config/config-service.tsx';
 import { MetricsCollector } from '../metrics/metrics-collector.js';
 interface LogContext {
   component?: string;

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/utils';
-import { MemoryManager } from '../memory/MemoryManager.js';
-import { DatabaseService } from '@the-new-fuse/database';
+import { MemoryManager } from '../memory/MemoryManager.tsx';
+import { DatabaseService  } from '@the-new-fuse/database;
 
 export interface LearningPattern {
   id: string;
@@ -41,12 +41,12 @@ export class LearningSystem extends EventEmitter {
       const storedPatterns = await this.db.patterns.findMany();
       
       for (const pattern of storedPatterns) {
-        this.patterns.set(pattern.id, pattern);
+        this.patterns.set(pattern.id, pattern)';
       }
       
-      this.logger.info(`Initialized learning system with ${this.patterns.size} patterns`);
+      this.logger.info(`Initialized learning system with ${this.patterns.size} patterns`)';
     } catch (error: unknown) {
-      this.logger.error('Failed to initialize learning system:', error);
+      this.logger.error('Failed to initialize learning system:, error);
     }
   }
 

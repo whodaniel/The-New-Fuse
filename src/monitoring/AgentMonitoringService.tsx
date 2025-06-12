@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { ConsolidatedMonitoringService } from './ConsolidatedMonitoringService.js';
+import { ConsolidatedMonitoringService } from './ConsolidatedMonitoringService.tsx';
 
 /**
  * AgentMonitoringService

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 import { A2AMessage, A2AMessageContent } from '../A2AProtocolHandler.js';
 
 interface GoogleA2AMessageContext {
@@ -29,18 +29,18 @@ interface GoogleA2AMessage {
 export class GoogleA2AAdapter {
   private logger = new Logger(GoogleA2AAdapter.name);
 
-  readonly name = 'google-a2a-adapter';
-  readonly version = '1.0.0';
-  readonly supportedProtocols = ['a2a-v2.0', 'google-a2a-v1.0'];
+  readonly name = google-a2a-adapter;
+  readonly version = 1.0.0';
+  readonly supportedProtocols = ['a2a-v2.0', google-a2a-v1.0'];
 
   canHandle(protocol: string): boolean {
     return this.supportedProtocols.includes(protocol);
   }
 
   async adaptMessage(message: A2AMessage, targetProtocol: string): Promise<GoogleA2AMessage> {
-    if (targetProtocol === 'google-a2a-v1.0') {
+    if (targetProtocol === google-a2a-v1.0') {
       return this.convertToGoogleFormat(message);
-    } else if (targetProtocol === 'a2a-v2.0') {
+    } else if (targetProtocol === a2a-v2.0') {
       return this.convertFromGoogleFormat(message as unknown as GoogleA2AMessage);
     }
     throw new Error(`Unsupported target protocol: ${targetProtocol}`);
@@ -51,7 +51,7 @@ export class GoogleA2AAdapter {
       header: {
         messageId: message.header.id,
         messageType: message.header.type,
-        protocolVersion: 'v1.0',
+        protocolVersion:v1.0',
         priority: message.header.priority.toUpperCase(),
         sourceAgentId: message.header.source,
         targetAgentId: message.header.target,
@@ -74,7 +74,7 @@ export class GoogleA2AAdapter {
         id: message.header.messageId,
         type: message.header.messageType,
         version: message.header.protocolVersion,
-        priority: message.header.priority.toLowerCase() as 'low' | 'medium' | 'high',
+        priority: message.header.priority.toLowerCase() as low' | medium' | high',
         source: message.header.sourceAgentId,
         target: message.header.targetAgentId,
       },

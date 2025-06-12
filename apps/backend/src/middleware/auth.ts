@@ -19,16 +19,12 @@ declare global {
   }
 }
 
-interface AuthenticatedRequest extends Request {
-  user?: User;
-  userId?: string;
-}
-
-export const auth = async (req: Request, res: Response, next: NextFunction) => {
+export const auth = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const authHeader = req.headers.authorization;
     if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ success: false, message: 'No token provided' });
+      res.status(401).json({ success: false, message: 'No token provided' });
+      return;
     }
 
     const token = authHeader.split(' ')[1];
@@ -38,30 +34,41 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
 
     // Fetch full user object from database
     // Check Redis cache first
-const cachedUser = await redisService.get(`user:${decoded.id}`);
-if (cachedUser) {
-  req.user = JSON.parse(cachedUser);
-  req.userId = decoded.id;
-  return next();
-}
+    try {
+      const cachedUser = await redisService.get(`user:${decoded.id}`);
+      if (cachedUser) {
+        req.user = JSON.parse(cachedUser);
+        req.userId = decoded.id;
+        next();
+        return;
+      }
+    } catch (redisError) {
+      console.warn('Redis cache error, falling back to database:', redisError);
+    }
 
-const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique({
       where: { id: decoded.id }
     });
 
     if (!user) {
-      return res.status(401).json({ success: false, message: 'User not found' });
+      res.status(401).json({ success: false, message: 'User not found' });
+      return;
     }
 
     // Attach the full user object and userId for convenience
     req.user = user;
     req.userId = user.id;
+    
     // Cache user in Redis for 1 hour
-    await redisService.setex(`user:${user.id}`, 3600, JSON.stringify(user));
+    try {
+      await redisService.setex(`user:${user.id}`, 3600, JSON.stringify(user));
+    } catch (redisError) {
+      console.warn('Redis cache set error:', redisError);
+    }
     
     next();
-  } catch (error) {
-    return res.status(401).json({ success: false, message: 'Invalid token' });
+  } catch {
+    res.status(401).json({ success: false, message: 'Invalid token' });
   }
 };
 

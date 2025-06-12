@@ -1,4 +1,4 @@
-import { AnalysisReport } from './analyze.js';
+import { AnalysisReport } from './analyze.tsx';
 
 export interface ReportTemplate {
   metadata: {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@/test/helpers/render';
-import { Captcha } from '../Captcha.js';
+import { Captcha } from '../Captcha.tsx';
 import { vi } from 'vitest';
 const mockRender = vi.fn();
 const mockReset = vi.fn();

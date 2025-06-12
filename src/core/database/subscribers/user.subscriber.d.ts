@@ -1,4 +1,4 @@
-import { DatabaseService } from '../database.service.js';
+import { DatabaseService } from '../database.service.tsx';
 export declare class UserSubscriber {
   private db;
   private eventEmitter;

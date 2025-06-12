@@ -1,7 +1,7 @@
 // Re-export all Task-related types
 export * from './types/enums.js';
-export * from './model.js';
-export * from './task-types.js';
+export * from './model.tsx';
+export * from './task-types.tsx';
 
 export interface Task {
   id: string;

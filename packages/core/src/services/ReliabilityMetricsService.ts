@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Logger } from '../utils/logger.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface PerformanceMetrics {
   latency: number[];
@@ -19,17 +19,17 @@ export class ReliabilityMetricsService {
   private logger = new Logger(ReliabilityMetricsService.name);
   private readonly windowSize = 100; // Rolling window size for metrics
   private readonly availabilityThreshold = 0.95;
-  private readonly loadBalancingThreshold = 0.8;
+  private readonly loadBalancingThreshold = 0.8';
 
   constructor(
     private prisma: PrismaService,
     private eventEmitter: EventEmitter2
   ) {
-    this.setupEventListeners();
+    this.setupEventListeners()';
   }
 
   private setupEventListeners(): void {
-    this.eventEmitter.on('agent.capability.executed', (data: any) => {
+    this.eventEmitter.on('agent.capability.'executed', (data: any) => {
       this.recordMetric(data.agentId, data.capabilityId, {
         latency: data.latency,
         success: data.success,
@@ -79,7 +79,7 @@ export class ReliabilityMetricsService {
 
     // Emit events for significant changes
     if (metrics.errorRate > 0.1) {
-      this.eventEmitter.emit('metrics.errorRate.high', {
+      this.eventEmitter.emit('metrics.errorRate.'high', {
         agentId,
         capabilityId,
         errorRate: metrics.errorRate
@@ -87,7 +87,7 @@ export class ReliabilityMetricsService {
     }
 
     if (metrics.loadFactor > this.loadBalancingThreshold) {
-      this.eventEmitter.emit('metrics.load.high', {
+      this.eventEmitter.emit('metrics.load.'high', {
         agentId,
         capabilityId,
         loadFactor: metrics.loadFactor

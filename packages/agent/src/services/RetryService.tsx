@@ -68,8 +68,8 @@ export class RetryService extends BaseService {
           this.logger.info(`Operation succeeded on attempt ${attempt}.`);
         }
         return result;
-      } catch (error) {
-        this.logger.warn(`Attempt ${attempt} failed: ${error.message}`, error);
+      } catch (error: unknown) {
+        this.logger.warn(`Attempt ${attempt} failed: ${(error as Error).message}`, error);
 
         if (attempt >= config.maxAttempts) {
           this.logger.error(`Operation failed after ${attempt} attempts. Giving up.`);

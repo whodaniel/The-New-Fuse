@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@the-new-fuse/database/client';
-import { DatabaseConfig } from './database.config.js';
+import { PrismaClient } from '@the-new-fuse/database';
+import { DatabaseConfig } from './database.config.tsx';
 
 @Injectable()
 export class DatabaseService implements OnModuleInit, OnModuleDestroy {

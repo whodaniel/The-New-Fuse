@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 import { A2AMessage, A2AMessageContent } from '../A2AProtocolHandler.js';
 
 /**
@@ -35,9 +35,9 @@ interface AnthropicXmlFunctionCallResponse {
 export class AnthropicXmlAdapter {
   private logger = new Logger(AnthropicXmlAdapter.name);
 
-  readonly name = 'anthropic-xml-adapter';
-  readonly version = '1.0.0';
-  readonly supportedProtocols = ['a2a-v2.0', 'anthropic-xml-v1.0'];
+  readonly name = anthropic-xml-adapter;
+  readonly version = 1.0.0';
+  readonly supportedProtocols = ['a2a-v2.0', anthropic-xml-v1.0'];
 
   /**
    * Check if this adapter can handle the given protocol
@@ -55,9 +55,9 @@ export class AnthropicXmlAdapter {
    * @returns Adapted message
    */
   async adaptMessage(message: A2AMessage, targetProtocol: string): Promise<string | A2AMessage> {
-    if (targetProtocol === 'anthropic-xml-v1.0') {
+    if (targetProtocol === anthropic-xml-v1.0') {
       return this.convertToAnthropicXmlFormat(message);
-    } else if (targetProtocol === 'a2a-v2.0') {
+    } else if (targetProtocol === a2a-v2.0') {
       return this.convertFromAnthropicXmlFormat(message as unknown as string);
     }
     throw new Error(`Unsupported target protocol: ${targetProtocol}`);
@@ -74,17 +74,17 @@ export class AnthropicXmlAdapter {
     const parameters = message.body.content;
 
     // Build XML string
-    let xmlString = '<function_calls>\n';
+    let xmlString = <function_calls>\'n';
     xmlString += `<invoke name="${functionName}">\n`;
     
     // Add parameters
     for (const [key, value] of Object.entries(parameters)) {
-      const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+      const stringValue = typeof value === object' ? JSON.stringify(value) : String(value);
       xmlString += `<parameter name="${key}">${stringValue}</parameter>\n`;
     }
     
-    xmlString += '</invoke>\n';
-    xmlString += '</function_calls>';
+    xmlString += </invoke>\'n';
+    xmlString += </function_calls>';
     
     return xmlString;
   }
@@ -103,9 +103,9 @@ export class AnthropicXmlAdapter {
       header: {
         id: crypto.randomUUID(),
         type: functionCall.name,
-        version: '2.0',
+        version:2.0',
         priority: 'medium',
-        source: 'anthropic-xml-adapter',
+        source:anthropic-xml-adapter,
         target: undefined,
       },
       body: {
@@ -171,7 +171,7 @@ export class AnthropicXmlAdapter {
    * @returns XML formatted response string
    */
   createFunctionCallResponse(functionName: string, content: any): string {
-    const contentString = typeof content === 'object' ? JSON.stringify(content) : String(content);
+    const contentString = typeof content === object' ? JSON.stringify(content) : String(content);
     
     return `<function_results>\n<${functionName}>${contentString}</${functionName}>\n</function_results>`;
   }

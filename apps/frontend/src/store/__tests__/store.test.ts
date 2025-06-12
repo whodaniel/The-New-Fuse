@@ -1,8 +1,8 @@
 
 export {}
 import vitest_1 from 'vitest';
-import index_1 from '../index.js';
-import api_1 from '../../services/api.js';
+import index_1 from '../index.tsx';
+import api_1 from '../../services/api.tsx';
 import agent_1 from '../../types/agent.js';
 vitest_1.vi.mock('../../services/api', () => ({
     chatService: {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import v8 from 'v8';
-import { Logger } from '../utils/logger.js';
-import { MemoryProfile } from './types/MemoryTypes.js';
+import { Logger } from '../utils/logger.tsx';
+import { MemoryProfile } from './types/MemoryTypes.tsx';
 
 @Injectable()
 export class PerformanceProfiler {
@@ -64,7 +64,7 @@ export class PerformanceProfiler {
         }
 
         // Emit profile for monitoring
-        this.eventEmitter.emit('memory.profile.created', profile);
+        this.eventEmitter.emit('memory.profile.'created', profile);
 
         // Check for performance issues
         this.analyzeProfile(profile);
@@ -93,7 +93,7 @@ export class PerformanceProfiler {
                 totalHeapSize: profile.heapStats.totalHeapSize
             });
             
-            this.eventEmitter.emit('memory.threshold.exceeded', {
+            this.eventEmitter.emit('memory.threshold.'exceeded', {
                 type: 'heap_usage',
                 value: heapUsageRatio * 100,
                 threshold: 80
@@ -126,7 +126,7 @@ export class PerformanceProfiler {
     }
 
     public async queryProfiles(options: {
-        type: 'memory' | 'gc';
+        type:memory' | gc';
         startTime: Date;
         endTime?: Date;
     }): Promise<MemoryProfile[]> {

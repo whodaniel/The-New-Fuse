@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { AgentWorkflowExample } from './agent-workflow.js';
+import { AgentWorkflowExample } from './agent-workflow.tsx';
 import { Agent } from '@the-new-fuse/core/entities/agent.entity';
 import { DataAnalysisTool } from '@the-new-fuse/core/tools/data-analysis';
 import { VisualizationTool } from '@the-new-fuse/core/tools/visualization';

@@ -32,7 +32,7 @@ export async function retry<T>(
 
       const delay = Math.min(backoff * Math.pow(2, attempt - 1), maxBackoff);
       logger.warn(`Attempt ${attempt} failed, retrying in ${delay}ms`, { error });
-      await new Promise(resolv(e: any) => setTimeout(resolve, delay));
+      await new Promise((resolve: (value?: any) => void) => setTimeout(resolve, delay));
     }
   }
 

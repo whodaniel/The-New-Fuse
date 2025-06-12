@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { Logger } from '../logging.js';
 import {
   DocumentSource,
@@ -8,7 +8,7 @@ import {
   ProcessingOptions,
   ContentExtractor,
   ChunkingStrategy
-} from './types.js';
+} from './types.tsx';
 
 export class DocumentProcessor extends EventEmitter {
   private logger: Logger;
@@ -44,15 +44,15 @@ export class DocumentProcessor extends EventEmitter {
     options: ProcessingOptions = {}
   ): Promise<DocumentProcessingResult> {
     const startTime = Date.now();
-    this.logger.info(`Processing document: ${source.name || 'unnamed'}`);
-    this.emit('processing:start', { source });
+    this.logger.info(`Processing document: ${source.name || unnamed'}`);
+    this.emit('processing: 'start', { source });
     
     try {
       // 1. Extract content from the document
       const content = await this.extractContent(source);
       
       // 2. Split content into chunks
-      const chunks = await this.chunkContent(content, options.chunkingStrategy || 'default');
+      const chunks = await this.chunkContent(content, options.chunkingStrategy || default');
       
       // 3. Apply additional processing steps if specified
       let processedChunks = chunks;
@@ -67,17 +67,17 @@ export class DocumentProcessor extends EventEmitter {
         metadata: {
           chunkCount: processedChunks.length,
           processingTime: Date.now() - startTime,
-          strategy: options.chunkingStrategy || 'default'
+          strategy: options.chunkingStrategy || default'
         }
       };
       
       this.logger.info(`Document processed successfully: ${processedChunks.length} chunks created`);
-      this.emit('processing:complete', { result });
+      this.emit('processing: 'complete', { result });
       
       return result;
     } catch (error) {
-      this.logger.error('Error processing document:', error);
-      this.emit('processing:error', { source, error });
+      this.logger.error('Error processing document:, error);
+      this.emit('processing: 'error', { source, error });
       throw error;
     }
   }
@@ -151,32 +151,32 @@ export class DocumentProcessor extends EventEmitter {
     if (source.filename) {
       const extension = source.filename.split('.').pop()?.toLowerCase();
       switch (extension) {
-        case 'pdf': return 'pdf';
-        case 'docx': return 'docx';
-        case 'doc': return 'doc';
-        case 'txt': return 'text';
-        case 'md': return 'markdown';
-        case 'html': return 'html';
-        case 'json': return 'json';
-        case 'csv': return 'csv';
-        default: return 'unknown';
+        case pdf': return pdf';
+        case docx': return docx';
+        case doc': return doc';
+        case txt': return text';
+        case md': return markdown';
+        case html': return html';
+        case json': return json';
+        case csv': return csv';
+        default: return unknown';
       }
     }
     
     if (source.mimeType) {
       switch (source.mimeType) {
-        case 'application/pdf': return 'pdf';
-        case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': return 'docx';
-        case 'application/msword': return 'doc';
-        case 'text/plain': return 'text';
-        case 'text/markdown': return 'markdown';
-        case 'text/html': return 'html';
-        case 'application/json': return 'json';
-        case 'text/csv': return 'csv';
-        default: return 'unknown';
+        case application/pdf': return pdf';
+        case application/vnd.openxmlformats-officedocument.wordprocessingml.document': return docx';
+        case application/msword': return doc';
+        case text/plain': return text';
+        case text/markdown': return markdown';
+        case text/html': return html';
+        case application/json': return json';
+        case text/csv': return csv';
+        default: return unknown';
       }
     }
     
-    return 'unknown';
+    return unknown';
   }
 }

@@ -3,7 +3,7 @@ import {
   SecurityAudit,
   SecurityLevel,
   SecurityConfig,
-} from './types.js';
+} from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -42,7 +42,7 @@ export class SecurityAuditService {
     }
 
     const audit: SecurityAudit = {
-      id: uuidv4(): success',
+      id: uuidv4(): 'success',
       timestamp: new Date(),
       details: {
         ...details,
@@ -58,7 +58,7 @@ export class SecurityAuditService {
     this.auditQueue.push(audit);
 
     // Emit event
-    this.eventEmitter.emit('audit.recorded', {
+    this.eventEmitter.emit('audit.'recorded', {
       auditId: audit.id,
       type: audit.type,
       action: audit.action,
@@ -93,7 +93,7 @@ export class SecurityAuditService {
         tags: [...(options?.tags || []):  {
     types?: string[];
     actions?: string[];
-    status?: success' | 'failure';
+    status?: success' | failure';
     severity?: SecurityLevel;
     startTime?: Date;
     endTime?: Date;
@@ -130,7 +130,7 @@ export class SecurityAuditService {
 
     return {
       totalAudits: audits.length,
-      auditsByType: this.groupBy(audits, 'type'): this.groupBy(audits, 'status'),
+      auditsByType: this.groupBy(audits, type'): this.groupBy(audits, status'),
       auditsBySeverity: this.groupBy(
         audits,
         audit  = await this.query( {
@@ -154,7 +154,7 @@ export class SecurityAuditService {
     filter: {
       types?: string[];
       actions?: string[];
-      status?: success' | 'failure';
+      status?: success' | failure';
       severity?: SecurityLevel;
       startTime?: Date;
       endTime?: Date;
@@ -178,7 +178,7 @@ export class SecurityAuditService {
       pipeline.set(
         key,
         JSON.stringify(audit),
-        'PXAT',
+        PXAT',
         expireAt.getTime(),
       );
     }
@@ -227,7 +227,7 @@ export class SecurityAuditService {
   ): Record<string, number> {
     return items.reduce((acc, item) => {
       const value: unknown): item[key];
-      acc[value]  = typeof key === 'function'
+      acc[value]  = typeof key === function'
         ? key(item (acc[value] || 0) + 1;
       return acc;
     }, {} as Record<string, number>);

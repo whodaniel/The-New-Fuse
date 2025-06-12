@@ -2,11 +2,11 @@ import { Redis } from 'ioredis';
 import { DatabaseService } from '@the-new-fuse/database';
 
 export class MemoryManager {
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   
   constructor() {
-    this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
+    this.redis = new (Redis as any)(process.env.REDIS_URL || 'redis://localhost:6379');
     this.db = new DatabaseService();
   }
 

@@ -8,7 +8,7 @@ Brief description of what this package does and its purpose within The New Fuse 
 
 ```bash
 # Within the monorepo
-yarn workspace @the-new-fuse/package-name install
+bun install --filter @the-new-fuse/package-name
 ```
 
 ## Usage
@@ -35,13 +35,13 @@ Description of the function and what it does.
 
 ```bash
 # Build the package
-yarn workspace @the-new-fuse/package-name build
+bun run --filter @the-new-fuse/package-name build
 
 # Run tests
-yarn workspace @the-new-fuse/package-name test
+bun run --filter @the-new-fuse/package-name test
 
 # Development mode with watch
-yarn workspace @the-new-fuse/package-name dev
+bun run --filter @the-new-fuse/package-name dev
 ```
 
 ## Dependencies

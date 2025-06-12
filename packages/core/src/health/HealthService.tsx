@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../cache/redis.service.js';
-import { DatabaseService } from '../database/database.service.js';
-import { MetricsService } from '../metrics/metrics.service.js';
+import { DatabaseService } from '../database/database.service.tsx';
+import { MetricsService } from '../metrics/metrics.service.tsx';
 
 interface ServiceHealth {
-  status: 'healthy' | 'unhealthy';
+  status:healthy' | unhealthy';
   latency?: number;
   error?: string;
 }
 
 interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status:healthy' | degraded' | unhealthy';
   timestamp: string;
   services: {
     database: ServiceHealth;
@@ -83,15 +83,15 @@ export class HealthService {
     }
   }
 
-  private getOverallStatus(services: ServiceHealth[]): 'healthy' | 'degraded' | 'unhealthy' {
+  private getOverallStatus(services: ServiceHealth[]):healthy' | degraded' | unhealthy' {
     const unhealthyCount = services.filter(s => s.status === 'unhealthy').length;
 
     if (unhealthyCount === 0) {
-      return 'healthy';
+      return healthy';
     } else if (unhealthyCount < services.length) {
-      return 'degraded';
+      return degraded';
     } else {
-      return 'unhealthy';
+      return unhealthy';
     }
   }
 }

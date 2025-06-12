@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DesignConfig, DesignPayload, DesignResult } from '../../types/design.types.js';
-import { RetryService } from './RetryService.js';
+import { RetryService } from './RetryService.tsx';
 
 interface RendererOptions {
   format: 'svg' | 'png' | 'json';

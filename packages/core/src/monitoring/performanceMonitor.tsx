@@ -1,6 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { RedisManager } from '../redis/redisManager.js';
+import { RedisManager } from '../redis/redisManager.tsx';
 import * as process from 'process';
 
 const logger: Logger = getLogger('performance_monitor');
@@ -85,7 +85,7 @@ export class PerformanceMonitor {
         } catch (e: unknown) {
             logger.error(`Error gathering metrics: ${e instanceof Error ? e.message : String(e): Promise<number> {
         try {
-            const startTime: PING',
+            const startTime: 'PING',
                 content: { timestamp: startTime }
             };
 
@@ -111,7 +111,7 @@ export class PerformanceMonitor {
                 type Date.now()): void {
             logger.error(`Error measuring message latency: ${e instanceof Error ? e.message : String(e): Promise<number> {
         try {
-            const startTime: test',
+            const startTime: 'test',
                 data: { timestamp: startTime }
             };
 

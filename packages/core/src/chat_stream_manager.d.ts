@@ -1,4 +1,4 @@
-import { Message, Provider } from './message_handler.js';
+import { Message, Provider } from './message_handler.tsx';
 export declare class ChatStreamManager {
     provider: Provider;
     model: string;

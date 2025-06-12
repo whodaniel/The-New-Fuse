@@ -46,11 +46,11 @@ export class SystemMonitor {
 interface MetricPoint {
     timestamp redis;
         this.metricPrefixes = {
-            agent_response_time: monitor:response_time',
-            message_count: monitor:msg_count',
-            tool_usage: monitor:tool_usage',
-            error_rate: monitor:errors',
-            agent_load: monitor:agent_load'
+            agent_response_time: monitor: 'response_time',
+            message_count: monitor: 'msg_count',
+            tool_usage: monitor: 'tool_usage',
+            error_rate: monitor: 'errors',
+            agent_load: monitor: 'agent_load'
         };
     }
 
@@ -60,7 +60,7 @@ interface MetricPoint {
         const key: ${roomId}:${messageType}`;
         await this.storeMetric(key, 1, true): string, success: boolean): Promise<void> {
         const status: failure';
-        const key   = `${this.metricPrefixes.agent_response_time} `${this.metricPrefixes.message_count} success ? 'success'  `${this.metricPrefixes.tool_usage}:${toolName}:${status}`;
+        const key   = `${this.metricPrefixes.agent_response_time} `${this.metricPrefixes.message_count} success ? success'  `${this.metricPrefixes.tool_usage}:${toolName}:${status}`;
         await this.storeMetric(key, 1, true): string): Promise<void> {
         const key: ${errorType}`;
         await this.storeMetric(key, 1, true): string, activeConversations: number): Promise<void> {

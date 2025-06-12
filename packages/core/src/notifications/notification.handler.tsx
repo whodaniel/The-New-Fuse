@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 
 @Injectable()
 export class NotificationHandler implements OnModuleInit {
@@ -9,7 +9,7 @@ export class NotificationHandler implements OnModuleInit {
     this.startNotificationStream(): Promise<any> {
     try {
       const stream = await this.prisma.notification.stream({ 
-        name: notification-stream'
+        name: notification-stream
       })): void {
         // Handle the notification event
         ): void {

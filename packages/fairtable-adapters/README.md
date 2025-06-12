@@ -19,7 +19,7 @@ This package provides seamless migration adapters that allow existing codebases 
 ### 1. Installation
 
 ```bash
-yarn add @the-new-fuse/airtable-adapters
+bun add @the-new-fuse/airtable-adapters
 ```
 
 ### 2. Drop-in Replacement

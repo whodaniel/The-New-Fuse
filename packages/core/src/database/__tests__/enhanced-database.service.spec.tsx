@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EnhancedDatabaseService } from '../enhanced-database.service.js';
-import { MetricsCollector } from '../../monitoring/metrics-collector.service.js';
+import { EnhancedDatabaseService } from '../enhanced-database.service.tsx';
+import { MetricsCollector } from '../../monitoring/metrics-collector.service.tsx';
 import { DatabaseConfig } from '../types.js';
 import * as path from 'path';
 import * as fs from 'fs/promises';
@@ -13,7 +13,7 @@ describe('EnhancedDatabaseService', () => {
     let testDbPath: string;
 
     beforeAll(async () => {
-        testDbPath = path.join(__dirname, 'test.db');
+        testDbPath = path.join(__dirname, test.db');
         await fs.mkdir(__dirname, { recursive: true });
     });
 
@@ -71,24 +71,24 @@ describe('EnhancedDatabaseService', () => {
 
         it('should execute a simple query', async () => {
             const result = await service.executeQuery(
-                'CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)'
+                CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)'
             );
             expect(result).toBeDefined();
         });
 
         it('should handle transactions', async () => {
             await service.executeQuery(
-                'CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)'
+                CREATE TABLE IF NOT EXISTS test (id INTEGER PRIMARY KEY, name TEXT)'
             );
 
             await service.executeQuery(
-                'INSERT INTO test (name) VALUES (?)',
+                INSERT INTO test (name) VALUES (?)',
                 ['test1'],
                 { transaction: true }
             );
 
             const result = await service.executeQuery<Array<{ name: string }>>(
-                'SELECT * FROM test WHERE name = ?',
+                SELECT * FROM test WHERE name = ?',
                 ['test1']
             );
             expect(result).toHaveLength(1);
@@ -104,12 +104,12 @@ describe('EnhancedDatabaseService', () => {
         });
 
         it('should retry failed queries', async () => {
-            const mockQuery = jest.spyOn(service as any, 'runQuery')
+            const mockQuery = jest.spyOn(service as any, runQuery')
                 .mockRejectedValueOnce(new Error('Test error'))
                 .mockResolvedValueOnce({ success: true });
 
             const result = await service.executeQuery(
-                'SELECT 1',
+                SELECT 1',
                 [],
                 { retries: 1 }
             );
@@ -155,7 +155,7 @@ describe('EnhancedDatabaseService', () => {
             await service.executeQuery('SELECT 1');
 
             expect(events.length).toBeGreaterThan(0);
-            expect(events.some(e => e.event === 'database.query')).toBeTruthy();
+            expect(events.some(e => e.event === database.query')).toBeTruthy();
         });
 
         it('should collect metrics', async () => {

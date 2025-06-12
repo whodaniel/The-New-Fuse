@@ -1,13 +1,13 @@
-import winston from 'winston';
+import winston from ''winston';
 import { ElasticsearchTransport } from 'winston-elasticsearch';
 
-export const logger: process.env.LOG_LEVEL || 'info',
+export const logger: process.env.LOG_LEVEL || info',
   format: winston.format.combine(
-    winston.format.timestamp():  { service: fuse-service' },
+    winston.format.timestamp():  { service: fuse-service },
   transports: [
     new winston.transports.Console(),
     new ElasticsearchTransport({
-      level: info',
+      level: 'info',
       clientOpts: {
         node: process.env.ELASTICSEARCH_URL,
         auth: {
@@ -15,7 +15,7 @@ export const logger: process.env.LOG_LEVEL || 'info',
           password: process.env.ELASTICSEARCH_PASS
         }
       },
-      indexPrefix: fuse-logs'
+      indexPrefix: fuse-logs
     })
   ]
 });

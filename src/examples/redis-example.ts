@@ -5,7 +5,7 @@
  */
 
 import { createRedisClient } from '../redis/redis-factory.js';
-import { RedisService } from '../types/redis/service.js';
+import { RedisService } from '../types/redis/service.tsx';
 
 /**
  * Example using the standard Redis client

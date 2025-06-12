@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
-import { Task, TaskStatusType } from '@the-new-fuse/types';
+import { Task, TaskStatusType  } from '@the-new-fuse/types';
 
 @Injectable()
 export class TaskSchedulerService {
-  private maxConcurrentTasks: number;
+  private maxConcurrentTasks: number';
 
   constructor(
     private readonly redisService: RedisService,
     private readonly configService: ConfigService
   ) {
-    this.maxConcurrentTasks = this.configService.get('task.maxConcurrent', 10);
+    this.maxConcurrentTasks = this.configService.get('task.'maxConcurrent', 10);
   }
 
   async scheduleTask(task: Task): Promise<void> {

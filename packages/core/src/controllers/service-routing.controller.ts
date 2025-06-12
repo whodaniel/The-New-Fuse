@@ -26,10 +26,10 @@ import {
 } from '@nestjs/swagger';
 
 import { ServiceCategoryRouterService } from '../services/service-category-router.service';
-import { TenantGuard } from '../guards/tenant.guard';
-import { AgencyRoleGuard } from '../guards/agency-role.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { TenantContext } from '../decorators/tenant-context.decorator';
+import { TenantGuard } from '../guards/tenant.'guard';
+import { AgencyRoleGuard } from '../guards/agency-role.'guard';
+import { Roles } from '../decorators/roles.'decorator';
+import { TenantContext } from '../decorators/tenant-context.'decorator';
 
 @ApiTags('Service Routing')
 @Controller('api/services')
@@ -46,10 +46,10 @@ export class ServiceRoutingController {
    */
 
   @Get('categories')
-  @ApiOperation({ summary: 'Get available service categories' })
-  @ApiQuery({ name: 'parentId', required: false, description: 'Filter by parent category' })
-  @ApiQuery({ name: 'tier', required: false, description: 'Filter by agency tier' })
-  @ApiResponse({ status: 200, description: 'Service categories retrieved' })
+  @ApiOperation({ summary:Get available service categories' })
+  @ApiQuery({ name: 'parentId', required: false, description: Filter by parent 'category' })
+  @ApiQuery({ name: 'tier', required: false, description: Filter by agency 'tier' })
+  @ApiResponse({ status: 200, description:Service categories retrieved' })
   async getServiceCategories(
     @TenantContext() tenantContext: any,
     @Query('parentId') parentId?: string,
@@ -67,9 +67,9 @@ export class ServiceRoutingController {
   }
 
   @Get('categories/:categoryId')
-  @ApiOperation({ summary: 'Get specific service category details' })
-  @ApiParam({ name: 'categoryId', description: 'Category ID' })
-  @ApiResponse({ status: 200, description: 'Category details retrieved' })
+  @ApiOperation({ summary:Get specific service category details' })
+  @ApiParam({ name: 'categoryId', description: Category 'ID' })
+  @ApiResponse({ status: 200, description:Category details retrieved' })
   async getServiceCategory(
     @TenantContext() tenantContext: any,
     @Param('categoryId') categoryId: string
@@ -86,8 +86,8 @@ export class ServiceRoutingController {
   }
 
   @Post('categories')
-  @ApiOperation({ summary: 'Create a new service category' })
-  @ApiResponse({ status: 201, description: 'Category created successfully' })
+  @ApiOperation({ summary:Create a new service category' })
+  @ApiResponse({ status: 201, description:Category created successfully' })
   @UseGuards(AgencyRoleGuard)
   @Roles('AGENCY_ADMIN')
   @HttpCode(HttpStatus.CREATED)
@@ -97,10 +97,10 @@ export class ServiceRoutingController {
       name: string;
       description: string;
       parentId?: string;
-      complexity: 'SIMPLE' | 'MODERATE' | 'COMPLEX' | 'EXPERT';
+      complexity:SIMPLE' | MODERATE' | COMPLEX' | EXPERT';
       estimatedDuration: number;
       basePricing: {
-        type: 'FIXED' | 'HOURLY' | 'TOKEN_BASED';
+        type:FIXED' | HOURLY' | TOKEN_BASED';
         amount: number;
       };
       requiredCapabilities: string[];
@@ -115,14 +115,14 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: category,
-      message: 'Service category created successfully'
+      message:Service category created successfully'
     };
   }
 
   @Put('categories/:categoryId')
-  @ApiOperation({ summary: 'Update service category' })
-  @ApiParam({ name: 'categoryId', description: 'Category ID' })
-  @ApiResponse({ status: 200, description: 'Category updated successfully' })
+  @ApiOperation({ summary:Update service category' })
+  @ApiParam({ name: 'categoryId', description: Category 'ID' })
+  @ApiResponse({ status: 200, description:Category updated successfully' })
   @UseGuards(AgencyRoleGuard)
   @Roles('AGENCY_ADMIN')
   async updateServiceCategory(
@@ -139,7 +139,7 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: category,
-      message: 'Service category updated successfully'
+      message:Service category updated successfully'
     };
   }
 
@@ -148,11 +148,11 @@ export class ServiceRoutingController {
    */
 
   @Get('providers')
-  @ApiOperation({ summary: 'Get service providers' })
-  @ApiQuery({ name: 'categoryId', required: false, description: 'Filter by category' })
-  @ApiQuery({ name: 'capability', required: false, description: 'Filter by capability' })
-  @ApiQuery({ name: 'minRating', required: false, type: Number, description: 'Minimum rating' })
-  @ApiResponse({ status: 200, description: 'Providers retrieved successfully' })
+  @ApiOperation({ summary:Get service providers' })
+  @ApiQuery({ name: 'categoryId', required: false, description: Filter by 'category' })
+  @ApiQuery({ name: 'capability', required: false, description: Filter by 'capability' })
+  @ApiQuery({ name: 'minRating', required: false, type: Number, description: Minimum 'rating' })
+  @ApiResponse({ status: 200, description:Providers retrieved successfully' })
   async getServiceProviders(
     @TenantContext() tenantContext: any,
     @Query('categoryId') categoryId?: string,
@@ -171,9 +171,9 @@ export class ServiceRoutingController {
   }
 
   @Get('providers/:providerId')
-  @ApiOperation({ summary: 'Get specific provider details' })
-  @ApiParam({ name: 'providerId', description: 'Provider ID' })
-  @ApiResponse({ status: 200, description: 'Provider details retrieved' })
+  @ApiOperation({ summary:Get specific provider details' })
+  @ApiParam({ name: 'providerId', description: Provider 'ID' })
+  @ApiResponse({ status: 200, description:Provider details retrieved' })
   async getServiceProvider(
     @TenantContext() tenantContext: any,
     @Param('providerId') providerId: string
@@ -190,10 +190,10 @@ export class ServiceRoutingController {
   }
 
   @Post('providers/register')
-  @ApiOperation({ summary: 'Register an agent as a service provider' })
-  @ApiResponse({ status: 201, description: 'Provider registered successfully' })
+  @ApiOperation({ summary:Register an agent as a service provider' })
+  @ApiResponse({ status: 201, description:Provider registered successfully' })
   @UseGuards(AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   @HttpCode(HttpStatus.CREATED)
   async registerProvider(
     @TenantContext() tenantContext: any,
@@ -217,16 +217,16 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: provider,
-      message: 'Service provider registered successfully'
+      message:Service provider registered successfully'
     };
   }
 
   @Put('providers/:providerId')
-  @ApiOperation({ summary: 'Update service provider' })
-  @ApiParam({ name: 'providerId', description: 'Provider ID' })
-  @ApiResponse({ status: 200, description: 'Provider updated successfully' })
+  @ApiOperation({ summary:Update service provider' })
+  @ApiParam({ name: 'providerId', description: Provider 'ID' })
+  @ApiResponse({ status: 200, description:Provider updated successfully' })
   @UseGuards(AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async updateProvider(
     @TenantContext() tenantContext: any,
     @Param('providerId') providerId: string,
@@ -241,7 +241,7 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: provider,
-      message: 'Service provider updated successfully'
+      message:Service provider updated successfully'
     };
   }
 
@@ -250,8 +250,8 @@ export class ServiceRoutingController {
    */
 
   @Post('requests')
-  @ApiOperation({ summary: 'Submit a service request' })
-  @ApiResponse({ status: 201, description: 'Service request submitted' })
+  @ApiOperation({ summary:Submit a service request' })
+  @ApiResponse({ status: 201, description:Service request submitted' })
   @HttpCode(HttpStatus.CREATED)
   async submitServiceRequest(
     @TenantContext() tenantContext: any,
@@ -259,7 +259,7 @@ export class ServiceRoutingController {
       categoryId: string;
       title: string;
       description: string;
-      priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+      priority:LOW' | MEDIUM' | HIGH' | URGENT';
       deadline?: Date;
       budget?: {
         max: number;
@@ -280,18 +280,18 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: request,
-      message: 'Service request submitted successfully'
+      message:Service request submitted successfully'
     };
   }
 
   @Get('requests')
-  @ApiOperation({ summary: 'Get service requests' })
+  @ApiOperation({ summary:Get service requests' })
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'categoryId', required: false })
   @ApiQuery({ name: 'providerId', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Service requests retrieved' })
+  @ApiResponse({ status: 200, description: Service requests 'retrieved' })
   async getServiceRequests(
     @TenantContext() tenantContext: any,
     @Query('status') status?: string,
@@ -312,9 +312,9 @@ export class ServiceRoutingController {
   }
 
   @Get('requests/:requestId')
-  @ApiOperation({ summary: 'Get specific service request' })
-  @ApiParam({ name: 'requestId', description: 'Request ID' })
-  @ApiResponse({ status: 200, description: 'Request details retrieved' })
+  @ApiOperation({ summary:Get specific service request' })
+  @ApiParam({ name: 'requestId', description: Request 'ID' })
+  @ApiResponse({ status: 200, description:Request details retrieved' })
   async getServiceRequest(
     @TenantContext() tenantContext: any,
     @Param('requestId') requestId: string
@@ -331,11 +331,11 @@ export class ServiceRoutingController {
   }
 
   @Put('requests/:requestId/assign')
-  @ApiOperation({ summary: 'Assign provider to service request' })
-  @ApiParam({ name: 'requestId', description: 'Request ID' })
-  @ApiResponse({ status: 200, description: 'Provider assigned successfully' })
+  @ApiOperation({ summary:Assign provider to service request' })
+  @ApiParam({ name: 'requestId', description: Request 'ID' })
+  @ApiResponse({ status: 200, description:Provider assigned successfully' })
   @UseGuards(AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async assignProvider(
     @TenantContext() tenantContext: any,
     @Param('requestId') requestId: string,
@@ -354,14 +354,14 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: request,
-      message: 'Provider assigned successfully'
+      message:Provider assigned successfully'
     };
   }
 
   @Put('requests/:requestId/complete')
-  @ApiOperation({ summary: 'Mark service request as completed' })
-  @ApiParam({ name: 'requestId', description: 'Request ID' })
-  @ApiResponse({ status: 200, description: 'Request marked as completed' })
+  @ApiOperation({ summary:Mark service request as completed' })
+  @ApiParam({ name: 'requestId', description: Request 'ID' })
+  @ApiResponse({ status: 200, description:Request marked as completed' })
   async completeServiceRequest(
     @TenantContext() tenantContext: any,
     @Param('requestId') requestId: string,
@@ -380,7 +380,7 @@ export class ServiceRoutingController {
     return {
       success: true,
       data: request,
-      message: 'Service request completed successfully'
+      message:Service request completed successfully'
     };
   }
 
@@ -389,8 +389,8 @@ export class ServiceRoutingController {
    */
 
   @Post('match-providers')
-  @ApiOperation({ summary: 'Find matching providers for requirements' })
-  @ApiResponse({ status: 200, description: 'Matching providers found' })
+  @ApiOperation({ summary:Find matching providers for requirements' })
+  @ApiResponse({ status: 200, description:Matching providers found' })
   async matchProviders(
     @TenantContext() tenantContext: any,
     @Body() requirements: {
@@ -398,7 +398,7 @@ export class ServiceRoutingController {
       requiredCapabilities: string[];
       budget?: number;
       deadline?: Date;
-      complexity: 'SIMPLE' | 'MODERATE' | 'COMPLEX' | 'EXPERT';
+      complexity:SIMPLE' | MODERATE' | COMPLEX' | EXPERT';
       priorityFactors?: {
         cost: number;
         quality: number;
@@ -418,9 +418,9 @@ export class ServiceRoutingController {
   }
 
   @Get('recommendations/:categoryId')
-  @ApiOperation({ summary: 'Get provider recommendations for category' })
-  @ApiParam({ name: 'categoryId', description: 'Category ID' })
-  @ApiResponse({ status: 200, description: 'Recommendations retrieved' })
+  @ApiOperation({ summary:Get provider recommendations for category' })
+  @ApiParam({ name: 'categoryId', description: Category 'ID' })
+  @ApiResponse({ status: 200, description:Recommendations retrieved' })
   async getProviderRecommendations(
     @TenantContext() tenantContext: any,
     @Param('categoryId') categoryId: string
@@ -441,12 +441,12 @@ export class ServiceRoutingController {
    */
 
   @Get('analytics/categories')
-  @ApiOperation({ summary: 'Get category performance analytics' })
+  @ApiOperation({ summary:Get category performance analytics' })
   @ApiQuery({ name: 'period', required: false })
-  @ApiResponse({ status: 200, description: 'Category analytics retrieved' })
+  @ApiResponse({ status: 200, description: Category analytics 'retrieved' })
   async getCategoryAnalytics(
     @TenantContext() tenantContext: any,
-    @Query('period') period = '30d'
+    @Query('period') period = 30'd'
   ) {
     const analytics = await this.serviceRouter.getCategoryAnalytics(
       tenantContext.agencyId,
@@ -460,14 +460,14 @@ export class ServiceRoutingController {
   }
 
   @Get('analytics/providers')
-  @ApiOperation({ summary: 'Get provider performance analytics' })
+  @ApiOperation({ summary:Get provider performance analytics' })
   @ApiQuery({ name: 'providerId', required: false })
   @ApiQuery({ name: 'period', required: false })
-  @ApiResponse({ status: 200, description: 'Provider analytics retrieved' })
+  @ApiResponse({ status: 200, description:Provider analytics retrieved' })
   async getProviderAnalytics(
     @TenantContext() tenantContext: any,
     @Query('providerId') providerId?: string,
-    @Query('period') period = '30d'
+    @Query('period') period = 30'd'
   ) {
     const analytics = await this.serviceRouter.getProviderAnalytics(
       tenantContext.agencyId,

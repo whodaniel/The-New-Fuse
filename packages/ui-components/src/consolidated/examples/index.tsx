@@ -1,12 +1,12 @@
-export * from './Button.js';
-export * from './Card.js';
-export * from './Label.js';
+export * from './Button.tsx';
+export * from './Card.tsx';
+export * from './Label.tsx';
 
 // Example usage showcase
 import React from 'react';
-import { ButtonUseCases } from './Button.js';
-import { ComplexCard } from './Card.js';
-import { FormFieldGroup } from './Label.js';
+import { ButtonUseCases } from './Button.tsx';
+import { ComplexCard } from './Card.tsx';
+import { FormFieldGroup } from './Label.tsx';
 
 export const ShowcaseExample = () => (
   <div className="p-6 space-y-8">

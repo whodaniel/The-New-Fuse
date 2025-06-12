@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Handle, Position } from 'reactflow';
 import { NodeConfigBuilder } from '../utils/node-config-builder.js';
-import { CodeEditor } from './CodeEditor.js';
-import { CollectionEditor } from './CollectionEditor.js';
-import { CredentialSelector } from './CredentialSelector.js';
+import { CodeEditor } from './CodeEditor.tsx';
+import { CollectionEditor } from './CollectionEditor.tsx';
+import { CredentialSelector } from './CredentialSelector.tsx';
 export const DynamicNode = ({ data, id, isConnectable, }) => {
     var _a;
     const [nodeSchema, setNodeSchema] = useState(null);

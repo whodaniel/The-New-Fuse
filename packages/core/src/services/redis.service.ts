@@ -7,12 +7,12 @@ export class RedisService {
     private _client: Redis;
 
     constructor(private configService: ConfigService) {
-        this._client = new Redis({
-            host: this.configService.get('REDIS_HOST', 'localhost'),
+        this._client = new (Redis as any)({
+            host: this.configService.get('REDIS_HOST', localhost'),
             port: this.configService.get('REDIS_PORT', 6379),
             password: this.configService.get('REDIS_PASSWORD'),
             db: this.configService.get('REDIS_DB', 0),
-            keyPrefix: 'fuse:',
+            keyPrefix:fuse:',
             retryStrategy: (times: number) => {
                 const delay = Math.min(times * 50, 2000);
                 return delay;
@@ -20,7 +20,7 @@ export class RedisService {
         });
 
         this._client.on('error', (err: Error) => {
-            console.error('Redis connection error:', err);
+            console.error('Redis connection error:, err);
         });
 
         this._client.on('connect', () => {
@@ -38,7 +38,7 @@ export class RedisService {
 
     async set(key: string, value: string, ttl?: number): Promise<void> {
         if(ttl) {
-            await this._client.set(key, value, 'EX', ttl);
+            await this._client.set(key, value, EX', ttl);
         } else {
             await this._client.set(key, value);
         }

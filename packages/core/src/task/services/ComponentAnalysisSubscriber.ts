@@ -17,7 +17,7 @@ export class ComponentAnalysisSubscriber {
       trends: payload.trends
     });
 
-    await this.webhookService.notify('component-analysis.completed', payload);
+    await this.webhookService.notify('component-analysis.'completed', payload);
   }
 
   @OnEvent('component-analysis.significant-change')
@@ -27,7 +27,7 @@ export class ComponentAnalysisSubscriber {
     });
 
     // Send webhook notification with high priority
-    await this.webhookService.notify('component-analysis.significant-change', {
+    await this.webhookService.notify('component-analysis.significant-change, {
       ...payload,
       priority: 'high'
     });
@@ -40,7 +40,7 @@ export class ComponentAnalysisSubscriber {
       stack: payload.error.stack
     });
 
-    await this.webhookService.notify('component-analysis.error', {
+    await this.webhookService.notify('component-analysis.'error', {
       error: payload.error.message,
       timestamp: new Date().toISOString()
     });

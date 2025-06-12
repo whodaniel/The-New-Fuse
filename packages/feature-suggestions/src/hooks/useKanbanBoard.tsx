@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { KanbanColumn, DraggableItem, FeatureSuggestion, SuggestionStatus } from '../types.js';
-import { SuggestionService } from '../services/types.js';
+import { SuggestionService } from '../services/types.tsx';
 
 interface UseKanbanBoardProps {
   suggestionService: SuggestionService;

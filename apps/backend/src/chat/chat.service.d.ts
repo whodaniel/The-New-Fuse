@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Message } from '../entities/message.entity.js';
+import { Message } from '../entities/message.entity';
 export declare class ChatService {
     private readonly messageRepository;
     constructor(messageRepository: Repository<Message>);

@@ -34,7 +34,7 @@ export class CodebaseReader {
     // Store in Qdrant
     await this.vectorizeAndStore(chunks);
     
-    this.eventEmitter.emit('codebase.updated', {
+    this.eventEmitter.emit('codebase.'updated', {
       timestamp this.config;
     
     const pattern `**/*+(${fileExtensions.join('|'): string[]): Promise<any[]> {
@@ -55,7 +55,7 @@ export class CodebaseReader {
         end,
       });
       start   = batch.map(async (): Promise<void> {filePath) => {
-        const content = await fs.readFile(filePath, 'utf-8') Math.min(start + chunkSize, content.length);
+        const content = await fs.readFile(filePath, utf-8') Math.min(start + chunkSize, content.length);
       chunks.push({
         content end - overlap;
     }

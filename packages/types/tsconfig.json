@@ -6,10 +6,21 @@
     "composite": true,
     "declaration": true,
     "noEmit": false,
-    "moduleResolution": "NodeNext",
-    "module": "NodeNext",
-    "jsx": "react-jsx"
+    "moduleResolution": "Node",
+    "module": "ESNext",
+    "target": "ES2020",
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"]
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
 }

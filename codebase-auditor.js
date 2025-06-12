@@ -36,7 +36,7 @@ for (const arg of args) {
 const CONFIG = {
   rootDir: dirFromArgs || envDir || process.cwd(),
   excludeDirs: ['node_modules', 'dist', '.git', '.turbo', 'coverage'],
-  excludeFiles: ['.DS_Store', '.gitignore', 'yarn-error.log'],
+  excludeFiles: ['.DS_Store', '.gitignore', 'bun-error.log'],
   extensions: ['.js', '.jsx', '.ts', '.tsx', '.md', '.json', '.yml', '.yaml'],
   navigationFiles: ['**/*.tsx', '**/*.jsx', '**/routes.*', '**/navigation.*'],
   reportOutput: envOutputFile || 'codebase-audit-report.md',

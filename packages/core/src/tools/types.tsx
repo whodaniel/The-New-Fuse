@@ -1,5 +1,5 @@
 export interface ToolParameter {
-  type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+  type: 'string' | number' | boolean' | array' | object';
   description: string;
   required?: boolean;
   default?: any;

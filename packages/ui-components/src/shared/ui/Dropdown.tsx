@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { cn } from '../../lib/utils.js';
-import { Icon } from './Icon.js';
+import { cn } from '../../lib/utils.tsx';
+import { Icon } from './Icon.tsx';
 
 export interface DropdownOption {
   value: string;

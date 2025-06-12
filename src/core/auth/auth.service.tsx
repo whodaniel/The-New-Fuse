@@ -1,6 +1,6 @@
 import { injectable, inject } from "inversify";
-import TYPES from '../di/types.js';
-import { ConfigService } from '../config/config-service.js';
+import TYPES from '../di/types.tsx';
+import { ConfigService } from '../config/config-service.tsx';
 import { CacheService } from '../cache/cache-service.js';
 import { LoggingService } from '../logging/logging-service.js';
 import { TimeService } from '../utils/time.service.js';

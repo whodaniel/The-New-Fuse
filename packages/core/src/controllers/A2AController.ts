@@ -17,56 +17,56 @@ export class A2AController {
   ) {}
 
   @Post('messages')
-  @ApiOperation({ summary: 'Send an A2A message' })
-  @ApiResponse({ status: 201, description: 'Message sent successfully' })
+  @ApiOperation({ summary:Send an A2A message' })
+  @ApiResponse({ status: 201, description:Message sent successfully' })
   async sendMessage(
     @Body() message: A2AMessage,
-    @Headers('x-protocol-version') protocolVersion = 'a2a-v2.0'
+    @Headers('x-protocol-version') protocolVersion = a2a-v2.0'
   ) {
-    if (protocolVersion !== 'a2a-v2.0') {
+    if (protocolVersion !== a2a-v2.0') {
       message = await this.protocolAdapter.adaptMessage(
         message,
         protocolVersion,
-        'a2a-v2.0'
+        a2a-v2.0'
       );
     }
     return this.protocolHandler.handleMessage(message);
   }
 
   @Get('agents')
-  @ApiOperation({ summary: 'List all available agents' })
-  @ApiResponse({ status: 200, description: 'List of agent cards' })
+  @ApiOperation({ summary:List all available agents' })
+  @ApiResponse({ status: 200, description:List of agent cards' })
   async listAgents() {
     return this.agentCardService.getDiscoveredAgents();
   }
 
   @Get('agents/:id')
-  @ApiOperation({ summary: 'Get agent details' })
-  @ApiResponse({ status: 200, description: 'Agent card details' })
+  @ApiOperation({ summary:Get agent details' })
+  @ApiResponse({ status: 200, description:Agent card details' })
   async getAgent(@Param('id') id: string) {
     return this.agentCardService.getAgentById(id);
   }
 
   @Get('agents/:id/capabilities')
-  @ApiOperation({ summary: 'Get agent capabilities' })
-  @ApiResponse({ status: 200, description: 'Agent capabilities' })
+  @ApiOperation({ summary:Get agent capabilities' })
+  @ApiResponse({ status: 200, description:Agent capabilities' })
   async getAgentCapabilities(@Param('id') id: string) {
     const agent = await this.agentCardService.getAgentById(id);
     return agent?.capabilities || [];
   }
 
   @Post('broadcast')
-  @ApiOperation({ summary: 'Broadcast message to multiple agents' })
-  @ApiResponse({ status: 201, description: 'Message broadcasted successfully' })
+  @ApiOperation({ summary:Broadcast message to multiple agents' })
+  @ApiResponse({ status: 201, description:Message broadcasted successfully' })
   async broadcastMessage(
     @Body() message: A2AMessage,
-    @Headers('x-protocol-version') protocolVersion = 'a2a-v2.0'
+    @Headers('x-protocol-version') protocolVersion = a2a-v2.0'
   ) {
-    if (protocolVersion !== 'a2a-v2.0') {
+    if (protocolVersion !== a2a-v2.0') {
       message = await this.protocolAdapter.adaptMessage(
         message,
         protocolVersion,
-        'a2a-v2.0'
+        a2a-v2.0'
       );
     }
     const agents = this.agentCardService.getDiscoveredAgents();
@@ -82,17 +82,17 @@ export class A2AController {
   }
 
   @Post('request')
-  @ApiOperation({ summary: 'Send request and wait for response' })
-  @ApiResponse({ status: 201, description: 'Response received' })
+  @ApiOperation({ summary:Send request and wait for response' })
+  @ApiResponse({ status: 201, description:Response received' })
   async sendRequest(
     @Body() message: A2AMessage,
-    @Headers('x-protocol-version') protocolVersion = 'a2a-v2.0'
+    @Headers('x-protocol-version') protocolVersion = a2a-v2.0'
   ) {
-    if (protocolVersion !== 'a2a-v2.0') {
+    if (protocolVersion !== a2a-v2.0') {
       message = await this.protocolAdapter.adaptMessage(
         message,
         protocolVersion,
-        'a2a-v2.0'
+        a2a-v2.0'
       );
     }
     return new Promise((resolve, reject) => {

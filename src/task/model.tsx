@@ -1,4 +1,4 @@
-import { Task } from './index.js';
+import { Task } from './index.tsx';
 import { TaskStatus, TaskPriority, TaskType } from './types/enums.js';
 
 export class TaskModel implements Task {

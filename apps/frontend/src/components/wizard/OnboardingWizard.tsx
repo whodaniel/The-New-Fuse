@@ -1,14 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Stepper, Step, StepLabel, Typography, Button, Paper, Container, Grid, CircularProgress } from '@chakra-ui/react';
+import { Box, Stepper, Step, Button, Container, Grid, CircularProgress, Heading, Text, StepIndicator, StepStatus, StepTitle, StepDescription, StepIcon, StepNumber, useSteps } from '@chakra-ui/react';
 import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { useWizard } from './WizardProvider.js';
-import { WelcomeStep } from './steps/WelcomeStep.js';
-import { UserProfileStep } from './steps/UserProfileStep.js';
-import { AIPreferencesStep } from './steps/AIPreferencesStep.js';
-import { WorkspaceSetupStep } from './steps/WorkspaceSetupStep.js';
-import { ToolsSelectionStep } from './steps/ToolsSelectionStep.js';
-import { GreeterAgentStep } from './steps/GreeterAgentStep.js';
-import { CompletionStep } from './steps/CompletionStep.js';
+import { Card } from '@/components/ui/card';
+import { useWizard } from './WizardProvider';
+import { WelcomeStep } from './steps/WelcomeStep';
+import { UserProfileStep } from './steps/UserProfileStep';
+import { AIPreferencesStep } from './steps/AIPreferencesStep';
+import { WorkspaceSetupStep } from './steps/WorkspaceSetupStep';
+import { ToolsSelectionStep } from './steps/ToolsSelectionStep';
+import { GreeterAgentStep } from './steps/GreeterAgentStep';
+import { CompletionStep } from './steps/CompletionStep';
 
 export interface OnboardingWizardProps {
   userType: 'human' | 'ai_agent' | 'unknown';
@@ -40,6 +41,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
 
   // Select steps based on user type
   const steps = userType === 'ai_agent' ? aiAgentSteps : humanSteps;
+  const { activeStep, setActiveStep } = useSteps({
+    index: state.currentStep,
+    count: steps.length,
+  });
+
+  useEffect(() => {
+    setActiveStep(state.currentStep);
+  }, [state.currentStep, setActiveStep]);
 
   useEffect(() => {
     // Initialize wizard session
@@ -68,14 +77,14 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
   }, [dispatch, state.isInitialized, userType]);
 
   const handleNext = () => {
-    if (state.currentStep < steps.length - 1) {
-      dispatch({ type: 'SET_STEP', payload: state.currentStep + 1 });
+    if (activeStep < steps.length - 1) {
+      dispatch({ type: 'SET_STEP', payload: activeStep + 1 });
     }
   };
 
   const handleBack = () => {
-    if (state.currentStep > 0) {
-      dispatch({ type: 'SET_STEP', payload: state.currentStep - 1 });
+    if (activeStep > 0) {
+      dispatch({ type: 'SET_STEP', payload: activeStep - 1 });
     }
   };
 
@@ -98,21 +107,31 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
     );
   }
 
-  const CurrentStepComponent = steps[state.currentStep]?.component || WelcomeStep;
-  const isFirstStep = state.currentStep === 0;
-  const isLastStep = state.currentStep === steps.length - 1;
+  const CurrentStepComponent = steps[activeStep]?.component || WelcomeStep;
+  const isFirstStep = activeStep === 0;
+  const isLastStep = activeStep === steps.length - 1;
 
   return (
     <Container maxW="container.lg" py={8}>
-      <Paper borderRadius="lg" boxShadow="md" p={6}>
-        <Typography variant="h4" mb={6} textAlign="center" fontWeight="bold">
+      <Card borderRadius="lg" boxShadow="md" p={6}>
+        <Heading as="h4" size="lg" mb={6} textAlign="center" fontWeight="bold">
           {userType === 'ai_agent' ? 'AI Agent Onboarding' : 'Welcome to The New Fuse'}
-        </Typography>
+        </Heading>
 
-        <Stepper activeStep={state.currentStep} mb={8}>
+        <Stepper index={activeStep} mb={8}>
           {steps.map((step, index) => (
-            <Step key={step.label} completed={index < state.currentStep}>
-              <StepLabel>{step.label}</StepLabel>
+            <Step key={step.label}>
+              <StepIndicator>
+                <StepStatus
+                  complete={<StepIcon />}
+                  incomplete={<StepNumber />}
+                  active={<StepNumber />}
+                />
+              </StepIndicator>
+              <Box flexShrink="0">
+                <StepTitle>{step.label}</StepTitle>
+                {/* You can add StepDescription here if needed */}
+              </Box>
             </Step>
           ))}
         </Stepper>
@@ -135,9 +154,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
           </Box>
           
           <Box textAlign="center">
-            <Typography variant="body2" color="gray.500">
-              Step {state.currentStep + 1} of {steps.length}
-            </Typography>
+            <Text fontSize="sm" color="gray.500">
+              Step {activeStep + 1} of {steps.length}
+            </Text>
           </Box>
           
           <Box textAlign="right">
@@ -159,7 +178,7 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
             )}
           </Box>
         </Grid>
-      </Paper>
+      </Card>
     </Container>
   );
 };

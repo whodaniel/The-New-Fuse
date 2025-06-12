@@ -1,4 +1,4 @@
-import { LLMProviderConfig } from './llm.types.js';
+import { LLMProviderConfig } from './llm.types.tsx';
 
 // Define these interfaces locally instead of importing from @the-new-fuse/types
 interface BaseAgentConfig {

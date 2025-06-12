@@ -2,12 +2,12 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisService } from '../../services/redis.service.js';
-import { SecurityPolicyManager } from '../policy.js';
+import { SecurityPolicyManager } from '../policy.tsx';
 import {
   SecurityPolicy,
   SecurityRule,
   SecurityLevel,
-} from '../types.js';
+} from '../types.tsx';
 
 describe('SecurityPolicyManager', () => {
   let service: SecurityPolicyManager;
@@ -62,10 +62,10 @@ describe('SecurityPolicyManager', () => {
         level: SecurityLevel.MEDIUM,
         rules: [
           {
-            id: rule1',
-            type: rate_limit',
+            id: 'rule1',
+            type: 'rate_limit',
             condition: requests > 100',
-            action: block',
+            action: 'block',
             metadata: {
               description: Rate limit rule',
               priority: 1,
@@ -84,7 +84,7 @@ describe('SecurityPolicyManager', () => {
       expect(policy.level).toBe(policyData.level);
       expect(mockRedisService.set).toHaveBeenCalled();
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'policy.created',
+        policy.'created',
         expect.any(Object),
       );
     });
@@ -93,7 +93,7 @@ describe('SecurityPolicyManager', () => {
   describe('updatePolicy', () => {
     it('should update an existing policy', async (): Promise<void> {) => {
       const existingPolicy {
-        id: policy1',
+        id: 'policy1',
         name: Old Name',
         description: Old description',
         level: SecurityLevel.LOW,
@@ -127,7 +127,7 @@ describe('SecurityPolicyManager', () => {
       expect((updatedPolicy as any).metadata.version).toBe('(1 as any).0.1');
       expect(mockRedisService.set).toHaveBeenCalled();
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'policy.updated',
+        policy.'updated',
         expect.any(Object),
       );
     });
@@ -136,10 +136,10 @@ describe('SecurityPolicyManager', () => {
       (mockRedisService as any).get.mockResolvedValue(null);
 
       await expect(
-        service.updatePolicy('non-existent', { name> {
+        service.updatePolicy('non-existent, { name> {
     it('should delete an existing policy', async (): Promise<void> {) => {
       const policy: SecurityPolicy = {
-        id: policy1',
+        id: 'policy1',
         name: Test Policy',
         description: Test description',
         level: SecurityLevel.LOW,
@@ -157,7 +157,7 @@ describe('SecurityPolicyManager', () => {
 
       expect(mockRedisService.del).toHaveBeenCalledWith(`policy:$ {policy.id}`);
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'policy.deleted',
+        policy.'deleted',
         expect.any(Object),
       );
     });
@@ -166,16 +166,16 @@ describe('SecurityPolicyManager', () => {
   describe('evaluatePolicy', () => {
     it('should evaluate policy rules and return violations', async (): Promise<void> {) => {
       const policy: SecurityPolicy = {
-        id: policy1',
+        id: 'policy1',
         name: Test Policy',
         description: Test description',
         level: SecurityLevel.MEDIUM,
         rules: [
           {
-            id: rule1',
-            type: rate_limit',
+            id: 'rule1',
+            type: 'rate_limit',
             condition: requests > 100',
-            action: block',
+            action: 'block',
             metadata: {
               description: Rate limit rule',
               priority: 1,
@@ -202,23 +202,23 @@ describe('SecurityPolicyManager', () => {
       expect(violations[0].type).toBe('rate_limit');
       expect(violations[0].severity).toBe(SecurityLevel.MEDIUM);
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'policy.violations',
+        policy.'violations',
         expect.any(Object),
       );
     });
 
     it('should not evaluate disabled policy', async (): Promise<void> {) => {
       const policy {
-        id: policy1',
+        id: 'policy1',
         name: Test Policy',
         description: Test description',
         level: SecurityLevel.MEDIUM,
         rules: [
           {
-            id: rule1',
-            type: rate_limit',
+            id: 'rule1',
+            type: 'rate_limit',
             condition: requests > 100',
-            action: block',
+            action: 'block',
             metadata: {
               description: Rate limit rule',
               priority: 1,
@@ -246,16 +246,16 @@ describe('SecurityPolicyManager', () => {
 
     it('should handle rule evaluation errors', async (): Promise<void> {) => {
       const policy {
-        id: policy1',
+        id: 'policy1',
         name: Test Policy',
         description: Test description',
         level: SecurityLevel.MEDIUM,
         rules: [
           {
-            id: rule1',
-            type: rate_limit',
+            id: 'rule1',
+            type: 'rate_limit',
             condition: invalid condition',
-            action: block',
+            action: 'block',
             metadata: {
               description: Invalid rule',
               priority: 1,
@@ -280,7 +280,7 @@ describe('SecurityPolicyManager', () => {
 
       expect(violations).toHaveLength(0);
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        '(rule as any).evaluation.error',
+        (rule as any).evaluation.'error',
         expect.any(Object),
       );
     });

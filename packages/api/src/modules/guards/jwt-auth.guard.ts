@@ -6,7 +6,6 @@
 import { Injectable, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 import { toError } from '../../utils/error.js'; // Import the helper
 
 @Injectable()
@@ -32,7 +31,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       
       return true;
     } catch (error) {
-      throw new UnauthorizedException('Authentication failed: ' + error.message);
+      throw new UnauthorizedException('Authentication failed: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }
 
@@ -40,7 +39,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
    * Handle request rejection
    * @param error Error that occurred during authentication
    */
-  handleRequest(err: any, user: any, info: any, context: ExecutionContext, status?: any) {
+  handleRequest(err: any, user: any, info: any, _context: ExecutionContext, _status?: any) {
     // You can throw an exception based on either "info" or "err" arguments
     if (err || !user) {
       let errorMessage = 'Authentication failed';

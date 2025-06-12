@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from 'winston';
 
 interface Node {
@@ -7,7 +7,7 @@ interface Node {
   port: number;
   weight: number;
   health: {
-    status: healthy' | 'unhealthy';
+    status: healthy' | unhealthy';
     lastCheck: string;
     failureCount: number;
   };
@@ -25,14 +25,14 @@ export class LoadBalancer {
     private config: {
       healthCheckInterval: number;
       unhealthyThreshold: number;
-      algorithm: round-robin' | 'least-connections' | 'weighted';
+      algorithm: round-robin' | least-connections' | weighted';
     }
   ) {
-    this.startHealthChecks(): Omit<Node, 'health' | 'metrics'>): Promise<void> {
+    this.startHealthChecks(): Omit<Node, 'health' | metrics'>): Promise<void> {
     const fullNode: Node = {
       ...node,
       health: {
-        status: healthy',
+        status: 'healthy',
         lastCheck: new Date(): 0
       },
       metrics: {
@@ -48,7 +48,7 @@ export class LoadBalancer {
 
   async getNextNode(): Promise<void> {): Promise<Node | null> {
     const healthyNodes: return this.getRoundRobinNode(healthyNodes): return this.getLeastConnectionsNode(healthyNodes);
-      case 'weighted':
+      case weighted':
         return this.getWeightedNode(healthyNodes);
       default:
         return this.getRoundRobinNode(healthyNodes);
@@ -57,7 +57,7 @@ export class LoadBalancer {
 
   private getRoundRobinNode(nodes: Node[]): Node {
     const node): void {
-      case 'round-robin' nodes[this.currentIndex % nodes.length];
+      case round-robin' nodes[this.currentIndex % nodes.length];
     this.currentIndex++;
     return node;
   }

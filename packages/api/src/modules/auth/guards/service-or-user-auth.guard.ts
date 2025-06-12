@@ -1,7 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtAuthGuard } from './jwt-auth.guard.js'; // Assuming this exists and works
 import { ApiKeyAuthGuard } from './api-key-auth.guard.js';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class ServiceOrUserAuthGuard implements CanActivate {
@@ -25,7 +24,7 @@ export class ServiceOrUserAuthGuard implements CanActivate {
     } catch (jwtError) {
         // If JWT guard throws UnauthorizedException, it means JWT was present but invalid, or missing.
         // We don't log this as an error yet, as API key might still work.
-        this.logger.debug(`JWT check failed or JWT not present: ${jwtError.message}`);
+        this.logger.debug(`JWT check failed or JWT not present: ${jwtError instanceof Error ? jwtError.message : 'Unknown error'}`);
     }
 
     // If JWT failed or wasn't present, try API Key authentication
@@ -43,7 +42,7 @@ export class ServiceOrUserAuthGuard implements CanActivate {
       }
     } catch (apiKeyError) {
         // If API Key guard throws UnauthorizedException, it means key was invalid or missing.
-        this.logger.debug(`API Key check failed: ${apiKeyError.message}`);
+        this.logger.debug(`API Key check failed: ${apiKeyError instanceof Error ? apiKeyError.message : 'Unknown error'}`);
     }
 
     // If both failed, deny access

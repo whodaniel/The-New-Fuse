@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AgentNetwork } from './agent-network.js';
-import { AgentSelector } from './agent-selector.js';
-import AgentPersonalityCustomizer from './agent-personality-customizer.js';
+import { AgentNetwork } from './agent-network.tsx';
+import { AgentSelector } from './agent-selector.tsx';
+import AgentPersonalityCustomizer from './agent-personality-customizer.tsx';
 import { webSocketService } from '../services/websocket.js';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 export const AgentCollaborationDashboard = () => {

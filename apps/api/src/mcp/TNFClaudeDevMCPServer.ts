@@ -324,13 +324,13 @@ export class TNFClaudeDevMCPServer {
         }
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Tool call failed for ${name}:`, error);
       return {
         id: request.id,
         error: {
           code: -32603,
-          message: error.message || 'Internal error',
+          message: (error as Error).message || 'Internal error',
           data: { tool: name, args }
         }
       };

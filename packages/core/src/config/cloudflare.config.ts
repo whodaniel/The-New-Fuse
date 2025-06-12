@@ -1,8 +1,8 @@
 export const cloudflareConfig = {
   agent: {
-    namespace: 'newfuse-agents',
+    namespace: 'newfuse-agents,
     persistence: {
-      type: 'durable-objects',
+      type:durable-objects,
       database: true,
     },
     communication: {
@@ -23,7 +23,7 @@ export const cloudflareConfig = {
     },
     vectorize: {
       enabled: true,
-      collections: ['agent-memory', 'task-context'],
+      collections: ['agent-memory, task-context],
     },
   },
 };

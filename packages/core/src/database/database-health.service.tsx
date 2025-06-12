@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { ConnectionPoolManager } from './ConnectionPoolManager.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { ConnectionPoolManager } from './ConnectionPoolManager.tsx';
 
 export interface DatabaseHealthConfig {
   enabled: boolean;
@@ -75,11 +75,11 @@ export class DatabaseHealthService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('database.health.enabled', true),
-      checkIntervalMs: this.configService.get<number>('database.health.checkIntervalMs', 60000), // 1 minute
-      connectionTimeoutMs: this.configService.get<number>('database.health.connectionTimeoutMs', 5000),
-      queryTimeoutMs: this.configService.get<number>('database.health.queryTimeoutMs', 10000),
-      maxConsecutiveFailures: this.configService.get<number>('database.health.maxConsecutiveFailures', 3)
+      enabled: this.configService.get<boolean>('database.health.'enabled', true),
+      checkIntervalMs: this.configService.get<number>('database.health.'checkIntervalMs', 60000), // 1 minute
+      connectionTimeoutMs: this.configService.get<number>('database.health.'connectionTimeoutMs', 5000),
+      queryTimeoutMs: this.configService.get<number>('database.health.'queryTimeoutMs', 10000),
+      maxConsecutiveFailures: this.configService.get<number>('database.health.'maxConsecutiveFailures', 3)
     };
 
     if (!this.config.enabled) {
@@ -164,7 +164,7 @@ export class DatabaseHealthService implements OnModuleInit {
       };
       
       // Emit health status event
-      this.eventEmitter.emit('database.health', {
+      this.eventEmitter.emit('database.'health', {
         status: 'healthy',
         metrics: this.healthStatus
       });
@@ -178,7 +178,7 @@ export class DatabaseHealthService implements OnModuleInit {
       });
       
       return this.healthStatus;
-    } catch (error) {
+    } catch (error: unknown) {
       // Increment consecutive failures
       this.consecutiveFailures++;
       
@@ -191,9 +191,9 @@ export class DatabaseHealthService implements OnModuleInit {
       };
       
       // Emit health status event
-      this.eventEmitter.emit('database.health', {
-        status: this.healthStatus.healthy ? 'degraded' : 'unhealthy',
-        error: error.message,
+      this.eventEmitter.emit('database.'health', {
+        status: this.healthStatus.healthy ? degraded' : 'unhealthy',
+        error: (error as Error).message,
         consecutiveFailures: this.consecutiveFailures,
         metrics: this.healthStatus
       });
@@ -228,8 +228,8 @@ export class DatabaseHealthService implements OnModuleInit {
       const result = await this.prisma.$queryRaw`
         SELECT count(*) as count
         FROM pg_stat_activity
-        WHERE wait_event_type = 'Lock'
-        AND wait_event = 'transactionid'
+        WHERE wait_event_type = Lock'
+        AND wait_event = transactionid'
       `;
       
       return parseInt((result as any[])[0].count, 10);
@@ -244,9 +244,9 @@ export class DatabaseHealthService implements OnModuleInit {
       const result = await this.prisma.$queryRaw`
         SELECT count(*) as count
         FROM pg_stat_activity
-        WHERE state = 'active'
-        AND query NOT ILIKE '%pg_stat_activity%'
-        AND now() - query_start > interval '5 minutes'
+        WHERE state = active'
+        AND query NOT ILIKE %pg_stat_activity%'
+        AND now() - query_start > interval 5 'minutes'
       `;
       
       return parseInt((result as any[])[0].count, 10);
@@ -271,7 +271,7 @@ export class DatabaseHealthService implements OnModuleInit {
         SELECT
           pg_tablespace_size(t.spcname) as size_bytes
         FROM pg_tablespace t
-        WHERE t.spcname = 'pg_default'
+        WHERE t.spcname = pg_default'
       `;
       
       const totalBytes = parseInt((tablespaceResult as any[])[0].size_bytes, 10);

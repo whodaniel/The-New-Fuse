@@ -46,7 +46,7 @@ export interface AuthToken {
   id: string;
   userId: string;
   value: string;
-  type: 'access' | 'refresh';
+  type:access' | refresh';
   scopes: AuthScope[];
   metadata: {
     createdAt: Date;
@@ -61,7 +61,7 @@ export interface AuthSession {
   id: string;
   userId: string;
   token: AuthToken;
-  status: 'active' | 'expired' | 'revoked';
+  status:active' | expired' | revoked';
   metadata: {
     createdAt: Date;
     expiresAt: Date;
@@ -103,7 +103,7 @@ export interface SecurityAudit {
   id: string;
   type: string;
   action: string;
-  status: 'success' | 'failure';
+  status:success' | failure';
   timestamp: Date;
   details: {
     userId?: string;
@@ -133,7 +133,7 @@ export interface SecurityViolation {
     policy?: string;
     rule?: string;
   };
-  status: 'open' | 'investigating' | 'resolved' | 'false_positive';
+  status:open' | investigating' | resolved' | false_positive';
   metadata: {
     detectedBy: string;
     assignedTo?: string;

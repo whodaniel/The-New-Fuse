@@ -6,7 +6,7 @@ exports.useSystemMetrics = useSystemMetrics;
 exports.useKnowledgeUpdates = useKnowledgeUpdates;
 import react_1 from 'react';
 import socket_io_client_1 from 'socket.io-client';
-import WizardProvider_1 from './WizardProvider.js';
+import WizardProvider_1 from './WizardProvider.tsx';
 const WizardWebSocketContext = (0, react_1.createContext)(null);
 function WizardWebSocketProvider({ children, url = process.env.WEBSOCKET_URL || 'ws://localhost:5000' }): any {
     const { state, updateAgents, addConversation } = (0, WizardProvider_1.useWizard)();

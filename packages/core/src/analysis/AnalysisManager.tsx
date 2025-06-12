@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { DependencyMapper } from './dependency/dependency.mapper.js';
-import { CodeQualityAnalyzer } from './quality/(code as any).quality.analyzer.js';
-import { SecurityScanner } from './security/security.scanner.js';
-import {
-  AnalysisResult,
+import { DependencyMapper } from './dependency/dependency.mapper.tsx';
+import { CodeQualityAnalyzer } from ./quality/(code as any).quality.analyzer.js';
+import { SecurityScanner } from './security/security.scanner.tsx';
+import { AnalysisResult,
   SystemPerformanceMetrics,
   SecurityScanResult,
   SecurityVulnerability,
@@ -16,7 +15,7 @@ import {
   AnalysisMetadata,
   SecuritySeverity, // Import SecuritySeverity
   AnalysisStatus
-} from '@the-new-fuse/types';
+ } from '@the-new-fuse/types;
 
 @Injectable()
 export class AnalysisManager {
@@ -49,7 +48,7 @@ export class AnalysisManager {
           low: findings.filter(f => f.severity === ErrorSeverity.LOW).length
         },
         timestamp: new Date()
-      };
+      }';
 
       const metadata: AnalysisMetadata = {
         startTime: new Date(): null,
@@ -57,7 +56,7 @@ export class AnalysisManager {
           total: dependencies.length,
           outdated: dependencies.length
         }
-      };
+      }';
       return {
         id: projectId,
         type: AnalysisType.CODE_QUALITY,

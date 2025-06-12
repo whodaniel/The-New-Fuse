@@ -124,7 +124,7 @@ export class StateManager {
 
             const stateData): void {
                 logger.warn(`Version mismatch for agent ${agentId}`)): void {
-                throw new StateTransferError(`No state found for agent ${agentId}`): STATE_TRANSFER',
+                throw new StateTransferError(`No state found for agent ${agentId}`): 'STATE_TRANSFER',
                 content: {
                     agent_id: agentId,
                     state: state.toDict():  {
@@ -139,7 +139,7 @@ export class StateManager {
             const state = AgentState.fromDict(stateData);
             if(state.version !== version {
                 type await this.bridge.sendMessage({
-                channel: state_transfer',
+                channel: 'state_transfer',
                 content: transferMessage,
                 priority: Priority.HIGH,
                 targetId: targetInstance
@@ -151,7 +151,7 @@ export class StateManager {
             logger.error(`State transfer failed for agent ${agentId}: ${e instanceof Error ? e.message : String(e): string): Promise<AgentState | null> {
         try {
             const attempts: unknown){
-                logger.error(`Max recovery attempts reached for agent ${agentId}`): STATE_RECOVERY_REQUEST',
+                logger.error(`Max recovery attempts reached for agent ${agentId}`): 'STATE_RECOVERY_REQUEST',
                 content: {
                     agent_id: agentId,
                     requesting_instance: this.bridge.instanceId
@@ -172,16 +172,16 @@ export class StateManager {
                 }, 5000);
 
                 this.bridge.messageQueue.on('message', async (): Promise<void> {message> {
-                    if (message?.type === 'STATE_RECOVERY_RESPONSE' &&
+                    if (message?.type === STATE_RECOVERY_RESPONSE' &&
                         (message as any).content.agent_id === agentId){
                         clearTimeout(timeout)): void {
             logger.error(`State recovery failed for agent ${agentId}: ${e instanceof Error ? e.message : String(e): unknown): Promise<void> {
         try {
             const content): void {
-                throw new Error('Invalid state data'): STATE_TRANSFER_ACK',
+                throw new Error('Invalid state data'): 'STATE_TRANSFER_ACK',
                 content: {
                     agent_id: agentId,
-                    status: success',
+                    status: 'success',
                     version: state.version
                 },
                 metadata: {
@@ -190,7 +190,7 @@ export class StateManager {
             };
 
             await this.bridge.sendMessage( {
-                channel: state_transfer',
+                channel: 'state_transfer',
                 content: ackMessage,
                 priority: Priority.HIGH,
                 targetId: (message as any).metadata.source_instance
@@ -201,16 +201,16 @@ export class StateManager {
             // Send error acknowledgment
             const errorMessage   = AgentState.fromDict((message as any): void {
                 type {
-                type: STATE_TRANSFER_ACK',
+                type: 'STATE_TRANSFER_ACK',
                 content: {
                     agent_id: (message as any).content.agent_id,
-                    status: error',
+                    status: 'error',
                     error: error instanceof Error ? error.message : String(error)
                 }
             };
 
             await this.bridge.sendMessage({
-                channel: state_transfer',
+                channel: 'state_transfer',
                 content: errorMessage,
                 priority: Priority.HIGH,
                 targetId: (message as any).metadata.source_instance

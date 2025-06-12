@@ -5,7 +5,7 @@ import { LoggerService } from '../logging/LoggerService.js';
 import { RedisService } from '../persistence/RedisService.js';
 
 interface ComponentStatus {
-  status: 'connected' | 'disconnected' | 'stale';
+  status:connected' | disconnected' | stale';
   lastSeen: number;
   config?: ComponentConfig;
 }
@@ -35,7 +35,7 @@ export class IntegrationManager {
 
   async registerComponent(componentId: string, config: ComponentConfig): Promise<void> {
     await this.redis.hset(
-      'components:status',
+      components: 'status',
       componentId,
       JSON.stringify({
         status: 'connected',
@@ -92,7 +92,7 @@ export class IntegrationManager {
       status.lastSeen = Date.now();
       
       await this.redis.hset(
-        'components:status',
+        components: 'status',
         componentId,
         JSON.stringify(status)
       );
@@ -104,7 +104,7 @@ export class IntegrationManager {
   private broadcastComponentStatus(componentId: string): void {
     const status = this.connectedComponents.get(componentId);
     if (status) {
-      this.server.emit('component:status', { componentId, status });
+      this.server.emit('component: 'status', { componentId, status });
     }
   }
 }

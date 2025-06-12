@@ -6,13 +6,13 @@
 
 ```bash
 # Normal development start
-yarn dev
+bun dev
 
 # API server only
-cd apps/api && yarn dev
+cd apps/api && bun dev
 
 # Backend only
-cd apps/backend && yarn dev
+cd apps/backend && bun dev
 ```
 
 ### What Changed?

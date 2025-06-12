@@ -1,4 +1,4 @@
-import { JsonValue, DataMap } from './common-types.js';
+import { JsonValue, DataMap } from './common-types.tsx';
 export declare enum ListingType {
     SALE = "sale",
     AUCTION = "auction",

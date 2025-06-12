@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MemoryContent, MemoryQuery, VectorStore } from '../types/memory.types.js';
-import { VectorMemoryStore } from './VectorMemoryStore.js';
-import { MemoryManager } from './MemoryManager.js';
+import { VectorMemoryStore } from './VectorMemoryStore.tsx';
+import { MemoryManager } from './MemoryManager.tsx';
 
 @Injectable()
 export class MemorySystem {

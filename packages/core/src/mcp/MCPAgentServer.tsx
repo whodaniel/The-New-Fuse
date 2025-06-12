@@ -1,4 +1,4 @@
-import { MCPMessage, MCPCapability, MCPAgent } from './types.js';
+import { MCPMessage, MCPCapability, MCPAgent } from './types.tsx';
 
 export class MCPAgentServer implements MCPAgent {
     private static instance: MCPAgentServer;
@@ -22,13 +22,13 @@ export class MCPAgentServer implements MCPAgent {
 
     private initializeCapabilities() {
         this.registerCapability({
-            name: registerCapability',
+            name: 'registerCapability',
             description: Register a new capability with the agent',
             parameters: {
-                capability: MCPCapability'
+                capability: 'MCPCapability'
             },
             returns: {
-                success: boolean'
+                success: 'boolean'
             },
             execute: async (): Promise<void> {params) => {
                 return this.registerCapability(params.capability);
@@ -36,7 +36,7 @@ export class MCPAgentServer implements MCPAgent {
         });
 
         this.registerCapability({
-            name: discoverAgents',
+            name: 'discoverAgents',
             description: Discover available agents and their capabilities',
             parameters: {
                 filter: Record<string, unknown>'
@@ -69,12 +69,12 @@ export class MCPAgentServer implements MCPAgent {
                     timestamp: Date.now(),
                     source: {
                         id: this.id,
-                        type: ai_agent',
+                        type: 'ai_agent',
                         capabilities: Array.from(this.capabilities.keys())
                     },
                     target: message.source,
                     content: {
-                        type: capability_response',
+                        type: 'capability_response',
                         action: message.content.action,
                         data: response,
                         priority: message.content.priority
@@ -82,7 +82,7 @@ export class MCPAgentServer implements MCPAgent {
                     metadata: {
                         conversationId: message.metadata.conversationId,
                         parentMessageId: message.messageId,
-                        protocol: mcp',
+                        protocol: 'mcp',
                         protocolVersion: 1.0.0'
                     }
                 });

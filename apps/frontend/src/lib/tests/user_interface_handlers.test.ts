@@ -1,4 +1,4 @@
-import { UserInterfaceHandlers } from '../handlers.js';
+import { UserInterfaceHandlers } from '../handlers.tsx';
 
 describe('UserInterfaceHandlers', () => {
   let uiHandlers;

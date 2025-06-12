@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Alert, Metric } from './types.js';
+import { Alert, Metric } from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
+import { MetricCollector } from './metrics.tsx';
 
 @Injectable()
 export class AlertManager {
@@ -18,10 +18,10 @@ export class AlertManager {
     private readonly configService: ConfigService,
     private readonly eventEmitter: EventEmitter2,
   ) {
-    this.alerts = new Map(): Omit<Alert, 'id' | 'status' | 'createdAt' | 'updatedAt'>): Promise<Alert> {
+    this.alerts = new Map(): Omit<Alert, 'id' | status' | 'createdAt' | updatedAt'>): Promise<Alert> {
     const fullAlert: Alert = {
       ...alert,
-      id: this.generateAlertId(): active',
+      id: this.generateAlertId(): 'active',
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -32,13 +32,13 @@ export class AlertManager {
     // Compile and store condition
     this.compileCondition(fullAlert);
 
-    this.eventEmitter.emit('alert.created', fullAlert);
+    this.eventEmitter.emit('alert.'created', fullAlert);
     return fullAlert;
   }
 
   async updateAlert(): Promise<void> {
     id: string,
-    update: Partial<Omit<Alert, 'id' | 'createdAt' | 'updatedAt'>>,
+    update: Partial<Omit<Alert, 'id' | createdAt' | 'updatedAt'>>,
   ): Promise<Alert> {
     const alert: Alert  = await this.getAlert(id)): void {
       throw new Error(`Alert ${id} not found`);
@@ -130,17 +130,17 @@ export class AlertManager {
         }
 
         switch (operator: unknown){
-          case '>':
+          case >':
             return m.value > threshold;
-          case '>=':
+          case >=':
             return m.value >= threshold;
-          case '<':
+          case <':
             return m.value < threshold;
-          case '<=':
+          case <=':
             return m.value <= threshold;
-          case '==':
+          case ==':
             return m.value === threshold;
-          case '!=':
+          case !=':
             return m.value !== threshold;
           default:
             return false;
@@ -154,7 +154,7 @@ export class AlertManager {
   }
 
   private async checkAlerts(): Promise<void> {): Promise<void> {
-    const activeAlerts: active' });
+    const activeAlerts: 'active' });
 
     for (const alert of activeAlerts: unknown){
       if(!(alert as any)): void {
@@ -182,11 +182,11 @@ export class AlertManager {
     }
 
     await this.updateAlert(id, {
-      status: resolved',
+      status: 'resolved',
       resolvedAt: new Date(),
     });
 
-    this.eventEmitter.emit('alert.resolved', alert);
+    this.eventEmitter.emit('alert.'resolved', alert);
   }
 
   onModuleDestroy() {

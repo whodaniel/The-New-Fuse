@@ -5,7 +5,9 @@ export function userFromStorage(): any {
             return null;
         return JSON.parse(userString);
     }
-    catch (_a) { }
+    catch {
+        // Ignore JSON parse errors
+    }
     return {};
 }
 export function baseHeaders(providedToken = null): any {
@@ -18,7 +20,9 @@ export function safeJsonParse(jsonString, fallback = null): any {
     try {
         return JSON.parse(jsonString);
     }
-    catch (_a) { }
+    catch {
+        // Ignore JSON parse errors
+    }
     return fallback;
 }
 //# sourceMappingURL=request.js.map

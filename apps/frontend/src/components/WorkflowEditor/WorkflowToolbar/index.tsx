@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../ui/Button.js';
+import { Button } from '../../ui/Button.tsx';
 import { ValidationErrors } from './ValidationErrors.js';
 import { ShareButton } from './ShareButton.js';
 import { DeployButton } from './DeployButton.js';

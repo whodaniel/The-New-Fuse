@@ -1,4 +1,4 @@
-import { FeatureSet } from '../processing/featureProcessor.js';
+import { FeatureSet } from '../processing/featureProcessor.tsx';
 import { Logger as WinstonLogger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
 import { Rule, Fact, DecisionEngineConfig, DecisionMetrics, ImplementationPlan, RiskAnalysis, Decision, BenefitAnalysis, CostAnalysis } from '../types.js';
@@ -23,16 +23,16 @@ export class DecisionEngine {
 
     async evaluate(data: any): Promise<Decision> {
         this.decisionLogger.info('Evaluating data for decision', { data });
-        // This is a placeholder decision. Ensure it matches the 'Decision' type from '../types.js'.
+        // This is a placeholder decision. Ensure it matches the Decision' type from '../types.js'.
         const decision: Decision = {
             shouldImplement: true,
             confidence: 0.85,
-            reasoning: ['High potential ROI', 'Aligns with strategic goals'],
+            reasoning: ['High potential ROI', Aligns with strategic 'goals'],
             priority: 'high',
-            timeline: 'Q3 2025',
+            timeline: Q3 2025',
             // Ensure all required fields from the Decision type are populated.
-            // For example, if Decision includes 'estimatedCost', 'riskLevel',
-            // 'benefitAnalysis', 'costAnalysis', 'implementationPlan', they should be added here.
+            // For example, if Decision includes estimatedCost', riskLevel',
+            // benefitAnalysis', costAnalysis', implementationPlan', they should be added here.
             // benefitAnalysis: { technicalBenefits: [], businessBenefits: [], userBenefits: [], metrics: {} }, // Example
             // costAnalysis: { developmentCosts: 0, operationalCosts: 0, maintenanceCosts: 0, trainingCosts: 0, breakdown: {} }, // Example
             // implementationPlan: { steps: [], milestones: [], resources: [] } // Example
@@ -67,7 +67,7 @@ async function runDecisionEngineExample() {
         const exampleConfig: DecisionEngineConfig = {
             // Populate with actual or example config values based on the DecisionEngineConfig type definition
             // For example:
-            // rules: [{ id: 'rule1', condition: 'factA > 10', action: 'setPriorityHigh' }],
+            // rules: [{ id: 'rule1', condition: factA > 10', action: 'setPriorityHigh' }],
             // initialFacts: { factA: 15 },
             // someOtherConfigValue: 'exampleSetting',
             // benefitAnalysis: { technicalBenefits: [], businessBenefits: [], userBenefits: [], metrics: {} },
@@ -75,7 +75,7 @@ async function runDecisionEngineExample() {
             // implementationPlan: { steps: [], milestones: [], resources: [] }
         };
         const engine = new DecisionEngine(exampleConfig);
-        const sampleData = { information: 'some relevant data for evaluation' };
+        const sampleData = { information:some relevant data for evaluation' };
         const decision = await engine.evaluate(sampleData);
         logger.info('Decision from example run:', decision);
     } catch (error) {

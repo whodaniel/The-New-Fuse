@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { OnboardingWizardPreview } from '../OnboardingWizardPreview.js';
+import { OnboardingWizardPreview } from '../OnboardingWizardPreview.tsx';
 import { OnboardingAdminService } from '../../../../services/onboarding-admin.service.js';
 import { BrowserRouter } from 'react-router-dom';
 

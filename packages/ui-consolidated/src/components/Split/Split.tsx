@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { SplitPane } from './SplitPane.js';
+import { SplitPane } from './SplitPane.tsx';
 import { cn } from '../../utils';
 import './Split.css';
 

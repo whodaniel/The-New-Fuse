@@ -1,5 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Agent } from './Agent.js'; // Assuming Agent entity import
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from ''typeorm';
+import { Agent } from './Agent.tsx'; // Assuming Agent entity import
 // import { Stage } from './Stage.js'; // If you have a Stage entity
 
 @Entity()
@@ -23,7 +23,7 @@ export class Pipeline {
     // stages?: Stage[]; // Assuming Stage is a defined interface/type
 
     @Column({ default: 'active' })
-    status!: 'active' | 'inactive' | 'archived';
+    status!: active' | inactive' | archived';
 
     @CreateDateColumn()
     createdAt!: Date;

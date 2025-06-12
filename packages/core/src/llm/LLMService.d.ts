@@ -1,4 +1,4 @@
-import { MonitoringService } from '../monitoring/MonitoringService.js';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
 export declare class LLMService {
     private configService;
     private monitoringService;

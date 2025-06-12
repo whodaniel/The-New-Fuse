@@ -1,6 +1,6 @@
+import React from 'react';
 import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom';
 import { Suspense, lazy, useState, useEffect } from 'react';
-import Landing from './pages/Landing';
 import MainLayout from './components/layout/MainLayout';
 import ProtectedRoute from './components/core/ProtectedRoute';
 import PublicRoute from './components/core/PublicRoute';
@@ -9,6 +9,7 @@ import Loading from './components/Loading';
 // Import directly loaded pages
 import TestPage from './pages/Test';
 import DebugPage from './pages/Debug';
+import DebugRouting from './pages/DebugRouting';
 
 // Lazy-loaded components
 const Login = lazy(() => import('./pages/auth/Login'));
@@ -18,7 +19,7 @@ const ResetPassword = lazy(() => import('./pages/auth/ResetPassword'));
 const SSO = lazy(() => import('./pages/auth/SSO'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Home = lazy(() => import('./pages/Home'));
-const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal'));
+const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal/index'));
 
 // UI Component pages
 const ComponentsNav = lazy(() => import('./pages/ComponentsNav'));
@@ -26,23 +27,11 @@ const ComponentsShowcase = lazy(() => import('./pages/ComponentsShowcase'));
 const LayoutExample = lazy(() => import('./pages/LayoutExample'));
 
 const Chat = lazy(() => import('./pages/Chat'));
+const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
 // Feature pages
 const TimelineDemo = lazy(() => import('./pages/TimelineDemo'));
 const GraphDemo = lazy(() => import('./pages/graph-demo'));
 const Analytics = lazy(() => import('./pages/Analytics'));
-
-
-
-// Task pages
-const Tasks = lazy(() => import('./pages/Tasks'));
-const TaskDetail = lazy(() => import('./pages/Tasks/Detail'));
-const NewTask = lazy(() => import('./pages/Tasks/New'));
-const EditTask = lazy(() => import('./pages/Tasks/Edit'));
-
-// Suggestion pages
-const Suggestions = lazy(() => import('./pages/Suggestions'));
-const SuggestionDetail = lazy(() => import('./pages/Suggestions/Detail'));
-const NewSuggestion = lazy(() => import('./pages/Suggestions/New'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
@@ -110,12 +99,13 @@ export default function Router() {
   return (
     <Routes>
       {/* Public routes outside of MainLayout */}
-      <Route path="/" element={<Landing />} />
+      <Route path="/" element={<Suspense fallback={<Loading />}><Home /></Suspense>} />
 
       {/* Routes with MainLayout */}
       <Route element={<MainLayout />}>
         <Route path="/test" element={<TestPage />} />
         <Route path="/debug" element={<DebugPage />} />
+        <Route path="/debug-routing" element={<DebugRouting />} />
         <Route path="/home" element={
           <Suspense fallback={<Loading />}>
             <Home />
@@ -141,6 +131,11 @@ export default function Router() {
         <Route path="/chat" element={
           <Suspense fallback={<Loading />}>
             <Chat />
+          </Suspense>
+        } />
+        <Route path="/multi-agent-chat" element={
+          <Suspense fallback={<Loading />}>
+            <MultiAgentChat />
           </Suspense>
         } />
 
@@ -210,7 +205,7 @@ export default function Router() {
         <Route path="*" element={
           <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
             <h1 className="text-3xl font-bold mb-4 text-gray-800">Page Not Found</h1>
-            <p className="text-gray-600 mb-8">The page you're looking for doesn't exist or has been moved.</p>
+            <p className="text-gray-600 mb-8">The page you&apos;re looking for doesn&apos;t exist or has been moved.</p>
             <div className="flex gap-4">
               <Link to="/" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
                 Go Home

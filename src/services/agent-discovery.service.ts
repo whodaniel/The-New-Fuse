@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../lib/prisma/prisma.service.js';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { AgentType, AgentStatus } from '@prisma/client';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 

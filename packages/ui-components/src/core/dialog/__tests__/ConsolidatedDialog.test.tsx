@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogFooter,
   Modal,
-} from '../ConsolidatedDialog.js';
+} from '../ConsolidatedDialog.tsx';
 
 describe('Dialog', () => {
   it('renders dialog with trigger and content', async () => {

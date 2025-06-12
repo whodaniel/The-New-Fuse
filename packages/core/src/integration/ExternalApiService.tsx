@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { Logger } from '../logging/LoggingService.js';
-import { CacheManager } from '../optimization/CacheManager.js';
+import { CacheManager } from '../optimization/CacheManager.tsx';
 import { RetryConfig } from '../types/RetryConfig.js';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class ExternalApiService {
       baseURL: this.config.baseURL,
       timeout: this.config.timeout || 30000,
       headers: {
-        'Content-Type': 'application/json',
+        Content-Type': application/'json',
       },
     };
 
@@ -128,7 +128,7 @@ export class ExternalApiService {
   }
 
   private shouldRetry(error: unknown): boolean {
-    if (!error || typeof error !== 'object' || !('response' in error)) {
+    if (!error || typeof error !== object' || !('response' in error)) {
       return false;
     }
 

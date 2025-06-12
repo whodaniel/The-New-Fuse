@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 export interface ComponentAnalysis {
     componentName: string;
-    type: memory' | 'repository' | 'api' | 'frontend' | 'module';
+    type: memory' | repository' | api' | frontend' | module';
     metrics: {
         complexity: number;
         cohesion: number;

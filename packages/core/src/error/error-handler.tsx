@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MonitoringService } from '../monitoring/monitoring.service.js';
+import { MonitoringService } from '../monitoring/monitoring.service.tsx';
 import {
   ApplicationError,
   BaseError,
   ErrorCategory,
   ErrorSeverity,
   ErrorMetadata
-} from './types.js';
+} from './types.tsx';
 
 @Injectable()
 export class ErrorHandler {
@@ -56,7 +56,7 @@ export class ErrorHandler {
       error.message,
       ErrorCategory.SYSTEM,
       ErrorSeverity.MEDIUM,
-      'UNKNOWN_ERROR',
+      UNKNOWN_ERROR',
       {
         timestamp: new Date()
       },
@@ -65,7 +65,7 @@ export class ErrorHandler {
   }
 
   private isBaseError(error: Error | BaseError): error is BaseError {
-    return 'category' in error && 'severity' in error && 'code' in error;
+    return category' in error && severity' in error && code' in error;
   }
 
   private extractMetadata(error: BaseError, context?: string): ErrorMetadata {

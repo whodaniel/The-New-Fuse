@@ -12,7 +12,7 @@ export const TaskValidationSchema = z.object({
   metadata: z.record(z.unknown()).optional(),
   dependencies: z.array(z.object({
     taskId: z.string(),
-    type: z.enum(['REQUIRED', 'OPTIONAL']),
+    type: z.enum(['REQUIRED', OPTIONAL']),
     status: z.string()
   })).optional()
 });

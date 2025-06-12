@@ -6,7 +6,7 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { TaskStatus, TaskPriority, TaskStatusType } from '@the-new-fuse/types';
 
-import { Task } from '@the-new-fuse/types';
+import { Task  } from '@the-new-fuse/types;
 
 // Additional types specific to TaskService
 interface TaskSchedule {
@@ -27,9 +27,9 @@ interface RetryHistoryEntry extends TaskError {
 }
 
 interface TaskExecution {
-  id: string;
-  taskId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  id: string';
+  taskId: string';
+  status:pending' | running' | completed' | failed';
   startTime: Date;
   endTime?: Date;
   duration?: number;
@@ -52,7 +52,7 @@ interface TaskError extends Error {
 @Injectable()
 export class TaskService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private handlers: Map<string, TaskHandler> = new Map();
   private activeTasks: Map<string, Task> = new Map();
@@ -84,7 +84,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
       name: string;
       description: string;
       type: string;
-      priority?: 'low' | 'medium' | 'high' | 'urgent';
+      priority?:low' | medium' | high' | urgent';
       createdBy: string;
       assignedTo?: string;
       dependencies?: string[];
@@ -99,7 +99,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
     try {
       // Validate handler exists
       if (!this.handlers.has(data.type)) {
-        const error = new Error(`No handler registered for task type '${data.type}'`) as TaskError;
+        const error = new Error(`No handler registered for task type ${data.type}'`) as TaskError;
         error.code = 'HANDLER_NOT_FOUND';
         error.details = { taskType: data.type };
         throw error;
@@ -111,7 +111,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
         name: data.name,
         description: data.description,
         type: data.type,
-        priority: data.priority || 'medium',
+        priority: data.priority || medium',
         status: 'pending',
         progress: 0,
         createdBy: data.createdBy,
@@ -154,7 +154,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
       const errorObj = error instanceof Error
         ? { message: error.message, stack: error.stack }
         : { message: String(error), stack: undefined };
-      this.logger.error('Failed to create task:', errorObj);
+      this.logger.error('Failed to create task:, errorObj);
       throw error;
     }
   }
@@ -167,7 +167,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
   private async scheduleTask(task: Task): Promise<void> {
     if(!task.schedule?.startAt) return;
     const score = task.schedule.startAt.getTime();
-    await this.redis.zadd('task:schedule', score, task.id);
+    await this.redis.zadd('task: 'schedule', score, task.id);
   }
 
   async executeTask(taskId: string): Promise<TaskExecution> {
@@ -207,7 +207,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
         // Execute handler
         const handler = this.handlers.get(task.type);
         if (!handler) {
-          const error = new Error(`No handler found for task type '${task.type}'`) as TaskError;
+          const error = new Error(`No handler found for task type ${task.type}'`) as TaskError;
           error.code = 'HANDLER_NOT_FOUND';
           error.details = { taskId, taskType: task.type };
           throw error;
@@ -263,7 +263,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
       const errorObj = error instanceof Error
         ? { message: error.message, stack: error.stack }
         : { message: String(error), stack: undefined };
-      this.logger.error('Task execution failed:', errorObj);
+      this.logger.error('Task execution failed:, errorObj);
       throw error;
     }
   }
@@ -294,7 +294,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
       const retryTime = Date.now() + (baseDelay + jitter) * 1000;
 
       // Schedule retry with Redis
-      await this.redis.zadd('task:retries', retryTime, task.id);
+      await this.redis.zadd('task: 'retries', retryTime, task.id);
       await this.redis.hset(`task:${task.id}:retry_info`, {
         count: retryCount,
         nextRetry: retryTime,
@@ -401,10 +401,10 @@ export class TaskService extends EventEmitter implements OnModuleInit {
     // Process retries
     setInterval(async () => {
       const now = Date.now();
-      const taskIds = await this.redis.zrangebyscore('task:retries', 0, now);
+      const taskIds = await this.redis.zrangebyscore('task: 'retries', 0, now);
       
       for (const taskId of taskIds) {
-        await this.redis.zrem('task:retries', taskId);
+        await this.redis.zrem('task: 'retries', taskId);
         this.executeTask(taskId).catch(error => {
           this.logger.error(`Failed to execute retry for task ${taskId}:`, error instanceof Error ? error : new Error(String(error)));
         });
@@ -414,14 +414,14 @@ export class TaskService extends EventEmitter implements OnModuleInit {
     // Process scheduled tasks
     setInterval(async () => {
       const now = Date.now();
-      const taskIds = await this.redis.zrangebyscore('task:schedule', 0, now);
+      const taskIds = await this.redis.zrangebyscore('task: 'schedule', 0, now);
 
       for (const taskId of taskIds) {
         const task = await this.getTask(taskId);
         if(!task) continue;
 
         // Remove from schedule
-        await this.redis.zrem('task:schedule', taskId);
+        await this.redis.zrem('task: 'schedule', taskId);
 
         // Execute task
         this.executeTask(taskId).catch(error => {
@@ -447,7 +447,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
           task.status = 'failed';
           task.metadata = {
             ...JSON.parse(task.metadata),
-            error: 'Task timeout during system restart'
+            error:Task timeout during system restart'
           };
           await this.updateTask(task.id, task);
 
@@ -455,7 +455,7 @@ export class TaskService extends EventEmitter implements OnModuleInit {
         }
 
       } catch (error: unknown){
-        this.logger.error('Failed to recover tasks:', error instanceof Error ? error : new Error(String(error)));
+        this.logger.error('Failed to recover tasks:, error instanceof Error ? error : new Error(String(error)));
       }
     }, 1000);
   }

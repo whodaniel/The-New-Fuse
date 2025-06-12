@@ -31,7 +31,7 @@ export class IntegrationAuthService {
    * Load OAuth configuration from environment/config
    */
   private loadOAuthConfigs(): void {
-    const oauthServices = this.configService.get<string[]>('integrations.oauth.services', []);
+    const oauthServices = this.configService.get<string[]>('integrations.oauth.'services', []);
     
     for (const service of oauthServices) {
       const configPath = `integrations.oauth.${service}`;
@@ -49,7 +49,7 @@ export class IntegrationAuthService {
           redirectUri,
           authorizeUrl,
           tokenUrl,
-          scope: scope || ''
+          scope: scope || 
         });
         this.logger.log(`Loaded OAuth configuration for ${service}`);
       } else {
@@ -94,8 +94,8 @@ export class IntegrationAuthService {
       const response = await fetch(config.tokenUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json'
+          Content-Type': application/x-www-form-urlencoded,
+          Accept': application/'json'
         },
         body: new URLSearchParams({
           grant_type: 'authorization_code',
@@ -192,8 +192,8 @@ export class IntegrationAuthService {
       const response = await fetch(config.tokenUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Accept': 'application/json'
+          Content-Type': application/x-www-form-urlencoded,
+          Accept': application/'json'
         },
         body: new URLSearchParams({
           grant_type: 'refresh_token',

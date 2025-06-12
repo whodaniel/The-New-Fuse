@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { 
-  WorkflowTemplate, 
+import { WorkflowTemplate, 
   WorkflowStep, 
   WorkflowError,
   WorkflowDefinition
-} from '@the-new-fuse/types';
+ } from '@the-new-fuse/types';
 
 @Injectable()
 export class TemplateValidator {

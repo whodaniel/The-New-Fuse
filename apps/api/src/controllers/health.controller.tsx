@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/User.js';
+import { User } from '../entities/User';
 
 @ApiTags('health')
 @Controller('health')
@@ -23,11 +23,11 @@ export class HealthController {
         database: 'connected',
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         status: 'error',
         database: 'disconnected',
-        error: error.message,
+        error: (error as Error).message,
         timestamp: new Date().toISOString(),
       };
     }

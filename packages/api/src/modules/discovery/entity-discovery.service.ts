@@ -1,7 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { MCPRegistryService } from '../mcp/mcp-registry.service.js'; // Adjust path if needed
-import { Prisma } from '@prisma/client'; // For JsonValue type if needed
+import { Prisma } from '@the-new-fuse/database/generated/prisma'; // For JsonValue type if needed
 
 @Injectable()
 export class EntityDiscoveryService implements OnModuleInit {
@@ -58,8 +58,10 @@ export class EntityDiscoveryService implements OnModuleInit {
           metadata: metadata as Prisma.JsonValue, // Cast metadata
         });
         this.logger.log(`Registered/Updated AIModel entity: ${entityName}`);
-      } catch (error) {
-        this.logger.error(`Failed to register AIModel entity for ${providerName}: ${error.message}`, error.stack);
+      } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        this.logger.error(`Failed to register AIModel entity for ${providerName}: ${errorMessage}`, errorStack);
       }
     } else {
       this.logger.log(`API key for ${providerName} (${apiKeyEnvVar}) not found. Skipping registration.`);
@@ -77,8 +79,10 @@ export class EntityDiscoveryService implements OnModuleInit {
                metadata: metadata as Prisma.JsonValue, // Cast metadata
            });
            this.logger.log(`Registered/Updated static entity: ${name}`);
-       } catch (error) {
-           this.logger.error(`Failed to register static entity ${name}: ${error.message}`, error.stack);
+       } catch (error: unknown) {
+           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+           const errorStack = error instanceof Error ? error.stack : undefined;
+           this.logger.error(`Failed to register static entity ${name}: ${errorMessage}`, errorStack);
        }
    }
 }

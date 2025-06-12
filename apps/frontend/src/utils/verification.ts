@@ -21,7 +21,6 @@ export class OutputVerifier {
         ];
     }
     verifySchema(output) {
-        var _a;
         try {
             if (typeof output !== 'object' || output === null) {
                 return {

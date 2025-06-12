@@ -1,6 +1,6 @@
 import { ReactNode, HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, LabelHTMLAttributes } from 'react';
 import { VariantProps } from 'class-variance-authority';
-import { buttonVariants } from './Button.js';
+import { buttonVariants } from './Button.tsx';
 
 // Base Props interface that all component props extend
 export interface BaseProps {

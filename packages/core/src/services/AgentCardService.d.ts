@@ -1,5 +1,5 @@
 import { AgentCard } from '../../types/src/agentCard.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 export declare class AgentCardService {
     private eventEmitter;
     private configService?;
@@ -14,6 +14,6 @@ export declare class AgentCardService {
     advertiseAgentCard(card: AgentCard, hostUrl: string): Promise<void>;
     getDiscoveredAgents(): AgentCard[];
     getAgentById(id: string): AgentCard | undefined;
-    getAgentUrl(id: string): string | undefined;
-    private hostCard;
+    getAgentUrl(id: string): string | undefined';
+    private hostCard';
 }

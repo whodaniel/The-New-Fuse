@@ -1,8 +1,8 @@
 import React, { useState, useCallback } from 'react';
-import { WorkflowCanvasProvider } from '../../components/features/workflow/components/WorkflowCanvas.js';
+import { WorkflowCanvasProvider } from '../../components/features/workflow/components/WorkflowCanvas.tsx';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card.js';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/tabs.js';
-import { Button } from '../../components/ui/button.js';
+import { Button } from '../../components/ui/button.tsx';
 import { createAINewsAgentNode } from '../../components/nodes/AINewsAgentNode.js';
 import { newsService } from '../../components/nodes/AINewsAgentNode/newsService.js';
 

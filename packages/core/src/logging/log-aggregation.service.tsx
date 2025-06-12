@@ -5,8 +5,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
 import * as readline from 'readline';
-import { CentralizedLoggingService } from './centralized-logging.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { CentralizedLoggingService } from './centralized-logging.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 
 const readdir = util.promisify(fs.readdir);
 const stat = util.promisify(fs.stat);
@@ -51,12 +51,12 @@ export class LogAggregationService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('logging.aggregation.enabled', true),
-      scanInterval: this.parseInterval(this.configService.get<string>('logging.aggregation.scanInterval', '5m')),
-      batchSize: this.configService.get<number>('logging.aggregation.batchSize', 1000),
-      directory: this.configService.get<string>('logging.file.directory', 'logs'),
-      storeInDatabase: this.configService.get<boolean>('logging.aggregation.storeInDatabase', true),
-      maxEntriesPerQuery: this.configService.get<number>('logging.aggregation.maxEntriesPerQuery', 10000)
+      enabled: this.configService.get<boolean>('logging.aggregation.'enabled', true),
+      scanInterval: this.parseInterval(this.configService.get<string>('logging.aggregation.'scanInterval', 5m')),
+      batchSize: this.configService.get<number>('logging.aggregation.'batchSize', 1000),
+      directory: this.configService.get<string>('logging.file.'directory', logs'),
+      storeInDatabase: this.configService.get<boolean>('logging.aggregation.'storeInDatabase', true),
+      maxEntriesPerQuery: this.configService.get<number>('logging.aggregation.'maxEntriesPerQuery', 10000)
     };
 
     if (!this.config.enabled) {
@@ -184,7 +184,7 @@ export class LogAggregationService implements OnModuleInit {
       const levelCounts = await this.prisma.$queryRaw`
         SELECT level, COUNT(*) as count
         FROM "LogEntry"
-        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` : '1=1'}
+        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` :1=1'}
         GROUP BY level
         ORDER BY count DESC
       `;
@@ -193,7 +193,7 @@ export class LogAggregationService implements OnModuleInit {
       const contextCounts = await this.prisma.$queryRaw`
         SELECT context, COUNT(*) as count
         FROM "LogEntry"
-        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` : '1=1'}
+        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` : 1=1'}
         GROUP BY context
         ORDER BY count DESC
         LIMIT 10
@@ -205,7 +205,7 @@ export class LogAggregationService implements OnModuleInit {
           date_trunc('hour', timestamp) as hour,
           COUNT(*) as count
         FROM "LogEntry"
-        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` : '1=1'}
+        WHERE ${whereClause.timestamp ? `timestamp >= ${whereClause.timestamp.gte} AND timestamp <= ${whereClause.timestamp.lte}` :1=1'}
         GROUP BY hour
         ORDER BY hour
       `;
@@ -317,7 +317,7 @@ export class LogAggregationService implements OnModuleInit {
           
           // Emit event for each log entry
           batch.forEach(entry => {
-            this.eventEmitter.emit('logging.entry', entry);
+            this.eventEmitter.emit('logging.'entry', entry);
           });
           
           processedCount += batchCount;
@@ -337,7 +337,7 @@ export class LogAggregationService implements OnModuleInit {
       
       // Emit event for each log entry
       batch.forEach(entry => {
-        this.eventEmitter.emit('logging.entry', entry);
+        this.eventEmitter.emit('logging.'entry', entry);
       });
       
       processedCount += batchCount;
@@ -359,7 +359,7 @@ export class LogAggregationService implements OnModuleInit {
 
   private sanitizeMetadata(logEntry: any): any {
     // Extract metadata fields (everything except standard fields)
-    const standardFields = ['timestamp', 'level', 'message', 'context', 'correlationId'];
+    const standardFields = ['timestamp', level', message', context', correlationId'];
     const metadata: Record<string, any> = {};
     
     for (const key in logEntry) {
@@ -385,7 +385,7 @@ export class LogAggregationService implements OnModuleInit {
     }
     
     const value = parseInt(match[1], 10);
-    const unit = (match[2] || 'm').toLowerCase();
+    const unit = (match[2] || m').toLowerCase();
     
     return value * (units[unit as keyof typeof units] || units.m);
   }
@@ -412,7 +412,7 @@ export class LogAggregationService implements OnModuleInit {
   }
 
   private formatSize(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB'];
+    const units = ['B', KB', MB', GB'];
     let size = bytes;
     let unitIndex = 0;
     

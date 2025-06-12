@@ -4,8 +4,8 @@ exports.GraphAnalytics = GraphAnalytics;
 import react_1 from 'react';
 import material_1 from '@mui/material';
 import recharts_1 from 'recharts';
-import WizardProvider_1 from './WizardProvider.js';
-import WizardWebSocket_1 from './WizardWebSocket.js';
+import WizardProvider_1 from './WizardProvider.tsx';
+import WizardWebSocket_1 from './WizardWebSocket.tsx';
 function GraphAnalytics(): any {
     const { state } = (0, WizardProvider_1.useWizard)();
     const { subscribeToEvent, unsubscribeFromEvent, sendMessage } = (0, WizardWebSocket_1.useWizardWebSocket)();

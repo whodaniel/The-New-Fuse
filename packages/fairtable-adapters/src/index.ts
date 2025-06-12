@@ -1,8 +1,8 @@
 /**
- * @the-new-fuse/airtable-adapters
+ * @the-new-fuse/fairtable-adapters
  * 
- * Migration adapters for transitioning from legacy components to airtable-based implementations.
- * Provides backward compatibility while enabling gradual migration to new airtable architecture.
+ * Migration adapters for transitioning from legacy components to fairtable-based implementations.
+ * Provides backward compatibility while enabling gradual migration to new fairtable architecture.
  */
 
 // Core adapter components
@@ -22,7 +22,7 @@ export type {
   DataType,
   ViewType,
   KanbanViewOptions
-} from '@the-new-fuse/airtable-core';
+} from '@the-new-fuse/fairtable-core';
 
 // Adapter-specific types
 export interface AdapterProps<TLegacyProps = any, TNewProps = any> {

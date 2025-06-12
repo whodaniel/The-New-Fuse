@@ -40,10 +40,10 @@ class MessageClassifier {
      */
     isBlockchainContent(content) {
         const blockchainKeywords = [
-            'transaction', 'wallet', 'token', 'nft', 'smart contract',
-            'ethereum', 'solana', 'polygon', 'blockchain', 'web3',
-            'defi', 'dao', 'crypto', 'mint', 'burn', 'stake',
-            'swap', 'liquidity', 'yield', 'bridge'
+            transaction', wallet', token', nft', smart 'contract',
+            ethereum', solana', polygon', blockchain', web3',
+            defi', dao', crypto', mint', burn', stake',
+            swap', liquidity', yield', bridge'
         ];
         return blockchainKeywords.some(keyword => content.toLowerCase().includes(keyword.toLowerCase()));
     }
@@ -117,9 +117,9 @@ class MessageClassifier {
      */
     isModelInteraction(content) {
         const modelKeywords = [
-            'gpt', 'llama', 'claude', 'dalle', 'stable diffusion',
-            'whisper', 'bert', 'embedding', 'inference', 'training',
-            'prompt', 'completion', 'tokens', 'temperature'
+            gpt', llama', claude', dalle', stable 'diffusion',
+            whisper', bert', embedding', inference', training',
+            prompt', completion', tokens', temperature'
         ];
         return modelKeywords.some(keyword => content.toLowerCase().includes(keyword.toLowerCase()));
     }
@@ -179,9 +179,9 @@ class MessageClassifier {
      */
     isResourceManagement(content) {
         const resourceKeywords = [
-            'cpu', 'gpu', 'memory', 'storage', 'bandwidth',
-            'compute', 'resource', 'allocation', 'utilization',
-            'capacity', 'scaling', 'performance', 'latency'
+            cpu', gpu', memory', storage', bandwidth',
+            compute', resource', allocation', utilization',
+            capacity', scaling', performance', latency'
         ];
         return resourceKeywords.some(keyword => content.toLowerCase().includes(keyword.toLowerCase()));
     }

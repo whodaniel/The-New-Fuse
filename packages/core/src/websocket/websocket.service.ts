@@ -1,19 +1,19 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@the-new-fuse/utils';
-import { WebSocketError } from '@the-new-fuse/types';
+import { WebSocketError  } from '@the-new-fuse/types;
 
 @Injectable()
 export class WebSocketService implements OnModuleInit {
   private readonly logger: Logger;
-  private io: Server;
+  private io: Server';
 
   constructor() {
-    this.logger = new Logger(WebSocketService.name);
+    this.logger = new Logger(WebSocketService.name)';
     this.io = new Server({
       cors: {
-        origin: (process as any).env.CORS_ORIGIN || '*',
-        methods: ['GET', 'POST']
+        origin: (process as any).env.CORS_ORIGIN || *',
+        methods: ['GET', POST']
       }
     });
   }
@@ -53,9 +53,9 @@ export class WebSocketService implements OnModuleInit {
   private handleError(socket: Socket, error: Error | WebSocketError): void {
     const errorMessage = error instanceof WebSocketError
       ? error.message
-      : 'Internal WebSocket error';
+      :Internal WebSocket error';
 
-    this.logger.error('WebSocket error:', {
+    this.logger.error('WebSocket error:, {
       socketId: socket.id,
       error: errorMessage,
       stack: error.stack
@@ -77,7 +77,7 @@ export class WebSocketService implements OnModuleInit {
     } catch (error) {
       this.logger.error('Failed to emit event', {
         event,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message :Unknown error'
       });
     }
   }

@@ -1,9 +1,9 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import { App } from './App.js';
-import { AuthProvider } from './providers/AuthProvider.js';
-import { ToastProvider } from './components/ui/toast.js'; // Import ToastProvider
+import { App } from './App.tsx';
+import { AuthProvider } from './providers/AuthProvider.tsx';
+import { ToastProvider } from './components/ui/toast.tsx'; // Import ToastProvider
 import './styles/globals.css'; // Re-add global CSS import
 
 const container = document.getElementById('root');

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@the-new-fuse/database/client';
-import { Logger } from '@the-new-fuse/utils';
+import { PrismaClient } from '@the-new-fuse/database';
+import { Logger  } from '@the-new-fuse/utils;
 
 interface TaskData {
   type: string;
@@ -28,8 +28,8 @@ export class TaskService {
           ...taskData,
           data: JSON.stringify(taskData),
         },
-      });
-      return task;
+      })';
+      return task';
     } catch (error: any) {
       this.logger.error('Failed to create task:', error);
       throw error;

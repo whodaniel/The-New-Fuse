@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TaskStatus, TaskStatusType, TaskType, TaskPriority, TaskResult, Task, TaskMetadata } from '@the-new-fuse/types';
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { PrismaService } from '@the-new-fuse/database';
 import crypto from 'crypto';
 
@@ -11,14 +11,14 @@ export class TaskManager {
   async createTask(taskData: Partial<Task>): Promise<Task> {
     const newTask: Task = {
       id: taskData.id || crypto.randomUUID(),
-      title: taskData.title || '',
-      description: taskData.description || '',
+      title: taskData.title || ,
+      description: taskData.description || ,
       type: taskData.type || TaskType.GENERIC,
       priority: taskData.priority || TaskPriority.NORMAL,
       status: TaskStatus.PENDING,
-      userId: taskData.userId || 'system',
+      userId: taskData.userId || system',
       metadata: {
-        creator: taskData.metadata?.creator || 'system',
+        creator: taskData.metadata?.creator || system',
         ...taskData.metadata
       } as TaskMetadata,
       dependencies: taskData.dependencies || [],

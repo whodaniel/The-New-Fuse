@@ -1,5 +1,5 @@
 import express, { Router } from 'express';
-import { getUserProfile, updateUserProfile } from '../controllers/userController';
+import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
 // import { authenticateToken } from '../middleware/auth'; // Assuming auth middleware exists or will be added
 
 const router: Router = express.Router();

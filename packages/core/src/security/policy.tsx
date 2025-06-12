@@ -4,7 +4,7 @@ import {
   SecurityRule,
   SecurityLevel,
   SecurityViolation,
-} from './types.js';
+} from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -24,14 +24,14 @@ export class SecurityPolicyManager {
     this.rules = new Map();
   }
 
-  async createPolicy(policy: Omit<SecurityPolicy, 'id' | 'metadata'>): Promise<SecurityPolicy> {
+  async createPolicy(policy: Omit<SecurityPolicy, 'id' | metadata'>): Promise<SecurityPolicy> {
     const fullPolicy: SecurityPolicy = {
       ...policy,
       id: uuidv4(),
       metadata: {
         createdAt: new Date(),
         updatedAt: new Date(),
-        version: '1.0.0', // Initialize version correctly
+        version:1.0.0', // Initialize version correctly
         enabled: true,
       },
     };
@@ -39,7 +39,7 @@ export class SecurityPolicyManager {
     await this.storePolicy(fullPolicy);
     this.compilePolicyRules(fullPolicy);
 
-    this.eventEmitter.emit('policy.created', {
+    this.eventEmitter.emit('policy.'created', {
       policyId: fullPolicy.id,
       name: fullPolicy.name,
     });
@@ -49,7 +49,7 @@ export class SecurityPolicyManager {
 
   async updatePolicy(
     id: string,
-    update: Partial<Omit<SecurityPolicy, 'id' | 'metadata'>>,
+    update: Partial<Omit<SecurityPolicy, 'id' | metadata'>>,
   ): Promise<SecurityPolicy> {
     const policy = await this.getPolicy(id);
     if (!policy) {
@@ -69,7 +69,7 @@ export class SecurityPolicyManager {
     await this.storePolicy(updatedPolicy);
     this.compilePolicyRules(updatedPolicy);
 
-    this.eventEmitter.emit('policy.updated', {
+    this.eventEmitter.emit('policy.'updated', {
       policyId: updatedPolicy.id,
       name: updatedPolicy.name,
       version: (updatedPolicy as any).metadata.version,
@@ -99,7 +99,7 @@ export class SecurityPolicyManager {
         });
     }
 
-    this.eventEmitter.emit('policy.deleted', {
+    this.eventEmitter.emit('policy.'deleted', {
       policyId: id,
       name: policy.name,
     });
@@ -153,7 +153,7 @@ export class SecurityPolicyManager {
                     }
                 }
             } catch (error) {
-                console.error('Error parsing policy data during list operation:', error);
+                console.error('Error parsing policy data during list operation:, error);
             }
         }
     }
@@ -189,7 +189,7 @@ export class SecurityPolicyManager {
                  console.error(`Failed to recompile rule ${rule.id}.`);
             }
         } catch (error: any) {
-             this.eventEmitter.emit('rule.compilation.error', {
+             this.eventEmitter.emit('rule.compilation.'error', {
                 policyId: policy.id,
                 ruleId: rule.id,
                 error: error.message,
@@ -205,7 +205,7 @@ export class SecurityPolicyManager {
           violations.push(this.createViolation(policy, rule, context));
         }
       } catch (error: any) {
-        this.eventEmitter.emit('rule.evaluation.error', {
+        this.eventEmitter.emit('rule.evaluation.'error', {
           policyId: policy.id,
           ruleId: rule.id,
           context: context, // Include context for debugging
@@ -217,7 +217,7 @@ export class SecurityPolicyManager {
     }
 
     if (violations.length > 0) {
-      this.eventEmitter.emit('policy.violations', {
+      this.eventEmitter.emit('policy.'violations', {
         policyId: policy.id,
         violations,
         context, // Include context in the event
@@ -239,7 +239,7 @@ export class SecurityPolicyManager {
           this.policies.set(policy.id, policy);
           this.compilePolicyRules(policy);
         } catch (error) {
-          console.error('Error loading policy from Redis:', error);
+          console.error('Error loading policy from Redis:, error);
         }
       }
     }
@@ -260,7 +260,7 @@ export class SecurityPolicyManager {
       try {
         this.compileRule(rule); // Compile and store the function
       } catch (error: any) {
-        this.eventEmitter.emit('rule.compilation.error', {
+        this.eventEmitter.emit('rule.compilation.'error', {
           policyId: policy.id,
           ruleId: rule.id,
           error: error.message,
@@ -297,8 +297,8 @@ export class SecurityPolicyManager {
     }
 
 
-    const compiledFunc = (context: any): boolean => { // Use 'any' for context flexibility or a more specific type
-      if (typeof context !== 'object' || context === null || !(field in context)) {
+    const compiledFunc = (context: any): boolean => { // Use any' for context flexibility or a more specific type
+      if (typeof context !== object' || context === null || !(field in context)) {
         // console.warn(`Field "${field}" not found in context for rule ${rule.id}`);
         return false; // Or throw error, depending on desired strictness
       }
@@ -306,19 +306,19 @@ export class SecurityPolicyManager {
 
       // Perform comparison based on operator
       switch (operator) {
-        case '>':
+        case >':
           return contextValue > value;
-        case '>=':
+        case >=':
           return contextValue >= value;
-        case '<':
+        case <':
           return contextValue < value;
-        case '<=':
+        case <=':
           return contextValue <= value;
-        case '==':
-        case '===': // Treat == and === similarly for simplicity here
+        case ==':
+        case ===': // Treat == and === similarly for simplicity here
           return contextValue === value;
-        case '!=':
-        case '!==': // Treat != and !== similarly
+        case !=':
+        case !==': // Treat != and !== similarly
           return contextValue !== value;
         default:
           console.error(`Unsupported operator "${operator}" in rule ${rule.id}`);
@@ -345,11 +345,11 @@ export class SecurityPolicyManager {
       context: { // Include relevant context
         policyId: policy.id,
         ruleId: rule.id,
-        ...(typeof context === 'object' ? context : { value: context }), // Spread context if object
+        ...(typeof context === object' ? context : { value: context }), // Spread context if object
       },
       status: 'open', // Default status
       metadata: {
-        detectedBy: 'policy-manager',
+        detectedBy: policy-manager,
         tags: ['policy_violation', rule.type, `severity:${rule.severity || policy.level}`],
         ...(rule.metadata || {}) // Include rule metadata if available
       },
@@ -359,7 +359,7 @@ export class SecurityPolicyManager {
 
   private incrementVersion(version: string): string {
     const parts = version.split('.');
-    if (parts.length !== 3) return '1.0.1'; // Default if format is wrong
+    if (parts.length !== 3) return 1.0.1'; // Default if format is wrong
     const patch = parseInt(parts[2], 10);
     if (isNaN(patch)) return `${parts[0]}.${parts[1]}.1`; // Default if patch is not number
     return `${parts[0]}.${parts[1]}.${patch + 1}`;

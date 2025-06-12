@@ -1,7 +1,7 @@
 import { OpenAI } from 'openai';
 import { v4 as uuidv4 } from 'uuid';
 import { EventEmitter } from 'events';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 
 export interface FunctionCallingAgentConfig {
   name: string;

@@ -1,4 +1,4 @@
-import { User as PrismaUser } from "@the-new-fuse/database/client";
+import { User as PrismaUser } from "@the-new-fuse/database";
 
 export interface User extends PrismaUser {
   id: string;

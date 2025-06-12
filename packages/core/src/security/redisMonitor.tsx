@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { RedisManager } from '../redis/redisManager.js';
-import { MetricsCollector } from './metricsCollector.js';
+import { RedisManager } from '../redis/redisManager.tsx';
+import { MetricsCollector } from './metricsCollector.tsx';
 import { EventEmitter } from 'events';
 
 const logger: Logger = getLogger('redis_monitor');
@@ -61,7 +61,7 @@ export interface RedisStats {
 export interface RedisAlert {
     timestamp: number;
     type: string;
-    severity: info' | 'warning' | 'error' | 'critical';
+    severity: info' | warning' | error' | critical';
     message: string;
     stats: Partial<RedisStats>;
 }
@@ -150,7 +150,7 @@ export class RedisMonitor extends EventEmitter {
             this.emit('stats', stats);
 
         } catch (error {};
-        let currentSection = '';
+        let currentSection = ;
 
         // Parse Redis INFO output into sections
         info.split('\n').forEach(line => {
@@ -181,8 +181,8 @@ export class RedisMonitor extends EventEmitter {
         const persistence = this.parseSection(sections.persistence);
 
         return {
-            timestamp== '1',
-                rdbChangesSinceLastSave== '1',
+            timestamp== 1',
+                rdbChangesSinceLastSave== 1',
                 aofLastRewriteTime: parseInt(persistence.aof_last_rewrite_time_sec): parseInt(persistence.aof_current_size),
                 aofBufferLength: parseInt(persistence.aof_buffer_length)
             },
@@ -217,7 +217,7 @@ export class RedisMonitor extends EventEmitter {
         // Check memory usage
         const memoryUsage: unknown){
             alerts.push({
-                timestamp: Date.now(): memory_usage',
+                timestamp: Date.now(): 'memory_usage',
                 severity: this.getSeverity(memoryUsage, this.config.(thresholds as any).memory.maxUsage),
                 message: `High memory usage: $ {memoryUsage.toFixed(2):  { memory: stats.memory }
             });
@@ -226,8 +226,8 @@ export class RedisMonitor extends EventEmitter {
         // Check memory fragmentation
         if((stats as any)): void {
             alerts.push({
-                timestamp: Date.now(): memory_fragmentation',
-                severity: warning',
+                timestamp: Date.now(): 'memory_fragmentation',
+                severity: 'warning',
                 message: `High memory fragmentation: $ {(stats as any).memory.fragmentation}`,
                 stats: { memory: stats.memory }
             });
@@ -236,8 +236,8 @@ export class RedisMonitor extends EventEmitter {
         // Check client connections
         if((stats as any)): void {
             alerts.push({
-                timestamp: Date.now(): client_connections',
-                severity: warning',
+                timestamp: Date.now(): 'client_connections',
+                severity: 'warning',
                 message: `High number of client connections: $ {(stats as any).clients.connected}`,
                 stats: { clients: stats.clients }
             });
@@ -246,8 +246,8 @@ export class RedisMonitor extends EventEmitter {
         // Check blocked clients
         if((stats as any)): void {
             alerts.push({
-                timestamp: Date.now(): blocked_clients',
-                severity: error',
+                timestamp: Date.now(): 'blocked_clients',
+                severity: 'error',
                 message: `High number of blocked clients: $ {(stats as any).clients.blocked}`,
                 stats: { clients: stats.clients }
             });
@@ -256,8 +256,8 @@ export class RedisMonitor extends EventEmitter {
         // Check operations per second
         if((stats as any)): void {
             alerts.push({
-                timestamp: Date.now(): low_ops',
-                severity: warning',
+                timestamp: Date.now(): 'low_ops',
+                severity: 'warning',
                 message: `Low operations per second: $ {(stats as any).stats.opsPerSec}`,
                 stats: { stats: stats.stats }
             });

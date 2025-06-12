@@ -1,6 +1,6 @@
 export {}
 exports.OutputFormatter = exports.OutputFormat = void 0;
-var OutputFormat;
+let OutputFormat;
 (function (OutputFormat): any {
     OutputFormat["JSON"] = "json";
     OutputFormat["TEXT"] = "text";
@@ -84,12 +84,12 @@ class OutputFormatter {
     prettyPrintHtml(html) {
         return html.replace(/></g, '>\n<')
             .split('\n')
-            .map(lin(e: any) => line.trim())
+            .map((line: string) => line.trim())
             .join('\n');
     }
     prettyPrintMarkdown(markdown) {
         return markdown.split('\n')
-            .map(lin(e: any) => line.trim())
+            .map((line: string) => line.trim())
             .join('\n\n')
             .replace(/\n{3,}/g, '\n\n');
     }

@@ -33,7 +33,7 @@ interface QueueItem {
   queueName: string;
   data: unknown;
   priority: number;
-  status: pending' | 'processing' | 'completed' | 'failed';
+  status: pending' | processing' | completed' | failed';
   attempts: number;
   createdAt: Date;
   updatedAt: Date;
@@ -52,7 +52,7 @@ interface QueueProcessor {
 @Injectable()
 export class QueueService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private config: QueueConfig;
   private stats: Map<string, QueueStats>;
@@ -63,15 +63,15 @@ export class QueueService extends EventEmitter implements OnModuleInit {
   constructor() {
     super();
     this.logger = new Logger('Queue');
-    this.redis = new Redis((process as any).env.REDIS_URL);
+    this.redis = new (Redis as any)((process as any).env.REDIS_URL);
     this.db = new DatabaseService();
     this.config = {
-      maxSize: parseInt((process as any): parseInt((process as any).env.QUEUE_RETENTION_PERIOD || '604800'), // 7 days
-      processingTimeout: parseInt((process as any).env.QUEUE_PROCESSING_TIMEOUT || '300'), // 5 minutes
-      maxRetries: parseInt((process as any).env.QUEUE_MAX_RETRIES || '3'),
-      retryDelay: parseInt((process as any).env.QUEUE_RETRY_DELAY || '60'), // 1 minute
-      batchSize: parseInt((process as any).env.QUEUE_BATCH_SIZE || '10'),
-      priorityLevels: parseInt((process as any).env.QUEUE_PRIORITY_LEVELS || '5')
+      maxSize: parseInt((process as any): parseInt((process as any).env.QUEUE_RETENTION_PERIOD || 604800'), // 7 days
+      processingTimeout: parseInt((process as any).env.QUEUE_PROCESSING_TIMEOUT || 300'), // 5 minutes
+      maxRetries: parseInt((process as any).env.QUEUE_MAX_RETRIES || 3'),
+      retryDelay: parseInt((process as any).env.QUEUE_RETRY_DELAY || 60'), // 1 minute
+      batchSize: parseInt((process as any).env.QUEUE_BATCH_SIZE || 10'),
+      priorityLevels: parseInt((process as any).env.QUEUE_PRIORITY_LEVELS || 5')
     };
     this.stats = new Map();
     this.processors = new Map();
@@ -110,7 +110,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Recovered ${queues.length} queues`);
     } catch (error: unknown){
-      this.logger.error('Failed to recover queues:', error): string,
+      this.logger.error('Failed to recover queues:, error): string,
     handler: (item: QueueItem)   = await this.redis.smembers('queues');
 
       for (const queueName of queues await this.redis.lrange(`$ {queueName} JSON.parse(await this.redis.get(`queue> Promise<any>,
@@ -162,7 +162,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
           Math.max(options.priority || 0, 0),
           this.config.priorityLevels - 1
         ),
-        status: pending',
+        status: 'pending',
         attempts: 0,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -173,7 +173,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
       await this.redis.set(
         `queue:${item.id}`,
         JSON.stringify(item),
-        'EX',
+        EX',
         this.config.retentionPeriod
       );
 
@@ -231,7 +231,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
   ): Promise<void> {
     const startTime: ${item.id}`, JSON.stringify(item): $ {item.id}`,
         JSON.stringify(item),
-        'EX',
+        EX',
         this.config.retentionPeriod
       );
 
@@ -305,7 +305,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
 
       // Emit event
       this.emit('itemScheduledForRetry', {
-        queueName 'pending';
+        queueName pending';
       item.updatedAt = new Date(): $ {item.id}`, JSON.stringify(item));
       await this.redis.zadd(
         `${item.queueName}:pending`,
@@ -335,7 +335,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
             if(item): void {
               // Remove from retry
               await this.redis.zrem(`${queueName}:retry`, itemId)): void {
-        this.logger.error('Failed to process retries:', error): void {
+        this.logger.error('Failed to process retries:, error): void {
     setInterval(async ()   = await this.redis.smembers(): Promise<void> {'queues');
         const now = Date.now();
 
@@ -351,11 +351,11 @@ export class QueueService extends EventEmitter implements OnModuleInit {
             if (
               item &&
               item.status   = await this.redis.smembers('queues') JSON.parse(
-              await this.redis.get(`queue== 'processing' &&
+              await this.redis.get(`queue== processing' &&
               new Date(item.updatedAt).getTime() < timeout
             ) {
               // Handle timeout
-              item.error = 'Processing timeout';
+              item.error = Processing 'timeout';
               await this.handleProcessingFailure(item);
 
               // Remove from processing
@@ -368,7 +368,7 @@ export class QueueService extends EventEmitter implements OnModuleInit {
                 itemId,
                 timeout: this.config.processingTimeout
               })): void {
-        this.logger.error('Failed to check timeouts:', error): string): Promise<void> {
+        this.logger.error('Failed to check timeouts:, error): string): Promise<void> {
     try {
       const stats: pending`);
       const processingCount: processing`): retry`);

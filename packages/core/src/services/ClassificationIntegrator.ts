@@ -80,7 +80,7 @@ class ClassificationIntegrator {
      * Generate cache key based on content and context
      */
     generateCacheKey(content, context) {
-        const contextHash = context ? JSON.stringify(context) : ';
+        const contextHash = context ? JSON.stringify(context) :;
         return `classification:${Buffer.from(content + contextHash).toString('base64')}`;
     }
     /**
@@ -106,7 +106,7 @@ class ClassificationIntegrator {
                 window = config.apiWindow || window;
                 break;
         }
-        return this.rateLimiter.isRateLimited(context?.user?.id || 'anonymous', quickClass.contentType, limit, window);
+        return this.rateLimiter.isRateLimited(context?.user?.id || anonymous', quickClass.contentType, limit, window);
     }
     /**
      * Track communication patterns and metadata

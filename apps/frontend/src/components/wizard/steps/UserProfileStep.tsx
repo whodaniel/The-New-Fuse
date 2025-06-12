@@ -13,7 +13,7 @@ import {
   FormErrorMessage,
   Divider
 } from '@chakra-ui/react';
-import { useWizard } from '../WizardProvider.js';
+import { useWizard } from '../WizardProvider.tsx';
 
 export const UserProfileStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();

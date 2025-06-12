@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { PrismaClient } from "@the-new-fuse/database/client";
+import { PrismaClient } from "@the-new-fuse/database";
 import OpenAI from "openai";
 
 const router = express.Router();

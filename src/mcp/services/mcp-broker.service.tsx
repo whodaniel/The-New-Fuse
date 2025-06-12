@@ -1,13 +1,13 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
-import { MCPServer } from '../MCPServer.js';
-import { MCPAgentServer } from '../MCPAgentServer.js';
-import { MCPChatServer } from '../MCPChatServer.js';
-import { MCPWorkflowServer } from '../MCPWorkflowServer.js';
-import { MCPFuseServer } from '../MCPFuseServer.js';
-import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer.js';
-import { MCPRAGServer } from '../MCPRAGServer.js';
+import { MCPServer } from '../MCPServer.tsx';
+import { MCPAgentServer } from '../MCPAgentServer.tsx';
+import { MCPChatServer } from '../MCPChatServer.tsx';
+import { MCPWorkflowServer } from '../MCPWorkflowServer.tsx';
+import { MCPFuseServer } from '../MCPFuseServer.tsx';
+import { MCPFileCoordinationServer } from '../MCPFileCoordinationServer.tsx';
+import { MCPRAGServer } from '../MCPRAGServer.tsx';
 
 /**
  * Message interface for MCP communication
@@ -86,12 +86,12 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
     const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
     
     try {
-      this.publisher = new Redis(redisUrl);
-      this.subscriber = new Redis(redisUrl);
+      this.publisher = new (Redis as any)(redisUrl);
+      this.subscriber = new (Redis as any)(redisUrl);
       
       this.logger.log('Connected to Redis');
-    } catch (error) {
-      this.logger.error(`Failed to connect to Redis: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to connect to Redis: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -107,8 +107,8 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
       ]);
       
       this.logger.log('Disconnected from Redis');
-    } catch (error) {
-      this.logger.error(`Failed to disconnect from Redis: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to disconnect from Redis: ${(error as Error).message}`);
     }
   }
 
@@ -142,8 +142,8 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
       });
       
       this.logger.log('Redis subscriptions set up');
-    } catch (error) {
-      this.logger.error(`Failed to set up Redis subscriptions: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to set up Redis subscriptions: ${(error as Error).message}`);
       throw error;
     }
   }

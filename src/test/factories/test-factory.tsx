@@ -1,10 +1,10 @@
-import { container } from '../setup.js';
-import type { TYPES } from '../../core/di/types.js';
-import { DatabaseService } from '../../core/database/database-service.js';
+import { container } from '../setup.tsx';
+import type { TYPES } from '../../core/di/types.tsx';
+import { DatabaseService } from '../../core/database/database-service.tsx';
 import { faker } from "@faker-js/faker";
 import { DeepPartial } from "typeorm";
-import { User } from '../../entities/user.entity.js';
-import { Workflow } from '../../entities/workflow.entity.js';
+import { User } from '../../entities/user.entity.tsx';
+import { Workflow } from '../../entities/workflow.entity.tsx';
 
 export class TestFactory {
   protected static dbService = container.get<DatabaseService>(

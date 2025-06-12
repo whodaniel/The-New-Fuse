@@ -1,4 +1,4 @@
-import { MCPServer, MCPServerOptions } from './MCPServer.js';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
 /**
  * MCP Server implementation for the Workflow System
  * Provides capabilities for workflow execution, composition, and monitoring

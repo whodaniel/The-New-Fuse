@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
-import { useLayout } from '../../../contexts/LayoutContext.js';
+import { useLayout } from '../../../contexts/LayoutContext.tsx';
 import {
     Home,
     LayoutDashboard,

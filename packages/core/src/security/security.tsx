@@ -30,48 +30,48 @@ interface SecurityPolicy {
 export const STRICT_POLICY: SecurityPolicy = {
   level: SecurityLevel.HIGH,
   allowedPatterns: [
-    '^[a-zA-Z0-9\\s\\-_\\.]+$' // Alphanumeric with basic punctuation
+    ^[a-zA-Z0-9\\s\\-_\\.]+$' // Alphanumeric with basic punctuation
   ],
   blockedPatterns: [
-    '<script.*?>.*?</script>', // Script tags
-    'javascript:', // JavaScript protocol
+    <script.*?>.*?</script>', // Script tags
+    javascript:, // JavaScript protocol
     'eval\\(', // eval(): ]\\s*\\w+', // Passwords
-    'token[=:]\\s*\\w+' // Tokens
+    token[=:]\\s*\\w+' // Tokens
   ],
   maxMessageSize: 1024 * 1024, // 1MB
   requireEncryption: true,
   requireAuthentication: true,
-  allowedRoles: ['admin', 'agent', 'system']
+  allowedRoles: ['admin', agent', system']
 };
 
 export const MEDIUM_POLICY: SecurityPolicy = {
   level: SecurityLevel.MEDIUM,
   allowedPatterns: [
-    '^[a-zA-Z0-9\\s\\-_\\.,;:!?@#$%^&*()]+$' // More permissive
+    ^[a-zA-Z0-9\\s\\-_\\.,;:!?@#$%^&*()]+$' // More permissive
   ],
   blockedPatterns: [
-    '<script.*?>.*?</script>', // Script tags
-    'javascript:', // JavaScript protocol
+    <script.*?>.*?</script>', // Script tags
+    javascript:, // JavaScript protocol
     'password[=:]\\s*\\w+' // Passwords
   ],
   maxMessageSize: 5 * 1024 * 1024, // 5MB
   requireEncryption: true,
   requireAuthentication: true,
-  allowedRoles: ['admin', 'agent', 'system', 'user']
+  allowedRoles: ['admin', agent', system', user']
 };
 
 export const LOW_POLICY: SecurityPolicy = {
   level: SecurityLevel.LOW,
   allowedPatterns: [
-    '.*' // Allow anything
+    .*' // Allow anything
   ],
   blockedPatterns: [
-    '<script.*?>.*?</script>' // Still block scripts
+    <script.*?>.*?</script>' // Still block scripts
   ],
   maxMessageSize: 10 * 1024 * 1024, // 10MB
   requireEncryption: false,
   requireAuthentication: false,
-  allowedRoles: ['admin', 'agent', 'system', 'user', 'guest']
+  allowedRoles: ['admin', agent', system', user', guest']
 };
 
 interface SecurityCheck {

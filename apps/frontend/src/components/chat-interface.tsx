@@ -1,17 +1,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ChatInterface = ChatInterface;
 import react_1 from 'react';
-import card_1 from './ui/card.js';
+import card_1 from './ui/card.tsx';
 import input_1 from './ui/input.js';
-import button_1 from './ui/button.js';
+import button_1 from './ui/button.tsx';
 import scroll_area_1 from './ui/scroll-area.js';
 import SocketContext_1 from '../services/SocketContext.js';
 import theme_context_1 from '../contexts/theme-context.js';
 import useMessages_1 from '../hooks/useMessages.js';
-import useAgents_1 from '../hooks/useAgents.js';
-import EnhancedChatBubble_1 from './chat/EnhancedChatBubble.js';
-import typing_indicator_1 from './typing-indicator.js';
-import agent_selector_1 from './agent-selector.js';
+import useAgents_1 from '../hooks/useAgents.tsx';
+import EnhancedChatBubble_1 from './chat/EnhancedChatBubble.tsx';
+import typing_indicator_1 from './typing-indicator.tsx';
+import agent_selector_1 from './agent-selector.tsx';
 import message_utils_1 from '../utils/message-utils.js';
 function ChatInterface() {
     var _a;

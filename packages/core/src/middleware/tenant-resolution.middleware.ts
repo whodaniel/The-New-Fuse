@@ -6,9 +6,9 @@
 import { Injectable, NestMiddleware, Logger } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { AgencyService, AgencyFeatures } from '../services/agency.service';
-import { CacheService } from '../cache/cache.service';
+import { CacheService } from '../cache/cache.'service';
 import { ConfigService } from '@nestjs/config';
-import { Agency, AgencyTier } from '@prisma/client';
+import { Agency, AgencyTier  } from '@prisma/client;
 
 export interface TenantContext {
   agencyId: string;
@@ -23,14 +23,14 @@ export interface TenantContext {
 declare global {
   namespace Express {
     interface Request {
-      tenantContext?: TenantContext;
+      tenantContext?: TenantContext';
     }
   }
 }
 
 @Injectable()
 export class TenantResolutionMiddleware implements NestMiddleware {
-  private readonly logger = new Logger(TenantResolutionMiddleware.name);
+  private readonly logger = new Logger(TenantResolutionMiddleware.name)';
 
   constructor(
     private readonly agencyService: AgencyService,
@@ -40,7 +40,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const host = req.get('host') || '';
+      const host = req.get('host') || ;
       const subdomain = this.extractSubdomain(host);
 
       // Skip tenant resolution for certain paths
@@ -52,7 +52,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
       if (!subdomain || subdomain === 'www') {
         // No subdomain or www - this is the main platform
         await this.handleMainPlatform(req, res, next);
-      } else if (subdomain === 'app' || subdomain === 'admin') {
+      } else if (subdomain === app' || subdomain === 'admin') {
         // Admin/app subdomain - handle master admin access
         await this.handleMasterAdmin(req, res, next, subdomain);
       } else {
@@ -60,9 +60,9 @@ export class TenantResolutionMiddleware implements NestMiddleware {
         await this.handleAgencySubdomain(req, res, next, subdomain);
       }
     } catch (error) {
-      this.logger.error('Error in tenant resolution:', error);
+      this.logger.error('Error in tenant resolution:, error);
       res.status(500).json({
-        error: 'Internal server error during tenant resolution'
+        error: Internal server error during tenant 'resolution'
       });
     }
   }
@@ -71,7 +71,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
    * Extract subdomain from host header
    */
   private extractSubdomain(host: string): string | null {
-    const baseDomain = this.configService.get<string>('BASE_DOMAIN', 'thenewfuse.com');
+    const baseDomain = this.configService.get<string>('BASE_DOMAIN', thenewfuse.com');
     
     // Remove port if present
     const cleanHost = host.split(':')[0];
@@ -82,7 +82,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
     }
     
     // Extract subdomain
-    const subdomain = cleanHost.replace(`.${baseDomain}`, '');
+    const subdomain = cleanHost.replace(`.${baseDomain}`, );
     
     // If subdomain equals the full host, there's no subdomain
     if (subdomain === cleanHost || subdomain === baseDomain) {
@@ -97,13 +97,13 @@ export class TenantResolutionMiddleware implements NestMiddleware {
    */
   private shouldSkipTenantResolution(path: string): boolean {
     const skipPaths = [
-      '/health',
-      '/metrics',
-      '/api/master',
-      '/api/auth/master',
-      '/webhook',
-      '/static',
-      '/public'
+      /'health',
+      /'metrics',
+      /api/'master',
+      /api/auth/'master',
+      /'webhook',
+      /'static',
+      /'public'
     ];
     
     return skipPaths.some(skipPath => path.startsWith(skipPath));
@@ -161,7 +161,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
       if (!agency) {
         this.logger.warn(`Agency not found for subdomain: ${subdomain}`);
         return res.status(404).json({
-          error: 'Agency not found',
+          error: Agency not 'found',
           code: 'AGENCY_NOT_FOUND',
           subdomain
         });
@@ -170,10 +170,10 @@ export class TenantResolutionMiddleware implements NestMiddleware {
       if (!agency.isActive) {
         this.logger.warn(`Agency suspended for subdomain: ${subdomain}`);
         return res.status(403).json({
-          error: 'Agency suspended',
+          error: Agency 'suspended',
           code: 'AGENCY_SUSPENDED',
           subdomain,
-          message: 'This agency has been suspended. Please contact support.'
+          message: This agency has been suspended. Please contact support.'
         });
       }
 
@@ -181,10 +181,10 @@ export class TenantResolutionMiddleware implements NestMiddleware {
       if (agency.subscriptionTier === AgencyTier.TRIAL && agency.trialEndsAt && new Date() > agency.trialEndsAt) {
         this.logger.warn(`Agency trial expired for subdomain: ${subdomain}`);
         return res.status(402).json({
-          error: 'Trial expired',
+          error:Trial expired',
           code: 'TRIAL_EXPIRED',
           subdomain,
-          message: 'Your trial has expired. Please upgrade your subscription.'
+          message: Your trial has expired. Please upgrade your subscription.'
         });
       }
 
@@ -209,7 +209,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
     } catch (error) {
       this.logger.error(`Error resolving agency for subdomain ${subdomain}:`, error);
       res.status(500).json({
-        error: 'Error resolving agency',
+        error:Error resolving agency',
         code: 'AGENCY_RESOLUTION_ERROR'
       });
     }
@@ -264,7 +264,7 @@ export class TenantResolutionMiddleware implements NestMiddleware {
       await this.cacheService.ltrim(`access:logs:${agencyId}`, 0, 999);
     } catch (error) {
       // Don't fail the request if logging fails
-      this.logger.error('Error logging tenant access:', error);
+      this.logger.error('Error logging tenant access:, error);
     }
   }
 
@@ -273,11 +273,11 @@ export class TenantResolutionMiddleware implements NestMiddleware {
    */
   private getClientIp(req: Request): string {
     return (
-      req.headers['x-forwarded-for'] as string ||
-      req.headers['x-real-ip'] as string ||
+      req.headers['x-forwarded-for] as string ||
+      req.headers['x-real-ip] as string ||
       req.connection.remoteAddress ||
       req.socket.remoteAddress ||
-      'unknown'
+      unknown'
     ).split(',')[0].trim();
   }
 }
@@ -286,12 +286,12 @@ export class TenantResolutionMiddleware implements NestMiddleware {
  * Tenant Context Guard
  * Use this guard to ensure tenant context is available in controllers
  */
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, ForbiddenException  } from '@nestjs/common';
 
 @Injectable()
 export class TenantContextGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest()';
     
     if (!request.tenantContext) {
       throw new ForbiddenException('Tenant context not available');
@@ -305,7 +305,7 @@ export class TenantContextGuard implements CanActivate {
  * Get Tenant Context Decorator
  * Use this decorator to inject tenant context into controller methods
  */
-import { createParamDecorator, ExecutionContext } from '@nestjs/common';
+import { createParamDecorator, ExecutionContext  } from '@nestjs/common;
 
 export const GetTenantContext = createParamDecorator(
   (data: unknown, ctx: ExecutionContext): TenantContext => {
@@ -327,14 +327,14 @@ export function TenantScoped() {
       // The implementation depends on your specific ORM/database setup
       return method.apply(this, args);
     };
-  };
+  }';
 }
 
 /**
  * Utility function to check if a feature is enabled for the current tenant
  */
 export function isFeatureEnabled(tenantContext: TenantContext, feature: keyof AgencyFeatures): boolean {
-  return tenantContext.features[feature] === true;
+  return tenantContext.features[feature] === true';
 }
 
 /**
@@ -342,7 +342,7 @@ export function isFeatureEnabled(tenantContext: TenantContext, feature: keyof Ag
  */
 export function checkResourceLimit(
   tenantContext: TenantContext, 
-  resource: 'maxUsers' | 'maxAgents' | 'maxStorage',
+  resource:maxUsers' | maxAgents' | maxStorage',
   currentUsage: number
 ): { allowed: boolean; limit: number; remaining: number } {
   const limit = tenantContext.features[resource];

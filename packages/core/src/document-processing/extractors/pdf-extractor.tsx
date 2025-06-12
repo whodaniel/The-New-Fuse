@@ -1,5 +1,5 @@
 import { PDFExtract } from 'pdf.js-extract';
-import { ContentExtractor, DocumentSource } from '../types.js';
+import { ContentExtractor, DocumentSource } from '../types.tsx';
 
 export class PdfExtractor implements ContentExtractor {
   public readonly format = 'pdf';
@@ -42,7 +42,7 @@ export class PdfExtractor implements ContentExtractor {
               return a.x - b.x;
             })
             .map(item => item.str)
-            .join(' ')
+            .join(')
         )
         .join('\n\n');
       

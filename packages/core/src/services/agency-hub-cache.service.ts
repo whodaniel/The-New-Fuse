@@ -6,7 +6,7 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 export interface CacheOptions {
   ttl?: number;  // Time to live in seconds
@@ -46,11 +46,11 @@ export class AgencyHubCacheService {
   async set<T>(key: string, value: T, options?: CacheOptions): Promise<void> {
     try {
       const ttl = options?.ttl || 300; // 5 minutes default
-      await this.cacheManager.set(key, value, ttl * 1000); // Convert to milliseconds
-      this.logger.debug(`Cache set for key: ${key}, TTL: ${ttl}s`);
+      await this.cacheManager.set(key, value, ttl * 1000)'; // Convert to milliseconds
+      this.logger.debug(`Cache set for key: ${key}, TTL: ${ttl}s`)';
       
       // Emit cache set event for monitoring
-      this.eventEmitter.emit('cache.set', { key, ttl });
+      this.eventEmitter.emit('cache.'set', { key, ttl });
     } catch (error) {
       this.logger.error(`Cache set error for key ${key}:`, error);
     }
@@ -65,7 +65,7 @@ export class AgencyHubCacheService {
       this.logger.debug(`Cache delete for key: ${key}`);
       
       // Emit cache delete event
-      this.eventEmitter.emit('cache.delete', { key });
+      this.eventEmitter.emit('cache.'delete', { key });
     } catch (error) {
       this.logger.error(`Cache delete error for key ${key}:`, error);
     }
@@ -109,7 +109,7 @@ export class AgencyHubCacheService {
       this.logger.debug(`Cleared ${keys.length} cache entries matching pattern: ${pattern}`);
       
       // Emit pattern clear event
-      this.eventEmitter.emit('cache.pattern.clear', { pattern, count: keys.length });
+      this.eventEmitter.emit('cache.pattern.'clear', { pattern, count: keys.length });
     } catch (error) {
       this.logger.error(`Cache pattern clear error for pattern ${pattern}:`, error);
     }
@@ -195,7 +195,7 @@ export class AgencyHubCacheService {
         hitRate: 0
       };
     } catch (error) {
-      this.logger.error('Error getting cache stats:', error);
+      this.logger.error('Error getting cache stats:, error);
       return {
         totalKeys: 0,
         memoryUsage: 0,
@@ -214,7 +214,7 @@ export class AgencyHubCacheService {
       // This would be implemented to pre-load frequently accessed data
       // For example, agency details, common service categories, etc.
       
-      this.eventEmitter.emit('cache.warmup.complete', { agencyId });
+      this.eventEmitter.emit('cache.warmup.'complete', { agencyId });
     } catch (error) {
       this.logger.error(`Cache warmup error for agency ${agencyId}:`, error);
     }

@@ -1,4 +1,4 @@
-import { MCPServer, MCPServerOptions } from './MCPServer.js';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
 import { AgentService } from '../services/agentService.js';
 /**
  * MCP Server implementation for the Agent System

@@ -3,7 +3,7 @@ export interface BaseEvent {
   timestamp: Date;
 }
 
-import { User } from "@the-new-fuse/database/client";
+import { User } from "@the-new-fuse/database";
 
 export class UserCreatedEvent implements BaseEvent {
   constructor(

@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service.js';
-import { MetricsService } from '../../metrics/metrics.service.js';
+import { MetricsService } from '../../metrics/metrics.service.tsx';
 import { 
   PerformanceInsight, 
-  PerformanceMetricsResult, 
   SystemPerformanceMetrics,
   ResourceManager,
   TaskService
 } from '@the-new-fuse/types';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils';
 
 interface AnalysisResult {
   values: SystemPerformanceMetrics;
@@ -177,7 +175,7 @@ export class PerformanceAnalyzer implements ResourceManager {
     //     type: 'cpu',
     //     severity: 'warning',
     //     description: `High CPU usage detected: ${metrics.cpuUsage}%`,
-    //     recommendation: 'Consider scaling up resources or optimizing CPU-intensive operations',
+    //     recommendation:Consider scaling up resources or optimizing CPU-intensive operations',
     //     metrics, // This would be a single metrics object
     //     timestamp: new Date()
     //   });
@@ -187,7 +185,7 @@ export class PerformanceAnalyzer implements ResourceManager {
     //     type: 'memory',
     //     severity: 'warning',
     //     description: `High memory usage detected: ${metrics.memoryUsage}%`,
-    //     recommendation: 'Consider increasing memory allocation or optimizing memory usage',
+    //     recommendation:Consider increasing memory allocation or optimizing memory usage',
     //     metrics,
     //     timestamp: new Date()
     //   });
@@ -197,7 +195,7 @@ export class PerformanceAnalyzer implements ResourceManager {
     //     type: 'latency',
     //     severity: 'warning',
     //     description: `High latency detected: ${metrics.latency}ms`,
-    //     recommendation: 'Investigate potential bottlenecks in request processing',
+    //     recommendation:Investigate potential bottlenecks in request processing',
     //     metrics,
     //     timestamp: new Date()
     //   });
@@ -207,7 +205,7 @@ export class PerformanceAnalyzer implements ResourceManager {
     //     type: 'throughput',
     //     severity: 'warning',
     //     description: `Low throughput detected: ${metrics.throughput} requests/sec`,
-    //     recommendation: 'Investigate potential bottlenecks in request processing',
+    //     recommendation:Investigate potential bottlenecks in request processing',
     //     metrics,
     //     timestamp: new Date()
     //   });

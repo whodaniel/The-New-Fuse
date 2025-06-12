@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis'; // Assuming ioredis, replace if using a different client
+import { Redis } from ''ioredis'; // Assuming ioredis, replace if using a different client
 
 // Define a basic structure for the config type
 interface RateLimitConfigType {

@@ -1,5 +1,5 @@
-export * from './web-scraper.js';
-export * from './serp-api.js';
+export * from './web-scraper.tsx';
+export * from './serp-api.tsx';
 export * from './zapier.js';
 export * from './slack.js';
 export * from './google-drive.js';

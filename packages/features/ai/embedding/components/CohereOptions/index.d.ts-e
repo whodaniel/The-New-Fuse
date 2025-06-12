@@ -1,1 +1,0 @@
-export { CohereEmbeddingOptions } from './CohereOptions';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Select, ColorPicker, Switch, VStack } from '@chakra-ui/react';
-import { useTheme } from './ThemeContext.js';
+import { useTheme } from './ThemeContext.tsx';
 
 export const ThemeCustomizer: React.React.FC<{}> = () => {
   const { currentTheme, setTheme, customizeTheme } = useTheme();

@@ -1,22 +1,22 @@
-import { Schedule } from '../types.js';
+import { Schedule } from '../types.tsx';
 
 export const componentAnalysisSchedule: Schedule = {
-  id: 'component-analysis-schedule',
-  name: 'Component Analysis Schedule',
-  description: 'Runs component analysis daily to track changes in component usage',
+  id:component-analysis-schedule,
+  name:Component Analysis Schedule',
+  description:Runs component analysis daily to track changes in component usage',
   type: 'recurring',
   taskTemplate: {
-    type: 'component-analysis',
-    name: 'Daily Component Analysis',
-    description: 'Analyzes component usage and tracks changes over time',
+    type: component-analysis,
+    name:Daily Component Analysis',
+    description:Analyzes component usage and tracks changes over time',
     priority: 'medium',
     metadata: {
-      retention: '90days' // Keep analysis results for 90 days
+      retention: 90days' // Keep analysis results for 90 days
     }
   },
   timing: {
     // Run daily at midnight
-    cron: '0 0 * * *',
+    cron:0 0 * * *',
   },
   enabled: true,
   metadata: {

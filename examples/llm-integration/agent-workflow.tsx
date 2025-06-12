@@ -3,8 +3,8 @@ import { AgentLLMService } from '@the-new-fuse/core/services/agent-llm.service';
 import { PromptService } from '@the-new-fuse/core/services/prompt.service';
 import { LLMService } from '@the-new-fuse/core/services/llm.service';
 import { Agent } from '@the-new-fuse/core/entities/agent.entity';
-import { AgentLLMConfig, CompletionConfig } from '@the-new-fuse/core/types/llm.types';
-import { AgentPromptTemplate } from '@the-new-fuse/core/types/prompt.types';
+import { AgentLLMConfig, CompletionConfig } from '@the-new-fuse/types/llm.types';
+import { AgentPromptTemplate } from '@the-new-fuse/types/prompt.types';
 
 @Injectable()
 export class AgentWorkflowExample {

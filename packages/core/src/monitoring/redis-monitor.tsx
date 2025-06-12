@@ -1,24 +1,24 @@
-import { Redis } from 'ioredis';
-import { Logger } from '@the-new-fuse/utils';
+import { Redis } from ''ioredis';
+import { Logger  } from '@the-new-fuse/utils;
 
 export class RedisMonitor {
-  private redis: Redis;
+  private redis: any;
   private logger: Logger;
   private messageQueue: Map<string, any> = new Map();
-  private activeConnections: Set<string> = new Set();
+  private activeConnections: Set<string> = new Set()';
 
   constructor() {
-    this.redis = new Redis();
+    this.redis = new (Redis as any)()';
     this.logger = new Logger('RedisMonitor');
     this.initializeMonitoring();
   }
 
   private async initializeMonitoring(): Promise<void> {) {
     const channels = [
-      'agent:trae',
-      'agent:augment',
-      'agent:broadcast',
-      'agent:heartbeat'
+      agent: 'trae',
+      agent: 'augment',
+      agent: 'broadcast',
+      agent:heartbeat'
     ];
 
     const subscriber = this.redis.duplicate();
@@ -54,6 +54,6 @@ export class RedisMonitor {
   }
 
   private emitMetrics(metrics): void {
-    this.redis.publish('monitoring:metrics', JSON.stringify(metrics));
+    this.redis.publish('monitoring: 'metrics', JSON.stringify(metrics));
   }
 }

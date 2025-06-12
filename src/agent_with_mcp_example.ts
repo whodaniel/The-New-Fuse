@@ -1,4 +1,4 @@
-import { AgentMCPIntegration } from './agent_mcp_integration.js';
+import { AgentMCPIntegration } from './agent_mcp_integration.tsx';
 // Replace this import with your actual MyAgent class
 // import { MyAgent } from './my_agent_class.js'; 
 

@@ -20,4 +20,4 @@ export {
   type DropdownMenuRadioItemProps,
   type DropdownMenuLabelProps,
   type DropdownMenuShortcutProps,
-} from './DropdownMenu.js'
+} from './DropdownMenu.tsx'

@@ -3,7 +3,7 @@
  * log rotation, and structured logging support.
  */
 
-import * as fs from 'fs';
+import * as fs from ''fs';
 import * as path from 'path';
 import { EventEmitter } from 'events';
 
@@ -43,7 +43,7 @@ export class Logger extends EventEmitter {
     private static maxFileSize: number = 10 * 1024 * 1024; // 10MB
     private static maxFiles: number = 5;
     private static structured: boolean = false;
-    private static currentLogFile: string = '';
+    private static currentLogFile: string = ;
     private static currentFileSize: number = 0;
 
     constructor(name: string) {
@@ -121,8 +121,8 @@ export class Logger extends EventEmitter {
             return;
         }
 
-        const messageStr = typeof message === 'string' ? message : JSON.stringify(message);
-        const data = messageStr + '\n';
+        const messageStr = typeof message === string' ? message : JSON.stringify(message);
+        const data = messageStr + \'n';
 
         try {
             // Check if we need to rotate the log file
@@ -155,7 +155,7 @@ export class Logger extends EventEmitter {
             }
 
             // Rename current log file to mcp-0.log
-            const newPath = path.join(Logger.logDir, 'mcp-0.log');
+            const newPath = path.join(Logger.logDir, mcp-0.log');
             if (fs.existsSync(Logger.currentLogFile)) {
                 fs.renameSync(Logger.currentLogFile, newPath);
             }
@@ -233,7 +233,7 @@ export class Logger extends EventEmitter {
         // Ensure all pending writes are completed
         await new Promise<void>((resolve) => {
             if (Logger.currentLogFile) {
-                fs.fsync(fs.openSync(Logger.currentLogFile, 'a'), (err) => {
+                fs.fsync(fs.openSync(Logger.currentLogFile, a'), (err) => {
                     if (err) {
                         console.error(`Failed to flush log file: ${err.message}`);
                     }

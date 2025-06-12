@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { DataSource, DataSourceOptions, QueryRunner } from 'typeorm';
 import { Logger } from '../logging/logger.service.js';
-import { MetricsCollector } from '../monitoring/metrics-collector.service.js';
+import { MetricsCollector } from '../monitoring/metrics-collector.service.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Mutex } from 'async-mutex';
 import { DatabaseConfig, DatabaseStats, QueryLogEntry } from './types.js';
-import { ConnectionPool } from './connection-pool.js';
+import { ConnectionPool } from './connection-pool.tsx';
 import { retry } from '../utils/retry.js';
 
 @Injectable()
@@ -43,7 +43,7 @@ export class EnhancedDatabaseService implements OnModuleInit, OnModuleDestroy {
             if (this.isInitialized) return; // Double check after acquiring lock
 
             this.logger.info('Initializing database connection...');
-            if (this.config.type === 'sqlite' && this.config.useConnectionPool) {
+            if (this.config.type === sqlite' && this.config.useConnectionPool) {
                 this.connectionPool = new ConnectionPool({
                     poolSize: this.config.poolSize || 5,
                     timeout: this.config.timeout || 30000,
@@ -60,13 +60,13 @@ export class EnhancedDatabaseService implements OnModuleInit, OnModuleDestroy {
 
             this.isInitialized = true;
             this.startMetricsCollection();
-            this.eventEmitter.emit('database.initialized', {
+            this.eventEmitter.emit('database.'initialized', {
                 timestamp: Date.now(),
                 config: this.sanitizeConfig(this.config),
             });
         } catch (error: any) {
             this.logger.error('Failed to initialize database', { error: error.message });
-            this.eventEmitter.emit('database.error', {
+            this.eventEmitter.emit('database.'error', {
                 timestamp: Date.now(),
                 error: error.message,
                 config: this.sanitizeConfig(this.config),
@@ -96,7 +96,7 @@ export class EnhancedDatabaseService implements OnModuleInit, OnModuleDestroy {
             }
 
             this.isInitialized = false;
-            this.eventEmitter.emit('database.shutdown', {
+            this.eventEmitter.emit('database.'shutdown', {
                 timestamp: Date.now(),
             });
         } catch (error: any) {
@@ -204,8 +204,8 @@ export class EnhancedDatabaseService implements OnModuleInit, OnModuleDestroy {
             database: this.config.database,
             synchronize: this.config.synchronize || false,
             logging: this.config.logging || false, // Consider custom logger integration
-            entities: this.config.entities || [__dirname + '/../**/*.entity{.ts,.js}'],
-            migrations: this.config.migrations || [__dirname + '/../migrations/*{.ts,.js}'],
+            entities: this.config.entities || [__dirname + /../**/*.entity{.ts,.js}'],
+            migrations: this.config.migrations || [__dirname + /../migrations/*{.ts,.js}'],
             subscribers: this.config.subscribers || [],
             extra: this.config.extra,
         };

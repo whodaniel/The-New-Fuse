@@ -1,7 +1,8 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WebSocketServer, WebSocket } from 'ws';
-import Ajv, { ValidateFunction } from 'ajv'; // Import Ajv
+import Ajv from 'ajv';
+import { ValidateFunction } from 'ajv';
 import { MCPRegistryService } from './mcp-registry.service.js';
 import { MCPMessage, MCPTool, parseMCPMessage, createMCPResponse, createMCPError } from '@the-new-fuse/types';
 import { v4 as uuidv4 } from 'uuid';
@@ -9,10 +10,10 @@ import { v4 as uuidv4 } from 'uuid';
 @Injectable()
 export class MCPRegistryServer implements OnModuleInit {
   private readonly logger = new Logger(MCPRegistryServer.name);
-  private wss: WebSocketServer;
+  private wss!: WebSocketServer;
   private tools: Map<string, MCPTool>;
   private port: number;
-  private ajv: Ajv; // Ajv instance
+  private ajv: Ajv.default; // Ajv instance
   private validatorCache: Map<string, ValidateFunction>; // Cache for compiled validators
 
   constructor(
@@ -21,7 +22,7 @@ export class MCPRegistryServer implements OnModuleInit {
   ) {
     this.port = this.configService.get<number>('MCP_REGISTRY_PORT', 3002); // Example port, configure as needed
     this.tools = new Map(this.registryService.getTools().map(tool => [tool.name, tool]));
-    this.ajv = new Ajv({ allErrors: true }); // Initialize Ajv, 'allErrors' provides more detail
+    this.ajv = new Ajv.default({ allErrors: true }); // Initialize Ajv, 'allErrors' provides more detail
     this.validatorCache = new Map(); // Initialize cache
     this.compileValidators(); // Pre-compile validators
   }

@@ -368,10 +368,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
             try {
                 const result = await vscode.commands.executeCommand('theNewFuse.trigger.claudeDesktop', 
                     'Hello from The New Fuse! This is a coordination message from the VS Code extension.');
-                if (result?.success) {
+                if ((result as any)?.success) {
                     notificationService.showInfo('🎉 Successfully pinged Claude Desktop!');
                 } else {
-                    notificationService.showError(`Failed to ping Claude Desktop: ${result?.error || 'Unknown error'}`);
+                    notificationService.showError(`Failed to ping Claude Desktop: ${(result as any)?.error || 'Unknown error'}`);
                 }
             } catch (error) {
                 notificationService.showError(`Error pinging Claude Desktop: ${error instanceof Error ? error.message : String(error)}`);

@@ -1,3 +1,0 @@
-export * from './agent.entity';
-export * from './prompt.entity';
-export * from './agent-prompt.entity';

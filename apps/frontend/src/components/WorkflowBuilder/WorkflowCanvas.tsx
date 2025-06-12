@@ -12,10 +12,10 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { Box, useToast } from '@chakra-ui/react';
-import { NodeToolbar } from './NodeToolbar.js';
+import { NodeToolbar } from './NodeToolbar.tsx';
 import { WorkflowToolbar } from './WorkflowToolbar.js';
-import { useWorkflow } from '../../hooks/useWorkflow.js';
-import { nodeTypes } from './nodes.js';
+import { useWorkflow } from '../../hooks/useWorkflow.tsx';
+import { nodeTypes } from './nodes.tsx';
 import { edgeTypes } from './edges.js';
 
 export const WorkflowCanvas: React.FC = () => {

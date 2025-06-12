@@ -50,8 +50,8 @@ export class ProtocolTranslationModule {
       });
       
       this.logger.info('Protocol Translator tools registered with MCP Broker Service');
-    } catch (error) {
-      this.logger.error(`Failed to initialize Protocol Translator: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize Protocol Translator: ${(error as Error).message}`);
     }
   }
 }

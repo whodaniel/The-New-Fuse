@@ -1,6 +1,6 @@
 export interface PromptParameter {
     name: string;
-    type: 'string' | 'number' | 'boolean' | 'array' | 'object';
+    type: 'string' | number' | boolean' | array' | object';
     description?: string;
     required: boolean;
     default?: unknown;
@@ -47,7 +47,7 @@ export interface PromptTemplate {
 
 export interface AgentPromptTemplate extends PromptTemplate {
     agentId: string;
-    purpose: 'system' | 'user' | 'function' | 'response';
+    purpose:system' | user' | function' | response';
     contextRequirements?: {
         needsHistory?: boolean;
         needsMemory?: boolean;
@@ -55,7 +55,7 @@ export interface AgentPromptTemplate extends PromptTemplate {
         needsState?: boolean;
     };
     expectedResponse?: {
-        format: 'text' | 'json' | 'markdown' | 'code';
+        format:text' | json' | markdown' | code';
         schema?: object;
     };
 }

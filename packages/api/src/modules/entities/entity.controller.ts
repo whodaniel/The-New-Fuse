@@ -10,7 +10,6 @@ import {
   UseGuards,
   ParseIntPipe,
   DefaultValuePipe,
-  NotFoundException,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
@@ -20,7 +19,7 @@ import { UpdateEntityDto } from './dto/update-entity.dto.js';
 import { BaseController } from '../controllers/base.controller.js'; // Adjust path if needed
 import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard.js'; // Adjust path if needed
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
-import { RegisteredEntity, Prisma } from '@prisma/client'; // Import Prisma
+import { RegisteredEntity, Prisma } from '@the-new-fuse/database/generated/prisma';
 import { ApiResponse as FuseApiResponse } from '@the-new-fuse/types'; // Assuming a standard response wrapper
 
 @ApiTags('Entities')

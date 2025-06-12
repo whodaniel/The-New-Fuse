@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { OpenAI } from 'openai';
 
 /**
@@ -454,7 +454,7 @@ containing a map of key fields to their descriptions.`;
       try {
         const messageSchema = await this.translator.translate({}, messagePrompt);
         newSchema.messageFormat = messageSchema;
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.error(`Failed to create message schema for ${protocolName}`);
       }
     }
@@ -536,7 +536,7 @@ containing a map of key fields to their descriptions.`;
       
       this.logger.info(`Successfully updated ${protocolType} protocol information`);
     } catch (error: any) {
-      this.logger.error(`Failed to update protocol information: ${error.message}`);
+      this.logger.error(`Failed to update protocol information: ${(error as Error).message}`);
       throw new Error(`Failed to update protocol information: ${error.message}`);
     }
   }

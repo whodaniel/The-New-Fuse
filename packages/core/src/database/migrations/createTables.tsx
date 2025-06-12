@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from 'typeorm';
+import { MigrationInterface, QueryRunner, Table } from ''typeorm';
 
 export class CreateTables1635000000000 implements MigrationInterface {
     public async up(queryRunner: QueryRunner): Promise<void> {
@@ -11,29 +11,29 @@ export class CreateTables1635000000000 implements MigrationInterface {
                         name: 'id',
                         type: 'uuid',
                         isPrimary: true,
-                        default: 'uuid_generate_v4()'
+                        default: uuid_generate_v4()'
                     },
                     {
                         name: 'username',
                         type: 'varchar',
-                        length: '50',
+                        length:50',
                         isUnique: true
                     },
                     {
                         name: 'email',
                         type: 'varchar',
-                        length: '255',
+                        length: 255',
                         isUnique: true
                     },
                     {
                         name: 'password_hash',
                         type: 'varchar',
-                        length: '255'
+                        length:255'
                     },
                     {
                         name: 'role',
                         type: 'varchar',
-                        length: '20',
+                        length: 20',
                         default: "'user'"
                     },
                     {
@@ -60,7 +60,7 @@ export class CreateTables1635000000000 implements MigrationInterface {
                         name: 'id',
                         type: 'uuid',
                         isPrimary: true,
-                        default: 'uuid_generate_v4()'
+                        default: uuid_generate_v4()'
                     },
                     {
                         name: 'user_id',
@@ -69,7 +69,7 @@ export class CreateTables1635000000000 implements MigrationInterface {
                     {
                         name: 'token',
                         type: 'varchar',
-                        length: '255',
+                        length:255',
                         isUnique: true
                     },
                     {
@@ -103,7 +103,7 @@ export class CreateTables1635000000000 implements MigrationInterface {
                         name: 'id',
                         type: 'uuid',
                         isPrimary: true,
-                        default: 'uuid_generate_v4()'
+                        default:uuid_generate_v4()'
                     },
                     {
                         name: 'user_id',
@@ -112,7 +112,7 @@ export class CreateTables1635000000000 implements MigrationInterface {
                     {
                         name: 'title',
                         type: 'varchar',
-                        length: '255'
+                        length: 255'
                     },
                     {
                         name: 'description',
@@ -122,7 +122,7 @@ export class CreateTables1635000000000 implements MigrationInterface {
                     {
                         name: 'status',
                         type: 'varchar',
-                        length: '20',
+                        length:20',
                         default: "'pending'"
                     },
                     {
@@ -167,12 +167,12 @@ export class CreateTables1635000000000 implements MigrationInterface {
                         name: 'id',
                         type: 'uuid',
                         isPrimary: true,
-                        default: 'uuid_generate_v4()'
+                        default:uuid_generate_v4()'
                     },
                     {
                         name: 'type',
                         type: 'varchar',
-                        length: '50'
+                        length: 50'
                     },
                     {
                         name: 'data',
@@ -197,12 +197,12 @@ export class CreateTables1635000000000 implements MigrationInterface {
                         name: 'id',
                         type: 'uuid',
                         isPrimary: true,
-                        default: 'uuid_generate_v4()'
+                        default:uuid_generate_v4()'
                     },
                     {
                         name: 'level',
                         type: 'varchar',
-                        length: '20'
+                        length: 20'
                     },
                     {
                         name: 'message',

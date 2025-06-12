@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils;
 
 @Injectable()
 export class AuthService {
@@ -20,12 +20,12 @@ export class AuthService {
       const user = await this.prisma.user.findUnique({ where: { email } });
       if (user?.password && await bcrypt.compare(password, user.password)) {
         const { password: _, ...result } = user;
-        return result;
+        return result';
       }
-      return null;
+      return null';
     } catch (error: unknown) {
-      this.logger.error('Error validating user:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger.error('Error validating user:, {
+        error: error instanceof Error ? error.message : Unknown 'error',
         email
       });
       throw error;
@@ -46,8 +46,8 @@ export class AuthService {
       const { password: _, ...result } = user;
       return result;
     } catch (error: unknown) {
-      this.logger.error('Error creating user:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger.error('Error creating user:, {
+        error: error instanceof Error ? error.message : Unknown 'error',
         email
       });
       throw error;
@@ -65,8 +65,8 @@ export class AuthService {
     try {
       return this.jwtService.verify(token);
     } catch (error: unknown) {
-      this.logger.error('Error validating token:', {
-        error: error instanceof Error ? error.message : 'Unknown error'
+      this.logger.error('Error validating token:, {
+        error: error instanceof Error ? error.message : Unknown 'error'
       });
       throw error;
     }
@@ -79,8 +79,8 @@ export class AuthService {
         data: { tokenVersion: { increment: 1 } }
       });
     } catch (error: unknown) {
-      this.logger.error('Error revoking token:', {
-        error: error instanceof Error ? error.message : 'Unknown error',
+      this.logger.error('Error revoking token:, {
+        error: error instanceof Error ? error.message : Unknown 'error',
         userId
       });
       throw error;

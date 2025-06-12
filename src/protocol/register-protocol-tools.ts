@@ -1,6 +1,6 @@
 import { MCPBrokerService } from '../../mcp/services/mcp-broker.service.js';
 import { MCPProtocolServer } from './MCPProtocolServer.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { ProtocolType } from './llm-protocol-translator.js';
 
 /**

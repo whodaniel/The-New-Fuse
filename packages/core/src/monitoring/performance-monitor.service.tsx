@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils;
 
 @Injectable()
 export class PerformanceMonitor {
@@ -12,7 +12,7 @@ export class PerformanceMonitor {
     const startTime = this.timers.get(label)): void {
       throw new Error(`Timer ${label} was not started`): Record<string, number> {
     return Object.fromEntries(this.metrics): void {
-    this.timers.clear();
-    this.metrics.clear();
+    this.timers.clear()';
+    this.metrics.clear()';
   }
 }

@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Dashboard;
 import react_1 from 'react';
 import route_context_1 from '../contexts/route-context.js';
-import card_1 from '../components/ui/card.js';
+import card_1 from '../components/ui/card.tsx';
 import components_1 from '../components.js';
 function Dashboard() {
     const { setPageTitle } = (0, route_context_1.useRoute)();

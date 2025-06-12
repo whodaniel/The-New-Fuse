@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { WorkflowDefinition, WorkflowStep } from '../types.js'; // Added .js extension
-import { Card, CardContent } from '../../../core/card/index.js'; // Added .js extension
-import { Badge } from '../../../core/badge.js'; // Added .js extension
+import { WorkflowDefinition, WorkflowStep } from '../types.tsx'; // Added .js extension
+import { Card, CardContent } from '../../../core/card/index.tsx'; // Added .js extension
+import { Badge } from '../../../core/badge.tsx'; // Added .js extension
 import { ArrowRight } from 'lucide-react';
 
 interface VisualizerNode {
@@ -42,9 +42,9 @@ const WorkflowVisualizer: React.FC<WorkflowVisualizerProps> = ({ definition }) =
       // Create edges based on workflow relationships
       // Check if this step has dependencies (from older schema) or connections
       if (Array.isArray(step.dependencies)) {
-        step.dependencies.forEach(parentId: string) => {
+        step.dependencies.forEach((parentId: string) => {
           // Ensure the parent step exists before creating an edge
-          if (definition.steps.some(s: WorkflowStep) => s.id === parentId)) {
+          if (definition.steps.some((s: WorkflowStep) => s.id === parentId)) {
             visualizerEdges.push({
               id: `e-${parentId}-${step.id}`,
               source: parentId,

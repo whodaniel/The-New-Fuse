@@ -7,10 +7,10 @@ export * from './useSuggestionActions.js';
 export * from './useAuth.js'; // Exports useAuth
 export * from './useWebSocket.js';
 export * from './hooks/useFeatureSuggestions.js';
-export * from './hooks/useKanbanBoard.js';
+export * from './hooks/useKanbanBoard.tsx';
 export * from './hooks/useTimeline.js';
 export * from './hooks/useKeyboardShortcuts.js';
-export * from './hooks/useUndoRedo.js';
+export * from './hooks/useUndoRedo.tsx';
 
 // API hooks - use explicit re-exports to avoid naming conflicts
 import * as apiHooks from './api/index.js';

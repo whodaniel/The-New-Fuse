@@ -1,3 +1,0 @@
-import { Page } from "puppeteer-core";
-export declare const getChromeExecutablePath: () => string;
-export declare function installMouseHelper(page: Page): Promise<void>;

@@ -1,7 +1,7 @@
 import React, { FC, useEffect } from "react";
 import { FeatureStage } from '../types.js';
-import { useFeatureTracker } from '../hooks/useFeatureTracker.js';
-import { FeatureProgress } from '../components/FeatureProgress.js';
+import { useFeatureTracker } from '../hooks/useFeatureTracker.tsx';
+import { FeatureProgress } from '../components/FeatureProgress.tsx';
 
 export const FeatureTrackingExample: FC = () => {
   const {

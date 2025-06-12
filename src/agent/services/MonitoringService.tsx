@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { PrometheusService } from './PrometheusService.js';
-import { RedisService } from './RedisService.js';
+import { PrometheusService } from './PrometheusService.tsx';
+import { RedisService } from './RedisService.tsx';
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import { Histogram, Counter, Gauge, register } from 'prom-client';
 import { trace, Span, SpanStatusCode, context, propagation } from '@opentelemetry/api';

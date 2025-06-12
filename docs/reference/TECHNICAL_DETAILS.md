@@ -378,9 +378,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Install dependencies
-        run: yarn install
+        run: bun install
       - name: Run tests
-        run: yarn test
+        run: bun test
 
   deploy:
     needs: test
@@ -397,7 +397,7 @@ jobs:
 
 ### Prerequisites
 - Node.js 18+
-- Yarn 4.6.0
+- Bun 1.1.38
 - Docker
 - PostgreSQL 17.0
 - Redis 7
@@ -408,26 +408,26 @@ jobs:
 git clone https://github.com/username/the-new-fuse.git
 
 # Install dependencies
-yarn install
+bun install
 
 # Setup environment
 cp .env.example .env
 
 # Start development servers
-yarn dev
+bun dev
 ```
 
 ### Testing
 ```bash
 # Run all tests
-yarn test
+bun test
 
 # Run specific tests
-yarn test:api
-yarn test:frontend
+bun run test:api
+bun run test:frontend
 
 # Run e2e tests
-yarn test:e2e
+bun run test:e2e
 ```
 
 ## Scaling Considerations

@@ -1,12 +1,12 @@
-FROM node:18-alpine as builder
+FROM oven/bun:1 as builder
 
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* yarn.lock* ./
+COPY package.json bun.lockb* ./
 
 # Install dependencies
-RUN yarn install --frozen-lockfile || npm install
+RUN bun install
 
 # Copy Prisma schema
 COPY prisma ./prisma/
@@ -18,10 +18,10 @@ RUN npx prisma generate
 COPY . .
 
 # Build TypeScript
-RUN yarn build || npm run build
+RUN bun run build
 
 # Production image
-FROM node:18-alpine
+FROM oven/bun:1
 
 WORKDIR /app
 

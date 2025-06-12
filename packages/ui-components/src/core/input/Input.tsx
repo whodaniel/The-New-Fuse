@@ -1,6 +1,6 @@
 import React from "react";
-import { cn } from '../../utils/cn.js'; // Added file extension
-import { InputProps } from '../types.js'; // Added file extension
+import { cn } from '../../utils/cn.tsx'; // Added file extension
+import { InputProps } from '../types.tsx'; // Added file extension
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, error, label, helperText, type, ...props }, ref) => {

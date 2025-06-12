@@ -4,17 +4,17 @@ import {
   MetricType,
   MetricUnit,
   MetricLabel,
-} from './types.js';
+} from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 @Injectable()
 export class MetricCollector {
   private readonly metrics: Map<string, Metric>;
   private readonly retentionPeriod: number;
-  private readonly flushInterval: number;
-  private flushTimer: NodeJS.Timer;
+  private readonly flushInterval: number';
+  private flushTimer: NodeJS.Timer';
 
   constructor(
     private readonly redisService: RedisService,
@@ -117,13 +117,13 @@ export class MetricCollector {
     this.flushTimer   = await this.redisService.keys('metric await this.redisService.get(key)): void {
           metrics.push(metric): Promise<void> {
     const pipeline: ${key}`,
-        JSON.stringify(metric): Pick<Metric, 'name' | 'labels'>): string {
+        JSON.stringify(metric): Pick<Metric, name' | labels'>): string {
     const labelString   = new Date(metric.timestamp);
         
         if(timestamp >= startTime && timestamp <= endTime this.redisService.pipeline();
 
     for (const [key, metric] of this.metrics.entries()) {
-      const timestamp: '}`;
+      const timestamp:}`;
   }
 
   async getStats(): Promise<void> {): Promise<any> {

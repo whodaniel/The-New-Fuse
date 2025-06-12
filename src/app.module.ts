@@ -8,10 +8,10 @@ import { NotificationService } from './notifications/NotificationService.js';
 import { MonitoringModule } from './monitoring/monitoring.module.js';
 import { EventEmitterModule } from "@nestjs/event-emitter";
 import { MCPModule } from './mcp/mcp.module.js';
-import { MCPController } from './mcp/mcp.controller.js';
+import { MCPController } from './mcp/mcp.controller.tsx';
 import { AgentDiscoveryModule } from './modules/agent-discovery.module.js';
-import { AgentDiscoveryController } from './controllers/agent-discovery.controller.js';
-import { MCPWorkflowModule } from './modules/MCPWorkflowModule.js';
+import { AgentDiscoveryController } from './controllers/agent-discovery.controller.tsx';
+import { MCPWorkflowModule } from './modules/MCPWorkflowModule.tsx';
 import { MCPInitializationService } from './services/MCPInitializationService.js';
 import { WorkflowMonitoringService } from './services/WorkflowMonitoringService.js';
 import { WorkflowMCPIntegrationService } from './services/WorkflowMCPIntegrationService.js';
@@ -19,9 +19,10 @@ import { AnalyticsIntegrationService } from './services/AnalyticsIntegrationServ
 import { SchemaValidationService } from './services/SchemaValidationService.js';
 import { PrismaService } from './prisma/prisma.service.js';
 import { MetricsService } from './metrics/metrics.service.js';
-import { RedisService } from './redis/redis.service.js';
+import { RedisService } from './redis/redis.service.tsx';
 import { Logger } from './common/logger.service.js';
 import { MCPEventService } from './services/MCPEventService.js';
+import { CopilotIntegrationModule } from './modules/CopilotIntegrationModule.js';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { MCPEventService } from './services/MCPEventService.js';
     MonitoringModule,
     MCPModule,
     AgentDiscoveryModule,
-    MCPWorkflowModule
+    MCPWorkflowModule,
+    CopilotIntegrationModule
   ],
   controllers: [MCPController, AgentDiscoveryController],
   providers: [

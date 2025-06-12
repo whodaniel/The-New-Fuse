@@ -10,7 +10,7 @@ interface WorkflowProgress {
 }
 
 interface WorkflowTask {
-  status: 'pending' | 'running' | 'completed' | 'failed';
+  status: 'pending' | running' | completed' | failed';
   duration?: number;
 }
 
@@ -173,7 +173,7 @@ export class MonitoringService {
       await this.alerting.raise({
         level: 'warning',
         source: 'trae',
-        message: 'High response time detected',
+        message:High response time detected',
         context: metrics
       });
     }
@@ -182,7 +182,7 @@ export class MonitoringService {
       await this.alerting.raise({
         level: 'error',
         source: 'trae',
-        message: 'Low success rate detected',
+        message:Low success rate detected',
         context: metrics
       });
     }
@@ -207,8 +207,8 @@ export class MonitoringService {
     if (metrics.latency > 2000) { // 2s threshold
       await this.alerting.raise({
         level: 'warning',
-        source: 'trae-llm',
-        message: 'High LLM response time detected',
+        source: trae-llm,
+        message:High LLM response time detected',
         context: metrics
       });
     }
@@ -217,8 +217,8 @@ export class MonitoringService {
     if (metrics.errorRate > 0.1) { // 10% threshold
       await this.alerting.raise({
         level: 'error',
-        source: 'trae-llm',
-        message: 'High LLM error rate detected',
+        source: trae-llm,
+        message:High LLM error rate detected',
         context: metrics
       });
     }

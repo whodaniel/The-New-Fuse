@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { Node, NodeConfig, NodeInput, NodeOutput } from './types.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
+import { Node, NodeConfig, NodeInput, NodeOutput } from './types.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
 
 export interface ApiNodeConfig extends NodeConfig {
   url: string;

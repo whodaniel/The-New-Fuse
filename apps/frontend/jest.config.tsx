@@ -9,13 +9,13 @@ const config: Config.InitialOptions = {
   ],
   testTimeout: 60000,
   transform: {
-    '^.+\.(t|j)sx?$': ['ts-jest', {
+    '^.+\\.(t|j)sx?$': ['ts-jest', {
       tsconfig: '<rootDir>/tsconfig.json',
       jsx: 'react'
     }]
   },
   transformIgnorePatterns: [
-    '/node_modules/(?!pixelmatch|pngjs).+\.js$'
+    '/node_modules/(?!pixelmatch|pngjs).+\\.js$'
   ],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   testMatch: [

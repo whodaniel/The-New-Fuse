@@ -11,22 +11,22 @@ import { IntegrationAuthType } from '../integration.types.js';
 @Injectable()
 export class PabblyIntegration extends BaseIntegration {
   private readonly logger = new Logger(PabblyIntegration.name);
-  private readonly baseUrl = 'https://connect.pabbly.com/api/v1';
+  private readonly baseUrl = https://connect.pabbly.com/api/'v1';
   
   constructor(private readonly configService: ConfigService) {
     super();
     this.id = 'pabbly';
     this.name = 'Pabbly';
-    this.description = 'Connect with Pabbly services for workflow automation, form building, email marketing, and more';
-    this.icon = 'https://pabbly.com/wp-content/uploads/2022/04/pabbly-connect-icon.png';
+    this.description = Connect with Pabbly services for workflow automation, form building, email marketing, and 'more';
+    this.icon = https://pabbly.com/wp-content/uploads/2022/04/pabbly-connect-icon.'png';
     this.authType = IntegrationAuthType.OAUTH2;
-    this.category = 'workflow-automation';
+    this.category = workflow-automation;
     this.pricing = {
       free: true,
-      freeTier: 'Limited workflows and runs per month',
-      paidTier: 'Unlimited workflows and higher execution limits'
+      freeTier:Limited workflows and runs per month',
+      paidTier:Unlimited workflows and higher execution limits'
     };
-    this.documentationUrl = 'https://pabbly.com/connect/docs/api-reference/';
+    this.documentationUrl = https://pabbly.com/connect/docs/api-reference/';
   }
 
   /**
@@ -44,7 +44,7 @@ export class PabblyIntegration extends BaseIntegration {
       // Check if the token is valid by making a simple API call
       const response = await axios.get(`${this.baseUrl}/user/profile`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -67,7 +67,7 @@ export class PabblyIntegration extends BaseIntegration {
     clientSecret: string;
   }): Promise<{ accessToken: string; refreshToken: string }> {
     try {
-      const response = await axios.post('https://connect.pabbly.com/oauth/token', {
+      const response = await axios.post('https://connect.pabbly.com/oauth/'token', {
         client_id: credentials.clientId,
         client_secret: credentials.clientSecret,
         refresh_token: credentials.refreshToken,
@@ -94,7 +94,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       const response = await axios.get(`${this.baseUrl}/user/profile`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -115,7 +115,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       const response = await axios.get(`${this.baseUrl}/workflows`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -136,7 +136,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       const response = await axios.get(`${this.baseUrl}/workflows/${workflowId}`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -163,8 +163,8 @@ export class PabblyIntegration extends BaseIntegration {
         workflowData,
         {
           headers: {
-            'Authorization': `Bearer ${credentials.accessToken}`,
-            'Content-Type': 'application/json'
+            Authorization': `Bearer ${credentials.accessToken}`,
+            Content-Type': application/'json'
           }
         }
       );
@@ -193,8 +193,8 @@ export class PabblyIntegration extends BaseIntegration {
         workflowData,
         {
           headers: {
-            'Authorization': `Bearer ${credentials.accessToken}`,
-            'Content-Type': 'application/json'
+            Authorization': `Bearer ${credentials.accessToken}`,
+            Content-Type': application/'json'
           }
         }
       );
@@ -216,7 +216,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       await axios.delete(`${this.baseUrl}/workflows/${workflowId}`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -241,7 +241,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       const response = await axios.get(`${this.baseUrl}/workflows/${workflowId}/executions`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         },
         params: {
           page: options?.page || 1,
@@ -281,7 +281,7 @@ export class PabblyIntegration extends BaseIntegration {
         data,
         {
           headers: {
-            'Content-Type': 'application/json'
+            Content-Type': application/'json'
           }
         }
       );
@@ -303,7 +303,7 @@ export class PabblyIntegration extends BaseIntegration {
     try {
       const response = await axios.get(`${this.baseUrl}/apps`, {
         headers: {
-          'Authorization': `Bearer ${credentials.accessToken}`
+          Authorization': `Bearer ${credentials.accessToken}`
         }
       });
 
@@ -324,26 +324,26 @@ export class PabblyIntegration extends BaseIntegration {
     return [
       {
         id: 'get_workflows',
-        name: 'Get Workflows',
-        description: 'Retrieve all workflows from Pabbly Connect',
+        name: Get 'Workflows',
+        description:Retrieve all workflows from Pabbly Connect',
         inputs: [],
         outputs: [
           {
             name: 'workflows',
             type: 'array',
-            description: 'List of workflows'
+            description:List of workflows'
           }
         ]
       },
       {
         id: 'get_workflow',
-        name: 'Get Workflow',
-        description: 'Retrieve a specific workflow by ID',
+        name: Get 'Workflow',
+        description:Retrieve a specific workflow by ID',
         inputs: [
           {
             name: 'workflowId',
             type: 'string',
-            description: 'ID of the workflow to retrieve',
+            description:ID of the workflow to retrieve',
             required: true
           }
         ],
@@ -351,25 +351,25 @@ export class PabblyIntegration extends BaseIntegration {
           {
             name: 'workflow',
             type: 'object',
-            description: 'Workflow details'
+            description:Workflow details'
           }
         ]
       },
       {
         id: 'create_workflow',
-        name: 'Create Workflow',
-        description: 'Create a new workflow in Pabbly Connect',
+        name: Create 'Workflow',
+        description:Create a new workflow in Pabbly Connect',
         inputs: [
           {
             name: 'name',
             type: 'string',
-            description: 'Name of the workflow',
+            description:Name of the workflow',
             required: true
           },
           {
             name: 'description',
             type: 'string',
-            description: 'Description of the workflow',
+            description:Description of the workflow',
             required: false
           }
         ],
@@ -377,37 +377,37 @@ export class PabblyIntegration extends BaseIntegration {
           {
             name: 'workflow',
             type: 'object',
-            description: 'Created workflow details'
+            description:Created workflow details'
           }
         ]
       },
       {
         id: 'update_workflow',
-        name: 'Update Workflow',
-        description: 'Update an existing workflow',
+        name: Update 'Workflow',
+        description:Update an existing workflow',
         inputs: [
           {
             name: 'workflowId',
             type: 'string',
-            description: 'ID of the workflow to update',
+            description:ID of the workflow to update',
             required: true
           },
           {
             name: 'name',
             type: 'string',
-            description: 'New name for the workflow',
+            description:New name for the workflow',
             required: false
           },
           {
             name: 'description',
             type: 'string',
-            description: 'New description for the workflow',
+            description:New description for the workflow',
             required: false
           },
           {
             name: 'active',
             type: 'boolean',
-            description: 'Whether the workflow should be active',
+            description:Whether the workflow should be active',
             required: false
           }
         ],
@@ -415,19 +415,19 @@ export class PabblyIntegration extends BaseIntegration {
           {
             name: 'workflow',
             type: 'object',
-            description: 'Updated workflow details'
+            description:Updated workflow details'
           }
         ]
       },
       {
         id: 'delete_workflow',
-        name: 'Delete Workflow',
-        description: 'Delete a workflow',
+        name: Delete 'Workflow',
+        description:Delete a workflow',
         inputs: [
           {
             name: 'workflowId',
             type: 'string',
-            description: 'ID of the workflow to delete',
+            description:ID of the workflow to delete',
             required: true
           }
         ],
@@ -435,25 +435,25 @@ export class PabblyIntegration extends BaseIntegration {
           {
             name: 'success',
             type: 'boolean',
-            description: 'Whether the deletion was successful'
+            description:Whether the deletion was successful'
           }
         ]
       },
       {
         id: 'trigger_workflow',
-        name: 'Trigger Workflow',
-        description: 'Trigger a workflow via webhook',
+        name: Trigger 'Workflow',
+        description:Trigger a workflow via webhook',
         inputs: [
           {
             name: 'workflowId',
             type: 'string',
-            description: 'ID of the workflow to trigger',
+            description:ID of the workflow to trigger',
             required: true
           },
           {
             name: 'data',
             type: 'object',
-            description: 'Data to send to the workflow',
+            description:Data to send to the workflow',
             required: true
           }
         ],
@@ -461,7 +461,7 @@ export class PabblyIntegration extends BaseIntegration {
           {
             name: 'result',
             type: 'object',
-            description: 'Result of the workflow trigger'
+            description:Result of the workflow trigger'
           }
         ]
       }
@@ -473,22 +473,22 @@ export class PabblyIntegration extends BaseIntegration {
    */
   async executeAction(actionId: string, credentials: { accessToken: string }, inputs: any): Promise<any> {
     switch (actionId) {
-      case 'get_workflows':
+      case get_workflows':
         const workflows = await this.getWorkflows(credentials);
         return { workflows };
 
-      case 'get_workflow':
+      case get_workflow':
         const workflow = await this.getWorkflow(credentials, inputs.workflowId);
         return { workflow };
 
-      case 'create_workflow':
+      case create_workflow':
         const createdWorkflow = await this.createWorkflow(credentials, {
           name: inputs.name,
           description: inputs.description
         });
         return { workflow: createdWorkflow };
 
-      case 'update_workflow':
+      case update_workflow':
         const updatedWorkflow = await this.updateWorkflow(credentials, inputs.workflowId, {
           name: inputs.name,
           description: inputs.description,
@@ -496,11 +496,11 @@ export class PabblyIntegration extends BaseIntegration {
         });
         return { workflow: updatedWorkflow };
 
-      case 'delete_workflow':
+      case delete_workflow':
         const success = await this.deleteWorkflow(credentials, inputs.workflowId);
         return { success };
 
-      case 'trigger_workflow':
+      case trigger_workflow':
         const result = await this.triggerWorkflow(credentials, inputs.workflowId, inputs.data);
         return { result };
 

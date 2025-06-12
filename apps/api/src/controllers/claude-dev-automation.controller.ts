@@ -76,7 +76,7 @@ export class ClaudeDevAutomationController {
         data: health,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Health check failed', error);
       throw new HttpException(
         'Health check failed',
@@ -132,7 +132,7 @@ export class ClaudeDevAutomationController {
     } catch (error) {
       this.logger.error(`Failed to create agent for tenant ${tenantId}`, error);
       
-      if (error.message.includes('Template') && error.message.includes('not found')) {
+      if ((error as Error).message.includes('Template') && error.message.includes('not found')) {
         throw new HttpException(
           `Invalid template: ${error.message}`,
           HttpStatus.BAD_REQUEST,
@@ -176,7 +176,7 @@ export class ClaudeDevAutomationController {
         count: agents.length,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to get agents for tenant ${tenantId}`, error);
       throw new HttpException(
         'Failed to retrieve agents',
@@ -253,7 +253,7 @@ export class ClaudeDevAutomationController {
     } catch (error) {
       this.logger.error(`Failed to execute task for agent ${agentId}`, error);
       
-      if (error.message.includes('not found')) {
+      if ((error as Error).message.includes('not found')) {
         throw new HttpException(
           error.message,
           HttpStatus.NOT_FOUND,
@@ -318,7 +318,7 @@ export class ClaudeDevAutomationController {
         count: tasks.length,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to get tasks for tenant ${tenantId}`, error);
       throw new HttpException(
         'Failed to retrieve tasks',
@@ -352,7 +352,7 @@ export class ClaudeDevAutomationController {
           this.validateCreateAgentDto(agentConfig);
         } catch (error) {
           throw new HttpException(
-            `Invalid configuration for agent ${index}: ${error.message}`,
+            `Invalid configuration for agent ${index}: ${(error as Error).message}`,
             HttpStatus.BAD_REQUEST,
           );
         }
@@ -375,7 +375,7 @@ export class ClaudeDevAutomationController {
         created: createdAgents.length,
         timestamp: new Date().toISOString(),
       };
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof HttpException) {
         throw error;
       }
@@ -500,7 +500,7 @@ export class ClaudeDevAutomationController {
     } catch (error) {
       this.logger.error(`Failed to customize template ${templateId}`, error);
       
-      if (error.message.includes('not found')) {
+      if ((error as Error).message.includes('not found')) {
         throw new HttpException(
           error.message,
           HttpStatus.NOT_FOUND,

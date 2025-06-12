@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { PrismaClient } from '@the-new-fuse/database/client';
-import { AuthService } from './auth.service.js';
-import { JwtConfigModule } from './jwt.module.js';
+import { PrismaClient } from '@the-new-fuse/database';
+import { AuthService } from './auth.service.tsx';
+import { JwtConfigModule } from './jwt.module.tsx';
 
 @Module({
   imports: [JwtConfigModule],

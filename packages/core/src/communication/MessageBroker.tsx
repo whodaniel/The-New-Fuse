@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { Logger } from '@the-new-fuse/utils';
-import { Message, CommunicationProtocol, MessageType, MessagePriority } from './Protocol.js';
+import { Message, CommunicationProtocol, MessageType, MessagePriority } from './Protocol.tsx';
 import { EventEmitter } from 'events';
-import { RedisService } from '../redis/redis.service.js';
-import { AICommAnalyticsService } from './services/AICommAnalyticsService.js';
+import { RedisService } from '../redis/redis.service.tsx';
+import { AICommAnalyticsService } from './services/AICommAnalyticsService.tsx';
 
 interface SubscriptionOptions {
   pattern: string;
@@ -26,7 +26,7 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
   private logger: Logger;
   private protocol: CommunicationProtocol;
   private subscriptions: Map<string, Set<(message: Message) => Promise<void>>>;
-  private readonly HIGH_PRIORITY_PREFIX = 'high:';
+  private readonly HIGH_PRIORITY_PREFIX = high:;
   private readonly PERSIST_PREFIX = 'persist:';
 
   constructor(
@@ -48,8 +48,8 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
 
   private async connect(): Promise<void> {
     try {
-      this.publisher = new Redis((process as any).env.REDIS_URL);
-      this.subscriber = new Redis((process as any).env.REDIS_URL);
+      this.publisher = new (Redis as any)((process as any).env.REDIS_URL);
+      this.subscriber = new (Redis as any)((process as any).env.REDIS_URL);
 
       this.subscriber.on('message', async (channel, message) => {
         try {
@@ -64,7 +64,7 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
         }
       });
     } catch (error) {
-      this.logger.error('Failed to connect MessageBroker:', error);
+      this.logger.error('Failed to connect MessageBroker:, error);
     }
   }
 
@@ -104,7 +104,7 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
       });
 
     } catch (error) {
-      this.logger.error('Error publishing message:', error);
+      this.logger.error('Error publishing message:, error);
 
       // Record failed communication
       await this.analyticsService.recordCommunication({
@@ -138,7 +138,7 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
       await this.processPersistentMessages(channel, options.handler);
 
     } catch (error) {
-      this.logger.error('Error subscribing to channel:', error);
+      this.logger.error('Error subscribing to channel:, error);
     }
   }
 
@@ -170,7 +170,7 @@ export class MessageBroker extends EventEmitter implements OnModuleInit, OnModul
           const message = JSON.parse(messageString);
           await handler(message);
         } catch (error) {
-          this.logger.error('Error processing persistent message:', error);
+          this.logger.error('Error processing persistent message:, error);
         }
       }
     } catch (error) {

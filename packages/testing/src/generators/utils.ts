@@ -29,13 +29,13 @@ export const generateTimestamp = (options: TimestampOptions = {}): Date => {
   return now;
 };
 
-export const pickRandom = <T>(array: T[]): T => {
+export function pickRandom<T>(array: T[]): T {
   return array[Math.floor(Math.random() * array.length)];
-};
+}
 
-export const generateEnum = <T extends string>(values: T[]): T => {
+export function generateEnum<T extends string>(values: T[]): T {
   return pickRandom(values);
-};
+}
 
 export const generateBoolean = (likelihood: number = 0.5): boolean => {
   return Math.random() < likelihood;
@@ -45,16 +45,16 @@ export const generateNumber = (min: number = 0, max: number = 100): number => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
-export const generateArray = <T>(
+export function generateArray<T>(
   generator: () => T,
   length: number = 3
-): T[] => {
+): T[] {
   return Array.from({ length }, () => generator());
-};
+}
 
-export const generateObject = <T extends Record<string, any>>(
+export function generateObject<T extends Record<string, any>>(
   template: T
-): T => {
+): T {
   const result: any = {};
   for (const [key, value] of Object.entries(template)) {
     if (typeof value === 'function') {
@@ -63,8 +63,8 @@ export const generateObject = <T extends Record<string, any>>(
       result[key] = value;
     }
   }
-  return result;
-};
+  return result as T;
+}
 
 export const generateEmail = (username: string): string => {
   const domains = ['example.com', 'test.com', 'fakemail.com'];

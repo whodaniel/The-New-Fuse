@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
-import { AgentSprite } from '../sprites/AgentSprite.js';
-import { Vector3 } from '../types/core.js';
+import { AgentSprite } from '../sprites/AgentSprite.tsx';
+import { Vector3 } from '../types/core.tsx';
 
 export class AgentManager {
   private agents: Map<string, AgentSprite> = new Map();

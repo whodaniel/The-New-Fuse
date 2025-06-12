@@ -1,4 +1,4 @@
-import { LearningPattern } from './LearningSystem.js';
+import { LearningPattern } from './LearningSystem.tsx';
 export interface PatternMatch {
     pattern: LearningPattern;
     confidence: number;

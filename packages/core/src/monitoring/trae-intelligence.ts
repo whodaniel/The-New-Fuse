@@ -23,7 +23,7 @@ export class TraeIntelligence {
   private analyzePatterns() {
     // Look for patterns in Trae's behavior
     const recentActivities = this.activityLog.slice(-100)): void {
-      this.emit('pattern-detected', {
+      this.emit('pattern-detected, {
         commands: commandPatterns,
         resources: resourcePatterns
       });

@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { Vector3 } from '../types/core.js';
+import { Vector3 } from '../types/core.tsx';
 
 export class InteractionManager {
   private scene: Phaser.Scene;

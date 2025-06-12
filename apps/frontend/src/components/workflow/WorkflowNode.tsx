@@ -5,8 +5,9 @@ import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 import WorkflowContext_1 from '@/contexts/WorkflowContext';
 import Badge_1 from '@/components/ui/Badge';
-// import Card_1 from '@/components/ui/Card'; // Remove old import
-import { Card } from '@the-new-fuse/ui-consolidated'; // Import consolidated Card
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// Temporarily using local components instead of ui-consolidated
+// import { Card } from '@the-new-fuse/ui-consolidated'; // Import consolidated Card
 import Button_1 from '@/components/ui/Button';
 import lucide_react_1 from 'lucide-react';
 import DropdownMenu_1 from '@/components/ui/DropdownMenu';

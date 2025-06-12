@@ -17,8 +17,8 @@ export class MemoryGraphAdapter {
   // Adapt memory data to graph structure
   async adapt(): Promise<void> {data: unknown): Promise<void> {
     const node: Node = {
-      id: data.id || `node_${Date.now(): data.label || 'Memory Node',
-      type: memory',
+      id: data.id || `node_${Date.now(): data.label || Memory 'Node',
+      type: 'memory',
       timestamp: new Date(),
       data: {
         ...data.metadata,
@@ -27,9 +27,9 @@ export class MemoryGraphAdapter {
     };
 
     this.nodeCache.set(node.id, node);
-    await this.eventSystem.emit('memory.added', {
+    await this.eventSystem.emit('memory.'added', {
       nodeId: node.id,
-      type: graph_adaptation'
+      type: 'graph_adaptation'
     });
   }
 
@@ -40,7 +40,7 @@ export class MemoryGraphAdapter {
     const nodes: Node): Promise<Edge[]> {
     const relatedNodes: node.id,
       target: relatedNode.id,
-      type: suggested',
+      type: 'suggested',
       label: Suggested Connection'
     }));
   }
@@ -75,7 +75,7 @@ export class MemoryGraphAdapter {
       }
     }
 
-    await this.eventSystem.emit('(memory as any).consolidation.needed', {
+    await this.eventSystem.emit('(memory as any).consolidation.'needed', {
       timestamp: now.toISOString(): this.nodeCache.size,
       edgesRemoved: this.edgeCache.size
     });

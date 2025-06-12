@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Checkbox, FormControl, FormLabel, Stack, Heading, Box, Text, Accordion, AccordionItem, AccordionButton, AccordionPanel, AccordionIcon } from '@chakra-ui/react';
-import { AgentToolType } from '@the-new-fuse/core/types/src/agent';
+import { AgentToolType } from '@the-new-fuse/types/src/agent';
 
 interface AgentToolsFormProps {
   selectedTools: AgentToolType[];

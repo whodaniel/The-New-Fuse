@@ -7,7 +7,7 @@ export interface ConfigOptions {
 }
 export interface DatabaseConfig {
     url: string;
-    type: postgres' | 'mysql' | 'sqlite';
+    type: postgres' | mysql' | sqlite';
     synchronize: boolean;
     logging: boolean;
 }

@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { AgentCapabilityDiscoveryService } from '../services/AgentCapabilityDiscoveryService.js';
 import { Logger } from '../common/logger.service.js';
 import { AgentType, AgentStatus } from '@prisma/client';

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { User } from '../types/User.js';
+import { User } from '../types/User.tsx';
 
 export interface AuthenticatedRequest extends Request {
   user?: User;

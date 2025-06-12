@@ -28,7 +28,7 @@ import {
 import { 
   usePromptTemplates, 
   PromptTemplateVersion 
-} from '../../hooks/usePromptTemplates.js';
+} from '../../hooks/usePromptTemplates.tsx';
 import { format } from 'date-fns';
 
 interface VersionHistoryProps {

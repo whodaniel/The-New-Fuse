@@ -231,12 +231,12 @@ export class MCPRAGClientService implements OnModuleInit {
         server_url: this.ragServerUrl,
         ...response.data
       };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         status: 'error',
         connected: false,
         server_url: this.ragServerUrl,
-        error: error.message
+        error: (error as Error).message
       };
     }
   }

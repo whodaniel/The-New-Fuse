@@ -1,4 +1,4 @@
-import { IAgent } from './interfaces/IAgent.js';
+import { IAgent } from './interfaces/IAgent.tsx';
 import { Message } from '@the-new-fuse/types';
 import { MemoryManager } from '@the-new-fuse/core';
 

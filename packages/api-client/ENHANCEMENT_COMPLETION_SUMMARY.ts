@@ -156,8 +156,8 @@ async function demonstrateEnhancedApiClient() {
     try {
       // This should throw an error due to missing required parameters
       await userService.getUserById('');
-    } catch (error) {
-      console.log('✅ Validation working:', error.message);
+    } catch (error: unknown) {
+      console.log('✅ Validation working:', (error as Error).message);
     }
 
     // ========================================

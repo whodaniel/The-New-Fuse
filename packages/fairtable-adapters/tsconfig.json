@@ -2,13 +2,16 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
-    "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "rootDir": "../../"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "../fairtable-components/src/**/*",
+    "../fairtable-core/src/**/*",
+    "../fairtable-utils/src/**/*"
   ],
   "exclude": [
     "node_modules",

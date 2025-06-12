@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../../lib/utils.js';
+import { cn } from '../../lib/utils.tsx';
 
 // Icon names that are supported by the component
 export type IconName = 

@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ChatRoom } from '../entities/chat-room.entity.js';
-import { Message } from '../entities/message.entity.js';
-import { CreateMessageDto } from '../dtos/message.dto.js';
+import { ChatRoom } from '../entities/chat-room.entity.tsx';
+import { Message } from '../entities/message.entity.tsx';
+import { CreateMessageDto } from '../dtos/message.dto.tsx';
 import { WebSocketGateway } from '../gateways/websocket.gateway.js';
 
 @Injectable()

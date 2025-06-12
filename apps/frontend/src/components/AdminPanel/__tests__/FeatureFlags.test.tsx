@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { FeatureFlags } from '../FeatureFlags.js';
-import { useFeatureFlags } from '../../../hooks/useFeatureFlags.js';
+import { FeatureFlags } from '../FeatureFlags.tsx';
+import { useFeatureFlags } from '../../../hooks/useFeatureFlags.tsx';
 
 jest.mock('../../../hooks/useFeatureFlags');
 

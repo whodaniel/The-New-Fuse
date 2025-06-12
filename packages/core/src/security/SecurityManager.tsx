@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from ''express';
 import { Redis } from 'ioredis';
 import { Logger } from 'winston';
 import * as jwt from 'jsonwebtoken';
@@ -48,10 +48,10 @@ export class SecurityManager {
       max: this.config.rateLimit.max,
       keyGenerator: (req: Request)  = req.headers.origin;
       if (origin && this.config.cors.origin.includes(origin)) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        res.setHeader('Access-Control-Allow-Methods', this.config.cors.methods.join(','));
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-        res.setHeader('Access-Control-Allow-Credentials', 'true');
+        res.setHeader('Access-Control-Allow-Origin, origin);
+        res.setHeader('Access-Control-Allow-Methods, this.config.cors.methods.join(','));
+        res.setHeader('Access-Control-Allow-Headers, Content-Type, Authorization');
+        res.setHeader('Access-Control-Allow-Credentials, true');
       }
       next();
     };
@@ -60,10 +60,10 @@ export class SecurityManager {
   private rateLimitMiddleware() {
     return rateLimit({
       windowMs> {
-        return req.ip || req.headers['x-forwarded-for'] as string;
+        return req.ip || req.headers['x-forwarded-for] as string;
       },
       handler: (req: Request, res: Response) => {
-        this.logger.warn('Rate limit exceeded:', {
+        this.logger.warn('Rate limit exceeded:, {
           ip: req.ip,
           path: req.path
         });
@@ -82,7 +82,7 @@ export class SecurityManager {
       try {
         const decoded): void {
         return res.status(401).json({ error jwt.verify(token, this.config.jwtSecret)): void {
-        this.logger.error('Authentication failed:', error);
+        this.logger.error('Authentication failed:, error);
         res.status(401).json({ error: Invalid token' });
       }
     };
@@ -96,7 +96,7 @@ export class SecurityManager {
     return jwt.sign(
       { userId, roles },
       this.config.jwtSecret,
-      { expiresIn: 1h' }
+      { expiresIn: 1'h' }
     ): string): Promise<void> {
     await this.redis.sadd('revoked_tokens', token);
   }

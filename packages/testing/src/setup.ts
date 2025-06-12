@@ -11,7 +11,7 @@ const mockMemoryUsage = {
   heapTotal: 0,
   external: 0,
   arrayBuffers: 0,
-  rss: 0 // Added missing rss property
+  rss: 0 // Ensure this line exists and is correct
 };
 
 process.memoryUsage = jest.fn(() => ({

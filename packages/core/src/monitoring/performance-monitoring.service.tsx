@@ -2,10 +2,10 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import * as process from 'process';
 import * as os from 'os';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 
 export interface PerformanceMetric {
   name: string;
@@ -73,11 +73,11 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
     }
 
     // Start regular performance monitoring
-    const interval = this.configService.get('monitoring.performance.interval', 60000); // Default: 1 minute
+    const interval = this.configService.get('monitoring.performance.'interval', 60000); // Default: 1 minute
     this.monitoringInterval = setInterval(() => this.collectMetrics(), interval);
     
     // Start memory leak detection
-    const memoryCheckInterval = this.configService.get('monitoring.performance.memoryCheckInterval', 3600000); // Default: 1 hour
+    const memoryCheckInterval = this.configService.get('monitoring.performance.'memoryCheckInterval', 3600000); // Default: 1 hour
     this.memoryLeakDetectionInterval = setInterval(() => this.checkForMemoryLeaks(), memoryCheckInterval);
     
     // Take initial memory snapshot
@@ -130,7 +130,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
     }
     
     // Emit metric event
-    this.eventEmitter.emit('performance.metric', normalizedMetric);
+    this.eventEmitter.emit('performance.'metric', normalizedMetric);
   }
 
   /**
@@ -198,7 +198,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       metrics.push({
         name: 'resource_utilization',
         value: (usage / capacity) * 100,
-        unit: '%',
+        unit:%',
         tags: {
           resource,
           ...tags,
@@ -234,7 +234,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
     return this.recordMetric({
       name: 'throughput',
       value: count / intervalSeconds, // Calculate operations per second
-      unit: 'ops/s',
+      unit:ops/'s',
       tags: {
         operation,
         success: String(success),
@@ -339,7 +339,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       
       // Log and emit event for memory leak detection
       this.logger.warn(`Memory leak detected: ${leakRate.toFixed(2)} MB/hour`, result);
-      this.eventEmitter.emit('performance.memoryLeak', result);
+      this.eventEmitter.emit('performance.'memoryLeak', result);
     }
     
     return result;
@@ -408,7 +408,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       timestamp: metric.timestamp || new Date(),
       tags: metric.tags || {},
       context: metric.context || {},
-      unit: metric.unit || ''
+      unit: metric.unit || 
     };
   }
 
@@ -426,7 +426,7 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
   }
 
   private triggerAlert(
-    level: 'warning' | 'critical',
+    level:warning' | critical',
     metric: PerformanceMetric,
     threshold: PerformanceThreshold
   ): void {
@@ -434,15 +434,15 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       level,
       metric: metric.name,
       value: metric.value,
-      threshold: level === 'critical' ? threshold.critical : threshold.warning,
+      threshold: level === critical' ? threshold.critical : threshold.warning,
       unit: threshold.unit,
       tags: metric.tags,
       timestamp: new Date().toISOString(),
-      message: `Performance ${level}: ${metric.name} is ${metric.value}${threshold.unit} (threshold: ${level === 'critical' ? threshold.critical : threshold.warning}${threshold.unit})`
+      message: `Performance ${level}: ${metric.name} is ${metric.value}${threshold.unit} (threshold: ${level === critical' ? threshold.critical : threshold.warning}${threshold.unit})`
     };
     
     this.logger.warn(`Performance alert: ${alert.message}`, alert);
-    this.eventEmitter.emit('performance.alert', alert);
+    this.eventEmitter.emit('performance.'alert', alert);
   }
 
   private async collectMetrics(): Promise<void> {
@@ -454,14 +454,14 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       
       // Record memory metrics
       await this.recordResourceUsage({
-        resource: 'memory.heap.used',
+        resource:memory.heap.'used',
         usage: memoryUsage.heapUsed / (1024 * 1024),
         capacity: memoryUsage.heapTotal / (1024 * 1024),
         tags: { unit: 'MB' }
       });
       
       await this.recordResourceUsage({
-        resource: 'memory.rss',
+        resource: memory.'rss',
         usage: memoryUsage.rss / (1024 * 1024),
         capacity: os.totalmem() / (1024 * 1024),
         tags: { unit: 'MB' }
@@ -469,19 +469,19 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
       
       // Record CPU metrics
       await this.recordResourceUsage({
-        resource: 'cpu.user',
+        resource: cpu.'user',
         usage: cpuUsage.user / 1000000, // Convert to seconds
         tags: { unit: 's' }
       });
       
       await this.recordResourceUsage({
-        resource: 'cpu.system',
+        resource: cpu.'system',
         usage: cpuUsage.system / 1000000, // Convert to seconds
         tags: { unit: 's' }
       });
       
       await this.recordResourceUsage({
-        resource: 'cpu.loadavg.1m',
+        resource: cpu.loadavg.1'm',
         usage: osLoadAvg[0],
         capacity: os.cpus().length,
         tags: { unit: 'load' }
@@ -524,9 +524,9 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
           data: {
             name: 'memory_leak_detection',
             value: result.leakRate || 0,
-            unit: 'MB/hour',
+            unit: MB/'hour',
             tags: {
-              severity: result.leakRate && result.leakRate > 50 ? 'critical' : 'warning'
+              severity: result.leakRate && result.leakRate > 50 ? critical' : 'warning'
             } as any,
             context: result as any
           }
@@ -539,11 +539,11 @@ export class PerformanceMonitoringService implements OnModuleInit, OnModuleDestr
 
   private getMemoryLeakRecommendation(leakRate: number): string {
     if (leakRate > 100) {
-      return 'Critical memory leak detected. Consider restarting the service immediately and investigating object retention patterns.';
+      return Critical memory leak detected. Consider restarting the service immediately and investigating object retention patterns.';
     } else if (leakRate > 50) {
-      return 'Significant memory leak detected. Schedule a restart soon and review recent code changes that might be causing object retention.';
+      return Significant memory leak detected. Schedule a restart soon and review recent code changes that might be causing object retention.';
     } else {
-      return 'Minor memory leak detected. Monitor the situation and consider investigating object lifecycle management in the application.';
+      return Minor memory leak detected. Monitor the situation and consider investigating object lifecycle management in the application.';
     }
   }
 }

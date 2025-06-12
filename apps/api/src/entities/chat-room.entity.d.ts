@@ -1,5 +1,5 @@
-import { User } from './user.entity.js';
-import { Message } from './message.entity.js';
+import { User } from './user.entity.tsx';
+import { Message } from './message.entity.tsx';
 export declare class ChatRoom {
     id: string;
     name: string;

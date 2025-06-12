@@ -1,6 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { DatabaseService } from './database.service.js';
+import { DatabaseService } from './database.service.tsx';
 import {
   User,
   Agent,

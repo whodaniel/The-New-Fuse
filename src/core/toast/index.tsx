@@ -7,8 +7,8 @@ import {
   ToastTitle,
   ToastViewport,
   type ToastProps,
-} from '../toast.js';
-import { useToast } from '../use-toast.js';
+} from '../toast.tsx';
+import { useToast } from '../use-toast.tsx';
 
 interface ToasterProps {
   className?: string;

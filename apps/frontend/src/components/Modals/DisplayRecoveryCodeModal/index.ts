@@ -1,2 +1,2 @@
-export { RecoveryCodeModal } from './DisplayRecoveryCodeModal.js';
+export { RecoveryCodeModal } from './DisplayRecoveryCodeModal.tsx';
 //# sourceMappingURL=index.js.map

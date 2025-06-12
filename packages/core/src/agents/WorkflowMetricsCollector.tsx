@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { MetricsProcessor } from '../security/metricsProcessor.js';
-import { AgentWorkflow, WorkflowTask, WorkflowState } from './types.js';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
+import { AgentWorkflow, WorkflowTask, WorkflowState } from './types.tsx';
 
 const logger: Logger = getLogger('workflow_metrics');
 
@@ -23,7 +23,7 @@ export interface TaskMetrics {
     endTime?: number;
     duration?: number;
     attempts: number;
-    status: pending' | 'running' | 'completed' | 'failed';
+    status: pending' | running' | completed' | failed';
     resourceUtilization: ResourceMetrics;
 }
 
@@ -50,7 +50,7 @@ export class WorkflowMetricsCollector {
         const metrics: WorkflowMetrics = {
             workflowId: workflow.id,
             startTime: Date.now(),
-            status: pending',
+            status: 'pending',
             taskMetrics: [],
             resourceUtilization: {
                 memoryUsage: 0,
@@ -61,7 +61,7 @@ export class WorkflowMetricsCollector {
 
         this.activeWorkflows.set(workflow.id, metrics);
         await this.metricsProcessor.processWorkflowMetrics({
-            type: workflow_initialized',
+            type: 'workflow_initialized',
             workflowId: workflow.id,
             timestamp: metrics.startTime,
             metrics
@@ -79,7 +79,7 @@ export class WorkflowMetricsCollector {
             type: task.type,
             startTime: Date.now(),
             attempts: 0,
-            status: running',
+            status: 'running',
             resourceUtilization: {
                 memoryUsage: 0,
                 cpuUsage: 0,
@@ -89,7 +89,7 @@ export class WorkflowMetricsCollector {
 
         workflowMetrics.taskMetrics.push(taskMetrics);
         await this.metricsProcessor.processTaskMetrics({
-            type: task_started',
+            type: 'task_started',
             workflowId,
             taskId: task.id,
             timestamp: taskMetrics.startTime,
@@ -100,7 +100,7 @@ export class WorkflowMetricsCollector {
     async recordTaskCompletion(): Promise<void> {
         workflowId: string,
         taskId: string,
-        status: completed' | 'failed',
+        status: completed' | failed',
         resourceMetrics: ResourceMetrics
     ): Promise<void> {
         const workflowMetrics = this.activeWorkflows.get(workflowId);
@@ -119,7 +119,7 @@ export class WorkflowMetricsCollector {
         taskMetrics.resourceUtilization = resourceMetrics;
 
         await this.metricsProcessor.processTaskMetrics({
-            type: task_completed',
+            type: 'task_completed',
             workflowId,
             taskId,
             timestamp: taskMetrics.endTime,
@@ -163,7 +163,7 @@ export class WorkflowMetricsCollector {
         metrics.status = status;
 
         await this.metricsProcessor.processWorkflowMetrics({
-            type: workflow_completed',
+            type: 'workflow_completed',
             workflowId,
             timestamp: metrics.endTime,
             metrics

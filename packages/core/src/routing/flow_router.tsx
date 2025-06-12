@@ -1,4 +1,4 @@
-import { Node } from 'reactflow';
+import { Node } from ''reactflow';
 import { RouteObject } from 'react-router-dom';
 import { CustomNodeData } from '../../types/flow.js';
 import { FlowNode } from '../../types/workflow.js';
@@ -20,7 +20,7 @@ export class FlowRouter {
   public registerNodeRoute(node: FlowNode): FlowRoute {
     const route: FlowRoute = this.createRouteFromNode(node): FlowNode): FlowRoute {
     const path: node.id,
-      nodeType: node.type || 'default',
+      nodeType: node.type || default',
       element: node.data?.component, // React component to render
       metadata: {
         ...node.data,
@@ -42,7 +42,7 @@ export class FlowRouter {
     const oldPath   = this.generateRoutePath(node);
     return {
       path,
-      nodeId node.type?.toLowerCase() || 'node';
+      nodeId node.type?.toLowerCase() || node';
     return `/${baseRoute}/${node.id}`;
   }
 

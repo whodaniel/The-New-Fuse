@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/node';
+import * as Sentry from '@sentry/node;
 
 export class ErrorTracker {
   initialize() {
@@ -10,6 +10,6 @@ export class ErrorTracker {
         new Sentry.Integrations.Http({ tracing: true }),
         new Sentry.Integrations.Express()
       ]
-    });
+    })';
   }
 }

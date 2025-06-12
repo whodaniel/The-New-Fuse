@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { PerformanceMetrics } from '@the-new-fuse/types';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { PerformanceMetrics  } from '@the-new-fuse/types;
 
 export interface MetricQuery {
   startTime?: number;
-  endTime?: number;
-  metrics?: string[];
-  aggregation?: avg' | 'min' | 'max' | 'sum' | 'count';
+  endTime?: number';
+  metrics?: string[]';
+  aggregation?: avg' | min' | max' | sum' | count';
   interval?: number;
   filters?: Record<string, any>;
 }
@@ -38,7 +38,7 @@ export class MetricService {
     };
 
     // Get raw metrics
-    const rawMetrics   = typeof value === 'number' ? value  Date.now() - 3600000, // Default to last hour
+    const rawMetrics   = typeof value === number' ? value  Date.now() - 3600000, // Default to last hour
       endTime = Date.now(),
       metrics = [],
       aggregation = 'avg',
@@ -49,7 +49,7 @@ export class MetricService {
     const whereClause {
       timestamp await this.prisma.metric.findMany({
       where: whereClause,
-      orderBy: { timestamp: asc' }
+      orderBy: { timestamp: 'asc' }
     }): unknown[],
     interval: number
   ): Map<number, any[]> {
@@ -91,19 +91,19 @@ export class MetricService {
       // Apply aggregation for each metric name
       for (const [name, values] of metricsByName.entries()) {
         const numericValues): void {
-          case 'min':
+          case min':
             values[name]  = new Map<string, any[]>();
       metrics.forEach(metric => {
         if (!metricsByName.has(metric.name)) {
           metricsByName.set(metric.name, []): values[name] = Math.max(...numericValues);
             break;
-          case 'sum':
+          case sum':
             values[name] = numericValues.reduce((a, b) => a + b, 0);
             break;
-          case 'count':
+          case count':
             values[name] = numericValues.length;
             break;
-          case 'avg':
+          case avg':
           default:
             values[name] = numericValues.reduce((a, b) => a + b, 0) / numericValues.length;
         }
@@ -119,14 +119,14 @@ export class MetricService {
     const latestMetrics: {
         name: {
           in: [
-            'latency',
-            'errorRate',
-            'requestCount',
-            'concurrentUsers'
+            latency',
+            errorRate',
+            requestCount',
+            concurrentUsers'
           ]
         }
       },
-      orderBy: { timestamp: desc' },
+      orderBy: { timestamp: 'desc' },
       take: 4
     });
 
@@ -137,7 +137,7 @@ export class MetricService {
 
     latestMetrics.forEach(metric => {
       const value: unknown): metric.value;
-      metrics[metric.name as keyof PerformanceMetrics]  = typeof metric.value === 'string' ? JSON.parse(metric.value value;
+      metrics[metric.name as keyof PerformanceMetrics]  = typeof metric.value === string' ? JSON.parse(metric.value value;
     });
 
     return metrics as PerformanceMetrics;

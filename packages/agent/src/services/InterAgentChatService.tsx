@@ -54,8 +54,8 @@ export class InterAgentChatService extends BaseService {
       await this.transport.connect();
       await this.transport.subscribeToAgent(this.currentAgentId);
       this.logger.info(`Transport connected and subscribed to Agent ${this.currentAgentId}.`);
-    } catch (error) {
-      this.logger.error(`Failed to initialize chat transport: ${error.message}`, error);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to initialize chat transport: ${(error as Error).message}`, error);
       // Implement retry or error handling strategy
     }
   }
@@ -86,8 +86,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.sendMessage(message);
       this.logger.debug(`Sent message ${message.id} to Agent ${recipientAgentId}.`);
-    } catch (error) {
-      this.logger.error(`Failed to send message to Agent ${recipientAgentId}: ${error.message}`, error);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to send message to Agent ${recipientAgentId}: ${(error as Error).message}`, error);
       throw error; // Re-throw for the caller to handle
     }
   }
@@ -115,8 +115,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.broadcastMessage(message);
       this.logger.debug(`Broadcasted message ${message.id}${topic ? ` on topic ${topic}` : ''}.`);
-    } catch (error) {
-      this.logger.error(`Failed to broadcast message: ${error.message}`, error);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to broadcast message: ${(error as Error).message}`, error);
       throw error; // Re-throw for the caller to handle
     }
   }
@@ -156,8 +156,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.subscribeToTopic(topic);
       this.logger.info(`Subscribed to topic: ${topic}`);
-    } catch (error) {
-      this.logger.error(`Failed to subscribe to topic ${topic}: ${error.message}`, error);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to subscribe to topic ${topic}: ${(error as Error).message}`, error);
     }
   }
 
@@ -174,8 +174,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.unsubscribeFromTopic(topic);
       this.logger.info(`Unsubscribed from topic: ${topic}`);
-    } catch (error) {
-      this.logger.error(`Failed to unsubscribe from topic ${topic}: ${error.message}`, error);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to unsubscribe from topic ${topic}: ${(error as Error).message}`, error);
     }
   }
 

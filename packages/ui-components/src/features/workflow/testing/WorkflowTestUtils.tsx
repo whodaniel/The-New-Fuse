@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowStatus, WorkflowState } from '../types.js';
+import { WorkflowStep, WorkflowStatus, WorkflowState } from '../types.tsx';
 
 export class WorkflowTestUtils {
   static createMockStep(overrides: Partial<WorkflowStep> = {}): WorkflowStep {

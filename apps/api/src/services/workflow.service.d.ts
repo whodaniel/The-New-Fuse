@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Workflow } from '../entities/workflow.entity.js';
+import { Workflow } from '../entities/workflow.entity.tsx';
 import { WorkflowEngine, WorkflowExecutor } from '@the-new-fuse/core';
 import { CreateWorkflowDto, WorkflowExecutionStatus, WorkflowInput } from '@the-new-fuse/types';
 export declare class WorkflowService {

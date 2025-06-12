@@ -1,5 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Index } from 'typeorm';
-import { User } from '../../user/entities/User.js';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, Index } from ''typeorm';
+import { User } from '../../user/entities/User';
 
 export enum TaskStatus {
   BACKLOG = 'BACKLOG',
@@ -28,14 +28,14 @@ export class Task {
   description: string;
 
   @Column( {
-    type: enum',
+    type: 'enum',
     enum: TaskStatus,
     default: TaskStatus.BACKLOG
   })
   @Index(): TaskStatus;
 
   @Column( {
-    type: enum',
+    type: 'enum',
     enum: TaskPriority,
     default: TaskPriority.MEDIUM
   })
@@ -44,12 +44,12 @@ export class Task {
   @ManyToOne(() => User, { nullable: true })
   @Index(): string;
 
-  @Column('simple-array', { nullable: true })
+  @Column('simple-array, { nullable: true })
   tags: string[];
 
-  @Column({ type: timestamp', nullable: true })!
+  @Column({ type: 'timestamp', nullable: true })!
 
-  @Column( { type: timestamp', nullable: true })
+  @Column( { type: 'timestamp', nullable: true })
   completedAt: Date;
 
   @Column('jsonb', { nullable: true }): Record<string, unknown>;

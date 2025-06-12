@@ -1,4 +1,4 @@
-import { NLPEngine } from './NLPEngine.js';
+import { NLPEngine } from './NLPEngine.tsx';
 export declare class VoiceEngine {
     private nlpEngine;
     private recognition;

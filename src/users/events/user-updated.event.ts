@@ -1,5 +1,5 @@
 import { BaseEvent } from './user-created.event.js';
-import { User } from "@the-new-fuse/database/client";
+import { User } from "@the-new-fuse/database";
 
 export class UserUpdatedEvent implements BaseEvent {
   constructor(

@@ -1,13 +1,12 @@
 
 export {}
 exports.Logger = exports.LogLevel = void 0;
-var LogLevel;
-(function (LogLevel): any {
-    LogLevel["DEBUG"] = "debug";
-    LogLevel["INFO"] = "info";
-    LogLevel["WARN"] = "warn";
-    LogLevel["ERROR"] = "error";
-})(LogLevel || (exports.LogLevel = LogLevel = {}));
+enum LogLevel {
+    DEBUG = "debug",
+    INFO = "info",
+    WARN = "warn",
+    ERROR = "error"
+}
 class Logger {
     constructor(context) {
         this.context = context;

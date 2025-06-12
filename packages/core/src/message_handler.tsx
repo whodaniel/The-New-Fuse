@@ -125,7 +125,7 @@ export class Message {
         new Date(data.timestamp)
       );
     } catch (error) {
-      logger.error('Error creating message from dict:', error);
+      logger.error('Error creating message from dict:, error);
       throw new Error(`Failed to create message from data: ${error}`);
     }
   }
@@ -182,8 +182,8 @@ export class LLMAgent {
         `You are ${name}, an AI assistant with the following characteristics:`,
         `- Description: ${this.metadata.description}`,
         `- Communication style: ${this.metadata.communicationStyle}`,
-        `- Key traits: ${this.metadata.personalityTraits.join(', ')}`,
-        `- Expertise areas: ${this.metadata.expertiseAreas.join(', ')}`
+        `- Key traits: ${this.metadata.personalityTraits.join(', )}`,
+        `- Expertise areas: ${this.metadata.expertiseAreas.join(', )}`
       ].join('\n')
     }];
   }
@@ -221,7 +221,7 @@ export class LLMAgent {
         max_tokens: 1000
       };
 
-      logger.debug('Sending request to OpenRouter API:', { data });
+      logger.debug('Sending request to OpenRouter API:, { data });
 
       // Make API request
       const response = await axios.post(
@@ -241,7 +241,7 @@ export class LLMAgent {
 
       // Process response
       const responseData = response.data;
-      logger.debug('OpenRouter API response:', { responseData });
+      logger.debug('OpenRouter API response:, { responseData });
 
       if (!responseData.choices?.length) {
         logger.error('Unexpected API response format:', { responseData });
@@ -359,7 +359,7 @@ export class ChatManager {
       type: MessageType.CHAT,
       sender: 'cascade',
       recipient: 'cline',
-      content: 'Hello, Cline!',
+      content:Hello, Cline!',
       sequence: 0,
       timestamp: new Date().toISOString(),
       priority: MessagePriority.NORMAL
@@ -428,12 +428,12 @@ export class ChatManager {
       throw new Error('Message content must be a non-empty string');
     }
 
-    if (toAgent !== 'cascade' && toAgent !== 'cline') {
+    if (toAgent !== cascade' && toAgent !== 'cline') {
       throw new Error(`Invalid agent specified: ${toAgent}`);
     }
 
     try {
-      const agent = toAgent === 'cascade' ? this.cascade : this.cline;
+      const agent = toAgent === cascade' ? this.cascade : this.cline;
       const userMessage = new Message(
         MessageRole.USER,
         content,

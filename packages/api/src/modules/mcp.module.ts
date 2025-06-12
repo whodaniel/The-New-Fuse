@@ -3,8 +3,8 @@ import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios'; // Import HttpModule
 import { MCPService } from './services/mcp.service.js';
 import { MCPController } from './controllers/mcp.controller.js';
-import { MCPRegistryService } from './mcp-registry.service.js'; // Import new service
-import { MCPRegistryServer } from './mcp-registry.server.js'; // Import new server
+import { MCPRegistryService } from './mcp/mcp-registry.service.js'; // Import new service
+import { MCPRegistryServer } from './mcp/mcp-registry.server.js'; // Import new server
 
 @Module({
   imports: [

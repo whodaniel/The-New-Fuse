@@ -45,7 +45,7 @@ export class RedisService extends BaseService {
 
     if (!this.client || this.client.status === 'end' || this.client.status === 'close') {
         this.logger.info(`Connecting to Redis at ${this.options.host}:${this.options.port}...`);
-        this.client = new Redis(this.options);
+        this.client = new (Redis as any)(this.options);
 
         this.client.on('connect', () => {
             this.logger.info('Redis client connected.');
@@ -92,8 +92,8 @@ export class RedisService extends BaseService {
                this.client?.once('error', errorListener); // Handle connection errors during initial connect
            });
         }
-    } catch (error) {
-        this.logger.error(`Failed to connect to Redis: ${error.message}`, error);
+    } catch (error: unknown) {
+        this.logger.error(`Failed to connect to Redis: ${(error as Error).message}`, error);
         this.client = null; // Ensure client is null on connection failure
         throw error; // Re-throw the error
     }

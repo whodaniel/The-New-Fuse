@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
-import { DatabaseManager } from './databaseManager.js';
+import { DatabaseManager } from './databaseManager.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 interface AuditEvent {
-  type: 'query' | 'migration' | 'security' | 'error';
+  type:query' | migration' | security' | error';
   timestamp: Date;
   details: any;
   duration?: number;
@@ -109,7 +109,7 @@ export class DatabaseMonitor implements OnModuleInit {
 
     for (const [name, value] of Object.entries(metrics)) {
       await db.query(
-        'INSERT INTO performance_metrics (metric_name, value, timestamp) VALUES ($1, $2, $3)',
+        INSERT INTO performance_metrics (metric_name, value, timestamp) VALUES ($1, $2, $3)',
         [name, value, timestamp]
       );
     }
@@ -118,7 +118,7 @@ export class DatabaseMonitor implements OnModuleInit {
   private async recordAuditEvent(event: AuditEvent) {
     const db = this.dbManager.getDataSource();
     await db.query(
-      'INSERT INTO audit_log (event_type, timestamp, details, duration, user_id) VALUES ($1, $2, $3, $4, $5)',
+      INSERT INTO audit_log (event_type, timestamp, details, duration, user_id) VALUES ($1, $2, $3, $4, $5)',
       [event.type, event.timestamp, event.details, event.duration, event.user]
     );
   }

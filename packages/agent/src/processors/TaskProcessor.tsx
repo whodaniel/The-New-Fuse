@@ -10,8 +10,8 @@ import {
   // LLMConfig, // Removed unused import
   // ToolDefinition, // Removed unused import
 } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService.js'; // Corrected import
-import { RedisService } from '../services/RedisService.js'; // Corrected import
+import { AlertService } from '../services/AlertService.tsx'; // Corrected import
+import { RedisService } from '../services/RedisService.tsx'; // Corrected import
 // Import other necessary services like LLMService, ToolService, etc.
 // import { LLMService } from '../services/LLMService.js';
 // import { ToolService } from '../services/ToolService.js';

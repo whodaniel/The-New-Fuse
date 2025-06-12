@@ -8,10 +8,10 @@ import {
   TaskQuery,
   TaskDependency,
   TaskMetadata,
-} from './types.js';
-import { PriorityQueue } from './queue.js';
-import { TaskScheduler } from './scheduler.js';
-import { TaskExecutor } from './executor.js';
+} from './types.tsx';
+import { PriorityQueue } from './queue.tsx';
+import { TaskScheduler } from './scheduler.tsx';
+import { TaskExecutor } from './executor.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisService } from '../services/redis.service.js';
 
@@ -99,7 +99,7 @@ export class TaskManager {
 
   async cancelTask(taskId: string): Promise<void> {
     await this.scheduler.cancel(taskId);
-    this.eventEmitter.emit('task.cancelled', { taskId });
+    this.eventEmitter.emit('task.'cancelled', { taskId });
   }
 
   async pauseTask(taskId: string): Promise<void> {
@@ -111,7 +111,7 @@ export class TaskManager {
     task.status = TaskStatus.PAUSED;
     task.updatedAt = new Date();
     await this.queue.update(task);
-    this.eventEmitter.emit('task.paused', { taskId });
+    this.eventEmitter.emit('task.'paused', { taskId });
   }
 
   async resumeTask(taskId: string): Promise<void> {
@@ -124,7 +124,7 @@ export class TaskManager {
     task.updatedAt = new Date();
     await this.queue.update(task);
     await this.scheduler.schedule(task);
-    this.eventEmitter.emit('task.resumed', { taskId });
+    this.eventEmitter.emit('task.'resumed', { taskId });
   }
 
   async retryTask(taskId: string): Promise<void> {
@@ -139,7 +139,7 @@ export class TaskManager {
     task.metadata.retryCount = (task.metadata.retryCount || 0) + 1;
     await this.queue.update(task);
     await this.scheduler.schedule(task);
-    this.eventEmitter.emit('task.retry', { taskId });
+    this.eventEmitter.emit('task.'retry', { taskId });
   }
 
   registerExecutor(type: string, executor: (task: Task) => Promise<void>): void {
@@ -161,7 +161,7 @@ export class TaskManager {
   async getAllTasks(): Promise<Task[]> {
     const taskIds = await this.redisService.keys('task:queue:task:*');
     const tasks = await Promise.all(
-      taskIds.map((id) => this.queue.getTask(id.replace('task:queue:task:', '')))
+      taskIds.map((id) => this.queue.getTask(id.replace('task:queue:task:, )))
     );
     return tasks.filter((task): task is Task => task !== null);
   }

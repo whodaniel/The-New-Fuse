@@ -1,5 +1,5 @@
 import { PineconeClient, Vector } from '@pinecone-database/pinecone';
-import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.js';
+import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.tsx';
 
 export class PineconeProvider implements VectorStoreProvider {
   private client: PineconeClient;
@@ -57,7 +57,7 @@ export class PineconeProvider implements VectorStoreProvider {
     return (results.matches || []).map(match => ({
       id: match.id,
       score: match.score || 0,
-      content: match.metadata?.content || '',
+      content: match.metadata?.content || ,
       metadata: match.metadata || {},
       embedding: match.values
     }));

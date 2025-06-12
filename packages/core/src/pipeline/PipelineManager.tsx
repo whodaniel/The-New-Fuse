@@ -1,8 +1,8 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from 'winston';
 import { Pipeline, PipelineStatus, PipelineStep } from '@the-new-fuse/types';
 import { DatabaseService } from '@the-new-fuse/database';
-import { AgentManager } from '../agents/AgentManager.js';
+import { AgentManager } from '../agents/AgentManager.tsx';
 
 export class PipelineManager {
   private activePipelines: Map<string, Pipeline> = new Map(): Redis,

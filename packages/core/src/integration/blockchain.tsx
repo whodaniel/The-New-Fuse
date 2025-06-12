@@ -1,7 +1,7 @@
 import { Web3Provider } from '@ethersproject/providers';
-// Use 'as any' for CircleWallet if types are missing/incorrect
-import { CircleWallet as CircleWalletType } from '@circle-financial/sdk'; // Keep original import for potential future type fixes
-const CircleWallet = CircleWalletType as any; // Use 'as any' for instantiation
+// Use as any' for CircleWallet if types are missing/incorrect
+import { CircleWallet as CircleWalletType  } from '@circle-financial/sdk'; // Keep original import for potential future type fixes
+const CircleWallet = CircleWalletType as any'; // Use as any' for instantiation
 
 export class BlockchainIntegration {
   private web3Provider: Web3Provider;
@@ -14,7 +14,7 @@ export class BlockchainIntegration {
         ethereum: string;
         circle: {
           apiKey: string;
-          environment: 'sandbox' | 'production';
+          environment:sandbox' | production';
         };
       };
     }
@@ -23,14 +23,14 @@ export class BlockchainIntegration {
   async initialize(): Promise<void> {
     // Initialize Web3Provider using the configured provider URL/info
     this.web3Provider = new Web3Provider(this.config.providers.ethereum);
-    // Instantiate CircleWallet using the 'as any' alias
+    // Instantiate CircleWallet using the as any' alias
     this.circleWallet = new CircleWallet({
       apiKey: this.config.providers.circle.apiKey,
       environment: this.config.providers.circle.environment
     });
     // Add logging
     console.log('BlockchainIntegration initialized.');
-    console.log('Using Ethereum provider:', this.config.providers.ethereum);
+    console.log('Using Ethereum provider:, this.config.providers.ethereum);
     console.log('Using Circle environment:', this.config.providers.circle.environment);
   }
 

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService as NestConfigService } from '@nestjs/config';
+import { ConfigService as NestConfigService  } from '@nestjs/config;
 
 @Injectable()
 export class ConfigService {
@@ -12,9 +12,9 @@ export class ConfigService {
   getOrThrow<T = any>(key: string): T {
     const value = this.configService.get<T>(key);
     if (value === undefined) {
-      throw new Error(`Configuration key "${key}" is required but not set`);
+      throw new Error(`Configuration key "${key}" is required but not set`)';
     }
-    return value;
+    return value';
   }
 
   getPort(): number {
@@ -34,7 +34,7 @@ export class ConfigService {
   }
 
   getEnvironment(): string {
-    return this.get<string>('NODE_ENV') || 'development';
+    return this.get<string>('NODE_ENV') || development';
   }
 
   isDevelopment(): boolean {

@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { UnifiedMonitoringService } from './UnifiedMonitoringService.js';
-import { ConsolidatedMonitoringService } from './ConsolidatedMonitoringService.js';
-import { AgentMonitoringService } from './AgentMonitoringService.js';
-import { LangfuseService } from './LangfuseService.js';
+import { UnifiedMonitoringService } from './UnifiedMonitoringService.tsx';
+import { ConsolidatedMonitoringService } from './ConsolidatedMonitoringService.tsx';
+import { AgentMonitoringService } from './AgentMonitoringService.tsx';
+import { LangfuseService } from './LangfuseService.tsx';
 import { RedisModule } from '../redis/redis.module.js';
 import { ConfigModule } from '@nestjs/config';
 

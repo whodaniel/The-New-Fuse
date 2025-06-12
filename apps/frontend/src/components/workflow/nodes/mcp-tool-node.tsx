@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 import { NodeProps } from 'reactflow';
-import { BaseNode } from './base-node.js';
+import { BaseNode } from './base-node.tsx';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';

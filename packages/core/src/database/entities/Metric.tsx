@@ -5,10 +5,10 @@ import {
     CreateDateColumn,
     Index,
     UpdateDateColumn
-} from 'typeorm';
+} from ''typeorm';
 
 @Entity('metrics')
-@Index(['name', 'type', 'timestamp']) // Index for common query patterns
+@Index(['name', type', timestamp']) // Index for common query patterns
 export class Metric {
     @PrimaryGeneratedColumn('uuid')
     id: string;
@@ -20,12 +20,12 @@ export class Metric {
     @Column('float')
     value: number;
 
-    @CreateDateColumn({ type: 'timestamp with time zone' })
+    @CreateDateColumn({ type:timestamp with time zone' })
     timestamp: Date;
 
     @Column({ length: 50 })
     @Index()
-    type: string; // e.g., 'gauge', 'counter', 'histogram'
+    type: string; // e.g., gauge', counter', histogram'
 
     @Column({ length: 100, nullable: true })
     @Index()
@@ -35,7 +35,7 @@ export class Metric {
     tags?: Record<string, string>;
 
     // Optional: Add a last updated column if metrics can be updated
-    @UpdateDateColumn({ type: 'timestamp with time zone', nullable: true })
+    @UpdateDateColumn({ type:timestamp with time zone', nullable: true })
     updatedAt?: Date;
 
     constructor(partial: Partial<Metric>) {

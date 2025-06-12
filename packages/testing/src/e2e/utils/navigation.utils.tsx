@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { BasePage } from '../pages/base.page.js';
+import { BasePage } from '../pages/base.page';
 import { config } from '../config/test-config.js';
 
 export class NavigationUtils extends BasePage {

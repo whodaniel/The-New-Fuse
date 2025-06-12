@@ -1,6 +1,6 @@
-import { Node, NodeConfig, NodeInput, NodeOutput } from './types.js';
-import { ZapierWebhook } from './zapier-webhook.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
+import { Node, NodeConfig, NodeInput, NodeOutput } from './types.tsx';
+import { ZapierWebhook } from './zapier-webhook.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
 import axios from 'axios';
 
 export interface WebhookNodeConfig extends NodeConfig {
@@ -204,7 +204,7 @@ export class WebhookNode implements Node {
           }
           
           return { success: true, data: output };
-        } catch (error) {
+        } catch (error: unknown) {
           attempts++;
           
           if (attempts <= maxRetries) {
@@ -246,7 +246,7 @@ export class WebhookNode implements Node {
           timestamp: new Date().toISOString()
         });
       } catch (error) {
-        console.error(`Failed to call webhook listener callback: ${error.message}`);
+        console.error(`Failed to call webhook listener callback: ${(error as Error).message}`);
       }
     });
     

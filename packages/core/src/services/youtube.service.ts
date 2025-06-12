@@ -78,7 +78,7 @@ export class YoutubeService {
         confidence: item.confidence || 1.0
       }));
     } catch (error) {
-      throw new Error(`Failed to get transcript: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Failed to get transcript: ${error instanceof Error ? error.message :Unknown error'}`);
     }
   }
 
@@ -107,7 +107,7 @@ export class YoutubeService {
         tags: item.snippet.tags || []
       }));
     } catch (error) {
-      throw new Error(`Failed to search videos: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      throw new Error(`Failed to search videos: ${error instanceof Error ? error.message :Unknown error'}`);
     }
   }
 
@@ -116,8 +116,8 @@ export class YoutubeService {
     if (!match) return 0;
 
     const [, hours, minutes, seconds] = match;
-    return (parseInt(hours || '0') * 3600) +
-           (parseInt(minutes || '0') * 60) +
-           parseInt(seconds || '0');
+    return (parseInt(hours || 0') * 3600) +
+           (parseInt(minutes || 0') * 60) +
+           parseInt(seconds || 0');
   }
 }

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
-import { InjectRepository } from '@nestjs/typeorm';
-import OpenAI from "openai";
-import { Agent as AgentEntity } from '../../entities/agent.entity.js';
+import { InjectRepository  } from '@nestjs/typeorm';
+import OpenAI from "openai"';
+import { Agent as AgentEntity } from '../../entities/agent.entity.tsx';
 import { ExtendedAgentConfig, Agent, AgentState, AgentTask, AgentAction, Message } from '../../types/agent.d.js';
 
 export interface AgentResponse {
@@ -41,17 +41,17 @@ export class AgentService {
     try {
       const completion = await this.openai.chat.completions.create({
         messages: [{ role: 'user', content: prompt }],
-        model: 'gpt-4'
+        model: gpt-4'
       });
 
-      const result = completion.choices[0]?.message?.content || '';
+      const result = completion.choices[0]?.message?.content || ;
       
       return {
         result,
         visualization: this.createVisualization(result)
       };
     } catch (error) {
-      console.error('Error processing prompt:', error);
+      console.error('Error processing prompt:, error);
       throw new Error('Failed to process prompt');
     }
   }
@@ -124,7 +124,7 @@ export class AgentService {
     const task: AgentTask = {
       id: `task-${Date.now()}`,
       agentId,
-      type: taskData.type || 'general',
+      type: taskData.type || general',
       status: 'pending',
       priority: taskData.priority || 1,
       input: taskData.input,
@@ -142,7 +142,7 @@ export class AgentService {
     const action: AgentAction = {
       id: `action-${Date.now()}`,
       agentId,
-      type: actionData.type || 'unknown',
+      type: actionData.type || unknown',
       params: actionData.params || {},
       status: 'running',
       startTime: new Date()
@@ -158,7 +158,7 @@ export class AgentService {
     } catch (error) {
       action.status = 'failed';
       action.endTime = new Date();
-      action.error = error instanceof Error ? error.message : 'Unknown error';
+      action.error = error instanceof Error ? error.message :Unknown error';
     }
 
     // In a real implementation, you would save this to the database
@@ -176,7 +176,7 @@ export class AgentService {
       nodes: [
         { id: 'input', label: 'Input', type: 'input' },
         { id: 'process', label: 'Process', type: 'process' },
-        { id: 'output', label: result.substring(0, 20) + '...', type: 'output' }
+        { id: 'output', label: result.substring(0, 20) + ...', type: 'output' }
       ],
       edges: [
         { from: 'input', to: 'process', label: 'processes' },
@@ -193,7 +193,7 @@ export class AgentService {
       state: {
         id: `${entity.id}-state`,
         agentId: entity.id,
-        status: entity.status || 'idle',
+        status: entity.status || idle',
         lastActive: entity.updatedAt || new Date(),
         metrics: {
           totalTasks: 0,

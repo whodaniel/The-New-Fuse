@@ -1,7 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { CascadeService } from './services/CascadeService.js';
-import { CascadeMiddleware } from './middleware/cascade.middleware.js';
-import { CascadeGuard } from './guards/cascade.guard.js';
+import { CascadeMiddleware } from './middleware/cascade.middleware.tsx';
+import { CascadeGuard } from './guards/cascade.guard.tsx';
 
 @Global()
 @Module({

@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { MonitoringService } from './MonitoringService.js';
-import { AlertService } from './AlertService.js';
+import { MonitoringService } from './MonitoringService.tsx';
+import { AlertService } from './AlertService.tsx';
 
 export interface DashboardData {
   metrics: {

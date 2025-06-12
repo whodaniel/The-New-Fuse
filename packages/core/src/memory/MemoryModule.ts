@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { MemoryManager } from './MemoryManager.js';
-import { MemoryOptimizer } from './MemoryOptimizer.js';
-import { MemoryIndexer } from './MemoryIndexer.js';
+import { MemoryManager } from './MemoryManager.tsx';
+import { MemoryOptimizer } from './MemoryOptimizer.tsx';
+import { MemoryIndexer } from './MemoryIndexer.tsx';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Module({

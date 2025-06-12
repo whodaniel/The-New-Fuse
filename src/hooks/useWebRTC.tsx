@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from "react";
-import { useWebSocket } from './useWebSocket.js';
+import { useWebSocket } from './useWebSocket.tsx';
 
 interface RTCParticipant {
   id: string;

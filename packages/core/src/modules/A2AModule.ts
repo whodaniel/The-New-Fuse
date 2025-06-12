@@ -12,7 +12,7 @@ import { A2AController } from '../controllers/A2AController.js';
   imports: [
     EventEmitterModule.forRoot({
       wildcard: true,
-      delimiter: '.',
+      delimiter:.',
       newListener: false,
       removeListener: false,
       maxListeners: 20,

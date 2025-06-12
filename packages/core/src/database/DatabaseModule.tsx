@@ -1,8 +1,8 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
-import { DatabaseService } from './DatabaseService.js';
-import { MigrationManager } from './MigrationManager.js';
-import { DatabaseConfig, DEFAULT_CONFIG } from './config.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { DatabaseService } from './DatabaseService.tsx';
+import { MigrationManager } from './MigrationManager.tsx';
+import { DatabaseConfig, DEFAULT_CONFIG } from './config.tsx';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 import { LoggerService } from '../logging/LoggerService.js';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 

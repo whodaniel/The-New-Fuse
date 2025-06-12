@@ -1,2 +1,3 @@
-export * from './ErrorBoundary.js';
+export * from './ErrorBoundary.tsx';
+export * from '../ui';
 //# sourceMappingURL=index.js.map

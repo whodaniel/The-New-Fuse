@@ -18,4 +18,4 @@ export declare const MINUTE = 60;
 export declare const HOUR: number;
 export declare const DAY: number;
 export declare const WEEK: number;
-export declare function getTimeDelta(seconds: number): any string;
+export declare function getTimeDelta(seconds: number): string;

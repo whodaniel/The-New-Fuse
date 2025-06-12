@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Tabs, Tab, Paper, CircularProgress } from '@mui/material';
-import UsageStats from './UsageStats.js';
-import SessionsList from './SessionsList.js';
-import PricingTiers from './PricingTiers.js';
-import SecurityLogs from './SecurityLogs.js';
+import UsageStats from './UsageStats.tsx';
+import SessionsList from './SessionsList.tsx';
+import PricingTiers from './PricingTiers.tsx';
+import SecurityLogs from './SecurityLogs.tsx';
 
 interface TabPanelProps {
   children?: React.ReactNode;

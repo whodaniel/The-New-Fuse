@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { IMetricsService, MetricValue, MetricsStorage } from './interfaces.js';
-import { MetricLabel, MetricType, MetricUnit } from './types.js';
+import { IMetricsService, MetricValue, MetricsStorage } from './interfaces.tsx';
+import { MetricLabel, MetricType, MetricUnit } from './types.tsx';
 
 @Injectable()
 export class MetricsService implements IMetricsService {

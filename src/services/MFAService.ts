@@ -4,7 +4,7 @@ import type {
   IConfigService,
   IEventBus,
   ICacheService,
-} from '../core/di/types.js';
+} from '../core/di/types.tsx';
 import * as speakeasy from "speakeasy";
 import * as qrcode from "qrcode";
 import { TimeService } from '../utils/time.service.js';

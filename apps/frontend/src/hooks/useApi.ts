@@ -6,7 +6,7 @@ import {
   createAgentService,
   createWorkflowService
 } from '@the-new-fuse/api-client';
-import { useAuth } from './useAuth.js';
+import { useAuth } from './useAuth.tsx';
 import { useToast } from './useToast.js';
 
 /**

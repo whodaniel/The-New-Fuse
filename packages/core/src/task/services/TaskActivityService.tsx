@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TaskActivity, TaskActivityType } from '../entities/TaskActivity.js';
-import { Task } from '../entities/Task.js';
-import { User } from '../../user/entities/User.js';
+import { TaskActivity, TaskActivityType } from '../entities/TaskActivity.tsx';
+import { Task } from '../entities/Task.tsx';
+import { User } from '../../user/entities/User';
 
 @Injectable()
 export class TaskActivityService {
@@ -33,7 +33,7 @@ export class TaskActivityService {
     return this.taskActivityRepository.find({
       where: { taskId },
       relations: ['user'], // Assuming you want to load the user relation
-      order: { createdAt: 'DESC' }, // Corrected: 'DESC' for descending order
+      order: { createdAt: 'DESC' }, // Corrected: DESC' for descending order
     });
   }
 

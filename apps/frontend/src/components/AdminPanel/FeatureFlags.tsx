@@ -12,7 +12,7 @@ import {
   Button,
   useToast
 } from '@chakra-ui/react';
-import { useFeatureFlags } from '../../hooks/useFeatureFlags.js';
+import { useFeatureFlags } from '../../hooks/useFeatureFlags.tsx';
 
 export const FeatureFlags: React.FC = () => {
   const { flags, updateFlag, loading } = useFeatureFlags();

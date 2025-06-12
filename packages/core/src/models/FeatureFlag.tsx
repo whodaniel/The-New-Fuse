@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document } from ''mongoose';
 import { FeatureFlag as IFeatureFlag, Environment } from '../types/featureFlags.js';
 
 export interface FeatureFlagDocument extends IFeatureFlag, Document {}
@@ -31,7 +31,7 @@ const FeatureFlagSchema = new Schema({
     },
     deviceTypes: [{
       type: String,
-      enum: ['desktop', 'mobile', 'tablet']
+      enum: ['desktop', mobile', tablet']
     }],
     regions: [String],
     customRules: [{
@@ -59,8 +59,8 @@ const FeatureFlagSchema = new Schema({
 
 // Indexes for efficient queries
 FeatureFlagSchema.index({ name: 1 }, { unique: true });
-FeatureFlagSchema.index({ 'conditions.environments': 1 });
-FeatureFlagSchema.index({ 'conditions.userGroups.groupId': 1 });
+FeatureFlagSchema.index({ conditions.environments': 1 });
+FeatureFlagSchema.index({ conditions.userGroups.groupId': 1 });
 FeatureFlagSchema.index({ enabled: 1 });
 FeatureFlagSchema.index({ stage: 1 });
 

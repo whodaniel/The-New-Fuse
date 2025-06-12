@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TaskStatus, TaskStatusType, TaskMetadata, Task, TaskDependency } from './types.js';
+import { TaskStatus, TaskStatusType, TaskMetadata, Task, TaskDependency } from './types.tsx';
 import { EventEmitter } from 'events';
-import { PriorityQueue } from './queue.js';
+import { PriorityQueue } from './queue.tsx';
 import { ConfigService } from '@nestjs/config';
-import { RedisService } from '../redis/redis.service.js';
+import { RedisService } from '../redis/redis.service.tsx';
 
 const statusTransitions: Record<TaskStatusType, TaskStatusType[]> = {
   [TaskStatus.PENDING]: [TaskStatus.RUNNING, TaskStatus.CANCELLED],
@@ -16,11 +16,11 @@ const statusTransitions: Record<TaskStatusType, TaskStatusType[]> = {
 
 function isTaskMetadata(metadata: unknown): metadata is TaskMetadata {
   return (
-    typeof metadata === 'object' &&
+    typeof metadata === object' &&
     metadata !== null &&
-    typeof (metadata as TaskMetadata).createdBy === 'string' &&
-    (typeof (metadata as TaskMetadata).startTime === 'undefined' || (metadata as TaskMetadata).startTime instanceof Date) &&
-    (typeof (metadata as TaskMetadata).endTime === 'undefined' || (metadata as TaskMetadata).endTime instanceof Date)
+    typeof (metadata as TaskMetadata).createdBy === string' &&
+    (typeof (metadata as TaskMetadata).startTime === undefined' || (metadata as TaskMetadata).startTime instanceof Date) &&
+    (typeof (metadata as TaskMetadata).endTime === undefined' || (metadata as TaskMetadata).endTime instanceof Date)
   );
 }
 
@@ -77,7 +77,7 @@ export class TaskScheduler extends EventEmitter {
       task.status = newStatus;
       await queue.update(task);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`Error updating task status:`, errorMessage);
       throw error;
     }
@@ -112,7 +112,7 @@ export class TaskScheduler extends EventEmitter {
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`[TaskScheduler] Schedule error for task ${task?.id}: ${errorMessage}`);
       if (error instanceof TaskSchedulerError) {
         throw error;
@@ -131,7 +131,7 @@ export class TaskScheduler extends EventEmitter {
             throw new TaskDependencyError(`Dependency task ${dep.taskId} not found`);
           }
 
-          if (dep.type === 'hard' && depTask.status !== TaskStatus.COMPLETED) {
+          if (dep.type === hard' && depTask.status !== TaskStatus.COMPLETED) {
             return false;
           }
         }
@@ -142,7 +142,7 @@ export class TaskScheduler extends EventEmitter {
       const availableSlots = this.maxConcurrent - runningTasks.length;
       return availableSlots > 0;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`Error checking canSchedule for task ${task.id}: ${errorMessage}`);
       throw new TaskSchedulerError(`Failed to check canSchedule: ${errorMessage}`);
     }
@@ -153,8 +153,8 @@ export class TaskScheduler extends EventEmitter {
       const tasks: Task[] = await this.queue.getTasksByStatus(TaskStatus.RUNNING);
       return tasks;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      console.error('Error getting running tasks:', errorMessage);
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
+      console.error('Error getting running tasks:, errorMessage);
       throw new TaskSchedulerError(`Failed to get running tasks: ${errorMessage}`);
     }
   }
@@ -164,8 +164,8 @@ export class TaskScheduler extends EventEmitter {
       const tasks: Task[] = await this.queue.getTasksByStatus(TaskStatus.PENDING);
       return tasks;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      console.error('Error getting pending tasks:', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : Unknown error 'occurred';
+      console.error('Error getting pending tasks:, errorMessage);
       throw new TaskSchedulerError(`Failed to get pending tasks: ${errorMessage}`);
     }
   }
@@ -189,8 +189,8 @@ export class TaskScheduler extends EventEmitter {
         return (a.createdAt || 0).valueOf() - (b.createdAt || 0).valueOf();
       });
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      console.error('Error sorting tasks by priority:', errorMessage);
+      const errorMessage = error instanceof Error ? error.message : Unknown error 'occurred';
+      console.error('Error sorting tasks by priority:, errorMessage);
       throw new TaskSchedulerError(`Failed to sort tasks by priority: ${errorMessage}`);
     }
   }
@@ -210,7 +210,7 @@ export class TaskScheduler extends EventEmitter {
 
       this.taskTimeouts.set(task.id, timeout);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message : Unknown error 'occurred';
       console.error(`Error setting deadline timeout for task ${task.id}:`, errorMessage);
       throw new TaskSchedulerError(`Failed to set deadline timeout: ${errorMessage}`);
     }
@@ -236,9 +236,9 @@ export class TaskScheduler extends EventEmitter {
         this.taskTimeouts.delete(taskId);
       }
       
-      this.emit('task:cancelled', task);
+      this.emit('task: 'cancelled', task);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message : Unknown error 'occurred';
       console.error(`[TaskScheduler] Cancel error for task ${taskId}: ${errorMessage}`);
       if (error instanceof TaskSchedulerError) {
         throw error;
@@ -271,12 +271,12 @@ export class TaskScheduler extends EventEmitter {
           }
         } catch (taskError) {
           console.error(`[TaskScheduler] Failed to schedule task ${task.id} during optimization: ${
-            taskError instanceof Error ? taskError.message : 'Unknown error'
+            taskError instanceof Error ? taskError.message :Unknown error'
           }`);
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`[TaskScheduler] Optimization error: ${errorMessage}`);
     }
   }
@@ -291,7 +291,7 @@ export class TaskScheduler extends EventEmitter {
       task.priority = (task.priority || 0) + 1;
       await this.queue.update(task);
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`Error increasing priority of task ${taskId}: ${errorMessage}`);
       throw new TaskSchedulerError(`Failed to increase priority: ${errorMessage}`);
     }
@@ -308,7 +308,7 @@ export class TaskScheduler extends EventEmitter {
     }
 
     for (const dep of task.dependencies) {
-      if (dep.type === 'hard' && dep.taskId) {
+      if (dep.type === hard' && dep.taskId) {
         const depTask = await this.queue.getTask(dep.taskId);
         if (!depTask) {
           throw new TaskDependencyError(`Required dependency ${dep.taskId} not found`);
@@ -333,12 +333,12 @@ export class TaskScheduler extends EventEmitter {
             await this.updateTaskStatus(depTask, TaskStatus.RUNNING, this.queue);
           }
         } catch (error) {
-          const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+          const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
           console.error(`Error updating dependent tasks for ${taskId}:`, errorMessage);
         }
       }
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      const errorMessage = error instanceof Error ? error.message :Unknown error occurred';
       console.error(`Error updating dependent tasks for ${taskId}:`, errorMessage);
     }
   }

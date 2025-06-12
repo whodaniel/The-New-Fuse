@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket.js';
 import { Alert } from './ui/alert.js';
-import { Button } from './ui/button.js';
+import { Button } from './ui/button.tsx';
 import { useToast } from './ui/use-toast.js';
 
 interface RealTimeConnectionProps {

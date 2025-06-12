@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { AgentWorkflowManager } from '../AgentWorkflowManager.js';
+import { AgentWorkflowManager } from '../AgentWorkflowManager.tsx';
 import { useWebSocket } from '../../hooks/useWebSocket.js';
 
 // Mock the WebSocket hook

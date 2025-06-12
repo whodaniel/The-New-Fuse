@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { AugmentBridge } from '../../../../apps/backend/src/scripts/augment-bridge.js';
-import { AG2Bridge } from '../../../../packages/integrations/ag2/ag2-integration/src/ag2-bridge.js';
+import { AG2Bridge } from '../../../../packages/integrations/ag2/ag2-integration/src/ag2-bridge.tsx';
 import { ErrorRecovery } from '../../../../apps/backend/src/core/error-recovery.js';
 import { CoreSystem } from '../../../../apps/backend/src/core/system.js';
 

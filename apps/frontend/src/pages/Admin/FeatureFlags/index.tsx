@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions.js';
-import { FeatureFlag, FeatureFlagConditions, Environment } from '@the-new-fuse/core/types/featureFlags';
-import { Button, Card, Input, Switch, Tabs, Toast } from '@the-new-fuse/ui-consolidated';
+import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions.tsx';
+import { FeatureFlag, FeatureFlagConditions, Environment } from '@the-new-fuse/types/featureFlags';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// Temporarily using local components instead of ui-consolidated
+// import { Button, Card, Input, Switch, Tabs, Toast } from '@the-new-fuse/ui-consolidated';
 
 export default function FeatureFlagsAdmin() {
   const [features, setFeatures] = useState<FeatureFlag[]>([]);

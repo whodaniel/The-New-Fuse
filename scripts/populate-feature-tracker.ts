@@ -1,4 +1,4 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { FeatureTrackingService } from '../packages/database/src/services/FeatureTrackingService.js';
 import { FeatureStage } from '@the-new-fuse/feature-tracker';
 

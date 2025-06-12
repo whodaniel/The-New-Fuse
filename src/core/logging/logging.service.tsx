@@ -1,6 +1,6 @@
 import { injectable, inject } from "inversify";
-import TYPES from '../di/types.js';
-import { ILogger, IConfigService, IEventBus } from '../di/types.js';
+import TYPES from '../di/types.tsx';
+import { ILogger, IConfigService, IEventBus } from '../di/types.tsx';
 import { createLogger, format, transports, Logger } from "winston";
 
 @injectable()

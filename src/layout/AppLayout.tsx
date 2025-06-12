@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { Header } from './Header.js';
+import { Header } from './Header.tsx';
 
 interface AppLayoutProps {
   children: React.ReactNode;

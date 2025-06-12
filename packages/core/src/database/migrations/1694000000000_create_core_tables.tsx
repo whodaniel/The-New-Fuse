@@ -1,4 +1,4 @@
-import { EnhancedDatabaseService } from '../enhanced-database.service.js';
+import { EnhancedDatabaseService } from '../enhanced-database.service.tsx';
 
 export async function up(db: EnhancedDatabaseService): Promise<void> {
     // Create users table
@@ -22,8 +22,8 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             name VARCHAR(255) NOT NULL,
             description TEXT,
             type VARCHAR(50) NOT NULL,
-            config JSONB NOT NULL DEFAULT '{}',
-            status VARCHAR(50) NOT NULL DEFAULT 'inactive',
+            config JSONB NOT NULL DEFAULT {}',
+            status VARCHAR(50) NOT NULL DEFAULT inactive',
             owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -37,8 +37,8 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
             name VARCHAR(255) NOT NULL,
             description TEXT,
-            config JSONB NOT NULL DEFAULT '{}',
-            status VARCHAR(50) NOT NULL DEFAULT 'inactive',
+            config JSONB NOT NULL DEFAULT {}',
+            status VARCHAR(50) NOT NULL DEFAULT inactive',
             owner_id UUID REFERENCES users(id) ON DELETE CASCADE,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -54,7 +54,7 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             agent_id UUID REFERENCES agents(id) ON DELETE CASCADE,
             name VARCHAR(255) NOT NULL,
             description TEXT,
-            config JSONB NOT NULL DEFAULT '{}',
+            config JSONB NOT NULL DEFAULT {}',
             order_index INTEGER NOT NULL,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -65,9 +65,9 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
 
 export async function down(db: EnhancedDatabaseService): Promise<void> {
     // Drop triggers first
-    // Note: 'tasks', 'metrics', 'task_dependencies' are dropped here but not created in the 'up' function of this migration.
+    // Note: 'tasks', metrics', task_dependencies' are dropped here but not created in the up' function of this migration.
     // This might be intentional if they are managed by other migrations or parts of the system.
-    const tables = ['users', 'agents', 'pipelines', 'pipeline_stages', 'tasks'];
+    const tables = ['users', agents', pipelines', pipeline_stages', tasks'];
     for (const table of tables) {
         await db.executeQuery(`
             DROP TRIGGER IF EXISTS update_${table}_updated_at ON ${table}

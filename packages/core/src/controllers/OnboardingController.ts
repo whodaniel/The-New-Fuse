@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Req, Res, UseGuards } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { UserTypeDetectionService, UserType } from '../services/UserTypeDetectionService.js';
 import { AuthGuard } from '../guards/auth.guard.js';
 
@@ -26,7 +26,7 @@ export class OnboardingController {
       const userType = this.userTypeDetectionService.detectUserType({
         headers: req.headers as Record<string, string>,
         authMethod: this.getAuthMethod(req),
-        userAgent: req.headers['user-agent'],
+        userAgent: req.headers['user-agent],
         hasInteractiveSession: !!req.headers['cookie']
       });
 
@@ -36,20 +36,20 @@ export class OnboardingController {
       if (userType === UserType.AI_AGENT) {
         return res.status(200).json({
           userType,
-          nextStep: 'ai-agent-registration',
-          message: 'AI agent detected. Please proceed with agent registration.'
+          nextStep:ai-agent-registration,
+          message:AI agent detected. Please proceed with agent registration.'
         });
       } else {
         return res.status(200).json({
           userType: userType === UserType.UNKNOWN ? UserType.HUMAN : userType,
-          nextStep: 'human-onboarding',
-          message: 'Human user detected. Please proceed with human onboarding.'
+          nextStep: human-onboarding,
+          message:Human user detected. Please proceed with human onboarding.'
         });
       }
     } catch (error) {
       this.logger.error('Error starting onboarding process', error);
       return res.status(500).json({
-        error: 'Failed to start onboarding process',
+        error:Failed to start onboarding process',
         message: error.message
       });
     }
@@ -66,8 +66,8 @@ export class OnboardingController {
     // Process human onboarding data
     return {
       success: true,
-      nextStep: data.currentStep === 'final' ? 'complete' : data.nextStep,
-      message: 'Human onboarding step processed successfully'
+      nextStep: data.currentStep === final' ? complete' : data.nextStep,
+      message:Human onboarding step processed successfully'
     };
   }
 
@@ -87,8 +87,8 @@ export class OnboardingController {
     return {
       success: true,
       agentId: data.agentId,
-      message: 'AI agent registered successfully',
-      accessToken: 'sample-token-' + Date.now() // In production, generate a real token
+      message:AI agent registered successfully',
+      accessToken:sample-token-' + Date.now() // In production, generate a real token
     };
   }
 
@@ -98,32 +98,32 @@ export class OnboardingController {
   @Get('ai-agent-capabilities-assessment')
   async getCapabilitiesAssessment() {
     return {
-      assessmentId: 'cap-' + Date.now(),
+      assessmentId:cap-' + Date.now(),
       capabilities: [
         {
-          name: 'file-management',
-          description: 'Ability to manage files (read, write, delete)',
-          testEndpoint: '/api/test/file-management'
+          name: file-management,
+          description:Ability to manage files (read, write, delete)',
+          testEndpoint: /api/test/file-management
         },
         {
-          name: 'process-management',
-          description: 'Ability to manage processes (start, stop, monitor)',
-          testEndpoint: '/api/test/process-management'
+          name:process-management,
+          description:Ability to manage processes (start, stop, monitor)',
+          testEndpoint: /api/test/process-management
         },
         {
-          name: 'web-interaction',
-          description: 'Ability to interact with web resources',
-          testEndpoint: '/api/test/web-interaction'
+          name:web-interaction,
+          description:Ability to interact with web resources',
+          testEndpoint:/api/test/web-interaction
         },
         {
-          name: 'code-analysis',
-          description: 'Ability to analyze code',
-          testEndpoint: '/api/test/code-analysis'
+          name:code-analysis,
+          description:Ability to analyze code',
+          testEndpoint:/api/test/code-analysis
         },
         {
-          name: 'api-integration',
-          description: 'Ability to integrate with external APIs',
-          testEndpoint: '/api/test/api-integration'
+          name:api-integration,
+          description:Ability to integrate with external APIs',
+          testEndpoint:/api/test/api-integration
         }
       ]
     };
@@ -144,27 +144,27 @@ export class OnboardingController {
       success: true,
       agentId: data.agentId,
       capabilities: data.capabilities,
-      message: 'AI agent capabilities assessment processed successfully'
+      message:AI agent capabilities assessment processed successfully'
     };
   }
 
   /**
    * Get auth method from request
    */
-  private getAuthMethod(req: Request): 'api_key' | 'oauth' | 'password' | 'none' {
-    if (req.headers['x-api-key']) {
-      return 'api_key';
+  private getAuthMethod(req: Request):api_key' | oauth' | password' | none' {
+    if (req.headers['x-api-key]) {
+      return api_key';
     }
     
-    if (req.headers['authorization']?.startsWith('Bearer ')) {
+    if (req.headers['authorization']?.startsWith('Bearer )) {
       return 'oauth';
     }
     
     if (req.body?.username && req.body?.password) {
-      return 'password';
+      return password';
     }
     
-    return 'none';
+    return none';
   }
 }
 

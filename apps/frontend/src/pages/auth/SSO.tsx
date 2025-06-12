@@ -1,29 +1,35 @@
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import react_router_dom_1 from 'react-router-dom';
-import useAuth_1 from '@/hooks/useAuth';
+import React, { useEffect } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useAuth } from '@/hooks/useAuth';
+
 const SSO = () => {
-    const { provider } = (0, react_router_dom_1.useParams)();
-    const [searchParams] = (0, react_router_dom_1.useSearchParams)();
-    const { handleSSOCallback } = (0, useAuth_1.useAuth)();
-    (0, react_1.useEffect)(() => {
-        const code = searchParams.get('code');
-        const error = searchParams.get('error');
-        const state = searchParams.get('state');
-        if (code && provider) {
-            handleSSOCallback(provider, code, state);
-        }
-        else if (error) {
-            console.error('SSO authentication failed:', error);
-        }
-    }, [provider, searchParams, handleSSOCallback]);
-    return (<div className="space-y-4 text-center">
-      <h3 className="text-lg font-medium">Processing {provider} login...</h3>
-      <p className="text-sm text-muted-foreground">
-        Please wait while we authenticate you.
+  const { provider } = useParams<{ provider: string }>();
+  const [searchParams] = useSearchParams();
+  const { handleSSOCallback } = useAuth();
+
+  useEffect(() => {
+    const code = searchParams.get('code');
+    const error = searchParams.get('error');
+    const state = searchParams.get('state');
+
+    if (code && provider) {
+      handleSSOCallback(provider, code, state);
+    } else if (error) {
+      console.error('SSO authentication failed:', error);
+    }
+  }, [provider, searchParams, handleSSOCallback]);
+
+  return (
+    <div className="space-y-4 text-center">
+      <h3 className="text-lg font-medium">
+        Processing {provider} login...
+      </h3>
+      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+      <p className="text-sm text-gray-600">
+        Please wait while we authenticate your account.
       </p>
-    </div>);
+    </div>
+  );
 };
-exports.default = SSO;
-export {};
-//# sourceMappingURL=SSO.js.map
+
+export default SSO;

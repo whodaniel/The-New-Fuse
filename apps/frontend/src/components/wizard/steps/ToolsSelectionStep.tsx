@@ -24,13 +24,13 @@ import {
   FiTerminal, 
   FiCode, 
   FiLink, 
-  FiBrain,
+  FiCpu,
   FiGithub,
   FiDatabase,
   FiClipboard,
   FiCloud
 } from 'react-icons/fi';
-import { useWizard } from '../WizardProvider.js';
+import { useWizard } from '../WizardProvider.tsx';
 
 export const ToolsSelectionStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();

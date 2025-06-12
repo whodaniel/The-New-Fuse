@@ -13,11 +13,11 @@ import {
   AlertIcon,
   useToast
 } from '@chakra-ui/react';
-import { OnboardingGeneralSettings } from './OnboardingGeneralSettings.js';
-import { OnboardingStepsConfig } from './OnboardingStepsConfig.js';
-import { OnboardingWizardPreview } from './OnboardingWizardPreview.js';
-import { OnboardingAISettings } from './OnboardingAISettings.js';
-import { OnboardingUserTypes } from './OnboardingUserTypes.js';
+import { OnboardingGeneralSettings } from './OnboardingGeneralSettings.tsx';
+import { OnboardingStepsConfig } from './OnboardingStepsConfig.tsx';
+import { OnboardingWizardPreview } from './OnboardingWizardPreview.tsx';
+import { OnboardingAISettings } from './OnboardingAISettings.tsx';
+import { OnboardingUserTypes } from './OnboardingUserTypes.tsx';
 
 export const OnboardingAdmin: React.FC = () => {
   const toast = useToast();

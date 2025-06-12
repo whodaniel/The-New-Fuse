@@ -1,99 +1,97 @@
 
 export {}
 exports.CommunicationRecord = exports.TransactionType = exports.ChainType = exports.SecurityLevel = exports.MessagePriority = exports.CommunicationPattern = exports.ProtocolType = exports.ParticipantType = exports.ResourceType = exports.WalletType = exports.TokenType = exports.ModelType = exports.PlatformType = exports.ContentType = void 0;
-import uuid_1 from 'uuid';
+import uuid_1 from ''uuid';
 // Content Types
-var ContentType;
-(function (ContentType): any {
+export enum ContentType {
     // Basic Types
-    ContentType["TEXT"] = "text";
-    ContentType["CODE"] = "code";
-    ContentType["MARKDOWN"] = "markdown";
-    ContentType["IMAGE"] = "image";
-    ContentType["VIDEO"] = "video";
-    ContentType["AUDIO"] = "audio";
-    ContentType["DOCUMENT"] = "document";
-    ContentType["URL"] = "url";
-    ContentType["EMBED"] = "embed";
+    TEXT = "text",
+    CODE = "code",
+    MARKDOWN = "markdown",
+    IMAGE = "image",
+    VIDEO = "video",
+    AUDIO = "audio",
+    DOCUMENT = "document",
+    URL = "url",
+    EMBED = "embed",
     // Blockchain Types
-    ContentType["SMART_CONTRACT"] = "smart_contract";
-    ContentType["TRANSACTION"] = "transaction";
-    ContentType["TOKEN"] = "token";
-    ContentType["NFT"] = "nft";
-    ContentType["FUNGIBLE_TOKEN"] = "fungible_token";
-    ContentType["SEMI_FUNGIBLE_TOKEN"] = "semi_fungible_token";
-    ContentType["WALLET"] = "wallet";
+    SMART_CONTRACT = "smart_contract",
+    TRANSACTION = "transaction",
+    TOKEN = "token",
+    NFT = "nft",
+    FUNGIBLE_TOKEN = "fungible_token",
+    SEMI_FUNGIBLE_TOKEN = "semi_fungible_token",
+    WALLET = "wallet",
     // AI/ML Types
-    ContentType["MODEL_INTERACTION"] = "model_interaction";
-    ContentType["MODEL_INFERENCE"] = "model_inference";
-    ContentType["MODEL_TRAINING"] = "model_training";
-    ContentType["PROMPT"] = "prompt";
-    ContentType["COMPLETION"] = "completion";
-    ContentType["EMBEDDING"] = "embedding";
+    MODEL_INTERACTION = "model_interaction",
+    MODEL_INFERENCE = "model_inference",
+    MODEL_TRAINING = "model_training",
+    PROMPT = "prompt",
+    COMPLETION = "completion",
+    EMBEDDING = "embedding",
     // Resource Types
-    ContentType["COMPUTE_RESOURCE"] = "compute_resource";
-    ContentType["STORAGE_RESOURCE"] = "storage_resource";
-    ContentType["NETWORK_RESOURCE"] = "network_resource";
-    ContentType["API_RESOURCE"] = "api_resource";
-})(ContentType || (exports.ContentType = ContentType = {}));
+    COMPUTE_RESOURCE = "compute_resource",
+    STORAGE_RESOURCE = "storage_resource",
+    NETWORK_RESOURCE = "network_resource",
+    API_RESOURCE = "api_resource"
+}
 // Platform Types
-var PlatformType;
-(function (PlatformType): any {
+export enum PlatformType {
     // Social Media
-    PlatformType["TWITTER"] = "twitter";
-    PlatformType["FACEBOOK"] = "facebook";
-    PlatformType["LINKEDIN"] = "linkedin";
-    PlatformType["INSTAGRAM"] = "instagram";
-    PlatformType["DISCORD"] = "discord";
-    PlatformType["SLACK"] = "slack";
+    TWITTER = "twitter",
+    FACEBOOK = "facebook",
+    LINKEDIN = "linkedin",
+    INSTAGRAM = "instagram",
+    DISCORD = "discord",
+    SLACK = "slack",
     // Development
-    PlatformType["GITHUB"] = "github";
-    PlatformType["GITLAB"] = "gitlab";
-    PlatformType["STACKOVERFLOW"] = "stackoverflow";
+    GITHUB = "github",
+    GITLAB = "gitlab",
+    STACKOVERFLOW = "stackoverflow",
     // Communication
-    PlatformType["EMAIL"] = "email";
-    PlatformType["SMS"] = "sms";
-    PlatformType["CHAT"] = "chat";
-    PlatformType["FORUM"] = "forum";
-    PlatformType["BLOG"] = "blog";
+    EMAIL = "email",
+    SMS = "sms",
+    CHAT = "chat",
+    FORUM = "forum",
+    BLOG = "blog",
     // Video/Audio
-    PlatformType["ZOOM"] = "zoom";
-    PlatformType["TEAMS"] = "teams";
-    PlatformType["MEET"] = "meet";
+    ZOOM = "zoom",
+    TEAMS = "teams",
+    MEET = "meet",
     // Blockchain
-    PlatformType["ETHEREUM"] = "ethereum";
-    PlatformType["POLYGON"] = "polygon";
-    PlatformType["SOLANA"] = "solana";
-    PlatformType["BINANCE"] = "binance";
-    PlatformType["ARBITRUM"] = "arbitrum";
-    PlatformType["OPTIMISM"] = "optimism";
-    PlatformType["AVALANCHE"] = "avalanche";
-    PlatformType["COSMOS"] = "cosmos";
-    PlatformType["CARDANO"] = "cardano";
+    ETHEREUM = "ethereum",
+    POLYGON = "polygon",
+    SOLANA = "solana",
+    BINANCE = "binance",
+    ARBITRUM = "arbitrum",
+    OPTIMISM = "optimism",
+    AVALANCHE = "avalanche",
+    COSMOS = "cosmos",
+    CARDANO = "cardano",
     // DeFi
-    PlatformType["UNISWAP"] = "uniswap";
-    PlatformType["AAVE"] = "aave";
-    PlatformType["COMPOUND"] = "compound";
-    PlatformType["CURVE"] = "curve";
-    PlatformType["BALANCER"] = "balancer";
+    UNISWAP = "uniswap",
+    AAVE = "aave",
+    COMPOUND = "compound",
+    CURVE = "curve",
+    BALANCER = "balancer",
     // NFT Marketplaces
-    PlatformType["OPENSEA"] = "opensea";
-    PlatformType["RARIBLE"] = "rarible";
-    PlatformType["FOUNDATION"] = "foundation";
-    PlatformType["BLUR"] = "blur";
-    PlatformType["X2Y2"] = "x2y2";
+    OPENSEA = "opensea",
+    RARIBLE = "rarible",
+    FOUNDATION = "foundation",
+    BLUR = "blur",
+    X2Y2 = "x2y2",
     // AI/ML Platforms
-    PlatformType["OPENAI"] = "openai";
-    PlatformType["ANTHROPIC"] = "anthropic";
-    PlatformType["COHERE"] = "cohere";
-    PlatformType["HUGGINGFACE"] = "huggingface";
-    PlatformType["REPLICATE"] = "replicate";
-    PlatformType["STABILITY_AI"] = "stability_ai";
-    PlatformType["CUSTOM_MODEL"] = "custom_model";
+    OPENAI = "openai",
+    ANTHROPIC = "anthropic",
+    COHERE = "cohere",
+    HUGGINGFACE = "huggingface",
+    REPLICATE = "replicate",
+    STABILITY_AI = "stability_ai",
+    CUSTOM_MODEL = "custom_model",
     // Custom
-    PlatformType["API"] = "api";
-    PlatformType["CUSTOM"] = "custom";
-})(PlatformType || (exports.PlatformType = PlatformType = {}));
+    API = "api",
+    CUSTOM = "custom"
+}
 // Model Types for AI/ML
 var ModelType;
 (function (ModelType): any {
@@ -270,7 +268,7 @@ class CommunicationRecord {
             timestamp: new Date().toISOString(),
             participants: {
                 sender: {
-                    id: '', // Corrected unterminated string literal
+                    id:, // Corrected unterminated string literal
                     type: ParticipantType.UNKNOWN
                 },
                 receivers: []
@@ -283,7 +281,7 @@ class CommunicationRecord {
             },
             content: {
                 type: ContentType.TEXT,
-                value: '' // Corrected unterminated string literal
+                value: ' // Corrected unterminated string literal
             },
             pattern: {
                 type: CommunicationPattern.DIRECT

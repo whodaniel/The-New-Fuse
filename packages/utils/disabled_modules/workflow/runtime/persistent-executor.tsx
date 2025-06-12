@@ -2,8 +2,8 @@
 export {}
 exports.PersistentWorkflowExecutor = void 0;
 import uuid_1 from 'uuid';
-import executor_1 from './executor.js';
-import storage_1 from '../persistence/storage.js';
+import executor_1 from './executor.tsx';
+import storage_1 from '../persistence/storage.tsx';
 import types_1 from './types.js';
 class PersistentWorkflowExecutor extends executor_1.WorkflowExecutor {
     constructor(dbPath, workflowId, options) {

@@ -1,9 +1,9 @@
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
-import { AlertManager } from './alerts.js';
-import { TracingService } from './tracing.js';
-import { PerformanceProfiler } from './profiler.js';
+import { MetricCollector } from './metrics.tsx';
+import { AlertManager } from './alerts.tsx';
+import { TracingService } from './tracing.tsx';
+import { PerformanceProfiler } from './profiler.tsx';
 export declare class SystemMonitor {
     private readonly configService;
     private readonly eventEmitter;
@@ -20,6 +20,6 @@ export declare class SystemMonitor {
     private collectHeapMetrics;
 }
 export { SystemMonitor };
-export { MetricCollector } from './metrics.js';
-export { PerformanceProfiler as PerformanceMonitor } from './profiler.js';
-export * from './types.js';
+export { MetricCollector } from './metrics.tsx';
+export { PerformanceProfiler as PerformanceMonitor } from './profiler.tsx';
+export * from './types.tsx';

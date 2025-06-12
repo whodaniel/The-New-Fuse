@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { APIDocumentation } from '../APIModule.js';
+import { APIDocumentation } from '../APIModule.tsx';
 describe("APIDocumentation", () => , JSX.Element, {
     import: React,
 }, { FC }, from, 'react');

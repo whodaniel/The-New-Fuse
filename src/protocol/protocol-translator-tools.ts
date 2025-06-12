@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { LLMProtocolTranslator, ProtocolType, ProtocolBridge } from './llm-protocol-translator.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 // Tool schemas for the Protocol Translator MCP tools
 export const translateMessageSchema = z.object({

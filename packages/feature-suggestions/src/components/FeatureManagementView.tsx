@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import KanbanBoard from './KanbanBoard.js';
-import { FeatureSuggestionList } from './FeatureSuggestionList.js';
-import { useKanbanBoard } from '../hooks/useKanbanBoard.js';
-import { useFeatureSuggestions } from '../hooks/useFeatureSuggestions.js';
+import KanbanBoard from './KanbanBoard.tsx';
+import { FeatureSuggestionList } from './FeatureSuggestionList.tsx';
+import { useKanbanBoard } from '../hooks/useKanbanBoard.tsx';
+import { useFeatureSuggestions } from '../hooks/useFeatureSuggestions.tsx';
 import { SuggestionPriority, SuggestionStatus } from '../types.js';
-import { SuggestionService } from '../services/types.js';
+import { SuggestionService } from '../services/types.tsx';
 
 interface FeatureManagementViewProps {
   suggestionService: SuggestionService;

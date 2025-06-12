@@ -8,12 +8,12 @@ import { NodeInspector } from './NodeInspector.js';
 import { ErrorBoundary } from '../shared/ErrorBoundary.js';
 import { useWorkflowHistory } from '../../hooks/useWorkflowHistory.js';
 import { useAutoSave } from '../../hooks/useAutoSave.js';
-import { useWorkflowValidation } from '../../hooks/useWorkflowValidation.js';
-import { useRealTimeCollaboration } from '../../hooks/useRealTimeCollaboration.js';
+import { useWorkflowValidation } from '../../hooks/useWorkflowValidation.tsx';
+import { useRealTimeCollaboration } from '../../hooks/useRealTimeCollaboration.tsx';
 import { WorkflowAnalytics } from './WorkflowAnalytics.js';
 import { CUSTOM_NODE_TYPES } from './nodes.js';
 import { CUSTOM_EDGE_TYPES } from './edges.js';
-import type { WorkflowState } from '../../types/workflow.js';
+import type { WorkflowState } from '../../types/workflow.tsx';
 
 export const WorkflowCanvas: React.FC = () => {
   const dispatch = useDispatch();

@@ -7,7 +7,7 @@ if [ -n "$STAGED_FILES" ]; then
   # if ! git diff --cached --name-only | grep -q "docs/DEVELOPMENT_LOG.md"; then
   #   echo "⚠️  Warning: You haven't updated the development log (docs/DEVELOPMENT_LOG.md)."
   #   echo "Please update the log to document your changes."
-  #   echo "You can use 'yarn fuse log add' to add a new log entry."
+  #   echo "You can use 'bun run fuse log add' to add a new log entry."
   #   echo ""
   #   echo "To bypass this check, use the --no-verify flag (not recommended)."
   #   echo ""
@@ -25,5 +25,5 @@ if [ -n "$STAGED_FILES" ]; then
   # fi
 
   # Run other pre-commit hooks
-  yarn lint-staged
+  bun run lint-staged
 fi

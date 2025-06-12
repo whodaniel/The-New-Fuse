@@ -104,8 +104,8 @@ export class SessionService {
       const files = params.files || [
         {
           id: uuidv4(),
-          name: 'main.js',
-          content: '// Write your code here\n\nconsole.log("Hello, world!");\n',
+          name:main.'js',
+          content:// Write your code here\n\nconsole.log("Hello, world!");\'n',
           language: 'javascript',
           lastModified: new Date().toISOString(),
         },
@@ -114,7 +114,7 @@ export class SessionService {
       // Create environment configuration if not provided
       const environment = params.environment || {
         runtime: 'node',
-        version: '16',
+        version:16',
         modules: [],
       };
       
@@ -123,7 +123,7 @@ export class SessionService {
         data: {
           id: uuidv4(),
           name: params.name,
-          description: params.description || '',
+          description: params.description || ,
           ownerId: params.ownerId,
           collaborators: params.collaborators || [],
           isPublic: params.isPublic || false,

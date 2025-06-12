@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { SystemResourceMonitorService } from './system-resource-monitor.service.js';
-import { PerformanceMonitoringService } from './performance-monitoring.service.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { SystemResourceMonitorService } from './system-resource-monitor.service.tsx';
+import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
 import * as child_process from 'child_process';
 import * as util from 'util';
 
@@ -13,7 +13,7 @@ export interface ScalingRule {
   metric: string;
   threshold: number;
   cooldownSeconds: number;
-  action: 'scale_up' | 'scale_down';
+  action:scale_up' | scale_down';
   minInstances: number;
   maxInstances: number;
   incrementBy: number;
@@ -24,7 +24,7 @@ export interface ScalingAction {
   rule: ScalingRule;
   metric: string;
   value: number;
-  action: 'scale_up' | 'scale_down';
+  action:scale_up' | scale_down';
   fromInstances: number;
   toInstances: number;
   success: boolean;
@@ -35,7 +35,7 @@ export interface AutoScalingConfig {
   enabled: boolean;
   checkIntervalMs: number;
   rules: ScalingRule[];
-  provider: 'kubernetes' | 'docker' | 'aws' | 'azure' | 'gcp' | 'custom';
+  provider:kubernetes' | docker' | aws' | azure' | gcp' | custom';
   providerConfig: Record<string, any>;
 }
 
@@ -61,11 +61,11 @@ export class AutoScalingService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('monitoring.autoScaling.enabled', false),
-      checkIntervalMs: this.configService.get<number>('monitoring.autoScaling.checkIntervalMs', 60000), // 1 minute
-      rules: this.configService.get<ScalingRule[]>('monitoring.autoScaling.rules', []),
-      provider: this.configService.get<'kubernetes' | 'docker' | 'aws' | 'azure' | 'gcp' | 'custom'>('monitoring.autoScaling.provider', 'kubernetes'),
-      providerConfig: this.configService.get<Record<string, any>>('monitoring.autoScaling.providerConfig', {})
+      enabled: this.configService.get<boolean>('monitoring.autoScaling.'enabled', false),
+      checkIntervalMs: this.configService.get<number>('monitoring.autoScaling.'checkIntervalMs', 60000), // 1 minute
+      rules: this.configService.get<ScalingRule[]>('monitoring.autoScaling.'rules', []),
+      provider: this.configService.get<'kubernetes' | docker' | aws' | azure' | gcp' | custom'>('monitoring.autoScaling.'provider', kubernetes'),
+      providerConfig: this.configService.get<Record<string, any>>('monitoring.autoScaling.'providerConfig', {})
     };
 
     if (!this.config.enabled) {
@@ -107,17 +107,17 @@ export class AutoScalingService implements OnModuleInit {
    */
   async getCurrentInstanceCount(): Promise<number> {
     switch (this.config.provider) {
-      case 'kubernetes':
+      case kubernetes':
         return this.getKubernetesInstanceCount();
-      case 'docker':
+      case docker':
         return this.getDockerInstanceCount();
-      case 'aws':
+      case aws':
         return this.getAwsInstanceCount();
-      case 'azure':
+      case azure':
         return this.getAzureInstanceCount();
-      case 'gcp':
+      case gcp':
         return this.getGcpInstanceCount();
-      case 'custom':
+      case custom':
         return this.getCustomInstanceCount();
       default:
         return this.currentInstances;
@@ -175,12 +175,12 @@ export class AutoScalingService implements OnModuleInit {
     
     // Determine if scaling is needed
     let shouldScale = false;
-    let scalingAction: 'scale_up' | 'scale_down' = 'scale_up';
+    let scalingAction:scale_up' | scale_down' = 'scale_up';
     
-    if (rule.action === 'scale_up' && value >= rule.threshold) {
+    if (rule.action === scale_up' && value >= rule.threshold) {
       shouldScale = true;
       scalingAction = 'scale_up';
-    } else if (rule.action === 'scale_down' && value <= rule.threshold) {
+    } else if (rule.action === scale_down' && value <= rule.threshold) {
       shouldScale = true;
       scalingAction = 'scale_down';
     }
@@ -201,7 +201,7 @@ export class AutoScalingService implements OnModuleInit {
     
     // Check if instance count would actually change
     if (newInstances === currentInstances) {
-      this.logger.info(`No scaling needed for ${rule.metric}: already at ${scalingAction === 'scale_up' ? 'maximum' : 'minimum'} instances (${currentInstances})`);
+      this.logger.info(`No scaling needed for ${rule.metric}: already at ${scalingAction === scale_up' ? maximum' : 'minimum'} instances (${currentInstances})`);
       return;
     }
     
@@ -225,7 +225,7 @@ export class AutoScalingService implements OnModuleInit {
       this.lastScalingActions.set(rule.metric, new Date());
       this.currentInstances = newInstances;
       
-      this.logger.info(`Scaled ${scalingAction === 'scale_up' ? 'up' : 'down'} from ${currentInstances} to ${newInstances} instances based on ${rule.metric} = ${value}`, {
+      this.logger.info(`Scaled ${scalingAction === scale_up' ? up' : 'down'} from ${currentInstances} to ${newInstances} instances based on ${rule.metric} = ${value}`, {
         metadata: {
           rule,
           value,
@@ -235,7 +235,7 @@ export class AutoScalingService implements OnModuleInit {
       });
       
       // Emit event
-      this.eventEmitter.emit('monitoring.scaling', action);
+      this.eventEmitter.emit('monitoring.'scaling', action);
     } catch (error) {
       const action: ScalingAction = {
         timestamp: new Date(),
@@ -251,7 +251,7 @@ export class AutoScalingService implements OnModuleInit {
       
       this.scalingHistory.push(action);
       
-      this.logger.error(`Failed to scale ${scalingAction === 'scale_up' ? 'up' : 'down'} from ${currentInstances} to ${newInstances} instances`, {
+      this.logger.error(`Failed to scale ${scalingAction === scale_up' ? up' : 'down'} from ${currentInstances} to ${newInstances} instances`, {
         error,
         metadata: {
           rule,
@@ -262,7 +262,7 @@ export class AutoScalingService implements OnModuleInit {
       });
       
       // Emit event
-      this.eventEmitter.emit('monitoring.scaling', action);
+      this.eventEmitter.emit('monitoring.'scaling', action);
     }
   }
 
@@ -278,22 +278,22 @@ export class AutoScalingService implements OnModuleInit {
       current = current[part];
     }
     
-    return typeof current === 'number' ? current : null;
+    return typeof current === number' ? current : null;
   }
 
   private async scaleInstances(count: number): Promise<void> {
     switch (this.config.provider) {
-      case 'kubernetes':
+      case kubernetes':
         return this.scaleKubernetes(count);
-      case 'docker':
+      case docker':
         return this.scaleDocker(count);
-      case 'aws':
+      case aws':
         return this.scaleAws(count);
-      case 'azure':
+      case azure':
         return this.scaleAzure(count);
-      case 'gcp':
+      case gcp':
         return this.scaleGcp(count);
-      case 'custom':
+      case custom':
         return this.scaleCustom(count);
       default:
         throw new Error(`Unsupported scaling provider: ${this.config.provider}`);
@@ -325,7 +325,7 @@ export class AutoScalingService implements OnModuleInit {
     try {
       const { serviceName } = this.config.providerConfig;
       
-      const { stdout } = await exec(`docker service inspect ${serviceName} --format '{{.Spec.Mode.Replicated.Replicas}}'`);
+      const { stdout } = await exec(`docker service inspect ${serviceName} --format {{.Spec.Mode.Replicated.Replicas}}'`);
       
       return parseInt(stdout.trim(), 10) || 1;
     } catch (error) {

@@ -34,7 +34,7 @@ export class FirebaseConfig {
         initialized = true;
         this.logger.log('Firebase Admin SDK initialized using FIREBASE_CONFIG.');
       } catch (error) {
-        this.logger.error('Error parsing FIREBASE_CONFIG or initializing Firebase Admin SDK:', error);
+        this.logger.error('Error parsing FIREBASE_CONFIG or initializing Firebase Admin SDK:, error);
       }
     }
 
@@ -52,7 +52,7 @@ export class FirebaseConfig {
         initialized = true;
         this.logger.log('Firebase Admin SDK initialized using GOOGLE_APPLICATION_CREDENTIALS.');
       } catch (error) {
-        this.logger.error('Error initializing Firebase Admin SDK with GOOGLE_APPLICATION_CREDENTIALS:', error);
+        this.logger.error('Error initializing Firebase Admin SDK with GOOGLE_APPLICATION_CREDENTIALS:, error);
       }
     }
 
@@ -83,7 +83,7 @@ export class FirebaseConfig {
       const decodedToken = await admin.auth().verifyIdToken(idToken);
       return decodedToken;
     } catch (error) {
-      console.error('Error verifying ID token:', error);
+      console.error('Error verifying ID token:, error);
       throw new Error('Invalid ID token');
     }
   }

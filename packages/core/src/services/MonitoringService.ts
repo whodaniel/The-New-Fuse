@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { Logger } from '../utils/logger.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ReliabilityMetricsService } from './ReliabilityMetricsService.js';
 import { CapabilitySecurityService } from './CapabilitySecurityService.js';
 
 interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status:healthy' | degraded' | unhealthy';
   timestamp: number;
   metrics: Record<string, any>;
   issues?: Array<{
     type: string;
     description: string;
-    severity: 'low' | 'medium' | 'high';
+    severity:low' | medium' | high';
   }>;
 }
 
@@ -48,7 +48,7 @@ export class MonitoringService {
   }
 
   private setupEventListeners(): void {
-    this.eventEmitter.on('capability.executed', (data: any) => {
+    this.eventEmitter.on('capability.'executed', (data: any) => {
       this.recordMetrics(data.agentId, data.capabilityId, {
         latency: data.latency,
         success: data.success,
@@ -56,7 +56,7 @@ export class MonitoringService {
       });
     });
 
-    this.eventEmitter.on('agent.status.changed', (data: any) => {
+    this.eventEmitter.on('agent.status.'changed', (data: any) => {
       this.updateHealthStatus(data.agentId, data.status);
     });
   }
@@ -152,7 +152,7 @@ export class MonitoringService {
           issues.push({
             type: 'high_error_rate',
             description: `High error rate (${(errorRate * 100).toFixed(2)}%) for capability ${capabilityId}`,
-            severity: errorRate > 0.2 ? 'high' : 'medium'
+            severity: errorRate > 0.2 ? high' : 'medium'
           });
           status = 'degraded';
         }
@@ -163,7 +163,7 @@ export class MonitoringService {
           issues.push({
             type: 'high_latency',
             description: `High average latency (${avgLatency.toFixed(2)}ms) for capability ${capabilityId}`,
-            severity: avgLatency > 2000 ? 'high' : 'medium'
+            severity: avgLatency > 2000 ? high' : 'medium'
           });
           status = 'degraded';
         }
@@ -174,7 +174,7 @@ export class MonitoringService {
       if (Date.now() - lastUpdate > 5 * 60 * 1000) { // 5 minutes threshold
         issues.push({
           type: 'agent_unresponsive',
-          description: 'Agent has not reported metrics for over 5 minutes',
+          description: Agent has not reported metrics for over 5 'minutes',
           severity: 'high'
         });
         status = 'unhealthy';
@@ -189,7 +189,7 @@ export class MonitoringService {
       });
 
       // Emit events for status changes
-      this.eventEmitter.emit('monitoring.health.updated', {
+      this.eventEmitter.emit('monitoring.health.'updated', {
         agentId,
         status,
         issues
@@ -208,7 +208,7 @@ export class MonitoringService {
     const recentErrorRate = recentErrors / recentRequests;
 
     if (recentErrorRate > 0.2 && recentRequests >= 10) {
-      this.eventEmitter.emit('monitoring.anomaly.detected', {
+      this.eventEmitter.emit('monitoring.anomaly.'detected', {
         type: 'error_spike',
         agentId,
         capabilityId,
@@ -255,7 +255,7 @@ export class MonitoringService {
         }
       });
     } catch (error) {
-      this.logger.error('Failed to persist metrics:', error);
+      this.logger.error('Failed to persist metrics:, error);
     }
   }
 
@@ -269,7 +269,7 @@ export class MonitoringService {
         issues: currentStatus?.issues
       });
 
-      this.eventEmitter.emit('monitoring.status.changed', {
+      this.eventEmitter.emit('monitoring.status.'changed', {
         agentId,
         oldStatus: currentStatus?.status,
         newStatus: status,

@@ -2,7 +2,7 @@
  * Simplified Redis client for basic connection and messaging.
  */
 
-import IORedis from 'ioredis';
+import IORedis from ''ioredis';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';

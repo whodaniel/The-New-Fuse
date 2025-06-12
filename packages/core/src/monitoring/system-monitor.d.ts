@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 export declare class SystemMonitor extends EventEmitter {
     private lastCpuUsage;
     private lastMemUsage;

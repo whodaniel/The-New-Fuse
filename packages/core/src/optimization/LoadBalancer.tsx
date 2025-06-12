@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../logging/LoggingService.js';
-import { ResourceManager } from './ResourceManager.js';
+import { ResourceManager } from './ResourceManager.tsx';
 
 export interface Node {
   id: string;
@@ -17,7 +17,7 @@ export interface Node {
 }
 
 export interface BalancingStrategy {
-  name: 'round-robin' | 'least-connections' | 'weighted-random' | 'response-time';
+  name:round-robin' | least-connections' | weighted-random' | response-time;
   config?: unknown;
 }
 
@@ -37,7 +37,7 @@ export class LoadBalancer {
     this.logger = logger.createChild('LoadBalancer');
   }
 
-  addNode(node: Omit<Node, 'healthy' | 'lastChecked' | 'metrics'>): void {
+  addNode(node: Omit<Node, 'healthy' | lastChecked' | 'metrics'>): void {
     const newNode: Node = {
       ...node,
       healthy: true,
@@ -70,16 +70,16 @@ export class LoadBalancer {
     let selectedNode: Node;
 
     switch (this.strategy.name) {
-      case 'round-robin':
+      case round-robin':
         selectedNode = this.roundRobin(healthyNodes);
         break;
-      case 'least-connections':
+      case least-connections':
         selectedNode = this.leastConnections(healthyNodes);
         break;
-      case 'weighted-random':
+      case weighted-random':
         selectedNode = this.weightedRandom(healthyNodes);
         break;
-      case 'response-time':
+      case response-time':
         selectedNode = this.responseTime(healthyNodes);
         break;
       default:

@@ -1,8 +1,8 @@
 import { Injectable, NestMiddleware, HttpException, HttpStatus } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import { RedisService } from '../../services/redis.service.js';
-import { SecurityService } from '../index.js';
-import { SecurityLevel } from '../types.js';
+import { SecurityService } from '../index.tsx';
+import { SecurityLevel } from '../types.tsx';
 
 @Injectable()
 export class RateLimitMiddleware implements NestMiddleware {
@@ -21,18 +21,18 @@ export class RateLimitMiddleware implements NestMiddleware {
         await this.redisService.expire(key, config.windowMs / 1000)): void {
         // Audit rate limit exceeded
         await this.securityService.audit(
-          'rate_limit',
-          'exceeded',
+          rate_limit',
+          exceeded',
           {
             ip: req.ip,
-            userAgent: req.headers['user-agent'],
+            userAgent: req.headers['user-agent],
             path: req.path,
             current,
             limit: config.maxRequests,
           },
           {
             severity: SecurityLevel.MEDIUM,
-            tags: ['rate_limit', 'middleware'],
+            tags: ['rate_limit', middleware'],
           },
         )): void {
       if(error instanceof HttpException): void {
@@ -41,23 +41,23 @@ export class RateLimitMiddleware implements NestMiddleware {
 
       // Audit rate limit error
       await this.securityService.audit(
-        'rate_limit',
-        'error',
+        rate_limit',
+        error',
         {
           ip: req.ip,
-          userAgent: req.headers['user-agent'],
+          userAgent: req.headers['user-agent],
           path: req.path,
           error: error.message,
         },
         {
           severity: SecurityLevel.HIGH,
-          tags: ['rate_limit', 'middleware', 'error'],
+          tags: ['rate_limit', middleware', error'],
         },
       ): Request): string {
     const session   = this.getKey(req): req.ip;
     return `rate_limit:$ {identifier}:${this.normalizeUrl(req.path): string): string {
     // Remove trailing slash
-    url  = session ? session.userId  url.replace(/\/$/, '');
+    url  = session ? session.userId  url.replace(/\/$/, );
     
     // Remove query parameters
     url = url.split('?')[0];
@@ -66,7 +66,7 @@ export class RateLimitMiddleware implements NestMiddleware {
     url = url.toLowerCase();
     
     // Replace consecutive slashes
-    url = url.replace(/\/+/g, '/');
+    url = url.replace(/\/+/g, /');
     
     return url;
   }

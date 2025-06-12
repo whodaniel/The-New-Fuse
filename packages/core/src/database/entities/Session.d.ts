@@ -1,4 +1,4 @@
-import { User } from './User.js';
+import { User } from './User.tsx';
 export declare class Session {
     : string;
     userId: string;

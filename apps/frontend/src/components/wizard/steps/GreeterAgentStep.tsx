@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Heading, Text, VStack } from '@chakra-ui/react';
-import { GreeterAgent } from '../GreeterAgent.js';
-import { useWizard } from '../WizardProvider.js';
+import { GreeterAgent } from '../GreeterAgent.tsx';
+import { useWizard } from '../WizardProvider.tsx';
 
 export const GreeterAgentStep: React.FC = () => {
   const { state } = useWizard();

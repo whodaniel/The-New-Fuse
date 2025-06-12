@@ -30,8 +30,8 @@ export class TraeAgent extends EventEmitter {
   constructor() {
     super();
     const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-    this.redis = new Redis(redisUrl);
-    this.subscriber = new Redis(redisUrl);
+    this.redis = new (Redis as any)(redisUrl);
+    this.subscriber = new (Redis as any)(redisUrl);
     
     this.setupSubscriptions();
     this.setupErrorHandling();

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect, useCallback } from ''react';
 import {
   ReactFlow,
   Controls,
@@ -10,7 +10,7 @@ import {
   MarkerType,
 } from 'reactflow';
 import { Injectable } from '@nestjs/common';
-import 'reactflow/dist/style.css';
+import reactflow/dist/style.'css';
 
 import { Tool } from '@the-new-fuse/tools/base';
 import { CustomNode } from '@the-new-fuse/components/CustomNode';
@@ -20,7 +20,7 @@ import { WorkflowData, FlowNode, FlowEdge } from '@the-new-fuse/types/flow';
 export class ProjectVisualizer extends Tool {
   private readonly defaultStyles = {
     edge: {
-      stroke: '#888',
+      stroke:#888',
       strokeWidth: 2,
       markerEnd: {
         type: MarkerType.ArrowClosed,
@@ -29,7 +29,7 @@ export class ProjectVisualizer extends Tool {
   };
 
   constructor() {
-    super('Flow Visualizer', 'Visualizes workflow using React Flow');
+    super('Flow Visualizer', Visualizes workflow using React Flow');
   }
 
   calculateNodePosition(id: string): { x: number; y: number } {
@@ -88,7 +88,7 @@ export const WorkflowVisualizer: React.FC<{ workflowData: WorkflowData, visualiz
   }, [workflowData, visualizer, setNodes, setEdges]);
 
   return (
-    <div style={{ width: '100%', height: '100vh' }}>
+    <div style={{ width: 100%', height:100'vh' }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}

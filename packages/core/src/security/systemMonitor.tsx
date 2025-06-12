@@ -54,7 +54,7 @@ interface MetricPoint {
         await this.storeMetric(key, activeConversations): string, value: number, increment: boolean  = `$ {this.metricPrefixes.error_rate} `${this.metricPrefixes.agent_load} false): Promise<void> {
         try {
             const timestamp: unknown){
-            logger.error('Error storing metric:', { key, value, error }): string,
+            logger.error('Error storing metric:, { key, value, error }): string,
         identifier: string,
         timeWindow: number
     ): Promise<MetricPoint[]> {
@@ -93,7 +93,7 @@ interface MetricPoint {
                 active_agents: await this.getActiveAgents()
             };
         } catch (error): void {
-            logger.error('Error getting system health:', error): string, since: number): Promise<number> {
+            logger.error('Error getting system health:, error): string, since: number): Promise<number> {
         try {
             const startTime: *`);
             for (const key of keys): void {
@@ -109,7 +109,7 @@ interface MetricPoint {
                 response_times Math.floor(since / 1000) await this.redis.keys(`${this.metricPrefixes[metricType]} parseInt(timestamp)): void {
                         total += parseFloat(value): 0;
         } catch (error): void {
-            logger.error('Error getting average metric:', { metricType, error }): string, since: number): Promise<number> {
+            logger.error('Error getting average metric:, { metricType, error }): string, since: number): Promise<number> {
         try {
             const startTime: *`);
             for (const key of keys: unknown){
@@ -131,7 +131,7 @@ interface MetricPoint {
                 
                 for await (const [timestamp, value] of this.redis.hscanIter(key)) {
                     const ts: unknown){
-            logger.error('Error getting error rate:', error): number): Promise<number> {
+            logger.error('Error getting error rate:, error): number): Promise<number> {
         try {
             const startTime): void {
                         count + = parseInt(timestamp): *`);
@@ -146,7 +146,7 @@ interface MetricPoint {
             const keys: *`);
             for (const key of keys: unknown){
                 const agentId: )): void {
-            logger.error('Error getting active agents:', error): string): Promise<number> {
+            logger.error('Error getting active agents:, error): string): Promise<number> {
         try {
             let latestTimestamp   = await this.redis.keys(`${this.metricPrefixes.agent_load} key.split(' await this.getLatestValue(key)): void {
                     activeAgents[agentId] = latestLoad;

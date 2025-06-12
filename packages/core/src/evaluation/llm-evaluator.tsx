@@ -1,13 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../logging.js';
-import { SmartAPIGateway } from '../api-management/SmartAPIGateway.js';
+import { SmartAPIGateway } from '../api-management/SmartAPIGateway.tsx';
 import {
   EvaluationResult,
   EvaluationCriteria,
   EvaluationDataset,
-  EvaluationCase,
   EvaluationMetric
-} from './types.js';
+} from './types.tsx';
 
 export class LLMEvaluator {
   private logger: Logger;

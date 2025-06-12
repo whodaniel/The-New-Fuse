@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
 import { AgentFactory } from '../src/agents/agent.factory.js';
 import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto.js'; // Assuming UpdateAgentDto exists
-import { AgentType } from '@the-new-fuse/database/client'; // Removed PrismaAgent alias
+import { AgentType } from '@the-new-fuse/database'; // Removed PrismaAgent alias
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import type { Agent } from '@prisma/client'; // Import Agent type from prisma client, removed PrismaClient
 

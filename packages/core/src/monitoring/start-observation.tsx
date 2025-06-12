@@ -1,4 +1,4 @@
-import { TraeObserver } from './trae-observer.js';
+import { TraeObserver } from './trae-observer.tsx';
 import { Logger } from '../../../utils/src/logger.js';
 
 const logger: , error);

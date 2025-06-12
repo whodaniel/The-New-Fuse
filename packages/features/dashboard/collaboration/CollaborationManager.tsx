@@ -1,11 +1,11 @@
-import { WebSocketManager } from '../data/WebSocketManager.js';
+import { WebSocketManager } from '../data/WebSocketManager.tsx';
 import {
   User,
   Comment,
   Annotation,
   ActivityEvent,
   CollaborationState,
-} from './types.js';
+} from './types.tsx';
 
 export class CollaborationManager {
   private ws: WebSocketManager;

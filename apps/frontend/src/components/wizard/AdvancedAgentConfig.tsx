@@ -3,8 +3,8 @@ exports.AdvancedAgentConfig = AdvancedAgentConfig;
 import react_1 from 'react';
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import WizardProvider_1 from './WizardProvider.js';
-import WizardWebSocket_1 from './WizardWebSocket.js';
+import WizardProvider_1 from './WizardProvider.tsx';
+import WizardWebSocket_1 from './WizardWebSocket.tsx';
 import react_2 from '@monaco-editor/react';
 const defaultSettings = {
     maxConcurrentTasks: 5,

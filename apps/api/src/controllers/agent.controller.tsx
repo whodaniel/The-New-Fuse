@@ -21,7 +21,7 @@ import {
     UpdateAgentDto, 
     AgentStatus 
 } from '@the-new-fuse/types';
-import { User } from '@the-new-fuse/database/client';
+import { User } from '@the-new-fuse/database';
 
 @ApiTags('Agents')
 @Controller('agents')
@@ -38,9 +38,9 @@ export class AgentController {
     ): Promise<Agent> {
         try {
             return await this.agentService.createAgent(data, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to create agent',
+                (error as Error).message || 'Failed to create agent',
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -62,9 +62,9 @@ export class AgentController {
                 return this.agentService.getAgentsByStatus(status, user.id);
             }
             return this.agentService.getAgents(user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to fetch agents',
+                (error as Error).message || 'Failed to fetch agents',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -83,9 +83,9 @@ export class AgentController {
                 throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
             }
             return agent;
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to fetch agent',
+                (error as Error).message || 'Failed to fetch agent',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }
@@ -101,9 +101,9 @@ export class AgentController {
     ): Promise<Agent> {
         try {
             return await this.agentService.updateAgent(id, updates, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to update agent',
+                (error as Error).message || 'Failed to update agent',
                 HttpStatus.BAD_REQUEST
             );
         }
@@ -118,9 +118,9 @@ export class AgentController {
     ): Promise<void> {
         try {
             await this.agentService.deleteAgent(id, user.id);
-        } catch (error) {
+        } catch (error: unknown) {
             throw new HttpException(
-                error.message || 'Failed to delete agent',
+                (error as Error).message || 'Failed to delete agent',
                 HttpStatus.INTERNAL_SERVER_ERROR
             );
         }

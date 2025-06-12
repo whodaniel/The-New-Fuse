@@ -1,6 +1,6 @@
-import { EntityRepository } from 'typeorm';
-import { BaseRepository } from './BaseRepository.js';
-import { User } from '../entities/User.js';
+import { EntityRepository } from ''typeorm';
+import { BaseRepository } from './BaseRepository.tsx';
+import { User } from '../entities/User.tsx';
 
 @EntityRepository(User)
 export class UserRepository extends BaseRepository<User> {
@@ -22,14 +22,14 @@ export class UserRepository extends BaseRepository<User> {
     user.username = data.username;
     user.email = data.email;
     user.passwordHash = data.password;
-    user.role = data.role || 'user';
+    user.role = data.role || user';
 
     return this.save(user);
   }
 
   async updateUserProfile(
     userId: string,
-    data: Partial<Pick<User, 'username' | 'email'>>
+    data: Partial<Pick<User, username' | email'>>
   ): Promise<User> {
     await this.update(userId, data);
     return this.findOneOrFail({ where: { id: userId } });

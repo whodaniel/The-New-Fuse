@@ -1,5 +1,5 @@
 import { Controller, Post, Get, Put, Body, Param, UseGuards } from '@nestjs/common';
-import { AdminGuard } from '../guards/admin.guard.js';
+import { AdminGuard } from '../guards/admin.guard.tsx';
 import { execSync } from 'child_process';
 import { Permission } from '@the-new-fuse/types';
 
@@ -11,8 +11,8 @@ export class AdminController {
     try {
       const output = execSync(`yarn fuse ${script}`, { encoding: 'utf-8' });
       return { success: true, output };
-    } catch (error) {
-      return { success: false, error: error.message };
+    } catch (error: unknown) {
+      return { success: false, error: (error as Error).message };
     }
   }
 

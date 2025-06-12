@@ -4,11 +4,11 @@ import { io, Socket } from 'socket.io-client';
 import { toast } from 'react-hot-toast';
 
 interface WebSocketMessage {
-  type: 'message' | 'file' | 'agent_action' | 'collaboration';
+  type:message' | file' | agent_action' | collaboration';
   payload: unknown;
   sender: {
     id: string;
-    type: 'user' | 'agent';
+    type:user' | agent';
     name: string;
   };
   timestamp: string;
@@ -34,7 +34,7 @@ export class AgentWebSocketService {
         }
       });
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('Error sending message:, error);
     }
   }
 }
@@ -70,7 +70,7 @@ class WebSocketService {
     });
 
     this.socket.on('error', (error) => {
-      console.error('WebSocket error:', error);
+      console.error('WebSocket error:, error);
     });
 
     this.socket.on('message', (message: WebSocketMessage) => {
@@ -141,7 +141,7 @@ class WebSocketService {
 
       const buffer = await chunk.arrayBuffer();
       const base64Chunk = btoa(
-        new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), '')
+        new Uint8Array(buffer).reduce((data, byte) => data + String.fromCharCode(byte), )
       );
 
       this.socket.emit('file_chunk', {

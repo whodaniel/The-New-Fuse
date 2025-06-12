@@ -7,11 +7,11 @@ interface KnowledgeDocument {
 
 // Define the paths to the knowledge base documents
 const KNOWLEDGE_BASE_PATHS: string[] = [
-  'docs/project-overview.md',
-  'docs/Architecture.md',
-  'docs/DevelopmentGuide.md',
-  'docs/getting-started/README.md',
-  'docs/api/README.md',
+  'docs/project-overview.'md',
+  docs/Architecture.'md',
+  docs/DevelopmentGuide.'md',
+  docs/getting-started/README.'md',
+  docs/api/README.'md',
 ];
 
 class RagService {

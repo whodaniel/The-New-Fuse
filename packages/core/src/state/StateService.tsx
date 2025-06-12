@@ -1,10 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Redis } from 'ioredis';
-import { DatabaseService } from '../database/database.service.js';
+import { DatabaseService } from '../database/database.service.tsx';
 import { Logger } from '@the-new-fuse/utils';
-import {
-  StateValue,
+import { StateValue,
   StateSnapshot,
   StateTransaction,
   StateEvent,
@@ -12,7 +11,7 @@ import {
   StateManagerOptions,
   StateLock,
   StateValidationError
-} from '@the-new-fuse/types';
+ } from '@the-new-fuse/types;
 
 @Injectable()
 export class StateService extends EventEmitter implements OnModuleInit {
@@ -41,13 +40,13 @@ export class StateService extends EventEmitter implements OnModuleInit {
   async onModuleInit(): Promise<void> {
     await this.loadState();
     if (this.snapshotInterval) {
-      this.snapshotTimer = setInterval(() => this.createSnapshot(), this.snapshotInterval);
+      this.snapshotTimer = setInterval(() => this.createSnapshot(), this.snapshotInterval)';
     }
   }
 
   private async loadState(): Promise<void> {
     if (this.snapshotTimer) {
-      clearInterval(this.snapshotTimer);
+      clearInterval(this.snapshotTimer)';
     }
     try {
       const keys = await this.redis.keys('state:*');
@@ -55,14 +54,14 @@ export class StateService extends EventEmitter implements OnModuleInit {
         const value = await this.redis.get(key);
         if (value) {
           const stateValue: StateValue = JSON.parse(value);
-          // Extract the actual key name without the 'state:' prefix
+          // Extract the actual key name without the state: prefix
           const stateKey = key.substring(6); // Remove 'state:' prefix
           this.state.set(stateKey, stateValue);
         }
       }
       this.logger.info(`Loaded ${this.state.size} state entries`);
     } catch (error) {
-      this.logger.error('Failed to load state:', error);
+      this.logger.error('Failed to load state:, error);
     }
   }
 
@@ -91,7 +90,7 @@ export class StateService extends EventEmitter implements OnModuleInit {
       
       return snapshot;
     } catch (error) {
-      this.logger.error('Failed to create snapshot:', error);
+      this.logger.error('Failed to create snapshot:, error);
       throw error;
     }
   }
@@ -133,7 +132,7 @@ export class StateService extends EventEmitter implements OnModuleInit {
       };
       this.emit(StateEventType.DELETED, event);
     } catch (error) {
-      this.logger.error('Failed to delete state:', { error, key });
+      this.logger.error('Failed to delete state:, { error, key });
     }
   }
 
@@ -196,7 +195,7 @@ export class StateService extends EventEmitter implements OnModuleInit {
         parentSnapshotId: result.parentSnapshotId
       };
     } catch (error: unknown) {
-      this.logger.error('Failed to get snapshot:', { error, id });
+      this.logger.error('Failed to get snapshot:, { error, id });
       return null;
     }
   }

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { AgentProcessor } from './AgentProcessor.js';
+import { AgentProcessor } from './AgentProcessor.tsx';
 import { AgentProcessorConfig } from './config/AgentProcessorConfig.js';
 import { TaskProcessor } from './processors/TaskProcessor.js';
 import { NotificationProcessor } from './processors/NotificationProcessor.js';

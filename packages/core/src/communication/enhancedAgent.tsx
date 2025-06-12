@@ -1,4 +1,4 @@
-import { Redis, createClient as createRedisClient } from 'redis'; // Import createClient
+import { Redis, createClient as createRedisClient } from ''redis'; // Import createClient
 import { EventEmitter } from 'events';
 import type { AgentCapability, AgentMessage, AgentConfig } from '@fuse/types/core';
 import { Logger, getLogger } from '@the-new-fuse/utils'; // Assuming getLogger is exported from utils
@@ -19,7 +19,7 @@ export class EnhancedAgent extends EventEmitter {
     private readonly broadcastChannel: string;
     private readonly description: string;
     private readonly capabilities: AgentCapability[];
-    private redis: Redis;
+    private redis: any;
     private isRunning: boolean = false;
 
     constructor(
@@ -42,7 +42,7 @@ export class EnhancedAgent extends EventEmitter {
 
         // Use createClient for Redis connection
         this.redis = createRedisClient({
-            url: process.env.REDIS_URL || 'redis://localhost:6379'
+            url: process.env.REDIS_URL || redis://localhost:6379'
         });
 
         this.redis.on('error', (err: Error) => logger.error('Redis Client Error', err));
@@ -66,9 +66,9 @@ export class EnhancedAgent extends EventEmitter {
             content: content,
             timestamp: new Date().toISOString(),
             metadata: {
-                version: '1.0',
-                // Ensure 'medium' is a valid value if AgentMessage['metadata']['priority'] has a stricter type
-                priority: 'medium' as any, // Using 'as any' if 'medium' is not strictly typed, otherwise ensure type compatibility
+                version: 1.0',
+                // Ensure medium' is a valid value if AgentMessage['metadata']['priority'] has a stricter type
+                priority:medium' as any, // Using as any' if medium' is not strictly typed, otherwise ensure type compatibility
             }
         };
 
@@ -83,17 +83,17 @@ export class EnhancedAgent extends EventEmitter {
         // Define the callback for message handling
         const messageHandler = (message: string, channel: string) => {
             try {
-                logger.debug(`Received message from channel '${channel}':`, message);
+                logger.debug(`Received message from channel ${channel}':`, message);
                 const parsedMessage = JSON.parse(message) as AgentMessage; // Add type assertion
                 this.emit('message', parsedMessage);
-            } catch (error: any) { // It's good practice to type 'error'
-                logger.error(`Error parsing message from channel '${channel}':`, error);
+            } catch (error: any) { // It's good practice to type error'
+                logger.error(`Error parsing message from channel ${channel}':`, error);
                 this.emit('error', error);
             }
         };
 
         // Subscribe to channels
-        // Note: The 'subscribe' method in node-redis v4 takes an array of channels and a listener function.
+        // Note: The subscribe' method in node-redis v4 takes an array of channels and a listener function.
         // The listener receives (message, channel).
         await subscriber.subscribe([this.channel, this.broadcastChannel], messageHandler);
         logger.info(`Subscribed to channels: ${this.channel}, ${this.broadcastChannel}`);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ThemeProvider, useTheme } from '../ThemeContext.js';
+import { ThemeProvider, useTheme } from '../ThemeContext.tsx';
 
 describe('ThemeContext', () => {
   const TestComponent = () => {

@@ -1,5 +1,5 @@
 export interface DatabaseConfig {
-    type: 'postgres' | 'mysql' | 'sqlite';
+    type: 'postgres' | mysql' | sqlite';
     host?: string;
     port?: number;
     username?: string;
@@ -74,7 +74,7 @@ export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'pending' | 'in-progress' | 'completed';
+  status:pending' | in-progress' | completed';
   createdAt: Date;
   updatedAt: Date;
 }

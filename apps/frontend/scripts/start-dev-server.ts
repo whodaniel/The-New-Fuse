@@ -1,11 +1,11 @@
 import { spawn } from 'child_process';
 import http from 'http';
 
-function waitForServer(url, timeout): any {
+function waitForServer(url: string, timeout: number): Promise<void> {
   return new Promise((resolve, reject) => {
     const startTime = Date.now();
 
-    const checkServer = (): any => {
+    const checkServer = (): void => {
       http.get(url, (res) => {
         if (res.statusCode === 200) {
           resolve();
@@ -14,7 +14,7 @@ function waitForServer(url, timeout): any {
         }
       }).on('error', retry);
 
-      function retry(): any {
+      function retry(): void {
         const elapsed = Date.now() - startTime;
         if (elapsed > timeout) {
           reject(new Error(`Server not ready after ${timeout}ms`));
@@ -28,15 +28,15 @@ function waitForServer(url, timeout): any {
   });
 }
 
-async function startServer(): any {
+async function startServer(): Promise<void> {
   // Kill any existing process on port 5173
   try {
-    await new Promise((resolve) => {
+    await new Promise<void>((resolve) => {
       const kill = spawn('kill', [`$(lsof -t -i:5173)`], { shell: true });
       kill.on('close', resolve);
     });
-  } catch (error) {
-    
+  } catch {
+    // Ignore errors when killing process
   }
 
   const server = spawn('yarn', ['dev'], {

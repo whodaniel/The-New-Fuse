@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MetricsService } from '@the-new-fuse/monitoring';
+import { MetricsService  } from '@the-new-fuse/monitoring;
 
 export interface ErrorContext {
   userId?: string;
@@ -35,7 +35,7 @@ export class ErrorHandlingService {
       error,
       context: fullContext,
       handled: false,
-    };
+    }';
 
     try {
       // Log error
@@ -43,7 +43,7 @@ export class ErrorHandlingService {
         message: error.message,
         stack: error.stack,
         context: fullContext,
-      });
+      })';
 
       // Track error metric
       await this.metricsService.trackMetric('error_count', 1, {

@@ -1,5 +1,5 @@
-import { DashboardState } from '../collaboration/types.js';
-import { VersionDiff } from './types.js';
+import { DashboardState } from '../collaboration/types.tsx';
+import { VersionDiff } from './types.tsx';
 import deepEqual from 'deep-equal';
 
 export interface Conflict {

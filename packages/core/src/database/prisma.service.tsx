@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   constructor() {
     super({
-      log: ['error', 'warn'],
+      log: ['error', warn'],
       errorFormat: 'minimal',
     });
   }

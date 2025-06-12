@@ -4,7 +4,7 @@ import * as winston from 'winston';
 import * as Transport from 'winston-transport';
 import * as DailyRotateFile from 'winston-daily-rotate-file';
 import { ElasticsearchTransport } from 'winston-elasticsearch';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as zlib from 'zlib';
@@ -70,14 +70,14 @@ export class CentralizedLoggingService implements OnModuleInit {
       enabled: true,
       level: LogLevel.INFO,
       directory: 'logs',
-      maxSize: '10m',
+      maxSize: 10'm',
       maxFiles: 14,
       compress: true
     },
     elasticsearch: {
       enabled: false,
       level: LogLevel.INFO,
-      node: 'http://localhost:9200',
+      node:http://localhost:9200',
       indexPrefix: 'logs'
     }
   };
@@ -87,28 +87,28 @@ export class CentralizedLoggingService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      level: this.configService.get<LogLevel>('logging.level', this.defaultConfig.level),
+      level: this.configService.get<LogLevel>('logging.'level', this.defaultConfig.level),
       console: {
-        enabled: this.configService.get<boolean>('logging.console.enabled', this.defaultConfig.console.enabled),
-        level: this.configService.get<LogLevel>('logging.console.level', this.defaultConfig.console.level),
-        colorize: this.configService.get<boolean>('logging.console.colorize', this.defaultConfig.console.colorize)
+        enabled: this.configService.get<boolean>('logging.console.'enabled', this.defaultConfig.console.enabled),
+        level: this.configService.get<LogLevel>('logging.console.'level', this.defaultConfig.console.level),
+        colorize: this.configService.get<boolean>('logging.console.'colorize', this.defaultConfig.console.colorize)
       },
       file: {
-        enabled: this.configService.get<boolean>('logging.file.enabled', this.defaultConfig.file.enabled),
-        level: this.configService.get<LogLevel>('logging.file.level', this.defaultConfig.file.level),
-        directory: this.configService.get<string>('logging.file.directory', this.defaultConfig.file.directory),
-        maxSize: this.configService.get<string>('logging.file.maxSize', this.defaultConfig.file.maxSize),
-        maxFiles: this.configService.get<number>('logging.file.maxFiles', this.defaultConfig.file.maxFiles),
-        compress: this.configService.get<boolean>('logging.file.compress', this.defaultConfig.file.compress)
+        enabled: this.configService.get<boolean>('logging.file.'enabled', this.defaultConfig.file.enabled),
+        level: this.configService.get<LogLevel>('logging.file.'level', this.defaultConfig.file.level),
+        directory: this.configService.get<string>('logging.file.'directory', this.defaultConfig.file.directory),
+        maxSize: this.configService.get<string>('logging.file.'maxSize', this.defaultConfig.file.maxSize),
+        maxFiles: this.configService.get<number>('logging.file.'maxFiles', this.defaultConfig.file.maxFiles),
+        compress: this.configService.get<boolean>('logging.file.'compress', this.defaultConfig.file.compress)
       },
       elasticsearch: {
-        enabled: this.configService.get<boolean>('logging.elasticsearch.enabled', this.defaultConfig.elasticsearch.enabled),
-        level: this.configService.get<LogLevel>('logging.elasticsearch.level', this.defaultConfig.elasticsearch.level),
-        node: this.configService.get<string>('logging.elasticsearch.node', this.defaultConfig.elasticsearch.node),
-        indexPrefix: this.configService.get<string>('logging.elasticsearch.indexPrefix', this.defaultConfig.elasticsearch.indexPrefix),
+        enabled: this.configService.get<boolean>('logging.elasticsearch.'enabled', this.defaultConfig.elasticsearch.enabled),
+        level: this.configService.get<LogLevel>('logging.elasticsearch.'level', this.defaultConfig.elasticsearch.level),
+        node: this.configService.get<string>('logging.elasticsearch.'node', this.defaultConfig.elasticsearch.node),
+        indexPrefix: this.configService.get<string>('logging.elasticsearch.'indexPrefix', this.defaultConfig.elasticsearch.indexPrefix),
         auth: {
-          username: this.configService.get<string>('logging.elasticsearch.auth.username', ''),
-          password: this.configService.get<string>('logging.elasticsearch.auth.password', '')
+          username: this.configService.get<string>('logging.elasticsearch.auth.'username', ),
+          password: this.configService.get<string>('logging.elasticsearch.auth.'password', )
         }
       }
     };
@@ -273,8 +273,8 @@ export class CentralizedLoggingService implements OnModuleInit {
       const fileTransport = new DailyRotateFile({
         level: this.config.file.level,
         dirname: logDir,
-        filename: '%DATE%.log',
-        datePattern: 'YYYY-MM-DD',
+        filename:%DATE%.'log',
+        datePattern:YYYY-MM-DD,
         maxSize: this.config.file.maxSize,
         maxFiles: this.config.file.maxFiles,
         format: winston.format.combine(
@@ -318,7 +318,7 @@ export class CentralizedLoggingService implements OnModuleInit {
         winston.format.json()
       ),
       defaultMeta: {
-        service: this.configService.get<string>('service.name', 'app')
+        service: this.configService.get<string>('service.'name', app')
       },
       transports
     });
@@ -355,7 +355,7 @@ export class CentralizedLoggingService implements OnModuleInit {
       formattedMessage += `: ${message}`;
       
       // Add metadata if present
-      const metadataKeys = Object.keys(metadata).filter(key => !['service', 'timestamp', 'level'].includes(key));
+      const metadataKeys = Object.keys(metadata).filter(key => !['service', timestamp', level'].includes(key));
       if (metadataKeys.length > 0) {
         const metadataObj = metadataKeys.reduce((obj, key) => {
           obj[key] = metadata[key];

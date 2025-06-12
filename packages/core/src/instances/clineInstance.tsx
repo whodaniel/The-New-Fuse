@@ -1,4 +1,4 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
 import { DirectCommunication, AgentRole } from '../communication/directCommunication.js';
 
@@ -8,8 +8,8 @@ async function main(): Promise<void> {
     try {
         // Initialize Cline instance
         const cline = new DirectCommunication(
-            'cline_ai',
-            'cascade_ai',
+            cline_ai',
+            cascade_ai',
             AgentRole.OPTIMIZATION
         );
 

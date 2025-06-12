@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 export interface ServiceMetadata {
   serviceName: string;
@@ -10,9 +10,9 @@ export interface ServiceMetadata {
   healthCheckUrl?: string;
   tags?: string[];
   description?: string;
-  registeredAt: Date;
-  lastHeartbeat: Date;
-  status: 'active' | 'inactive' | 'error';
+  registeredAt: Date';
+  lastHeartbeat: Date';
+  status:active' | inactive' | error';
 }
 
 export interface ServiceDiscoveryOptions {
@@ -30,13 +30,13 @@ export class ServiceRegistryService {
   constructor(
     private readonly configService: ConfigService
   ) {
-    this.heartbeatInterval = this.configService.get<number>('serviceRegistry.heartbeatInterval', 30000);
+    this.heartbeatInterval = this.configService.get<number>('serviceRegistry.'heartbeatInterval', 30000);
     this.startHeartbeatMonitoring();
   }
 
   public async registerService(
     serviceName: string, 
-    metadata: Omit<ServiceMetadata, 'serviceName' | 'registeredAt' | 'lastHeartbeat'>
+    metadata: Omit<ServiceMetadata, 'serviceName' | registeredAt' | 'lastHeartbeat'>
   ): Promise<ServiceMetadata> {
     const serviceMetadata: ServiceMetadata = {
       ...metadata,

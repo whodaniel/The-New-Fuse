@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service.js';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service.tsx';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 
 export interface QueryPerformanceConfig {
   enabled: boolean;
@@ -42,12 +42,12 @@ export class QueryPerformanceMonitorService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('database.queryPerformance.enabled', true),
-      slowQueryThresholdMs: this.configService.get<number>('database.queryPerformance.slowQueryThresholdMs', 1000),
-      logAllQueries: this.configService.get<boolean>('database.queryPerformance.logAllQueries', false),
-      sampleRate: this.configService.get<number>('database.queryPerformance.sampleRate', 0.1),
-      trackBindParameters: this.configService.get<boolean>('database.queryPerformance.trackBindParameters', true),
-      trackStackTrace: this.configService.get<boolean>('database.queryPerformance.trackStackTrace', false)
+      enabled: this.configService.get<boolean>('database.queryPerformance.'enabled', true),
+      slowQueryThresholdMs: this.configService.get<number>('database.queryPerformance.'slowQueryThresholdMs', 1000),
+      logAllQueries: this.configService.get<boolean>('database.queryPerformance.'logAllQueries', false),
+      sampleRate: this.configService.get<number>('database.queryPerformance.'sampleRate', 0.1),
+      trackBindParameters: this.configService.get<boolean>('database.queryPerformance.'trackBindParameters', true),
+      trackStackTrace: this.configService.get<boolean>('database.queryPerformance.'trackStackTrace', false)
     };
 
     if (!this.config.enabled) {
@@ -102,12 +102,12 @@ export class QueryPerformanceMonitorService implements OnModuleInit {
     
     // Record in performance monitoring
     this.performanceMonitor.recordResponseTime({
-      operation: 'database.query',
+      operation:database.'query',
       durationMs,
       tags: {
-        source: context?.source || 'unknown',
+        source: context?.source || unknown',
         correlationId,
-        operation: context?.operation || 'unknown'
+        operation: context?.operation || unknown'
       }
     });
     
@@ -116,12 +116,12 @@ export class QueryPerformanceMonitorService implements OnModuleInit {
     
     // Log query if needed
     if (isSlowQuery || this.config.logAllQueries) {
-      const logLevel = isSlowQuery ? 'warn' : 'debug';
-      const logMessage = isSlowQuery ? 'Slow query detected' : 'Query executed';
+      const logLevel = isSlowQuery ? 'warn' :'debug';
+      const logMessage = isSlowQuery ? Slow query detected' :Query executed';
       
       this.logger[logLevel](`${logMessage}: ${durationMs}ms`, {
         metadata: {
-          query: query.substring(0, 200) + (query.length > 200 ? '...' : ''),
+          query: query.substring(0, 200) + (query.length > 200 ? ...' :),
           duration: durationMs,
           source: context?.source,
           correlationId,
@@ -152,7 +152,7 @@ export class QueryPerformanceMonitorService implements OnModuleInit {
       }
       
       // Emit event
-      this.eventEmitter.emit('database.slowQuery', {
+      this.eventEmitter.emit('database.'slowQuery', {
         query,
         duration: durationMs,
         timestamp: new Date(),
@@ -245,10 +245,10 @@ export class QueryPerformanceMonitorService implements OnModuleInit {
   private normalizeQuery(query: string): string {
     // Replace specific values with placeholders
     return query
-      .replace(/\d+/g, '?')
-      .replace(/'[^']*'/g, '?')
-      .replace(/"[^"]*"/g, '?')
-      .replace(/\s+/g, ' ')
+      .replace(/\d+/g, ?')
+      .replace(/'[^']*'/g, ?')
+      .replace(/"[^"]*"/g, ?')
+      .replace(/\s+/g, )
       .trim();
   }
 

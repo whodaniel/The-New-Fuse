@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Logger } from '../logging/LoggingService.js';
-import { RedisService } from '../redis/RedisService.js';
+import { RedisService } from '../redis/RedisService.tsx';
 
 export interface EventMetadata {
   timestamp: number;
@@ -66,7 +66,7 @@ export class EventBusService {
       payload,
       metadata: {
         timestamp: Date.now(),
-        source: (process as any).env.SERVICE_NAME || 'unknown',
+        source: (process as any).env.SERVICE_NAME || unknown',
         correlationId: options.correlationId,
         userId: options.userId,
       },

@@ -1,12 +1,12 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { TaskComment } from '../entities/TaskComment.js';
-import { CreateCommentDto, UpdateCommentDto } from '../dto/comment.dto.js';
-import { TaskActivityService } from './TaskActivityService.js';
-import { TaskActivityType } from '../entities/TaskActivity.js';
-import { User } from '../../user/entities/User.js';
-import { Task } from '../entities/Task.js';
+import { TaskComment } from '../entities/TaskComment.tsx';
+import { CreateCommentDto, UpdateCommentDto } from '../dto/comment.dto.tsx';
+import { TaskActivityService } from './TaskActivityService.tsx';
+import { TaskActivityType } from '../entities/TaskActivity.tsx';
+import { User } from '../../user/entities/User';
+import { Task } from '../entities/Task.tsx';
 import { NotificationService } from '../../notification/NotificationService.js';
 import { MentionParser } from '../../shared/utils/MentionParser.js';
 
@@ -109,7 +109,7 @@ export class TaskCommentService {
   private async findCommentById(id: string): Promise<TaskComment> {
     const comment = await this.commentRepository.findOne({
       where: { id },
-      relations: ['task', 'author']
+      relations: ['task', author']
     });
 
     if (!comment) {

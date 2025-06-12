@@ -1,6 +1,6 @@
 import { useContext } from 'react';
-import { ToastContext } from './toast-provider.js';
-import { ToastProps } from '../types.js';
+import { ToastContext } from './toast-provider.tsx';
+import { ToastProps } from '../types.tsx';
 
 /**
  * Hook for accessing the toast context

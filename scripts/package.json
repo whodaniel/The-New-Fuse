@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "MCP server for managing MCP configurations",
   "main": "mcp-config-manager-server.js",
+  "type": "module",
   "bin": {
     "mcp-config-manager-server": "./mcp-config-manager-server.js"
   },

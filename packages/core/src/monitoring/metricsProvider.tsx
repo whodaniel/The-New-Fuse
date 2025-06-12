@@ -1,19 +1,19 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from '@the-new-fuse/utils';
-import { MetricType, MetricUnit, Metric, MetricLabel } from './types.js';
+import { MetricType, MetricUnit, Metric, MetricLabel } from './types.tsx';
 import { EventEmitter } from 'events';
 
 const logger = new Logger('MetricsProvider');
 
 export class MetricsProvider extends EventEmitter {
-  private redis: Redis;
+  private redis: any;
   private prefix: string;
   private defaultLabels: MetricLabel[];
 
   constructor(redis: Redis, options: { prefix?: string; defaultLabels?: MetricLabel[] } = {}) {
     super();
     this.redis = redis;
-    this.prefix = options.prefix || 'metrics:';
+    this.prefix = options.prefix || metrics:;
     this.defaultLabels = options.defaultLabels || [];
   }
 
@@ -91,7 +91,7 @@ export class MetricsProvider extends EventEmitter {
       // Emit metric event for real-time monitoring
       this.emit('metric', metric);
     } catch (error) {
-      logger.error('Failed to record metric:', {
+      logger.error('Failed to record metric:, {
         error,
         metric
       });
@@ -141,7 +141,7 @@ export class MetricsProvider extends EventEmitter {
 
       await Promise.all(
         keys.map(key =>
-          this.redis.zremrangebyscore(key, '-inf', minScore)
+          this.redis.zremrangebyscore(key, -'inf', minScore)
         )
       );
     } catch (error) {

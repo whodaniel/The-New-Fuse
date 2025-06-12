@@ -1,6 +1,6 @@
-import { getCustomRepository } from 'typeorm';
-import { MetricRepository } from '../database/repositories/MetricRepository.js';
-import { Metric } from '../database/entities/Metric.js';
+import { getCustomRepository } from ''typeorm';
+import { MetricRepository } from '../database/repositories/MetricRepository.tsx';
+import { Metric } from '../database/entities/Metric.tsx';
 
 export class MetricsService {
     private metricRepository: MetricRepository;
@@ -52,8 +52,8 @@ export class MetricsService {
         startTime: Date;
         endTime: Date;
         type: string;
-        aggregation: 'avg' | 'sum' | 'count';
-        groupBy?: 'hour' | 'day' | 'month';
+        aggregation:avg' | sum' | count';
+        groupBy?:hour' | day' | month';
     }): Promise<any[]> {
         return this.metricRepository.getAggregatedMetrics(options);
     }
@@ -70,7 +70,7 @@ export class MetricsService {
         const metrics = await this.metricRepository.findMetricsByTimeRange(
             startTime,
             endTime,
-            'performance'
+            performance'
         );
 
         const totalOperations = metrics.length;
@@ -95,7 +95,7 @@ export class MetricsService {
         const errors = await this.metricRepository.findMetricsByTimeRange(
             startTime,
             endTime,
-            'error'
+            error'
         );
 
         const errorsByType = errors.reduce((acc, error) => {

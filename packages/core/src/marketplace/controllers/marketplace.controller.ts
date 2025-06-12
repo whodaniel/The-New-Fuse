@@ -19,11 +19,11 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBody, ApiQuery } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { MarketplaceService } from '../services/marketplace.service.js';
-import { MarketplaceItemType, MarketplaceItemStatus } from '../entities/marketplace-item.entity.js';
-import { SubscriptionStatus } from '../entities/user-subscription.entity.js';
+import { MarketplaceItemType, MarketplaceItemStatus } from '../entities/marketplace-item.entity';
+import { SubscriptionStatus } from '../entities/user-subscription.entity';
 import { RolesGuard } from '../../auth/guards/roles.guard.js';
 import { Roles } from '../../auth/decorators/roles.decorator.js';
-import { UserRole } from '../../user/entities/user.entity.js';
+import { UserRole } from '../../user/entities/user.entity';
 
 @ApiTags('marketplace')
 @Controller('marketplace')
@@ -36,12 +36,12 @@ export class MarketplaceController {
   // Marketplace Item Endpoints
 
   @Get('items')
-  @ApiOperation({ summary: 'Get all marketplace items' })
-  @ApiQuery({ name: 'type', required: false, enum: MarketplaceItemType, description: 'Filter by item type' })
-  @ApiQuery({ name: 'featured', required: false, type: Boolean, description: 'Filter by featured status' })
-  @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number, starting from 1' })
-  @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page' })
-  @ApiResponse({ status: 200, description: 'Returns a list of marketplace items' })
+  @ApiOperation({ summary:Get all marketplace items' })
+  @ApiQuery({ name: 'type', required: false, enum: MarketplaceItemType, description: Filter by item 'type' })
+  @ApiQuery({ name: 'featured', required: false, type: Boolean, description: Filter by featured 'status' })
+  @ApiQuery({ name: 'page', required: false, type: Number, description: Page number, starting from '1' })
+  @ApiQuery({ name: 'limit', required: false, type: Number, description: Number of items per 'page' })
+  @ApiResponse({ status: 200, description:Returns a list of marketplace items' })
   async getAllItems(
     @Query('type') type?: MarketplaceItemType,
     @Query('featured') featured?: boolean,
@@ -50,22 +50,22 @@ export class MarketplaceController {
   ) {
     try {
       return await this.marketplaceService.getAllItems(type, featured, page, limit);
-    } catch (error) {
-      this.logger.error(`Failed to get marketplace items: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to get marketplace items: ${(error as Error).message}`, error.stack);
       throw new HttpException('Failed to retrieve marketplace items', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Get('items/:id')
-  @ApiOperation({ summary: 'Get marketplace item by ID' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiResponse({ status: 200, description: 'Returns the specified marketplace item' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Get marketplace item by ID' })
+  @ApiParam({ name: 'id', description: Marketplace item 'ID' })
+  @ApiResponse({ status: 200, description:Returns the specified marketplace item' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async getItem(@Param('id') id: string) {
     try {
       return await this.marketplaceService.getItemById(id);
-    } catch (error) {
-      this.logger.error(`Failed to get marketplace item ${id}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to get marketplace item ${id}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -75,14 +75,14 @@ export class MarketplaceController {
 
   @Post('items')
   @Roles(UserRole.ADMIN, UserRole.CREATOR)
-  @ApiOperation({ summary: 'Create a new marketplace item' })
-  @ApiBody({ description: 'Marketplace item data' })
-  @ApiResponse({ status: 201, description: 'Returns the created marketplace item' })
+  @ApiOperation({ summary:Create a new marketplace item' })
+  @ApiBody({ description:Marketplace item data' })
+  @ApiResponse({ status: 201, description:Returns the created marketplace item' })
   async createItem(@Body() itemData: any, @Request() req) {
     try {
       return await this.marketplaceService.createItem(itemData, req.user.id);
-    } catch (error) {
-      this.logger.error(`Failed to create marketplace item: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to create marketplace item: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -95,16 +95,16 @@ export class MarketplaceController {
 
   @Put('items/:id')
   @Roles(UserRole.ADMIN, UserRole.CREATOR)
-  @ApiOperation({ summary: 'Update a marketplace item' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiBody({ description: 'Updated marketplace item data' })
-  @ApiResponse({ status: 200, description: 'Returns the updated marketplace item' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Update a marketplace item' })
+  @ApiParam({ name: 'id', description: Marketplace item 'ID' })
+  @ApiBody({ description:Updated marketplace item data' })
+  @ApiResponse({ status: 200, description:Returns the updated marketplace item' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async updateItem(@Param('id') id: string, @Body() itemData: any) {
     try {
       return await this.marketplaceService.updateItem(id, itemData);
-    } catch (error) {
-      this.logger.error(`Failed to update marketplace item ${id}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to update marketplace item ${id}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -117,16 +117,16 @@ export class MarketplaceController {
 
   @Delete('items/:id')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Delete a marketplace item' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiResponse({ status: 200, description: 'Marketplace item deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Delete a marketplace item' })
+  @ApiParam({ name: 'id', description: Marketplace item 'ID' })
+  @ApiResponse({ status: 200, description:Marketplace item deleted successfully' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async deleteItem(@Param('id') id: string) {
     try {
       const result = await this.marketplaceService.deleteItem(id);
       return { id, deleted: result };
-    } catch (error) {
-      this.logger.error(`Failed to delete marketplace item ${id}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to delete marketplace item ${id}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -140,11 +140,11 @@ export class MarketplaceController {
   // Subscription Endpoints
 
   @Post('subscribe/:itemId')
-  @ApiOperation({ summary: 'Subscribe to a marketplace item' })
-  @ApiParam({ name: 'itemId', description: 'Marketplace item ID' })
-  @ApiBody({ description: 'Payment details (if required)' })
-  @ApiResponse({ status: 200, description: 'Subscription created successfully' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Subscribe to a marketplace item' })
+  @ApiParam({ name: 'itemId', description: Marketplace item 'ID' })
+  @ApiBody({ description:Payment details (if required)' })
+  @ApiResponse({ status: 200, description: Subscription created 'successfully' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async subscribeToItem(
     @Param('itemId') itemId: string,
     @Body() paymentDetails: any,
@@ -159,10 +159,10 @@ export class MarketplaceController {
       return {
         subscriptionId: subscription.id,
         itemId,
-        message: 'Subscription created successfully'
+        message:Subscription created successfully'
       };
-    } catch (error) {
-      this.logger.error(`Failed to subscribe to item ${itemId}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to subscribe to item ${itemId}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -174,10 +174,10 @@ export class MarketplaceController {
   }
 
   @Post('subscriptions/:subscriptionId/cancel')
-  @ApiOperation({ summary: 'Cancel a subscription' })
-  @ApiParam({ name: 'subscriptionId', description: 'Subscription ID' })
-  @ApiResponse({ status: 200, description: 'Subscription cancelled successfully' })
-  @ApiResponse({ status: 404, description: 'Subscription not found' })
+  @ApiOperation({ summary:Cancel a subscription' })
+  @ApiParam({ name: 'subscriptionId', description: Subscription 'ID' })
+  @ApiResponse({ status: 200, description:Subscription cancelled successfully' })
+  @ApiResponse({ status: 404, description:Subscription not found' })
   async cancelSubscription(@Param('subscriptionId') subscriptionId: string, @Request() req) {
     try {
       const subscription = await this.marketplaceService.cancelSubscription(
@@ -187,11 +187,11 @@ export class MarketplaceController {
       return {
         subscriptionId: subscription.id,
         itemId: subscription.itemId,
-        message: 'Subscription cancelled successfully'
+        message:Subscription cancelled successfully'
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
-        `Failed to cancel subscription ${subscriptionId}: ${error.message}`,
+        `Failed to cancel subscription ${subscriptionId}: ${(error as Error).message}`,
         error.stack
       );
       if (error instanceof HttpException) {
@@ -205,32 +205,32 @@ export class MarketplaceController {
   }
 
   @Get('subscriptions')
-  @ApiOperation({ summary: 'Get user subscriptions' })
+  @ApiOperation({ summary:Get user subscriptions' })
   @ApiQuery({
     name: 'status',
     required: false,
     enum: SubscriptionStatus,
-    description: 'Filter by subscription status'
+    description: Filter by subscription 'status'
   })
-  @ApiResponse({ status: 200, description: 'Returns the user subscriptions' })
+  @ApiResponse({ status: 200, description:Returns the user subscriptions' })
   async getUserSubscriptions(@Query('status') status: SubscriptionStatus, @Request() req) {
     try {
       return await this.marketplaceService.getUserSubscriptions(req.user.id, status);
-    } catch (error) {
-      this.logger.error(`Failed to get user subscriptions: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to get user subscriptions: ${(error as Error).message}`, error.stack);
       throw new HttpException('Failed to retrieve user subscriptions', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   @Get('check-access/:itemId')
-  @ApiOperation({ summary: 'Check if user has access to a marketplace item' })
-  @ApiParam({ name: 'itemId', description: 'Marketplace item ID' })
-  @ApiResponse({ status: 200, description: 'Returns access status' })
+  @ApiOperation({ summary:Check if user has access to a marketplace item' })
+  @ApiParam({ name: 'itemId', description: Marketplace item 'ID' })
+  @ApiResponse({ status: 200, description:Returns access status' })
   async checkAccess(@Param('itemId') itemId: string, @Request() req) {
     try {
       return await this.marketplaceService.checkUserAccess(req.user.id, itemId);
-    } catch (error) {
-      this.logger.error(`Failed to check access for item ${itemId}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to check access for item ${itemId}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -241,13 +241,13 @@ export class MarketplaceController {
   // Subscription Tiers
 
   @Get('subscription-tiers')
-  @ApiOperation({ summary: 'Get available subscription tiers' })
-  @ApiResponse({ status: 200, description: 'Returns the available subscription tiers' })
+  @ApiOperation({ summary:Get available subscription tiers' })
+  @ApiResponse({ status: 200, description:Returns the available subscription tiers' })
   async getSubscriptionTiers() {
     try {
       return await this.marketplaceService.getSubscriptionTiers();
-    } catch (error) {
-      this.logger.error(`Failed to get subscription tiers: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to get subscription tiers: ${(error as Error).message}`, error.stack);
       throw new HttpException('Failed to retrieve subscription tiers', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
@@ -256,10 +256,10 @@ export class MarketplaceController {
 
   @Put('items/:id/approve')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Approve a marketplace item (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiResponse({ status: 200, description: 'Marketplace item approved successfully' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Approve a marketplace item (Admin only)' })
+  @ApiParam({ name: 'id', description:Marketplace item ID' })
+  @ApiResponse({ status: 200, description:Marketplace item approved successfully' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async approveItem(@Param('id') id: string, @Request() req) {
     try {
       const updatedItem = await this.marketplaceService.updateItem(id, {
@@ -270,10 +270,10 @@ export class MarketplaceController {
       return {
         id: updatedItem.id,
         status: updatedItem.status,
-        message: 'Marketplace item approved successfully'
+        message:Marketplace item approved successfully'
       };
-    } catch (error) {
-      this.logger.error(`Failed to approve marketplace item ${id}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to approve marketplace item ${id}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -286,11 +286,11 @@ export class MarketplaceController {
 
   @Put('items/:id/reject')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Reject a marketplace item (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiBody({ description: 'Rejection reason' })
-  @ApiResponse({ status: 200, description: 'Marketplace item rejected successfully' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Reject a marketplace item (Admin only)' })
+  @ApiParam({ name: 'id', description:Marketplace item ID' })
+  @ApiBody({ description:Rejection reason' })
+  @ApiResponse({ status: 200, description:Marketplace item rejected successfully' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async rejectItem(
     @Param('id') id: string,
     @Body() data: { reason: string },
@@ -309,10 +309,10 @@ export class MarketplaceController {
       return {
         id: updatedItem.id,
         status: updatedItem.status,
-        message: 'Marketplace item rejected successfully'
+        message:Marketplace item rejected successfully'
       };
-    } catch (error) {
-      this.logger.error(`Failed to reject marketplace item ${id}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to reject marketplace item ${id}: ${(error as Error).message}`, error.stack);
       if (error instanceof HttpException) {
         throw error;
       }
@@ -325,11 +325,11 @@ export class MarketplaceController {
 
   @Put('items/:id/feature')
   @Roles(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Feature or unfeature a marketplace item (Admin only)' })
-  @ApiParam({ name: 'id', description: 'Marketplace item ID' })
-  @ApiBody({ description: 'Featured status' })
-  @ApiResponse({ status: 200, description: 'Featured status updated successfully' })
-  @ApiResponse({ status: 404, description: 'Marketplace item not found' })
+  @ApiOperation({ summary:Feature or unfeature a marketplace item (Admin only)' })
+  @ApiParam({ name: 'id', description:Marketplace item ID' })
+  @ApiBody({ description:Featured status' })
+  @ApiResponse({ status: 200, description:Featured status updated successfully' })
+  @ApiResponse({ status: 404, description:Marketplace item not found' })
   async featureItem(
     @Param('id') id: string,
     @Body() data: { featured: boolean }
@@ -341,11 +341,11 @@ export class MarketplaceController {
       return {
         id: updatedItem.id,
         featured: updatedItem.featured,
-        message: `Marketplace item ${data.featured ? 'featured' : 'unfeatured'} successfully`
+        message: `Marketplace item ${data.featured ? featured' : 'unfeatured'} successfully`
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(
-        `Failed to update featured status for marketplace item ${id}: ${error.message}`,
+        `Failed to update featured status for marketplace item ${id}: ${(error as Error).message}`,
         error.stack
       );
       if (error instanceof HttpException) {

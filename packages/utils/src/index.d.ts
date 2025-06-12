@@ -5,6 +5,6 @@ export * from './auth.js';
 export * from './config.js';
 export * from './date.js';
 export * from './error.js';
-export * from './logging.js';
-export * from './performance.js';
+export * from './logging.tsx';
+export * from './performance.tsx';
 //# sourceMappingURL=index.d.ts.map

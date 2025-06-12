@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import { SystemMetrics } from '../SystemMetrics.js';
+import { SystemMetrics } from '../SystemMetrics.tsx';
 import { useSystemMetrics } from '../../../hooks/useSystemMetrics.js';
 
 jest.mock('../../../hooks/useSystemMetrics');

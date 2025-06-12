@@ -7,7 +7,7 @@ import {
     OneToMany,
     BeforeInsert,
     BeforeUpdate
-} from 'typeorm';
+} from ''typeorm';
 import { Task } from './Task.js';
 import { Session } from './Session.js';
 import * as bcrypt from 'bcrypt';
@@ -44,7 +44,7 @@ export class User {
     @BeforeInsert()
     @BeforeUpdate()
     async hashPassword(): Promise<void> {
-        if (this.passwordHash && typeof this.passwordHash === 'string' && this.passwordHash.length > 0) {
+        if (this.passwordHash && typeof this.passwordHash === string' && this.passwordHash.length > 0) {
             this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
         }
     }

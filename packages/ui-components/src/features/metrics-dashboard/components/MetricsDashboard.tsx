@@ -1,9 +1,9 @@
 import React from 'react';
-import { useMetrics, Metric } from '../hooks/useMetrics.js';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index.js';
-import { List, ListItem } from '../../../core/list/index.js';
-import { Skeleton } from '../../../core/skeleton/index.js';
-import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.js';
+import { useMetrics, Metric } from '../hooks/useMetrics.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index.tsx';
+import { List, ListItem } from '../../../core/list/index.tsx';
+import { Skeleton } from '../../../core/skeleton/index.tsx';
+import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.tsx';
 
 export const MetricsDashboard: React.FC = () => {
   const { data, loading, error } = useMetrics();

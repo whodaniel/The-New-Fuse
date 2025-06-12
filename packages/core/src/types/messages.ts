@@ -16,16 +16,16 @@ export interface TaskMessage extends BaseMessage {
 }
 
 export interface StateMessage extends BaseMessage {
-    type: 'STATE';
+    type:STATE';
     payload: {
         stateId: string;
-        action: 'UPDATE' | 'DELETE';
+        action: UPDATE' | DELETE';
         data: unknown;
     };
 }
 
 export interface ControlMessage extends BaseMessage {
-    type: 'CONTROL';
+    type:CONTROL';
     payload: {
         command: string;
         parameters?: unknown;
@@ -33,7 +33,7 @@ export interface ControlMessage extends BaseMessage {
 }
 
 export interface ErrorMessage extends BaseMessage {
-    type: 'ERROR';
+    type: ERROR';
     payload: {
         code: string;
         message: string;

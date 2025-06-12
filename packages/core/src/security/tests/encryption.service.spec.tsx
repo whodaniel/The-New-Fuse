@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { EncryptionService } from '../encryption.js';
+import { EncryptionService } from '../encryption.tsx';
 
 describe('EncryptionService', () => {
   let service: EncryptionService;
@@ -9,8 +9,8 @@ describe('EncryptionService', () => {
   const mockConfigService: jest.fn((key: string, defaultValue: unknown)  = {
     get> {
       switch (key: unknown){
-        case 'ENCRYPTION_KEY':
-          return 'test-encryption-key-32-bytes-length!';
+        case ENCRYPTION_KEY':
+          return test-encryption-key-32-bytes-length!';
         default:
           return defaultValue;
       }
@@ -36,9 +36,9 @@ describe('EncryptionService', () => {
     jest.clearAllMocks();
   });
 
-  describe('encrypt/decrypt', () => {
+  describe('encrypt/'decrypt', () => {
     it('should encrypt and decrypt string data', async (): Promise<void> {) => {
-      const data = 'sensitive data';
+      const data = sensitive 'data';
       const { encrypted, iv, tag } = await service.encrypt(data);
 
       expect(encrypted).toBeDefined();
@@ -62,7 +62,7 @@ describe('EncryptionService', () => {
     });
 
     it('should throw error on invalid decryption', async (): Promise<void> {) => {
-      const data = 'sensitive data';
+      const data = sensitive 'data';
       const { encrypted, iv, tag } = await service.encrypt(data);
 
       // Modify the encrypted data to make it invalid
@@ -74,7 +74,7 @@ describe('EncryptionService', () => {
     });
   });
 
-  describe('hash/verify', () => {
+  describe('hash/'verify', () => {
     it('should hash and verify string data', async (): Promise<void> {) => {
       const data = 'password123';
       const hash = await service.hash(data);
@@ -101,7 +101,7 @@ describe('EncryptionService', () => {
       const data = 'password123';
       const hash = await service.hash(data);
 
-      const isValid = await service.verify('wrong-password', hash);
+      const isValid = await service.verify('wrong-password, hash);
       expect(isValid).toBe(false);
     });
   });
@@ -117,9 +117,9 @@ describe('EncryptionService', () => {
     });
   });
 
-  describe('sign/verify', () => {
+  describe('sign/'verify', () => {
     it('should sign and verify data', async (): Promise<void> {) => {
-      const data = 'message to sign';
+      const data = message to 'sign';
       const { publicKey, privateKey } = await service.generateKeyPair();
 
       const signature = service.sign(data, privateKey);
@@ -130,7 +130,7 @@ describe('EncryptionService', () => {
     });
 
     it('should reject modified data', async (): Promise<void> {) => {
-      const data = 'message to sign';
+      const data = message to 'sign';
       const { publicKey, privateKey } = await service.generateKeyPair();
 
       const signature = service.sign(data, privateKey);
@@ -139,11 +139,11 @@ describe('EncryptionService', () => {
     });
 
     it('should reject modified signature', async (): Promise<void> {) => {
-      const data = 'message to sign';
+      const data = message to 'sign';
       const { publicKey, privateKey } = await service.generateKeyPair();
 
       const signature = service.sign(data, privateKey);
-      const modifiedSignature = signature.replace(/A/g, 'B');
+      const modifiedSignature = signature.replace(/A/g, B');
       const isValid = service.verify(data, modifiedSignature, publicKey);
       expect(isValid).toBe(false);
     });
@@ -173,15 +173,15 @@ describe('EncryptionService', () => {
     });
 
     it('should create HMAC', () => {
-      const data = 'data to hash';
-      const key = 'secret key';
+      const data = data to 'hash';
+      const key = secret 'key';
       const hmac = service.createHmac(data, key);
       expect(typeof hmac).toBe('string');
       expect(hmac.length).toBe(64); // SHA-256 produces 64 character hex string
     });
 
     it('should create hash', () => {
-      const data = 'data to hash';
+      const data = data to 'hash';
       const hash = service.createHash(data);
       expect(typeof hash).toBe('string');
       expect(hash.length).toBe(64); // SHA-256 produces 64 character hex string

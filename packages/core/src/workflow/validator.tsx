@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import {
-  WorkflowTemplate,
+import { WorkflowTemplate,
   WorkflowStep,
   WorkflowStepType,
   WorkflowStatus
-} from '@the-new-fuse/types';
+ } from '@the-new-fuse/types';
 
 class WorkflowError extends Error {
   constructor(
@@ -18,7 +17,7 @@ class WorkflowError extends Error {
     this.name = 'WorkflowError';
   }
 }
-import { Logger } from '@the-new-fuse/utils';
+import { Logger  } from '@the-new-fuse/utils';
 
 @Injectable()
 export class WorkflowValidator {

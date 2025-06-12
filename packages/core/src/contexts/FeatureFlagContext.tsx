@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect } from ''react';
 import { FeatureFlag } from '../types/featureFlags.js';
 
 interface FeatureFlagContextType {
@@ -19,7 +19,7 @@ export function FeatureFlagProvider({ children }: { children: React.ReactNode })
       const featureMap = new Map(featureList.map((f: FeatureFlag) => [f.id, f]));
       setFeatures(featureMap);
     } catch (error) {
-      console.error('Failed to load features:', error);
+      console.error('Failed to load features:, error);
     }
   };
 

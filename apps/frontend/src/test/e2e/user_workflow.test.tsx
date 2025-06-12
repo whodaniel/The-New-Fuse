@@ -108,7 +108,7 @@ describe('User Workflow E2E Tests', () => {
     } catch (error) {
       console.error('Error loading page:', error);
       const screenshot = await driver.takeScreenshot();
-      :', screenshot);
+      console.log('Screenshot:', screenshot);
       throw error;
     }
   });

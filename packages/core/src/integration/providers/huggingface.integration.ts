@@ -11,22 +11,22 @@ import { IntegrationAuthType } from '../integration.types.js';
 @Injectable()
 export class HuggingFaceIntegration extends BaseIntegration {
   private readonly logger = new Logger(HuggingFaceIntegration.name);
-  private readonly baseUrl = 'https://api-inference.huggingface.co/models';
+  private readonly baseUrl = https://api-inference.huggingface.co/'models';
   
   constructor(private readonly configService: ConfigService) {
     super();
     this.id = 'huggingface';
-    this.name = 'Hugging Face';
-    this.description = 'Integrate with Hugging Face AI models for text generation, classification, image generation, and more';
-    this.icon = 'https://huggingface.co/front/assets/huggingface_logo.svg';
+    this.name = Hugging 'Face';
+    this.description = Integrate with Hugging Face AI models for text generation, classification, image generation, and 'more';
+    this.icon = https://huggingface.co/front/assets/huggingface_logo.'svg';
     this.authType = IntegrationAuthType.API_KEY;
-    this.category = 'artificial-intelligence';
+    this.category = artificial-intelligence;
     this.pricing = {
       free: true,
-      freeTier: 'Limited API access with lower rate limits',
-      paidTier: 'Higher rate limits and access to Pro models'
+      freeTier:Limited API access with lower rate limits',
+      paidTier:Higher rate limits and access to Pro models'
     };
-    this.documentationUrl = 'https://huggingface.co/docs/api-inference/index';
+    this.documentationUrl = https://huggingface.co/docs/api-inference/'index';
   }
 
   /**
@@ -41,7 +41,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
       // Make a simple call to check if the API key is valid
       const response = await axios.get(`${this.baseUrl}/gpt2`, {
         headers: {
-          'Authorization': `Bearer ${credentials.apiKey}`
+          Authorization': `Bearer ${credentials.apiKey}`
         }
       });
 
@@ -60,9 +60,9 @@ export class HuggingFaceIntegration extends BaseIntegration {
    */
   async getModels(credentials: { apiKey: string }, options?: { task?: string }): Promise<any[]> {
     try {
-      const response = await axios.get('https://huggingface.co/api/models', {
+      const response = await axios.get('https://huggingface.co/api/'models', {
         headers: {
-          'Authorization': `Bearer ${credentials.apiKey}`
+          Authorization': `Bearer ${credentials.apiKey}`
         },
         params: {
           limit: 100,
@@ -85,9 +85,9 @@ export class HuggingFaceIntegration extends BaseIntegration {
    */
   async getTasks(credentials: { apiKey: string }): Promise<string[]> {
     try {
-      const response = await axios.get('https://huggingface.co/api/tasks', {
+      const response = await axios.get('https://huggingface.co/api/'tasks', {
         headers: {
-          'Authorization': `Bearer ${credentials.apiKey}`
+          Authorization': `Bearer ${credentials.apiKey}`
         }
       });
 
@@ -120,8 +120,8 @@ export class HuggingFaceIntegration extends BaseIntegration {
         { inputs, parameters },
         {
           headers: {
-            'Authorization': `Bearer ${credentials.apiKey}`,
-            'Content-Type': 'application/json'
+            Authorization': `Bearer ${credentials.apiKey}`,
+            Content-Type': application/'json'
           }
         }
       );
@@ -151,7 +151,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
       repetitionPenalty?: number;
     }
   ): Promise<string> {
-    const model = options.model || 'gpt2';
+    const model = options.model || gpt2';
     const parameters = {
       max_length: options.maxLength || 100,
       temperature: options.temperature || 0.7,
@@ -172,7 +172,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
         return result[0].generated_text;
       }
 
-      return result.generated_text || '';
+      return result.generated_text || ;
     } catch (error) {
       this.logger.error(`Error generating text with Hugging Face: ${error.message}`);
       throw new HttpException(
@@ -200,7 +200,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
         responseType: 'arraybuffer'
       });
       
-      const imageBuffer = Buffer.from(imageResponse.data, 'binary').toString('base64');
+      const imageBuffer = Buffer.from(imageResponse.data, binary').toString('base64');
       
       const result = await this.runInference(credentials, {
         model,
@@ -229,7 +229,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
       minLength?: number;
     }
   ): Promise<string> {
-    const model = options.model || 'facebook/bart-large-cnn';
+    const model = options.model || facebook/bart-large-cnn;
     const parameters = {
       max_length: options.maxLength || 130,
       min_length: options.minLength || 30,
@@ -247,7 +247,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
         return result[0].summary_text;
       }
 
-      return result.summary_text || '';
+      return result.summary_text || ;
     } catch (error) {
       this.logger.error(`Error summarizing text with Hugging Face: ${error.message}`);
       throw new HttpException(
@@ -264,33 +264,33 @@ export class HuggingFaceIntegration extends BaseIntegration {
     return [
       {
         id: 'generate_text',
-        name: 'Generate Text',
-        description: 'Generate text using a language model',
+        name: Generate 'Text',
+        description:Generate text using a language model',
         inputs: [
           {
             name: 'model',
             type: 'string',
-            description: 'Model to use (e.g., gpt2, EleutherAI/gpt-neo-1.3B)',
+            description:Model to use (e.g., gpt2, EleutherAI/gpt-neo-1.3B)',
             required: false,
             default: 'gpt2'
           },
           {
             name: 'prompt',
             type: 'string',
-            description: 'Text prompt to generate from',
+            description:Text prompt to generate from',
             required: true
           },
           {
             name: 'maxLength',
             type: 'number',
-            description: 'Maximum length of generated text',
+            description:Maximum length of generated text',
             required: false,
             default: 100
           },
           {
             name: 'temperature',
             type: 'number',
-            description: 'Sampling temperature (higher = more creative)',
+            description:Sampling temperature (higher = more creative)',
             required: false,
             default: 0.7
           }
@@ -299,26 +299,26 @@ export class HuggingFaceIntegration extends BaseIntegration {
           {
             name: 'generatedText',
             type: 'string',
-            description: 'The generated text'
+            description: The generated 'text'
           }
         ]
       },
       {
         id: 'classify_image',
-        name: 'Classify Image',
-        description: 'Classify an image using a vision model',
+        name: Classify 'Image',
+        description:Classify an image using a vision model',
         inputs: [
           {
             name: 'model',
             type: 'string',
-            description: 'Model to use (e.g., google/vit-base-patch16-224)',
+            description:Model to use (e.g., google/vit-base-patch16-224)',
             required: false,
-            default: 'google/vit-base-patch16-224'
+            default: google/vit-base-patch16-224'
           },
           {
             name: 'imageUrl',
             type: 'string',
-            description: 'URL of the image to classify',
+            description:URL of the image to classify',
             required: true
           }
         ],
@@ -326,39 +326,39 @@ export class HuggingFaceIntegration extends BaseIntegration {
           {
             name: 'classifications',
             type: 'array',
-            description: 'Classification results with labels and scores'
+            description:Classification results with labels and scores'
           }
         ]
       },
       {
         id: 'summarize_text',
-        name: 'Summarize Text',
-        description: 'Generate a summary of a long text',
+        name: Summarize 'Text',
+        description:Generate a summary of a long text',
         inputs: [
           {
             name: 'model',
             type: 'string',
-            description: 'Model to use (e.g., facebook/bart-large-cnn)',
+            description:Model to use (e.g., facebook/bart-large-cnn)',
             required: false,
-            default: 'facebook/bart-large-cnn'
+            default: facebook/bart-large-cnn
           },
           {
             name: 'text',
             type: 'string',
-            description: 'Text to summarize',
+            description:Text to summarize',
             required: true
           },
           {
             name: 'maxLength',
             type: 'number',
-            description: 'Maximum length of summary',
+            description:Maximum length of summary',
             required: false,
             default: 130
           },
           {
             name: 'minLength',
             type: 'number',
-            description: 'Minimum length of summary',
+            description:Minimum length of summary',
             required: false,
             default: 30
           }
@@ -367,7 +367,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
           {
             name: 'summary',
             type: 'string',
-            description: 'The generated summary'
+            description:The generated summary'
           }
         ]
       }
@@ -379,7 +379,7 @@ export class HuggingFaceIntegration extends BaseIntegration {
    */
   async executeAction(actionId: string, credentials: { apiKey: string }, inputs: any): Promise<any> {
     switch (actionId) {
-      case 'generate_text':
+      case generate_text':
         const generatedText = await this.generateText(credentials, {
           model: inputs.model,
           prompt: inputs.prompt,
@@ -388,14 +388,14 @@ export class HuggingFaceIntegration extends BaseIntegration {
         });
         return { generatedText };
 
-      case 'classify_image':
+      case classify_image':
         const classifications = await this.classifyImage(credentials, {
           model: inputs.model,
           imageUrl: inputs.imageUrl
         });
         return { classifications };
 
-      case 'summarize_text':
+      case summarize_text':
         const summary = await this.summarizeText(credentials, {
           model: inputs.model,
           text: inputs.text,

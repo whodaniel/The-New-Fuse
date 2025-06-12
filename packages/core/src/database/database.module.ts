@@ -4,10 +4,10 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { MonitoringModule } from '../monitoring/monitoring.module.js';
 import { LoggingModule } from '../logging/logging.module.js';
-import { ConnectionPoolManager } from './ConnectionPoolManager.js';
-import { DatabaseOptimizerService } from './database-optimizer.service.js';
-import { QueryPerformanceMonitorService } from './query-performance-monitor.service.js';
-import { DatabaseHealthService } from './database-health.service.js';
+import { ConnectionPoolManager } from './ConnectionPoolManager.tsx';
+import { DatabaseOptimizerService } from './database-optimizer.service.tsx';
+import { QueryPerformanceMonitorService } from './query-performance-monitor.service.tsx';
+import { DatabaseHealthService } from './database-health.service.tsx';
 
 @Module({
   imports: [

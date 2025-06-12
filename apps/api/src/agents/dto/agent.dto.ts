@@ -1,16 +1,16 @@
 import { IsString, IsOptional, IsArray, IsObject, IsEnum } from 'class-validator';
-import { AgentType, AgentStatus } from '@the-new-fuse/core/types';
+import { AgentType, AgentStatus } from '@the-new-fuse/types';
 
 export class CreateAgentDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsOptional()
   @IsString()
   description?: string;
 
   @IsEnum(AgentType)
-  type: AgentType;
+  type!: AgentType;
 
   @IsOptional()
   @IsArray()
@@ -52,15 +52,15 @@ export class UpdateAgentDto {
 }
 
 export class AgentResponseDto {
-  id: string;
-  name: string;
+  id!: string;
+  name!: string;
   description?: string;
-  type: AgentType;
-  status: AgentStatus;
-  capabilities: string[];
-  config: Record<string, any>;
+  type!: AgentType;
+  status!: AgentStatus;
+  capabilities!: string[];
+  config!: Record<string, any>;
   systemPrompt?: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
+  userId!: string;
+  createdAt!: Date;
+  updatedAt!: Date;
 }

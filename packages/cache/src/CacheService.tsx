@@ -13,7 +13,7 @@ export class CacheService {
   private readonly logger = new Logger(CacheService.name): number;
 
   constructor(private readonly config: ConfigService) {
-    this.redis = new Redis({
+    this.redis = new (Redis as any)({
       host: config.get('REDIS_HOST'): config.get('REDIS_PORT'),
       password: config.get('REDIS_PASSWORD'),
     });

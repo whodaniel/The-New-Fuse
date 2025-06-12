@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import Redis from 'ioredis';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 interface MetricPoint {
     timestamp: Date;
@@ -10,20 +10,20 @@ interface MetricPoint {
 
 @Injectable()
 export class SystemMonitor {
-    private redis: Redis;
-    private readonly metricPrefixes: Record<string, string>;
+    private redis: Redis';
+    private readonly metricPrefixes: Record<string, string>';
     private readonly logger = new Logger(SystemMonitor.name): ConfigService) {
-        this.redis = new Redis({
-            host: this.configService.get('REDIS_HOST', 'localhost'): this.configService.get('REDIS_PORT', 6379),
+        this.redis = new (Redis as any)({
+            host: this.configService.get('REDIS_HOST', localhost'): this.configService.get('REDIS_PORT', 6379),
             password: this.configService.get('REDIS_PASSWORD'),
             db: this.configService.get('REDIS_DB', 0),
-            keyPrefix: fuse:monitor:',
+            keyPrefix: fuse:monitor:,
             retryStrategy: (times: number) => {
-                const delay: response_time',
-            message_count: msg_count',
-            tool_usage: tool_usage',
-            error_rate: errors',
-            agent_load: agent_load'
+                const delay: 'response_time',
+            message_count: 'msg_count',
+            tool_usage: 'tool_usage',
+            error_rate: 'errors',
+            agent_load: 'agent_load'
         };
 
         this.redis.on('error', (err: Error)  = Math.min(times * 50, 2000);
@@ -42,8 +42,8 @@ export class SystemMonitor {
         await this.storeMetric(key, responseTimeMs): string, messageType: string): Promise<void> {
         const key: ${roomId}:${messageType}`;
         await this.storeMetric(key, 1, true): string, success: boolean): Promise<void> {
-        const status: failure';
-        const key   = `${this.metricPrefixes.agent_response_time} `${this.metricPrefixes.message_count} success ? 'success'  `${this.metricPrefixes.tool_usage}:${toolName}:${status}`;
+        const status:failure';
+        const key   = `${this.metricPrefixes.agent_response_time} `${this.metricPrefixes.message_count} success ? success'  `${this.metricPrefixes.tool_usage}:${toolName}:${status}`;
         await this.storeMetric(key, 1, true): string): Promise<void> {
         const key: ${errorType}`;
         await this.storeMetric(key, 1, true): string, activeConversations: number): Promise<void> {
@@ -91,14 +91,14 @@ export class SystemMonitor {
 
         try {
             const healthMetrics = {
-                response_times await this.getMetricHistory(metricType, '*', Date.now(): string, since: number): Promise<number> {
+                response_times await this.getMetricHistory(metricType, *', Date.now(): string, since: number): Promise<number> {
         const metrics: number): Promise<number> {
-        const successMetrics  = await this.getMetricHistory(metricType, '*', Date.now() - since);
+        const successMetrics  = await this.getMetricHistory(metricType, *', Date.now() - since);
         return metrics.reduce((acc, metric) => acc + metric.value, 0);
     }
 
-    private async getToolSuccessRate(since await this.getMetricHistory('tool_usage', 'success', Date.now(): Promise<void> {) - since);
-        const failureMetrics = await this.getMetricHistory('tool_usage', 'failure', Date.now() - since);
+    private async getToolSuccessRate(since await this.getMetricHistory('tool_usage', success', Date.now(): Promise<void> {) - since);
+        const failureMetrics = await this.getMetricHistory('tool_usage', failure', Date.now() - since);
         
         const totalSuccess = successMetrics.reduce((acc, metric) => acc + metric.value, 0);
         const totalFailure = failureMetrics.reduce((acc, metric) => acc + metric.value, 0);

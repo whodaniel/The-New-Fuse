@@ -15,7 +15,7 @@ async function bootstrap(): Promise<void> {
   // Security
   app.use(helmet());
   app.enableCors({
-    origin: configService.get('CORS_ORIGINS').split(','),
+    origin: configService.get('CORS_ORIGINS')?.split(',') || ['http://localhost:3000'],
     credentials: true
   });
 
@@ -40,7 +40,7 @@ async function bootstrap(): Promise<void> {
   SwaggerModule.setup('api/docs', app, document);
 
   // Monitoring
-  await monitoringService.onModuleInit();
+  // await monitoringService.onModuleInit();
 
   await app.listen(configService.get('PORT', 3001));
 }

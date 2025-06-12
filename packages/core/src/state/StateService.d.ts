@@ -1,8 +1,8 @@
 import { OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Redis } from 'ioredis';
-import { DatabaseService } from '../database/database.service.js';
-import { StateManagerOptions } from '@the-new-fuse/types';
+import { DatabaseService } from '../database/database.service.tsx';
+import { StateManagerOptions  } from '@the-new-fuse/types;
 export declare class StateService extends EventEmitter implements OnModuleInit {
     private readonly logger;
     private readonly redis;
@@ -12,6 +12,6 @@ export declare class StateService extends EventEmitter implements OnModuleInit {
     private readonly locks;
     private readonly lockTimeout;
     private readonly snapshotInterval;
-    private snapshotTimer;
-    constructor(redis: Redis, db: DatabaseService, options?: StateManagerOptions);
+    private snapshotTimer';
+    constructor(redis: Redis, db: DatabaseService, options?: StateManagerOptions)';
 }

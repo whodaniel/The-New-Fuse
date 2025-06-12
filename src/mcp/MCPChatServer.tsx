@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { z } from "zod";
-import { MCPServer, MCPServerOptions } from './MCPServer.js';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
 
 // Schema for contextual messaging
 const contextualMessageSchema = z.object({

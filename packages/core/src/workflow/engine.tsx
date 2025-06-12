@@ -8,12 +8,12 @@ import {
   WorkflowTemplate,
   WorkflowContext
 } from '../types/workflow.js';
-import { WorkflowError } from './types.js';
+import { WorkflowError } from './types.tsx';
 import { WorkflowResult } from '@the-new-fuse/types';
 import { Logger } from '@the-new-fuse/utils';
-import { WorkflowExecutor } from './executor.js';
-import { WorkflowValidator } from './validator.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { WorkflowExecutor } from './executor.tsx';
+import { WorkflowValidator } from './validator.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter';
 
 @Injectable()
 export class WorkflowEngine {

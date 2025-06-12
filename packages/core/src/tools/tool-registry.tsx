@@ -1,7 +1,7 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../logging.js';
-import { Tool, ToolExecutionResult, ToolParameter } from './types.js';
+import { Tool, ToolExecutionResult, ToolParameter } from './types.tsx';
 
 export class ToolRegistry extends EventEmitter {
   private tools: Map<string, Tool> = new Map();
@@ -17,12 +17,12 @@ export class ToolRegistry extends EventEmitter {
    */
   registerTool(tool: Tool): void {
     if (this.tools.has(tool.name)) {
-      this.logger.warn(`Tool '${tool.name}' already registered, overwriting`);
+      this.logger.warn(`Tool ${tool.name}' already registered, overwriting`);
     }
     
     this.tools.set(tool.name, tool);
     this.logger.info(`Registered tool: ${tool.name}`);
-    this.emit('tool:registered', { tool });
+    this.emit('tool: 'registered', { tool });
   }
   
   /**
@@ -32,7 +32,7 @@ export class ToolRegistry extends EventEmitter {
     const result = this.tools.delete(toolName);
     if (result) {
       this.logger.info(`Unregistered tool: ${toolName}`);
-      this.emit('tool:unregistered', { toolName });
+      this.emit('tool: 'unregistered', { toolName });
     }
     return result;
   }
@@ -59,13 +59,13 @@ export class ToolRegistry extends EventEmitter {
     const startTime = Date.now();
     
     this.logger.debug(`Executing tool: ${toolName} (ID: ${executionId})`, params);
-    this.emit('tool:executing', { toolName, executionId, params });
+    this.emit('tool: 'executing', { toolName, executionId, params });
     
     const tool = this.tools.get(toolName);
     if (!tool) {
       const error = new Error(`Tool not found: ${toolName}`);
       this.logger.error(`Tool execution failed: ${error.message}`);
-      this.emit('tool:failed', { toolName, executionId, error });
+      this.emit('tool: 'failed', { toolName, executionId, error });
       
       return {
         success: false,
@@ -94,20 +94,20 @@ export class ToolRegistry extends EventEmitter {
       this.logger.debug(`Tool executed successfully: ${toolName} (ID: ${executionId})`, { 
         duration: executionResult.duration 
       });
-      this.emit('tool:executed', executionResult);
+      this.emit('tool: 'executed', executionResult);
       
       return executionResult;
-    } catch (error) {
+    } catch (error: unknown) {
       const executionResult: ToolExecutionResult = {
         success: false,
         toolName,
         executionId,
-        error: error.message,
+        error: (error as Error).message,
         duration: Date.now() - startTime
       };
       
       this.logger.error(`Tool execution failed: ${toolName} (ID: ${executionId})`, error);
-      this.emit('tool:failed', executionResult);
+      this.emit('tool: 'failed', executionResult);
       
       return executionResult;
     }
@@ -141,12 +141,12 @@ export class ToolRegistry extends EventEmitter {
    */
   private validateParameterType(name: string, value: any, parameter: ToolParameter): void {
     switch (parameter.type) {
-      case 'string':
+      case string':
         if (typeof value !== 'string') {
           throw new Error(`Parameter ${name} must be a string`);
         }
         if (parameter.enum && !parameter.enum.includes(value)) {
-          throw new Error(`Parameter ${name} must be one of: ${parameter.enum.join(', ')}`);
+          throw new Error(`Parameter ${name} must be one of: ${parameter.enum.join(', )}`);
         }
         break;
       case 'number':
@@ -160,18 +160,18 @@ export class ToolRegistry extends EventEmitter {
           throw new Error(`Parameter ${name} must be at most ${parameter.maximum}`);
         }
         break;
-      case 'boolean':
+      case boolean':
         if (typeof value !== 'boolean') {
           throw new Error(`Parameter ${name} must be a boolean`);
         }
         break;
-      case 'array':
+      case array':
         if (!Array.isArray(value)) {
           throw new Error(`Parameter ${name} must be an array`);
         }
         break;
-      case 'object':
-        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      case object':
+        if (typeof value !== object' || value === null || Array.isArray(value)) {
           throw new Error(`Parameter ${name} must be an object`);
         }
         break;

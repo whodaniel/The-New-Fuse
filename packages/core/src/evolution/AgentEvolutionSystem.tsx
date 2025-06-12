@@ -24,7 +24,7 @@ interface SpecializationCriteria {
 
 interface MergeStrategy {
   priorityCapabilities: string[];
-  conflictResolutionPreference: 'favor_primary' | 'favor_secondary' | 'hybrid';
+  conflictResolutionPreference: 'favor_primary' | favor_secondary' | hybrid';
   keepUnique: boolean;
   mergePerformanceBoost: number;
 }
@@ -43,7 +43,7 @@ export class AgentEvolutionSystem {
         version: this.incrementVersion(agent.version),
         performanceMetrics: this.enhancePerformanceMetrics(agent.performanceMetrics)
       },
-      improvements: ['Improved reasoning capabilities', 'Enhanced knowledge integration'],
+      improvements: ['Improved reasoning capabilities', Enhanced knowledge 'integration'],
       performanceGains: {
         accuracy: 0.05,
         speed: 0.1,
@@ -62,7 +62,7 @@ export class AgentEvolutionSystem {
       ...sourceAgent,
       id: `${sourceAgent.id}-${specializationGoal.domain}`,
       name: `${sourceAgent.name} ${specializationGoal.domain} Specialist`,
-      version: '1.0.0',
+      version:1.0.0',
       capabilities: [
         ...sourceAgent.capabilities,
         ...specializationGoal.requiredCapabilities
@@ -107,7 +107,7 @@ export class AgentEvolutionSystem {
       ...primaryAgent,
       id: `merged-${Date.now()}`,
       name: `Merged Agent ${new Date().toISOString().substring(0, 10)}`,
-      version: '1.0.0',
+      version:1.0.0',
       capabilities: mergedCapabilities,
       performanceMetrics: this.calculateMergedPerformance(agents, mergeStrategy)
     };
@@ -115,7 +115,7 @@ export class AgentEvolutionSystem {
   
   private incrementVersion(version: string): string {
     const parts = version.split('.');
-    const minorVersion = parseInt(parts[1] || '0', 10) + 1;
+    const minorVersion = parseInt(parts[1] || 0', 10) + 1;
     return `${parts[0]}.${minorVersion}.0`;
   }
   

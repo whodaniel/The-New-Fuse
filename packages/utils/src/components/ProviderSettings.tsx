@@ -6,7 +6,7 @@ import * as React from 'react';
 import { jsx as _jsx, jsxs as _jsxs } from 'react/jsx-runtime';
 import { FormControl, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { Settings as SettingsIcon } from '@mui/icons-material';
-// import { providerRegistry } from '../providers/registry.js';
+// import { providerRegistry } from '../providers/registry.tsx';
 import type { ChangeEvent } from 'react';
 
 export interface ProviderSettings {

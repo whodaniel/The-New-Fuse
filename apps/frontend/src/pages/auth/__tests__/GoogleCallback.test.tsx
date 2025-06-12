@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { AuthContext } from '@/contexts/AuthContext';
-import GoogleCallback from '../GoogleCallback.js';
+import GoogleCallback from '../GoogleCallback.tsx';
 
 const mockNavigate = jest.fn();
 jest.mock('react-router-dom', () => ({

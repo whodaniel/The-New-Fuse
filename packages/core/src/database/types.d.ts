@@ -1,5 +1,5 @@
 export interface DatabaseConfig {
-    type: postgres' | 'mysql' | 'sqlite';
+    type: postgres' | mysql' | sqlite';
     host?: string;
     port?: number;
     username?: string;

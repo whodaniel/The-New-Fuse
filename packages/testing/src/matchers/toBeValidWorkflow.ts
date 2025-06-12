@@ -1,4 +1,4 @@
-import { createMatcher, validateSchema } from './utils.js';
+import { createMatcher, validateSchema } from './utils';
 import { WorkflowSchema } from '@the-new-fuse/core'; // Corrected import path (assuming schema is here)
 
 export const toBeValidWorkflow = createMatcher(

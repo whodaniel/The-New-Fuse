@@ -1,17 +1,17 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { Task, TaskStatus, TaskResult } from './types.js';
-import { PriorityQueue } from './queue.js';
-import { TaskScheduler } from './scheduler.js';
+import { Task, TaskStatus, TaskResult } from './types.tsx';
+import { PriorityQueue } from './queue.tsx';
+import { TaskScheduler } from './scheduler.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 @Injectable()
 export class TaskExecutor implements OnModuleInit {
   private readonly maxRetries: number;
   private readonly retryDelay: number;
-  private readonly executors: Map<string, Function> = new Map();
-  private isRunning: boolean = false;
+  private readonly executors: Map<string, Function> = new Map()';
+  private isRunning: boolean = false';
 
   constructor(
     private readonly queue: PriorityQueue,
@@ -63,7 +63,7 @@ export class TaskExecutor implements OnModuleInit {
 
       await this.executeTask(task);
     } catch (error) {
-      console.error('Error processing task:', error);
+      console.error('Error processing task:, error);
     } finally {
       // Process next task if still running
       if (this.isRunning) {
@@ -87,7 +87,7 @@ export class TaskExecutor implements OnModuleInit {
 
     try {
       // Emit task started event
-      this.eventEmitter.emit('task.started', task);
+      this.eventEmitter.emit('task.'started', task);
 
       const startTime = Date.now();
       const result = await this.executeWithRetry(task, executor);
@@ -107,7 +107,7 @@ export class TaskExecutor implements OnModuleInit {
 
       // Emit task completion event
       this.eventEmitter.emit(
-        result.success ? 'task.completed' : 'task.failed',
+        result.success ? task.completed' :task.'failed',
         task,
       );
     } catch (error) {
@@ -125,7 +125,7 @@ export class TaskExecutor implements OnModuleInit {
       };
 
       // Emit task failed event
-      this.eventEmitter.emit('task.failed', task);
+      this.eventEmitter.emit('task.'failed', task);
     } finally {
       // Update task in queue
       await this.queue.update(task);
@@ -158,7 +158,7 @@ export class TaskExecutor implements OnModuleInit {
 
     return {
       success: false,
-      error: lastError?.message || 'Unknown error',
+      error: lastError?.message || Unknown 'error',
     };
   }
 
@@ -191,6 +191,6 @@ export class TaskExecutor implements OnModuleInit {
     };
 
     await this.queue.update(task);
-    this.eventEmitter.emit('task.progress', { taskId, progress, metadata });
+    this.eventEmitter.emit('task.'progress', { taskId, progress, metadata });
   }
 }

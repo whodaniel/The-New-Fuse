@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../services/api.js';
+import { api } from '../services/api.tsx';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface PromptTemplate {

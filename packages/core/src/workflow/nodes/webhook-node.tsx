@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.js';
+import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.tsx';
 
 export class WebhookNodeHandler implements NodeHandler {
   constructor() {}

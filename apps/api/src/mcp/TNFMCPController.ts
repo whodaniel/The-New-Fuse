@@ -23,11 +23,11 @@ export class TNFMCPController {
         message: `MCP Server started on port ${port}`,
         port,
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to start remote server:', error);
       return {
         success: false,
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }

@@ -1,6 +1,0 @@
-import React from 'react';
-import { LayoutContextType } from './types';
-export declare const LayoutProvider: (React as any).FC<{
-    children: (React as any).ReactNode;
-}>;
-export declare const useLayout: () => LayoutContextType;

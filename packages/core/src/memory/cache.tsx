@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { RedisManager } from '../redis_manager.js';
-import { Logger } from '../utils/logger.js';
+import { RedisManager } from '../redis_manager.tsx';
+import { Logger } from '../utils/logger.tsx';
 
 export interface CacheEntry<T = any> {
   value: T;

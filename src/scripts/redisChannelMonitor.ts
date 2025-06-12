@@ -4,8 +4,8 @@ const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379;
 const CHANNEL_NAME = 'AI_INTER_LLM_CHANNEL'; // Or any channel name you prefer
 
-const publisher = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
-const subscriber = new Redis({ host: REDIS_HOST, port: REDIS_PORT });
+const publisher = new (Redis as any)({ host: REDIS_HOST, port: REDIS_PORT });
+const subscriber = new (Redis as any)({ host: REDIS_HOST, port: REDIS_PORT });
 
 async function main() {
     console.log(`Attempting to connect to Redis at ${REDIS_HOST}:${REDIS_PORT}`);

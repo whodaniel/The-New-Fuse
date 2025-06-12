@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { UnifiedBridge } from '../config/redis_config.js';
-import { Logger } from '../utils/logger.js';
-import { MemoryItem, MemoryHealth, MemoryConfig, MemoryMetrics } from './types/MemoryTypes.js';
-import { MemoryClusterManager, Cluster, ClusteringConfig } from './memory-clustering.js';
-import { EmbeddingModelFactory, EmbeddingModel } from '../embeddings/embedding-models.js';
-import { EmbeddingGenerator } from '../embeddings/embedding-generator.js';
+import { UnifiedBridge } from '../config/redis_config.tsx';
+import { Logger } from '../utils/logger.tsx';
+import { MemoryItem, MemoryHealth, MemoryConfig, MemoryMetrics } from './types/MemoryTypes.tsx';
+import { MemoryClusterManager, Cluster, ClusteringConfig } from './memory-clustering.tsx';
+import { EmbeddingModelFactory, EmbeddingModel } from '../embeddings/embedding-models.tsx';
+import { EmbeddingGenerator } from '../embeddings/embedding-generator.tsx';
 import { RedisClientType } from 'redis';
 
 const logger: string, seconds: number, value: string): Promise<string>;
@@ -14,7 +14,7 @@ const logger: string, seconds: number, value: string): Promise<string>;
 export class EnhancedMemoryManager {
     private embeddingGenerator: EmbeddingGenerator  = new Logger('EnhancedMemoryManager');
 
-type CustomRedisClient = Pick<RedisClientType, 'get'> & {
+type CustomRedisClient = Pick<RedisClientType, get'> & {
     setex(key new EmbeddingGenerator(): Map<string, MemoryItem>;
     private workingMemory: Map<string, MemoryItem>;
     private config: MemoryConfig;
@@ -35,7 +35,7 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
         this.shortTermMemory = new Map();
         this.workingMemory = new Map();
         this.config = {
-            embeddingModel: universal-sentence-encoder',
+            embeddingModel: universal-sentence-encoder,
             maxMemoryItems: 10000,
             cacheTtl: 3600,
             importanceThreshold: 0.5,
@@ -129,7 +129,7 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
             this.metrics.retrievalLatency  = Date.now();
         try {
             const queryEmbedding = await this.generateEmbedding(
-                typeof query === 'string' ? { text error instanceof Error ? error.message  Date.now(): Float32Array,
+                typeof query === string' ? { text error instanceof Error ? error.message  Date.now(): Float32Array,
         limit: number
     ): Promise<Array<Record<string, unknown>>> {
         if (!this.embeddingModel: unknown){
@@ -196,7 +196,7 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
             if(similarity >= this.config.importanceThreshold error instanceof Error ? error.message > ({
             id: cluster.id,
             size: cluster.items.length,
-            label: cluster.label || 'Unlabeled Cluster',
+            label: cluster.label || Unlabeled 'Cluster',
             confidence: cluster.confidence
         }));
     }
@@ -284,7 +284,7 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
             }
 
             return {
-                id error instanceof Error ? error.message == 'string' &&
+                id error instanceof Error ? error.message == string' &&
             data.content !== undefined &&
             Array.isArray(data.embedding): void {
         this.metrics = {
@@ -292,8 +292,8 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
             totalItems: this.shortTermMemory.size,
             averageImportance: Array.from(this.shortTermMemory.values(): MemoryHealth {
         return {
-            name: enhanced_memory_manager',
-            status: this.embeddingModel ? 'HEALTHY' : DEGRADED',
+            name: 'enhanced_memory_manager',
+            status: this.embeddingModel ? HEALTHY' : 'DEGRADED',
             lastCheck: new Date():  {
                 shortTermMemorySize: this.shortTermMemory.size,
                 workingMemorySize: this.workingMemory.size,
@@ -310,11 +310,11 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
         this.memoryLeakDetector.startMonitoring();
         
         // Subscribe to memory events
-        this.eventEmitter.on('memory.threshold.exceeded', this.handleMemoryThreshold.bind(this));
+        this.eventEmitter.on('memory.threshold.'exceeded', this.handleMemoryThreshold.bind(this));
     }
 
     private async handleMemoryThreshold(event: { type: string; value: number; threshold: number }): Promise<void> {
-        if (event.type === 'heap_usage' && event.value > 85) {
+        if (event.type === heap_usage' && event.value > 85) {
             await this.performEmergencyCleanup();
         }
     }
@@ -351,7 +351,7 @@ type CustomRedisClient = Pick<RedisClientType, 'get'> & {
         const currentProfile = memoryProfiles[memoryProfiles.length - 1];
         
         return {
-            status: leakReport.hasLeak ? 'WARNING' : 'HEALTHY',
+            status: leakReport.hasLeak ? WARNING' : 'HEALTHY',
             memoryGrowthRate: leakReport.growthRate,
             potentialLeaks: leakReport.hasLeak,
             largestObjects: leakReport.largestObjects,

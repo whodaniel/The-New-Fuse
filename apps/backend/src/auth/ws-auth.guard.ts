@@ -27,8 +27,8 @@ export class WsAuthGuard implements CanActivate {
       // Attach user to socket
       client['user'] = payload;
       return true;
-    } catch (error) {
-      this.logger.error('WebSocket authentication failed', { error: error.message });
+    } catch (error: unknown) {
+      this.logger.error('WebSocket authentication failed', { error: (error as Error).message });
       throw new WsException('Unauthorized');
     }
   }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { BaseError, ErrorCategory } from '../types.js';
-import { DatabaseService } from '../../database/database.service.js';
+import { BaseError, ErrorCategory } from '../types.tsx';
+import { DatabaseService } from '../../database/database.service.tsx';
 import { NetworkService } from '../../network/network.service.js';
 import { CacheService } from '../../cache/cache.service.js';
 
@@ -14,14 +14,14 @@ export class RecoveryStrategies {
 
   async handleDatabaseError(error: BaseError): Promise<void> {
     switch (error.code) {
-      case 'CONNECTION_LOST':
+      case CONNECTION_LOST':
         await this.db.reconnect();
         break;
-      case 'TRANSACTION_ERROR':
+      case TRANSACTION_ERROR':
         await this.db.rollbackTransaction();
         await this.db.retryTransaction();
         break;
-      case 'TIMEOUT':
+      case TIMEOUT':
         await this.db.clearConnections();
         await this.db.initialize();
         break;
@@ -32,11 +32,11 @@ export class RecoveryStrategies {
 
   async handleNetworkError(error: BaseError): Promise<void> {
     switch (error.code) {
-      case 'REQUEST_TIMEOUT':
+      case REQUEST_TIMEOUT':
         await this.network.resetConnection();
         await this.network.applyBackoff();
         break;
-      case 'SERVICE_UNAVAILABLE':
+      case SERVICE_UNAVAILABLE':
         await this.network.switchToFallbackService();
         break;
       default:
@@ -46,10 +46,10 @@ export class RecoveryStrategies {
 
   async handleCacheError(error: BaseError): Promise<void> {
     switch (error.code) {
-      case 'CACHE_MISS':
+      case CACHE_MISS':
         await this.cache.rebuild();
         break;
-      case 'CACHE_CORRUPT':
+      case CACHE_CORRUPT':
         await this.cache.clear();
         await this.cache.warmup();
         break;

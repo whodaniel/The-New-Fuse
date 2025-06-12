@@ -1,10 +1,10 @@
 import { injectable, inject } from "inversify";
 import { Request, Response, NextFunction } from "express";
-import TYPES from '../di/types.js';
+import TYPES from '../di/types.tsx';
 import { AuthService } from './auth-service.js';
 import { Logger } from "winston";
 import { ErrorHandler } from '../error/error-handler.js';
-import { User } from './auth.types.js';
+import { User } from './auth.types.tsx';
 
 declare global {
   namespace Express {

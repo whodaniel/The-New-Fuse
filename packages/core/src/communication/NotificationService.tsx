@@ -13,17 +13,17 @@ interface Notification {
   userId: string;
   title: string;
   message: string;
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  priority:low' | medium' | high' | urgent';
   channels: string[];
   metadata: Record<string, unknown>;
-  status: 'pending' | 'sent' | 'delivered' | 'read' | 'failed';
+  status:pending' | sent' | delivered' | read' | failed';
   timestamp: Date;
   expiresAt?: Date;
 }
 
 interface NotificationChannel {
   id: string;
-  type: 'email' | 'sms' | 'push' | 'slack' | 'webhook';
+  type:email' | sms' | push' | slack' | webhook';
   config: Record<string, unknown>;
   enabled: boolean;
   metadata: Record<string, unknown>;
@@ -60,7 +60,7 @@ interface NotificationPreference {
 @Injectable()
 export class NotificationService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private channels: Map<string, NotificationChannel>;
   private templates: Map<string, NotificationTemplate>;
@@ -72,7 +72,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
   constructor() {
     super();
     this.logger = new Logger('NotificationService');
-    this.redis = new Redis();
+    this.redis = new (Redis as any)();
     this.db = new DatabaseService();
     this.channels = new Map();
     this.templates = new Map();
@@ -101,7 +101,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         });
       }
     } catch (error) {
-      this.logger.error('Failed to load notification channels:', error);
+      this.logger.error('Failed to load notification channels:, error);
     }
   }
 
@@ -132,7 +132,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         });
       }
     } catch (error) {
-      this.logger.error('Failed to load notification preferences:', error);
+      this.logger.error('Failed to load notification preferences:, error);
     }
   }
 
@@ -142,7 +142,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     data: {
       title: string;
       message: string;
-      priority?: 'low' | 'medium' | 'high' | 'urgent';
+      priority?: low' | medium' | high' | urgent';
       channels?: string[];
       metadata?: Record<string, unknown>;
       expiresIn?: number;
@@ -156,7 +156,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         userId,
         title: data.title,
         message: data.message,
-        priority: data.priority || 'medium',
+        priority: data.priority || medium',
         channels: data.channels || ['email'],
         metadata: data.metadata || {},
         status: 'pending',
@@ -190,7 +190,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
 
       return notification;
     } catch (error) {
-      this.logger.error('Failed to send notification:', error);
+      this.logger.error('Failed to send notification:, error);
       throw error;
     }
   }
@@ -200,7 +200,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     await this.redis.set(
       key,
       JSON.stringify(notification),
-      'EX',
+      EX',
       this.notificationRetention
     );
   }
@@ -224,19 +224,19 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     channel: NotificationChannel
   ): Promise<void> {
     switch (channel.type) {
-      case 'email':
+      case email':
         await this.sendEmail(notification, channel.config);
         break;
-      case 'sms':
+      case sms':
         await this.sendSMS(notification, channel.config);
         break;
-      case 'push':
+      case push':
         await this.sendPushNotification(notification, channel.config);
         break;
-      case 'slack':
+      case slack':
         await this.sendSlackMessage(notification, channel.config);
         break;
-      case 'webhook':
+      case webhook':
         await this.sendWebhook(notification, channel.config);
         break;
       default:
@@ -297,7 +297,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     secret: string
   ): string {
     // Implement webhook signature generation
-    return '';
+    return ;
   }
 
   private renderTemplate(notification: Notification): string {
@@ -306,7 +306,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
 
     let content = template.content;
     for (const variable of template.variables) {
-      const value = notification.metadata[variable] || '';
+      const value = notification.metadata[variable] || ;
       content = content.replace(`{{${variable}}}`, value);
     }
     return content;
@@ -323,7 +323,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     }
 
     await this.redis.zadd(
-      'notification:retries',
+      notification: 'retries',
       Date.now() + this.retryDelay * Math.pow(2, retryCount - 1),
       JSON.stringify({ notification, channel })
     );
@@ -331,13 +331,13 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
 
   async processRetries(): Promise<void> {
     const now = Date.now();
-    const items = await this.redis.zrangebyscore('notification:retries', 0, now);
+    const items = await this.redis.zrangebyscore('notification: 'retries', 0, now);
 
     for (const item of items) {
       const { notification, channel } = JSON.parse(item);
       try {
         await this.sendThroughChannel(notification, channel);
-        await this.redis.zrem('notification:retries', item);
+        await this.redis.zrem('notification: 'retries', item);
       } catch (error) {
         this.logger.error(`Retry failed for notification ${notification.id}:`, error);
         await this.retryNotification(notification, channel, retryCount + 1);
@@ -375,7 +375,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
       // Check schedule if defined
       if (channelPrefs.schedule) {
         const { start, end, timezone } = channelPrefs.schedule;
-        const now = new Date().toLocaleTimeString('en-US', { timeZone: timezone });
+        const now = new Date().toLocaleTimeString('en-US, { timeZone: timezone });
         if (now < start || now > end) {
           return false;
         }
@@ -451,7 +451,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
 
   async updateNotificationStatus(
     notificationId: string,
-    status: 'sent' | 'delivered' | 'read' | 'failed'
+    status:sent' | delivered' | read' | failed'
   ): Promise<void> {
     try {
       await this.db.notifications.update({
@@ -474,7 +474,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         status,
       });
     } catch (error: unknown) {
-      this.logger.error('Failed to update notification status:', error);
+      this.logger.error('Failed to update notification status:, error);
     }
   }
 
@@ -485,7 +485,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
     try {
       await Promise.all(
         notificationIds.map((id) =>
-          this.updateNotificationStatus(id, 'read')
+          this.updateNotificationStatus(id, read')
         )
       );
 
@@ -495,7 +495,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         notificationCount: notificationIds.length,
       });
     } catch (error: unknown) {
-      this.logger.error('Failed to mark notifications as read:', error);
+      this.logger.error('Failed to mark notifications as read:, error);
     }
   }
 
@@ -551,7 +551,7 @@ export class NotificationService extends EventEmitter implements OnModuleInit {
         },
       });
     } catch (error: unknown) {
-      this.logger.error('Failed to cleanup expired notifications:', error);
+      this.logger.error('Failed to cleanup expired notifications:, error);
     }
   }
 

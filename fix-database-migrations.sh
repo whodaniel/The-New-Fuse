@@ -80,4 +80,4 @@ npx prisma generate
 echo "✅ Prisma client generated"
 
 echo "🎉 Database migration issues have been permanently fixed."
-echo "You can now run 'yarn build' to build the entire project."
+echo "You can now run 'bun run build' to build the entire project."

@@ -1,8 +1,8 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { AgentMetadata, ChangeType, MetadataChange, PerformanceMetrics } from '../types/agent.metadata.js';
 
 interface TrendAnalysis {
-  direction: 'improving' | 'declining' | 'stable';
+  direction:improving' | declining' | stable';
   changeRate: number;
   confidence: number;
 }
@@ -40,7 +40,7 @@ export class AgentMetadataManager {
       await tx.agentMetadata.create({
         data: {
           agentId,
-          version: '1.0',
+          version:1.0',
           capabilities: [],
           personalityTraits: [],
           communicationStyle: 'standard',
@@ -53,7 +53,7 @@ export class AgentMetadataManager {
       await tx.metadataVersion.create({
         data: {
           agentId,
-          version: '1.0',
+          version:1.0',
           metadata: initialMetadata
         }
       });

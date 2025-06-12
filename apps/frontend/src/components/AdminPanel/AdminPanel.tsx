@@ -1,15 +1,15 @@
 import React from 'react';
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import { ScriptRunner } from './ScriptRunner.js';
-import { UserManagement } from './UserManagement.js';
-import { SystemMetrics } from './SystemMetrics.js';
-import { RoleManager } from './RoleManager.js';
-import { ServiceMonitor } from './ServiceMonitor.js';
-import { SystemConfig } from './SystemConfig.js';
-import { AuditLogs } from './AuditLogs.js';
-import { FeatureFlags } from './FeatureFlags.js';
-import { ApiMonitor } from './ApiMonitor.js';
-import { DatabaseAdmin } from './DatabaseAdmin.js';
+import { ScriptRunner } from './ScriptRunner.tsx';
+import { UserManagement } from './UserManagement.tsx';
+import { SystemMetrics } from './SystemMetrics.tsx';
+import { RoleManager } from './RoleManager.tsx';
+import { ServiceMonitor } from './ServiceMonitor.tsx';
+import { SystemConfig } from './SystemConfig.tsx';
+import { AuditLogs } from './AuditLogs.tsx';
+import { FeatureFlags } from './FeatureFlags.tsx';
+import { ApiMonitor } from './ApiMonitor.tsx';
+import { DatabaseAdmin } from './DatabaseAdmin.tsx';
 import { McpMonitor } from './McpMonitor.js'; // Import the new component
 
 /**

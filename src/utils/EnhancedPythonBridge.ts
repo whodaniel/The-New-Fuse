@@ -1,5 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { EventEmitter } from 'events';
 
 /**

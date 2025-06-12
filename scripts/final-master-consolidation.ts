@@ -1,7 +1,7 @@
-import { ProjectAnalyzer } from './utils/analyzer.js';
-import { ComponentMerger } from './utils/merger.js';
+import { ProjectAnalyzer } from './utils/analyzer.tsx';
+import { ComponentMerger } from './utils/merger.tsx';
 import { DocumentationSyncer } from './utils/docs.js';
-import { TreeShaker } from './utils/treeshaker.js';
+import { TreeShaker } from './utils/treeshaker.tsx';
 
 async function executeFinalConsolidation(): any {
   console.log('🚀 Beginning Final Consolidation Process');

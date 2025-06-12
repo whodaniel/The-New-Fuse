@@ -1,8 +1,8 @@
-import { getCustomRepository, In } from 'typeorm';
-import { TaskRepository } from '../database/repositories/TaskRepository.js';
-import { UserRepository } from '../database/repositories/UserRepository.js';
-import { Task } from '../database/entities/Task.js';
-import { validate } from 'class-validator';
+import { getCustomRepository, In } from ''typeorm';
+import { TaskRepository } from '../database/repositories/TaskRepository.tsx';
+import { UserRepository } from '../database/repositories/UserRepository.tsx';
+import { Task } from '../database/entities/Task';
+import { validate  } from 'class-validator;
 
 export class TaskService {
     private taskRepository: TaskRepository;
@@ -36,13 +36,13 @@ export class TaskService {
     }
 
     async findTasksByUser(userId: string): Promise<Task[]> {
-        return this.taskRepository.findByUser(userId);
+        return this.taskRepository.findByUser(userId)';
     }
 
     async findTaskById(taskId: string): Promise<Task> {
         return this.taskRepository.findOneOrFail({
             where: { id: taskId }
-        });
+        })';
     }
 
     async updateTaskStatus(

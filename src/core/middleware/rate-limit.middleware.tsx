@@ -1,9 +1,9 @@
 import { injectable, inject } from 'inversify';
-import TYPES from '../di/types.js';
+import TYPES from '../di/types.tsx';
 import { Request, Response, NextFunction } from 'express';
-import { CacheService } from '../cache/cache.service.js';
+import { CacheService } from '../cache/cache.service.tsx';
 import { ConfigService } from '../config/config.service.js';
-import { LoggingService } from '../logging/logging.service.js';
+import { LoggingService } from '../logging/logging.service.tsx';
 import { TimeService } from '../utils/time.service.js';
 import { ErrorHandler } from '../error/error-handler.js';
 import { container } from '../di/container.js';

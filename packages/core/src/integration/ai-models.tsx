@@ -1,5 +1,5 @@
 // Attempt to fix import path - assuming types are exported from packages/types/src/index.tsx (which exports .js files)
-import { ModelRegistry, ModelType, ModelConfig, AIModel } from '../../types/index.js';
+import { ModelRegistry, ModelType, ModelConfig, AIModel } from '../../types/index.tsx';
 
 export class AIModelIntegration {
   // Assuming ModelRegistry is Map<ModelType, AIModel> based on usage

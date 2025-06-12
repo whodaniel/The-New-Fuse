@@ -20,7 +20,7 @@ export class AgentSystem {
     }
   }
 
-  async createAgent(agent: Omit<Agent, 'id' | 'status'>): Promise<Agent> {
+  async createAgent(agent: Omit<Agent, 'id' | status'>): Promise<Agent> {
     const id = crypto.randomUUID();
     const newAgent: Agent = {
       ...agent,
@@ -39,7 +39,7 @@ export class AgentSystem {
   }
 
   async updateAgentStatus(id: string, status: AgentStatus): Promise<void> {
-    await this.redis.hSet(`agent:${id}`, 'status', status);
+    await this.redis.hSet(`agent:${id}`, status', status);
 
     // Update local cache if agent exists
     const agent = this.agents.get(id);

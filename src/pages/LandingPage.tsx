@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/button.js';
+import { Button } from '../components/ui/button.tsx';
 import { Container, VStack, SimpleGrid, Box, Text } from '@chakra-ui/react';
 import { FeatureCard } from '../components/FeatureCard.js';
 

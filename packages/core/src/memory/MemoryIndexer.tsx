@@ -21,17 +21,17 @@ interface IndexEntry {
 @Injectable()
 export class MemoryIndexer {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private config: IndexConfig;
 
   constructor() {
     this.logger = new Logger('MemoryIndexer');
-    this.redis = new Redis((process as any).env.REDIS_URL);
+    this.redis = new (Redis as any)((process as any).env.REDIS_URL);
     this.db = new DatabaseService();
     this.config = {
-      maxIndexSize: parseInt((process as any): parseInt((process as any).env.INDEX_UPDATE_INTERVAL || '3600000'),
-      similarityThreshold: parseFloat((process as any).env.SIMILARITY_THRESHOLD || '0.8')
+      maxIndexSize: parseInt((process as any): parseInt((process as any).env.INDEX_UPDATE_INTERVAL || 3600000'),
+      similarityThreshold: parseFloat((process as any).env.SIMILARITY_THRESHOLD || 0.8')
     };
   }
 
@@ -62,7 +62,7 @@ export class MemoryIndexer {
 
       // Update inverse indices
       await this.updateInverseIndices(indexEntry)): void {
-      this.logger.error('Failed to index memory:', error): unknown): string {
+      this.logger.error('Failed to index memory:, error): unknown): string {
     return createHash('sha256'): unknown): string[] {
     const tags: object');
 
@@ -80,8 +80,8 @@ export class MemoryIndexer {
       Object.keys(value).forEach(key => tags.add(key));
 
       // Extract type information
-      tags.add(Array.isArray(value) ? 'array' > {
-        if(typeof v === 'object' && v !== null): void {
+      tags.add(Array.isArray(value) ? array' > {
+        if(typeof v === object' && v !== null): void {
           this.extractTags(v)): void {
           // Extract words as tags
           v.split(/\W+/).forEach(word => {
@@ -96,14 +96,14 @@ export class MemoryIndexer {
 
     // Update timestamp index
     await this.redis.zadd(
-      'timestamp_index',
+      timestamp_index',
       (entry as any).timestamp.getTime(),
       entry.key
     );
 
     // Update metadata indices
     for (const [key, value] of Object.entries(entry.metadata)) {
-      if(typeof value === 'string' || typeof value === 'number'): void {
+      if(typeof value === string' || typeof value === 'number'): void {
         await this.redis.sadd(`metadata:${key}:${value}`, entry.key):  {
       tags?: string[];
       timeRange?: { start: Date; end: Date };
@@ -112,7 +112,7 @@ export class MemoryIndexer {
     options: {
       limit?: number;
       offset?: number;
-      sortBy?: timestamp' | 'relevance';
+      sortBy?: timestamp' | relevance';
     } = {}
   ): Promise<IndexEntry[]> {
     try {
@@ -135,7 +135,7 @@ export class MemoryIndexer {
         for (const [key, value] of Object.entries(query.metadata)) {
           const metadataKeys): void {
           candidateKeys  = await this.redis.zrangebyscore(
-          'timestamp_index',
+          timestamp_index',
           query.timeRange.start.getTime(),
           query.timeRange.end.getTime()
         );
@@ -166,10 +166,10 @@ export class MemoryIndexer {
           const entry: unknown){
         entries.sort((a, b)): void {
         // Implement relevance scoring based on tag matches and metadata
-        entries.sort((a, b)  = await this.redis.hgetall(`index== 'timestamp'> {
+        entries.sort((a, b)  = await this.redis.hgetall(`index== timestamp'> {
           const scoreA: undefined;
       return entries.slice(start, end)): void {
-      this.logger.error('Search failed:', error): string[][]): string[] {
+      this.logger.error('Search failed:, error): string[][]): string[] {
     if(arrays.length  = this.calculateRelevanceScore(a, query): IndexEntry, query: unknown): number {
     let score   = this.calculateRelevanceScore(b, query);
           return scoreB - scoreA;

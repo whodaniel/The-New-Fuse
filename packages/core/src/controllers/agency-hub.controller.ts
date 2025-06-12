@@ -28,10 +28,10 @@ import {
 } from '@nestjs/swagger';
 
 import { EnhancedAgencyService } from '../services/enhanced-agency.service';
-import { TenantGuard } from '../guards/tenant.guard';
-import { AgencyRoleGuard } from '../guards/agency-role.guard';
-import { Roles } from '../decorators/roles.decorator';
-import { TenantContext } from '../decorators/tenant-context.decorator';
+import { TenantGuard } from '../guards/tenant.'guard';
+import { AgencyRoleGuard } from '../guards/agency-role.'guard';
+import { Roles } from '../decorators/roles.'decorator';
+import { TenantContext } from '../decorators/tenant-context.'decorator';
 
 export interface CreateAgencyRequest {
   name: string;
@@ -75,10 +75,10 @@ export class AgencyHubController {
    */
 
   @Post('agencies')
-  @ApiOperation({ summary: 'Create a new agency (Master Admin only)' })
-  @ApiResponse({ status: 201, description: 'Agency created successfully' })
-  @ApiResponse({ status: 400, description: 'Invalid input data' })
-  @ApiResponse({ status: 409, description: 'Subdomain already exists' })
+  @ApiOperation({ summary:Create a new agency (Master Admin only)' })
+  @ApiResponse({ status: 201, description: Agency created 'successfully' })
+  @ApiResponse({ status: 400, description:Invalid input data' })
+  @ApiResponse({ status: 409, description:Subdomain already exists' })
   @Roles('MASTER_ADMIN')
   @UseGuards(AgencyRoleGuard)
   @HttpCode(HttpStatus.CREATED)
@@ -93,21 +93,21 @@ export class AgencyHubController {
       return {
         success: true,
         data: agency,
-        message: 'Agency created successfully'
+        message:Agency created successfully'
       };
-    } catch (error) {
-      this.logger.error(`Failed to create agency: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to create agency: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
 
   @Get('agencies')
-  @ApiOperation({ summary: 'List all agencies (Master Admin only)' })
+  @ApiOperation({ summary:List all agencies (Master Admin only)' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'tier', required: false, type: String })
   @ApiQuery({ name: 'status', required: false, type: String })
-  @ApiResponse({ status: 200, description: 'Agencies retrieved successfully' })
+  @ApiResponse({ status: 200, description: Agencies retrieved 'successfully' })
   @Roles('MASTER_ADMIN')
   @UseGuards(AgencyRoleGuard)
   async getAllAgencies(
@@ -137,10 +137,10 @@ export class AgencyHubController {
   }
 
   @Get('agencies/:agencyId')
-  @ApiOperation({ summary: 'Get agency details (Master Admin only)' })
-  @ApiParam({ name: 'agencyId', description: 'Agency ID' })
-  @ApiResponse({ status: 200, description: 'Agency details retrieved' })
-  @ApiResponse({ status: 404, description: 'Agency not found' })
+  @ApiOperation({ summary:Get agency details (Master Admin only)' })
+  @ApiParam({ name: 'agencyId', description:Agency ID' })
+  @ApiResponse({ status: 200, description:Agency details retrieved' })
+  @ApiResponse({ status: 404, description:Agency not found' })
   @Roles('MASTER_ADMIN')
   @UseGuards(AgencyRoleGuard)
   async getAgencyById(@Param('agencyId') agencyId: string) {
@@ -155,10 +155,10 @@ export class AgencyHubController {
   }
 
   @Put('agencies/:agencyId')
-  @ApiOperation({ summary: 'Update agency (Master Admin only)' })
-  @ApiParam({ name: 'agencyId', description: 'Agency ID' })
-  @ApiResponse({ status: 200, description: 'Agency updated successfully' })
-  @ApiResponse({ status: 404, description: 'Agency not found' })
+  @ApiOperation({ summary:Update agency (Master Admin only)' })
+  @ApiParam({ name: 'agencyId', description:Agency ID' })
+  @ApiResponse({ status: 200, description:Agency updated successfully' })
+  @ApiResponse({ status: 404, description:Agency not found' })
   @Roles('MASTER_ADMIN')
   @UseGuards(AgencyRoleGuard)
   async updateAgency(
@@ -172,15 +172,15 @@ export class AgencyHubController {
     return {
       success: true,
       data: updatedAgency,
-      message: 'Agency updated successfully'
+      message:Agency updated successfully'
     };
   }
 
   @Delete('agencies/:agencyId')
-  @ApiOperation({ summary: 'Delete agency (Master Admin only)' })
-  @ApiParam({ name: 'agencyId', description: 'Agency ID' })
-  @ApiResponse({ status: 200, description: 'Agency deleted successfully' })
-  @ApiResponse({ status: 404, description: 'Agency not found' })
+  @ApiOperation({ summary:Delete agency (Master Admin only)' })
+  @ApiParam({ name: 'agencyId', description:Agency ID' })
+  @ApiResponse({ status: 200, description:Agency deleted successfully' })
+  @ApiResponse({ status: 404, description:Agency not found' })
   @Roles('MASTER_ADMIN')
   @UseGuards(AgencyRoleGuard)
   async deleteAgency(@Param('agencyId') agencyId: string) {
@@ -190,7 +190,7 @@ export class AgencyHubController {
     
     return {
       success: true,
-      message: 'Agency deleted successfully'
+      message:Agency deleted successfully'
     };
   }
 
@@ -199,10 +199,10 @@ export class AgencyHubController {
    */
 
   @Get('dashboard')
-  @ApiOperation({ summary: 'Get agency dashboard data' })
-  @ApiResponse({ status: 200, description: 'Dashboard data retrieved' })
+  @ApiOperation({ summary:Get agency dashboard data' })
+  @ApiResponse({ status: 200, description:Dashboard data retrieved' })
   @UseGuards(TenantGuard, AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async getAgencyDashboard(@TenantContext() tenantContext: any) {
     this.logger.log(`Retrieving dashboard for agency: ${tenantContext.agencyId}`);
     
@@ -217,8 +217,8 @@ export class AgencyHubController {
   }
 
   @Get('status')
-  @ApiOperation({ summary: 'Get agency swarm status' })
-  @ApiResponse({ status: 200, description: 'Swarm status retrieved' })
+  @ApiOperation({ summary:Get agency swarm status' })
+  @ApiResponse({ status: 200, description:Swarm status retrieved' })
   @UseGuards(TenantGuard)
   async getAgencySwarmStatus(@TenantContext() tenantContext: any) {
     this.logger.log(`Getting swarm status for agency: ${tenantContext.agencyId}`);
@@ -234,8 +234,8 @@ export class AgencyHubController {
   }
 
   @Post('initialize-swarm')
-  @ApiOperation({ summary: 'Initialize swarm for agency' })
-  @ApiResponse({ status: 200, description: 'Swarm initialized successfully' })
+  @ApiOperation({ summary:Initialize swarm for agency' })
+  @ApiResponse({ status: 200, description:Swarm initialized successfully' })
   @UseGuards(TenantGuard, AgencyRoleGuard)
   @Roles('AGENCY_ADMIN')
   async initializeSwarm(
@@ -252,20 +252,20 @@ export class AgencyHubController {
     return {
       success: true,
       data: result,
-      message: 'Swarm initialized successfully'
+      message:Swarm initialized successfully'
     };
   }
 
   @Get('analytics')
-  @ApiOperation({ summary: 'Get agency analytics' })
-  @ApiQuery({ name: 'period', required: false, description: 'Time period (7d, 30d, 90d)' })
-  @ApiQuery({ name: 'metric', required: false, description: 'Specific metric to retrieve' })
-  @ApiResponse({ status: 200, description: 'Analytics data retrieved' })
+  @ApiOperation({ summary:Get agency analytics' })
+  @ApiQuery({ name: 'period', required: false, description: Time period (7d, 30d, 90d)' })
+  @ApiQuery({ name: 'metric', required: false, description: Specific metric to 'retrieve' })
+  @ApiResponse({ status: 200, description:Analytics data retrieved' })
   @UseGuards(TenantGuard, AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async getAgencyAnalytics(
     @TenantContext() tenantContext: any,
-    @Query('period') period = '30d',
+    @Query('period') period = 30'd',
     @Query('metric') metric?: string
   ) {
     this.logger.log(`Retrieving analytics for agency: ${tenantContext.agencyId}`);
@@ -282,8 +282,8 @@ export class AgencyHubController {
   }
 
   @Post('service-requests')
-  @ApiOperation({ summary: 'Submit a service request' })
-  @ApiResponse({ status: 201, description: 'Service request created' })
+  @ApiOperation({ summary:Submit a service request' })
+  @ApiResponse({ status: 201, description:Service request created' })
   @UseGuards(TenantGuard)
   async submitServiceRequest(
     @TenantContext() tenantContext: any,
@@ -303,17 +303,17 @@ export class AgencyHubController {
     return {
       success: true,
       data: request,
-      message: 'Service request submitted successfully'
+      message:Service request submitted successfully'
     };
   }
 
   @Get('service-requests')
-  @ApiOperation({ summary: 'Get agency service requests' })
+  @ApiOperation({ summary:Get agency service requests' })
   @ApiQuery({ name: 'status', required: false })
   @ApiQuery({ name: 'category', required: false })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Service requests retrieved' })
+  @ApiResponse({ status: 200, description:Service requests retrieved' })
   @UseGuards(TenantGuard)
   async getServiceRequests(
     @TenantContext() tenantContext: any,
@@ -334,8 +334,8 @@ export class AgencyHubController {
   }
 
   @Get('providers')
-  @ApiOperation({ summary: 'Get agency service providers' })
-  @ApiResponse({ status: 200, description: 'Service providers retrieved' })
+  @ApiOperation({ summary:Get agency service providers' })
+  @ApiResponse({ status: 200, description:Service providers retrieved' })
   @UseGuards(TenantGuard)
   async getServiceProviders(@TenantContext() tenantContext: any) {
     const providers = await this.enhancedAgencyService.getServiceProviders(
@@ -349,10 +349,10 @@ export class AgencyHubController {
   }
 
   @Post('providers/register')
-  @ApiOperation({ summary: 'Register an agent as a service provider' })
-  @ApiResponse({ status: 201, description: 'Provider registered successfully' })
+  @ApiOperation({ summary:Register an agent as a service provider' })
+  @ApiResponse({ status: 201, description:Provider registered successfully' })
   @UseGuards(TenantGuard, AgencyRoleGuard)
-  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  @Roles('AGENCY_ADMIN', AGENCY_MANAGER')
   async registerServiceProvider(
     @TenantContext() tenantContext: any,
     @Body() providerData: any
@@ -365,7 +365,7 @@ export class AgencyHubController {
     return {
       success: true,
       data: provider,
-      message: 'Service provider registered successfully'
+      message:Service provider registered successfully'
     };
   }
 }

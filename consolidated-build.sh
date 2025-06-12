@@ -262,7 +262,7 @@ echo ""
 # Install dependencies if node_modules doesn't exist
 if [ ! -d "node_modules" ]; then
   echo -e "📦 ${YELLOW}Installing dependencies...${NC}"
-  yarn install
+  bun install
   echo -e "${GREEN}Dependencies installed.${NC}"
   echo ""
 fi
@@ -270,8 +270,8 @@ fi
 # Run database migrations if needed
 if [ "$skip_db" != true ]; then
   echo -e "🗄️ ${YELLOW}Running database migrations...${NC}"
-  yarn db:generate
-  yarn db:migrate
+  bun run db:generate
+  bun run db:migrate
   echo -e "${GREEN}Database migrations complete.${NC}"
   echo ""
 else
@@ -287,55 +287,55 @@ if [ "$incremental" == true ]; then
   echo -e "${CYAN}Building packages incrementally in dependency order...${NC}"
   
   echo -e "🧩 ${YELLOW}Building types package...${NC}"
-  yarn workspace @the-new-fuse/types build
+  cd packages/types && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building utils package...${NC}"
-  yarn workspace @the-new-fuse/utils build
+  cd packages/utils && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building core package...${NC}"
-  yarn workspace @the-new-fuse/core build
+  cd packages/core && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building database package...${NC}"
-  yarn workspace @the-new-fuse/database build
+  cd packages/database && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building UI packages...${NC}"
-  yarn workspace @the-new-fuse/ui build
-  [ -d "packages/ui-components" ] && yarn workspace @the-new-fuse/ui-components build
-  [ -d "packages/ui-consolidated" ] && yarn workspace @the-new-fuse/ui-consolidated build
+  cd packages/ui && bun run build && cd ../..
+  [ -d "packages/ui-components" ] && cd packages/ui-components && bun run build && cd ../..
+  [ -d "packages/ui-consolidated" ] && cd packages/ui-consolidated && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building feature packages...${NC}"
-  [ -d "packages/feature-tracker" ] && yarn workspace @the-new-fuse/feature-tracker build
-  [ -d "packages/feature-suggestions" ] && yarn workspace @the-new-fuse/feature-suggestions build
+  [ -d "packages/feature-tracker" ] && cd packages/feature-tracker && bun run build && cd ../..
+  [ -d "packages/feature-suggestions" ] && cd packages/feature-suggestions && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building API packages...${NC}"
-  [ -d "packages/api-types" ] && yarn workspace @the-new-fuse/api-types build
-  yarn workspace @the-new-fuse/api-core build
-  yarn workspace @the-new-fuse/api build
-  [ -d "packages/api-client" ] && yarn workspace @the-new-fuse/api-client build
+  [ -d "packages/api-types" ] && cd packages/api-types && bun run build && cd ../..
+  cd packages/api-core && bun run build && cd ../..
+  cd packages/api && bun run build && cd ../..
+  [ -d "packages/api-client" ] && cd packages/api-client && bun run build && cd ../..
   
   echo -e "🧩 ${YELLOW}Building frontend and backend packages...${NC}"
-  [ -d "packages/frontend" ] && yarn workspace @the-new-fuse/frontend build
-  [ -d "packages/backend" ] && yarn workspace @the-new-fuse/backend build
+  [ -d "packages/frontend" ] && cd packages/frontend && bun run build && cd ../..
+  [ -d "packages/backend" ] && cd packages/backend && bun run build && cd ../..
   
 elif [ ${#packages[@]} -gt 0 ]; then
   # Build specified packages
   for package in "${packages[@]}"; do
     echo -e "🧩 ${YELLOW}Building package: ${MAGENTA}$package${NC}..."
     if [ "$watch" == true ]; then
-      yarn workspace @the-new-fuse/$package dev &
+      cd packages/$package && bun run dev & cd ../..
     else
-      yarn workspace @the-new-fuse/$package build
+      cd packages/$package && bun run build && cd ../..
     fi
   done
 else
   # Build everything using turbo
   echo -e "${CYAN}Building all packages...${NC}"
   if [ "$production" == true ]; then
-    yarn build
+    bun run build
   elif [ "$watch" == true ]; then
-    yarn dev
+    bun run dev
   else
-    yarn build
+    bun run build
   fi
 fi
 
@@ -348,9 +348,9 @@ if [ "$extensions" == true ]; then
   if [ -d "packages/vscode-extension" ]; then
     echo -e "🧩 ${YELLOW}Building VS Code extension...${NC}"
     cd packages/vscode-extension
-    yarn install
-    yarn build
-    yarn package
+    bun install
+    bun run build
+    bun run package
     cd ../..
     echo -e "${GREEN}VS Code extension built.${NC}"
     echo ""
@@ -360,8 +360,8 @@ if [ "$extensions" == true ]; then
   if [ -d "packages/chrome-extension" ]; then
     echo -e "🧩 ${YELLOW}Building Chrome extension...${NC}"
     cd packages/chrome-extension
-    yarn install
-    yarn build
+    bun install
+    bun run build
     cd ../..
     echo -e "${GREEN}Chrome extension built.${NC}"
     echo ""
@@ -379,7 +379,7 @@ fi
 # Run tests if needed
 if [ "$skip_tests" != true ] && [ "$watch" != true ]; then
   echo -e "🧪 ${YELLOW}Running tests...${NC}"
-  yarn test
+  bun test
   echo -e "${GREEN}Tests complete.${NC}"
   echo ""
 else
@@ -398,8 +398,8 @@ echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo -e "  • ${BLUE}To run the development environment:${NC} ./run-dev-docker.sh"
 echo -e "  • ${BLUE}To run the production environment:${NC} ./run-prod-docker.sh"
-echo -e "  • ${BLUE}To start the API server:${NC} yarn workspace @the-new-fuse/api start"
-echo -e "  • ${BLUE}To start the frontend:${NC} yarn workspace @the-new-fuse/frontend start"
+echo -e "  • ${BLUE}To start the API server:${NC} cd packages/api && bun run start"
+echo -e "  • ${BLUE}To start the frontend:${NC} cd packages/frontend && bun run start"
 echo ""
 
 # If in watch mode, wait for Ctrl+C

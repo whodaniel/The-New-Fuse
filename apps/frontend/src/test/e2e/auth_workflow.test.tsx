@@ -45,7 +45,7 @@ describe('Authentication E2E Tests', () => {
   const takeScreenshotOnFailure = async (error: Error) => {
     console.error('Test failed:', error);
     const screenshot = await driver.takeScreenshot();
-    :', screenshot);
+    console.log('Screenshot:', screenshot);
     throw error;
   };
 

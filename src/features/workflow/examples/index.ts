@@ -1,1 +1,1 @@
-export { WorkflowExample } from './WorkflowExample.js';
+export { WorkflowExample } from './WorkflowExample.tsx';

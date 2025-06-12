@@ -12,9 +12,9 @@ import {
   TabsList,
   TabsTrigger,
 } from './tabs.js';
-import { WebhookConfigurationUI } from './WebhookConfigurationUI.js';
-import { toast } from './toast.js';
-import { Button } from './button.js';
+import { WebhookConfigurationUI } from './WebhookConfigurationUI.tsx';
+import { toast } from './toast.tsx';
+import { Button } from './button.tsx';
 import { ScrollArea } from './scroll-area.js';
 import { Badge } from './badge.js';
 

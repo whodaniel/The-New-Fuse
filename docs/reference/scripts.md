@@ -37,51 +37,51 @@ For more details about automated component analysis, see [Automated Component An
 ### Core Development
 ```bash
 # Start development server
-yarn dev
+bun dev
 
 # Start production server
-yarn start
+bun start
 
 # Build project
-yarn build
+bun run build
 
 # Type checking
-yarn type-check
+bun run type-check
 ```
 
 ### Testing
 ```bash
 # Run all tests
-yarn test
+bun test
 
 # Run specific tests
-yarn test:unit
-yarn test:integration
-yarn test:e2e
+bun run test:unit
+bun run test:integration
+bun run test:e2e
 ```
 
 ### Database Operations
 ```bash
 # Reset development database
-yarn db:reset
+bun run db:reset
 
 # Run migrations
-yarn db:migrate
+bun run db:migrate
 
 # Generate types
-yarn db:generate
+bun run db:generate
 ```
 
 ### Docker Operations
 ```bash
 # Start Docker environment
-yarn docker:up
+bun run docker:up
 
 # Stop Docker environment
-yarn docker:down
+bun run docker:down
 
 # Clean Docker artifacts
-yarn clean:docker
+bun run clean:docker
 ```
 
 ## Maintenance Scripts
@@ -167,7 +167,7 @@ scripts/
 
 ## Best Practices
 
-1. Always use yarn scripts instead of running scripts directly
+1. Always use bun scripts instead of running scripts directly
 2. Check script documentation before modifying
 3. Test scripts in development before pushing changes
 4. Keep scripts modular and focused

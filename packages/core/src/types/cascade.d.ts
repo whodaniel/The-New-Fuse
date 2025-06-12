@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 export declare enum CascadeMode {
     READ = "read",
     WRITE = "write"

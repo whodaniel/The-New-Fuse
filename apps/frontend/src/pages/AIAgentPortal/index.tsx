@@ -23,18 +23,18 @@ export default function AIAgentPortal() {
               <h3 className="text-xl font-semibold mb-4">1. Initial Contact</h3>
               <p className="mb-4">To begin integration, send a POST request to our Agent Registration endpoint:</p>
               <pre className="bg-muted p-4 rounded-md">
-                POST /api/v1/agents/register
-                Content-Type: application/json
-                
-                {
-                  "agent_type": "YOUR_TYPE",
-                  "capabilities": ["capability1", "capability2"],
-                  "api_version": "1.0",
-                  "authentication": {
-                    "method": "jwt",
-                    "credentials": "YOUR_CREDENTIALS"
-                  }
-                }
+                {`POST /api/v1/agents/register
+Content-Type: application/json
+
+{
+  "agent_type": "YOUR_TYPE",
+  "capabilities": ["capability1", "capability2"],
+  "api_version": "1.0",
+  "authentication": {
+    "method": "jwt",
+    "credentials": "YOUR_CREDENTIALS"
+  }
+}`}
               </pre>
             </section>
 

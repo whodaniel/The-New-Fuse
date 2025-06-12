@@ -1,13 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { WorkflowDefinition, WorkflowStep } from '../types.js'; // Added .js extension
-import { WorkflowBuilder } from '../services/WorkflowBuilder.js'; // Added .js extension
-import { WorkflowVisualizer } from './WorkflowVisualizer.js'; // Added .js extension
-import { Button } from '../../../core/button/index.js'; // Added .js extension
-import { Input } from '../../../core/input/index.js'; // Added .js extension
-import { Textarea } from '../../../core/textarea.js'; // Added .js extension
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../core/select/index.js'; // Added .js extension
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../../core/card/index.js'; // Added .js extension
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '../../../core/dialog/index.js'; // Added .js extension
+import React, { useState, useEffect } from 'react';
+import { WorkflowDefinition, WorkflowStep } from '../types.tsx'; // Added .js extension
+import { WorkflowBuilder } from '../services/WorkflowBuilder.tsx'; // Added .js extension
+import { WorkflowVisualizer } from './WorkflowVisualizer.tsx'; // Added .js extension
+import { Button } from '../../../core/button/index.tsx'; // Added .js extension
+import { Input } from '../../../core/input/index.tsx'; // Added .js extension
+import { Textarea } from '../../../core/textarea.tsx'; // Added .js extension
+import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index.tsx'; // Added .js extension
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '../../../core/dialog/index.tsx'; // Added .js extension
 import { Trash2, Edit, PlusCircle } from 'lucide-react';
 
 // Explicitly define props interface for the component
@@ -35,7 +34,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
   // Load initial steps
   useEffect(() => {
     // Reset builder with initial definition steps
-    initialDefinition.steps.forEach(step: WorkflowStep => {
+    initialDefinition.steps.forEach((step: WorkflowStep) => {
       builder.addStep(step);
     });
     
@@ -62,7 +61,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
   };
 
   const handleStepChange = (field: keyof WorkflowStep, value: any) => {
-    setEditedStep(prev: any) => {
+    setEditedStep((prev: any) => {
       if (!prev) return null;
       return { ...prev, [field]: value };
     });
@@ -71,12 +70,12 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
   const handleParamsChange = (paramsJson: string) => {
     try {
       const parsedParams = JSON.parse(paramsJson);
-      setEditedStep(prev: any) => {
+      setEditedStep((prev: any) => {
         if (!prev) return null;
         return { ...prev, parameters: parsedParams };
       });
       setParamsError(null);
-    } catch (error) {
+    } catch (_error) {
       setParamsError("Invalid JSON format for parameters.");
     }
   };
@@ -89,7 +88,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
     } else {
       // Update existing step
       // This is a simplified approach - in a real app you'd need to handle dependencies
-      const updatedSteps = workflow.steps.map(s: WorkflowStep) => 
+      const updatedSteps = workflow.steps.map((s: WorkflowStep) =>
         s.id === editedStep.id ? editedStep : s
       );
       
@@ -126,7 +125,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
   };
 
   // Helper component for action buttons that appear when a step is selected
-  const ActionButtons = ({ step }: { step: WorkflowStep }) => {
+  const _ActionButtons = ({ step }: { step: WorkflowStep }) => {
     const onEdit = () => handleEditStep(step);
     const onDelete = () => {
       setSelectedStep(step);

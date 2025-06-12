@@ -20,8 +20,8 @@ export interface MetricThresholds {
 }
 export interface MetricAlert {
     timestamp: number;
-    type: system' | 'application' | 'agent';
-    severity: info' | 'warning' | 'error' | 'critical';
+    type: system' | application' | agent';
+    severity: info' | warning' | error' | critical';
     metric: string;
     value: number;
     threshold: number;

@@ -1,4 +1,4 @@
-import { AgentType, AgentStatus } from '@the-new-fuse/core/types';
+import { AgentType, AgentStatus } from '@the-new-fuse/types';
 export declare class CreateAgentDto {
     name: string;
     description?: string;

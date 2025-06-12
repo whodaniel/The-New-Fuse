@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { PerformanceMonitoringService } from '../monitoring/performance-monitoring.service.tsx';
 
 export interface QueryPerformanceData {
   query: string;
@@ -25,11 +25,11 @@ export interface TableStatistics {
 }
 
 export interface OptimizationRecommendation {
-  type: 'index' | 'vacuum' | 'analyze' | 'rewrite' | 'partition';
+  type:index' | vacuum' | analyze' | rewrite' | partition';
   tableName: string;
   reason: string;
   sql?: string;
-  priority: 'low' | 'medium' | 'high';
+  priority:low' | medium' | high';
   estimatedImpact: string;
 }
 
@@ -56,11 +56,11 @@ export class DatabaseOptimizerService implements OnModuleInit {
 
   async onModuleInit() {
     // Load configuration
-    this.enabled = this.configService.get<boolean>('database.optimization.enabled', true);
-    this.autoOptimize = this.configService.get<boolean>('database.optimization.autoOptimize', false);
-    this.slowQueryThresholdMs = this.configService.get<number>('database.optimization.slowQueryThresholdMs', 1000);
-    this.vacuumThreshold = this.configService.get<number>('database.optimization.vacuumThreshold', 1000);
-    this.analyzeThreshold = this.configService.get<number>('database.optimization.analyzeThreshold', 10000);
+    this.enabled = this.configService.get<boolean>('database.optimization.'enabled', true);
+    this.autoOptimize = this.configService.get<boolean>('database.optimization.'autoOptimize', false);
+    this.slowQueryThresholdMs = this.configService.get<number>('database.optimization.'slowQueryThresholdMs', 1000);
+    this.vacuumThreshold = this.configService.get<number>('database.optimization.'vacuumThreshold', 1000);
+    this.analyzeThreshold = this.configService.get<number>('database.optimization.'analyzeThreshold', 10000);
 
     if (!this.enabled) {
       this.logger.info('Database optimization is disabled');
@@ -71,7 +71,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
     this.setupEventListeners();
     
     // Start optimization interval
-    const intervalMs = this.configService.get<number>('database.optimization.checkIntervalHours', 24) * 60 * 60 * 1000;
+    const intervalMs = this.configService.get<number>('database.optimization.'checkIntervalHours', 24) * 60 * 60 * 1000;
     this.optimizationInterval = setInterval(() => this.checkAndOptimize(), intervalMs);
     
     // Run initial check
@@ -91,11 +91,11 @@ export class DatabaseOptimizerService implements OnModuleInit {
   recordQueryPerformance(data: QueryPerformanceData): void {
     // Record in performance monitoring
     this.performanceMonitor.recordResponseTime({
-      operation: 'database.query',
+      operation:database.'query',
       durationMs: data.duration,
       tags: {
-        source: data.source || 'unknown',
-        correlationId: data.correlationId || 'unknown'
+        source: data.source || unknown',
+        correlationId: data.correlationId || unknown'
       }
     });
     
@@ -112,22 +112,22 @@ export class DatabaseOptimizerService implements OnModuleInit {
     try {
       const result = await this.prisma.$queryRaw`
         SELECT
-          t.schemaname || '.' || t.relname AS table_name,
+          t.schemaname || .' || t.relname AS table_name,
           c.reltuples AS row_count,
-          pg_size_pretty(pg_total_relation_size('"' || t.schemaname || '"."' || t.relname || '"')) AS size,
-          pg_size_pretty(pg_indexes_size('"' || t.schemaname || '"."' || t.relname || '"')) AS index_size,
-          pg_size_pretty(pg_total_relation_size('"' || t.schemaname || '"."' || t.relname || '"') - pg_indexes_size('"' || t.schemaname || '"."' || t.relname || '"')) AS table_size,
+          pg_size_pretty(pg_total_relation_size('"' || t.schemaname || "."' || t.relname || "')) AS size,
+          pg_size_pretty(pg_indexes_size('"' || t.schemaname || "."' || t.relname || "')) AS index_size,
+          pg_size_pretty(pg_total_relation_size('"' || t.schemaname || "."' || t.relname || "') - pg_indexes_size('"' || t.schemaname || "."' || t.relname || "')) AS table_size,
           pg_stat_get_live_tuples(c.oid) AS live_tuples,
           pg_stat_get_dead_tuples(c.oid) AS dead_tuples,
-          pg_total_relation_size('"' || t.schemaname || '"."' || t.relname || '"') AS size_bytes,
-          pg_indexes_size('"' || t.schemaname || '"."' || t.relname || '"') AS index_size_bytes,
+          pg_total_relation_size('"' || t.schemaname || "."' || t.relname || "') AS size_bytes,
+          pg_indexes_size('"' || t.schemaname || "."' || t.relname || "') AS index_size_bytes,
           s.last_vacuum,
           s.last_analyze
         FROM pg_tables t
         JOIN pg_class c ON t.tablename = c.relname
         LEFT JOIN pg_stat_user_tables s ON t.tablename = s.relname
-        WHERE t.schemaname = 'public'
-        ORDER BY pg_total_relation_size('"' || t.schemaname || '"."' || t.relname || '"') DESC;
+        WHERE t.schemaname = public'
+        ORDER BY pg_total_relation_size('"' || t.schemaname || "."' || t.relname || "') DESC;
       `;
       
       return (result as any[]).map(row => ({
@@ -139,7 +139,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
         lastVacuum: row.last_vacuum,
         lastAnalyze: row.last_analyze
       }));
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to get table statistics', { error });
       return [];
     }
@@ -163,8 +163,8 @@ export class DatabaseOptimizerService implements OnModuleInit {
             tableName: table.tableName,
             reason: `Table has ${table.deadTuples} dead tuples`,
             sql: `VACUUM (ANALYZE, VERBOSE) ${table.tableName};`,
-            priority: table.deadTuples > this.vacuumThreshold * 10 ? 'high' : 'medium',
-            estimatedImpact: 'Reclaim disk space and improve query performance'
+            priority: table.deadTuples > this.vacuumThreshold * 10 ? high' : 'medium',
+            estimatedImpact: Reclaim disk space and improve query 'performance'
           });
         }
         
@@ -179,7 +179,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
             reason: `Table statistics are outdated or missing`,
             sql: `ANALYZE VERBOSE ${table.tableName};`,
             priority: 'medium',
-            estimatedImpact: 'Improve query planner accuracy'
+            estimatedImpact:Improve query planner accuracy'
           });
         }
       }
@@ -230,7 +230,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
         });
         
         // Emit event
-        this.eventEmitter.emit('database.optimization', {
+        this.eventEmitter.emit('database.'optimization', {
           type: recommendation.type,
           tableName: recommendation.tableName,
           sql: recommendation.sql,
@@ -243,13 +243,13 @@ export class DatabaseOptimizerService implements OnModuleInit {
           type: recommendation.type,
           tableName: recommendation.tableName,
           success: false,
-          error: error.message
+          error: (error as Error).message
         });
         
         success = false;
         
         // Emit event
-        this.eventEmitter.emit('database.optimization', {
+        this.eventEmitter.emit('database.'optimization', {
           type: recommendation.type,
           tableName: recommendation.tableName,
           sql: recommendation.sql,
@@ -343,7 +343,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
         }
       } else {
         // Just emit event with recommendations
-        this.eventEmitter.emit('database.optimizationRecommendations', recommendations);
+        this.eventEmitter.emit('database.'optimizationRecommendations', recommendations);
       }
     } catch (error) {
       this.logger.error('Error during database optimization check', { error });
@@ -353,7 +353,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
   private handleSlowQuery(data: QueryPerformanceData): void {
     this.logger.warn(`Slow query detected: ${data.duration}ms`, {
       metadata: {
-        query: data.query.substring(0, 200) + (data.query.length > 200 ? '...' : ''),
+        query: data.query.substring(0, 200) + (data.query.length > 200 ? ...' :),
         duration: data.duration,
         source: data.source,
         correlationId: data.correlationId
@@ -369,7 +369,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
     }
     
     // Emit event
-    this.eventEmitter.emit('database.slowQuery', data);
+    this.eventEmitter.emit('database.'slowQuery', data);
   }
 
   private async identifyMissingIndexes(): Promise<OptimizationRecommendation[]> {
@@ -379,7 +379,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
       // Get tables with sequential scans
       const seqScans = await this.prisma.$queryRaw`
         SELECT
-          schemaname || '.' || relname AS table_name,
+          schemaname || .' || relname AS table_name,
           seq_scan,
           seq_tup_read,
           idx_scan,
@@ -405,7 +405,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
           if (whereColumns.length > 0) {
             // Create index recommendation
             const indexName = `idx_${table.table_name.split('.')[1]}_${whereColumns.join('_')}`;
-            const indexColumns = whereColumns.join(', ');
+            const indexColumns = whereColumns.join(', );
             
             recommendations.push({
               type: 'index',
@@ -413,7 +413,7 @@ export class DatabaseOptimizerService implements OnModuleInit {
               reason: `Table has ${table.seq_scan} sequential scans with ${table.seq_tup_read} rows read`,
               sql: `CREATE INDEX ${indexName} ON ${table.table_name} (${indexColumns});`,
               priority: 'high',
-              estimatedImpact: 'Potentially significant query performance improvement'
+              estimatedImpact:Potentially significant query performance improvement'
             });
           }
         }
@@ -458,16 +458,16 @@ export class DatabaseOptimizerService implements OnModuleInit {
   private normalizeQuery(query: string): string {
     // Replace specific values with placeholders
     return query
-      .replace(/\d+/g, '?')
-      .replace(/'[^']*'/g, '?')
-      .replace(/"[^"]*"/g, '?')
-      .replace(/\s+/g, ' ')
+      .replace(/\d+/g, ?')
+      .replace(/'[^']*'/g, ?')
+      .replace(/"[^"]*"/g, ?')
+      .replace(/\s+/g, )
       .trim();
   }
 
   private setupEventListeners(): void {
     // Listen for query performance events
-    this.eventEmitter.on('database.query', (data: QueryPerformanceData) => {
+    this.eventEmitter.on('database.'query', (data: QueryPerformanceData) => {
       this.recordQueryPerformance(data);
     });
   }

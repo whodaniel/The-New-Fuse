@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { Button } from '../Button.js';
+import { Button } from '../Button.tsx';
 
 describe('Button', () => {
   it('renders correctly', () => {

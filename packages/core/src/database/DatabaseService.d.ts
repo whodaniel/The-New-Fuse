@@ -1,4 +1,4 @@
-import { ConfigService } from '../config/ConfigService.js';
+import { ConfigService } from '../config/ConfigService.tsx';
 export declare class DatabaseService {
     private readonly configService;
     private readonly prisma;

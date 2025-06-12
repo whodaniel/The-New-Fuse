@@ -55,7 +55,7 @@ interface ErrorRecord {
 @Injectable()
 export class MonitoringService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private metrics: Map<string, Metric>;
   private alerts: Map<string, Alert>;
@@ -280,7 +280,7 @@ export class MonitoringService extends EventEmitter implements OnModuleInit {
   private async evaluateAlert(
     alert: Alert,
     metrics: Record<string, number>,
-    labels: Record<string, string>
+    _labels: Record<string, string>
   ): Promise<void> {
     try {
       const condition = new Function('metrics', `return ${alert.condition}`);
@@ -456,7 +456,7 @@ export class MonitoringService extends EventEmitter implements OnModuleInit {
     return health;
   }
 
-  private async collectDeploymentMetrics(deploymentId: string): Promise<DeploymentMetrics> {
+  private async collectDeploymentMetrics(_deploymentId: string): Promise<DeploymentMetrics> {
     // Here we would integrate with Prometheus/metrics collection
     // For now returning sample metrics
     return {

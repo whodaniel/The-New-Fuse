@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import useUser from './hooks/useUser.js';
+import useUser from './hooks/useUser.tsx';
 import System from './models/system.js';
 const PfpContext = createContext(null);
 const generateInitials = (name): any => {

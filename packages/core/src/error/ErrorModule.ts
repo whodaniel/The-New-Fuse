@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
-import { ErrorHandlerService } from './ErrorHandlerService.js';
-import { ErrorRecoveryService } from './ErrorRecoveryService.js';
+import { ErrorHandlerService } from './ErrorHandlerService.tsx';
+import { ErrorRecoveryService } from './ErrorRecoveryService.tsx';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Global()

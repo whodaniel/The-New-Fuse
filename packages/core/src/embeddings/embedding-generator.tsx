@@ -1,9 +1,9 @@
-import { EmbeddingModelFactory } from './embedding-models.js';
+import { EmbeddingModelFactory } from './embedding-models.tsx';
 
 export class EmbeddingGenerator {
     private model: unknown = null;
 
-    constructor(private modelName: string = 'universal-sentence-encoder') {
+    constructor(private modelName: string = universal-sentence-encoder') {
         this.initialize();
     }
 

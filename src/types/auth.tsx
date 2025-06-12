@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BaseEntity } from './index.js';
+import { BaseEntity } from './index.tsx';
 
 // Core User Types
 export interface User extends BaseEntity {

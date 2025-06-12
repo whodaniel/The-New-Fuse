@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import Redis from 'ioredis';
-import { Logger } from './utils/logger.js';
+import { Logger } from './utils/logger.tsx';
 
 export interface RedisConfig {
   host: string;
@@ -17,7 +17,7 @@ export class RedisManager {
   private readonly logger = new Logger(RedisManager.name);
 
   constructor(config: RedisConfig) {
-    this.client = new Redis({
+    this.client = new (Redis as any)({
       host: config.host,
       port: config.port,
       password: config.password,
@@ -42,7 +42,7 @@ export class RedisManager {
   async set(key: string, value: string, ttl?: number): Promise<void> {
     try {
       if(ttl) {
-        await this.client.set(key, value, 'EX', ttl);
+        await this.client.set(key, value, EX', ttl);
       } else {
         await this.client.set(key, value);
       }

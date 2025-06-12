@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { ServiceCommunicationMonitor } from './service-communication-monitor.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { ServiceCommunicationMonitor } from './service-communication-monitor.tsx';
 import axios, { AxiosRequestConfig } from 'axios';
 
 export interface ServiceDependencyConfig {
@@ -55,12 +55,12 @@ export class ServiceDependencyHealthService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('monitoring.serviceDependencies.enabled', true),
-      checkIntervalMs: this.configService.get<number>('monitoring.serviceDependencies.checkIntervalMs', 60000), // 1 minute
-      defaultTimeout: this.configService.get<number>('monitoring.serviceDependencies.defaultTimeout', 5000),
-      retries: this.configService.get<number>('monitoring.serviceDependencies.retries', 3),
-      retryDelay: this.configService.get<number>('monitoring.serviceDependencies.retryDelay', 1000),
-      dependencies: this.configService.get<ServiceDependencyConfig[]>('monitoring.serviceDependencies.dependencies', [])
+      enabled: this.configService.get<boolean>('monitoring.serviceDependencies.'enabled', true),
+      checkIntervalMs: this.configService.get<number>('monitoring.serviceDependencies.'checkIntervalMs', 60000), // 1 minute
+      defaultTimeout: this.configService.get<number>('monitoring.serviceDependencies.'defaultTimeout', 5000),
+      retries: this.configService.get<number>('monitoring.serviceDependencies.'retries', 3),
+      retryDelay: this.configService.get<number>('monitoring.serviceDependencies.'retryDelay', 1000),
+      dependencies: this.configService.get<ServiceDependencyConfig[]>('monitoring.serviceDependencies.'dependencies', [])
     };
 
     if (!this.config.enabled) {
@@ -151,7 +151,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
       
       // Configure request
       const config: AxiosRequestConfig = {
-        method: dependency.method || 'GET',
+        method: dependency.method || GET',
         url,
         timeout: dependency.timeout || this.config.defaultTimeout,
         headers: dependency.headers || {},
@@ -172,7 +172,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
       if (dependency.expectedResponse) {
         healthy = this.checkExpectedResponse(response.data, dependency.expectedResponse);
         if (!healthy) {
-          error = 'Response did not match expected format';
+          error = Response did not match expected 'format';
         }
       } else {
         healthy = true;
@@ -180,7 +180,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
       
       // Record communication metrics
       await this.serviceCommunicationMonitor.recordCommunication({
-        sourceService: this.configService.get<string>('service.name', 'app'),
+        sourceService: this.configService.get<string>('service.'name', app'),
         targetService: dependency.name,
         operation: 'health_check',
         latencyMs: responseTimeMs,
@@ -194,7 +194,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
       
       // Record failed communication
       await this.serviceCommunicationMonitor.recordCommunication({
-        sourceService: this.configService.get<string>('service.name', 'app'),
+        sourceService: this.configService.get<string>('service.'name', app'),
         targetService: dependency.name,
         operation: 'health_check',
         latencyMs: responseTimeMs,
@@ -216,8 +216,8 @@ export class ServiceDependencyHealthService implements OnModuleInit {
     this.serviceStatuses.set(dependency.name, status);
     
     // Log result
-    const logLevel = healthy ? 'info' : (dependency.isRequired ? 'error' : 'warn');
-    this.logger[logLevel](`Health check for ${dependency.name}: ${healthy ? 'Healthy' : 'Unhealthy'}`, {
+    const logLevel = healthy ? info' : (dependency.isRequired ? 'error' :'warn');
+    this.logger[logLevel](`Health check for ${dependency.name}: ${healthy ? Healthy' : 'Unhealthy'}`, {
       metadata: {
         service: dependency.name,
         responseTimeMs,
@@ -226,7 +226,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
     });
     
     // Emit event
-    this.eventEmitter.emit('monitoring.serviceHealth', {
+    this.eventEmitter.emit('monitoring.'serviceHealth', {
       ...status,
       timestamp: new Date()
     });
@@ -301,7 +301,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
     }
     
     // If expected is an object, check if all expected properties exist with expected values
-    if (typeof expected === 'object' && expected !== null) {
+    if (typeof expected === object' && expected !== null) {
       for (const key in expected) {
         if (!actual || !this.deepEquals(actual[key], expected[key])) {
           return false;
@@ -319,7 +319,7 @@ export class ServiceDependencyHealthService implements OnModuleInit {
     
     if (typeof a !== typeof b) return false;
     
-    if (typeof a === 'object' && a !== null && b !== null) {
+    if (typeof a === object' && a !== null && b !== null) {
       if (Array.isArray(a) && Array.isArray(b)) {
         if (a.length !== b.length) return false;
         for (let i = 0; i < a.length; i++) {

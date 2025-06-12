@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service.js';
-import { DependencyNode, DependencyEdge, DependencyGraph } from '@the-new-fuse/types';
+import { PrismaService } from '../../database/prisma.service.tsx';
+import { DependencyNode, DependencyEdge, DependencyGraph  } from '@the-new-fuse/types;
 
 interface ProjectDependency {
   id: string;
-  name: string;
-  version: string;
-  type?: direct' | 'dev' | 'peer';
+  name: string';
+  version: string';
+  type?: direct' | dev' | peer';
   parentId?: string;
   vulnerabilities?: Array<{
     id: string;

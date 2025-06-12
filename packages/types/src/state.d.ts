@@ -1,4 +1,4 @@
-import { JsonValue, DataMap } from './common-types.js';
+import { JsonValue, DataMap } from './common-types.tsx';
 export declare enum StateEventType {
     SYNC_FAILED = "(state as any).sync.failed",
     LOCK_ACQUIRED = "(state as any).lock.acquired",

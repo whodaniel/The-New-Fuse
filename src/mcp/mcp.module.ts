@@ -1,18 +1,18 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ScheduleModule } from '@nestjs/schedule';
-import { MCPAgentServer } from './MCPAgentServer.js';
-import { MCPChatServer } from './MCPChatServer.js';
-import { MCPWorkflowServer } from './MCPWorkflowServer.js';
-import { MCPFuseServer } from './MCPFuseServer.js';
-import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.js';
-import { MCPRAGServer } from './MCPRAGServer.js';
-import { MCPController } from './mcp.controller.js';
-import { MCPBrokerService } from './services/mcp-broker.service.js';
+import { MCPAgentServer } from './MCPAgentServer.tsx';
+import { MCPChatServer } from './MCPChatServer.tsx';
+import { MCPWorkflowServer } from './MCPWorkflowServer.tsx';
+import { MCPFuseServer } from './MCPFuseServer.tsx';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.tsx';
+import { MCPRAGServer } from './MCPRAGServer.tsx';
+import { MCPController } from './mcp.controller.tsx';
+import { MCPBrokerService } from './services/mcp-broker.service.tsx';
 import { MCPRAGClientService } from './services/mcp-rag-client.service.js';
 import { RAGConfigurationService } from './services/rag-configuration.service.js';
 import { DocumentationOrchestrationService } from './services/documentation-orchestration.service.js';
-import { DirectorAgentService } from './services/director-agent.service.js';
+import { DirectorAgentService } from './services/director-agent.service.tsx';
 import { AgentModule } from '../modules/agent.module.js';
 
 /**

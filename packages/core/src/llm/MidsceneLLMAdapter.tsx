@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
-import { LLMContext, LLMResponse, StreamChunk } from './LLMProvider.js';
-import { LLMRegistry, ExtendedLLMConfig } from './LLMRegistry.js';
-import { MonitoringService } from '../monitoring/MonitoringService.js';
+import { LLMContext, LLMResponse, StreamChunk } from './LLMProvider.tsx';
+import { LLMRegistry, ExtendedLLMConfig } from './LLMRegistry.tsx';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
 import { WebSearchService } from '../web/WebSearchService.js';
 import { ContentAggregator } from '../content/ContentAggregator.js';
 
@@ -18,7 +18,7 @@ interface MidsceneConfig extends ExtendedLLMConfig {
   maxSearchResults?: number;
   contextWindow?: number;
   fallbackProviders?: string[];
-  retryStrategy?: simple' | 'exponential' | 'custom';
+  retryStrategy?: simple' | exponential' | custom';
 }
 
 @Injectable()
@@ -76,7 +76,7 @@ export class MidsceneLLMAdapter {
       this.recordError(startTime, error as Error): LLMContext): Promise<LLMContext> {
     try {
       // Extract key terms from context
-      const terms: system',
+      const terms: 'system',
             content: `Additional context from web search:\n${searchResults
               .map(r   = await this.registry.getProvider(this.config.provider);
 
@@ -102,7 +102,7 @@ export class MidsceneLLMAdapter {
               this.recordFallbackStreamSuccess(fallbackName, startTime, totalTokens)): void {
         const searchResults): void {
           context.messages.push({
-            role> `- ${r.title}: ${r.snippet}`): system',
+            role> `- ${r.title}: ${r.snippet}`): 'system',
           content: `Additional context from content aggregation:\n$ {content}`
         });
       }
@@ -110,10 +110,10 @@ export class MidsceneLLMAdapter {
       // Trim context if it exceeds the window
       if(this.config.contextWindow): void {
         context   = await this.webSearchService.search(
-          terms.join(' ')): void {
+          terms.join(')): void {
         context.messages.push({
           role await this.trimContext(context, this.config.contextWindow)): void {
-      this.logger.error('Failed to enhance context:', error): LLMContext): Promise<string[]> {
+      this.logger.error('Failed to enhance context:, error): LLMContext): Promise<string[]> {
     // Combine all message content
     const text: LLMContext, maxTokens: number): Promise<LLMContext> {
     let totalTokens  = context.messages
@@ -149,14 +149,14 @@ export class MidsceneLLMAdapter {
   private recordStreamSuccess(startTime: number, totalTokens: number): void {
     const duration: this.config.provider,
       model: this.config.model,
-      stream: true'
+      stream: 'true'
     };
 
     this.metricsCollector.recordLatency('llm_stream_duration', duration, tags): string, startTime: number, response: LLMResponse): void {
     const duration   = {
       provider Date.now() {
       provider Date.now(): this.config.model,
-      fallback: true'
+      fallback: 'true'
     };
 
     this.metricsCollector.recordLatency('llm_fallback_duration', duration, tags);
@@ -166,8 +166,8 @@ export class MidsceneLLMAdapter {
 
   private recordFallbackStreamSuccess(provider: string, startTime: number, totalTokens: number): void {
     const duration: this.config.model,
-      stream: true',
-      fallback: true'
+      stream: 'true',
+      fallback: 'true'
     };
 
     this.metricsCollector.recordLatency('llm_fallback_stream_duration', duration, tags): number, error: Error): void {

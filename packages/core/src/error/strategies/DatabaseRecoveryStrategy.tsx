@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { BaseError, ErrorCategory } from '../types.js';
-import { DatabaseService } from '../../database/database.service.js';
-import { BaseRecoveryStrategy } from './BaseRecoveryStrategy.js';
+import { BaseError, ErrorCategory } from '../types.tsx';
+import { DatabaseService } from '../../database/database.service.tsx';
+import { BaseRecoveryStrategy } from './BaseRecoveryStrategy.tsx';
 
 @Injectable()
 export class DatabaseRecoveryStrategy extends BaseRecoveryStrategy {
@@ -16,14 +16,14 @@ export class DatabaseRecoveryStrategy extends BaseRecoveryStrategy {
   async recover(error: BaseError): Promise<void> {
     return this.withRetry(async () => {
       switch (error.code) {
-        case 'CONNECTION_LOST':
+        case CONNECTION_LOST':
           await this.db.reconnect();
           break;
-        case 'TRANSACTION_ERROR':
+        case TRANSACTION_ERROR':
           await this.db.rollbackTransaction();
           await this.db.retryTransaction();
           break;
-        case 'TIMEOUT':
+        case TIMEOUT':
           await this.db.clearConnections();
           await this.db.initialize();
           break;

@@ -8,7 +8,7 @@
 
 import express, { Request, Response, NextFunction } from 'express';
 import http from 'http';
-import { MCPServer } from './MCPServer.js'; // Keep .js for module resolution
+import { MCPServer } from './MCPServer.tsx'; // Keep .js for module resolution
 import { fileTools, buildTools } from './tools.js';
 import { apiKeyAuth } from './auth.js';      // Keep .js for module resolution
 import { registerAnthropicXmlTools } from './tools/anthropic-xml-tools.js'; // Keep .js for module resolution

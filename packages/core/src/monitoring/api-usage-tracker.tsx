@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { Logger } from '../logging.js';
 
 export interface ApiUsageEvent {

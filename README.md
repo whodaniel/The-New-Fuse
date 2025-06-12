@@ -4,30 +4,32 @@
 
 ## Overview
 
-The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems, with a particular focus on integration with VS Code and other development environments. Now featuring **Yarn Berry workspace integration** and **comprehensive Chrome extension automation**.
+The New Fuse is an AI agent coordination platform that enables intelligent interaction between different AI systems, with a particular focus on integration with VS Code and other development environments. Now featuring **Bun workspace integration** and **comprehensive Chrome extension automation**.
 
 ## 🎆 Latest Features
 
-### Chrome Extension with Yarn Berry Workspace
-- **Unified Build System**: Chrome extension integrated with main project using Yarn Berry workspaces
+### Chrome Extension with Bun Workspace
+
+- **Unified Build System**: Chrome extension integrated with main project using Bun workspaces
 - **Browser Automation**: AI-powered element selection and cross-platform automation
-- **One-Command Building**: Build everything with `yarn build:all`
-- **Development Workflow**: `yarn dev:chrome` for hot reloading during development
-- **Distribution Ready**: `yarn release:chrome` creates Chrome Web Store packages
+- **One-Command Building**: Build everything with `bun run build:all`
+- **Development Workflow**: `bun run dev:chrome` for hot reloading during development
+- **Distribution Ready**: `bun run release:chrome` creates Chrome Web Store packages
 
 ### Quick Chrome Extension Setup
+
 ```bash
 # Build the Chrome extension
-yarn build:chrome
+bun run build:chrome
 
 # Or build everything (main project + Chrome extension)
-yarn build:all
+bun run build:all
 
 # Development mode with file watching
-yarn dev:chrome
+bun run dev:chrome
 
 # Package for Chrome Web Store
-yarn release:chrome
+bun run release:chrome
 ```
 
 **Load in Chrome**: Go to `chrome://extensions/` → Enable "Developer mode" → "Load unpacked" → Select `chrome-extension/dist/`
@@ -81,24 +83,37 @@ cd the-new-fuse
 COMPOSE_BAKE=true docker-compose -f compose.yaml up -d --build
 ```
 
-- The frontend will be available at http://localhost:3000
-- The backend API will be available at http://localhost:3001
+- The frontend will be available at <http://localhost:3000>
+- The backend API will be available at <http://localhost:3001>
 
-#### Notes:
+#### Notes
+
 - Make sure all required `.env` files exist in `apps/backend/.env` and `apps/frontend/.env`.
 - If you add new monorepo packages or services, ensure their paths exist and are referenced in `compose.yaml`.
-- **Yarn 3.x with Corepack**: The Dockerfiles now enable Corepack before installing dependencies to ensure the correct Yarn version is used.
+- **Bun**: The Dockerfiles now use Bun for dependency management and scripts.
 - All references to missing services (e.g., `message-broker`, `chrome-extension`, `frontend/simplified`) have been removed from `compose.yaml` for a clean build experience.
 
 ## Development
 
-To start developing, see the [Development Guide](docs/development/guide.md).
+This project uses **Bun** as its package manager and runtime. To start developing, see the [Development Guide](docs/development/guide.md) and [Bun Setup Guide](docs/development/BUN-SETUP.md).
 
 Quick start for development:
 
 ```bash
-# Build with the new consolidated script
-./consolidated-build.sh --watch --skip-tests
+# Install dependencies with Bun
+bun install
+
+# Start development server
+bun run dev
+
+# Build the project
+bun run build
+
+# Run tests
+bun test
+
+# Build everything including Chrome extension
+bun run build:all
 ```
 
 ### Development Log
@@ -109,13 +124,13 @@ You can update the log manually or use our CLI tools:
 
 ```bash
 # Add a new log entry
-yarn fuse log add
+bun run fuse log add
 
 # View the development log
-yarn fuse log view
+bun run fuse log view
 
 # Watch for file changes and automatically track them
-yarn fuse log watch
+bun run fuse log watch
 ```
 
 For more information, see the [AI Documentation Guide](docs/AI_DOCUMENTATION_GUIDE.md).
@@ -131,7 +146,7 @@ To help with this, a validation script is provided to check for the existence of
 Use the following command from the root of the project:
 
 ```bash
-yarn validate:env
+bun run validate:env
 ```
 
 Or, if you are using npm:
@@ -201,4 +216,5 @@ Contributions are welcome! Please see our [Contributing Guide](CONTRIBUTING.md) 
 ## License
 
 [MIT License](LICENSE)
+
 # Repository cleaned and optimized for GitHub - Tue May 20 14:16:42 EDT 2025

@@ -1,9 +1,21 @@
-
 import React, { useState, useEffect, useRef } from 'react'; // Column is not used
 import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "@the-new-fuse/fairtable-core";
 import { PlusIcon, FilterIcon, SortAscendingIcon, EyeIcon, PencilIcon, TrashIcon, ChevronDownIcon, TableCellsIcon, KanbanIcon, CalendarIcon, GalleryIcon, TimelineIcon } from './Icons'; // NEW_VIEW_DEFAULT_NAME is not used
-// import EditableText from './EditableText'; // EditableText is used, but not imported here. It's imported in ColumnHeader.tsx and TableTabs.tsx
+import EditableText from './EditableText';
+import SelectInput, { SelectOptionItem } from './SelectInput';
+import Modal from './Modal';
 
+// Example FILTER_OPERATOR_OPTIONS definition. Expand as needed.
+const FILTER_OPERATOR_OPTIONS: Record<string, { label: string; applicableTypes: DataType[] }> = {
+  EQUALS: { label: 'Equals', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.DATE, DataType.BOOLEAN] },
+  NOT_EQUALS: { label: 'Does not equal', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.DATE, DataType.BOOLEAN] },
+  CONTAINS: { label: 'Contains', applicableTypes: [DataType.TEXT] },
+  NOT_CONTAINS: { label: 'Does not contain', applicableTypes: [DataType.TEXT] },
+  IS_EMPTY: { label: 'Is empty', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.DATE, DataType.BOOLEAN] },
+  IS_NOT_EMPTY: { label: 'Is not empty', applicableTypes: [DataType.TEXT, DataType.NUMBER, DataType.DATE, DataType.BOOLEAN] },
+  GREATER_THAN: { label: 'Greater than', applicableTypes: [DataType.NUMBER, DataType.DATE] },
+  LESS_THAN: { label: 'Less than', applicableTypes: [DataType.NUMBER, DataType.DATE] },
+};
 
 interface ToolbarProps {
   table: Table;
@@ -111,7 +123,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         const opts = view.viewSpecificOptions as TimelineViewOptions;
         setTimelineStartDateCol(opts.startDateColumnId || null);
         setTimelineEndDateCol(opts.endDateColumnId || null);
-        setTimelineLabelCol(opts.labelColumnId);
+        setTimelineLabelCol(opts.labelColumnId ?? null);
         setIsConfigureTimelineModalOpen(true);
     }
   }
@@ -192,6 +204,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
         <button
           onClick={() => setIsViewDropdownOpen(!isViewDropdownOpen)}
           className="flex items-center px-3 py-1.5 hover:bg-slate-200 rounded-md"
+          title="Switch view"
+          aria-label="Switch view"
         >
           <ViewTypeIconDisplay type={view.type} />
           <EditableText 
@@ -257,6 +271,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
           className="flex items-center px-3 py-1.5 hover:bg-slate-200 rounded-md"
           title="Filter rows"
+ aria-label="Filter rows"
         >
           <FilterIcon className="w-4 h-4 mr-1" /> Filter {view.filters.length > 0 && `(${view.filters.length})`}
         </button>
@@ -267,7 +282,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
                   <SelectInput options={columnOptions} value={filter.columnId} onChange={(val) => onUpdateFilter(filter.id, { columnId: val, value: '' })} /> {/* Reset value on column change */}
                   <SelectInput options={getApplicableFilterOperators(filter.columnId)} value={filter.operator} onChange={(val) => onUpdateFilter(filter.id, { operator: val as FilterOperator })} />
-                   <button onClick={() => onDeleteFilter(filter.id)} className="text-red-500 hover:text-red-700 justify-self-end p-1">
+ <button onClick={() => onDeleteFilter(filter.id)} className="text-red-500 hover:text-red-700 justify-self-end p-1" title="Delete filter" aria-label="Delete filter">
                        <TrashIcon className="w-4 h-4" />
                    </button>
                 </div>
@@ -304,6 +319,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
           onClick={() => setIsSortDropdownOpen(!isSortDropdownOpen)}
           className="flex items-center px-3 py-1.5 hover:bg-slate-200 rounded-md"
           title="Sort rows"
+ aria-label="Sort rows"
         >
           <SortAscendingIcon className="w-4 h-4 mr-1" /> Sort {view.sorts.length > 0 && `(${view.sorts.length})`}
         </button>
@@ -318,7 +334,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                   onChange={(val) => onUpdateSort(sortRule.id, { direction: val as 'ASC' | 'DESC' })}
                   className="w-32"
                 />
-                <button onClick={() => onDeleteSort(sortRule.id)} className="text-red-500 hover:text-red-700 p-1">
+ <button onClick={() => onDeleteSort(sortRule.id)} className="text-red-500 hover:text-red-700 p-1" title="Delete sort rule" aria-label="Delete sort rule">
                   <TrashIcon className="w-4 h-4" />
                 </button>
               </div>
@@ -334,6 +350,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
       <button
         onClick={onAddRow}
         className="ml-auto px-3 py-1.5 text-sm font-medium text-white bg-sky-600 hover:bg-sky-700 rounded-md shadow-sm transition-colors flex items-center"
+ title="Add new row"
       >
         <PlusIcon className="w-4 h-4 mr-1" /> Add Row
       </button>
@@ -345,8 +362,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
         title="Create New View"
         footer={
             <div className="flex justify-end space-x-2">
-                <button onClick={() => setIsAddViewModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md">Cancel</button>
-                <button onClick={handleConfirmAddView} className="px-4 py-2 text-sm text-white bg-sky-600 hover:bg-sky-700 rounded-md">Next</button>
+ <button onClick={() => setIsAddViewModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md" aria-label="Cancel">Cancel</button>
+ <button onClick={handleConfirmAddView} className="px-4 py-2 text-sm text-white bg-sky-600 hover:bg-sky-700 rounded-md" aria-label="Next">Next</button>
             </div>
         }
       >
@@ -367,7 +384,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             size="md"
             footer={
                 <div className="flex justify-end space-x-2">
-                    <button onClick={() => setIsConfigureKanbanModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md">Cancel</button>
+ <button onClick={() => setIsConfigureKanbanModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md" aria-label="Cancel">Cancel</button>
                     <button 
                         onClick={handleConfirmKanbanConfig} 
                         className="px-4 py-2 text-sm text-white bg-sky-600 hover:bg-sky-700 rounded-md"
@@ -402,7 +419,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
             size="md"
             footer={
                 <div className="flex justify-end space-x-2">
-                    <button onClick={() => setIsConfigureTimelineModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md">Cancel</button>
+ <button onClick={() => setIsConfigureTimelineModalOpen(false)} className="px-4 py-2 text-sm text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md" aria-label="Cancel">Cancel</button>
                     <button 
                         onClick={handleConfirmTimelineConfig} 
                         className="px-4 py-2 text-sm text-white bg-sky-600 hover:bg-sky-700 rounded-md"

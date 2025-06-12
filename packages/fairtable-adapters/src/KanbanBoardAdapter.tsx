@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { KanbanView } from '@the-new-fuse/airtable-components';
+import { KanbanView } from '@the-new-fuse/fairtable-components';
 import { 
   Table, 
   View, 
@@ -10,7 +10,7 @@ import {
   DataType, 
   ViewType,
   CellValue 
-} from '@the-new-fuse/airtable-core';
+} from '@the-new-fuse/fairtable-core';
 
 // Legacy interfaces from feature-suggestions
 interface LegacyKanbanColumn {

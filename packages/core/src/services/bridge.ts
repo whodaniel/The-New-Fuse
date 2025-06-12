@@ -1,7 +1,7 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient, RedisClientType } from ''redis';
 import { createLogger, transports, format } from 'winston';
 
-const logger: info',
+const logger: 'info',
     format: format.combine(
         format.colorize(),
         format.timestamp(),

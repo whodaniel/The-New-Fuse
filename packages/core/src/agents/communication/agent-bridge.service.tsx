@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
-import { RedisService } from '../../redis/RedisService.js';
+import { RedisService } from '../../redis/RedisService.tsx';
 import { WebSocketGateway } from '@nestjs/websockets';
 import * as crypto from 'crypto';
 
@@ -11,7 +11,7 @@ interface AgentMessage {
   content: unknown;
   metadata?: Record<string, unknown>;
   timestamp: string;
-  type: 'direct' | 'broadcast';
+  type:direct' | broadcast';
 }
 
 interface MessageValidator {
@@ -35,7 +35,7 @@ export class AgentBridgeService {
     try {
       await this.messageValidator.validate(message);
       
-      const channel = `agent:${message.recipient || 'broadcast'}`;
+      const channel = `agent:${message.recipient || broadcast'}`;
       await this.redisService.set(channel, JSON.stringify(message));
       
       this.logger.log('Message broadcasted', message);
@@ -80,7 +80,7 @@ export class AgentBridgeService {
   }
 
   private async initializeRedisSubscriptions(): Promise<void> {
-    const pattern = 'agent:*';
+    const pattern = agent:*';
     
     // Note: This is a simplified implementation
     // In a real implementation, you'd use Redis pub/sub

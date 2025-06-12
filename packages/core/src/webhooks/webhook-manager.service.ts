@@ -52,7 +52,7 @@ export class WebhookManager {
 
     try {
       // Register webhook with the integration
-      await this.integrationRegistry.executeIntegrationAction(integrationId, 'create_webhook', {
+      await this.integrationRegistry.executeIntegrationAction(integrationId, create_webhook', {
         url,
         secret: webhookSecret,
         eventType
@@ -74,9 +74,9 @@ export class WebhookManager {
       });
 
       return webhookId;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to register webhook for integration ${integrationId}`, {
-        error: error.message
+        error: (error as Error).message
       });
       throw error;
     }
@@ -92,8 +92,8 @@ export class WebhookManager {
     }
 
     // Verify webhook signature if provided
-    if (headers['x-webhook-signature']) {
-      this.verifyWebhookSignature(payload, headers['x-webhook-signature'], webhook.secret);
+    if (headers['x-webhook-signature]) {
+      this.verifyWebhookSignature(payload, headers['x-webhook-signature], webhook.secret);
     }
 
     try {
@@ -127,7 +127,7 @@ export class WebhookManager {
       // Call integration to delete the webhook
       await this.integrationRegistry.executeIntegrationAction(
         webhook.integrationId, 
-        'delete_webhook', 
+        delete_webhook', 
         { webhookId }
       );
       
@@ -135,9 +135,9 @@ export class WebhookManager {
       this.webhooks.delete(webhookId);
       this.logger.info(`Unregistered webhook ${webhookId}`);
       return true;
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to unregister webhook ${webhookId}`, {
-        error: error.message
+        error: (error as Error).message
       });
       throw error;
     }
@@ -160,7 +160,7 @@ export class WebhookManager {
    * Get webhook URL based on ID
    */
   private getWebhookUrl(webhookId: string): string {
-    const baseUrl = this.configService.get<string>('app.baseUrl') || 'http://localhost:3000';
+    const baseUrl = this.configService.get<string>('app.baseUrl') || http://localhost:3000';
     return `${baseUrl}/webhooks/${webhookId}`;
   }
 

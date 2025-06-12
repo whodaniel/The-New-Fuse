@@ -5,7 +5,7 @@ import {
   TimelineWorkflow,
   WorkflowStep
 } from '../types/timeline.js';
-import { TimelineService } from '../services/types.js';
+import { TimelineService } from '../services/types.tsx';
 
 interface UseTimelineProps {
   timelineService: TimelineService;

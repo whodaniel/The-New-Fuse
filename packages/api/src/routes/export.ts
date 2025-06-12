@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { ConversationExportService, ExportFormat } from '@the-new-fuse/core/src/services/ConversationExportService';
+import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
 import { authenticate } from '../middleware/auth.js';
 import { validateBody } from '../middleware/validation.middleware.js';
 import { exportSchema } from '../schemas/export.schema.js';
@@ -11,10 +11,11 @@ const router = Router();
  * Body: { conversation: string, format: "pdf" | "md" | "txt" }
  * Response: PDF or text/markdown file
  */
-router.post('/conversation', authenticate, validateBody(exportSchema), async (req: Request, res: Response) => {
+router.post('/conversation', authenticate, validateBody(exportSchema), async (req: Request, res: Response): Promise<void> => {
   const { conversation, format } = req.body as { conversation: string; format: ExportFormat };
   if (!conversation || !format) {
-    return res.status(400).json({ error: 'Missing conversation or format' });
+    res.status(400).json({ error: 'Missing conversation or format' });
+    return;
   }
   try {
     const buffer = await ConversationExportService.export(conversation, format);

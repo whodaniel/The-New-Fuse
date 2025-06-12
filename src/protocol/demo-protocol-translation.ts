@@ -1,8 +1,8 @@
 // Example usage of the Protocol Translator through the MCP system
 import dotenv from 'dotenv';
-import { MCPServer } from '../mcp/MCPServer.js';
+import { MCPServer } from '../mcp/MCPServer.tsx';
 import { registerProtocolTranslatorTools } from './register-protocol-tools.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 // Load environment variables
 dotenv.config();

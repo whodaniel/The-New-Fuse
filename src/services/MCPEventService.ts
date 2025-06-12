@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { WorkflowMonitoringService } from './WorkflowMonitoringService.js';
 import { AnalyticsIntegrationService } from './AnalyticsIntegrationService.js';
 import { MCPErrorHandlingService } from './MCPErrorHandlingService.js';

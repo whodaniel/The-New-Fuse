@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Node, useReactFlow } from 'reactflow';
 import { FlowRouter } from '../core/routing/flow_router.js';
-import { FlowNode } from '../types/workflow.js';
+import { FlowNode } from '../types/workflow.tsx';
 
 export function useFlowRouter(): any {
   const { getNodes } = useReactFlow();

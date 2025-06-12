@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from ''axios';
 import { Logger } from '../logging.js';
 import { LLMProvider } from '../types/providers.js';
 
@@ -10,7 +10,7 @@ export class ApiClientFactory {
   private defaultConfig: AxiosRequestConfig = {
     timeout: 30000,
     headers: {
-      'Content-Type': 'application/json'
+      Content-Type': application/'json'
     }
   };
 
@@ -29,20 +29,20 @@ export class ApiClientFactory {
       baseURL: provider.baseUrl,
       headers: {
         ...this.defaultConfig.headers,
-        'Authorization': `Bearer ${apiKey}`
+        Authorization': `Bearer ${apiKey}`
       }
     };
 
     // Add provider-specific configurations
     switch (provider.id) {
-      case 'openai':
+      case openai':
         // OpenAI-specific configuration
         break;
-      case 'anthropic':
+      case anthropic':
         // Anthropic-specific configuration
-        config.headers['x-api-version'] = '2023-06-01';
+        config.headers['x-api-version] = 2023-06-01';
         break;
-      case 'mistral':
+      case mistral':
         // Mistral-specific configuration
         break;
       // Add other providers as needed
@@ -55,7 +55,7 @@ export class ApiClientFactory {
       (config) => {
         const redactedConfig = { ...config };
         if (redactedConfig.headers && redactedConfig.headers.Authorization) {
-          redactedConfig.headers.Authorization = 'Bearer [REDACTED]';
+          redactedConfig.headers.Authorization = Bearer [REDACTED]';
         }
         this.logger.debug('API Request', { 
           url: redactedConfig.url,
@@ -76,7 +76,7 @@ export class ApiClientFactory {
         this.logger.debug('API Response', {
           status: response.status,
           provider: provider.id,
-          requestId: response.headers['x-request-id']
+          requestId: response.headers['x-request-id]
         });
         return response;
       },

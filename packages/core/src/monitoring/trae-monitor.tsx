@@ -1,10 +1,10 @@
-import { window, commands, workspace, languages, WebviewPanel } from 'vscode';
+import { window, commands, workspace, languages, WebviewPanel } from ''vscode';
 import { EventEmitter } from 'events';
 
 export class TraeMonitor extends EventEmitter {
   private heartbeatInterval: NodeJS.Timeout | null = null;
   private redisClient: any | null = null;
-  private readonly env: string = process.env.NODE_ENV || 'development';
+  private readonly env: string = process.env.NODE_ENV || development';
 
   private commandHistory: Array<{command: string, args: unknown[], timestamp: Date, source: string}> = [];
 
@@ -35,7 +35,7 @@ export class TraeMonitor extends EventEmitter {
           });
         }
       } catch (error) {
-        this.emit('monitor-error', { 
+        this.emit('monitor-error, { 
           error,
           command: event.command,
           timestamp: new Date() 
@@ -68,7 +68,7 @@ export class TraeMonitor extends EventEmitter {
   private determineSource(event: any): string {
     // Use command metadata for source detection
     return event?.metadata?.source || 
-      (event.command.startsWith('trae.') ? 'trae' : 'user');
+      (event.command.startsWith('trae.') ? 'trae' :'user');
   }
 
   public enableMetricsReporting(intervalMs = 60000) {
@@ -78,7 +78,7 @@ export class TraeMonitor extends EventEmitter {
   private async publishMetrics() {
     const metrics = this.metricsCollector.getMetrics();
     if (this.redisClient) {
-      await this.redisClient.publish('trae:metrics', JSON.stringify({
+      await this.redisClient.publish('trae: 'metrics', JSON.stringify({
         timestamp: new Date().toISOString(),
         metrics
       }));
@@ -125,7 +125,7 @@ export class TraeMonitor extends EventEmitter {
 
   private monitorWebview(panel: WebviewPanel) {
     panel.webview.onDidReceiveMessage(message => {
-      this.emit('webview-message', {
+      this.emit('webview-message, {
         timestamp: Date.now(),
         command: message.command,
         args: message.args,

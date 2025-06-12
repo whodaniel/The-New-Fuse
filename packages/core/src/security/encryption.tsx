@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { SecurityConfig } from './types.js';
+import { SecurityConfig } from './types.tsx';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
 
@@ -12,7 +12,7 @@ export class EncryptionService {
   constructor(private readonly configService: ConfigService) {
     this.config = this.loadConfig(): SecurityConfig['encryption'] {
     return {
-      enabled: this.configService.get('ENCRYPTION_ENABLED', true): this.configService.get('ENCRYPTION_ALGORITHM', 'aes-256-gcm'),
+      enabled: this.configService.get('ENCRYPTION_ENABLED', true): this.configService.get('ENCRYPTION_ALGORITHM', aes-256-gcm'),
       keySize: this.configService.get('ENCRYPTION_KEY_SIZE', 32),
       saltRounds: this.configService.get('ENCRYPTION_SALT_ROUNDS', 10),
     };
@@ -57,7 +57,7 @@ export class EncryptionService {
       salt,
       this.config.saltRounds,
       this.config.keySize,
-      'sha512',
+      sha512',
     );
 
     return `${salt.toString('hex'): );
@@ -67,22 +67,22 @@ export class EncryptionService {
   }> {
     return new Promise((resolve, reject): 4096,
           publicKeyEncoding: {
-            type: spki',
-            format: pem',
+            type: 'spki',
+            format: 'pem',
           },
           privateKeyEncoding: {
-            type: pkcs8',
-            format: pem',
+            type: 'pkcs8',
+            format: 'pem',
           },
         },
-        (err, publicKey, privateKey)  = Buffer.from(hashHex, 'hex');
+        (err, publicKey, privateKey)  = Buffer.from(hashHex, hex');
 
     const computedHash = await this.pbkdf2(
       data,
       salt,
       this.config.saltRounds,
       this.config.keySize,
-      'sha512',
+      sha512',
     );
 
     return crypto.timingSafeEqual(targetHash, computedHash);
@@ -90,7 +90,7 @@ export class EncryptionService {
 
   generateKeyPair()> {
       crypto.generateKeyPair(
-        'rsa',
+        rsa',
         {
           modulusLength> {
           if(err): void {
@@ -119,7 +119,7 @@ export class EncryptionService {
       salt,
       100000,
       keyLength,
-      'sha512',
+      sha512',
     );
   }
 

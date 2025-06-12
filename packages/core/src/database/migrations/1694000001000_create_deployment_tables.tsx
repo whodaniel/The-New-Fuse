@@ -1,4 +1,4 @@
-import { EnhancedDatabaseService } from '../enhanced-database.service.js';
+import { EnhancedDatabaseService } from '../enhanced-database.service.tsx';
 
 export async function up(db: EnhancedDatabaseService): Promise<void> {
     // Create deployments table
@@ -11,7 +11,7 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             started_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             completed_at TIMESTAMP WITH TIME ZONE,
             created_by VARCHAR(255) NOT NULL,
-            metadata JSONB DEFAULT '{}'::jsonb,
+            metadata JSONB DEFAULT {}'::jsonb,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         )
@@ -26,7 +26,7 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             status VARCHAR(50) NOT NULL,
             errors TEXT[] DEFAULT ARRAY[]::TEXT[],
             warnings TEXT[] DEFAULT ARRAY[]::TEXT[],
-            metrics JSONB DEFAULT '{}'::jsonb,
+            metrics JSONB DEFAULT {}'::jsonb,
             created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
         )
     `);
@@ -39,7 +39,7 @@ export async function up(db: EnhancedDatabaseService): Promise<void> {
             metric_name VARCHAR(100) NOT NULL,
             metric_value DOUBLE PRECISION NOT NULL,
             timestamp TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
-            labels JSONB DEFAULT '{}'::jsonb
+            labels JSONB DEFAULT {}'::jsonb
         )
     `);
 

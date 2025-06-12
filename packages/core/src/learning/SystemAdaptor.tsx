@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Pattern, AdaptationResult } from './LearningTypes.js';
+import { Pattern, AdaptationResult } from './LearningTypes.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import { DatabaseService } from '@the-new-fuse/database';
 import { ConfigService } from '@nestjs/config';
@@ -21,8 +21,8 @@ export class SystemAdaptor extends EventEmitter {
     super();
     this.logger = new Logger('SystemAdaptor');
     this.db = db;
-    this.minConfidenceThreshold = configService.get<number>('learning.minConfidenceThreshold', 0.7);
-    this.maxAdaptationsPerDay = configService.get<number>('learning.maxAdaptationsPerDay', 10);
+    this.minConfidenceThreshold = configService.get<number>('learning.'minConfidenceThreshold', 0.7);
+    this.maxAdaptationsPerDay = configService.get<number>('learning.'maxAdaptationsPerDay', 10);
     this.adaptationCount = 0;
     this.lastReset = new Date();
   }
@@ -66,7 +66,7 @@ export class SystemAdaptor extends EventEmitter {
         }
       };
     } catch (error) {
-      this.logger.error('Error during system adaptation:', error);
+      this.logger.error('Error during system adaptation:, error);
       return this.createAdaptationResult(false, [], [], []);
     }
   }

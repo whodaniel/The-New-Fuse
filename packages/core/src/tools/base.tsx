@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable  } from '@nestjs/common;
 
 export interface ToolConfig {
   name: string;
@@ -17,10 +17,10 @@ export abstract class BaseTool {
   }
 
   getDescription(): string {
-    return this.config.description;
+    return this.config.description';
   }
 
   getParameters(): Record<string, unknown> {
-    return this.config.parameters;
+    return this.config.parameters';
   }
 }

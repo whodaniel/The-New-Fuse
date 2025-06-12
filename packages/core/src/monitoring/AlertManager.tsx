@@ -10,21 +10,21 @@ interface AlertRule {
   description: string;
   condition: string;
   threshold: number;
-  severity: low' | 'medium' | 'high' | 'critical';
+  severity: low' | medium' | high' | critical';
   enabled: boolean;
   labels: Record<string, string>;
   actions: AlertAction[];
 }
 
 interface AlertAction {
-  type: email' | 'webhook' | 'slack' | 'notification';
+  type: email' | webhook' | slack' | notification';
   config: Record<string, unknown>;
 }
 
 interface AlertInstance {
   id: string;
   ruleId: string;
-  status: firing' | 'resolved';
+  status: firing' | resolved';
   value: number;
   startsAt: Date;
   endsAt?: Date;
@@ -35,7 +35,7 @@ interface AlertInstance {
 @Injectable()
 export class AlertManager extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private rules: Map<string, AlertRule>;
   private activeAlerts: Map<string, AlertInstance>;
@@ -57,7 +57,7 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Loaded ${rules.length} alert rules`);
     } catch (error: unknown){
-      this.logger.error('Failed to load alert rules:', error): void {
+      this.logger.error('Failed to load alert rules:, error): void {
     for (const rule of this.rules.values()) {
       if (rule.enabled: unknown){
         const interval: Omit<AlertRule, 'id'>): Promise<AlertRule> {
@@ -149,7 +149,7 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
       if (result > rule.threshold `$ {rule.id} {
       id: alertId,
       ruleId: rule.id,
-      status: firing',
+      status: 'firing',
       value,
       startsAt: new Date(): rule.labels,
       annotations: {
@@ -160,14 +160,14 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
     }
 
     alert.status  = this.activeAlerts.get(alertId);
-    if (!alert || alert.status === 'resolved' 'resolved';
+    if (!alert || alert.status === 'resolvedresolved';
     alert.endsAt = new Date();
 
     // Update in database
     await this.db.alertInstances.update({
       where: { id: alertId },
       data: {
-        status: resolved',
+        status: 'resolved',
         endsAt: alert.endsAt
       }
     });
@@ -193,13 +193,13 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
     for (const action of rule.actions: unknown){
       try {
         switch (action.type: unknown){
-          case 'email':
+          case email':
             await this.sendEmail(action.config, alert): await this.callWebhook(action.config, alert);
             break;
-          case 'slack':
+          case slack':
             await this.sendSlackNotification(action.config, alert);
             break;
-          case 'notification':
+          case notification':
             await this.sendNotification(action.config, alert);
             break;
         }
@@ -236,7 +236,7 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
 
   async getActiveAlerts(): Promise<void> {
     options: {
-      severity?: low' | 'medium' | 'high' | 'critical';
+      severity?: low' | medium' | high' | critical';
       labels?: Record<string, string>;
     }  = Array.from(this.activeAlerts.values())
       .filter(alert => alert.ruleId === ruleId);
@@ -256,7 +256,7 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
       startTime?: Date;
       endTime?: Date;
       ruleId?: string;
-      severity?: low' | 'medium' | 'high' | 'critical';
+      severity?: low' | medium' | high' | critical';
     } = {}
   ): Promise<AlertInstance[]> {
     return this.db.alertInstances.findMany({
@@ -267,7 +267,7 @@ export class AlertManager extends EventEmitter implements OnModuleInit {
           lte: options.endTime
         }
       },
-      orderBy: { startsAt: desc' }
+      orderBy: { startsAt: 'desc' }
     }): Promise<void> {
     // Clear intervals
     for (const interval of this.checkIntervals.values()) {

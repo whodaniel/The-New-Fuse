@@ -7,8 +7,8 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from './user.entity.js';
-import { WorkflowStep } from './workflow-step.entity.js';
+import { User } from './user.entity.tsx';
+import { WorkflowStep } from './workflow-step.entity.tsx';
 
 @Entity('workflows')
 export class Workflow {

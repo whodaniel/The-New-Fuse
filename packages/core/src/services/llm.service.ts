@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import OpenAI from "openai";
+import { ConfigService  } from '@nestjs/config';
+import OpenAI from "openai"';
 import Anthropic from '@anthropic-ai/sdk';
 import { Redis } from 'ioredis';
 import { PromptTemplate } from '../types/prompt.types.js';
@@ -27,27 +27,27 @@ export class LLMService {
         private readonly configService: ConfigService,
     ) {
         this.providers = new Map();
-        this.defaultProvider = this.configService.get<string>('llm.defaultProvider', 'openai');
+        this.defaultProvider = this.configService.get<string>('llm.'defaultProvider', openai');
         this.initializeProviders();
-        this.cache = new Redis({
-            host: this.configService.get<string>('redis.host', 'localhost'),
-            port: this.configService.get<number>('redis.port', 6379),
-            db: this.configService.get<number>('redis.db', 0),
+        this.cache = new (Redis as any)({
+            host: this.configService.get<string>('redis.'host', localhost'),
+            port: this.configService.get<number>('redis.'port', 6379),
+            db: this.configService.get<number>('redis.'db', 0),
         });
     }
 
     private async initializeProviders(): Promise<void> {
-        const providers = this.configService.get<Record<string, LLMProviderConfig>>('llm.providers', {});
+        const providers = this.configService.get<Record<string, LLMProviderConfig>>('llm.'providers', {});
         
         for (const [name, config] of Object.entries(providers)) {
             switch(name) {
-                case 'openai':
+                case openai':
                     this.providers.set(name, new OpenAI({
                         apiKey: config.apiKey,
                         baseURL: config.baseUrl,
                     }));
                     break;
-                case 'anthropic':
+                case anthropic':
                     this.providers.set(name, new Anthropic({
                         apiKey: config.apiKey,
                     }));
@@ -80,10 +80,10 @@ export class LLMService {
             let result: CompletionResult;
             
             switch (provider) {
-                case 'openai':
+                case openai':
                     result = await this.completeWithOpenAI(llm, prompt, config);
                     break;
-                case 'anthropic':
+                case anthropic':
                     result = await this.completeWithAnthropic(llm, prompt, config);
                     break;
                 default:
@@ -94,13 +94,13 @@ export class LLMService {
             await this.cache.set(
                 cacheKey,
                 JSON.stringify(result),
-                'EX',
+                EX',
                 3600 // 1 hour cache
             );
 
             return result;
         } catch (error) {
-            console.error('LLM completion failed:', error);
+            console.error('LLM completion failed:, error);
             throw error;
         }
     }
@@ -110,10 +110,10 @@ export class LLMService {
         prompt: string | PromptTemplate,
         config?: CompletionConfig
     ): Promise<CompletionResult> {
-        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
+        const promptText = typeof prompt === string' ? prompt : prompt.render({});
         
         const response = await llm.chat.completions.create({
-            model: config?.model || 'gpt-4',
+            model: config?.model || gpt-4',
             messages: [{ role: 'user', content: promptText }],
             temperature: config?.temperature || 0.7,
             max_tokens: config?.maxTokens || 2000,
@@ -123,9 +123,9 @@ export class LLMService {
         });
 
         return {
-            text: response.choices[0].message.content || '',
+            text: response.choices[0].message.content || ,
             provider: 'openai',
-            model: config?.model || 'gpt-4',
+            model: config?.model || gpt-4',
             usage: {
                 promptTokens: response.usage?.prompt_tokens || 0,
                 completionTokens: response.usage?.completion_tokens || 0,
@@ -140,10 +140,10 @@ export class LLMService {
         prompt: string | PromptTemplate,
         config?: CompletionConfig
     ): Promise<CompletionResult> {
-        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
+        const promptText = typeof prompt === string' ? prompt : prompt.render({});
         
         const response = await llm.messages.create({
-            model: config?.model || 'claude-3-sonnet-20240229',
+            model: config?.model || claude-3-sonnet-20240229',
             max_tokens: config?.maxTokens || 2000,
             messages: [{ role: 'user', content: promptText }],
             temperature: config?.temperature || 0.7,
@@ -155,7 +155,7 @@ export class LLMService {
         return {
             text: message.content,
             provider: 'anthropic',
-            model: config?.model || 'claude-3-sonnet-20240229',
+            model: config?.model || claude-3-sonnet-20240229',
             usage: {
                 promptTokens: message.usage.promptTokens,
                 completionTokens: message.usage.completionTokens,
@@ -179,7 +179,7 @@ export class LLMService {
     }
 
     private getCacheKey(prompt: string | PromptTemplate, config?: CompletionConfig): string {
-        const promptText = typeof prompt === 'string' ? prompt : prompt.render({});
+        const promptText = typeof prompt === string' ? prompt : prompt.render({});
         const configStr = JSON.stringify(config || {});
         return `llm:${promptText}:${configStr}`;
     }

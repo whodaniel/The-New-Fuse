@@ -1,5 +1,6 @@
-import { WorkflowBuilder } from './WorkflowBuilder.js';
-import { WorkflowDefinition, WorkflowStep } from '../types.js';
+import { WorkflowBuilder } from './WorkflowBuilder.tsx';
+import { WorkflowDefinition, WorkflowStep } from '../types.tsx';
+import { communicationFlowTemplate } from '@the-new-fuse/core/src/workflow/communicationFlowTemplate';
 
 // Define a workflow template interface that extends the builder
 interface WorkflowTemplate extends WorkflowBuilder {
@@ -38,7 +39,7 @@ export class WorkflowTemplateManager {
       id: 'data-processing',
       name: 'Data Processing',
       description: 'A template for processing data with standard steps',
-      createWorkflow: (customSteps) => {
+      createWorkflow: (customSteps?: WorkflowStep[]) => {
         const builder = new WorkflowBuilder('data-processing', 'Data Processing');
         
         // Add default steps for data processing
@@ -61,7 +62,7 @@ export class WorkflowTemplateManager {
         
         // Add custom steps if provided
         if (customSteps) {
-          customSteps.forEach(step: WorkflowStep => builder.addStep(step));
+          customSteps.forEach((step: WorkflowStep) => builder.addStep(step));
         }
         
         return builder.build();
@@ -74,7 +75,7 @@ export class WorkflowTemplateManager {
       id: 'conditional',
       name: 'Conditional Workflow',
       description: 'A template for workflows with conditional branches',
-      createWorkflow: (customSteps) => {
+      createWorkflow: (customSteps?: WorkflowStep[]) => {
         const builder = new WorkflowBuilder('conditional', 'Conditional Workflow');
         
         // Add default steps with conditions
@@ -119,7 +120,7 @@ export class WorkflowTemplateManager {
         
         // Add custom steps if provided
         if (customSteps) {
-          customSteps.forEach(step: WorkflowStep => builder.addStep(step));
+          customSteps.forEach((step: WorkflowStep) => builder.addStep(step));
         }
         
         return builder.build();
@@ -130,6 +131,9 @@ export class WorkflowTemplateManager {
     this.templates.set(emptyTemplate.id, emptyTemplate);
     this.templates.set(dataProcessingTemplate.id, dataProcessingTemplate);
     this.templates.set(conditionalTemplate.id, conditionalTemplate);
+    
+    // Register generic communication flow template
+    this.templates.set(communicationFlowTemplate.id, communicationFlowTemplate);
   }
   
   /**

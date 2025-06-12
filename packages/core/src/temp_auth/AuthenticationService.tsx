@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import { Logger } from '@the-new-fuse/utils';
 import { DatabaseService } from '@the-new-fuse/database';
 import { Redis as RedisClient } from 'ioredis';
-import { TokenManager } from './TokenManager.js';
+import { TokenManager } from './TokenManager.tsx';
 import { UserService } from '../services/UserService.js';
 import { compare, hash } from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
@@ -14,7 +14,7 @@ import {
   AuthEventType,
   AuthEvent,
   TokenPayload
-} from './AuthTypes.js';
+} from './AuthTypes.tsx';
 
 @Injectable()
 export class AuthenticationService extends EventEmitter {
@@ -46,7 +46,7 @@ export class AuthenticationService extends EventEmitter {
       const user = await this.userService.findByUsername(username);
       
       if (!user) {
-        await this.recordLoginAttempt(username, false, deviceInfo.ip, 'User not found');
+        await this.recordLoginAttempt(username, false, deviceInfo.ip, User not found');
         throw new Error('Invalid credentials');
       }
 
@@ -54,13 +54,13 @@ export class AuthenticationService extends EventEmitter {
       const isPasswordValid = await compare(password, user.password);
       
       if (!isPasswordValid) {
-        await this.recordLoginAttempt(user.id, false, deviceInfo.ip, 'Invalid password');
+        await this.recordLoginAttempt(user.id, false, deviceInfo.ip, Invalid password');
         throw new Error('Invalid credentials');
       }
 
       // Check if account is locked
       if (await this.isAccountLocked(user.id)) {
-        await this.recordLoginAttempt(user.id, false, deviceInfo.ip, 'Account locked');
+        await this.recordLoginAttempt(user.id, false, deviceInfo.ip, Account locked');
         throw new Error('Account is locked');
       }
 
@@ -76,7 +76,7 @@ export class AuthenticationService extends EventEmitter {
         session
       };
     } catch (error) {
-      this.logger.error('Login failed:', error as Error);
+      this.logger.error('Login failed:, error as Error);
       throw error;
     }
   }
@@ -102,7 +102,7 @@ export class AuthenticationService extends EventEmitter {
         sessionId
       });
     } catch (error) {
-      this.logger.error('Logout failed:', error as Error);
+      this.logger.error('Logout failed:, error as Error);
       throw error;
     }
   }
@@ -177,7 +177,7 @@ export class AuthenticationService extends EventEmitter {
         refreshToken: newRefreshToken
       };
     } catch (error) {
-      this.logger.error('Token refresh failed:', error as Error);
+      this.logger.error('Token refresh failed:, error as Error);
       throw error;
     }
   }
@@ -237,7 +237,7 @@ export class AuthenticationService extends EventEmitter {
       // Record password change event
       await this.recordAuthEvent(userId, AuthEventType.PASSWORD_CHANGE);
     } catch (error) {
-      this.logger.error('Password change failed:', error as Error);
+      this.logger.error('Password change failed:, error as Error);
       throw error;
     }
   }
@@ -303,8 +303,8 @@ export class AuthenticationService extends EventEmitter {
     const lockKey = `account_lock:${userId}`;
     await this.redis.set(
       lockKey,
-      'locked',
-      'EX',
+      locked',
+      EX',
       this.config.lockoutDuration
     );
   }

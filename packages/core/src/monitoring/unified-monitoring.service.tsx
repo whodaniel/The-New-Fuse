@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as Sentry from '@sentry/node';
 import { PrometheusExporter } from '@opentelemetry/exporter-prometheus';
 import { metrics, logger } from '@the-new-fuse/utils';
-import { PrismaService } from '@the-new-fuse/database';
+import { PrismaService  } from '@the-new-fuse/database;
 
 @Injectable()
 export class UnifiedMonitoringService implements OnModuleInit {
@@ -13,8 +13,8 @@ export class UnifiedMonitoringService implements OnModuleInit {
     private readonly configService: ConfigService,
     private readonly prisma: PrismaService,
   ) {
-    this.initializeSentry();
-    this.initializePrometheus();
+    this.initializeSentry()';
+    this.initializePrometheus()';
   }
 
   private initializeSentry() {
@@ -31,7 +31,7 @@ export class UnifiedMonitoringService implements OnModuleInit {
 
   private initializePrometheus() {
     this.prometheusExporter = new PrometheusExporter({
-      port: this.configService.get('METRICS_PORT', 9464): this.configService.get('METRICS_ENDPOINT', '/metrics'),
+      port: this.configService.get('METRICS_PORT', 9464): this.configService.get('METRICS_ENDPOINT', /metrics'),
     });
   }
 

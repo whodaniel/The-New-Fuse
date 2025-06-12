@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { MetricsProcessor } from './metricsProcessor.js';
-import { CircuitBreaker } from '../resilience/CircuitBreaker.js';
+import { MetricsProcessor } from './metricsProcessor.tsx';
+import { CircuitBreaker } from '../resilience/CircuitBreaker.tsx';
 import { DatabaseService } from '@the-new-fuse/database';
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'events';
@@ -39,7 +39,7 @@ export interface SecurityPolicy {
 export interface SecurityConfig {
   enabled: boolean;
   policies: SecurityPolicy[];
-  defaultAction: allow' | 'deny';
+  defaultAction: allow' | deny';
   encryptionKey?: string;
   jwtSecret?: string;
   encryption: {
@@ -60,7 +60,7 @@ export interface SecurityConfig {
 }
 
 const securityPolicySchema: z.string(): z.string().optional(),
-  level: z.enum(['low', 'medium', 'high', 'critical']),
+  level: z.enum(['low', medium', high', critical']),
   allowedPatterns: z.array(z.string()),
   blockedPatterns: z.array(z.string()),
   maxMessageSize: z.number().positive(),
@@ -74,7 +74,7 @@ const securityPolicySchema: z.string(): z.string().optional(),
 @Injectable()
 export class SecurityService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private config: SecurityConfig;
   private policies: Map<string, SecurityPolicy>;
@@ -87,7 +87,7 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
     super();
     this.logger  = z.object({
   name new Logger('SecurityService');
-    this.redis = new Redis((process as any).env.REDIS_URL);
+    this.redis = new (Redis as any)((process as any).env.REDIS_URL);
     this.db = new DatabaseService();
     this.policies = new Map();
     
@@ -95,7 +95,7 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
     this.config = {
       enabled: true,
       policies: [],
-      defaultAction: deny'
+      defaultAction: 'deny'
     };
 
     // Initialize encryption key and JWT secret
@@ -110,16 +110,16 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
           ...config
         };
 
-        if(config.encryptionKey Buffer.from(config.encryptionKey, 'hex')): void {
+        if(config.encryptionKey Buffer.from(config.encryptionKey, hex')): void {
           this.jwtSecret = config.jwtSecret;
         }
       }
     } catch (error): void {
-      this.logger.error('Failed to load security config:', error);
+      this.logger.error('Failed to load security config:, error);
       throw new Error('Security configuration load failure');
     }
     try {
-      const policies: { priority: desc' }
+      const policies: { priority: 'desc' }
       });
 
       for (const policy of policies: unknown){
@@ -128,7 +128,7 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
 
       this.logger.info(`Loaded ${policies.length} security policies`);
     } catch (error: unknown){
-      this.logger.error('Failed to load security policies:', error): Omit<SecurityPolicy, 'id' | 'createdAt' | 'updatedAt'>): Promise<SecurityPolicy> {
+      this.logger.error('Failed to load security policies:, error): Omit<SecurityPolicy, 'id' | createdAt' | 'updatedAt'>): Promise<SecurityPolicy> {
     try {
       // Validate policy
       securityPolicySchema.parse(policy): SecurityPolicy  = await this.db.securityPolicies.findMany( {
@@ -145,7 +145,7 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
 
       // Update local cache
       this.policies.set(newPolicy.id, newPolicy)): void {
-      this.logger.error('Failed to create security policy:', error): string, updates: Partial<SecurityPolicy>): Promise<SecurityPolicy> {
+      this.logger.error('Failed to create security policy:, error): string, updates: Partial<SecurityPolicy>): Promise<SecurityPolicy> {
     try {
       const policy: SecurityPolicy  = this.policies.get(id)): void {
         throw new Error(`Policy ${id} not found`);
@@ -210,11 +210,11 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
 
       return JSON.stringify(result);
     } catch (error): void {
-      this.logger.error('Failed to encrypt message:', error): string): Promise<any> {
+      this.logger.error('Failed to encrypt message:, error): string): Promise<any> {
     try {
-      const { iv, encrypted, authTag }  = crypto.createCipheriv('aes-256-gcm', this.encryptionKey, iv)): void {
-      this.logger.error('Failed to decrypt message:', error): unknown, options: jwt.SignOptions   = Buffer.concat([
-        cipher.update(JSON.stringify(message), 'utf8'),
+      const { iv, encrypted, authTag }  = crypto.createCipheriv('aes-256-gcm, this.encryptionKey, iv)): void {
+      this.logger.error('Failed to decrypt message:, error): unknown, options: jwt.SignOptions   = Buffer.concat([
+        cipher.update(JSON.stringify(message), utf8'),
         cipher.final()
       ]);
 
@@ -224,16 +224,16 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
         iv JSON.parse(encryptedMessage): Promise<string> {
     try {
       return jwt.sign(payload, this.jwtSecret, {
-        expiresIn: 1h',
+        expiresIn: 1'h',
         ...options
       })): void {
-      this.logger.error('Failed to generate token:', error): string): Promise<any> {
+      this.logger.error('Failed to generate token:, error): string): Promise<any> {
     try {
       return jwt.verify(token, this.jwtSecret)): void {
       this.logger.error('Failed to verify token:', error): Partial<SecurityConfig>): Promise<void> {
     try {
       this.config  = Buffer.concat([
-        decipher.update(Buffer.from(encrypted, 'hex')),
+        decipher.update(Buffer.from(encrypted, hex')),
         decipher.final()
       ]);
 
@@ -244,14 +244,14 @@ export class SecurityService extends EventEmitter implements OnModuleInit {
       };
 
       await this.db.securityConfig.upsert({
-        where: { id: default' },
+        where: { id: 'default' },
         update: updates,
         create: {
-          id: default',
+          id: 'default',
           ...this.config
         }
       })): void {
-        this.encryptionKey = Buffer.from(updates.encryptionKey, 'hex')): void {
+        this.encryptionKey = Buffer.from(updates.encryptionKey, hex')): void {
         this.jwtSecret = updates.jwtSecret;
       }
 

@@ -17,14 +17,14 @@ import {
   useDisclosure,
   Select
 } from '@chakra-ui/react';
-import { PromptEditor } from './PromptEditor.js';
-import { VariableManager } from './VariableManager.js';
-import { TestCaseManager } from './TestCaseManager.js';
-import { ResultsViewer } from './ResultsViewer.js';
-import { VersionHistory } from './VersionHistory.js';
-import { PromptSaveModal } from './PromptSaveModal.js';
-import { usePromptTemplates } from '../../hooks/usePromptTemplates.js';
-import { useModels } from '../../hooks/useModels.js';
+import { PromptEditor } from './PromptEditor.tsx';
+import { VariableManager } from './VariableManager.tsx';
+import { TestCaseManager } from './TestCaseManager.tsx';
+import { ResultsViewer } from './ResultsViewer.tsx';
+import { VersionHistory } from './VersionHistory.tsx';
+import { PromptSaveModal } from './PromptSaveModal.tsx';
+import { usePromptTemplates } from '../../hooks/usePromptTemplates.tsx';
+import { useModels } from '../../hooks/useModels.tsx';
 
 export const PromptWorkbench: React.FC = () => {
   const toast = useToast();
@@ -104,10 +104,10 @@ export const PromptWorkbench: React.FC = () => {
         title: 'Generation complete',
         status: 'success',
       });
-    } catch (error) {
+    } catch (error: unknown) {
       toast({
         title: 'Generation failed',
-        description: error.message,
+        description: (error as Error).message,
         status: 'error',
       });
     } finally {

@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import type { AgentCapability } from '@fuse/types/core';
 export interface DevelopmentProposal {
     component: string;

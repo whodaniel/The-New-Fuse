@@ -1,5 +1,5 @@
 import { ChatService } from '../services/chat.service.js';
-import { CreateMessageDto } from '../dtos/message.dto.js';
+import { CreateMessageDto } from '../dtos/message.dto.tsx';
 export declare class ChatController {
     private readonly chatService;
     constructor(chatService: ChatService);

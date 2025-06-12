@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM oven/bun:1
 
 # ensure we can run dev server on 0.0.0.0
 ENV HOST=0.0.0.0
@@ -6,10 +6,11 @@ ENV HOST=0.0.0.0
 WORKDIR /project
 
 # Copy root package manifests and lockfile
-COPY package.json yarn.lock .yarnrc.yml .yarn .
+COPY package.json ./
+COPY bun.lockb* ./
 # Copy frontend package manifest
 COPY apps/frontend/package.json apps/frontend/
-# Copy all workspace package.json files for Yarn workspaces compatibility
+# Copy all workspace package.json files for Bun workspaces compatibility
 COPY packages/api/package.json packages/api/
 COPY packages/api-client/package.json packages/api-client/
 COPY packages/api-core/package.json packages/api-core/
@@ -39,10 +40,8 @@ COPY packages/integrations/package.json packages/integrations/
 COPY apps/chrome-extension/package.json apps/chrome-extension/
 COPY apps/frontend/package.json apps/frontend/
 
-# Enable Corepack and activate Yarn 4.9.1
-RUN corepack enable && corepack prepare yarn@4.9.1 --activate
 # Install all dependencies to support workspaces
-RUN yarn install
+RUN bun install
 # Copy the rest of the workspace source
 COPY packages/api packages/api
 COPY packages/api-client packages/api-client
@@ -85,4 +84,4 @@ WORKDIR /project/apps/frontend
 EXPOSE 3000
 
 # Start Vite dev server, binding to all interfaces
-CMD ["yarn", "dev", "--host", "0.0.0.0"]
+CMD ["bun", "run", "dev", "--host", "0.0.0.0"]

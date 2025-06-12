@@ -56,7 +56,7 @@ export class ValidationError extends ApplicationError {
       message,
       ErrorCategory.VALIDATION,
       ErrorSeverity.MEDIUM,
-      'VALIDATION_ERROR',
+      VALIDATION_ERROR',
       metadata
     );
     this.validationErrors = validationErrors;

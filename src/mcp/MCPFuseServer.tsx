@@ -1,7 +1,7 @@
 import { Logger } from "@/utils/logger";
 import { MCPAgentServer, MCPChatServer, MCPWorkflowServer } from './servers.js';
 import { MCPServerOptions, MCPToolParams, MCPServer } from './types.js';
-import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.js';
+import { MCPFileCoordinationServer } from './MCPFileCoordinationServer.tsx';
 
 export class MCPFuseServer {
   protected readonly logger = new Logger(MCPFuseServer.name);

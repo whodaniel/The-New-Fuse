@@ -1,8 +1,8 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { AgentCommunicationBridge } from './AgentCommunicationBridge.js';
-import { GDesignerService } from '../integrations/GDesignerService.js';
-import { MetricsProcessor } from '../security/metricsProcessor.js';
+import { AgentCommunicationBridge } from './AgentCommunicationBridge.tsx';
+import { GDesignerService } from '../integrations/GDesignerService.tsx';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
 
 const logger: Logger = getLogger('agent_workflow');
 

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ExportController } from '../controllers/export.controller.js';
-import { ConversationExportService } from '@the-new-fuse/core/src/services/ConversationExportService';
+import { ConversationExportService } from '@the-new-fuse/core';
 
 @Module({
   controllers: [ExportController],

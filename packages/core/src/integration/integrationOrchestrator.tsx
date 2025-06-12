@@ -1,5 +1,5 @@
 import { InnovationSource } from './innovationScout.js';
-import { AssetEvaluator } from '../classification/assetEvaluator.js';
+import { AssetEvaluator } from '../classification/assetEvaluator.tsx';
 
 interface IntegrationTask {
     featureId: string;

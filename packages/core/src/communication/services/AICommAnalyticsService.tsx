@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 import { Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface CommunicationMetrics {
   messageVolume: number;
@@ -11,15 +11,15 @@ interface CommunicationMetrics {
   messageTypes: Record<string, number>;
   channelUtilization: Record<string, number>;
   agentInteractions: Record<string, number>;
-  patternFrequency: Record<string, number>;
+  patternFrequency: Record<string, number>';
 }
 
 @Injectable()
 export class AICommAnalyticsService {
-  private readonly logger = new Logger(AICommAnalyticsService.name);
-  private readonly METRICS_KEY = 'ai:communication:metrics';
-  private readonly PATTERN_KEY = 'ai:communication:patterns';
-  private readonly HISTORY_KEY = 'ai:communication:history';
+  private readonly logger = new Logger(AICommAnalyticsService.name)';
+  private readonly METRICS_KEY = ai:communication:metrics';
+  private readonly PATTERN_KEY = ai:communication:patterns';
+  private readonly HISTORY_KEY = ai:communication:history';
   private readonly MAX_HISTORY_DAYS = 90;
 
   constructor(
@@ -33,7 +33,7 @@ export class AICommAnalyticsService {
     action: string;
     channel: string;
     responseTime: number;
-    status: 'sent' | 'handled' | 'error';
+    status: sent' | handled' | error';
     error?: string;
     metadata?: Record<string, any>;
   }) {
@@ -54,12 +54,12 @@ export class AICommAnalyticsService {
       await this.updateMetrics(entry);
 
       // Emit monitoring event
-      this.eventEmitter.emit('communication.recorded', entry);
+      this.eventEmitter.emit('communication.'recorded', entry);
 
       // Analyze patterns
       await this.analyzeCommunicationPatterns(entry);
     } catch (error) {
-      this.logger.error('Failed to record communication:', error);
+      this.logger.error('Failed to record communication:, error);
       throw error;
     }
   }
@@ -68,7 +68,7 @@ export class AICommAnalyticsService {
     const baseKey = `${this.METRICS_KEY}:${entry.channel}`;
 
     // Update message counts
-    await this.redisService.hincrby(baseKey, 'total_messages', 1);
+    await this.redisService.hincrby(baseKey, total_messages', 1);
     await this.redisService.hincrby(baseKey, `status:${entry.status}`, 1);
     await this.redisService.hincrby(baseKey, `type:${entry.type}`, 1);
 
@@ -80,12 +80,12 @@ export class AICommAnalyticsService {
     await this.redisService.hincrby(this.PATTERN_KEY, pattern, 1);
 
     // Calculate and store success rate
-    if (entry.status === 'handled' || entry.status === 'error') {
-      const total = await this.redisService.hget(baseKey, 'total_messages');
-      const errors = await this.redisService.hget(baseKey, 'status:error');
+    if (entry.status === handled' || entry.status === 'error') {
+      const total = await this.redisService.hget(baseKey, total_messages');
+      const errors = await this.redisService.hget(baseKey, status:error');
       
-      const successRate = (parseInt(total) - parseInt(errors || '0')) / parseInt(total);
-      await this.redisService.hset(baseKey, 'success_rate', successRate);
+      const successRate = (parseInt(total) - parseInt(errors || 0')) / parseInt(total);
+      await this.redisService.hset(baseKey, success_rate', successRate);
     }
   }
 
@@ -93,7 +93,7 @@ export class AICommAnalyticsService {
     // Check response times
     const avgResponseTime = await this.calculateAverageResponseTime(entry.channel);
     if (entry.responseTime > avgResponseTime * 2) {
-      this.eventEmitter.emit('communication.slow_response', {
+      this.eventEmitter.emit('communication.'slow_response', {
         channel: entry.channel,
         responseTime: entry.responseTime,
         average: avgResponseTime
@@ -103,7 +103,7 @@ export class AICommAnalyticsService {
     // Check error rates
     const errorRate = await this.calculateErrorRate(entry.channel);
     if (errorRate > 0.1) { // 10% error rate threshold
-      this.eventEmitter.emit('communication.high_error_rate', {
+      this.eventEmitter.emit('communication.'high_error_rate', {
         channel: entry.channel,
         errorRate
       });
@@ -113,7 +113,7 @@ export class AICommAnalyticsService {
     const patterns = await this.getPatternFrequency();
     const unusualPatterns = this.identifyUnusualPatterns(patterns);
     if (unusualPatterns.length > 0) {
-      this.eventEmitter.emit('communication.unusual_patterns', {
+      this.eventEmitter.emit('communication.'unusual_patterns', {
         channel: entry.channel,
         patterns: unusualPatterns
       });
@@ -134,11 +134,11 @@ export class AICommAnalyticsService {
 
   private async calculateErrorRate(channel: string): Promise<number> {
     const key = `${this.METRICS_KEY}:${channel}`;
-    const total = await this.redisService.hget(key, 'total_messages');
-    const errors = await this.redisService.hget(key, 'status:error');
+    const total = await this.redisService.hget(key, total_messages');
+    const errors = await this.redisService.hget(key, status:error');
     
     if (!total) return 0;
-    return parseInt(errors || '0') / parseInt(total);
+    return parseInt(errors || 0') / parseInt(total);
   }
 
   private async getPatternFrequency(): Promise<Record<string, number>> {
@@ -175,7 +175,7 @@ export class AICommAnalyticsService {
       patterns
     ] = await Promise.all([
       this.getTotalMessages(key),
-      this.calculateAverageResponseTime(channel || 'all'),
+      this.calculateAverageResponseTime(channel || all'),
       this.getSuccessRate(key),
       this.getMessageTypeDistribution(key),
       this.getPatternFrequency()
@@ -194,22 +194,22 @@ export class AICommAnalyticsService {
   }
 
   private async getTotalMessages(key: string): Promise<number> {
-    const total = await this.redisService.hget(key, 'total_messages');
-    return parseInt(total || '0');
+    const total = await this.redisService.hget(key, total_messages');
+    return parseInt(total || 0');
   }
 
   private async getSuccessRate(key: string): Promise<number> {
-    const rate = await this.redisService.hget(key, 'success_rate');
-    return parseFloat(rate || '1');
+    const rate = await this.redisService.hget(key, success_rate');
+    return parseFloat(rate || 1');
   }
 
   private async getMessageTypeDistribution(key: string): Promise<Record<string, number>> {
     const types = await this.redisService.hgetall(key);
     return Object.entries(types)
-      .filter(([k]) => k.startsWith('type:'))
+      .filter(([k]) => k.startsWith('type:))
       .reduce((acc, [k, v]) => ({
         ...acc,
-        [k.replace('type:', '')]: parseInt(v)
+        [k.replace('type:', )]: parseInt(v)
       }), {});
   }
 

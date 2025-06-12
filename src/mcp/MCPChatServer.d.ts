@@ -1,4 +1,4 @@
-import { MCPServer, MCPServerOptions } from './MCPServer.js';
+import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
 /**
  * MCP Server implementation for the Chat System
  * Provides capabilities for contextual messaging and code collaboration

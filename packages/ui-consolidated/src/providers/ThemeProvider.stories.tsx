@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider.js';
+import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider.tsx';
 import { Button } from '../components/Button.js';
-import { Card } from '../components/Card.js';
+import { Card } from '../components/Card.tsx';
 import { Input } from '../components/Input.js';
 import { Select } from '../components/Select';
 import { Checkbox } from '../components/Checkbox';

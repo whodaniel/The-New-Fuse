@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from '../utils/cn.js'; // Added file extension
+import { cn } from '../utils/cn.tsx'; // Added file extension
 
 export interface TextareaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {

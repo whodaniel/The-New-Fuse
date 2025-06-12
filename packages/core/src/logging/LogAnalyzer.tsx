@@ -1,4 +1,4 @@
-import { injectable, inject } from 'inversify';
+import { injectable, inject } from ''inversify';
 import { LoggingService } from './LoggingService.js';
 
 export interface LogAnalysis {

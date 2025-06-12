@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket.js';
-import { Card, CardHeader, CardContent } from './ui/card.js';
-import { Button } from './ui/button.js';
+import { Card, CardHeader, CardContent } from './ui/card.tsx';
+import { Button } from './ui/button.tsx';
 import { Alert } from './ui/alert.js';
 import { Tooltip } from './ui/tooltip.js';
 import { useSession } from '@your-org/security/react';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select.js';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from './ui/dialog.js';
-import { Badge } from './ui/badge.js';
+import { Badge } from './ui/badge.tsx';
 import { format } from 'date-fns';
 
 interface Connection {

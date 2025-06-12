@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { LoginForm } from './LoginForm.js';
-import { useAuthContext } from '../../providers/AuthProvider.js';
+import { LoginForm } from './LoginForm.tsx';
+import { useAuthContext } from '../../providers/AuthProvider.tsx';
 
 // Mock the auth context
 jest.mock('../../providers/AuthProvider', () => ({

@@ -6,8 +6,8 @@ import {
     UpdateDateColumn,
     ManyToOne,
     JoinColumn
-} from 'typeorm';
-import { User } from './User.js';
+} from ''typeorm';
+import { User } from './User.tsx';
 
 @Entity('tasks')
 export class Task {
@@ -24,7 +24,7 @@ export class Task {
     description!: string | null;
 
     @Column({ length: 20, default: 'pending' })
-    status!: 'pending' | 'in_progress' | 'completed' | 'failed';
+    status!: pending' | in_progress' | completed' | failed';
 
     @Column({ type: 'int', default: 1 })
     priority!: number;

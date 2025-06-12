@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 import { MCPMessage } from '../../types/mcp.js';
 import { ProtocolAdapterRegistry } from '../../protocols/ProtocolAdapterRegistry.js';
 

@@ -29,11 +29,11 @@ function setup_project() {
     fi
     
     # Install dependencies
-    yarn install
+    bun install
     
     # Initialize database
-    yarn workspace @the-new-fuse/database generate
-    yarn workspace @the-new-fuse/database migrate
+    cd packages/database && bun run generate && cd ../..
+    cd packages/database && bun run migrate && cd ../..
     
     echo -e "${GREEN}✅ Setup complete!${NC}"
 }
@@ -43,12 +43,17 @@ function build_project() {
     echo -e "${BLUE}🏗️  Building project for ${env}...${NC}"
     
     # Build core packages first
-    yarn workspace @the-new-fuse/types build
-    yarn workspace @the-new-fuse/utils build
-    yarn workspace @the-new-fuse/core build
+    cd packages/types && bun run build && cd ../..
+    cd packages/utils && bun run build && cd ../..
+    cd packages/core && bun run build && cd ../..
     
     # Build all other packages
-    yarn workspaces foreach -pt run build
+    for dir in packages/*/; do
+        if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+            echo "Building $dir..."
+            cd "$dir" && bun run build && cd ../..
+        fi
+    done
     
     echo -e "${GREEN}✅ Build complete!${NC}"
 }
@@ -59,10 +64,10 @@ function start_services() {
     
     if [ "$env" == "prod" ]; then
         docker-compose -f docker-compose.prod.yml up -d
-        yarn workspace @the-new-fuse/backend start:prod
+        cd packages/backend && bun run start:prod
     else
         docker-compose up -d
-        yarn workspace @the-new-fuse/backend start:dev
+        cd packages/backend && bun run start:dev
     fi
 }
 
@@ -72,13 +77,28 @@ function run_tests() {
 
     case "$mode" in
         --watch)
-            yarn workspaces foreach -ptv run test:watch
+            for dir in packages/*/; do
+                if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+                    echo "Running tests in watch mode for $dir..."
+                    cd "$dir" && bun run test:watch && cd ../..
+                fi
+            done
             ;;
         --coverage)
-            yarn workspaces foreach -ptv run test:coverage
+            for dir in packages/*/; do
+                if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+                    echo "Running tests with coverage for $dir..."
+                    cd "$dir" && bun run test:coverage && cd ../..
+                fi
+            done
             ;;
         *)
-            yarn workspaces foreach -ptv run test
+            for dir in packages/*/; do
+                if [ -d "$dir" ] && [ -f "$dir/package.json" ]; then
+                    echo "Running tests for $dir..."
+                    cd "$dir" && bun test && cd ../..
+                fi
+            done
             ;;
     esac
 }

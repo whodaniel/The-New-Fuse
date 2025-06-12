@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import { BaseError } from './types.js';
+import { BaseError } from './types.tsx';
 
 interface ExternalReportingConfig {
   sentry?: {
@@ -27,7 +27,7 @@ export class ExternalReportingService {
   async reportError(error: Error, context?: Record<string, any>): Promise<void> {
     try {
       // ... existing code for reporting, e.g., this.client.captureException(error, context)
-      console.error('Reported error:', error, context); // Placeholder
+      console.error('Reported error:, error, context); // Placeholder
     } catch (reportingError) {
       console.error('Failed to report error:', reportingError);
     }
@@ -38,7 +38,7 @@ export class ExternalReportingService {
       // ... existing code for reporting, e.g., this.client.captureMessage(message, level, extra)
       console.log(`Reported message (${level}):`, message, extra); // Placeholder
     } catch (reportingError) {
-      console.error('Failed to report message:', reportingError);
+      console.error('Failed to report message:, reportingError);
     }
   }
 

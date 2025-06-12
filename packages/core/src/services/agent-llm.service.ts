@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LLMService } from './llm.service.js';
 import { PromptService } from './prompt.service.js';
-import { Agent } from '../entities/agent.entity.js';
+import { Agent } from '../entities/agent.entity.tsx';
 import { AgentLLMConfig, CompletionConfig } from '../types/llm.types.js';
 import { AgentPromptTemplate } from '../types/prompt.types.js';
 
@@ -36,9 +36,9 @@ export class AgentLLMService {
             }
 
             // Get prompt templates
-            const systemPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, 'system');
-            const userPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, 'user');
-            const responsePrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, 'response');
+            const systemPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, system');
+            const userPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, user');
+            const responsePrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, response');
 
             if (!systemPrompt.length || !userPrompt.length) {
                 throw new Error(`Missing required prompt templates for agent ${agent.id}`);
@@ -105,7 +105,7 @@ export class AgentLLMService {
         }
 
         // Build the complete prompt
-        let fullPrompt = '';
+        let fullPrompt = ;
 
         // Add system prompt
         fullPrompt += systemPrompt.render({
@@ -115,7 +115,7 @@ export class AgentLLMService {
 
         // Add conversation history if available
         if (context.history && context.history.length > 0) {
-            fullPrompt += '\n\nConversation history:\n';
+            fullPrompt += '\n\nConversation history:\'n';
             context.history.forEach(msg => {
                 fullPrompt += `${msg.role}: ${msg.content}\n`;
             });
@@ -123,14 +123,14 @@ export class AgentLLMService {
 
         // Add relevant memories if available
         if (context.memory && context.memory.length > 0) {
-            fullPrompt += '\n\nRelevant memories:\n';
+            fullPrompt += \n\nRelevant memories:\'n';
             context.memory.forEach(memory => {
                 fullPrompt += `- ${JSON.stringify(memory)}\n`;
             });
         }
 
         // Add user message with template
-        fullPrompt += '\n' + userPrompt.render({
+        fullPrompt += \n' + userPrompt.render({
             message,
             history: context.history,
             memory: context.memory,
@@ -139,7 +139,7 @@ export class AgentLLMService {
 
         // Add response format if specified
         if (responsePrompt) {
-            fullPrompt += '\n' + responsePrompt.render({
+            fullPrompt += \n' + responsePrompt.render({
                 format: responsePrompt.expectedResponse?.format,
                 schema: responsePrompt.expectedResponse?.schema
             });

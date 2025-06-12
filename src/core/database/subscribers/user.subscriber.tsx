@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Prisma, User } from '@the-new-fuse/database/client';
-import { DatabaseService } from '../database.service.js';
+import { Prisma, User } from '@the-new-fuse/database';
+import { DatabaseService } from '../database.service.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()

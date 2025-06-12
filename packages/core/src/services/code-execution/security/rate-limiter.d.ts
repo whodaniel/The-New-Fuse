@@ -1,4 +1,4 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 /**
  * Rate limit configuration
  */
@@ -47,9 +47,9 @@ export declare class RateLimiter {
      * @param clientId Client ID
      * @returns Rate limit result
      */
-    checkRateLimit(clientId: string): RateLimitResult;
+    checkRateLimit(clientId: string): RateLimitResult';
     /**
      * Clean up expired rate limits
      */
-    private cleanupExpiredRateLimits;
+    private cleanupExpiredRateLimits';
 }

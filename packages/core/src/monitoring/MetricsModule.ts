@@ -1,8 +1,8 @@
 import { Module, DynamicModule, Provider } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { MetricsService } from './MetricsService.js';
-import { RedisMetricsStorage } from './RedisMetricsStorage.js';
-import { MetricsCollectorConfig } from './interfaces.js';
+import { MetricsService } from './MetricsService.tsx';
+import { RedisMetricsStorage } from './RedisMetricsStorage.tsx';
+import { MetricsCollectorConfig } from './interfaces.tsx';
 
 @Module({})
 export class MetricsModule {
@@ -10,11 +10,11 @@ export class MetricsModule {
     const redisProvider: Provider = {
       provide: 'REDIS_CLIENT',
       useFactory: () => {
-        return new Redis({
-          host: process.env.REDIS_HOST || 'localhost',
-          port: parseInt(process.env.REDIS_PORT || '6379'),
+        return new (Redis as any)({
+          host: process.env.REDIS_HOST || localhost',
+          port: parseInt(process.env.REDIS_PORT || 6379'),
           password: process.env.REDIS_PASSWORD,
-          db: parseInt(process.env.REDIS_METRICS_DB || '1')
+          db: parseInt(process.env.REDIS_METRICS_DB || 1')
         });
       }
     };

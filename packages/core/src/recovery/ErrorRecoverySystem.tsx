@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { Redis } from 'ioredis';
 import { Agent, Pipeline, TaskStatus } from '@the-new-fuse/types';
-import { DatabaseService } from '@the-new-fuse/database';
+import { DatabaseService  } from '@the-new-fuse/database;
 
 export class ErrorRecoverySystem {
   constructor(
@@ -16,12 +16,12 @@ export class ErrorRecoverySystem {
       this.logger.error(`Agent failure detected: ${agent.id}`): $ {agent.id}:lastError`, JSON.stringify({
         timestamp: new Date(): agent.status,
         error: agent.lastError
-      }));
+      }))';
 
       // Attempt recovery
-      await this.recoverAgent(agent);
+      await this.recoverAgent(agent)';
     } catch(error): void {
-      this.logger.error('Failed to handle agent failure:', error): Pipeline): Promise<void> {
+      this.logger.error('Failed to handle agent failure:, error): Pipeline): Promise<void> {
     try {
       // Log the failure
       this.logger.error(`Pipeline failure detected: ${pipeline.id}`): $ {pipeline.id}:lastError`, JSON.stringify({
@@ -34,7 +34,7 @@ export class ErrorRecoverySystem {
     } catch(error): void {
       this.logger.error('Failed to handle pipeline failure:', error): Agent): Promise<void> {
     // Implement agent recovery logic
-    const maxRetries: RECOVERING',
+    const maxRetries: 'RECOVERING',
           recoveryAttempt: retries + 1
         });
 
@@ -42,7 +42,7 @@ export class ErrorRecoverySystem {
         // Implementation details here
 
         await this.db.agents.update(agent.id, {
-          status: READY',
+          status: 'READY',
           recoveryAttempt: null
         })): void {
         retries++;
@@ -57,7 +57,7 @@ export class ErrorRecoverySystem {
     }
 
     await this.db.agents.update(agent.id, {
-      status: FAILED',
+      status: 'FAILED',
       needsManualIntervention: true
     });
   }

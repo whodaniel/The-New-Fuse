@@ -9,7 +9,8 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": true,
+    "noEmit": false,
+    "composite": true,
     "jsx": "react-jsx",
     "strict": true,
     "noUnusedLocals": true,
@@ -20,6 +21,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
+      "@the-new-fuse/api-client": ["../api-client/src"],
       "@the-new-fuse/hooks": ["../hooks/src"],
       "@the-new-fuse/types": ["../types/src"]
     }

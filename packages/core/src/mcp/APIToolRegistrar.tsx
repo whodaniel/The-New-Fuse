@@ -1,9 +1,9 @@
-import { MCPRegistry } from './MCPRegistry.js';
-import { MCPTool } from './types.js';
-import { APIAuthManager } from './APIAuthManager.js';
-import { APIMetricsCollector } from './APIMetricsCollector.js';
-import { APISpec, APIEndpoint } from '../agents/types/workflow.types.js';
-import { Logger } from '../utils/logger.js';
+import { MCPRegistry } from './MCPRegistry.tsx';
+import { MCPTool } from './types.tsx';
+import { APIAuthManager } from './APIAuthManager.tsx';
+import { APIMetricsCollector } from './APIMetricsCollector.tsx';
+import { APISpec, APIEndpoint } from '../agents/types/workflow.types.tsx';
+import { Logger } from '../utils/logger.tsx';
 
 export class APIToolRegistrar {
     private registry: MCPRegistry;
@@ -26,7 +26,7 @@ export class APIToolRegistrar {
         agentId: string,
         apiSpec: APISpec
     ): MCPTool {
-        const toolName = `api_${endpoint.method.toLowerCase()}_${endpoint.path.replace(/[^a-zA-Z0-9]/g, '_')}`;
+        const toolName = `api_${endpoint.method.toLowerCase()}_${endpoint.path.replace(/[^a-zA-Z0-9]/g, _')}`;
         
         const tool: MCPTool = {
             name: toolName,
@@ -142,10 +142,10 @@ export class APIToolRegistrar {
         const response = await fetch(url, {
             method: endpoint.method,
             headers: {
-                'Content-Type': 'application/json',
+                Content-Type': application/'json',
                 ...authHeaders
             },
-            body: ['GET', 'HEAD'].includes(endpoint.method) ? undefined : JSON.stringify(params)
+            body: ['GET', HEAD'].includes(endpoint.method) ? undefined : JSON.stringify(params)
         });
 
         if (!response.ok) {

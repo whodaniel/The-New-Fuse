@@ -49,15 +49,14 @@ export const validateWorkflow = (nodes, edges): any => {
         }
     });
     nodes.forEach(node => {
-        var _a, _b, _c;
         switch (node.type) {
             case 'input':
-                if (!((_a = node.data.outputs) === null || _a === void 0 ? void 0 : _a.length)) {
+                if (!node.data.outputs?.length) {
                     errors.push(`Input node "${node.data.label}" (${node.id}) must have at least one output`);
                 }
                 break;
             case 'task':
-                if (!((_b = node.data.inputs) === null || _b === void 0 ? void 0 : _b.length)) {
+                if (!node.data.inputs?.length) {
                     errors.push(`Task node "${node.data.label}" (${node.id}) must have at least one input`);
                 }
                 break;
@@ -69,8 +68,7 @@ export const validateWorkflow = (nodes, edges): any => {
         }
     });
     edges.forEach(edge => {
-        var _a;
-        if (edge.type === 'conditional' && !((_a = edge.data) === null || _a === void 0 ? void 0 : _a.condition)) {
+        if (edge.type === 'conditional' && !edge.data?.condition) {
             errors.push(`Conditional edge ${edge.id} must have a condition`);
         }
     });

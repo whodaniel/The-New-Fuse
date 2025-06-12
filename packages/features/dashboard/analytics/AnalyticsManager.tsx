@@ -3,7 +3,7 @@ import {
   DashboardMetrics,
   DashboardPerformanceMetrics,
   UserMetrics,
-} from './types.js';
+} from './types.tsx';
 
 export class AnalyticsManager {
   private actions: UserAction[];

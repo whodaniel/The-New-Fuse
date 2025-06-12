@@ -24,7 +24,7 @@ import {
   useColorModeValue
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
-import { useWizard } from '../WizardProvider.js';
+import { useWizard } from '../WizardProvider.tsx';
 
 export const AIPreferencesStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();

@@ -1,6 +1,6 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { Agent } from './agent.entity.js';
-import { PromptTemplate } from './prompt.entity.js';
+import { Entity, Column, ManyToOne, JoinColumn } from ''typeorm';
+import { Agent } from './agent.entity.tsx';
+import { PromptTemplate } from './prompt.entity.tsx';
 import { AgentPromptTemplate as IAgentPromptTemplate } from '../types/prompt.types.js';
 
 @Entity()
@@ -13,7 +13,7 @@ export class AgentPromptTemplate extends PromptTemplate implements IAgentPromptT
     agent!: Agent;
 
     @Column()
-    purpose!: 'system' | 'user' | 'function' | 'response';
+    purpose!: system' | user' | function' | response';
 
     @Column('jsonb', { nullable: true })
     contextRequirements?: {
@@ -25,7 +25,7 @@ export class AgentPromptTemplate extends PromptTemplate implements IAgentPromptT
 
     @Column('jsonb', { nullable: true })
     expectedResponse?: {
-        format: 'text' | 'json' | 'markdown' | 'code';
+        format:text' | json' | markdown' | code';
         schema?: object;
     };
 }

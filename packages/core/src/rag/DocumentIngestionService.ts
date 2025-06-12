@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RAGService, DocumentChunk } from './RAGService.js';
 import * as fs from 'fs';
@@ -44,7 +44,7 @@ export class DocumentIngestionService {
   ) {
     this.defaultChunkSize = this.configService.get<number>('RAG_CHUNK_SIZE', 1000);
     this.defaultChunkOverlap = this.configService.get<number>('RAG_CHUNK_OVERLAP', 200);
-    this.defaultFileExtensions = this.configService.get<string>('RAG_FILE_EXTENSIONS', '.md,.txt,.html,.json,.yaml,.yml').split(',');
+    this.defaultFileExtensions = this.configService.get<string>('RAG_FILE_EXTENSIONS', .md,.txt,.html,.json,.yaml,.yml').split(',');
   }
 
   /**
@@ -100,8 +100,8 @@ export class DocumentIngestionService {
       
       // Index documents
       return await this.ragService.indexDocuments(chunkedDocuments);
-    } catch (error) {
-      this.logger.error(`Failed to ingest documents: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to ingest documents: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -115,14 +115,14 @@ export class DocumentIngestionService {
         throw new Error(`File not found: ${filePath}`);
       }
       
-      const content = await fs.promises.readFile(filePath, 'utf-8');
+      const content = await fs.promises.readFile(filePath, utf-8');
       const extension = path.extname(filePath).toLowerCase();
       
       // Parse content based on file type
       let parsedContent = content;
       let frontmatter = {};
       
-      if (extension === '.md') {
+      if (extension === .md') {
         // Parse markdown frontmatter
         const { content: mdContent, data } = matter(content);
         parsedContent = mdContent;
@@ -139,8 +139,8 @@ export class DocumentIngestionService {
           ...metadata
         }
       }];
-    } catch (error) {
-      this.logger.error(`Failed to process file ${filePath}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to process file ${filePath}: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -181,8 +181,8 @@ export class DocumentIngestionService {
       }
       
       return documents;
-    } catch (error) {
-      this.logger.error(`Failed to process directory ${dirPath}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to process directory ${dirPath}: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -219,8 +219,8 @@ export class DocumentIngestionService {
           ...metadata
         }
       }];
-    } catch (error) {
-      this.logger.error(`Failed to process URL ${url}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to process URL ${url}: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -256,7 +256,7 @@ export class DocumentIngestionService {
       // This is a simplified implementation that assumes the API returns an array of documents
       if (Array.isArray(data)) {
         return data.map(item => ({
-          content: typeof item.content === 'string' ? item.content : JSON.stringify(item),
+          content: typeof item.content === string' ? item.content : JSON.stringify(item),
           metadata: {
             source: apiEndpoint,
             ...item.metadata,
@@ -265,7 +265,7 @@ export class DocumentIngestionService {
         }));
       } else if (data.documents && Array.isArray(data.documents)) {
         return data.documents.map(item => ({
-          content: typeof item.content === 'string' ? item.content : JSON.stringify(item),
+          content: typeof item.content === string' ? item.content : JSON.stringify(item),
           metadata: {
             source: apiEndpoint,
             ...item.metadata,
@@ -282,8 +282,8 @@ export class DocumentIngestionService {
           }
         }];
       }
-    } catch (error) {
-      this.logger.error(`Failed to process API ${apiEndpoint}: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to process API ${apiEndpoint}: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }
@@ -295,10 +295,10 @@ export class DocumentIngestionService {
     // Simple HTML to text conversion
     // In a real implementation, you would use a proper HTML parser
     return html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, '')
-      .replace(/<[^>]+>/g, ' ')
-      .replace(/\s+/g, ' ')
+      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, )
+      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, )
+      .replace(/<[^>]+>/g, )
+      .replace(/\s+/g, ' )
       .trim();
   }
 
@@ -326,7 +326,7 @@ export class DocumentIngestionService {
       
       // Split document into paragraphs
       const paragraphs = doc.content.split(/\n\s*\n/);
-      let currentChunk = '';
+      let currentChunk = ';
       
       for (const paragraph of paragraphs) {
         // If adding this paragraph would exceed chunk size, create a new chunk
@@ -341,14 +341,14 @@ export class DocumentIngestionService {
           // Start new chunk with overlap from previous chunk
           if (currentChunk.length > chunkOverlap) {
             const overlapStart = currentChunk.length - chunkOverlap;
-            currentChunk = currentChunk.substring(overlapStart) + '\n\n';
+            currentChunk = currentChunk.substring(overlapStart) + \n\'n';
           } else {
-            currentChunk = '';
+            currentChunk = ;
           }
         }
         
         // Add paragraph to current chunk
-        currentChunk += paragraph + '\n\n';
+        currentChunk += paragraph + '\n\'n';
       }
       
       // Add final chunk if not empty

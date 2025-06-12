@@ -1,14 +1,14 @@
 import { Logger } from '@the-new-fuse/utils';
 import { Message, MessageType, UUID } from '@the-new-fuse/types';
-// import { CommandProcessor } from './processors/CommandProcessor.js';
-// import { NotificationProcessor } from './processors/NotificationProcessor.js';
-// import { TaskProcessor } from './processors/TaskProcessor.js';
+// import { CommandProcessor } from './processors/CommandProcessor.tsx';
+// import { NotificationProcessor } from './processors/NotificationProcessor.tsx';
+// import { TaskProcessor } from './processors/TaskProcessor.tsx';
 // import { BaseProcessor } from './processors/BaseProcessor.js'; // Removed unused import
 // import { MessageValidator } from './services/MessageValidator.js';
 // Import other necessary services (e.g., InterAgentChatService, ConfigService, AlertService, RedisService)
-// import { AlertService } from './services/AlertService.js';
-// import { RedisService } from './services/RedisService.js';
-// import { InterAgentChatService } from './services/InterAgentChatService.js';
+// import { AlertService } from './services/AlertService.tsx';
+// import { RedisService } from './services/RedisService.tsx';
+// import { InterAgentChatService } from './services/InterAgentChatService.tsx';
 // import { ConfigService } from './services/ConfigService.js'; // Assuming ConfigService exists
 
 /**
@@ -38,8 +38,8 @@ export class AgentProcessor {
     // Example: Assuming MessageValidator is optional or created internally
     // try {
     //     this.messageValidator = new MessageValidator();
-    // } catch (error) {
-    //     this.logger.warn(`Failed to initialize MessageValidator: ${error.message}. Validation will be skipped.`);
+    // } catch (error: unknown) {
+    //     this.logger.warn(`Failed to initialize MessageValidator: ${(error as Error).message}. Validation will be skipped.`);
     //     this.messageValidator = undefined;
     // }
 

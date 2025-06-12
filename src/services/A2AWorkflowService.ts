@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { WorkflowEngine } from '../workflow/WorkflowEngine.js';
+import { WorkflowEngine } from '../workflow/WorkflowEngine.tsx';
 import { A2ANode } from '../workflow/nodes/A2ANode.js';
 import { ConfigurationManager } from '../config/A2AConfig.js';
 

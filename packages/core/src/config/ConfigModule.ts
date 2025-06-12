@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigManager } from './ConfigManager.js';
-import { ConfigValidator } from './ConfigValidator.js';
+import { ConfigValidator } from './ConfigValidator.tsx';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Global()

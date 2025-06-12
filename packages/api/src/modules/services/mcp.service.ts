@@ -18,7 +18,7 @@ export interface McpTool {
 
 @Injectable()
 export class MCPService implements OnModuleInit, OnModuleDestroy {
-  private mcpBroker: MCPBrokerService;
+  private mcpBroker!: MCPBrokerService;
   private servers: McpServer[] = [];
 
   constructor(private configService: ConfigService) {
@@ -29,7 +29,7 @@ export class MCPService implements OnModuleInit, OnModuleDestroy {
     // Initialize MCP Broker Service
     try {
       // Import dynamically to avoid circular dependencies
-      const { MCPBrokerService } = await import('../../../src/mcp/services/mcp-broker.service');
+      const { MCPBrokerService } = await import('../../../src/mcp/services/mcp-broker.service.js');
       this.mcpBroker = new MCPBrokerService();
       
       // Check if initialize method exists before calling it

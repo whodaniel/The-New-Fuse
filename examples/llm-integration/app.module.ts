@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OpenAIService } from './services/openai.service.js';
 import { AgentService } from './services/agent.service.js';
-import { Agent } from './entities/agent.entity.js';
+import { Agent } from './entities/agent.entity';
 
 @Module({
     imports: [

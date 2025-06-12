@@ -1,6 +1,6 @@
-import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.js';
-import { VectorStore } from '../../vectordb/vector-store.js';
-import { EmbeddingService } from '../../vectordb/embedding-service.js';
+import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.tsx';
+import { VectorStore } from '../../vectordb/vector-store.tsx';
+import { EmbeddingService } from '../../vectordb/embedding-service.tsx';
 
 type VectorStoreOperation = 'store' | 'search' | 'delete' | 'clear';
 
@@ -115,8 +115,8 @@ export class VectorStoreNodeHandler implements NodeHandler {
         default:
           throw new Error(`Unsupported vector store operation: ${operation}`);
       }
-    } catch (error) {
-      context.logger.error(`Vector store error: ${error.message}`, { operation });
+    } catch (error: unknown) {
+      context.logger.error(`Vector store error: ${(error as Error).message}`, { operation });
       
       return {
         success: false,

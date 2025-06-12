@@ -19,10 +19,10 @@ export class AgentWebSocketGateway {
         const { type, payload } = data;
         
         switch(type) {
-            case 'TASK_REQUEST':
+            case TASK_REQUEST':
                 await this.handleTaskRequest(client, payload as TaskPayload);
                 break;
-            case 'STATUS_UPDATE':
+            case STATUS_UPDATE':
                 await this.updateAgentStatus(client, payload);
                 break;
             default:
@@ -32,11 +32,11 @@ export class AgentWebSocketGateway {
 
     private async handleTaskRequest(client: Socket, payload: TaskPayload): Promise<void> {
         const taskId = await this.pubSub.publish('tasks', payload);
-        client.emit('task:created', { taskId });
+        client.emit('task: 'created', { taskId });
     }
 
     private async updateAgentStatus(client: Socket, payload: unknown): Promise<void> {
-        await this.pubSub.publish('agent:status', {
+        await this.pubSub.publish('agent: 'status', {
             agentId: client.id,
             status: payload
         });

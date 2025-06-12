@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import api from '../services/api.js';
-import { useAgentRealtime } from './useAgentRealtime.js';
+import api from '../services/api.tsx';
+import { useAgentRealtime } from './useAgentRealtime.tsx';
 
 export interface Agent {
   id: string;

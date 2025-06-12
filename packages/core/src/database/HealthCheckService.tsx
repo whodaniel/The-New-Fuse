@@ -1,11 +1,11 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DatabaseService } from './DatabaseService.js';
+import { DatabaseService } from './DatabaseService.tsx';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export interface HealthStatus {
-  status: 'healthy' | 'degraded' | 'unhealthy';
+  status:healthy' | degraded' | unhealthy';
   timestamp: Date;
   details: {
     connectionPool: {
@@ -21,7 +21,7 @@ export interface HealthStatus {
     };
     replication?: {
       lag: number;
-      status: 'synchronized' | 'replicating' | 'disconnected';
+      status:synchronized' | replicating' | disconnected';
     };
     cacheStatus?: {
       hitRate: number;
@@ -77,14 +77,14 @@ export class HealthCheckService implements OnModuleInit {
         },
       };
 
-      this.metrics.gauge('database.health.status', this.healthStatus.status === 'healthy' ? 1 : 0);
-      this.eventEmitter.emit('database.health.updated', this.healthStatus);
+      this.metrics.gauge('database.health.'status', this.healthStatus.status === healthy' ? 1 : 0);
+      this.eventEmitter.emit('database.health.'updated', this.healthStatus);
 
       if (this.healthStatus.status !== 'healthy') {
         this.logger.warn('Database health check detected issues', this.healthStatus);
       }
     } catch (error) {
-      this.logger.error('Health check failed:', error);
+      this.logger.error('Health check failed:, error);
       this.metrics.increment('database.health.check.failed');
       
       this.healthStatus = {
@@ -212,7 +212,7 @@ export class HealthCheckService implements OnModuleInit {
       queryMetrics.errorRate > 0.1 ||
       queryMetrics.averageResponseTime > 1000
     ) {
-      return 'unhealthy';
+      return unhealthy';
     }
 
     if (
@@ -220,21 +220,21 @@ export class HealthCheckService implements OnModuleInit {
       queryMetrics.errorRate > 0.05 ||
       queryMetrics.averageResponseTime > 500
     ) {
-      return 'degraded';
+      return degraded';
     }
 
-    return 'healthy';
+    return healthy';
   }
 
   private determineReplicationStatus(
     lag: number,
     state: string,
-  ): 'synchronized' | 'replicating' | 'disconnected' {
+  ):synchronized' | replicating' | disconnected' {
     if (state !== 'streaming') {
-      return 'disconnected';
+      return disconnected';
     }
 
-    return lag < 30000 ? 'synchronized' : 'replicating';
+    return lag < 30000 ? 'synchronized' :'replicating';
   }
 
   public getStatus(): HealthStatus {

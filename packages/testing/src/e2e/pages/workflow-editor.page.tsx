@@ -1,5 +1,5 @@
 import { Page, Locator } from '@playwright/test';
-import { BasePage } from './base.page.js';
+import { BasePage } from './base.page';
 
 export class WorkflowEditorPage extends BasePage {
   // Node and edge manipulation

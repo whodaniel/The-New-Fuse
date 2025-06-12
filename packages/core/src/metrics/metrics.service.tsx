@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { MetricsConfig, PerformanceMetrics, SystemPerformanceMetrics } from '@the-new-fuse/types';
 import { Logger } from '@the-new-fuse/utils';
-import { MetricsCollector } from '../monitoring/metrics-collector.service.js';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.js';
+import { MetricsCollector } from '../monitoring/metrics-collector.service.tsx';
+import { PrismaService } from '../prisma/prisma.service.tsx';
+import { ErrorCategory, ErrorSeverity } from '../monitoring/ErrorTrackingService.tsx';
 
 export interface MetricsQuery {
   startTime: Date;
@@ -126,7 +126,7 @@ export class MetricsService {
           name: errorName,
           category,
           severity,
-          service: service || 'unknown',
+          service: service || unknown',
           timestamp: new Date()
         }
       });
@@ -152,7 +152,7 @@ export class MetricsService {
         }, {} as Record<string, number>)
       }));
     } catch (error: unknown) {
-      this.logger.error('Error querying metrics:', error);
+      this.logger.error('Error querying metrics:, error);
       return [];
     }
   }

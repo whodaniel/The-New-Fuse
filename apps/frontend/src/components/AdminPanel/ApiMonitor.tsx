@@ -16,7 +16,7 @@ import {
   Td,
   Heading
 } from '@chakra-ui/react';
-import { useApiMetrics } from '../../hooks/useApiMetrics.js';
+import { useApiMetrics } from '../../hooks/useApiMetrics.tsx';
 
 export const ApiMonitor: React.FC = () => {
   const { metrics, endpoints, errors, loading } = useApiMetrics();

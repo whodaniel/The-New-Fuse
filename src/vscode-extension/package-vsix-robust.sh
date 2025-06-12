@@ -12,8 +12,13 @@ if [ ! -f "package.json" ]; then
 fi
 echo "✅ Found package.json in current directory."
 
-echo "Ensuring Corepack is enabled (for Yarn)..."
-corepack enable || echo "⚠️  Failed to enable corepack. Continuing, assuming Yarn is otherwise available."
+echo "Ensuring Bun is available..."
+if ! command -v bun &> /dev/null; then
+    echo "⚠️  Bun not found. Installing Bun..."
+    curl -fsSL https://bun.sh/install | bash
+    source ~/.bashrc 2>/dev/null || true
+    export PATH="$HOME/.bun/bin:$PATH"
+fi
 
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
 if ! command -v vsce &> /dev/null; then
@@ -27,29 +32,29 @@ else
     echo "✅ vsce is already installed."
 fi
 
-echo "2️⃣ Installing dependencies using Yarn..."
-if ! yarn install; then
-    echo "❌ Failed to install dependencies using Yarn. Check Yarn/Corepack setup and project dependencies."
+echo "2️⃣ Installing dependencies using Bun..."
+if ! bun install; then
+    echo "❌ Failed to install dependencies using Bun. Check Bun setup and project dependencies."
     # Attempt to clean and reinstall as a fallback
-    echo "   Attempting 'yarn cache clean && yarn install' as a fallback..."
-    yarn cache clean && yarn install
+    echo "   Attempting 'bun install --force' as a fallback..."
+    bun install --force
     if [ \$? -ne 0 ]; then
-        echo "❌ Fallback 'yarn cache clean && yarn install' also failed."
+        echo "❌ Fallback 'bun install --force' also failed."
         exit 1
     fi
 fi
-echo "✅ Dependencies installed successfully using Yarn."
+echo "✅ Dependencies installed successfully using Bun."
 
 echo "3️⃣ Building extension..."
 BUILD_SUCCESSFUL=false
 # Check if 'compile' script exists in package.json
 if grep -q '"compile":' package.json; then
-    echo "   Found 'compile' script. Attempting 'yarn run compile'..."
-    if yarn run compile; then
-        echo "✅ Build successful with 'yarn run compile'."
+    echo "   Found 'compile' script. Attempting 'bun run compile'..."
+    if bun run compile; then
+        echo "✅ Build successful with 'bun run compile'."
         BUILD_SUCCESSFUL=true
     else
-        echo "⚠️  'yarn run compile' failed."
+        echo "⚠️  'bun run compile' failed."
     fi
 else
     echo "⚠️  'compile' script not found in package.json."
@@ -119,7 +124,7 @@ fi
 echo "✅ Using main entry point for packaging: \$MAIN_ENTRY_FROM_PACKAGE_JSON"
 
 echo "5️⃣ Creating .vsix package..."
-VSCE_PACKAGE_ARGS="--no-dependencies --no-yarn --allow-star-activation"
+VSCE_PACKAGE_ARGS="--no-dependencies --allow-star-activation"
 
 if vsce package \$VSCE_PACKAGE_ARGS; then
     echo "✅ .vsix package created successfully."

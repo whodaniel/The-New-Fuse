@@ -4,4 +4,4 @@ export interface Toast {
   type: "success" | "error" | "info" | "warning";
   duration: number;
 }
-export declare function useToast(): any unknown;
+export declare function useToast(): unknown;

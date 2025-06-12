@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { CommandTransport } from '../../transport/command-transport.js';
-import { TransportMessage } from '../../transport/transport-interface.js';
+import { CommandTransport } from '../../transport/command-transport.tsx';
+import { TransportMessage } from '../../transport/transport-interface.tsx';
 
 jest.mock('vscode');
 

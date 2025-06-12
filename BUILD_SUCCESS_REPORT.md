@@ -55,12 +55,12 @@ All major components of The New Fuse project have been successfully built and ar
 
 2. **Start Development Server:**
    ```bash
-   yarn dev
+   bun run dev
    ```
 
 3. **Test MCP Server:**
    ```bash
-   yarn mcp:start
+   bun run mcp:start
    ```
 
 ### Testing Checklist:
@@ -74,7 +74,7 @@ All major components of The New Fuse project have been successfully built and ar
 
 ```bash
 # Main build process
-yarn build:all              # Built all Turbo packages + Chrome extension
+bun run build:all              # Built all Turbo packages + Chrome extension
 ./build-mcp.sh              # Built MCP server components
 vsce package                # Packaged VS Code extension
 ```

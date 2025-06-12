@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseError } from '../types.js';
-import { IRecoveryStrategy } from './IRecoveryStrategy.js';
+import { BaseError } from '../types.tsx';
+import { IRecoveryStrategy } from './IRecoveryStrategy.tsx';
 
 @Injectable()
 export abstract class BaseRecoveryStrategy implements IRecoveryStrategy {

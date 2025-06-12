@@ -23,7 +23,7 @@ import http_socket_1 from './aibitat/plugins/http-socket.js';
 import workspaceChats_1 from '../../models/workspaceChats.js';
 import http_1 from '../http.js';
 import defaults_1 from './defaults.js';
-import _1 from '.';
+import _1 from '.;
 import workspaceAgentInvocation_1 from '../../models/workspaceAgentInvocation.js';
 const node_events_1 = __importDefault(require("node:events"));
 import responses_1 from '../helpers/chat/responses.js';
@@ -36,10 +36,10 @@ class EphemeralAgentHandler extends _1.AgentHandler {
     /**
      * @param {{
      * uuid: string,
-     * workspace: import("@the-new-fuse/database/client").workspaces,
+     * workspace: import("@the-new-fuse/database").workspaces,
      * prompt: string,
-     * userId: import("@the-new-fuse/database/client").users["id"]|null,
-     * threadId: import("@the-new-fuse/database/client").workspace_threads["id"]|null,
+     * userId: import("@the-new-fuse/database").users["id"]|null,
+     * threadId: import("@the-new-fuse/database").workspace_threads["id"]|null,
      * sessionId: string|null
      * }} parameters
      */
@@ -48,11 +48,11 @@ class EphemeralAgentHandler extends _1.AgentHandler {
         _EphemeralAgentHandler_instances.add(this);
         /** @type {string|null} the unique identifier for the agent invocation */
         _EphemeralAgentHandler_invocationUUID.set(this, null);
-        /** @type {import("@the-new-fuse/database/client").workspaces|null} the workspace to use for the agent */
+        /** @type {import("@the-new-fuse/database").workspaces|null} the workspace to use for the agent */
         _EphemeralAgentHandler_workspace.set(this, null);
-        /** @type {import("@the-new-fuse/database/client").users|null} the user id to use for the agent */
+        /** @type {import("@the-new-fuse/database").users|null} the user id to use for the agent */
         _EphemeralAgentHandler_userId.set(this, null);
-        /** @type {import("@the-new-fuse/database/client").workspace_threads|null} the workspace thread id to use for the agent */
+        /** @type {import("@the-new-fuse/database").workspace_threads|null} the workspace thread id to use for the agent */
         _EphemeralAgentHandler_threadId.set(this, null);
         /** @type {string|null} the session id to use for the agent */
         _EphemeralAgentHandler_sessionId.set(this, null);

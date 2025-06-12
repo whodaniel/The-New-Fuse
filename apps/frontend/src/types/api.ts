@@ -1,21 +1,20 @@
-export var AgentType;
-(function (AgentType): any {
-    AgentType["BASE"] = "base";
-    AgentType["ENHANCED"] = "enhanced";
-    AgentType["RESEARCH"] = "research";
-    AgentType["CASCADE"] = "cascade";
-    AgentType["WORKFLOW"] = "workflow";
-    AgentType["MARKETING"] = "marketing";
-    AgentType["TECHNICAL_SUPPORT"] = "technical_support";
-    AgentType["CUSTOMER_SUPPORT"] = "customer_support";
-})(AgentType || (AgentType = {}));
-export var ReasoningStrategy;
-(function (ReasoningStrategy): any {
-    ReasoningStrategy["DEDUCTIVE"] = "deductive";
-    ReasoningStrategy["INDUCTIVE"] = "inductive";
-    ReasoningStrategy["ABDUCTIVE"] = "abductive";
-    ReasoningStrategy["ANALOGICAL"] = "analogical";
-})(ReasoningStrategy || (ReasoningStrategy = {}));
+export enum AgentType {
+    BASE = "base",
+    ENHANCED = "enhanced",
+    RESEARCH = "research",
+    CASCADE = "cascade",
+    WORKFLOW = "workflow",
+    MARKETING = "marketing",
+    TECHNICAL_SUPPORT = "technical_support",
+    CUSTOMER_SUPPORT = "customer_support"
+}
+
+export enum ReasoningStrategy {
+    DEDUCTIVE = "deductive",
+    INDUCTIVE = "inductive",
+    ABDUCTIVE = "abductive",
+    ANALOGICAL = "analogical"
+}
 export const transformApiMessage = (apiMessage): any => {
     return {
         id: apiMessage.id,

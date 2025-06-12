@@ -14,7 +14,7 @@ This package contains the consolidated UI components for The New Fuse platform. 
 ## Installation
 
 ```bash
-yarn add @the-new-fuse/ui-consolidated
+bun add @the-new-fuse/ui-consolidated
 ```
 
 ## Usage
@@ -362,30 +362,30 @@ function App() {
 
 ```bash
 # Install dependencies
-yarn install
+bun install
 
 # Start development server
-yarn dev
+bun dev
 
 # Run tests
-yarn test
+bun test
 
 # Build the package
-yarn build
+bun run build
 
 # Run Storybook
-yarn storybook
+bun run storybook
 ```
 
 ## Testing
 
 ```bash
 # Run all tests
-yarn test
+bun test
 
 # Run tests in watch mode
-yarn test:watch
+bun run test:watch
 
 # Generate test coverage
-yarn test:coverage
+bun run test:coverage
 ```

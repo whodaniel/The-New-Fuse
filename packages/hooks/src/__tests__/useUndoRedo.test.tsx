@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useUndoRedo } from '../hooks/useUndoRedo.js';
+import { useUndoRedo } from '../hooks/useUndoRedo.tsx';
 
 describe('useUndoRedo', () => {
   it('should initialize with initial state', () => {

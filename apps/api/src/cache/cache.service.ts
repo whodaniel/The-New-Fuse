@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Redis from 'ioredis';
+import * as Redis from 'ioredis';
 
 @Injectable()
 export class CacheService {
@@ -7,7 +7,7 @@ export class CacheService {
   private logger = new Logger(CacheService.name);
 
   constructor() {
-    this.client = new Redis();
+    this.client = new (Redis as any)();
     this.client.on('error', (err) => this.logger.error('Redis error', err));
   }
 

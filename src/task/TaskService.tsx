@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseServiceConfig, AsyncServiceResult } from '../types/service-types.js';
+import { BaseServiceConfig, AsyncServiceResult } from '../types/service-types.tsx';
 
 export interface TaskConfig extends BaseServiceConfig {
   maxRetries?: number;

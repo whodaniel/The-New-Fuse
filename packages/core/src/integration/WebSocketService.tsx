@@ -88,7 +88,7 @@ export class WebSocketService extends EventEmitter {
    * Validate a message against security policy and structure requirements
    */
   private validateMessage(message: unknown): boolean {
-    if (typeof message !== 'object' || message === null) return false;
+    if (typeof message !== object' || message === null) return false;
     
     const typedMessage = message as { type?: string; payload?: unknown };
     if (!typedMessage.type || typeof typedMessage.type !== 'string') return false;

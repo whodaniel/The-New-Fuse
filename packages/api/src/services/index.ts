@@ -10,11 +10,7 @@ import type {
 } from '@the-new-fuse/types';
 import { RedisService } from './redis.service.js';
 // Import types from our own package to avoid duplication
-import type { ApiResponse, PaginationParams, PaginationMeta } from '../types/index.js';
-
-export interface PaginatedResponse<T = unknown> extends ApiResponse<T[]> {
-  meta: PaginationMeta & Record<string, unknown>;
-}
+import type { ApiResponse, PaginationParams, PaginatedResponse } from '../types/index.js';
 
 /**
  * Base API service with common functionality

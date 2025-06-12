@@ -1,7 +1,7 @@
 import { Container } from "inversify";
-import { ConfigService } from '../core/config/config-service.js';
-import { DatabaseService } from '../core/database/database-service.js';
-import type { TYPES } from '../core/di/types.js';
+import { ConfigService } from '../core/config/config-service.tsx';
+import { DatabaseService } from '../core/database/database-service.tsx';
+import type { TYPES } from '../core/di/types.tsx';
 
 export async function createTestContainer(): Promise<Container> {
   const container = new Container();

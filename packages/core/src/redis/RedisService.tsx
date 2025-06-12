@@ -1,13 +1,13 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
 import Redis from 'ioredis';
-import { ConfigService } from '../config/ConfigService.js';
+import { ConfigService } from '../config/ConfigService.tsx';
 
 @Injectable()
 export class RedisService implements OnModuleInit, OnModuleDestroy {
   private readonly redis: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    this.redis = new Redis(this.configService.getRedisUrl());
+    this.redis = new (Redis as any)(this.configService.getRedisUrl());
   }
 
   async onModuleInit(): Promise<void> {
@@ -28,7 +28,7 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
 
   async set(key: string, value: string, ttl?: number): Promise<void> {
     if (ttl) {
-      await this.redis.set(key, value, 'EX', ttl);
+      await this.redis.set(key, value, EX', ttl);
     } else {
       await this.redis.set(key, value);
     }

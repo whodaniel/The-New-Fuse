@@ -1,23 +1,23 @@
 import React from 'react';
 import { ThemeProvider } from './ThemeProvider/index.js';
-import { Button } from './button/index.js';
-import { Card } from './card/index.js';
-import { Input } from './input/index.js';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select/index.js';
-import { Progress } from './progress/index.js';
-import { List, ListItem } from './list/index.js';
-import { Avatar, AvatarImage, AvatarFallback } from './avatar/index.js';
-import { Tooltip } from './tooltip/index.js';
-import { Skeleton } from './skeleton/index.js';
-import { DateRangePicker } from './date-range-picker/index.js';
-import { Dialog } from './dialog/index.js';
-import { Modal } from './modal/index.js';
-import { Toast } from './toast/index.js';
-import { useToast } from './use-toast.js';
-import { Toaster } from './toast.js';
-import { ErrorBoundary } from './ErrorBoundary/index.js';
-import { LoadingSpinner } from './LoadingSpinner.js';
-import { ProtectedRoute } from './ProtectedRoute.js';
+import { Button } from './button/index.tsx';
+import { Card } from './card/index.tsx';
+import { Input } from './input/index.tsx';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select/index.tsx';
+import { Progress } from './progress/index.tsx';
+import { List, ListItem } from './list/index.tsx';
+import { Avatar, AvatarImage, AvatarFallback } from './avatar/index.tsx';
+import { Tooltip } from './tooltip/index.tsx';
+import { Skeleton } from './skeleton/index.tsx';
+import { DateRangePicker } from './date-range-picker/index.tsx';
+import { Dialog } from './dialog/index.tsx';
+import { Modal } from './modal/index.tsx';
+import { Toast } from './toast/index.tsx';
+import { useToast } from './use-toast.tsx';
+import { Toaster } from './toast.tsx';
+import { ErrorBoundary } from './ErrorBoundary/index.tsx';
+import { LoadingSpinner } from './LoadingSpinner.tsx';
+import { ProtectedRoute } from './ProtectedRoute.tsx';
 import {
   ButtonProps,
   CardProps,
@@ -36,7 +36,7 @@ import {
   ToastActionElement,
   ToastVariant,
   ToasterToast,
-} from './types.js';
+} from './types.tsx';
 
 export {
   Button,

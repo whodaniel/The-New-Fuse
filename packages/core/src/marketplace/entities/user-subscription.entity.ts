@@ -3,7 +3,7 @@
  * Represents a user's subscription to a marketplace item
  */
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
-import { User } from '../../user/entities/user.entity.js';
+import { User } from '../../user/entities/user.entity';
 import { MarketplaceItem } from './marketplace-item.entity.js';
 
 /**

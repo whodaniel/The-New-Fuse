@@ -1,4 +1,4 @@
-import { SemanticIndex } from './semantic.js';
+import { SemanticIndex } from './semantic.tsx';
 import { MemoryContent } from '../types/memory.types.js';
 export declare class MemorySystem {
     add(content: MemoryContent): void;
@@ -7,9 +7,9 @@ export declare class MemorySystem {
     private readonly embeddingService;
     private readonly configService;
 }
-export * from './MemoryManager.js';
-export * from './MemorySystem.js';
-export * from './VectorMemoryStore.js';
-export * from './memory.entity.js';
-export * from './types.js';
+export * from './MemoryManager.tsx';
+export * from './MemorySystem.tsx';
+export * from './VectorMemoryStore.tsx';
+export * from './memory.entity.tsx';
+export * from './types.tsx';
 export * from '../types/memory.types.js';

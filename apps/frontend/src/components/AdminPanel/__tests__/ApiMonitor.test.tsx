@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { ApiMonitor } from '../ApiMonitor.js';
-import { useApiMetrics } from '../../../hooks/useApiMetrics.js';
+import { ApiMonitor } from '../ApiMonitor.tsx';
+import { useApiMetrics } from '../../../hooks/useApiMetrics.tsx';
 
 jest.mock('../../../hooks/useApiMetrics');
 

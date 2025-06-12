@@ -23,21 +23,21 @@ echo -e "${YELLOW}Step 1: Installing dependencies...${NC}"
 cd "$EXTENSION_DIR" || { echo -e "${RED}Extension directory not found!${NC}"; exit 1; }
 
 # Check if package manager is specified in project
-HAS_YARN_LOCK=false
-if [ -f "yarn.lock" ]; then
-    HAS_YARN_LOCK=true
+HAS_BUN_LOCK=false
+if [ -f "bun.lockb" ]; then
+    HAS_BUN_LOCK=true
 fi
 
 # Check which package manager is available
-HAS_YARN=false
-if command -v yarn &> /dev/null; then
-    HAS_YARN=true
+HAS_BUN=false
+if command -v bun &> /dev/null; then
+    HAS_BUN=true
 fi
 
 # Install dependencies using the appropriate package manager
-if [ "$HAS_YARN_LOCK" = true ] || [ "$HAS_YARN" = true ]; then
-    echo -e "${YELLOW}Using yarn to install dependencies...${NC}"
-    yarn install
+if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
+    echo -e "${YELLOW}Using bun to install dependencies...${NC}"
+    bun install
 else
     echo -e "${YELLOW}Using npm to install dependencies...${NC}"
     npm install
@@ -52,8 +52,8 @@ echo -e "${GREEN}Dependencies installed successfully.${NC}"
 
 # Step 2: Compile TypeScript
 echo -e "${YELLOW}Step 2: Compiling TypeScript...${NC}"
-if [ "$HAS_YARN_LOCK" = true ] || [ "$HAS_YARN" = true ]; then
-    yarn compile || yarn run compile || yarn tsc
+if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
+    bun run compile || bun run tsc || npx tsc
 else
     npm run compile || npx tsc
 fi

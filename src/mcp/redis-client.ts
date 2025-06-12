@@ -5,7 +5,7 @@
  * It supports all Redis operations and SSL/TLS configuration.
  */
 
-import { RedisService } from '../types/redis/service.js';
+import { RedisService } from '../types/redis/service.tsx';
 
 export interface MCPRedisConfig {
   // Basic connection parameters

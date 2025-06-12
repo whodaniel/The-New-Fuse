@@ -99,8 +99,8 @@ export class AgencyController {
         },
         message: 'Agency created successfully'
       };
-    } catch (error) {
-      this.logger.error(`Failed to create agency: ${error.message}`, error.stack);
+    } catch (error: unknown) {
+      this.logger.error(`Failed to create agency: ${(error as Error).message}`, error.stack);
       throw error;
     }
   }

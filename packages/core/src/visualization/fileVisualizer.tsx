@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from ''fs';
 import { join, basename, relative } from 'path';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
@@ -62,7 +62,7 @@ export class ProjectVisualizer {
             metadata: {}
         };
         this.project = new Project({
-            tsConfigFilePath: join(projectPath, 'tsconfig.json')
+            tsConfigFilePath: join(projectPath, tsconfig.json')
         });
     }
 
@@ -101,12 +101,12 @@ export class ProjectVisualizer {
 
             // Analyze classes
             sourceFile.getClasses().forEach(classDecl => {
-                classes.push(classDecl.getName() || 'AnonymousClass');
+                classes.push(classDecl.getName() || AnonymousClass');
             });
 
             // Analyze functions
             sourceFile.getFunctions().forEach(funcDecl => {
-                functions.push(funcDecl.getName() || 'AnonymousFunction');
+                functions.push(funcDecl.getName() || AnonymousFunction');
             });
 
             const relPath = relative(this.projectPath, filePath);
@@ -193,14 +193,14 @@ export class ProjectVisualizer {
                 summary.push(`## ${filePath} (${metadata.loc} lines)`);
 
                 if (metadata.classes.length > 0) {
-                    summary.push(`- Classes: ${metadata.classes.join(', ')}`);
+                    summary.push(`- Classes: ${metadata.classes.join(', )}`);
                 }
 
                 if (metadata.functions.length > 0) {
-                    summary.push(`- Functions: ${metadata.functions.join(', ')}`);
+                    summary.push(`- Functions: ${metadata.functions.join(', )}`);
                 }
 
-                summary.push('');
+                summary.push(');
             }
 
             return summary.join('\n');
@@ -232,7 +232,7 @@ export class WizardSession {
             this.visualizer.buildComfyWorkflow(analyses);
 
             // Export workflow for ComfyUI
-            const workflowPath = join(this.projectPath, 'project_visualization.json');
+            const workflowPath = join(this.projectPath, project_visualization.json');
             this.visualizer.exportWorkflow(workflowPath);
 
             // Generate text summary

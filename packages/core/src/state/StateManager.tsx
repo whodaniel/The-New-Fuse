@@ -2,7 +2,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events';
 import { Redis } from 'ioredis';
-import { DatabaseService } from '../database/database.service.js';
+import { DatabaseService } from '../database/database.service.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import * as z from 'zod';
 import {
@@ -52,7 +52,7 @@ export class StateManager extends EventEmitter implements OnModuleInit {
       persisted.forEach((state) => this.states.set(state.id, state));
     } catch (error) {
       const msg = error instanceof Error ? error.message : String(error);
-      this.logger.error('Failed to load persisted states:', { error: msg });
+      this.logger.error('Failed to load persisted states:, { error: msg });
     }
   }
 
@@ -151,7 +151,7 @@ export class StateManager extends EventEmitter implements OnModuleInit {
         });
       }
     } catch (error) {
-      this.logger.warn('Failed to cleanup old transactions:', { error, key });
+      this.logger.warn('Failed to cleanup old transactions:, { error, key });
     }
   }
 
@@ -194,7 +194,7 @@ export class StateManager extends EventEmitter implements OnModuleInit {
         this.emit(StateEventType.DELETED, event);
       }
     } catch (error) {
-      this.logger.error('Failed to delete state:', { error, key });
+      this.logger.error('Failed to delete state:, { error, key });
     }
   }
 
@@ -260,7 +260,7 @@ export class StateManager extends EventEmitter implements OnModuleInit {
     await this.set(key, state);
   }
 
-  private async logTransaction(state: StateValue, action: 'CREATE' | 'UPDATE' | 'DELETE'): Promise<void> {
+  private async logTransaction(state: StateValue, action: CREATE' | UPDATE' | DELETE'): Promise<void> {
     if (!this.db.prisma) {
       throw new Error('Database connection not initialized');
     }

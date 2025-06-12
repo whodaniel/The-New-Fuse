@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
-import { MCPRegistry } from './MCPRegistry.js';
-import { MCPTool } from './types.js';
+import { Logger } from '../utils/logger.tsx';
+import { MCPRegistry } from './MCPRegistry.tsx';
+import { MCPTool } from './types.tsx';
 
 interface WebhookConfig {
     url: string;
@@ -68,18 +68,18 @@ export class WebhookManager {
                     const result = await originalExecute(params);
 
                     // Trigger webhooks
-                    await this.triggerWebhooks(tool.name, 'success', {
+                    await this.triggerWebhooks(tool.name, success', {
                         params,
                         result,
                         timestamp: Date.now()
                     });
 
                     return result;
-                } catch (error) {
+                } catch (error: unknown) {
                     // Trigger error webhooks
-                    await this.triggerWebhooks(tool.name, 'error', {
+                    await this.triggerWebhooks(tool.name, error', {
                         params,
-                        error: error.message,
+                        error: (error as Error).message,
                         timestamp: Date.now()
                     });
                     
@@ -124,8 +124,8 @@ export class WebhookManager {
             const response = await fetch(webhook.url, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-Webhook-Signature': this.generateSignature(event, webhook.secret),
+                    Content-Type': application/'json',
+                    X-Webhook-Signature': this.generateSignature(event, webhook.secret),
                     ...webhook.headers
                 },
                 body: JSON.stringify(event)
@@ -136,7 +136,7 @@ export class WebhookManager {
             }
 
             this.logger.debug(`Successfully delivered webhook ${event.id}`);
-        } catch (error) {
+        } catch (error: unknown) {
             if (
                 webhook.retryConfig &&
                 attempt < webhook.retryConfig.maxAttempts
@@ -152,7 +152,7 @@ export class WebhookManager {
             }
             
             this.logger.error(
-                `Webhook delivery failed after ${attempt} attempts: ${error.message}`
+                `Webhook delivery failed after ${attempt} attempts: ${(error as Error).message}`
             );
         }
     }
@@ -161,7 +161,7 @@ export class WebhookManager {
      * Generate signature for webhook payload
      */
     private generateSignature(event: WebhookEvent, secret?: string): string {
-        if (!secret) return '';
+        if (!secret) return ;
         
         const crypto = require('crypto');
         const hmac = crypto.createHmac('sha256', secret);

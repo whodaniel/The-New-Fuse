@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
-import { Database } from './database.js';
+import { Database } from './database.tsx';
 
 export interface WebhookDefinition {
   id: string;

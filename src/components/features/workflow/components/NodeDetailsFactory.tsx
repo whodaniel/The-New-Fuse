@@ -5,7 +5,7 @@ import { ApiNodeDetailsView } from './details/ApiNodeDetailsView.js';
 import { DataTransformDetailsView } from './details/DataTransformDetailsView.js';
 import { MCPNodeDetailsView } from './details/MCPNodeDetailsView.js';
 import { MCPWorkflowDetailsView } from './details/MCPWorkflowDetailsView.js';
-import { AINewsAgentDetailsView } from './details/AINewsAgentDetailsView.js';
+import { AINewsAgentDetailsView } from './details/AINewsAgentDetailsView.tsx';
 
 /**
  * Factory function to return the appropriate details component based on node type

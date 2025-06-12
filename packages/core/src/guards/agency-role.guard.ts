@@ -58,7 +58,7 @@ export class AgencyRoleGuard implements CanActivate {
       
       if (!hasPermission) {
         this.logger.warn(
-          `Access denied. User ${user.id} with role ${userRole} attempted to access resource requiring roles: ${requiredRoles.join(', ')}`
+          `Access denied. User ${user.id} with role ${userRole} attempted to access resource requiring roles: ${requiredRoles.join(', )}`
         );
         throw new ForbiddenException('Insufficient permissions for this operation');
       }
@@ -69,8 +69,8 @@ export class AgencyRoleGuard implements CanActivate {
       request.userRole = userRole;
       
       return true;
-    } catch (error) {
-      this.logger.error(`Role guard error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Role guard error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -130,31 +130,31 @@ export class AgencyRoleGuard implements CanActivate {
     // Define resource-specific permissions
     const resourcePermissions = {
       agency: {
-        read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        write: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
+        read: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        write: ['MASTER_ADMIN', AGENCY_ADMIN'],
         delete: ['MASTER_ADMIN']
       },
       users: {
-        read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-        write: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
-        delete: ['MASTER_ADMIN', 'AGENCY_ADMIN']
+        read: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER'],
+        write: ['MASTER_ADMIN', AGENCY_ADMIN'],
+        delete: ['MASTER_ADMIN', AGENCY_ADMIN']
       },
       agents: {
-        read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        write: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-        delete: ['MASTER_ADMIN', 'AGENCY_ADMIN']
+        read: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        write: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER'],
+        delete: ['MASTER_ADMIN', AGENCY_ADMIN']
       },
       swarm: {
-        read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        write: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-        execute: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        delete: ['MASTER_ADMIN', 'AGENCY_ADMIN']
+        read: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        write: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER'],
+        execute: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        delete: ['MASTER_ADMIN', AGENCY_ADMIN']
       },
       services: {
-        read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        write: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
-        request: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
-        delete: ['MASTER_ADMIN', 'AGENCY_ADMIN']
+        read: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        write: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER'],
+        request: ['MASTER_ADMIN', AGENCY_ADMIN', AGENCY_MANAGER', AGENCY_USER'],
+        delete: ['MASTER_ADMIN', AGENCY_ADMIN']
       }
     };
 

@@ -36,9 +36,9 @@ export class TelemetryController {
       await Promise.all(promises);
       
       return { success: true, processed: events.length };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to process telemetry events: ${error.message}`,
+        `Failed to process telemetry events: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -78,9 +78,9 @@ export class TelemetryController {
       });
       
       return { agents };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to get agent activity: ${error.message}`,
+        `Failed to get agent activity: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -116,9 +116,9 @@ export class TelemetryController {
         .slice(0, limit);
       
       return { tools: sortedTools };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to get tool usage: ${error.message}`,
+        `Failed to get tool usage: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -153,9 +153,9 @@ export class TelemetryController {
       const validTraces = traces.filter(trace => trace !== null);
       
       return { traces: validTraces };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to get recent traces: ${error.message}`,
+        `Failed to get recent traces: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

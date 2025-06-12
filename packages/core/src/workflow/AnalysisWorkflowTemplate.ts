@@ -6,7 +6,7 @@ export class AnalysisWorkflowTemplate {
   constructor() {
     this.steps = [
       {
-        name: 'Step 1',
+        name:Step 1',
         type: 'analysis',
         parameters: {},
         retryPolicy: {
@@ -16,7 +16,7 @@ export class AnalysisWorkflowTemplate {
         }
       },
       {
-        name: 'Step 2',
+        name:Step 2',
         type: 'visualization',
         parameters: {},
         retryPolicy: {
@@ -26,7 +26,7 @@ export class AnalysisWorkflowTemplate {
         }
       },
       {
-        name: 'Step 3',
+        name:Step 3',
         type: 'integration',
         parameters: {},
         retryPolicy: {

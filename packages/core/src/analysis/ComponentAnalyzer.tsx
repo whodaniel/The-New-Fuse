@@ -1,9 +1,9 @@
 
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 
 export interface ComponentAnalysis {
   componentName: string;
-  type: memory' | 'repository' | 'api' | 'frontend' | 'module';
+  type: memory' | repository' | api' | frontend' | module';
   metrics: {
     complexity: number;
     cohesion: number;
@@ -28,16 +28,16 @@ export class ComponentAnalyzer extends EventEmitter {
       suggestions: []
     };
 
-    this.analyses.set(path, analysis): complete', analysis);
+    this.analyses.set(path, analysis): 'complete', analysis);
     
     return analysis;
   }
 
   private determineComponentType(path: string): ComponentAnalysis['type'] {
-    if (path.includes('/memory/')) return 'memory';
-    if (path.includes('/repository/')) return 'repository';
-    if (path.includes('/api/')) return 'api';
-    if (path.includes('/components/')) return 'frontend';
-    return 'module';
+    if (path.includes('/memory/')) return memory';
+    if (path.includes('/repository/')) return repository';
+    if (path.includes('/api/')) return api';
+    if (path.includes('/components/')) return frontend';
+    return module';
   }
 }

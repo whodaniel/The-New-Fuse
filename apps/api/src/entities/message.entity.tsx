@@ -7,9 +7,9 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { User } from './user.entity.js';
-import { ChatRoom } from './chat-room.entity.js';
-import { Agent } from './agent.entity.js';
+import { User } from './user.entity.tsx';
+import { ChatRoom } from './chat-room.entity.tsx';
+import { Agent } from './agent.entity.tsx';
 
 @Entity('messages')
 export class Message {

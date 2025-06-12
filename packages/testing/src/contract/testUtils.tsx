@@ -1,6 +1,6 @@
 import { Type } from '@nestjs/common';
 import { faker } from '@faker-js/faker';
-import { APIResponse } from '@the-new-fuse/types'; // Corrected import path (assuming type is here)
+import { ApiResponse } from '@the-new-fuse/types'; // Corrected import path (assuming type is here)
 
 export class TestUtils {
   /**
@@ -21,7 +21,7 @@ export class TestUtils {
   /**
    * Create mock API response
    */
-  static createMockApiResponse<T>(data: T): APIResponse<T> {
+  static createMockApiResponse<T>(data: T): ApiResponse<T> {
     return {
       status: 'success',
       data,

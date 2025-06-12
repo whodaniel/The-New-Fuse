@@ -5,7 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-} from 'typeorm';
+} from ''typeorm';
 import {
   TaskType,
   TaskPriority,
@@ -13,7 +13,7 @@ import {
   TaskDependency,
   TaskMetadata,
   TaskResult,
-} from './types.js';
+} from './types.tsx';
 
 @Entity('tasks')
 export class TaskEntity {
@@ -74,10 +74,10 @@ export class TaskEntity {
   searchVector?: unknown;
 
   // Indexes for common queries
-  @Index(['status', 'priority'])
+  @Index(['status', priority'])
   statusPriorityIdx?: string;
 
-  @Index(['type', 'status'])
+  @Index(['type', status'])
   typeStatusIdx?: string;
 
   @Index(['metadata'])
@@ -88,9 +88,9 @@ export class TaskEntity {
 
 // Around line 20, 26, 32, 38: TS1146: Declaration expected.
 // This often means a property name is missing after a decorator or the syntax is incorrect.
-// Example: @Column() name: string; // 'name' is the declaration.
+// Example: @Column() name: string; // name' is the declaration.
 
-// Around line 23, 29, 35: TS1109: Expression expected, TS1005: ':' expected, TS1002: Unterminated string literal.
+// Around line 23, 29, 35: TS1109: Expression expected, TS1005::' expected, TS1002: Unterminated string literal.
 // This suggests issues in column options or default values.
 // Example: @Column({ type: 'varchar', length: 255, nullable: true, default: 'pending' })
 
@@ -99,10 +99,10 @@ export class TaskEntity {
 
 // Around line 57, 60, 63: Errors with commas, colons, unterminated strings, property assignments.
 // These are common in object literals for column options or relation options.
-// Example: @ManyToOne(() => User, user => user.tasks, { eager: false, onDelete: 'SET NULL' })
+// Example: @ManyToOne(() => User, user => user.tasks, { eager: false, onDelete: SET 'NULL' })
 // Example: @Column({ type: 'jsonb', nullable: true, default: () => "'{}'" })
 
-// Around line 66, 67, 70, 71: Errors with commas, colons, expected ')'.
+// Around line 66, 67, 70, 71: Errors with commas, colons, expected )'.
 // Likely issues in relation definitions (e.g., JoinColumn, JoinTable) or method definitions if any.
 
 // General approach:

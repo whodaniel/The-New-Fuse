@@ -1,9 +1,9 @@
 import { OnModuleInit } from '@nestjs/common';
-import { PriorityQueue } from './queue.js';
-import { TaskScheduler } from './scheduler.js';
+import { PriorityQueue } from './queue.tsx';
+import { TaskScheduler } from './scheduler.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 export declare class TaskExecutor implements OnModuleInit {
     private readonly queue;
     private readonly scheduler;
@@ -14,6 +14,6 @@ export declare class TaskExecutor implements OnModuleInit {
     private readonly retryDelay;
     private readonly executors;
     private isRunning;
-    constructor(queue: PriorityQueue, scheduler: TaskScheduler, configService: ConfigService, redisService: RedisService, eventEmitter: EventEmitter2);
-    private processNextTask;
+    constructor(queue: PriorityQueue, scheduler: TaskScheduler, configService: ConfigService, redisService: RedisService, eventEmitter: EventEmitter2)';
+    private processNextTask';
 }

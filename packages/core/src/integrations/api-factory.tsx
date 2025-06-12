@@ -1,11 +1,11 @@
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from ''axios';
 import { Logger } from '../logging.js';
 import { EventEmitter } from 'events';
-import { ApiMetrics } from '../monitoring/api-metrics.js';
+import { ApiMetrics } from '../monitoring/api-metrics.tsx';
 
 export interface ApiClientConfig {
   baseUrl: string;
-  authType: 'none' | 'bearer' | 'basic' | 'api-key' | 'oauth2';
+  authType:none' | bearer' | basic' | api-key' | oauth2';
   authConfig?: {
     token?: string;
     username?: string;
@@ -58,7 +58,7 @@ export class ApiClientFactory extends EventEmitter {
       baseURL: mergedConfig.baseUrl,
       timeout: mergedConfig.timeout,
       headers: {
-        'Content-Type': 'application/json',
+        Content-Type': application/'json',
         ...mergedConfig.defaultHeaders
       }
     };
@@ -104,7 +104,7 @@ export class ApiClientFactory extends EventEmitter {
         // Record metrics
         if (mergedConfig.metrics) {
           mergedConfig.metrics.recordSuccess({
-            url: response.config.url || '',
+            url: response.config.url || ,
             method: response.config.method || 'GET',
             duration,
             status: response.status,
@@ -176,7 +176,7 @@ export class ApiClientFactory extends EventEmitter {
         // Record error metrics
         if (mergedConfig.metrics) {
           mergedConfig.metrics.recordFailure({
-            url: config.url || '',
+            url: config.url || ,
             method: config.method || 'GET',
             duration,
             status: error.response?.status || 0,
@@ -207,37 +207,37 @@ export class ApiClientFactory extends EventEmitter {
     const { authType, authConfig } = clientConfig;
 
     switch (authType) {
-      case 'bearer':
+      case bearer':
         if (authConfig?.token) {
           axiosConfig.headers = {
             ...axiosConfig.headers,
-            'Authorization': `Bearer ${authConfig.token}`
+            Authorization': `Bearer ${authConfig.token}`
           };
         }
         break;
-      case 'basic':
+      case basic':
         if (authConfig?.username && authConfig?.password) {
           const credentials = Buffer.from(`${authConfig.username}:${authConfig.password}`).toString('base64');
           axiosConfig.headers = {
             ...axiosConfig.headers,
-            'Authorization': `Basic ${credentials}`
+            Authorization': `Basic ${credentials}`
           };
         }
         break;
-      case 'api-key':
+      case api-key':
         if (authConfig?.apiKey) {
-          const headerName = authConfig.apiKeyHeader || 'X-Api-Key';
+          const headerName = authConfig.apiKeyHeader || X-Api-Key;
           axiosConfig.headers = {
             ...axiosConfig.headers,
             [headerName]: authConfig.apiKey
           };
         }
         break;
-      case 'oauth2':
+      case oauth2':
         // OAuth2 authentication would be implemented here
         // This typically involves token acquisition and refresh logic
         break;
-      case 'none':
+      case none':
       default:
         // No authentication needed
         break;
@@ -255,15 +255,15 @@ export class ApiClientFactory extends EventEmitter {
       const headers = { ...(redacted.headers as Record<string, any>) };
       
       if (headers.Authorization) {
-        headers.Authorization = headers.Authorization.replace(/Bearer .+/, 'Bearer [REDACTED]')
-                                                   .replace(/Basic .+/, 'Basic [REDACTED]');
+        headers.Authorization = headers.Authorization.replace(/Bearer .+/, Bearer [REDACTED]')
+                                                   .replace(/Basic .+/, Basic [REDACTED]');
       }
       
       // Redact common API key headers
-      const apiKeyHeaders = ['X-Api-Key', 'Api-Key', 'Apikey', 'X-API-KEY'];
+      const apiKeyHeaders = ['X-Api-Key, Api-Key, Apikey', X-API-KEY];
       apiKeyHeaders.forEach(header => {
         if (headers[header]) {
-          headers[header] = '[REDACTED]';
+          headers[header] = [REDACTED]';
         }
       });
       

@@ -7,7 +7,7 @@ import {
   AuthToken,
   AuthSession,
   SecurityConfig,
-} from './types.js';
+} from './types.tsx';
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -26,7 +26,7 @@ export class AuthService {
     private readonly eventEmitter: EventEmitter2,
   ) {
     this.config = this.loadConfig();
-    this.jwtSecret = this.configService.get<string>('JWT_SECRET', 'defaultsecret');
+    this.jwtSecret = this.configService.get<string>('JWT_SECRET', defaultsecret');
   }
 
   private loadConfig(): SecurityConfig['auth'] {
@@ -121,13 +121,13 @@ export class AuthService {
     userId: string,
     scopes: AuthScope[],
     options?: {
-      type?: 'access' | 'refresh';
+      type?:access' | refresh';
       expiresIn?: number;
       source?: string;
       device?: string;
     },
   ): Promise<AuthToken> {
-    const type = options?.type || 'access';
+    const type = options?.type || access';
     const expiresIn = options?.expiresIn || this.config.tokenExpiration;
     
     const tokenId = uuidv4();
@@ -203,7 +203,7 @@ export class AuthService {
     };
 
     await this.storeSession(session);
-    this.eventEmitter.emit('session.created', {
+    this.eventEmitter.emit('session.'created', {
       sessionId: session.id,
       userId: session.userId,
     });
@@ -216,7 +216,7 @@ export class AuthService {
 
     if (
       !session ||
-      session.status !== 'active' ||
+      session.status !== active' ||
       session.metadata.expiresAt < new Date()
     ) {
       return null;
@@ -241,7 +241,7 @@ export class AuthService {
     // Revoke associated token
     await this.revokeToken(session.token.id);
 
-    this.eventEmitter.emit('session.revoked', {
+    this.eventEmitter.emit('session.'revoked', {
       sessionId: session.id,
       userId: session.userId,
     });
@@ -280,7 +280,7 @@ export class AuthService {
     }
 
     if (errors.length > 0) {
-      throw new Error(`Password validation failed: ${errors.join('; ')}`);
+      throw new Error(`Password validation failed: ${errors.join('; )}`);
     }
   }
 

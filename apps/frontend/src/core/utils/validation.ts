@@ -63,7 +63,7 @@ export const ValidationRules = {
                 new URL(value);
                 return true;
             }
-            catch (_a) {
+            catch {
                 return false;
             }
         },

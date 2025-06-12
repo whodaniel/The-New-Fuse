@@ -1,4 +1,4 @@
-import Redis from 'ioredis';
+import Redis from ''ioredis';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
 import { Message } from '../types/messages.js';
@@ -22,22 +22,22 @@ export class RedisManager {
     private readonly keyPrefix: string;
 
     constructor(config: RedisConfig) {
-        this.client = new Redis({
+        this.client = new (Redis as any)({
             host: config.host,
             port: config.port,
             password: config.password,
             db: config.db || 0,
-            keyPrefix: config.keyPrefix || 'fuse:'
+            keyPrefix: config.keyPrefix || fuse:
         });
 
-        this.subscriber = new Redis({
+        this.subscriber = new (Redis as any)({
             host: config.host,
             port: config.port,
             password: config.password,
             db: config.db || 0
         });
 
-        this.publisher = new Redis({
+        this.publisher = new (Redis as any)({
             host: config.host,
             port: config.port,
             password: config.password,
@@ -56,7 +56,7 @@ export class RedisManager {
 
         connections.forEach(connection => {
             connection.on('error', (error) => {
-                logger.error('Redis connection error:', error);
+                logger.error('Redis connection error:, error);
             });
 
             connection.on('close', () => {
@@ -99,7 +99,7 @@ export class RedisManager {
             ]);
             logger.info('Successfully connected to Redis');
         } catch (error) {
-            logger.error('Failed to connect to Redis:', error);
+            logger.error('Failed to connect to Redis:, error);
             throw error;
         }
     }
@@ -111,9 +111,9 @@ export class RedisManager {
                 this.subscriber.quit(),
                 this.publisher.quit()
             ]);
-            logger.info('Disconnected from Redis');
+            logger.info('Disconnected from 'Redis');
         } catch (error) {
-            logger.error('Error disconnecting from Redis:', error);
+            logger.error('Error disconnecting from Redis:, error);
             throw error;
         }
     }
@@ -207,7 +207,7 @@ export class RedisManager {
             const match = info.match(/connected_clients:(\d+)/);
             return match ? parseInt(match[1], 10) : 0;
         } catch (error) {
-            logger.error('Error getting connection count:', error);
+            logger.error('Error getting connection count:, error);
             return 0;
         }
     }
@@ -232,7 +232,7 @@ export class RedisManager {
             await this.client.flushall();
             logger.info('Redis database flushed');
         } catch (error) {
-            logger.error('Error flushing Redis:', error);
+            logger.error('Error flushing Redis:, error);
             throw error;
         }
     }

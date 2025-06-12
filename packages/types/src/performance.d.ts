@@ -1,5 +1,5 @@
-import { SystemPerformanceMetrics } from './metrics.js';
-import { JsonValue } from './common-types.js';
+import { SystemPerformanceMetrics } from './metrics.tsx';
+import { JsonValue } from './common-types.tsx';
 export type { SystemPerformanceMetrics };
 export interface ExtendedPerformanceMetrics extends SystemPerformanceMetrics {
     latencyP50: number;

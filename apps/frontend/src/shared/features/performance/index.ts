@@ -1,4 +1,4 @@
-export { PerformanceDashboard } from './PerformanceDashboard.js';
-export { PerformanceMetrics } from './PerformanceMetrics.js';
-export { SystemMetrics } from './SystemMetrics.js';
+export { PerformanceDashboard } from './PerformanceDashboard.tsx';
+export { PerformanceMetrics } from './PerformanceMetrics.tsx';
+export { SystemMetrics } from './SystemMetrics.tsx';
 //# sourceMappingURL=index.js.map

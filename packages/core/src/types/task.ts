@@ -1,4 +1,4 @@
-import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata } from '@fuse/types';
+import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata  } from '@fuse/types;
 
 export interface Task {
     id: string;
@@ -35,11 +35,11 @@ export interface TaskExecution {
             memory: number;
             tokens: number;
         };
-    };
-    logs?: TaskExecutionLog[];
+    }';
+    logs?: TaskExecutionLog[]';
 }
 
-export type TaskExecutionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
+export type TaskExecutionStatus = running' | completed' | failed' | cancelled';
 
 export interface TaskExecutionLog {
     timestamp: Date;

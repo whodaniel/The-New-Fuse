@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Agent } from './Agent.js';
-import { Pipeline } from './Pipeline.js';
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from ''typeorm';
+import { Agent } from './Agent.tsx';
+import { Pipeline } from './Pipeline.tsx';
 
 @Entity('users')
 export class User {
@@ -22,7 +22,7 @@ export class User {
   @Column({ default: false, type: 'boolean' })
   emailVerified!: boolean;
 
-  @Column('simple-array', { nullable: true })
+  @Column('simple-array, { nullable: true })
   roles?: string[];
 
   @CreateDateColumn({ type: 'timestamp' })

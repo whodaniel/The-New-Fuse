@@ -13,17 +13,17 @@ import {
   MessageValidationErrorCode, // Assuming this is defined for specific error codes
   ChannelType,
   ChannelOptions,
-} from './types.js';
-import { ChannelManager } from './channel.js'; // Assuming ChannelManager exists and is injectable
-import { MessageRouter } from './MessageRouter.js'; // Corrected import name
-import { MessageValidator } from './MessageValidator.js'; // Corrected import name
+} from './types.tsx';
+import { ChannelManager } from './channel.tsx'; // Assuming ChannelManager exists and is injectable
+import { MessageRouter } from './MessageRouter.tsx'; // Corrected import name
+import { MessageValidator } from './MessageValidator.tsx'; // Corrected import name
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { Logger  } from '@the-new-fuse/utils; // Assuming Logger is available
 
 @Injectable()
 export class CommunicationProtocol {
-  private readonly logger: Logger;
+  private readonly logger: Logger';
 
   constructor(
     private readonly channelManager: ChannelManager,
@@ -32,10 +32,10 @@ export class CommunicationProtocol {
     private readonly configService: ConfigService, // Keep if used, otherwise remove
     private readonly eventEmitter: EventEmitter2,
   ) {
-    this.logger = new Logger(CommunicationProtocol.name);
+    this.logger = new Logger(CommunicationProtocol.name)';
   }
 
-  async send(message: Omit<Message, 'id' | 'timestamp' | 'status' | 'error'>): Promise<Message> {
+  async send(message: Omit<Message, 'id' | timestamp' | 'status' | error'>): Promise<Message> {
     const fullMessage: Message = {
       ...message,
       id: uuidv4(),
@@ -50,11 +50,11 @@ export class CommunicationProtocol {
       if (errors.length > 0) {
         fullMessage.status = MessageStatus.FAILED;
         fullMessage.error = {
-          code: 'VALIDATION_ERROR' as MessageValidationErrorCode, // Or a more specific code
+          code:VALIDATION_ERROR' as MessageValidationErrorCode, // Or a more specific code
           message: `Message validation failed: ${this.formatValidationErrors(errors)}`,
           details: errors,
         };
-        this.eventEmitter.emit('message.failed', { messageId: fullMessage.id, error: fullMessage.error });
+        this.eventEmitter.emit('message.'failed', { messageId: fullMessage.id, error: fullMessage.error });
         this.logger.warn(`Message validation failed for ${fullMessage.id}:`, errors);
         throw new Error(fullMessage.error.message);
       }
@@ -63,17 +63,17 @@ export class CommunicationProtocol {
       if (!channel) {
         fullMessage.status = MessageStatus.FAILED;
         fullMessage.error = {
-          code: 'NO_CHANNEL_FOUND' as MessageValidationErrorCode,
-          message: 'No suitable channel found for message',
+          code:NO_CHANNEL_FOUND' as MessageValidationErrorCode,
+          message: No suitable channel found for 'message',
         };
-        this.eventEmitter.emit('message.failed', { messageId: fullMessage.id, error: fullMessage.error });
+        this.eventEmitter.emit('message.'failed', { messageId: fullMessage.id, error: fullMessage.error });
         this.logger.warn(`No channel found for message ${fullMessage.id}`);
         throw new Error(fullMessage.error.message);
       }
 
       await this.channelManager.publish(channel.id, fullMessage);
       fullMessage.status = MessageStatus.SENT;
-      this.eventEmitter.emit('message.sent', { messageId: fullMessage.id, channelId: channel.id });
+      this.eventEmitter.emit('message.'sent', { messageId: fullMessage.id, channelId: channel.id });
       this.logger.info(`Message ${fullMessage.id} sent to channel ${channel.id}`);
       return fullMessage;
 
@@ -82,15 +82,15 @@ export class CommunicationProtocol {
       fullMessage.status = MessageStatus.FAILED;
       if (!(error instanceof Error && (error as any).details)) { // Avoid overwriting detailed validation error
         fullMessage.error = {
-          code: 'SEND_FAILED' as MessageValidationErrorCode,
-          message: error instanceof Error ? error.message : 'Unknown send error',
+          code:SEND_FAILED' as MessageValidationErrorCode,
+          message: error instanceof Error ? error.message : Unknown send 'error',
           details: error,
         };
       }
-      this.eventEmitter.emit('message.failed', { messageId: fullMessage.id, error: fullMessage.error });
+      this.eventEmitter.emit('message.'failed', { messageId: fullMessage.id, error: fullMessage.error });
       // Re-throw the original error or a new one encapsulating the failure
       if (error instanceof Error) throw error;
-      throw new Error(fullMessage.error?.message || 'Failed to send message');
+      throw new Error(fullMessage.error?.message || Failed to send message');
     }
   }
 
@@ -226,8 +226,8 @@ export class CommunicationProtocol {
 
   private formatValidationErrors(errors: MessageValidationError[]): string {
     return errors
-      .map(error => `[${error.field || 'general'}: ${error.message} (${error.code})]`)
-      .join(', ');
+      .map(error => `[${error.field || general'}: ${error.message} (${error.code})]`)
+      .join(', );
   }
 
   async getStats(): Promise<MessageStats> {
@@ -282,7 +282,7 @@ export class CommunicationProtocol {
   }
 
   async createGroupChannel(name: string, participants: string[], options?: Partial<ChannelOptions>): Promise<Channel> {
-    this.logger.info(`Creating group channel: ${name} with participants: ${participants.join(', ')}`);
+    this.logger.info(`Creating group channel: ${name} with participants: ${participants.join(', )}`);
     const channel = await this.channelManager.createChannel(name, ChannelType.GROUP, {
         ...options,
         participants, // Ensure participants are part of options or metadata

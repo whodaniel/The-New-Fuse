@@ -13,9 +13,8 @@ exports.FeatureTracker = void 0;
 const common_1 = require("@nestjs/common");
 const types_js_1 = require("./types.js");
 let FeatureTracker = class FeatureTracker {
-    constructor() {
-        this.features = new Map();
-    }
+    features = new Map();
+    constructor() { }
     createFeature(featureId, name, description, dependencies = []) {
         const newFeature = {
             featureId,
@@ -111,3 +110,4 @@ exports.FeatureTracker = FeatureTracker = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], FeatureTracker);
+//# sourceMappingURL=FeatureTracker.js.map

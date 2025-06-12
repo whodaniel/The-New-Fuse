@@ -5,13 +5,13 @@ import react_1 from 'react';
 import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
 import WorkflowContext_1 from '@/contexts/WorkflowContext';
-import WorkflowNode_1 from './WorkflowNode.js';
-import WorkflowEdge_1 from './WorkflowEdge.js';
+import WorkflowNode_1 from './WorkflowNode.tsx';
+import WorkflowEdge_1 from './WorkflowEdge.tsx';
 import Button_1 from '@/components/ui/Button';
 import react_toastify_1 from 'react-toastify';
-import WorkflowExecutionContext from './WorkflowExecutionContext.js';
-import WorkflowDebugger from './WorkflowDebugger.js';
-import WorkflowTemplates from './WorkflowTemplates.js';
+import WorkflowExecutionContext from './WorkflowExecutionContext.tsx';
+import WorkflowDebugger from './WorkflowDebugger.tsx';
+import WorkflowTemplates from './WorkflowTemplates.tsx';
 import { workflowBuilderConfig } from '@/config/workflow-builder.config';
 // Import node components
 import {

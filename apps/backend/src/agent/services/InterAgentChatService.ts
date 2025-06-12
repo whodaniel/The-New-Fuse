@@ -46,8 +46,8 @@ export class InterAgentChatService implements OnModuleInit {
       });
       
       this.monitoringService.logEvent('agent.channel.subscribed', { agentId: this.agentId, channel });
-    } catch (error) {
-      this.alertService.error('agent.channel.subscribe.failed', `Failed to subscribe to channel ${channel}`, { error: error.message });
+    } catch (error: unknown) {
+      this.alertService.error('agent.channel.subscribe.failed', `Failed to subscribe to channel ${channel}`, { error: (error as Error).message });
     }
   }
 
@@ -94,8 +94,8 @@ export class InterAgentChatService implements OnModuleInit {
       this.eventEmitter.emit('agent.message.sent', message);
       
       return messageId;
-    } catch (error) {
-      this.alertService.error('agent.message.send.failed', `Failed to send message to agent ${toAgentId}`, { error: error.message });
+    } catch (error: unknown) {
+      this.alertService.error('agent.message.send.failed', `Failed to send message to agent ${toAgentId}`, { error: (error as Error).message });
       throw error;
     }
   }
@@ -126,8 +126,8 @@ export class InterAgentChatService implements OnModuleInit {
       this.eventEmitter.emit('agent.message.broadcast', message);
       
       return messageId;
-    } catch (error) {
-      this.alertService.error('agent.message.broadcast.failed', 'Failed to broadcast message', { error: error.message });
+    } catch (error: unknown) {
+      this.alertService.error('agent.message.broadcast.failed', 'Failed to broadcast message', { error: (error as Error).message });
       throw error;
     }
   }
@@ -154,10 +154,10 @@ export class InterAgentChatService implements OnModuleInit {
       }
       
       return { status: 'healthy' };
-    } catch (error) {
+    } catch (error: unknown) {
       return {
         status: 'unhealthy',
-        details: error.message,
+        details: (error as Error).message,
       };
     }
   }

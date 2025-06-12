@@ -35,7 +35,7 @@ export interface WorkflowMetadata {
     creator: string;
     createdAt: number;
     tags?: string[];
-    priority: low' | 'medium' | 'high';
+    priority: low' | medium' | high';
 }
 export interface WorkflowConfiguration {
     maxConcurrentTasks: number;
@@ -67,10 +67,10 @@ export interface WorkflowError {
     timestamp: number;
     context?: Record<string, unknown>;
 }
-export type WorkflowStatus = 'pending' | 'running' | 'completed' | 'failed' | 'paused' | 'cancelled';
-export type TaskType = 'data_processing' | 'ml_inference' | 'api_call' | 'notification' | 'validation' | 'transformation';
+export type WorkflowStatus = pending' | running' | completed' | failed' | paused' | cancelled';
+export type TaskType = data_processing' | ml_inference' | api_call' | notification' | validation' | transformation';
 export interface NotificationConfig {
     endpoints: string[];
-    events: ('start' | 'complete' | 'fail' | 'pause')[];
-    format: json' | 'plain';
+    events: ('start' | complete' | fail' | pause')[];
+    format: json' | plain';
 }

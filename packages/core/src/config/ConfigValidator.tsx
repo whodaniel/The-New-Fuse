@@ -11,7 +11,7 @@ interface ValidationResult {
 interface ValidationRule {
   schema: z.ZodSchema;
   message?: string;
-  severity: 'error' | 'warning';
+  severity:error' | warning';
   condition?: (value: unknown) => boolean;
 }
 
@@ -92,7 +92,7 @@ export class ConfigValidator {
       const schemaObject: Record<string, z.ZodSchema> = {};
 
       for (const [key, value] of Object.entries(config)) {
-        if(typeof value === 'object' && value !== null) {
+        if(typeof value === object' && value !== null) {
           schemaObject[key] = this.createSchema(value as Record<string, unknown>);
         } else {
           schemaObject[key] = this.inferSchema(value);
@@ -101,20 +101,20 @@ export class ConfigValidator {
 
       return z.object(schemaObject);
     } catch (error) {
-      this.logger.error('Error creating schema:', error);
+      this.logger.error('Error creating schema:, error);
       throw error;
     }
   }
 
   inferSchema(value: unknown): z.ZodSchema {
     switch (typeof value) {
-      case 'string':
+      case string':
         return z.string();
-      case 'number':
+      case number':
         return z.number();
-      case 'boolean':
+      case boolean':
         return z.boolean();
-      case 'object':
+      case object':
         if(value === null) {
           return z.null();
         }

@@ -1,4 +1,4 @@
-import { AgentMetadataManager } from '../services/AgentMetadataManager.js';
+import { AgentMetadataManager } from '../services/AgentMetadataManager.tsx';
 import { TaskManager } from '../services/TaskManager.js';
 import { LearningSystem } from '../services/LearningSystem.js';
 
@@ -25,7 +25,7 @@ interface CharacterEvent {
 
 interface PerformanceAnalysis {
   successRateTrend: {
-    direction: 'improving' | 'declining' | 'stable';
+    direction:improving' | declining' | stable';
     value: number;
   };
   success: boolean;
@@ -56,7 +56,7 @@ export class MetadataIntegrationExamples {
       const currentMetadata = await this.metadataManager.getCurrentMetadata(agentId);
       await this.metadataManager.update(agentId, {
         capabilities: [...currentMetadata.capabilities, ...taskResult.demonstratedCapabilities]
-      }, 'New capabilities demonstrated in task');
+      }, New capabilities demonstrated in task');
     }
   }
 
@@ -106,7 +106,7 @@ export class MetadataIntegrationExamples {
 
   private optimizeCommunicationStyle(trends: PerformanceAnalysis): string {
     // Implementation of communication style optimization
-    return 'optimized_style';
+    return optimized_style';
   }
 
   private updateTraitsBasedOnLearning(

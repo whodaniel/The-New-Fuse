@@ -26,7 +26,7 @@ export class RedisService implements OnModuleDestroy {
         db: this.configService.get('REDIS_DB', 0),
       };
 
-      this.client = new Redis(options);
+      this.client = new (Redis as any)(options);
 
       this.client.on('error', (error) => {
         this.logger.error('Redis connection error:', error);

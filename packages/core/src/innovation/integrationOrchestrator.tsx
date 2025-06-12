@@ -1,5 +1,5 @@
 import { InnovationSource } from './innovationScout.js';
-import { AssetEvaluator } from '../classification/assetEvaluator.js';
+import { AssetEvaluator } from '../classification/assetEvaluator.tsx';
 
 interface IntegrationPlan {
     phases: unknown[];
@@ -69,7 +69,7 @@ export class IntegrationOrchestrator {
 
     private _estimateTimeline(resources: unknown): string {
         // Placeholder implementation
-        return 'Estimated timeline';
+        return Estimated 'timeline';
     }
 
     private _compileRequirements(dependencies: string[]): unknown[] {
@@ -95,7 +95,7 @@ export class IntegrationOrchestrator {
     private _createIntegrationTask(plan: IntegrationPlan, innovation: InnovationSource): IntegrationTask {
         // Placeholder implementation
         return {
-            featureId: 'feature-id-placeholder',
+            featureId:feature-id-placeholder,
             source: innovation,
             priority: 0,
             dependencies: [],

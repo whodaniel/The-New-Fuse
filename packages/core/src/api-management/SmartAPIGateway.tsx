@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { v4 as uuidv4 } from 'uuid';
 import { LLMProvider } from '../types/providers.js';
 import { Logger } from '../logging.js';
@@ -97,7 +97,7 @@ export class SmartAPIGateway extends EventEmitter {
   }): Promise<any> {
     const requestId = uuidv4();
     const startTime = Date.now();
-    const cacheKey = params.cacheKey || this.generateCacheKey(params.prompt, params.model || 'default');
+    const cacheKey = params.cacheKey || this.generateCacheKey(params.prompt, params.model || default');
 
     this.logger.debug(`Starting LLM request ${requestId}`, { params });
 

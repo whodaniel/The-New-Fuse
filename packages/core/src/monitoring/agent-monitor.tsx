@@ -26,12 +26,12 @@ export class AgentMonitor {
 
   private sendHeartbeat(agentId: string) {
     const heartbeat = {
-      type: heartbeat',
+      type: 'heartbeat',
       timestamp: new Date().toISOString(),
       metadata: {
         version: 1.1.0',
         source: agentId,
-        status: active'
+        status: 'active'
       }
     };
 
@@ -44,7 +44,7 @@ export class AgentMonitor {
     this.redis.subscribe(`agent:${agentId}`, (message) => {
       if (message.type === 'heartbeat') {
         lastHeartbeat = Date.now();
-        this.updateAgentStatus(agentId, 'active');
+        this.updateAgentStatus(agentId, active');
       }
     });
 
@@ -52,8 +52,8 @@ export class AgentMonitor {
     setInterval(() => {
       const timeSinceLastHeartbeat = Date.now() - lastHeartbeat;
       if (timeSinceLastHeartbeat > 60000) { // 1 minute timeout
-        this.updateAgentStatus(agentId, 'disconnected');
-        this.emitAlert(agentId, 'Agent heartbeat timeout');
+        this.updateAgentStatus(agentId, disconnected');
+        this.emitAlert(agentId, Agent heartbeat timeout');
       }
     }, 30000);
   }
@@ -66,11 +66,11 @@ export class AgentMonitor {
   }
 
   private emitAlert(agentId: string, message: string) {
-    this.redis.publish('monitoring:alerts', JSON.stringify({
+    this.redis.publish('monitoring: 'alerts', JSON.stringify({
       agentId,
       message,
       timestamp: new Date().toISOString(),
-      severity: high'
+      severity: 'high'
     }));
   }
 }

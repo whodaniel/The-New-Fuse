@@ -7,7 +7,7 @@ export interface KeyboardEvent {
   preventDefault: () => void;
 }
 
-export function handleKeyboardSubmit(event: KeyboardEvent, callback: (): any => void): void {
+export function handleKeyboardSubmit(event: KeyboardEvent, callback: () => void): void {
   const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
   const submitModifier = isMac ? event.metaKey : event.ctrlKey;
 
@@ -17,7 +17,7 @@ export function handleKeyboardSubmit(event: KeyboardEvent, callback: (): any => 
   }
 }
 
-export function handleEscapeKey(event: KeyboardEvent, callback: (): any => void): void {
+export function handleEscapeKey(event: KeyboardEvent, callback: () => void): void {
   if (event.key === 'Escape') {
     event.preventDefault();
     callback();

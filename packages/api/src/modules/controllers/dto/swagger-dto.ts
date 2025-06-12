@@ -12,29 +12,29 @@ import { WorkflowStatus } from '@the-new-fuse/types';
  */
 export class WorkflowDto {
   @ApiProperty({ description: 'Unique identifier' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ description: 'Workflow name' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ description: 'Workflow description', required: false })
   description?: string;
 
   @ApiProperty({ description: 'Workflow version' })
-  version: string;
+  version!: string;
 
-  @ApiProperty({ 
-    description: 'Trigger type', 
+  @ApiProperty({
+    description: 'Trigger type',
     enum: ['manual', 'event', 'schedule'],
     example: 'manual'
   })
-  triggerType: 'manual' | 'event' | 'schedule';
+  triggerType!: 'manual' | 'event' | 'schedule';
 
   @ApiProperty({ description: 'Trigger configuration', required: false, type: 'object' })
   triggerConfig?: Record<string, any>;
 
   @ApiProperty({ description: 'Workflow steps', type: 'array', items: { type: 'object' } })
-  steps: any[];
+  steps!: any[];
 
   @ApiProperty({ description: 'Initial context', required: false, type: 'object' })
   initialContext?: Record<string, any>;
@@ -43,10 +43,10 @@ export class WorkflowDto {
   tags?: string[];
 
   @ApiProperty({ description: 'Creation timestamp' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ description: 'Last update timestamp' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ApiProperty({ description: 'Deletion timestamp', required: false })
   deletedAt?: Date;
@@ -57,26 +57,26 @@ export class WorkflowDto {
  */
 export class WorkflowExecutionDto {
   @ApiProperty({ description: 'Unique identifier' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ description: 'Workflow definition identifier' })
-  definitionId: string;
+  definitionId!: string;
 
   @ApiProperty({ description: 'Workflow definition version' })
-  definitionVersion: string;
+  definitionVersion!: string;
 
-  @ApiProperty({ 
-    description: 'Execution status', 
+  @ApiProperty({
+    description: 'Execution status',
     enum: ['pending', 'running', 'completed', 'failed', 'paused', 'cancelled'],
     example: 'running'
   })
-  status: WorkflowStatus;
+  status!: WorkflowStatus;
 
   @ApiProperty({ description: 'Current step ID', required: false })
   currentStepId?: string | null;
 
   @ApiProperty({ description: 'Runtime context data', type: 'object' })
-  context: Record<string, any>;
+  context!: Record<string, any>;
 
   @ApiProperty({ description: 'Start timestamp', required: false })
   startedAt?: Date | null;
@@ -91,10 +91,10 @@ export class WorkflowExecutionDto {
   stepHistory?: Array<{ stepId: string; status: WorkflowStatus; timestamp: Date; result?: unknown }>;
 
   @ApiProperty({ description: 'Creation timestamp' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ description: 'Last update timestamp' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ApiProperty({ description: 'Deletion timestamp', required: false })
   deletedAt?: Date;
@@ -105,32 +105,32 @@ export class WorkflowExecutionDto {
  */
 export class AgentDto {
   @ApiProperty({ description: 'Unique identifier' })
-  id: string;
+  id!: string;
 
   @ApiProperty({ description: 'Agent name' })
-  name: string;
+  name!: string;
 
   @ApiProperty({ description: 'Agent type', example: 'assistant' })
-  type: string;
+  type!: string;
 
   @ApiProperty({ description: 'Agent capabilities', type: 'array', items: { type: 'string' } })
-  capabilities: string[];
+  capabilities!: string[];
 
   @ApiProperty({ description: 'Agent metadata', required: false, type: 'object' })
   metadata?: Record<string, any>;
 
-  @ApiProperty({ 
-    description: 'Agent status', 
+  @ApiProperty({
+    description: 'Agent status',
     enum: ['active', 'inactive', 'busy', 'error'],
     example: 'active'
   })
-  status: string;
+  status!: string;
 
   @ApiProperty({ description: 'Creation timestamp' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({ description: 'Last update timestamp' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @ApiProperty({ description: 'Deletion timestamp', required: false })
   deletedAt?: Date;

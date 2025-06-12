@@ -1,40 +1,23 @@
-/**
- * Supported export formats for conversations
- */
+// Export types
 export enum ExportFormat {
-  JSON = 'json',
-  MARKDOWN = 'markdown', 
-  HTML = 'html'
+  JSON = "JSON",
+  CSV = "CSV",
+  XML = "XML",
+  PDF = "PDF"
 }
 
-/**
- * Export configuration options
- */
 export interface ExportOptions {
   format: ExportFormat;
   includeMetadata?: boolean;
-  includeTimestamps?: boolean;
-  dateRange?: {
-    start: Date;
-    end: Date;
-  };
+  compression?: boolean;
 }
 
-/**
- * Result of an export operation
- */
 export interface ExportResult {
-  buffer: Buffer;
+  data: string | Buffer;
   filename: string;
   mimeType: string;
-  size: number;
 }
 
-/**
- * Export service interface
- */
 export interface ConversationExportService {
-  export(conversation: any, format: ExportFormat, options?: ExportOptions): Promise<Buffer>;
-  getFilename(format: ExportFormat, conversationId?: string): string;
-  getMimeType(format: ExportFormat): string;
+  export(conversation: any, format: ExportFormat): Promise<Buffer>;
 }

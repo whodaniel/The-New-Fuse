@@ -1,6 +1,6 @@
 import { chromium, FullConfig } from '@playwright/test';
 import { config } from './config/test-config.js';
-import { TestDataManager } from './utils/test-data.js';
+import { TestDataManager } from './utils/test-data';
 
 async function globalSetup(fullConfig: FullConfig): Promise<void> {
   // Set up browser

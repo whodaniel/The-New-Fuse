@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Server, WebSocket } from 'ws';
-import { ConfigService } from '../config/ConfigService.js';
+import { ConfigService } from '../config/ConfigService.tsx';
 
 interface WebSocketMessage {
   type: string;
@@ -26,7 +26,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
           const data: WebSocketMessage = JSON.parse(message);
           this.handleMessage(ws, data);
         } catch (error) {
-          console.error('Failed to parse WebSocket message:', error);
+          console.error('Failed to parse WebSocket message:, error);
         }
       });
 
@@ -35,7 +35,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
       });
 
       ws.on('error', (error) => {
-        console.error('WebSocket error:', error);
+        console.error('WebSocket error:, error);
         this.clients.delete(ws);
       });
     });
@@ -52,7 +52,7 @@ export class WebSocketService implements OnModuleInit, OnModuleDestroy {
 
   private handleMessage(ws: WebSocket, message: WebSocketMessage): void {
     switch (message.type) {
-      case 'ping':
+      case ping':
         ws.send(JSON.stringify({ type: 'pong' }));
         break;
       default:

@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { WorkflowStep, WorkflowStatus, WorkflowState } from './types.js';
+import { WorkflowStep, WorkflowStatus, WorkflowState } from './types.tsx';
 
 // Create placeholder components until actual implementations are available
 const WorkflowControls: FC<{
@@ -22,11 +22,11 @@ const WorkflowProgress: FC<{
   completedSteps: string[];
 }> = ({ steps, currentStep, completedSteps }) => (
   <div className="workflow-progress">
-    {steps.map(step: WorkflowStep => (
-      <div 
-        key={step.id} 
+    {steps.map((step: WorkflowStep) => (
+      <div
+        key={step.id}
         className={`
-          step 
+          step
           ${step.id === currentStep ? 'current' : ''}
           ${completedSteps.includes(step.id) ? 'completed' : ''}
         `}
@@ -71,7 +71,7 @@ const useWorkflowState = (workflowId: string) => {
   });
 
   const updateState = (newState: Partial<WorkflowState>) => {
-    setState(prev: any) => ({ ...prev, ...newState }));
+    setState((prev: any) => ({ ...prev, ...newState }));
   };
 
   return { state, updateState };
@@ -144,7 +144,7 @@ export const WorkflowEngine: FC<WorkflowEngineProps> = ({
         completedSteps={state.completedSteps}
       />
       <WorkflowStepViewer
-        step={steps.find(s: WorkflowStep) => s.id === state.currentStep)}
+        step={steps.find((s: WorkflowStep) => s.id === state.currentStep)}
         onExecute={executeStep}
       />
       {state.error && (

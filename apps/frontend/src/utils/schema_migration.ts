@@ -1,8 +1,8 @@
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 const logger = new Logger('SchemaMigration');
 export class SchemaMigration {
     constructor() {
-        this.redis = new Redis({
+        this.redis = new (Redis as any)({
             host: process.env.REDIS_HOST || 'localhost',
             port: parseInt(process.env.REDIS_PORT || '6379'),
             password: process.env.REDIS_PASSWORD

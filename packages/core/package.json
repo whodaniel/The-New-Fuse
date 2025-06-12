@@ -6,8 +6,19 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:core": "tsc",
+    "build:watch": "tsc --watch",
+    "build:production": "NODE_ENV=production tsc",
+    "clean": "rimraf dist",
+    "type-check": "tsc --noEmit",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "test:unit": "jest --testPathPattern=unit",
+    "test:integration": "jest --testPathPattern=integration",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.ts",
+    "lint:fix": "eslint src/**/*.ts --fix",
+    "dev": "tsc --watch"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",

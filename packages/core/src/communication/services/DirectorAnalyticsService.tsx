@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Logger } from '@nestjs/common';
+import { Logger  } from '@nestjs/common;
 
 interface DirectorMetrics {
   taskDecompositionEfficiency: number;
@@ -10,15 +10,15 @@ interface DirectorMetrics {
   taskCompletionRates: Record<string, number>;
   coordinationOverhead: number;
   messageRoutingEfficiency: number;
-  brokerLoadDistribution: Record<string, number>;
+  brokerLoadDistribution: Record<string, number>';
 }
 
 @Injectable()
 export class DirectorAnalyticsService {
-  private readonly logger = new Logger(DirectorAnalyticsService.name);
-  private readonly DIRECTOR_METRICS_KEY = 'ai:director:metrics';
-  private readonly BROKER_METRICS_KEY = 'ai:broker:metrics';
-  private readonly TASK_HISTORY_KEY = 'ai:director:task_history';
+  private readonly logger = new Logger(DirectorAnalyticsService.name)';
+  private readonly DIRECTOR_METRICS_KEY = ai:director:metrics';
+  private readonly BROKER_METRICS_KEY = ai:broker:metrics';
+  private readonly TASK_HISTORY_KEY = ai:director:task_history';
   private readonly MAX_HISTORY_DAYS = 90;
 
   constructor(
@@ -27,13 +27,13 @@ export class DirectorAnalyticsService {
   ) {}
 
   async recordDirectorAction(action: {
-    type: 'decomposition' | 'delegation' | 'supervision' | 'coordination';
+    type: decomposition' | delegation' | supervision' | coordination';
     taskId: string;
     directorId: string;
     workers: string[];
     startTime: number;
     endTime?: number;
-    status: 'started' | 'completed' | 'failed';
+    status:started' | completed' | failed';
     metadata?: Record<string, any>;
   }) {
     try {
@@ -55,24 +55,24 @@ export class DirectorAnalyticsService {
       await this.updateDirectorMetrics(entry);
 
       // Emit monitoring event
-      this.eventEmitter.emit('director.action.recorded', entry);
+      this.eventEmitter.emit('director.action.'recorded', entry);
 
       // Check for optimization opportunities
       await this.analyzeOptimizationOpportunities(entry);
     } catch (error) {
-      this.logger.error('Failed to record director action:', error);
+      this.logger.error('Failed to record director action:, error);
       throw error;
     }
   }
 
   async recordBrokerAction(action: {
-    type: 'route' | 'translate' | 'queue' | 'match';
+    type: route' | translate' | queue' | match';
     brokerId: string;
     sources: string[];
     targets: string[];
     startTime: number;
     endTime?: number;
-    status: 'success' | 'failed';
+    status:success' | failed';
     metadata?: Record<string, any>;
   }) {
     try {
@@ -87,12 +87,12 @@ export class DirectorAnalyticsService {
       await this.updateBrokerMetrics(entry);
 
       // Emit monitoring event
-      this.eventEmitter.emit('broker.action.recorded', entry);
+      this.eventEmitter.emit('broker.action.'recorded', entry);
 
       // Analyze routing patterns
       await this.analyzeRoutingPatterns(entry);
     } catch (error) {
-      this.logger.error('Failed to record broker action:', error);
+      this.logger.error('Failed to record broker action:, error);
       throw error;
     }
   }
@@ -116,7 +116,7 @@ export class DirectorAnalyticsService {
     if (entry.status === 'completed') {
       const avgDuration = await this.calculateAverageDuration(key);
       const efficiency = entry.duration < avgDuration ? 1 : avgDuration / entry.duration;
-      await this.redisService.hset(key, 'current_efficiency', efficiency);
+      await this.redisService.hset(key, current_efficiency', efficiency);
     }
   }
 
@@ -153,7 +153,7 @@ export class DirectorAnalyticsService {
     const loadVariance = this.calculateLoadVariance(workerLoads);
     
     if (loadVariance > 0.3) { // 30% variance threshold
-      this.eventEmitter.emit('director.optimization.needed', {
+      this.eventEmitter.emit('director.optimization.'needed', {
         type: 'load_imbalance',
         directorId: entry.directorId,
         workerLoads,
@@ -164,11 +164,11 @@ export class DirectorAnalyticsService {
     // Check task completion efficiency
     const efficiency = await this.redisService.hget(
       `${this.DIRECTOR_METRICS_KEY}:${entry.directorId}`,
-      'current_efficiency'
+      current_efficiency'
     );
 
     if (efficiency && parseFloat(efficiency) < 0.7) { // 70% efficiency threshold
-      this.eventEmitter.emit('director.optimization.needed', {
+      this.eventEmitter.emit('director.optimization.'needed', {
         type: 'low_efficiency',
         directorId: entry.directorId,
         efficiency: parseFloat(efficiency),
@@ -183,7 +183,7 @@ export class DirectorAnalyticsService {
     // Analyze routing success rates
     const successRate = await this.calculateSuccessRate(key);
     if (successRate < 0.95) { // 95% success rate threshold
-      this.eventEmitter.emit('broker.optimization.needed', {
+      this.eventEmitter.emit('broker.optimization.'needed', {
         type: 'low_success_rate',
         brokerId: entry.brokerId,
         successRate,
@@ -195,7 +195,7 @@ export class DirectorAnalyticsService {
     const patterns = await this.getRoutingPatterns(key);
     const bottlenecks = this.identifyBottlenecks(patterns);
     if (bottlenecks.length > 0) {
-      this.eventEmitter.emit('broker.optimization.needed', {
+      this.eventEmitter.emit('broker.optimization.'needed', {
         type: 'routing_bottleneck',
         brokerId: entry.brokerId,
         bottlenecks
@@ -208,10 +208,10 @@ export class DirectorAnalyticsService {
     const workers = await this.redisService.hgetall(key);
     
     return Object.entries(workers)
-      .filter(([k]) => k.startsWith('worker:'))
+      .filter(([k]) => k.startsWith('worker:))
       .reduce((acc, [k, v]) => ({
         ...acc,
-        [k.replace('worker:', '')]: parseInt(v)
+        [k.replace('worker:', )]: parseInt(v)
       }), {});
   }
 
@@ -226,19 +226,19 @@ export class DirectorAnalyticsService {
 
   private async calculateSuccessRate(key: string): Promise<number> {
     const total = await this.redisService.hget(key, 'status:success');
-    const failed = await this.redisService.hget(key, 'status:failed');
+    const failed = await this.redisService.hget(key, status:failed');
     
     if (!total) return 1;
-    return parseInt(total) / (parseInt(total) + parseInt(failed || '0'));
+    return parseInt(total) / (parseInt(total) + parseInt(failed || 0'));
   }
 
   private async getRoutingPatterns(key: string): Promise<Record<string, number>> {
     const routes = await this.redisService.hgetall(key);
     return Object.entries(routes)
-      .filter(([k]) => k.startsWith('route:'))
+      .filter(([k]) => k.startsWith('route:))
       .reduce((acc, [k, v]) => ({
         ...acc,
-        [k.replace('route:', '')]: parseInt(v)
+        [k.replace('route:', )]: parseInt(v)
       }), {});
   }
 
@@ -265,7 +265,7 @@ export class DirectorAnalyticsService {
     ]);
 
     return {
-      taskDecompositionEfficiency: parseFloat(efficiency || '0'),
+      taskDecompositionEfficiency: parseFloat(efficiency || 0'),
       delegationPatterns: taskCounts,
       workerUtilization: workerLoads,
       taskCompletionRates: await this.getTaskCompletionRates(directorId),
@@ -277,14 +277,14 @@ export class DirectorAnalyticsService {
 
   private async getTaskCompletionRates(directorId: string): Promise<Record<string, number>> {
     const key = `${this.DIRECTOR_METRICS_KEY}:${directorId}`;
-    const completed = await this.redisService.hget(key, 'status:completed');
-    const failed = await this.redisService.hget(key, 'status:failed');
-    const total = parseInt(completed || '0') + parseInt(failed || '0');
+    const completed = await this.redisService.hget(key, status:completed');
+    const failed = await this.redisService.hget(key, status:failed');
+    const total = parseInt(completed || 0') + parseInt(failed || 0');
     
     return {
-      completed: parseInt(completed || '0'),
-      failed: parseInt(failed || '0'),
-      rate: total ? parseInt(completed || '0') / total : 0
+      completed: parseInt(completed || 0'),
+      failed: parseInt(failed || 0'),
+      rate: total ? parseInt(completed || 0') / total : 0
     };
   }
 

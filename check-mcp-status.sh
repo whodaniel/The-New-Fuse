@@ -17,7 +17,7 @@ echo "✅ MCP server built successfully"
 
 # Check if dependencies are installed
 if [ ! -d "node_modules/@modelcontextprotocol" ]; then
-    echo "❌ MCP SDK not installed. Run 'yarn install' first."
+    echo "❌ MCP SDK not installed. Run 'bun install' first."
     exit 1
 fi
 
@@ -41,16 +41,16 @@ echo ""
 echo "🎉 MCP Server Setup Complete!"
 echo ""
 echo "📋 Next Steps:"
-echo "1. Start development: npm run mcp:dev"
-echo "2. Or start normally: npm run mcp:start"  
-echo "3. Test with inspector: npm run mcp:test"
+echo "1. Start development: bun run mcp:dev"
+echo "2. Or start normally: bun run mcp:start"  
+echo "3. Test with inspector: bun run mcp:test"
 echo "4. Restart Claude Desktop to use the new server"
 echo ""
 echo "🔧 Available Commands:"
-echo "  npm run mcp:build     - Build the server"
-echo "  npm run mcp:start     - Start in stdio mode"
-echo "  npm run mcp:start:remote - Start in HTTP mode"
-echo "  npm run mcp:dev       - Development mode with auto-reload"
-echo "  npm run mcp:test      - Test with MCP Inspector"
+echo "  bun run mcp:build     - Build the server"
+echo "  bun run mcp:start     - Start in stdio mode"
+echo "  bun run mcp:start:remote - Start in HTTP mode"
+echo "  bun run mcp:dev       - Development mode with auto-reload"
+echo "  bun run mcp:test      - Test with MCP Inspector"
 echo ""
 echo "📚 Documentation: src/mcp/README.md"

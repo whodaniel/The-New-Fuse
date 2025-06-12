@@ -1,6 +1,6 @@
 import React from 'react';
 import { useStore } from '@/store';
-import { PerformanceMonitor } from './PerformanceMonitor.js';
+import { PerformanceMonitor } from './PerformanceMonitor.tsx';
 
 interface DevToolsProps {}
 

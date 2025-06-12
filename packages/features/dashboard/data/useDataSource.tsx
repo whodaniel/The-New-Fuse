@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { DataFetcher } from './DataFetcher.js';
-import { WebSocketManager } from './WebSocketManager.js';
+import { DataFetcher } from './DataFetcher.tsx';
+import { WebSocketManager } from './WebSocketManager.tsx';
 import {
   DataSourceState,
   DataFetcherConfig,
   WebSocketConfig,
   CacheConfig,
   DataTransformer,
-} from './types.js';
+} from './types.tsx';
 
 interface UseDataSourceOptions<T = any, R = any> {
   type: 'rest' | 'websocket';

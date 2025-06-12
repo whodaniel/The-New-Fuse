@@ -4,7 +4,7 @@ import react_1 from 'react';
 import react_router_dom_1 from 'react-router-dom';
 import theme_toggle_1 from '../common/theme-toggle.js';
 import scroll_area_1 from '../ui/scroll-area.js';
-import nav_menu_1 from './nav-menu.js';
+import nav_menu_1 from './nav-menu.tsx';
 import route_context_1 from '../../contexts/route-context.js';
 function RootLayout() {
     const { pageTitle } = (0, route_context_1.useRoute)();

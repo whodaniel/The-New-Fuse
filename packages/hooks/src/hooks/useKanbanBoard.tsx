@@ -6,7 +6,7 @@ import {
   SuggestionService,
   TaskStatus
 } from '../types/index.js';
-import { useUndoRedo } from './useUndoRedo.js';
+import { useUndoRedo } from './useUndoRedo.tsx';
 import {
   Table,
   View,

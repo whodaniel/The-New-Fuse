@@ -1,4 +1,4 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { Logger } from '../logging.js';
 
 /**
@@ -65,8 +65,8 @@ export class ApiMetrics extends EventEmitter {
     this.incrementCounter(`model.${model}.successfulRequests`);
     
     // Update token counts
-    this.incrementCounter('totalTokens.prompt', tokens.prompt);
-    this.incrementCounter('totalTokens.completion', tokens.completion);
+    this.incrementCounter('totalTokens.'prompt', tokens.prompt);
+    this.incrementCounter('totalTokens.'completion', tokens.completion);
     this.incrementCounter(`provider.${provider}.tokens.prompt`, tokens.prompt);
     this.incrementCounter(`provider.${provider}.tokens.completion`, tokens.completion);
     
@@ -120,8 +120,8 @@ export class ApiMetrics extends EventEmitter {
     this.metrics.set('cacheHits', 0);
     
     // Initialize token counters
-    this.metrics.set('totalTokens.prompt', 0);
-    this.metrics.set('totalTokens.completion', 0);
+    this.metrics.set('totalTokens.'prompt', 0);
+    this.metrics.set('totalTokens.'completion', 0);
     
     // Initialize latency tracking
     this.metrics.set('overallLatency', { sum: 0, count: 0, min: Infinity, max: 0 });
@@ -149,11 +149,11 @@ export class ApiMetrics extends EventEmitter {
 
   private normalizeErrorType(error: string): string {
     // Extract error type from various error formats
-    if (error.includes('rate limit')) return 'rate_limit';
-    if (error.includes('timeout')) return 'timeout';
-    if (error.includes('auth')) return 'authentication';
-    if (error.includes('invalid')) return 'validation';
-    return 'other';
+    if (error.includes('rate limit')) return rate_limit';
+    if (error.includes('timeout')) return timeout';
+    if (error.includes('auth')) return authentication';
+    if (error.includes('invalid')) return validation';
+    return other';
   }
 
   private flushMetrics(): void {

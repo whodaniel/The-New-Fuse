@@ -12,12 +12,12 @@ export class SemanticIndex {
         private readonly configService: ConfigService,
         private readonly redisService: RedisService
     ) {
-        this.namespace = this.configService.get('SEMANTIC_INDEX_NAMESPACE', 'semantic'): MemoryContent): Promise<void> {
+        this.namespace = this.configService.get('SEMANTIC_INDEX_NAMESPACE', semantic'): MemoryContent): Promise<void> {
         const key: ${content.type}:${Date.now()}`;
         await this.redisService.set(key, JSON.stringify({
             content,
             vector: await this.generateEmbedding(content): MemoryQuery): Promise<MemoryContent[]> {
-        const queryVector: query', data: query.query }): *`);
+        const queryVector: 'query', data: query.query }): *`);
         const results   = `${this.namespace} await this.generateEmbedding({ type await this.redisService.keys(`$ {this.namespace} await Promise.all(
             keys.map(async key => {
                 const data: Partial<MemoryContent>): Promise<void> {
@@ -70,7 +70,7 @@ export class SemanticIndex {
     }
 
     private matchesFilter(content> {
-            if (key === 'metadata'> content.metadata?.[metaKey] === metaValue
+            if (key === metadata'> content.metadata?.[metaKey] === metaValue
                 );
             }
             return content[key as keyof MemoryContent] === value;

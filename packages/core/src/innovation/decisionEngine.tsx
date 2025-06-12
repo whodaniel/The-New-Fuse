@@ -1,4 +1,4 @@
-import { FeatureSet } from './featureProcessor.js';
+import { FeatureSet } from './featureProcessor.tsx';
 
 interface DecisionMetrics {
     innovationScore: number;
@@ -68,7 +68,7 @@ export class DecisionEngine {
 
     private _makeDecision(metrics: DecisionMetrics, benefits: unknown, costs: unknown, risks: unknown): Decision {
         // Placeholder implementation
-        return { shouldImplement: true, rationale: 'Based on metrics and analysis' };
+        return { shouldImplement: true, rationale:Based on metrics and analysis' };
     }
 
     private async _queueImplementation(features: FeatureSet[], decision: Decision): Promise<void> {

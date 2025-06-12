@@ -1,60 +1,32 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-import react_1 from 'react';
-import components_1 from '../components.js';
-import material_1 from '@mui/material';
-import store_1 from '../store.js';
-import SocketContext_1 from '../services/SocketContext.js';
+import React, { useState } from 'react';
+
 const ChatInterface = () => {
-    const { activeChat, agents } = (0, store_1.default)();
-    const { socket, isConnected } = (0, SocketContext_1.useSocket)();
-    const [isVoiceEnabled, setIsVoiceEnabled] = react_1.default.useState(false);
-    react_1.default.useEffect(() => {
-        if (!socket)
-            return;
-        socket.on('message', (message) => {
-            
-        });
-        return () => {
-            socket.off('message');
-        };
-    }, [socket]);
-    return (<div className="p-6 h-full">
-      <material_1.Grid container spacing={3} className="h-full">
-        
-        <material_1.Grid item xs={12} md={8} className="h-full">
-          <material_1.Paper className="p-4 h-full flex flex-col">
-            {activeChat ? (<components_1.ChatRoom chat={activeChat}/>) : (<div className="flex-1 flex items-center justify-center">
-                <p className="text-gray-500">Select or start a chat to begin</p>
-              </div>)}
-          </material_1.Paper>
-        </material_1.Grid>
-
-        <material_1.Grid item xs={12} md={4} className="h-full">
-          <material_1.Grid container spacing={3}>
-            
-            <material_1.Grid item xs={12}>
-              <material_1.Paper className="p-4">
-                <components_1.VoiceControl isEnabled={isVoiceEnabled} onToggle={() => setIsVoiceEnabled(!isVoiceEnabled)}/>
-              </material_1.Paper>
-            </material_1.Grid>
-
-            <material_1.Grid item xs={12}>
-              <material_1.Paper className="p-4">
-                <components_1.MultiModalInteraction />
-              </material_1.Paper>
-            </material_1.Grid>
-
-            <material_1.Grid item xs={12}>
-              <material_1.Paper className="p-4">
-                <components_1.AIAssistant />
-              </material_1.Paper>
-            </material_1.Grid>
-          </material_1.Grid>
-        </material_1.Grid>
-      </material_1.Grid>
-    </div>);
+  const [isVoiceEnabled, setIsVoiceEnabled] = useState(false);
+  
+  return React.createElement('div', { className: 'p-6 h-full' },
+    React.createElement('div', { className: 'grid grid-cols-1 md:grid-cols-4 gap-6 h-full' },
+      React.createElement('div', { className: 'md:col-span-3' },
+        React.createElement('div', { className: 'bg-white rounded-lg shadow p-4 h-full' },
+          React.createElement('div', { className: 'flex-1 flex items-center justify-center' },
+            React.createElement('p', { className: 'text-gray-500' }, 'Chat Interface Demo')
+          )
+        )
+      ),
+      React.createElement('div', { className: 'space-y-4' },
+        React.createElement('div', { className: 'bg-white rounded-lg shadow p-4' },
+          React.createElement('h3', { className: 'font-semibold mb-2' }, 'Voice Control'),
+          React.createElement('button', {
+            onClick: () => setIsVoiceEnabled(!isVoiceEnabled),
+            className: `px-4 py-2 rounded ${isVoiceEnabled ? 'bg-green-500 text-white' : 'bg-gray-200'}`
+          }, isVoiceEnabled ? 'Voice On' : 'Voice Off')
+        ),
+        React.createElement('div', { className: 'bg-white rounded-lg shadow p-4' },
+          React.createElement('h3', { className: 'font-semibold mb-2' }, 'Status'),
+          React.createElement('p', { className: 'text-sm text-gray-600' }, 'Chat interface ready')
+        )
+      )
+    )
+  );
 };
-exports.default = ChatInterface;
-export {};
-//# sourceMappingURL=ChatInterface.js.map
+
+export default ChatInterface;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Card, Row, Col, Table, Progress } from 'antd';
 import { Line } from '@ant-design/charts';
-import { useWebSocket } from '../../hooks/useWebSocket.js';
+import { useWebSocket } from '../../hooks/useWebSocket.tsx';
 
 export const A2APerformanceDashboard: React.FC = () => {
     const [metrics, setMetrics] = useState<any>({});

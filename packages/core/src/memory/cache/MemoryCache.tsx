@@ -43,7 +43,7 @@ export class MemoryCache {
             pipeline.set(
                 `memory:${key}`,
                 JSON.stringify(content),
-                'EX',
+                EX',
                 ttl || this.defaultTTL
             );
         });

@@ -1,6 +1,6 @@
 import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ConversationExportService, ExportFormat } from '@the-new-fuse/core/src/services/ConversationExportService';
+import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
@@ -19,7 +19,7 @@ class ExportConversationDto {
 @UseGuards(JwtAuthGuard)
 @Controller('export')
 export class ExportController {
-  constructor(private readonly exportService: typeof ConversationExportService) {}
+  constructor() {}
 
   /**
    * POST /api/v1/export/conversation
@@ -41,7 +41,7 @@ export class ExportController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Missing conversation or format' });
     }
     try {
-      const buffer = await this.exportService.export(conversation, format);
+      const buffer = await ConversationExportService.export(conversation, format);
       const mime =
         format === 'pdf' ? 'application/pdf' :
         format === 'md' ? 'text/markdown' :

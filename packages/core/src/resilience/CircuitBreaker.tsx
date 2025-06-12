@@ -5,7 +5,7 @@ interface CircuitBreakerConfig {
 }
 
 export class CircuitBreaker {
-    private state: 'CLOSED' | 'OPEN' | 'HALF-OPEN' = 'CLOSED';
+    private state: 'CLOSED' | OPEN' | HALF-OPEN' = 'CLOSED';
     private failures = 0;
     private lastFailureTime?: Date;
 
@@ -29,7 +29,7 @@ export class CircuitBreaker {
     private isOpen(): boolean {
         if (this.state === 'OPEN') {
             if (this.shouldAttemptReset()) {
-                this.state = 'HALF-OPEN';
+                this.state = HALF-OPEN;
                 return false;
             }
             return true;
@@ -38,7 +38,7 @@ export class CircuitBreaker {
     }
 
     private onSuccess(): void {
-        if (this.state === 'HALF-OPEN') {
+        if (this.state === HALF-OPEN') {
             this.state = 'CLOSED';
             this.failures = 0;
         }

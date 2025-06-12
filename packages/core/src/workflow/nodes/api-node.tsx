@@ -1,5 +1,5 @@
-import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.js';
-import { ApiClientFactory } from '../../integrations/api-factory.js';
+import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.tsx';
+import { ApiClientFactory } from '../../integrations/api-factory.tsx';
 
 export class APINodeHandler implements NodeHandler {
   private apiClientFactory: ApiClientFactory;
@@ -59,11 +59,11 @@ export class APINodeHandler implements NodeHandler {
         data: response.data,
         headers: response.headers
       };
-    } catch (error) {
+    } catch (error: unknown) {
       if (error.response) {
         // The request was made and the server responded with a status code
         // that falls out of the range of 2xx
-        context.logger.error(`API error: ${error.message}`, { 
+        context.logger.error(`API error: ${(error as Error).message}`, { 
           status: error.response.status,
           data: error.response.data
         });

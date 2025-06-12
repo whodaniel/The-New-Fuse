@@ -1,5 +1,5 @@
-import { Request } from 'express';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { Request } from ''express';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 export interface AuthenticatedRequest extends Request {
     user?: {
         id: string;

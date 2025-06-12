@@ -1,6 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { User } from './User.js';
-import { Pipeline } from './Pipeline.js';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToOne, CreateDateColumn, UpdateDateColumn } from ''typeorm';
+import { User } from './User.tsx';
+import { Pipeline } from './Pipeline.tsx';
 import { AgentConfig } from './AgentConfig.js';
 
 @Entity()
@@ -18,7 +18,7 @@ export class Agent {
     config!: AgentConfig;
 
     @Column({ default: 'active' })
-    status!: 'active' | 'inactive' | 'error';
+    status!:active' | inactive' | error';
 
     @CreateDateColumn({ type: 'timestamp' })
     createdAt!: Date;

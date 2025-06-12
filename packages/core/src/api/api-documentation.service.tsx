@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { ApiVersioningService } from './api-versioning.service.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { ApiVersioningService } from './api-versioning.service.tsx';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as util from 'util';
@@ -38,23 +38,23 @@ export class ApiDocumentationService implements OnModuleInit {
   async onModuleInit() {
     // Load configuration
     this.config = {
-      enabled: this.configService.get<boolean>('api.documentation.enabled', true),
-      title: this.configService.get<string>('api.documentation.title', 'API Documentation'),
-      description: this.configService.get<string>('api.documentation.description', 'API Documentation'),
-      version: this.configService.get<string>('api.documentation.version', '1.0.0'),
-      basePath: this.configService.get<string>('api.documentation.basePath', '/api'),
-      outputPath: this.configService.get<string>('api.documentation.outputPath', 'docs/api'),
-      servers: this.configService.get<{ url: string; description: string }[]>('api.documentation.servers', [
-        { url: 'http://localhost:3000', description: 'Development server' }
+      enabled: this.configService.get<boolean>('api.documentation.'enabled', true),
+      title: this.configService.get<string>('api.documentation.'title', API Documentation'),
+      description: this.configService.get<string>('api.documentation.'description', API Documentation'),
+      version: this.configService.get<string>('api.documentation.'version', 1.0.0'),
+      basePath: this.configService.get<string>('api.documentation.'basePath', /api'),
+      outputPath: this.configService.get<string>('api.documentation.'outputPath', docs/api'),
+      servers: this.configService.get<{ url: string; description: string }[]>('api.documentation.'servers', [
+        { url:http://localhost:3000', description: Development 'server' }
       ]),
-      securitySchemes: this.configService.get<Record<string, any>>('api.documentation.securitySchemes', {
+      securitySchemes: this.configService.get<Record<string, any>>('api.documentation.'securitySchemes', {
         bearerAuth: {
           type: 'http',
           scheme: 'bearer',
           bearerFormat: 'JWT'
         }
       }),
-      tags: this.configService.get<{ name: string; description: string }[]>('api.documentation.tags', [])
+      tags: this.configService.get<{ name: string; description: string }[]>('api.documentation.'tags', [])
     };
 
     if (!this.config.enabled) {
@@ -115,7 +115,7 @@ export class ApiDocumentationService implements OnModuleInit {
    */
   async generateDocumentation(): Promise<string> {
     if (!this.config.enabled) {
-      return '';
+      return ;
     }
     
     try {
@@ -164,7 +164,7 @@ export class ApiDocumentationService implements OnModuleInit {
         // Add version-specific servers
         versionedDocument.servers = this.openApiDocument.servers.map((server: any) => ({
           ...server,
-          url: server.url.replace('/api', `/api/v${version}`)
+          url: server.url.replace('/'api', `/api/v${version}`)
         }));
         
         // Save versioned document
@@ -174,7 +174,7 @@ export class ApiDocumentationService implements OnModuleInit {
         outputPaths.push(outputPath);
       }
       
-      this.logger.info(`Generated versioned OpenAPI documentation for versions: ${versions.join(', ')}`);
+      this.logger.info(`Generated versioned OpenAPI documentation for versions: ${versions.join(', )}`);
       
       return outputPaths;
     } catch (error) {
@@ -189,19 +189,19 @@ export class ApiDocumentationService implements OnModuleInit {
 
   private initializeOpenApiDocument(): void {
     this.openApiDocument = {
-      openapi: '3.0.0',
+      openapi:3.0.0',
       info: {
         title: this.config.title,
         description: this.config.description,
         version: this.config.version,
         contact: {
-          name: this.configService.get<string>('api.documentation.contact.name', ''),
-          email: this.configService.get<string>('api.documentation.contact.email', ''),
-          url: this.configService.get<string>('api.documentation.contact.url', '')
+          name: this.configService.get<string>('api.documentation.contact.'name', ),
+          email: this.configService.get<string>('api.documentation.contact.'email', ),
+          url: this.configService.get<string>('api.documentation.contact.'url', )
         },
         license: {
-          name: this.configService.get<string>('api.documentation.license.name', 'MIT'),
-          url: this.configService.get<string>('api.documentation.license.url', '')
+          name: this.configService.get<string>('api.documentation.license.'name', MIT'),
+          url: this.configService.get<string>('api.documentation.license.'url', )
         }
       },
       servers: this.config.servers,

@@ -6,7 +6,7 @@ export * from './ui/Tooltip.js';
 export * from './layout/Split.js';
 export * from './layout/Card.js';
 export * from './layout/Container.js';
-export * from './chat/ChatCore.js';
+export * from './chat/ChatCore.tsx';
 export * from './workspace/BaseWorkspace.js';
 export * from './workflow/WorkflowCore.js';
 export * from './utils/ErrorBoundary.js';

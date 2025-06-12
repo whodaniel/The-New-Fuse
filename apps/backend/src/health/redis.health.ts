@@ -13,8 +13,8 @@ export class RedisHealthIndicator extends HealthIndicator {
     try {
       const result = await this.redis.ping();
       return this.getStatus('redis', result === 'PONG');
-    } catch (error) {
-      return this.getStatus('redis', false, { error: error.message });
+    } catch (error: unknown) {
+      return this.getStatus('redis', false, { error: (error as Error).message });
     }
   }
 }

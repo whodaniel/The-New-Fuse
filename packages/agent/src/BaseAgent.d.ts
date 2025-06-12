@@ -1,4 +1,4 @@
-import { IAgent } from './interfaces/IAgent.js';
+import { IAgent } from './interfaces/IAgent.tsx';
 import { MemoryManager } from '@the-new-fuse/core';
 export declare abstract class BaseAgent implements IAgent {
     readonly id: string;

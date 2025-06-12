@@ -1,6 +1,0 @@
-import React from 'react';
-interface AgentTasksProps {
-    agentId: string;
-}
-declare const AgentTasks: React.FC<AgentTasksProps>;
-export default AgentTasks;

@@ -2,8 +2,8 @@
  * MarketplaceItem entity for The New Fuse marketplace
  * Represents an item that can be listed in the marketplace
  */
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
-import { User } from '../../user/entities/user.entity.js';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from ''typeorm';
+import { User } from '../../user/entities/user.entity';
 import { UserSubscription } from './user-subscription.entity.js';
 
 /**
@@ -113,10 +113,10 @@ export class MarketplaceItem {
   @Column('text', { nullable: true })
   documentationUrl: string;
 
-  @Column('simple-array', { nullable: true })
+  @Column('simple-array, { nullable: true })
   categories: string[];
 
-  @Column('simple-array', { nullable: true })
+  @Column('simple-array, { nullable: true })
   tags: string[];
 
   @Column({ default: 0 })

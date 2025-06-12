@@ -13,23 +13,23 @@ export class TraeObserver {
 
     private initializeLLMMonitoring() {
         // Monitor LLM API calls
-        this.intelligence.on('llm-request', (data) => {
+        this.intelligence.on('llm-request, (data) => {
             this.handleLLMRequest(data);
             this.activityTimeline.push({
-                type: llm-api',
+                type: llm-api,
                 timestamp: Date.now(),
                 data
             });
         });
 
         // Monitor LLM responses
-        this.intelligence.on('llm-response', (data) => {
+        this.intelligence.on('llm-response, (data) => {
             this.handleLLMResponse(data);
             this.calculateLatency(data.requestId);
         });
 
         // Monitor for errors
-        this.intelligence.on('llm-error', (error) => {
+        this.intelligence.on('llm-error, (error) => {
             this.handleLLMError(error);
         });
     }
@@ -40,7 +40,7 @@ export class TraeObserver {
             timestamp: Date.now(),
             prompt: data.prompt,
             parameters: data.parameters,
-            status: pending'
+            status: 'pending'
         });
         return requestId;
     }
@@ -55,7 +55,7 @@ export class TraeObserver {
             this.logger.debug('LLM Interaction Complete', {
                 requestId: data.requestId,
                 duration: interaction.completedAt - interaction.timestamp,
-                status: success'
+                status: 'success'
             });
         }
     }

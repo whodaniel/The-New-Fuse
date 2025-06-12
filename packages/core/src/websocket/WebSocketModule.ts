@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { WebSocketService } from './WebSocketService.js';
+import { WebSocketService } from './WebSocketService.tsx';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({

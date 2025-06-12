@@ -1,4 +1,4 @@
-export { SingleUserAuth } from './SingleUserAuth.js';
-export { MultiUserAuth } from './MultiUserAuth.js';
+export { SingleUserAuth } from './SingleUserAuth.tsx';
+export { MultiUserAuth } from './MultiUserAuth.tsx';
 export { usePasswordModal } from './hooks/usePasswordModal.js';
 //# sourceMappingURL=index.js.map

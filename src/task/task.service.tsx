@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import { DatabaseService } from '../database/database.service.js';
+import { DatabaseService } from '../database/database.service.tsx';
 import {
   Task,
   TaskStatus,

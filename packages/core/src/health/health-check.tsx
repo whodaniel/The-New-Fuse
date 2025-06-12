@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from ''axios';
 
 export class HealthCheck {
   private static readonly TIMEOUT = 5000; // 5 seconds timeout
@@ -16,9 +16,9 @@ export class HealthCheck {
 
   static async checkAll(): Promise<Record<string, boolean>> {
     const services: Record<string, string> = {
-      api: 'http://localhost:3001',
-      backend: 'http://localhost:3002',
-      frontend: 'http://localhost:3000'
+      api:http://localhost:3001',
+      backend: http://localhost:3002',
+      frontend:http://localhost:3000'
     };
 
     const results: Record<string, boolean> = {};

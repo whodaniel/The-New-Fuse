@@ -1,6 +1,6 @@
 interface CollaborationContext {
   sharedState: {
-    currentPhase: analysis' | 'enhancement' | 'implementation' | 'testing';
+    currentPhase: analysis' | enhancement' | implementation' | testing';
     activeTask: string;
     progress: Record<string, any>;
   };
@@ -10,13 +10,13 @@ interface CollaborationContext {
 
 const collaborationContext = {
   sharedState: {
-    currentPhase: analysis',
-    activeTask: system_analysis',
+    currentPhase: 'analysis',
+    activeTask: 'system_analysis',
     progress: {}
   },
   messageQueue: new PriorityQueue(),
   capabilities: new Map([
-    ['augment', ['code_analysis', 'architecture_design', 'type_safety', 'documentation']],
-    ['trae', ['code_analysis', 'task_coordination', 'system_integration', 'code_generation']]
+    ['augment', ['code_analysis', architecture_design', type_safety', documentation']],
+    ['trae', ['code_analysis', task_coordination', system_integration', code_generation']]
   ])
 };export {};

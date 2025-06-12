@@ -16,7 +16,7 @@ interface User {
   permissions: string[];
   metadata: Record<string, unknown>;
   lastLogin?: Date;
-  status: 'active' | 'inactive' | 'suspended';
+  status:active' | inactive' | suspended';
 }
 
 interface Session {
@@ -55,7 +55,7 @@ interface LoginContext {
 @Injectable()
 export class AuthenticationService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private readonly saltRounds = 10;
   private readonly jwtSecret: string;
@@ -66,11 +66,11 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
   constructor() {
     super();
     const redisOptions = process.env.REDIS_URL ? { url: process.env.REDIS_URL } : undefined;
-    this.redis = redisOptions ? new Redis(redisOptions) : undefined;
-    this.jwtSecret = process.env.JWT_SECRET || 'default-secret';
-    this.tokenExpiration = parseInt(process.env.TOKEN_EXPIRATION || '3600', 10);
-    this.maxLoginAttempts = parseInt(process.env.MAX_LOGIN_ATTEMPTS || '5', 10);
-    this.lockoutDuration = parseInt(process.env.LOCKOUT_DURATION || '1800', 10);
+    this.redis = redisOptions ? new (Redis as any)(redisOptions) : undefined;
+    this.jwtSecret = process.env.JWT_SECRET || default-secret;
+    this.tokenExpiration = parseInt(process.env.TOKEN_EXPIRATION || 3600', 10);
+    this.maxLoginAttempts = parseInt(process.env.MAX_LOGIN_ATTEMPTS || 5', 10);
+    this.lockoutDuration = parseInt(process.env.LOCKOUT_DURATION || 1800', 10);
   }
 
   async onModuleInit(): Promise<void> {
@@ -125,7 +125,7 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
 
       return createdUser;
     } catch (error) {
-      this.logger.error('Registration failed:', error);
+      this.logger.error('Registration failed:, error);
       throw error;
     }
   }
@@ -175,7 +175,7 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
 
       return { user, session };
     } catch (error) {
-      this.logger.error('Login failed:', error);
+      this.logger.error('Login failed:, error);
       throw error;
     }
   }
@@ -201,7 +201,7 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
         userId: session.userId
       });
     } catch (error) {
-      this.logger.error('Logout failed:', error);
+      this.logger.error('Logout failed:, error);
       throw error;
     }
   }
@@ -234,7 +234,7 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
     await this.redis.set(
       `session:${session.id}`,
       JSON.stringify(session),
-      'EX',
+      EX',
       this.tokenExpiration
     );
 
@@ -283,7 +283,7 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
       await this.redis.set(
         `session:${session.id}`,
         JSON.stringify(session),
-        'EX',
+        EX',
         this.tokenExpiration
       );
       return session;
@@ -320,8 +320,8 @@ export class AuthenticationService extends EventEmitter implements OnModuleInit 
     if (attempts >= this.maxLoginAttempts) {
       await this.redis.set(
         `lockout:${userId}`,
-        '1',
-        'EX',
+        1',
+        EX',
         this.lockoutDuration
       );
 

@@ -1,5 +1,5 @@
 import { VariantProps } from "class-variance-authority";
-import { buttonVariants } from './Button.js';
+import { buttonVariants } from './Button.tsx';
 import { ComponentProps } from "react";
 
 export type ButtonVariants = VariantProps<typeof buttonVariants>;

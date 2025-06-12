@@ -11,8 +11,8 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
-import { ThemeCustomizer } from '../components/ThemeCustomizer.js';
-import { ColorPicker } from '../components/ColorPicker.js';
+import { ThemeCustomizer } from '../components/ThemeCustomizer.tsx';
+import { ColorPicker } from '../components/ColorPicker.tsx';
 
 interface SettingsTab {
   name: string;

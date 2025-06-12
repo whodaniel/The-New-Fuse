@@ -67,7 +67,7 @@ export interface Adaptation {
     type: string;
     parameters: Record<string, unknown>;
   };
-  status: 'pending' | 'active' | 'disabled';
+  status:pending' | active' | disabled';
   metadata: {
     created: Date;
     updated: Date;

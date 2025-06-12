@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DatabaseManager } from './databaseManager.js';
+import { DatabaseManager } from './databaseManager.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -27,7 +27,7 @@ export class DataIntegrityService implements OnModuleInit {
       BEGIN
         IF NOT EXISTS (
           SELECT 1 FROM information_schema.table_constraints
-          WHERE constraint_type = 'FOREIGN KEY'
+          WHERE constraint_type = FOREIGN 'KEY'
           AND table_name = TG_TABLE_NAME
         ) THEN
           RETURN NEW;
@@ -40,8 +40,8 @@ export class DataIntegrityService implements OnModuleInit {
       CREATE OR REPLACE FUNCTION validate_json_schema()
       RETURNS trigger AS $$
       BEGIN
-        IF NEW.config IS NOT NULL AND NOT jsonb_typeof(NEW.config) = 'object' THEN
-          RAISE EXCEPTION 'Invalid JSON schema in config field';
+        IF NEW.config IS NOT NULL AND NOT jsonb_typeof(NEW.config) = object' THEN
+          RAISE EXCEPTION Invalid JSON schema in config 'field';
         END IF;
         RETURN NEW;
       END;
@@ -82,12 +82,12 @@ export class DataIntegrityService implements OnModuleInit {
       // Check for orphaned records
       const orphanedRecords = await db.query(`
         WITH orphans AS (
-          SELECT t.id, 'task' as type
+          SELECT t.id, task' as type
           FROM tasks t
           LEFT JOIN agents a ON t.agent_id = a.id
           WHERE t.agent_id IS NOT NULL AND a.id IS NULL
           UNION ALL
-          SELECT ps.id, 'pipeline_stage' as type
+          SELECT ps.id, pipeline_stage' as type
           FROM pipeline_stages ps
           LEFT JOIN pipelines p ON ps.pipeline_id = p.id
           WHERE p.id IS NULL
@@ -105,11 +105,11 @@ export class DataIntegrityService implements OnModuleInit {
 
       // Check for invalid JSON in config columns
       const invalidJson = await db.query(`
-        SELECT id, 'agent' as type 
+        SELECT id, agent' as type 
         FROM agents 
-        WHERE config IS NOT NULL AND NOT jsonb_typeof(config) = 'object'
+        WHERE config IS NOT NULL AND NOT jsonb_typeof(config) = object'
         UNION ALL
-        SELECT id, 'pipeline' as type
+        SELECT id, pipeline' as type
         FROM pipelines
         WHERE config IS NOT NULL AND NOT jsonb_typeof(config) = 'object';
       `);
@@ -151,7 +151,7 @@ export class DataIntegrityService implements OnModuleInit {
         });
       }
     } catch (error) {
-      this.logger.error('Error during integrity check:', error);
+      this.logger.error('Error during integrity check:, error);
       this.eventEmitter.emit('integrity_check_error', {
         timestamp: new Date(),
         error
@@ -171,7 +171,7 @@ export class DataIntegrityService implements OnModuleInit {
         duration
       ) VALUES ($1, $2, $3, $4)`,
       [
-        'integrity_check',
+        integrity_check',
         new Date(),
         { issues },
         duration
@@ -188,7 +188,7 @@ export class DataIntegrityService implements OnModuleInit {
 
       for (const issue of issues) {
         switch (issue.type) {
-          case 'orphaned_records':
+          case orphaned_records':
             // Remove orphaned records
             await db.query(`
               DELETE FROM tasks WHERE id = ANY($1::uuid[])
@@ -196,16 +196,16 @@ export class DataIntegrityService implements OnModuleInit {
             repairs.push({ type: 'removed_orphaned', count: issue.details.length });
             break;
 
-          case 'invalid_json':
+          case invalid_json':
             // Reset invalid JSON to empty object
             await db.query(`
-              UPDATE agents SET config = '{}'::jsonb 
+              UPDATE agents SET config = {}'::jsonb 
               WHERE id = ANY($1::uuid[])
             `, [issue.details.map((r: any) => r.id)]);
             repairs.push({ type: 'fixed_json', count: issue.details.length });
             break;
 
-          case 'duplicates':
+          case duplicates':
             // Keep only the oldest record for duplicates
             await db.query(`
               DELETE FROM users u1 USING users u2
@@ -223,7 +223,7 @@ export class DataIntegrityService implements OnModuleInit {
       await this.logRepairOperation(repairs);
     } catch (error) {
       await db.query('ROLLBACK');
-      this.logger.error('Error during integrity repair:', error);
+      this.logger.error('Error during integrity repair:, error);
       throw error;
     }
   }
@@ -237,7 +237,7 @@ export class DataIntegrityService implements OnModuleInit {
         details
       ) VALUES ($1, $2, $3)`,
       [
-        'integrity_repair',
+        integrity_repair',
         new Date(),
         { repairs }
       ]

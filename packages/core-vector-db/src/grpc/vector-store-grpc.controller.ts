@@ -2,13 +2,13 @@ import { Controller, Logger } from '@nestjs/common';
 import { GrpcMethod, GrpcService } from '@nestjs/microservices';
 import { VectorDatabaseService } from '../vector-database.service';
 import { OpenAIEmbeddingProvider } from '../drivers/openai-embedding.provider';
-import { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
+import type { Metadata, ServerUnaryCall } from '@grpc/grpc-js';
 
 // Proto message interfaces (will be generated)
 interface CreateCollectionRequest {
   name: string;
   dimension: number;
-  metric: string;
+  metric: "cosine" | "euclidean" | "dot_product";
   config: { [key: string]: string };
 }
 
@@ -103,8 +103,8 @@ export class VectorStoreGrpcController {
       await this.vectorService.createCollection({
         name: request.name,
         dimension: request.dimension,
-        metric: request.metric || 'cosine',
-        config: request.config || {},
+        metric: (request.metric as "cosine" | "euclidean" | "dot_product") || 'cosine',
+        // config: request.config || {}, // Removed, not in CollectionConfig type
       });
 
       return {
@@ -112,11 +112,19 @@ export class VectorStoreGrpcController {
         message: `Collection "${request.name}" created successfully`,
       };
     } catch (error) {
-      this.logger.error(`Failed to create collection: ${error.message}`, error.stack);
-      return {
-        success: false,
-        message: error.message,
-      };
+      if (error instanceof Error) {
+        this.logger.error(`Failed to create collection: ${error.message}`, error.stack);
+        return {
+          success: false,
+          message: error.message,
+        };
+      } else {
+        this.logger.error(`Failed to create collection: ${String(error)}`);
+        return {
+          success: false,
+          message: String(error),
+        };
+      }
     }
   }
 
@@ -152,12 +160,21 @@ export class VectorStoreGrpcController {
         documentsProcessed: documents.length,
       };
     } catch (error) {
-      this.logger.error(`Failed to upsert documents: ${error.message}`, error.stack);
-      return {
-        success: false,
-        message: error.message,
-        documentsProcessed: 0,
-      };
+      if (error instanceof Error) {
+        this.logger.error(`Failed to upsert documents: ${error.message}`, error.stack);
+        return {
+          success: false,
+          message: error.message,
+          documentsProcessed: 0,
+        };
+      } else {
+        this.logger.error(`Failed to upsert documents: ${String(error)}`);
+        return {
+          success: false,
+          message: String(error),
+          documentsProcessed: 0,
+        };
+      }
     }
   }
 
@@ -172,7 +189,11 @@ export class VectorStoreGrpcController {
       
       if (document) {
         return {
-          document,
+          document: {
+            ...document,
+            metadata: document.metadata || {},
+            embedding: document.embedding ?? [],
+          },
           found: true,
         };
       } else {
@@ -182,7 +203,11 @@ export class VectorStoreGrpcController {
         };
       }
     } catch (error) {
-      this.logger.error(`Failed to get document: ${error.message}`, error.stack);
+      if (error instanceof Error) {
+        this.logger.error(`Failed to get document: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(`Failed to get document: ${String(error)}`);
+      }
       return {
         document: {} as VectorDocument,
         found: false,
@@ -208,24 +233,31 @@ export class VectorStoreGrpcController {
         throw new Error('Either embedding or text must be provided for similarity search');
       }
 
-      const results = await this.vectorService.similaritySearch(request.collection, {
+      const results = await this.vectorService.searchByEmbedding(
+        request.collection,
         embedding,
-        limit: request.limit || 10,
-        threshold: request.threshold || 0.0,
-        metadata_filter: request.metadataFilter,
-      });
+        {
+          limit: request.limit || 10,
+          threshold: request.threshold || 0.0,
+          metadata_filter: request.metadataFilter,
+        }
+      );
 
       return {
-        results: results.map(result => ({
+        results: results.map((result: any) => ({
           id: result.id,
           content: result.content,
-          metadata: result.metadata,
+          metadata: result.metadata || {},
           score: result.score,
           distance: result.distance,
         })),
       };
     } catch (error) {
-      this.logger.error(`Failed to perform similarity search: ${error.message}`, error.stack);
+      if (error instanceof Error) {
+        this.logger.error(`Failed to perform similarity search: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(`Failed to perform similarity search: ${String(error)}`);
+      }
       return {
         results: [],
       };
@@ -246,15 +278,27 @@ export class VectorStoreGrpcController {
         },
       };
     } catch (error) {
-      this.logger.error(`Health check failed: ${error.message}`, error.stack);
-      return {
-        healthy: false,
-        status: 'error',
-        details: {
-          error: error.message,
-          timestamp: new Date().toISOString(),
-        },
-      };
+      if (error instanceof Error) {
+        this.logger.error(`Health check failed: ${error.message}`, error.stack);
+        return {
+          healthy: false,
+          status: 'error',
+          details: {
+            error: error.message,
+            timestamp: new Date().toISOString(),
+          },
+        };
+      } else {
+        this.logger.error(`Health check failed: ${String(error)}`);
+        return {
+          healthy: false,
+          status: 'error',
+          details: {
+            error: String(error),
+            timestamp: new Date().toISOString(),
+          },
+        };
+      }
     }
   }
 
@@ -271,12 +315,21 @@ export class VectorStoreGrpcController {
         stats,
       };
     } catch (error) {
-      this.logger.error(`Failed to get stats: ${error.message}`, error.stack);
-      return {
-        stats: {
-          error: error.message,
-        },
-      };
+      if (error instanceof Error) {
+        this.logger.error(`Failed to get stats: ${error.message}`, error.stack);
+        return {
+          stats: {
+            error: error.message,
+          },
+        };
+      } else {
+        this.logger.error(`Failed to get stats: ${String(error)}`);
+        return {
+          stats: {
+            error: String(error),
+          },
+        };
+      }
     }
   }
 
@@ -286,7 +339,11 @@ export class VectorStoreGrpcController {
       const collections = await this.vectorService.listCollections();
       return { collections };
     } catch (error) {
-      this.logger.error(`Failed to list collections: ${error.message}`, error.stack);
+      if (error instanceof Error) {
+        this.logger.error(`Failed to list collections: ${error.message}`, error.stack);
+      } else {
+        this.logger.error(`Failed to list collections: ${String(error)}`);
+      }
       return { collections: [] };
     }
   }
@@ -302,11 +359,19 @@ export class VectorStoreGrpcController {
         message: `Collection "${request.name}" deleted successfully`,
       };
     } catch (error) {
-      this.logger.error(`Failed to delete collection: ${error.message}`, error.stack);
-      return {
-        success: false,
-        message: error.message,
-      };
+      if (error instanceof Error) {
+        this.logger.error(`Failed to delete collection: ${error.message}`, error.stack);
+        return {
+          success: false,
+          message: error.message,
+        };
+      } else {
+        this.logger.error(`Failed to delete collection: ${String(error)}`);
+        return {
+          success: false,
+          message: String(error),
+        };
+      }
     }
   }
 }

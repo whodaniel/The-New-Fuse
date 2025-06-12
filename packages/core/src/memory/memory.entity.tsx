@@ -5,8 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-} from 'typeorm';
-import { MemoryType } from './types.js';
+} from ''typeorm';
+import { MemoryType } from './types.tsx';
 
 @Entity('memories')
 export class MemoryEntity {
@@ -16,7 +16,7 @@ export class MemoryEntity {
   content: string;
 
   @Column( {
-    type: enum',
+    type: 'enum',
     enum: MemoryType,
   })
   @Index(): MemoryType;
@@ -31,7 +31,7 @@ export class MemoryEntity {
   @Column('float', { array: true, nullable: true })
   embedding?: number[];
 
-  @Column('simple-array', { nullable: true }): string[];
+  @Column('simple-array, { nullable: true }): string[];
 
   @Column( { nullable: true })
   @Index(): string;

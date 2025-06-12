@@ -1,4 +1,4 @@
-import { Task, TaskMetadata, TaskStatusType } from '@the-new-fuse/types';
+import { Task, TaskMetadata, TaskStatusType  } from '@the-new-fuse/types;
 export interface DatabaseConnection {
     host: string;
     port: number;
@@ -8,9 +8,9 @@ export interface DatabaseConnection {
 }
 export interface QueryOptions {
     limit?: number;
-    offset?: number;
-    orderBy?: string;
-    order?: 'ASC' | 'DESC';
+    offset?: number';
+    orderBy?: string';
+    order?:ASC' | DESC';
 }
 export interface TaskFilter {
     status?: TaskStatusType;

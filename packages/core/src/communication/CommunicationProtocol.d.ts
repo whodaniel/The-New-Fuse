@@ -1,5 +1,5 @@
-import { MessageRouter } from './MessageRouter.js';
-import { MessageValidator } from './MessageValidator.js';
+import { MessageRouter } from './MessageRouter.tsx';
+import { MessageValidator } from './MessageValidator.tsx';
 import { DatabaseService } from '@the-new-fuse/database';
 import { EventEmitter } from 'events';
 export declare class CommunicationProtocol extends EventEmitter {

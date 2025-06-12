@@ -1,12 +1,12 @@
-import * as vscode from 'vscode';
+import * as vscode from ''vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 
 export class WorkspaceMonitor {
     private fileWatchers: Map<string, fs.FSWatcher> = new Map();
     private static readonly MONITORED_PATHS = [
-        'apps/backend/src/scripts',
-        'packages/core/src/agents'
+        apps/backend/src/'scripts',
+        packages/core/src/'agents'
     ];
 
     constructor() {
@@ -33,7 +33,7 @@ export class WorkspaceMonitor {
     private async handleFileChange(): Promise<void> {event: vscode.TextDocumentChangeEvent) {
         if (this.isTraeRelatedFile(event.document.uri.fsPath)) {
             await this.analyzeChange({
-                type: modification',
+                type: 'modification',
                 file: event.document.uri.fsPath,
                 changes: event.contentChanges,
                 timestamp: new Date()

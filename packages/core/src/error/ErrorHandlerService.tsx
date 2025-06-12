@@ -1,7 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
 import { DatabaseService } from '@the-new-fuse/database';
-import { ErrorRecoveryService } from './ErrorRecoveryService.js';
+import { ErrorRecoveryService } from './ErrorRecoveryService.tsx';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
 
@@ -11,17 +11,17 @@ interface ErrorRecord {
   stack?: string;
   timestamp: Date;
   component: string;
-  severity: 'info' | 'warning' | 'error' | 'critical';
-  status: 'new' | 'acknowledged' | 'in_progress' | 'resolved' | 'ignored';
-  source: 'system' | 'user' | 'external';
+  severity:info' | warning' | error' | critical';
+  status:new' | acknowledged' | in_progress' | resolved' | ignored';
+  source:system' | user' | external';
   metadata: Record<string, unknown>;
   recoveryAttemptIds?: string[];
 }
 
 export interface ErrorOptions {
   component?: string;
-  severity?: 'info' | 'warning' | 'error' | 'critical';
-  source?: 'system' | 'user' | 'external';
+  severity?:info' | warning' | error' | critical';
+  source?:system' | user' | external';
   metadata?: Record<string, unknown>;
   recover?: boolean;
 }
@@ -66,11 +66,11 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
     
     // Set up recovery service handlers
     this.recoveryService.on('recoverySucceeded', ({ attempt }) => {
-      this.updateErrorStatus(attempt.errorId, 'resolved');
+      this.updateErrorStatus(attempt.errorId, resolved');
     });
     
     this.recoveryService.on('recoveryFailed', ({ attempt }) => {
-      this.updateErrorStatus(attempt.errorId, 'acknowledged');
+      this.updateErrorStatus(attempt.errorId, acknowledged');
     });
     
     this.logger.info('Error handler service initialized');
@@ -81,8 +81,8 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
     options: ErrorOptions = {}
   ): Promise<ErrorRecord> {
     const opts = { ...DEFAULT_ERROR_OPTIONS, ...options };
-    const message = typeof error === 'string' ? error : error.message;
-    const stack = typeof error === 'string' ? undefined : error.stack;
+    const message = typeof error === string' ? error : error.message;
+    const stack = typeof error === string' ? undefined : error.stack;
     
     // Rate limiting check
     const errorKey = `${opts.component}:${message}`;
@@ -147,20 +147,20 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
   
   private logError(error: ErrorRecord): void {
     switch (error.severity) {
-      case 'info':
+      case info':
         this.logger.info(error.message, {
           component: error.component,
           metadata: error.metadata
         });
         break;
-      case 'warning':
+      case warning':
         this.logger.warn(error.message, {
           component: error.component,
           metadata: error.metadata
         });
         break;
-      case 'error':
-      case 'critical':
+      case error':
+      case critical':
         this.logger.error(error.message, {
           component: error.component,
           stack: error.stack,
@@ -191,7 +191,7 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
         }
       });
     } catch (dbError) {
-      this.logger.error('Failed to persist error:', dbError);
+      this.logger.error('Failed to persist error:, dbError);
     }
   }
   
@@ -223,7 +223,7 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
         }
       });
     } catch (recoveryError) {
-      this.logger.error('Recovery attempt failed:', recoveryError);
+      this.logger.error('Recovery attempt failed:, recoveryError);
     }
   }
   
@@ -271,7 +271,7 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
         metadata: metadata ? { ...JSON.parse(error.metadata as string), ...metadata } : JSON.parse(error.metadata as string)
       } as ErrorRecord;
     } catch (updateError) {
-      this.logger.error('Failed to update error status:', updateError);
+      this.logger.error('Failed to update error status:, updateError);
       throw updateError;
     }
   }
@@ -330,7 +330,7 @@ export class ErrorHandlerService extends EventEmitter implements OnModuleInit {
         recoveryAttemptIds: error.recoveryAttemptIds ? JSON.parse(error.recoveryAttemptIds as string) : undefined
       }) as ErrorRecord);
     } catch (listError) {
-      this.logger.error('Failed to list errors:', listError);
+      this.logger.error('Failed to list errors:, listError);
       return [];
     }
   }

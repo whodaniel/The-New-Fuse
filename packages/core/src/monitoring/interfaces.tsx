@@ -1,4 +1,4 @@
-import { MetricLabel, MetricType, MetricUnit } from './types.js';
+import { MetricLabel, MetricType, MetricUnit } from './types.tsx';
 
 export interface IMetricsService {
   recordCounter(name: string, value?: number, labels?: MetricLabel[]): Promise<void>;

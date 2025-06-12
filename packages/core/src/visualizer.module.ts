@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ProjectVisualizer } from './project_visualizer.js';
+import { ProjectVisualizer } from './project_visualizer.tsx';
 
 @Module({
   providers: [ProjectVisualizer],

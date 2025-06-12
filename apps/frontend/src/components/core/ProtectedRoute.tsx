@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { useAuth } from '../../providers/AuthProvider.js';
-import Loading from '../Loading.js';
+import { useAuth } from '../../providers/AuthProvider.tsx';
+import Loading from '../Loading.tsx';
 
 const ProtectedRoute = () => {
   const { isAuthenticated, isLoading } = useAuth();

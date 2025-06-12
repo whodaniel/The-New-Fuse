@@ -396,12 +396,12 @@ export class MCPFileCoordinationServer extends MCPServer {
   async getSystemHealth(): Promise<any> {
     try {
       return await this.coordinationManager.getSystemHealth();
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Failed to get system health:', error);
       return {
         overall: 'unhealthy',
         components: {
-          fileCoordinationService: { status: 'error', message: error.message }
+          fileCoordinationService: { status: 'error', message: (error as Error).message }
         }
       };
     }

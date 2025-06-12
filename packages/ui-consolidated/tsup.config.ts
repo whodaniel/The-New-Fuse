@@ -7,7 +7,7 @@ export default defineConfig({
   splitting: false,
   sourcemap: true,
   clean: true,
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', '@the-new-fuse/api-client', '@the-new-fuse/hooks', '@the-new-fuse/types'],
   treeshake: true,
   minify: true,
   esbuildOptions(options) {

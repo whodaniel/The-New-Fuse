@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import * as Sentry from '@sentry/node';
-import { MetricsService } from '../metrics/metrics.service.js';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { MetricsService } from '../metrics/metrics.service.tsx';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 /**
@@ -256,7 +256,7 @@ export class ErrorTrackingService {
     };
 
     // Emit alert event
-    this.eventEmitter.emit('error.alert', alert);
+    this.eventEmitter.emit('error.'alert', alert);
 
     // Log to Sentry as an event
     Sentry.captureMessage(`Error threshold exceeded: ${count} ${severity} ${category} errors`,

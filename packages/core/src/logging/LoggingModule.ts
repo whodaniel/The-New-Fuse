@@ -1,6 +1,6 @@
 import { Module, Global } from '@nestjs/common';
 import { LoggingService } from './LoggingService.js';
-import { LogAnalyzer } from './LogAnalyzer.js';
+import { LogAnalyzer } from './LogAnalyzer.tsx';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Global()

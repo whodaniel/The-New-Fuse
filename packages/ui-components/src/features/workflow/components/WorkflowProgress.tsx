@@ -1,6 +1,6 @@
 import React from 'react';
-import { WorkflowStep, WorkflowStatus } from '../types.js';
-import { Progress } from '../../../core/progress.js';
+import { WorkflowStep, WorkflowStatus } from '../types.tsx';
+import { Progress } from '../../../core/progress.tsx';
 
 interface WorkflowProgressProps {
   steps: WorkflowStep[];
@@ -20,13 +20,13 @@ export const WorkflowProgress: React.FC<WorkflowProgressProps> = ({
     if (status === WorkflowStatus.IDLE) return 0;
     
     // Count completed steps
-    const completedSteps = steps.filter(step: WorkflowStep => 
+    const completedSteps = steps.filter((step: WorkflowStep) =>
       step.status === 'completed' || step.status === 'skipped'
     ).length;
     
     // If current step is running, add partial credit
-    const currentStepIndex = currentStepId 
-      ? steps.findIndex(step: WorkflowStep => step.id === currentStepId) 
+    const currentStepIndex = currentStepId
+      ? steps.findIndex((step: WorkflowStep) => step.id === currentStepId)
       : -1;
     
     if (currentStepIndex >= 0 && steps[currentStepIndex].status === 'running') {
@@ -55,11 +55,11 @@ export const WorkflowProgress: React.FC<WorkflowProgressProps> = ({
       
       <div className="text-xs text-muted-foreground flex justify-between">
         <div>
-          {steps.filter(step: WorkflowStep => step.status === 'completed').length} of {steps.length} steps completed
+          {steps.filter((step: WorkflowStep) => step.status === 'completed').length} of {steps.length} steps completed
         </div>
         {currentStepId && status === WorkflowStatus.RUNNING && (
           <div>
-            Current: {steps.find(step: WorkflowStep => step.id === currentStepId)?.name || 'Unknown step'}
+            Current: {steps.find((step: WorkflowStep) => step.id === currentStepId)?.name || 'Unknown step'}
           </div>
         )}
       </div>

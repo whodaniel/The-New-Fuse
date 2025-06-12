@@ -4,7 +4,7 @@ import { ConfigurationPanel } from './ConfigurationPanel.js';
 import { InputsPanel } from './InputsPanel.js';
 import { OutputsPanel } from './OutputsPanel.js';
 import { HistoryPanel } from './HistoryPanel.js';
-import type { Node } from '../../../types/workflow.js';
+import type { Node } from '../../../types/workflow.tsx';
 
 interface NodeInspectorProps {
   node: Node;

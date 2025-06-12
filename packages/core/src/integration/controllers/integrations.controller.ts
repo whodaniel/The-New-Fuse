@@ -22,15 +22,15 @@ import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiResponse } from '@nestjs/s
 // --- DTOs for Request Bodies ---
 
 class ConnectIntegrationDto {
-  @ApiPropertyOptional({ description: 'Credentials needed for connection (e.g., API key, OAuth tokens)', type: 'object' })
+  @ApiPropertyOptional({ description:Credentials needed for connection (e.g., API key, OAuth tokens)', type: 'object' })
   credentials?: Record<string, any>;
 }
 
 class ExecuteActionDto {
-  @ApiProperty({ description: 'The action to execute on the integration', example: 'chat_completion' })
+  @ApiProperty({ description:The action to execute on the integration', example: 'chat_completion' })
   action: string;
 
-  @ApiPropertyOptional({ description: 'Parameters required for the action', type: 'object', example: { model: 'gpt-4', messages: [{ role: 'user', content: 'Hello!' }] } })
+  @ApiPropertyOptional({ description: Parameters required for the 'action', type: 'object', example: { model: gpt-4', messages: [{ role: 'user', content: Hello!' }] } })
   params?: Record<string, any>;
 }
 
@@ -45,8 +45,8 @@ export class IntegrationsController {
   constructor(private readonly integrationRegistryService: IntegrationRegistryService) {}
 
   @Get()
-  @ApiOperation({ summary: 'List all available integrations' })
-  @ApiResponse({ status: 200, description: 'List of integrations retrieved successfully.' })
+  @ApiOperation({ summary:List all available integrations' })
+  @ApiResponse({ status: 200, description:List of integrations retrieved successfully.' })
   async listIntegrations() {
     this.logger.log('Request received to list all integrations');
     try {
@@ -61,10 +61,10 @@ export class IntegrationsController {
   }
 
   @Get('type/:type')
-  @ApiOperation({ summary: 'List integrations by type' })
-  @ApiParam({ name: 'type', enum: IntegrationType, description: 'The type of integrations to list' })
-  @ApiResponse({ status: 200, description: 'List of integrations by type retrieved successfully.' })
-  @ApiResponse({ status: 400, description: 'Invalid integration type provided.' })
+  @ApiOperation({ summary:List integrations by type' })
+  @ApiParam({ name: 'type', enum: IntegrationType, description: The type of integrations to 'list' })
+  @ApiResponse({ status: 200, description:List of integrations by type retrieved successfully.' })
+  @ApiResponse({ status: 400, description: Invalid integration type provided.' })
   async listIntegrationsByType(@Param('type') type: IntegrationType) {
     this.logger.log(`Request received to list integrations of type: ${type}`);
     // Basic validation if the type exists in the enum
@@ -85,10 +85,10 @@ export class IntegrationsController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: 'Get details (metadata) of a specific integration' })
-  @ApiParam({ name: 'id', description: 'The ID of the integration' })
-  @ApiResponse({ status: 200, description: 'Integration metadata retrieved successfully.' })
-  @ApiResponse({ status: 404, description: 'Integration not found.' })
+  @ApiOperation({ summary:Get details (metadata) of a specific integration' })
+  @ApiParam({ name: 'id', description: The ID of the 'integration' })
+  @ApiResponse({ status: 200, description:Integration metadata retrieved successfully.' })
+  @ApiResponse({ status: 404, description: Integration not found.' })
   async getIntegrationDetails(@Param('id') id: string) {
     this.logger.log(`Request received for details of integration: ${id}`);
     try {
@@ -106,13 +106,13 @@ export class IntegrationsController {
 
   @Post(':id/connect')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Connect to a specific integration' })
-  @ApiParam({ name: 'id', description: 'The ID of the integration to connect' })
+  @ApiOperation({ summary:Connect to a specific integration' })
+  @ApiParam({ name: 'id', description: The ID of the integration to 'connect' })
   @ApiBody({ type: ConnectIntegrationDto, required: false })
-  @ApiResponse({ status: 200, description: 'Integration connected successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad request (e.g., missing credentials if required).' })
-  @ApiResponse({ status: 404, description: 'Integration not found.' })
-  @ApiResponse({ status: 500, description: 'Connection failed.' })
+  @ApiResponse({ status: 200, description:Integration connected successfully.' })
+  @ApiResponse({ status: 400, description: Bad request (e.g., missing credentials if required).' })
+  @ApiResponse({ status: 404, description:Integration not found.' })
+  @ApiResponse({ status: 500, description: Connection failed.' })
   async connectIntegration(
     @Param('id') id: string,
     @Body() connectDto?: ConnectIntegrationDto,
@@ -121,8 +121,8 @@ export class IntegrationsController {
     try {
       const result = await this.integrationRegistryService.connectIntegration(id, connectDto?.credentials);
       return { message: `Integration ${id} connected successfully.`, connected: result };
-    } catch (error) {
-      if (error.message.includes('not found')) {
+    } catch (error: unknown) {
+      if ((error as Error).message.includes('not found')) {
         this.logger.warn(`Connect failed - Integration not found: ${id}`);
         throw new NotFoundException(`Integration with ID "${id}" not found.`);
       }
@@ -137,18 +137,18 @@ export class IntegrationsController {
 
   @Post(':id/disconnect')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Disconnect from a specific integration' })
-  @ApiParam({ name: 'id', description: 'The ID of the integration to disconnect' })
-  @ApiResponse({ status: 200, description: 'Integration disconnected successfully.' })
-  @ApiResponse({ status: 404, description: 'Integration not found.' })
-  @ApiResponse({ status: 500, description: 'Disconnection failed.' })
+  @ApiOperation({ summary:Disconnect from a specific integration' })
+  @ApiParam({ name: 'id', description: The ID of the integration to 'disconnect' })
+  @ApiResponse({ status: 200, description:Integration disconnected successfully.' })
+  @ApiResponse({ status: 404, description: Integration not found.' })
+  @ApiResponse({ status: 500, description:Disconnection failed.' })
   async disconnectIntegration(@Param('id') id: string) {
     this.logger.log(`Request received to disconnect integration: ${id}`);
     try {
       const result = await this.integrationRegistryService.disconnectIntegration(id);
       return { message: `Integration ${id} disconnected successfully.`, disconnected: result };
-    } catch (error) {
-      if (error.message.includes('not found')) {
+    } catch (error: unknown) {
+      if ((error as Error).message.includes('not found')) {
         this.logger.warn(`Disconnect failed - Integration not found: ${id}`);
         throw new NotFoundException(`Integration with ID "${id}" not found.`);
       }
@@ -159,13 +159,13 @@ export class IntegrationsController {
 
   @Post(':id/execute')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Execute an action on a specific integration' })
-  @ApiParam({ name: 'id', description: 'The ID of the integration' })
+  @ApiOperation({ summary:Execute an action on a specific integration' })
+  @ApiParam({ name: 'id', description: The ID of the 'integration' })
   @ApiBody({ type: ExecuteActionDto })
-  @ApiResponse({ status: 200, description: 'Action executed successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad request (e.g., missing action/params, action not supported).' })
-  @ApiResponse({ status: 404, description: 'Integration not found.' })
-  @ApiResponse({ status: 500, description: 'Action execution failed.' })
+  @ApiResponse({ status: 200, description:Action executed successfully.' })
+  @ApiResponse({ status: 400, description: Bad request (e.g., missing action/params, action not supported).' })
+  @ApiResponse({ status: 404, description:Integration not found.' })
+  @ApiResponse({ status: 500, description: Action execution failed.' })
   async executeAction(
     @Param('id') id: string,
     @Body() executeActionDto: ExecuteActionDto,
@@ -184,8 +184,8 @@ export class IntegrationsController {
       // Avoid logging potentially large or sensitive results directly
       this.logger.log(`Action "${executeActionDto.action}" on integration ${id} executed successfully.`);
       return result; // Return the actual result from the integration action
-    } catch (error) {
-      if (error.message.includes('not found')) {
+    } catch (error: unknown) {
+      if ((error as Error).message.includes('not found')) {
         this.logger.warn(`Execute failed - Integration not found: ${id}`);
         throw new NotFoundException(`Integration with ID "${id}" not found.`);
       }

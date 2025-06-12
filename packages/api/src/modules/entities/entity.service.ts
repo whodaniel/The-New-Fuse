@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../services/prisma.service.js'; // Adjust path if needed
-import { RegisteredEntity, Prisma } from '@prisma/client';
+import { RegisteredEntity, Prisma } from '@the-new-fuse/database/generated/prisma';
 import { CreateEntityDto } from './dto/create-entity.dto.js';
 import { UpdateEntityDto } from './dto/update-entity.dto.js';
 
@@ -93,13 +93,15 @@ export class EntityService {
       });
        this.logger.log(`Successfully updated entity with ID: ${updatedEntity.id}`);
       return updatedEntity;
-    } catch (error) {
+    } catch (error: unknown) {
         // Handle Prisma error for record not found specifically
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             this.logger.warn(`Update failed: Entity not found with where clause: ${JSON.stringify(where)}`);
             throw new NotFoundException(`Entity not found.`);
         }
-        this.logger.error(`Failed to update entity: ${error.message}`, error.stack);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        this.logger.error(`Failed to update entity: ${errorMessage}`, errorStack);
         throw error;
     }
   }
@@ -112,14 +114,16 @@ export class EntityService {
       });
        this.logger.log(`Successfully removed entity with ID: ${deletedEntity.id}`);
       return deletedEntity;
-    } catch (error) {
+    } catch (error: unknown) {
          // Handle Prisma error for record not found specifically
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
             this.logger.warn(`Remove failed: Entity not found with where clause: ${JSON.stringify(where)}`);
             throw new NotFoundException(`Entity not found.`);
         }
-      this.logger.error(`Failed to remove entity: ${error.message}`, error.stack);
-      throw error;
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        const errorStack = error instanceof Error ? error.stack : undefined;
+        this.logger.error(`Failed to remove entity: ${errorMessage}`, errorStack);
+        throw error;
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Logger } from "@the-new-fuse/utils";
-import { EventEmitter } from '../../utils/EventEmitter.js';
+import { EventEmitter } from '../../utils/EventEmitter.tsx';
 export declare abstract class BaseService extends EventEmitter {
   protected readonly logger: Logger;
   protected initialized: boolean;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
-import { TaskPriority, TaskStatus } from './types.js';
+import { TaskPriority, TaskStatus } from './types.tsx';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '@the-new-fuse/utils';
 import { EventEmitter } from 'events';
@@ -33,7 +33,7 @@ interface Task<T> {
   retries?: number;
   timeout?: number;
   execute: () => Promise<any>;
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'timedout' | 'cancelled';
+  status:pending' | running' | completed' | failed' | timedout' | cancelled';
   createdAt: Date;
   updatedAt?: Date;
   startedAt?: Date;
@@ -44,20 +44,20 @@ interface Task<T> {
 }
 
 interface TaskQueueEvents<T> {
-  'task:added': (task: Task<T>) => void;
-  'task:started': (task: Task<T>) => void;
-  'task:completed': (task: Task<T>) => void;
-  'task:failed': (data: { task: Task<T>, error: Error }) => void;
-  'task:cancelled': (task: Task<T>) => void;
+  task:added': (task: Task<T>) => void;
+  task:started': (task: Task<T>) => void;
+  task:completed': (task: Task<T>) => void;
+  task:failed': (data: { task: Task<T>, error: Error }) => void;
+  task:cancelled': (task: Task<T>) => void;
 }
 
 @Injectable()
 export class TaskQueue<T> extends EventEmitter {
-  private redis: Redis;
+  private redis: any;
   private logger: Logger;
-  private readonly queueKey = 'task:queue';
-  private readonly processingKey = 'task:processing';
-  private readonly completedKey = 'task:completed';
+  private readonly queueKey = task:queue';
+  private readonly processingKey = task:processing';
+  private readonly completedKey = task:completed';
   private options: TaskQueueOptions<T>;
   private queue: Task<T>[] = [];
   private runningTasks: number = 0;
@@ -67,8 +67,8 @@ export class TaskQueue<T> extends EventEmitter {
 
   constructor() {
     super(); // Call EventEmitter constructor
-    const redisUrl = (process as any).env.REDIS_URL || 'redis://localhost:6379/0';
-    this.redis = new Redis(redisUrl, {
+    const redisUrl = (process as any).env.REDIS_URL || redis://localhost:6379/0';
+    this.redis = new (Redis as any)(redisUrl, {
       retryStrategy: (times: number) => {
         const delay = Math.min(times * 50, 2000);
         return delay;
@@ -187,10 +187,10 @@ export class TaskQueue<T> extends EventEmitter {
     await this.redis.disconnect();
   }
 
-  public addTask(taskDetails: Omit<Task<T>, 'id' | 'status' | 'createdAt' | 'updatedAt' | 'startedAt' | 'completedAt' | 'retries' | 'execute' | 'priority'> & { execute: (context: any) => Promise<T>; priority?: number }): Task<T> {
+  public addTask(taskDetails: Omit<Task<T>, 'id' | status' | 'createdAt' | updatedAt' | 'startedAt' | completedAt' | 'retries' | execute' | 'priority'> & { execute: (context: any) => Promise<T>; priority?: number }): Task<T> {
     const newTask: Task<T> = {
       id: uuidv4(),
-      status: 'pending' as const,
+      status:pending' as const,
       createdAt: new Date(),
       updatedAt: new Date(),
       retries: 0,
@@ -204,7 +204,7 @@ export class TaskQueue<T> extends EventEmitter {
     this.queue.push(newTask);
     this.queue.sort((a, b) => (b.priority || 0) - (a.priority || 0));
     this.logger.info(`Task ${newTask.id} of type ${newTask.type} added to queue`);
-    this.emit('task:added', newTask);
+    this.emit('task: 'added', newTask);
     this.processQueue();
     return newTask;
   }
@@ -237,20 +237,20 @@ export class TaskQueue<T> extends EventEmitter {
       this.logger.debug(`Executing task ${task.id} of type ${task.type}`);
       task.status = 'running';
       task.startedAt = new Date();
-      this.emit('task:started', task);
+      this.emit('task: 'started', task);
 
       const result = await task.execute();
       task.status = 'completed';
       task.completedAt = new Date();
       task.result = result;
-      this.emit('task:completed', task);
+      this.emit('task: 'completed', task);
       this.logger.info(`Task ${task.id} completed successfully`);
       this.handleTaskSuccess(task, result);
     } catch (error: any) {
       task.status = 'failed';
       task.completedAt = new Date();
       task.error = error;
-      this.emit('task:failed', { task, error });
+      this.emit('task: 'failed', { task, error });
       this.logger.error(`Task ${task.id} failed: ${error.message}`, error);
       this.handleTaskError(task, error);
     }
@@ -267,7 +267,7 @@ export class TaskQueue<T> extends EventEmitter {
       if (task.status === 'pending') {
         this.queue.splice(taskIndex, 1);
         task.status = 'cancelled';
-        this.emit('task:cancelled', task);
+        this.emit('task: 'cancelled', task);
         this.logger.info(`Task ${id} cancelled from queue`);
         return true;
       }

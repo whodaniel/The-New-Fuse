@@ -1,1 +1,1 @@
-export * from './ConsolidatedDialog.js';
+export * from './ConsolidatedDialog.tsx';

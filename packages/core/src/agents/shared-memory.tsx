@@ -1,5 +1,5 @@
-import { Memory, MemoryItem } from './types.js';
-import { VectorStore } from '../vectordb/vector-store.js';
+import { Memory, MemoryItem } from './types.tsx';
+import { VectorStore } from '../vectordb/vector-store.tsx';
 import { Logger } from '../logging.js';
 
 export class SharedMemory implements Memory {
@@ -51,7 +51,7 @@ export class SharedMemory implements Memory {
         content: result.content,
         type: result.metadata.type,
         metadata: Object.entries(result.metadata)
-          .filter(([key]) => !['agentId', 'taskId', 'timestamp', 'type'].includes(key))
+          .filter(([key]) => !['agentId', taskId', timestamp', type'].includes(key))
           .reduce((obj, [key, value]) => ({ ...obj, [key]: value }), {})
       }));
     }
@@ -85,6 +85,6 @@ export class SharedMemory implements Memory {
       return true;
     });
     
-    this.logger.info(`Cleared memory items for ${agentId ? `agent ${agentId}` : ''} ${taskId ? `task ${taskId}` : ''}`);
+    this.logger.info(`Cleared memory items for ${agentId ? `agent ${agentId}` :} ${taskId ? `task ${taskId}` : '}`);
   }
 }

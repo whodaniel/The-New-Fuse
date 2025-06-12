@@ -15,8 +15,7 @@ jobs:
       - name: Setup Node.js
         uses: oven-sh/setup-bun@v1
         with:
-          bun-version: '18'
-          cache: 'yarn'
+          bun-version: 'latest'
       
       - name: Install Dependencies
         run: bun install --frozen-lockfile

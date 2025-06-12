@@ -1,4 +1,4 @@
-export * from './types.js';
+export * from './types.tsx';
 export * from './presets.js';
-export * from './DataSourceConfig.js';
-export * from './TemplateGallery.js';
+export * from './DataSourceConfig.tsx';
+export * from './TemplateGallery.tsx';

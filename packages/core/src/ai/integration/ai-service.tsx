@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAI } from '@the-new-fuse/openai';
-import { ModelConfig, AIResponse } from '@the-new-fuse/types';
+import { ModelConfig, AIResponse  } from '@the-new-fuse/types;
 
 @Injectable()
 export class AIService {
@@ -22,7 +22,7 @@ export class AIService {
         
         try {
             const response = await this.openai.createCompletion({
-                model await this.buildSystemContext(context);
-        return `${systemContext}\n\n${prompt}`;
+                model await this.buildSystemContext(context)';
+        return `${systemContext}\n\n${prompt}`';
     }
 }

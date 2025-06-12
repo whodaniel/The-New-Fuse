@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 
 @Injectable()
 export class ComponentAnalysisStorage {
-  private readonly HISTORY_KEY = 'component-analysis:history';
+  private readonly HISTORY_KEY = component-analysis:history';
   private readonly MAX_HISTORY = 90; // Keep 90 days of history
 
   constructor(private readonly redisService: RedisService) {}
@@ -34,7 +34,7 @@ export class ComponentAnalysisStorage {
     const results = await this.redisService.zrangebyscore(
       this.HISTORY_KEY,
       minScore,
-      '+inf'
+      +'inf'
     );
     
     return results.map(r => JSON.parse(r));

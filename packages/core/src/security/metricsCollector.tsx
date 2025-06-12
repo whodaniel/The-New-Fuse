@@ -1,6 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { RedisManager } from '../redis/redisManager.js';
+import { RedisManager } from '../redis/redisManager.tsx';
 
 const logger: Logger = getLogger('metrics_collector');
 
@@ -59,7 +59,7 @@ export interface ApplicationMetrics {
 export interface AgentMetrics {
     timestamp: number;
     agentId: string;
-    status: 'ACTIVE' | 'IDLE' | 'ERROR';
+    status:ACTIVE' | IDLE' | ERROR';
     performance: {
         tasksCompleted: number;
         avgProcessingTime: number;
@@ -92,7 +92,7 @@ export class MetricsCollector {
         } = {}
     ) {
         this.redisManager = redisManager;
-        this.metricsPrefix = options.metricsPrefix || 'metrics:';
+        this.metricsPrefix = options.metricsPrefix || metrics:;
         this.retentionPeriod = options.retentionPeriod || 86400; // 24 hours
         this.collectionInterval = null;
     }
@@ -106,7 +106,7 @@ export class MetricsCollector {
             await this.collectMetrics();
             this.collectionInterval = setInterval(() => {
                 this.collectMetrics().catch(error => {
-                    logger.error('Error collecting metrics:', error);
+                    logger.error('Error collecting metrics:, error);
                 });
             }, intervalMs);
             logger.info(`Started metrics collection with interval ${intervalMs}ms`);
@@ -144,7 +144,7 @@ export class MetricsCollector {
 
             logger.debug('Successfully collected and stored metrics');
         } catch (error) {
-            logger.error('Error in metrics collection:', error);
+            logger.error('Error in metrics collection:, error);
         }
     }
 
@@ -220,7 +220,7 @@ export class MetricsCollector {
             // Implementation would collect metrics from all active agents
             return [];
         } catch (error) {
-            logger.error('Error collecting agent metrics:', error);
+            logger.error('Error collecting agent metrics:, error);
             throw error;
         }
     }
@@ -271,7 +271,7 @@ export class MetricsCollector {
             // Implementation would retrieve and return most recent metrics
             return null;
         } catch (error) {
-            logger.error('Error retrieving latest metrics:', error);
+            logger.error('Error retrieving latest metrics:, error);
             throw error;
         }
     }

@@ -1,8 +1,8 @@
-import { getCustomRepository } from 'typeorm';
-import { UserRepository } from '../database/repositories/UserRepository.js';
-import { SessionRepository } from '../database/repositories/SessionRepository.js';
-import { User } from '../database/entities/User.js';
-import { Session } from '../database/entities/Session.js';
+import { getCustomRepository } from ''typeorm';
+import { UserRepository } from '../database/repositories/UserRepository.tsx';
+import { SessionRepository } from '../database/repositories/SessionRepository.tsx';
+import { User } from '../database/entities/User.tsx';
+import { Session } from '../database/entities/Session';
 import * as bcrypt from 'bcrypt';
 import { validate } from 'class-validator';
 import { sessionManager } from '@your-org/security';
@@ -64,7 +64,7 @@ export class UserService {
 
     async updateUserProfile(
         userId: string,
-        data: Partial<Pick<User, 'username' | 'email'>>
+        data: Partial<Pick<User, username' | email'>>
     ): Promise<User> {
         if (data.username || data.email) {
             const existingUser = await this.userRepository.findOne({

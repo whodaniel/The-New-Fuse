@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PerformanceProfile, ProfileSample } from './types.js';
+import { PerformanceProfile, ProfileSample } from './types.tsx';
 import { RedisService } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
+import { MetricCollector } from './metrics.tsx';
 import * as v8 from 'v8';
 import * as os from 'os';
 
@@ -80,7 +80,7 @@ export class PerformanceProfiler {
         environment: this.configService.get('NODE_ENV'),
         version: process.version,
         trigger: 'scheduled',
-        tags: ['cpu', 'performance'],
+        tags: ['cpu', performance'],
       },
     };
 
@@ -117,7 +117,7 @@ export class PerformanceProfiler {
         heapTotal: memoryUsage.heapTotal.toString(),
         external: memoryUsage.external.toString(),
         rss: memoryUsage.rss.toString(),
-        arrayBuffers: memoryUsage.arrayBuffers?.toString() || '0',
+        arrayBuffers: memoryUsage.arrayBuffers?.toString() || 0',
         gcType: gcStats.type,
         gcDuration: gcStats.duration?.toString()
       },
@@ -146,7 +146,7 @@ export class PerformanceProfiler {
         environment: this.configService.get('NODE_ENV'),
         version: process.version,
         trigger: 'scheduled',
-        tags: ['memory', 'performance', 'heap', 'gc'],
+        tags: ['memory', performance', heap', gc'],
       },
     };
 
@@ -194,7 +194,7 @@ export class PerformanceProfiler {
         environment: this.configService.get('NODE_ENV'),
         version: process.version,
         trigger: 'scheduled',
-        tags: ['io', 'performance'],
+        tags: ['io', performance'],
       },
     };
 
@@ -215,7 +215,7 @@ export class PerformanceProfiler {
         }
 
         // This is a simplified example. In reality, you'd want to track actual network usage
-        totalBytes += iface.family === 'IPv4' ? 4 : 16;
+        totalBytes += iface.family === IPv4' ? 4 : 16;
       }
     }
 
@@ -240,7 +240,7 @@ export class PerformanceProfiler {
         environment: this.configService.get('NODE_ENV'),
         version: process.version,
         trigger: 'scheduled',
-        tags: ['network', 'performance'],
+        tags: ['network', performance'],
       },
     };
 
@@ -300,11 +300,11 @@ export class PerformanceProfiler {
     await this.redisService.set(
       key,
       JSON.stringify(profile),
-      'PX',
+      PX',
       this.retentionPeriod * 1000,
     );
 
-    this.eventEmitter.emit('profile.collected', {
+    this.eventEmitter.emit('profile.'collected', {
       id: profile.id,
       type: profile.type,
       timestamp: profile.timestamp,
@@ -316,7 +316,7 @@ export class PerformanceProfiler {
     this.metricCollector.gauge(
       `profile_${profile.type}_value`,
       profile.data.summary.avg,
-      'count',
+      count',
       [
         { name: 'type', value: profile.type },
         { name: 'environment', value: profile.metadata.environment },
@@ -324,11 +324,11 @@ export class PerformanceProfiler {
     );
 
     // Record percentile metrics
-    ['p50', 'p90', 'p95', 'p99'].forEach(percentile => {
+    ['p50', p90', p95', p99'].forEach(percentile => {
       this.metricCollector.gauge(
         `profile_${profile.type}_${percentile}`,
         profile.data.summary[percentile],
-        'count',
+        count',
         [
           { name: 'type', value: profile.type },
           { name: 'environment', value: profile.metadata.environment },
@@ -348,7 +348,7 @@ export class PerformanceProfiler {
         heapSizeLimit: heapInfo.heapSizeLimit
       });
 
-      this.eventEmitter.emit('memory.threshold.exceeded', {
+      this.eventEmitter.emit('memory.threshold.'exceeded', {
         type: 'heap_usage',
         value: heapUsagePercent,
         threshold: 85,
@@ -389,13 +389,13 @@ export class PerformanceProfiler {
   }
 
   async queryProfiles(options: {
-    type?: 'cpu' | 'memory' | 'io' | 'network';
+    type?:cpu' | memory' | io' | network';
     startTime?: Date;
     endTime?: Date;
     environment?: string;
     tags?: string[];
   }): Promise<PerformanceProfile[]> {
-    const pattern = options.type ? `profile:${options.type}:*` : 'profile:*';
+    const pattern = options.type ? `profile:${options.type}:*` :profile:*';
     
     const keys = await this.redisService.client.keys(pattern);
     const profiles: PerformanceProfile[] = [];

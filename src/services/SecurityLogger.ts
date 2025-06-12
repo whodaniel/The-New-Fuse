@@ -1,7 +1,7 @@
 import { injectable, inject } from "inversify";
 import type { TYPES } from '.../core/di/types.js';
-import { LoggingService } from '../core/logging/logging.service.js';
-import { CacheService } from '../core/cache/cache.service.js';
+import { LoggingService } from '../core/logging/logging.service.tsx';
+import { CacheService } from '../core/cache/cache.service.tsx';
 import { TimeService } from '../core/utils/time.service.js';
 import { EventBus } from '../core/events/event-bus.js';
 import { ConfigService } from '../core/config/config.service.js';

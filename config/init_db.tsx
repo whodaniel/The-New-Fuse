@@ -5,7 +5,7 @@
 import { DataSource } from 'typeorm';
 import path from 'path';
 import { AdminRegistry } from './models/admin_registry.js';
-import { getSettings } from './config.js';
+import { getSettings } from './config.tsx';
 
 const settings = getSettings();
 

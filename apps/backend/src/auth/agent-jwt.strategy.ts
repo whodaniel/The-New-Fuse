@@ -112,12 +112,12 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       this.logger.debug(`Agent authenticated successfully: ${payload.agentId}`);
       return agentInfo;
 
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }
       
-      this.logger.error(`Agent JWT validation error: ${error.message}`, error.stack);
+      this.logger.error(`Agent JWT validation error: ${(error as Error).message}`, error.stack);
       throw new UnauthorizedException('Agent authentication failed');
     }
   }

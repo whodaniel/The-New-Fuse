@@ -22,7 +22,7 @@ export class CredentialVault {
     if (!key) {
       throw new Error('Credential encryption key not configured');
     }
-    this.encryptionKey = Buffer.from(key, 'base64');
+    this.encryptionKey = Buffer.from(key, base64');
   }
 
   /**
@@ -34,9 +34,9 @@ export class CredentialVault {
       const encryptedCredentials = this.encryptCredentials(credentials);
       this.credentials.set(integrationId, encryptedCredentials);
       this.logger.info(`Stored credentials for integration: ${integrationId}`);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to store credentials for integration ${integrationId}`, {
-        error: error.message
+        error: (error as Error).message
       });
       throw error;
     }
@@ -52,9 +52,9 @@ export class CredentialVault {
         return undefined;
       }
       return this.decryptCredentials(encryptedCredentials);
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Failed to retrieve credentials for integration ${integrationId}`, {
-        error: error.message
+        error: (error as Error).message
       });
       throw error;
     }
@@ -80,10 +80,10 @@ export class CredentialVault {
 
   private encryptCredentials(credentials: Record<string, any>): Record<string, any> {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipheriv('aes-256-gcm', this.encryptionKey, iv);
+    const cipher = crypto.createCipheriv('aes-256-gcm, this.encryptionKey, iv);
     
     const encrypted = Buffer.concat([
-      cipher.update(JSON.stringify(credentials), 'utf8'),
+      cipher.update(JSON.stringify(credentials), utf8'),
       cipher.final()
     ]);
 
@@ -98,15 +98,15 @@ export class CredentialVault {
 
   private decryptCredentials(encryptedData: Record<string, any>): Record<string, any> {
     const decipher = crypto.createDecipheriv(
-      'aes-256-gcm',
+      aes-256-gcm,
       this.encryptionKey,
-      Buffer.from(encryptedData.iv, 'base64')
+      Buffer.from(encryptedData.iv, base64')
     );
 
-    decipher.setAuthTag(Buffer.from(encryptedData.authTag, 'base64'));
+    decipher.setAuthTag(Buffer.from(encryptedData.authTag, base64'));
 
     const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encryptedData.encrypted, 'base64')),
+      decipher.update(Buffer.from(encryptedData.encrypted, base64')),
       decipher.final()
     ]);
 

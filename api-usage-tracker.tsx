@@ -1,5 +1,5 @@
-import { Database } from './database.js';
-import { User } from './types.js';
+import { Database } from './database.tsx';
+import { User } from './types.tsx';
 
 interface ApiUsageRecord {
   userId: string;

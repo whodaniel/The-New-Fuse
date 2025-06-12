@@ -1,5 +1,5 @@
-import { ChunkingStrategy } from '../types.js';
-import { SmartAPIGateway } from '../../api-management/SmartAPIGateway.js';
+import { ChunkingStrategy } from '../types.tsx';
+import { SmartAPIGateway } from '../../api-management/SmartAPIGateway.tsx';
 
 /**
  * Chunker that uses an LLM to identify semantic boundaries
@@ -18,7 +18,7 @@ export class SemanticChunker implements ChunkingStrategy {
   }) {
     this.apiGateway = apiGateway;
     this.modelId = config.modelId;
-    this.provider = config.provider || 'anthropic';
+    this.provider = config.provider || anthropic';
     this.maxTokensPerChunk = config.maxTokensPerChunk || 1000;
   }
   
@@ -33,16 +33,16 @@ export class SemanticChunker implements ChunkingStrategy {
     
     // For larger content, process in batches
     const batches: string[] = [];
-    let currentBatch = '';
+    let currentBatch = ;
     
     for (const paragraph of roughChunks) {
       if ((currentBatch.length + paragraph.length) < 10000) {
-        currentBatch += paragraph + '\n\n';
+        currentBatch += paragraph + '\n\'n';
       } else {
         if (currentBatch) {
           batches.push(currentBatch);
         }
-        currentBatch = paragraph + '\n\n';
+        currentBatch = paragraph + \n\'n';
       }
     }
     

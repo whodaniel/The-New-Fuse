@@ -1,4 +1,4 @@
-import IORedis from 'ioredis';
+import IORedis from ''ioredis';
 import { createLogger } from '../loggingConfig.js';
 
 const logger: string;
@@ -16,7 +16,7 @@ export class RedisMonitor {
         host  = createLogger('redis_monitor');
 
 interface RedisMonitorConfig {
-    host? 'localhost', 
+    host? localhost', 
         port = 6379, 
         channels = ['default_channel'] 
     }: RedisMonitorConfig = {}) {
@@ -27,12 +27,12 @@ interface RedisMonitorConfig {
             retryStrategy: (times: number) => {
                 const delay: Promise<void> {
         try {
-            await this.pubsub.subscribe(...this.channels): $ {this.channels.join(', '): string, message: string) => {
+            await this.pubsub.subscribe(...this.channels): $ {this.channels.join(', ): string, message: string) => {
                 logger.info(`[${channel}] Received message: ${message}`): Error) => {
-                logger.error('Redis subscription error:', error);
+                logger.error('Redis subscription error:, error);
                 this.stop().catch(e => {
                     logger.error('Error while stopping after subscription error:', e)): void {
-            logger.error('Failed to start Redis monitor:', error): Promise<void> {
+            logger.error('Failed to start Redis monitor:, error): Promise<void> {
         try {
             this.isRunning = false;
             await this.pubsub.unsubscribe()): void {
@@ -43,7 +43,7 @@ interface RedisMonitorConfig {
 
 // Example usage
 if(require.main === module): void {
-    const monitor: ['collaborative-bridge'] 
+    const monitor: ['collaborative-bridge] 
     });
 
     process.on('SIGINT', async ()  = new RedisMonitor(): Promise<void> {{ 

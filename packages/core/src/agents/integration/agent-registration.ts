@@ -1,7 +1,7 @@
 const agentConfig: ExtendedAgentConfig = {
-  id: augment',
-  name: Augment',
-  type: code_assistant',
+  id: 'augment',
+  name: 'Augment',
+  type: 'code_assistant',
   capabilities: {
     reasoning: true,
     planning: true,
@@ -10,7 +10,9 @@ const agentConfig: ExtendedAgentConfig = {
     memory: true
   },
   llmConfig: {
-    model: claude',
-    provider: anthropic'
+    model: 'claude',
+    provider: 'anthropic'
   }
-};export {};
+};
+
+export {};

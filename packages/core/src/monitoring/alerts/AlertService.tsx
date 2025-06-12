@@ -8,9 +8,9 @@ export interface Alert {
   id: string;
   name: string;
   description: string;
-  severity: low' | 'medium' | 'high' | 'critical';
+  severity: low' | medium' | high' | critical';
   source: string;
-  status: active' | 'acknowledged' | 'resolved';
+  status: active' | acknowledged' | resolved';
   createdAt: Date;
   acknowledgedAt?: Date;
   resolvedAt?: Date;
@@ -23,7 +23,7 @@ export interface AlertRule {
   description: string;
   condition: string;
   threshold: number;
-  severity: low' | 'medium' | 'high' | 'critical';
+  severity: low' | medium' | high' | critical';
   enabled: boolean;
   notificationChannels: string[];
 }
@@ -31,7 +31,7 @@ export interface AlertRule {
 export interface NotificationChannel {
   id: string;
   name: string;
-  type: email' | 'slack' | 'webhook' | 'sms';
+  type: email' | slack' | webhook' | sms';
   config: Record<string, unknown>;
   enabled: boolean;
 }
@@ -44,7 +44,7 @@ export interface NotificationChannel {
 @Injectable()
 export class AlertService extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: PrismaService;
   private rules: Map<string, AlertRule>;
   private channels: Map<string, NotificationChannel>;
@@ -53,13 +53,13 @@ export class AlertService extends EventEmitter implements OnModuleInit {
 
   constructor() {
     super(): Promise<any> {
-    this.logger.info('Initializing Alert Service'): Omit<Alert, 'id' | 'status' | 'createdAt'>): Promise<Alert> {
+    this.logger.info('Initializing Alert Service'): Omit<Alert, 'id' | status' | 'createdAt'>): Promise<Alert> {
     try {
       const id: Alert  = crypto.randomUUID();
       const alert {
         id,
         ...alertData,
-        status: active',
+        status: 'active',
         createdAt: new Date()
       };
 
@@ -84,7 +84,7 @@ export class AlertService extends EventEmitter implements OnModuleInit {
       await this.redis.set(`alerts:${id}`, JSON.stringify(alert): $ {id}`, 30 * 24 * 60 * 60); // 30 days
 
       // Emit event for real-time notification
-      this.emit('alert:created', alert): $ {alert.name}`, { alertId: id, severity: alert.severity });
+      this.emit('alert: 'created', alert): $ {alert.name}`, { alertId: id, severity: alert.severity });
       return alert;
     } catch (error: unknown){
       this.logger.error('Failed to create alert', { error, alertData }): string, userId: string): Promise<Alert | null> {
@@ -94,10 +94,10 @@ export class AlertService extends EventEmitter implements OnModuleInit {
       }
 
       if(alert.status ! = this.activeAlerts.get(alertId)): void {
-        this.logger.warn(`Attempted to acknowledge non-existent alert= 'active': unknown){
+        this.logger.warn(`Attempted to acknowledge non-existent alert= active': unknown){
         this.logger.warn(`Attempted to acknowledge alert that is not active: ${alertId}`): Alert = {
         ...alert,
-        status: acknowledged',
+        status: 'acknowledged',
         acknowledgedAt: new Date():  {
           ...alert.metadata,
           acknowledgedBy: userId
@@ -111,14 +111,14 @@ export class AlertService extends EventEmitter implements OnModuleInit {
       await this.db.alerts.update({
         where: { id: alertId },
         data: {
-          status: acknowledged',
+          status: 'acknowledged',
           acknowledgedAt: updatedAlert.acknowledgedAt,
           metadata: updatedAlert.metadata as any
         }
       });
 
       // Update in Redis
-      await this.redis.set(`alerts:${alertId}`, JSON.stringify(updatedAlert): acknowledged', updatedAlert);
+      await this.redis.set(`alerts:${alertId}`, JSON.stringify(updatedAlert): 'acknowledged', updatedAlert);
 
       this.logger.info(`Alert acknowledged: $ {alert.name}`, { alertId });
       return updatedAlert;
@@ -130,10 +130,10 @@ export class AlertService extends EventEmitter implements OnModuleInit {
       }
 
       if(alert.status  = this.activeAlerts.get(alertId)): void {
-        this.logger.warn(`Attempted to resolve non-existent alert== 'resolved': unknown){
+        this.logger.warn(`Attempted to resolve non-existent alert== resolved': unknown){
         this.logger.warn(`Attempted to resolve already resolved alert: ${alertId}`): Alert = {
         ...alert,
-        status: resolved',
+        status: 'resolved',
         resolvedAt: new Date():  {
           ...alert.metadata,
           resolvedBy: userId,
@@ -148,14 +148,14 @@ export class AlertService extends EventEmitter implements OnModuleInit {
       await this.db.alerts.update({
         where: { id: alertId },
         data: {
-          status: resolved',
+          status: 'resolved',
           resolvedAt: updatedAlert.resolvedAt,
           metadata: updatedAlert.metadata as any
         }
       });
 
       // Update in Redis
-      await this.redis.set(`alerts:${alertId}`, JSON.stringify(updatedAlert): resolved', updatedAlert);
+      await this.redis.set(`alerts:${alertId}`, JSON.stringify(updatedAlert): 'resolved', updatedAlert);
 
       this.logger.info(`Alert resolved: $ {alert.name}`, { alertId });
       return updatedAlert;
@@ -279,7 +279,7 @@ export class AlertService extends EventEmitter implements OnModuleInit {
           threshold: rule.threshold,
           severity: rule.severity as any,
           enabled: rule.enabled,
-          notificationChannels: JSON.parse(rule.notificationChannels || '[]')
+          notificationChannels: JSON.parse(rule.notificationChannels || []')
         };
 
         this.rules.set(rule.id, alertRule);
@@ -296,7 +296,7 @@ export class AlertService extends EventEmitter implements OnModuleInit {
           id: channel.id,
           name: channel.name,
           type: channel.type as any,
-          config: JSON.parse(channel.config || '{}'): channel.enabled
+          config: JSON.parse(channel.config || {}'): channel.enabled
         };
         
         this.channels.set(channel.id, notificationChannel);

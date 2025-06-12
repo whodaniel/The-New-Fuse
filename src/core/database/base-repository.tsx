@@ -1,7 +1,7 @@
 import { injectable, inject } from "inversify";
 import { Logger } from "@the-new-fuse/utils";
 import { BaseEntity } from "@the-new-fuse/types";
-import { DatabaseService, Repository, QueryOptions } from './types.js';
+import { DatabaseService, Repository, QueryOptions } from './types.tsx';
 import { TYPES } from '../types.js';
 import { ErrorHandler } from '../error/error-handler.js';
 import { EventBus } from '../events/event-bus.js';

@@ -1,10 +1,10 @@
 # Build stage
-FROM node:18-alpine as builder
+FROM oven/bun:1 as builder
 
 WORKDIR /app
 
 # Copy root package files
-COPY package.json yarn.lock ./
+COPY package.json bun.lockb ./
 
 # Copy package.json files from all workspaces
 COPY apps/client/package.json ./apps/client/
@@ -13,16 +13,16 @@ COPY packages/utils/package.json ./packages/utils/
 COPY packages/ui/package.json ./packages/ui/
 
 # Install dependencies
-RUN yarn install --frozen-lockfile
+RUN bun install --frozen-lockfile
 
 # Copy source files
 COPY . .
 
 # Build packages
-RUN yarn workspace @the-new-fuse/types build
-RUN yarn workspace @the-new-fuse/utils build
-RUN yarn workspace @the-new-fuse/ui build
-RUN yarn workspace @the-new-fuse/client build
+RUN cd packages/types && bun run build && cd ../..
+RUN cd packages/utils && bun run build && cd ../..
+RUN cd packages/ui && bun run build && cd ../..
+RUN cd apps/client && bun run build && cd ../..
 
 # Production stage
 FROM nginx:alpine

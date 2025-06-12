@@ -1,4 +1,4 @@
-import { WebSocketServer, WebSocket } from 'ws';
+import { WebSocketServer, WebSocket } from ''ws';
 import { TraeMetrics } from './trae-metrics.js';
 import { CommandTracker } from './command-tracker.js';
 
@@ -38,7 +38,7 @@ export class UnifiedMonitorService {
  }
 
  private async handleAuthentication(ws: WebSocket, req: any) {
- const token = new URL(req.url, 'http://localhost').searchParams.get('token');
+ const token = new URL(req.url, http://localhost').searchParams.get('token');
  if (!token) throw new Error('Authentication required');
 
  // Implement actual token verification logic

@@ -2,7 +2,7 @@
 import Redis from 'ioredis';
 
 async function testRedisConnection(): any {
-    const redis = new Redis({
+    const redis = new (Redis as any)({
         host: process.env.REDIS_HOST || 'localhost',
         port: parseInt(process.env.REDIS_PORT || '6379'),
         retryStrategy: (times) => Math.min(times * 50, 2000)

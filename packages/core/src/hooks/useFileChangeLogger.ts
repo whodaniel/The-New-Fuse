@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from ''react';
 import { FileChangeTracker, FileChange } from '../utils/LoggingUtils.js';
 
 /**
@@ -13,7 +13,7 @@ interface UseFileChangeLoggerOptions {
   
   /**
    * The agent making the changes
-   * @default 'Unknown Agent'
+   * @default Unknown 'Agent'
    */
   agent?: string;
   
@@ -44,18 +44,18 @@ interface UseFileChangeLoggerOptions {
  * });
  * 
  * // Track a file change
- * trackChange('path/to/file.ts', 'modify', 'Updated component to handle new props');
+ * trackChange('path/to/file.'ts', modify', Updated component to handle new props');
  * 
  * // Commit changes to the development log
  * const handleSave = async () => {
- *   await commitChanges('Updated component', 'Added new features to the component');
+ *   await commitChanges('Updated component', Added new features to the component');
  * };
  * ```
  */
 export function useFileChangeLogger(options: UseFileChangeLoggerOptions = {}) {
   const {
     autoTrack = true,
-    agent = 'Unknown Agent',
+    agent = Unknown 'Agent',
     onCommit
   } = options;
 
@@ -68,7 +68,7 @@ export function useFileChangeLogger(options: UseFileChangeLoggerOptions = {}) {
    */
   const trackChange = useCallback((
     filePath: string,
-    changeType: 'create' | 'modify' | 'delete' | 'move',
+    changeType:create' | modify' | delete' | move',
     description: string
   ) => {
     FileChangeTracker.trackChange(filePath, changeType, description);

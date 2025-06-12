@@ -26,11 +26,11 @@ export declare const agentCardSchema: z.ZodObject<{
         encryption: z.ZodBoolean;
         rateLimit: z.ZodOptional<z.ZodNumber>;
     }, "strip", z.ZodTypeAny, {
-        authentication: "oauth2" | "none" | "api_key" | "jwt";
+        authentication: "none" | "api_key" | "oauth2" | "jwt";
         encryption: boolean;
         rateLimit?: number | undefined;
     }, {
-        authentication: "oauth2" | "none" | "api_key" | "jwt";
+        authentication: "none" | "api_key" | "oauth2" | "jwt";
         encryption: boolean;
         rateLimit?: number | undefined;
     }>;

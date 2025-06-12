@@ -15,7 +15,7 @@ This package provides testing utilities for The New Fuse platform, including:
 ## Installation
 
 ```bash
-yarn add -D @the-new-fuse/testing
+bun add -D @the-new-fuse/testing
 ```
 
 ## Usage
@@ -99,7 +99,7 @@ The `ArtifactManager` class provides methods for generating and managing test ar
 
 1. Create a feature branch: `git checkout -b feature/my-feature`
 2. Make your changes
-3. Run tests: `yarn test`
+3. Run tests: `bun test`
 4. Submit a pull request
 
 ## License

@@ -1,4 +1,4 @@
-import { BaseEntity } from './index.js';
+import { BaseEntity } from './index.tsx';
 
 export interface DatabaseConfig {
   type: string;

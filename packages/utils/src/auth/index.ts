@@ -23,10 +23,10 @@ __exportStar(require("./security"), exports);
 __exportStar(require("./logging"), exports);
 __exportStar(require("./web-browsing"), exports);
 __exportStar(require("./memory"), exports);
-export * from './auth.js';
+export * from './auth.tsx';
 // Comment out missing files
 // export * from './auth.utils.js';
-export * from './bedrock.js';
-export * from './RepoLoader.js';
+export * from './bedrock.tsx';
+export * from './RepoLoader.tsx';
 //# sourceMappingURL=index.js.map
 export {};

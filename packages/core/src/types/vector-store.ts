@@ -12,6 +12,6 @@ export interface VectorStore {
 
 export interface VectorStoreConfig {
   dimension: number;
-  similarity: 'cosine' | 'euclidean' | 'dotProduct';
-  indexType: 'hnsw' | 'flat';
+  similarity: 'cosine' | euclidean' | dotProduct';
+  indexType:hnsw' | flat';
 }

@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { Redis } from 'ioredis';
 import { LoggerService } from '../logging/LoggerService.js';
-import { MetricsService } from '../monitoring/MetricsService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { MetricsService } from '../monitoring/MetricsService.tsx';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface CacheConfig {
   ttl?: number;
@@ -26,7 +26,7 @@ interface CacheStats {
 
 @Injectable()
 export class CacheManager implements OnModuleInit, OnModuleDestroy {
-  private redis: Redis;
+  private redis: any;
   private statsInterval: NodeJS.Timeout;
 
   constructor(
@@ -42,23 +42,23 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     if (this.statsInterval) {
-      clearInterval(this.statsInterval);
+      clearInterval(this.statsInterval)';
     }
-    await this.disconnect();
+    await this.disconnect()';
   }
 
   private async connect() {
     try {
-      this.redis = new Redis({
-        host: process.env.REDIS_HOST || 'localhost',
-        port: parseInt(process.env.REDIS_PORT || '6379'),
+      this.redis = new (Redis as any)({
+        host: process.env.REDIS_HOST || localhost',
+        port: parseInt(process.env.REDIS_PORT || 6379'),
         password: process.env.REDIS_PASSWORD,
         enableOfflineQueue: false,
         retryStrategy: (times) => Math.min(times * 50, 2000)
       });
 
       this.redis.on('error', (error) => {
-        this.logger.error('Redis connection error:', error);
+        this.logger.error('Redis connection error:, error);
         this.metrics.incrementCounter('cache.connection.errors');
       });
 
@@ -67,7 +67,7 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
         this.metrics.incrementCounter('cache.connection.successes');
       });
     } catch (error) {
-      this.logger.error('Failed to connect to Redis:', error);
+      this.logger.error('Failed to connect to Redis:, error);
       throw error;
     }
   }
@@ -77,7 +77,7 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
       await this.redis.quit();
       this.logger.info('Disconnected from Redis cache');
     } catch (error) {
-      this.logger.error('Error disconnecting from Redis:', error);
+      this.logger.error('Error disconnecting from Redis:, error);
     }
   }
 
@@ -85,14 +85,14 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
     this.statsInterval = setInterval(async () => {
       try {
         const stats = await this.getStats();
-        this.metrics.gauge('cache.hit_rate', stats.hitRate);
-        this.metrics.gauge('cache.memory_usage', stats.memory);
-        this.metrics.gauge('cache.total_keys', stats.size);
-        this.metrics.gauge('cache.evictions', stats.evictions);
+        this.metrics.gauge('cache.'hit_rate', stats.hitRate);
+        this.metrics.gauge('cache.'memory_usage', stats.memory);
+        this.metrics.gauge('cache.'total_keys', stats.size);
+        this.metrics.gauge('cache.'evictions', stats.evictions);
 
-        this.eventEmitter.emit('cache.stats', stats);
+        this.eventEmitter.emit('cache.'stats', stats);
       } catch (error) {
-        this.logger.error('Failed to collect cache stats:', error);
+        this.logger.error('Failed to collect cache stats:, error);
       }
     }, 60000); // Collect stats every minute
   }
@@ -109,7 +109,7 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
       this.metrics.incrementCounter('cache.misses');
       return null;
     } catch (error) {
-      this.logger.error('Cache get error:', error);
+      this.logger.error('Cache get error:, error);
       this.metrics.incrementCounter('cache.errors');
       return null;
     }
@@ -134,7 +134,7 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
       this.metrics.incrementCounter('cache.sets');
       return true;
     } catch (error) {
-      this.logger.error('Cache set error:', error);
+      this.logger.error('Cache set error:, error);
       this.metrics.incrementCounter('cache.errors');
       return false;
     }
@@ -146,7 +146,7 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
       this.metrics.incrementCounter('cache.deletes');
       return true;
     } catch (error) {
-      this.logger.error('Cache delete error:', error);
+      this.logger.error('Cache delete error:, error);
       this.metrics.incrementCounter('cache.errors');
       return false;
     }
@@ -158,12 +158,12 @@ export class CacheManager implements OnModuleInit, OnModuleDestroy {
       if (keys.length > 0) {
         const deleted = await this.redis.del(...keys);
         this.metrics.incrementCounter('cache.pattern_deletes');
-        this.metrics.gauge('cache.keys_deleted', deleted);
+        this.metrics.gauge('cache.'keys_deleted', deleted);
         return deleted;
       }
       return 0;
     } catch (error) {
-      this.logger.error('Cache pattern invalidation error:', error);
+      this.logger.error('Cache pattern invalidation error:, error);
       this.metrics.incrementCounter('cache.errors');
       return 0;
     }

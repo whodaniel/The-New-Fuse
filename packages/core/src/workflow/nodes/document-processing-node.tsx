@@ -1,6 +1,6 @@
-import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.js';
-import { DocumentProcessor } from '../../document-processing/document-processor.js';
-import { ProcessingOptions } from '../../document-processing/types.js';
+import { NodeHandler, WorkflowNode, ExecutionContext } from '../types.tsx';
+import { DocumentProcessor } from '../../document-processing/document-processor.tsx';
+import { ProcessingOptions } from '../../document-processing/types.tsx';
 
 export class DocumentProcessingNodeHandler implements NodeHandler {
   private documentProcessor: DocumentProcessor;
@@ -60,8 +60,8 @@ export class DocumentProcessingNodeHandler implements NodeHandler {
         chunkCount: result.chunks.length,
         processingTime: result.metadata.processingTime
       };
-    } catch (error) {
-      context.logger.error(`Document processing error: ${error.message}`);
+    } catch (error: unknown) {
+      context.logger.error(`Document processing error: ${(error as Error).message}`);
       
       return {
         success: false,

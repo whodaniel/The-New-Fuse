@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { QdrantClient } from '@qdrant/js-client-rest';
-import { QdrantConfigType } from '../config/qdrant_config.js';
+import { QdrantConfigType } from '../config/qdrant_config.tsx';
 import { OpenAIEmbeddings } from 'langchain/embeddings/openai';
 
 @Injectable()

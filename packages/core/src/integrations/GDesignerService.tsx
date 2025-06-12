@@ -1,7 +1,7 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { AgentCommunicationBridge, AgentMessage } from '../agents/AgentCommunicationBridge.js';
-import { MetricsProcessor } from '../security/metricsProcessor.js';
+import { AgentCommunicationBridge, AgentMessage } from '../agents/AgentCommunicationBridge.tsx';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
 
 const logger: Logger = getLogger('gdesigner_service');
 
@@ -56,7 +56,7 @@ export class GDesignerService {
 
             logger.info('GDesigner integration initialized successfully');
         } catch (error) {
-            logger.error('Failed to initialize GDesigner integration:', error);
+            logger.error('Failed to initialize GDesigner integration:, error);
             throw error;
         }
     }
@@ -77,7 +77,7 @@ export class GDesignerService {
 
             return result;
         } catch (error) {
-            logger.error('Task processing failed:', error);
+            logger.error('Task processing failed:, error);
             await this.handleTaskError(task, error);
             throw error;
         }
@@ -92,7 +92,7 @@ export class GDesignerService {
             recipient: 'task_processor',
             payload: task,
             metadata: {
-                priority: (task.priority as 'low' | 'medium' | 'high') || 'medium',
+                priority: (task.priority as low' | medium' | high') || medium',
                 timeout: this.config.timeout
             }
         };
@@ -103,7 +103,7 @@ export class GDesignerService {
 
     private async setupCommunicationChannels(): Promise<void> {
         await this.communicationBridge.registerHandler(
-            'gdesigner_service',
+            gdesigner_service',
             async (message: AgentMessage): Promise<void> => {
                 await this.handleIncomingMessage(message);
             }
@@ -112,13 +112,13 @@ export class GDesignerService {
 
     private async handleIncomingMessage(message: AgentMessage): Promise<void> {
         switch (message.type) {
-            case 'task_response':
+            case task_response':
                 await this.processTaskResponse(message);
                 break;
-            case 'status_update':
+            case status_update':
                 await this.handleStatusUpdate(message);
                 break;
-            case 'error':
+            case error':
                 await this.handleErrorMessage(message);
                 break;
             default:
@@ -155,7 +155,7 @@ export class GDesignerService {
             context: {
                 ...task.context,
                 enrichedAt: Date.now(),
-                serviceVersion: '1.0.0'
+                serviceVersion:1.0.0'
             }
         };
     }

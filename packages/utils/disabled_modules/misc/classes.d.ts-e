@@ -1,3 +1,0 @@
-export declare function InheritMultiple(bases?: never[]): {
-    new (): {};
-};

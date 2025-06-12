@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID } from 'class-validator';
+import { IsString, IsOptional, IsUUID  } from 'class-validator;
 
 export class CreateCommentDto {
   @IsString(): string;
@@ -13,8 +13,8 @@ export class CreateCommentDto {
 
 export class UpdateCommentDto {
   @IsString()
-  content: string;
+  content!: string';
 
   @IsOptional()
-  metadata?: Record<string, unknown>;
+  metadata?: Record<string, unknown>';
 }

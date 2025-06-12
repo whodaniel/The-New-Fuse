@@ -21,7 +21,7 @@ This comprehensive guide consolidates all setup, installation, integration, and 
 Before starting with The New Fuse, ensure you have:
 
 - **Node.js** (v18 or higher)
-- **npm** or **yarn** package manager
+- **Bun** (v1.1.38 or higher) package manager
 - **VS Code** (latest version)
 - **Git** for version control
 - **Docker** (optional, for containerized deployment)
@@ -37,9 +37,7 @@ Before starting with The New Fuse, ensure you have:
 
 2. **Install dependencies:**
    ```bash
-   npm install
-   # or
-   yarn install
+   bun install
    ```
 
 3. **Initialize MCP integration:**
@@ -49,9 +47,7 @@ Before starting with The New Fuse, ensure you have:
 
 4. **Start the development environment:**
    ```bash
-   npm run dev
-   # or
-   yarn dev
+   bun dev
    ```
 
 5. **Open VS Code with The New Fuse extension:**
@@ -81,8 +77,8 @@ the-new-fuse/
 #### Method 1: Development Installation
 ```bash
 cd src/vscode-extension
-npm install
-npm run compile
+bun install
+bun run compile
 code --install-extension .
 ```
 

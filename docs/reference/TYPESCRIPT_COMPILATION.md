@@ -31,8 +31,8 @@ The build process includes the following steps:
 
 The following scripts are available in `package.json`:
 
-- **build**: `yarn clean:js && turbo run build` - Clean up and build all packages
-- **build:ts**: `yarn clean:js && tsc -b` - Clean up and build TypeScript files
+- **build**: `bun run clean:js && turbo run build` - Clean up and build all packages
+- **build:ts**: `bun run clean:js && tsc -b` - Clean up and build TypeScript files
 - **build:ts:incremental**: `bash ./scripts/build-incremental.sh` - Build TypeScript files incrementally
 - **clean:js**: `bash ./scripts/cleanup-js-files.sh` - Clean up compiled JavaScript files in source directories
 - **clean:ts**: `tsc -b --clean` - Clean up TypeScript build artifacts
@@ -51,9 +51,9 @@ If you encounter TypeScript compilation errors, try the following:
 2. **Check for circular dependencies**: Circular dependencies can cause compilation issues
 3. **Use skipLibCheck**: If you're having issues with type definitions in node_modules, use the `--skipLibCheck` flag
 4. **Check module resolution**: Make sure the `moduleResolution` option is set correctly
-5. **Fix template literals in JSX/TSX files**: Use the `yarn fix:template-literals` script to fix template literals in JSX/TSX files
-6. **Use incremental builds**: Use the `yarn build:ts:incremental` script to build TypeScript files incrementally
-7. **Type check without compilation**: Use the `yarn type-check` script to type check the project without compilation
+5. **Fix template literals in JSX/TSX files**: Use the `bun run fix:template-literals` script to fix template literals in JSX/TSX files
+6. **Use incremental builds**: Use the `bun run build:ts:incremental` script to build TypeScript files incrementally
+7. **Type check without compilation**: Use the `bun run type-check` script to type check the project without compilation
 
 ## Best Practices
 

@@ -2,14 +2,14 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisService } from '../../services/redis.service.js';
-import { AuthService } from '../auth.js';
+import { AuthService } from '../auth.tsx';
 import {
   AuthMethod,
   AuthScope,
   AuthCredentials,
   AuthToken,
   AuthSession,
-} from '../types.js';
+} from '../types.tsx';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -63,7 +63,7 @@ describe('AuthService', () => {
       const value: -1 }, // Already expired
       );
 
-      const isValid: refresh',
+      const isValid: 'refresh',
       });
 
       expect(token).toBeDefined();
@@ -87,7 +87,7 @@ describe('AuthService', () => {
     });
 
     it('should create API key credentials without hashing', async (): Promise<void> {) => {
-      const value = 'api-key-123';
+      const value = api-key-123';
       const credentials = await service.createCredentials(
         AuthMethod.API_KEY,
         value,
@@ -100,7 +100,7 @@ describe('AuthService', () => {
     });
 
     it('should validate password policy', async (): Promise<void> {) => {
-      const weakPassword = '123';
+      const weakPassword = 123';
       await expect(
         service.createCredentials(AuthMethod.PASSWORD, weakPassword),
       ).rejects.toThrow();
@@ -125,7 +125,7 @@ describe('AuthService', () => {
     });
 
     it('should validate API key credentials', async (): Promise<void> {) => {
-      const apiKey = 'api-key-123';
+      const apiKey = api-key-123';
       const credentials = await service.createCredentials(
         AuthMethod.API_KEY,
         apiKey,
@@ -141,7 +141,7 @@ describe('AuthService', () => {
     });
 
     it('should reject expired credentials', async (): Promise<void> {) => {
-      const apiKey = 'api-key-123';
+      const apiKey = api-key-123';
       const credentials = await service.createCredentials(
         AuthMethod.API_KEY,
         apiKey,
@@ -157,8 +157,8 @@ describe('AuthService', () => {
 
   describe('createToken', () => {
     it('should create access token', async (): Promise<void> {) => {
-      const userId 'user-123';
-      const scopes: 1', 'session:2']);
+      const userId user-123';
+      const scopes: 1', session:2']);
       (mockRedisService as any).get.mockImplementation((key)   = [AuthScope.READ];
       const token = await service.createToken(userId, scopes);
 
@@ -170,13 +170,13 @@ describe('AuthService', () => {
     });
 
     it('should create refresh token', async (): Promise<void> {) => {
-      const userId = 'user-123';
+      const userId = user-123';
       const scopes = [AuthScope.READ];
       const token = await service.createToken(userId, scopes, {
         type> {
     it('should create new session', async (): Promise<void> {) => {
-      const userId 'user-123';
-      const token: active',
+      const userId user-123';
+      const token: 'active',
           metadata: {
             createdAt: new Date(): new Date(Date.now() + 3600000),
           },
@@ -192,13 +192,13 @@ describe('AuthService', () => {
       expect(session.status).toBe('active');
       expect(mockRedisService.set).toHaveBeenCalled();
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'session.created',
+        session.'created',
         expect.any(Object),
       );
     });
 
     it('should enforce max sessions limit', async (): Promise<void> {) => {
-      const userId = 'user-123';
+      const userId = user-123';
       (mockRedisService as any).keys.mockResolvedValue(['session> {
         return JSON.stringify({
           userId,
@@ -215,7 +215,7 @@ describe('AuthService', () => {
         id: session-123',
         userId: user-123',
         token: {} as AuthToken,
-        status: active',
+        status: 'active',
         metadata: {
           createdAt: new Date(): new Date(Date.now() + 3600000),
         },
@@ -235,7 +235,7 @@ describe('AuthService', () => {
         id: session-123',
         userId: user-123',
         token: {} as AuthToken,
-        status: active',
+        status: 'active',
         metadata: {
           createdAt: new Date(): new Date(Date.now() - 3600000), // Already expired
         },
@@ -253,7 +253,7 @@ describe('AuthService', () => {
         id: session-123',
         userId: user-123',
         token: {} as AuthToken,
-        status: revoked',
+        status: 'revoked',
         metadata: {
           createdAt: new Date(): new Date(Date.now() + 3600000),
         },

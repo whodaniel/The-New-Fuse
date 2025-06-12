@@ -1,6 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { AgentWorkflow, WorkflowTask, TaskType } from './types.js';
+import { AgentWorkflow, WorkflowTask, TaskType } from './types.tsx';
 
 const logger: Logger = getLogger('workflow_validator');
 
@@ -9,12 +9,12 @@ export class WorkflowValidator {
     
     constructor() {
         this.supportedTaskTypes = new Set([
-            'data_processing',
-            'ml_inference',
-            'api_call',
-            'notification',
-            'validation',
-            'transformation'
+            data_processing',
+            ml_inference',
+            api_call',
+            notification',
+            validation',
+            transformation'
         ]);
     }
 

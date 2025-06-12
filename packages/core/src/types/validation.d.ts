@@ -2,11 +2,11 @@ export interface ValidationRule {
     id: string;
     name: string;
     description?: string;
-    type: 'schema' | 'custom' | 'regex' | 'function';
+    type: 'schema' | custom' | regex' | function';
     target: string;
     condition: ValidationCondition;
     message: string;
-    severity: 'error' | 'warning' | 'info';
+    severity:error' | warning' | info';
     metadata?: Record<string, any>;
 }
 export interface ValidationCondition {

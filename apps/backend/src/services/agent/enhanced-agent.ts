@@ -11,8 +11,8 @@ export class EnhancedAgent extends EventEmitter {
         private readonly redisUrl: string
     ) {
         super();
-        this.pubClient = new Redis(redisUrl);
-        this.subClient = new Redis(redisUrl);
+        this.pubClient = new (Redis as any)(redisUrl);
+        this.subClient = new (Redis as any)(redisUrl);
     }
 
     async initialize(): Promise<void> {

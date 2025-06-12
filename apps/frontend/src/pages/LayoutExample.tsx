@@ -1,136 +1,63 @@
 import React from 'react';
-import { Layout, Card, Button } from '@the-new-fuse/ui-consolidated';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
-/**
- * LayoutExample - A page to showcase the Layout component
- */
-const LayoutExample: React.FC = () => {
+const LayoutExample = () => {
   return (
-    <Layout
-      navigation={[
-        { label: 'Home', href: '#', active: true },
-        { label: 'Dashboard', href: '#' },
-        { label: 'Projects', href: '#' },
-        { label: 'Tasks', href: '#' },
-        { label: 'Calendar', href: '#' },
-        { label: 'Reports', href: '#' },
-        { label: 'Settings', href: '#' },
-      ]}
-      user={{
-        name: 'John Doe',
-        email: 'john@example.com',
-        avatar: 'https://i.pravatar.cc/300',
-      }}
-      footerLinks={[
-        { label: 'Privacy Policy', href: '#' },
-        { label: 'Terms of Service', href: '#' },
-        { label: 'Contact Us', href: '#' },
-      ]}
-      className="min-h-screen"
-    >
-      <div className="p-6">
-        <h1 className="text-3xl font-bold mb-6">Layout Example</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <Card title="Dashboard Overview">
-            <p className="mb-4">This is an example of the Layout component with a header, sidebar, and content area.</p>
-            <Button>View Details</Button>
-          </Card>
-          
-          <Card title="Recent Activity">
-            <ul className="space-y-2 mb-4">
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                <span>Project A was updated</span>
-              </li>
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
-                <span>New task assigned</span>
-              </li>
-              <li className="flex items-center">
-                <span className="w-2 h-2 bg-yellow-500 rounded-full mr-2"></span>
-                <span>Meeting scheduled</span>
-              </li>
-            </ul>
-            <Button variant="outline">See All Activity</Button>
-          </Card>
-          
-          <Card title="Quick Actions">
-            <div className="space-y-2 mb-4">
-              <Button className="w-full">Create New Project</Button>
-              <Button variant="outline" className="w-full">Add Task</Button>
-              <Button variant="secondary" className="w-full">Generate Report</Button>
-            </div>
-          </Card>
-        </div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <Card title="Project Status">
-              <div className="space-y-4">
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Project A</span>
-                    <span>75%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Project B</span>
-                    <span>45%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '45%' }}></div>
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex justify-between mb-1">
-                    <span>Project C</span>
-                    <span>90%</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-blue-600 h-2 rounded-full" style={{ width: '90%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </Card>
-          </div>
-          
-          <div>
-            <Card title="Team Members">
-              <ul className="space-y-3">
-                <li className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-blue-500 mr-3 flex items-center justify-center text-white">JD</div>
-                  <div>
-                    <div className="font-medium">John Doe</div>
-                    <div className="text-sm text-gray-500">Project Manager</div>
-                  </div>
-                </li>
-                <li className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-green-500 mr-3 flex items-center justify-center text-white">AS</div>
-                  <div>
-                    <div className="font-medium">Alice Smith</div>
-                    <div className="text-sm text-gray-500">Developer</div>
-                  </div>
-                </li>
-                <li className="flex items-center">
-                  <div className="w-8 h-8 rounded-full bg-purple-500 mr-3 flex items-center justify-center text-white">RJ</div>
-                  <div>
-                    <div className="font-medium">Robert Johnson</div>
-                    <div className="text-sm text-gray-500">Designer</div>
-                  </div>
-                </li>
-              </ul>
-            </Card>
+    <div className="min-h-screen bg-gray-50">
+      <header className="bg-white shadow-sm border-b">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <h1 className="text-xl font-semibold">Layout Example</h1>
+            <nav className="space-x-4">
+              <a href="#" className="text-blue-600 hover:text-blue-800">Home</a>
+              <a href="#" className="text-gray-600 hover:text-gray-800">Dashboard</a>
+              <a href="#" className="text-gray-600 hover:text-gray-800">Settings</a>
+            </nav>
           </div>
         </div>
-      </div>
-    </Layout>
+      </header>
+
+      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <aside className="md:col-span-1">
+            <Card>
+              <CardHeader>
+                <CardTitle>Navigation</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <nav className="space-y-2">
+                  <a href="#" className="block py-2 px-3 rounded bg-blue-100 text-blue-700">Dashboard</a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Projects</a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Tasks</a>
+                  <a href="#" className="block py-2 px-3 rounded hover:bg-gray-100">Settings</a>
+                </nav>
+              </CardContent>
+            </Card>
+          </aside>
+
+          <section className="md:col-span-2">
+            <Card>
+              <CardHeader>
+                <CardTitle>Layout Demonstration</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-4">This page demonstrates a typical application layout with:</p>
+                <ul className="list-disc list-inside space-y-2 mb-6">
+                  <li>Fixed header with navigation</li>
+                  <li>Sidebar navigation panel</li>
+                  <li>Main content area</li>
+                  <li>Responsive design</li>
+                </ul>
+                <Button>
+                  Example Action
+                </Button>
+              </CardContent>
+            </Card>
+          </section>
+        </div>
+      </main>
+    </div>
   );
 };
 

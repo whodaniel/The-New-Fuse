@@ -6,7 +6,7 @@
 import { createPool, Pool, PoolConnection, FieldPacket, QueryOptions, OkPacket, ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import type { PoolOptions } from 'mysql2/promise';
 import Redis from 'ioredis';
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 import { EventEmitter } from 'events';
 
 // Initialize logger
@@ -45,14 +45,14 @@ class DatabaseError extends Error {
 
 class ConnectionError extends DatabaseError {
     constructor(message: string, public readonly shard: string) {
-        super(message, 'CONNECTION_ERROR');
+        super(message, CONNECTION_ERROR');
         this.name = 'ConnectionError';
     }
 }
 
 class ShardNotFoundError extends DatabaseError {
     constructor(shard: string) {
-        super(`Shard ${shard} not found`, 'SHARD_NOT_FOUND');
+        super(`Shard ${shard} not found`, SHARD_NOT_FOUND');
         this.name = 'ShardNotFoundError';
     }
 }
@@ -69,10 +69,10 @@ export class DatabaseConfig extends EventEmitter {
 
     constructor() {
         super();
-        this.defaultPoolSize = parseInt((process as any).env.DB_POOL_SIZE || '20', 10);
-        this.defaultMaxOverflow = parseInt((process as any).env.DB_MAX_OVERFLOW || '10', 10);
-        this.defaultPoolTimeout = parseInt((process as any).env.DB_POOL_TIMEOUT || '30', 10);
-        this.defaultPoolRecycle = parseInt((process as any).env.DB_POOL_RECYCLE || '3600', 10);
+        this.defaultPoolSize = parseInt((process as any).env.DB_POOL_SIZE || 20', 10);
+        this.defaultMaxOverflow = parseInt((process as any).env.DB_MAX_OVERFLOW || 10', 10);
+        this.defaultPoolTimeout = parseInt((process as any).env.DB_POOL_TIMEOUT || 30', 10);
+        this.defaultPoolRecycle = parseInt((process as any).env.DB_POOL_RECYCLE || 3600', 10);
 
         this.metrics = {
             connections: {},
@@ -84,8 +84,8 @@ export class DatabaseConfig extends EventEmitter {
 
     private async initializeRedis(): Promise<void> {
         try {
-            const redisUrl = (process as any).env.REDIS_URL || 'redis://localhost:6379/0';
-            this.redis = new Redis(redisUrl, {
+            const redisUrl = (process as any).env.REDIS_URL || redis://localhost:6379/0';
+            this.redis = new (Redis as any)(redisUrl, {
                 retryStrategy: (times: number) => {
                     const delay = Math.min(times * 50, 2000);
                     return delay;
@@ -134,13 +134,13 @@ export class DatabaseConfig extends EventEmitter {
             // Add event listeners with proper typing
             pool.on('connection', () => {
                 this.metrics.connections[shardName]++;
-                this.updateRedisMetrics(shardName, 'connections', 1);
+                this.updateRedisMetrics(shardName, connections', 1);
                 logger.debug(`Connection acquired on shard ${shardName}`);
             });
 
             pool.on('release', () => {
                 this.metrics.connections[shardName]--;
-                this.updateRedisMetrics(shardName, 'connections', -1);
+                this.updateRedisMetrics(shardName, connections', -1);
                 logger.debug(`Connection released on shard ${shardName}`);
             });
 
@@ -148,8 +148,8 @@ export class DatabaseConfig extends EventEmitter {
             pool.on('enqueue', () => {
                 logger.warn(`Connection enqueued on shard ${shardName} due to pool overflow`);
                 this.metrics.errors[shardName]++;
-                this.updateRedisMetrics(shardName, 'errors', 1);
-                this.emit('error', new DatabaseError(`Pool overflow on shard ${shardName}`, 'POOL_ERROR'));
+                this.updateRedisMetrics(shardName, errors', 1);
+                this.emit('error', new DatabaseError(`Pool overflow on shard ${shardName}`, POOL_ERROR'));
             });
 
             // Handle connection errors are handled during query execution
@@ -160,7 +160,7 @@ export class DatabaseConfig extends EventEmitter {
         } catch (error: unknown) {
             const errorMessage = error instanceof Error ? error.message : String(error);
             logger.error(`Failed to add shard ${shardName}: ${errorMessage}`);
-            throw new DatabaseError(`Failed to add shard ${shardName}: ${errorMessage}`, 'SHARD_INIT_ERROR');
+            throw new DatabaseError(`Failed to add shard ${shardName}: ${errorMessage}`, SHARD_INIT_ERROR');
         }
     }
 
@@ -178,7 +178,7 @@ export class DatabaseConfig extends EventEmitter {
             if (this.metrics.latency[shard].length > 100) { // Maintain max 100 latency entries
                 this.metrics.latency[shard].shift();
             }
-            await this.updateRedisMetrics(shard, 'latency', connectionAcquisitionDuration);
+            await this.updateRedisMetrics(shard, latency', connectionAcquisitionDuration);
 
             // Wrap query method to track metrics
             const wrappedConnection = connection as any;
@@ -188,7 +188,7 @@ export class DatabaseConfig extends EventEmitter {
             wrappedConnection.query = async function <T extends QueryResult>(sql: string | QueryOptions, values?: unknown): Promise<[T, FieldPacket[]]> {
                 const queryStartTime = Date.now();
                 try {
-                    const result = typeof sql === 'string'
+                    const result = typeof sql === string'
                         ? await originalQuery<T>(sql, values)
                         : await originalQuery<T>(sql);
                     (self as any).metrics.queries[shard]++;
@@ -197,22 +197,22 @@ export class DatabaseConfig extends EventEmitter {
                      if ((self as any).metrics.latency[shard].length > 100) {
                        (self as any).metrics.latency[shard].shift();
                      }
-                    await self.updateRedisMetrics(shard, 'queries', 1);
-                    await self.updateRedisMetrics(shard, 'latency', queryDuration);
+                    await self.updateRedisMetrics(shard, queries', 1);
+                    await self.updateRedisMetrics(shard, latency', queryDuration);
                     return result;
                 } catch (error: unknown) {
                     (self as any).metrics.errors[shard]++;
-                    await self.updateRedisMetrics(shard, 'errors', 1);
+                    await self.updateRedisMetrics(shard, errors', 1);
                     throw new DatabaseError(
                         `Query error on shard ${shard}: ${error instanceof Error ? error.message : String(error)}`,
-                        'QUERY_ERROR'
+                        QUERY_ERROR'
                     );
                 }
             };
 
             return connection;
         } catch (error: unknown) {
-            await this.updateRedisMetrics(shard, 'errors', 1);
+            await this.updateRedisMetrics(shard, errors', 1);
             throw new ConnectionError(
                 `Failed to get connection from shard ${shard}: ${error instanceof Error ? error.message : String(error)}`,
                 shard
@@ -264,7 +264,7 @@ export async function initializeDatabase(): Promise<DatabaseConfig> {
     // Initialize with default configuration
     const defaultShards = {
         main: {
-            uri: (process as any).env.DATABASE_URL || 'mysql://user:password@localhost:3306/main'
+            uri: (process as any).env.DATABASE_URL || mysql://user:password@localhost:3306/'main'
         }
     };
 

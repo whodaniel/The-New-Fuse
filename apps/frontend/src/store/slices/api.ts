@@ -1,4 +1,3 @@
-var _a;
 export {}
 exports.fetchData = exports.fetchDataFailure = exports.fetchDataSuccess = exports.fetchDataStart = void 0;
 import toolkit_1 from '@reduxjs/toolkit';
@@ -26,7 +25,10 @@ const apiSlice = (0, toolkit_1.createSlice)({
         }
     }
 });
-_a = apiSlice.actions, exports.fetchDataStart = _a.fetchDataStart, exports.fetchDataSuccess = _a.fetchDataSuccess, exports.fetchDataFailure = _a.fetchDataFailure;
+const actions = apiSlice.actions;
+exports.fetchDataStart = actions.fetchDataStart;
+exports.fetchDataSuccess = actions.fetchDataSuccess;
+exports.fetchDataFailure = actions.fetchDataFailure;
 const fetchData = (endpoint, params): any => async (dispatch) => {
     try {
         dispatch((0, exports.fetchDataStart)());

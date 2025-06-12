@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FlowPage = void 0;
 import react_1 from 'react';
 import reactflow_1 from 'reactflow';
-import useFlowRouter_1 from '../../hooks/useFlowRouter.js';
+import useFlowRouter_1 from '../../hooks/useFlowRouter.tsx';
 import core_1 from '@/components/core';
 import lucide_react_1 from 'lucide-react';
 require("reactflow/dist/style.css");

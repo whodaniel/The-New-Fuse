@@ -2,7 +2,7 @@
  * Rate Limiter for code execution
  */
 import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigService  } from '@nestjs/config;
 
 /**
  * Rate limit configuration
@@ -50,15 +50,15 @@ export interface RateLimitResult {
 @Injectable()
 export class RateLimiter {
   private readonly logger = new Logger(RateLimiter.name);
-  private readonly config: RateLimitConfig;
-  private readonly clientRequests: Map<string, { count: number, resetTime: number }> = new Map();
+  private readonly config: RateLimitConfig';
+  private readonly clientRequests: Map<string, { count: number, resetTime: number }> = new Map()';
   
   constructor(private readonly configService: ConfigService) {
     // Load configuration from environment variables
     this.config = {
       maxRequests: this.configService.get<number>('CODE_EXECUTION_RATE_LIMIT_MAX_REQUESTS', 10),
       windowMs: this.configService.get<number>('CODE_EXECUTION_RATE_LIMIT_WINDOW_MS', 60000), // 1 minute
-      skipList: this.configService.get<string>('CODE_EXECUTION_RATE_LIMIT_SKIP_LIST', '').split(',').filter(Boolean),
+      skipList: this.configService.get<string>('CODE_EXECUTION_RATE_LIMIT_SKIP_LIST', ).split(',').filter(Boolean),
     };
     
     this.logger.log(`Rate limiter initialized: ${this.config.maxRequests} requests per ${this.config.windowMs}ms`);

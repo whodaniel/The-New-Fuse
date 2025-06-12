@@ -40,13 +40,13 @@ export class ModelContextProtocolClient implements MCPClient {
                 try {
                     const response = JSON.parse(data.toString()) as MCPResponse;
                     this.handleResponse(response);
-                } catch (error) {
+                } catch (error: unknown) {
                     console.error('MCP: Failed to parse response:', error);
                 }
             });
 
             this.socket.on('error', (error) => {
-                this.status.error = error.message;
+                this.status.error = (error as Error).message;
                 console.error('MCP: Socket error:', error);
             });
 

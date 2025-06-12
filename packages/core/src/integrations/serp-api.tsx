@@ -6,8 +6,8 @@ export interface SearchOptions {
   location?: string;
   domain?: string;
   language?: string;
-  safe?: 'active' | 'off';
-  filter?: 'country' | 'nocountry';
+  safe?:active' | off';
+  filter?:country' | nocountry';
 }
 
 export interface SearchResult {
@@ -16,7 +16,7 @@ export interface SearchResult {
   snippet: string;
   position: number;
   displayedLink: string;
-  source: 'organic' | 'featured_snippet' | 'knowledge_graph' | 'related_questions';
+  source:organic' | featured_snippet' | knowledge_graph' | related_questions';
 }
 
 export class WebSearch {
@@ -39,9 +39,9 @@ export class WebSearch {
         q: query,
         num: options?.num || 10,
         location: options?.location,
-        google_domain: options?.domain || 'google.com',
-        gl: options?.language || 'us',
-        safe: options?.safe || 'active',
+        google_domain: options?.domain || google.'com',
+        gl: options?.language || us',
+        safe: options?.safe || active',
         filter: options?.filter
       };
       
@@ -71,11 +71,11 @@ export class WebSearch {
           // Parse featured snippet if present
           if (data.answer_box) {
             results.unshift({
-              title: data.answer_box.title || 'Featured Snippet',
-              link: data.answer_box.link || '',
-              snippet: data.answer_box.snippet || data.answer_box.answer || '',
+              title: data.answer_box.title || Featured 'Snippet',
+              link: data.answer_box.link || ,
+              snippet: data.answer_box.snippet || data.answer_box.answer || ,
               position: 0,
-              displayedLink: data.answer_box.displayed_link || '',
+              displayedLink: data.answer_box.displayed_link || ,
               source: 'featured_snippet'
             });
           }

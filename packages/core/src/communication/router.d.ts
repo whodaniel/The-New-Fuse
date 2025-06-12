@@ -1,7 +1,7 @@
-import { ChannelManager } from './channel.js';
+import { ChannelManager } from './channel.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 export declare class MessageRouter {
     private readonly channelManager;
     private readonly configService;
@@ -9,6 +9,6 @@ export declare class MessageRouter {
     private readonly eventEmitter;
     private readonly routingTable;
     private readonly routingPatterns;
-    constructor(channelManager: ChannelManager, configService: ConfigService, redisService: RedisService, eventEmitter: EventEmitter2);
-    const broadcastChannel: unknown;
+    constructor(channelManager: ChannelManager, configService: ConfigService, redisService: RedisService, eventEmitter: EventEmitter2)';
+    const broadcastChannel: unknown';
 }

@@ -7,15 +7,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgentSwarmOrchestrationService } from './agent-swarm-orchestration.service';
-import { ServiceCategoryRouterService } from './service-category-router.service';
-import { 
-  Agency, 
+import { ServiceCategoryRouterService } from './service-category-router.'service';
+import { Agency, 
   AgencyTier, 
   ServiceRequest,
   ServiceCategory,
   ServiceProvider,
   SwarmExecution
-} from '@prisma/client';
+ } from '@prisma/client;
 
 export interface EnhancedAgencyDto {
   name: string;
@@ -58,9 +57,9 @@ export interface AgencySwarmStatus {
 export interface ServiceRequestOptions {
   categoryId: string;
   title: string;
-  description: string;
-  requirements: Record<string, any>;
-  priority?: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  description: string';
+  requirements: Record<string, any>';
+  priority?:LOW' | MEDIUM' | HIGH' | URGENT';
   budget?: {
     min?: number;
     max?: number;
@@ -69,12 +68,12 @@ export interface ServiceRequestOptions {
   timeline?: {
     startDate?: Date;
     deadline?: Date;
-    flexibility?: 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH';
+    flexibility?:NONE' | LOW' | MEDIUM' | HIGH';
   };
   preferences?: {
-    providerType?: 'ANY' | 'INDIVIDUAL' | 'TEAM' | 'SPECIALIST';
-    communication?: 'MINIMAL' | 'REGULAR' | 'FREQUENT';
-    reporting?: 'BASIC' | 'DETAILED' | 'COMPREHENSIVE';
+    providerType?:ANY' | INDIVIDUAL' | TEAM' | SPECIALIST';
+    communication?:MINIMAL' | REGULAR' | FREQUENT';
+    reporting?:BASIC' | DETAILED' | COMPREHENSIVE';
   };
 }
 
@@ -221,7 +220,7 @@ export class EnhancedAgencyService {
         title: options.title,
         description: options.description,
         requirements: options.requirements,
-        priority: options.priority || 'MEDIUM',
+        priority: options.priority || MEDIUM',
         budget: options.budget,
         timeline: options.timeline,
         preferences: options.preferences,
@@ -234,7 +233,7 @@ export class EnhancedAgencyService {
       id: serviceRequest.id,
       categoryId: options.categoryId,
       requirements: options.requirements,
-      priority: options.priority || 'MEDIUM',
+      priority: options.priority || MEDIUM',
       timeline: options.timeline,
       budget: options.budget,
       requesterId,
@@ -263,7 +262,7 @@ export class EnhancedAgencyService {
           id: serviceRequest.id,
           categoryId: options.categoryId,
           requirements: options.requirements,
-          priority: options.priority || 'MEDIUM',
+          priority: options.priority || MEDIUM',
           timeline: options.timeline,
           budget: options.budget,
           requesterId,
@@ -275,8 +274,8 @@ export class EnhancedAgencyService {
           routingResult.estimatedDuration
         );
 
-      } catch (error) {
-        this.logger.error(`Failed to start swarm execution: ${error.message}`);
+      } catch (error: unknown) {
+        this.logger.error(`Failed to start swarm execution: ${(error as Error).message}`);
         
         // Update request status to failed
         await this.prisma.serviceRequest.update({
@@ -287,7 +286,7 @@ export class EnhancedAgencyService {
     }
 
     // Emit event
-    this.eventEmitter.emit('service.request.submitted', {
+    this.eventEmitter.emit('service.request.'submitted', {
       agencyId,
       serviceRequestId: serviceRequest.id,
       swarmExecutionId: swarmExecution?.id
@@ -375,8 +374,8 @@ export class EnhancedAgencyService {
             pricing: this.getDefaultProviderPricing(agent)
           });
         }
-      } catch (error) {
-        this.logger.warn(`Failed to register agent ${agent.id} as provider: ${error.message}`);
+      } catch (error: unknown) {
+        this.logger.warn(`Failed to register agent ${agent.id} as provider: ${(error as Error).message}`);
       }
     }
   }
@@ -502,7 +501,7 @@ export class EnhancedAgencyService {
     }
 
     // Emit creation event
-    this.eventEmitter.emit('agency.created', {
+    this.eventEmitter.emit('agency.'created', {
       agencyId: agency.id,
       swarmEnabled: dto.enableSwarmOrchestration !== false
     });
@@ -617,7 +616,7 @@ export class EnhancedAgencyService {
     }
 
     // Emit update event
-    this.eventEmitter.emit('agency.updated', {
+    this.eventEmitter.emit('agency.'updated', {
       agencyId,
       changes: updates
     });
@@ -659,7 +658,7 @@ export class EnhancedAgencyService {
         skills: string[];
         capabilities: Record<string, any>[];
         hourlyRate?: number;
-        experienceLevel?: 'JUNIOR' | 'INTERMEDIATE' | 'SENIOR' | 'EXPERT';
+        experienceLevel?:JUNIOR' | INTERMEDIATE' | SENIOR' | EXPERT';
         isAvailable?: boolean;
       }>;
     }
@@ -696,22 +695,22 @@ export class EnhancedAgencyService {
               hourlyRate: providerData.hourlyRate || 50.00,
               currency: 'USD'
             },
-            experienceLevel: providerData.experienceLevel || 'INTERMEDIATE',
+            experienceLevel: providerData.experienceLevel || INTERMEDIATE',
             isAvailable: providerData.isAvailable !== false
           });
 
           registeredProviders.push(provider);
         }
-      } catch (error) {
+      } catch (error: unknown) {
         errors.push({
           provider: providerData,
-          error: error.message
+          error: (error as Error).message
         });
       }
     }
 
     // Emit registration event
-    this.eventEmitter.emit('providers.registered', {
+    this.eventEmitter.emit('providers.'registered', {
       agencyId,
       registeredCount: registeredProviders.length,
       errorCount: errors.length
@@ -792,7 +791,7 @@ export class EnhancedAgencyService {
       const category = categories.find(c => c.id === cb.categoryId);
       return {
         categoryId: cb.categoryId,
-        categoryName: category?.name || 'Unknown',
+        categoryName: category?.name || Unknown',
         count: cb._count.id
       };
     });
@@ -810,7 +809,7 @@ export class EnhancedAgencyService {
    */
   async getAnalytics(
     agencyId: string,
-    timeframe: string = '30d'
+    timeframe: string = 30'd'
   ): Promise<{
     overview: {
       totalRequests: number;
@@ -834,7 +833,7 @@ export class EnhancedAgencyService {
     this.logger.log(`Getting analytics for agency: ${agencyId} (timeframe: ${timeframe})`);
 
     // Parse timeframe
-    const timeframeDays = parseInt(timeframe.replace('d', '')) || 30;
+    const timeframeDays = parseInt(timeframe.replace('d', )) || 30;
     const startDate = new Date(Date.now() - timeframeDays * 24 * 60 * 60 * 1000);
     const endDate = new Date();
 
@@ -888,10 +887,10 @@ export class EnhancedAgencyService {
     // Add buffer time based on category complexity
     const complexity = category.complexityLevel;
     const bufferMultiplier = {
-      'SIMPLE': 1.2,
-      'MODERATE': 1.5,
-      'COMPLEX': 2.0,
-      'EXPERT': 2.5
+      SIMPLE': 1.2,
+      MODERATE': 1.5,
+      COMPLEX': 2.0,
+      EXPERT': 2.5
     }[complexity] || 1.5;
 
     const estimatedMs = estimatedDuration * 60 * 60 * 1000 * bufferMultiplier;
@@ -902,7 +901,7 @@ export class EnhancedAgencyService {
     // Extract current step from execution plan
     const executionPlan = execution.executionPlan as any[];
     const currentStep = executionPlan?.find(step => step.status === 'RUNNING');
-    return currentStep?.action || 'Processing...';
+    return currentStep?.action || Processing...';
   }
 
   private calculateTimeRemaining(execution: SwarmExecution): number | undefined {
@@ -954,7 +953,7 @@ export class EnhancedAgencyService {
     });
 
     const completedRequests = requests.filter(r => r.status === 'COMPLETED');
-    const activeRequests = requests.filter(r => ['PENDING', 'ASSIGNED', 'IN_PROGRESS'].includes(r.status));
+    const activeRequests = requests.filter(r => ['PENDING', ASSIGNED', IN_PROGRESS'].includes(r.status));
 
     const totalCompletionTime = completedRequests.reduce((sum, r) => {
       if (r.completedAt && r.startedAt) {
@@ -1007,7 +1006,7 @@ export class EnhancedAgencyService {
       .map(p => {
         const provider = providers.find(pr => pr.id === p.providerId);
         return {
-          providerId: p.providerId || '',
+          providerId: p.providerId || ,
           name: provider?.name || 'Unknown',
           score: p._avg.qualityScore || 0,
           completedTasks: p._count.id
@@ -1046,7 +1045,7 @@ export class EnhancedAgencyService {
         });
 
         return {
-          categoryName: category?.name || 'Unknown',
+          categoryName: category?.name || Unknown',
           completionRate: cp._count.id > 0 ? (completedCount / cp._count.id) * 100 : 0,
           avgQuality: cp._avg.qualityScore || 0
         };

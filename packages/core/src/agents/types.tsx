@@ -39,7 +39,7 @@ export interface WorkflowMetadata {
     creator: string;
     createdAt: number;
     tags?: string[];
-    priority: low' | 'medium' | 'high';
+    priority: low' | medium' | high';
 }
 
 export interface WorkflowConfiguration {
@@ -78,25 +78,25 @@ export interface WorkflowError {
 }
 
 export type WorkflowStatus = 
-    | 'pending'
-    | 'running'
-    | 'completed'
-    | 'failed'
-    | 'paused'
-    | 'cancelled';
+    | pending'
+    | running'
+    | completed'
+    | failed'
+    | paused'
+    | cancelled';
 
 export type TaskType =
-    | 'data_processing'
-    | 'ml_inference'
-    | 'api_call'
-    | 'notification'
-    | 'validation'
-    | 'transformation';
+    | data_processing'
+    | ml_inference'
+    | api_call'
+    | notification'
+    | validation'
+    | transformation';
 
 export interface NotificationConfig {
     endpoints: string[];
-    events: ('start' | 'complete' | 'fail' | 'pause')[];
-    format: json' | 'plain';
+    events: ('start' | complete' | fail' | pause')[];
+    format: json' | plain';
 }
 
 export enum AgentRole {
@@ -125,7 +125,7 @@ export interface Task {
   id: string;
   name: string;
   description: string;
-  status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  status:pending' | in_progress' | completed' | failed';
   priority?: number;
   requiredCapabilities?: string[];
   preferredRole?: AgentRole;
@@ -149,13 +149,13 @@ export interface MemoryItem {
   targetAgentId?: string;
   timestamp: string;
   content: string;
-  type?: 'thought' | 'action' | 'observation' | 'communication';
+  type?:thought' | action' | observation' | communication';
   metadata?: Record<string, any>;
 }
 
 export interface AgentCommunication {
   content: string;
-  type: 'question' | 'answer' | 'suggestion' | 'instruction' | 'feedback';
+  type:question' | answer' | suggestion' | instruction' | feedback';
   metadata?: Record<string, any>;
 }
 

@@ -1,7 +1,7 @@
 import { WorkflowStatus, WorkflowContext } from '@the-new-fuse/types';
 import { Logger } from '../logging.js';
-import { ToolRegistry } from '../tools/tool-registry.js';
-import { SmartAPIGateway } from '../api-management/SmartAPIGateway.js';
+import { ToolRegistry } from '../tools/tool-registry.tsx';
+import { SmartAPIGateway } from '../api-management/SmartAPIGateway.tsx';
 
 export { WorkflowStatus, WorkflowContext };
 export enum WorkflowStepType {

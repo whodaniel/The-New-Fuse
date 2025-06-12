@@ -2,7 +2,7 @@
   "name": "the-new-fuse",
   "displayName": "The New Fuse - AI Development Assistant",
   "description": "Advanced AI-powered development assistant with multi-provider LLM support, agent communication, and enhanced Chrome-style UI",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "the-new-fuse",
   "author": {
     "name": "Daniel Goldberg",
@@ -421,7 +421,7 @@
     "@types/uuid": "^9.0.8",
     "@types/vscode": "^1.75.0",
     "@types/ws": "^8.5.10",
-    "@vscode/vsce": "^2.20.0",
+    "@vscode/vsce": "^3.5.0",
     "esbuild": "^0.19.0",
     "rimraf": "^5.0.0",
     "typescript": "^4.9.4"

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PromptTemplate } from '../entities/prompt.entity.js';
-import { AgentPromptTemplate } from '../entities/agent-prompt.entity.js';
+import { PromptTemplate } from '../entities/prompt.entity.tsx';
+import { AgentPromptTemplate } from '../entities/agent-prompt.entity';
 import type { PromptTemplate as IPromptTemplate, AgentPromptTemplate as IAgentPromptTemplate } from '../types/prompt.types.js';
 
 @Injectable()
@@ -128,7 +128,7 @@ export class PromptService {
 
     public async getAgentTemplatesByPurpose(
         agentId: string,
-        purpose: 'system' | 'user' | 'function' | 'response'
+        purpose:system' | user' | function' | response'
     ): Promise<IAgentPromptTemplate[]> {
         const agentTemplates = this.agentTemplates.get(agentId);
         if (!agentTemplates) {
@@ -163,10 +163,10 @@ export class PromptService {
                 // Validation rules
                 if (param.validation) {
                     // Min/Max validation for numbers
-                    if (param.validation.min !== undefined && typeof value === 'number' && value < param.validation.min) {
+                    if (param.validation.min !== undefined && typeof value === number' && value < param.validation.min) {
                         errors.push(`Value for ${param.name} is below minimum: ${param.validation.min}`);
                     }
-                    if (param.validation.max !== undefined && typeof value === 'number' && value > param.validation.max) {
+                    if (param.validation.max !== undefined && typeof value === number' && value > param.validation.max) {
                         errors.push(`Value for ${param.name} is above maximum: ${param.validation.max}`);
                     }
 
@@ -180,7 +180,7 @@ export class PromptService {
 
                     // Enum validation
                     if (param.validation.enumValues && !param.validation.enumValues.includes(value)) {
-                        errors.push(`Invalid value for ${param.name}: must be one of ${param.validation.enumValues.join(', ')}`);
+                        errors.push(`Invalid value for ${param.name}: must be one of ${param.validation.enumValues.join(', )}`);
                     }
                 }
             }
@@ -196,14 +196,14 @@ export class PromptService {
         switch (expectedType) {
             case 'string':
                 return typeof value === 'string';
-            case 'number':
+            case number':
                 return typeof value === 'number';
-            case 'boolean':
+            case boolean':
                 return typeof value === 'boolean';
-            case 'array':
+            case array':
                 return Array.isArray(value);
-            case 'object':
-                return typeof value === 'object' && value !== null && !Array.isArray(value);
+            case object':
+                return typeof value === object' && value !== null && !Array.isArray(value);
             default:
                 return false;
         }
@@ -217,7 +217,7 @@ export class PromptService {
 
         const validation = this.validateTemplateParams(template, variables);
         if (!validation.isValid) {
-            throw new Error(`Template validation failed: ${validation.errors?.join(', ')}`);
+            throw new Error(`Template validation failed: ${validation.errors?.join(', )}`);
         }
 
         return template.render(variables);

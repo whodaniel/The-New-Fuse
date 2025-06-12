@@ -10,7 +10,7 @@ import {
   OneToMany,
 } from "typeorm";
 import { User } from './User.js';
-import { TaskExecution } from './TaskExecution.js';
+import { TaskExecution } from './TaskExecution.tsx';
 
 @Entity("tasks")
 export class Task {

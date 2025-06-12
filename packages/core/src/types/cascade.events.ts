@@ -25,10 +25,10 @@ export interface CascadeErrorEvent {
 }
 
 export type CascadeEventMap = {
-  'modeChange': CascadeModeChangeEvent;
-  'stateChange': CascadeStateChangeEvent;
-  'metadataUpdate': CascadeMetadataUpdateEvent;
-  'error': CascadeErrorEvent;
+  modeChange': CascadeModeChangeEvent;
+  stateChange': CascadeStateChangeEvent;
+  metadataUpdate': CascadeMetadataUpdateEvent;
+  error': CascadeErrorEvent;
 };
 
 export type CascadeEventType = keyof CascadeEventMap;

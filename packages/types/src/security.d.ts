@@ -56,4 +56,12 @@ export interface SecurityPolicy {
     };
     metadata?: Record<string, unknown>;
 }
+
+export enum SecurityScheme {
+    API_KEY = "apiKey",
+    BEARER_TOKEN = "bearerToken",
+    OAUTH2 = "oauth2",
+    NONE = "none"
+}
+
 //# sourceMappingURL=security.d.ts.map

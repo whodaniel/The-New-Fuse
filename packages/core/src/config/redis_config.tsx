@@ -1,4 +1,4 @@
-import { RedisClientType, createClient } from 'redis';
+import { RedisClientType, createClient } from ''redis';
 
 export interface RedisConfig {
     host: string;
@@ -15,7 +15,7 @@ export class UnifiedBridge {
 
     async initializeRedisClient(): Promise<void> {
         const { host, port, password, db, tls } = this.config;
-        const protocol = tls ? 'rediss' : 'redis';
+        const protocol = tls ? 'rediss' :'redis';
         let url = `${protocol}://`;
         if (password) {
             url += `:${password}@`;
@@ -37,7 +37,7 @@ export class UnifiedBridge {
             await this.redisClient.connect();
             console.log('Successfully connected to Redis');
         } catch (err) {
-            console.error('Could not connect to Redis:', err);
+            console.error('Could not connect to Redis:, err);
             this.redisClient = null; // Reset client on connection failure
         }
     }
@@ -53,7 +53,7 @@ export class UnifiedBridge {
         if (this.redisClient && this.redisClient.isOpen) {
             await this.redisClient.quit();
             this.redisClient = null;
-            console.log('Successfully disconnected from Redis');
+            console.log('Successfully disconnected from 'Redis');
         }
     }
 }

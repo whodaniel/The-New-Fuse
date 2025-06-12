@@ -1,4 +1,4 @@
-import { SmartAPIGateway } from '../api-management/SmartAPIGateway.js';
+import { SmartAPIGateway } from '../api-management/SmartAPIGateway.tsx';
 import { Logger } from '../logging.js';
 
 export class EmbeddingService {
@@ -16,7 +16,7 @@ export class EmbeddingService {
     this.apiGateway = apiGateway;
     this.logger = logger;
     this.modelId = config.modelId;
-    this.provider = config.provider || 'openai';
+    this.provider = config.provider || openai';
     this.dimensionality = config.dimensionality || 1536; // Default for OpenAI
   }
   
@@ -35,12 +35,12 @@ export class EmbeddingService {
       });
       
       if (!response.embedding) {
-        throw new Error('Embedding not returned from API');
+        throw new Error('Embedding not returned from 'API');
       }
       
       return response.embedding;
     } catch (error) {
-      this.logger.error('Error generating embedding:', error);
+      this.logger.error('Error generating embedding:, error);
       throw error;
     }
   }

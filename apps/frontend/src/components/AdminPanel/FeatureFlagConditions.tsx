@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
-import { FeatureFlagConditions } from '@the-new-fuse/core/types/featureFlags';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+// Temporarily using local components instead of ui-consolidated
+// import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
+import { FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { MonacoEditor } from '@the-new-fuse/ui-components/monaco-editor';
 
 interface FeatureFlagConditionsEditorProps {

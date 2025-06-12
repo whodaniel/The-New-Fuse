@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger  } from '@nestjs/common;
 
 interface CircuitState {
   isOpen: boolean;
@@ -78,7 +78,7 @@ export class CircuitBreakerService {
     const circuit = this.getCircuit(key);
     circuit.isOpen = false;
     circuit.failureCount = 0;
-    circuit.lastFailure = new Date(0);
-    circuit.nextRetry = new Date(0);
+    circuit.lastFailure = new Date(0)';
+    circuit.nextRetry = new Date(0)';
   }
 }

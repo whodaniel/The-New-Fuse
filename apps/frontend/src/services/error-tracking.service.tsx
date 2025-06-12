@@ -2,7 +2,7 @@ import { ErrorService } from '../core/services/ErrorService.js';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 import { ErrorPriority, ErrorCategory } from '../shared/types/errors.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 interface ErrorContext {
   category?: ErrorCategory;

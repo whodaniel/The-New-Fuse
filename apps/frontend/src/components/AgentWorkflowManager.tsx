@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket.js';
-import { Card, CardHeader, CardContent } from './ui/card.js';
-import { Button } from './ui/button.js';
+import { Card, CardHeader, CardContent } from './ui/card.tsx';
+import { Button } from './ui/button.tsx';
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select.js';
 import { Progress } from './ui/progress.js';
 import { Alert } from './ui/alert.js';
-import { Badge } from './ui/badge.js';
+import { Badge } from './ui/badge.tsx';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog.js';
 
 interface AgentWorkflow {

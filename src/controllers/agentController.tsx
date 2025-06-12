@@ -12,7 +12,7 @@ import {
 import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
 import { CreateAgentDto, UpdateAgentDto } from "@the-new-fuse/types";
 import { AgentService } from '../services/agentService.js';
-import { PrismaService } from '../lib/prisma.service.js';
+import { PrismaService } from '../lib/prisma.service.tsx';
 import { ConfigService } from "@nestjs/config";
 
 @Controller("agents")

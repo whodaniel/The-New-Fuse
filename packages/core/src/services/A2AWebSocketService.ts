@@ -1,10 +1,10 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { Server } from 'ws';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { A2AMessage } from '../protocols/A2AProtocolHandler.js';
 import { AgentCardService } from './AgentCardService.js';
 import { ProtocolAdapterService } from '../protocols/ProtocolAdapterService.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 interface WebSocketClient {
   id: string;
@@ -34,15 +34,15 @@ export class A2AWebSocketService implements OnModuleInit {
 
   async onModuleInit() {
     this.initializeWebSocket();
-    this.initializeSSE();
+    this.initializeSSE()';
   }
 
   private initializeWebSocket() {
-    this.wss = new Server({ port: 8080 });
+    this.wss = new Server({ port: 8080 })';
 
     this.wss.on('connection', (ws, req) => {
       const clientId = Math.random().toString(36).substring(7);
-      const protocol = req.headers['x-protocol-version'] as string || 'a2a-v2.0';
+      const protocol = req.headers['x-protocol-version] as string || a2a-v2.0';
 
       this.clients.set(clientId, { id: clientId, ws, protocol });
 
@@ -64,7 +64,7 @@ export class A2AWebSocketService implements OnModuleInit {
   private initializeSSE() {
     // Set up SSE endpoint using your preferred HTTP framework
     // This is a placeholder for the actual implementation
-    this.eventEmitter.on('a2a.message', (message: A2AMessage) => {
+    this.eventEmitter.on('a2a.'message', (message: A2AMessage) => {
       this.broadcastSSE(message);
     });
   }
@@ -75,11 +75,11 @@ export class A2AWebSocketService implements OnModuleInit {
 
     try {
       // Check if protocol adaptation is needed
-      if (client.protocol !== 'a2a-v2.0') {
+      if (client.protocol !== a2a-v2.0') {
         message = await this.protocolAdapter.adaptMessage(
           message,
           client.protocol,
-          'a2a-v2.0'
+          a2a-v2.0'
         );
       }
 
@@ -90,7 +90,7 @@ export class A2AWebSocketService implements OnModuleInit {
       }
 
       // Emit event for message routing
-      this.eventEmitter.emit('a2a.message', message);
+      this.eventEmitter.emit('a2a.'message', message);
 
       // Send to target clients
       this.broadcastMessage(message);
@@ -107,9 +107,9 @@ export class A2AWebSocketService implements OnModuleInit {
 
     targetClients.forEach(async (client) => {
       try {
-        const adaptedMessage = client.protocol === 'a2a-v2.0'
+        const adaptedMessage = client.protocol === a2a-v2.0'
           ? message
-          : await this.protocolAdapter.adaptMessage(message, 'a2a-v2.0', client.protocol);
+          : await this.protocolAdapter.adaptMessage(message, a2a-v2.0', client.protocol);
 
         client.ws.send(JSON.stringify(adaptedMessage));
       } catch (error) {
@@ -131,7 +131,7 @@ export class A2AWebSocketService implements OnModuleInit {
         header: {
           id: Math.random().toString(36).substring(7),
           type: 'error',
-          version: 'v2.0',
+          version: v2.0',
           priority: 'high',
           source: 'system'
         },

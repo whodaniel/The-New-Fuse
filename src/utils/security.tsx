@@ -1,4 +1,4 @@
-import { LRUCache } from '../config/lru_cache.js';
+import { LRUCache } from '../config/lru_cache.tsx';
 import { TimeSpan } from '../config/timedelta.js';
 import { logger } from '../config/logging_config.js';
 

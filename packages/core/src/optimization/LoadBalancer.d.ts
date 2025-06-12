@@ -1,5 +1,5 @@
 import { Logger } from '../logging/LoggingService.js';
-import { ResourceManager } from './ResourceManager.js';
+import { ResourceManager } from './ResourceManager.tsx';
 export interface Node {
     id: string;
     host: string;
@@ -14,7 +14,7 @@ export interface Node {
     };
 }
 export interface BalancingStrategy {
-    name: round-robin' | 'least-connections' | 'weighted-random' | 'response-time';
+    name: round-robin' | least-connections' | weighted-random' | response-time;
     config?: unknown;
 }
 export declare class LoadBalancer {

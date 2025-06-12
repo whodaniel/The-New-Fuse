@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import type { WorkflowState } from '../types/workflow.js';
+import type { WorkflowState } from '../types/workflow.tsx';
 
 export const useWorkflowHistory = (): any => {
   const dispatch = useDispatch();

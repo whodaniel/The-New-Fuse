@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from ''axios';
 import { Logger } from '../logging.js';
 import { EventEmitter } from 'events';
 
@@ -53,7 +53,7 @@ export class ZapierWebhook extends EventEmitter {
     }
     
     const headers = {
-      'Content-Type': 'application/json',
+      Content-Type': application/'json',
       ...this.config.headers,
       ...options?.additionalHeaders
     };

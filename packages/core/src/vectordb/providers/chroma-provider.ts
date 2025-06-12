@@ -1,5 +1,5 @@
-import { ChromaClient } from 'chromadb';
-import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.js';
+import { ChromaClient } from ''chromadb';
+import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types.tsx';
 
 export class ChromaProvider implements VectorStoreProvider {
   public readonly name = 'chroma';

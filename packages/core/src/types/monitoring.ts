@@ -33,11 +33,11 @@ export interface SystemMetrics {
 }
 
 export interface HealthStatus {
-    status: 'healthy' | 'degraded' | 'unhealthy';
+    status: 'healthy' | degraded' | unhealthy';
     timestamp: Date;
     checks: {
         [key: string]: {
-            status: 'pass' | 'warn' | 'fail';
+            status:pass' | warn' | fail';
             message?: string;
             timestamp: Date;
             metadata?: Record<string, unknown>;
@@ -49,7 +49,7 @@ export interface HealthStatus {
 export interface Alert {
     id: string;
     type: string;
-    severity: 'info' | 'warning' | 'error' | 'critical';
+    severity:info' | warning' | error' | critical';
     message: string;
     timestamp: Date;
     source: string;
@@ -65,11 +65,11 @@ export interface AlertRule {
     description?: string;
     condition: {
         metric: string;
-        operator: 'gt' | 'lt' | 'eq' | 'ne' | 'gte' | 'lte';
+        operator:gt' | lt' | eq' | ne' | gte' | lte';
         value: number;
         duration?: number;
     };
-    severity: 'info' | 'warning' | 'error' | 'critical';
+    severity:info' | warning' | error' | critical';
     actions?: AlertAction[];
     enabled: boolean;
     metadata?: Record<string, unknown>;
@@ -96,7 +96,7 @@ export interface MonitoringConfig {
         checkInterval: number;
     };
     storage: {
-        type: 'memory' | 'file' | 'database';
+        type:memory' | file' | database';
         config?: Record<string, unknown>;
     };
 }

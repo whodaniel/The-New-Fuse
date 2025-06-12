@@ -1,4 +1,4 @@
-import { getFileExtension } from './directories.js';
+import { getFileExtension } from './directories.tsx';
 
 export interface FileValidationOptions {
   maxSize?: number;
@@ -59,7 +59,7 @@ export function validateFiles(files: File[], options: FileValidationOptions = {}
     return { valid: false, errors };
   }
 
-  const fileErrors = files.map(fil(e: any) => validateFile(file, options));
+  const fileErrors = files.map((file: File) => validateFile(file, options));
   const allErrors = fileErrors.reduce((acc, result) => [...acc, ...result.errors], [] as string[]);
 
   return {

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Message, Channel, ChannelType, MessageType, ChannelMetadata, PrismaChannel } from './types.js'; // Adjusted import, added PrismaChannel
+import { Message, Channel, ChannelType, MessageType, ChannelMetadata, PrismaChannel } from './types.tsx'; // Adjusted import, added PrismaChannel
 import { Logger } from '@the-new-fuse/utils';
 import { DatabaseService } from '@the-new-fuse/database';
 import { EventEmitter } from 'events';
@@ -34,7 +34,7 @@ export class MessageRouter extends EventEmitter {
             this.logger.warn(`Failed to parse metadata for channel ${dbChannel.id}`, e);
             metadata = this.createDefaultMetadata(dbChannel.type as ChannelType);
           }
-        } else if (typeof dbChannel.metadata === 'object' && dbChannel.metadata !== null) {
+        } else if (typeof dbChannel.metadata === object' && dbChannel.metadata !== null) {
           metadata = dbChannel.metadata as ChannelMetadata;
         } else {
           this.logger.warn(`Metadata for channel ${dbChannel.id} is null or not a string/object, using default.`);
@@ -55,7 +55,7 @@ export class MessageRouter extends EventEmitter {
       }
       this.logger.info(`Initialized message router with ${this.channels.size} channels.`);
     } catch (error: unknown) {
-      this.logger.error('Failed to initialize message router:', error);
+      this.logger.error('Failed to initialize message router:, error);
       throw error;
     }
   }
@@ -69,7 +69,7 @@ export class MessageRouter extends EventEmitter {
       type: type,
       // Ensure other potentially required fields from ChannelMetadata are initialized
       // e.g., participants: [], subscribers: 0, etc. based on types.d.tsx
-      description: '',
+      description: ,
       tags: [],
       participants: [], // Assuming participants is part of ChannelMetadata
       subscribers: 0,  // Assuming subscribers is part of ChannelMetadata
@@ -228,7 +228,7 @@ export class MessageRouter extends EventEmitter {
   }
 
   async saveChannel(channel: Channel): Promise<void> {
-    const metadataToSave = typeof channel.metadata === 'object' ? JSON.stringify(channel.metadata) : channel.metadata;
+    const metadataToSave = typeof channel.metadata === object' ? JSON.stringify(channel.metadata) : channel.metadata;
 
     const dataToUpsert: PrismaChannel = {
         id: channel.id,
@@ -251,7 +251,7 @@ export class MessageRouter extends EventEmitter {
     });
     
     // Ensure in-memory channel has metadata as an object
-    const inMemoryMetadata = typeof channel.metadata === 'string' 
+    const inMemoryMetadata = typeof channel.metadata === string' 
         ? JSON.parse(channel.metadata) as ChannelMetadata 
         : channel.metadata;
 
@@ -349,7 +349,7 @@ export class MessageRouter extends EventEmitter {
 
 // Define PrismaChannel at the end or import from a central types location if used across services
 // For now, defining it here based on assumptions.
-// Ensure this aligns with your actual Prisma schema for the 'channel' table.
+// Ensure this aligns with your actual Prisma schema for the channel' table.
 // export interface PrismaChannel {
 //   id: string;
 //   name: string;

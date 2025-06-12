@@ -6,7 +6,7 @@ import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import DataCard_1 from '../../shared/DataCard.js';
+import DataCard_1 from '../../shared/DataCard.tsx';
 import dagre_1 from 'dagre';
 const layoutAlgorithms = {
     force: (nodes, edges) => {

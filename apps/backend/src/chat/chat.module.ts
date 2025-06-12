@@ -4,7 +4,7 @@ import { ChatController } from './chat.controller.js';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { RedisService } from '../services/redis.service.js';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Message } from '../entities/message.entity.js';
+import { Message } from '../entities/message.entity';
 
 @Module({
   imports: [PrismaModule, TypeOrmModule.forFeature([Message])],

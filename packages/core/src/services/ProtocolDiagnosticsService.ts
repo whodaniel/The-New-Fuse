@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MonitoringService } from './MonitoringService.js';
 import { ReliabilityMetricsService } from './ReliabilityMetricsService.js';
 
 interface ProtocolIssue {
   id: string;
-  type: 'version_mismatch' | 'schema_violation' | 'timeout' | 'connection' | 'security';
+  type:version_mismatch' | schema_violation' | timeout' | connection' | security';
   description: string;
   timestamp: number;
   agents: string[];
-  severity: 'low' | 'medium' | 'high';
+  severity:low' | medium' | high';
   context: Record<string, any>;
   resolved?: boolean;
   resolution?: {
@@ -45,16 +45,16 @@ export class ProtocolDiagnosticsService {
 
   private setupEventListeners(): void {
     // Protocol events
-    this.eventEmitter.on('protocol.handshake.start', this.recordHandshakeStart.bind(this));
-    this.eventEmitter.on('protocol.handshake.complete', this.recordHandshakeComplete.bind(this));
-    this.eventEmitter.on('protocol.negotiation.result', this.recordNegotiationResult.bind(this));
-    this.eventEmitter.on('protocol.message.error', this.handleMessageError.bind(this));
+    this.eventEmitter.on('protocol.handshake.'start', this.recordHandshakeStart.bind(this));
+    this.eventEmitter.on('protocol.handshake.'complete', this.recordHandshakeComplete.bind(this));
+    this.eventEmitter.on('protocol.negotiation.'result', this.recordNegotiationResult.bind(this));
+    this.eventEmitter.on('protocol.message.'error', this.handleMessageError.bind(this));
     
     // Version events
-    this.eventEmitter.on('protocol.version.mismatch', this.handleVersionMismatch.bind(this));
+    this.eventEmitter.on('protocol.version.'mismatch', this.handleVersionMismatch.bind(this));
     
     // Schema events
-    this.eventEmitter.on('protocol.schema.violation', this.handleSchemaViolation.bind(this));
+    this.eventEmitter.on('protocol.schema.'violation', this.handleSchemaViolation.bind(this));
   }
 
   async diagnoseProtocolIssue(
@@ -77,7 +77,7 @@ export class ProtocolDiagnosticsService {
         description: `High handshake latency: ${avgHandshakeLatency.toFixed(2)}ms`,
         timestamp: Date.now(),
         agents: [agentId],
-        severity: avgHandshakeLatency > 5000 ? 'high' : 'medium',
+        severity: avgHandshakeLatency > 5000 ? high' : 'medium',
         context: { avgHandshakeLatency }
       });
     }
@@ -93,7 +93,7 @@ export class ProtocolDiagnosticsService {
           description: `Low negotiation success rate: ${(successRate * 100).toFixed(2)}%`,
           timestamp: Date.now(),
           agents: [agentId],
-          severity: successRate < 0.7 ? 'high' : 'medium',
+          severity: successRate < 0.7 ? high' : 'medium',
           context: { successRate, totalNegotiations }
         });
       }
@@ -108,7 +108,7 @@ export class ProtocolDiagnosticsService {
         description: `High message error rate: ${(errorRate * 100).toFixed(2)}%`,
         timestamp: Date.now(),
         agents: [agentId],
-        severity: errorRate > 0.1 ? 'high' : 'medium',
+        severity: errorRate > 0.1 ? high' : 'medium',
         context: { errorRate, totalMessages: metrics.messageCount }
       });
     }
@@ -134,7 +134,7 @@ export class ProtocolDiagnosticsService {
       ...resolution
     };
 
-    this.eventEmitter.emit('protocol.issue.resolved', {
+    this.eventEmitter.emit('protocol.issue.'resolved', {
       issueId,
       resolution
     });
@@ -198,7 +198,7 @@ export class ProtocolDiagnosticsService {
         description: `High message error rate: ${(errorRate * 100).toFixed(2)}%`,
         timestamp: Date.now(),
         agents: [data.agentId],
-        severity: errorRate > 0.1 ? 'high' : 'medium',
+        severity: errorRate > 0.1 ? high' : 'medium',
         context: {
           errorRate,
           totalMessages: metrics.messageCount,
@@ -208,7 +208,7 @@ export class ProtocolDiagnosticsService {
       };
 
       this.activeIssues.set(issue.id, issue);
-      this.eventEmitter.emit('protocol.issue.detected', issue);
+      this.eventEmitter.emit('protocol.issue.'detected', issue);
     }
   }
 
@@ -231,7 +231,7 @@ export class ProtocolDiagnosticsService {
     };
 
     this.activeIssues.set(issue.id, issue);
-    this.eventEmitter.emit('protocol.issue.detected', issue);
+    this.eventEmitter.emit('protocol.issue.'detected', issue);
   }
 
   private handleSchemaViolation(data: {
@@ -253,7 +253,7 @@ export class ProtocolDiagnosticsService {
     };
 
     this.activeIssues.set(issue.id, issue);
-    this.eventEmitter.emit('protocol.issue.detected', issue);
+    this.eventEmitter.emit('protocol.issue.'detected', issue);
   }
 
   private initializeMetrics(agentId: string): void {

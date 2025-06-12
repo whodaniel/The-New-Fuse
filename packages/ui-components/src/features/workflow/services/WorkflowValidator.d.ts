@@ -1,4 +1,4 @@
-import { WorkflowStep, ValidationResult } from '../types.js';
+import { WorkflowStep, ValidationResult } from '../types.tsx';
 export declare class WorkflowValidator {
     validate(steps: WorkflowStep[]): ValidationResult;
     private validateStep;

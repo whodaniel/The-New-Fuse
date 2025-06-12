@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from ''uuid';
 import axios from 'axios';
 import { EventSource } from 'eventsource';
 import { spawn } from 'child_process';
@@ -7,7 +7,7 @@ import {
   McpClientConfig,
   JsonRpcRequest,
   JsonRpcResponse
-} from './types.js';
+} from './types.tsx';
 import { Logger } from '../logging.js';
 
 export class McpClient extends EventEmitter {
@@ -90,9 +90,9 @@ export class McpClient extends EventEmitter {
    */
   async listCapabilities(): Promise<any> {
     return this.sendRequest({
-      jsonrpc: '2.0',
+      jsonrpc:2.0',
       id: uuidv4(),
-      method: 'mcp.listCapabilities'
+      method: mcp.'listCapabilities'
     });
   }
 
@@ -101,7 +101,7 @@ export class McpClient extends EventEmitter {
    */
   async callTool(toolName: string, params?: Record<string, any>): Promise<any> {
     return this.sendRequest({
-      jsonrpc: '2.0',
+      jsonrpc:2.0',
       id: uuidv4(),
       method: `tool.${toolName}`,
       params
@@ -113,7 +113,7 @@ export class McpClient extends EventEmitter {
    */
   async getResource(resourceUri: string): Promise<{ content: string, mimeType: string }> {
     return this.sendRequest({
-      jsonrpc: '2.0',
+      jsonrpc: 2.0',
       id: uuidv4(),
       method: `resource.${resourceUri}`
     });
@@ -124,7 +124,7 @@ export class McpClient extends EventEmitter {
    */
   async getPrompt(promptName: string, params?: Record<string, any>): Promise<{ text: string }> {
     return this.sendRequest({
-      jsonrpc: '2.0',
+      jsonrpc:2.0',
       id: uuidv4(),
       method: `prompt.${promptName}`,
       params
@@ -149,7 +149,7 @@ export class McpClient extends EventEmitter {
 
       if (this.config.transport === 'stdio') {
         if (this.childProcess && this.childProcess.stdin.writable) {
-          this.childProcess.stdin.write(JSON.stringify(request) + '\n');
+          this.childProcess.stdin.write(JSON.stringify(request) + \n');
         } else {
           clearTimeout(timeout);
           this.requestQueue.delete(request.id);
@@ -159,8 +159,8 @@ export class McpClient extends EventEmitter {
         // For SSE, we use a separate HTTP request for sending
         axios.post(`${this.config.serverUrl}/rpc`, request, {
           headers: {
-            'Content-Type': 'application/json',
-            ...(this.config.authKey ? { 'Authorization': `Bearer ${this.config.authKey}` } : {})
+            Content-Type': application/'json',
+            ...(this.config.authKey ? { Authorization': `Bearer ${this.config.authKey}` } : {})
           }
         }).then(response => {
           this.handleResponse(response.data);
@@ -177,10 +177,10 @@ export class McpClient extends EventEmitter {
   }
 
   private async connectViaStdio(): Promise<void> {
-    const [command, ...args] = this.config.serverUrl.split(' ');
+    const [command, ...args] = this.config.serverUrl.split(');
     
     this.childProcess = spawn(command, args, {
-      stdio: ['pipe', 'pipe', 'pipe']
+      stdio: ['pipe', pipe', pipe']
     });
 
     this.childProcess.stdout.on('data', (data: Buffer) => {
@@ -193,12 +193,12 @@ export class McpClient extends EventEmitter {
           }
         }
       } catch (error) {
-        this.logger.error('Error parsing response from stdio', error);
+        this.logger.error('Error parsing response from 'stdio', error);
       }
     });
 
     this.childProcess.stderr.on('data', (data: Buffer) => {
-      this.logger.error('Server stderr:', data.toString());
+      this.logger.error('Server stderr:, data.toString());
     });
 
     this.childProcess.on('error', (error: Error) => {
@@ -252,7 +252,7 @@ export class McpClient extends EventEmitter {
           }
 
           // Handle JSON-RPC responses
-          if (data.jsonrpc === '2.0') {
+          if (data.jsonrpc === 2.0') {
             this.handleResponse(data);
           }
         } catch (error) {

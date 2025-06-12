@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Database } from './database.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
-import { ZapierWebhook } from './zapier-webhook.js';
+import { Database } from './database.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
+import { ZapierWebhook } from './zapier-webhook.tsx';
 import { NodeFactory } from './node-factory.js';
 import { 
   Workflow, 
@@ -12,7 +12,7 @@ import {
   WorkflowExecution,
   WorkflowExecutionOptions,
   WorkflowSchedule
-} from './types.js';
+} from './types.tsx';
 
 interface QueuedNode {
   node: Node;
@@ -166,10 +166,10 @@ export class WorkflowEngine {
       if (options.debugMode) {
         execution.logs.push(`[${new Date().toISOString()}] Workflow execution completed successfully`);
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // Log error if debug mode is on
       if (options.debugMode) {
-        execution.logs.push(`[${new Date().toISOString()}] Workflow execution failed: ${error.message}`);
+        execution.logs.push(`[${new Date().toISOString()}] Workflow execution failed: ${(error as Error).message}`);
       }
       
       // Complete the execution with failure
@@ -310,7 +310,7 @@ export class WorkflowEngine {
           
           // Store result in final results
           finalResults[node.id] = result.data;
-        } catch (error) {
+        } catch (error: unknown) {
           // Mark node as executed but failed
           queuedNode.executed = true;
           
@@ -324,7 +324,7 @@ export class WorkflowEngine {
           // Log node execution error if debug mode is on
           if (options.debugMode) {
             execution.logs.push(
-              `[${new Date().toISOString()}] Node ${node.name} (${node.id}) failed with error: ${error.message}`
+              `[${new Date().toISOString()}] Node ${node.name} (${node.id}) failed with error: ${(error as Error).message}`
             );
           }
           

@@ -1,13 +1,13 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Node, NodeType } from './types.js';
-import { ApiNode, ApiNodeConfig } from './api-node.js';
-import { VectorStoreNode, VectorStoreNodeConfig } from './vector-store-node.js';
-import { DocumentProcessingNode, DocumentProcessingNodeConfig } from './document-processing-node.js';
-import { WebhookNode, WebhookNodeConfig } from './webhook-node.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
-import { ZapierWebhook } from './zapier-webhook.js';
-import { VectorDatabase } from './vector-database.js';
-import { DocumentProcessor } from './document-processor.js';
+import { Node, NodeType } from './types.tsx';
+import { ApiNode, ApiNodeConfig } from './api-node.tsx';
+import { VectorStoreNode, VectorStoreNodeConfig } from './vector-store-node.tsx';
+import { DocumentProcessingNode, DocumentProcessingNodeConfig } from './document-processing-node.tsx';
+import { WebhookNode, WebhookNodeConfig } from './webhook-node.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
+import { ZapierWebhook } from './zapier-webhook.tsx';
+import { VectorDatabase } from './vector-database.tsx';
+import { DocumentProcessor } from './document-processor.tsx';
 
 // Define node type categories for UI organization
 export interface NodeTypeInfo {

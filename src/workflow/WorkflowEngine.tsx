@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowContext } from './validator.js';
+import { WorkflowStep, WorkflowContext } from './validator.tsx';
 
 export interface Workflow {
   id: string;

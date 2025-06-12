@@ -28,7 +28,7 @@ export interface ValidationWarning {
     code: string;
     message: string;
     path?: string;
-    severity: 'warning';
+    severity:warning';
     metadata?: Record<string, unknown>;
 }
 

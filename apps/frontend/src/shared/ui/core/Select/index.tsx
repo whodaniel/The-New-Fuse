@@ -9,4 +9,4 @@ export {
   SelectSeparator,
   type SelectTriggerProps,
   type SelectItemProps,
-} from './Select.js';
+} from './Select.tsx';

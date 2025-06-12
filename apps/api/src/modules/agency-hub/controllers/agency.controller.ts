@@ -33,9 +33,9 @@ export class AgencyController {
   async createAgency(@Body() createAgencyDto: any) {
     try {
       return await this.enhancedAgencyService.createAgencyWithSwarm(createAgencyDto);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to create agency',
+        (error as Error).message || 'Failed to create agency',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -47,9 +47,9 @@ export class AgencyController {
   async getAgency(@Param('agencyId') agencyId: string) {
     try {
       return await this.enhancedAgencyService.getAgencyWithSwarmStatus(agencyId);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Agency not found',
+        (error as Error).message || 'Agency not found',
         HttpStatus.NOT_FOUND
       );
     }
@@ -69,9 +69,9 @@ export class AgencyController {
         agencyId,
         updateAgencyDto
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to update agency',
+        (error as Error).message || 'Failed to update agency',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -88,9 +88,9 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.initializeSwarm(agencyId, config);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to initialize swarm',
+        (error as Error).message || 'Failed to initialize swarm',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -102,9 +102,9 @@ export class AgencyController {
   async getSwarmStatus(@Param('agencyId') agencyId: string) {
     try {
       return await this.enhancedAgencyService.getSwarmStatus(agencyId);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get swarm status',
+        (error as Error).message || 'Failed to get swarm status',
         HttpStatus.NOT_FOUND
       );
     }
@@ -121,9 +121,9 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.registerProviders(agencyId, providersDto);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to register providers',
+        (error as Error).message || 'Failed to register providers',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -142,9 +142,9 @@ export class AgencyController {
         categoryId,
         active
       });
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get providers',
+        (error as Error).message || 'Failed to get providers',
         HttpStatus.NOT_FOUND
       );
     }
@@ -161,9 +161,9 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.getAnalytics(agencyId, timeframe);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get analytics',
+        (error as Error).message || 'Failed to get analytics',
         HttpStatus.NOT_FOUND
       );
     }

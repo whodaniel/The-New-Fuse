@@ -13,9 +13,9 @@ export class LLMProviderController {
   async findAll(): Promise<LLMProviderDTO[]> {
     try {
       return await this.llmProviderService.findAll();
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to fetch LLM providers: ${error.message}`,
+        `Failed to fetch LLM providers: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -28,9 +28,9 @@ export class LLMProviderController {
   async create(@Body() createLLMProviderDto: CreateLLMProviderDTO): Promise<LLMProviderDTO> {
     try {
       return await this.llmProviderService.create(createLLMProviderDto);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to create LLM provider: ${error.message}`,
+        `Failed to create LLM provider: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -43,9 +43,9 @@ export class LLMProviderController {
   async findOne(@Param('id') id: string): Promise<LLMProviderDTO> {
     try {
       return await this.llmProviderService.findById(id);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to find LLM provider: ${error.message}`,
+        `Failed to find LLM provider: ${(error as Error).message}`,
         HttpStatus.NOT_FOUND
       );
     }
@@ -60,9 +60,9 @@ export class LLMProviderController {
   ): Promise<LLMProviderDTO> {
     try {
       return await this.llmProviderService.update(id, updateLLMProviderDto);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to update LLM provider: ${error.message}`,
+        `Failed to update LLM provider: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -75,9 +75,9 @@ export class LLMProviderController {
     try {
       await this.llmProviderService.delete(id);
       return { success: true };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to delete LLM provider: ${error.message}`,
+        `Failed to delete LLM provider: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -89,9 +89,9 @@ export class LLMProviderController {
   async setDefault(@Param('id') id: string): Promise<LLMProviderDTO> {
     try {
       return await this.llmProviderService.setDefault(id);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        `Failed to set LLM provider as default: ${error.message}`,
+        `Failed to set LLM provider as default: ${(error as Error).message}`,
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }

@@ -4,20 +4,20 @@ import { Socket } from '@nestjs/websockets';
 
 import { Server } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { RedisService } from '../../redis/redis.service.js';
+import { RedisService } from '../../redis/redis.service.tsx';
 import { SecurityConfig } from '../types/config.js';
-import { MonitoringService } from '../../monitoring/monitoring.service.js';
+import { MonitoringService } from '../../monitoring/monitoring.service.tsx';
 
 type AICoderMessage = {
-  type: 'task' | 'sync' | 'heartbeat';
+  type:task' | sync' | heartbeat';
   payload: unknown;
   timestamp: number;
-  sender: 'trae' | 'augment';
-  receiver: 'trae' | 'augment';
+  sender:trae' | augment';
+  receiver:trae' | augment';
   messageId: string;
 };
 
-@WebSocketGateway({ namespace: 'ai-coder' })
+@WebSocketGateway({ namespace:ai-coder })
 export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
@@ -33,7 +33,7 @@ export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
   }
 
   private setupRedisListeners() {
-    this.redisService.subscribeToChannel('ai-coordination', (message) => {
+    this.redisService.subscribeToChannel('ai-coordination, (message) => {
       try {
         const parsed: AICoderMessage = JSON.parse(message);
         this.server.emit(parsed.receiver, {
@@ -42,7 +42,7 @@ export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
           receivedAt: Date.now()
         });
       } catch (error) {
-        this.logger.error('Failed to parse Redis message:', error);
+        this.logger.error('Failed to parse Redis message:, error);
       }
     });
   }
@@ -60,21 +60,21 @@ export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
     isValid: boolean;
     error?: string;
   } {
-    const requiredFields = ['type', 'payload', 'timestamp', 'sender', 'receiver', 'messageId'];
+    const requiredFields = ['type', payload', timestamp', sender', receiver', messageId'];
     const missingFields = requiredFields.filter(field => !(field in message));
 
     if (missingFields.length > 0) {
       this.logger.warn(`Invalid message format - missing required fields`);
       return {
         isValid: false,
-        error: `Missing required fields: ${missingFields.join(', ')}`
+        error: `Missing required fields: ${missingFields.join(', )}`
       };
     }
 
-    if (!['task', 'sync', 'heartbeat'].includes(message.type)) {
+    if (!['task', sync', heartbeat'].includes(message.type)) {
       return {
         isValid: false,
-        error: 'Invalid message type'
+        error:Invalid message type'
       };
     }
 
@@ -91,7 +91,7 @@ export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       messageId: crypto.randomUUID()
     };
 
-    await this.redisService.publishToChannel('ai-coordination', JSON.stringify(message));
+    await this.redisService.publishToChannel('ai-coordination, JSON.stringify(message));
   }
 
   @SubscribeMessage('trae:action')
@@ -119,6 +119,6 @@ export class AICoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
     });
 
     // Broadcast metrics to monitoring dashboard
-    this.server.emit('trae:metrics', actionMetrics);
+    this.server.emit('trae: 'metrics', actionMetrics);
   }
 }

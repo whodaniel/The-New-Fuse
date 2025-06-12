@@ -1,4 +1,4 @@
-import { DashboardPreset } from './types.js';
+import { DashboardPreset } from './types.tsx';
 
 export const dashboardPresets: DashboardPreset[] = [
   {

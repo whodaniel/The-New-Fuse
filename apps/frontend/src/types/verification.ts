@@ -1,8 +1,7 @@
-export var VerificationType;
-(function (VerificationType): any {
-    VerificationType["SCHEMA"] = "schema";
-    VerificationType["CONTENT"] = "content";
-    VerificationType["SECURITY"] = "security";
-    VerificationType["HARMLESSNESS"] = "harmlessness";
-})(VerificationType || (VerificationType = {}));
+export enum VerificationType {
+    SCHEMA = "schema",
+    CONTENT = "content",
+    SECURITY = "security",
+    HARMLESSNESS = "harmlessness"
+}
 //# sourceMappingURL=verification.js.map

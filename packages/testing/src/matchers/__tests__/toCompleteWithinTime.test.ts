@@ -1,4 +1,4 @@
-import { toCompleteWithinTime } from '../toCompleteWithinTime.js';
+import { toCompleteWithinTime } from '../toCompleteWithinTime';
 
 describe('toCompleteWithinTime', () => {
   const delay = (ms: number): any => new Promise(resolve => setTimeout(resolve, ms));

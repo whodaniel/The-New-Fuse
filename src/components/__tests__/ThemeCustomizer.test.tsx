@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react';
-import { ThemeProvider } from '../../contexts/ThemeContext.js';
-import { ThemeCustomizer } from '../ThemeCustomizer.js';
+import { ThemeProvider } from '../../contexts/ThemeContext.tsx';
+import { ThemeCustomizer } from '../ThemeCustomizer.tsx';
 
 describe('ThemeCustomizer', () => {
   const renderWithTheme = (component: React.ReactNode) => {

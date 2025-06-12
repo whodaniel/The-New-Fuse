@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, renderHook, act } from '@testing-library/react';
-import { ThemeProvider, useTheme } from '../ThemeContext.js';
+import { ThemeProvider, useTheme } from '../ThemeContext.tsx';
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <ThemeProvider>{children}</ThemeProvider>

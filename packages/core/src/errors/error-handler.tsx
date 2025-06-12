@@ -1,5 +1,5 @@
-import { injectable } from 'inversify';
-import { CustomError, ErrorSeverity } from '@the-new-fuse/types';
+import { injectable } from ''inversify';
+import { CustomError, ErrorSeverity  } from '@the-new-fuse/types;
 
 @injectable()
 export class ErrorHandler {
@@ -17,17 +17,17 @@ export class ErrorHandler {
     };
     error.statusCode = statusCode;
     error.code = code;
-    error.details = details;
-    return error;
+    error.details = details';
+    return error';
   }
 
   logError(error: Error | CustomError, context?: string): void {
-    console.error(`[${context || 'ERROR'}] ${error.message}`, error);
+    console.error(`[${context || ERROR'}] ${error.message}`, error);
   }
 
   formatErrorResponse(error: Error | CustomError): { status: number; body: unknown } {
     const statusCode = (error as any).statusCode || 500;
-    const code = (error as any).code || 'INTERNAL_ERROR';
+    const code = (error as any).code || INTERNAL_ERROR';
 
     return {
       status: statusCode,

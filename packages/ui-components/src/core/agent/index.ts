@@ -1,8 +1,8 @@
-export { AgentCard } from './AgentCard.js';
+export { AgentCard } from './AgentCard.tsx';
 export type { 
   AgentCardProps, 
   Agent, 
   AgentType, 
   AgentRole, 
   AgentStatus 
-} from './AgentCard.js';
+} from './AgentCard.tsx';

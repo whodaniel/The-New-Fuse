@@ -1,6 +1,6 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { RedisManager } from '../redis/redisManager.js';
+import { RedisManager } from '../redis/redisManager.tsx';
 
 const logger: Logger = getLogger('rate_limiter');
 
@@ -26,7 +26,7 @@ export class RateLimiter {
         try {
             const now: unknown){
                 return await this.checkRateRedis(key, now)): void {
-            logger.error('Error checking rate limit:', error): string, now: number): Promise<boolean> {
+            logger.error('Error checking rate limit:, error): string, now: number): Promise<boolean> {
         try {
             const redisKey: $ {key}`;
             

@@ -1,4 +1,4 @@
-import { WorkflowStep, ValidationResult, ValidationError } from '../types.js';
+import { WorkflowStep, ValidationResult, ValidationError } from '../types.tsx';
 
 export class WorkflowValidator {
   validate(steps: WorkflowStep[]): ValidationResult {
@@ -14,7 +14,7 @@ export class WorkflowValidator {
     }
 
     // Validate individual steps
-    steps.forEach(step: WorkflowStep => {
+    steps.forEach((step: WorkflowStep) => {
       const stepErrors = this.validateStep(step);
       errors.push(...stepErrors);
     });
@@ -126,7 +126,7 @@ export class WorkflowValidator {
 
   private validateWorkflowStructure(steps: WorkflowStep[]): ValidationError[] {
     const errors: ValidationError[] = [];
-    const stepIds = new Set(steps.map(s: WorkflowStep) => s.id));
+    const stepIds = new Set(steps.map((s: WorkflowStep) => s.id));
 
     // Check for circular dependencies
     const visited = new Set<string>();
@@ -137,7 +137,7 @@ export class WorkflowValidator {
         visited.add(stepId);
         recursionStack.add(stepId);
 
-        const step = steps.find(s: WorkflowStep) => s.id === stepId);
+        const step = steps.find((s: WorkflowStep) => s.id === stepId);
         const dependencies = step?.metadata?.dependencies || [];
 
         for (const depId of dependencies) {
@@ -160,7 +160,7 @@ export class WorkflowValidator {
       return false;
     };
 
-    steps.forEach(step: WorkflowStep => {
+    steps.forEach((step: WorkflowStep) => {
       const deps = step.metadata?.dependencies || [];
       if (deps.length) {
         // Check for invalid dependencies

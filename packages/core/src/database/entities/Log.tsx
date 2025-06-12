@@ -4,11 +4,11 @@ import {
     Column,
     CreateDateColumn,
     Index
-} from 'typeorm';
+} from ''typeorm';
 import { LogLevel } from '../../logging/types.js'; // Assuming LogLevel is defined here
 
 @Entity('logs')
-@Index(['level', 'timestamp', 'context']) // Add multi-column index
+@Index(['level', timestamp', context']) // Add multi-column index
 export class Log {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -25,7 +25,7 @@ export class Log {
   @Column('text')
   message: string;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' }) // Ensure timezone is stored
+  @CreateDateColumn({ type:timestamp with time zone' }) // Ensure timezone is stored
   timestamp: Date;
 
   @Column({ nullable: true, length: 255 }) // Add length limit for context

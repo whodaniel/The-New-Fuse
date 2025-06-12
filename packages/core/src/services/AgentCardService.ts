@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { AgentCard, agentCardSchema } from '../../types/src/agentCard.js';
 import axios from 'axios';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
@@ -18,7 +18,7 @@ export class AgentCardService {
     private eventEmitter: EventEmitter2,
     private configService?: { get: (key: string) => string }
   ) {
-    this.cardStoragePath = configService?.get('CARD_STORAGE_PATH') || './agent-cards';
+    this.cardStoragePath = configService?.get('CARD_STORAGE_PATH') || ./agent-cards;
   }
 
   async discoverAgent(url: string): Promise<AgentCard> {
@@ -28,7 +28,7 @@ export class AgentCardService {
       
       this.discoveredAgents.set(card.id, card);
       this.cardUrlMap.set(card.id, url);
-      this.eventEmitter.emit('agent.discovered', card);
+      this.eventEmitter.emit('agent.'discovered', card);
       
       return card;
     } catch (error) {
@@ -46,7 +46,7 @@ export class AgentCardService {
       await this.hostCard(card, hostUrl);
       
       this.logger.info(`Agent card hosted successfully at ${hostUrl}`);
-      this.eventEmitter.emit('agent.advertised', { card, url: hostUrl });
+      this.eventEmitter.emit('agent.'advertised', { card, url: hostUrl });
     } catch (error) {
       this.logger.error('Failed to advertise agent card', error);
       throw error;

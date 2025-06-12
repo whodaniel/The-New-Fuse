@@ -1,5 +1,5 @@
-import { WebSocketTransport } from '../../transport/websocket-transport.js';
-import { TransportMessage } from '../../transport/transport-interface.js';
+import { WebSocketTransport } from '../../transport/websocket-transport.tsx';
+import { TransportMessage } from '../../transport/transport-interface.tsx';
 import * as WebSocket from 'ws';
 
 jest.mock('ws');

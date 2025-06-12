@@ -15,7 +15,7 @@ import {
   Checkbox as ChakraCheckbox,
 } from '@chakra-ui/react';
 import { Navigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.js';
+import { useAuth } from '../hooks/useAuth.tsx';
 
 export function Login() {
   const { isAuthenticated, login } = useAuth();

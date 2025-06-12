@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Message, Channel } from './types.js';
-import { ChannelManager } from './channel.js';
+import { Message, Channel } from './types.tsx';
+import { ChannelManager } from './channel.tsx';
 import { ConfigService } from '@nestjs/config';
 import { RedisService } from '../services/redis.service.js';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventEmitter2  } from '@nestjs/event-emitter;
 
 @Injectable()
 export class MessageRouter {
@@ -34,9 +34,9 @@ export class MessageRouter {
     }
 
     // Try broadcast as last resort
-    const broadcastChannel = await this.routeBroadcast(message);
+    const broadcastChannel = await this.routeBroadcast(message)';
     if (broadcastChannel) {
-      return broadcastChannel;
+      return broadcastChannel';
     }
 
     throw new Error('No suitable channel found for message');
@@ -58,7 +58,7 @@ export class MessageRouter {
 
     // Persist to Redis
     await this.redisService.hset(
-      'routing:table',
+      routing: 'table',
       key,
       JSON.stringify(Array.from(channels)),
     );
@@ -66,13 +66,13 @@ export class MessageRouter {
     if (pattern) {
       this.routingPatterns.set(channelId, new RegExp(pattern));
       await this.redisService.hset(
-        'routing:patterns',
+        routing: 'patterns',
         channelId,
         pattern,
       );
     }
 
-    this.eventEmitter.emit('route.added', {
+    this.eventEmitter.emit('route.'added', {
       source,
       target,
       channelId,
@@ -88,10 +88,10 @@ export class MessageRouter {
       channels.delete(channelId);
       if (channels.size === 0) {
         this.routingTable.delete(key);
-        await this.redisService.hdel('routing:table', key);
+        await this.redisService.hdel('routing: 'table', key);
       } else {
         await this.redisService.hset(
-          'routing:table',
+          routing: 'table',
           key,
           JSON.stringify(Array.from(channels)),
         );
@@ -100,10 +100,10 @@ export class MessageRouter {
 
     if (this.routingPatterns.has(channelId)) {
       this.routingPatterns.delete(channelId);
-      await this.redisService.hdel('routing:patterns', channelId);
+      await this.redisService.hdel('routing: 'patterns', channelId);
     }
 
-    this.eventEmitter.emit('route.removed', {
+    this.eventEmitter.emit('route.'removed', {
       source,
       target,
       channelId,
@@ -146,14 +146,14 @@ export class MessageRouter {
   private async routeBroadcast(message: Message): Promise<Channel | null> {
     // Look for a broadcast channel that matches the message type
     // This implementation assumes broadcast channels are registered with a specific key format,
-    // e.g., 'broadcast:messageType'. This needs to be defined by how broadcast routes are added.
+    // e.g., broadcast:messageType'. This needs to be defined by how broadcast routes are added.
     // For now, let's assume a generic broadcast or a more specific lookup if available.
     // The original code had `this.redisService.get(`broadcast:${message.type}`)`
     // which implies a specific channel ID is stored under that key.
 
     // Simplified: Iterate all channels if no specific broadcast routing logic is in routingTable/Patterns
     // This is a placeholder and likely needs refinement based on actual broadcast strategy.
-    // A more robust way would be to have a dedicated 'broadcast' entry in routingTable or a specific pattern.
+    // A more robust way would be to have a dedicated broadcast' entry in routingTable or a specific pattern.
     
     // Attempting to retrieve a specific broadcast channel ID from Redis as hinted in original logic
     const broadcastChannelId = await this.redisService.get(`broadcast:${message.type}`);
@@ -166,8 +166,8 @@ export class MessageRouter {
     
     // Fallback: Check for a generic broadcast channel if one was registered with a known ID or pattern
     // This part is speculative without knowing how broadcast channels are registered.
-    // Example: if a channel was added with target '*'
-    const genericBroadcastKey = this.getRoutingKey(message.source, '*'); // Or just '*' if source is irrelevant
+    // Example: if a channel was added with target *'
+    const genericBroadcastKey = this.getRoutingKey(message.source, *'); // Or just *' if source is irrelevant
     const broadcastChannels = this.routingTable.get(genericBroadcastKey);
     if (broadcastChannels) {
         for (const channelId of broadcastChannels) {

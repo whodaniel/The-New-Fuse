@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 import { ACAProtocolAdapter } from './adapters/ACAProtocolAdapter.js';
 import { GoogleA2AAdapter } from './adapters/GoogleA2AAdapter.js';
 import { AnthropicXmlAdapter } from './adapters/AnthropicXmlAdapter.js';
@@ -93,7 +93,7 @@ export class ProtocolAdapterRegistry {
     }
 
     // Otherwise, convert to A2A v2.0 as an intermediate format
-    const intermediateMessage = await sourceAdapter.adaptMessage(message, 'a2a-v2.0');
+    const intermediateMessage = await sourceAdapter.adaptMessage(message, a2a-v2.0');
     return targetAdapter.adaptMessage(intermediateMessage, targetProtocol);
   }
 }

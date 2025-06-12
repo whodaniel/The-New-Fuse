@@ -1,4 +1,4 @@
-import { WorkflowError } from './types.js';
+import { WorkflowError } from './types.tsx';
 
 interface RetryStrategy {
   maxAttempts: number;

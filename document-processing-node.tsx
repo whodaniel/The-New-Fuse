@@ -1,6 +1,6 @@
-import { Node, NodeConfig, NodeInput, NodeOutput } from './types.js';
-import { DocumentProcessor } from './document-processor.js';
-import { ApiUsageTracker } from './api-usage-tracker.js';
+import { Node, NodeConfig, NodeInput, NodeOutput } from './types.tsx';
+import { DocumentProcessor } from './document-processor.tsx';
+import { ApiUsageTracker } from './api-usage-tracker.tsx';
 
 export interface DocumentProcessingNodeConfig extends NodeConfig {
   operation: 'parse' | 'extract' | 'summarize' | 'convert' | 'ocr' | 'translate' | 'split';
@@ -91,7 +91,7 @@ export class DocumentProcessingNode implements Node {
       }
       
       return result;
-    } catch (error) {
+    } catch (error: unknown) {
       // Track error if tracker is provided
       if (this.apiUsageTracker) {
         await this.apiUsageTracker.trackUsage({
@@ -107,7 +107,7 @@ export class DocumentProcessingNode implements Node {
       
       return {
         success: false,
-        error: error.message
+        error: (error as Error).message
       };
     }
   }

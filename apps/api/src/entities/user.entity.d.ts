@@ -1,8 +1,8 @@
 import { UserRole } from '../types/user.types.js';
-import { Agent } from './agent.entity.js';
-import { ChatRoom } from './chat-room.entity.js';
-import { Message } from './message.entity.js';
-import { Workflow } from './workflow.entity.js';
+import { Agent } from './agent.entity.tsx';
+import { ChatRoom } from './chat-room.entity.tsx';
+import { Message } from './message.entity.tsx';
+import { Workflow } from './workflow.entity.tsx';
 export declare class User {
     id: string;
     username: string;

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { YoutubeService } from './services/youtube.service.js';
-import { TranscriptProcessor } from './transcript/transcript.processor.js';
+import { TranscriptProcessor } from './transcript/transcript.processor.tsx';
 import { Logger } from '../../utils/src/logger.js';
 
 interface VideoMetadata {

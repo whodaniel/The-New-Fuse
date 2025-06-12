@@ -1,17 +1,17 @@
 // Export all types
-export * from './types.js';
+export * from './types.tsx';
 
 // Export components
-export { WorkflowVisualizer } from './components/WorkflowVisualizer.js';
-export { WorkflowEditor } from './components/WorkflowEditor.js';
-export { WorkflowControls } from './components/WorkflowControls.js';
+export { WorkflowVisualizer } from './components/WorkflowVisualizer.tsx';
+export { WorkflowEditor } from './components/WorkflowEditor.tsx';
+export { WorkflowControls } from './components/WorkflowControls.tsx';
 
 // Export services
-export { WorkflowBuilder } from './services/WorkflowBuilder.js';
-export { WorkflowEngine } from './services/WorkflowEngine.js';
-export { WorkflowExecutor } from './services/WorkflowExecutor.js';
-export { WorkflowMetricsTracker } from './services/WorkflowMetricsTracker.js';
-export { WorkflowTaskQueue } from './services/WorkflowTaskQueue.js';
+export { WorkflowBuilder } from './services/WorkflowBuilder.tsx';
+export { WorkflowEngine } from './services/WorkflowEngine.tsx';
+export { WorkflowExecutor } from './services/WorkflowExecutor.tsx';
+export { WorkflowMetricsTracker } from './services/WorkflowMetricsTracker.tsx';
+export { WorkflowTaskQueue } from './services/WorkflowTaskQueue.tsx';
 
 // Export examples
 export * from './examples/index.js';

@@ -105,7 +105,7 @@ export function getCommonPath(paths: string[]): string {
   const parts = paths.map(path => normalizePath(path).split('/'));
   const minLength = Math.min(...parts.map(p => p.length));
 
-  let commonParts: string[] = [];
+  const commonParts: string[] = [];
   for (let i = 0; i < minLength; i++) {
     const part = parts[0][i];
     if (parts.every(p => p[i] === part)) {
@@ -120,6 +120,7 @@ export function getCommonPath(paths: string[]): string {
 
 export function isValidFileName(fileName: string): boolean {
   // Check for invalid characters in file names
+  // eslint-disable-next-line no-control-regex
   const invalidChars = /[<>:"/\\|?*\x00-\x1F]/;
   return !invalidChars.test(fileName) && fileName.trim() === fileName && fileName !== '.' && fileName !== '..';
 }
@@ -127,6 +128,7 @@ export function isValidFileName(fileName: string): boolean {
 export function sanitizeFileName(fileName: string): string {
   // Replace invalid characters with underscores
   return fileName
+    // eslint-disable-next-line no-control-regex
     .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_')
     .replace(/\s+/g, '_')
     .replace(/^\.+/, '_')

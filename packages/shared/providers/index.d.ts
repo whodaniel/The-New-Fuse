@@ -1,1 +1,1 @@
-export * from './AuthProvider.js';
+export * from './AuthProvider.tsx';

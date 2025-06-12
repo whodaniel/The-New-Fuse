@@ -1,10 +1,9 @@
-export var ContentCategory;
-(function (ContentCategory): any {
-    ContentCategory["SAFE"] = "safe";
-    ContentCategory["MILD"] = "mild";
-    ContentCategory["MODERATE"] = "moderate";
-    ContentCategory["SEVERE"] = "severe";
-})(ContentCategory || (ContentCategory = {}));
+export enum ContentCategory {
+    SAFE = "safe",
+    MILD = "mild",
+    MODERATE = "moderate",
+    SEVERE = "severe"
+}
 export class HarmlessnessScreen {
     constructor() {
         this.harmful_patterns = {

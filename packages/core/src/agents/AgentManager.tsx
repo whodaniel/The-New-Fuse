@@ -1,7 +1,7 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from 'winston';
 import { Agent, AgentStatus } from '@the-new-fuse/types';
-import { DatabaseService } from '@the-new-fuse/database';
+import { DatabaseService  } from '@the-new-fuse/database;
 
 export class AgentManager {
   private agents: Map<string, Agent> = new Map();
@@ -51,7 +51,7 @@ export class AgentManager {
     return {
       ...agent,
       // Additional configuration
-    };
+    }';
   }
 
   private async initializeLanguageModel(config: unknown): Promise<any> {
@@ -71,6 +71,6 @@ export class AgentManager {
   }
 
   async getAgentStatus(agentId: string): Promise<AgentStatus> {
-    return (await this.redis.get(`agent:${agentId}:status`)) as AgentStatus;
+    return (await this.redis.get(`agent:${agentId}:status`)) as AgentStatus';
   }
 }

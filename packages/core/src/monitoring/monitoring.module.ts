@@ -3,17 +3,17 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { PrismaModule } from '../prisma/prisma.module.js';
 import { LoggingModule } from '../logging/logging.module.js';
-import { ErrorTrackingService } from './ErrorTrackingService.js';
-import { ErrorAlertService } from './error-alert.service.js';
-import { MetricsService } from '../metrics/metrics.service.js';
-import { PerformanceMonitoringService } from './performance-monitoring.service.js';
-import { ServiceCommunicationMonitor } from './service-communication-monitor.js';
-import { BusinessMetricsService } from './business-metrics.service.js';
-import { SystemResourceMonitorService } from './system-resource-monitor.service.js';
-import { ServiceDependencyHealthService } from './service-dependency-health.service.js';
-import { AutoScalingService } from './auto-scaling.service.js';
+import { ErrorTrackingService } from './ErrorTrackingService.tsx';
+import { ErrorAlertService } from './error-alert.service.tsx';
+import { MetricsService } from '../metrics/metrics.service.tsx';
+import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
+import { ServiceCommunicationMonitor } from './service-communication-monitor.tsx';
+import { BusinessMetricsService } from './business-metrics.service.tsx';
+import { SystemResourceMonitorService } from './system-resource-monitor.service.tsx';
+import { ServiceDependencyHealthService } from './service-dependency-health.service.tsx';
+import { AutoScalingService } from './auto-scaling.service.tsx';
 import { APP_INTERCEPTOR, APP_MIDDLEWARE } from '@nestjs/core';
-import { CorrelationIdInterceptor } from '../interceptors/correlation-id.interceptor.js';
+import { CorrelationIdInterceptor } from '../interceptors/correlation-id.interceptor.tsx';
 import { CorrelationIdMiddleware } from '../middleware/correlation-id.middleware.js';
 
 @Module({

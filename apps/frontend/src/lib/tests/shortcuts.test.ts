@@ -1,5 +1,5 @@
 
-import { UnifiedControlInterface } from '../unified_controls.js';
+import { UnifiedControlInterface } from '../unified_controls.tsx';
 
 describe('Keyboard Shortcuts Tests', () => {
   let shortcuts;

@@ -42,9 +42,9 @@ export class ServiceRequestController {
         user.id,
         requestDto
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to create service request',
+        (error as Error).message || 'Failed to create service request',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -73,9 +73,9 @@ export class ServiceRequestController {
         limit,
         offset
       });
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get service requests',
+        (error as Error).message || 'Failed to get service requests',
         HttpStatus.NOT_FOUND
       );
     }
@@ -87,9 +87,9 @@ export class ServiceRequestController {
   async getServiceRequest(@Param('requestId') requestId: string) {
     try {
       return await this.enhancedAgencyService.getServiceRequestDetails(requestId);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Service request not found',
+        (error as Error).message || 'Service request not found',
         HttpStatus.NOT_FOUND
       );
     }
@@ -110,9 +110,9 @@ export class ServiceRequestController {
         statusDto.status,
         statusDto.reason
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to update status',
+        (error as Error).message || 'Failed to update status',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -133,9 +133,9 @@ export class ServiceRequestController {
         assignmentDto.providerId,
         assignmentDto.priority
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to assign request',
+        (error as Error).message || 'Failed to assign request',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -167,9 +167,9 @@ export class ServiceRequestController {
         requestId,
         bestProvider.id
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to auto-assign request',
+        (error as Error).message || 'Failed to auto-assign request',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -187,9 +187,9 @@ export class ServiceRequestController {
         requestDetails.agencyId,
         requestDetails.requirements
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get recommendations',
+        (error as Error).message || 'Failed to get recommendations',
         HttpStatus.NOT_FOUND
       );
     }
@@ -211,9 +211,9 @@ export class ServiceRequestController {
         completionDto.qualityScore,
         completionDto.notes
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to complete request',
+        (error as Error).message || 'Failed to complete request',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -233,9 +233,9 @@ export class ServiceRequestController {
         user.id,
         reviewDto
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to submit review',
+        (error as Error).message || 'Failed to submit review',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -257,9 +257,9 @@ export class ServiceRequestController {
         agencyId,
         { status, limit, offset }
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get category requests',
+        (error as Error).message || 'Failed to get category requests',
         HttpStatus.NOT_FOUND
       );
     }

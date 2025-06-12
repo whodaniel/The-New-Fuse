@@ -4,10 +4,10 @@ import {
   WorkflowStep, 
   WorkflowContext, 
   ExecutionResult 
-} from '../types.js';
-import { WorkflowExecutor } from './WorkflowExecutor.js';
-import { WorkflowMetricsTracker } from './WorkflowMetricsTracker.js';
-import { WorkflowTaskQueue } from './WorkflowTaskQueue.js';
+} from '../types.tsx';
+import { WorkflowExecutor } from './WorkflowExecutor.tsx';
+import { WorkflowMetricsTracker } from './WorkflowMetricsTracker.tsx';
+import { WorkflowTaskQueue } from './WorkflowTaskQueue.tsx';
 
 export class WorkflowEngine {
   private static instance: WorkflowEngine;

@@ -1,5 +1,5 @@
 import { NodeCategory } from '../types.js';
-import { nodeConfigurationSchema } from '../schemas/nodeConfiguration.js';
+import { nodeConfigurationSchema } from '../schemas/nodeConfiguration.tsx';
 import {
   BrainCircuit,
   Database,

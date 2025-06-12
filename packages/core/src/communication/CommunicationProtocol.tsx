@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Message, Channel, MessageHandler, MessageType, MessageStatus } from './CommunicationTypes.js';
-import { MessageRouter } from './MessageRouter.js';
-import { MessageValidator } from './MessageValidator.js';
+import { Message, Channel, MessageHandler, MessageType, MessageStatus } from './CommunicationTypes.tsx';
+import { MessageRouter } from './MessageRouter.tsx';
+import { MessageValidator } from './MessageValidator.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import { DatabaseService } from '@the-new-fuse/database';
 import { EventEmitter } from 'events';

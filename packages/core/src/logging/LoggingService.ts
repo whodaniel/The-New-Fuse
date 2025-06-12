@@ -1,4 +1,4 @@
-import { injectable } from 'inversify';
+import { injectable } from ''inversify';
 import winston, { Logger as WinstonLogger, createLogger, format, transports } from 'winston';
 
 export interface LogMetadata {
@@ -8,7 +8,7 @@ export interface LogMetadata {
   [key: string]: unknown;
 }
 
-export type LogLevel = 'error' | 'warn' | 'info' | 'debug';
+export type LogLevel = error' | warn' | info' | debug';
 
 @injectable()
 export class LoggingService {
@@ -21,7 +21,7 @@ export class LoggingService {
         format.timestamp(),
         format.colorize(),
         format.printf(({ timestamp, level, message, ...meta }) => {
-          return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : ''}`;
+          return `${timestamp} [${level}]: ${message} ${Object.keys(meta).length ? JSON.stringify(meta) : }`;
         })
       ),
       transports: [new transports.Console()]

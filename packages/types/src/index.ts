@@ -1,9 +1,4 @@
-// Export all service types
-export type {
-  ServiceStatus
-} from './services.js';
-
-// Re-export base types
+// Core types
 export type {
   JsonValue,
   DataMap,
@@ -15,15 +10,44 @@ export type {
   BaseConfig,
   BaseResponse,
   ValidationResult
-} from './core/base-types.js';
+} from './core/base-types';
 
-// Re-export common types
+// Common types
 export type {
   ApiResponse,
   Handler
-} from './common-types.js';
+} from './common-types';
 
-// Re-export task types
+// Agent types
+export { // Export classes as values
+  Agent,
+  CreateAgentDto,
+  UpdateAgentDto,
+} from './agent';
+export type { // Export interfaces as types
+  AgentCapabilityConfig,
+  AgentCapability
+} from './agent';
+export {
+  AgentStatus,
+  AgentRole,
+  AgentType
+ } from './agent';
+
+// Workflow types
+export type {
+  WorkflowStep,
+  WorkflowDefinition,
+  WorkflowInstance,
+  CreateWorkflowDefinitionDto,
+  UpdateWorkflowDefinitionDto,
+  StartWorkflowInstanceDto,
+  WorkflowService
+} from './workflow';
+
+export type {  WorkflowStatus  } from './workflow';
+
+// Task types
 export type {
   TaskStatusType,
   TaskPriorityType,
@@ -36,59 +60,44 @@ export type {
   TaskQuery,
   TaskResult,
   TaskFilter
-} from './tasks.js';
+} from './tasks';
 
-// Re-export WebSocket types
+// MCP types
+export type {
+  MCPMessage,
+  MCPError,
+  MCPTool,
+  MCPResource,
+  RegisteredEntity,
+  CreateEntityDto,
+  UpdateEntityDto
+} from './mcp';
+
+export type { 
+  parseMCPMessage,
+  createMCPResponse,
+  createMCPError
+ } from './mcp';
+
+// WebSocket types
 export type {
   WebSocketMessage,
   WebSocketConfig,
   WebSocketHandler
-} from './ws.js';
+} from './websocket';
 
-// Re-export agent core types
-export * from './agent.js';
+// Service types
+export type { ServiceStatus } from './services';
 
-// Re-export workflow types
-export type {
-  WorkflowStep,
-  WorkflowDefinition,
-  WorkflowInstance,
-  CreateWorkflowDefinitionDto,
-  UpdateWorkflowDefinitionDto,
-  StartWorkflowInstanceDto,
-  WorkflowService
-} from './workflow.js';
-
-// Export workflow status enum
-export { WorkflowStatus } from './workflow.js';
-
-// Export workflow aliases for backward compatibility
-export type {
-  WorkflowDefinition as Workflow,
-  WorkflowInstance as WorkflowExecution,
-  CreateWorkflowDefinitionDto as CreateWorkflowDto,
-  UpdateWorkflowDefinitionDto as UpdateWorkflowDto,
-  StartWorkflowInstanceDto as StartWorkflowDto
-} from './workflow.js';
-
-// Export everything else
-export * from './agent.types.js';
-export * from './marketplace.js';
-export type {
-  ResourceManager
-} from './performance.js';
-export * from './routes.js';
-export * from './state.js';
-export * from './validation.js';
-export * from './chat.js';
-export * from './models.js';
-export * from './metrics.js';
-export type { ServiceStatus as MonitoringServiceStatus } from './monitoring.js';
-export type { ResourceManager as ResourceModuleManager } from './resource.js';
-export * from './security.js';
-export * from './session.js';
-export * from './suggestion.js';
-export * from './user.js';
-export * from './webhooks.js';
-export * from './export.js';
-export * from './mcp.js';
+// Other core exports
+export * from './marketplace';
+export * from './metrics';
+export * from './security';
+export * from './user';
+export * from './state';
+export * from './validation';
+export * from './chat';
+export * from './session';
+export * from './suggestion';
+export * from './export';
+export * from './webhooks';

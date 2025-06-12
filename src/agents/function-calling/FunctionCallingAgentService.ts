@@ -1,7 +1,7 @@
 import { FunctionCallingAgent, FunctionCallingAgentConfig } from './FunctionCallingAgent.js';
 import { predefinedTools } from './predefined-tools.js';
 import { EventEmitter } from 'events';
-import { Logger } from '../../utils/logger.js';
+import { Logger } from '../../utils/logger.tsx';
 
 /**
  * Service for managing function-calling agents

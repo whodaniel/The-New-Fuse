@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { TaskProcessor } from '../processors/TaskProcessor.js';
-import { NotificationProcessor } from '../processors/NotificationProcessor.js';
-import { CommandProcessor } from '../processors/CommandProcessor.js';
+import { TaskProcessor } from '../processors/TaskProcessor.tsx';
+import { NotificationProcessor } from '../processors/NotificationProcessor.tsx';
+import { CommandProcessor } from '../processors/CommandProcessor.tsx';
 import { AgentMessage, AgentMessageType } from '../../types/agent.types.js';
 
 @Injectable()

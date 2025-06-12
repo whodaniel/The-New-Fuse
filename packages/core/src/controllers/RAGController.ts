@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Query, Param, UseGuards } from '@nestjs/co
 import { RAGService, RAGQueryOptions, RAGQueryResult } from '../rag/RAGService.js';
 import { DocumentIngestionService, DocumentSourceType, IngestionOptions } from '../rag/DocumentIngestionService.js';
 import { AuthGuard } from '../guards/auth.guard.js';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 /**
  * DTO for RAG query
@@ -64,7 +64,7 @@ export class RAGController {
   async getStatus(): Promise<{ status: string; message: string }> {
     return {
       status: 'ok',
-      message: 'RAG system is operational'
+      message: RAG system is 'operational'
     };
   }
 }

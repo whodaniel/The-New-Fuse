@@ -16,11 +16,11 @@ import ReactFlow, {
   useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { AIProcessingNode } from '../nodes/AIProcessingNode.js';
-import { ApiNode } from '../nodes/ApiNode.js';
-import { DataTransformNode } from '../nodes/DataTransformNode.js';
-import { MCPNode } from '../nodes/MCPNode.js';
-import { MCPWorkflowNode } from '../nodes/MCPWorkflowNode.js';
+import { AIProcessingNode } from '../nodes/AIProcessingNode.tsx';
+import { ApiNode } from '../nodes/ApiNode.tsx';
+import { DataTransformNode } from '../nodes/DataTransformNode.tsx';
+import { MCPNode } from '../nodes/MCPNode.tsx';
+import { MCPWorkflowNode } from '../nodes/MCPWorkflowNode.tsx';
 import { AINewsAgentNode } from '../../../nodes/AINewsAgentNode.js';
 import { AIVerificationAgent } from '../../../nodes/AIVerificationAgent.js';
 import { AISummarizationAgent } from '../../../nodes/AISummarizationAgent.js';

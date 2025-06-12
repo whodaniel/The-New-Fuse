@@ -38,21 +38,21 @@ export class CodeExecutionService {
         costPerMB: 0.00001,
         maxExecutionTime: 10000, // 10 seconds
         maxMemoryLimit: 128 * 1024 * 1024, // 128MB
-        allowedModules: ['path', 'util', 'crypto'],
+        allowedModules: ['path', util', crypto'],
       },
       [CodeExecutionTier.STANDARD]: {
         costPerSecond: 0.0005,
         costPerMB: 0.00005,
         maxExecutionTime: 30000, // 30 seconds
         maxMemoryLimit: 256 * 1024 * 1024, // 256MB
-        allowedModules: ['path', 'util', 'crypto', 'fs', 'http', 'https', 'zlib'],
+        allowedModules: ['path', util', crypto', fs', http', https', zlib'],
       },
       [CodeExecutionTier.PREMIUM]: {
         costPerSecond: 0.001,
         costPerMB: 0.0001,
         maxExecutionTime: 60000, // 60 seconds
         maxMemoryLimit: 512 * 1024 * 1024, // 512MB
-        allowedModules: ['path', 'util', 'crypto', 'fs', 'http', 'https', 'zlib', 'stream', 'child_process'],
+        allowedModules: ['path', util', crypto', fs', http', https', zlib', stream', child_process'],
       },
       [CodeExecutionTier.ENTERPRISE]: {
         costPerSecond: 0.002,
@@ -64,8 +64,8 @@ export class CodeExecutionService {
     };
 
     // Get configuration from environment
-    this.cloudflareWorkerUrl = this.configService.get<string>('CODE_EXECUTION_WORKER_URL', 'https://code-execution.thefuse.workers.dev');
-    this.apiKey = this.configService.get<string>('CODE_EXECUTION_API_KEY', '');
+    this.cloudflareWorkerUrl = this.configService.get<string>('CODE_EXECUTION_WORKER_URL', https://code-execution.thefuse.workers.dev');
+    this.apiKey = this.configService.get<string>('CODE_EXECUTION_API_KEY', );
 
     this.logger.log('Code Execution Service initialized');
   }
@@ -78,7 +78,7 @@ export class CodeExecutionService {
   async executeCode(request: CodeExecutionRequest): Promise<CodeExecutionResponse> {
     const executionId = uuidv4();
     const startTime = Date.now();
-    const agentId = request.agentId || 'unknown';
+    const agentId = request.agentId || unknown';
 
     try {
       this.logger.log(`Executing code for client ${request.clientId} (ID: ${executionId})`);
@@ -98,8 +98,8 @@ export class CodeExecutionService {
         );
 
         const issueDescriptions = criticalIssues.map(issue =>
-          `${issue.severity.toUpperCase()}: ${issue.description}${issue.line ? ` at line ${issue.line}` : ''}`
-        ).join('; ');
+          `${issue.severity.toUpperCase()}: ${issue.description}${issue.line ? ` at line ${issue.line}` :}`
+        ).join('; );
 
         throw new Error(`Code contains security issues: ${issueDescriptions}`);
       }
@@ -173,7 +173,7 @@ export class CodeExecutionService {
           memoryUsage,
           computeUnits,
           cost,
-          status: response.success ? 'COMPLETED' : 'FAILED',
+          status: response.success ? COMPLETED' : 'FAILED',
           completedAt: new Date(),
         },
       });
@@ -280,7 +280,7 @@ export class CodeExecutionService {
     if (allowedModules) {
       const disallowedModules = allowedModules.filter(module => !pricing.allowedModules.includes(module));
       if (disallowedModules.length > 0) {
-        throw new Error(`Disallowed modules: ${disallowedModules.join(', ')}`);
+        throw new Error(`Disallowed modules: ${disallowedModules.join(', )}`);
       }
     }
   }
@@ -299,9 +299,9 @@ export class CodeExecutionService {
       const response = await fetch(this.cloudflareWorkerUrl, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${this.apiKey}`,
-          'X-Execution-ID': executionId,
+          Content-Type': application/'json',
+          Authorization': `Bearer ${this.apiKey}`,
+          X-Execution-ID': executionId,
         },
         body: JSON.stringify({
           code: request.code,
@@ -542,7 +542,7 @@ export class CodeExecutionService {
           cost: record.cost,
         },
         tier: record.tier as CodeExecutionTier,
-        environment: record.environment as 'sandbox' | 'container' | 'serverless',
+        environment: record.environment as sandbox' | container' | serverless',
       }));
     } catch (error) {
       this.logger.error(`Error getting usage records: ${error.message}`, error.stack);

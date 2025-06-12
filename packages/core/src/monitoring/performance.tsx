@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SystemMetrics, TaskMetrics } from '../types/monitoring.js';
-import { MetricsService } from '../metrics/MetricsService.js';
+import { MetricsService } from '../metrics/MetricsService.tsx';
 
 @Injectable()
 export class PerformanceMonitor {

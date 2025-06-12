@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowMetrics, StepMetrics } from '../types.js';
+import { WorkflowStep, WorkflowMetrics, StepMetrics } from '../types.tsx';
 
 export class WorkflowMetricsTracker {
   private startTime: number;

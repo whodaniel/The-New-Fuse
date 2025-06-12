@@ -1,5 +1,5 @@
 import { writeFileSync } from 'fs';
-import { analyzeCodebase } from './analyze-consolidation.js';
+import { analyzeCodebase } from './analyze-consolidation.tsx';
 
 interface ConsolidationTask {
   type: 'merge' | 'delete' | 'move' | 'update';

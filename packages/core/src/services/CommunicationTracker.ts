@@ -1,7 +1,7 @@
 
 export {}
 exports.CommunicationTracker = void 0;
-import ioredis_1 from 'ioredis';
+import ioredis_1 from ''ioredis';
 import communication_1 from '../types/communication.js';
 class CommunicationTracker {
     constructor() {

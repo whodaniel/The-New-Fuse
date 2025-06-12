@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from ''zod';
 
 export enum MessageType {
   COMMAND = 'COMMAND',
@@ -55,7 +55,7 @@ export interface Message {
 export interface Channel {
   id: string;
   name: string;
-  type: 'DIRECT' | 'BROADCAST' | 'TOPIC';
+  type:DIRECT' | BROADCAST' | TOPIC';
   metadata: {
     created: Date;
     lastActive: Date;
@@ -109,7 +109,7 @@ export const MessageSchema = z.object({
 export const ChannelSchema = z.object({
   id: z.string().uuid(),
   name: z.string(),
-  type: z.enum(['DIRECT', 'BROADCAST', 'TOPIC']), // Corrected to z.enum for string literals
+  type: z.enum(['DIRECT', BROADCAST', TOPIC']), // Corrected to z.enum for string literals
   metadata: z.object({
     created: z.date(),
     lastActive: z.date(),

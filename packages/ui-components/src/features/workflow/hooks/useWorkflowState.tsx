@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { WorkflowState, WorkflowStatus } from '../types.js';
+import { WorkflowState, WorkflowStatus } from '../types.tsx';
 
 export function useWorkflowState(workflowId: string) {
   const [state, setState] = useState<WorkflowState>({
@@ -13,7 +13,7 @@ export function useWorkflowState(workflowId: string) {
   }, [workflowId]);
 
   const updateState = (updates: Partial<WorkflowState>) => {
-    setState(current: any) => {
+    setState((current: any) => {
       const newState = { ...current, ...updates };
       // Persist state changes
       saveWorkflowState(workflowId, newState);

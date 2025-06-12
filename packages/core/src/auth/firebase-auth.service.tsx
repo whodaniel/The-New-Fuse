@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { FirebaseConfig } from '../config/firebase.config.js';
-import { PrismaClient, Session, User } from '@the-new-fuse/database/client';
+import { FirebaseConfig } from '../config/firebase.config.tsx';
+import { PrismaClient, Session, User } from '@the-new-fuse/database';
 import { Logger } from '@the-new-fuse/utils';
-import { auth } from 'firebase-admin';
+import { auth  } from 'firebase-admin;
 
 @Injectable()
 export class FirebaseAuthService {
@@ -15,10 +15,10 @@ export class FirebaseAuthService {
 
   async verifyToken(token: string): Promise<auth.DecodedIdToken> {
     try {
-      const decodedToken = await this.firebaseConfig.verifyIdToken(token);
-      return decodedToken;
+      const decodedToken = await this.firebaseConfig.verifyIdToken(token)';
+      return decodedToken';
     } catch (error: unknown) {
-      this.logger.error('Token verification failed:', error);
+      this.logger.error('Token verification failed:, error);
       throw error;
     }
   }
@@ -52,7 +52,7 @@ export class FirebaseAuthService {
 
       return session;
     } catch (error: unknown) {
-      this.logger.error('Session validation failed:', error);
+      this.logger.error('Session validation failed:, error);
       throw error;
     }
   }

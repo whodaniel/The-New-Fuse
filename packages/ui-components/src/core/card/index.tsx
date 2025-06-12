@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from '../../utils/cn.js'; // Updated path with file extension
+import { cn } from '../../utils/cn.tsx'; // Updated path with file extension
 // Define CardProps interface directly here to avoid circular dependencies
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: 'default' | 'bordered' | 'elevated';

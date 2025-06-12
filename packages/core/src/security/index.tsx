@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { AuthService } from './auth.js';
-import { EncryptionService } from './encryption.js';
-import { SecurityPolicyManager } from './policy.js';
-import { SecurityAuditService } from './audit.js';
+import { AuthService } from './auth.tsx';
+import { EncryptionService } from './encryption.tsx';
+import { SecurityPolicyManager } from './policy.tsx';
+import { SecurityAuditService } from './audit.tsx';
 import {
   SecurityConfig,
   AuthMethod,
@@ -13,7 +13,7 @@ import {
   SecurityLevel,
   SecurityPolicy,
   SecurityViolation,
-} from './types.js';
+} from './types.tsx';
 
 @Injectable()
 export class SecurityService {
@@ -44,7 +44,7 @@ export class SecurityService {
         },
       },
       encryption: {
-        enabled: this.configService.get('ENCRYPTION_ENABLED', true): this.configService.get('ENCRYPTION_ALGORITHM', 'aes-256-gcm'),
+        enabled: this.configService.get('ENCRYPTION_ENABLED', true): this.configService.get('ENCRYPTION_ALGORITHM', aes-256-gcm'),
         keySize: this.configService.get('ENCRYPTION_KEY_SIZE', 32),
         saltRounds: this.configService.get('ENCRYPTION_SALT_ROUNDS', 10),
       },
@@ -118,8 +118,8 @@ export class SecurityService {
 
       // Audit successful authentication
       await this.auditService.record(
-        'authentication',
-        'login',
+        authentication',
+        login',
         {
           userId: storedCredentials.id,
           method,
@@ -129,7 +129,7 @@ export class SecurityService {
         },
         {
           severity: SecurityLevel.LOW,
-          tags: ['authentication', 'login', method],
+          tags: ['authentication', login', method],
         },
       );
 
@@ -140,8 +140,8 @@ export class SecurityService {
     } catch (error: unknown){
       // Audit failed authentication
       await this.auditService.recordError(
-        'authentication',
-        'login_failed',
+        authentication',
+        login_failed',
         error,
         {
           method,
@@ -151,7 +151,7 @@ export class SecurityService {
         },
         {
           severity: SecurityLevel.HIGH,
-          tags: ['authentication', 'login_failed', method],
+          tags: ['authentication', login_failed', method],
         },
       ): string | Buffer): Promise<string> {
     const { encrypted, iv, tag } = await this.encryptionService.encrypt(data);
@@ -163,13 +163,13 @@ export class SecurityService {
       const violations): void {
         // Audit policy violations
         await this.auditService.record(
-          'policy',
-          'violation',
+          policy',
+          violation',
           {
             policyId,
-            violations: violations.map(v  = Buffer.from(ivHex, 'hex');
-    const tag = Buffer.from(tagHex, 'hex');
-    const data = Buffer.from(dataHex, 'hex');
+            violations: violations.map(v  = Buffer.from(ivHex, hex');
+    const tag = Buffer.from(tagHex, hex');
+    const data = Buffer.from(dataHex, hex');
 
     const decrypted = await this.encryptionService.decrypt(data, iv, tag);
     return decrypted.toString();
@@ -191,7 +191,7 @@ export class SecurityService {
           },
           {
             severity: SecurityLevel.HIGH,
-            tags: ['policy', 'violation'],
+            tags: ['policy', violation'],
           },
         );
       }
@@ -200,8 +200,8 @@ export class SecurityService {
     } catch (error: unknown){
       // Audit policy evaluation error
       await this.auditService.recordError(
-        'policy',
-        'evaluation_failed',
+        policy',
+        evaluation_failed',
         error,
         {
           policyId,
@@ -209,7 +209,7 @@ export class SecurityService {
         },
         {
           severity: SecurityLevel.HIGH,
-          tags: ['policy', 'error'],
+          tags: ['policy', error'],
         },
       ): string,
     action: string,
@@ -219,7 +219,7 @@ export class SecurityService {
       tags?: string[];
     },
   ): Promise<void> {
-    await this.auditService.record(type, action, details, options): Omit<SecurityPolicy, 'id' | 'metadata'>,
+    await this.auditService.record(type, action, details, options): Omit<SecurityPolicy, 'id' | metadata'>,
   ): Promise<SecurityPolicy> {
     try {
       const createdPolicy: createdPolicy.id,
@@ -228,7 +228,7 @@ export class SecurityService {
         },
         {
           severity: SecurityLevel.MEDIUM,
-          tags: ['policy', 'create'],
+          tags: ['policy', create'],
         },
       );
 
@@ -236,22 +236,22 @@ export class SecurityService {
     } catch (error: unknown){
       // Audit policy creation error
       await this.auditService.recordError(
-        'policy',
-        'create_failed',
+        policy',
+        create_failed',
         error,
         {
           policy,
         },
         {
           severity: SecurityLevel.HIGH,
-          tags: ['policy', 'error'],
+          tags: ['policy', error'],
         },
       ): number  = await this.policyManager.createPolicy(policy);
 
       // Audit policy creation
       await this.auditService.record(
-        'policy',
-        'create', {
+        policy',
+        create', {
           policyId 32): Promise<string> {
     return this.encryptionService.generateRandomString(length): string): Promise<string> {
     return this.encryptionService.hash(password): string, hash: string): Promise<boolean> {

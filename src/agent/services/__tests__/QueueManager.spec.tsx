@@ -1,8 +1,8 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { QueueManager } from '../QueueManager.js';
+import { QueueManager } from '../QueueManager.tsx';
 import { CacheService } from '../../../cache/CacheService.js';
-import { AgentProcessorConfig } from '../../config/AgentProcessorConfig.js';
-import { AgentTestHelper } from '../../testing/AgentTestHelper.js';
+import { AgentProcessorConfig } from '../../config/AgentProcessorConfig.tsx';
+import { AgentTestHelper } from '../../testing/AgentTestHelper.tsx';
 
 describe("QueueManager", () => {
   let queueManager: QueueManager;

@@ -2,7 +2,7 @@
  * Configuration for Cascade AI agent.
  */
 
-import { RedisConfig } from './redis_config.js';
+import { RedisConfig } from './redis_config.tsx';
 
 interface CascadeCapabilities {
     code_generation: boolean;

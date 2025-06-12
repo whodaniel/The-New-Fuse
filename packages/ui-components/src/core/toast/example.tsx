@@ -1,6 +1,6 @@
 import React from 'react';
-import { ToastProvider, useToast, Toaster } from './index.js';
-import { Button } from '../button/index.js';
+import { ToastProvider, useToast, Toaster } from './index.tsx';
+import { Button } from '../button/index.tsx';
 
 /**
  * Example component demonstrating toast usage

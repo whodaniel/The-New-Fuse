@@ -135,7 +135,119 @@ exports.Prisma.AgentScalarFieldEnum = {
   lastActive: 'lastActive',
   metadata: 'metadata',
   createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId'
+};
+
+exports.Prisma.RegisteredEntityScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  description: 'description',
+  metadata: 'metadata',
+  status: 'status',
+  createdAt: 'createdAt',
   updatedAt: 'updatedAt'
+};
+
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  email: 'email',
+  name: 'name',
+  passwordHash: 'passwordHash',
+  role: 'role',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  content: 'content',
+  role: 'role',
+  userId: 'userId',
+  sessionId: 'sessionId',
+  metadata: 'metadata',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.A2AAgentScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  name: 'name',
+  type: 'type',
+  version: 'version',
+  description: 'description',
+  metadata: 'metadata',
+  endpoints: 'endpoints',
+  authentication: 'authentication',
+  status: 'status',
+  lastHeartbeat: 'lastHeartbeat',
+  registeredAt: 'registeredAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.A2AAgentCapabilityScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  name: 'name',
+  description: 'description',
+  version: 'version',
+  parameters: 'parameters',
+  metadata: 'metadata'
+};
+
+exports.Prisma.A2AMessageScalarFieldEnum = {
+  id: 'id',
+  messageId: 'messageId',
+  protocolVersion: 'protocolVersion',
+  timestamp: 'timestamp',
+  fromAgentId: 'fromAgentId',
+  toAgentId: 'toAgentId',
+  type: 'type',
+  priority: 'priority',
+  conversationId: 'conversationId',
+  requestId: 'requestId',
+  ttl: 'ttl',
+  payload: 'payload',
+  routing: 'routing',
+  signature: 'signature',
+  checksum: 'checksum',
+  metadata: 'metadata',
+  deliveredAt: 'deliveredAt',
+  acknowledgedAt: 'acknowledgedAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.A2AConversationScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  initiatorId: 'initiatorId',
+  topic: 'topic',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.A2AConversationParticipantScalarFieldEnum = {
+  id: 'id',
+  conversationId: 'conversationId',
+  agentId: 'agentId',
+  joinedAt: 'joinedAt',
+  leftAt: 'leftAt',
+  role: 'role'
+};
+
+exports.Prisma.A2AHeartbeatScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  timestamp: 'timestamp',
+  status: 'status',
+  load: 'load',
+  activeConnections: 'activeConnections',
+  lastActivity: 'lastActivity',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -145,6 +257,10 @@ exports.Prisma.SortOrder = {
 
 exports.Prisma.NullableJsonNullValueInput = {
   DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
+};
+
+exports.Prisma.JsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
@@ -178,6 +294,14 @@ exports.TaskPriority = {
   URGENT: 'URGENT'
 };
 
+exports.AgentType = {
+  GENERIC: 'GENERIC',
+  CODER: 'CODER',
+  ANALYZER: 'ANALYZER',
+  COORDINATOR: 'COORDINATOR',
+  COMMUNICATOR: 'COMMUNICATOR'
+};
+
 exports.AgentStatus = {
   IDLE: 'IDLE',
   BUSY: 'BUSY',
@@ -185,9 +309,62 @@ exports.AgentStatus = {
   OFFLINE: 'OFFLINE'
 };
 
+exports.EntityStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  PENDING: 'PENDING'
+};
+
+exports.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+  AGENT: 'AGENT'
+};
+
+exports.A2AAgentStatus = {
+  ONLINE: 'ONLINE',
+  OFFLINE: 'OFFLINE',
+  BUSY: 'BUSY',
+  IDLE: 'IDLE',
+  ERROR: 'ERROR'
+};
+
+exports.A2AMessageType = {
+  HANDSHAKE: 'HANDSHAKE',
+  REQUEST: 'REQUEST',
+  RESPONSE: 'RESPONSE',
+  NOTIFICATION: 'NOTIFICATION',
+  HEARTBEAT: 'HEARTBEAT',
+  ERROR: 'ERROR',
+  BROADCAST: 'BROADCAST'
+};
+
+exports.A2AMessagePriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+};
+
+exports.A2AConversationStatus = {
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.Prisma.ModelName = {
   Task: 'Task',
-  Agent: 'Agent'
+  Agent: 'Agent',
+  RegisteredEntity: 'RegisteredEntity',
+  User: 'User',
+  ChatMessage: 'ChatMessage',
+  A2AAgent: 'A2AAgent',
+  A2AAgentCapability: 'A2AAgentCapability',
+  A2AMessage: 'A2AMessage',
+  A2AConversation: 'A2AConversation',
+  A2AConversationParticipant: 'A2AConversationParticipant',
+  A2AHeartbeat: 'A2AHeartbeat'
 };
 
 /**

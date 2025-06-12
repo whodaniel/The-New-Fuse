@@ -8,7 +8,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { User } from './User.js';
-import { Task } from './Task.js';
+import { Task } from './Task.tsx';
 
 @Entity("task_executions")
 export class TaskExecution {

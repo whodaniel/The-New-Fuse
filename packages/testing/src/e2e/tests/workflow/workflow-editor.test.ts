@@ -1,5 +1,5 @@
 import { test, expect } from '../../fixtures/test.fixture.js';
-import { WorkflowEditorPage } from '../../pages/workflow-editor.page.js';
+import { WorkflowEditorPage } from '../../pages/workflow-editor.page';
 
 test.describe('Workflow Editor', () => {
   let workflowEditor: WorkflowEditorPage;

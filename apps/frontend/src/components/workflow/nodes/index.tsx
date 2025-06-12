@@ -1,6 +1,6 @@
-export { BaseNode } from './base-node.js';
-export { AgentNode } from './agent-node.js';
-export { MCPToolNode } from './mcp-tool-node.js';
-export { InputNode } from './input-node.js';
-export { OutputNode } from './output-node.js';
-export { ConditionNode } from './condition-node.js';
+export { BaseNode } from './base-node.tsx';
+export { AgentNode } from './agent-node.tsx';
+export { MCPToolNode } from './mcp-tool-node.tsx';
+export { InputNode } from './input-node.tsx';
+export { OutputNode } from './output-node.tsx';
+export { ConditionNode } from './condition-node.tsx';

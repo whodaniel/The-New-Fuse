@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { Link, Outlet, useLocation } from 'react-router-dom';
-import { Sidebar } from './Sidebar/index.js';
+import { Sidebar } from './Sidebar/index.tsx';
 
 // Create a simplified Button component
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

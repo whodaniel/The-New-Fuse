@@ -5,12 +5,12 @@ echo "🚀 Setting up The New Fuse development environment..."
 
 # Check prerequisites
 command -v node >/dev/null 2>&1 || { echo "❌ Node.js is required but not installed." >&2; exit 1; }
-command -v yarn >/dev/null 2>&1 || { echo "❌ Yarn is required but not installed." >&2; exit 1; }
+command -v bun >/dev/null 2>&1 || { echo "❌ Bun is required but not installed." >&2; exit 1; }
 command -v docker >/dev/null 2>&1 || { echo "❌ Docker is required but not installed." >&2; exit 1; }
 
 # Clean existing artifacts
 echo "🧹 Cleaning previous builds..."
-yarn clean
+bun run clean
 
 # Setup environment files
 echo "⚙️ Setting up environment configuration..."
@@ -20,15 +20,15 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-yarn install --frozen-lockfile
+bun install --frozen-lockfile
 
 # Build core packages in correct order
 echo "🔨 Building core packages..."
-yarn workspace @the-new-fuse/types build
-yarn workspace @the-new-fuse/utils build
-yarn workspace @the-new-fuse/core build
-yarn workspace @the-new-fuse/database build
-yarn workspace @the-new-fuse/feature-tracker build
+cd packages/types && bun run build && cd ../..
+cd packages/utils && bun run build && cd ../..
+cd packages/core && bun run build && cd ../..
+cd packages/database && bun run build && cd ../..
+cd packages/feature-tracker && bun run build && cd ../..
 yarn workspace @the-new-fuse/feature-suggestions build
 
 # Setup database

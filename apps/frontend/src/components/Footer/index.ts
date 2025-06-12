@@ -1,2 +1,2 @@
-export { Footer } from './Footer.js';
+export { Footer } from './Footer.tsx';
 //# sourceMappingURL=index.js.map

@@ -14,7 +14,7 @@ import {
   Textarea,
   VStack
 } from '@chakra-ui/react';
-import { PromptTemplate } from '../../hooks/usePromptTemplates.js';
+import { PromptTemplate } from '../../hooks/usePromptTemplates.tsx';
 
 interface PromptSaveModalProps {
   isOpen: boolean;

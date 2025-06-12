@@ -1,7 +1,7 @@
 import { RedisService } from '../services/redis.service.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
+import { MetricCollector } from './metrics.tsx';
 export declare class AlertManager {
     private readonly metricCollector;
     private readonly redisService;

@@ -55,19 +55,19 @@ export class CascadeBridge {
 
     constructor(private configService: ConfigService) {
         const redisConfig: RedisConfig = {
-            host: this.configService.get('REDIS_HOST', 'localhost'),
+            host: this.configService.get('REDIS_HOST', localhost'),
             port: this.configService.get('REDIS_PORT', 6379),
             password: this.configService.get('REDIS_PASSWORD'),
             db: this.configService.get('REDIS_DB', 0),
-            keyPrefix: 'fuse:bridge:',
+            keyPrefix:fuse:bridge:',
             retryStrategy: (times: number) => {
                 const delay = Math.min(times * 50, 2000);
                 return delay;
             }
         };
 
-        this.redisClient = new Redis(redisConfig);
-        this.pubsub = new Redis(redisConfig);
+        this.redisClient = new (Redis as any)(redisConfig);
+        this.pubsub = new (Redis as any)(redisConfig);
 
         this.redisClient.on('error', (err: Error) => {
             this.logger.error(`Redis client error: ${err.message}`);
@@ -84,8 +84,8 @@ export class CascadeBridge {
         try {
             await this.redisClient.ping();
             this.connected = true;
-        } catch (error) {
-            this.logger.error(`Failed to connect to Redis: ${error.message}`);
+        } catch (error: unknown) {
+            this.logger.error(`Failed to connect to Redis: ${(error as Error).message}`);
             throw error;
         }
     }
@@ -111,8 +111,8 @@ export class CascadeBridge {
             const messageString = JSON.stringify(message);
             await this.redisClient.publish(channel, messageString);
             this.logger.debug(`Message sent to ${channel}`, { messageId: message.id });
-        } catch (error) {
-            this.logger.error(`Failed to publish message: ${error.message}`);
+        } catch (error: unknown) {
+            this.logger.error(`Failed to publish message: ${(error as Error).message}`);
             throw error;
         }
     }
@@ -120,8 +120,8 @@ export class CascadeBridge {
     async subscribe(channel: string): Promise<void> {
         try {
             await this.pubsub.subscribe(channel);
-        } catch (error) {
-            this.logger.error(`Failed to subscribe to channel: ${error.message}`);
+        } catch (error: unknown) {
+            this.logger.error(`Failed to subscribe to channel: ${(error as Error).message}`);
             throw error;
         }
     }
@@ -130,8 +130,8 @@ export class CascadeBridge {
         try {
             await this.pubsub.unsubscribe(channel);
             this.logger.debug(`Unsubscribed from ${channel}`);
-        } catch (error) {
-            this.logger.error(`Failed to unsubscribe from channel: ${error.message}`);
+        } catch (error: unknown) {
+            this.logger.error(`Failed to unsubscribe from channel: ${(error as Error).message}`);
             throw error;
         }
     }

@@ -36,7 +36,7 @@ export class ResourceManager {
         timestamp: new Date(): Promise<number> {
     try {
       const cpus: unknown){
-      this.logger.error('Failed to get CPU usage:', error): Promise<number> {
+      this.logger.error('Failed to get CPU usage:, error): Promise<number> {
     try {
       const totalMem): void {
       this.logger.error('Failed to get memory usage:', error): Promise<number> {
@@ -65,7 +65,7 @@ export class ResourceManager {
       errors: 0,
       latencies: [],
       lastReset: Date.now(): Promise<ResourceLimits> {
-    const config: { type: resource_limits' }
+    const config: { type: 'resource_limits' }
     });
 
     return {

@@ -1,8 +1,8 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { v4 as uuidv4 } from 'uuid';
 import { Logger } from '../logging.js';
-import { Agent, AgentRole, Task, Memory, ExecutionResult, AgentCommunication } from './types.js';
-import { SmartAPIGateway } from '../api-management/SmartAPIGateway.js';
+import { Agent, AgentRole, Task, Memory, ExecutionResult, AgentCommunication } from './types.tsx';
+import { SmartAPIGateway } from '../api-management/SmartAPIGateway.tsx';
 import { PriorityManager } from '../priority/priority-manager.js';
 import { ResourceManager } from '../resources/resource-manager.js';
 import { ImplementationPhase } from '../types/phase.js';
@@ -40,7 +40,7 @@ export class AgentOrchestrator extends EventEmitter {
   /**
    * Add a task to be executed by the team
    */
-  addTask(task: Omit<Task, 'id' | 'status'>): string {
+  addTask(task: Omit<Task, 'id' | status'>): string {
     const id = uuidv4();
     const fullTask: Task = {
       ...task,
@@ -49,7 +49,7 @@ export class AgentOrchestrator extends EventEmitter {
     };
     this.tasks.set(id, fullTask);
     this.logger.info(`Added task: ${task.name} (${id})`);
-    this.emit('task:added', { taskId: id, task: fullTask });
+    this.emit('task: 'added', { taskId: id, task: fullTask });
     
     if (!this.isExecuting) {
       this.executeTasks();
@@ -81,7 +81,7 @@ export class AgentOrchestrator extends EventEmitter {
         
         // If we've reached max concurrent tasks, wait for some to complete
         if (this.activeTasks.size >= this.maxConcurrentTasks) {
-          await new Promise(resolve => this.once('task:completed', resolve));
+          await new Promise(resolve => this.once('task: 'completed', resolve));
         }
       }
     } finally {
@@ -105,7 +105,7 @@ export class AgentOrchestrator extends EventEmitter {
       // Update task status
       task.status = 'in_progress';
       this.tasks.set(task.id, task);
-      this.emit('task:started', { taskId: task.id });
+      this.emit('task: 'started', { taskId: task.id });
       
       // Find the most suitable agent for this task
       const agent = this.findAgentForTask(task);
@@ -130,12 +130,12 @@ export class AgentOrchestrator extends EventEmitter {
       });
       
       // Update task status
-      task.status = result.success ? 'completed' : 'failed';
+      task.status = result.success ? 'completed' :'failed';
       task.result = result;
       this.tasks.set(task.id, task);
       
       this.logger.info(`Task ${task.id} ${task.status}: ${task.name}`);
-      this.emit('task:completed', { 
+      this.emit('task: 'completed', { 
         taskId: task.id, 
         success: result.success, 
         result 
@@ -153,7 +153,7 @@ export class AgentOrchestrator extends EventEmitter {
       };
       this.tasks.set(task.id, task);
       
-      this.emit('task:failed', { 
+      this.emit('task: 'failed', { 
         taskId: task.id, 
         error 
       });

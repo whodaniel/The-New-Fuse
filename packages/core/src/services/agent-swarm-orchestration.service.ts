@@ -8,12 +8,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { AgencyHubCacheService } from './agency-hub-cache.service';
-import { 
-  Agent, 
+import { Agent, 
   Agency, 
   AgencyTier,
   User 
-} from '@prisma/client';
+ } from '@prisma/client;
 
 // =====================================================
 // CORE INTERFACES & TYPES
@@ -21,9 +20,9 @@ import {
 
 export interface ServiceRequest {
   id: string;
-  categoryId: string;
-  requirements: Record<string, any>;
-  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT';
+  categoryId: string';
+  requirements: Record<string, any>';
+  priority:LOW' | MEDIUM' | HIGH' | URGENT';
   location?: string;
   timeline?: {
     startDate?: Date;
@@ -43,7 +42,7 @@ export interface ServiceRequest {
 export interface AgentCapability {
   name: string;
   category: string;
-  proficiencyLevel: 'BEGINNER' | 'INTERMEDIATE' | 'ADVANCED' | 'EXPERT';
+  proficiencyLevel:BEGINNER' | INTERMEDIATE' | ADVANCED' | EXPERT';
   tools: AgentTool[];
   constraints?: Record<string, any>;
 }
@@ -51,7 +50,7 @@ export interface AgentCapability {
 export interface AgentTool {
   id: string;
   name: string;
-  type: 'SERVICE_LOOKUP' | 'PROVIDER_MATCHING' | 'QUALITY_CONTROL' | 'ANALYTICS' | 'COMMUNICATION' | 'CUSTOM';
+  type:SERVICE_LOOKUP' | PROVIDER_MATCHING' | QUALITY_CONTROL' | ANALYTICS' | COMMUNICATION' | CUSTOM';
   configuration: Record<string, any>;
   permissions: string[];
 }
@@ -59,7 +58,7 @@ export interface AgentTool {
 export interface CommunicationFlow {
   fromAgentId: string;
   toAgentId: string;
-  flowType: 'HANDOFF' | 'COLLABORATION' | 'SUPERVISION' | 'ESCALATION';
+  flowType:HANDOFF' | COLLABORATION' | SUPERVISION' | ESCALATION';
   conditions?: Record<string, any>;
   priority: number;
 }
@@ -84,14 +83,14 @@ export interface AgentHierarchy {
 export interface HierarchyRelationship {
   supervisorId: string;
   subordinateIds: string[];
-  relationshipType: 'MANAGES' | 'COORDINATES' | 'SUPPORTS';
+  relationshipType:MANAGES' | COORDINATES' | SUPPORTS';
 }
 
 export interface SwarmExecution {
   id: string;
   serviceRequestId: string;
   agencyId: string;
-  status: 'INITIALIZING' | 'ROUTING' | 'EXECUTING' | 'COLLABORATING' | 'COMPLETED' | 'FAILED';
+  status:INITIALIZING' | ROUTING' | EXECUTING' | COLLABORATING' | COMPLETED' | FAILED';
   activeAgents: string[];
   executionPlan: ExecutionStep[];
   startedAt: Date;
@@ -104,7 +103,7 @@ export interface ExecutionStep {
   stepId: string;
   agentId: string;
   action: string;
-  status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED' | 'SKIPPED';
+  status:PENDING' | IN_PROGRESS' | COMPLETED' | FAILED' | SKIPPED';
   startedAt?: Date;
   completedAt?: Date;
   results?: Record<string, any>;
@@ -226,7 +225,7 @@ export class AgentSwarmOrchestrationService {
     const selected: Agent[] = [];
 
     // Always include a manager for complex requests
-    if (request.priority === 'HIGH' || request.priority === 'URGENT') {
+    if (request.priority === HIGH' || request.priority === 'URGENT') {
       const managers = candidates.filter(agent => 
         hierarchy.managers.includes(agent.id)
       );
@@ -267,7 +266,7 @@ export class AgentSwarmOrchestrationService {
     // 1. Analysis phase
     steps.push({
       stepId: 'analysis',
-      agentId: agents[0]?.id || '',
+      agentId: agents[0]?.id || ,
       action: 'ANALYZE_REQUEST',
       status: 'PENDING',
       dependencies: []
@@ -277,7 +276,7 @@ export class AgentSwarmOrchestrationService {
     if (agents.some(a => config.hierarchy.managers.includes(a.id))) {
       steps.push({
         stepId: 'planning',
-        agentId: agents.find(a => config.hierarchy.managers.includes(a.id))?.id || '',
+        agentId: agents.find(a => config.hierarchy.managers.includes(a.id))?.id || ,
         action: 'CREATE_EXECUTION_PLAN',
         status: 'PENDING',
         dependencies: ['analysis']
@@ -299,7 +298,7 @@ export class AgentSwarmOrchestrationService {
     // 4. Quality control
     steps.push({
       stepId: 'quality_control',
-      agentId: agents[0]?.id || '',
+      agentId: agents[0]?.id || ,
       action: 'QUALITY_REVIEW',
       status: 'PENDING',
       dependencies: specialists.map((_, index) => `execution_${index}`)
@@ -308,7 +307,7 @@ export class AgentSwarmOrchestrationService {
     // 5. Finalization
     steps.push({
       stepId: 'finalization',
-      agentId: agents.find(a => config.hierarchy.managers.includes(a.id))?.id || agents[0]?.id || '',
+      agentId: agents.find(a => config.hierarchy.managers.includes(a.id))?.id || agents[0]?.id || ,
       action: 'FINALIZE_RESULTS',
       status: 'PENDING',
       dependencies: ['quality_control']
@@ -345,22 +344,22 @@ export class AgentSwarmOrchestrationService {
       this.logger.log(`Swarm execution completed: ${execution.id} with quality score: ${execution.qualityScore}`);
 
       // Emit completion event
-      this.eventEmitter.emit('swarm.execution.completed', {
+      this.eventEmitter.emit('swarm.execution.'completed', {
         executionId: execution.id,
         agencyId: execution.agencyId,
         qualityScore: execution.qualityScore,
         duration: execution.completedAt.getTime() - execution.startedAt.getTime()
       });
 
-    } catch (error) {
+    } catch (error: unknown) {
       execution.status = 'FAILED';
       execution.completedAt = new Date();
       this.logger.error(`Swarm execution failed: ${execution.id}`, error);
 
-      this.eventEmitter.emit('swarm.execution.failed', {
+      this.eventEmitter.emit('swarm.execution.'failed', {
         executionId: execution.id,
         agencyId: execution.agencyId,
-        error: error.message
+        error: (error as Error).message
       });
     }
   }
@@ -377,7 +376,7 @@ export class AgentSwarmOrchestrationService {
 
     while (completedSteps.size < execution.executionPlan.length) {
       const readySteps = execution.executionPlan.filter(step =>
-        step.status === 'PENDING' &&
+        step.status === PENDING' &&
         step.dependencies.every(dep => completedSteps.has(dep))
       );
 
@@ -463,19 +462,19 @@ export class AgentSwarmOrchestrationService {
     config: AgencySwarmConfig
   ): Promise<Record<string, any>> {
     switch (action) {
-      case 'ANALYZE_REQUEST':
+      case ANALYZE_REQUEST':
         return this.analyzeServiceRequest(agent, execution);
 
-      case 'CREATE_EXECUTION_PLAN':
+      case CREATE_EXECUTION_PLAN':
         return this.createDetailedPlan(agent, execution);
 
-      case 'EXECUTE_SPECIALIST_TASK':
+      case EXECUTE_SPECIALIST_TASK':
         return this.executeSpecialistTask(agent, execution);
 
-      case 'QUALITY_REVIEW':
+      case QUALITY_REVIEW':
         return this.performQualityReview(agent, execution, config);
 
-      case 'FINALIZE_RESULTS':
+      case FINALIZE_RESULTS':
         return this.finalizeResults(agent, execution);
 
       default:
@@ -494,7 +493,7 @@ export class AgentSwarmOrchestrationService {
     return {
       complexity: 'MEDIUM',
       estimatedDuration: 120, // minutes
-      requiredSkills: ['problem_solving', 'technical_analysis'],
+      requiredSkills: ['problem_solving', technical_analysis'],
       riskFactors: ['timeline_constraint'],
       recommendedApproach: 'collaborative_execution'
     };
@@ -518,7 +517,7 @@ export class AgentSwarmOrchestrationService {
         specialists: execution.activeAgents.length - 1,
         estimatedCost: 500
       },
-      successCriteria: ['functional_requirements_met', 'quality_standards_achieved']
+      successCriteria: ['functional_requirements_met', quality_standards_achieved']
     };
   }
 
@@ -534,7 +533,7 @@ export class AgentSwarmOrchestrationService {
     
     return {
       tasksCompleted: capabilities.map(cap => cap.name),
-      deliverables: ['technical_implementation', 'documentation'],
+      deliverables: ['technical_implementation', documentation'],
       qualityMetrics: {
         accuracy: 0.95,
         completeness: 0.98,
@@ -560,7 +559,7 @@ export class AgentSwarmOrchestrationService {
     return {
       overallQuality: avgQuality,
       passesThreshold: avgQuality >= config.qualityThreshold,
-      recommendations: avgQuality < config.qualityThreshold ? ['require_rework', 'additional_review'] : ['approve_for_delivery'],
+      recommendations: avgQuality < config.qualityThreshold ? ['require_rework', additional_review'] : ['approve_for_delivery'],
       reviewNotes: `Quality assessment completed with score: ${avgQuality.toFixed(2)}`
     };
   }
@@ -573,7 +572,7 @@ export class AgentSwarmOrchestrationService {
     execution: SwarmExecution
   ): Promise<Record<string, any>> {
     const allResults = execution.executionPlan
-      .filter(s => s.status === 'COMPLETED' && s.results)
+      .filter(s => s.status === COMPLETED' && s.results)
       .map(s => s.results);
 
     return {
@@ -583,7 +582,7 @@ export class AgentSwarmOrchestrationService {
         deliverables: this.extractDeliverables(allResults),
         qualityAssurance: this.extractQualityMetrics(allResults)
       },
-      nextSteps: ['client_delivery', 'feedback_collection', 'performance_analysis']
+      nextSteps: ['client_delivery', feedback_collection', performance_analysis']
     };
   }
 
@@ -626,7 +625,7 @@ export class AgentSwarmOrchestrationService {
     });
 
     // Emit event for real-time listeners
-    this.eventEmitter.emit('message.sent', { queueName, message });
+    this.eventEmitter.emit('message.'sent', { queueName, message });
   }
 
   /**
@@ -681,17 +680,17 @@ export class AgentSwarmOrchestrationService {
   private createDefaultHierarchy(agents: Agent[]): AgentHierarchy {
     // Simple classification based on agent type and capabilities
     const managers = agents.filter(a => 
-      a.type === 'MANAGER' || 
+      a.type === MANAGER' || 
       (a.capabilities as any)?.some?.((c: any) => c.category === 'management')
     ).map(a => a.id);
 
     const specialists = agents.filter(a => 
-      a.type === 'SPECIALIST' || 
+      a.type === SPECIALIST' || 
       (!managers.includes(a.id) && a.type !== 'SUPPORT')
     ).map(a => a.id);
 
     const support = agents.filter(a => 
-      a.type === 'SUPPORT' ||
+      a.type === SUPPORT' ||
       (a.capabilities as any)?.some?.((c: any) => c.category === 'support')
     ).map(a => a.id);
 
@@ -703,7 +702,7 @@ export class AgentSwarmOrchestrationService {
         ...managers.map(managerId => ({
           supervisorId: managerId,
           subordinateIds: [...specialists, ...support],
-          relationshipType: 'MANAGES' as const
+          relationshipType:MANAGES' as const
         }))
       ]
     };
@@ -835,11 +834,11 @@ export class AgentSwarmOrchestrationService {
 
   private getSharedInstructions(tier: AgencyTier): string {
     const instructions = {
-      [AgencyTier.TRIAL]: 'Basic collaboration protocols. Focus on learning and simple tasks.',
-      [AgencyTier.STARTER]: 'Standard operational procedures. Moderate complexity handling.',
-      [AgencyTier.PROFESSIONAL]: 'Advanced collaboration protocols. Complex task orchestration.',
-      [AgencyTier.ENTERPRISE]: 'Enterprise-grade procedures. Full automation and optimization.',
-      [AgencyTier.WHITE_LABEL]: 'Custom protocols with full autonomy and advanced AI capabilities.'
+      [AgencyTier.TRIAL]:Basic collaboration protocols. Focus on learning and simple tasks.',
+      [AgencyTier.STARTER]: Standard operational procedures. Moderate complexity handling.',
+      [AgencyTier.PROFESSIONAL]:Advanced collaboration protocols. Complex task orchestration.',
+      [AgencyTier.ENTERPRISE]: Enterprise-grade procedures. Full automation and optimization.',
+      [AgencyTier.WHITE_LABEL]:Custom protocols with full autonomy and advanced AI capabilities.'
     };
 
     return instructions[tier] || instructions[AgencyTier.STARTER];

@@ -5,7 +5,7 @@ FROM base AS deps
 WORKDIR /app
 
 # Copy package.json files for all workspaces
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
+COPY package.json bun.lockb* package-lock.json* pnpm-lock.yaml* ./
 COPY apps/message-broker/package.json ./apps/message-broker/
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/

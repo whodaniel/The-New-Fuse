@@ -1,9 +1,9 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
 import Redis from "ioredis";
-import { InterAgentChatService } from '../InterAgentChatService.js';
-import { MonitoringService } from '../MonitoringService.js';
-import { AlertService } from '../AlertService.js';
+import { InterAgentChatService } from '../InterAgentChatService.tsx';
+import { MonitoringService } from '../MonitoringService.tsx';
+import { AlertService } from '../AlertService.tsx';
 
 jest.mock("ioredis");
 

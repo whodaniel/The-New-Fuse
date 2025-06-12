@@ -8,7 +8,7 @@ export interface BaseState {
 export interface TaskState extends BaseState {
     type: 'TASK';
     data: {
-        status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+        status:PENDING' | RUNNING' | COMPLETED' | FAILED';
         progress?: number;
         result?: unknown;
         error?: string;
@@ -16,9 +16,9 @@ export interface TaskState extends BaseState {
 }
 
 export interface AgentState extends BaseState {
-    type: 'AGENT';
+    type:AGENT';
     data: {
-        status: 'IDLE' | 'BUSY' | 'ERROR';
+        status: IDLE' | BUSY' | ERROR';
         currentTask?: string;
         capabilities: string[];
         metrics: {
@@ -30,7 +30,7 @@ export interface AgentState extends BaseState {
 }
 
 export interface SystemState extends BaseState {
-    type: 'SYSTEM';
+    type:SYSTEM';
     data: {
         activeAgents: number;
         pendingTasks: number;

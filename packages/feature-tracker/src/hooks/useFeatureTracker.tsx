@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FeatureTracker } from '../FeatureTracker.js';
+import { FeatureTracker } from '../FeatureTracker.tsx';
 import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types.js';
 
 interface UseFeatureTrackerResult {

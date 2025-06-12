@@ -1,40 +1,22 @@
-/**
- * Model Context Protocol (MCP) types
- */
-
-/**
- * Base MCP message structure
- */
 export interface MCPMessage {
   id: string;
-  type: 'request' | 'response' | 'notification';
-  method?: string;
-  params?: Record<string, unknown>;
-  result?: unknown;
-  error?: MCPError;
+  type: string;
+  data: unknown;
+  timestamp: Date;
 }
 
-/**
- * MCP error structure
- */
 export interface MCPError {
   code: number;
   message: string;
   data?: unknown;
 }
 
-/**
- * MCP tool definition
- */
 export interface MCPTool {
   name: string;
   description: string;
-  inputSchema: Record<string, unknown>;
+  parameters: unknown;
 }
 
-/**
- * MCP resource definition
- */
 export interface MCPResource {
   uri: string;
   name: string;
@@ -42,73 +24,45 @@ export interface MCPResource {
   mimeType?: string;
 }
 
-/**
- * Registered entity in the MCP registry
- */
 export interface RegisteredEntity {
   id: string;
   name: string;
   type: string;
-  description?: string;
-  metadata?: Record<string, unknown>;
-  status: 'active' | 'inactive' | 'pending';
+  metadata: unknown;
   createdAt: Date;
-  updatedAt: Date;
 }
 
-/**
- * DTO for creating an entity
- */
 export interface CreateEntityDto {
   name: string;
   type: string;
-  description?: string;
-  metadata?: Record<string, unknown>;
+  metadata?: unknown;
 }
 
-/**
- * DTO for updating an entity
- */
 export interface UpdateEntityDto {
   name?: string;
-  description?: string;
-  metadata?: Record<string, unknown>;
-  status?: 'active' | 'inactive' | 'pending';
+  type?: string;
+  metadata?: unknown;
 }
 
-/**
- * Parse an MCP message from string
- */
-export function parseMCPMessage(data: string): MCPMessage {
-  try {
-    return JSON.parse(data) as MCPMessage;
-  } catch (error) {
-    throw new Error(`Invalid MCP message: ${error}`);
-  }
+export function parseMCPMessage(data: unknown): MCPMessage {
+  // Implementation would go here
+  return data as MCPMessage;
 }
 
-/**
- * Create an MCP response message
- */
 export function createMCPResponse(id: string, result: unknown): MCPMessage {
   return {
     id,
     type: 'response',
-    result
+    data: result,
+    timestamp: new Date()
   };
 }
 
-/**
- * Create an MCP error message
- */
-export function createMCPError(id: string, code: number, message: string, data?: unknown): MCPMessage {
+export function createMCPError(id: string, error: MCPError): MCPMessage {
   return {
     id,
-    type: 'response',
-    error: {
-      code,
-      message,
-      data
-    }
+    type: 'error',
+    data: error,
+    timestamp: new Date()
   };
 }

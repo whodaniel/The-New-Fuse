@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
 import { FeatureSet, FeatureProposal, SiteData } from './types.js';
-import { DecisionEngine } from './DecisionEngine.js';
+import { DecisionEngine } from './DecisionEngine.tsx';
 import { AdaptiveImplementer } from './AdaptiveImplementer.js';
 
 @Injectable()
@@ -72,14 +72,14 @@ export class FeatureProcessor {
     }
 
     private estimateTimeframe(complexity: number): string {
-        if(complexity > 8) return 'long';
-        if(complexity > 4) return 'medium';
-        return 'short';
+        if(complexity > 8) return long';
+        if(complexity > 4) return medium';
+        return short';
     }
 
-    private determinePriority(impact: number): 'high' | 'medium' | 'low' {
-        if (impact > 8) return 'high';
-        if (impact > 4) return 'medium';
-        return 'low';
+    private determinePriority(impact: number):high' | medium' | low' {
+        if (impact > 8) return high';
+        if (impact > 4) return medium';
+        return low';
     }
 }

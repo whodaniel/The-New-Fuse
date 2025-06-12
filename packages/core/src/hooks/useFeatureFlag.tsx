@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from ''react';
 import { FeatureFlagContext, Environment } from '../types/featureFlags.js';
 
 export function useFeatureFlag(featureId: string, context: FeatureFlagContext = {}): any {
@@ -15,7 +15,7 @@ export function useFeatureFlag(featureId: string, context: FeatureFlagContext = 
       setIsLoading(true);
       const response = await fetch(`/api/admin/features/${featureId}/evaluate`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { Content-Type': application/'json' },
         body: JSON.stringify({ context })
       });
       
@@ -39,7 +39,7 @@ export function useFeatureFlag(featureId: string, context: FeatureFlagContext = 
       setIsLoading(true);
       const response = await fetch(`/api/admin/features/${featureId}`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { Content-Type': application/'json' },
         body: JSON.stringify({ enabled: !isEnabled })
       });
       

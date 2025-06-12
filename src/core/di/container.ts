@@ -1,11 +1,11 @@
 // filepath: src/core/di/container.ts
 import { Container } from "inversify";
-import TYPES from './types.js';
+import TYPES from './types.tsx';
 import { ConfigService } from '../config/config.service.js';
-import { DatabaseService } from '../database/database.service.js';
-import { LoggingService } from '../logging/logging.service.js';
-import { CacheService } from '../cache/cache.service.js';
-import { SecurityService } from '../security/security-service.js';
+import { DatabaseService } from '../database/database.service.tsx';
+import { LoggingService } from '../logging/logging.service.tsx';
+import { CacheService } from '../cache/cache.service.tsx';
+import { SecurityService } from '../security/security-service.tsx';
 import { TimeService } from '../time/time.service.js';
 import { ErrorHandler } from '../errors/error-handler.js';
 

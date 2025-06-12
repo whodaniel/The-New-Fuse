@@ -1,8 +1,8 @@
 import { Module, Global } from '@nestjs/common';
-import { MonitoringService } from './MonitoringService.js';
-import { AlertManager } from './AlertManager.js';
-import { MetricsCollector } from './MetricsCollector.js';
-import { UnifiedMonitoringService } from './unified-monitoring.service.js';
+import { MonitoringService } from './MonitoringService.tsx';
+import { AlertManager } from './AlertManager.tsx';
+import { MetricsCollector } from './MetricsCollector.tsx';
+import { UnifiedMonitoringService } from './unified-monitoring.service.tsx';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Global()

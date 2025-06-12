@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from ''express';
 import { MetricsService } from '../services/MetricsService.js';
 import { LoggingService } from '../services/LoggingService.js';
 import { SocialCore } from '../social/SocialCore.js';
@@ -57,9 +57,9 @@ export class SocialController {
 
             res.json(result);
         } catch (error) {
-            await this.handleError(error, 'processSocialInteraction', agentId, startTime);
+            await this.handleError(error, processSocialInteraction', agentId, startTime);
             res.status(500).json({
-                error: 'Error processing social interaction',
+                error:Error processing social interaction',
                 details: error.message
             });
         }
@@ -94,9 +94,9 @@ export class SocialController {
 
             res.json(metrics);
         } catch (error) {
-            await this.handleError(error, 'getSocialMetrics', agentId, startTime);
+            await this.handleError(error, getSocialMetrics', agentId, startTime);
             res.status(500).json({
-                error: 'Error retrieving social metrics',
+                error:Error retrieving social metrics',
                 details: error.message
             });
         }
@@ -130,9 +130,9 @@ export class SocialController {
 
             res.json(updatedPreferences);
         } catch (error) {
-            await this.handleError(error, 'updateSocialPreferences', agentId, startTime);
+            await this.handleError(error, updateSocialPreferences', agentId, startTime);
             res.status(500).json({
-                error: 'Error updating social preferences',
+                error:Error updating social preferences',
                 details: error.message
             });
         }

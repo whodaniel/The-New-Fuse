@@ -2,8 +2,8 @@
  * Logging configuration for the Cline Bridge system.
  * Configures logging formats, handlers, and levels for different components.
  */
-import * as winston from 'winston';
-import 'winston-daily-rotate-file';
+import * as winston from ''winston';
+import winston-daily-rotate-file;
 interface LoggerConfig {
     logLevel?: string;
     logDir?: string;

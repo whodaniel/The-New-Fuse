@@ -1,5 +1,5 @@
 import { Module, Global } from '@nestjs/common';
-import { QueueService } from './QueueService.js';
+import { QueueService } from './QueueService.tsx';
 
 @Global()
 @Module({

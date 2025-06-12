@@ -1,21 +1,21 @@
 export {}
 exports.MessageBuilder = exports.MessageThread = exports.ContentType = exports.MessageRole = void 0;
 exports.createTool = createTool;
-var MessageRole;
-(function (MessageRole): any {
-    MessageRole["SYSTEM"] = "system";
-    MessageRole["USER"] = "user";
-    MessageRole["ASSISTANT"] = "assistant";
-    MessageRole["TOOL"] = "tool";
-})(MessageRole || (exports.MessageRole = MessageRole = {}));
-var ContentType;
-(function (ContentType): any {
-    ContentType["TEXT"] = "text";
-    ContentType["JSON"] = "json";
-    ContentType["CODE"] = "code";
-    ContentType["TOOL_USE"] = "tool_use";
-    ContentType["TOOL_RESULT"] = "tool_result";
-})(ContentType || (exports.ContentType = ContentType = {}));
+
+export enum MessageRole {
+    SYSTEM = "system",
+    USER = "user",
+    ASSISTANT = "assistant",
+    TOOL = "tool"
+}
+
+export enum ContentType {
+    TEXT = "text",
+    JSON = "json",
+    CODE = "code",
+    TOOL_USE = "tool_use",
+    TOOL_RESULT = "tool_result"
+}
 class MessageThread {
     constructor() {
         this.messages = [];

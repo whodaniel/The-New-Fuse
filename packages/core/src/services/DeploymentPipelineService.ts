@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@nestjs/common';
 import { EnvironmentValidationService } from './EnvironmentValidationService.js';
-import { MonitoringService } from '../monitoring/MonitoringService.js';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
 
 @Injectable()
 export class DeploymentPipelineService {
@@ -17,8 +17,8 @@ export class DeploymentPipelineService {
   ) {}
 
   async deployToEnvironment(
-    fromEnv: 'development' | 'staging' | 'production',
-    toEnv: 'development' | 'staging' | 'production',
+    fromEnv:development' | staging' | production',
+    toEnv:development' | staging' | production',
     version: string
   ): Promise<DeploymentResult> {
     try {
@@ -55,7 +55,7 @@ export class DeploymentPipelineService {
         };
       }
 
-      this.eventEmitter.emit('deployment.success', {
+      this.eventEmitter.emit('deployment.'success', {
         environment: toEnv,
         version,
         deploymentId
@@ -68,14 +68,14 @@ export class DeploymentPipelineService {
         warnings: validationResult.warnings
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error(`Deployment to ${toEnv} failed:`, error);
       await this.rollback(toEnv, version);
       
       return {
         success: false,
         environment: toEnv,
-        errors: [error.message]
+        errors: [(error as Error).message]
       };
     }
   }
@@ -99,15 +99,15 @@ export class DeploymentPipelineService {
       // Apply rollback
       await this.executeDeployment(environment, previousVersion);
 
-      this.eventEmitter.emit('deployment.rollback', {
+      this.eventEmitter.emit('deployment.'rollback', {
         environment,
         fromVersion: version,
         toVersion: previousVersion
       });
 
     } catch (rollbackError) {
-      this.logger.error('Rollback failed:', rollbackError);
-      this.eventEmitter.emit('deployment.rollback.failed', {
+      this.logger.error('Rollback failed:, rollbackError);
+      this.eventEmitter.emit('deployment.rollback.'failed', {
         environment,
         version,
         error: rollbackError.message
@@ -129,6 +129,6 @@ export class DeploymentPipelineService {
 
   private async getPreviousStableVersion(environment: string): Promise<string> {
     // Implementation to get last known good version
-    return 'v1.0.0'; // Placeholder
+    return v1.0.0'; // Placeholder
   }
 }

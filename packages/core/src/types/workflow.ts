@@ -19,7 +19,7 @@ export interface Workflow {
     tags?: string[];
 }
 
-export interface WorkflowInstance extends Omit<Workflow, 'tasks' | 'edges'> {
+export interface WorkflowInstance extends Omit<Workflow, 'tasks' | edges'> {
     templateId: string;
     steps: WorkflowStep[];
     startTime: Date;
@@ -44,7 +44,7 @@ export enum WorkflowStepType {
     SEQUENCE = 'SEQUENCE'
 }
 
-export type WorkflowStatus = 'draft' | 'active' | 'running' | 'completed' | 'failed' | 'cancelled';
+export type WorkflowStatus = draft' | active' | running' | completed' | failed' | cancelled';
 
 export interface WorkflowTask extends Task {
     workflowId: string;
@@ -55,7 +55,7 @@ export interface WorkflowTask extends Task {
     taskDefinition: TaskDefinition;
     retryPolicy?: {
         maxAttempts: number;
-        backoffStrategy: 'fixed' | 'exponential';
+        backoffStrategy:fixed' | exponential';
         backoffDelay: number;
     };
 }
@@ -66,7 +66,7 @@ export interface WorkflowEdge {
     sourceTaskId: string;
     targetTaskId: string;
     condition?: {
-        type: 'success' | 'failure' | 'always' | 'custom';
+        type:success' | failure' | always' | custom';
         expression?: string;
     };
     metadata?: Record<string, any>;
@@ -93,7 +93,7 @@ export interface WorkflowExecution {
 }
 
 export interface TaskExecution {
-    status: 'pending' | 'running' | 'completed' | 'failed';
+    status:pending' | running' | completed' | failed';
     startTime?: Date;
     endTime?: Date;
     result?: unknown;
@@ -101,7 +101,7 @@ export interface TaskExecution {
     retryCount: number;
 }
 
-export type WorkflowExecutionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
+export type WorkflowExecutionStatus = running' | completed' | failed' | cancelled';
 
 export interface WorkflowTemplate {
     id: string;
@@ -131,7 +131,7 @@ export const WorkflowSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   version: z.string(),
-  status: z.enum(['draft', 'active', 'running', 'completed', 'failed', 'cancelled']),
+  status: z.enum(['draft', active', running', completed', failed', cancelled']),
   tasks: z.array(z.object({
     id: z.string(),
     workflowId: z.string(),
@@ -142,7 +142,7 @@ export const WorkflowSchema = z.object({
     taskDefinition: z.any(), // Would be more specific in a real implementation
     retryPolicy: z.object({
       maxAttempts: z.number(),
-      backoffStrategy: z.enum(['fixed', 'exponential']),
+      backoffStrategy: z.enum(['fixed', exponential']),
       backoffDelay: z.number()
     }).optional()
   })),
@@ -152,7 +152,7 @@ export const WorkflowSchema = z.object({
     sourceTaskId: z.string(),
     targetTaskId: z.string(),
     condition: z.object({
-      type: z.enum(['success', 'failure', 'always', 'custom']),
+      type: z.enum(['success', failure', always', custom']),
       expression: z.string().optional()
     }).optional(),
     metadata: z.record(z.any()).optional()

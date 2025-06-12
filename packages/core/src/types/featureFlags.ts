@@ -30,7 +30,7 @@ export interface FeatureFlagConditions {
   environments?: Environment[];
   percentage?: PercentageRollout;
   dateRange?: DateRange;
-  deviceTypes?: ('desktop' | 'mobile' | 'tablet')[];
+  deviceTypes?: ('desktop' | mobile' | tablet')[];
   regions?: string[]; // Country/region codes
   customRules?: {
     name: string;
@@ -72,7 +72,7 @@ export interface FeatureFlagContext {
   userId?: string;
   userGroups?: string[];
   environment?: Environment;
-  deviceType?: 'desktop' | 'mobile' | 'tablet';
+  deviceType?:desktop' | mobile' | tablet';
   region?: string;
   customContext?: Record<string, any>;
 }

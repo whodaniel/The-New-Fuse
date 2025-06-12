@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InfiniteCanvas = InfiniteCanvas;
 import react_1 from 'react';
 import framer_motion_1 from 'framer-motion';
-import pipeline_node_1 from './pipeline-node.js';
-import node_connection_1 from './node-connection.js';
+import pipeline_node_1 from './pipeline-node.tsx';
+import node_connection_1 from './node-connection.tsx';
 import button_1 from '@/components/ui/button';
 import lucide_react_1 from 'lucide-react';
 function InfiniteCanvas() {

@@ -1,5 +1,5 @@
 import type { OpenAiEmbeddingSettings } from '@/types/embedding';
-import { OpenAiOptions as Component } from './OpenAiOptions.js';
+import { OpenAiOptions as Component } from './OpenAiOptions.tsx';
 
 export default function OpenAiOptions({ settings }: { settings: OpenAiEmbeddingSettings }) {
   return <Component settings={settings} />;

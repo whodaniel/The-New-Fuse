@@ -1,5 +1,5 @@
-import { TaskStatus, TaskPriority, TaskType } from '../../../task/types.js';
-import { WorkflowStep, WorkflowExecutionResult } from '../types.js';
+import { TaskStatus, TaskPriority, TaskType } from '../../../task/types.tsx';
+import { WorkflowStep, WorkflowExecutionResult } from '../types.tsx';
 
 interface Task {
   id: string;

@@ -1,9 +1,9 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from ''express';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 import { verify } from 'jsonwebtoken';
-import { RateLimiter } from './rateLimiter.js';
+import { RateLimiter } from './rateLimiter.tsx';
 
 const logger: Logger = getLogger('request_middleware');
 
@@ -96,9 +96,9 @@ export class RequestMiddleware {
             };
 
             req.user  = (req as any).headers.authorization;
-            if (!authHeader?.startsWith('Bearer ')) {
+            if (!authHeader?.startsWith('Bearer )) {
                 throw new Error('No token provided')): void {
-            logger.warn('Authentication failed:', error);
+            logger.warn('Authentication failed:, error);
             res.status(401).json({
                 error: Authentication failed',
                 message: error instanceof Error ? error.message : Invalid token'
@@ -106,7 +106,7 @@ export class RequestMiddleware {
         }
     };
 
-    public authorize  = authHeader.split(' ')[1];
+    public authorize  = authHeader.split(')[1];
             const decoded = verify(token, this.jwtSecret) as {
                 id decoded;
             (req as any).context.userId = decoded.id;
@@ -115,7 +115,7 @@ export class RequestMiddleware {
         return (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
             try {
                 const userPermissions: unknown){
-                logger.warn('Authorization failed:', error);
+                logger.warn('Authorization failed:, error);
                 res.status(403).json({
                     error: Authorization failed',
                     message: error instanceof Error ? error.message : Insufficient permissions'
@@ -135,7 +135,7 @@ export class RequestMiddleware {
                 if(!hasAllPermissions> {
         try {
             const key: unknown){
-            logger.warn('Rate limit exceeded:', error);
+            logger.warn('Rate limit exceeded:, error);
             res.status(429).json({
                 error: Too many requests',
                 message: error instanceof Error ? error.message : Rate limit exceeded'
@@ -152,7 +152,7 @@ export class RequestMiddleware {
     ): void  = await this.rateLimiter.checkRate(key);
 
             if(!isAllowed> {
-        logger.error('Unhandled error:', error);
+        logger.error('Unhandled error:, error);
 
         // Collect error metrics
         this.collectErrorMetrics(error, req);
@@ -160,7 +160,7 @@ export class RequestMiddleware {
         // Send appropriate response
         res.status(500).json({
             error: Internal server error',
-            message: (process as any).env.NODE_ENV === 'development' ? error.message : An unexpected error occurred'
+            message: (process as any).env.NODE_ENV === development' ? error.message : An unexpected error occurred'
         });
     };
 
@@ -180,7 +180,7 @@ export class RequestMiddleware {
             // Store metrics using the metrics collector
             await this.metricsCollector.storeMetrics('request', metrics);
         } catch (error): void {
-            logger.error('Error collecting request metrics:', error): Error, req: Request): Promise<void> {
+            logger.error('Error collecting request metrics:, error): Error, req: Request): Promise<void> {
         try {
             const metrics  = {
                 timestamp {

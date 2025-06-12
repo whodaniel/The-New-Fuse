@@ -14,10 +14,10 @@ import {
   TableHeader,
   TableRow,
 } from './table.js';
-import { Button } from './button.js';
+import { Button } from './button.tsx';
 import { Input } from './input.js';
 import { Label } from './label.js';
-import { toast } from './toast.js';
+import { toast } from './toast.tsx';
 
 interface WebhookConfig {
   url: string;

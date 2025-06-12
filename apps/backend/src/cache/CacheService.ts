@@ -16,7 +16,7 @@ export class CacheService {
   constructor(
     redisUrl: string = process.env.REDIS_URL || 'redis://localhost:6379'
   ) {
-    this.redis = new Redis(redisUrl);
+    this.redis = new (Redis as any)(redisUrl);
     this.logger = new Logger(CacheService.name);
 
     this.redis.on('error', (error: Error) => {
@@ -39,8 +39,8 @@ export class CacheService {
       const ttl = options.ttl || this.defaultTTL;
 
       await this.redis.setex(finalKey, ttl, serializedValue);
-    } catch (error) {
-      this.logger.error(`Cache set error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache set error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -50,8 +50,8 @@ export class CacheService {
       const finalKey = this.getKey(key, namespace);
       const value = await this.redis.get(finalKey);
       return value ? JSON.parse(value) : null;
-    } catch (error) {
-      this.logger.error(`Cache get error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache get error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -60,8 +60,8 @@ export class CacheService {
     try {
       const finalKey = this.getKey(key, namespace);
       await this.redis.del(finalKey);
-    } catch (error) {
-      this.logger.error(`Cache delete error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache delete error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -70,8 +70,8 @@ export class CacheService {
     try {
       const finalKey = this.getKey(key, namespace);
       return await this.redis.exists(finalKey) === 1;
-    } catch (error) {
-      this.logger.error(`Cache has error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache has error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -86,8 +86,8 @@ export class CacheService {
       } else {
         await this.redis.flushdb();
       }
-    } catch (error) {
-      this.logger.error(`Cache clear error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache clear error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -100,8 +100,8 @@ export class CacheService {
       const finalKeys = keys.map(key => this.getKey(key, namespace));
       const values = await this.redis.mget(...finalKeys);
       return values.map(value => (value ? JSON.parse(value) : null));
-    } catch (error) {
-      this.logger.error(`Cache getMultiple error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache getMultiple error: ${(error as Error).message}`);
       throw error;
     }
   }
@@ -121,8 +121,8 @@ export class CacheService {
       });
 
       await pipeline.exec();
-    } catch (error) {
-      this.logger.error(`Cache setMultiple error: ${error.message}`);
+    } catch (error: unknown) {
+      this.logger.error(`Cache setMultiple error: ${(error as Error).message}`);
       throw error;
     }
   }

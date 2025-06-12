@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import { Redis } from ''ioredis';
 import { Logger } from 'winston';
 export declare class SecurityManager {
     private redis;

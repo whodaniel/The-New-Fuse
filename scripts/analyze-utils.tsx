@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import * as ts from 'typescript';
-import { ComponentAnalysis } from './analyze.js';
+import { ComponentAnalysis } from './analyze.tsx';
 
 export function analyzeProps(ast: ts.Node): PropAnalysis[] {
   const props: PropAnalysis[] = [];

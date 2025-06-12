@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Layout, Card, Row, Col } from 'antd';
-import { AgentPerformanceMonitor } from './AgentPerformanceMonitor.js';
-import { A2AMonitor } from './A2AMonitor.js';
-import { useWebSocket } from '../../hooks/useWebSocket.js';
+import { AgentPerformanceMonitor } from './AgentPerformanceMonitor.tsx';
+import { A2AMonitor } from './A2AMonitor.tsx';
+import { useWebSocket } from '../../hooks/useWebSocket.tsx';
 
 export const A2ADashboard: React.FC<{ workflowId: string }> = ({ workflowId }) => {
     const [agents, setAgents] = useState<string[]>([]);

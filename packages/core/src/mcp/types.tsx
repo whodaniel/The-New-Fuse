@@ -4,25 +4,25 @@ export interface MCPMessage<T = unknown> {
     timestamp: number;
     source: {
         id: string;
-        type: 'ai_agent' | 'user' | 'system';
+        type: 'ai_agent' | user' | system';
         capabilities: string[];
     };
     target: {
         id: string;
-        type: 'ai_agent' | 'user' | 'system';
+        type:ai_agent' | user' | system';
     };
     content: {
         type: MCPMessageType;
         action: string;
         data: T;
-        priority: 'low' | 'medium' | 'high';
+        priority:low' | medium' | high';
     };
     metadata: {
         conversationId?: string;
         parentMessageId?: string;
         capabilities?: string[];
-        protocol: 'mcp';
-        protocolVersion: '1.0.0';
+        protocol:mcp';
+        protocolVersion: 1.0.0';
     };
 }
 
@@ -47,7 +47,7 @@ export interface MCPAgent {
 
 // JSON-RPC 2.0 Request
 export interface JsonRpcRequest {
-  jsonrpc: '2.0';
+  jsonrpc:2.0';
   id: string | number;
   method: string;
   params?: Record<string, any> | any[];
@@ -55,14 +55,14 @@ export interface JsonRpcRequest {
 
 // JSON-RPC 2.0 Success Response
 export interface JsonRpcSuccessResponse {
-  jsonrpc: '2.0';
+  jsonrpc: 2.0';
   id: string | number;
   result: any;
 }
 
 // JSON-RPC 2.0 Error Response
 export interface JsonRpcErrorResponse {
-  jsonrpc: '2.0';
+  jsonrpc:2.0';
   id: string | number;
   error: {
     code: number;
@@ -80,7 +80,7 @@ export interface McpTool {
   description: string;
   type: string;
   parameters: {
-    type: 'object';
+    type: object';
     properties: Record<string, {
       type: string;
       description: string;
@@ -121,7 +121,7 @@ export interface McpServerConfig {
   name: string;
   description?: string;
   version: string;
-  transport: 'stdio' | 'sse';
+  transport:stdio' | sse';
   port?: number; // Required for SSE
   url?: string; // Alternative to port for SSE
   authRequired: boolean;
@@ -131,7 +131,7 @@ export interface McpServerConfig {
 // MCP Client Configuration
 export interface McpClientConfig {
   serverUrl: string;
-  transport: 'stdio' | 'sse';
+  transport:stdio' | sse';
   timeout?: number;
   authKey?: string;
   retryConfig?: {

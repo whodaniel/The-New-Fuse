@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { WorkflowMonitoringService } from './WorkflowMonitoringService.js';
 import { Logger } from '../common/logger.service.js';
 

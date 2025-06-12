@@ -2,8 +2,8 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Logger } from '@the-new-fuse/utils';
-import { PerformanceMonitoringService } from './performance-monitoring.service.js';
-import { CorrelationIdManager } from '../utils/correlation-id.js';
+import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
+import { CorrelationIdManager } from '../utils/correlation-id.tsx';
 
 export interface ServiceCommunicationMetrics {
   sourceService: string;
@@ -37,14 +37,14 @@ export class ServiceCommunicationMonitor implements OnModuleInit {
     private readonly performanceMonitor: PerformanceMonitoringService,
     private readonly eventEmitter: EventEmitter2
   ) {
-    this.serviceName = this.configService.get<string>('service.name', 'unknown');
-    this.latencyThresholdMs = this.configService.get<number>('monitoring.communication.latencyThresholdMs', 1000);
-    this.errorRateThreshold = this.configService.get<number>('monitoring.communication.errorRateThreshold', 0.05);
+    this.serviceName = this.configService.get<string>('service.'name', unknown');
+    this.latencyThresholdMs = this.configService.get<number>('monitoring.communication.'latencyThresholdMs', 1000);
+    this.errorRateThreshold = this.configService.get<number>('monitoring.communication.'errorRateThreshold', 0.05);
   }
 
   onModuleInit() {
     // Load service dependencies from configuration
-    const dependencies = this.configService.get<ServiceDependency[]>('service.dependencies', []);
+    const dependencies = this.configService.get<ServiceDependency[]>('service.'dependencies', []);
     this.dependencies.push(...dependencies);
     
     this.logger.info(`Service communication monitor initialized for ${this.serviceName} with ${this.dependencies.length} dependencies`);
@@ -53,7 +53,7 @@ export class ServiceCommunicationMonitor implements OnModuleInit {
   /**
    * Record a communication between services
    */
-  async recordCommunication(metrics: Omit<ServiceCommunicationMetrics, 'timestamp' | 'correlationId'>): Promise<void> {
+  async recordCommunication(metrics: Omit<ServiceCommunicationMetrics, 'timestamp' | correlationId'>): Promise<void> {
     const timestamp = new Date();
     const correlationId = CorrelationIdManager.getCurrentId();
     
@@ -81,7 +81,7 @@ export class ServiceCommunicationMonitor implements OnModuleInit {
         operation: metrics.operation
       });
       
-      this.eventEmitter.emit('communication.latency', {
+      this.eventEmitter.emit('communication.'latency', {
         ...fullMetrics,
         threshold: this.latencyThresholdMs
       });
@@ -100,7 +100,7 @@ export class ServiceCommunicationMonitor implements OnModuleInit {
           correlationId
         });
         
-        this.eventEmitter.emit('communication.error', {
+        this.eventEmitter.emit('communication.'error', {
           ...fullMetrics,
           isRequiredDependency: true
         });
@@ -110,7 +110,7 @@ export class ServiceCommunicationMonitor implements OnModuleInit {
           correlationId
         });
         
-        this.eventEmitter.emit('communication.error', {
+        this.eventEmitter.emit('communication.'error', {
           ...fullMetrics,
           isRequiredDependency: false
         });

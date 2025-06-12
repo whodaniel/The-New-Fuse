@@ -1,4 +1,4 @@
-import { ConfigService as NestConfigService } from '@nestjs/config';
+import { ConfigService as NestConfigService  } from '@nestjs/config';
 export declare class ConfigService extends NestConfigService {
-    constructor();
+    constructor()';
 }

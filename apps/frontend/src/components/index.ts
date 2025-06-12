@@ -11,7 +11,7 @@ export * from './shared/ThemeToggle.js';
 export * from './providers.js';
 
 // Layout Components
-export * from './layout.js';
+export * from './layout.tsx';
 
 // Import renamed components
 export { default as MainLayout } from './layout/MainLayout.jsx.js';

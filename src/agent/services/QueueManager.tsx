@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { CacheService } from '../../cache/CacheService.js';
 import { AgentMessage } from '../../types/agent.types.js';
-import { AgentProcessorConfig } from '../config/AgentProcessorConfig.js';
+import { AgentProcessorConfig } from '../config/AgentProcessorConfig.tsx';
 
 @Injectable()
 export class QueueManager {

@@ -58,10 +58,10 @@ export class A2ADistributedWorkflow {
                         status: 'completed',
                         agentId
                     });
-                } catch (error) {
+                } catch (error: unknown) {
                     results.set(step.nodeId, {
                         status: 'failed',
-                        error: error.message
+                        error: (error as Error).message
                     });
                 } finally {
                     inProgress.delete(step.nodeId);

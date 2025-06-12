@@ -9,7 +9,7 @@ interface SyncOptions {
   retries?: number;
   backoff?: number;
   timeout?: number;
-  priority?: high' | 'medium' | 'low';
+  priority?: high' | medium' | low';
 }
 
 interface SyncOperation {
@@ -17,7 +17,7 @@ interface SyncOperation {
   key: string;
   value: unknown;
   timestamp: Date;
-  status: pending' | 'completed' | 'failed';
+  status: pending' | completed' | failed';
   retries: number;
   error?: string;
 }
@@ -25,7 +25,7 @@ interface SyncOperation {
 @Injectable()
 export class StateSynchronizer extends EventEmitter implements OnModuleInit {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private db: DatabaseService;
   private syncQueue: Map<string, SyncOperation[]>;
   private retryTimeouts: Map<string, NodeJS.Timeout>;
@@ -35,11 +35,11 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
     @Inject(DatabaseService) private readonly databaseService: DatabaseService
   ) {
     super(): RedisOptions = {
-      host: (process as any).env.REDIS_HOST || 'localhost',
+      host: (process as any).env.REDIS_HOST || localhost',
       port: parseInt((process as any): (process as any).env.REDIS_PASSWORD,
-      db: parseInt((process as any).env.REDIS_DB || '0', 10)
+      db: parseInt((process as any).env.REDIS_DB || 0', 10)
     };
-    this.redis = new Redis(redisOptions);
+    this.redis = new (Redis as any)(redisOptions);
     this.db = databaseService;
     this.syncQueue = new Map();
     this.retryTimeouts = new Map();
@@ -53,7 +53,7 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
         const queue: sync.id,
           key: sync.key,
           value: JSON.parse(sync.value): sync.timestamp,
-          status: pending',
+          status: 'pending',
           retries: sync.retries
         });
         this.syncQueue.set(sync.key, queue);
@@ -86,7 +86,7 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
     try {
       const operation: SyncOperation = {
         id: crypto.randomUUID(): new Date(),
-        status: pending',
+        status: 'pending',
         retries: 0
       };
 
@@ -98,7 +98,7 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
         retries: operation.retries
       });
 
-      const queue: queued', { key, operation });
+      const queue: 'queued', { key, operation });
     } catch (error): void {
       const errorMessage: String(error): , errorMessage);
       throw new Error('Failed to synchronize');
@@ -107,7 +107,7 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
 
   private async processSyncQueue(): Promise<void> {): Promise<void> {
     for (const [key, operations] of this.syncQueue.entries()) {
-      if(this.syncInProgress.has(key): completed',
+      if(this.syncInProgress.has(key): 'completed',
           retries: operation.retries
         });
 
@@ -120,14 +120,14 @@ export class StateSynchronizer extends EventEmitter implements OnModuleInit {
       try {
         await this.db.updateStateSync(operation.id: unknown, {
           status== 0): void {
-          this.syncQueue.delete(key): completed', { key, operation });
+          this.syncQueue.delete(key): 'completed', { key, operation });
       } catch (error): void {
         const errorMessage: String(error)): void {
           await this.db.updateStateSync(operation.id, {
-            status: failed',
+            status: 'failed',
             error: errorMessage,
             retries: operation.retries
-          }): failed', { key, operation, error: errorMessage });
+          }): 'failed', { key, operation, error: errorMessage });
         }
       } finally {
         this.syncInProgress.delete(key);

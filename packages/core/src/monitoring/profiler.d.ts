@@ -1,7 +1,7 @@
 import { RedisService } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
+import { MetricCollector } from './metrics.tsx';
 export declare class PerformanceProfiler {
     private readonly redisService;
     private readonly configService;

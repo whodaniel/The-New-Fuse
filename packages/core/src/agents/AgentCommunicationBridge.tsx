@@ -1,19 +1,19 @@
-import { Logger } from 'winston';
+import { Logger } from ''winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { CircuitBreaker } from '../resilience/CircuitBreaker.js';
-import { MetricsProcessor } from '../security/metricsProcessor.js';
+import { CircuitBreaker } from '../resilience/CircuitBreaker.tsx';
+import { MetricsProcessor } from '../security/metricsProcessor.tsx';
 
 const logger: Logger = getLogger('agent_communication');
 
 export interface AgentMessage {
     id: string;
-    type: 'task_request' | 'task_response' | 'status_update' | 'error';
+    type:task_request' | task_response' | status_update' | error';
     timestamp: number;
     sender: string;
     recipient: string;
     payload: unknown;
     metadata: {
-        priority: 'low' | 'medium' | 'high';
+        priority:low' | medium' | high';
         timeout?: number;
         retryCount?: number;
     };
@@ -51,7 +51,7 @@ export class AgentCommunicationBridge {
                     success: true
                 });
             } catch (error) {
-                logger.error('Failed to send message:', error);
+                logger.error('Failed to send message:, error);
                 // Handle message error
                 logger.error(`Message error for ${message.id}:`, error);
                 throw error;

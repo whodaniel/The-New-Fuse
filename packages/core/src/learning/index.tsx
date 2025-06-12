@@ -6,9 +6,9 @@ import {
   LearningMetrics,
   Pattern,
   Adaptation,
-} from './types.js';
-import { PatternRecognizer } from './pattern.js';
-import { SystemAdaptor } from './adaptor.js';
+} from './types.tsx';
+import { PatternRecognizer } from './pattern.tsx';
+import { SystemAdaptor } from './adaptor.tsx';
 import { MemorySystem } from '../memory.js';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
@@ -41,7 +41,7 @@ export class LearningSystem {
     };
   }
 
-  async learn(data: Omit<LearningData, 'id' | 'metadata'>): Promise<void> {
+  async learn(data: Omit<LearningData, 'id' | metadata'>): Promise<void> {
     if (!this.config.enabled) {
       return;
     }
@@ -51,7 +51,7 @@ export class LearningSystem {
       id: uuidv4(),
       metadata: {
         timestamp: new Date(),
-        version: this.configService.get('APP_VERSION', '1.0.0'),
+        version: this.configService.get('APP_VERSION', 1.0.0'),
         tags: [],
         performance: {
           executionTime: 0,
@@ -88,8 +88,8 @@ export class LearningSystem {
         memoryUsage: process.memoryUsage().heapUsed,
       };
     } catch (error) {
-      console.error('Error in learning process:', error);
-      this.eventEmitter.emit('learning.error', { data: learningData, error });
+      console.error('Error in learning process:, error);
+      this.eventEmitter.emit('learning.'error', { data: learningData, error });
     }
   }
 

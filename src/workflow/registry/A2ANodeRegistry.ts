@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { NodeRegistry } from './NodeRegistry.js';
 import { A2ANode } from '../nodes/A2ANode.js';
-import { A2ANodeComponent } from '../../components/workflow/A2ANodeComponent.js';
+import { A2ANodeComponent } from '../../components/workflow/A2ANodeComponent.tsx';
 import { ConfigurationManager } from '../../config/A2AConfig.js';
 
 @Injectable()

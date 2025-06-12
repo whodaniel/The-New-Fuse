@@ -1,6 +1,6 @@
 import React from 'react';
 import { useOnboarding } from '@/hooks/useOnboarding';
-import { FeatureTour } from './FeatureTour.js';
+import { FeatureTour } from './FeatureTour.tsx';
 import { GettingStartedGuide } from './GettingStartedGuide.js';
 
 export const UserOnboarding: React.FC = () => {

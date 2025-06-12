@@ -1,8 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Center, Spinner } from '@chakra-ui/react';
-import { ProtectedRoute } from '../components/core/ProtectedRoute.js';
-import { PublicRoute } from '../components/core/PublicRoute.js';
+import { ProtectedRoute } from '../components/core/ProtectedRoute.tsx';
+import { PublicRoute } from '../components/core/PublicRoute.tsx';
 
 // Lazy-loaded components with proper default exports
 const Landing = lazy(() => import('../pages/Landing').then(m => ({ default: m.Landing })));

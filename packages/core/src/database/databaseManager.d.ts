@@ -1,6 +1,6 @@
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 export interface DatabaseConfig {
-    type: postgres' | 'mysql' | 'sqlite';
+    type: postgres' | mysql' | sqlite';
     host?: string;
     port?: number;
     username?: string;

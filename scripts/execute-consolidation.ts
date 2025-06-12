@@ -1,5 +1,5 @@
 import { executeAnalysisPhase } from './execute-analysis.js';
-import { AdvancedComponentMerger } from './utils/advanced-merger.js';
+import { AdvancedComponentMerger } from './utils/advanced-merger.tsx';
 import { EnhancedDocSyncer } from './utils/doc-sync.js';
 import { EnhancedTreeShaker } from './utils/enhanced-treeshaker.js';
 

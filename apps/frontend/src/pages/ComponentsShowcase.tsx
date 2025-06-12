@@ -1,47 +1,39 @@
 import React, { useState } from 'react';
-import {
-  Badge,
-  Button,
-  Card,
-  Input,
-  Select,
-  Container,
-  Split,
-  Layout,
-  Sidebar
-} from '@the-new-fuse/ui-consolidated';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+// Temporarily using local components instead of ui-consolidated
+// import {
+//   Badge,
+//   Button,
+//   Card,
+//   Input,
+//   Select,
+//   Container,
+//   Split,
+//   Layout,
+//   Sidebar
+// } from '@the-new-fuse/ui-consolidated';
 
 /**
  * ComponentsShowcase - A page to showcase all UI components
  */
 const ComponentsShowcase: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [collapsed, setCollapsed] = useState(false);
   const [inputValue, setInputValue] = useState('');
-  const [selectValue, setSelectValue] = useState('');
   
   return (
     <div className="min-h-screen bg-white">
-      <Container size="lg" className="py-8">
+      <div className="max-w-4xl mx-auto py-8 px-4">
         <h1 className="text-3xl font-bold mb-8 text-center">UI Components Showcase</h1>
         
         {/* Badges Section */}
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Badges</h2>
           <div className="flex flex-wrap gap-2 mb-4">
-            <Badge>Default</Badge>
-            <Badge variant="secondary">Secondary</Badge>
-            <Badge variant="destructive">Destructive</Badge>
-            <Badge variant="outline">Outline</Badge>
-            <Badge variant="success">Success</Badge>
-            <Badge variant="warning">Warning</Badge>
-            <Badge variant="info">Info</Badge>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Badge size="sm">Small</Badge>
-            <Badge>Default</Badge>
-            <Badge size="lg">Large</Badge>
-            <Badge dismissible onDismiss={() => alert('Badge dismissed')}>Dismissible</Badge>
+            <Badge>Default Badge</Badge>
+            <Badge className="bg-secondary">Secondary</Badge>
+            <Badge className="bg-destructive">Destructive</Badge>
+            <Badge className="border border-gray-300">Outline</Badge>
           </div>
         </section>
         
@@ -294,7 +286,7 @@ const ComponentsShowcase: React.FC = () => {
             View Layout Example
           </Button>
         </section>
-      </Container>
+      </div>
     </div>
   );
 };

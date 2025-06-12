@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useWebSocket } from '../hooks/useWebSocket.js';
-import { Badge } from './ui/badge.js';
-import { Card, CardHeader, CardContent } from './ui/card.js';
+import { Badge } from './ui/badge.tsx';
+import { Card, CardHeader, CardContent } from './ui/card.tsx';
 import { Progress } from './ui/progress.js';
 import { Skeleton } from './ui/skeleton.js';
 

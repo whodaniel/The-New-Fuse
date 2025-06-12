@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Message, MessageType, MessageValidationError } from './types.js';
+import { Message, MessageType, MessageValidationError } from './types.tsx';
 import { ConfigService } from '@nestjs/config';
 import * as Joi from 'joi';
 
@@ -175,18 +175,18 @@ export class MessageValidator {
     const now = new Date().getTime();
     if (message.metadata.timestamp.getTime() > now + 1000) { // Allow 1 second clock skew
       errors.push({
-        field: 'metadata.timestamp',
+        field: metadata.'timestamp',
         code: 'FUTURE_TIMESTAMP',
-        message: 'Message timestamp cannot be in the future',
+        message: Message timestamp cannot be in the 'future',
       });
     }
 
     // Validate TTL if present
     if (message.metadata.ttl !== undefined && message.metadata.ttl <= 0) {
       errors.push({
-        field: 'metadata.ttl',
+        field:metadata.'ttl',
         code: 'INVALID_TTL',
-        message: 'TTL must be greater than 0',
+        message: TTL must be greater than 0',
       });
     }
 
@@ -194,9 +194,9 @@ export class MessageValidator {
     if (message.metadata.retries !== undefined && message.metadata.maxRetries !== undefined) {
       if (message.metadata.retries > message.metadata.maxRetries) {
         errors.push({
-          field: 'metadata.retries',
+          field:metadata.'retries',
           code: 'MAX_RETRIES_EXCEEDED', // Corrected error code
-          message: 'Retries cannot exceed maxRetries',
+          message: Retries cannot exceed 'maxRetries',
         });
       }
     }
@@ -207,7 +207,7 @@ export class MessageValidator {
       const maxDepth = this.configService.get<number>('MAX_CORRELATION_DEPTH', 10);
       if (depth > maxDepth) {
         errors.push({
-          field: 'metadata.correlationId',
+          field:metadata.'correlationId',
           code: 'CORRELATION_DEPTH_EXCEEDED',
           message: `Correlation chain depth (${depth}) exceeds maximum allowed depth (${maxDepth})`,
         });
@@ -218,17 +218,17 @@ export class MessageValidator {
     if (this.configService.get<boolean>('REQUIRE_MESSAGE_SIGNATURE', false)) {
       if (!message.metadata.signature) {
         errors.push({
-          field: 'metadata.signature',
+          field:metadata.'signature',
           code: 'MISSING_SIGNATURE',
-          message: 'Message signature is required',
+          message: Message signature is 'required',
         });
       } else {
         const isValid = await this.verifySignature(message);
         if (!isValid) {
           errors.push({
-            field: 'metadata.signature',
+            field:metadata.'signature',
             code: 'INVALID_SIGNATURE',
-            message: 'Invalid message signature',
+            message: Invalid message 'signature',
           });
         }
       }

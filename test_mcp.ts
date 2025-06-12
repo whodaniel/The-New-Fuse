@@ -1,4 +1,4 @@
-import { MCPClient } from './src/mcp_client.js';
+import { MCPClient } from './src/mcp_client.tsx';
 import path from 'path';
 
 /**

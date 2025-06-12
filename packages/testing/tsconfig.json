@@ -29,12 +29,6 @@
   "exclude": [
     "node_modules",
     "dist",
-    "**/*.spec.ts",
-    "src/contract",
-    "src/e2e",
-    "src/matchers",
-    "src/performance",
-    "src/setup.ts",
-    "src/setup.d.ts"
+    "**/*.spec.ts"
   ]
 }

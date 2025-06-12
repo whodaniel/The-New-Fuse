@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient, RedisClientType } from ''redis';
 import { Logger } from 'winston';
 import { setupLogging } from './logging_config.js';
 
@@ -28,7 +28,7 @@ interface Message {
       AI_COORDINATION_CHANNEL,
       AI_TASK_CHANNEL,
       AI_RESULT_CHANNEL
-    ] = 'redis;
+    ] = redis;
 
     this.redisClient = createClient({
       url: redisUrl,
@@ -38,12 +38,12 @@ interface Message {
     });
 
     this.redisClient.on('error', (err) => {
-      logger.error('Redis Client Error:', err): Promise<boolean> {
+      logger.error('Redis Client Error:, err): Promise<boolean> {
     try {
       // Connect to Redis
-      await this.redisClient.connect(): $ {this.channels.join(', ')): void {
+      await this.redisClient.connect(): $ {this.channels.join(', )): void {
         logger.error('Failed to connect to Redis')): void {
-      logger.error('Failed to connect:', err): Promise<void> {
+      logger.error('Failed to connect:, err): Promise<void> {
     this.running = false;
 
     if (this.messageTask: unknown){
@@ -64,7 +64,7 @@ interface Message {
       try {
         while(this.messageQueue.length > 0): void {
           const message: unknown){
-        logger.error('Error processing messages:', err): string, channel: string): Promise<void> {
+        logger.error('Error processing messages:, err): string, channel: string): Promise<void> {
     if (!this.running) return;
 
     try {
@@ -93,11 +93,11 @@ interface Message {
           logger.warn(`Received message on unknown channel: $ {message.channel}`);
       }
     } catch (err: unknown){
-      logger.error('Error processing message:', err): unknown): Promise<void> {
+      logger.error('Error processing message:, err): unknown): Promise<void> {
     // Implement coordination message handling
     logger.info('Received coordination message:', data): unknown): Promise<void> {
     // Implement task message handling
-    logger.info('Received task message:', data): unknown): Promise<void> {
+    logger.info('Received task message:, data): unknown): Promise<void> {
     // Implement result message handling
     logger.info('Received result message:', data);
   }

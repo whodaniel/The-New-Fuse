@@ -3,8 +3,8 @@
  * Configures logging formats, handlers, and levels for different components.
  */
 
-import * as winston from 'winston';
-import 'winston-daily-rotate-file';
+import * as winston from ''winston';
+import winston-daily-rotate-file;
 import * as path from 'path';
 import * as fs from 'fs';
 import { format } from 'winston';
@@ -57,8 +57,8 @@ export function setupLogging(config: LoggerConfig = {}): LoggerCollection {
   // Define detailed format for logs
   const detailedFormat = format.combine(
     format.timestamp(),
-    format.label({ label: 'cline-bridge' }),
-    format.metadata({ fillExcept: ['message', 'level', 'timestamp', 'label'] }),
+    format.label({ label:cline-bridge }),
+    format.metadata({ fillExcept: ['message', level', timestamp', label'] }),
     format.colorize(),
     format.printf(({ timestamp, level, message, label, metadata }) => {
       let msg = `${timestamp} [${label}] ${level}: ${message}`;
@@ -84,8 +84,8 @@ export function setupLogging(config: LoggerConfig = {}): LoggerCollection {
   // Add file transport with rotation
   const fileTransport = new (winston as any).transports.DailyRotateFile({
     dirname: logDir,
-    filename: 'cline_bridge_%DATE%.log',
-    datePattern: 'YYYY-MM-DD',
+    filename:cline_bridge_%DATE%.'log',
+    datePattern:YYYY-MM-DD,
     maxSize,
     maxFiles,
     format: detailedFormat
@@ -148,7 +148,7 @@ function createDefaultLogger(name: string): winston.Logger {
     defaultMeta: { component: name },
     format: format.combine(
       format.timestamp(),
-      format.label({ label: 'cline-bridge' }),
+      format.label({ label: cline-bridge }),
       format.metadata()
     ),
     transports: [

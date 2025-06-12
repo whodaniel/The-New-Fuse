@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
-import { Task } from '../../entities/Task.js';
-import { TaskExecution } from '../../entities/TaskExecution.js';
+import { Task } from '../../entities/Task';
+import { TaskExecution } from '../../entities/TaskExecution';
 export declare class TaskService {
     private readonly taskRepository;
     private readonly taskExecutionRepository;

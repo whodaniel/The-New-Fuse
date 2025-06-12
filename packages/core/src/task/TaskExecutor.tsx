@@ -7,13 +7,13 @@ import { EventEmitter } from 'events';
 import { TaskRepository } from '@the-new-fuse/database';
 
 const statusTransitions: Record<TaskStatusType, TaskStatusType[]> = {
-  'pending': ['running', 'cancelled'],
-  'running': ['completed', 'failed', 'cancelled'],
-  'completed': [],
-  'failed': ['pending'],
-  'cancelled': ['pending'],
-  'scheduled': ['pending', 'cancelled'],
-  'in_progress': ['running', 'failed', 'cancelled']
+  pending': ['running', cancelled'],
+  running': ['completed', failed', cancelled'],
+  completed': [],
+  failed': ['pending'],
+  cancelled': ['pending'],
+  scheduled': ['pending', cancelled'],
+  in_progress': ['running', failed', cancelled']
 } as const;
 
 async function updateTaskStatus(task: Task, newStatus: TaskStatusType, taskRepository: TaskRepository): Promise<Task> {
@@ -117,9 +117,9 @@ export class TaskExecutor extends EventEmitter {
 
   private async runTask(task: Task): Promise<{ output?: Record<string, unknown> }> {
     switch (task.type) {
-      case 'processing':
+      case processing':
         return this.processTask(task);
-      case 'analysis':
+      case analysis':
         return this.analyzeTask(task);
       default:
         throw new Error(`Unknown task type: ${task.type}`);
@@ -205,13 +205,13 @@ export class TaskExecutor extends EventEmitter {
 
   private async processTaskData(data: unknown, config: Record<string, string>): Promise<any> {
     // Implement actual data processing logic based on task type and configuration
-    const processingType = config.processingType || 'default';
+    const processingType = config.processingType || default';
     switch (processingType) {
-      case 'transform':
+      case transform':
         return this.transformData(data, config);
-      case 'validate':
+      case validate':
         return this.validateData(data, config);
-      case 'aggregate':
+      case aggregate':
         return this.aggregateData(data, config);
       default:
         return this.defaultProcessing(data);
@@ -220,13 +220,13 @@ export class TaskExecutor extends EventEmitter {
 
   private async analyzeTaskData(data: unknown, params: Record<string, any>): Promise<any> {
     // Implement actual data analysis logic based on parameters
-    const analysisType = params.analysisType || 'basic';
+    const analysisType = params.analysisType || basic';
     switch (analysisType) {
-      case 'statistical':
+      case statistical':
         return this.performStatisticalAnalysis(data, params);
-      case 'pattern':
+      case pattern':
         return this.performPatternAnalysis(data, params);
-      case 'prediction':
+      case prediction':
         return this.performPredictiveAnalysis(data, params);
       default:
         return this.performBasicAnalysis(data);
@@ -288,13 +288,13 @@ export class TaskExecutor extends EventEmitter {
 
   private async processTaskData(data: unknown, config: Record<string, string>): Promise<any> {
     // Implement actual data processing logic based on task type and configuration
-    const processingType = config.processingType || 'default';
+    const processingType = config.processingType || default';
     switch (processingType) {
-      case 'transform':
+      case transform':
         return this.transformData(data, config);
-      case 'validate':
+      case validate':
         return this.validateData(data, config);
-      case 'aggregate':
+      case aggregate':
         return this.aggregateData(data, config);
       default:
         return this.defaultProcessing(data);
@@ -303,13 +303,13 @@ export class TaskExecutor extends EventEmitter {
 
   private async analyzeTaskData(data: unknown, params: Record<string, any>): Promise<any> {
     // Implement actual data analysis logic based on parameters
-    const analysisType = params.analysisType || 'basic';
+    const analysisType = params.analysisType || basic';
     switch (analysisType) {
-      case 'statistical':
+      case statistical':
         return this.performStatisticalAnalysis(data, params);
-      case 'pattern':
+      case pattern':
         return this.performPatternAnalysis(data, params);
-      case 'prediction':
+      case prediction':
         return this.performPredictiveAnalysis(data, params);
       default:
         return this.performBasicAnalysis(data);

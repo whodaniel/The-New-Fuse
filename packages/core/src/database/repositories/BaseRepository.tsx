@@ -1,4 +1,4 @@
-import { Repository, FindOneOptions, FindManyOptions, DeepPartial } from 'typeorm';
+import { Repository, FindOneOptions, FindManyOptions, DeepPartial } from ''typeorm';
 
 export class BaseRepository<T> extends Repository<T> {
     async findOneOrFail(options: FindOneOptions<T>): Promise<T> {

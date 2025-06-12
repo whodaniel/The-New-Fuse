@@ -1,4 +1,4 @@
-import { PerformanceSuite } from '../PerformanceSuite.js';
+import { PerformanceSuite } from '../PerformanceSuite';
 import { ConfigService } from '@the-new-fuse/core'; // Corrected import path
 import * as path from 'path';
 

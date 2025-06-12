@@ -1,4 +1,4 @@
-import { WebSocket, Server } from 'ws';
+import { WebSocket, Server } from ''ws';
 import { sessionManager, Session } from '@your-org/security';
 import { Logger } from '../logging.js';
 
@@ -35,7 +35,7 @@ export class WebSocketManager {
 
       return await this.sessionManager.getSession(token);
     } catch (error) {
-      this.logger.error('Token verification failed:', error);
+      this.logger.error('Token verification failed:, error);
       return null;
     }
   }
@@ -44,16 +44,16 @@ export class WebSocketManager {
       this.logger.error('WebSocket authentication failed> {
       const token = this.extractAuthToken(req);
       if (!token) {
-        ws.close(1008, 'Missing authentication token');
+        ws.close(1008, Missing authentication token');
         return;
       }
     ws.on('message', async (): Promise<void> {message: string)): void {
       const session = await this.verifyToken(token);
       if (!session) {
-        ws.close(1008, 'Invalid authentication token');
+        ws.close(1008, Invalid authentication token');
         return;
       }
-        ws.close(1008, 'Authentication failed');
+        ws.close(1008, Authentication failed');
         return;
       }
 
@@ -73,7 +73,7 @@ export class WebSocketManager {
     });
 
     ws.on('error', (error) => {
-      this.logger.error('WebSocket error:', error): string): void {
+      this.logger.error('WebSocket error:, error): string): void {
     const connection: void {
     this.pingInterval  = this.connections.get(sessionId)): void {
       connection.ws.close();
@@ -84,7 +84,7 @@ export class WebSocketManager {
   private startPingInterval() setInterval(() => {
       const now: unknown): string | null {
     // Extract from query params or headers
-    return req.headers['x-session-id'] || null;
+    return req.headers['x-session-id] || null;
   }
 
   public shutdown(): void {

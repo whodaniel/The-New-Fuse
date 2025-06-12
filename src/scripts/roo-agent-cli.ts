@@ -26,8 +26,8 @@ async function initializeService() {
       const mcpService = new MCPService();
       agentService = new RooAgentAutomationService(mcpService);
       await agentService.initialize(process.cwd());
-    } catch (error) {
-      console.error(chalk.red('Failed to initialize agent service:'), error.message);
+    } catch (error: unknown) {
+      console.error(chalk.red('Failed to initialize agent service:'), (error as Error).message);
       process.exit(1);
     }
   }
@@ -100,8 +100,8 @@ async function createAgent() {
     console.log(chalk.gray(`- Categories: ${agent.categories?.join(', ') || 'None'}`));
     console.log(chalk.gray(`- Tags: ${agent.tags?.join(', ') || 'None'}`));
     
-  } catch (error) {
-    spinner.fail(chalk.red(`Failed to create agent: ${error.message}`));
+  } catch (error: unknown) {
+    spinner.fail(chalk.red(`Failed to create agent: ${(error as Error).message}`));
     process.exit(1);
   }
 }
@@ -153,8 +153,8 @@ async function createTeam() {
       console.log(chalk.gray(`- ${agent.name} (${agent.slug})`));
     });
     
-  } catch (error) {
-    spinner.fail(chalk.red(`Failed to create team: ${error.message}`));
+  } catch (error: unknown) {
+    spinner.fail(chalk.red(`Failed to create team: ${(error as Error).message}`));
     process.exit(1);
   }
 }
@@ -265,8 +265,8 @@ async function deleteAgent() {
   try {
     await service.deleteAgent(answers.agentSlug, { isGlobal: answers.deleteGlobal });
     spinner.succeed(chalk.green(`Agent '${answers.agentSlug}' deleted successfully!`));
-  } catch (error) {
-    spinner.fail(chalk.red(`Failed to delete agent: ${error.message}`));
+  } catch (error: unknown) {
+    spinner.fail(chalk.red(`Failed to delete agent: ${(error as Error).message}`));
     process.exit(1);
   }
 }
@@ -294,8 +294,8 @@ async function getStatistics() {
       console.log(chalk.gray(`  ${category}: ${count}`));
     });
     
-  } catch (error) {
-    console.error(chalk.red(`Failed to get statistics: ${error.message}`));
+  } catch (error: unknown) {
+    console.error(chalk.red(`Failed to get statistics: ${(error as Error).message}`));
     process.exit(1);
   }
 }
@@ -428,8 +428,8 @@ program
       });
       
       spinner.succeed(chalk.green(`Agent '${agent.name}' created successfully!`));
-    } catch (error) {
-      spinner.fail(chalk.red(`Failed to create agent: ${error.message}`));
+    } catch (error: unknown) {
+      spinner.fail(chalk.red(`Failed to create agent: ${(error as Error).message}`));
       process.exit(1);
     }
   });
@@ -445,8 +445,8 @@ program
     try {
       const agents = await service.createDevelopmentTeam(team);
       spinner.succeed(chalk.green(`Team '${team}' created with ${agents.length} agents!`));
-    } catch (error) {
-      spinner.fail(chalk.red(`Failed to create team: ${error.message}`));
+    } catch (error: unknown) {
+      spinner.fail(chalk.red(`Failed to create team: ${(error as Error).message}`));
       process.exit(1);
     }
   });

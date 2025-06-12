@@ -1,4 +1,4 @@
-import { ClineBridge } from '../cline_bridge.js';
+import { ClineBridge } from '../cline_bridge.tsx';
 import { jest } from '@jest/globals';
 import { Task } from '../types/task.js';
 import { ImplementationPhase } from '../types/phase.js';

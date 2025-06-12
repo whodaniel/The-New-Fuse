@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from ''bcryptjs';
 import * as jwt from 'jsonwebtoken';
 import { Repository } from 'typeorm';
 import { User } from '../models/User.js';
@@ -65,7 +65,7 @@ export class AuthManagerImpl {
       throw new Error('Invalid credentials');
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.hashedPassword || '');
+    const isValidPassword = await bcrypt.compare(password, user.hashedPassword || );
 
     if (!isValidPassword) {
       throw new Error('Invalid credentials');

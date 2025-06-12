@@ -1,14 +1,14 @@
-import { container } from '../setup.js';
-import type { TYPES } from '../../core/di/types.js';
+import { container } from '../setup.tsx';
+import type { TYPES } from '../../core/di/types.tsx';
 import { AuthService } from '../../core/auth/auth-service.js';
-import { UserFactory } from '../factories/test-factory.js';
+import { UserFactory } from '../factories/test-factory.tsx';
 import {
   ApiTestHelper,
   expectSuccess,
   expectUnauthorized,
-} from '../helpers/api-test-helper.js';
+} from '../helpers/api-test-helper.tsx';
 import { Application } from "express";
-import { createApp } from '../../app.js'; // Assuming you have an app creation function
+import { createApp } from '../../app.tsx'; // Assuming you have an app creation function
 
 describe("Authentication Integration Tests", () => {
   let app: Application;

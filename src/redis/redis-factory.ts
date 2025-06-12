@@ -5,9 +5,9 @@
  * It supports both standard Redis clients and MCP Redis clients.
  */
 
-import { RedisService } from '../types/redis/service.js';
-import { RedisServiceImpl, createRedisService } from './redis.service.js';
-import { RedisConnectionOptions } from '../utils/redis/connection.js';
+import { RedisService } from '../types/redis/service.tsx';
+import { RedisServiceImpl, createRedisService } from './redis.service.tsx';
+import { RedisConnectionOptions } from '../utils/redis/connection.tsx';
 import { MCPRedisClient, MCPRedisConfig, createMCPRedisClient } from '../mcp/redis-client.js';
 
 export type RedisClientType = 'standard' | 'mcp';

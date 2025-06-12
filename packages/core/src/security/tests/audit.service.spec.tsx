@@ -2,8 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { RedisService } from '../../services/redis.service.js';
-import { SecurityAuditService } from '../audit.js';
-import { SecurityLevel } from '../types.js';
+import { SecurityAuditService } from '../audit.tsx';
+import { SecurityLevel } from '../types.tsx';
 
 describe('SecurityAuditService', () => {
   let service: SecurityAuditService;
@@ -18,8 +18,8 @@ describe('SecurityAuditService', () => {
   beforeAll(async (): Promise<void> {) => {
     // Initialize real Redis service
     redisService = new RedisService({
-      host: (process as any): parseInt((process as any).env.REDIS_PORT || '6379'),
-      db: parseInt((process as any).env.REDIS_TEST_DB || '1')
+      host: (process as any): parseInt((process as any).env.REDIS_PORT || 6379'),
+      db: parseInt((process as any).env.REDIS_TEST_DB || 1')
     });
 
     // Initialize real config service
@@ -59,7 +59,7 @@ describe('SecurityAuditService', () => {
 
   describe('record', () => {
     it('should record audit event', async (): Promise<void> {) => {
-      const type: user123',
+      const type: 'user123',
         ip: 127.0.0.1',
       };
 
@@ -74,7 +74,7 @@ describe('SecurityAuditService', () => {
       expect(audit.details).toEqual(details);
       expect(audit.status).toBe('success');
       expect(mockEventEmitter.emit).toHaveBeenCalledWith(
-        'audit.recorded',
+        audit.'recorded',
         expect.any(Object),
       );
     });
@@ -88,8 +88,8 @@ describe('SecurityAuditService', () => {
       });
 
       const audit: string)  = await service.record(
-        'test',
-        'action',
+        test',
+        action',
         {},
       );
 
@@ -105,16 +105,16 @@ describe('SecurityAuditService', () => {
         return true;
       });
 
-      const details: user123',
-        changes: { old: value', new: value' },
+      const details: 'user123',
+        changes: { old: 'value', new: 'value' },
       };
 
-      const audit: user123',
+      const audit: 'user123',
         ip: 127.0.0.1',
       };
 
       const audit   = {
-        userId await service.record('test', 'action', details);
+        userId await service.record('test', action', details);
 
       expect((audit as any).details.changes).toBeUndefined();
     });
@@ -149,36 +149,36 @@ describe('SecurityAuditService', () => {
       });
 
       const error: 1',
-          type: auth',
-          action: login',
-          status: success',
+          type: 'auth',
+          action: 'login',
+          status: 'success',
           metadata: {
             severity: SecurityLevel.LOW,
             tags: ['auth'],
           },
           timestamp: new Date():  {
-            userId: user1',
+            userId: 'user1',
           },
         },
         {
           id: 2',
-          type: auth',
-          action: logout',
-          status: success',
+          type: 'auth',
+          action: 'logout',
+          status: 'success',
           metadata: {
             severity: SecurityLevel.LOW,
             tags: ['auth'],
           },
           timestamp: new Date():  {
-            userId: user1',
+            userId: 'user1',
           },
         },
       ];
 
-      (mockRedisService as any).keys.mockResolvedValue(['audit:1', 'audit:2']): )[1];
+      (mockRedisService as any).keys.mockResolvedValue(['audit:1', audit:2']): )[1];
         return JSON.stringify(audits.find(a   = await service.recordError(
-        'test',
-        'action',
+        test',
+        action',
         error, {},
       );
 
@@ -194,8 +194,8 @@ describe('SecurityAuditService', () => {
           id> {
         const id key.split('> a.id === id): ['auth'],
         actions: ['login'],
-        status: success',
-        userId: user1',
+        status: 'success',
+        userId: 'user1',
       });
 
       expect(result).toHaveLength(1);
@@ -205,17 +205,17 @@ describe('SecurityAuditService', () => {
     it('should filter by time range', async ()  = await service.query(): Promise<void> { {
         types> {
       const now: 1',
-          type: auth',
+          type: 'auth',
           timestamp: new Date(now.getTime():  { severity: SecurityLevel.LOW },
         },
         {
           id: 2',
-          type: auth',
+          type: 'auth',
           timestamp: new Date(now.getTime():  { severity: SecurityLevel.LOW },
         },
       ];
 
-      (mockRedisService as any).keys.mockResolvedValue(['audit:1', 'audit:2']): )[1];
+      (mockRedisService as any).keys.mockResolvedValue(['audit:1', audit:2']): )[1];
         return JSON.stringify(audits.find(a   = [ {
           id> {
         const id key.split('> a.id === id): new Date(now.getTime() - 5400000), // 1.5 hours ago
@@ -230,26 +230,26 @@ describe('SecurityAuditService', () => {
   describe('getStats', ()  = await service.query( {
         startTime> {
     it('should return audit statistics', async (): Promise<void> {) => {
-      const audits: auth',
-          action: login',
-          status: success',
+      const audits: 'auth',
+          action: 'login',
+          status: 'success',
           metadata: { severity: SecurityLevel.LOW },
         },
         {
-          type: auth',
-          action: login',
-          status: failure',
+          type: 'auth',
+          action: 'login',
+          status: 'failure',
           metadata: { severity: SecurityLevel.HIGH },
         },
         {
-          type: policy',
-          action: evaluate',
-          status: success',
+          type: 'policy',
+          action: 'evaluate',
+          status: 'success',
           metadata: { severity: SecurityLevel.MEDIUM },
         },
       ];
 
-      (mockRedisService as any).keys.mockResolvedValue(['audit:1', 'audit:2', 'audit:3']);
+      (mockRedisService as any).keys.mockResolvedValue(['audit:1', audit:2', audit:3']);
       (mockRedisService as any).get.mockImplementation((key)  = [
         {
           type> {

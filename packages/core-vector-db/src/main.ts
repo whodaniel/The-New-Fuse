@@ -18,10 +18,9 @@ async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     VectorDatabaseModule.forRoot({
       vectorDbConfig: {
-        type: process.env.VECTOR_DB_TYPE || 'qdrant',
-        url: process.env.VECTOR_DB_URL || process.env.QDRANT_URL || 'http://localhost:6333',
+        provider: (process.env.VECTOR_DB_TYPE as any) || 'qdrant',
         apiKey: process.env.VECTOR_DB_API_KEY || process.env.QDRANT_API_KEY,
-        host: process.env.VECTOR_DB_HOST,
+        host: process.env.VECTOR_DB_HOST || process.env.VECTOR_DB_URL || process.env.QDRANT_URL || 'http://localhost:6333',
         port: process.env.VECTOR_DB_PORT ? parseInt(process.env.VECTOR_DB_PORT) : undefined,
         database: process.env.VECTOR_DB_DATABASE,
         ssl: process.env.VECTOR_DB_SSL === 'true',
@@ -32,7 +31,7 @@ async function bootstrap() {
         provider: 'openai',
         apiKey: process.env.OPENAI_API_KEY || '',
         model: process.env.OPENAI_EMBEDDING_MODEL || 'text-embedding-3-small',
-        dimensions: process.env.OPENAI_EMBEDDING_DIMENSIONS ? parseInt(process.env.OPENAI_EMBEDDING_DIMENSIONS) : 1536,
+        dimension: process.env.OPENAI_EMBEDDING_DIMENSIONS ? parseInt(process.env.OPENAI_EMBEDDING_DIMENSIONS) : 1536,
       },
     }),
     {
@@ -46,7 +45,7 @@ async function bootstrap() {
         keepalive: {
           keepaliveTimeMs: 120000,
           keepaliveTimeoutMs: 5000,
-          keepalivePermitWithoutCalls: true,
+          keepalivePermitWithoutCalls: 1,
           http2MaxPingsWithoutData: 0,
           http2MinTimeBetweenPingsMs: 10000,
           http2MinPingIntervalWithoutDataMs: 5 * 60 * 1000,

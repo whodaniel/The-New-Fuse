@@ -73,13 +73,13 @@ export default {
       return new Response(JSON.stringify(result), {
         headers: { 'Content-Type': 'application/json' }
       });
-    } catch (error) {
+    } catch (error: unknown) {
       // Handle unexpected errors
       return new Response(JSON.stringify({
         success: false,
         output: [],
         error: {
-          message: error.message || 'Unknown error',
+          message: (error as Error).message || 'Unknown error',
           stack: error.stack,
           type: error.name
         },

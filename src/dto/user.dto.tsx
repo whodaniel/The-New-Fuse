@@ -1,11 +1,11 @@
 // filepath: src/dto/user.dto.ts
 import { BaseDTO } from './base.dto.js';
-import { UserRole, UserStatus } from '../entities/user.entity.js';
+import { UserRole, UserStatus } from '../entities/user.entity.tsx';
 
 export interface CreateUserDTO {
-  email: string;
-  username: string;
-  password: string;
+  email!: string;
+  username!: string;
+  password!: string;
   firstName?: string;
   lastName?: string;
   role?: UserRole;
@@ -23,11 +23,11 @@ export interface UpdateUserDTO {
 }
 
 export interface UserResponseDTO extends BaseDTO {
-  email: string;
-  username: string;
+  email!: string;
+  username!: string;
   firstName?: string;
   lastName?: string;
-  role: UserRole;
-  status: UserStatus;
+  role!: UserRole;
+  status!: UserStatus;
   lastLogin?: Date;
 }

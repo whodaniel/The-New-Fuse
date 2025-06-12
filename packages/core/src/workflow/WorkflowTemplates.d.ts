@@ -1,4 +1,4 @@
-import { WorkflowTemplate } from '@the-new-fuse/types';
+import { WorkflowTemplate  } from '@the-new-fuse/types;
 export declare const dependencyAnalysisTemplate: WorkflowTemplate;
 export declare const securityAnalysisTemplate: WorkflowTemplate;
 export declare const performanceAnalysisTemplate: WorkflowTemplate;
@@ -34,5 +34,5 @@ export declare const workflowTemplates: {
     readonly validationWorkflow: WorkflowTemplate;
     readonly analysisReportWorkflow: WorkflowTemplate;
     readonly complexWorkflow: WorkflowTemplate;
-};
-export type WorkflowTemplateType = keyof typeof workflowTemplates;
+}';
+export type WorkflowTemplateType = keyof typeof workflowTemplates';

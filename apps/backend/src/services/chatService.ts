@@ -77,4 +77,22 @@ export class ChatService {
   //     where: { createdAt: { lt: thirtyDaysAgo } },
   //   });
   // }
+  // Static methods for backward compatibility with existing route usage
+  static async getChatHistory(userId: string, page = 1, pageSize = 20) {
+    const prisma = new PrismaService();
+    const service = new ChatService(prisma);
+    return service.getChatHistory(userId, page, pageSize);
+  }
+
+  static async addMessage(userId: string, role: string, content: string) {
+    const prisma = new PrismaService();
+    const service = new ChatService(prisma);
+    return service.addMessage(userId, role as MessageRole, content);
+  }
+
+  static async clearChatHistory(userId: string) {
+    const prisma = new PrismaService();
+    const service = new ChatService(prisma);
+    return service.clearChatHistory(userId);
+  }
 }

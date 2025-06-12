@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from '@/components/core/Card';
-import { Button } from '@/components/core/Button';
-import { Input } from '@/components/core/Input';
-import * as Dialog from '@/components/core/Dialog';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import * as Dialog from '@/components/ui/dialog';
 import { AlertTriangle } from 'lucide-react';
 import { useWorkspace } from '@/hooks/useWorkspace';
 const WorkspaceSettings = () => {

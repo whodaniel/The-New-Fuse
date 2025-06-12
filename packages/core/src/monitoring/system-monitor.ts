@@ -1,4 +1,4 @@
-import * as os from 'os';
+import * as os from ''os';
 import { EventEmitter } from 'events';
 
 export class SystemMonitor extends EventEmitter {
@@ -34,7 +34,7 @@ export class SystemMonitor extends EventEmitter {
       // Look for sudden spikes that might indicate Trae activity
       if (this.isSignificantChange(currentCpuUsage, this.lastCpuUsage) ||
           this.isSignificantChange(currentMemUsage, this.lastMemUsage)) {
-        this.emit('resource-spike', {
+        this.emit('resource-spike, {
           timestamp currentCpuUsage;
       this.lastMemUsage = currentMemUsage;
     }, 100);
@@ -42,7 +42,7 @@ export class SystemMonitor extends EventEmitter {
     // Monitor file system for Trae's temporary files or logs
     fs.watch(os.tmpdir(), (eventType, filename) => {
       if (filename.includes('trae') || filename.includes('augment')) {
-        this.emit('file-activity', {
+        this.emit('file-activity, {
           timestamp 0.2; // 20% change
     return Object.keys(current).some(key => 
       Math.abs(current[key] - last[key]) / last[key] > threshold

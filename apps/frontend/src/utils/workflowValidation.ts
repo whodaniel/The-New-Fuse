@@ -39,7 +39,7 @@ const isValidPosition = (position): any => {
         positionSchema.parse(position);
         return true;
     }
-    catch (_a) {
+    catch {
         return false;
     }
 };
@@ -49,7 +49,7 @@ const isValidCondition = (condition): any => {
         conditionSchema.parse(condition);
         return true;
     }
-    catch (_a) {
+    catch {
         return false;
     }
 };
@@ -59,7 +59,7 @@ const isValidNode = (node): any => {
         nodeSchema.parse(node);
         return true;
     }
-    catch (_a) {
+    catch {
         return false;
     }
 };
@@ -69,20 +69,19 @@ const isValidEdge = (edge): any => {
         edgeSchema.parse(edge);
         return true;
     }
-    catch (_a) {
+    catch {
         return false;
     }
 };
 exports.isValidEdge = isValidEdge;
 const validateNodeConfiguration = (node): any => {
-    var _a, _b, _c, _d, _e;
     const errors = [];
     switch (node.type) {
         case 'agent':
-            if (!((_a = node.data.config) === null || _a === void 0 ? void 0 : _a.agentType)) {
+            if (!node.data.config?.agentType) {
                 errors.push('Agent type is required');
             }
-            if (!((_b = node.data.config) === null || _b === void 0 ? void 0 : _b.model)) {
+            if (!node.data.config?.model) {
                 errors.push('Language model configuration is required');
             }
             break;
@@ -126,7 +125,6 @@ const validateWorkflowConnections = (nodes, edges): any => {
         }
     });
     edges.forEach(edge => {
-        var _a;
         const sourceNode = nodes.find(n => n.id === edge.source);
         const targetNode = nodes.find(n => n.id === edge.target);
         if (!sourceNode) {

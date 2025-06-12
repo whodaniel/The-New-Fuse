@@ -1,4 +1,4 @@
-import { MemoryProfile, MemoryLeakWarning } from './types/MemoryTypes.js';
+import { MemoryProfile, MemoryLeakWarning } from './types/MemoryTypes.tsx';
 
 export class MemoryLeakDetector {
     private memoryProfiles: MemoryProfile[] = [];

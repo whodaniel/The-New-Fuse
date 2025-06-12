@@ -5,7 +5,7 @@ export * from './user.js';
 export * from './workflow.js';
 export { AgentStatus } from './core.js';
 export * from './agent.js';
-export * from './feature.js';
+export * from './feature.tsx';
 export * from './auth.js';
 
 // Export utility functions

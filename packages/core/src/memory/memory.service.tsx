@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
 import { Memory } from '@the-new-fuse/types';
-import { PrismaClient } from '@the-new-fuse/database/client';
+import { PrismaClient } from '@the-new-fuse/database';
 
 @Injectable()
 export class MemoryService {
   private readonly logger = new Logger(MemoryService.name): PrismaClient;
 
   constructor() {
-    this.prisma = new PrismaClient(): Omit<Memory, 'id' | 'createdAt' | 'updatedAt'>): Promise<Memory> {
+    this.prisma = new PrismaClient(): Omit<Memory, 'id' | createdAt' | 'updatedAt'>): Promise<Memory> {
     try {
       const result: {
           type: memory.type,
@@ -26,7 +26,7 @@ export class MemoryService {
         updatedAt: result.updatedAt
       };
     } catch (error: unknown){
-      this.logger.error('Failed to create memory:', error): string): Promise<Memory | null> {
+      this.logger.error('Failed to create memory:, error): string): Promise<Memory | null> {
     try {
       const memory: { id }
       });
@@ -60,7 +60,7 @@ export class MemoryService {
         createdAt: memory.createdAt,
         updatedAt: memory.updatedAt
       })): void {
-      this.logger.error('Failed to find memories by type:', error): string, memory: Partial<Omit<Memory, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Memory> {
+      this.logger.error('Failed to find memories by type:, error): string, memory: Partial<Omit<Memory, 'id' | createdAt' | 'updatedAt'>>): Promise<Memory> {
     try {
       const result = await this.prisma.memory.update({
         where: { id },
@@ -80,7 +80,7 @@ export class MemoryService {
         updatedAt: result.updatedAt
       };
     } catch (error: unknown){
-      this.logger.error('Failed to update memory:', error): string): Promise<void> {
+      this.logger.error('Failed to update memory:, error): string): Promise<void> {
     try {
       await this.prisma.memory.delete({
         where: { id }

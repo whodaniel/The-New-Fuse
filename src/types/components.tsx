@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { User } from './index.js';
+import { User } from './index.tsx';
 
 // Common component props
 export interface BaseComponentProps {

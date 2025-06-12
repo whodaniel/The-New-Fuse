@@ -10,15 +10,15 @@ NC='\033[0m' # No Color
 
 # Function to print colored output
 print_status() {
-    echo -e "${GREEN}✅ \$1${NC}"
+    echo -e "${GREEN}✅ $1${NC}"
 }
 
 print_warning() {
-    echo -e "${YELLOW}⚠️  \$1${NC}"
+    echo -e "${YELLOW}⚠️  $1${NC}"
 }
 
 print_error() {
-    echo -e "${RED}❌ \$1${NC}"
+    echo -e "${RED}❌ $1${NC}"
 }
 
 # Check if we're in the right directory
@@ -27,16 +27,18 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
-# Ensure Corepack is enabled for Yarn
-echo "Ensuring Corepack is enabled..."
-corepack enable
+# Check if Bun is available
+if ! command -v bun &> /dev/null; then
+    print_error "Bun is not installed. Please install Bun first."
+    exit 1
+fi
 
 # Install vsce if not present
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
 if ! command -v vsce &> /dev/null; then
     print_warning "vsce not found. Installing globally via npm (requires npm to be functional)..."
     npm install -g @vscode/vsce
-    if [ \$? -ne 0 ]; then
+    if [ $? -ne 0 ]; then
         print_error "Failed to install vsce. Please ensure npm is working or install vsce manually."
         exit 1
     fi
@@ -45,23 +47,23 @@ else
     print_status "vsce is already installed"
 fi
 
-# Install dependencies using Yarn
-echo "2️⃣ Installing dependencies using Yarn..."
-yarn install --check-files
-if [ \$? -ne 0 ]; then
-    print_error "Failed to install dependencies using Yarn. Check for Yarn/Corepack issues or workspace errors."
+# Install dependencies using Bun
+echo "2️⃣ Installing dependencies using Bun..."
+bun install --frozen-lockfile
+if [ $? -ne 0 ]; then
+    print_error "Failed to install dependencies using Bun. Check for Bun installation or workspace errors."
     exit 1
 fi
-print_status "Dependencies installed using Yarn"
+print_status "Dependencies installed using Bun"
 
-# Build the extension using Yarn
-echo "3️⃣ Building extension using Yarn..."
-yarn run compile # Assuming 'compile' is the correct build script in package.json
-if [ \$? -ne 0 ]; then
-    print_warning "Build failed with errors (yarn run compile), but attempting to package anyway..."
+# Build the extension using Bun
+echo "3️⃣ Building extension using Bun..."
+bun run compile # Assuming 'compile' is the correct build script in package.json
+if [ $? -ne 0 ]; then
+    print_warning "Build failed with errors (bun run compile), but attempting to package anyway..."
     echo "   Attempting fallback build with esbuild..."
     npx esbuild ./src/extension.ts --bundle --outfile=./dist/extension.js --format=cjs --platform=node --external:vscode --allow-overwrite
-    if [ \$? -ne 0 ]; then
+    if [ $? -ne 0 ]; then
         print_error "Fallback esbuild also failed. Cannot proceed with packaging."
         exit 1
     fi
@@ -72,32 +74,27 @@ if [ \$? -ne 0 ]; then
         print_status "Updated main entry point to ./dist/extension.js"
     fi
 else
-    print_status "Build completed successfully (yarn run compile)"
+    print_status "Build completed successfully (bun run compile)"
 fi
 
 # Package the extension
 echo "5️⃣ Creating .vsix package..."
-vsce package --allow-star-activation --no-dependencies --no-yarn
-if [ \$? -ne 0 ]; then
-    print_error "Failed to create .vsix package with --no-yarn"
+vsce package --allow-star-activation --no-dependencies
+if [ $? -ne 0 ]; then
+    print_error "Failed to create .vsix package"
     
-    print_warning "Trying vsce package without --no-yarn (might re-run package manager)..."
-    vsce package --allow-star-activation --no-dependencies
-    if [ \$? -ne 0 ]; then
-        print_error "Package creation failed even without --no-yarn"
-        print_warning "Trying with relaxed validation (skip license)..."
-        vsce package --allow-star-activation --no-dependencies --skip-license
-        if [ \$? -ne 0 ]; then
-            print_error "Package creation failed even with relaxed validation"
-            exit 1
-        fi
+    print_warning "Trying with relaxed validation (skip license)..."
+    vsce package --allow-star-activation --no-dependencies --skip-license
+    if [ $? -ne 0 ]; then
+        print_error "Package creation failed even with relaxed validation"
+        exit 1
     fi
 fi
 
 # Find the created .vsix file
-VSIX_FILE=\$(ls -t *.vsix 2>/dev/null | head -n1)
-if [ -n "\$VSIX_FILE" ]; then
-    print_status "Extension packaged successfully: \$VSIX_FILE"
+VSIX_FILE=$(ls -t *.vsix 2>/dev/null | head -n1)
+if [ -n "$VSIX_FILE" ]; then
+    print_status "Extension packaged successfully: $VSIX_FILE"
     echo ""
     echo "🎉 Package created successfully!"
     echo "📁 File: \$VSIX_FILE"

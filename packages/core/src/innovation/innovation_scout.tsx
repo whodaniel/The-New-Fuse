@@ -57,8 +57,8 @@ interface ProcessingResult {
     source: InnovationSource;
     assessment: InnovationAssessment;
     recommendation: {
-        action: 'integrate' | 'monitor' | 'ignore';
-        priority: 'high' | 'medium' | 'low';
+        action:integrate' | monitor' | ignore';
+        priority:high' | medium' | low';
         rationale: string;
         nextSteps: string[];
     };
@@ -82,7 +82,7 @@ export class InnovationScout {
 
     public async processSite(siteData: SiteData): Promise<ProcessingResult> {
         try {
-            logger.info('Processing discovered site:', { url: siteData.url });
+            logger.info('Processing discovered site:, { url: siteData.url });
 
             const innovationSource = await this.analyzeSite(siteData);
             const assessment = await this.assessInnovationValue(innovationSource);
@@ -103,7 +103,7 @@ export class InnovationScout {
             return result;
 
         } catch (error: unknown) {
-            logger.error('Error processing site:', {
+            logger.error('Error processing site:, {
                 url: siteData.url,
                 error
             });
@@ -188,7 +188,7 @@ export class InnovationScout {
             opportunities: await this.evaluator.identifyOpportunities(source)
         };
 
-        logger.debug('Innovation assessment:', {
+        logger.debug('Innovation assessment:, {
             url: source.url,
             assessment
         });
@@ -219,7 +219,7 @@ export class InnovationScout {
             nextSteps: this.generateNextSteps(assessment)
         } as ProcessingResult['recommendation'];
 
-        logger.info('Generated recommendation:', recommendation);
+        logger.info('Generated recommendation:, recommendation);
 
         return recommendation;
     }
@@ -228,11 +228,11 @@ export class InnovationScout {
         assessment: InnovationAssessment
     ): ProcessingResult['recommendation']['action'] {
         if (assessment.valueScore > 0.75) {
-            return 'integrate';
+            return integrate';
         } else if (assessment.valueScore > 0.5) {
-            return 'monitor';
+            return monitor';
         } else {
-            return 'ignore';
+            return ignore';
         }
     }
 
@@ -240,11 +240,11 @@ export class InnovationScout {
         assessment: InnovationAssessment
     ): ProcessingResult['recommendation']['priority'] {
         if (assessment.valueScore > 0.8) {
-            return 'high';
+            return high';
         } else if (assessment.valueScore > 0.6) {
-            return 'medium';
+            return medium';
         } else {
-            return 'low';
+            return low';
         }
     }
 
@@ -267,7 +267,7 @@ export class InnovationScout {
             factors.push('Strong market potential');
         }
 
-        return `Recommendation based on: ${factors.join(', ')}`;
+        return `Recommendation based on: ${factors.join(', )}`;
     }
 
     private generateNextSteps(assessment: InnovationAssessment): string[] {

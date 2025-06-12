@@ -1,4 +1,4 @@
-import { WorkflowDefinition, WorkflowStep, WorkflowCondition } from '../types.js'; // Added .js extension
+import { WorkflowDefinition, WorkflowStep, WorkflowCondition } from '../types.tsx'; // Added .js extension
 
 /**
  * A builder class for creating workflow definitions
@@ -35,14 +35,14 @@ export class WorkflowBuilder {
     this.steps.delete(stepId);
     
     // Remove this step from any dependencies
-    this.steps.forEach(step: WorkflowStep => {
+    this.steps.forEach((step: WorkflowStep) => {
       if (step.dependencies) {
-        step.dependencies = step.dependencies.filter(id: string) => id !== stepId);
+        step.dependencies = step.dependencies.filter((id: string) => id !== stepId);
       }
       
       // Also handle conditions with this stepId
       if (step.conditions) {
-        step.conditions = step.conditions.filter(cond: WorkflowCondition) => cond.nextStepId !== stepId);
+        step.conditions = step.conditions.filter((cond: WorkflowCondition) => cond.nextStepId !== stepId);
       }
     });
   }
@@ -111,6 +111,25 @@ export class WorkflowBuilder {
     // Add condition
     step.conditions.push(condition);
   }
+
+  /**
+   * Add a nested workflow as a step
+   */
+  addSubWorkflowStep(subWorkflow: WorkflowDefinition, stepId: string, name?: string): void {
+    const step: WorkflowStep = {
+      id: stepId,
+      name: name || subWorkflow.name || 'Sub-Workflow',
+      type: 'sub-workflow',
+      action: 'run-sub-workflow',
+      parameters: { workflow: subWorkflow },
+      dependencies: [],
+      status: 'pending',
+      startTime: null,
+      endTime: null,
+      error: undefined,
+    };
+    this.addStep(step);
+  }
   
   /**
    * Build the workflow definition
@@ -123,7 +142,26 @@ export class WorkflowBuilder {
       steps: Array.from(this.steps.values())
     };
   }
-  
+
+  /**
+   * Export the workflow as JSON
+   */
+  toJSON(): string {
+    return JSON.stringify(this.build(), null, 2);
+  }
+
+  /**
+   * Import a workflow from JSON
+   */
+  static fromJSON(json: string): WorkflowBuilder {
+    const obj = JSON.parse(json);
+    const builder = new WorkflowBuilder(obj.id, obj.name, obj.description);
+    if (Array.isArray(obj.steps)) {
+      obj.steps.forEach((step: WorkflowStep) => builder.addStep(step));
+    }
+    return builder;
+  }
+
   /**
    * Validate the workflow for correctness
    */
@@ -132,10 +170,10 @@ export class WorkflowBuilder {
     const stepIds = new Set(this.steps.keys());
     
     // Check dependencies and conditions
-    this.steps.forEach(step: WorkflowStep => {
+    this.steps.forEach((step: WorkflowStep) => {
       // Check dependencies
       if (step.dependencies) {
-        step.dependencies.forEach(depId: string) => {
+        step.dependencies.forEach((depId: string) => {
           if (!stepIds.has(depId)) {
             errors.push(`Step ${step.id} has dependency on non-existent step: ${depId}`);
           }
@@ -144,7 +182,7 @@ export class WorkflowBuilder {
       
       // Check conditions
       if (step.conditions) {
-        step.conditions.forEach(cond: WorkflowCondition) => {
+        step.conditions.forEach((cond: WorkflowCondition) => {
           if (!stepIds.has(cond.nextStepId)) {
             errors.push(`Step ${step.id} has condition pointing to non-existent step: ${cond.nextStepId}`);
           }

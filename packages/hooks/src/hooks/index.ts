@@ -1,2 +1,2 @@
-export * from './useUndoRedo.js';
+export * from './useUndoRedo.tsx';
 export * from './useKeyboardShortcuts.js';

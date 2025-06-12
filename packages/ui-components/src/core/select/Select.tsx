@@ -1,6 +1,6 @@
 import React from 'react';
 import Select, { components, GroupBase, OptionProps } from 'react-select'; // Import OptionProps
-import { cn } from '../../lib/utils.js'; // Added .js
+import { cn } from '../../lib/utils.tsx'; // Added .js
 import { SelectProps, SelectOption } from './types.js'; // Assuming types.ts exports SelectOption
 
 export const CustomOption = (props: OptionProps<SelectOption, boolean, GroupBase<SelectOption>>) => { // Use OptionProps and SelectOption

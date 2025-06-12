@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowStep, WorkflowMetrics, WorkflowStatus } from '../types.js';
-import { Button } from '../../../core/button/index.js';
-import { Progress } from '../../../core/progress/index.js';
-import { Badge } from '../../../core/badge.js';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../../core/card/index.js';
-import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.js';
+import { WorkflowStep, WorkflowMetrics, WorkflowStatus } from '../types.tsx';
+import { Button } from '../../../core/button/index.tsx';
+import { Progress } from '../../../core/progress/index.tsx';
+import { Badge } from '../../../core/badge.tsx';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../../core/card/index.tsx';
+import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.tsx';
 import { Play, Pause, RotateCcw, Trash2, AlertCircle } from 'lucide-react';
 
 // Define the StepMetrics type that was missing

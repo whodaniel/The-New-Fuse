@@ -1,6 +1,6 @@
 import { test, expect } from '../../fixtures/test.fixture.js';
-import { DashboardPage } from '../../pages/dashboard.page.js';
-import { WorkflowEditorPage } from '../../pages/workflow-editor.page.js';
+import { DashboardPage } from '../../pages/dashboard.page';
+import { WorkflowEditorPage } from '../../pages/workflow-editor.page';
 
 test.describe('Dashboard', () => {
   let dashboardPage: DashboardPage;

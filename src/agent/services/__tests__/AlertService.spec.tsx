@@ -1,6 +1,6 @@
 import { Test, TestingModule } from "@nestjs/testing";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { AlertService } from '../AlertService.js';
+import { AlertService } from '../AlertService.tsx';
 
 describe("AlertService", () => {
   let service: AlertService;

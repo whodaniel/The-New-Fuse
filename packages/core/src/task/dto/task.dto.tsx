@@ -1,15 +1,15 @@
 import { IsString, IsEnum, IsOptional, IsUUID, IsArray, IsDate, IsInt, IsBoolean, Min, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
-import { TaskStatus, TaskPriority } from '../entities/Task.js';
+import { TaskStatus, TaskPriority } from '../entities/Task.tsx';
 
 export class CreateTaskDto {
   @IsString(): string;
 
   @IsString()
-  description: string;
+  description!: string;
 
   @IsEnum(TaskPriority)
-  priority: TaskPriority;
+  priority!: TaskPriority;
 
   @IsOptional()
   @IsUUID()

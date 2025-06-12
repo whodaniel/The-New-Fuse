@@ -1,4 +1,4 @@
-import { Database } from 'sqlite3';
+import { Database } from ''sqlite3';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
 
@@ -137,11 +137,11 @@ export class MetadataVersioning {
                 description TEXT NOT NULL,
                 goals TEXT,
                 milestones TEXT,
-                current_stage TEXT DEFAULT 'in_progress',
+                current_stage TEXT DEFAULT in_progress',
                 start_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 end_time TIMESTAMP,
                 progress REAL DEFAULT 0.0,
-                status TEXT DEFAULT 'in_progress',
+                status TEXT DEFAULT in_progress',
                 FOREIGN KEY (agent_id) REFERENCES agent_metadata(agent_id)
             )`
         ];
@@ -154,7 +154,7 @@ export class MetadataVersioning {
     async createMetadataVersion(agentId: string, metadata: AgentMetadata): Promise<number> {
         try {
             const result = await this.executeQuery(
-                'INSERT INTO metadata_versions (agent_id, metadata) VALUES (?, ?)',
+                INSERT INTO metadata_versions (agent_id, metadata) VALUES (?, ?)',
                 [agentId, JSON.stringify(metadata)]
             );
             return result.lastID || 0;
@@ -211,10 +211,10 @@ export class MetadataVersioning {
                     description,
                     JSON.stringify(goals),
                     JSON.stringify(milestones),
-                    'in_progress',
+                    in_progress',
                     new Date().toISOString(),
                     0,
-                    'active'
+                    active'
                 ]
             );
         } catch (e) {
@@ -241,12 +241,12 @@ export class MetadataVersioning {
             const params: unknown[] = [agentId];
 
             if (startTime) {
-                query += ' AND mv.timestamp >= ?';
+                query +=  AND mv.timestamp >= ?';
                 params.push(startTime);
             }
 
             if (endTime) {
-                query += ' AND mv.timestamp <= ?';
+                query +=  AND mv.timestamp <= ?';
                 params.push(endTime);
             }
 
@@ -279,7 +279,7 @@ export class MetadataVersioning {
             const params: unknown[] = [agentId];
 
             if (arcName) {
-                query += ' AND arc_name = ?';
+                query +=  AND arc_name = ?';
                 params.push(arcName);
             }
 
@@ -290,9 +290,9 @@ export class MetadataVersioning {
                 agentId: row.agent_id,
                 arcName: row.arc_name,
                 description: row.description,
-                goals: JSON.parse(row.goals || '[]'),
-                milestones: JSON.parse(row.milestones || '[]'),
-                currentStage: row.current_stage || 'in_progress',
+                goals: JSON.parse(row.goals || []'),
+                milestones: JSON.parse(row.milestones || []'),
+                currentStage: row.current_stage || in_progress',
                 startTime: new Date(row.start_time),
                 endTime: row.end_time ? new Date(row.end_time) : undefined,
                 progress: row.progress,

@@ -1,6 +1,6 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from ''events';
 import { Logger } from '../logging.js';
-import { VectorStoreProvider, EmbeddingFunction, VectorDocument, VectorQuery, SearchResult } from './types.js';
+import { VectorStoreProvider, EmbeddingFunction, VectorDocument, VectorQuery, SearchResult } from './types.tsx';
 
 export class VectorStore extends EventEmitter {
   private provider: VectorStoreProvider;
@@ -32,7 +32,7 @@ export class VectorStore extends EventEmitter {
       // Store in vector database
       const ids = await this.provider.storeVectors(documentWithEmbeddings, this.namespace);
       this.logger.info(`Stored ${ids.length} documents in vector store (${this.provider.name})`);
-      this.emit('documents:stored', { count: ids.length, namespace: this.namespace });
+      this.emit('documents: 'stored', { count: ids.length, namespace: this.namespace });
       return ids;
     } catch (error) {
       this.logger.error('Error storing documents in vector store', error);

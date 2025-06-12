@@ -29,7 +29,7 @@ export function CascadeMethod(options: CascadeMethodOptions = {}): MethodDecorat
       const cascadeService = Reflect.getMetadata('cascade_service', target.constructor);
 
       if (!cascadeService) {
-        console.error('CascadeService not injected or available on target:', target);
+        console.error('CascadeService not injected or available on target:, target);
         throw new Error('CascadeService not injected');
       }
       

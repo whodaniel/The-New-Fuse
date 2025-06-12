@@ -14,7 +14,7 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react';
-import { useAuth } from '../hooks/useAuth.js';
+import { useAuth } from '../hooks/useAuth.tsx';
 
 export function Dashboard() {
   const { user } = useAuth();

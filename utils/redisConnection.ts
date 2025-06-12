@@ -6,7 +6,7 @@ class RedisConnection {
 
     static async initialize() {
         try {
-            this.instance = new Redis({
+            this.instance = new (Redis as any)({
                 host: 'localhost',
                 port: 6379,
                 retryStrategy: (times) => {

@@ -1,4 +1,4 @@
-import { AssetCategory } from '../classification/assetClassifier.js';
+import { AssetCategory } from '../classification/assetClassifier.tsx';
 export interface FeatureSet {
     id: string;
     name: string;

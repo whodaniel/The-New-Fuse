@@ -1,74 +1,62 @@
-export interface Agent {
-  id: string;
-  name: string;
-  description: string | null;
-  type: string;
-  capabilities: string[];
-  status: string;
-  userId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt: Date | null;
-  config?: Record<string, unknown>;
+import { BaseEntity } from './core/base-types';
+
+export enum AgentType {
+  CHAT = "CHAT",
+  WORKFLOW = "WORKFLOW",
+  TASK = "TASK",
+  ASSISTANT = "ASSISTANT"
 }
 
 export enum AgentStatus {
-  ACTIVE = 'ACTIVE',
-  INACTIVE = 'INACTIVE',
-  PENDING = 'PENDING',
-  DELETED = 'DELETED'
+  ACTIVE = "ACTIVE",
+  INACTIVE = "INACTIVE",
+  BUSY = "BUSY",
+  ERROR = "ERROR"
 }
 
-export interface CreateAgentDto {
+export enum AgentRole {
+  USER = "USER",
+  ASSISTANT = "ASSISTANT",
+  SYSTEM = "SYSTEM"
+}
+
+export interface AgentCapability { // Can remain an interface
   name: string;
   description?: string;
-  type: string;
-  role?: AgentRole;
-  capabilities: string[];
-  systemPrompt?: string;
-  status?: AgentStatus;
-  configuration?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
+  parameters?: unknown;
 }
 
-export interface UpdateAgentDto {
+// Changed from interface to class
+export class Agent extends BaseEntity {
+  name: string;
+  type: AgentType;
+  status: AgentStatus;
+  description?: string;
+  systemPrompt?: string;
+  capabilities?: AgentCapability[];
+  configuration?: unknown;
+}
+
+// Changed from interface to class
+export class CreateAgentDto {
+  name: string;
+  type: AgentType;
+  description?: string;
+  systemPrompt?: string;
+  capabilities?: AgentCapability[];
+  configuration?: unknown;
+}
+
+// Changed from interface to class
+export class UpdateAgentDto {
   name?: string;
   description?: string;
-  type?: string;
-  role?: AgentRole;
   systemPrompt?: string;
-  capabilities?: string[];
+  capabilities?: AgentCapability[];
+  configuration?: unknown;
   status?: AgentStatus;
-  configuration?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
 }
 
-// Add agent role and capability types
-export enum AgentRole {
-  ADMIN = 'ADMIN',
-  USER = 'USER',
-  GUEST = 'GUEST'
-}
-
-// Define capability types as enum for validation
-export enum AgentCapability {
-  CHAT = 'CHAT',
-  FILE_PROCESSING = 'FILE_PROCESSING',
-  DATA_ANALYSIS = 'DATA_ANALYSIS',
-  CODE_GENERATION = 'CODE_GENERATION',
-  WORKFLOW_ORCHESTRATION = 'WORKFLOW_ORCHESTRATION',
-  API_INTEGRATION = 'API_INTEGRATION',
-  DATABASE_OPERATIONS = 'DATABASE_OPERATIONS',
-  MONITORING = 'MONITORING',
-  SECURITY = 'SECURITY',
-  TESTING = 'TESTING'
-}
-
-// Interface for detailed capability configuration
-export interface AgentCapabilityConfig {
-  id: string;
-  name: string;
-  description?: string;
-  parameters?: Record<string, unknown>;
-  metadata?: Record<string, unknown>;
+export interface AgentCapabilityConfig { // Can remain an interface
+  [key: string]: unknown;
 }

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MCPBrokerService, MCPMessage } from './mcp-broker.service.js';
+import { MCPBrokerService, MCPMessage } from './mcp-broker.service.tsx';
 import { z } from 'zod';
 
 /**
@@ -180,10 +180,10 @@ export class DirectorAgentService {
           }
         });
       }
-    } catch (error) {
+    } catch (error: unknown) {
       // Update task on error
       task.status = 'failed';
-      task.error = error.message;
+      task.error = (error as Error).message;
       task.updatedAt = new Date().toISOString();
       this.tasks.set(task.id, task);
       

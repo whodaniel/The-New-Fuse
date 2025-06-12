@@ -6,9 +6,9 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, ConflictException } from '@nestjs/common';
 import { PrismaService } from '../database/prisma.service';
 import { ConfigService } from '@nestjs/config';
-import { AgencyTemplateService } from './agency-template.service';
-import { BillingService } from '../billing/billing.service';
-import { CacheService } from '../cache/cache.service';
+import { AgencyTemplateService } from './agency-template.'service';
+import { BillingService } from '../billing/billing.'service';
+import { CacheService } from '../cache/cache.'service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { 
   Agency, 
@@ -150,7 +150,7 @@ export class AgencyService {
     await this.clearAgencyCache(agency.subdomain);
 
     // Emit events
-    this.eventEmitter.emit('agency.created', {
+    this.eventEmitter.emit('agency.'created', {
       agencyId: agency.id,
       subdomain: agency.subdomain,
       tier: agency.subscriptionTier,
@@ -227,7 +227,7 @@ export class AgencyService {
    */
   async updateAgency(
     agencyId: string, 
-    updates: Partial<Pick<Agency, 'name' | 'settings' | 'branding'>>,
+    updates: Partial<Pick<Agency, name' | settings' | branding'>>,
     actorId: string
   ): Promise<Agency> {
     const existingAgency = await this.prisma.agency.findUnique({
@@ -270,7 +270,7 @@ export class AgencyService {
     // Clear cache
     await this.clearAgencyCache(updatedAgency.subdomain);
 
-    this.eventEmitter.emit('agency.updated', {
+    this.eventEmitter.emit('agency.'updated', {
       agencyId,
       changes: updates,
       actorId
@@ -301,7 +301,7 @@ export class AgencyService {
       await tx.agencyAuditLog.create({
         data: {
           agencyId,
-          action: isActive ? 'ACTIVATE_AGENCY' : 'SUSPEND_AGENCY',
+          action: isActive ? ACTIVATE_AGENCY' : 'SUSPEND_AGENCY',
           actorId,
           newValues: { isActive, reason },
           metadata: { reason, source: 'agency_status_change' }
@@ -314,7 +314,7 @@ export class AgencyService {
     // Clear cache
     await this.clearAgencyCache(agency.subdomain);
 
-    this.eventEmitter.emit('agency.status_changed', {
+    this.eventEmitter.emit('agency.'status_changed', {
       agencyId,
       isActive,
       reason,
@@ -498,9 +498,9 @@ export class AgencyService {
 
   private isReservedSubdomain(subdomain: string): boolean {
     const reserved = [
-      'www', 'api', 'admin', 'app', 'mail', 'email', 'smtp', 'ftp', 
-      'blog', 'forum', 'shop', 'store', 'support', 'help', 'docs',
-      'staging', 'test', 'dev', 'demo', 'beta', 'alpha'
+      www', api', admin', app', mail', email', smtp', ftp', 
+      blog', forum', shop', store', support', help', docs',
+      staging', test', dev', demo', beta', alpha'
     ];
     return reserved.includes(subdomain.toLowerCase());
   }
@@ -508,9 +508,9 @@ export class AgencyService {
   private generateSlug(name: string): string {
     return name
       .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/[^a-z0-9\s-]/g, )
       .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
+      .replace(/-+/g, -')
       .trim();
   }
 
@@ -534,8 +534,8 @@ export class AgencyService {
 
   private getDefaultBranding(): any {
     return {
-      primaryColor: '#3B82F6',
-      secondaryColor: '#1E40AF',
+      primaryColor:#3'B82F6',
+      secondaryColor:#1'E40AF',
       logo: null,
       favicon: null,
       fonts: {
@@ -570,7 +570,7 @@ export class AgencyService {
     agencyId: string,
     template?: string
   ): Promise<void> {
-    const templateData = await this.templateService.getTemplate(template || 'basic');
+    const templateData = await this.templateService.getTemplate(template || basic');
     
     // Create default agents
     for (const agentTemplate of templateData.agents) {

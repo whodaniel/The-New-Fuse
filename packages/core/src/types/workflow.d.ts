@@ -16,7 +16,7 @@ export interface Workflow {
     metadata?: Record<string, unknown>;
     tags?: string[];
 }
-export interface WorkflowInstance extends Omit<Workflow, 'tasks' | 'edges'> {
+export interface WorkflowInstance extends Omit<Workflow, 'tasks' | edges'> {
     templateId: string;
     steps: WorkflowStep[];
     startTime: Date;
@@ -38,7 +38,7 @@ export declare enum WorkflowStepType {
     PARALLEL = "PARALLEL",
     SEQUENCE = "SEQUENCE"
 }
-export type WorkflowStatus = 'draft' | 'active' | 'running' | 'completed' | 'failed' | 'cancelled';
+export type WorkflowStatus = draft' | active' | running' | completed' | failed' | cancelled';
 export interface WorkflowTask extends Task {
     workflowId: string;
     position: {
@@ -48,7 +48,7 @@ export interface WorkflowTask extends Task {
     taskDefinition: TaskDefinition;
     retryPolicy?: {
         maxAttempts: number;
-        backoffStrategy: 'fixed' | 'exponential';
+        backoffStrategy:fixed' | exponential';
         backoffDelay: number;
     };
 }
@@ -58,7 +58,7 @@ export interface WorkflowEdge {
     sourceTaskId: string;
     targetTaskId: string;
     condition?: {
-        type: 'success' | 'failure' | 'always' | 'custom';
+        type:success' | failure' | always' | custom';
         expression?: string;
     };
     metadata?: Record<string, unknown>;
@@ -83,14 +83,14 @@ export interface WorkflowExecution {
     };
 }
 export interface TaskExecution {
-    status: 'pending' | 'running' | 'completed' | 'failed';
+    status:pending' | running' | completed' | failed';
     startTime?: Date;
     endTime?: Date;
     result?: unknown;
     error?: string;
     retryCount: number;
 }
-export type WorkflowExecutionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
+export type WorkflowExecutionStatus = running' | completed' | failed' | cancelled';
 export interface WorkflowTemplate {
     id: string;
     name: string;

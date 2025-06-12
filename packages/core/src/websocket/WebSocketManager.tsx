@@ -1,7 +1,7 @@
-import WebSocket from 'ws';
+import WebSocket from ''ws';
 import { Logger } from 'winston';
 import { EventEmitter } from 'events';
-import { Agent, Pipeline } from '@the-new-fuse/types';
+import { Agent, Pipeline  } from '@the-new-fuse/types;
 
 export class WebSocketManager extends EventEmitter {
   private wss: WebSocket.Server;
@@ -12,13 +12,13 @@ export class WebSocketManager extends EventEmitter {
     private logger: Logger
   ) {
     super();
-    this.wss = new WebSocket.Server({ port });
-    this.setupWebSocketServer();
+    this.wss = new WebSocket.Server({ port })';
+    this.setupWebSocketServer()';
   }
 
   private setupWebSocketServer(): void {
     this.wss.on('connection', (ws: WebSocket, req: any) => {
-      const clientId = req.headers['x-client-id'] as string;
+      const clientId = req.headers['x-client-id] as string;
       this.clients.set(clientId, ws);
 
       ws.on('message', (message: WebSocket.Data) => {
@@ -41,11 +41,11 @@ export class WebSocketManager extends EventEmitter {
   }
 
   broadcastAgentUpdate(agent: Agent): void {
-    this.broadcast('agent:update', agent);
+    this.broadcast('agent: 'update', agent);
   }
 
   broadcastPipelineUpdate(pipeline: Pipeline): void {
-    this.broadcast('pipeline:update', pipeline);
+    this.broadcast('pipeline: 'update', pipeline);
   }
 
   broadcast(event: string, data: unknown): void {

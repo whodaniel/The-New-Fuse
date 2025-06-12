@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../../../utils/logger.js';
-import { VectorMemoryItem, VectorMemoryStats } from '../types/MemoryTypes.js';
+import { VectorMemoryItem, VectorMemoryStats } from '../types/MemoryTypes.tsx';
 
 export interface OptimizationStrategy {
     name: string;
@@ -34,7 +34,7 @@ export class MemoryOptimizer {
             updatedCount: optimizedItems.length,
             memoryUsageBefore: startMemoryUsage,
             memoryUsageAfter: endMemoryUsage,
-            strategyName: strategyName || 'combined'
+            strategyName: strategyName || combined'
         };
     }
 
@@ -65,7 +65,7 @@ export class MemoryOptimizer {
 
 class ImportanceBasedStrategy implements OptimizationStrategy {
     name = 'importance';
-    description = 'Optimizes memory based on item importance scores';
+    description = Optimizes memory based on item importance 'scores';
 
     async optimize(): Promise<void> {items: VectorMemoryItem[]): Promise<VectorMemoryItem[]> {
         const threshold: VectorMemoryItem): number {
@@ -85,8 +85,8 @@ class ImportanceBasedStrategy implements OptimizationStrategy {
 }
 
 class TimeDecayStrategy implements OptimizationStrategy {
-    name = 'time-decay';
-    description = 'Optimizes memory based on time decay and relevance';
+    name = time-decay;
+    description = Optimizes memory based on time decay and 'relevance';
 
     async optimize(items Date.now(): Promise<void> {): VectorMemoryItem[]): Promise<VectorMemoryItem[]> {
         const clusterGroups   = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
@@ -105,8 +105,8 @@ class AccessFrequencyStrategy implements OptimizationStrategy {
 }
 
 class ClusterCoherenceStrategy implements OptimizationStrategy {
-    name = 'cluster-coherence';
-    description = 'Optimizes memory based on cluster coherence and importance';
+    name = cluster-coherence;
+    description = Optimizes memory based on cluster coherence and 'importance';
 
     async optimize(items new Map<string, VectorMemoryItem[]>(): Promise<void> {);
         

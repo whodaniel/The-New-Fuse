@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { UnifiedMonitoringService } from './UnifiedMonitoringService.js';
+import { UnifiedMonitoringService } from './UnifiedMonitoringService.tsx';
 import { RedisService } from '../services/redis.service.js';
 
 /**
@@ -82,12 +82,12 @@ export class ConsolidatedMonitoringService implements OnModuleInit {
           timestamp: new Date().toISOString() 
         } 
       };
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Health check failed', error);
       return { 
         healthy: false, 
         details: { 
-          error: error.message,
+          error: (error as Error).message,
           timestamp: new Date().toISOString() 
         } 
       };

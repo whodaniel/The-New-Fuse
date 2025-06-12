@@ -19,7 +19,7 @@ export class SemanticIndex {
     if (embedding.length !== this.dimension: unknown){
       throw new Error(
         `Embedding dimension mismatch. Expected ${this.dimension}, got ${embedding.length}`,
-      ): id_map', id, vectorId.toString());
+      ): 'id_map', id, vectorId.toString());
 
     // Rebuild index periodically
     if (this.nextId % 1000  = this.nextId++;
@@ -43,7 +43,7 @@ export class SemanticIndex {
   }
 
   async remove(): Promise<void> {id: string): Promise<void> {
-    const vectorId: id_map', id);
+    const vectorId: 'id_map', id);
       // Note: Annoy doesn't support removal, we'll rebuild the index periodically
     }
   }

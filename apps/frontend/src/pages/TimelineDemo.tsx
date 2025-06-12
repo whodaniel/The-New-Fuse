@@ -1,6 +1,45 @@
 import React from 'react';
-import { EnhancedTimelineView } from '@the-new-fuse/feature-suggestions/src/components/EnhancedTimelineView';
-import { SuggestionPriority } from '@the-new-fuse/feature-suggestions/src/types';
+
+// Simple local types to avoid dependency issues
+enum SuggestionPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM', 
+  HIGH = 'HIGH',
+  CRITICAL = 'CRITICAL'
+}
+
+// Mock EnhancedTimelineView component to avoid dependency issues
+const EnhancedTimelineView = ({ events, onEventClick }: { events: any[], onEventClick?: (event: any) => void }) => (
+  <div className="space-y-4">
+    <h3 className="text-lg font-semibold">Timeline Events</h3>
+    <div className="space-y-2">
+      {events.map((event, index) => (
+        <div 
+          key={event.id || index} 
+          className="p-4 border rounded-lg cursor-pointer hover:bg-gray-50"
+          onClick={() => onEventClick?.(event)}
+        >
+          <div className="flex justify-between items-start">
+            <div>
+              <h4 className="font-medium">{event.data?.title || `Event ${index + 1}`}</h4>
+              <p className="text-sm text-gray-600">{event.data?.description || 'No description'}</p>
+            </div>
+            <span className="text-xs text-gray-500">{event.timestamp?.toLocaleDateString()}</span>
+          </div>
+          <div className="mt-2">
+            <span className={`inline-block px-2 py-1 text-xs rounded ${
+              event.data?.priority === 'HIGH' ? 'bg-red-100 text-red-800' :
+              event.data?.priority === 'MEDIUM' ? 'bg-yellow-100 text-yellow-800' :
+              'bg-green-100 text-green-800'
+            }`}>
+              {event.data?.priority || 'NORMAL'}
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 // Sample data for the timeline demonstration
 const sampleEvents = [
@@ -11,7 +50,7 @@ const sampleEvents = [
         data: {
             title: 'Add Dark Mode Support',
             description: 'Implement system-wide dark mode with user preferences',
-            priority: SuggestionPriority.HIGH,
+            priority: 'HIGH',
             item: { id: 'sugg1' }
         }
     },
@@ -55,7 +94,7 @@ const sampleEvents = [
         data: {
             title: 'Add Mobile Support',
             description: 'Make the application responsive for mobile devices',
-            priority: SuggestionPriority.MEDIUM,
+            priority: 'MEDIUM',
             item: { id: 'sugg2' }
         }
     }

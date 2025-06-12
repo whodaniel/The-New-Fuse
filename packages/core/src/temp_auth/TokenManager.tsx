@@ -11,12 +11,12 @@ import {
   AuthConfig,
   AuthEventType,
   AuthEvent
-} from './AuthTypes.js';
+} from './AuthTypes.tsx';
 
 @Injectable()
 export class TokenManager extends EventEmitter {
   private logger: Logger;
-  private redis: Redis;
+  private redis: any;
   private readonly tokenBlacklist: Set<string>;
 
   constructor(
@@ -31,7 +31,7 @@ export class TokenManager extends EventEmitter {
   }
 
   async generateAccessToken(
-    payload: Omit<TokenPayload, 'issuedAt' | 'expiresAt'>
+    payload: Omit<TokenPayload, 'issuedAt' | expiresAt'>
   ): Promise<string> {
     try {
       const now = Math.floor(Date.now() / 1000);
@@ -49,7 +49,7 @@ export class TokenManager extends EventEmitter {
       await this.recordTokenEvent(payload.userId, AuthEventType.TOKEN_REFRESH);
       return token;
     } catch (error) {
-      this.logger.error('Failed to generate access token:', error as Error);
+      this.logger.error('Failed to generate access token:, error as Error);
       throw error;
     }
   }
@@ -102,7 +102,7 @@ export class TokenManager extends EventEmitter {
 
       return payload;
     } catch (error) {
-      this.logger.error('Failed to validate access token:', error as Error);
+      this.logger.error('Failed to validate access token:, error as Error);
       return null;
     }
   }
@@ -146,8 +146,8 @@ export class TokenManager extends EventEmitter {
       // Store in Redis for persistence
       await this.redis.set(
         `revoked_token:${token}`,
-        '1',
-        'EX',
+        1',
+        EX',
         Math.max(payload['exp'] - Math.floor(Date.now() / 1000), 0)
       );
 
@@ -156,7 +156,7 @@ export class TokenManager extends EventEmitter {
         await this.redis.del(`refresh_token:${payload['tokenId']}`);
       }
     } catch (error) {
-      this.logger.error('Failed to revoke token:', error as Error);
+      this.logger.error('Failed to revoke token:, error as Error);
       throw error;
     }
   }

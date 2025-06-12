@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../database/prisma.service.js';
+import { PrismaService } from '../../database/prisma.service.tsx';
 import { SecurityVulnerability, SecuritySeverity, SecurityScanResult } from '@the-new-fuse/types';
-import { Prisma } from '@the-new-fuse/database/client';
+import { Prisma } from '@the-new-fuse/database';
 
 type RawVulnerabilityPattern = {
   pattern: string;
@@ -143,7 +143,7 @@ export class SecurityScanner {
   }
 
   async getVulnerabilities(filters?: VulnerabilityFilters): Promise<SecurityVulnerability[]> {
-    let where = '';
+    let where = ;
     const params: unknown[] = [];
 
     if (filters?.severity?.length) {
@@ -152,12 +152,12 @@ export class SecurityScanner {
     }
 
     if (filters?.dependency) {
-      where += ' AND affected_dependency = ?';
+      where +=  AND affected_dependency = ?';
       params.push(filters.dependency);
     }
 
     if (filters?.cve) {
-      where += ' AND cve = ?';
+      where +=  AND cve = ?';
       params.push(filters.cve);
     }
 

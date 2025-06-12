@@ -238,3 +238,13 @@ export const getCurrentUser = async (req: Request, res: Response) => {
     });
   }
 };
+
+// Export the controller object for use in routes
+export const authController = {
+  register,
+  login,
+  logout,
+  getCurrentUser,
+  googleAuth,
+  googleAuthCallback
+};

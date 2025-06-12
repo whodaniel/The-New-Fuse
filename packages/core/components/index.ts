@@ -11,7 +11,7 @@ export * from './layout/Card.js';
 export * from './layout/Container.js';
 
 // Feature Components
-export * from './chat/ChatCore.js';
+export * from './chat/ChatCore.tsx';
 export * from './workspace/BaseWorkspace.js';
 export * from './workflow/WorkflowCore.js';
 

@@ -1,9 +1,9 @@
 import { Application } from "express";
 import request from "supertest";
-import { container } from '../setup.js';
-import { TYPES } from '../../core/di/types.js';
-import { AuthService } from '../../core/auth/auth.service.js';
-import { UserFactory } from '../factories/test-factory.js';
+import { container } from '../setup.tsx';
+import { TYPES } from '../../core/di/types.tsx';
+import { AuthService } from '../../core/auth/auth.service.tsx';
+import { UserFactory } from '../factories/test-factory.tsx';
 
 export class ApiTestHelper {
   private static authService = container.get<AuthService>(TYPES.AuthService);

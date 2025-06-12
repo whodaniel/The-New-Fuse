@@ -1,4 +1,4 @@
-import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata } from '@fuse/types';
+import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata  } from '@fuse/types;
 export interface Task {
     id: string;
     title: string;
@@ -33,13 +33,13 @@ export interface TaskExecution {
             memory: number;
             tokens: number;
         };
-    };
-    logs?: TaskExecutionLog[];
+    }';
+    logs?: TaskExecutionLog[]';
 }
-export type TaskExecutionStatus = 'running' | 'completed' | 'failed' | 'cancelled';
+export type TaskExecutionStatus = running' | completed' | failed' | cancelled';
 export interface TaskExecutionLog {
     timestamp: Date;
-    level: 'info' | 'warning' | 'error';
+    level:info' | warning' | error';
     message: string;
     metadata?: Record<string, unknown>;
 }
@@ -69,7 +69,7 @@ export interface TaskQueue {
     config: {
         maxSize?: number;
         priorityLevels: number;
-        processingStrategy: 'fifo' | 'lifo' | 'priority';
+        processingStrategy:fifo' | lifo' | priority';
     };
     metrics: {
         totalTasks: number;

@@ -73,7 +73,7 @@ export interface TaskResult {
 
 export interface TaskDependency {
   taskId: string;
-  type: 'hard' | 'soft';
+  type:hard' | soft';
   condition?: string;
 }
 

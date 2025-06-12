@@ -1,5 +1,5 @@
 type Node = any;
-import { JsonValue, DataMap } from './common-types.js';
+import { JsonValue, DataMap } from './common-types.tsx';
 export declare enum WorkflowStepType {
     TASK = "task",
     CONDITION = "condition",

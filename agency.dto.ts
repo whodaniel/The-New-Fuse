@@ -178,10 +178,10 @@ export class AgencyListResponseDto {
     description: 'Pagination information' 
   })
   pagination: {
-    page: number;
-    limit: number;
-    total: number;
-  } = { page: 1, limit: 20, total: 0 };
+    page!: number;
+    limit!: number;
+    total!: number;
+  } = { page!: 1, limit: 20, total: 0 };
 }
 
 /**

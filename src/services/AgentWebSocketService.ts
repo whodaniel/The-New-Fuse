@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { A2AMessage, AgentStatus, ConnectionMetadata } from '../protocols/types.js';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service.tsx';
 import { AgentAuthService } from './AgentAuthService.js';
 import { MetricsService } from '../metrics/metrics.service.js';
 

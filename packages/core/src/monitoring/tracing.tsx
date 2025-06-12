@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Trace, TraceSpan, MetricUnit } from './types.js';
+import { Trace, TraceSpan, MetricUnit } from './types.tsx';
 import { RedisService } from '@nestjs-modules/ioredis';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MetricCollector } from './metrics.js';
+import { MetricCollector } from './metrics.tsx';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -38,7 +38,7 @@ export class TracingService {
       startTime: new Date(),
       endTime: null,
       duration: null,
-      status: success',
+      status: 'success',
       spans: [],
       metadata: {
         service: options.service,
@@ -66,7 +66,7 @@ export class TracingService {
       startTime: new Date(),
       endTime: null,
       duration: null,
-      status: success',
+      status: 'success',
       attributes: options.attributes || {},
       events: [],
     };
@@ -74,7 +74,7 @@ export class TracingService {
     this.activeSpans.set(span.id, span);
     trace.spans.push(span);
 
-    this.eventEmitter.emit('span.started', {
+    this.eventEmitter.emit('span.'started', {
       traceId: trace.id,
       spanId: span.id,
     });
@@ -102,7 +102,7 @@ export class TracingService {
     }
 
     span.attributes[key]  = this.activeSpans.get(spanId): string, error?: Error): void {
-    const span: success';
+    const span:success';
 
     if(error): void {
       (span as any).attributes.error  = this.activeSpans.get(spanId)): void {
@@ -111,14 +111,14 @@ export class TracingService {
 
     span.endTime = new Date();
     span.duration = (span as any).endTime.getTime() - (span as any).startTime.getTime();
-    span.status = error ? 'error'  {
+    span.status = error ? error'  {
         message: error.message,
         stack: error.stack,
       };
     }
 
     this.activeSpans.delete(spanId);
-    this.eventEmitter.emit('span.ended', {
+    this.eventEmitter.emit('span.'ended', {
       spanId,
       duration: span.duration,
       status: span.status,
@@ -126,21 +126,21 @@ export class TracingService {
 
     // Record metrics
     this.metricCollector.histogram(
-      'span_duration',
+      span_duration',
       span.duration,
       MetricUnit.Milliseconds,
       [
-        { name: name', value: span.name },
-        { name: status', value: span.status },
+        { name: 'name', value: span.name },
+        { name: 'status', value: span.status },
       ],
     ): string, error?: Error): void {
-    const trace: success';
+    const trace:success';
 
     // Store trace in Redis
     this.storeTrace(trace);
 
     this.activeTraces.delete(traceId);
-    this.eventEmitter.emit('trace.ended', {
+    this.eventEmitter.emit('trace.'ended', {
       traceId,
       duration: trace.duration,
       status: trace.status,
@@ -148,13 +148,13 @@ export class TracingService {
 
     // Record metrics
     this.metricCollector.histogram(
-      'trace_duration',
+      trace_duration',
       trace.duration,
       MetricUnit.Milliseconds,
       [
-        { name: name', value: trace.name },
-        { name: service', value: (trace as any).metadata.service },
-        { name: status', value: trace.status },
+        { name: 'name', value: trace.name },
+        { name: 'service', value: (trace as any).metadata.service },
+        { name: 'status', value: trace.status },
       ],
     );
   }
@@ -177,7 +177,7 @@ export class TracingService {
   async queryTraces(): Promise<void> {options: {
     service?: string;
     environment?: string;
-    status?: success' | 'error';
+    status?: success' | error';
     startTime?: Date;
     endTime?: Date;
     minDuration?: number;
@@ -191,7 +191,7 @@ export class TracingService {
     filter: {
       service?: string;
       environment?: string;
-      status?: success' | 'error';
+      status?: success' | error';
       startTime?: Date;
       endTime?: Date;
       minDuration?: number;
@@ -264,7 +264,7 @@ export class TracingService {
     if(keys.length > 0): void {
       await this.redisService.client.del(...keys): number): void {
     this.metricCollector.histogram(
-      'trace_duration',
+      trace_duration',
       duration,
       MetricUnit.Milliseconds,
       { traceId: this.traceId }

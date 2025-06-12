@@ -32,9 +32,9 @@ class RooCoderClient {
       reconnectOnError: () => true
     };
 
-    this.redis = new Redis(redisUrl, redisOptions);
-    this.pubClient = new Redis(redisUrl, redisOptions);
-    this.subClient = new Redis(redisUrl, redisOptions);
+    this.redis = new (Redis as any)(redisUrl, redisOptions);
+    this.pubClient = new (Redis as any)(redisUrl, redisOptions);
+    this.subClient = new (Redis as any)(redisUrl, redisOptions);
   }
 
   async initialize(): Promise<void> {
@@ -148,7 +148,7 @@ class RooCoderClient {
   }
 }
 
-async function main(): any {
+async function main(): Promise<void> {
   const client = new RooCoderClient();
   try {
     await client.initialize();

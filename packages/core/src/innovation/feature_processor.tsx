@@ -63,7 +63,7 @@ interface FeatureProposal {
         totalImpact: number;
         totalComplexity: number;
         estimatedTimeframe: string;
-        recommendedPriority: 'high' | 'medium' | 'low';
+        recommendedPriority:high' | medium' | low';
     };
     implementation: {
         phases: string[];
@@ -85,7 +85,7 @@ export class FeatureProcessor {
 
     public async processFeatures(siteData: SiteData): Promise<FeatureProposal | { status: string }> {
         try {
-            logger.info('Processing new features from site');
+            logger.info('Processing new features from 'site');
             
             const extractedFeatures = await this.extractFeatures(siteData);
             if (extractedFeatures.length === 0) {
@@ -102,7 +102,7 @@ export class FeatureProcessor {
 
             return { status: "no_superior_features_found" };
         } catch (error) {
-            logger.error('Error processing features:', error);
+            logger.error('Error processing features:, error);
             throw error;
         }
     }
@@ -143,7 +143,7 @@ export class FeatureProcessor {
     }
 
     private generateFeatureId(featureData: FeatureData): string {
-        return `feature_${(featureData as any).name.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${Date.now()}`;
+        return `feature_${(featureData as any).name.toLowerCase().replace(/[^a-z0-9]/g, _')}_${Date.now()}`;
     }
 
     private determineCategory(featureData: FeatureData): AssetCategory {
@@ -159,7 +159,7 @@ export class FeatureProcessor {
                 components.push({
                     id: `comp_${comp.id || Date.now()}`,
                     name: comp.name,
-                    type: comp.type || 'unknown',
+                    type: comp.type || unknown',
                     requirements: comp.requirements || []
                 });
             }
@@ -334,19 +334,19 @@ export class FeatureProcessor {
     }
 
     private estimateTimeframe(complexity: number): string {
-        if (complexity > 2) return 'long-term';
-        if (complexity > 1) return 'medium-term';
-        return 'short-term';
+        if (complexity > 2) return long-term;
+        if (complexity > 1) return medium-term;
+        return short-term;
     }
 
-    private determinePriority(impact: number): 'high' | 'medium' | 'low' {
-        if (impact > 2) return 'high';
-        if (impact > 1) return 'medium';
-        return 'low';
+    private determinePriority(impact: number):high' | medium' | low' {
+        if (impact > 2) return high';
+        if (impact > 1) return medium';
+        return low';
     }
 
     private planImplementationPhases(features: FeatureSet[]): string[] {
-        return ['planning', 'development', 'testing', 'deployment'];
+        return ['planning', development', testing', deployment'];
     }
 
     private consolidateDependencies(features: FeatureSet[]): string[] {

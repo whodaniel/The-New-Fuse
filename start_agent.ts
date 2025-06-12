@@ -1,4 +1,4 @@
-import { EnhancedAgent } from './packages/core/src/communication/enhancedAgent.js';
+import { EnhancedAgent } from './packages/core/src/communication/enhancedAgent.tsx';
 import { config } from 'dotenv';
 
 // Load environment variables

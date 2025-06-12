@@ -4,14 +4,14 @@
  */
 
 // Export core components
-export * from './core/button/index.js';
-export * from './core/card/index.js';
-export * from './core/input/index.js';
-export * from './core/progress.js';
-export * from './core/badge.js';
-export * from './core/dialog/index.js';
-export * from './core/select/index.js';
-export * from './core/switch/index.js';
+export * from './core/button/index.tsx';
+export * from './core/card/index.tsx';
+export * from './core/input/index.tsx';
+export * from './core/progress.tsx';
+export * from './core/badge.tsx';
+export * from './core/dialog/index.tsx';
+export * from './core/select/index.tsx';
+export * from './core/switch/index.tsx';
 // Toast components and hooks
 export {
   Toast,
@@ -20,21 +20,21 @@ export {
   Toaster,
   useToast,
   toast
-} from './core/toast/index.js';
-export * from './core/label.js';
-export * from './core/checkbox.js';
+} from './core/toast/index.tsx';
+export * from './core/label.tsx';
+export * from './core/checkbox.tsx';
 
 // Export layout components
 export * from './layout/BaseLayout.js';
 export * from './layout/Navigation.js';
 
 // Export feature components
-export * from './features/workflow/components/WorkflowEditor.js';
-export * from './features/workflow/components/WorkflowVisualizer.js';
-export * from './features/workflow/components/WorkflowError.js';
+export * from './features/workflow/components/WorkflowEditor.tsx';
+export * from './features/workflow/components/WorkflowVisualizer.tsx';
+export * from './features/workflow/components/WorkflowError.tsx';
 
 // Export utilities
-export { cn, default as classNames } from './utils/cn.js';
+export { cn, default as classNames } from './utils/cn.tsx';
 
 // Export types
 export type {
@@ -48,7 +48,7 @@ export type {
   ToastVariant,
   ToasterToast,
   ToastActionType
-} from './core/types.js';
+} from './core/types.tsx';
 
 // Export workflow types
 export type {
@@ -59,4 +59,4 @@ export type {
   WorkflowError as WorkflowErrorType,
   WorkflowExecution,
   WorkflowMetrics
-} from './features/workflow/types.js';
+} from './features/workflow/types.tsx';

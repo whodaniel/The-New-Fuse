@@ -17,17 +17,17 @@ export interface APISpec {
     endpoints?: APIEndpoint[];
     // Authentication configuration
     auth?: {
-        type: 'basic' | 'bearer' | 'oauth2' | 'apiKey';
+        type: 'basic' | bearer' | oauth2' | apiKey';
         config: Record<string, any>;
     };
 }
 
 export interface APIEndpoint {
     path: string;
-    method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+    method:GET' | POST' | PUT' | DELETE' | PATCH';
     description?: string;
     parameters?: {
-        type: 'object';
+        type:object';
         properties: Record<string, any>;
         required?: string[];
     };

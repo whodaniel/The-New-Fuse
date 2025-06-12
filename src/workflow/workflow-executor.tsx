@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { WorkflowVersion, WorkflowStep } from './workflow-manager.js';
+import { WorkflowVersion, WorkflowStep } from './workflow-manager.tsx';
 
 export interface ExecutionContext {
     workflowId: string;

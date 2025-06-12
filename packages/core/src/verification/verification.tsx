@@ -34,18 +34,18 @@ export class OutputVerifier {
 
     this.sensitivePatterns = [
       'password',
-      'secret',
-      'token',
-      'key',
-      'credential'
+      secret',
+      token',
+      key',
+      credential'
     ] as const;
 
     this.harmfulPatterns = [
-      'malware',
-      'exploit',
-      'attack',
-      'vulnerability',
-      'hack'
+      malware',
+      exploit',
+      attack',
+      vulnerability',
+      hack'
     ] as const;
   }
 
@@ -55,7 +55,7 @@ export class OutputVerifier {
   public verifySchema(output: Record<string, unknown>): VerificationResult {
     try {
       // Check basic structure
-      if (typeof output !== 'object' || output === null) {
+      if (typeof output !== object' || output === null) {
         return {
           success: false,
           type: VerificationType.SCHEMA,
@@ -121,7 +121,7 @@ export class OutputVerifier {
 
       // Check metadata
       const metadata = output.metadata as Record<string, unknown> ?? {};
-      const requiredMetadata = new Set(['timestamp', 'source_id']);
+      const requiredMetadata = new Set(['timestamp', source_id']);
       const missingMetadata = Array.from(requiredMetadata)
         .filter(field => !(field in metadata));
 
@@ -151,7 +151,7 @@ export class OutputVerifier {
 
   public verifySecurity(output: Record<string, unknown>): VerificationResult {
     try {
-      const contentStr = String(output.content ?? '');
+      const contentStr = String(output.content ?? );
 
       // Check for sensitive patterns
       const foundPatterns = this.sensitivePatterns

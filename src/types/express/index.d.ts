@@ -1,5 +1,5 @@
 import { Request } from "express";
-import { User } from '../auth.js';
+import { User } from '../auth.tsx';
 
 declare global {
   namespace Express {

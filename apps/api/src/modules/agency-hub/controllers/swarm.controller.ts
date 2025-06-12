@@ -44,9 +44,9 @@ export class SwarmController {
         executionDto.executionPlan,
         executionDto.configuration
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to create execution',
+        (error as Error).message || 'Failed to create execution',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -67,9 +67,9 @@ export class SwarmController {
         limit,
         offset
       });
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get executions',
+        (error as Error).message || 'Failed to get executions',
         HttpStatus.NOT_FOUND
       );
     }
@@ -81,9 +81,9 @@ export class SwarmController {
   async getExecution(@Param('executionId') executionId: string) {
     try {
       return await this.swarmOrchestrationService.getExecutionDetails(executionId);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Execution not found',
+        (error as Error).message || 'Execution not found',
         HttpStatus.NOT_FOUND
       );
     }
@@ -104,9 +104,9 @@ export class SwarmController {
         statusDto.status,
         statusDto.reason
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to update status',
+        (error as Error).message || 'Failed to update status',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -128,9 +128,9 @@ export class SwarmController {
         stepId,
         stepUpdateDto
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to update step',
+        (error as Error).message || 'Failed to update step',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -154,9 +154,9 @@ export class SwarmController {
         messageDto.content,
         messageDto.priority
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to send message',
+        (error as Error).message || 'Failed to send message',
         HttpStatus.BAD_REQUEST
       );
     }
@@ -175,9 +175,9 @@ export class SwarmController {
         agentId,
         limit
       });
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get messages',
+        (error as Error).message || 'Failed to get messages',
         HttpStatus.NOT_FOUND
       );
     }
@@ -206,9 +206,9 @@ export class SwarmController {
   async performHealthCheck(@Param('agencyId') agencyId: string) {
     try {
       return await this.swarmOrchestrationService.performHealthCheck(agencyId);
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Health check failed',
+        (error as Error).message || 'Health check failed',
         HttpStatus.INTERNAL_SERVER_ERROR
       );
     }
@@ -226,9 +226,9 @@ export class SwarmController {
         agencyId,
         timeframe
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get metrics',
+        (error as Error).message || 'Failed to get metrics',
         HttpStatus.NOT_FOUND
       );
     }

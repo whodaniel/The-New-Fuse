@@ -1,5 +1,5 @@
 import { ConfigService } from './config/config.service.js';
-import { PrismaService } from './prisma/prisma.service.js';
+import { PrismaService } from './prisma/prisma.service.tsx';
 export declare class ApplicationFactory {
     private readonly config;
     private readonly prisma;

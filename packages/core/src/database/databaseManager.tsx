@@ -1,15 +1,15 @@
 // filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/core/src/database/databaseManager.tsx
-import { DataSource, DataSourceOptions } from 'typeorm';
+import { DataSource, DataSourceOptions } from ''typeorm';
 import { Logger } from 'winston';
 import { getLogger } from '../logging/loggingConfig.js';
-import { MetricsCollector } from '../monitoring/metricsCollector.js';
+import { MetricsCollector } from '../monitoring/metricsCollector.tsx';
 import * as path from 'path';
 import * as fs from 'fs/promises';
 
 const logger: Logger = getLogger('database_manager');
 
 export interface DatabaseConfig {
-    type: 'postgres' | 'mysql' | 'sqlite';
+    type:postgres' | mysql' | sqlite';
     host?: string;
     port?: number;
     username?: string;
@@ -85,8 +85,8 @@ export class DatabaseManager {
 
         // Set defaults
         return {
-            type: config.type || 'postgres',
-            host: config.host || 'localhost',
+            type: config.type || postgres',
+            host: config.host || localhost',
             port: config.port || 5432,
             synchronize: config.synchronize || false,
             logging: config.logging || false,
@@ -149,7 +149,7 @@ export class DatabaseManager {
 
             logger.info(`Database connection established to ${this.config.host}:${this.config.port}/${this.config.database}`);
         } catch (error) {
-            logger.error('Failed to initialize database connection:', error);
+            logger.error('Failed to initialize database connection:, error);
             throw error;
         }
     }
@@ -163,16 +163,16 @@ export class DatabaseManager {
             this.stats.connections = poolStats;
 
             // Collect query metrics
-            this.metricsCollector.recordMetric('database.queries.total', this.stats.queries.total);
-            this.metricsCollector.recordMetric('database.queries.failed', this.stats.queries.failed);
-            this.metricsCollector.recordMetric('database.queries.avgDuration', this.stats.queries.avgDuration);
+            this.metricsCollector.recordMetric('database.queries.'total', this.stats.queries.total);
+            this.metricsCollector.recordMetric('database.queries.'failed', this.stats.queries.failed);
+            this.metricsCollector.recordMetric('database.queries.'avgDuration', this.stats.queries.avgDuration);
 
             // Collect connection metrics
-            this.metricsCollector.recordMetric('database.connections.active', poolStats.active);
-            this.metricsCollector.recordMetric('database.connections.idle', poolStats.idle);
-            this.metricsCollector.recordMetric('database.connections.total', poolStats.total);
+            this.metricsCollector.recordMetric('database.connections.'active', poolStats.active);
+            this.metricsCollector.recordMetric('database.connections.'idle', poolStats.idle);
+            this.metricsCollector.recordMetric('database.connections.'total', poolStats.total);
         } catch (error) {
-            logger.error('Error collecting database metrics:', error);
+            logger.error('Error collecting database metrics:, error);
         }
     }
 

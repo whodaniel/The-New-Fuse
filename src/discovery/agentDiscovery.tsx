@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
-import { ExtensionScanner } from './extensionScanner.js';
-import { CapabilityRegistry } from './capabilityRegistry.js';
+import { ExtensionScanner } from './extensionScanner.tsx';
+import { CapabilityRegistry } from './capabilityRegistry.tsx';
 import { Agent, AgentEventData, AgentRegistrationRequest } from './types.js';
 
 /**

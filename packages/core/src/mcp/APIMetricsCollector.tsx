@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { MCPTool } from './types.js';
-import { APISpec } from '../agents/types/workflow.types.js';
-import { Logger } from '../utils/logger.js';
+import { MCPTool } from './types.tsx';
+import { APISpec } from '../agents/types/workflow.types.tsx';
+import { Logger } from '../utils/logger.tsx';
 
 interface APIMetric {
     timestamp: number;
@@ -145,12 +145,12 @@ export class APIMetricsCollector {
                     });
 
                     return result;
-                } catch (error) {
+                } catch (error: unknown) {
                     const duration = Date.now() - startTime;
                     this.recordMetric(tool.name, agentId, {
                         duration,
                         success: false,
-                        error: error.message,
+                        error: (error as Error).message,
                         endpoint,
                         method,
                         agentId,

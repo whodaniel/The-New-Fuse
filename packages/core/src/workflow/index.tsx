@@ -1,14 +1,14 @@
 import { Container } from 'inversify';
-import { WorkflowAuditSystem } from './audit.js';
-import { WorkflowResourceManager } from './resources.js';
-import { WorkflowSecurityManager } from './security.js';
-import { WorkflowTestFramework } from './testing.js';
-import { WorkflowAnalytics } from './analytics.js';
-import { WorkflowRecoverySystem } from './recovery.js';
-import { WorkflowAPIGateway } from './gateway.js';
-import { WorkflowEngine } from './engine.js';
-import { WorkflowErrorRecovery } from './errorRecovery.js';
-import { WorkflowMonitor } from './monitor.js';
+import { WorkflowAuditSystem } from './audit.tsx';
+import { WorkflowResourceManager } from './resources.tsx';
+import { WorkflowSecurityManager } from './security.tsx';
+import { WorkflowTestFramework } from './testing.tsx';
+import { WorkflowAnalytics } from './analytics.tsx';
+import { WorkflowRecoverySystem } from './recovery.tsx';
+import { WorkflowAPIGateway } from './gateway.tsx';
+import { WorkflowEngine } from './engine.tsx';
+import { WorkflowErrorRecovery } from './errorRecovery.tsx';
+import { WorkflowMonitor } from './monitor.tsx';
 
 export interface WorkflowServices {
   audit: WorkflowAuditSystem;
@@ -62,8 +62,8 @@ export class WorkflowModule {
 }
 
 // Export all workflow components
-export * from './engine.js';
-export * from './errorRecovery.js';
-export * from './monitor.js';
-export * from './gateway.js';
-export * from './types.js';
+export * from './engine.tsx';
+export * from './errorRecovery.tsx';
+export * from './monitor.tsx';
+export * from './gateway.tsx';
+export * from './types.tsx';

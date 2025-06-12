@@ -7,9 +7,9 @@ NC='\033[0m' # No Color
 
 echo -e "${GREEN}Starting cleanup process...${NC}"
 
-# Clean Yarn cache
-echo -e "\n${GREEN}Cleaning Yarn cache...${NC}"
-yarn cache clean
+# Clean Bun cache
+echo -e "\n${GREEN}Cleaning Bun cache...${NC}"
+bun pm cache rm
 rm -rf .yarn/cache
 rm -rf .yarn/build-state.yml
 rm -rf .yarn/install-state.gz
@@ -51,4 +51,4 @@ else
 fi
 
 echo -e "\n${GREEN}Cleanup complete!${NC}"
-echo -e "${GREEN}Run 'yarn install' to reinstall dependencies${NC}"
+echo -e "${GREEN}Run 'bun install' to reinstall dependencies${NC}"

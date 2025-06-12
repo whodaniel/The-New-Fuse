@@ -1,8 +1,8 @@
 // src/controllers/auth.controller.ts
 import { injectable, inject } from "inversify";
-import type { TYPES } from '../core/di/types.js';
+import type { TYPES } from '../core/di/types.tsx';
 import { Request, Response, NextFunction } from "express";
-import { User } from '../types/auth.js';
+import { User } from '../types/auth.tsx';
 
 @injectable()
 export class AuthController {

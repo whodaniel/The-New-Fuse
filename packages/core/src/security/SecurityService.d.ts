@@ -25,7 +25,7 @@ export interface SecurityPolicy {
 export interface SecurityConfig {
     enabled: boolean;
     policies: SecurityPolicy[];
-    defaultAction: allow' | 'deny';
+    defaultAction: allow' | deny';
     encryptionKey?: string;
     jwtSecret?: string;
     encryption: {

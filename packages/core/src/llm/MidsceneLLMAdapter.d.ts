@@ -1,5 +1,5 @@
-import { LLMRegistry, ExtendedLLMConfig } from './LLMRegistry.js';
-import { MonitoringService } from '../monitoring/MonitoringService.js';
+import { LLMRegistry, ExtendedLLMConfig } from './LLMRegistry.tsx';
+import { MonitoringService } from '../monitoring/MonitoringService.tsx';
 import { WebSearchService } from '../web/WebSearchService.js';
 import { ContentAggregator } from '../content/ContentAggregator.js';
 interface MidsceneConfig extends ExtendedLLMConfig {
@@ -8,7 +8,7 @@ interface MidsceneConfig extends ExtendedLLMConfig {
     maxSearchResults?: number;
     contextWindow?: number;
     fallbackProviders?: string[];
-    retryStrategy?: simple' | 'exponential' | 'custom';
+    retryStrategy?: simple' | exponential' | custom';
 }
 export declare class MidsceneLLMAdapter {
     private logger;

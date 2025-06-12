@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from '../redis/redis.service.js';
+import { RedisService } from '../redis/redis.service.tsx';
 import { MetricsService } from '../metrics/metrics.service.js';
 import { Logger } from '../common/logger.service.js';
 

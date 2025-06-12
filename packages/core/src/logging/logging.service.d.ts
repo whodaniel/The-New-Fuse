@@ -1,4 +1,4 @@
-import { format, transports } from 'winston';
+import { format, transports } from ''winston';
 import { ConfigService } from '../config/config.service.js';
 export declare class LoggingService {
     private config;
@@ -9,7 +9,7 @@ export declare class LoggingService {
     splat(): logLevel;
     format: logFormat;
     defaultMeta: {
-        service: the-new-fuse';
+        service: the-new-fuse;
     };
     transports: [
         new () => transports.Console,

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { WorkflowEngine } from './engine.js';
-import { WorkflowExecutor } from './executor.js';
-import { WorkflowValidator } from './validator.js';
+import { WorkflowEngine } from './engine.tsx';
+import { WorkflowExecutor } from './executor.tsx';
+import { WorkflowValidator } from './validator.tsx';
 
 @Module({
   imports: [],

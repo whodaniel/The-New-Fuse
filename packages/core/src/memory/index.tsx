@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Memory, MemoryQuery, MemoryType, MemoryStats } from './types.js';
-import { MemoryStore } from './store.js';
-import { SemanticIndex } from './semantic.js';
-import { MemoryCache } from './cache.js';
+import { Memory, MemoryQuery, MemoryType, MemoryStats } from './types.tsx';
+import { MemoryStore } from './store.tsx';
+import { SemanticIndex } from './semantic.tsx';
+import { MemoryCache } from './cache.tsx';
 import { EmbeddingService } from '../services/embedding.service.js';
 import { ConfigService } from '@nestjs/config';
 import { MemoryContent } from '../types/memory.types.js';
@@ -94,11 +94,11 @@ export class MemorySystem {
   }
 }
 
-export * from './MemoryManager.js';
-export * from './MemorySystem.js';
-export * from './VectorMemoryStore.js';
-export * from './memory.entity.js';
-export * from './types.js';
+export * from './MemoryManager.tsx';
+export * from './MemorySystem.tsx';
+export * from './VectorMemoryStore.tsx';
+export * from './memory.entity.tsx';
+export * from './types.tsx';
 
 // Re-export types
 export * from '../types/memory.types.js';

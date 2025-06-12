@@ -1,5 +1,5 @@
 import { Node, Edge } from "reactflow";
-import { nodeConfigurationSchema } from '../schemas/nodeConfiguration.js';
+import { nodeConfigurationSchema } from '../schemas/nodeConfiguration.tsx';
 import { NodeType } from '../types.js';
 
 export function validateWorkflow(nodes: Node[], edges: Edge[]): string[] {

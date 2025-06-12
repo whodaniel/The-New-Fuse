@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label } from '../Label.js';
+import { Label } from '../Label.tsx';
 import { Input } from '../Input.js';
 
 // Basic Label

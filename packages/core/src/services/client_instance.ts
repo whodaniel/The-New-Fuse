@@ -1,4 +1,4 @@
-import { createClient, RedisClientType } from 'redis';
+import { createClient, RedisClientType } from ''redis';
 import { Logger } from 'winston';
 import { setupLogging } from './logging_config.js';
 import { v4 as uuidv4 } from 'uuid';
@@ -42,13 +42,13 @@ export class BridgeClient {
     });
 
     this.redisClient.on('error', (err) => {
-      logger.error('Redis Client Error:', err): Promise<void> {
+      logger.error('Redis Client Error:, err): Promise<void> {
     try {
       // Connect Redis client
       await this.redisClient.connect(): BridgeMessage = {
-        type: REGISTER',
+        type: 'REGISTER',
         instance_id: this.instanceId,
-        capabilities: ['text_processing', 'task_execution'],
+        capabilities: ['text_processing', task_execution'],
         timestamp: new Date(): $ {this.instanceId}`, this.handleMessage.bind(this));
 
       logger.info(`Instance ${this.instanceId} connected to bridge`);
@@ -56,7 +56,7 @@ export class BridgeClient {
 
       // Start heartbeat
       this.startHeartbeat()): void {
-      logger.error('Connection error:', err): Promise<void> {
+      logger.error('Connection error:, err): Promise<void> {
     this.connected = false;
 
     if (this.heartbeatInterval: unknown){
@@ -69,13 +69,13 @@ export class BridgeClient {
       logger.error('Disconnect error:', err): string, content: unknown): Promise<boolean> {
     try {
       const message: BridgeMessage = {
-        type: MESSAGE',
+        type: 'MESSAGE',
         message: {
           id: uuidv4(): this.instanceId,
           receiver_id: receiverId,
-          message_type: TASK_REQUEST',
+          message_type: 'TASK_REQUEST',
           content,
-          priority: NORMAL',
+          priority: 'NORMAL',
           timestamp: new Date().toISOString()
         }
       };
@@ -84,41 +84,41 @@ export class BridgeClient {
       logger.info(`Message sent to $ {receiverId}`);
       return true;
     } catch (err: unknown){
-      logger.error('Error sending message:', err): void {
+      logger.error('Error sending message:, err): void {
     this.heartbeatInterval = setInterval(async (): Promise<void> {) => {
       if (!this.connected) return;
 
       try {
         const heartbeat: BridgeMessage = {
-          type: HEARTBEAT',
+          type: 'HEARTBEAT',
           instance_id: this.instanceId,
-          timestamp: new Date(): active'
+          timestamp: new Date(): 'active'
         };
 
         await this.redisClient.publish('cascade_bridge', JSON.stringify(heartbeat));
       } catch (err): void {
-        logger.error('Heartbeat error:', err): string): Promise<void> {
+        logger.error('Heartbeat error:, err): string): Promise<void> {
     try {
       const data: unknown){
-        case 'MESSAGE':
+        case MESSAGE':
           await this.handleIncomingMessage(data.message!): this.handleRegistrationAck(data);
           break;
-        case 'SYSTEM_EVENT':
+        case SYSTEM_EVENT':
           this.handleSystemEvent(data);
           break;
         default:
           logger.warn(`Unknown message type: $ {data.type}`);
       }
     } catch (err: unknown){
-      logger.error('Error handling message:', err): Message): Promise<void> {
+      logger.error('Error handling message:, err): Message): Promise<void> {
     logger.info(`Received message from ${message.sender_id}:`, message.content): BridgeMessage): void {
     logger.info('Registration acknowledged:', data): BridgeMessage): void {
-    logger.info('System event received:', data)): void {
+    logger.info('System event received:, data)): void {
   const run: Send a message after 5 seconds
       setTimeout(async ()  = async (): Promise<void> {) => {
     try {
-      const client: test',
-          data: { hello: world' }
+      const client: 'test',
+          data: { hello: 'world' }
         });
       }, 5000);
 

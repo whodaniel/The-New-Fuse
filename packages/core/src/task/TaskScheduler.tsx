@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskStatus, TaskPriority } from './types.js';
+import { Task, TaskStatus, TaskPriority } from './types.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import { TaskRepository } from '@the-new-fuse/database';
-import { TaskExecutor } from './TaskExecutor.js';
+import { TaskExecutor } from './TaskExecutor.tsx';
 import { EventEmitter } from 'events';
 import { FindOneOptions } from 'typeorm';
-import { TaskQueue } from './TaskQueue.js';
+import { TaskQueue } from './TaskQueue.tsx';
 
 interface ScheduledTask<T> extends Task<T> {
   cronTime: string;
@@ -67,7 +67,7 @@ export class TaskScheduler<T> extends EventEmitter {
           await this.scheduleTask(task);
         }
       } catch (error) {
-        this.logger.error('Error in task scheduler:', error);
+        this.logger.error('Error in task scheduler:, error);
       }
     }, 1000);
   }
@@ -131,12 +131,12 @@ export class TaskScheduler<T> extends EventEmitter {
       }
 
       // For hard dependencies, the dependent task must be completed
-      if (dependency.type === 'hard' && dependentTask.status !== TaskStatus.COMPLETED) {
+      if (dependency.type === hard' && dependentTask.status !== TaskStatus.COMPLETED) {
         return false;
       }
 
       // For soft dependencies, we can proceed if the task is either completed or failed
-      if (dependency.type === 'soft' && 
+      if (dependency.type === soft' && 
           ![TaskStatus.COMPLETED, TaskStatus.FAILED].includes(dependentTask.status)) {
         return false;
       }
@@ -187,7 +187,7 @@ export class TaskScheduler<T> extends EventEmitter {
 
     this.scheduledTasks.set(id, task);
     // Placeholder for cron job creation, assuming a library like node-cron
-    // const job = new CronJob(cronTime, () => this.runScheduledTask(id), null, true, 'America/Los_Angeles');
+    // const job = new CronJob(cronTime, () => this.runScheduledTask(id), null, true, America/Los_Angeles');
     // this.cronJobs.set(id, job);
     // job.start();
     this.options.onTaskScheduled?.(task);

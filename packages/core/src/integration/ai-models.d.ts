@@ -1,6 +1,6 @@
-import { ModelConfig } from '@the-new-fuse/types';
+import { ModelConfig  } from '@the-new-fuse/types;
 export declare class AIModelIntegration {
     private models;
-    ModelType: any;
-    config: ModelConfig;
+    ModelType: any';
+    config: ModelConfig';
 }

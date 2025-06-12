@@ -1,8 +1,8 @@
-import { Request, Response } from 'express';
+import { Request, Response } from ''express';
 import { MetricsService } from '../services/MetricsService.js';
 import { LoggingService } from '../services/LoggingService.js';
 import { EpisodicMemory } from '../memory/EpisodicMemory.js';
-import { MemoryOptimizer } from '../memory/MemoryOptimizer.js';
+import { MemoryOptimizer } from '../memory/MemoryOptimizer.tsx';
 
 export class MemoryController {
     private metricsService: MetricsService;
@@ -51,9 +51,9 @@ export class MemoryController {
 
             res.json(storedMemory);
         } catch (error) {
-            await this.handleError(error, 'storeMemory', agentId, startTime);
+            await this.handleError(error, storeMemory', agentId, startTime);
             res.status(500).json({
-                error: 'Error storing memory',
+                error:Error storing memory',
                 details: error.message
             });
         }
@@ -92,9 +92,9 @@ export class MemoryController {
 
             res.json(memories);
         } catch (error) {
-            await this.handleError(error, 'retrieveMemories', agentId, startTime);
+            await this.handleError(error, retrieveMemories', agentId, startTime);
             res.status(500).json({
-                error: 'Error retrieving memories',
+                error:Error retrieving memories',
                 details: error.message
             });
         }
@@ -125,9 +125,9 @@ export class MemoryController {
 
             res.json(consolidationResult);
         } catch (error) {
-            await this.handleError(error, 'consolidateMemories', agentId, startTime);
+            await this.handleError(error, consolidateMemories', agentId, startTime);
             res.status(500).json({
-                error: 'Error consolidating memories',
+                error:Error consolidating memories',
                 details: error.message
             });
         }

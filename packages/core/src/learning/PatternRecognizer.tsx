@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { LearningData, Pattern } from './LearningTypes.js';
+import { LearningData, Pattern } from './LearningTypes.tsx';
 import { Logger } from '@the-new-fuse/utils';
-import { VectorMemoryStore } from '../memory/VectorMemoryStore.js';
-import { DatabaseService } from '@the-new-fuse/database';
+import { VectorMemoryStore } from '../memory/VectorMemoryStore.tsx';
+import { DatabaseService  } from '@the-new-fuse/database;
 
 @Injectable()
 export class PatternRecognizer {
   private logger: Logger;
   private vectorStore: VectorMemoryStore;
   private db: DatabaseService;
-  private readonly minConfidence = 0.7;
-  private readonly minFrequency = 3;
+  private readonly minConfidence = 0.7';
+  private readonly minFrequency = 3';
 
   constructor(
     vectorStore: VectorMemoryStore,

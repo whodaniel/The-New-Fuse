@@ -1,1 +1,1 @@
-export declare function Toaster(): any string;
+export declare function Toaster(): string;

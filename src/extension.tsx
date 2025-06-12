@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
-import { Orchestrator } from './orchestrator/orchestrator.js';
-import { setupFileWatchers } from './orchestrator/file-watchers.js';
-import { AgentDiscovery } from './discovery/agentDiscovery.js';
+import { Orchestrator } from './orchestrator/orchestrator.tsx';
+import { setupFileWatchers } from './orchestrator/file-watchers.tsx';
+import { AgentDiscovery } from './discovery/agentDiscovery.tsx';
 import { AgentEvent } from './discovery/types.js';
 
 // Global instance of agent discovery

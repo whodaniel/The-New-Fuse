@@ -1,11 +1,11 @@
-import { VectorMemoryStore } from '../memory/VectorMemoryStore.js';
-import { DatabaseService } from '@the-new-fuse/database';
+import { VectorMemoryStore } from '../memory/VectorMemoryStore.tsx';
+import { DatabaseService  } from '@the-new-fuse/database;
 export declare class PatternRecognizer {
     private logger;
     private vectorStore;
     private db;
     private readonly minConfidence;
     private readonly minFrequency;
-    constructor(vectorStore: VectorMemoryStore, db: DatabaseService);
-    private extractPatterns;
+    constructor(vectorStore: VectorMemoryStore, db: DatabaseService)';
+    private extractPatterns';
 }

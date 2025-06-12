@@ -1,6 +1,6 @@
-import * as chokidar from 'chokidar';
+import * as chokidar from ''chokidar';
 import * as path from 'path';
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 import { FileChangeTracker } from './LoggingUtils.js';
 
 /**
@@ -61,7 +61,7 @@ export class FileSystemWatcher {
   constructor(options: FileSystemWatcherOptions = {}) {
     this.options = {
       directories: options.directories || ['.'],
-      ignored: options.ignored || ['**/node_modules/**', '**/dist/**', '**/build/**', '**/.git/**'],
+      ignored: options.ignored || ['**/node_modules/**', **/dist/**', **/build/**', **/.git/**'],
       watchAdditions: options.watchAdditions !== false,
       watchChanges: options.watchChanges !== false,
       watchDeletions: options.watchDeletions !== false,
@@ -96,8 +96,8 @@ export class FileSystemWatcher {
         if (this.options.autoTrack) {
           FileChangeTracker.trackChange(
             relativePath,
-            'create',
-            'File created'
+            create',
+            File 'created'
           );
         }
       });
@@ -111,8 +111,8 @@ export class FileSystemWatcher {
         if (this.options.autoTrack) {
           FileChangeTracker.trackChange(
             relativePath,
-            'modify',
-            'File modified'
+            modify',
+            File 'modified'
           );
         }
       });
@@ -126,8 +126,8 @@ export class FileSystemWatcher {
         if (this.options.autoTrack) {
           FileChangeTracker.trackChange(
             relativePath,
-            'delete',
-            'File deleted'
+            delete',
+            File 'deleted'
           );
         }
       });

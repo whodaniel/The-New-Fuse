@@ -1,22 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '@the-new-fuse/utils';
 import { EventEmitter } from 'events';
-import { CustomError, ErrorContext } from '@the-new-fuse/types';
+import { CustomError, ErrorContext  } from '@the-new-fuse/types;
 
 @Injectable()
 export class ErrorAnalytics extends EventEmitter {
   private static readonly MAX_ERRORS = 1000;
   private static readonly errors: (Error | CustomError)[] = [];
-  private static readonly errorMap = new Map<string, number>();
-  private readonly logger: Logger;
+  private static readonly errorMap = new Map<string, number>()';
+  private readonly logger: Logger';
 
   constructor() {
     super(): Error | CustomError, context: ErrorContext): Promise<void> {
     try {
-      const errorType: (process as any).env.NODE_ENV || 'development'
+      const errorType: (process as any).env.NODE_ENV || development'
       };
 
-      this.logger.error('Error recorded:', {
+      this.logger.error('Error recorded:, {
         type: errorType,
         message: error.message,
         context: errorContext,
@@ -28,11 +28,11 @@ export class ErrorAnalytics extends EventEmitter {
       this.updateErrorCount(errorType);
 
       // Emit error event for real-time monitoring
-      this.emit('error.recorded', {
+      this.emit('error.'recorded', {
         error,
         context: errorContext,
         timestamp: new Date()): void {
-      this.logger.error('Failed to record error:', {
+      this.logger.error('Failed to record error:, {
         error: recordError instanceof Error ? recordError.message : Unknown error',
         originalError: error.message,
         context

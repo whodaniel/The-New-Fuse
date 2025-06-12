@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { User } from '../entities/User.js';
+import { User } from '../entities/User';
 export declare class HealthController {
     private readonly userRepository;
     constructor(userRepository: Repository<User>);

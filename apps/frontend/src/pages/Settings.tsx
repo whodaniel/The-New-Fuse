@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../providers/AuthProvider.js';
+import { useAuth } from '../providers/AuthProvider.tsx';
 
 export default function Settings() {
   const { user } = useAuth();
@@ -71,8 +71,8 @@ export default function Settings() {
               <h2 className="text-xl font-semibold mb-4">General Settings</h2>
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Language</label>
-                  <select className="w-full px-3 py-2 bg-background border rounded-md">
+                  <label className="block text-sm font-medium mb-1" id="language-label">Language</label>
+                  <select className="w-full px-3 py-2 bg-background border rounded-md" aria-labelledby="language-label">
                     <option>English</option>
                     <option>Spanish</option>
                     <option>French</option>
@@ -81,8 +81,8 @@ export default function Settings() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Time Zone</label>
-                  <select className="w-full px-3 py-2 bg-background border rounded-md">
+                  <label className="block text-sm font-medium mb-1" id="timezone-label">Time Zone</label>
+                  <select className="w-full px-3 py-2 bg-background border rounded-md" aria-labelledby="timezone-label">
                     <option>UTC (Coordinated Universal Time)</option>
                     <option>EST (Eastern Standard Time)</option>
                     <option>PST (Pacific Standard Time)</option>
@@ -123,6 +123,7 @@ export default function Settings() {
                   <input 
                     type="text" 
                     className="w-full px-3 py-2 bg-background border rounded-md"
+ title="Display Name"
                     defaultValue={user?.displayName || ''}
                   />
                 </div>
@@ -132,6 +133,7 @@ export default function Settings() {
                   <input 
                     type="email" 
                     className="w-full px-3 py-2 bg-background border rounded-md"
+ title="Email"
                     defaultValue={user?.email || ''}
                   />
                 </div>
@@ -168,8 +170,8 @@ export default function Settings() {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Font Size</label>
-                  <select className="w-full px-3 py-2 bg-background border rounded-md">
+                  <label className="block text-sm font-medium mb-1" id="fontsize-label">Font Size</label>
+                  <select className="w-full px-3 py-2 bg-background border rounded-md" aria-labelledby="fontsize-label">
                     <option>Small</option>
                     <option selected>Medium</option>
                     <option>Large</option>
@@ -195,7 +197,7 @@ export default function Settings() {
                     <p className="text-sm text-muted-foreground">Receive email notifications for important updates</p>
                   </div>
                   <div className="relative inline-block w-12 h-6 rounded-full bg-muted">
-                    <input type="checkbox" id="emailNotif" className="sr-only" />
+                    <input type="checkbox" id="emailNotif" className="sr-only" aria-label="Toggle email notifications" />
                     <span className="absolute left-1 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
                   </div>
                 </div>
@@ -206,7 +208,7 @@ export default function Settings() {
                     <p className="text-sm text-muted-foreground">Receive push notifications in your browser</p>
                   </div>
                   <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input type="checkbox" id="pushNotif" className="sr-only" checked />
+                    <input type="checkbox" id="pushNotif" className="sr-only" checked aria-label="Toggle push notifications" />
                     <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
                   </div>
                 </div>
@@ -217,7 +219,7 @@ export default function Settings() {
                     <p className="text-sm text-muted-foreground">Get notified when agents complete tasks</p>
                   </div>
                   <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input type="checkbox" id="agentNotif" className="sr-only" checked />
+                    <input type="checkbox" id="agentNotif" className="sr-only" checked aria-label="Toggle agent activity alerts" />
                     <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
                   </div>
                 </div>
@@ -242,6 +244,7 @@ export default function Settings() {
                       type="password" 
                       className="flex-1 px-3 py-2 bg-background border rounded-md mr-2"
                       value="REDACTED-STRIPE-KEY"
+ title="API Key"
                       readOnly
                     />
                     <button className="px-3 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90">
@@ -256,7 +259,7 @@ export default function Settings() {
                     <p className="text-sm text-muted-foreground">Enable API access for external applications</p>
                   </div>
                   <div className="relative inline-block w-12 h-6 rounded-full bg-primary">
-                    <input type="checkbox" id="apiAccess" className="sr-only" checked />
+                    <input type="checkbox" id="apiAccess" className="sr-only" checked aria-label="Toggle API access" />
                     <span className="absolute left-7 top-1 w-4 h-4 rounded-full bg-white transition-transform"></span>
                   </div>
                 </div>

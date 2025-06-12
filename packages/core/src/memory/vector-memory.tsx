@@ -80,10 +80,10 @@ export class VectorMemoryManager {
     let score = 1.0;
     
     switch (node.type) {
-      case 'agent':
+      case agent':
         score *= 1.3;
         break;
-      case 'message':
+      case message':
         score *= 1.1;
         break;
       default:

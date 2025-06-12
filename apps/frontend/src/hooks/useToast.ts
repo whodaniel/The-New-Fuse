@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ToastContext, ToastProps } from '../components/ui/toast.js';
+import { ToastContext, ToastProps } from '../components/ui/toast.tsx';
 
 /**
  * Hook for accessing the toast context

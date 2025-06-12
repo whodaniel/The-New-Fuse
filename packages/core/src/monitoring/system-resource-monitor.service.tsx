@@ -1,8 +1,8 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { CentralizedLoggingService } from '../logging/centralized-logging.service.js';
-import { PerformanceMonitoringService } from './performance-monitoring.service.js';
+import { CentralizedLoggingService } from '../logging/centralized-logging.service.tsx';
+import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
 import * as os from 'os';
 import * as process from 'process';
 import * as fs from 'fs';

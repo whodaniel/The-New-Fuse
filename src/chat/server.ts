@@ -6,9 +6,9 @@ import Redis from 'ioredis';
 
 // Create Redis clients
 const redisUrl = process.env.REDIS_URL || "redis://localhost:6379";
-const redisClient = new Redis(redisUrl);
-const redisPub = new Redis(redisUrl);
-const redisSub = new Redis(redisUrl);
+const redisClient = new (Redis as any)(redisUrl);
+const redisPub = new (Redis as any)(redisUrl);
+const redisSub = new (Redis as any)(redisUrl);
 
 // Create Express app and HTTP server
 const app = express();

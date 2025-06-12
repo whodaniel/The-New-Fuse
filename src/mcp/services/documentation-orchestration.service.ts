@@ -235,10 +235,10 @@ export class DocumentationOrchestrationService {
             documentCount: testResult.content?.length || 0
           };
           healthyCount++;
-        } catch (error) {
+        } catch (error: unknown) {
           sourceResults[source] = {
             available: false,
-            error: error.message
+            error: (error as Error).message
           };
         }
       }
@@ -258,13 +258,13 @@ export class DocumentationOrchestrationService {
         ragServerStatus: ragStatus
       };
 
-    } catch (error) {
+    } catch (error: unknown) {
       this.logger.error('Documentation health check failed:', error);
       
       return {
         overallHealth: 'unhealthy',
         sources: {},
-        ragServerStatus: { error: error.message }
+        ragServerStatus: { error: (error as Error).message }
       };
     }
   }
@@ -311,12 +311,12 @@ export class DocumentationOrchestrationService {
         };
         response.totalResults += result.content?.length || 0;
 
-      } catch (error) {
+      } catch (error: unknown) {
         this.logger.warn(`Search failed for source ${source}:`, error);
         response.sources[source] = {
           results: [],
           count: 0,
-          error: error.message
+          error: (error as Error).message
         };
       }
     }

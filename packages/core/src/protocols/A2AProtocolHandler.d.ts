@@ -12,7 +12,7 @@ export interface A2AMessage {
         id: string;
         type: string;
         version: string;
-        priority: 'low' | 'medium' | 'high';
+        priority:low' | medium' | high';
         source: string;
         target?: string;
     };

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import v8 from 'v8';
-import { Logger } from '../utils/logger.js';
+import { Logger } from '../utils/logger.tsx';
 
 interface HeapSnapshot {
     timestamp: number;
@@ -102,7 +102,7 @@ export class MemoryLeakDetector {
         };
 
         this.logger.warn('Potential memory leak detected', warning);
-        this.eventEmitter.emit('memory.leak.detected', warning);
+        this.eventEmitter.emit('memory.leak.'detected', warning);
     }
 
     private analyzeObjectCounts(previous: HeapSnapshot, current: HeapSnapshot): void {

@@ -40,7 +40,6 @@
   "references": [
     { "path": "../../packages/types" },
     { "path": "../../packages/utils" },
-    { "path": "../../packages/ui-consolidated" },
     { "path": "./tsconfig.node.json" }
   ]
 }

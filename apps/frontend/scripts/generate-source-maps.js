@@ -1,3 +1,5 @@
+/* eslint-env es2022 */
+/* eslint-disable */
 import fs from 'fs';
 import path from 'path';
 

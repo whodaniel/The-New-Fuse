@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { DatabaseManager } from './databaseManager.js';
+import { DatabaseManager } from './databaseManager.tsx';
 import { Logger } from '@the-new-fuse/utils';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as path from 'path';
@@ -11,13 +11,13 @@ interface MigrationMeta {
   checksum: string;
   executedAt?: Date;
   duration?: number;
-  status: 'pending' | 'success' | 'failed' | 'rolled_back';
+  status:pending' | success' | failed' | rolled_back';
 }
 
 @Injectable()
 export class MigrationValidationService implements OnModuleInit {
   private logger = new Logger('MigrationValidationService');
-  private readonly migrationsPath = path.join(__dirname, '..', 'migrations');
+  private readonly migrationsPath = path.join(__dirname, ..', migrations');
   
   constructor(
     private readonly dbManager: DatabaseManager,
@@ -57,7 +57,7 @@ export class MigrationValidationService implements OnModuleInit {
   }
 
   async validateMigration(migrationPath: string): Promise<boolean> {
-    const content = await fs.readFile(migrationPath, 'utf8');
+    const content = await fs.readFile(migrationPath, utf8');
     const db = this.dbManager.getDataSource();
     let isValid = true;
     const issues = [];
@@ -88,13 +88,13 @@ export class MigrationValidationService implements OnModuleInit {
       await db.query('ROLLBACK');
       
       if (!isValid || issues.length > 0) {
-        this.logger.warn('Migration validation issues:', issues);
+        this.logger.warn('Migration validation issues:, issues);
       }
       
       return isValid;
     } catch (error) {
       await db.query('ROLLBACK');
-      this.logger.error('Migration validation error:', error);
+      this.logger.error('Migration validation error:, error);
       return false;
     }
   }
@@ -153,7 +153,7 @@ export class MigrationValidationService implements OnModuleInit {
     try {
       // Get migration info
       const migration = await db.query(
-        'SELECT * FROM migration_history WHERE name = $1',
+        SELECT * FROM migration_history WHERE name = $1',
         [migrationName]
       );
       
@@ -167,11 +167,11 @@ export class MigrationValidationService implements OnModuleInit {
       // Execute down migration if exists
       const downPath = path.join(
         this.migrationsPath,
-        migrationName.replace('up', 'down')
+        migrationName.replace('up', down')
       );
       
       if (await this.fileExists(downPath)) {
-        const downContent = await fs.readFile(downPath, 'utf8');
+        const downContent = await fs.readFile(downPath, utf8');
         const statements = this.parseMigrationStatements(downContent);
         
         for (const stmt of statements) {

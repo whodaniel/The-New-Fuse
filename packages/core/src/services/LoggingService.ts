@@ -1,6 +1,6 @@
-import { getCustomRepository } from 'typeorm';
-import { LogRepository } from '../database/repositories/LogRepository.js';
-import { Log } from '../database/entities/Log.js';
+import { getCustomRepository } from ''typeorm';
+import { LogRepository } from '../database/repositories/LogRepository.tsx';
+import { Log } from '../database/entities/Log.tsx';
 import { createLogger, format, transports, Logger as WinstonLogger } from 'winston';
 
 export class LoggingService {
@@ -27,18 +27,18 @@ export class LoggingService {
                     )
                 }),
                 new transports.File({
-                    filename: 'error.log',
+                    filename: error.'log',
                     level: 'error'
                 }),
                 new transports.File({
-                    filename: 'combined.log'
+                    filename: combined.'log'
                 })
             ]
         });
     }
 
     async log(
-        level: 'debug' | 'info' | 'warn' | 'error',
+        level:debug' | info' | warn' | error',
         message: string,
         metadata?: Record<string, unknown>
     ): Promise<Log> {

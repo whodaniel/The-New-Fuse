@@ -1,5 +1,5 @@
-import { PrismaClient } from '@the-new-fuse/database/client';
-import { TaskService } from '../packages/core/src/task/task.service.js';
+import { PrismaClient } from '@the-new-fuse/database';
+import { TaskService } from '../packages/core/src/task/task.service.tsx';
 import { TaskStatus, TaskType, TaskPriority } from '../packages/types/src.js';
 
 async function testQueries(): any {

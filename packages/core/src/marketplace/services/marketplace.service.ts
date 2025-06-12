@@ -8,9 +8,9 @@ import { UserSubscriptionRepository } from '../repositories/user-subscription.re
 import { IntegrationRegistryService } from '../../integration/services/integration-registry.service.js';
 import { PaymentService } from '../../payment/services/payment.service.js';
 import { UserService } from '../../user/services/user.service.js';
-import { MarketplaceItem, MarketplaceItemType, PricingModel } from '../entities/marketplace-item.entity.js';
-import { UserSubscription, SubscriptionStatus } from '../entities/user-subscription.entity.js';
-import { User } from '../../user/entities/user.entity.js';
+import { MarketplaceItem, MarketplaceItemType, PricingModel } from '../entities/marketplace-item.entity';
+import { UserSubscription, SubscriptionStatus } from '../entities/user-subscription.entity';
+import { User } from '../../user/entities/user.entity';
 
 @Injectable()
 export class MarketplaceService {
@@ -187,7 +187,7 @@ export class MarketplaceService {
       const paymentResult = await this.paymentService.processPayment({
         userId,
         amount: item.price,
-        currency: item.currency || 'USD',
+        currency: item.currency || USD',
         description: `Subscription to ${item.name}`,
         metadata: {
           itemId,
@@ -319,41 +319,41 @@ export class MarketplaceService {
       {
         id: 'free',
         name: 'Free',
-        description: 'Basic access with limited features',
+        description:Basic access with limited features',
         price: 0,
         currency: 'USD',
         features: [
-          'Access to basic integrations',
-          'Limited workflow executions',
-          'Community support'
+          Access to basic 'integrations',
+          Limited workflow 'executions',
+          Community 'support'
         ]
       },
       {
         id: 'pro',
         name: 'Professional',
-        description: 'Advanced features for professionals',
+        description:Advanced features for professionals',
         price: 19.99,
         currency: 'USD',
         features: [
-          'Access to all standard integrations',
-          'Unlimited workflow executions',
-          'Priority support',
-          'Advanced analytics'
+          Access to all standard 'integrations',
+          Unlimited workflow 'executions',
+          Priority 'support',
+          Advanced 'analytics'
         ]
       },
       {
         id: 'enterprise',
         name: 'Enterprise',
-        description: 'Full-featured solution for organizations',
+        description:Full-featured solution for organizations',
         price: 99.99,
         currency: 'USD',
         features: [
-          'Access to all integrations including premium',
-          'Unlimited everything',
-          'Dedicated support',
-          'Custom integrations',
-          'Team collaboration features',
-          'Advanced security features'
+          Access to all integrations including 'premium',
+          Unlimited 'everything',
+          Dedicated 'support',
+          Custom 'integrations',
+          Team collaboration 'features',
+          Advanced security 'features'
         ]
       }
     ];

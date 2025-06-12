@@ -60,9 +60,9 @@ export class AnalyticsController {
           clientSatisfaction: serviceMetrics.clientSatisfaction || 0
         }
       };
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get analytics overview',
+        (error as Error).message || 'Failed to get analytics overview',
         HttpStatus.NOT_FOUND
       );
     }
@@ -82,9 +82,9 @@ export class AnalyticsController {
         timeframe,
         granularity
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get performance metrics',
+        (error as Error).message || 'Failed to get performance metrics',
         HttpStatus.NOT_FOUND
       );
     }
@@ -104,9 +104,9 @@ export class AnalyticsController {
         timeframe,
         categoryId
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get provider performance',
+        (error as Error).message || 'Failed to get provider performance',
         HttpStatus.NOT_FOUND
       );
     }
@@ -126,9 +126,9 @@ export class AnalyticsController {
         timeframe,
         breakdown
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get quality trends',
+        (error as Error).message || 'Failed to get quality trends',
         HttpStatus.NOT_FOUND
       );
     }
@@ -146,9 +146,9 @@ export class AnalyticsController {
         agencyId,
         timeframe
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get utilization metrics',
+        (error as Error).message || 'Failed to get utilization metrics',
         HttpStatus.NOT_FOUND
       );
     }
@@ -168,9 +168,9 @@ export class AnalyticsController {
         timeframe,
         breakdown
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get cost analysis',
+        (error as Error).message || 'Failed to get cost analysis',
         HttpStatus.NOT_FOUND
       );
     }
@@ -188,9 +188,9 @@ export class AnalyticsController {
         agencyId,
         timeframe
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get bottleneck analysis',
+        (error as Error).message || 'Failed to get bottleneck analysis',
         HttpStatus.NOT_FOUND
       );
     }
@@ -208,9 +208,9 @@ export class AnalyticsController {
         agencyId,
         horizon
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to get predictive analytics',
+        (error as Error).message || 'Failed to get predictive analytics',
         HttpStatus.NOT_FOUND
       );
     }
@@ -240,9 +240,9 @@ export class AnalyticsController {
         format,
         includeMetrics
       );
-    } catch (error) {
+    } catch (error: unknown) {
       throw new HttpException(
-        error.message || 'Failed to export analytics data',
+        (error as Error).message || 'Failed to export analytics data',
         HttpStatus.NOT_FOUND
       );
     }

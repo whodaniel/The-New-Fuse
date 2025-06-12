@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../logging/LoggingService.js';
-import { EventBusService } from '../integration/EventBusService.js';
+import { EventBusService } from '../integration/EventBusService.tsx';
 
 export interface UsageEvent {
   eventType: string;
@@ -70,7 +70,7 @@ export class UsageAnalytics {
     };
 
     this.sessions.set(userId, session); // Store session by userId for easy lookup
-    await this.eventBus.publish('usage.session.start', session);
+    await this.eventBus.publish('usage.session.'start', session);
 
     this.logger.info('User session started', { userId, sessionId });
     return sessionId;
@@ -84,7 +84,7 @@ export class UsageAnalytics {
     }
 
     session.endTime = Date.now();
-    await this.eventBus.publish('usage.session.end', session);
+    await this.eventBus.publish('usage.session.'end', session);
 
     this.logger.info('User session ended', {
       userId: session.userId,

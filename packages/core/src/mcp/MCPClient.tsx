@@ -1,5 +1,5 @@
-import { MCPMessage, MCPAgent, MCPCapability } from './types.js';
-import { MCPAgentServer } from './MCPAgentServer.js';
+import { MCPMessage, MCPAgent, MCPCapability } from './types.tsx';
+import { MCPAgentServer } from './MCPAgentServer.tsx';
 
 export class MCPClient implements MCPAgent {
     private server: MCPAgentServer;
@@ -27,7 +27,7 @@ export class MCPClient implements MCPAgent {
         params: unknown
     ): Promise<any> {
         const message: MCPMessage = {
-            version: '1.0.0',
+            version:1.0.0',
             messageId: crypto.randomUUID(),
             timestamp: Date.now(),
             source: {
@@ -48,7 +48,7 @@ export class MCPClient implements MCPAgent {
             metadata: {
                 conversationId: crypto.randomUUID(),
                 protocol: 'mcp',
-                protocolVersion: '1.0.0'
+                protocolVersion:1.0.0'
             }
         };
 

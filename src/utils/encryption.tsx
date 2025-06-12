@@ -1,5 +1,5 @@
 import { createCipheriv, createDecipheriv, createPublicKey, createPrivateKey } from 'crypto';
-import { Logger } from './logger.js';
+import { Logger } from './logger.tsx';
 import CryptoJS from 'crypto-js';
 
 const logger = new Logger('Encryption');

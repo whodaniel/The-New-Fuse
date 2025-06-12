@@ -1,4 +1,4 @@
-import { ProjectVisualizer } from './fileVisualizer.js';
+import { ProjectVisualizer } from './fileVisualizer.tsx';
 import { AnalysisResults, AnalysisType, Finding, AnalysisResult } from '@the-new-fuse/types';
 import { Graph } from 'graphology';
 

@@ -1,9 +1,9 @@
 // filepath: src/entities/index.ts
 export * from './User.js';
-export * from './Agent.js';
-export * from './Pipeline.js';
-export * from './Task.js';
-export * from './TaskExecution.js';
-export * from './AuthSession.js';
-export * from './LoginAttempt.js';
-export * from './AuthEvent.js';
+export * from './Agent.tsx';
+export * from './Pipeline.tsx';
+export * from './Task.tsx';
+export * from './TaskExecution.tsx';
+export * from './AuthSession.tsx';
+export * from './LoginAttempt.tsx';
+export * from './AuthEvent.tsx';

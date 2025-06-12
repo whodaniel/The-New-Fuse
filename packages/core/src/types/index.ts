@@ -10,7 +10,7 @@ export {
   WalletType
 } from './communication.js'; // Adjusted extension
 export * from './enums.js'; // Adjusted extension
-// export { // Commented out - './interfaces' likely missing
+// export { // Commented out - ./interfaces' likely missing
 //   type ExtendedLLMConfig,
 //   type BaseMessage
 // } from './interfaces.js';
@@ -36,7 +36,7 @@ export {
 export type { AgentState } from './agent.js'; // Adjusted extension
 
 // Common types
-// export type { // Commented out - './common' likely missing
+// export type { // Commented out - ./common' likely missing
 //   CommonConfig,
 //   CommonError,
 //   CommonEvent,
@@ -73,7 +73,7 @@ export const TYPES = {
 // export * as Types from '@the-new-fuse/types';
 
 export type {
-  // type WorkflowDefinition, // 'type' keyword here is incorrect syntax
+  // type WorkflowDefinition, // type' keyword here is incorrect syntax
   WorkflowDefinition, // Corrected syntax
   WorkflowDefinitionType,
   WorkflowExecution,
@@ -88,7 +88,7 @@ export { WorkflowSchema } from './workflow.js'; // Adjusted extension
 
 export interface VectorStore {
   dimensions: number;
-  similarity: 'cosine' | 'euclidean' | 'dot';
+  similarity:cosine' | euclidean' | dot';
   store(vectors: number[][], metadata: unknown[]): Promise<void>;
   search(query: number[], k: number): Promise<SearchResult[]>;
 }
@@ -104,7 +104,7 @@ export interface ChatCompletion {
   model: string;
   choices: Array<{
     message: {
-      role: 'assistant' | 'user' | 'system';
+      role:assistant' | user' | system';
       content: string;
     };
     finish_reason: string;
