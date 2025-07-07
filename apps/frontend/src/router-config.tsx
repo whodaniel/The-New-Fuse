@@ -1,11 +1,11 @@
 import React, { lazy, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
-import Loading from './components/ui/loading.js';
-import AuthLayout from './layouts/AuthLayout.tsx';
-import MainLayout from './layouts/MainLayout.tsx';
-import AdminLayout from './layouts/AdminLayout.tsx';
-import SettingsLayout from './layouts/SettingsLayout.tsx';
-import HelpLayout from './layouts/HelpLayout.tsx';
+import Loading from './components/ui/loading';
+import AuthLayout from './layouts/AuthLayout';
+import MainLayout from './layouts/MainLayout';
+import AdminLayout from './layouts/AdminLayout';
+import SettingsLayout from './layouts/SettingsLayout';
+import HelpLayout from './layouts/HelpLayout';
 
 // Auth pages
 const Login = lazy(() => import('./pages/Auth/Login.js'));

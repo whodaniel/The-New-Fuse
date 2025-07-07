@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '../../../core/button.tsx';
-import { WorkflowStatus } from '../types.tsx';
+import { Button } from '../../../core/button';
+import { WorkflowStatus } from '../types';
 
 interface WorkflowControlsProps {
   status: WorkflowStatus;

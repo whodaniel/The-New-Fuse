@@ -1,0 +1,30 @@
+/* Light Theme for The New Fuse Chrome Extension */
+
+:root {
+  --primary-color: #4285f4;
+  --primary-hover: #3367d6;
+  --secondary-color: #5f6368;
+  --success-color: #34a853;
+  --error-color: #ea4335;
+  --warning-color: #fbbc05;
+  --bg-color: #ffffff;
+  --text-color: #202124;
+  --border-color: #dadce0;
+  --header-bg: #f1f3f4;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.icon-button i.fas.fa-moon {
+  display: inline-block;
+}
+
+.icon-button i.fas.fa-sun {
+  display: none;
+}

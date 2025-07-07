@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../providers/AuthProvider.tsx';
+import { useAuth } from '../providers/AuthProvider';
 
 export const Register: React.FC = () => {
   const [name, setName] = useState('');

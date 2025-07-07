@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowStep, WorkflowMetrics, WorkflowStatus } from '../types.tsx';
-import { Button } from '../../../core/button/index.tsx';
-import { Progress } from '../../../core/progress/index.tsx';
-import { Badge } from '../../../core/badge.tsx';
-import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../../core/card/index.tsx';
-import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index.tsx';
+import { WorkflowStep, WorkflowMetrics, WorkflowStatus, StepMetrics } from '../types';
+import { Button } from '../../../core/button/index';
+import { Progress } from '../../../core/progress/index';
+import { Badge } from '../../../core/badge';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '../../../core/card/index';
+import { Alert, AlertDescription, AlertTitle } from '../../../core/alert/index';
 import { Play, Pause, RotateCcw, Trash2, AlertCircle } from 'lucide-react';
 
-// Define the StepMetrics type that was missing
-interface StepMetrics {
-  id: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
-  attempts: number;
-}
+// StepMetrics is now imported from types.js
 
 interface WorkflowControlPanelProps {
   workflowId: string;
@@ -40,7 +35,7 @@ const WorkflowControlPanel: React.FC<WorkflowControlPanelProps> = ({
     if (metrics?.stepMetrics) {
       const total = Object.keys(metrics.stepMetrics).length || 1;
       const completed = Object.values(metrics.stepMetrics).filter(
-        (s: StepMetrics) => s.status === 'completed'
+        (s) => (s as StepMetrics).status === 'completed'
       ).length;
       
       setProgress(Math.round((completed / total) * 100));

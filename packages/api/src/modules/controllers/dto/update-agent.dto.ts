@@ -1,5 +1,6 @@
-import { IsString, IsOptional } from 'class-validator';
+import { IsString, IsOptional, IsEnum } from 'class-validator';
 import type { UpdateAgentDto as IUpdateAgentDto } from '@the-new-fuse/types';
+import { AgentType } from '@the-new-fuse/types';
 
 export class UpdateAgentDto implements IUpdateAgentDto {
   @IsOptional()
@@ -7,8 +8,8 @@ export class UpdateAgentDto implements IUpdateAgentDto {
   name?: string;
 
   @IsOptional()
-  @IsString()
-  type?: string;
+  @IsEnum(AgentType)
+  type?: AgentType;
 
   @IsOptional()
   metadata?: Record<string, any>;

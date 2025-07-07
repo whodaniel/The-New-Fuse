@@ -1,4 +1,4 @@
-import { UserInterfaceHandlers } from '../handlers.tsx';
+import { UserInterfaceHandlers } from '../handlers';
 
 describe('Command Processing', () => {
   let uiHandlers;

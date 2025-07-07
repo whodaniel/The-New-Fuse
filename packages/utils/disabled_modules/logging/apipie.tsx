@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod): any {
 };
 export {}
 const openai_1 = __importDefault(require("openai"));
-import ai_provider_1 from './ai-provider.js';
-import classes_1 from './helpers/classes.js';
-import untooled_1 from './helpers/untooled.js';
+import ai_provider_1 from './ai-provider';
+import classes_1 from './helpers/classes';
+import untooled_1 from './helpers/untooled';
 /**
  * The agent provider for the OpenRouter provider.
  */

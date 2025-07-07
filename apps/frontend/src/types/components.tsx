@@ -1,7 +1,7 @@
 import { ReactNode, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes } from 'react'
 import { VariantProps } from 'class-variance-authority'
-import { TimelineEvent, TimelineBranch, TimelineWorkflow } from './timeline.js';
-import { FeatureSuggestion } from './features.js';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow } from './timeline';
+import { FeatureSuggestion } from './features';
 
 // Shared Props
 export interface BaseProps {

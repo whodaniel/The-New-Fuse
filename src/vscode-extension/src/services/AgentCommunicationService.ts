@@ -78,7 +78,7 @@ export class AgentCommunicationService {
         this.eventEmitter.removeAllListeners();
     }
 
-    public registerFunction(name: string, handler: Function): void {
+    public registerFunction(name: string, handler: (...args: any[]) => void): void {
         this.eventEmitter.on(name, handler);
     }
 

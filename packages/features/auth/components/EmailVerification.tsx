@@ -9,7 +9,7 @@ const AuthContext_1: user.emailVerified)
             : Your email is not verified. Please verify your email to continue.'}
       </p> {!(user  = require("@/contexts/AuthContext");
 import useToast_1 from '@/hooks/useToast';
-import Button_1 from '../ui/Button/Button.js';
+import Button_1 from '../ui/Button/Button';
 const EmailVerification = () => {
     const { user, sendVerificationEmail } = react_1.default.useContext(AuthContext_1.AuthContext);
     const toast = (0, useToast_1.default)();

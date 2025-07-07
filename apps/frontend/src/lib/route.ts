@@ -2,7 +2,7 @@ export {}
 exports.config = void 0;
 exports.POST = POST;
 import server_1 from 'next/server';
-import uploadHandler_1 from '../../../lib/uploadHandler.js';
+import uploadHandler_1 from '../../../lib/uploadHandler';
 async function POST(request): any {
     try {
         const formData = await request.formData();

@@ -1,0 +1,22 @@
+[install]
+cache = true
+exact = false
+production = false
+optional = true
+dev = true
+peer = true
+concurrent = 50
+frozenLockfile = false
+registry = "https://registry.npmjs.org/"
+
+[run]
+hot = false
+watch = false
+bun = true
+
+[build]
+target = "node"
+outdir = "dist"
+
+[test]
+timeout = 30000

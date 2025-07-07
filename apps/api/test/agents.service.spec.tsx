@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AgentsService } from '../src/agents/agents.service.js';
-import { PrismaService } from '../src/prisma/prisma.service.js';
+import { AgentsService } from '../src/agents/agents.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 import { ConfigService } from '@nestjs/config';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
-import { AgentFactory } from '../src/agents/agent.factory.js';
-import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto.js'; // Assuming UpdateAgentDto exists
+import { AgentFactory } from '../src/agents/agent.factory';
+import { CreateAgentDto, UpdateAgentDto } from '../src/agents/dto'; // Assuming UpdateAgentDto exists
 import { AgentType } from '@the-new-fuse/database'; // Removed PrismaAgent alias
 import { jest, describe, beforeEach, it, expect } from '@jest/globals';
 import type { Agent } from '@prisma/client'; // Import Agent type from prisma client, removed PrismaClient

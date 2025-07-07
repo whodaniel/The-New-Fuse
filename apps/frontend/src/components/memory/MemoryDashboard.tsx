@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MemoryDashboard = void 0;
 import react_1 from 'react';
 import react_chartjs_2_1 from 'react-chartjs-2';
-import chart_js_1 from 'chart.js';
+import chart_js_1 from 'chart';
 chart_js_1.Chart.register(chart_js_1.CategoryScale, chart_js_1.LinearScale, chart_js_1.PointElement, chart_js_1.LineElement, chart_js_1.Title, chart_js_1.Tooltip, chart_js_1.Legend, chart_js_1.ArcElement);
 const MemoryDashboard = ({ memoryManager }) => {
     const [metrics, setMetrics] = (0, react_1.useState)(null);

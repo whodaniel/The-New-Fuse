@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AgentCard, AgentCardProps } from './AgentCard.tsx';
+import { AgentCard, AgentCardProps } from './AgentCard';
 
 describe('AgentCard', () => {
   const baseProps: AgentCardProps = {

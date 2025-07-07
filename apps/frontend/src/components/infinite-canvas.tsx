@@ -4,8 +4,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.InfiniteCanvas = InfiniteCanvas;
 import react_1 from 'react';
 import framer_motion_1 from 'framer-motion';
-import pipeline_node_1 from './pipeline-node.tsx';
-import node_connection_1 from './node-connection.tsx';
+import pipeline_node_1 from './pipeline-node';
+import node_connection_1 from './node-connection';
 import button_1 from '@/components/ui/button';
 import lucide_react_1 from 'lucide-react';
 function InfiniteCanvas() {
@@ -15,7 +15,7 @@ function InfiniteCanvas() {
     const [position, setPosition] = (0, react_1.useState)({ x: 0, y: 0 });
     const canvasRef = (0, react_1.useRef)(null);
     const handleDragNode = (id, newPosition) => {
-        setNodes(nodes.map(nod(e: any) => node.id === id ? Object.assign(Object.assign({}, node), { position: newPosition }) : node));
+        setNodes(nodes.map((node: any) => node.id === id ? Object.assign(Object.assign({}, node), { position: newPosition }) : node));
     };
     const handleConnect = (fromId, toId) => {
         setConnections([...connections, { from: fromId, to: toId }]);
@@ -43,7 +43,7 @@ function InfiniteCanvas() {
             x: position.x,
             y: position.y,
         }} drag dragMomentum={false} onDrag={handlePan}>
-        {nodes.map(nod(e: any) => (<pipeline_node_1.PipelineNode key={node.id} node={node} onDrag={(newPosition) => handleDragNode(node.id, newPosition)} onConnect={handleConnect}/>))}
+        {nodes.map((node: any) => (<pipeline_node_1.PipelineNode key={node.id} node={node} onDrag={(newPosition) => handleDragNode(node.id, newPosition)} onConnect={handleConnect}/>))}
         {connections.map((connection, index) => (<node_connection_1.NodeConnection key={index} from={connection.from} to={connection.to}/>))}
       </framer_motion_1.motion.div>
       <div className="absolute top-4 left-4 space-x-2">

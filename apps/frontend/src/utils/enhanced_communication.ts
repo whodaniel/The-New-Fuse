@@ -1,4 +1,4 @@
-import { Logger } from './logger.tsx';
+import { Logger } from './logger';
 const logger = new Logger('EnhancedCommunicationBus');
 export class EnhancedCommunicationBus extends EventEmitter {
     constructor(options = {}) {

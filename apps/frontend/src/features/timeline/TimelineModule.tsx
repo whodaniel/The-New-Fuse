@@ -1,9 +1,9 @@
 import React from 'react';
-import { TimelineView } from './components/TimelineView.js';
-import { TimelineSlider } from './components/TimelineSlider.js'; // Fixed import
-import { EnhancedTimelineView } from './components/EnhancedTimelineView.tsx';
-import { useTimeline } from './hooks/useTimeline.js';
-import { TimelineService } from './services/timeline.service.tsx';
+import { TimelineView } from './components/TimelineView';
+import { TimelineSlider } from './components/TimelineSlider'; // Fixed import
+import { EnhancedTimelineView } from './components/EnhancedTimelineView';
+import { useTimeline } from './hooks/useTimeline';
+import { TimelineService } from './services/timeline.service';
 
 export const TimelineModule: React.FC = () => {
   const {

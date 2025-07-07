@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppCreator = AppCreator;
 import react_1 from 'react';
-import ui_1 from '../../shared/components/ui.js';
+import ui_1 from '../../shared/components/ui';
 function AppCreator() {
     const [appName, setAppName] = (0, react_1.useState)('');
     const [creatorName, setCreatorName] = (0, react_1.useState)('');
@@ -52,7 +52,7 @@ function AppCreator() {
         setError('');
         setSuccessMessage('');
         try {
-            await new Promise(resolv(e: any) => setTimeout(resolve, 2000));
+            await new Promise((resolve: any) => setTimeout(resolve, 2000));
             setSuccessMessage('App created successfully!');
         }
         catch (err) {

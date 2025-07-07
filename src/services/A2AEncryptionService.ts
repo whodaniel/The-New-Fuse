@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+// Refactored: Use centralized cryptoUtils for all cryptographic operations
+import { encrypt, decrypt, getRandomBytes } from '../utils/cryptoUtils';
 import { ConfigService } from '@nestjs/config';
 import { A2AMessage } from '../protocols/types.js';
 
@@ -10,38 +11,19 @@ export class A2AEncryptionService {
 
     constructor(private configService: ConfigService) {
         this.secretKey = Buffer.from(
-            this.configService.get('A2A_SECURITY_KEY', randomBytes(32).toString('hex')),
+            this.configService.get('A2A_SECURITY_KEY', getRandomBytes(32).toString('hex')),
             'hex'
         );
     }
 
-    async encryptMessage(message: A2AMessage): Promise<Buffer> {
-        const iv = randomBytes(12);
-        const cipher = createCipheriv(this.algorithm, this.secretKey, iv);
-        
-        const encrypted = Buffer.concat([
-            cipher.update(JSON.stringify(message), 'utf8'),
-            cipher.final()
-        ]);
-
-        const authTag = cipher.getAuthTag();
-        return Buffer.concat([iv, authTag, encrypted]);
+    async encryptMessage(message: A2AMessage): Promise<string> {
+        // Use the shared encrypt utility (returns iv:tag:encryptedData as string)
+        return encrypt(JSON.stringify(message), this.secretKey);
     }
 
-    async decryptMessage(data: Buffer): Promise<A2AMessage> {
-        const iv = data.subarray(0, 12);
-        const authTag = data.subarray(12, 28);
-        const encrypted = data.subarray(28);
-
-        const decipher = createDecipheriv(this.algorithm, this.secretKey, iv);
-        decipher.setAuthTag(authTag);
-
-        const decrypted = Buffer.concat([
-            decipher.update(encrypted),
-            decipher.final()
-        ]);
-
-        return JSON.parse(decrypted.toString('utf8'));
+    async decryptMessage(data: string): Promise<A2AMessage> {
+        // Use the shared decrypt utility (expects iv:tag:encryptedData as string)
+        return JSON.parse(decrypt(data, this.secretKey));
     }
 
     async verifyMessageIntegrity(message: A2AMessage): Promise<boolean> {

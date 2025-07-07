@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { LoggingService } from '../services/logging.service.js';
-import { EmailService } from '../services/email.service.js';
-import { NotificationSentEvent } from './events/notification.events.js';
+import { UsersService } from '../users/users.service';
+import { EventBus } from '../events/event-bus.service';
+import { LoggingService } from '../services/logging.service';
+import { EmailService } from '../services/email.service';
+import { NotificationSentEvent } from './events/notification.events';
 
 @Injectable()
 export class NotificationService {

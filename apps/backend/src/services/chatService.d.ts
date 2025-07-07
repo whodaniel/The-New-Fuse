@@ -1,4 +1,4 @@
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 import { ChatMessage, Prisma } from '@prisma/client';
 export declare enum MessageRole {
     USER = "user",

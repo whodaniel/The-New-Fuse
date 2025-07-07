@@ -1,4 +1,4 @@
-import { test, expect } from '../../fixtures/test.fixture.js';
+import { test, expect } from '../../fixtures/test.fixture';
 import { DashboardPage } from '../../pages/dashboard.page';
 import { WorkflowEditorPage } from '../../pages/workflow-editor.page';
 

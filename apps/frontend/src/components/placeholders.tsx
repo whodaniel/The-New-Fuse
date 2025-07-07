@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Placeholders = exports.LLMSelector = exports.PredictiveTaskAllocator = exports.WebhookManager = exports.GPUManager = exports.Notifications = exports.Sidebar = exports.Header = exports.PerformanceMetrics = exports.SystemMetrics = exports.TaskBoard = exports.DynamicKnowledgeGraph = exports.VoiceControlledCommander = exports.VoiceControl = exports.MultiModalInteraction = exports.ChatRoom = exports.AIAssistant = exports.CreateAgent = exports.AgentTrainingArena = exports.AgentSkillMarketplace = exports.AgentPersonalityCustomizer = exports.AgentNetwork = exports.AgentDetails = exports.AgentCollaborationDashboard = void 0;
-import card_1 from './ui/card.tsx';
+import card_1 from './ui/card';
 const createPlaceholder = (title) => {
     return () => (<card_1.Card className="m-4">
       <card_1.CardHeader>

@@ -16,15 +16,15 @@ import {
   HttpStatus,
   HttpCode
 } from '@nestjs/common';
-import { AgentService } from '../services/agent.service.js';
-import { BaseController } from './base.controller.js';
-// import { JwtAuthGuard } from '../guards/jwt-auth.guard.js'; // Replaced by ServiceOrUserAuthGuard
-import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard.js'; // Import the new guard
-import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { AgentService } from '../services/agent.service';
+import { BaseController } from './base.controller';
+// import { JwtAuthGuard } from '../guards/jwt-auth.guard'; // Replaced by ServiceOrUserAuthGuard
+import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard'; // Import the new guard
+import { CurrentUser } from '../decorators/current-user.decorator';
 import { Agent, AgentStatus, ApiResponse } from '@the-new-fuse/types';
-import { CreateAgentDto } from './dto/create-agent.dto.js';
-import { UpdateAgentDto } from './dto/update-agent.dto.js';
-import { AgentDto } from './dto/swagger-dto.js';
+import { CreateAgentDto } from './dto/create-agent.dto';
+import { UpdateAgentDto } from './dto/update-agent.dto';
+import { AgentDto } from './dto/swagger-dto';
 import { ApiTags, ApiOperation, ApiResponse as SwaggerApiResponse, ApiBody, ApiParam, ApiQuery } from '@nestjs/swagger';
 
 @Controller('agents')
@@ -222,7 +222,7 @@ export class AgentController extends BaseController {
   async deleteAgent(
     @Param('id') id: string,
     @CurrentUser() user: any // Keep requiring user for delete
-  ): Promise<ApiResponse<void>> {
+  ): Promise<ApiResponse<boolean>> {
      if (!user?.id) {
         throw new Error('Cannot delete agent without user context.');
     }

@@ -1,10 +1,10 @@
 import { Test } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { AppModule } from '../../src/app.module.js';
-import { setupApp } from '../../src/setup.js';
-import { PrismaService } from '../../src/prisma/prisma.service.js';
-import { createTestUser, createTestAgent } from '../utils/test-helpers.js';
+import { AppModule } from '../../src/app.module';
+import { setupApp } from '../../src/setup';
+import { PrismaService } from '../../src/prisma/prisma.service';
+import { createTestUser, createTestAgent } from '../utils/test-helpers';
 
 describe('Agent Workflow (e2e)', () => {
   let app: INestApplication;

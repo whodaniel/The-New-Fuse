@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { AuthService } from '../auth/auth.service.js';
+import { AuthService } from '../auth/auth.service';
 
 interface WebSocketMessage {
   type: string;
@@ -38,7 +38,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
       this.logger.log(`Client connected: ${user.id}`);
       this.broadcastUserStatus(user.id, 'online');
       
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Connection error: ${(error as Error).message}`);
       client.disconnect();
     }

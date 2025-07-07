@@ -1,9 +1,9 @@
 import React from 'react';
-import { Button } from '../../ui/Button.tsx';
-import { ValidationErrors } from './ValidationErrors.js';
-import { ShareButton } from './ShareButton.js';
-import { DeployButton } from './DeployButton.js';
-import { useWorkflowActions } from '../../../hooks/useWorkflowActions.js';
+import { Button } from '../../ui/Button';
+import { ValidationErrors } from './ValidationErrors';
+import { ShareButton } from './ShareButton';
+import { DeployButton } from './DeployButton';
+import { useWorkflowActions } from '../../../hooks/useWorkflowActions';
 
 interface WorkflowToolbarProps {
   onSave: () => void;

@@ -1,5 +1,5 @@
-import { Workflow } from './workflow.entity.tsx';
-import { Agent } from './agent.entity.tsx';
+import { Workflow } from './workflow.entity';
+import { Agent } from './agent.entity';
 export declare class WorkflowStep {
     id: string;
     name: string;

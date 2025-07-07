@@ -1,4 +1,4 @@
-import { UserRole } from './enums.js';
+import { UserRole } from './enums';
 export class DepartmentUtils {
     static isParentDepartment(department: any) {
         return !department.parentId;

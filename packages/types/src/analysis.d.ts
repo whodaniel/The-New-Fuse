@@ -1,4 +1,4 @@
-import { AnalysisType, AnalysisStatus } from './core/enums.js';
+import { AnalysisType, AnalysisStatus } from './core/enums';
 export { AnalysisType, AnalysisStatus };
 export type Severity = 'HIGH' | 'MEDIUM' | 'LOW' | 'CRITICAL';
 export interface Finding {
@@ -89,7 +89,7 @@ export interface SecurityScanResult {
     severity: SecuritySeverity;
     timestamp: Date;
 }
-import { SecuritySeverity } from './core/enums.js';
+import { SecuritySeverity } from './core/enums';
 export { SecuritySeverity };
 export interface CodeQualityIssue {
     severity: Severity;

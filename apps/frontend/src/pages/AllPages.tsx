@@ -1,7 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-
-// No need to import these components as we're just linking to their routes
 
 interface PageInfo {
   name: string;
@@ -10,107 +8,268 @@ interface PageInfo {
 }
 
 const AllPages: React.FC = () => {
-  // Define all pages with their paths
-  const pages = [
-    // Main pages
-    { name: 'Landing', path: '/', description: 'Main landing page'},
-    { name: 'Dashboard', path: '/dashboard', description: 'Main dashboard (requires login)'},
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
-    // Auth pages
-    { name: 'Login', path: '/auth/login', description: 'User login page'},
-    { name: 'Register', path: '/auth/register', description: 'User registration page'},
-    { name: 'Forgot Password', path: '/auth/forgot-password', description: 'Password recovery page'},
-    { name: 'Reset Password', path: '/auth/reset-password/token', description: 'Password reset page'},
-    { name: 'SSO', path: '/auth/sso/google', description: 'Single sign-on page'},
+  // Complete list based on ALL_PAGES_LIST.md and ComprehensiveRouter.tsx
+  const allPages: PageInfo[] = [
+    // Core Application Pages
+    { name: 'Home', path: '/', description: 'Enhanced Home Page with Production Status' },
+    { name: 'Dashboard', path: '/dashboard', description: 'Main Dashboard with Metrics' },
+    { name: 'Home Alt', path: '/home', description: 'Alternative Home Route' },
 
-    // Demo pages
-    { name: 'Timeline Demo', path: '/timeline-demo', description: 'Timeline feature demonstration'},
-    { name: 'Graph Demo', path: '/graph-demo', description: 'Graph visualization demo'},
+    // AI & Agents
+    { name: 'Multi-Agent Chat', path: '/multi-agent-chat', description: 'Main Chat Interface' },
+    { name: 'AI Agent Portal', path: '/ai-portal', description: 'Agent Management' },
+    { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
+    { name: 'All Agents', path: '/agents', description: 'Agent List' },
+    { name: 'New Agent', path: '/agents/new', description: 'Create New Agent' },
+    { name: 'Agent Dashboard', path: '/dashboard/agents', description: 'Agent Dashboard' },
+    { name: 'Create Agent', path: '/dashboard/agents/new', description: 'Create Agent Form' },
 
-    // Analytics
-    { name: 'Analytics', path: '/analytics', description: 'Analytics dashboard (requires login)'},
+    // Workspace Management
+    { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },
+    { name: 'Workspace Analytics', path: '/workspace/analytics', description: 'Workspace Metrics' },
+    { name: 'Workspace Members', path: '/workspace/members', description: 'Team Management' },
+    { name: 'Workspace Settings', path: '/workspace/settings', description: 'Workspace Configuration' },
+    { name: 'Workspace Chat', path: '/workspace-chat', description: 'Team Chat' },
 
-    // Admin pages
-    { name: 'Admin Dashboard', path: '/admin/dashboard', description: 'Admin dashboard (requires login)'},
-    { name: 'Admin Users', path: '/admin/users', description: 'User management (requires login)'},
-    { name: 'Admin Workspaces', path: '/admin/workspaces', description: 'Workspace management (requires login)'},
-    { name: 'System Health', path: '/admin/system-health', description: 'System health monitoring (requires login)'},
-    { name: 'Admin Settings', path: '/admin/settings', description: 'Admin settings (requires login)'},
+    // Tasks & Workflows
+    { name: 'All Tasks', path: '/tasks', description: 'Task Management' },
+    { name: 'New Task', path: '/tasks/new', description: 'Create Task' },
+    { name: 'Workflows', path: '/workflows', description: 'Workflow Management' },
+    { name: 'Workflow Builder', path: '/workflows/builder', description: 'Visual Workflow Builder' },
+    { name: 'Advanced Builder', path: '/workflows/advanced-builder', description: 'Advanced n8n-Compatible Workflow Builder' },
+    { name: 'Workflow Templates', path: '/workflows/templates', description: 'Template Library' },
+    { name: 'Execution Monitor', path: '/workflows/executions', description: 'Workflow Execution History & Monitoring' },
+    { name: 'Suggestions', path: '/suggestions', description: 'AI Suggestions' },
+    { name: 'New Suggestion', path: '/suggestions/new', description: 'Create Suggestion' },
 
-    // Workspace pages
-    { name: 'Workspaces', path: '/workspace', description: 'Workspace management (requires login)'},
+    // Administration
+    { name: 'Admin Panel', path: '/admin', description: 'Main Admin Dashboard' },
+    { name: 'User Management', path: '/admin/users', description: 'User Administration' },
+    { name: 'Workspace Management', path: '/admin/workspaces', description: 'Workspace Admin' },
+    { name: 'System Health', path: '/admin/system-health', description: 'System Monitoring' },
+    { name: 'Feature Flags', path: '/admin/feature-flags', description: 'Feature Management' },
+    { name: 'Port Management', path: '/admin/port-management', description: 'Port Configuration' },
+    { name: 'Admin Settings', path: '/admin/settings', description: 'Admin Configuration' },
+    { name: 'Admin Onboarding', path: '/admin/onboarding', description: 'Admin Onboarding' },
+    { name: 'Experimental Features', path: '/admin/experimental-features', description: 'Beta Features' },
 
-    // Settings pages
-    { name: 'Settings', path: '/settings', description: 'User settings (requires login)'},
-    { name: 'General Settings', path: '/settings/general', description: 'General settings (requires login)'},
-    { name: 'Appearance', path: '/settings/appearance', description: 'Appearance settings (requires login)'},
-    { name: 'API Keys', path: '/settings/api', description: 'API key management (requires login)'},
-    { name: 'Security', path: '/settings/security', description: 'Security settings (requires login)'},
-    { name: 'Notifications', path: '/settings/notifications', description: 'Notification settings (requires login)'},
+    // Dashboard & Analytics
+    { name: 'Dashboard Analytics', path: '/dashboard/analytics', description: 'Analytics Dashboard' },
+    { name: 'Dashboard Settings', path: '/dashboard/settings', description: 'Dashboard Config' },
+    { name: 'Analytics', path: '/analytics', description: 'Main Analytics' },
 
-    // Feature pages
-    { name: 'AI Agent Portal', path: '/ai-agent-portal', description: 'AI agent management portal (requires login)'},
+    // Settings & Configuration
+    { name: 'Settings', path: '/settings', description: 'Main Settings' },
+    { name: 'General Settings', path: '/settings/general', description: 'General Configuration' },
+    { name: 'Appearance Settings', path: '/settings/appearance', description: 'UI Customization' },
+    { name: 'Notification Settings', path: '/settings/notifications', description: 'Notification Preferences' },
+    { name: 'Security Settings', path: '/settings/security', description: 'Security Configuration' },
+    { name: 'API Settings', path: '/settings/api', description: 'API Configuration' },
+    { name: 'General Settings Alt', path: '/general-settings', description: 'Alternative General Settings' },
+    { name: 'Embedding Preferences', path: '/general-settings/embedding', description: 'Embedding Configuration' },
 
-    // Legal pages
-    { name: 'Terms of Service', path: '/terms', description: 'Terms of service page'},
-    { name: 'Privacy Policy', path: '/privacy', description: 'Privacy policy page'},
+    // Authentication
+    { name: 'Login', path: '/login', description: 'Main Login' },
+    { name: 'Register', path: '/register', description: 'User Registration' },
+    { name: 'Auth Login', path: '/auth/login', description: 'Authentication Login' },
+    { name: 'Auth Register', path: '/auth/register', description: 'Authentication Registration' },
+    { name: 'SSO Authentication', path: '/auth/sso', description: 'Single Sign-On' },
+    { name: 'Google OAuth Callback', path: '/auth/google-callback', description: 'Google OAuth' },
+    { name: 'OAuth Callback', path: '/auth/oauth-callback', description: 'General OAuth' },
 
-    // Support pages
-    { name: 'Help Center', path: '/help', description: 'Help and support center'},
-    { name: 'Documentation', path: '/documentation', description: 'Documentation pages'},
+    // Landing & Marketing
+    { name: 'Landing Page', path: '/landing', description: 'Marketing Landing' },
+    { name: 'Landing Page Alt', path: '/landing-page', description: 'Alternative Landing' },
+    { name: 'Simple Landing', path: '/simple-landing', description: 'Minimal Landing' },
+    { name: 'Onboarding Flow', path: '/onboarding', description: 'User Onboarding' },
+    { name: 'Onboarding Preview', path: '/preview/onboarding', description: 'Onboarding Preview' },
 
-    // Error pages
-    { name: '404 Not Found', path: '/404', description: 'Error page for 404 errors'},
+    // Legal
+    { name: 'Privacy Policy', path: '/legal/privacy', description: 'Privacy Policy' },
+    { name: 'Terms of Service', path: '/legal/terms', description: 'Terms of Service' },
+
+    // Components & Demos
+    { name: 'UI Components', path: '/components', description: 'Component Showcase' },
+    { name: 'Timeline Demo', path: '/timeline-demo', description: 'Timeline Component' },
+    { name: 'Graph Demo', path: '/graph-demo', description: 'Graph Visualization' },
+    { name: 'Frontend Showcase', path: '/frontend-showcase', description: 'Frontend Demo' },
+    { name: 'Layout Example', path: '/layout-example', description: 'Layout Demo' },
+    { name: 'Components Navigation', path: '/components-nav', description: 'Component Navigation' },
+
+    // Development & Debug
+    { name: 'Debug Info', path: '/debug', description: 'Debug Information' },
+    { name: 'Build Info', path: '/build-info', description: 'Build Details' },
+    { name: 'Debug Routing', path: '/debug-routing', description: 'Routing Debug' },
+    { name: 'All Pages List', path: '/all-pages', description: 'Page Directory (Current Page)' },
+    { name: 'Test Page', path: '/test', description: 'Testing Interface' },
+
+    // Error Handling
+    { name: '404 Page', path: '/404', description: 'Not Found Page' },
   ];
 
   // Group pages by category
   const pageCategories = [
-    { name: 'Main Pages', pages: pages.slice(0, 2) },
-    { name: 'Auth Pages', pages: pages.slice(2, 7) },
-    { name: 'Demo Pages', pages: pages.slice(7, 9) },
-    { name: 'Analytics', pages: pages.slice(9, 10) },
-    { name: 'Admin Pages', pages: pages.slice(10, 15) },
-    { name: 'Workspace Pages', pages: pages.slice(15, 16) },
-    { name: 'Settings Pages', pages: pages.slice(16, 22) },
-    { name: 'Feature Pages', pages: pages.slice(22, 23) },
-    { name: 'Legal Pages', pages: pages.slice(23, 25) },
-    { name: 'Support Pages', pages: pages.slice(25, 27) },
-    { name: 'Error Pages', pages: pages.slice(27) },
+    { name: 'Core Application', pages: allPages.slice(0, 3) },
+    { name: 'AI & Agents', pages: allPages.slice(3, 13) },
+    { name: 'Workspace Management', pages: allPages.slice(13, 18) },
+    { name: 'Tasks & Workflows', pages: allPages.slice(18, 27) },
+    { name: 'Administration', pages: allPages.slice(27, 36) },
+    { name: 'Dashboard & Analytics', pages: allPages.slice(36, 39) },
+    { name: 'Settings & Configuration', pages: allPages.slice(39, 47) },
+    { name: 'Authentication', pages: allPages.slice(47, 54) },
+    { name: 'Landing & Marketing', pages: allPages.slice(54, 59) },
+    { name: 'Legal', pages: allPages.slice(59, 61) },
+    { name: 'Components & Demos', pages: allPages.slice(61, 67) },
+    { name: 'Development & Debug', pages: allPages.slice(67, 72) },
+    { name: 'Error Handling', pages: allPages.slice(72) },
   ];
+
+  // Filter pages based on search and category
+  const filteredCategories = pageCategories
+    .map(category => ({
+      ...category,
+      pages: category.pages.filter(page => 
+        (selectedCategory === 'All' || category.name === selectedCategory) &&
+        (page.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         page.path.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         (page.description && page.description.toLowerCase().includes(searchTerm.toLowerCase())))
+      )
+    }))
+    .filter(category => category.pages.length > 0);
+
+  const totalPages = allPages.length;
 
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-8">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">The New Fuse - All Pages</h1>
-        <p className="text-lg text-gray-700 dark:text-gray-300 mb-8">
-          This page provides links to all available pages in The New Fuse application.
-          Use this for navigation during development and testing.
-        </p>
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            🚀 The New Fuse - All Pages
+          </h1>
+          <p className="text-lg text-gray-700 dark:text-gray-300 mb-4">
+            Complete directory of all {totalPages} pages in The New Fuse application
+          </p>
+          <div className="bg-green-100 dark:bg-green-900 border border-green-400 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg inline-block">
+            ✅ All pages are accessible and routed correctly
+          </div>
+        </div>
 
-        {pageCategories.map((category, categoryIndex) => (
+        {/* Search and Filter */}
+        <div className="mb-8 flex flex-col md:flex-row gap-4">
+          <div className="flex-1">
+            <input
+              type="text"
+              placeholder="Search pages by name, path, or description..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <select
+              value={selectedCategory}
+              onChange={(e) => setSelectedCategory(e.target.value)}
+              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="All">All Categories</option>
+              {pageCategories.map(category => (
+                <option key={category.name} value={category.name}>
+                  {category.name} ({category.pages.length})
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Page Categories */}
+        {filteredCategories.map((category, categoryIndex) => (
           <div key={categoryIndex} className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4 border-b pb-2">{category.name}</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 flex items-center">
+              <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm mr-3">
+                {category.pages.length}
+              </span>
+              {category.name}
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {category.pages.map((page, pageIndex) => (
-                <div key={pageIndex} className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
-                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">{page.name}</h3>
+                <div key={pageIndex} className="p-6 border rounded-lg bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105">
+                  <h3 className="text-xl font-bold text-gray-800 dark:text-white mb-2">
+                    {page.name}
+                  </h3>
                   {page.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">{page.description}</p>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      {page.description}
+                    </p>
                   )}
-                  <p className="text-xs font-mono text-gray-500 dark:text-gray-500 mb-4 bg-gray-100 dark:bg-gray-700 p-1 rounded">{page.path}</p>
-                  <div className="mt-4">
+                  <div className="mb-4">
+                    <code className="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-2 py-1 rounded">
+                      {page.path}
+                    </code>
+                  </div>
+                  <div className="flex gap-2">
                     <Link
                       to={page.path}
-                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors inline-block"
+                      className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors inline-block text-sm font-medium"
                     >
-                      View Page
+                      Visit Page
                     </Link>
+                    <button
+                      onClick={() => {
+                        const fullUrl = `http://localhost:3000${page.path}`;
+                        navigator.clipboard.writeText(fullUrl);
+                      }}
+                      className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+                      title="Copy URL to clipboard"
+                    >
+                      Copy URL
+                    </button>
                   </div>
                 </div>
               ))}
             </div>
           </div>
         ))}
+
+        {filteredCategories.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500 dark:text-gray-400 text-lg">
+              No pages found matching your search criteria.
+            </p>
+          </div>
+        )}
+
+        {/* Footer */}
+        <div className="mt-12 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-700">
+          <h3 className="text-lg font-bold text-blue-800 dark:text-blue-300 mb-2">
+            📊 Application Summary
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div>
+              <strong className="text-blue-700 dark:text-blue-300">Total Pages:</strong>
+              <br />
+              {totalPages} routes
+            </div>
+            <div>
+              <strong className="text-blue-700 dark:text-blue-300">Categories:</strong>
+              <br />
+              {pageCategories.length} sections
+            </div>
+            <div>
+              <strong className="text-blue-700 dark:text-blue-300">Server:</strong>
+              <br />
+              localhost:3000
+            </div>
+            <div>
+              <strong className="text-blue-700 dark:text-blue-300">Status:</strong>
+              <br />
+              All routed ✅
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

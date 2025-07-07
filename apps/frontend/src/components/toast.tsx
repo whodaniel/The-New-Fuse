@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ToastAction = exports.ToastClose = exports.ToastDescription = exports.ToastTitle = exports.Toast = exports.ToastViewport = exports.ToastProvider = void 0;
 import React from 'react';
 import ToastPrimitives from '@radix-ui/react-toast';
-import utils_1 from '../../lib/utils.js';
+import utils_1 from '../../lib/utils';
 const ToastProvider = ToastPrimitives.Provider;
 exports.ToastProvider = ToastProvider;
 const ToastViewport = React.forwardRef((_a, ref) => {

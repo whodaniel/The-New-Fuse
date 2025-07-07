@@ -1,15 +1,52 @@
 import { Controller, Post, Body, UseGuards, Get, Req, Res } from '@nestjs/common';
-import { AuthService } from './auth.service.js';
-import { FirebaseAuthGuard } from './firebase-auth.guard.js';
+import { AuthService } from './auth.service';
+import { FirebaseAuthGuard } from './firebase-auth.guard';
 import { Request, Response } from 'express';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+class RegisterDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  @MinLength(6)
+  password: string;
+
+  @IsString()
+  name: string;
+}
+
+class LoginDto {
+  @IsEmail()
+  email: string;
+
+  @IsString()
+  password: string;
+}
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Post('register')
+  async register(@Body() registerDto: RegisterDto) {
+    const { email, password, name } = registerDto;
+    return this.authService.register(email, password, name);
+  }
+
   @Post('login')
+  async loginWithEmail(@Body() loginDto: LoginDto) {
+    const { email, password } = loginDto;
+    const user = await this.authService.validateUser(email, password);
+    if (!user) {
+      throw new Error('Invalid credentials');
+    }
+    return this.authService.login(user);
+  }
+
+  @Post('login/firebase')
   @UseGuards(FirebaseAuthGuard)
-  async login(@Req() req: Request) {
+  async loginWithFirebase(@Req() req: Request) {
     const firebaseToken = req.headers.authorization?.split('Bearer ')[1];
     return this.authService.authenticate(firebaseToken);
   }

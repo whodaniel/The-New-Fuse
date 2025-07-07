@@ -3,7 +3,7 @@ import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 import fs from 'fs/promises';
 import path from 'path';
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 export class VisualRegression {
   private static readonly SCREENSHOTS_DIR = 'test-screenshots';
@@ -51,7 +51,7 @@ export class VisualRegression {
       }
       
       return true;
-    } catch (error: unknown) {
+    } catch (error) {
       if (error && typeof error === 'object' && 'code' in error && error.code === 'ENOENT') {
         // Baseline doesn't exist, create it
         await fs.writeFile(baselinePath, screenshotBuffer);

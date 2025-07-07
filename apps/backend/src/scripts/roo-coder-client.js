@@ -1,8 +1,13 @@
-import { Redis } from 'ioredis';
-import { Logger } from '@nestjs/common';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ioredis_1 = require("ioredis");
+const common_1 = require("@nestjs/common");
 class RooCoderClient {
+    logger = new common_1.Logger(RooCoderClient.name);
+    redis;
+    pubClient;
+    subClient;
     constructor() {
-        this.logger = new Logger(RooCoderClient.name);
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6380';
         const redisOptions = {
             retryStrategy: (times) => {
@@ -13,9 +18,9 @@ class RooCoderClient {
             enableReadyCheck: true,
             reconnectOnError: () => true
         };
-        this.redis = new Redis(redisUrl, redisOptions);
-        this.pubClient = new Redis(redisUrl, redisOptions);
-        this.subClient = new Redis(redisUrl, redisOptions);
+        this.redis = new ioredis_1.Redis(redisUrl, redisOptions);
+        this.pubClient = new ioredis_1.Redis(redisUrl, redisOptions);
+        this.subClient = new ioredis_1.Redis(redisUrl, redisOptions);
     }
     async initialize() {
         try {

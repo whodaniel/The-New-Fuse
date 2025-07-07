@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as Redis from 'ioredis';
+import { Redis } from 'ioredis';
 
 @Injectable()
 export class CacheService {
@@ -7,8 +7,8 @@ export class CacheService {
   private logger = new Logger(CacheService.name);
 
   constructor() {
-    this.client = new (Redis as any)();
-    this.client.on('error', (err) => this.logger.error('Redis error', err));
+    this.client = new Redis();
+    this.client.on('error', (err: any) => this.logger.error('Redis error', err));
   }
 
   async get(key: string): Promise<string | null> {
@@ -24,14 +24,14 @@ export class CacheService {
   }
 
   async sadd(key: string, member: string): Promise<number> {
-    return this.client.sAdd(key, member);
+    return this.client.sadd(key, member);
   }
 
   async srem(key: string, member: string): Promise<number> {
-    return this.client.sRem(key, member);
+    return this.client.srem(key, member);
   }
 
   async scard(key: string): Promise<number> {
-    return this.client.sCard(key);
+    return this.client.scard(key);
   }
 }

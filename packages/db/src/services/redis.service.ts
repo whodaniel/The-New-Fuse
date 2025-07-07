@@ -1,11 +1,11 @@
-import { Redis } from 'ioredis';
+import Redis from 'ioredis';
 
 class RedisService {
     private client: Redis;
     private subscribers: Map<string, any>;
 
     constructor(config: { host: string; port: number; password: string; db?: number }) {
-        this.client = new (Redis as any)({
+        this.client = new Redis({
             host: config.host,
             port: config.port,
             password: config.password,
@@ -62,7 +62,7 @@ class RedisService {
     }
 
     async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
-        const subscriber = new (Redis as any)({
+        const subscriber = new Redis({
             host: this.client.options.host,
             port: this.client.options.port,
             password: this.client.options.password,

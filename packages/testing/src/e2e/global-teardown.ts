@@ -1,5 +1,5 @@
 import { chromium, FullConfig } from '@playwright/test';
-import { config } from './config/test-config.js';
+import { config } from './config/test-config';
 import { TestDataManager } from './utils/test-data';
 
 async function globalTeardown(_fullConfig: FullConfig): Promise<void> {
@@ -25,8 +25,7 @@ async function globalTeardown(_fullConfig: FullConfig): Promise<void> {
       await page.request.post(`${config.apiUrl}/api/testing/reset-db`);
     }
   } catch (error) {
-    console.error('Failed to clean up test environment:', error);
-    throw error;
+    throw new Error(`Failed to clean up test environment: ${error}`);
   } finally {
     await browser.close();
   }

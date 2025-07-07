@@ -1,5 +1,5 @@
-import { StateManager } from '../../domain/core/stateManager.js';
-import { LoggingService } from '../../services/logging.js';
+import { StateManager } from '../../domain/core/stateManager';
+import { LoggingService } from '../../services/logging';
 export class ErrorService {
     constructor() {
         this.errorHistory = [];

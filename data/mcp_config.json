@@ -1,8 +1,9 @@
 {
   "mcpServers": {
     "agent-communication": {
-      "command": "node",
+      "command": "npx",
       "args": [
+        "tsx",
         "src/agent_with_mcp_example.ts"
       ]
     },
@@ -18,11 +19,49 @@
         "@peakmojo/applescript-mcp"
       ]
     },
-    "mcp-config-manager": {
+    "tnf-mcp-config-manager": {
       "command": "node",
       "args": [
-        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/scripts/mcp-config-manager-server.js"
+        "--loader",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/tnf-mcp-config-manager.ts"
+      ],
+      "env": {
+        "TNF_CORE_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/data",
+        "LOG_LEVEL": "info"
+      },
+      "description": "The New Fuse MCP Configuration Manager - Universal MCP config management for any client + TNF Agent Builder integration",
+      "managed_by": "tnf-core",
+      "priority": 9,
+      "tags": [
+        "tnf-core",
+        "configuration",
+        "universal",
+        "agent-builder",
+        "passthrough"
+      ],
+      "capabilities": [
+        "Universal MCP client configuration",
+        "TNF Agent Builder integration", 
+        "Passthrough configuration generation",
+        "Multi-client support",
+        "TNF registry synchronization",
+        "Configuration validation",
+        "Health monitoring"
       ]
+    },
+    "unified-config-server": {
+      "command": "/Users/<owner>/.nvm/versions/node/v22.16.0/bin/npx",
+      "args": [
+        "tsx",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/unified-config-server.ts",
+        "--no-oauth"
+      ],
+      "env": {
+        "HTTP_PORT": "3773",
+        "LOG_LEVEL": "info",
+        "CONFIG_PATH": "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/data/mcp_config.json"
+      }
     },
     "browsermcp": {
       "command": "npx",
@@ -41,6 +80,74 @@
         "alpine/socat",
         "STDIO",
         "TCP:host.docker.internal:8811"
+      ]
+    },
+    "tnf-complete-api-wrapper": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/complete-api-mcp-server.ts"
+      ],
+      "env": {
+        "TNF_API_BASE_URL": "http://localhost:8080/v1",
+        "NODE_ENV": "development"
+      },
+      "description": "Complete API wrapper for The New Fuse platform - provides 80+ MCP tools for full platform access",
+      "managed_by": "enhanced-mcp-config-manager",
+      "priority": 10,
+      "tags": [
+        "api",
+        "wrapper",
+        "platform",
+        "tools",
+        "core"
+      ],
+      "capabilities": [
+        "Authentication management",
+        "Agent CRUD operations", 
+        "Chat session management",
+        "Webhook configuration",
+        "MCP server management",
+        "Workflow execution",
+        "User management",
+        "Marketplace operations",
+        "Agency hub administration",
+        "System monitoring",
+        "Integration management"
+      ]
+    },
+    "tnf-enhanced-mcp-server": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/enhanced-tnf-mcp-server.ts"
+      ],
+      "env": {
+        "TNF_API_BASE_URL": "http://localhost:8080/v1",
+        "NODE_ENV": "development"
+      },
+      "description": "Enhanced The New Fuse MCP Server - combines existing functionality with direct API Gateway integration",
+      "managed_by": "enhanced-mcp-config-manager",
+      "priority": 11,
+      "tags": [
+        "enhanced",
+        "api",
+        "platform",
+        "unified",
+        "core"
+      ],
+      "capabilities": [
+        "Legacy MCP tool compatibility",
+        "Direct API Gateway integration",
+        "Enhanced authentication management",
+        "Real-time platform monitoring",
+        "Advanced webhook management",
+        "Comprehensive system administration",
+        "Unified session management",
+        "Performance monitoring",
+        "Security enhancements"
       ]
     }
   }

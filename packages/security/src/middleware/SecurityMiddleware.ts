@@ -37,7 +37,7 @@ export class SecurityMiddleware implements NestMiddleware {
         if (!isValid) {
           return res.status(429).json({ error: 'Too many requests' });
         }
-      } catch (error) {
+      } catch {
         return res.status(401).json({
           status: 'error',
           message: 'Invalid token'
@@ -46,7 +46,6 @@ export class SecurityMiddleware implements NestMiddleware {
 
       // Extract resource and action
       const resource = this.getResourceFromRequest(req);
-      const action = this.getActionFromRequest(req);
 
       // Check resource access
       try {
@@ -62,7 +61,7 @@ export class SecurityMiddleware implements NestMiddleware {
             message: 'Access denied'
           });
         }
-      } catch (error) {
+      } catch {
         return res.status(403).json({
           status: 'error',
           message: 'Access denied'
@@ -70,9 +69,8 @@ export class SecurityMiddleware implements NestMiddleware {
       }
 
       next();
-    } catch (error) {
+    } catch {
       // this.logger.error('Security middleware error:', error);
-      console.error('Security middleware error:', error);
       return res.status(500).json({
         status: 'error',
         message: 'Internal server error'

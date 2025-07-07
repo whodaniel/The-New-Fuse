@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Grid, Stat, StatLabel, StatNumber, StatHelpText } from '@chakra-ui/react';
-import { useSystemMetrics } from '../../hooks/useSystemMetrics.js';
+import { useSystemMetrics } from '../../hooks/useSystemMetrics';
 import { ServiceMetrics } from '@the-new-fuse/types';
 
 export const SystemMetrics: React.FC = () => {

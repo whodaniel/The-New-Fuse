@@ -34,7 +34,7 @@ export const WorkflowExecutionContext: React.React.FC<WorkflowExecutionContextPr
         
         // Update node UI
         setNodes(nodes => 
-          nodes.map(nod(e: any) => {
+          nodes.map((node: any) => {
             if (node.id === update.nodeId) {
               return {
                 ...node,
@@ -92,7 +92,7 @@ export const WorkflowExecutionContext: React.React.FC<WorkflowExecutionContextPr
       
       // Update node UI
       setNodes(nodes => 
-        nodes.map(nod(e: any) => ({
+        nodes.map((node: any) => ({
           ...node,
           data: {
             ...node.data,

@@ -1,6 +1,15 @@
-import { AgentCoordinator } from '../services/agent/agent-coordinator.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const agent_coordinator_1 = require("../services/agent/agent-coordinator");
+// Simple mock FeatureTracker for testing
+class MockFeatureTracker {
+    track(feature, metadata) {
+        // Mock implementation
+    }
+}
 async function testCoordinator() {
-    const coordinator = new AgentCoordinator('CoordinatorAgent');
+    const mockFeatureTracker = new MockFeatureTracker();
+    const coordinator = new agent_coordinator_1.AgentCoordinator('CoordinatorAgent', mockFeatureTracker);
     try {
         await coordinator.start();
         // Test coordination by simulating messages

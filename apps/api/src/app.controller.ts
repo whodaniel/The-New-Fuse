@@ -1,7 +1,5 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
-import { User } from '../decorators/user.decorator.js';
 
 @ApiTags('app')
 @Controller()

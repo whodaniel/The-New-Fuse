@@ -1,99 +1,93 @@
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AdminController = void 0;
+const common_1 = require("@nestjs/common");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const child_process_1 = require("child_process");
+const role_service_1 = require("../services/role.service");
+const audit_service_1 = require("../services/audit.service");
+const metrics_service_1 = require("../services/metrics.service");
+let AdminController = class AdminController {
+    roleService;
+    auditService;
+    metricsService;
+    constructor(roleService, auditService, metricsService) {
+        this.roleService = roleService;
+        this.auditService = auditService;
+        this.metricsService = metricsService;
     }
-    return useValue ? value : void 0;
-};
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+    async runScript(script) {
+        try {
+            const output = (0, child_process_1.execSync)(`yarn fuse ${script}`, { encoding: 'utf-8' });
+            return { success: true, output };
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
+        catch (error) {
+            return { success: false, error: error.message };
         }
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+    async getRoles() {
+        return this.roleService.getAllRoles();
+    }
+    async updateRolePermissions(roleId, permissions) {
+        return this.roleService.updateRolePermissions(roleId, permissions);
+    }
+    async getAuditLogs() {
+        return this.auditService.getLogs();
+    }
+    async getSystemMetrics() {
+        return this.metricsService.getSystemMetrics();
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Controller, Post, Get, Put, UseGuards } from '@nestjs/common';
-import { AdminGuard } from '../guards/admin.guard.js';
-import { execSync } from 'child_process';
-let AdminController = (() => {
-    let _classDecorators = [Controller('admin'), UseGuards(AdminGuard)];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    let _instanceExtraInitializers = [];
-    let _runScript_decorators;
-    let _getRoles_decorators;
-    let _updateRolePermissions_decorators;
-    let _getAuditLogs_decorators;
-    let _getSystemMetrics_decorators;
-    var AdminController = _classThis = class {
-        async runScript(script) {
-            try {
-                const output = execSync(`yarn fuse ${script}`, { encoding: 'utf-8' });
-                return { success: true, output };
-            }
-            catch (error) {
-                return { success: false, error: error.message };
-            }
-        }
-        async getRoles() {
-            return this.roleService.getAllRoles();
-        }
-        async updateRolePermissions(roleId, permissions) {
-            return this.roleService.updateRolePermissions(roleId, permissions);
-        }
-        async getAuditLogs() {
-            return this.auditService.getLogs();
-        }
-        async getSystemMetrics() {
-            return this.metricsService.getSystemMetrics();
-        }
-        constructor() {
-            __runInitializers(this, _instanceExtraInitializers);
-        }
-    };
-    __setFunctionName(_classThis, "AdminController");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _runScript_decorators = [Post('run-script')];
-        _getRoles_decorators = [Get('roles')];
-        _updateRolePermissions_decorators = [Put('roles/:roleId/permissions')];
-        _getAuditLogs_decorators = [Get('audit-logs')];
-        _getSystemMetrics_decorators = [Get('metrics')];
-        __esDecorate(_classThis, null, _runScript_decorators, { kind: "method", name: "runScript", static: false, private: false, access: { has: obj => "runScript" in obj, get: obj => obj.runScript }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getRoles_decorators, { kind: "method", name: "getRoles", static: false, private: false, access: { has: obj => "getRoles" in obj, get: obj => obj.getRoles }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _updateRolePermissions_decorators, { kind: "method", name: "updateRolePermissions", static: false, private: false, access: { has: obj => "updateRolePermissions" in obj, get: obj => obj.updateRolePermissions }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getAuditLogs_decorators, { kind: "method", name: "getAuditLogs", static: false, private: false, access: { has: obj => "getAuditLogs" in obj, get: obj => obj.getAuditLogs }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getSystemMetrics_decorators, { kind: "method", name: "getSystemMetrics", static: false, private: false, access: { has: obj => "getSystemMetrics" in obj, get: obj => obj.getSystemMetrics }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AdminController = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return AdminController = _classThis;
-})();
-export { AdminController };
+exports.AdminController = AdminController;
+__decorate([
+    (0, common_1.Post)('run-script'),
+    __param(0, (0, common_1.Body)('script')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "runScript", null);
+__decorate([
+    (0, common_1.Get)('roles'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getRoles", null);
+__decorate([
+    (0, common_1.Put)('roles/:roleId/permissions'),
+    __param(0, (0, common_1.Param)('roleId')),
+    __param(1, (0, common_1.Body)('permissions')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Array]),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "updateRolePermissions", null);
+__decorate([
+    (0, common_1.Get)('audit-logs'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getAuditLogs", null);
+__decorate([
+    (0, common_1.Get)('metrics'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AdminController.prototype, "getSystemMetrics", null);
+exports.AdminController = AdminController = __decorate([
+    (0, common_1.Controller)('admin'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __metadata("design:paramtypes", [role_service_1.RoleService,
+        audit_service_1.AuditService,
+        metrics_service_1.MetricsService])
+], AdminController);

@@ -74,7 +74,7 @@ export class SecurityLoggingService {
           },
         );
       }
-    } catch (error: unknown) {
+    } catch (error) {
       const errorObj = error as Error;
       this.logger.error(`Failed to log security event: ${errorObj.message}`, errorObj.stack);
     }
@@ -247,7 +247,7 @@ export class SecurityLoggingService {
       })) as SecurityEvent[];
 
       return { events: parsedEvents, total };
-    } catch (error: unknown) {
+    } catch (error) {
       const errorObj = error as Error;
       this.logger.error(`Failed to query security events: ${errorObj.message}`, errorObj.stack);
       return { events: [], total: 0 };

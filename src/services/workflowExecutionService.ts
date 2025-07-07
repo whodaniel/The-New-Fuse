@@ -54,7 +54,7 @@ class WorkflowExecutionService {
       });
 
       return result;
-    } catch (error: unknown) {
+    } catch (error) {
       this.executionSubject.next({
         nodeId,
         state: 'error',

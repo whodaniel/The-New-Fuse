@@ -1,4 +1,4 @@
-import { CollaborationState } from './types.tsx';
+import { CollaborationState } from './types';
 export declare class CollaborationManager {
     private ws;
     private state;

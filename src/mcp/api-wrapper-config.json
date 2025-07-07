@@ -1,0 +1,162 @@
+{
+  "mcpServers": {
+    "tnf-complete-api-wrapper": {
+      "command": "node",
+      "args": [
+        "--loader",
+        "tsx/esm",
+        "src/mcp/complete-api-mcp-server.ts"
+      ],
+      "env": {
+        "TNF_API_BASE_URL": "http://localhost:8080/v1",
+        "NODE_ENV": "development"
+      },
+      "description": "Complete API wrapper for The New Fuse platform - provides 80+ MCP tools for full platform access",
+      "capabilities": [
+        "Authentication management",
+        "Agent CRUD operations", 
+        "Chat session management",
+        "Webhook configuration",
+        "MCP server management",
+        "Workflow execution",
+        "User management",
+        "Marketplace operations",
+        "Agency hub administration",
+        "System monitoring",
+        "Integration management"
+      ],
+      "tools": {
+        "authentication": [
+          "auth_login",
+          "auth_register", 
+          "auth_refresh",
+          "auth_logout",
+          "auth_set_credentials"
+        ],
+        "agents": [
+          "agent_list",
+          "agent_create",
+          "agent_get",
+          "agent_update", 
+          "agent_update_status",
+          "agent_delete",
+          "agent_list_active"
+        ],
+        "chat": [
+          "chat_sessions_list",
+          "chat_session_create",
+          "chat_messages_get",
+          "chat_message_send",
+          "chat_history_get",
+          "chat_clear"
+        ],
+        "webhooks": [
+          "webhook_register",
+          "webhook_status_get",
+          "webhook_events_history",
+          "webhook_event_retry",
+          "webhook_incoming_simulate"
+        ],
+        "mcp": [
+          "mcp_servers_list",
+          "mcp_server_register",
+          "mcp_server_status",
+          "mcp_server_update",
+          "mcp_server_remove",
+          "mcp_oauth_discovery"
+        ],
+        "workflows": [
+          "workflow_list",
+          "workflow_get",
+          "workflow_create",
+          "workflow_update",
+          "workflow_delete",
+          "workflow_execute",
+          "workflow_executions_get"
+        ],
+        "users": [
+          "user_list",
+          "user_get",
+          "user_create",
+          "user_update",
+          "user_delete"
+        ],
+        "marketplace": [
+          "marketplace_items_list",
+          "marketplace_item_get",
+          "marketplace_item_create",
+          "marketplace_item_update",
+          "marketplace_item_delete",
+          "marketplace_subscribe",
+          "marketplace_subscription_cancel",
+          "marketplace_subscriptions_list",
+          "marketplace_check_access"
+        ],
+        "agency": [
+          "agency_list",
+          "agency_create",
+          "agency_get",
+          "agency_update",
+          "agency_delete",
+          "agency_dashboard_get",
+          "agency_swarm_status",
+          "agency_swarm_initialize",
+          "agency_analytics_get",
+          "agency_service_request_submit",
+          "agency_service_requests_list"
+        ],
+        "admin": [
+          "admin_metrics_get",
+          "admin_health_get",
+          "admin_audit_logs_get",
+          "admin_script_run",
+          "admin_roles_get",
+          "admin_role_permissions_update",
+          "health_check",
+          "platform_status_get"
+        ],
+        "integrations": [
+          "integration_n8n_workflow_create",
+          "integration_n8n_node_types_get",
+          "integration_n8n_node_type_get",
+          "integration_n8n_credentials_get",
+          "integration_n8n_workflow_test",
+          "integration_llm_providers_list",
+          "integration_llm_provider_create",
+          "integration_llm_provider_update",
+          "integration_llm_provider_delete",
+          "integration_llm_provider_set_default"
+        ]
+      },
+      "resources": [
+        "tnf://api/schema",
+        "tnf://api/endpoints", 
+        "tnf://platform/status",
+        "tnf://auth/context",
+        "tnf://tools/catalog",
+        "tnf://services/registry"
+      ],
+      "authentication": {
+        "required": false,
+        "note": "Use auth_login tool to authenticate for protected endpoints"
+      },
+      "usage": {
+        "quickStart": [
+          "1. Use auth_login with email/password to authenticate",
+          "2. Use agent_list to see available agents",
+          "3. Use chat_session_create to start a chat",
+          "4. Explore other tools based on your needs"
+        ],
+        "examples": {
+          "login": "auth_login({\"email\": \"user@example.com\", \"password\": \"password\"})",
+          "listAgents": "agent_list({\"status\": \"active\"})",
+          "createAgent": "agent_create({\"name\": \"My Bot\", \"type\": \"chatbot\"})",
+          "sendMessage": "chat_message_send({\"sessionId\": \"123\", \"message\": \"Hello\"})"
+        }
+      },
+      "version": "1.0.0",
+      "author": "The New Fuse Platform",
+      "license": "Proprietary"
+    }
+  }
+}

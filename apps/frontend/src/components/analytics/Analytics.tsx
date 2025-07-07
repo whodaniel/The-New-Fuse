@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import components_1 from '../components.js';
+import components_1 from '../components';
 import material_1 from '@mui/material';
 import react_chartjs_2_1 from 'react-chartjs-2';
-import chart_js_1 from 'chart.js';
+import chart_js_1 from 'chart';
 // Register ChartJS components
 chart_js_1.Chart.register(chart_js_1.CategoryScale, chart_js_1.LinearScale, chart_js_1.PointElement, chart_js_1.LineElement, chart_js_1.BarElement, chart_js_1.Title, chart_js_1.Tooltip, chart_js_1.Legend);
 const Analytics = () => {

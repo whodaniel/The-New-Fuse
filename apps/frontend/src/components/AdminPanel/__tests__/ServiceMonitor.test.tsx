@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { ServiceMonitor } from '../ServiceMonitor.tsx';
-import { useServices } from '../../../hooks/useServices.js';
+import { ServiceMonitor } from '../ServiceMonitor';
+import { useServices } from '../../../hooks/useServices';
 
 jest.mock('../../../hooks/useServices');
 

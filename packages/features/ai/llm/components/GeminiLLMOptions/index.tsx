@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CaretUp, CaretDown } from "@phosphor-icons/react";
 import { Preloader } from "@/components/Preloader";
 import { useProviderEndpointAutoDiscovery } from "@/hooks/useProviderEndpointAutoDiscovery";
-import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types.js';
+import { BaseLLMOptionsProps, ModelSelectionProps } from '../../types';
 import system from "@/models/system";
 
 interface GeminiSettings extends BaseLLMOptionsProps {

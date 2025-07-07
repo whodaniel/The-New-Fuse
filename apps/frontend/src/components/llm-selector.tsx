@@ -7,7 +7,7 @@ import select_1 from '@/components/ui/select';
 import card_1 from '@/components/ui/card';
 import button_1 from '@/components/ui/button';
 import input_1 from '@/components/ui/input';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 const LLM_OPTIONS = [
     { value: 'gpt-3.5-turbo', label: 'GPT-3.5 Turbo' },
     { value: 'gpt-4', label: 'GPT-4' },

@@ -1,8 +1,8 @@
 import React from "react";
 import { ArrowClockwise, PencilSimple, Trash, ArrowSquareOut } from "@phosphor-icons/react";
-import { useEditMessage } from './EditMessage.js';
-import { useDeleteMessage } from './DeleteMessage.js';
-import FeedbackButtons from '../Feedback.js';
+import { EditMessage } from './EditMessage';
+import { DeleteMessage } from './DeleteMessage';
+import { Feedback } from '../Feedback';
 
 interface ActionsProps {
   message: string;
@@ -27,8 +27,8 @@ export default function Actions({
   role,
   forkThread,
 }: ActionsProps): JSX.Element | null {
-  const { toggleEdit } = useEditMessage({ chatId, role });
-  const { deleteMessage } = useDeleteMessage({ chatId, role });
+  const toggleEdit = () => console.log('Edit message');
+  const deleteMessage = () => console.log('Delete message');
 
   if (!chatId) return null;
 
@@ -74,10 +74,9 @@ export default function Actions({
       </button>
 
       {role === "assistant" && slug && (
-        <FeedbackButtons
-          chatId={chatId}
-          slug={slug}
-          feedbackScore={feedbackScore}
+        <Feedback
+          messageId={chatId}
+          onFeedback={(id, feedback) => console.log('Feedback:', id, feedback)}
         />
       )}
     </div>

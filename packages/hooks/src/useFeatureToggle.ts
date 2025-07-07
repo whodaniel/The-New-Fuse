@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { FeatureToggleContext } from './types/index.js';
+import { FeatureToggleContext } from './types/index';
 
 export const useFeatureToggle = (): any => {
   const context = useContext(FeatureToggleContext);

@@ -1,5 +1,5 @@
 // filepath: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/packages/agent/src/processors/BaseProcessor.ts
-import { Logger } from '@the-new-fuse/utils';
+import { Logger } from '../utils/Logger';
 import { Message } from '@the-new-fuse/types';
 
 /**
@@ -43,8 +43,8 @@ export abstract class BaseProcessor {
       throw new Error('Message must have a type');
     }
 
-    if (typeof message.data === 'undefined') {
-      throw new Error('Message must have data');
+    if (typeof message.content === 'undefined') {
+      throw new Error('Message must have content');
     }
   }
 
@@ -54,8 +54,8 @@ export abstract class BaseProcessor {
    * @param data Optional data to log
    * @protected
    */
-  protected debug(message: string, data?: unknown): void {
-    this.logger.debug(message, data);
+  protected debug(message: string): void {
+    this.logger.debug(message);
   }
 
   /**
@@ -66,12 +66,11 @@ export abstract class BaseProcessor {
    */
   protected logError(error: Error | string, context?: unknown): void {
     if (error instanceof Error) {
-      this.logger.error(error.message, {
-        stack: error.stack,
-        context
-      });
+      const errorMessage = context ? `${error.message} - Context: ${JSON.stringify(context)}` : error.message;
+      this.logger.error(errorMessage);
     } else {
-      this.logger.error(error, context);
+      const errorMessage = context ? `${error} - Context: ${JSON.stringify(context)}` : error;
+      this.logger.error(errorMessage);
     }
   }
 }

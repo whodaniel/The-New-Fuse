@@ -1,5 +1,5 @@
-import { TaskStatus } from './index.tsx';
-import { TaskPriority } from './core/enums.js';
+import { TaskStatus } from './index';
+import { TaskPriority } from './core/enums';
 export interface Task {
     id: string;
     name: string;

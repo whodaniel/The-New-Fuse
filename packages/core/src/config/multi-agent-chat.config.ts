@@ -38,52 +38,52 @@ export interface MultiAgentChatConfig {
 export const defaultConfig: MultiAgentChatConfig = {
   providers: {
     openai: {
-      name: "OpenAI GPT",
-      apiKey: process.env.OPENAI_API_KEY,
-      endpoint: "https://api.openai.com/v1/chat/completions",
-      model: "gpt-4"
+      name: 'OpenAI GPT',
+      endpoint: 'https://api.openai.com/v1/chat/completions',
+      model: 'gpt-4',
+      apiKey: process.env.OPENAI_API_KEY
     },
     anthropic: {
-      name: "Anthropic Claude",
-      apiKey: process.env.ANTHROPIC_API_KEY,
-      endpoint: "https://api.anthropic.com/v1/messages",
-      model: "claude-3-sonnet-20240229"
+      name: 'Anthropic Claude',
+      endpoint: 'https://api.anthropic.com/v1/messages',
+      model: 'claude-3-sonnet-20240229',
+      apiKey: process.env.ANTHROPIC_API_KEY
     },
     cohere: {
-      name: "Cohere",
-      apiKey: process.env.COHERE_API_KEY,
-      endpoint: "https://api.cohere.com/v1/chat",
-      model: "command-r-plus"
+      name: 'Cohere',
+      endpoint: 'https://api.cohere.com/v1/chat',
+      model: 'command-r-plus',
+      apiKey: process.env.COHERE_API_KEY
     },
     sambanova: {
-      name: "SambaNova",
-      apiKey: process.env.SAMBANOVA_API_KEY,
-      endpoint: "https://api.sambanova.ai/v1/chat/completions",
-      model: "Meta-Llama-3.1-405B-Instruct"
+      name: 'SambaNova',
+      endpoint: 'https://api.sambanova.ai/v1/chat/completions',
+      model: 'Meta-Llama-3.1-405B-Instruct',
+      apiKey: process.env.SAMBANOVA_API_KEY
     },
     deepseek: {
-      name: "DeepSeek",
-      apiKey: process.env.DEEPSEEK_API_KEY,
-      endpoint: "https://api.deepseek.ai/v1/chat/completions",
-      model: "deepseek-chat"
+      name: 'DeepSeek',
+      endpoint: 'https://api.deepseek.ai/v1/chat/completions',
+      model: 'deepseek-chat',
+      apiKey: process.env.DEEPSEEK_API_KEY
     },
     mistral: {
-      name: "Mistral",
-      apiKey: process.env.MISTRAL_API_KEY,
-      endpoint: "https://api.mistral.ai/v1/chat/completions",
-      model: "mistral-large-latest"
+      name: 'Mistral',
+      endpoint: 'https://api.mistral.ai/v1/chat/completions',
+      model: 'mistral-large-latest',
+      apiKey: process.env.MISTRAL_API_KEY
     },
     openrouter: {
-      name: "OpenRouter",
-      apiKey: process.env.OPENROUTER_API_KEY,
-      endpoint: "https://openrouter.ai/api/v1/chat/completions",
-      model: "meta-llama/llama-3.1-405b-instruct"
+      name: 'OpenRouter',
+      endpoint: 'https://openrouter.ai/api/v1/chat/completions',
+      model: 'meta-llama/llama-3.1-405b-instruct',
+      apiKey: process.env.OPENROUTER_API_KEY
     },
     gemini: {
-      name: "Google Gemini",
-      apiKey: process.env.GEMINI_API_KEY,
-      endpoint: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-      model: "gemini-2.0-flash"
+      name: 'Google Gemini',
+      endpoint: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      model: 'gemini-2.0-flash',
+      apiKey: process.env.GEMINI_API_KEY
     }
   },
   firebase: {
@@ -94,12 +94,12 @@ export const defaultConfig: MultiAgentChatConfig = {
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID
   },
-  defaultProvider: "gemini",
-  maxConversationHistory: 50,
+  defaultProvider: 'gemini',
+  maxConversationHistory: 100,
   heartbeatInterval: 30000,
   imageGeneration: {
     enabled: true,
-    defaultSize: { width: 256, height: 256 },
-    quality: 0.7
+    defaultSize: { width: 1024, height: 1024 },
+    quality: 80
   }
 };

@@ -1,4 +1,4 @@
-import { WorkflowService } from '../services/workflow/WorkflowService.js';
+import { WorkflowService } from '../services/workflow/WorkflowService';
 import { Workflow, CreateWorkflowDto, UpdateWorkflowDto, WorkflowStatus } from '@the-new-fuse/types';
 import { User } from '@the-new-fuse/database';
 export declare class WorkflowController {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { spawn } from 'child_process';
-import { StreamResponse } from '../utils/stream.js';
+import { StreamResponse } from '../utils/stream';
 
 const router = Router();
 

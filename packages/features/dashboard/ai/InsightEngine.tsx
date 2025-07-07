@@ -1,6 +1,6 @@
-import { InsightConfig, Insight } from './types.tsx';
-import { DashboardMetrics } from '../analytics/types.tsx';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.tsx';
+import { InsightConfig, Insight } from './types';
+import { DashboardMetrics } from '../analytics/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 
 export class InsightEngine {
   private analyticsManager: AnalyticsManager;

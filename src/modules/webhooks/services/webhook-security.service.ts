@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import * as crypto from 'crypto';
+// Refactored: Use centralized cryptoUtils for all cryptographic operations
+import { hmacSha256, timingSafeEqual } from '../../../utils/cryptoUtils';
 import { WebhookSecurityConfig } from '@the-new-fuse/types';
 
 @Injectable()
@@ -27,9 +28,14 @@ export class WebhookSecurityService {
   }
 
   private generateSignature(payload: string, secret: string, algorithm: 'sha256' | 'sha1'): string {
-    const hmac = crypto.createHmac(algorithm, secret);
-    hmac.update(payload, 'utf8');
-    return hmac.digest('hex');
+    // Only 'sha256' is supported by the shared utility; fallback to direct for 'sha1'
+    if (algorithm === 'sha256') {
+      return hmacSha256(payload, secret, 'hex');
+    } else {
+      // Fallback for legacy 'sha1' (could be added to cryptoUtils if needed)
+      const { createHmac } = require('crypto');
+      return createHmac('sha1', secret).update(payload, 'utf8').digest('hex');
+    }
   }
 
   private normalizeSignature(signature: string, algorithm: 'sha256' | 'sha1'): string {
@@ -44,16 +50,7 @@ export class WebhookSecurityService {
   }
 
   private timingSafeEqual(a: string, b: string): boolean {
-    if (a.length !== b.length) {
-      return false;
-    }
-
-    let result = 0;
-    for (let i = 0; i < a.length; i++) {
-      result |= a.charCodeAt(i) ^ b.charCodeAt(i);
-    }
-
-    return result === 0;
+    return timingSafeEqual(a, b);
   }
 
   validateStripeSignature(payload: string, signature: string, secret: string, tolerance: number = 300): boolean {

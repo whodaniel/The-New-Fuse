@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 // Use ChatMessage from the Prisma schema
 import { ChatMessage, Prisma } from '@prisma/client';
 

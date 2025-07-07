@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'; // Column is not used
-import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "@the-new-fuse/fairtable-core";
+import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions, Column } from "../../fairtable-core/src";
 import { PlusIcon, FilterIcon, SortAscendingIcon, EyeIcon, PencilIcon, TrashIcon, ChevronDownIcon, TableCellsIcon, KanbanIcon, CalendarIcon, GalleryIcon, TimelineIcon } from './Icons'; // NEW_VIEW_DEFAULT_NAME is not used
 import EditableText from './EditableText';
 import SelectInput, { SelectOptionItem } from './SelectInput';
@@ -95,15 +95,15 @@ const Toolbar: React.FC<ToolbarProps> = ({
   }, [view.viewSpecificOptions, view.type, table.columns]);
 
 
-  const columnOptions: SelectOptionItem[] = table.columns.map(col => ({ value: col.id, label: col.name }));
+  const columnOptions: SelectOptionItem[] = table.columns.map((col: Column) => ({ value: col.id, label: col.name }));
   const dateColumnOptions: SelectOptionItem[] = table.columns
-    .filter(col => col.type === DataType.DATE)
-    .map(col => ({ value: col.id, label: col.name }));
+    .filter((col: Column) => col.type === DataType.DATE)
+    .map((col: Column) => ({ value: col.id, label: col.name }));
   const allColumnOptionsForLabel: SelectOptionItem[] = table.columns
-    .map(col => ({ value: col.id, label: col.name }));
+    .map((col: Column) => ({ value: col.id, label: col.name }));
   
   const getApplicableFilterOperators = (columnId: string): SelectOptionItem[] => {
-    const column = table.columns.find(c => c.id === columnId);
+    const column = table.columns.find((c: Column) => c.id === columnId);
     if (!column) return [];
     return Object.entries(FILTER_OPERATOR_OPTIONS)
         .filter(([_, optDetails]) => optDetails.applicableTypes.includes(column.type))
@@ -131,12 +131,12 @@ const Toolbar: React.FC<ToolbarProps> = ({
   const handleConfirmAddView = () => {
     setIsEditingExistingViewConfig(false); // For new view
     if (newViewType === ViewType.KANBAN) {
-        const potentialGroupByCols = table.columns.filter(c => c.type === DataType.SINGLE_SELECT || c.type === DataType.LINKED_RECORD || c.type === DataType.TEXT);
+        const potentialGroupByCols = table.columns.filter((c: Column) => c.type === DataType.SINGLE_SELECT || c.type === DataType.LINKED_RECORD || c.type === DataType.TEXT);
         setKanbanGroupByColumnId(potentialGroupByCols[0]?.id || table.columns[0]?.id || null);
         setIsConfigureKanbanModalOpen(true); 
     } else if (newViewType === ViewType.TIMELINE) {
-        const dateCols = table.columns.filter(c => c.type === DataType.DATE);
-        const textCols = table.columns.filter(c => c.type === DataType.TEXT);
+        const dateCols = table.columns.filter((c: Column) => c.type === DataType.DATE);
+        const textCols = table.columns.filter((c: Column) => c.type === DataType.TEXT);
         setTimelineStartDateCol(dateCols[0]?.id || null);
         setTimelineEndDateCol(dateCols[1]?.id || null);
         setTimelineLabelCol(textCols[0]?.id || table.columns[0]?.id || null);
@@ -184,7 +184,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
   ];
 
   const getFilterInputType = (columnId: string): string => {
-    const col = table.columns.find(c => c.id === columnId);
+    const col = table.columns.find((c: Column) => c.id === columnId);
     if (!col) return "text";
     switch(col.type) {
         case DataType.NUMBER: return "number";
@@ -218,7 +218,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         </button>
         {isViewDropdownOpen && (
           <div className="absolute left-0 mt-1 w-60 bg-white rounded-md shadow-lg py-1 z-30 border border-slate-200">
-            {table.views.map(v => (
+            {table.views.map((v: View) => (
               <button
                 key={v.id}
                 onClick={() => { onSetActiveView(v.id); setIsViewDropdownOpen(false); }}
@@ -277,7 +277,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         </button>
         {isFilterDropdownOpen && (
           <div className="absolute left-0 mt-1 w-[450px] bg-white rounded-md shadow-lg p-3 z-30 border border-slate-200 space-y-3 max-h-[400px] overflow-y-auto custom-scrollbar">
-            {view.filters.map((filter) => (
+            {view.filters.map((filter: any) => (
               <div key={filter.id} className="space-y-1 p-2 bg-slate-50 rounded">
                 <div className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
                   <SelectInput options={columnOptions} value={filter.columnId} onChange={(val) => onUpdateFilter(filter.id, { columnId: val, value: '' })} /> {/* Reset value on column change */}
@@ -287,7 +287,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
                    </button>
                 </div>
                 {isValueNeededForOperator(filter.operator) && (
-                    table.columns.find(c => c.id === filter.columnId)?.type === DataType.BOOLEAN ? (
+                    table.columns.find((c: Column) => c.id === filter.columnId)?.type === DataType.BOOLEAN ? (
                         <SelectInput
                             options={[{value: 'true', label: 'Checked'}, {value: 'false', label: 'Unchecked'}]}
                             value={String(filter.value || 'false')}
@@ -325,7 +325,7 @@ const Toolbar: React.FC<ToolbarProps> = ({
         </button>
         {isSortDropdownOpen && (
           <div className="absolute left-0 mt-1 w-80 bg-white rounded-md shadow-lg p-3 z-30 border border-slate-200 space-y-2">
-            {view.sorts.map(sortRule => (
+            {view.sorts.map((sortRule: any) => (
               <div key={sortRule.id} className="flex items-center space-x-2 p-2 bg-slate-50 rounded">
                 <SelectInput options={columnOptions} value={sortRule.columnId} onChange={(val) => onUpdateSort(sortRule.id, { columnId: val })} className="flex-grow"/>
                 <SelectInput
@@ -399,8 +399,8 @@ const Toolbar: React.FC<ToolbarProps> = ({
                 <label htmlFor="kanbanGroupBy" className="block text-sm font-medium text-slate-700">Group by column:</label>
                 <SelectInput
                     options={table.columns
-                        .filter(col => [DataType.SINGLE_SELECT, DataType.LINKED_RECORD, DataType.TEXT, DataType.BOOLEAN, DataType.NUMBER].includes(col.type)) 
-                        .map(col => ({value: col.id, label: col.name}))
+                        .filter((col: Column) => [DataType.SINGLE_SELECT, DataType.LINKED_RECORD, DataType.TEXT, DataType.BOOLEAN, DataType.NUMBER].includes(col.type)) 
+                        .map((col: Column) => ({value: col.id, label: col.name}))
                     }
                     value={kanbanGroupByColumnId || ""}
                     onChange={(val) => setKanbanGroupByColumnId(val)}

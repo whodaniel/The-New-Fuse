@@ -1,8 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LLMConfigManager = LLMConfigManager;
 import react_1 from 'react';
-import providers_1 from '../../services/llm/providers.js';
-import ui_1 from '../ui.js';
+import providers_1 from '../../services/llm/providers';
+import ui_1 from '../ui';
 function LLMConfigManager({ currentConfig, onConfigUpdate }) {
     const [config, setConfig] = (0, react_1.useState)(currentConfig);
     const [isValidating, setIsValidating] = (0, react_1.useState)(false);

@@ -143,5 +143,5 @@ export interface VerificationResponse {
 // Error Types
 // Local AuthError and AuthErrorCode removed
 // Re-exporting AuthenticationError from src/types/error.tsx as AuthError for compatibility
-import { AuthenticationError } from '../../types/error.tsx';
+import { AuthenticationError } from '../../types/error';
 export type { AuthenticationError as AuthError };

@@ -1,184 +1,178 @@
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.N8nIntegrationController = void 0;
+const common_1 = require("@nestjs/common");
+const axios_1 = require("@nestjs/axios");
+const config_1 = require("@nestjs/config");
+const rxjs_1 = require("rxjs");
+const utils_1 = require("@the-new-fuse/utils");
+const n8n_metadata_service_1 = require("./n8n-metadata.service");
+const workflow_validator_1 = require("./workflow.validator");
+let N8nIntegrationController = class N8nIntegrationController {
+    httpService;
+    configService;
+    metadataService;
+    logger;
+    validator;
+    constructor(httpService, configService, metadataService) {
+        this.httpService = httpService;
+        this.configService = configService;
+        this.metadataService = metadataService;
+        this.logger = new utils_1.Logger({ prefix: 'N8nIntegrationController' });
+        this.validator = new workflow_validator_1.WorkflowValidator();
     }
-    return useValue ? value : void 0;
-};
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+    async createWorkflow(workflowData) {
+        try {
+            // Validate workflow structure
+            const nodeTypes = await this.metadataService.getAllNodeTypes();
+            const validationErrors = this.validator.validate(workflowData.nodes, workflowData.edges, nodeTypes);
+            if (validationErrors.length > 0) {
+                throw new common_1.HttpException({
+                    status: common_1.HttpStatus.BAD_REQUEST,
+                    error: 'Invalid workflow',
+                    details: validationErrors,
+                }, common_1.HttpStatus.BAD_REQUEST);
+            }
+            const n8nUrl = this.configService.get('N8N_URL');
+            const n8nApiKey = this.configService.get('N8N_API_KEY');
+            if (!n8nUrl || !n8nApiKey) {
+                throw new Error('N8N configuration missing');
+            }
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${n8nUrl}/api/v1/workflows`, {
+                name: workflowData.name || 'New Workflow',
+                active: false,
+                nodes: workflowData.nodes,
+                connections: workflowData.connections,
+                settings: {
+                    saveDataErrorExecution: 'all',
+                    saveDataSuccessExecution: 'all',
+                    saveManualExecutions: true,
+                    timezone: 'UTC',
+                },
+            }, {
+                headers: {
+                    'X-N8N-API-KEY': n8nApiKey,
+                },
+            }));
+            return response.data;
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
+        catch (error) {
+            this.logger.error('Failed to create workflow', error);
+            throw error;
         }
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Controller, Post, Get, HttpException, HttpStatus } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
-import { Logger } from '@the-new-fuse/utils';
-import { WorkflowValidator } from './workflow.validator.js';
-let N8nIntegrationController = (() => {
-    let _classDecorators = [Controller('n8n')];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    let _instanceExtraInitializers = [];
-    let _createWorkflow_decorators;
-    let _getNodeTypes_decorators;
-    let _getNodeTypeDescription_decorators;
-    let _getCredentials_decorators;
-    let _testWorkflow_decorators;
-    var N8nIntegrationController = _classThis = class {
-        constructor(httpService, configService, metadataService) {
-            this.httpService = (__runInitializers(this, _instanceExtraInitializers), httpService);
-            this.configService = configService;
-            this.metadataService = metadataService;
-            this.logger = new Logger({ prefix: 'N8nIntegrationController' });
-            this.validator = new WorkflowValidator();
+    async getNodeTypes() {
+        try {
+            return await this.metadataService.getAllNodeTypes();
         }
-        async createWorkflow(workflowData) {
-            try {
-                // Validate workflow structure
-                const nodeTypes = await this.metadataService.getAllNodeTypes();
-                const validationErrors = this.validator.validate(workflowData.nodes, workflowData.edges, nodeTypes);
-                if (validationErrors.length > 0) {
-                    throw new HttpException({
-                        status: HttpStatus.BAD_REQUEST,
-                        error: 'Invalid workflow',
-                        details: validationErrors,
-                    }, HttpStatus.BAD_REQUEST);
-                }
-                const n8nUrl = this.configService.get('N8N_URL');
-                const n8nApiKey = this.configService.get('N8N_API_KEY');
-                if (!n8nUrl || !n8nApiKey) {
-                    throw new Error('N8N configuration missing');
-                }
-                const response = await firstValueFrom(this.httpService.post(`${n8nUrl}/api/v1/workflows`, {
-                    name: workflowData.name || 'New Workflow',
-                    active: false,
+        catch (error) {
+            this.logger.error('Failed to fetch node types', error);
+            throw error;
+        }
+    }
+    async getNodeTypeDescription(type) {
+        try {
+            return await this.metadataService.getNodeTypeDescription(type);
+        }
+        catch (error) {
+            this.logger.error(`Failed to fetch node type description for ${type}`, error);
+            throw error;
+        }
+    }
+    async getCredentials(type) {
+        try {
+            const n8nUrl = this.configService.get('N8N_URL');
+            const n8nApiKey = this.configService.get('N8N_API_KEY');
+            if (!n8nUrl || !n8nApiKey) {
+                throw new Error('N8N configuration missing');
+            }
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.get(`${n8nUrl}/api/v1/credentials?type=${type}`, {
+                headers: {
+                    'X-N8N-API-KEY': n8nApiKey,
+                },
+            }));
+            return response.data;
+        }
+        catch (error) {
+            this.logger.error(`Failed to fetch credentials for type ${type}`, error);
+            throw error;
+        }
+    }
+    async testWorkflow(workflowData) {
+        try {
+            const n8nUrl = this.configService.get('N8N_URL');
+            const n8nApiKey = this.configService.get('N8N_API_KEY');
+            if (!n8nUrl || !n8nApiKey) {
+                throw new Error('N8N configuration missing');
+            }
+            const response = await (0, rxjs_1.firstValueFrom)(this.httpService.post(`${n8nUrl}/api/v1/workflows/test`, {
+                workflowData: {
                     nodes: workflowData.nodes,
                     connections: workflowData.connections,
-                    settings: {
-                        saveDataErrorExecution: 'all',
-                        saveDataSuccessExecution: 'all',
-                        saveManualExecutions: true,
-                        timezone: 'UTC',
-                    },
-                }, {
-                    headers: {
-                        'X-N8N-API-KEY': n8nApiKey,
-                    },
-                }));
-                return response.data;
-            }
-            catch (error) {
-                this.logger.error('Failed to create workflow', error);
-                throw error;
-            }
+                },
+            }, {
+                headers: {
+                    'X-N8N-API-KEY': n8nApiKey,
+                },
+            }));
+            return response.data;
         }
-        async getNodeTypes() {
-            try {
-                return await this.metadataService.getAllNodeTypes();
-            }
-            catch (error) {
-                this.logger.error('Failed to fetch node types', error);
-                throw error;
-            }
+        catch (error) {
+            this.logger.error('Failed to test workflow', error);
+            throw error;
         }
-        async getNodeTypeDescription(type) {
-            try {
-                return await this.metadataService.getNodeTypeDescription(type);
-            }
-            catch (error) {
-                this.logger.error(`Failed to fetch node type description for ${type}`, error);
-                throw error;
-            }
-        }
-        async getCredentials(type) {
-            try {
-                const n8nUrl = this.configService.get('N8N_URL');
-                const n8nApiKey = this.configService.get('N8N_API_KEY');
-                if (!n8nUrl || !n8nApiKey) {
-                    throw new Error('N8N configuration missing');
-                }
-                const response = await firstValueFrom(this.httpService.get(`${n8nUrl}/api/v1/credentials?type=${type}`, {
-                    headers: {
-                        'X-N8N-API-KEY': n8nApiKey,
-                    },
-                }));
-                return response.data;
-            }
-            catch (error) {
-                this.logger.error(`Failed to fetch credentials for type ${type}`, error);
-                throw error;
-            }
-        }
-        async testWorkflow(workflowData) {
-            try {
-                const n8nUrl = this.configService.get('N8N_URL');
-                const n8nApiKey = this.configService.get('N8N_API_KEY');
-                if (!n8nUrl || !n8nApiKey) {
-                    throw new Error('N8N configuration missing');
-                }
-                const response = await firstValueFrom(this.httpService.post(`${n8nUrl}/api/v1/workflows/test`, {
-                    workflowData: {
-                        nodes: workflowData.nodes,
-                        connections: workflowData.connections,
-                    },
-                }, {
-                    headers: {
-                        'X-N8N-API-KEY': n8nApiKey,
-                    },
-                }));
-                return response.data;
-            }
-            catch (error) {
-                this.logger.error('Failed to test workflow', error);
-                throw error;
-            }
-        }
-    };
-    __setFunctionName(_classThis, "N8nIntegrationController");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _createWorkflow_decorators = [Post('workflow')];
-        _getNodeTypes_decorators = [Get('node-types')];
-        _getNodeTypeDescription_decorators = [Get('node-types/:type')];
-        _getCredentials_decorators = [Get('credentials/:type')];
-        _testWorkflow_decorators = [Post('test-workflow')];
-        __esDecorate(_classThis, null, _createWorkflow_decorators, { kind: "method", name: "createWorkflow", static: false, private: false, access: { has: obj => "createWorkflow" in obj, get: obj => obj.createWorkflow }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getNodeTypes_decorators, { kind: "method", name: "getNodeTypes", static: false, private: false, access: { has: obj => "getNodeTypes" in obj, get: obj => obj.getNodeTypes }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getNodeTypeDescription_decorators, { kind: "method", name: "getNodeTypeDescription", static: false, private: false, access: { has: obj => "getNodeTypeDescription" in obj, get: obj => obj.getNodeTypeDescription }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getCredentials_decorators, { kind: "method", name: "getCredentials", static: false, private: false, access: { has: obj => "getCredentials" in obj, get: obj => obj.getCredentials }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _testWorkflow_decorators, { kind: "method", name: "testWorkflow", static: false, private: false, access: { has: obj => "testWorkflow" in obj, get: obj => obj.testWorkflow }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        N8nIntegrationController = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return N8nIntegrationController = _classThis;
-})();
-export { N8nIntegrationController };
+    }
+};
+exports.N8nIntegrationController = N8nIntegrationController;
+__decorate([
+    (0, common_1.Post)('workflow'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], N8nIntegrationController.prototype, "createWorkflow", null);
+__decorate([
+    (0, common_1.Get)('node-types'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], N8nIntegrationController.prototype, "getNodeTypes", null);
+__decorate([
+    (0, common_1.Get)('node-types/:type'),
+    __param(0, (0, common_1.Param)('type')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], N8nIntegrationController.prototype, "getNodeTypeDescription", null);
+__decorate([
+    (0, common_1.Get)('credentials/:type'),
+    __param(0, (0, common_1.Param)('type')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], N8nIntegrationController.prototype, "getCredentials", null);
+__decorate([
+    (0, common_1.Post)('test-workflow'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], N8nIntegrationController.prototype, "testWorkflow", null);
+exports.N8nIntegrationController = N8nIntegrationController = __decorate([
+    (0, common_1.Controller)('n8n'),
+    __metadata("design:paramtypes", [axios_1.HttpService,
+        config_1.ConfigService,
+        n8n_metadata_service_1.N8nMetadataService])
+], N8nIntegrationController);

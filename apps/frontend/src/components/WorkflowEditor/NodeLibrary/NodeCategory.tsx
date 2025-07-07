@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { NodeTemplate, Category } from '../../../types/workflow.tsx';
+import { NodeTemplate, Category } from '../../../types/workflow';
 
 interface NodeCategoryProps {
   category: Category;

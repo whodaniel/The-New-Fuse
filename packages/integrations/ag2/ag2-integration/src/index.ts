@@ -1,2 +1,2 @@
 
-export { AG2Bridge } from './ag2-bridge.tsx';
+export { AG2Bridge } from './ag2-bridge';

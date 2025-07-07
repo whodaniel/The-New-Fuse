@@ -1,5 +1,18 @@
 import { PerformanceSuite } from '../PerformanceSuite';
-import { ConfigService } from '@the-new-fuse/core'; // Corrected import path
+// Mock ConfigService interface since core package has issues
+interface ConfigService {
+  get: jest.Mock;
+  getOrThrow: jest.Mock;
+  getPort: jest.Mock;
+  getDatabaseUrl: jest.Mock;
+  getRedisUrl: jest.Mock;
+  getJwtSecret: jest.Mock;
+  getEnvironment: jest.Mock;
+  isDevelopment: jest.Mock;
+  isProduction: jest.Mock;
+  isTest: jest.Mock;
+  configService: any;
+}
 import * as path from 'path';
 
 describe('API Performance Tests', () => {
@@ -7,7 +20,20 @@ describe('API Performance Tests', () => {
   let config: ConfigService;
 
   beforeAll(() => {
-    config = ConfigService.getInstance();
+    // Create a mock config service for testing
+    config = {
+      get: jest.fn(),
+      getOrThrow: jest.fn(),
+      getPort: jest.fn().mockReturnValue(3000),
+      getDatabaseUrl: jest.fn().mockReturnValue('mock://database'),
+      getRedisUrl: jest.fn().mockReturnValue('mock://redis'),
+      getJwtSecret: jest.fn().mockReturnValue('mock-secret'),
+      getEnvironment: jest.fn().mockReturnValue('test'),
+      isDevelopment: jest.fn().mockReturnValue(false),
+      isProduction: jest.fn().mockReturnValue(false),
+      isTest: jest.fn().mockReturnValue(true),
+      configService: jest.fn() as any // Mock the private property
+    } as any;
     
     suite = new PerformanceSuite({
       baselinePath: path.join(__dirname, '../../../performance-baselines'),

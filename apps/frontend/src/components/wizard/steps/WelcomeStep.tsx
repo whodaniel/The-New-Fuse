@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Heading, Text, Image, VStack, HStack, Icon } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
-import { useWizard } from '../WizardProvider.tsx';
+import { useWizard } from '../WizardProvider';
 
 export const WelcomeStep: React.FC = () => {
   const { state } = useWizard();

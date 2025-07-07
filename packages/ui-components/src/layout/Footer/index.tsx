@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Icon } from '../../shared/ui/index.js';
-import { ErrorBoundary } from '../../shared/ui/ErrorBoundary.tsx';
+import { Button, Icon } from '../../shared/ui/index';
+import { ErrorBoundary } from '../../shared/ui/ErrorBoundary';
 
 const Footer: React.FC = () => {
   return (

@@ -1,12 +1,17 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.validateRequest = void 0;
 // Create simple validation error
 class ValidationError extends Error {
+    statusCode;
+    details;
     constructor(message, details) {
         super(message);
         this.statusCode = 400;
         this.details = details;
     }
 }
-export const validateRequest = (schema) => {
+const validateRequest = (schema) => {
     return (req, _res, next) => {
         const { error } = schema.validate(req.body, {
             abortEarly: false,
@@ -21,3 +26,4 @@ export const validateRequest = (schema) => {
         next();
     };
 };
+exports.validateRequest = validateRequest;

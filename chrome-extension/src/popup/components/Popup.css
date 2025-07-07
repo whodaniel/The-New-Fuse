@@ -1,0 +1,9 @@
+.tab-panel-base {
+  flex-grow: 1;
+  overflow: auto;
+}
+
+.tab-panel-content {
+  height: 100%;
+  overflow: auto;
+}

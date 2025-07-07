@@ -1,6 +1,9 @@
-import { EnhancedAgent } from '../services/agent/enhanced-agent.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const enhanced_agent_1 = require("../services/agent/enhanced-agent");
 async function testAgent() {
-    const agent = new EnhancedAgent('TestAgent');
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    const agent = new enhanced_agent_1.EnhancedAgent('TestAgent', redisUrl);
     agent.on('message', ({ channel, message }) => {
     });
     agent.on('error', (error) => {

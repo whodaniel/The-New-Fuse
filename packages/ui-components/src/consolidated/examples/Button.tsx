@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../Button.tsx';
+import { Button } from '../Button';
 import { Search, Mail, Menu } from 'lucide-react';
 
 // Basic Examples

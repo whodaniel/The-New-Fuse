@@ -7,7 +7,7 @@ import card_1 from '@/components/ui/card';
 import button_1 from '@/components/ui/button';
 import input_1 from '@/components/ui/input';
 import label_1 from '@/components/ui/label';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function WebhookManager() {
     const [webhookUrl, setWebhookUrl] = (0, react_1.useState)('');
     const handleAddWebhook = () => {

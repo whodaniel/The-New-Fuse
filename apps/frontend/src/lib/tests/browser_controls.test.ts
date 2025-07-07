@@ -1,4 +1,4 @@
-import { UserInterfaceHandlers } from '../handlers.tsx';
+import { UserInterfaceHandlers } from '../handlers';
 
 describe('Browser Controls', () => {
   let uiHandlers;

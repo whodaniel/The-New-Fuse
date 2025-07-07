@@ -19,8 +19,10 @@ servers:
     description: Production server
   - url: https://staging-api.thenewfuse.com
     description: Staging server
-  - url: http://localhost:3000
-    description: Development server
+  - url: http://localhost:8080
+    description: Development server (API Gateway)
+  - url: http://localhost:3002
+    description: Direct webhooks service (development)
 
 security:
   - BearerAuth: []

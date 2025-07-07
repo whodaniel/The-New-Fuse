@@ -1,4 +1,4 @@
-import { WorkflowStep, ValidationResult, ValidationError } from '../types.tsx';
+import { WorkflowStep, ValidationResult, ValidationError } from '../types';
 
 export class WorkflowValidator {
   validate(steps: WorkflowStep[]): ValidationResult {
@@ -7,10 +7,11 @@ export class WorkflowValidator {
     // Check for basic requirements
     if (!steps.length) {
       errors.push({
+        field: "steps",
         type: "error",
         message: "Workflow must contain at least one step"
       });
-      return { valid: false, errors };
+      return { isValid: false, errors };
     }
 
     // Validate individual steps
@@ -24,7 +25,7 @@ export class WorkflowValidator {
     errors.push(...structureErrors);
 
     return {
-      valid: errors.length === 0,
+      isValid: errors.length === 0,
       errors
     };
   }
@@ -35,27 +36,27 @@ export class WorkflowValidator {
     // Validate required fields
     if (!step.id) {
       errors.push({
+        field: `step.${step.id || 'unknown'}.id`,
         type: "error",
-        message: "Step ID is required",
-        step: step
+        message: "Step ID is required"
       });
     }
 
     // Check for name in metadata if name property doesn't exist directly
     if (!step.name && !step.metadata?.name) {
       errors.push({
+        field: `step.${step.id}.name`,
         type: "error",
-        message: "Step name is required (either directly or in metadata)",
-        step: step
+        message: "Step name is required (either directly or in metadata)"
       });
     }
 
     // Validate action configuration (either action or type should be meaningful)
-    if (!step.action && step.type === 'default') {
+    if (!step.action && step.type === 'action') {
       errors.push({
+        field: `step.${step.id}.action`,
         type: "error",
-        message: "Step action or specific type is required",
-        step: step
+        message: "Step action or specific type is required"
       });
     }
 
@@ -73,6 +74,7 @@ export class WorkflowValidator {
 
     if (!action.type) {
       errors.push({
+        field: "action.type",
         type: "error",
         message: "Action type is required"
       });
@@ -80,6 +82,7 @@ export class WorkflowValidator {
 
     if (action.type === 'api' && !action.endpoint) {
       errors.push({
+        field: "action.endpoint",
         type: "error",
         message: "API endpoint is required for API actions"
       });
@@ -87,6 +90,7 @@ export class WorkflowValidator {
 
     if (action.type === 'function' && !action.handler) {
       errors.push({
+        field: "action.handler",
         type: "error",
         message: "Function handler is required for function actions"
       });
@@ -98,9 +102,10 @@ export class WorkflowValidator {
   private validateConditions(conditions: any[]): ValidationError[] {
     const errors: ValidationError[] = [];
 
-    conditions.forEach(condition => {
+    conditions.forEach((condition, i) => {
       if (!condition.type) {
         errors.push({
+          field: `condition.${i}.type`,
           type: "error",
           message: "Condition type is required"
         });
@@ -108,6 +113,7 @@ export class WorkflowValidator {
 
       if (!condition.value && condition.type !== 'expression') {
         errors.push({
+          field: `condition.${i}.value`,
           type: "error",
           message: "Condition value is required"
         });
@@ -115,6 +121,7 @@ export class WorkflowValidator {
 
       if (condition.type === 'expression' && !condition.expression) {
         errors.push({
+          field: `condition.${i}.expression`,
           type: "error",
           message: "Expression is required for expression conditions"
         });
@@ -143,12 +150,14 @@ export class WorkflowValidator {
         for (const depId of dependencies) {
           if (!visited.has(depId) && checkCircular(depId)) {
             errors.push({
+              field: `step.${stepId}.dependencies`,
               type: "error",
               message: `Circular dependency detected involving step ${stepId}`
             });
             return true;
           } else if (recursionStack.has(depId)) {
             errors.push({
+              field: `step.${stepId}.dependencies`,
               type: "error",
               message: `Circular dependency detected involving step ${stepId}`
             });
@@ -167,9 +176,9 @@ export class WorkflowValidator {
         deps.forEach((depId: string) => {
           if (!stepIds.has(depId)) {
             errors.push({
+              field: `step.${step.id}.dependencies.${depId}`,
               type: "error",
-              message: `Step ${step.id} has invalid dependency: ${depId}`,
-              step: step
+              message: `Step ${step.id} has invalid dependency: ${depId}`
             });
           }
         });

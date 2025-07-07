@@ -1,4 +1,4 @@
-import { User } from './User.js';
+import { User } from './User';
 export declare class AuthSession {
     id: string;
     user: User;

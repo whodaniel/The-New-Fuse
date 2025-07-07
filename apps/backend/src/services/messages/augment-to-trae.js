@@ -1,4 +1,6 @@
-import { createClient } from 'redis';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const redis_1 = require("redis");
 // Message to send to the agent
 const initializationMessage = {
     type: 'initialization',
@@ -17,7 +19,7 @@ const initializationMessage = {
 (async function () {
     try {
         // Create a Redis client
-        const redisClient = createClient({
+        const redisClient = (0, redis_1.createClient)({
             url: process.env.REDIS_URL || 'redis://localhost:6379'
         });
         // Connect to Redis

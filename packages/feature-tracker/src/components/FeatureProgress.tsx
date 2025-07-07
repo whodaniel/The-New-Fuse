@@ -1,5 +1,5 @@
 import React, { FC } from 'react';
-import { FeatureStage, FeatureProgress as FeatureProgressType } from '../types.js';
+import { FeatureStage, FeatureProgress as FeatureProgressType } from '../types';
 
 // Define interfaces for props for better type safety
 interface ProgressBarProps {

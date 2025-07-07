@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SelectSeparator = exports.SelectItem = exports.SelectLabel = exports.SelectContent = exports.SelectTrigger = exports.SelectValue = exports.SelectGroup = exports.Select = void 0;
 import React from 'react';
 import SelectPrimitive from '@radix-ui/react-select';
-import utils_1 from '../../lib/utils.js';
+import utils_1 from '../../lib/utils';
 const Select = SelectPrimitive.Root;
 exports.Select = Select;
 const SelectGroup = SelectPrimitive.Group;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { WorkflowCanvas } from '../WorkflowCanvas.tsx';
+import { WorkflowCanvas } from '../WorkflowCanvas';
 import { WorkflowProvider } from '@/contexts/WorkflowContext';
 import { ReactFlowProvider } from 'reactflow';
 

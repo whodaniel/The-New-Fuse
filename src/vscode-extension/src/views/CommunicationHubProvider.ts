@@ -462,7 +462,7 @@ export class CommunicationHubProvider extends EventEmitter {
      */
     private async sendMessage(message: any): Promise<void> {
         try {
-            await this.communicationService.broadcastMessage('user-message', message);
+            await this.communicationService.broadcastMessage('user-message' as any, message);
             this.updateWebviewWithMessage({
                 ...message,
                 metadata: {
@@ -532,18 +532,18 @@ export class CommunicationHubProvider extends EventEmitter {
     /**
      * Generate HTML for the webview
      */
-    public getHtmlBodySnippet(webview: vscode.Webview, nonce: string): string {
+    public getHtmlBodySnippet(webview: vscode.Webview, nonce: string, path: any): string {
         // Create URI for scripts and styles
         const scriptUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionUri, 'media', 'communication-hub.js')
+            vscode.Uri.file(path.join(this.extensionUri.fsPath, 'media', 'communication-hub.js'))
         );
         
         const styleUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionUri, 'media', 'styles.css')
+            vscode.Uri.file(path.join(this.extensionUri.fsPath, 'media', 'styles.css'))
         );
         
         const codiconsUri = webview.asWebviewUri(
-            vscode.Uri.joinPath(this.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css')
+            vscode.Uri.file(path.join(this.extensionUri.fsPath, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css'))
         );
         
         return `

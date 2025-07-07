@@ -1,4 +1,4 @@
-import { User, DeviceInfo, LockoutStatus, AuthError } from './auth.tsx';
+import { User, DeviceInfo, LockoutStatus, AuthError } from './auth';
 
 export interface SecurityService {
   checkRateLimit(ip: string): boolean;

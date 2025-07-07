@@ -1,8 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnhancedChatBubble = EnhancedChatBubble;
 import react_1 from 'react';
-import message_utils_1 from '../../utils/message-utils.js';
-import ui_1 from '../ui.js';
+import message_utils_1 from '../../utils/message-utils';
+import ui_1 from '../ui';
 function EnhancedChatBubble({ message, agents, workspace }) {
     const isUser = message.sender.type === 'user';
     const agent = message.metadata.agentId

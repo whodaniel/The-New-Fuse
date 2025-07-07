@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { ConfigService } from '@nestjs/config';
-import { AgentFactory } from './agent.factory.js';
-import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto.js';
+import { AgentFactory } from './agent.factory';
+import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
 import { UnifiedMonitorService } from '@the-new-fuse/core';
 
 @Injectable()
@@ -18,9 +18,9 @@ export class AgentsService {
     try {
       const agent = await this.prisma.agent.create({
         data: {
-          ...dto,
+          ...(dto as any),
           userId,
-          config: this.agentFactory.getDefaultConfig(dto.type)
+          config: this.agentFactory.getDefaultConfig(dto.type) as any
         }
       });
 

@@ -1,20 +1,29 @@
-import { Redis } from 'ioredis';
-import axios from 'axios';
-import { Logger } from '@nestjs/common';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TraeAgent = void 0;
+const ioredis_1 = require("ioredis");
+const axios_1 = __importDefault(require("axios"));
+const common_1 = require("@nestjs/common");
 /**
  * Trae Agent implementation for The New Fuse system
  * Handles system verification, registration, and communication
  */
 class TraeAgent {
+    logger = new common_1.Logger(TraeAgent.name);
+    redis;
+    pubClient;
+    subClient;
+    isRegistered = false;
+    isConnected = false;
+    apiEndpoint = 'http://localhost:3001/api/v1/agents/register';
     constructor() {
-        this.logger = new Logger(TraeAgent.name);
-        this.isRegistered = false;
-        this.isConnected = false;
-        this.apiEndpoint = 'http://localhost:3001/api/v1/agents/register';
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        this.redis = new Redis(redisUrl);
-        this.pubClient = new Redis(redisUrl);
-        this.subClient = new Redis(redisUrl);
+        this.redis = new ioredis_1.Redis(redisUrl);
+        this.pubClient = new ioredis_1.Redis(redisUrl);
+        this.subClient = new ioredis_1.Redis(redisUrl);
     }
     /**
      * Initialize the Trae Agent
@@ -93,7 +102,7 @@ class TraeAgent {
                 },
                 timestamp: new Date().toISOString()
             };
-            const response = await axios.post(this.apiEndpoint, registrationPayload);
+            const response = await axios_1.default.post(this.apiEndpoint, registrationPayload);
             if (response.status === 200 || response.status === 201) {
                 this.logger.log('Registration successful:', response.data);
                 this.isRegistered = true;
@@ -233,6 +242,7 @@ class TraeAgent {
         };
     }
 }
+exports.TraeAgent = TraeAgent;
 async function main() {
     const traeAgent = new TraeAgent();
     try {
@@ -251,4 +261,3 @@ async function main() {
 if (require.main === module) {
     main().catch(console.error);
 }
-export { TraeAgent };

@@ -1,8 +1,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { OnboardingStepsConfig } from '../OnboardingStepsConfig.tsx';
-import { OnboardingAdminService } from '../../../../services/onboarding-admin.service.js';
+import { OnboardingStepsConfig } from '../OnboardingStepsConfig';
+import { OnboardingAdminService } from '../../../../services/onboarding-admin.service';
 
 // Mock the service
 jest.mock('../../../../services/onboarding-admin.service');

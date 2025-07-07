@@ -6,16 +6,16 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Index } from 
 @Index('idx_webhook_delivery_status', ['deliveryStatus'])
 export class WebhookDeliveryLog {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'webhook_config_id', type: 'uuid' })
-  webhookConfigId: string;
+  webhookConfigId!: string;
 
   @Column({ name: 'event_id', type: 'uuid' })
-  eventId: string;
+  eventId!: string;
 
   @Column({ name: 'delivery_status', type: 'varchar', length: 20 })
-  deliveryStatus: string;
+  deliveryStatus!: string;
 
   @Column({ name: 'http_status', type: 'int', nullable: true })
   httpStatus?: number;
@@ -27,11 +27,11 @@ export class WebhookDeliveryLog {
   errorMessage?: string;
 
   @Column({ name: 'attempt_count', type: 'int', default: 1 })
-  attemptCount: number;
+  attemptCount!: number;
 
   @Column({ name: 'delivered_at', type: 'timestamp', nullable: true })
   deliveredAt?: Date;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 }

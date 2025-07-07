@@ -116,7 +116,7 @@ class AdvancedGraphAlgorithms {
     }
     detectStructuralHoles() {
         const constraints = new Map();
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             const neighbors = this.edges
                 .filter((e: any) => e.source === node.id || e.target === node.id)
                 .map((e: any) => e.source === node.id ? e.target : e.source);
@@ -142,7 +142,7 @@ class AdvancedGraphAlgorithms {
     }
     findCorePeriphery() {
         const degrees = new Map();
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             degrees.set(node.id, this.edges.filter((e: any) => e.source === node.id || e.target === node.id).length);
         });
         // Use k-means with k=2 to separate core from periphery
@@ -168,13 +168,13 @@ class AdvancedGraphAlgorithms {
         const { core, periphery } = this.findCorePeriphery();
         // Calculate degree centrality
         const degreeCentrality = new Map();
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             degreeCentrality.set(node.id, this.edges.filter((e: any) => e.source === node.id || e.target === node.id).length);
         });
         // Calculate clustering coefficients
         const localCoefficients = new Map();
         let globalCoefficient = 0;
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             const neighbors = this.edges
                 .filter((e: any) => e.source === node.id || e.target === node.id)
                 .map((e: any) => e.source === node.id ? e.target : e.source);

@@ -1,22 +1,27 @@
-import { Redis } from 'ioredis';
-import { Logger } from '@nestjs/common';
-import { EventEmitter } from 'events';
-export class TraeAgent extends EventEmitter {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TraeAgent = void 0;
+const ioredis_1 = require("ioredis");
+const common_1 = require("@nestjs/common");
+const events_1 = require("events");
+class TraeAgent extends events_1.EventEmitter {
+    logger = new common_1.Logger(TraeAgent.name);
+    redis;
+    subscriber;
+    isConnected = false;
+    channels = {
+        primary: 'agent:trae',
+        broadcast: 'agent:broadcast',
+        augment: 'agent:augment',
+        heartbeat: 'agent:heartbeat',
+        metrics: 'monitoring:metrics',
+        alerts: 'monitoring:alerts'
+    };
     constructor() {
         super();
-        this.logger = new Logger(TraeAgent.name);
-        this.isConnected = false;
-        this.channels = {
-            primary: 'agent:trae',
-            broadcast: 'agent:broadcast',
-            augment: 'agent:augment',
-            heartbeat: 'agent:heartbeat',
-            metrics: 'monitoring:metrics',
-            alerts: 'monitoring:alerts'
-        };
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        this.redis = new Redis(redisUrl);
-        this.subscriber = new Redis(redisUrl);
+        this.redis = new ioredis_1.Redis(redisUrl);
+        this.subscriber = new ioredis_1.Redis(redisUrl);
         this.setupSubscriptions();
         this.setupErrorHandling();
     }
@@ -88,3 +93,4 @@ export class TraeAgent extends EventEmitter {
         }
     }
 }
+exports.TraeAgent = TraeAgent;

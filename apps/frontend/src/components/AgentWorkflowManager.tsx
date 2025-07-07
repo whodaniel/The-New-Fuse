@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket.js';
-import { Card, CardHeader, CardContent } from './ui/card.tsx';
-import { Button } from './ui/button.tsx';
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select.js';
-import { Progress } from './ui/progress.js';
-import { Alert } from './ui/alert.js';
-import { Badge } from './ui/badge.tsx';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog.js';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { Card, CardHeader, CardContent } from './ui/card';
+import { Button } from './ui/button';
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from './ui/select';
+import { Progress } from './ui/progress';
+import { Alert } from './ui/alert';
+import { Badge } from './ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from './ui/dialog';
 
 interface AgentWorkflow {
   id: string;

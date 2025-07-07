@@ -6,7 +6,7 @@ import {
   DropdownItem,
   DropdownSeparator,
   DropdownLabel,
-} from './Dropdown.tsx';
+} from './Dropdown';
 
 const meta: Meta<typeof Dropdown> = {
   title: 'Components/Dropdown',

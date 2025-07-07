@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useLayout } from '../../contexts/LayoutContext.tsx';
-import { useTheme } from '../../providers/ThemeProvider.tsx';
-import { useAuth } from '../../providers/AuthProvider.tsx';
+import { useLayout } from '../../contexts/LayoutContext';
+import { useTheme } from '../../providers/ThemeProvider';
+import { useAuth } from '../../providers/AuthProvider';
 
 export function Header() {
     const { toggleSidebar } = useLayout();

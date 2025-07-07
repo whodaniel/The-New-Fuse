@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { useColorMode } from '@chakra-ui/react';
-import type { ThemeConfig as ThemeConfigType } from '../types/theme.js';
+import type { ThemeConfig as ThemeConfigType } from '../types/theme';
 
 // Re-export the ThemeConfig type
 export type ThemeConfig = ThemeConfigType;

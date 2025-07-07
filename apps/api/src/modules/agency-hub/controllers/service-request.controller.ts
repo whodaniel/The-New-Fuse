@@ -17,7 +17,7 @@ import { AuthGuard } from '../../../guards/auth.guard';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { Roles } from '../../../decorators/roles.decorator';
 import { CurrentUser } from '../../../decorators/current-user.decorator';
-import { EnhancedUserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('service-requests')
 @Controller('api/service-requests')
@@ -42,7 +42,7 @@ export class ServiceRequestController {
         user.id,
         requestDto
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to create service request',
         HttpStatus.BAD_REQUEST
@@ -73,7 +73,7 @@ export class ServiceRequestController {
         limit,
         offset
       });
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get service requests',
         HttpStatus.NOT_FOUND
@@ -87,7 +87,7 @@ export class ServiceRequestController {
   async getServiceRequest(@Param('requestId') requestId: string) {
     try {
       return await this.enhancedAgencyService.getServiceRequestDetails(requestId);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Service request not found',
         HttpStatus.NOT_FOUND
@@ -97,7 +97,7 @@ export class ServiceRequestController {
 
   @Put(':requestId/status')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENCY_MANAGER)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Update service request status' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
   async updateRequestStatus(
@@ -110,7 +110,7 @@ export class ServiceRequestController {
         statusDto.status,
         statusDto.reason
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update status',
         HttpStatus.BAD_REQUEST
@@ -120,7 +120,7 @@ export class ServiceRequestController {
 
   @Post(':requestId/assign')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENCY_MANAGER)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Assign service request to provider' })
   @ApiResponse({ status: 200, description: 'Request assigned successfully' })
   async assignRequest(
@@ -133,7 +133,7 @@ export class ServiceRequestController {
         assignmentDto.providerId,
         assignmentDto.priority
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to assign request',
         HttpStatus.BAD_REQUEST
@@ -143,7 +143,7 @@ export class ServiceRequestController {
 
   @Post(':requestId/auto-assign')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENCY_MANAGER)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Auto-assign service request to best provider' })
   @ApiResponse({ status: 200, description: 'Request auto-assigned successfully' })
   async autoAssignRequest(@Param('requestId') requestId: string) {
@@ -167,7 +167,7 @@ export class ServiceRequestController {
         requestId,
         bestProvider.id
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to auto-assign request',
         HttpStatus.BAD_REQUEST
@@ -187,7 +187,7 @@ export class ServiceRequestController {
         requestDetails.agencyId,
         requestDetails.requirements
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get recommendations',
         HttpStatus.NOT_FOUND
@@ -197,7 +197,7 @@ export class ServiceRequestController {
 
   @Post(':requestId/complete')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENT_OPERATOR)
+  @Roles(UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Mark service request as completed' })
   @ApiResponse({ status: 200, description: 'Request marked as completed' })
   async completeRequest(
@@ -211,7 +211,7 @@ export class ServiceRequestController {
         completionDto.qualityScore,
         completionDto.notes
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to complete request',
         HttpStatus.BAD_REQUEST
@@ -233,7 +233,7 @@ export class ServiceRequestController {
         user.id,
         reviewDto
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to submit review',
         HttpStatus.BAD_REQUEST
@@ -257,7 +257,7 @@ export class ServiceRequestController {
         agencyId,
         { status, limit, offset }
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get category requests',
         HttpStatus.NOT_FOUND

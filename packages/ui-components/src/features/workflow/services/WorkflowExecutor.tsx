@@ -1,4 +1,4 @@
-import { WorkflowStep, WorkflowCondition, WorkflowContext, ExecutionResult } from '../types.tsx';
+import { WorkflowStep, WorkflowCondition, WorkflowContext, ExecutionResult } from '../types';
 
 // Define WorkflowMetricsTracker interface
 export interface WorkflowMetricsTracker {
@@ -13,7 +13,7 @@ export class WorkflowExecutor {
 
   constructor(metricsTracker: WorkflowMetricsTracker) {
     this.metricsTracker = metricsTracker;
-    this.context = {};
+    this.context = { variables: {} };
   }
 
   public async executeWorkflow(steps: WorkflowStep[]): Promise<ExecutionResult> {
@@ -23,7 +23,7 @@ export class WorkflowExecutor {
     while (currentStep) {
       try {
         const result = await this.executeStep(currentStep);
-        this.context[currentStep.id] = result;
+        this.context.variables[currentStep.id] = result;
 
         currentStep = await this.determineNextStep(currentStep, result);
         if (currentStep) {
@@ -33,7 +33,7 @@ export class WorkflowExecutor {
         if (currentStep) {
           this.metricsTracker.recordStepCompletion(currentStep.id, false);
         }
-        return { success: false, error };
+        return { success: false, error: error instanceof Error ? error.message : String(error) };
       }
     }
 
@@ -55,7 +55,16 @@ export class WorkflowExecutor {
   ): Promise<WorkflowStep | null> {
     if (currentStep.branches) {
       for (const branch of currentStep.branches) {
-        if (await this.evaluateCondition(branch.condition, stepResult)) {
+        if (typeof branch.condition === 'string') {
+          // Handle simple condition strings - for now just evaluate as expressions
+          const conditionObj: WorkflowCondition = {
+            nextStepId: '',
+            expression: branch.condition
+          };
+          if (await this.evaluateCondition(conditionObj, stepResult)) {
+            return branch.nextStep;
+          }
+        } else if (await this.evaluateCondition(branch.condition, stepResult)) {
           return branch.nextStep;
         }
       }
@@ -67,23 +76,29 @@ export class WorkflowExecutor {
     condition: WorkflowCondition,
     stepResult: unknown
   ): Promise<boolean> {
-    switch (condition.type) {
-      case 'equals':
-        return stepResult === condition.value;
-      case 'contains':
-        return String(stepResult).includes(String(condition.value));
-      case 'greater':
-        return Number(stepResult) > Number(condition.value);
-      case 'less':
-        return Number(stepResult) < Number(condition.value);
-      case 'expression':
-        if (condition.expression) {
-          return await this.evaluateExpression(condition.expression, stepResult);
-        }
-        return false;
-      default:
-        throw new Error(`Unknown condition type: ${condition.type}`);
+    // Handle expression-based conditions
+    if (condition.expression) {
+      return await this.evaluateExpression(condition.expression, stepResult);
     }
+    
+    // Legacy type-based conditions (if we had them)
+    if ('type' in condition && 'value' in condition) {
+      const typedCondition = condition as any;
+      switch (typedCondition.type) {
+        case 'equals':
+          return stepResult === typedCondition.value;
+        case 'contains':
+          return String(stepResult).includes(String(typedCondition.value));
+        case 'greater':
+          return Number(stepResult) > Number(typedCondition.value);
+        case 'less':
+          return Number(stepResult) < Number(typedCondition.value);
+        default:
+          throw new Error(`Unknown condition type: ${typedCondition.type}`);
+      }
+    }
+    
+    return false;
   }
 
   private async evaluateExpression(

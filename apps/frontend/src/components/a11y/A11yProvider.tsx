@@ -1,7 +1,7 @@
 import React from 'react';
 import { useA11y } from '@/hooks/useA11y';
-import { ScreenReaderSupport } from './ScreenReaderSupport.js';
-import { KeyboardNavigation } from './KeyboardNavigation.tsx';
+import { ScreenReaderSupport } from './ScreenReaderSupport';
+import { KeyboardNavigation } from './KeyboardNavigation';
 
 export const A11yProvider: React.React.FC<{
   children: React.ReactNode;

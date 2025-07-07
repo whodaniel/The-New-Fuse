@@ -24,7 +24,7 @@ class GraphAnalyzer {
     }
     calculateDegrees() {
         const degrees = new Map();
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             const inDegree = this.edges.filter((e: any) => e.target === node.id).length;
             const outDegree = this.edges.filter((e: any) => e.source === node.id).length;
             degrees.set(node.id, {
@@ -39,7 +39,7 @@ class GraphAnalyzer {
         const betweenness = new Map();
         const n = this.nodes.length;
         // Initialize betweenness values
-        this.nodes.forEach(nod(e: any) => betweenness.set(node.id, 0));
+        this.nodes.forEach((node: any) => betweenness.set(node.id, 0));
         // For each pair of nodes
         for (let i = 0; i < n; i++) {
             for (let j = i + 1; j < n; j++) {
@@ -91,7 +91,7 @@ class GraphAnalyzer {
         const n = this.nodes.length;
         let pageRank = new Map();
         // Initialize PageRank values
-        this.nodes.forEach(nod(e: any) => pageRank.set(node.id, 1 / n));
+        this.nodes.forEach((node: any) => pageRank.set(node.id, 1 / n));
         for (let iter = 0; iter < iterations; iter++) {
             const newRank = new Map();
             this.nodes.forEach((node, i) => {
@@ -125,7 +125,7 @@ class GraphAnalyzer {
                 }
             });
         };
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             if (!visited.has(node.id)) {
                 dfs(node.id);
                 currentCommunity++;
@@ -183,7 +183,7 @@ class GraphAnalyzer {
         const closeness = this.calculateClosenessCentrality();
         const pageRank = this.calculatePageRank();
         const communities = this.detectCommunities();
-        this.nodes.forEach(nod(e: any) => {
+        this.nodes.forEach((node: any) => {
             const degree = degrees.get(node.id);
             this.nodeMetrics.set(node.id, {
                 degree: degree?.total || 0,

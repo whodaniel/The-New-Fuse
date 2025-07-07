@@ -1,106 +1,84 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatService = void 0;
+const common_1 = require("@nestjs/common");
+const typeorm_1 = require("@nestjs/typeorm");
+const typeorm_2 = require("typeorm");
+const chat_room_entity_1 = require("../entities/chat-room.entity");
+const message_entity_1 = require("../entities/message.entity");
+const websocket_gateway_1 = require("../gateways/websocket.gateway");
+let ChatService = class ChatService {
+    chatRoomRepository;
+    messageRepository;
+    websocketGateway;
+    constructor(chatRoomRepository, messageRepository, websocketGateway) {
+        this.chatRoomRepository = chatRoomRepository;
+        this.messageRepository = messageRepository;
+        this.websocketGateway = websocketGateway;
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    async getRooms() {
+        return this.chatRoomRepository.find();
     }
-    return useValue ? value : void 0;
+    async getRoom(roomId) {
+        const room = await this.chatRoomRepository.findOne({
+            where: { id: roomId },
+            relations: ['messages'],
+        });
+        if (!room) {
+            throw new common_1.NotFoundException('Chat room not found');
+        }
+        return room;
+    }
+    async getMessages(roomId, options) {
+        const room = await this.getRoom(roomId);
+        return this.messageRepository.find({
+            where: { room: { id: room.id } },
+            take: options.limit,
+            skip: options.offset,
+            order: { timestamp: 'DESC' },
+        });
+    }
+    async sendMessage(roomId, createMessageDto) {
+        const room = await this.getRoom(roomId);
+        const message = this.messageRepository.create({
+            ...createMessageDto,
+            room,
+        });
+        await this.messageRepository.save(message);
+        // Notify connected clients through WebSocket
+        this.websocketGateway.emitMessage(roomId, message);
+        return message;
+    }
+    async getAnalytics() {
+        const [totalRooms, totalMessages] = await Promise.all([
+            this.chatRoomRepository.count(),
+            this.messageRepository.count(),
+        ]);
+        return {
+            totalRooms,
+            totalMessages,
+            timestamp: new Date(),
+        };
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Injectable, NotFoundException } from '@nestjs/common';
-let ChatService = (() => {
-    let _classDecorators = [Injectable()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var ChatService = _classThis = class {
-        constructor(chatRoomRepository, messageRepository, websocketGateway) {
-            this.chatRoomRepository = chatRoomRepository;
-            this.messageRepository = messageRepository;
-            this.websocketGateway = websocketGateway;
-        }
-        async getRooms() {
-            return this.chatRoomRepository.find();
-        }
-        async getRoom(roomId) {
-            const room = await this.chatRoomRepository.findOne({
-                where: { id: roomId },
-                relations: ['messages'],
-            });
-            if (!room) {
-                throw new NotFoundException('Chat room not found');
-            }
-            return room;
-        }
-        async getMessages(roomId, options) {
-            const room = await this.getRoom(roomId);
-            return this.messageRepository.find({
-                where: { room: { id: room.id } },
-                take: options.limit,
-                skip: options.offset,
-                order: { timestamp: 'DESC' },
-            });
-        }
-        async sendMessage(roomId, createMessageDto) {
-            const room = await this.getRoom(roomId);
-            const message = this.messageRepository.create({
-                ...createMessageDto,
-                room,
-            });
-            await this.messageRepository.save(message);
-            // Notify connected clients through WebSocket
-            this.websocketGateway.emitMessage(roomId, message);
-            return message;
-        }
-        async getAnalytics() {
-            const [totalRooms, totalMessages] = await Promise.all([
-                this.chatRoomRepository.count(),
-                this.messageRepository.count(),
-            ]);
-            return {
-                totalRooms,
-                totalMessages,
-                timestamp: new Date(),
-            };
-        }
-    };
-    __setFunctionName(_classThis, "ChatService");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        ChatService = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return ChatService = _classThis;
-})();
-export { ChatService };
+exports.ChatService = ChatService;
+exports.ChatService = ChatService = __decorate([
+    (0, common_1.Injectable)(),
+    __param(0, (0, typeorm_1.InjectRepository)(chat_room_entity_1.ChatRoom)),
+    __param(1, (0, typeorm_1.InjectRepository)(message_entity_1.Message)),
+    __metadata("design:paramtypes", [typeorm_2.Repository,
+        typeorm_2.Repository,
+        websocket_gateway_1.WebSocketGateway])
+], ChatService);

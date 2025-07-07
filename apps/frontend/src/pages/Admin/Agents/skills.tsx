@@ -1,6 +1,6 @@
-import AgentSQLConnectorSelection from './SQLConnectorSelection.js';
-import GenericSkillPanel from './GenericSkillPanel.js';
-import DefaultSkillPanel from './DefaultSkillPanel.js';
+import AgentSQLConnectorSelection from './SQLConnectorSelection';
+import GenericSkillPanel from './GenericSkillPanel';
+import DefaultSkillPanel from './DefaultSkillPanel';
 import { Brain, File, Browser, ChartBar, FileMagnifyingGlass, } from "@phosphor-icons/react";
 import RAGImage from "@/media/agents/rag-memory.png";
 import SummarizeImage from "@/media/agents/view-summarize.png";

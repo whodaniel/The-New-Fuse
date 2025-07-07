@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AlertService } from './alerts/alert.service.tsx';
-import { PerformanceMonitoringService } from './performance-monitoring.service.tsx';
-import { ErrorTrackingService } from './error-tracking.service.tsx';
-import { SecurityLoggingService } from './security-logging.service.tsx';
+import { AlertService } from './alerts/alert.service';
+import { PerformanceMonitoringService } from './performance-monitoring.service';
+import { ErrorTrackingService } from './error-tracking.service';
+import { SecurityLoggingService } from './security-logging.service';
 
 @Injectable()
 export class MonitoringService {

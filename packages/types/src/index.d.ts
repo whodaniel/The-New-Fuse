@@ -1,4 +1,4 @@
-export type * from './core/index.js';
+export type * from './core/index';
 export type DeepPartial<T> = {
     [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
 };

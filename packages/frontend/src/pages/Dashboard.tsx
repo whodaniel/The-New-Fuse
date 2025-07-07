@@ -14,10 +14,10 @@ import {
   Grid,
   GridItem,
 } from '@chakra-ui/react';
-import { useAuth } from '../hooks/useAuth.tsx';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export function Dashboard() {
-  const { user } = useAuth();
+  const { user } = useAuthContext();
   const bgColor = useColorModeValue('gray.50', 'gray.800');
   const statBgColor = useColorModeValue('white', 'gray.700');
 

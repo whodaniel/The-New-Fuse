@@ -1,4 +1,4 @@
-import { BaseEntity, TaskStatus, TaskType } from '../core.js';
+import { BaseEntity, TaskStatus, TaskType } from '../core';
 
 /**
  * Represents a task entity

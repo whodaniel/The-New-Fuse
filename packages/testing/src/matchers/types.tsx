@@ -1,6 +1,6 @@
 import { ReactElement } from 'react';
 import { ZodSchema } from 'zod';
-import { ComponentValidator } from './toBeValidComponent';
+import { ComponentValidator, ComponentValidatorInput } from './toBeValidComponent';
 import { APIContract } from './toMatchAPIContract';
 
 declare global {
@@ -25,9 +25,9 @@ declare global {
 
       /**
        * Validates a React component against specified requirements
-       * @param validator Component validation rules
+       * @param validator Component validation rules or Zod schema
        */
-      toBeValidComponent(validator: ComponentValidator): R;
+      toBeValidComponent(validator: ComponentValidatorInput): R;
 
       /**
        * Checks if an async operation completes within the specified time

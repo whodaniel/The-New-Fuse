@@ -1,6 +1,6 @@
-import { User } from './User.js';
-import { Agent } from './Agent.tsx';
-import { Task } from './Task.js';
+import { User } from './User';
+import { Agent } from './Agent';
+import { Task } from './Task';
 export declare class Pipeline {
     id: string;
     name: string;

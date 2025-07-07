@@ -1,6 +1,6 @@
 import { OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { CacheService } from '../cache/cache.service.js';
+import { CacheService } from '../cache/cache.service';
 import { UnifiedMonitoringService } from '@the-new-fuse/core';
 export declare class WebsocketGateway implements OnGatewayConnection, OnGatewayDisconnect {
     private cache;

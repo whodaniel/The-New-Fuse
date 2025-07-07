@@ -1,2 +1,2 @@
-export * from './ChartComponent.tsx';
-export * from './DataGrid.tsx';
+export * from './ChartComponent';
+export * from './DataGrid';

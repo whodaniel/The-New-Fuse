@@ -1,4 +1,6 @@
-export default () => ({
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = () => ({
     llm: {
         provider: process.env.LLM_PROVIDER || 'openai',
         openai: {

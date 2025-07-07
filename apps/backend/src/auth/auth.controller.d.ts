@@ -1,4 +1,4 @@
-import { AuthService } from './auth.service.js';
+import { AuthService } from './auth.service';
 import { Request, Response } from 'express';
 export declare class AuthController {
     private readonly authService;

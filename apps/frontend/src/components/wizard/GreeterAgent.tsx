@@ -12,7 +12,7 @@ import {
   Spinner,
   useColorModeValue
 } from '@chakra-ui/react';
-import { useWizard } from './WizardProvider.tsx';
+import { useWizard } from './WizardProvider';
 
 // Mock RAG service to avoid dependency issues
 const ragService = {

@@ -1,6 +1,6 @@
-import SlashCommand from './SlashCommand.js';
-import UnknownItem from './Unknown.js';
-import AgentSkill from './AgentSkill.js';
+import SlashCommand from './SlashCommand';
+import UnknownItem from './Unknown';
+import AgentSkill from './AgentSkill';
 const HubItemComponent = {
     "agent-skill": AgentSkill,
     "system-prompt": SystemPrompt,

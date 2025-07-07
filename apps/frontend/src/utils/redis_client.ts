@@ -2,7 +2,7 @@ export {}
 exports.ClientBridge = exports.RedisConfig = void 0;
 import ioredis_1 from 'ioredis';
 import uuid_1 from 'uuid';
-import logging_config_1 from './logging_config.js';
+import logging_config_1 from './logging_config';
 import events_1 from 'events';
 const logger = (0, logging_config_1.setupLogging)('redis_client');
 class RedisConfig {

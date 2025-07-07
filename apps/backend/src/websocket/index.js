@@ -1,13 +1,16 @@
-import { Server } from 'socket.io';
-import { verifyToken } from '../utils/auth.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.initializeWebSocket = initializeWebSocket;
+const socket_io_1 = require("socket.io");
+const auth_1 = require("../utils/auth");
 // Services instances
 let agentService;
 let chatService;
-export function initializeWebSocket(server, deps) {
+function initializeWebSocket(server, deps) {
     // Store service instances
     agentService = deps.agentService;
     chatService = deps.chatService;
-    const io = new Server(server, {
+    const io = new socket_io_1.Server(server, {
         cors: {
             origin: '*',
             methods: ['GET', 'POST']
@@ -20,7 +23,7 @@ export function initializeWebSocket(server, deps) {
             if (!token) {
                 return next(new Error('Authentication error: No token provided'));
             }
-            const decoded = verifyToken(token);
+            const decoded = (0, auth_1.verifyToken)(token);
             socket.userId = decoded.id;
             next();
         }

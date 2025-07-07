@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { RobotSimple } from "@phosphor-icons/react";
+import { Robot } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
 
 interface AgentMenuProps {
@@ -30,7 +30,7 @@ export default function AvailableAgentsButton({ showing, setShowing }: AgentMenu
         showing ? "!opacity-100" : ""
       }`}
     >
-      <RobotSimple
+      <Robot
         color="var(--theme-sidebar-footer-icon-fill)"
         className="w-[20px] h-[20px] pointer-events-none opacity-60 hover:opacity-100 light:opacity-100 light:hover:opacity-60"
         weight="bold"

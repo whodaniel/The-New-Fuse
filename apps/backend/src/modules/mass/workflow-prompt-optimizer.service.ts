@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { PrismaService } from '../../lib/prisma/prisma.service';
 import { 
   MassOptimizationConfig, 
   WorkflowTopology, 
   PerformanceMetrics 
 } from '@the-new-fuse/types';
-import { EvaluationHarnessService } from './prompt-optimizer.service.js';
+import { EvaluationHarnessService } from './prompt-optimizer.service';
 
 @Injectable()
 export class WorkflowPromptOptimizerService {

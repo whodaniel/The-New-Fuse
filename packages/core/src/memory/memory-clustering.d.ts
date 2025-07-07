@@ -1,11 +1,8 @@
-export interface ClusteringConfig {
-    numClusters: number;
-    minClusterSize: number;
-    similarityThreshold: number;
-    embeddingModel: string;
+import { ConfigService } from '@nestjs/config';
+export declare class MemoryClustering {
+    private readonly configService;
+    constructor(configService: ConfigService);
+    clusterItems(items: any[]): Promise<any[]>;
+    analyzeContent(item: any): Promise<string[]>;
 }
-export declare class MemoryClusterManager {
-    private clusters;
-}
-export interface Cluster {
-}
+//# sourceMappingURL=memory-clustering.d.ts.map

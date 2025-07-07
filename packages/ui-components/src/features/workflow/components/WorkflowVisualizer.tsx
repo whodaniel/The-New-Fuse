@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
-import { WorkflowDefinition, WorkflowStep } from '../types.tsx'; // Added .js extension
-import { Card, CardContent } from '../../../core/card/index.tsx'; // Added .js extension
-import { Badge } from '../../../core/badge.tsx'; // Added .js extension
+import { WorkflowDefinition, WorkflowStep } from '../types';
+import { Card, CardContent } from '../../../core/card/index';
+import { Badge } from '../../../core/badge';
 import { ArrowRight } from 'lucide-react';
 
 interface VisualizerNode {

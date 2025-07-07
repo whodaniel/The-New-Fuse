@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
-import { VoiceEngine } from '../ai/VoiceEngine.js';
-import { GestureEngine } from '../ai/GestureEngine.js';
-import { XREngine } from '../ai/XREngine.js';
-import { NLPEngine } from '../ai/NLPEngine.js';
-import { DashboardState } from '../collaboration/types.js';
+import { VoiceEngine } from '../ai/VoiceEngine';
+import { GestureEngine } from '../ai/GestureEngine';
+import { XREngine } from '../ai/XREngine';
+import { NLPEngine } from '../ai/NLPEngine';
+import { DashboardState } from '../collaboration/types';
 
 export function useInteraction(
   dashboardState: DashboardState,

@@ -1,11 +1,11 @@
 import React from 'react';
 
 // Import components from their correct paths
-import { Layout } from '../layout/BaseLayout.js';
-import { Navigation } from '../layout/Navigation.js';
-import { Table } from './data-table.tsx';
-import { Chart } from './graph-chart.tsx';
-import { Form } from './form.tsx';
+import { Layout } from '../layout/BaseLayout';
+import { Navigation } from '../layout/Navigation';
+import { Table } from './data-table';
+import { Chart } from './graph-chart';
+import { Form } from './form';
 
 export {
   Layout,

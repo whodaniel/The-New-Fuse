@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { MonitoringService } from '../services/monitoring.service.js';
+import { MonitoringService } from '../services/monitoring.service';
 
 @ApiTags('monitoring')
 @Controller('monitoring')

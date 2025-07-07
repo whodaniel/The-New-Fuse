@@ -1,7 +1,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageBubble = MessageBubble;
 import react_1 from 'react';
-import message_utils_1 from '../utils/message-utils.js';
+import message_utils_1 from '../utils/message-utils';
 function MessageBubble({ message, agents }) {
     const isUserMessage = message.sender === 'User';
     return (<div className={`flex flex-col ${isUserMessage ? 'items-end' : 'items-start'}`}>

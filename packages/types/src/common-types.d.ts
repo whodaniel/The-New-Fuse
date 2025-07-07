@@ -1,4 +1,4 @@
-import { UnknownRecord, JsonValue, DataMap } from './core/base-types.tsx';
+import { UnknownRecord, JsonValue, DataMap } from './core/base-types';
 export type { UnknownRecord, JsonValue, DataMap };
 export type ApiResponse<T> = {
     data: T;

@@ -1,5 +1,5 @@
-import { RedisService } from './redisService.js';
-import { CacheService } from './cacheService.js';
+import { RedisService } from './redisService';
+import { CacheService } from './cacheService';
 export declare class HealthService {
     private readonly redis;
     private readonly cache;

@@ -1,5 +1,5 @@
 import type { Request } from 'express';
-import { User } from './user.tsx';
+import { User } from './user';
 export interface AuthenticatedRequest extends Request {
     user?: User;
 }

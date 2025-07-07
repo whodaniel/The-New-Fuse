@@ -1,6 +1,6 @@
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
-import { N8nMetadataService } from './n8n-metadata.service.js';
+import { N8nMetadataService } from './n8n-metadata.service';
 export declare class N8nIntegrationController {
     private readonly httpService;
     private readonly configService;

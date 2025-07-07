@@ -1,124 +1,346 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, createContext, useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { Plus, Settings, Play, Pause, Download, Sparkles, Copy, X, Lightbulb, Bot, RefreshCw, Users, Zap, Eraser } from 'lucide-react';
+import { chatApiService, type Message, type ChatAgent, type ConversationRule, type SynthesisJob } from '../../services/chatApi';
 
-interface Message {
-  id: string;
-  content: string;
-  sender: 'user' | 'agent' | 'system';
-  timestamp: string;
-  agentName?: string;
-  agentAvatar?: string;
-  type?: 'text' | 'code' | 'image' | 'file';
-}
+// Context for shared state
+const ChatContext = createContext<any>(null);
 
-interface ChatAgent {
-  id: string;
-  name: string;
-  avatar: string;
-  status: 'online' | 'offline' | 'busy';
-  type: 'assistant' | 'specialist' | 'admin';
-}
-
-export default function ChatPage() {
+// Enhanced Chat Provider Component
+const EnhancedChatProvider = ({ children }: { children: React.ReactNode }) => {
+  const [agents, setAgents] = useState<ChatAgent[]>([]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [rules, setRules] = useState<ConversationRule[]>([]);
+  const [synthesisJobs, setSynthesisJobs] = useState<SynthesisJob[]>([]);
+  const [conversationGoal, setConversationGoal] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [isAutomating, setIsAutomating] = useState(false);
+  const [isSynthesizing, setIsSynthesizing] = useState(false);
+  const [mode, setMode] = useState<'manual' | 'auto'>('manual');
+  const [isPaused, setIsPaused] = useState(true);
+  const [isTtsEnabled, setIsTtsEnabled] = useState(false);
+  const [voices, setVoices] = useState<any[]>([]);
+  const [currentChatId, setCurrentChatId] = useState<string | null>(null);
+
+  // Load voices for TTS
+  useEffect(() => {
+    const loadVoices = () => {
+      const availableVoices = window.speechSynthesis?.getVoices() || [];
+      setVoices(availableVoices.map(v => ({ 
+        name: v.name, 
+        lang: v.lang,
+        voice: v
+      })));
+    };
+    
+    if (window.speechSynthesis) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+      setTimeout(loadVoices, 100);
+    }
+  }, []);
+
+  // Text-to-speech function
+  const speak = useCallback((text: string, voiceName?: string) => {
+    return new Promise<void>((resolve) => {
+      if (!isTtsEnabled || !text || typeof text !== 'string' || text.trim() === '') {
+        resolve();
+        return;
+      }
+      
+      const allVoices = window.speechSynthesis?.getVoices() || [];
+      if (allVoices.length === 0) {
+        resolve();
+        return;
+      }
+      
+      if (window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+      }
+      
+      const utterance = new SpeechSynthesisUtterance(text.replace(/\*/g, ''));
+      utterance.voice = allVoices.find(v => v.name === voiceName) || 
+                       allVoices.find(v => v.lang.startsWith('en') && v.default) || 
+                       allVoices[0];
+      utterance.onend = () => resolve();
+      utterance.onerror = () => resolve();
+      
+      setTimeout(() => {
+        try {
+          window.speechSynthesis.speak(utterance);
+        } catch (error) {
+          console.warn('TTS failed:', error);
+          resolve();
+        }
+      }, 100);
+    });
+  }, [isTtsEnabled]);
+
+  // API call functions using the backend service
+  const callTextApi = useCallback(async (prompt: string, systemPrompt = "You are a helpful assistant.") => {
+    try {
+      return await chatApiService.callTextApi(prompt, systemPrompt);
+    } catch (error) {
+      console.error('Text API error:', error);
+      return 'I apologize, but I encountered an error while processing your request.';
+    }
+  }, []);
+
+  const addMessage = useCallback(async (message: Omit<Message, 'id'>) => {
+    try {
+      // Add to local state immediately for real-time UI
+      const newMessage = {
+        ...message,
+        id: Date.now().toString()
+      };
+      setMessages(prev => [...prev, newMessage]);
+      
+      // Sync with backend if we have a chat ID
+      if (currentChatId) {
+        await chatApiService.addMessage(currentChatId, message);
+      }
+      
+      return newMessage;
+    } catch (error) {
+      console.error('Error adding message:', error);
+      return {
+        ...message,
+        id: Date.now().toString()
+      };
+    }
+  }, [currentChatId, setMessages]);
+
+  const getAgentById = useCallback((id: string) => {
+    return agents.find(a => a.id === id);
+  }, [agents]);
+
+  const contextValue = {
+    agents, setAgents,
+    messages, setMessages,
+    rules, setRules,
+    synthesisJobs, setSynthesisJobs,
+    conversationGoal, setConversationGoal,
+    isGenerating, setIsGenerating,
+    isAutomating, setIsAutomating,
+    isSynthesizing, setIsSynthesizing,
+    mode, setMode,
+    isPaused, setIsPaused,
+    isTtsEnabled, setIsTtsEnabled,
+    voices,
+    speak,
+    callTextApi,
+    addMessage,
+    getAgentById,
+    currentChatId,
+    setCurrentChatId
+  };
+
+  return (
+    <ChatContext.Provider value={contextValue}>
+      {children}
+    </ChatContext.Provider>
+  );
+};
+
+function ChatPage() {
   const [newMessage, setNewMessage] = useState('');
   const [selectedAgent, setSelectedAgent] = useState<string>('general');
-  const [isTyping, setIsTyping] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [senderId, setSenderId] = useState('You');
+  const [recipientAgentId, setRecipientAgentId] = useState('');
+  const [isAgentModalOpen, setIsAgentModalOpen] = useState(false);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [isRuleModalOpen, setIsRuleModalOpen] = useState(false);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const agents: ChatAgent[] = [
-    {
-      id: 'general',
-      name: 'General Assistant',
-      avatar: '🤖',
-      status: 'online',
-      type: 'assistant'
-    },
-    {
-      id: 'codehelper',
-      name: 'Code Helper',
-      avatar: '👨‍💻',
-      status: 'online',
-      type: 'specialist'
-    },
-    {
-      id: 'dataanalyst',
-      name: 'Data Analyst',
-      avatar: '📊',
-      status: 'online',
-      type: 'specialist'
-    },
-    {
-      id: 'support',
-      name: 'Support Agent',
-      avatar: '🛠️',
-      status: 'busy',
-      type: 'admin'
-    }
-  ];
+  const {
+    agents, setAgents,
+    messages, setMessages,
+    rules,
+    conversationGoal, setConversationGoal,
+    isGenerating, setIsGenerating,
+    isAutomating, setIsAutomating,
+    isSynthesizing,
+    mode, setMode,
+    isPaused, setIsPaused,
+    isTtsEnabled, setIsTtsEnabled,
+    voices,
+    speak,
+    callTextApi,
+    addMessage,
+    getAgentById,
+    currentChatId,
+    setCurrentChatId
+  } = useContext(ChatContext) || {};
 
-  // Mock initial messages
+  // Initialize default agents if none exist
   useEffect(() => {
-    setTimeout(() => {
-      setMessages([
+    if (agents && agents.length === 0) {
+      const defaultAgents: ChatAgent[] = [
         {
-          id: '1',
+          id: 'general',
+          name: 'General Assistant',
+          avatar: '🤖',
+          status: 'online',
+          type: 'assistant',
+          systemPrompt: 'You are a helpful general assistant.',
+          model: 'GPT-4',
+          voice: voices[0]?.name || ''
+        },
+        {
+          id: 'codehelper',
+          name: 'Code Helper',
+          avatar: '👨‍💻',
+          status: 'online',
+          type: 'specialist',
+          systemPrompt: 'You are a coding specialist who helps with programming questions.',
+          model: 'GPT-4',
+          voice: voices[0]?.name || ''
+        },
+        {
+          id: 'dataanalyst',
+          name: 'Data Analyst',
+          avatar: '📊',
+          status: 'online',
+          type: 'specialist',
+          systemPrompt: 'You are a data analysis expert.',
+          model: 'Claude-3',
+          voice: voices[0]?.name || ''
+        },
+        {
+          id: 'support',
+          name: 'Support Agent',
+          avatar: '🛠️',
+          status: 'busy',
+          type: 'admin',
+          systemPrompt: 'You provide technical support and help resolve issues.',
+          model: 'GPT-3.5',
+          voice: voices[0]?.name || ''
+        }
+      ];
+      setAgents(defaultAgents);
+    }
+  }, [agents, setAgents, voices]);
+
+  // Initialize with welcome messages if messages are empty
+  useEffect(() => {
+    if (messages && messages.length === 0) {
+      setTimeout(() => {
+        addMessage({
           content: 'Hello! I\'m your General Assistant. How can I help you today?',
           sender: 'agent',
           timestamp: new Date(Date.now() - 300000).toISOString(),
+          agentId: 'general',
           agentName: 'General Assistant',
           agentAvatar: '🤖',
           type: 'text'
-        },
-        {
-          id: '2',
-          content: 'Welcome to The New Fuse chat system! You can interact with various AI agents to get help with different tasks.',
+        });
+        addMessage({
+          content: 'Welcome to The New Fuse Enhanced Chat! You can now interact with multiple AI agents simultaneously, set conversation goals, and use automation features.',
           sender: 'system',
           timestamp: new Date(Date.now() - 240000).toISOString(),
           type: 'text'
-        }
-      ]);
+        });
+        setLoading(false);
+      }, 1000);
+    } else if (messages) {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  }, [messages, addMessage]);
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Auto-response logic for multi-agent conversations
+  useEffect(() => {
+    if (mode !== 'auto' || isGenerating || !messages || messages.length === 0 || isPaused) {
+      return;
+    }
+    
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage.sender === 'You' || lastMessage.sender === 'system' || !lastMessage.agentId) {
+      return;
+    }
+    
+    const nextRule = rules?.find(rule => rule.sourceId === lastMessage.agentId);
+    if (!nextRule?.targetId) return;
+    
+    const nextAgent = getAgentById(nextRule.targetId);
+    if (!nextAgent) return;
+    
+    const timeoutId = setTimeout(async () => {
+      try {
+        setIsGenerating(true);
+        const history = messages.slice(-10).map(m => `${m.sender}: ${m.content}`).join('\n');
+        const goalPrompt = conversationGoal ? `The current conversation goal is: "${conversationGoal}".` : '';
+        const finalPrompt = `${goalPrompt}\n\nPrevious conversation:\n${history}\n\nYour turn, ${nextAgent.name}. What is your response? Keep it conversational and concise.`;
+        
+        const botText = await callTextApi(finalPrompt, nextAgent.systemPrompt);
+        await addMessage({ 
+          content: botText, 
+          sender: 'agent', 
+          timestamp: new Date().toISOString(),
+          agentId: nextAgent.id,
+          agentName: nextAgent.name,
+          agentAvatar: nextAgent.avatar,
+          type: 'text'
+        });
+        
+        await speak(botText, nextAgent.voice);
+      } catch (error) {
+        console.error('Auto-response error:', error);
+      } finally {
+        setIsGenerating(false);
+      }
+    }, 1500);
+    
+    return () => clearTimeout(timeoutId);
+  }, [mode, messages, rules, isGenerating, isPaused, conversationGoal, getAgentById, callTextApi, addMessage, speak]);
+
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
-
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      content: newMessage,
-      sender: 'user',
+    if (!newMessage.trim() || !recipientAgentId) return;
+    
+    const respondingAgent = getAgentById(recipientAgentId);
+    if (!respondingAgent) return;
+    
+    const userMessage = { 
+      content: newMessage, 
+      sender: senderId === 'You' ? 'You' : getAgentById(senderId)?.name || 'You',
       timestamp: new Date().toISOString(),
-      type: 'text'
+      type: 'text' as const
     };
-
-    setMessages(prev => [...prev, userMessage]);
     setNewMessage('');
-    setIsTyping(true);
-
-    // Simulate agent response
-    setTimeout(() => {
-      const selectedAgentInfo = agents.find(a => a.id === selectedAgent);
-      const agentResponse: Message = {
-        id: (Date.now() + 1).toString(),
-        content: generateAgentResponse(newMessage, selectedAgent),
+    
+    try {
+      await addMessage(userMessage);
+      setIsGenerating(true);
+      
+      const history = [...messages, userMessage].slice(-10)
+        .map(m => `${m.sender}: ${m.content}`)
+        .join('\n');
+        
+      const goalPrompt = conversationGoal ? `The current conversation goal is: "${conversationGoal}".` : '';
+      const finalPrompt = `${goalPrompt}\n\nPrevious conversation:\n${history}\n\nYour turn, ${respondingAgent.name}. What is your response?`;
+      
+      const botText = await callTextApi(finalPrompt, respondingAgent.systemPrompt);
+      await addMessage({ 
+        content: botText, 
         sender: 'agent',
         timestamp: new Date().toISOString(),
-        agentName: selectedAgentInfo?.name || 'Assistant',
-        agentAvatar: selectedAgentInfo?.avatar || '🤖',
+        agentId: respondingAgent.id,
+        agentName: respondingAgent.name,
+        agentAvatar: respondingAgent.avatar,
         type: 'text'
-      };
+      });
       
-      setMessages(prev => [...prev, agentResponse]);
-      setIsTyping(false);
-    }, 1000 + Math.random() * 2000);
+      await speak(botText, respondingAgent.voice);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const generateAgentResponse = (userInput: string, agentId: string): string => {
@@ -203,18 +425,34 @@ export default function ChatPage() {
             <p className="text-gray-600">Communicate with AI agents and get instant help</p>
           </div>
           <div className="flex space-x-3">
-            <Link
-              to="/multi-agent-chat"
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            <button 
+              onClick={() => setIsAgentModalOpen(true)}
+              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center"
             >
-              🤖 Multi-Agent Chat
-            </Link>
-            <Link
-              to="/agents"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              <Users size={16} className="mr-2" />
+              Agents ({agents?.length || 0})
+            </button>
+            <button 
+              onClick={() => setIsGoalModalOpen(true)}
+              className="bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600 transition-colors flex items-center"
             >
-              📋 Manage Agents
-            </Link>
+              <Lightbulb size={16} className="mr-2" />
+              Set Goal
+            </button>
+            <button 
+              onClick={() => setIsRuleModalOpen(true)}
+              className="bg-yellow-500 text-black px-4 py-2 rounded-lg hover:bg-yellow-600 transition-colors flex items-center"
+            >
+              <Copy size={16} className="mr-2" />
+              Rules
+            </button>
+            <button 
+              className="bg-cyan-600 text-white px-4 py-2 rounded-lg hover:bg-cyan-700 transition-colors flex items-center"
+              disabled={isSynthesizing}
+            >
+              <Sparkles size={16} className="mr-2" />
+              {isSynthesizing ? 'Synthesizing...' : 'Creative Synthesis'}
+            </button>
           </div>
         </div>
       </div>
@@ -251,27 +489,68 @@ export default function ChatPage() {
               ))}
             </div>
 
-            {/* Quick Actions */}
-            <div className="mt-6 space-y-2">
-              <h3 className="text-sm font-medium text-gray-700">Quick Actions</h3>
-              <Link
-                to="/tasks/new"
-                className="block w-full text-left p-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
-              >
-                📋 Create Task
-              </Link>
-              <Link
-                to="/agents/new"
-                className="block w-full text-left p-2 text-sm text-purple-600 hover:bg-purple-50 rounded"
-              >
-                🤖 Deploy Agent
-              </Link>
-              <Link
-                to="/workspace/analytics"
-                className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 rounded"
-              >
-                📊 View Analytics
-              </Link>
+            {/* Enhanced Controls */}
+            <div className="mt-6 space-y-4">
+              <h3 className="text-sm font-medium text-gray-700">Conversation Controls</h3>
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Mode:</span>
+                <button 
+                  onClick={() => setMode(mode === 'manual' ? 'auto' : 'manual')}
+                  className={`px-3 py-1 rounded-full text-sm ${mode === 'auto' ? 'bg-blue-500 text-white' : 'bg-gray-200'}`}
+                >
+                  {mode === 'auto' ? 'Auto' : 'Manual'}
+                </button>
+              </div>
+              
+              {mode === 'auto' && (
+                <div className="flex items-center justify-between">
+                  <span className="text-sm">Auto-responses:</span>
+                  <button 
+                    onClick={() => setIsPaused(!isPaused)}
+                    className="p-2 text-gray-400 hover:text-white rounded-full"
+                  >
+                    {isPaused ? <Play size={16} /> : <Pause size={16} />}
+                  </button>
+                </div>
+              )}
+              
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Text-to-Speech:</span>
+                <button 
+                  onClick={() => setIsTtsEnabled(!isTtsEnabled)}
+                  className={`px-3 py-1 rounded-full text-sm ${isTtsEnabled ? 'bg-green-500 text-white' : 'bg-gray-200'}`}
+                >
+                  {isTtsEnabled ? 'ON' : 'OFF'}
+                </button>
+              </div>
+              
+              <div className="space-y-2">
+                <Link
+                  to="/agents"
+                  className="block w-full text-left p-2 text-sm text-purple-600 hover:bg-purple-50 rounded"
+                >
+                  🤖 Manage All Agents
+                </Link>
+                <Link
+                  to="/agents/new"
+                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 rounded"
+                >
+                  ➕ Create New Agent
+                </Link>
+                <Link
+                  to="/tasks/new"
+                  className="block w-full text-left p-2 text-sm text-blue-600 hover:bg-blue-50 rounded"
+                >
+                  📋 Create Task
+                </Link>
+                <button
+                  onClick={() => setIsGalleryOpen(true)}
+                  className="block w-full text-left p-2 text-sm text-green-600 hover:bg-green-50 rounded"
+                >
+                  🎬 Synthesis Gallery
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -370,15 +649,13 @@ export default function ChatPage() {
                 </div>
               ))}
               
-              {isTyping && (
+              {isGenerating && (
                 <div className="flex justify-start">
                   <div className="bg-gray-50 text-gray-900 max-w-xs lg:max-w-md px-4 py-2 rounded-lg">
                     <div className="flex items-center space-x-2 mb-1">
-                      <span className="text-lg">
-                        {agents.find(a => a.id === selectedAgent)?.avatar}
-                      </span>
+                      <span className="text-lg">🤖</span>
                       <span className="text-xs font-medium text-gray-600">
-                        {agents.find(a => a.id === selectedAgent)?.name}
+                        Agent thinking...
                       </span>
                     </div>
                     <div className="flex space-x-1">
@@ -392,21 +669,47 @@ export default function ChatPage() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input */}
+            {/* Enhanced Message Input */}
             <div className="p-4 border-t border-gray-200">
+              <div className="flex items-center gap-2 mb-3">
+                <label className="text-sm">From:</label>
+                <select 
+                  value={senderId}
+                  onChange={e => setSenderId(e.target.value)}
+                  className="flex-1 p-2 border rounded-lg bg-gray-50 border-gray-300 text-sm"
+                >
+                  <option value="You">You</option>
+                  {agents?.map(a => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
+                  ))}
+                </select>
+                
+                <label className="text-sm">To:</label>
+                <select 
+                  value={recipientAgentId}
+                  onChange={e => setRecipientAgentId(e.target.value)}
+                  className="flex-1 p-2 border rounded-lg bg-gray-50 border-gray-300 text-sm"
+                >
+                  <option value="">Select Agent</option>
+                  {agents?.map(a => (
+                    <option key={a.id} value={a.id}>{a.name}</option>
+                  ))}
+                </select>
+              </div>
+              
               <div className="flex space-x-2">
                 <input
                   type="text"
                   value={newMessage}
                   onChange={(e) => setNewMessage(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                  placeholder={`Message ${agents.find(a => a.id === selectedAgent)?.name}...`}
+                  placeholder={isGenerating ? "Thinking..." : "Type a message..."}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  disabled={isTyping}
+                  disabled={isGenerating || !agents || agents.length === 0}
                 />
                 <button
                   onClick={handleSendMessage}
-                  disabled={!newMessage.trim() || isTyping}
+                  disabled={!newMessage.trim() || isGenerating || !agents || agents.length === 0 || !recipientAgentId}
                   className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Send
@@ -423,3 +726,12 @@ export default function ChatPage() {
     </div>
   );
 }
+
+// Wrap the main component with the enhanced provider
+const WrappedChatPage = () => (
+  <EnhancedChatProvider>
+    <ChatPage />
+  </EnhancedChatProvider>
+);
+
+export default WrappedChatPage;

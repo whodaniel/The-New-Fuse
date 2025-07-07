@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import react_router_dom_1 from 'react-router-dom';
-import shared_1 from './components/shared.js';
-import features_1 from './components/features.js';
-import SocketContext_1 from './services/SocketContext.js';
-import theme_context_1 from './contexts/theme-context.js';
+import shared_1 from './components/shared';
+import features_1 from './components/features';
+import SocketContext_1 from './services/SocketContext';
+import theme_context_1 from './contexts/theme-context';
 require("./App.css");
 const App = () => {
     return (<react_router_dom_1.BrowserRouter>

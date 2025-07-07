@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseService } from './base.service.js';
-import { WorkflowRepository } from '@the-new-fuse/database/src/repositories/workflow.repository';
-import { WorkflowExecutionRepository } from '@the-new-fuse/database/src/repositories/workflow-execution.repository';
+import { BaseService } from './base.service';
+import { WorkflowRepository } from '../repositories/workflow.repository';
+import { WorkflowExecutionRepository } from '../repositories/workflow-execution.repository';
 import {
   Workflow,
   WorkflowExecution,
@@ -9,9 +9,9 @@ import {
   UpdateWorkflowDto,
   WorkflowStatus
 } from '@the-new-fuse/types';
-import { PrismaService } from '../../services/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
 export class WorkflowService extends BaseService<Workflow> {
@@ -62,7 +62,7 @@ export class WorkflowService extends BaseService<Workflow> {
 
       this.logger.log(`Created workflow: ${workflow.id} (${workflow.name})`);
       return this.addRequiredProperties(workflow);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error creating workflow: ${err.message}`, err.stack); // Use err
       throw error;
@@ -78,7 +78,7 @@ export class WorkflowService extends BaseService<Workflow> {
     try {
       const workflows = await this.repository.findAll({ userId });
       return workflows.map(workflow => this.addRequiredProperties(workflow));
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflows: ${err.message}`, err.stack); // Use err
       throw error;
@@ -98,7 +98,7 @@ export class WorkflowService extends BaseService<Workflow> {
         throw new Error(`Workflow with ID ${id} not found`);
       }
       return this.addRequiredProperties(workflow);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflow by ID: ${err.message}`, err.stack); // Use err
       throw error;
@@ -118,18 +118,21 @@ export class WorkflowService extends BaseService<Workflow> {
       await this.getWorkflowById(id, userId);
 
       // Update the workflow
-      const workflow = await this.repository.update(id, {
-        ...(updates.name && { name: updates.name }),
-        ...(updates.description && { description: updates.description }),
-        ...(updates.steps && { steps: updates.steps }),
-        ...(updates.status && { status: updates.status }),
-        ...(updates.metadata && { metadata: updates.metadata }),
+      const updateData: any = {
         updatedAt: new Date()
-      } as any);
+      };
+      
+      if (updates.name) updateData.name = updates.name;
+      if (updates.description) updateData.description = updates.description;
+      if (updates.steps) updateData.steps = updates.steps;
+      if (updates.status) updateData.status = updates.status;
+      if (updates.metadata) updateData.metadata = updates.metadata;
+      
+      const workflow = await this.repository.update(id, updateData);
 
       this.logger.log(`Updated workflow: ${id}`);
       return this.addRequiredProperties(workflow);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating workflow: ${err.message}`, err.stack); // Use err
       throw error;
@@ -150,7 +153,7 @@ export class WorkflowService extends BaseService<Workflow> {
       await this.repository.delete(id);
 
       this.logger.log(`Deleted workflow: ${id}`);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error deleting workflow: ${err.message}`, err.stack); // Use err
       throw error;
@@ -198,7 +201,7 @@ export class WorkflowService extends BaseService<Workflow> {
 
       this.logger.log(`Completed workflow execution: ${execution.id}`);
       return this.convertExecutionStatus(completedExecution);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error executing workflow: ${err.message}`, err.stack); // Use err
       throw error;
@@ -224,7 +227,7 @@ export class WorkflowService extends BaseService<Workflow> {
       
       // Convert status string to the proper enum value
       return executions.map(execution => this.convertExecutionStatus(execution));
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflow executions: ${err.message}`, err.stack); // Use err
       throw error;
@@ -249,7 +252,7 @@ export class WorkflowService extends BaseService<Workflow> {
       }
 
       return this.convertExecutionStatus(execution);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflow execution: ${err.message}`, err.stack); // Use err
       throw error;

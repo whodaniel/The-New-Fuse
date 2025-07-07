@@ -1,7 +1,7 @@
 
 export {}
 exports.RateLimiter = void 0;
-import logging_1 from '../logging.js';
+import logging_1 from '../logging';
 class RateLimiter {
     constructor(config = { windowMs: 60000, maxRequests: 100 }) {
         this.limits = new Map();

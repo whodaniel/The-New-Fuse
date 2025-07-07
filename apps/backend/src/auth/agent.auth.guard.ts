@@ -39,7 +39,7 @@ export class AgentAuthGuard implements CanActivate {
       this.logger.debug('No valid authentication credentials found');
       throw new UnauthorizedException('Agent authentication required');
 
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.debug(`Agent authentication failed: ${(error as Error).message}`);
       throw new UnauthorizedException(`Agent authentication failed: ${error.message}`);
     }

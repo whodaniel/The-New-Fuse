@@ -10,3 +10,13 @@ export interface AuthToken {
   expiresAt: Date;
   userId: string;
 }
+
+export interface SecurityScheme {
+  type: 'bearer' | 'apiKey' | 'basic' | 'oauth2';
+  name?: string;
+  in?: 'query' | 'header' | 'cookie';
+  scheme?: string;
+  bearerFormat?: string;
+  flows?: unknown;
+  openIdConnectUrl?: string;
+}

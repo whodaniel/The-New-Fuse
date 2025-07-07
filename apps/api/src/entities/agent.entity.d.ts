@@ -1,7 +1,7 @@
-import { User } from './user.entity.tsx';
-import { AgentType } from '../dtos/agent.dto.tsx';
-import { Message } from './message.entity.tsx';
-import { WorkflowStep } from './workflow-step.entity.tsx';
+import { User } from './user.entity';
+import { AgentType } from '../dtos/agent.dto';
+import { Message } from './message.entity';
+import { WorkflowStep } from './workflow-step.entity';
 export declare class Agent {
     id: string;
     name: string;

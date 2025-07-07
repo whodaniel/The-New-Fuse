@@ -1,6 +1,6 @@
-import { CollaborationManager } from './CollaborationManager.tsx';
-import { FilterState, FilterGroup, FilterCondition } from './types/filters.tsx';
-import { User } from './types.tsx';
+import { CollaborationManager } from './CollaborationManager';
+import { FilterState, FilterGroup, FilterCondition } from './types/filters';
+import { User } from './types';
 
 export class FilterSyncManager {
   private collaborationManager: CollaborationManager;

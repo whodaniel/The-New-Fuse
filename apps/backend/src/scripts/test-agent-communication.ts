@@ -127,7 +127,7 @@ Composer
   }
 }
 
-async function main(): any {
+async function main(): Promise<void> {
   const tester = new AgentCommunicationTester();
   try {
     await tester.initialize();

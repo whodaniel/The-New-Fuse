@@ -1,4 +1,4 @@
-import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types.js';
+import { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from './types';
 export declare class FeatureTracker {
     private features;
     constructor();

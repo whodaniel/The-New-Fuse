@@ -3,7 +3,7 @@ import passport from 'passport';
 import jwt, { SignOptions } from 'jsonwebtoken';
 import { PrismaClient, User } from '@prisma/client';
 import bcrypt from 'bcryptjs';
-import { generateToken } from '../utils/token.js';
+import { generateToken } from '../utils/token';
 
 const prisma = new PrismaClient();
 

@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { FeatureProgress as FeatureProgressType } from '../types.js';
+import { FeatureProgress as FeatureProgressType } from '../types';
 interface FeatureProgressProps {
     feature: FeatureProgressType;
 }

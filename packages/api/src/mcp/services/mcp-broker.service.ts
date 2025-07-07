@@ -4,7 +4,7 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
 export class MCPBrokerService {
@@ -49,7 +49,7 @@ export class MCPBrokerService {
 
       this.isInitialized = true;
       this.logger.log('MCP Broker Service initialized successfully');
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error('Failed to initialize MCP Broker Service', err);
       throw err;
@@ -78,7 +78,7 @@ export class MCPBrokerService {
       this.isInitialized = false;
 
       this.logger.log('MCP Broker Service cleanup completed');
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error('Error during MCP Broker Service cleanup', err);
       throw err;
@@ -117,7 +117,7 @@ export class MCPBrokerService {
           capabilities: server.capabilities || [],
           version: server.version || '1.0.0'
         };
-      } catch (error: unknown) { // Change to unknown
+      } catch (error) { // Change to unknown
         const err = toError(error); // Use helper
         status[name] = {
           online: false,
@@ -194,7 +194,7 @@ export class MCPBrokerService {
         action,
         result: { message: `Executed ${action} on ${serverName}` }
       };
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error executing MCP directive: ${err.message}`, err.stack); // Use err.message and err.stack
       throw err;

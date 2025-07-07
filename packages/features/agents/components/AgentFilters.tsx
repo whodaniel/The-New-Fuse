@@ -6,8 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true }): value }));
     const handleModelChange: value }));
     };
     import clearFilters from 'react';
-import Select_1 from '../ui/Select/Select.js';
-import Button_1 from '../ui/Button/Button.js';
+import Select_1 from '../ui/Select/Select';
+import Button_1 from '../ui/Button/Button';
 import lucide_react_1 from 'lucide-react';
 const AgentFilters = ( { filters, onFilterChange, availableCapabilities, availableModels, }) => {
     const handleStatusChange = (value) => {

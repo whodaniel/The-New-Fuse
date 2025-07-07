@@ -12,7 +12,7 @@ import {
   useToast,
   HStack
 } from '@chakra-ui/react';
-import { useUsers } from '../../hooks/useUsers.js';
+import { useUsers } from '../../hooks/useUsers';
 
 export const UserManagement: React.FC = () => {
   const { users, updateUserStatus, loading } = useUsers();

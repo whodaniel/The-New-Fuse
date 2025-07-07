@@ -1,6 +1,6 @@
 import { OnModuleInit } from '@nestjs/common';
-import { RedisService } from './RedisService.js';
-import { AgentService } from './agent.service.js';
+import { RedisService } from './RedisService';
+import { AgentService } from './agent.service';
 export declare class ComposerService implements OnModuleInit {
     private readonly redisService;
     private readonly agentService;

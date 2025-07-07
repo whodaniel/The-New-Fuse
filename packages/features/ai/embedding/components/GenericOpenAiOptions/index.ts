@@ -1,2 +1,2 @@
-export { GenericOpenAiEmbeddingOptions } from './GenericOpenAiOptions.tsx';
+export { GenericOpenAiEmbeddingOptions } from './GenericOpenAiOptions';
 //# sourceMappingURL=index.js.map

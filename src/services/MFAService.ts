@@ -158,7 +158,7 @@ export class MFAService {
         success: true,
         message: "MFA verification successful.",
       };
-    } catch (error: unknown) {
+    } catch (error) {
       // Log error
       this.logger.error("MFA verification error", {
         context: {

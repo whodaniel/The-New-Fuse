@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { debounce } from 'lodash';
-import { saveWorkflowToServer } from '../api/workflow.js';
-import type { WorkflowState } from '../types/workflow.tsx';
+import { saveWorkflowToServer } from '../api/workflow';
+import type { WorkflowState } from '../types/workflow';
 
 export const useAutoSave = (): any => {
   const [lastSaved, setLastSaved] = useState(new Date());

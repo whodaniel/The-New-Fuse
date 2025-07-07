@@ -1,2 +1,2 @@
-export { VoyageAiOptions } from './VoyageAiOptions.tsx';
+export { VoyageAiOptions } from './VoyageAiOptions';
 //# sourceMappingURL=index.js.map

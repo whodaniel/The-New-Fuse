@@ -2,7 +2,7 @@
   httpRequest: 'n8n-nodes-base.httpRequest',
   slack: 'n8n-nodes-base.slack',
 };
-export function convertToN8n(nodes, edges): any {
+export function convertReactFlowToN8n(nodes, edges): any {
   const n8nNodes = nodes.map((node) => ({
     id: node.id,
     name: node.data.name || node.type,

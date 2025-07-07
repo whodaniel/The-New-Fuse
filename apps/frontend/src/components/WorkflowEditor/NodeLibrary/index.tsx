@@ -1,9 +1,9 @@
 import React from 'react';
 import { DragEvent } from 'react';
-import { NodeCategory } from './NodeCategory.tsx';
-import { SearchBar } from './SearchBar.js';
-import { useNodeCategories } from '../../../hooks/useNodeCategories.js';
-import type { NodeTemplate } from '../../../types/workflow.tsx';
+import { NodeCategory } from './NodeCategory';
+import { SearchBar } from './SearchBar';
+import { useNodeCategories } from '../../../hooks/useNodeCategories';
+import type { NodeTemplate } from '../../../types/workflow';
 
 interface NodeLibraryProps {
   isPanelOpen: boolean;

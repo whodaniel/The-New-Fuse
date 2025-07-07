@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { CheckCircleIcon } from '@chakra-ui/icons';
 import { FiHome, FiSettings, FiUsers, FiCode, FiBook, FiMessageSquare } from 'react-icons/fi';
-import { useWizard } from '../WizardProvider.tsx';
+import { useWizard } from '../WizardProvider';
 
 export const CompletionStep: React.FC = () => {
   const { state } = useWizard();

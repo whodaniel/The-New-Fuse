@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 export declare class GoogleAuthService {
     private configService;

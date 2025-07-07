@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuth } from '../providers/AuthProvider.tsx';
+import { useAuth } from '../providers/AuthProvider';
 import { Link } from 'react-router-dom';
 
 export function Dashboard() {

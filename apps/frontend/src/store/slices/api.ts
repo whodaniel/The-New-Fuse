@@ -1,7 +1,7 @@
 export {}
 exports.fetchData = exports.fetchDataFailure = exports.fetchDataSuccess = exports.fetchDataStart = void 0;
 import toolkit_1 from '@reduxjs/toolkit';
-import fetcher_1 from '../../services/api/fetcher.js';
+import fetcher_1 from '../../services/api/fetcher';
 const initialState = {
     data: null,
     loading: false,

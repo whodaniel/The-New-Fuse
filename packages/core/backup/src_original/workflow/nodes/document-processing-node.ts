@@ -1,0 +1,11 @@
+
+export interface DocumentProcessingConfig { operation: 'extract' | 'parse' | 'chunk'
+  format?: 'text' | 'markdown' | 'json'
+        throw new Error('Document processing operation and inputPath are required'
+      switch (config.operation) { case 'extract'
+        case 'parse'
+        case '
+      chunks: [{ text: ''
+      chunks: [{ text: ''
+        { text: 'Chunk 1'
+        { text: ''

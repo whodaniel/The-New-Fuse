@@ -5,7 +5,7 @@
 
 import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
 import { BaseRepository } from '@the-new-fuse/database/src/repositories/base.repository';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
 export abstract class BaseService<T> {
@@ -35,8 +35,8 @@ export abstract class BaseService<T> {
     take = 100
   ): Promise<T[]> {
     try {
-      return await this.repository.findAll(filter, include, orderBy, skip, take);
-    } catch (error: unknown) { // Change to unknown
+      return await this.repository.findMany(filter);
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error finding all entities: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not retrieve entities: ${err.message}`);
@@ -51,13 +51,13 @@ export abstract class BaseService<T> {
    */
   async findById(id: string, include: Record<string, boolean> = {}): Promise<T | null> {
     try {
-      const entity = await this.repository.findById(id, include);
+      const entity = await this.repository.findById(id);
       if (!entity) {
         this.logger.warn(`Entity with ID ${id} not found`);
         return null;
       }
       return entity;
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error finding entity with ID ${id}: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not retrieve entity ${id}: ${err.message}`);
@@ -75,8 +75,10 @@ export abstract class BaseService<T> {
     include: Record<string, boolean> = {}
   ): Promise<T | null> {
     try {
-      return await this.repository.findOne(filter, include);
-    } catch (error: unknown) { // Change to unknown
+      // Use findMany with filter and take the first result
+      const results = await this.repository.findMany(filter);
+      return results.length > 0 ? results[0] : null;
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error finding entity: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not retrieve entity: ${err.message}`);
@@ -93,7 +95,7 @@ export abstract class BaseService<T> {
       const entity = await this.repository.create(data);
       this.logger.log(`Created new entity with ID ${(entity as any).id}`);
       return entity;
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error creating entity: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not create entity: ${err.message}`);
@@ -117,7 +119,7 @@ export abstract class BaseService<T> {
       const updatedEntity = await this.repository.update(id, data);
       this.logger.log(`Updated entity with ID ${id}`);
       return updatedEntity;
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating entity with ID ${id}: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not update entity ${id}: ${err.message}`);
@@ -140,7 +142,7 @@ export abstract class BaseService<T> {
       const deletedEntity = await this.repository.delete(id);
       this.logger.log(`Deleted entity with ID ${id}`);
       return deletedEntity;
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error deleting entity with ID ${id}: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not delete entity ${id}: ${err.message}`);
@@ -154,8 +156,10 @@ export abstract class BaseService<T> {
    */
   async count(filter: Record<string, any> = {}): Promise<number> {
     try {
-      return await this.repository.count(filter);
-    } catch (error: unknown) { // Change to unknown
+      // Use findMany to get all matches and count them
+      const results = await this.repository.findMany(filter);
+      return results.length;
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error counting entities: ${err.message}`, err.stack); // Use err
       throw new InternalServerErrorException(`Could not count entities: ${err.message}`);

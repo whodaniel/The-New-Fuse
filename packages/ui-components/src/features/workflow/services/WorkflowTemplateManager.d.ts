@@ -1,4 +1,4 @@
-import { WorkflowTemplate, WorkflowStep } from '../types.tsx';
+import { WorkflowTemplate, WorkflowStep } from '../types';
 export declare class WorkflowTemplateManager {
     private templates;
     constructor();

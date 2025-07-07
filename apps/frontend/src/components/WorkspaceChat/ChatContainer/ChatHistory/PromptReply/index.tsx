@@ -1,8 +1,8 @@
 import { memo } from "react";
 import { Warning } from "@phosphor-icons/react";
-import UserIcon from '../../../../UserIcon.js';
+import UserIcon from '../../../../UserIcon';
 import renderMarkdown from "@/utils/chat/markdown";
-import Citations from '../Citation.js';
+import Citations from '../Citation';
 import { WorkspaceData } from "@/types/workspace";
 
 interface PromptReplyProps {

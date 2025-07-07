@@ -2,10 +2,9 @@ import {
   PromptTemplate,
   PromptVersion,
   PromptSnippet,
-  PromptBlock,
   PromptExecutionResult,
   PromptTemplateService
-} from './types.js';
+} from './types';
 
 export class PromptTemplateServiceImpl implements PromptTemplateService {
   private templates: Map<string, PromptTemplate> = new Map();
@@ -333,23 +332,23 @@ Respond in the following structure:
     
     if (!version) throw new Error(`Version not found: ${versionId || template.currentVersion}`);
 
-    let compiled = version.content;
+    let compiledContent = version.content;
     const templateVariables = { ...version.variables, ...variables };
 
     // Replace variables with actual values
     Object.entries(templateVariables).forEach(([key, value]) => {
       const regex = new RegExp(`{{\\s*${key}\\s*}}`, 'g');
-      compiled = compiled.replace(regex, String(value));
+      compiledContent = compiledContent.replace(regex, String(value));
     });
 
-    return compiled;
+    return compiledContent;
   }
 
   async executeTemplate(templateId: string, versionId?: string, variables?: Record<string, any>): Promise<PromptExecutionResult> {
     const startTime = Date.now();
     
     try {
-      const compiled = await this.compileTemplate(templateId, versionId, variables);
+      
       const responseTime = Date.now() - startTime;
       
       // Simulate execution (in real implementation, this would call an LLM)

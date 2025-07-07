@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer, SubscribeMessage } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RedisService } from './redis.service.js';
+import { RedisService } from './redis.service';
 
 @WebSocketGateway({
   cors: {
@@ -22,7 +22,7 @@ export class AgentBridgeService {
 
   private async setupRedisSubscriptions() {
     // Listen for Redis messages and bridge them to WebSocket
-    this.redisService.subClient.on('message', (channel: string, message: string) => {
+    this.redisService.getSubClient().on('message', (channel: string, message: string) => {
       this.handleRedisMessage(channel, message);
     });
   }

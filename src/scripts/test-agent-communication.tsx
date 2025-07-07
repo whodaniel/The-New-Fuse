@@ -56,7 +56,7 @@ class AgentCommunicationTester {
     try {
       this.logger.log(`Sending message to ${channel}:\n${JSON.stringify(data, null, 2)}`);
       await this.pubClient.publish(channel, JSON.stringify(data));
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error("Failed to send message:", error);
     }
   }
@@ -169,7 +169,7 @@ async function main(): Promise<void> {
       await tester.cleanup();
       process.exit(0);
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error("Failed to run agent communication test:", error);
   }
 }

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Label } from '@/components/ui/label';
-import { webSocketService } from '../services/websocket.js';
+import { webSocketService } from '../services/websocket';
 function AgentPersonalityCustomizer({ agentId }) {
     const [openness, setOpenness] = useState(50);
     const [conscientiousness, setConscientiousness] = useState(50);

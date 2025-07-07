@@ -52,7 +52,7 @@ import {
   FiClock,
   FiAlertCircle
 } from 'react-icons/fi';
-import { OnboardingAdminService } from '../../../services/onboarding-admin.service.js';
+import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import {
   LineChart,
   Line,

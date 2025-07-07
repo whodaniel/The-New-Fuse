@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { MCPBrokerService } from '../../../src/mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../../../src/mcp/services/mcp-broker.service';
 
 export interface McpServer {
   id: string;

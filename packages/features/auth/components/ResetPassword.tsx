@@ -6,9 +6,9 @@ import react_hook_form_1 from 'react-hook-form';
 import zod_1 from '@hookform/resolvers/zod';
 import z from 'zod';
 import AuthContext_1 from '@/contexts/AuthContext';
-import Input_1 from '../ui/Input/Input.js';
-import Button_1 from '../ui/Button/Button.js';
-import Card_1 from '../ui/Card/Card.js';
+import Input_1 from '../ui/Input/Input';
+import Button_1 from '../ui/Button/Button';
+import Card_1 from '../ui/Card/Card';
 import useToast_1 from '@/hooks/useToast';
 const resetSchema = z.object( {
     email ({ onSuccess, onSignIn, }) => {

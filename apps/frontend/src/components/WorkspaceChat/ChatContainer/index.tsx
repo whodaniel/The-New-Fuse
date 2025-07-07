@@ -1,10 +1,10 @@
 import React, { ReactElement } from 'react';
 import { useState, useEffect, useContext } from "react";
-import ChatHistory from './ChatHistory.js';
-import { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper.js';
-import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput.js';
+import ChatHistory from './ChatHistory';
+import { CLEAR_ATTACHMENTS_EVENT, DndUploaderContext } from './DnDWrapper';
+import PromptInput, { PROMPT_INPUT_EVENT } from './PromptInput';
 import { isMobile } from "react-device-detect";
-import { SidebarMobileHeader } from '../../Sidebar.js';
+import { SidebarMobileHeader } from '../../Sidebar';
 import { useParams } from "react-router-dom";
 import { v4 } from "uuid";
 import handleSocketResponse, {
@@ -15,13 +15,13 @@ import handleSocketResponse, {
 } from "@/utils/chat/agent";
 import { handleChat } from "@/utils/chat/handlers";
 import { Workspace } from "@/utils/workspace";
-import DnDFileUploaderWrapper from './DnDWrapper.js';
+import DnDFileUploaderWrapper from './DnDWrapper';
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { ChatTooltips } from './ChatTooltips.js';
+import { ChatTooltips } from './ChatTooltips';
 import { TimeStamp } from "@/utils/TimeStamp";
-import MessageGroup from './ChatHistory/MessageGroup.js';
+import MessageGroup from './ChatHistory/MessageGroup';
 import { WorkspaceData } from "@/types/workspace";
 import { 
   Settings, 

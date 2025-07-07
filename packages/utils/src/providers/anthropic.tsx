@@ -1,8 +1,8 @@
 
 export {}
 exports.AnthropicProvider = void 0;
-import { BaseLLMProvider } from './base.tsx';
-import { providerRegistry } from './registry.tsx';
+import { BaseLLMProvider } from './base.js';
+import { providerRegistry } from './registry.js';
 
 interface ChatMessage {
     role: 'user' | 'assistant';

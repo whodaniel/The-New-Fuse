@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useAuth } from '../providers/AuthProvider.tsx';
+import { useAuth } from '../providers/AuthProvider';
 
 export default function Settings() {
   const { user } = useAuth();

@@ -19,14 +19,14 @@ exports.EphemeralEventListener = exports.EphemeralAgentHandler = void 0;
 const aibitat_1 = __importDefault(require("./aibitat"));
 const plugins_1 = __importDefault(require("./aibitat/plugins"));
 const imported_1 = __importDefault(require("./imported"));
-import http_socket_1 from './aibitat/plugins/http-socket.js';
-import workspaceChats_1 from '../../models/workspaceChats.js';
-import http_1 from '../http.js';
-import defaults_1 from './defaults.js';
+import http_socket_1 from './aibitat/plugins/http-socket';
+import workspaceChats_1 from '../../models/workspaceChats';
+import http_1 from '../http';
+import defaults_1 from './defaults';
 import _1 from '.;
-import workspaceAgentInvocation_1 from '../../models/workspaceAgentInvocation.js';
+import workspaceAgentInvocation_1 from '../../models/workspaceAgentInvocation';
 const node_events_1 = __importDefault(require("node:events"));
-import responses_1 from '../helpers/chat/responses.js';
+import responses_1 from '../helpers/chat/responses';
 /**
  * This is an instance and functional Agent handler, but it does not utilize
  * sessions or websocket's and is instead a singular one-off agent run that does

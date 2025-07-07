@@ -3,6 +3,13 @@ import React, { useState, useEffect, createContext, useContext, ReactNode } from
 // Toast Types
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
+export interface ToastProps {
+  title?: string;
+  description?: string;
+  variant?: 'success' | 'destructive' | 'warning' | 'info';
+  duration?: number;
+}
+
 interface Toast {
   id: string;
   message: string;
@@ -16,7 +23,7 @@ interface ToastContextType {
   removeToast: (id: string) => void;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+export const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 export const useToast = () => {
   const context = useContext(ToastContext);
@@ -94,4 +101,43 @@ export const Toaster = () => {
       ))}
     </div>
   );
+};
+
+// Global toast instance for direct usage
+let globalAddToast: ((message: string, type: ToastType, duration?: number) => void) | undefined;
+
+export const setGlobalToast = (addToast: (message: string, type: ToastType, duration?: number) => void) => {
+  globalAddToast = addToast;
+};
+
+// Toast methods for direct usage
+export const toast = {
+  success: (message: string, duration?: number) => {
+    if (globalAddToast) {
+      globalAddToast(message, 'success', duration);
+    } else {
+      console.warn('Toast not initialized. Make sure ToastProvider is setup.');
+    }
+  },
+  error: (message: string, duration?: number) => {
+    if (globalAddToast) {
+      globalAddToast(message, 'error', duration);
+    } else {
+      console.warn('Toast not initialized. Make sure ToastProvider is setup.');
+    }
+  },
+  warning: (message: string, duration?: number) => {
+    if (globalAddToast) {
+      globalAddToast(message, 'warning', duration);
+    } else {
+      console.warn('Toast not initialized. Make sure ToastProvider is setup.');
+    }
+  },
+  info: (message: string, duration?: number) => {
+    if (globalAddToast) {
+      globalAddToast(message, 'info', duration);
+    } else {
+      console.warn('Toast not initialized. Make sure ToastProvider is setup.');
+    }
+  },
 };

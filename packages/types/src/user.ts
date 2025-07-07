@@ -1,9 +1,20 @@
-import type { BaseEntity, UUID } from './core/index.js';
+import type { BaseEntity, UUID } from './core/index';
 
 /**
  * Represents user roles within the system.
  */
 export type UserRole = 'admin' | 'developer' | 'user' | 'guest';
+
+/**
+ * Represents system permissions that can be granted to users
+ */
+export enum Permission {
+  READ_USERS = 'READ_USERS',
+  WRITE_USERS = 'WRITE_USERS',
+  DELETE_USERS = 'DELETE_USERS',
+  MANAGE_AGENTS = 'MANAGE_AGENTS',
+  ADMIN_ACCESS = 'ADMIN_ACCESS'
+}
 
 /**
  * Represents user preferences or settings.

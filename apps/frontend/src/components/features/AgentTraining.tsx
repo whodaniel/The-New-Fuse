@@ -2,12 +2,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentTraining = void 0;
 import react_1 from 'react';
 import react_query_1 from '@tanstack/react-query';
-import Card_1 from '../../../core/Card.js';
-import Button_1 from '../../../core/Button.js';
-import Input_1 from '../../../core/Input.js';
-import Select_1 from '../../../core/Select.js';
-import FileUpload_1 from '../../chat/FileUpload.js';
-import agentService_1 from '../../../../services/api/agentService.js';
+import Card_1 from '../../../core/Card';
+import Button_1 from '../../../core/Button';
+import Input_1 from '../../../core/Input';
+import Select_1 from '../../../core/Select';
+import FileUpload_1 from '../../chat/FileUpload';
+import agentService_1 from '../../../../services/api/agentService';
 import react_hot_toast_1 from 'react-hot-toast';
 import recharts_1 from 'recharts';
 const AgentTraining = ({ agentId }) => {

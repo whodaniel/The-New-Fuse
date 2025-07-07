@@ -2,7 +2,7 @@
  * Request-related type definitions
  */
 
-import { UUID, ISODateTime, SortOptions, FilterOptions, QueryOptions } from './common.js';
+import { UUID, ISODateTime, SortOptions, FilterOptions, QueryOptions } from './common';
 
 /**
  * Base request interface

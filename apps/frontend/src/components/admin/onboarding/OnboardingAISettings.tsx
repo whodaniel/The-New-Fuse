@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { OnboardingAdminService } from '../../../services/onboarding-admin.service.js';
+import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import {
   Box,
   VStack,

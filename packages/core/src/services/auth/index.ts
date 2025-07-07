@@ -1,1 +1,1 @@
-export * from './service-authentication.js';
+export * from '';

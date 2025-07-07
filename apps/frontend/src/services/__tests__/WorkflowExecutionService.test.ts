@@ -1,6 +1,6 @@
-import { workflowExecutionService } from '../WorkflowExecutionService.js';
-import { workflowDatabaseService } from '../WorkflowDatabaseService.js';
-import { a2aProtocolService } from '../A2AProtocolService.js';
+import { workflowExecutionService } from '../WorkflowExecutionService';
+import { workflowDatabaseService } from '../WorkflowDatabaseService';
+import { a2aProtocolService } from '../A2AProtocolService';
 
 // Mock dependencies
 jest.mock('../WorkflowDatabaseService', () => ({

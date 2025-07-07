@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
-import { AuthService } from '../auth/auth.service.js';
+import { AuthService } from '../auth/auth.service';
 export declare class AdminGuard implements CanActivate {
     private readonly authService;
     constructor(authService: AuthService);

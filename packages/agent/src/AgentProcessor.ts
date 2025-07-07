@@ -1,15 +1,15 @@
-import { Logger } from '@the-new-fuse/utils';
+import { Logger } from './utils/Logger';
 import { Message, MessageType, UUID } from '@the-new-fuse/types';
-// import { CommandProcessor } from './processors/CommandProcessor.tsx';
-// import { NotificationProcessor } from './processors/NotificationProcessor.tsx';
-// import { TaskProcessor } from './processors/TaskProcessor.tsx';
-// import { BaseProcessor } from './processors/BaseProcessor.js'; // Removed unused import
-// import { MessageValidator } from './services/MessageValidator.js';
+// import { CommandProcessor } from './processors/CommandProcessor';
+// import { NotificationProcessor } from './processors/NotificationProcessor';
+// import { TaskProcessor } from './processors/TaskProcessor';
+// import { BaseProcessor } from './processors/BaseProcessor'; // Removed unused import
+// import { MessageValidator } from './services/MessageValidator';
 // Import other necessary services (e.g., InterAgentChatService, ConfigService, AlertService, RedisService)
-// import { AlertService } from './services/AlertService.tsx';
-// import { RedisService } from './services/RedisService.tsx';
-// import { InterAgentChatService } from './services/InterAgentChatService.tsx';
-// import { ConfigService } from './services/ConfigService.js'; // Assuming ConfigService exists
+// import { AlertService } from './services/AlertService';
+// import { RedisService } from './services/RedisService';
+// import { InterAgentChatService } from './services/InterAgentChatService';
+// import { ConfigService } from './services/ConfigService'; // Assuming ConfigService exists
 
 /**
  * Main processor for an agent instance.
@@ -38,7 +38,7 @@ export class AgentProcessor {
     // Example: Assuming MessageValidator is optional or created internally
     // try {
     //     this.messageValidator = new MessageValidator();
-    // } catch (error: unknown) {
+    // } catch (error) {
     //     this.logger.warn(`Failed to initialize MessageValidator: ${(error as Error).message}. Validation will be skipped.`);
     //     this.messageValidator = undefined;
     // }
@@ -85,25 +85,14 @@ export class AgentProcessor {
           // await this.notificationProcessor.process(typedMessage);
           // Notifications usually don't require a direct response
           break;
-        // Add cases for other message types (e.g., TASK_CANCEL, STATUS_QUERY, CHAT)
-        case MessageType.TASK_CANCEL:
-             if (typeof typedMessage.content === 'object' && typedMessage.content !== null && 'taskId' in typedMessage.content) {
-                 // await this.taskProcessor.cancelTask((typedMessage.content as { taskId: UUID }).taskId);
-             } else {
-                 this.logger.warn(`Received TASK_CANCEL message ${typedMessage.id} without a valid taskId in content.`);
-             }
-             break;
-        case MessageType.CHAT:
-            this.logger.info(`Received CHAT message ${typedMessage.id}. Handling TBD.`);
-            // TODO: Implement chat message handling (e.g., pass to an LLM, specific handler)
-            break;
+        // Add cases for other message types as needed
         default:
           this.logger.warn(`Received message ${typedMessage.id} with unhandled type: ${typedMessage.type}`);
           break;
       }
     } catch (error) {
         // Catch errors from processor.process methods
-        this.logger.error(`Unhandled error processing message ${typedMessage.id} (Type: ${typedMessage.type}): ${(error as Error).message}`, error);
+        this.logger.error(`Unhandled error processing message ${typedMessage.id} (Type: ${typedMessage.type}): ${(error as Error).message}`);
         // Optionally send a generic error notification/alert
         // await this.alertService.error(
         //     `Failed to process message ${typedMessage.id}`,

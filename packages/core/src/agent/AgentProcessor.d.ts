@@ -1,20 +1,13 @@
-import { LLMRegistry } from '../llm/LLMRegistry.tsx';
-import { MonitoringService } from '../monitoring/MonitoringService.tsx';
-import { ErrorRecoveryService } from '../error/ErrorRecoveryService.tsx';
-import { EventEmitter } from 'events';
-export interface ProcessedMessage {
-    id: string;
-    content: string;
-    role: system' | user' | assistant';
-    timestamp: Date;
-    metadata: Record<string, unknown>;
-}
-export declare class AgentProcessor extends EventEmitter {
-    private readonly llmRegistry;
-    private readonly monitoring;
-    private readonly errorRecovery;
+import { Agent, AgentState } from '../types/agent.d';
+export declare class AgentProcessor {
     private readonly logger;
-    private readonly metrics;
-    private readonly activeProcessing;
-    constructor(llmRegistry: LLMRegistry, monitoring: MonitoringService, errorRecovery: ErrorRecoveryService);
+    processAgent(agent: Agent): Promise<{
+        success: boolean;
+        message: string;
+        result?: unknown;
+    }>;
+    updateAgentStatus(id: string, status: AgentState['status']): Promise<void>;
+    private validateAgentConfig;
+    private executeAgentTasks;
 }
+//# sourceMappingURL=AgentProcessor.d.ts.map

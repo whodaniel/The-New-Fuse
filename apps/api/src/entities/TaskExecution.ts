@@ -1,35 +1,35 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { Task } from './Task.js';
+import { Task } from './Task';
 
 @Entity()
 export class TaskExecution {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  status: string;
+  status!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  output: any;
+  output!: any;
 
   @Column({ nullable: true })
-  error: string;
+  error!: string;
 
   @ManyToOne(() => Task, task => task.taskExecutions)
-  task: Task;
+  task!: Task;
 
   @Column()
-  taskId: string;
+  taskId!: string;
 
   @Column({ nullable: true })
-  startTime: Date;
+  startTime!: Date;
 
   @Column({ nullable: true })
-  endTime: Date;
+  endTime!: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

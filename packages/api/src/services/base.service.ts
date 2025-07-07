@@ -1,11 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import prismaService from './prisma.service.js';
+import prismaService, { PrismaService } from './prisma.service';
 
 /**
  * Base service class that provides common functionality for all services
  */
 export abstract class BaseService<T> {
-  protected prisma: PrismaClient;
+  protected prisma: PrismaService;
   protected modelName: string;
 
   constructor(modelName: string) {

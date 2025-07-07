@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { RedisService } from './redis.service.js';
+import { RedisService } from './redis.service';
 export declare class AgentBridgeService {
     private readonly redisService;
     server: Server;

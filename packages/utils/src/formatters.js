@@ -1,19 +1,26 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.formatDate = formatDate;
+exports.formatNumber = formatNumber;
+exports.formatBytes = formatBytes;
+exports.formatDuration = formatDuration;
+exports.truncate = truncate;
 /**
  * Format a date to ISO string
  */
-export function formatDate(date) {
+function formatDate(date) {
     return date.toISOString();
 }
 /**
  * Format a number with commas as thousands separators
  */
-export function formatNumber(num) {
+function formatNumber(num) {
     return num.toLocaleString();
 }
 /**
  * Format bytes to a human-readable string (KB, MB, GB, etc.)
  */
-export function formatBytes(bytes, decimals = 2) {
+function formatBytes(bytes, decimals = 2) {
     if (bytes === 0)
         return '0 Bytes';
     const k = 1024;
@@ -24,7 +31,7 @@ export function formatBytes(bytes, decimals = 2) {
 /**
  * Format a duration in milliseconds to a human-readable string
  */
-export function formatDuration(ms) {
+function formatDuration(ms) {
     const seconds = Math.floor(ms / 1000);
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
@@ -45,9 +52,8 @@ export function formatDuration(ms) {
 /**
  * Truncate a string to a specific length
  */
-export function truncate(str, length) {
+function truncate(str, length) {
     if (str.length <= length)
         return str;
     return str.slice(0, length) + '...';
 }
-//# sourceMappingURL=formatters.js.map

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions.tsx';
+import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
 import { FeatureFlag, FeatureFlagConditions, Environment } from '@the-new-fuse/types/featureFlags';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

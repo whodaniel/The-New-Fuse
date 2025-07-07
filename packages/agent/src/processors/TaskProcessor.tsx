@@ -1,20 +1,20 @@
-import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
-import { Logger } from '@the-new-fuse/utils';
+import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
+import { Logger } from '../utils/Logger';
 import {
   Message,
   MessageType,
   Task,
-  TaskResult,
+  CoreTaskResult as TaskResult,
   TaskStatus,
   UUID,
   // LLMConfig, // Removed unused import
   // ToolDefinition, // Removed unused import
 } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService.tsx'; // Corrected import
-import { RedisService } from '../services/RedisService.tsx'; // Corrected import
+import { AlertService } from '../services/AlertService'; // Corrected import
+import { RedisService } from '../services/RedisService'; // Corrected import
 // Import other necessary services like LLMService, ToolService, etc.
-// import { LLMService } from '../services/LLMService.js';
-// import { ToolService } from '../services/ToolService.js';
+// import { LLMService } from '../services/LLMService';
+// import { ToolService } from '../services/ToolService';
 
 /**
  * Processes incoming task assignment messages and executes the tasks.
@@ -61,10 +61,10 @@ export class TaskProcessor extends BaseProcessor {
     }
 
     // TODO: Add validation using MessageValidator service if available
-    const task = message.content as Task; // Type assertion, consider validation
+    const task = message.content as unknown as Task; // Type assertion, consider validation
 
     // Basic validation
-    if (!task.id || !task.description) {
+    if (!task.id || !task.title) {
         this.logger.warn(`Received invalid task assignment message ${message.id}: Missing ID or description.`);
         await this.alertService.error(
             'Received invalid task assignment',
@@ -80,7 +80,7 @@ export class TaskProcessor extends BaseProcessor {
         return null; // Avoid processing the same task twice concurrently
     }
 
-    this.logger.info(`Starting processing for task ${task.id}: "${task.description.substring(0, 50)}..."`);
+    this.logger.info(`Starting processing for task ${task.id}: "${task.title.substring(0, 50)}..."`);
     this.activeTasks.set(task.id, task);
     await this.updateTaskStatus(task.id, TaskStatus.IN_PROGRESS);
 
@@ -95,7 +95,7 @@ export class TaskProcessor extends BaseProcessor {
       this.logger.debug(`Executing task ${task.id}... (Placeholder)`);
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
       const resultData = {
-          summary: `Task "${task.description}" completed successfully (placeholder).`,
+          summary: `Task "${task.title}" completed successfully (placeholder).`,
           details: { executedAt: new Date() },
       };
       // --- End Task Execution Logic ---
@@ -105,32 +105,46 @@ export class TaskProcessor extends BaseProcessor {
       this.activeTasks.delete(task.id);
 
       const taskResult: TaskResult = {
+        id: `result_${task.id}`,
         taskId: task.id,
         status: TaskStatus.COMPLETED,
-        result: resultData,
+        output: resultData,
+        metrics: {
+          duration: 1000,
+          resourceUsage: {
+            cpuUsage: 0,
+            memoryUsage: 0
+          }
+        },
         timestamp: new Date(),
-        agentId: this.agentId,
       };
       // TODO: Send TaskResult back to the orchestrator or requesting agent
       // Example: await this.chatService.sendMessage(task.originatorId, taskResult, MessageType.TASK_RESULT);
       return taskResult;
 
     } catch (error) {
-      this.logger.error(`Error processing task ${task.id}: ${error.message}`, error);
-      await this.updateTaskStatus(task.id, TaskStatus.FAILED, error.message);
+      this.logger.error(`Error processing task ${task.id}: ${(error as Error).message}`);
+      await this.updateTaskStatus(task.id, TaskStatus.FAILED, (error as Error).message);
       this.activeTasks.delete(task.id);
       await this.alertService.error(
           `Task ${task.id} failed`,
           `Agent ${this.agentId} / TaskProcessor`,
-          { error: error.message, taskDescription: task.description }
+          { error: (error as Error).message, taskDescription: task.title }
       );
 
       const taskResult: TaskResult = {
+        id: `result_${task.id}`,
         taskId: task.id,
         status: TaskStatus.FAILED,
-        error: error.message,
+        error: (error as Error).message,
+        metrics: {
+          duration: 0,
+          resourceUsage: {
+            cpuUsage: 0,
+            memoryUsage: 0
+          }
+        },
         timestamp: new Date(),
-        agentId: this.agentId,
       };
        // TODO: Send failure TaskResult back
       return taskResult;
@@ -156,7 +170,7 @@ export class TaskProcessor extends BaseProcessor {
         await this.redisService.set(`task:${taskId}:status`, JSON.stringify(taskData), 3600 * 24); // Store for 24 hours
         // TODO: Potentially publish status update event (e.g., via Redis Pub/Sub or EventBus)
     } catch (redisError) {
-        this.logger.error(`Failed to update task status in Redis for task ${taskId}: ${redisError.message}`, redisError);
+        this.logger.error(`Failed to update task status in Redis for task ${taskId}: ${(redisError as Error).message}`);
         // Consider alternative logging or alerting if Redis fails
     }
   }

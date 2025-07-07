@@ -1,4 +1,4 @@
-import { SystemPerformanceMetrics } from './metrics.tsx';
+import { SystemPerformanceMetrics } from './metrics';
 export type ResourceManager = {
     getCPUUsage(): Promise<number>;
     getMemoryUsage(): Promise<number>;

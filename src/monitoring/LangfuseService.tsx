@@ -52,7 +52,7 @@ export class FuseMonitoringService implements OnModuleInit {
           host,
         });
         this.logger.log(`Langfuse client initialized with host: ${host}`);
-      } catch (error: unknown) {
+      } catch (error) {
         this.logger.error(`Failed to initialize Langfuse client: ${(error as Error).message}`);
         this.langfuseEnabled = false;
         this.langfuse = null;
@@ -70,7 +70,7 @@ export class FuseMonitoringService implements OnModuleInit {
         // Test connection to Langfuse
         await this.langfuse.ping();
         this.logger.log('Successfully connected to Langfuse');
-      } catch (error: unknown) {
+      } catch (error) {
         this.logger.error(`Failed to connect to Langfuse: ${(error as Error).message}`);
         this.langfuseEnabled = false;
       }

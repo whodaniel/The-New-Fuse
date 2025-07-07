@@ -1,9 +1,9 @@
 import express from 'express';
 import cors from 'cors';
-import { agentRouter } from './routes/agents.js';
-import { authRoutes } from './routes/authRoutes.js';
-import onboardingRoutes from './routes/onboardingRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // Added userRoutes import
+import { agentRouter } from './routes/agents';
+import { authRoutes } from './routes/authRoutes';
+import onboardingRoutes from './routes/onboardingRoutes';
+import userRoutes from './routes/userRoutes'; // Added userRoutes import
 
 const app = express();
 const port = process.env.PORT || 3003;

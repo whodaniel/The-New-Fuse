@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { PrismaService } from '../../lib/prisma/prisma.service';
 import { 
   TopologyOptimizationConfig, 
   WorkflowTopology, 
@@ -8,7 +8,7 @@ import {
   PerformanceMetrics,
   MassBlockType 
 } from '@the-new-fuse/types';
-import { EvaluationHarnessService } from './prompt-optimizer.service.js';
+import { EvaluationHarnessService } from './prompt-optimizer.service';
 
 @Injectable()
 export class TopologyOptimizerService {

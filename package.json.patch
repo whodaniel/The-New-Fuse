@@ -1,5 +1,0 @@
-{
-  "scripts": {
-    "fix-case-sensitivity": "ts-node src/utils/fixCaseSensitivity.ts"
-  }
-}

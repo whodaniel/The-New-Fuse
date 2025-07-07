@@ -1,2 +1,2 @@
-export { LocalAiOptions } from './LocalAiOptions.tsx';
+export { LocalAiOptions } from './LocalAiOptions';
 //# sourceMappingURL=index.js.map

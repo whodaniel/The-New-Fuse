@@ -204,7 +204,7 @@ export class WebhookNode implements Node {
           }
           
           return { success: true, data: output };
-        } catch (error: unknown) {
+        } catch (error) {
           attempts++;
           
           if (attempts <= maxRetries) {

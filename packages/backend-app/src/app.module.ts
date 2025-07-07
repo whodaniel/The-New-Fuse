@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import 'reflect-metadata';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { FeatureModule } from './feature/feature.module.js';
-import { CoreModule } from './core/core.module.js';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { FeatureModule } from './feature/feature.module';
+import { CoreModule } from './core/core.module';
 import { DatabaseModule } from '@the-new-fuse/database';
 
 @Module({

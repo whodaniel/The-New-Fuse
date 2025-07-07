@@ -1,5 +1,5 @@
-import { DashboardState } from '../collaboration/types.tsx';
-import { SearchConfig } from './types.tsx';
+import { DashboardState } from '../collaboration/types';
+import { SearchConfig } from './types';
 
 interface NLPQuery {
   type: search' | 'filter' | 'sort' | 'analyze';

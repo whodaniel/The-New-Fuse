@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useChat } from '@/hooks/useChat';
-import { MessageList } from './MessageList.js';
-import { ChatInput } from './ChatInput.js';
+import { MessageList } from './MessageList';
+import { ChatInput } from './ChatInput';
 import { TypingIndicator } from '@/components/ui/TypingIndicator';
-import { AgentInfo } from './AgentInfo.js';
-import { ChatControls } from './ChatControls.js';
+import { AgentInfo } from './AgentInfo';
+import { ChatControls } from './ChatControls';
 
 interface ChatWindowProps {
   agentId: string;

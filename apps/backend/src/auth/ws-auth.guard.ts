@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { WsException } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
-import { LoggingService } from '../services/logging.service.js';
+import { LoggingService } from '../services/logging.service';
 
 @Injectable()
 export class WsAuthGuard implements CanActivate {
@@ -27,7 +27,7 @@ export class WsAuthGuard implements CanActivate {
       // Attach user to socket
       client['user'] = payload;
       return true;
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('WebSocket authentication failed', { error: (error as Error).message });
       throw new WsException('Unauthorized');
     }

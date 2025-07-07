@@ -1,5 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AIError = void 0;
 /**
- * DEPRECATED: Use AIError from @the-new-fuse/core/src/error/exceptions instead.
+ * Temporary stub for AIError until core package is built
  */
-export { AIError } from '@the-new-fuse/core/src/error/exceptions';
-//# sourceMappingURL=error.js.map
+class AIError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = 'AIError';
+    }
+}
+exports.AIError = AIError;

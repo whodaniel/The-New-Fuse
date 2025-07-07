@@ -1,22 +1,27 @@
-import express from 'express';
-import cors from 'cors';
-import { agentRouter } from './routes/agents.js';
-import { authRoutes } from './routes/authRoutes.js';
-import onboardingRoutes from './routes/onboardingRoutes.js';
-import userRoutes from './routes/userRoutes.js'; // Added userRoutes import
-const app = express();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
+const agents_1 = require("./routes/agents");
+const authRoutes_1 = require("./routes/authRoutes");
+const onboardingRoutes_1 = __importDefault(require("./routes/onboardingRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes")); // Added userRoutes import
+const app = (0, express_1.default)();
 const port = process.env.PORT || 3003;
 // Middleware
-app.use(cors({
+app.use((0, cors_1.default)({
     origin: process.env.FRONTEND_URL || 'http://localhost:3000',
     credentials: true,
 }));
-app.use(express.json());
+app.use(express_1.default.json());
 // Routes
-app.use('/api/agents', agentRouter);
-app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes); // Added userRoutes
-app.use(onboardingRoutes); // Register onboarding routes
+app.use('/api/agents', agents_1.agentRouter);
+app.use('/api/auth', authRoutes_1.authRoutes);
+app.use('/api/users', userRoutes_1.default); // Added userRoutes
+app.use(onboardingRoutes_1.default); // Register onboarding routes
 // Root route
 app.get('/', (req, res) => {
     res.json({ message: 'Welcome to The New Fuse API Server', status: 'online' });

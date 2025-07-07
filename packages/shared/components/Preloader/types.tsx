@@ -1,5 +1,5 @@
 import { VariantProps } from 'class-variance-authority';
-import { preloaderVariants } from './index.tsx';
+import { preloaderVariants } from './index';
 
 export type PreloaderSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 export type PreloaderVariant = 'default' | 'light' | 'dark' | 'muted';

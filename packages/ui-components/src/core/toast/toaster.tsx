@@ -1,7 +1,7 @@
 import React from 'react';
-import { Toast } from './index.tsx';
-import { useToast } from './use-toast.tsx';
-import { cn } from '../../utils/cn.tsx';
+import { Toast } from './index';
+import { useToast } from './use-toast';
+import { cn } from '../../utils/cn';
 import './toast.css';
 
 /**

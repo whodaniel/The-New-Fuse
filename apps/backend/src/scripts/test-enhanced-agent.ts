@@ -1,7 +1,8 @@
-import { EnhancedAgent } from '../services/agent/enhanced-agent.js';
+import { EnhancedAgent } from '../services/agent/enhanced-agent';
 
-async function testAgent(): any {
-    const agent = new EnhancedAgent('TestAgent');
+async function testAgent(): Promise<void> {
+    const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
+    const agent = new EnhancedAgent('TestAgent', redisUrl);
 
     agent.on('message', ({ channel, message }) => {
         

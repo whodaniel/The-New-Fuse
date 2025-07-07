@@ -15,6 +15,6 @@ export class ConfigurationUpdater {
   }
 
   async updateServiceConfiguration(): Promise<void> {
-    console.log('Configuration update placeholder');
+    // TODO: Implement configuration update logic
   }
 }

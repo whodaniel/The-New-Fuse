@@ -5,12 +5,12 @@ import { useTranslation } from "react-i18next";
 
 import NewWorkspaceModal, {
   useNewWorkspaceModal,
-} from '../Modals/NewWorkspace.js';
-import ActiveWorkspaces from './ActiveWorkspaces.js';
+} from '../Modals/NewWorkspace';
+import ActiveWorkspaces from './ActiveWorkspaces';
 import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
-import Footer from '../Footer.js';
-import SettingsButton from '../SettingsButton.js';
+import Footer from '../Footer';
+import SettingsButton from '../SettingsButton';
 import paths from "@/utils/paths";
 
 const STYLES = {

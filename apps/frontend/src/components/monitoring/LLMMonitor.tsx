@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { webSocketService } from '../services/websocket.js';
+import { webSocketService } from '../services/websocket';
 
 export const LLMMonitor: React.FC = () => {
     const [llmMetrics, setLLMMetrics] = useState({

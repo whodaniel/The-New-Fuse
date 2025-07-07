@@ -1,20 +1,9 @@
 import { Module, Global } from '@nestjs/common';
-import { ConfigManager } from './ConfigManager.js';
-import { ConfigValidator } from './ConfigValidator.tsx';
-import { DatabaseModule } from '@the-new-fuse/database';
+import { ConfigService } from './ConfigService';
 
 @Global()
 @Module({
-  imports: [
-    DatabaseModule
-  ],
-  providers: [
-    ConfigManager,
-    ConfigValidator
-  ],
-  exports: [
-    ConfigManager,
-    ConfigValidator
-  ]
+  providers: [ConfigService],
+  exports: [ConfigService],
 })
 export class ConfigModule {}

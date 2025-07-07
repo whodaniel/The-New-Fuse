@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FeatureTracker } from '../FeatureTracker.tsx';
-import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types.js';
+import { FeatureTracker } from '../FeatureTracker';
+import type { FeatureProgress, FeatureStage, CodeMetrics, QualitativeAssessment } from '../types';
 
 interface UseFeatureTrackerResult {
   feature: FeatureProgress | null;

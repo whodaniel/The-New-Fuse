@@ -79,7 +79,9 @@ describe('Custom Matcher Examples', () => {
     const InvalidComponent = null; // Example of an invalid component (null)
 
     it('should pass for a valid React element', () => {
-      expect(ValidComponent).toBeValidComponent();
+      expect(ValidComponent).toBeValidComponent({
+        displayName: 'TestComponent'
+      });
     });
 
     // This test will likely fail if the matcher doesn't handle null gracefully
@@ -87,7 +89,7 @@ describe('Custom Matcher Examples', () => {
     it('should fail for null or undefined (or throw error if not handled)', () => {
       // expect(InvalidComponent).not.toBeValidComponent();
       // OR, if it throws:
-      expect(() => expect(InvalidComponent).toBeValidComponent()).toThrow();
+      expect(() => expect(InvalidComponent).toBeValidComponent({})).toThrow();
     });
 
     it('should validate component against a Zod schema if provided', () => {
@@ -141,19 +143,25 @@ describe('Custom Matcher Examples', () => {
   // Example for toMatchAPIContract (conceptual)
   describe('toMatchAPIContract', () => {
     const mockAPIContract = {
-      requestSchema: z.object({ userId: z.string() }),
-      responseSchema: z.object({ success: z.boolean(), data: z.any().optional() }),
+      status: 200,
+      schema: z.object({ success: z.boolean(), data: z.any().optional() }),
     };
-    it('should pass if request and response match the contract', () => {
-      const apiRequest = { userId: 'user-123' };
-      const apiResponse = { success: true, data: { message: 'ok' } };
-      expect({ request: apiRequest, response: apiResponse }).toMatchAPIContract(mockAPIContract);
+    it('should pass if response matches the contract', () => {
+      const apiResponse = {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
+        data: { success: true, data: { message: 'ok' } }
+      };
+      expect(apiResponse).toMatchAPIContract(mockAPIContract);
     });
 
-    it('should fail if request does not match the contract', () => {
-      const apiRequest = { wrongParam: 42 }; // Does not match requestSchema
-      const apiResponse = { success: true };
-      expect({ request: apiRequest, response: apiResponse }).not.toMatchAPIContract(mockAPIContract);
+    it('should fail if response does not match the contract', () => {
+      const apiResponse = {
+        status: 404,
+        headers: {},
+        data: { success: true }
+      };
+      expect(apiResponse).not.toMatchAPIContract(mockAPIContract);
     });
   });
 

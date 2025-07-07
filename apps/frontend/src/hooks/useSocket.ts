@@ -1,7 +1,7 @@
 export {}
 import react_1 from 'react';
 import socket_io_client_1 from 'socket.io-client';
-import useAuth_1 from './useAuth.tsx';
+import useAuth_1 from './useAuth';
 const useSocket = (): any => {
     const [socket, setSocket] = (0, react_1.useState)(null);
     const { user } = (0, useAuth_1.default)();

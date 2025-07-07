@@ -9,7 +9,7 @@
     "build": "tsc",
     "clean": "rimraf dist",
     "test": "jest",
-    "lint": "eslint src --ext .ts,.tsx"
+    "lint": "eslint src"
   },
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -22,6 +22,7 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.20.0",
+    "react-select": "^5.10.1",
     "tailwind-merge": "^2.1.0"
   },
   "devDependencies": {

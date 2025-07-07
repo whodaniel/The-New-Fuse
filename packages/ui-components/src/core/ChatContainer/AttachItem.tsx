@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { PaperclipHorizontal } from "@phosphor-icons/react";
 import { Tooltip } from "react-tooltip";
-import { PASTE_ATTACHMENT_EVENT } from './DnDWrapper.tsx';
+import { PASTE_ATTACHMENT_EVENT } from './DnDWrapper';
 
 export default function AttachItem(): JSX.Element {
   const inputRef = useRef<HTMLInputElement>(null);

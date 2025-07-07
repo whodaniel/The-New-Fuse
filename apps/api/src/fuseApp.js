@@ -1,26 +1,31 @@
-import express from 'express';
-import session from 'express-session';
-import { WebSocketServer } from 'ws';
-import { hash, compare } from 'bcrypt'; // Changed 'generate' to 'hash'
-import { Pool } from 'pg';
-import { performance } from 'perf_hooks';
-import { createClient } from 'ioredis'; // Changed from 'redis' to 'ioredis'
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const express_session_1 = __importDefault(require("express-session"));
+const ws_1 = require("ws");
+const bcrypt_1 = require("bcrypt"); // Changed 'generate' to 'hash'
+const pg_1 = require("pg");
+const perf_hooks_1 = require("perf_hooks");
+const ioredis_1 = require("ioredis"); // Changed from 'redis' to 'ioredis'
 // Configuration
 const SECRET_KEY = process.env.SECRET_KEY || 'dev';
 const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://user:password@localhost:5432/chat';
 const SESSION_LIFETIME = 7 * 24 * 60 * 60 * 1000; // 7 days
 // Initialize database connection
-const pool = new Pool({
+const pool = new pg_1.Pool({
     connectionString: DATABASE_URL
 });
 // Initialize Redis client
-const redisClient = createClient(); // Removed the RedisClientType type that doesn't exist in ioredis
+const redisClient = (0, ioredis_1.createClient)(); // Removed the RedisClientType type that doesn't exist in ioredis
 // No need to call connect() on ioredis - it connects automatically
 // Initialize Express app
-const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(session({
+const app = (0, express_1.default)();
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use((0, express_session_1.default)({
     secret: SECRET_KEY,
     resave: false,
     saveUninitialized: true,
@@ -35,7 +40,7 @@ app.post('/register', async (req, res) => {
         if (userCheck.rows.length > 0) {
             return res.status(400).send('Username or email already exists');
         }
-        const passwordHash = await hash(password, 10);
+        const passwordHash = await (0, bcrypt_1.hash)(password, 10);
         await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [username, email, passwordHash]);
         res.status(201).send('Registration successful');
     }
@@ -52,7 +57,7 @@ app.post('/login', async (req, res) => {
             return res.status(400).send('Invalid username or password');
         }
         const user = userCheck.rows[0];
-        const passwordMatch = await compare(password, user.password_hash);
+        const passwordMatch = await (0, bcrypt_1.compare)(password, user.password_hash);
         if (!passwordMatch) {
             return res.status(400).send('Invalid username or password');
         }
@@ -121,7 +126,7 @@ app.post('/pipelines/new', async (req, res) => {
     }
 });
 // WebSocket server for metrics
-const wss = new WebSocketServer({ noServer: true });
+const wss = new ws_1.WebSocketServer({ noServer: true });
 wss.on('connection', (ws) => {
     ws.on('message', async (message) => {
         try {
@@ -138,10 +143,10 @@ wss.on('connection', (ws) => {
 });
 // Metrics handler
 async function getMetrics() {
-    const start = performance.now();
+    const start = perf_hooks_1.performance.now();
     // Simulate some performance metrics
     const metrics = {
-        latency: performance.now() - start,
+        latency: perf_hooks_1.performance.now() - start,
         requests: Math.floor(Math.random() * 100),
         errors: Math.floor(Math.random() * 5)
     };

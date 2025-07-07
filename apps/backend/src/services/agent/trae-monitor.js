@@ -1,13 +1,17 @@
-import { Redis } from 'ioredis';
-import { Logger } from '@nestjs/common';
-export class TraeMonitor {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.TraeMonitor = void 0;
+const ioredis_1 = require("ioredis");
+const common_1 = require("@nestjs/common");
+class TraeMonitor {
+    logger = new common_1.Logger(TraeMonitor.name);
+    redis;
+    heartbeatInterval = null;
+    metricsCollectionInterval = null;
+    metrics = new Map();
     constructor() {
-        this.logger = new Logger(TraeMonitor.name);
-        this.heartbeatInterval = null;
-        this.metricsCollectionInterval = null;
-        this.metrics = new Map();
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        this.redis = new Redis(redisUrl);
+        this.redis = new ioredis_1.Redis(redisUrl);
     }
     async initialize() {
         try {
@@ -145,3 +149,4 @@ export class TraeMonitor {
         await this.redis.quit();
     }
 }
+exports.TraeMonitor = TraeMonitor;

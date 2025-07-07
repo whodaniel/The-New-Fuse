@@ -3,13 +3,13 @@ import ReactFlow, { Controls, Background, addEdge, useNodesState, useEdgesState,
 import 'reactflow/dist/style.css';
 import '@reactflow/node-resizer/dist/style.css';
 import './styles/WorkflowEditor.css';
-import { DynamicNode } from './components/DynamicNode.tsx';
-import n8nMetadataService from '../services/n8n-metadata.service.js';
-import { convertReactFlowToN8n } from './utils/converter.js';
-import { validateN8nWorkflow, createDynamicValidator } from './utils/validation.js';
-import { WorkflowValidator } from './utils/realtime-validation.js';
-import { processErrorConnections } from './utils/special-nodes.js';
-import { getNodeCategoryFromMetadata } from './utils/node-support.js';
+import { DynamicNode } from './components/DynamicNode';
+import n8nMetadataService from '../../services/n8n-metadata.service';
+import { convertReactFlowToN8n } from './utils/converter';
+import { validateN8nWorkflow, createDynamicValidator } from './utils/validation';
+import { WorkflowValidator } from './utils/realtime-validation';
+import { processErrorConnections } from './utils/special-nodes';
+import { getNodeCategoryFromMetadata } from './utils/node-support';
 const nodeTypes = {
     dynamicNode: DynamicNode,
 };

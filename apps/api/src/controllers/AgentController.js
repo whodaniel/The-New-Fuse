@@ -1,7 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentController = void 0;
 /**
  * Agent controller for handling agent-related API endpoints
  */
-export class AgentController {
+class AgentController {
     /**
      * List all available agents
      */
@@ -154,3 +157,4 @@ export class AgentController {
         }
     }
 }
+exports.AgentController = AgentController;

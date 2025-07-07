@@ -24,7 +24,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
     try {
       const agents = await AgentService.getAgents();
       set({ agents, loading: false });
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         set({ error: error.message, loading: false });
       } else {
@@ -47,7 +47,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
         selectedAgent: updated,
         loading: false,
       }));
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         set({ error: error.message, loading: false });
       } else {
@@ -65,7 +65,7 @@ export const useAgentStore = create<AgentState>((set, get) => ({
         selectedAgent: state.selectedAgent?.id === id ? null : state.selectedAgent,
         loading: false,
       }));
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
         set({ error: error.message, loading: false });
       } else {

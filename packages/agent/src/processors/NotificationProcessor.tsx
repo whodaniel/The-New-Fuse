@@ -1,7 +1,7 @@
-import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
-import { Logger } from '@the-new-fuse/utils';
+import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
+import { Logger } from '../utils/Logger';
 import { Message, MessageType, Notification, UUID } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService.tsx'; // Corrected import
+import { AlertService } from '../services/AlertService'; // Corrected import
 // Import other necessary services or types (e.g., UI update service, logging service)
 
 /**
@@ -38,7 +38,7 @@ export class NotificationProcessor extends BaseProcessor {
     }
 
     // TODO: Add validation using MessageValidator service if available
-    const notification = message.content as Notification; // Type assertion, consider validation
+    const notification = message.content as unknown as Notification; // Type assertion, consider validation
 
     if (!notification.level || !notification.text) {
         this.logger.warn(`Received notification message ${message.id} with missing level or text.`);
@@ -51,26 +51,29 @@ export class NotificationProcessor extends BaseProcessor {
         return; // Stop processing incomplete notification
     }
 
-    this.logger.log(
-        notification.level === 'error' || notification.level === 'critical' ? 'error' :
-        notification.level === 'warning' ? 'warn' : 'info',
-        `Processing notification ${message.id}: [${notification.level.toUpperCase()}] ${notification.title || ''} - ${notification.text}`,
-        { details: notification.details, source: notification.source }
-    );
+    const logMessage = `Processing notification ${message.id}: [${notification.level.toUpperCase()}] ${notification.title || ''} - ${notification.text}`;
+    
+    if (notification.level === 'error') {
+      this.logger.error(logMessage);
+    } else if (notification.level === 'warning') {
+      this.logger.warn(logMessage);
+    } else {
+      this.logger.info(logMessage);
+    }
 
     try {
       // Action 1: Dispatch as an alert using AlertService
       // Map notification level to alert severity
       let alertSeverity: 'info' | 'warning' | 'error' | 'critical';
       switch (notification.level) {
-        case 'critical':
-          alertSeverity = 'critical';
-          break;
         case 'error':
           alertSeverity = 'error';
           break;
         case 'warning':
           alertSeverity = 'warning';
+          break;
+        case 'success':
+          alertSeverity = 'info';
           break;
         case 'info':
         default:
@@ -98,12 +101,12 @@ export class NotificationProcessor extends BaseProcessor {
       this.logger.debug(`Notification ${message.id} processed successfully.`);
 
     } catch (error) {
-      this.logger.error(`Error processing notification ${message.id}: ${error.message}`, error);
+      this.logger.error(`Error processing notification ${message.id}: ${(error as Error).message}`);
       // Optionally, create a fallback alert about the processing failure
       await this.alertService.error(
           `Failed to process notification ${message.id}`,
           `Agent ${this.agentId} / NotificationProcessor`,
-          { error: error.message, originalNotification: notification }
+          { error: (error as Error).message, originalNotification: notification }
       );
     }
   }

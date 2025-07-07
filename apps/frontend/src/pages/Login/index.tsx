@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../AuthContext.tsx';
-import { auth, googleProvider, signInWithPopup } from '../../lib/firebase.js';
+import { useAuth } from '../../AuthContext';
+import { auth, googleProvider, signInWithPopup } from '../../lib/firebase';
 
 const LoginPage = () => {
     const navigate = useNavigate();

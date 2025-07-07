@@ -1,100 +1,72 @@
-import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
-import { EventEmitter } from 'events';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from '@nestjs/common';
+
+export interface AutomationRequest {
+  templateId: string;
+  parameters: Record<string, any>;
+  userId: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  deadline?: Date;
+  context?: Record<string, any>;
+}
+
+export interface AutomationResult {
+  id: string;
+  templateId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
+  result?: any;
+  error?: string;
+  metadata: {
+    userId: string;
+    startTime: Date;
+    endTime?: Date;
+    duration?: number;
+  };
+}
+
+export interface ClaudeDevTemplate {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
+  version: string;
+  author: string;
+  tags: string[];
+  capabilities: string[];
+  integrations: string[];
+  prompt: string;
+  parameters: Array<{
+    name: string;
+    type: string;
+    description: string;
+    required: boolean;
+    defaultValue?: any;
+  }>;
+}
 
 export interface ClaudeDevAgent {
   id: string;
-  tenantId: string;
   name: string;
-  description: string;
-  template: string;
-  configuration: ClaudeDevConfiguration;
-  status: 'active' | 'inactive' | 'error' | 'initializing';
+  type: string;
+  status: 'active' | 'inactive' | 'busy' | 'error';
+  capabilities: string[];
+  tenantId?: string;
   createdAt: Date;
-  updatedAt: Date;
-  metadata: Record<string, any>;
-  permissions: ClaudeDevPermissions;
-  health: {
-    lastHealthCheck: Date;
-    status: 'healthy' | 'unhealthy' | 'unknown';
-    errorCount: number;
-    uptime: number;
-  };
-}
-
-export interface ClaudeDevConfiguration {
-  autoApprove: boolean;
-  maxFileOperations: number;
-  allowedDirectories: string[];
-  taskTimeout: number;
-  concurrentTasks: number;
-  integrations: {
-    workspace: boolean;
-    terminal: boolean;
-    browser: boolean;
-    vscode: boolean;
-  };
-  capabilities: {
-    fileOperations: boolean;
-    codeAnalysis: boolean;
-    terminalAccess: boolean;
-    webBrowsing: boolean;
-    imageProcessing: boolean;
-  };
-  automationLevel: 'manual' | 'semi-auto' | 'auto';
-  notifications: {
-    onTaskStart: boolean;
-    onTaskComplete: boolean;
-    onError: boolean;
-    onApprovalRequired: boolean;
-  };
-}
-
-export interface ClaudeDevPermissions {
-  canCreateFiles: boolean;
-  canDeleteFiles: boolean;
-  canModifyFiles: boolean;
-  canExecuteTerminal: boolean;
-  canBrowseWeb: boolean;
-  canAccessWorkspace: boolean;
-  allowedFileTypes: string[];
-  restrictedPaths: string[];
-  maxFileSize: number;
+  updatedAt?: Date;
+  metadata?: Record<string, any>;
 }
 
 export interface ClaudeDevTask {
   id: string;
   agentId: string;
-  tenantId: string;
-  type: 'code_review' | 'project_setup' | 'debug' | 'documentation' | 'test' | 'refactor' | 'deploy' | 'security' | 'analysis' | 'ui_ux';
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'approval_required';
-  priority: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
+  templateId: string;
+  status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled';
   parameters: Record<string, any>;
-  progress: {
-    percentage: number;
-    currentStep: string;
-    totalSteps: number;
-    completedSteps: number;
-    estimatedTimeRemaining: number;
-  };
-  result?: {
-    success: boolean;
-    output: any;
-    files: string[];
-    metrics: Record<string, number>;
-    recommendations: string[];
-  };
-  error?: {
-    message: string;
-    code: string;
-    details: any;
-    timestamp: Date;
-  };
+  result?: any;
+  error?: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
   createdAt: Date;
-  startedAt?: Date;
   completedAt?: Date;
-  metadata: Record<string, any>;
+  metadata?: Record<string, any>;
 }
 
 export interface ClaudeDevStatistics {
@@ -104,407 +76,318 @@ export interface ClaudeDevStatistics {
   completedTasks: number;
   failedTasks: number;
   averageTaskDuration: number;
-  successRate: number;
-  resourceUsage: {
-    cpuUsage: number;
-    memoryUsage: number;
-    diskUsage: number;
-    networkUsage: number;
-  };
+  systemUptime: number;
+  memoryUsage: number;
+  cpuUsage: number;
+}
+
+export interface ClaudeDevConfiguration {
+  maxConcurrentTasks: number;
+  timeout: number;
+  retryAttempts: number;
+  logLevel: 'debug' | 'info' | 'warn' | 'error';
+  enableMetrics: boolean;
+  enableCache: boolean;
+  cacheSize: number;
+  autoBackup: boolean;
+  backupInterval: number;
+}
+
+export interface ClaudeDevPermissions {
+  canCreateAgents: boolean;
+  canDeleteAgents: boolean;
+  canModifyAgents: boolean;
+  canExecuteTasks: boolean;
+  canViewStatistics: boolean;
+  canManageTemplates: boolean;
+  canAccessLogs: boolean;
+  canExportData: boolean;
+  maxAgentsPerUser: number;
+  maxTasksPerDay: number;
 }
 
 @Injectable()
-export class ClaudeDevAutomationService extends EventEmitter implements OnModuleInit, OnModuleDestroy {
+export class ClaudeDevAutomationService {
   private readonly logger = new Logger(ClaudeDevAutomationService.name);
-  private agents: Map<string, ClaudeDevAgent> = new Map();
-  private tasks: Map<string, ClaudeDevTask> = new Map();
-  private healthCheckInterval?: NodeJS.Timeout;
-  private metricsCollectionInterval?: NodeJS.Timeout;
-  private initialized = false;
+  private templates: Map<string, ClaudeDevTemplate> = new Map();
+  private automations: Map<string, AutomationResult> = new Map();
 
-  constructor(
-    private readonly configService: ConfigService,
-  ) {
-    super();
-    this.setupEventListeners();
+  constructor() {
+    this.initializeDefaultTemplates();
   }
 
-  async onModuleInit(): Promise<void> {
+  async listTemplates(category?: string): Promise<ClaudeDevTemplate[]> {
+    const templates = Array.from(this.templates.values());
+    if (category) {
+      return templates.filter(t => t.category === category);
+    }
+    return templates;
+  }
+
+  async getTemplate(templateId: string): Promise<ClaudeDevTemplate | null> {
+    return this.templates.get(templateId) || null;
+  }
+
+  async createCustomTemplate(templateData: Partial<ClaudeDevTemplate>): Promise<string> {
+    const id = `custom-${Date.now()}`;
+    const template: ClaudeDevTemplate = {
+      id,
+      name: templateData.name || 'Custom Template',
+      description: templateData.description || '',
+      category: templateData.category || 'custom',
+      version: '1.0.0',
+      author: 'user',
+      tags: templateData.tags || [],
+      capabilities: templateData.capabilities || [],
+      integrations: templateData.integrations || [],
+      prompt: templateData.prompt || '',
+      parameters: templateData.parameters || []
+    };
+    
+    this.templates.set(id, template);
+    return id;
+  }
+
+  async deleteTemplate(templateId: string): Promise<boolean> {
+    if (templateId.startsWith('built-in-')) {
+      throw new Error('Cannot delete built-in templates');
+    }
+    return this.templates.delete(templateId);
+  }
+
+  async executeAutomation(request: AutomationRequest): Promise<AutomationResult> {
+    const id = `automation-${Date.now()}`;
+    const automation: AutomationResult = {
+      id,
+      templateId: request.templateId,
+      status: 'pending',
+      metadata: {
+        userId: request.userId,
+        startTime: new Date()
+      }
+    };
+
+    this.automations.set(id, automation);
+    
+    // Simulate async execution
+    this.processAutomation(id, request);
+    
+    return automation;
+  }
+
+  async listAutomations(userId: string, limit: number = 50): Promise<AutomationResult[]> {
+    const automations = Array.from(this.automations.values())
+      .filter(a => a.metadata.userId === userId)
+      .slice(0, limit);
+    return automations;
+  }
+
+  async getAutomationResult(automationId: string): Promise<AutomationResult | null> {
+    return this.automations.get(automationId) || null;
+  }
+
+  async cancelAutomation(automationId: string, userId: string): Promise<boolean> {
+    const automation = this.automations.get(automationId);
+    if (!automation || automation.metadata.userId !== userId) {
+      return false;
+    }
+    
+    if (automation.status === 'running' || automation.status === 'pending') {
+      automation.status = 'cancelled';
+      automation.metadata.endTime = new Date();
+      return true;
+    }
+    
+    return false;
+  }
+
+  async getUsageStats(userId: string): Promise<any> {
+    const userAutomations = Array.from(this.automations.values())
+      .filter(a => a.metadata.userId === userId);
+    
+    return {
+      totalAutomations: userAutomations.length,
+      successfulAutomations: userAutomations.filter(a => a.status === 'completed').length,
+      failedAutomations: userAutomations.filter(a => a.status === 'failed').length,
+      totalTokensUsed: 0, // Mock data
+      totalCost: 0, // Mock data
+      averageExecutionTime: 0 // Mock data
+    };
+  }
+
+  private async processAutomation(automationId: string, _request: AutomationRequest): Promise<void> {
+    const automation = this.automations.get(automationId);
+    if (!automation) return;
+
     try {
-      this.logger.log('Initializing Claude Dev Automation Service...');
+      automation.status = 'running';
       
-      await this.startHealthChecks();
-      await this.startMetricsCollection();
+      // Simulate processing time
+      await new Promise(resolve => setTimeout(resolve, 2000));
       
-      this.initialized = true;
-      this.emit('service:initialized', {
-        timestamp: new Date(),
-        agentCount: this.agents.size,
-        taskCount: this.tasks.size,
+      automation.status = 'completed';
+      automation.result = { message: 'Automation completed successfully' };
+      automation.metadata.endTime = new Date();
+      automation.metadata.duration = automation.metadata.endTime.getTime() - automation.metadata.startTime.getTime();
+      
+    } catch (error) {
+      automation.status = 'failed';
+      automation.error = (error as Error).message;
+      automation.metadata.endTime = new Date();
+    }
+  }
+
+  private initializeDefaultTemplates(): void {
+    const defaultTemplates: ClaudeDevTemplate[] = [
+      {
+        id: 'built-in-code-review',
+        name: 'Code Review',
+        description: 'Automated code review and feedback',
+        category: 'development',
+        version: '1.0.0',
+        author: 'system',
+        tags: ['code', 'review', 'quality'],
+        capabilities: ['static-analysis', 'best-practices'],
+        integrations: ['git', 'github'],
+        prompt: 'Review the following code and provide feedback...',
+        parameters: [
+          {
+            name: 'code',
+            type: 'string',
+            description: 'Code to review',
+            required: true
+          }
+        ]
+      }
+    ];
+
+    defaultTemplates.forEach(template => {
+      this.templates.set(template.id, template);
+    });
+  }
+
+  /**
+   * Get health status of the automation service
+   */
+  async getHealthStatus(): Promise<any> {
+    return {
+      status: 'healthy',
+      activeAutomations: Array.from(this.automations.values()).filter(a => a.status === 'running').length,
+      totalTemplates: this.templates.size,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString()
+    };
+  }
+
+  /**
+   * Get service statistics
+   */
+  async getStatistics(): Promise<any> {
+    const automations = Array.from(this.automations.values());
+    return {
+      totalAutomations: automations.length,
+      completedAutomations: automations.filter(a => a.status === 'completed').length,
+      failedAutomations: automations.filter(a => a.status === 'failed').length,
+      runningAutomations: automations.filter(a => a.status === 'running').length,
+      totalTemplates: this.templates.size,
+      customTemplates: Array.from(this.templates.values()).filter(t => t.id.startsWith('custom-')).length
+    };
+  }
+
+  /**
+   * Create a new agent
+   */
+  async createAgent(agentData: any): Promise<any> {
+    // Mock implementation - in real scenario, this would interact with an agent management system
+    const agent = {
+      id: `agent-${Date.now()}`,
+      name: agentData.name || 'Unnamed Agent',
+      type: agentData.type || 'general',
+      status: 'active',
+      createdAt: new Date()
+    };
+    
+    return agent;
+  }
+
+  /**
+   * Get agents by tenant
+   */
+  async getAgentsByTenant(tenantId: string): Promise<any[]> {
+    // Mock implementation - return empty array for now
+    return [];
+  }
+
+  /**
+   * Get agent by ID
+   */
+  async getAgent(agentId: string): Promise<any | null> {
+    // Mock implementation
+    return {
+      id: agentId,
+      name: `Agent ${agentId}`,
+      type: 'general',
+      status: 'active',
+      createdAt: new Date()
+    };
+  }
+
+  /**
+   * Execute a task
+   */
+  async executeTask(taskData: any): Promise<any> {
+    // Convert task to automation request
+    const request: AutomationRequest = {
+      templateId: taskData.templateId || 'built-in-code-review',
+      parameters: taskData.parameters || {},
+      userId: taskData.userId || 'system',
+      priority: taskData.priority || 'medium'
+    };
+
+    return this.executeAutomation(request);
+  }
+
+  /**
+   * Create agent batch
+   */
+  async createAgentBatch(batchData: any): Promise<any> {
+    // Mock implementation
+    const agents = [];
+    const count = batchData.count || 1;
+    
+    for (let i = 0; i < count; i++) {
+      const agent = await this.createAgent({
+        name: `${batchData.namePrefix || 'Agent'} ${i + 1}`,
+        type: batchData.type || 'general'
       });
-      
-      this.logger.log('Claude Dev Automation Service initialized successfully');
-    } catch (error) {
-      this.logger.error('Failed to initialize Claude Dev Automation Service', error);
-      this.emit('service:error', { error, timestamp: new Date() });
-      throw error;
+      agents.push(agent);
     }
-  }
-
-  async onModuleDestroy(): Promise<void> {
-    this.logger.log('Shutting down Claude Dev Automation Service...');
-    
-    if (this.healthCheckInterval) {
-      clearInterval(this.healthCheckInterval);
-    }
-    
-    if (this.metricsCollectionInterval) {
-      clearInterval(this.metricsCollectionInterval);
-    }
-    
-    this.removeAllListeners();
-    this.logger.log('Claude Dev Automation Service shut down successfully');
-  }
-
-  // Agent Management
-  async createAgent(tenantId: string, agentData: Partial<ClaudeDevAgent>): Promise<ClaudeDevAgent> {
-    try {
-      const agentId = this.generateId('agent');
-      const now = new Date();
-      
-      const agent: ClaudeDevAgent = {
-        id: agentId,
-        tenantId,
-        name: agentData.name || `Claude Dev Agent ${agentId}`,
-        description: agentData.description || 'Automated coding assistant',
-        template: agentData.template || 'general',
-        configuration: this.getDefaultConfiguration(agentData.configuration),
-        status: 'initializing',
-        createdAt: now,
-        updatedAt: now,
-        metadata: agentData.metadata || {},
-        permissions: this.getDefaultPermissions(agentData.permissions),
-        health: {
-          lastHealthCheck: now,
-          status: 'unknown',
-          errorCount: 0,
-          uptime: 0,
-        },
-      };
-
-      await this.validateAgentConfiguration(agent);
-      this.agents.set(agentId, agent);
-      await this.initializeAgent(agent);
-      
-      this.emit('agent:created', { agent, timestamp: new Date() });
-      this.logger.log(`Created Claude Dev agent: ${agentId} for tenant: ${tenantId}`);
-      
-      return agent;
-    } catch (error) {
-      this.logger.error('Failed to create Claude Dev agent', error);
-      throw error;
-    }
-  }
-
-  async getAgent(agentId: string, tenantId: string): Promise<ClaudeDevAgent | undefined> {
-    const agent = this.agents.get(agentId);
-    return agent && agent.tenantId === tenantId ? agent : undefined;
-  }
-
-  async getAgentsByTenant(tenantId: string): Promise<ClaudeDevAgent[]> {
-    return Array.from(this.agents.values()).filter(agent => agent.tenantId === tenantId);
-  }
-
-  // Task Management
-  async executeTask(agentId: string, tenantId: string, taskData: Partial<ClaudeDevTask>): Promise<ClaudeDevTask> {
-    try {
-      const agent = await this.getAgent(agentId, tenantId);
-      if (!agent) {
-        throw new Error(`Agent ${agentId} not found for tenant ${tenantId}`);
-      }
-
-      if (agent.status !== 'active') {
-        throw new Error(`Agent ${agentId} is not active (status: ${agent.status})`);
-      }
-
-      const taskId = this.generateId('task');
-      const now = new Date();
-
-      const task: ClaudeDevTask = {
-        id: taskId,
-        agentId,
-        tenantId,
-        type: taskData.type || 'code_review',
-        status: 'pending',
-        priority: taskData.priority || 'medium',
-        description: taskData.description || 'Automated task',
-        parameters: taskData.parameters || {},
-        progress: {
-          percentage: 0,
-          currentStep: 'Initializing',
-          totalSteps: 1,
-          completedSteps: 0,
-          estimatedTimeRemaining: 0,
-        },
-        createdAt: now,
-        metadata: taskData.metadata || {},
-      };
-
-      this.tasks.set(taskId, task);
-      this.executeTaskAsync(task, agent);
-
-      this.emit('task:created', { task, agent, timestamp: new Date() });
-      this.logger.log(`Created task ${taskId} for agent ${agentId}`);
-
-      return task;
-    } catch (error) {
-      this.logger.error('Failed to create task', error);
-      throw error;
-    }
-  }
-
-  async getStatistics(tenantId?: string): Promise<ClaudeDevStatistics> {
-    const agents = tenantId 
-      ? Array.from(this.agents.values()).filter(a => a.tenantId === tenantId)
-      : Array.from(this.agents.values());
-    
-    const tasks = tenantId
-      ? Array.from(this.tasks.values()).filter(t => t.tenantId === tenantId)
-      : Array.from(this.tasks.values());
-
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-    const failedTasks = tasks.filter(t => t.status === 'failed');
-
-    const avgDuration = completedTasks.length > 0
-      ? completedTasks.reduce((sum, task) => {
-          const duration = task.completedAt && task.startedAt 
-            ? task.completedAt.getTime() - task.startedAt.getTime()
-            : 0;
-          return sum + duration;
-        }, 0) / completedTasks.length
-      : 0;
-
-    return {
-      totalAgents: agents.length,
-      activeAgents: agents.filter(a => a.status === 'active').length,
-      totalTasks: tasks.length,
-      completedTasks: completedTasks.length,
-      failedTasks: failedTasks.length,
-      averageTaskDuration: avgDuration,
-      successRate: tasks.length > 0 ? (completedTasks.length / tasks.length) * 100 : 0,
-      resourceUsage: {
-        cpuUsage: Math.random() * 100,
-        memoryUsage: Math.random() * 100,
-        diskUsage: Math.random() * 100,
-        networkUsage: Math.random() * 100,
-      },
-    };
-  }
-
-  async getHealthStatus(): Promise<{ status: 'healthy' | 'unhealthy'; details: any }> {
-    const stats = await this.getStatistics();
-    const unhealthyAgents = Array.from(this.agents.values()).filter(a => a.health.status === 'unhealthy');
-    
-    const status = unhealthyAgents.length === 0 && this.initialized ? 'healthy' : 'unhealthy';
     
     return {
-      status,
-      details: {
-        initialized: this.initialized,
-        totalAgents: stats.totalAgents,
-        activeAgents: stats.activeAgents,
-        unhealthyAgents: unhealthyAgents.length,
-        averageSuccessRate: stats.successRate,
-        resourceUsage: stats.resourceUsage,
-      },
+      batchId: `batch-${Date.now()}`,
+      agents,
+      totalCreated: agents.length
     };
   }
 
-  // Private Methods
-  private setupEventListeners(): void {
-    this.on('agent:created', this.handleAgentCreated.bind(this));
-    this.on('task:started', this.handleTaskStarted.bind(this));
-    this.on('task:completed', this.handleTaskCompleted.bind(this));
-    this.on('task:failed', this.handleTaskFailed.bind(this));
-  }
-
-  private async executeTaskAsync(task: ClaudeDevTask, agent: ClaudeDevAgent): Promise<void> {
-    try {
-      task.status = 'running';
-      task.startedAt = new Date();
-      this.emit('task:started', { task, agent, timestamp: new Date() });
-
-      const result = await this.performTaskExecution(task, agent);
-
-      task.status = 'completed';
-      task.completedAt = new Date();
-      task.result = result;
-      task.progress.percentage = 100;
-      task.progress.currentStep = 'Completed';
-
-      this.emit('task:completed', { task, agent, result, timestamp: new Date() });
-    } catch (error) {
-      task.status = 'failed';
-      task.completedAt = new Date();
-      task.error = {
-        message: error.message,
-        code: error.code || 'UNKNOWN_ERROR',
-        details: error,
-        timestamp: new Date(),
-      };
-      this.emit('task:failed', { task, agent, error, timestamp: new Date() });
-    }
-  }
-
-  private async performTaskExecution(task: ClaudeDevTask, agent: ClaudeDevAgent): Promise<any> {
-    const mockResults = {
-      code_review: {
-        success: true,
-        output: 'Code review completed successfully',
-        files: ['src/example.ts'],
-        metrics: { linesReviewed: 250, issuesFound: 3 },
-        recommendations: ['Add type annotations', 'Improve error handling'],
-      },
-      project_setup: {
-        success: true,
-        output: 'Project setup completed',
-        files: ['package.json', 'tsconfig.json', 'src/index.ts'],
-        metrics: { filesCreated: 15, dependenciesInstalled: 8 },
-        recommendations: ['Configure ESLint', 'Add pre-commit hooks'],
-      },
-    };
-
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    return mockResults[task.type] || mockResults.code_review;
-  }
-
-  private getDefaultConfiguration(provided?: Partial<ClaudeDevConfiguration>): ClaudeDevConfiguration {
-    return {
-      autoApprove: provided?.autoApprove ?? false,
-      maxFileOperations: provided?.maxFileOperations ?? 100,
-      allowedDirectories: provided?.allowedDirectories ?? ['src/', 'tests/'],
-      taskTimeout: provided?.taskTimeout ?? 300000,
-      concurrentTasks: provided?.concurrentTasks ?? 3,
-      integrations: {
-        workspace: true,
-        terminal: true,
-        browser: false,
-        vscode: true,
-        ...provided?.integrations,
-      },
-      capabilities: {
-        fileOperations: true,
-        codeAnalysis: true,
-        terminalAccess: false,
-        webBrowsing: false,
-        imageProcessing: false,
-        ...provided?.capabilities,
-      },
-      automationLevel: provided?.automationLevel ?? 'semi-auto',
-      notifications: {
-        onTaskStart: true,
-        onTaskComplete: true,
-        onError: true,
-        onApprovalRequired: true,
-        ...provided?.notifications,
-      },
-    };
-  }
-
-  private getDefaultPermissions(provided?: Partial<ClaudeDevPermissions>): ClaudeDevPermissions {
-    return {
-      canCreateFiles: provided?.canCreateFiles ?? true,
-      canDeleteFiles: provided?.canDeleteFiles ?? false,
-      canModifyFiles: provided?.canModifyFiles ?? true,
-      canExecuteTerminal: provided?.canExecuteTerminal ?? false,
-      canBrowseWeb: provided?.canBrowseWeb ?? false,
-      canAccessWorkspace: provided?.canAccessWorkspace ?? true,
-      allowedFileTypes: provided?.allowedFileTypes ?? ['.ts', '.js', '.json', '.md'],
-      restrictedPaths: provided?.restrictedPaths ?? ['node_modules/', '.git/'],
-      maxFileSize: provided?.maxFileSize ?? 10485760,
-    };
-  }
-
-  private async validateAgentConfiguration(agent: ClaudeDevAgent): Promise<void> {
-    if (agent.configuration.maxFileOperations < 1) {
-      throw new Error('maxFileOperations must be at least 1');
-    }
-    if (agent.configuration.taskTimeout < 1000) {
-      throw new Error('taskTimeout must be at least 1000ms');
-    }
-    if (agent.permissions.maxFileSize < 1024) {
-      throw new Error('maxFileSize must be at least 1KB');
-    }
-  }
-
-  private async initializeAgent(agent: ClaudeDevAgent): Promise<void> {
-    try {
-      agent.status = 'active';
-      agent.health.status = 'healthy';
-      agent.health.lastHealthCheck = new Date();
-      this.logger.log(`Initialized agent: ${agent.id}`);
-    } catch (error) {
-      agent.status = 'error';
-      agent.health.status = 'unhealthy';
-      throw error;
-    }
-  }
-
-  private async startHealthChecks(): Promise<void> {
-    this.healthCheckInterval = setInterval(async () => {
-      await this.performHealthChecks();
-    }, 60000);
-  }
-
-  private async startMetricsCollection(): Promise<void> {
-    this.metricsCollectionInterval = setInterval(async () => {
-      await this.collectMetrics();
-    }, 300000);
-  }
-
-  private async performHealthChecks(): Promise<void> {
-    for (const agent of this.agents.values()) {
-      try {
-        agent.health.lastHealthCheck = new Date();
-        agent.health.status = agent.status === 'active' ? 'healthy' : 'unhealthy';
-        agent.health.uptime = Date.now() - agent.createdAt.getTime();
-      } catch (error) {
-        agent.health.status = 'unhealthy';
-        agent.health.errorCount++;
-        this.logger.warn(`Health check failed for agent ${agent.id}`, error);
+  /**
+   * Get tasks by agent ID
+   */
+  async getTasksByAgent(agentId: string, tenantId?: string): Promise<AutomationResult[]> {
+    // Filter automation results by agent ID
+    const results: AutomationResult[] = [];
+    
+    for (const result of this.automations.values()) {
+      // Assuming agent ID is stored in metadata or context
+      if (result.metadata && 
+          (result.metadata as any).agentId === agentId &&
+          (!tenantId || (result.metadata as any).tenantId === tenantId)) {
+        results.push(result);
       }
     }
-  }
-
-  private async collectMetrics(): Promise<void> {
-    try {
-      const stats = await this.getStatistics();
-      this.logger.debug('Collected metrics', stats);
-    } catch (error) {
-      this.logger.error('Failed to collect metrics', error);
-    }
-  }
-
-  private generateId(prefix: string): string {
-    const timestamp = Date.now().toString(36);
-    const random = Math.random().toString(36).substring(2, 8);
-    return `${prefix}_${timestamp}_${random}`;
-  }
-
-  // Event Handlers
-  private handleAgentCreated(data: any): void {
-    this.logger.log(`Agent created: ${data.agent.id}`);
-  }
-
-  private handleTaskStarted(data: any): void {
-    this.logger.log(`Task started: ${data.task.id}`);
-  }
-
-  private handleTaskCompleted(data: any): void {
-    this.logger.log(`Task completed: ${data.task.id}`);
-  }
-
-  private handleTaskFailed(data: any): void {
-    this.logger.error(`Task failed: ${data.task.id}`, data.error);
+    
+    return results.sort((a, b) => 
+      new Date(b.metadata.startTime).getTime() - new Date(a.metadata.startTime).getTime()
+    );
   }
 }

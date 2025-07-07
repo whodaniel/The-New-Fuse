@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import ui_1 from '../../shared/components/ui.js';
+import ui_1 from '../../shared/components/ui';
 import icons_material_1 from '@mui/icons-material';
 const VideoChat = () => {
     const videoRef = (0, react_1.useRef)(null);

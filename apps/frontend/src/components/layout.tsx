@@ -4,7 +4,7 @@ exports.viewport = exports.metadata = void 0;
 exports.default = RootLayout;
 require("./globals.css");
 import google_1 from 'next/font/google';
-import LifeSaverToken_1 from '../components/ui/LifeSaverToken.js';
+import LifeSaverToken_1 from '../components/ui/LifeSaverToken';
 const inter = (0, google_1.Inter)({
     subsets: ['latin'],
     display: 'swap',

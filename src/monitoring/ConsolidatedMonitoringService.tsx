@@ -82,7 +82,7 @@ export class ConsolidatedMonitoringService implements OnModuleInit {
           timestamp: new Date().toISOString() 
         } 
       };
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Health check failed', error);
       return { 
         healthy: false, 

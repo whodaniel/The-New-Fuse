@@ -1,22 +1,22 @@
 // Core UI Components
-export * from './core.js';
+export * from './core';
 
 // Feature Components
-export * from './features.js';
+export * from './features';
 
 // Shared Components
-export * from './shared/ThemeToggle.js';
+export * from './shared/ThemeToggle';
 
 // Providers
-export * from './providers.js';
+export * from './providers';
 
 // Layout Components
-export * from './layout.tsx';
+export * from './layout';
 
 // Import renamed components
-export { default as MainLayout } from './layout/MainLayout.jsx.js';
-export { Card } from './ui-components/src/core/card.jsx.js';
-export { WorkflowControls } from './ui-components/src/features/workflow/components/WorkflowControls.jsx.js';
-export { WorkflowVisualizer } from './ui-components/src/features/workflow/components/WorkflowVisualizer.jsx.js';
+export { default as MainLayout } from './layout/MainLayout.jsx';
+export { Card } from './ui-components/src/core/card.jsx';
+export { WorkflowControls } from './ui-components/src/features/workflow/components/WorkflowControls.jsx';
+export { WorkflowVisualizer } from './ui-components/src/features/workflow/components/WorkflowVisualizer.jsx';
 
 //# sourceMappingURL=index.js.map

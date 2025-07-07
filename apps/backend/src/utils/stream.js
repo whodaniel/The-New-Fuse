@@ -1,4 +1,8 @@
-export class StreamResponse {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.StreamResponse = void 0;
+class StreamResponse {
+    res;
     constructor(res) {
         this.res = res;
         this.res.setHeader('Content-Type', 'text/plain');
@@ -11,3 +15,4 @@ export class StreamResponse {
         this.res.end();
     }
 }
+exports.StreamResponse = StreamResponse;

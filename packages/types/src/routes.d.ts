@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import { DataMap } from './common-types.tsx';
+import { DataMap } from './common-types';
 export interface RouteProps {
     Component: ComponentType<unknown>;
 }

@@ -17,7 +17,12 @@
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true
-    }
+    },
+    "project": [
+      "./tsconfig.json",
+      "./apps/*/tsconfig.json",
+      "./packages/*/tsconfig.json"
+    ]
   },
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",

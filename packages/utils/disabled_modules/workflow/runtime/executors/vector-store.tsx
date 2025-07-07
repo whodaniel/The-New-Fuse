@@ -1,7 +1,7 @@
 
 export {}
 exports.VectorStoreNodeExecutor = void 0;
-import types_1 from '../types.js';
+import types_1 from '../types';
 class VectorStoreNodeExecutor {
     constructor() {
         this.stores = new Map();

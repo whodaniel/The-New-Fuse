@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AgentCapability, AgentRole, AgentType } from './agent.js';
+import { AgentCapability, AgentRole, AgentType } from './agent';
 
 export const agentCardSchema = z.object({
   id: z.string(),

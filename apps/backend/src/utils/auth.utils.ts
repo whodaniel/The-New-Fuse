@@ -38,13 +38,13 @@ export async function validateUser(email: string, password: string, prisma: Pris
     return null;
   }
   
-  const isPasswordValid = await comparePasswords(password, user.password);
+  const isPasswordValid = await comparePasswords(password, user.password || '');
   
   if (!isPasswordValid) {
     return null;
   }
   
   // Don't return the password
-  const { password: _, ...result } = user;
+  const { password: _password, ...result } = user;
   return result;
 }

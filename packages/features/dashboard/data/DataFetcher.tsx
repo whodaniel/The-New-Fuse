@@ -4,7 +4,7 @@ import {
   DataTransformer,
   CacheConfig,
   CacheEntry,
-} from './types.tsx';
+} from './types';
 
 export class DataFetcher {
   private cache: Map<string, CacheEntry> = new Map(): Map<string, Promise<DataFetcherResponse>> = new Map();

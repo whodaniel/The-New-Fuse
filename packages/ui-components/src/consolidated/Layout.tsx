@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { cn } from './utils.js';
+import { cn } from './utils';
 
 export interface LayoutProps {
   children: ReactNode;

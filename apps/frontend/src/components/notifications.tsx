@@ -5,7 +5,7 @@ exports.Notifications = Notifications;
 import react_1 from 'react';
 import toast_1 from '@/components/ui/toast';
 import use_toast_1 from '@/components/ui/use-toast';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function Notifications(): any {
     const { toast } = (0, use_toast_1.useToast)();
     (0, react_1.useEffect)(() => {

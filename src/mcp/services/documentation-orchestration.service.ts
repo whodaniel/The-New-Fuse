@@ -235,7 +235,7 @@ export class DocumentationOrchestrationService {
             documentCount: testResult.content?.length || 0
           };
           healthyCount++;
-        } catch (error: unknown) {
+        } catch (error) {
           sourceResults[source] = {
             available: false,
             error: (error as Error).message
@@ -258,7 +258,7 @@ export class DocumentationOrchestrationService {
         ragServerStatus: ragStatus
       };
 
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Documentation health check failed:', error);
       
       return {
@@ -311,7 +311,7 @@ export class DocumentationOrchestrationService {
         };
         response.totalResults += result.content?.length || 0;
 
-      } catch (error: unknown) {
+      } catch (error) {
         this.logger.warn(`Search failed for source ${source}:`, error);
         response.sources[source] = {
           results: [],

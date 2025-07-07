@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { ErrorTrackingService } from '../error-(tracking as any).service.js';
-import { SecurityLoggingService } from '../security-(logging as any).service.js';
-import { PerformanceMonitoringService } from '../performance-(monitoring as any).service.js';
-import { SystemHealthService } from '../system-(health as any).service.js';
+import { ErrorTrackingService } from '../error-(tracking as any).service';
+import { SecurityLoggingService } from '../security-(logging as any).service';
+import { PerformanceMonitoringService } from '../performance-(monitoring as any).service';
+import { SystemHealthService } from '../system-(health as any).service';
 
 export interface DashboardMetrics {
   errors: {

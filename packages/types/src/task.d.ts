@@ -1,4 +1,4 @@
-import { TaskPriority } from './core/enums.js';
+import { TaskPriority } from './core/enums';
 export declare const TaskType: {
     readonly ANALYSIS: "ANALYSIS";
     readonly IMPLEMENTATION: "IMPLEMENTATION";

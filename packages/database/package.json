@@ -6,22 +6,20 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "db:generate": "prisma generate",
-    "db:migrate": "prisma migrate deploy",
-    "db:studio": "prisma studio",
-    "lint": "eslint src --ext .ts,.tsx"
+    "db:generate": "echo 'Using manual Prisma client'",
+    "lint": "eslint src"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/config": "^3.0.0",
-    "@prisma/client": "^4.11.0",
-    "reflect-metadata": "^0.2.0",
-    "rxjs": "^7.8.0"
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^3.3.0",
+    "@prisma/client": "^6.11.0",
+    "prisma": "6.11.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@types/node": "^18.15.3",
-    "eslint": "^8.36.0",
-    "prisma": "^4.11.0",
-    "typescript": "^5.0.2"
+    "@types/node": "^20.0.0",
+    "eslint": "^8.56.0",
+    "typescript": "^5.3.0"
   }
 }

@@ -1,12 +1,17 @@
-import { Redis } from 'ioredis';
-import { Logger } from '@nestjs/common';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ioredis_1 = require("ioredis");
+const common_1 = require("@nestjs/common");
 class AgentCommunicationTester {
+    logger = new common_1.Logger(AgentCommunicationTester.name);
+    redis;
+    pubClient;
+    subClient;
     constructor() {
-        this.logger = new Logger(AgentCommunicationTester.name);
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        this.redis = new Redis(redisUrl);
-        this.pubClient = new Redis(redisUrl);
-        this.subClient = new Redis(redisUrl);
+        this.redis = new ioredis_1.Redis(redisUrl);
+        this.pubClient = new ioredis_1.Redis(redisUrl);
+        this.subClient = new ioredis_1.Redis(redisUrl);
     }
     async initialize() {
         try {

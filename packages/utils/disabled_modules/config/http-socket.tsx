@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod): any {
 };
 export {}
 const chalk_1 = __importDefault(require("chalk"));
-import error_1 from '../error.js';
-import telemetry_1 from '../../../../models/telemetry.js';
+import error_1 from '../error';
+import telemetry_1 from '../../../../models/telemetry';
 /**
  * HTTP Interface plugin for Aibitat to emulate a websocket interface in the agent
  * framework so we dont have to modify the interface for passing messages and responses

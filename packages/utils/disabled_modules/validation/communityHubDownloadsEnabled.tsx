@@ -1,8 +1,8 @@
 
 export {}
 exports.communityHubDownloadsEnabled = exports.communityHubItem = void 0;
-import communityHub_1 from '../../models/communityHub.js';
-import http_1 from '../http.js';
+import communityHub_1 from '../../models/communityHub';
+import http_1 from '../http';
 /**
  * ### Must be called after `communityHubItem`
  * Checks if community hub bundle downloads are enabled. The reason this functionality is disabled

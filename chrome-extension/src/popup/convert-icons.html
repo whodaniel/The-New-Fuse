@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Convert SVG to PNG</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .icon-container {
+      margin-bottom: 20px;
+    }
+    canvas {
+      border: 1px solid #ccc;
+      margin-right: 10px;
+    }
+    button {
+      padding: 10px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+  </style>
+</head>
+<body>
+  <h1>Convert SVG to PNG</h1>
+  
+  <div class="icon-container">
+    <h2>16x16 Icon</h2>
+    <img id="svg16" src="icons/icon16.svg" width="16" height="16">
+    <canvas id="canvas16" width="16" height="16"></canvas>
+    <div>
+      <button onclick="convertToPNG(16)">Convert to PNG</button>
+      <a id="download16" download="icon16.png">Download PNG</a>
+    </div>
+  </div>
+  
+  <div class="icon-container">
+    <h2>48x48 Icon</h2>
+    <img id="svg48" src="icons/icon48.svg" width="48" height="48">
+    <canvas id="canvas48" width="48" height="48"></canvas>
+    <div>
+      <button onclick="convertToPNG(48)">Convert to PNG</button>
+      <a id="download48" download="icon48.png">Download PNG</a>
+    </div>
+  </div>
+  
+  <div class="icon-container">
+    <h2>128x128 Icon</h2>
+    <img id="svg128" src="icons/icon128.svg" width="128" height="128">
+    <canvas id="canvas128" width="128" height="128"></canvas>
+    <div>
+      <button onclick="convertToPNG(128)">Convert to PNG</button>
+      <a id="download128" download="icon128.png">Download PNG</a>
+    </div>
+  </div>
+  
+  <script>
+    function convertToPNG(size) {
+      const svg = document.getElementById(`svg${size}`);
+      const canvas = document.getElementById(`canvas${size}`);
+      const ctx = canvas.getContext('2d');
+      
+      // Create a new image with the SVG as source
+      const img = new Image();
+      img.onload = function() {
+        // Draw the image on the canvas
+        ctx.drawImage(img, 0, 0, size, size);
+        
+        // Create a download link
+        const downloadLink = document.getElementById(`download${size}`);
+        downloadLink.href = canvas.toDataURL('image/png');
+        downloadLink.style.display = 'inline-block';
+      };
+      
+      // Set the source of the image to the SVG
+      img.src = `icons/icon${size}.svg`;
+    }
+  </script>
+</body>
+</html>

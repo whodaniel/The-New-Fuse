@@ -2,7 +2,7 @@ export {}
 exports.WorkflowStorage = void 0;
 import sqlite3_1 from 'sqlite3';
 import util_1 from 'util';
-import schema_1 from './schema.js';
+import schema_1 from './schema';
 class WorkflowStorage {
     constructor(dbPath) {
         this.initialized = false;

@@ -8,7 +8,7 @@ import {
   useColorMode,
 } from '@chakra-ui/react';
 import { ThemeProvider as ChakraThemeProvider } from '@chakra-ui/react';
-import { ThemeCustomizer } from '../components/ThemeCustomizer.tsx';
+import { ThemeCustomizer } from '../components/ThemeCustomizer';
 
 export function Settings() {
   const { colorMode } = useColorMode();

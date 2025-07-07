@@ -1,71 +1,16 @@
-{
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "name": "🔧 Attach to Chrome (Port 9222)",
-            "type": "chrome",
-            "request": "attach",
-            "port": 9222,
-            "webRoot": "${workspaceFolder}",
-            "sourceMaps": true,
-            "trace": true,
-            "smartStep": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },       
-        
+--- a/src/vscode-extension/src/utilities/getUri.ts
++++ b/src/vscode-extension/src/utilities/getUri.ts
+@@ -1,4 +1,5 @@
+ import * as vscode from 'vscode';
++import * as path from 'path';
+ 
+ /**
+  * A helper function that returns a URI for a file/folder in the webview-ui/build folder.
+@@ -29,5 +30,5 @@
+  * @returns A URI to the resource.
+  */
+ export function getUri(webview: vscode.Webview, extensionUri: vscode.Uri, pathList: string[]) {
+-    return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
++    return webview.asWebviewUri(vscode.Uri.file(path.join(extensionUri.fsPath, ...pathList)));
+ }
 
-        {
-            "name": "Attach to Kubernetes Pod (NodeJS)",
-            "type": "node",
-            "request": "attach",
-            "port": 9229,
-            "localRoot": "${workspaceFolder}",
-            "remoteRoot": "Path to the Remote Directory Containing the Program"
-        },
-        {
-            "name": "🚀 Launch Chrome with App",
-            "type": "chrome",
-            "request": "launch",
-            "url": "http://localhost:3000",
-            "webRoot": "${workspaceFolder}",
-            "runtimeArgs": [
-                "--remote-debugging-port=9222",
-                "--disable-web-security",
-                "--user-data-dir=${workspaceFolder}/.vscode/chrome-debug"
-            ],
-            "sourceMaps": true,
-            "smartStep": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ]
-        },
-        {
-            "name": "Attach to Edge",
-            "port": 9222,
-            "request": "attach",
-            "type": "msedge",
-            "outFiles": [
-                "${workspaceFolder}/dist/apps/api/**/*.js"
-            ],
-            "sourceMaps": true,
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "internalConsoleOptions": "neverOpen",
-            "preLaunchTask": "npm: build -w api" // Example: build the api before launching
-        },
-        {
-            "name": "Docker Node.js Launch",
-            "type": "docker",
-            "request": "launch",
-            "preLaunchTask": "docker-run: debug",
-            "platform": "node",
-            "node": {
-                "package": "${workspaceFolder}/apps/api/package.json",
-                "localRoot": "${workspaceFolder}/apps/api"
-            }
-        }
-    ]
-}

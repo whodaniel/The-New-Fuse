@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Query, UseGuards } from '@nestjs/common';
 import { AgentLLMService, MemorySystem, PromptService } from '@the-new-fuse/core';
 import { MemoryContent, MemoryQuery } from '@the-new-fuse/core';
-import { AuthGuard } from '../guards/auth.guard.js';
+import { AuthGuard } from '../guards/auth.guard';
 
 @Controller('neural')
 @UseGuards(AuthGuard)
@@ -20,7 +20,7 @@ export class NeuralController {
         success: true,
         data: results,
       };
-    } catch (error: unknown) { // Explicitly type error as unknown
+    } catch (error) { // Explicitly type error as unknown
       return {
         success: false,
         // Check if error is an instance of Error before accessing message
@@ -37,7 +37,7 @@ export class NeuralController {
         success: true,
         message: 'Memory stored successfully',
       };
-    } catch (error: unknown) { // Explicitly type error as unknown
+    } catch (error) { // Explicitly type error as unknown
       return {
         success: false,
         // Check if error is an instance of Error before accessing message
@@ -57,7 +57,7 @@ export class NeuralController {
         await this.memorySystem.add(content);
       }
       return { success: true };
-    } catch (error: unknown) { // Explicitly type error as unknown
+    } catch (error) { // Explicitly type error as unknown
       return {
         success: false,
         // Check if error is an instance of Error before accessing message
@@ -130,7 +130,7 @@ export class NeuralController {
         success: true,
         data: renderedPrompt,
       };
-    } catch (error: unknown) { // Explicitly type error as unknown
+    } catch (error) { // Explicitly type error as unknown
       return {
         success: false,
         // Check if error is an instance of Error before accessing message

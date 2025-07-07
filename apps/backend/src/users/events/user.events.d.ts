@@ -1,4 +1,4 @@
-import { BaseEvent } from '../../events/event-bus.service.js';
+import { BaseEvent } from '../../events/event-bus.service';
 export declare class UserCreatedEvent extends BaseEvent {
     readonly user: any;
     constructor(user: any);

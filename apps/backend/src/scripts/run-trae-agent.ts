@@ -1,6 +1,6 @@
-import { TraeAgent } from '../services/agent/trae-agent.js';
+import { TraeAgent } from '../services/agent/trae-agent';
 
-async function main(): any {
+async function main(): Promise<void> {
   const agent = new TraeAgent();
 
   process.on('SIGINT', async () => {
@@ -10,4 +10,7 @@ async function main(): any {
   });
 }
 
-main().catch(console.error);
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

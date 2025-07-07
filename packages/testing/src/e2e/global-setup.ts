@@ -1,8 +1,8 @@
 import { chromium, FullConfig } from '@playwright/test';
-import { config } from './config/test-config.js';
+import { config } from './config/test-config';
 import { TestDataManager } from './utils/test-data';
 
-async function globalSetup(fullConfig: FullConfig): Promise<void> {
+async function globalSetup(_fullConfig: FullConfig): Promise<void> {
   // Set up browser
   const browser = await chromium.launch();
   const page = await browser.newPage();
@@ -30,8 +30,7 @@ async function globalSetup(fullConfig: FullConfig): Promise<void> {
     process.env.TEST_USER_PASSWORD = testUser.password;
 
   } catch (error) {
-    console.error('Failed to set up test environment:', error);
-    throw error;
+    throw new Error(`Failed to set up test environment: ${error}`);
   } finally {
     await browser.close();
   }

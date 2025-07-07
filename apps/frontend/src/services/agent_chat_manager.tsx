@@ -1,5 +1,5 @@
 import { sessionManager, Session } from '@your-org/security';
-import { ChatService } from './chat.service.js';
+import { ChatService } from './chat.service';
 
 interface ChatSession {
   id: string;

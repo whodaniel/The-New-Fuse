@@ -15,7 +15,7 @@ import {
   useColorModeValue,
 } from '@chakra-ui/react';
 import { Link as RouterLink, Navigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth.tsx';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 interface LoginCredentials {
   email: string;
@@ -24,7 +24,7 @@ interface LoginCredentials {
 }
 
 export function Login() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);

@@ -1,6 +1,6 @@
 export {}
 exports.ProgressTracker = void 0;
-import logging_config_1 from './logging_config.js';
+import logging_config_1 from './logging_config';
 class ProgressTracker {
     constructor() {
         this.tasks = {};

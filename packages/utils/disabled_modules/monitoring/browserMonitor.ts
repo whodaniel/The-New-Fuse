@@ -1,7 +1,7 @@
 
 export {}
 exports.browserMonitor = void 0;
-import eventBus_1 from './eventBus.js';
+import eventBus_1 from './eventBus';
 class BrowserMonitor {
     constructor() {
         this.metricsInterval = null;

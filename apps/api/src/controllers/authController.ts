@@ -14,7 +14,7 @@ class AuthController {
 
       // TODO: Add more robust validation (e.g., email format, password strength)
 
-      const existingUserByEmail = await userService.findUserByEmail(email);
+      const existingUserByEmail = await userService.findByEmail(email);
       if (existingUserByEmail) {
         res.status(409).json({ success: false, message: 'User with this email already exists' });
         return;

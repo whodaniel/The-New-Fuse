@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../Card.tsx';
-import { Button } from '../Button.tsx';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../Card';
+import { Button } from '../Button';
 
 // Basic Card
 export const BasicCard = () => (

@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useFeatureSuggestions } from './useFeatureSuggestions.tsx';
-import { SuggestionStatus, SuggestionPriority } from '../types.js';
+import { useFeatureSuggestions } from './useFeatureSuggestions';
+import { SuggestionStatus, SuggestionPriority } from '../types';
 
 // Mock suggestion service
 const mockSuggestionService = {

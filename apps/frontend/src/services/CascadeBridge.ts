@@ -1,5 +1,5 @@
-import { WebSocketService } from './websocket.js';
-import { LoggingService } from './logging.js';
+import { WebSocketService } from './websocket';
+import { LoggingService } from './logging';
 export class CascadeBridge extends EventEmitter {
     constructor() {
         super();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Dialog } from '../Dialog.js';
-import { Button } from '../../Button.js';
+import { Dialog } from '../Dialog';
+import { Button } from '../../Button';
 
 describe('Dialog Snapshots', () => {
   it('renders basic dialog correctly', () => {

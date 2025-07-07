@@ -1,0 +1,50 @@
+/* chrome-extension/src/floatingPanel/floatingPanel.css */
+
+/* 
+  Global styles for the floating panel iframe content.
+  Most component-specific styles will be handled by MUI and JSS within the React app.
+  This file is for very basic resets or global overrides if necessary.
+*/
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent scrollbars on the iframe body itself */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+               Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+               sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: transparent; /* Ensure iframe body is transparent if Paper has rounded corners */
+}
+
+#floating-panel-react-root {
+  width: 100%;
+  height: 100%;
+  display: flex; /* Allow content to fill the root */
+  flex-direction: column; /* Stack content vertically */
+}
+
+/* Example: Custom scrollbar styling for content within the panel if needed */
+/*
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+*/

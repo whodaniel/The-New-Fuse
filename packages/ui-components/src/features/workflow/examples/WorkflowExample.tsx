@@ -1,8 +1,8 @@
 import React from 'react';
-import { WorkflowBuilder } from '../services/WorkflowBuilder.tsx';
-import { WorkflowEditor } from '../components/WorkflowEditor.tsx';
-import WorkflowControlPanel from '../components/WorkflowControlPanel.tsx';
-import { WorkflowDefinition } from '../types.tsx';
+import { WorkflowBuilder } from '../services/WorkflowBuilder';
+import { WorkflowEditor } from '../components/WorkflowEditor';
+import WorkflowControlPanel from '../components/WorkflowControlPanel';
+import { WorkflowDefinition, WorkflowStatus } from '../types';
 
 const WorkflowExample: React.FC = () => {
   // Example Workflow Definition
@@ -103,16 +103,19 @@ const WorkflowExample: React.FC = () => {
 
   // Mock metrics and status for control panel example
   const mockMetrics = {
+    totalSteps: 6,
+    completedSteps: 1,
+    failedSteps: 0,
     stepMetrics: {
-      'step-1': { id: 'step-1', status: 'completed', attempts: 1 },
-      'step-2': { id: 'step-2', status: 'running', attempts: 1 },
-      'step-conditional': { id: 'step-conditional', status: 'pending', attempts: 0 },
-      'step-3a': { id: 'step-3a', status: 'pending', attempts: 0 },
-      'step-3b': { id: 'step-3b', status: 'pending', attempts: 0 },
-      'step-final': { id: 'step-final', status: 'pending', attempts: 0 },
+      'step-1': { id: 'step-1', status: 'completed' as const, attempts: 1 },
+      'step-2': { id: 'step-2', status: 'running' as const, attempts: 1 },
+      'step-conditional': { id: 'step-conditional', status: 'pending' as const, attempts: 0 },
+      'step-3a': { id: 'step-3a', status: 'pending' as const, attempts: 0 },
+      'step-3b': { id: 'step-3b', status: 'pending' as const, attempts: 0 },
+      'step-final': { id: 'step-final', status: 'pending' as const, attempts: 0 },
     }
   };
-  const mockStatus = 'running'; // or 'paused', 'completed', 'failed'
+  const mockStatus = WorkflowStatus.RUNNING;
 
   return (
     <div className="p-4 space-y-4">

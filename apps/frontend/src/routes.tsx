@@ -1,8 +1,8 @@
 import React, { Suspense, lazy } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { useAuth } from './providers/AuthProvider.tsx';
-import MainLayout from './components/layout/MainLayout.tsx';
-import { HomePage } from './pages/HomePage.tsx';
+import { useAuth } from './providers/AuthProvider';
+import MainLayout from './components/layout/MainLayout';
+import { HomePage } from './pages/HomePage';
 import { MemoryInspector } from '@the-new-fuse/ui-components/src/features/memory-inspector/components/MemoryInspector';
 import { MetricsDashboard } from '@the-new-fuse/ui-components/src/features/metrics-dashboard/components/MetricsDashboard';
 

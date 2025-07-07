@@ -1,27 +1,23 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.agentCardSchema = void 0;
-const zod_1 = require("zod");
-const agent_js_1 = require("./agent.js");
-exports.agentCardSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    name: zod_1.z.string(),
-    version: zod_1.z.string(),
-    description: zod_1.z.string(),
-    capabilities: zod_1.z.array(zod_1.z.nativeEnum(agent_js_1.AgentCapability)),
-    role: zod_1.z.nativeEnum(agent_js_1.AgentRole),
-    type: zod_1.z.nativeEnum(agent_js_1.AgentType),
-    endpoints: zod_1.z.object({
-        discovery: zod_1.z.string().url(),
-        messaging: zod_1.z.string().url(),
-        metrics: zod_1.z.string().url().optional(),
+import { z } from 'zod';
+import { AgentCapability, AgentRole, AgentType } from './agent';
+export const agentCardSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    version: z.string(),
+    description: z.string(),
+    capabilities: z.array(z.nativeEnum(AgentCapability)),
+    role: z.nativeEnum(AgentRole),
+    type: z.nativeEnum(AgentType),
+    endpoints: z.object({
+        discovery: z.string().url(),
+        messaging: z.string().url(),
+        metrics: z.string().url().optional(),
     }),
-    protocols: zod_1.z.array(zod_1.z.string()),
-    security: zod_1.z.object({
-        authentication: zod_1.z.enum(['none', 'api_key', 'oauth2', 'jwt']),
-        encryption: zod_1.z.boolean(),
-        rateLimit: zod_1.z.number().optional(),
+    protocols: z.array(z.string()),
+    security: z.object({
+        authentication: z.enum(['none', 'api_key', 'oauth2', 'jwt']),
+        encryption: z.boolean(),
+        rateLimit: z.number().optional(),
     }),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+    metadata: z.record(z.unknown()).optional(),
 });
-//# sourceMappingURL=agentCard.js.map

@@ -1,4 +1,4 @@
-export * from './Sidebar.tsx';
-export * from './SidebarItem.tsx';
-export * from './types.js';
+export * from './Sidebar';
+export * from './SidebarItem';
+export * from './types';
 //# sourceMappingURL=index.js.map

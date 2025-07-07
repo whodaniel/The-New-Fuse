@@ -26,6 +26,8 @@ export interface NodeTemplate {
   label: string;
   description: string;
   icon: React.ReactNode;
+  category: string;
+  config?: Record<string, any>;
   defaultConfiguration?: Record<string, any>;
   requiredConfig?: string[];
 }
@@ -33,6 +35,7 @@ export interface NodeTemplate {
 export interface Category {
   id: string;
   name: string;
+  description?: string;
   nodes: NodeTemplate[];
 }
 

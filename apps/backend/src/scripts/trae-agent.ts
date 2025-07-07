@@ -274,7 +274,7 @@ class TraeAgent {
   }
 }
 
-async function main(): any {
+async function main(): Promise<void> {
   const traeAgent = new TraeAgent();
   try {
     await traeAgent.initialize();
@@ -295,4 +295,5 @@ if (require.main === module) {
   main().catch(console.error);
 }
 
-export { TraeAgent, AgentMessage };
+export { TraeAgent };
+export type { AgentMessage };

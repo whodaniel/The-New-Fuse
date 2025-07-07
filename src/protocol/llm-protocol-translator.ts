@@ -454,7 +454,7 @@ containing a map of key fields to their descriptions.`;
       try {
         const messageSchema = await this.translator.translate({}, messagePrompt);
         newSchema.messageFormat = messageSchema;
-      } catch (error: unknown) {
+      } catch (error) {
         this.logger.error(`Failed to create message schema for ${protocolName}`);
       }
     }

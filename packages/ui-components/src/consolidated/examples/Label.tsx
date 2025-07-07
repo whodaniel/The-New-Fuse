@@ -1,6 +1,6 @@
 import React from 'react';
-import { Label } from '../Label.tsx';
-import { Input } from '../Input.js';
+import { Label } from '../Label';
+import { Input } from '../../core/input/Input';
 
 // Basic Label
 export const BasicLabel = () => (

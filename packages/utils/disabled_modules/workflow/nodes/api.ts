@@ -2,7 +2,7 @@
 export {}
 exports.createAPINode = exports.APINode = void 0;
 import jsx_runtime_1 from 'react/jsx-runtime';
-import registry_1 from '../../providers/registry.js';
+import registry_1 from '../../providers/registry';
 const APINode = ({ data }): any => {
     const providers = registry_1.providerRegistry.getAllProviders();
     return ((0, jsx_runtime_1.jsxs)("div", { className: "api-node", children: [(0, jsx_runtime_1.jsxs)("div", { className: "node-header", children: [(0, jsx_runtime_1.jsx)("h3", { children: "API Call" }), (0, jsx_runtime_1.jsx)("select", { value: data.provider, onChange: (e) => {

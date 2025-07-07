@@ -1,1 +1,5 @@
-export type { Todo } from '../../packages/types/src/types';
+export interface MCPServerConfig {
+  port: number;
+  host: string;
+  // Add other relevant configuration properties here
+}

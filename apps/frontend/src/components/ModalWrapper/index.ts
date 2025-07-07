@@ -1,2 +1,2 @@
-export { ModalWrapper } from './ModalWrapper.tsx';
+export { ModalWrapper } from './ModalWrapper';
 //# sourceMappingURL=index.js.map

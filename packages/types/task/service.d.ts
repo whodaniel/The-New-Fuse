@@ -1,6 +1,6 @@
-import { UUID } from '../core.js';
-import { Task } from './model.js';
-import { TaskCreateDTO, TaskUpdateDTO } from './dto.js';
+import { UUID } from '../core';
+import { Task } from './model';
+import { TaskCreateDTO, TaskUpdateDTO } from './dto';
 /**
  * Interface for Task service operations
  */

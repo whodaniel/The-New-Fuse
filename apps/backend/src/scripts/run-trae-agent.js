@@ -1,9 +1,14 @@
-import { TraeAgent } from '../services/agent/trae-agent.js';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const trae_agent_1 = require("../services/agent/trae-agent");
 async function main() {
-    const agent = new TraeAgent();
+    const agent = new trae_agent_1.TraeAgent();
     process.on('SIGINT', async () => {
         await agent.cleanup();
         process.exit(0);
     });
 }
-main().catch(console.error);
+main().catch((error) => {
+    console.error(error);
+    process.exit(1);
+});

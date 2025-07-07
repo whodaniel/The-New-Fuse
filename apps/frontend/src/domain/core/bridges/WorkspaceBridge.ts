@@ -1,6 +1,6 @@
-import { EventBus } from '../eventBus.js';
-import { StateManager } from '../stateManager.js';
-import { LoggingService } from '../../../services/logging.js';
+import { EventBus } from '../eventBus';
+import { StateManager } from '../stateManager';
+import { LoggingService } from '../../../services/logging';
 export class WorkspaceBridge {
     constructor() {
         this.communicationManager = CommunicationManager.getInstance();

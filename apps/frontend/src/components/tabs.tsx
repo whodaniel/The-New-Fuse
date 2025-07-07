@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabsContent = exports.TabsTrigger = exports.TabsList = exports.Tabs = void 0;
 import React from 'react';
 import TabsPrimitive from '@radix-ui/react-tabs';
-import utils_1 from '../../lib/utils.js';
+import utils_1 from '../../lib/utils';
 const Tabs = TabsPrimitive.Root;
 exports.Tabs = Tabs;
 const TabsList = React.forwardRef((_a, ref) => {

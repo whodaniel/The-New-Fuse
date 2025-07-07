@@ -1,3 +1,3 @@
-export * from './Sidebar.js';
-export * from './BaseLayout.js';
-export * from './BaseLayout/types.js';
+export * from './Sidebar';
+export * from './BaseLayout';
+export * from './BaseLayout/types';

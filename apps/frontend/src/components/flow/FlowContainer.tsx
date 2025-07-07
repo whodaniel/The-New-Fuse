@@ -4,11 +4,11 @@ exports.FlowContainer = void 0;
 import react_1 from 'react';
 import react_router_dom_1 from 'react-router-dom';
 import lucide_react_1 from 'lucide-react';
-import FlowPage_1 from './FlowPage.tsx';
-import NodeDetails_1 from './NodeDetails.tsx';
-import useFlowRouter_1 from '../../hooks/useFlowRouter.tsx';
-import useFlowMemory_1 from '../../hooks/useFlowMemory.js';
-import VectorMemoryContext_1 from '../../contexts/VectorMemoryContext.js';
+import FlowPage_1 from './FlowPage';
+import NodeDetails_1 from './NodeDetails';
+import useFlowRouter_1 from '../../hooks/useFlowRouter';
+import useFlowMemory_1 from '../../hooks/useFlowMemory';
+import VectorMemoryContext_1 from '../../contexts/VectorMemoryContext';
 import core_1 from '@/components/core';
 const FlowContainer = ({ initialNodes = [], initialEdges = [], onSave, }) => {
     const [nodes, setNodes] = (0, react_1.useState)(initialNodes);

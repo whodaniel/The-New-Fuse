@@ -1,4 +1,4 @@
-import { RedisConfig } from '../../../packages/core/src/config/redis_config.js';
+import { RedisConfig } from '../../../packages/core/src/config/redis_config';
 
 export const redisConfig: RedisConfig = {
     host: 'localhost',

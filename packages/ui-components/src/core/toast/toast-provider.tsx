@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { Toast } from './index.tsx';
-import { ToastProps, ToasterToast } from '../types.tsx';
+import { Toast } from './index';
+import { ToastProps, ToasterToast } from '../types';
 
 // Define toast context
-interface ToastContextType {
+export interface ToastContextType {
   toasts: ToasterToast[];
   toast: (props: Omit<ToastProps, 'id'>) => string;
   dismiss: (id: string) => void;

@@ -1,6 +1,6 @@
 import { ReactNode, HTMLAttributes, ButtonHTMLAttributes, InputHTMLAttributes, SelectHTMLAttributes, LabelHTMLAttributes } from 'react';
 import { VariantProps } from 'class-variance-authority';
-import { buttonVariants } from './Button.tsx';
+import { buttonVariants } from './Button';
 
 // Base Props interface that all component props extend
 export interface BaseProps {
@@ -20,7 +20,7 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>, Va
 }
 
 // Card Types
-export interface CardProps extends HTMLAttributes<HTMLDivElement>, BaseProps {
+export interface CardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'>, BaseProps {
   title?: ReactNode;
   footer?: ReactNode;
   header?: ReactNode;

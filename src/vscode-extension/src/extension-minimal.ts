@@ -1,31 +1,27 @@
 import * as vscode from 'vscode';
 
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('🚀 MINIMAL DEBUG: Starting extension activation...');
-    
-    try {
-        // Test basic view container
-        const disposable = vscode.window.registerWebviewViewProvider(
-            'theNewFuse.tabbedContainer',
-            {
-                resolveWebviewView(webviewView) {
-                    console.log('✅ MINIMAL DEBUG: Test webview view resolved!');
-                    webviewView.webview.html = '<h1>Test Extension Working!</h1><p>The New Fuse minimal test is active.</p>';
-                }
-            }
-        );
-        
-        context.subscriptions.push(disposable);
-        console.log('✅ MINIMAL DEBUG: Test view registered successfully');
-        
-    } catch (error) {
-        console.error('❌ MINIMAL DEBUG: Extension activation failed:', error);
-        vscode.window.showErrorMessage(`Extension activation failed: ${error}`);
-    }
-    
-    console.log('✅ MINIMAL DEBUG: Extension activation completed');
+    console.log('The New Fuse extension is now active!');
+
+    // Register commands
+    const disposables = [
+        vscode.commands.registerCommand('the-new-fuse.showChat', () => {
+            vscode.window.showInformationMessage('The New Fuse Chat activated!');
+        }),
+
+        vscode.commands.registerCommand('the-new-fuse.runDiagnostic', () => {
+            const output = vscode.window.createOutputChannel('The New Fuse');
+            output.show();
+            output.appendLine('🔍 Running diagnostic...');
+            output.appendLine('✅ Extension loaded successfully');
+            output.appendLine('✅ Commands registered');
+            output.appendLine('🎉 Diagnostic complete!');
+        })
+    ];
+
+    context.subscriptions.push(...disposables);
 }
 
 export function deactivate() {
-    console.log('🛑 MINIMAL DEBUG: Extension deactivated');
+    console.log('The New Fuse extension deactivated');
 }

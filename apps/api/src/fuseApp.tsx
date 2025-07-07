@@ -46,7 +46,7 @@ app.post('/register', async (req: Request, res: Response) => {
     const passwordHash = await hash(password, 10);
     await pool.query('INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3)', [username, email, passwordHash]);
     res.status(201).send('Registration successful');
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
@@ -72,7 +72,7 @@ app.post('/login', async (req: Request, res: Response) => {
       req.session.cookie.maxAge = SESSION_LIFETIME;
     }
     res.status(200).send('Login successful');
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
@@ -120,7 +120,7 @@ app.post('/agents/new', async (req: Request, res: Response) => {
       [name, description, agent_type, language_model, custom_prompt, custom_parameters, req.session.user_id]
     );
     res.status(201).send('Agent created successfully');
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }
@@ -139,7 +139,7 @@ app.post('/pipelines/new', async (req: Request, res: Response) => {
       [name, description, input_type, output_type, steps, req.session.user_id]
     );
     res.status(201).send('Pipeline created successfully');
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(error instanceof Error ? error.message : 'Unknown error');
     res.status(500).send('Internal server error');
   }

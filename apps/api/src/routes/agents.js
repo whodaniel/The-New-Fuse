@@ -1,9 +1,12 @@
-import { Router } from 'express';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.agentRouter = void 0;
+const express_1 = require("express");
 // Create a basic router with placeholder endpoints
 // This is a simplified version just to get the server running
-export const agentRouter = Router();
+exports.agentRouter = (0, express_1.Router)();
 // Simple GET endpoint returning placeholder data
-agentRouter.get('/', (req, res) => {
+exports.agentRouter.get('/', (req, res) => {
     res.json({
         success: true,
         message: 'Agents API is working',
@@ -14,7 +17,7 @@ agentRouter.get('/', (req, res) => {
     });
 });
 // Simple GET endpoint for individual agent
-agentRouter.get('/:id', (req, res) => {
+exports.agentRouter.get('/:id', (req, res) => {
     const { id } = req.params;
     res.json({
         success: true,
@@ -22,7 +25,7 @@ agentRouter.get('/:id', (req, res) => {
     });
 });
 // Simple POST endpoint for creating an agent
-agentRouter.post('/', (req, res) => {
+exports.agentRouter.post('/', (req, res) => {
     res.status(201).json({
         success: true,
         message: 'Agent created successfully',

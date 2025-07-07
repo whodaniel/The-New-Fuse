@@ -28,9 +28,9 @@ var __importDefault = (this && this.__importDefault) || function (mod): any {
 export {}
 exports.agentSkillsFromSystemSettings = exports.WORKSPACE_AGENT = exports.USER_AGENT = void 0;
 const AgentPlugins = __importStar(require("./aibitat/plugins/index"));
-import systemSettings_1 from '../../models/systemSettings.js';
-import http_1 from '../http.js';
-import ai_provider_1 from './aibitat/providers/ai-provider.js';
+import systemSettings_1 from '../../models/systemSettings';
+import http_1 from '../http';
+import ai_provider_1 from './aibitat/providers/ai-provider';
 const imported_1 = __importDefault(require("./imported"));
 const USER_AGENT = {
     name: USER',

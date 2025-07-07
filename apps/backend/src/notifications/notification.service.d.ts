@@ -1,7 +1,7 @@
-import { UsersService } from '../users/users.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { LoggingService } from '../services/logging.service.js';
-import { EmailService } from '../services/email.service.js';
+import { UsersService } from '../users/users.service';
+import { EventBus } from '../events/event-bus.service';
+import { LoggingService } from '../services/logging.service';
+import { EmailService } from '../services/email.service';
 export declare class NotificationService {
     private usersService;
     private eventBus;

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { FlowStatus } from './flow/index.js';
+import { FlowStatus } from './flow/index';
 
 // Re-export FlowStatus as WorkflowStatus for compatibility
 export const WorkflowStatus = FlowStatus;

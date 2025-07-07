@@ -1,7 +1,7 @@
-import AgentWebSearchSelection from './WebSearchSelection.js';
-import AgentSQLConnectorSelection from './SQLConnectorSelection.js';
-import GenericSkillPanel from './GenericSkillPanel.js';
-import DefaultSkillPanel from './DefaultSkillPanel.js';
+import AgentWebSearchSelection from './WebSearchSelection';
+import AgentSQLConnectorSelection from './SQLConnectorSelection';
+import GenericSkillPanel from './GenericSkillPanel';
+import DefaultSkillPanel from './DefaultSkillPanel';
 import {
   Brain,
   File,

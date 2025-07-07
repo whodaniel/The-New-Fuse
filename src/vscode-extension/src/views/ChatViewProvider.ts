@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { ChatService, ChatMessage, ChatSession } from '../services/features/ChatService';
 import { NotificationService } from '../services/core/NotificationService';
 
@@ -28,7 +29,7 @@ export class ChatViewProvider {
      */
     public getHtmlForChatPanel(webview: vscode.Webview, nonce: string): string {
         // Helper to get resource URIs, using the stored extensionUri
-        const getUri = (pathList: string[]) => webview.asWebviewUri(vscode.Uri.joinPath(this.extensionUri, ...pathList));
+        const getUri = (pathList: string[]) => webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionUri.fsPath, ...pathList)));
 
         // Example: If you have specific CSS for the chat panel
         // const chatPanelCss = getUri(['media', 'chat-panel.css']);

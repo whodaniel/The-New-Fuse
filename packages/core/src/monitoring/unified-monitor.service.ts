@@ -1,94 +1,67 @@
-import { Injectable  } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-/**
- * Unified monitoring service for tracking system metrics and events
- */
 @Injectable()
 export class UnifiedMonitorService {
-  private metrics: Map<string, any> = new Map();
-  
+  private metrics = new Map<string, any>();
+  private readonly logger = new Logger(UnifiedMonitorService.name);
+
   constructor() {
-    // Initialize default metrics
-    this.metrics.set('connections', 0);
-    this.metrics.set('messages', 0);
-    this.metrics.set('errors', 0);
-    this.metrics.set('latency', []);
+    this.initializeMetrics();
   }
-  
-  /**
-   * Increment a numeric metric
-   */
-  incrementMetric(name: string, value: number = 1): void {
-    const current = this.metrics.get(name) || 0;
-    this.metrics.set(name, current + value);
-  }
-  
-  /**
-   * Record a latency value
-   */
-  recordLatency(operation: string, timeMs: number): void {
-    const latencies = this.metrics.get('latency') || [];
-    latencies.push({ operation, timeMs, timestamp: new Date() });
-    
-    // Keep only the last 1000 latency records
-    if (latencies.length > 1000) {
-      latencies.shift();
-    }
-    
-    this.metrics.set('latency', latencies);
-  }
-  
-  /**
-   * Log a system event
-   */
-  logEvent(eventType: string, data: any): void {
-    console.log(`[${eventType}]`, JSON.stringify(data));
-    
-    // Store event in metrics
-    const events = this.metrics.get('events') || [];
-    events.push({
-      type: eventType,
-      data,
-      timestamp: new Date()
-    });
-    
-    // Keep only the last 1000 events
-    if (events.length > 1000) {
-      events.shift();
-    }
-    
-    this.metrics.set('events', events);
-  }
-  
-  /**
-   * Get all metrics
-   */
-  getMetrics(): Record<string, any> {
-    const result: Record<string, any> = {};
-    
-    this.metrics.forEach((value, key) => {
-      result[key] = value;
-    });
-    
-    return result;
-  }
-  
-  /**
-   * Get a specific metric
-   */
-  getMetric(name: string): any {
-    return this.metrics.get(name);
-  }
-  
-  /**
-   * Reset all metrics
-   */
-  resetMetrics(): void {
-    this.metrics.clear();
+
+  private initializeMetrics(): void {
     this.metrics.set('connections', 0);
     this.metrics.set('messages', 0);
     this.metrics.set('errors', 0);
     this.metrics.set('latency', []);
     this.metrics.set('events', []);
+  }
+
+  incrementMetric(name: string, value: number = 1): void {
+    const current = this.metrics.get(name) || 0;
+    this.metrics.set(name, current + value);
+  }
+
+  recordLatency(operation: string, timeMs: number): void {
+    const latencies = this.metrics.get('latency') || [];
+    latencies.push({ operation, timeMs, timestamp: new Date() });
+    this.metrics.set('latency', latencies);
+  }
+
+  logEvent(eventType: string, data: any): void {
+    const events = this.metrics.get('events') || [];
+    events.push({ eventType, data, timestamp: new Date() });
+    this.metrics.set('events', events);
+    this.logger.log(`Event: ${eventType}`, data);
+  }
+
+  recordMetric(name: string, value: number, tags?: Record<string, string>): void {
+    this.metrics.set(name, { value, tags, timestamp: new Date() });
+  }
+
+  captureError(error: Error | string, context?: Record<string, any>): void {
+    this.incrementMetric('errors');
+    this.logEvent('error', {
+      error: typeof error === 'string' ? error : error.message,
+      stack: typeof error === 'object' ? error.stack : undefined,
+      context
+    });
+  }
+
+  getMetrics(): Record<string, any> {
+    const result: Record<string, any> = {};
+    for (const [key, value] of this.metrics.entries()) {
+      result[key] = value;
+    }
+    return result;
+  }
+
+  getMetric(name: string): any {
+    return this.metrics.get(name);
+  }
+
+  resetMetrics(): void {
+    this.metrics.clear();
+    this.initializeMetrics();
   }
 }

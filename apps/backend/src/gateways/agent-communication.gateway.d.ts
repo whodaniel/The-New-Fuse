@@ -1,6 +1,6 @@
 import { OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { RedisService } from '../services/redis.service.js';
+import { RedisService } from '../services/redis.service';
 export declare class AgentCommunicationGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
     private readonly redisService;
     server: Server;

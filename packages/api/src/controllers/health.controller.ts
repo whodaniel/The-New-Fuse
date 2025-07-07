@@ -4,9 +4,9 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service.js';
+import { PrismaService } from '../services/prisma.service';
 // Use our local implementation instead of @nestjs/terminus
-import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '../modules/health/terminus.js';
+import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '../modules/health/terminus';
 
 @Controller('health')
 export class HealthController {

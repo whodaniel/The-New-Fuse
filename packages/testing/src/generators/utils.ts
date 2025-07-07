@@ -1,4 +1,4 @@
-import { v4 as uuidv4 } from 'uuid';
+
 
 export const generateId = (prefix: string = ''): string => {
   return `${prefix}${Math.random().toString(36).substring(2, 11)}`;

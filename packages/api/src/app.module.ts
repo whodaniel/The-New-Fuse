@@ -7,15 +7,15 @@ import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-import { AgentModule } from './modules/agent.module.js';
-import { WorkflowModule } from './modules/workflow.module.js';
-import { ExportModule } from './modules/export.module.js';
-import { PrismaService } from './services/prisma.service.js';
-import { AppConfigService } from './services/app-config.service.js';
-import { EventService } from './services/event.service.js';
-import { HealthService } from './services/health.service.js';
-import { HealthController } from './controllers/health.controller.js';
-import { RequestLoggerMiddleware } from './middleware/request-logger.middleware.js';
+import { AgentModule } from './modules/agent.module';
+import { WorkflowModule } from './modules/workflow.module';
+import { ExportModule } from './modules/export.module';
+import { PrismaService } from './services/prisma.service';
+import { AppConfigService } from './services/app-config.service';
+import { EventService } from './services/event.service';
+import { HealthService } from './services/health.service';
+import { HealthController } from './controllers/health.controller';
+import { RequestLoggerMiddleware } from './middleware/request-logger.middleware';
 
 @Module({
   imports: [
@@ -23,7 +23,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware.
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: ['.env.local', '.env']
-    }),
+    }) as any,
     
     // Event emitter for application-wide events
     EventEmitterModule.forRoot({
@@ -37,7 +37,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware.
       verboseMemoryLeak: true,
       // Disable throwing uncaughtException if an error event is emitted and no listeners are attached
       ignoreErrors: false,
-    }),
+    }) as any,
     
     // JWT authentication
     JwtModule.registerAsync({
@@ -49,7 +49,7 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware.
           expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d')
         }
       })
-    }),
+    }) as any,
     
     // Feature modules
     AgentModule,

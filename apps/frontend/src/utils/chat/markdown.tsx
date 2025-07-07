@@ -1,5 +1,5 @@
 import { marked } from 'marked';
-import highlight from 'highlight.js';
+import highlight from 'highlight';
 import { decode } from 'he';
 import DOMPurify from 'dompurify';
 

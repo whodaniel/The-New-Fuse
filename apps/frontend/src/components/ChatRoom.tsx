@@ -4,11 +4,11 @@ exports.ChatRoom = void 0;
 import react_1 from 'react';
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import useSocket_1 from '../hooks/useSocket.js';
-import useAuth_1 from '../hooks/useAuth.tsx';
-import chat_1 from '../types/chat.js';
+import useSocket_1 from '../hooks/useSocket';
+import useAuth_1 from '../hooks/useAuth';
+import chat_1 from '../types/chat';
 import { formatDistanceToNow } from 'date-fns';
-import MarkdownRenderer_1 from './MarkdownRenderer.tsx';
+import MarkdownRenderer_1 from './MarkdownRenderer';
 import nanoid_1 from 'nanoid';
 const ChatRoom = ({ roomId, title }) => {
     const [messages, setMessages] = (0, react_1.useState)([]);

@@ -1,4 +1,4 @@
-export { Settings } from './Settings.tsx';
-export { VisualCustomization } from './VisualCustomization.tsx';
-export { LLMConfigManager } from './LLMConfigManager.tsx';
+export { Settings } from './Settings';
+export { VisualCustomization } from './VisualCustomization';
+export { LLMConfigManager } from './LLMConfigManager';
 //# sourceMappingURL=index.js.map

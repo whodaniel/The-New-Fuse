@@ -3,7 +3,9 @@ export enum ExportFormat {
   JSON = "JSON",
   CSV = "CSV",
   XML = "XML",
-  PDF = "PDF"
+  PDF = "PDF",
+  MARKDOWN = "MARKDOWN",
+  HTML = "HTML"
 }
 
 export interface ExportOptions {

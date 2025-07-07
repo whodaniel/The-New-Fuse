@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
+import { encrypt, decrypt } from '../../src/utils/cryptoUtils';
+
 
 @Injectable()
 export class EncryptionService {
@@ -17,20 +17,12 @@ export class EncryptionService {
   }
 
   async encrypt(text: string): Promise<string> {
-    const iv = randomBytes(16);
-    const cipher = createCipheriv(this.algorithm, this.key, iv);
-    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
+    // Use centralized cryptoUtils for encryption
+    return encrypt(text, this.key);
   }
 
   async decrypt(encryptedText: string): Promise<string> {
-    const [ivHex, encryptedHex] = encryptedText.split(':');
-    const iv = Buffer.from(ivHex, 'hex');
-    const decipher = createDecipheriv(this.algorithm, this.key, iv);
-    const decrypted = Buffer.concat([
-      decipher.update(Buffer.from(encryptedHex, 'hex')),
-      decipher.final(),
-    ]);
-    return decrypted.toString();
+    // Use centralized cryptoUtils for decryption
+    return decrypt(encryptedText, this.key);
   }
 }

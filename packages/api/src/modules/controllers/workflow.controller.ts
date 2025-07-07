@@ -15,18 +15,18 @@ import {
   HttpStatus,
   HttpCode
 } from '@nestjs/common';
-import { WorkflowService } from '../services/workflow.service.js';
-import { BaseController } from './base.controller.js';
-import { JwtAuthGuard } from '../guards/jwt-auth.guard.js';
-import { CurrentUser } from '../decorators/current-user.decorator.js';
+import { WorkflowService } from '../services/workflow.service';
+import { BaseController } from './base.controller';
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { CurrentUser } from '../decorators/current-user.decorator';
 import { 
   Workflow, 
   WorkflowExecution, 
   ApiResponse 
 } from '@the-new-fuse/types';
-import { CreateWorkflowDto } from './dto/create-workflow.dto.js';
-import { UpdateWorkflowDto } from './dto/update-workflow.dto.js';
-import { WorkflowDto, WorkflowExecutionDto } from './dto/swagger-dto.js';
+import { CreateWorkflowDto } from './dto/create-workflow.dto';
+import { UpdateWorkflowDto } from './dto/update-workflow.dto';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/swagger-dto';
 import { 
   ApiTags, 
   ApiOperation, 

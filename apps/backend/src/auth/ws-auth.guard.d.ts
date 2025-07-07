@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { LoggingService } from '../services/logging.service.js';
+import { LoggingService } from '../services/logging.service';
 export declare class WsAuthGuard implements CanActivate {
     private jwtService;
     private logger;

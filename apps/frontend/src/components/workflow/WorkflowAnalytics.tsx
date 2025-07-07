@@ -40,7 +40,7 @@ export const WorkflowAnalytics: React.React.FC<WorkflowAnalyticsProps> = ({ work
       try {
         // In a real app, this would fetch metrics from an API
         // For now, we'll just simulate a delay and return mock data
-        await new Promise(resolv(e: any) => setTimeout(resolve, 1500));
+        await new Promise((resolve: any) => setTimeout(resolve, 1500));
         
         // Mock data
         const mockMetrics: WorkflowMetrics = {

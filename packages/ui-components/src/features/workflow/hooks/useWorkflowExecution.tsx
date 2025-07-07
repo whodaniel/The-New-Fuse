@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { WorkflowStep } from '../types.tsx';
+import { WorkflowStep } from '../types';
 
 interface WorkflowExecutionOptions {
   onStepComplete?: (stepId: string) => void;

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@/test/helpers/render';
-import { ChatBubble } from './ChatBubble.tsx';
+import { ChatBubble } from './ChatBubble';
 import { describe, it, expect, vi } from 'vitest';
 describe('ChatBubble', () => {
     it('renders message content', () => {

@@ -1,5 +1,5 @@
 import { Router, Request, Response } from 'express';
-import { MCPBrokerService } from '../mcp/services/mcp-broker.service.js';
+import { MCPBrokerService } from '../mcp/services/mcp-broker.service';
 
 // Define a User interface with an id property to fix the type error
 interface User {
@@ -39,7 +39,7 @@ router.get('/servers', async (req, res) => {
         status
       }
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Error getting MCP servers:', error);
     res.status(500).json({
       success: false,
@@ -67,7 +67,7 @@ router.get('/servers/status', async (req, res) => {
       success: true,
       data: status
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Error getting MCP server status:', error);
     res.status(500).json({
       success: false,
@@ -95,7 +95,7 @@ router.get('/capabilities', (req, res) => {
       success: true,
       data: capabilities
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('Error getting MCP capabilities:', error);
     res.status(500).json({
       success: false,
@@ -190,7 +190,7 @@ router.post('/execute', (req: Request, res: Response) => {
         success: true,
         data: result
       });
-    } catch (error: unknown) {
+    } catch (error) {
       const err = error as Error;
       console.error('Error executing MCP directive:', err);
       res.status(500).json({

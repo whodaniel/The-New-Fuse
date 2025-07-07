@@ -3,8 +3,8 @@ exports.AgentConfig = AgentConfig;
 import react_1 from 'react';
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import agent_types_1 from '../../domain/core/wizards/types/agent_types.js';
-import WizardProvider_1 from './WizardProvider.tsx';
+import agent_types_1 from '../../domain/core/wizards/types/agent_types';
+import WizardProvider_1 from './WizardProvider';
 function AgentConfig({ onUpdate }): any {
     const { state } = (0, WizardProvider_1.useWizard)();
     const [agents, setAgents] = (0, react_1.useState)(new Map());

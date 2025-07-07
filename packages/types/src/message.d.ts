@@ -6,7 +6,7 @@ export declare enum MessageType {
     STATUS = "status",
     RESPONSE = "response"
 }
-import { Priority } from './core/enums.js';
+import { Priority } from './core/enums';
 export interface Message {
     id: string;
     type: MessageType;

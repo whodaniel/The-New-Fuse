@@ -25,7 +25,7 @@ const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunc
       roles: ['user']
     };
     next();
-  } catch (error) {
+  } catch {
     res.status(401).json({ message: 'Invalid token' });
   }
 };

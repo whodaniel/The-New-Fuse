@@ -111,8 +111,7 @@ export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
       const collectionName = namespace || this.defaultCollection;
       await this.vectorService.batchDeleteDocuments(collectionName, ids);
       return true;
-    } catch (error) {
-      console.error('Failed to delete vectors:', error);
+    } catch {
       return false;
     }
   }
@@ -125,8 +124,7 @@ export class LegacyVectorAdapter implements LegacyVectorStoreProvider {
       const collectionName = namespace || this.defaultCollection;
       await this.vectorService.deleteCollection(collectionName);
       return true;
-    } catch (error) {
-      console.error('Failed to clear namespace:', error);
+    } catch {
       return false;
     }
   }

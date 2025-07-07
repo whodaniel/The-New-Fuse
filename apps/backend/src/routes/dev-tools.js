@@ -1,12 +1,14 @@
-import { Router } from 'express';
-import { spawn } from 'child_process';
-import { StreamResponse } from '../utils/stream.js';
-const router = Router();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const child_process_1 = require("child_process");
+const stream_1 = require("../utils/stream");
+const router = (0, express_1.Router)();
 router.post('/api/dev-tools/cleanup', async (req, res) => {
     const options = req.body;
-    const stream = new StreamResponse(res);
+    const stream = new stream_1.StreamResponse(res);
     try {
-        const script = spawn('./scripts/fresh-env.sh', [
+        const script = (0, child_process_1.spawn)('./scripts/fresh-env.sh', [
             options.all ? '--all' : '',
             ...Object.entries(options)
                 .filter(([_, value]) => value)
@@ -29,14 +31,15 @@ router.post('/api/dev-tools/cleanup', async (req, res) => {
         });
     }
     catch (error) {
-        stream.write(`Failed to execute cleanup: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        stream.write(`Failed to execute cleanup: ${errorMessage}`);
         stream.end();
     }
 });
 router.post('/api/dev-tools/start', async (req, res) => {
-    const stream = new StreamResponse(res);
+    const stream = new stream_1.StreamResponse(res);
     try {
-        const script = spawn('./scripts/launch-unified.sh', ['development']);
+        const script = (0, child_process_1.spawn)('./scripts/launch-unified.sh', ['development']);
         script.stdout.on('data', (data) => {
             stream.write(data.toString());
         });
@@ -54,8 +57,9 @@ router.post('/api/dev-tools/start', async (req, res) => {
         });
     }
     catch (error) {
-        stream.write(`Failed to start development environment: ${error.message}`);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        stream.write(`Failed to start development environment: ${errorMessage}`);
         stream.end();
     }
 });
-export default router;
+exports.default = router;

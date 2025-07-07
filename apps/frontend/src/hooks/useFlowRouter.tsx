@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Node, useReactFlow } from 'reactflow';
-import { FlowRouter } from '../core/routing/flow_router.js';
-import { FlowNode } from '../types/workflow.tsx';
+import { FlowRouter } from '../core/routing/flow_router';
+import { FlowNode } from '../types/workflow';
 
 export function useFlowRouter(): any {
   const { getNodes } = useReactFlow();

@@ -30,7 +30,7 @@ import {
   FiClipboard,
   FiCloud
 } from 'react-icons/fi';
-import { useWizard } from '../WizardProvider.tsx';
+import { useWizard } from '../WizardProvider';
 
 export const ToolsSelectionStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();

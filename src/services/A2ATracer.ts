@@ -25,7 +25,7 @@ export class A2ATracer {
                 const result = await operation();
                 span.end();
                 return result;
-            } catch (error: unknown) {
+            } catch (error) {
                 span.recordException(error);
                 span.setStatus({ code: 2, message: (error as Error).message });
                 span.end();

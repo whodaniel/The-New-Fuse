@@ -1,5 +1,6 @@
 // filepath: src/security/encryption.ts
-import { createCipheriv, createDecipheriv, randomBytes } from "crypto";
+// Refactored: Use centralized cryptoUtils for all cryptographic operations
+import { encrypt, decrypt, getRandomBytes } from '../utils/cryptoUtils';
 
 export class EncryptionService {
   private readonly algorithm = 'aes-256-gcm';
@@ -16,30 +17,16 @@ export class EncryptionService {
    * Returns iv:authTag:cipherText in hex
    */
   public async encrypt(text: string): Promise<string> {
-    const iv = randomBytes(12);
-    const cipher = createCipheriv(this.algorithm, this.key, iv);
-    const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
-    const authTag = cipher.getAuthTag();
-    return `${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted.toString('hex')}`;
+    // Use the shared encrypt utility (returns iv:tag:encryptedData as string)
+    return encrypt(text, this.key);
   }
 
   /**
    * Decrypt data from iv:authTag:cipherText hex
    */
   public async decrypt(encryptedData: string): Promise<string> {
-    const parts = encryptedData.split(':');
-    if (parts.length !== 3) {
-      throw new Error('Invalid encrypted data format');
-    }
-    const [ivHex, authTagHex, encryptedHex] = parts;
-    const iv = Buffer.from(ivHex, 'hex');
-    const authTag = Buffer.from(authTagHex, 'hex');
-    const encrypted = Buffer.from(encryptedHex, 'hex');
-
-    const decipher = createDecipheriv(this.algorithm, this.key, iv);
-    decipher.setAuthTag(authTag);
-    const decrypted = Buffer.concat([decipher.update(encrypted), decipher.final()]);
-    return decrypted.toString('utf8');
+    // Use the shared decrypt utility (expects iv:tag:encryptedData as string)
+    return decrypt(encryptedData, this.key);
   }
 }
 

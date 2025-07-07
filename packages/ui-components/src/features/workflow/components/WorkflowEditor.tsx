@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { WorkflowDefinition, WorkflowStep } from '../types.tsx'; // Added .js extension
-import { WorkflowBuilder } from '../services/WorkflowBuilder.tsx'; // Added .js extension
-import { WorkflowVisualizer } from './WorkflowVisualizer.tsx'; // Added .js extension
-import { Button } from '../../../core/button/index.tsx'; // Added .js extension
-import { Input } from '../../../core/input/index.tsx'; // Added .js extension
-import { Textarea } from '../../../core/textarea.tsx'; // Added .js extension
-import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index.tsx'; // Added .js extension
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '../../../core/dialog/index.tsx'; // Added .js extension
+import { WorkflowDefinition, WorkflowStep } from '../types';
+import { WorkflowBuilder } from '../services/WorkflowBuilder';
+import { WorkflowVisualizer } from './WorkflowVisualizer';
+import { Button } from '../../../core/button/index';
+import { Input } from '../../../core/input/index';
+import { Textarea } from '../../../core/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from '../../../core/dialog/index';
 import { Trash2, Edit, PlusCircle } from 'lucide-react';
 
 // Explicitly define props interface for the component
@@ -211,7 +211,7 @@ const WorkflowEditor: React.FC<WorkflowEditorProps> = ({ initialDefinition, onSa
                   <Textarea
                     id="step-params"
                     value={JSON.stringify(editedStep.parameters || {}, null, 2)}
-                    onChange={(e) => handleParamsChange(e.target.value)}
+                    onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleParamsChange(e.target.value)}
                     placeholder="Parameters (JSON format)"
                     rows={6}
                     className={paramsError ? 'border-destructive' : ''}

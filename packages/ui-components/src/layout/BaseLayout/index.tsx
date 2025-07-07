@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import { cn } from '../../lib/utils.tsx';
+import { cn } from '../../lib/utils';
 
 interface BaseLayoutProps {
   children: ReactNode;
@@ -15,4 +15,6 @@ export const BaseLayout = ({ children, className }: BaseLayoutProps) => {
     </div>
   );
 };
-//# sourceMappingURL=index.js.map
+
+// Also export as Layout for compatibility
+export { BaseLayout as Layout };

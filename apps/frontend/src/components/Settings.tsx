@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import components_1 from '../components.js';
+import components_1 from '../components';
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
 const Settings = () => {

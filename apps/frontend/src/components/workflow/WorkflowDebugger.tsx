@@ -59,7 +59,7 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
     
     // Update node UI
     setNodes(nodes => 
-      nodes.map(nod(e: any) => {
+      nodes.map((node: any) => {
         if (node.id === nodeId) {
           return {
             ...node,
@@ -164,7 +164,7 @@ export const WorkflowDebugger: React.React.FC<WorkflowDebuggerProps> = ({ workfl
                   <TabsContent value="breakpoints" className="space-y-2">
                     <Label className="text-sm">Set Breakpoints</Label>
                     <div className="max-h-40 overflow-y-auto space-y-1">
-                      {nodes.map(nod(e: any) => (
+                      {nodes.map((node: any) => (
                         <div key={node.id} className="flex items-center justify-between">
                           <span className="text-xs">{node.data?.name || node.type} ({node.id})</span>
                           <Switch

@@ -1,5 +1,5 @@
 import type { z } from 'zod';
-import type { AuditStorage } from './storage.js';
+import type { AuditStorage } from './storage';
 
 export declare const AuditLogEntry: z.ZodType<any>;
 export type AuditLogEntryType = z.infer<typeof AuditLogEntry>;

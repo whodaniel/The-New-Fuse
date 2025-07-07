@@ -1,9 +1,9 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { RedisService } from './RedisService.js';
-import { AlertService } from './AlertService.js';
-import { MonitoringService } from './MonitoringService.js';
+import { RedisService } from '../../services/redis.service';
+import { AlertService } from './AlertService';
+import { MonitoringService } from './MonitoringService';
 
 interface AgentMessage {
   id: string;
@@ -41,12 +41,10 @@ export class InterAgentChatService implements OnModuleInit {
     const channel = `${this.channelPrefix}:${this.agentId}`;
     
     try {
-      await this.redisService.subscribe(channel, (message) => {
-        this.handleIncomingMessage(message);
-      });
+      await this.redisService.subscribe(channel);
       
       this.monitoringService.logEvent('agent.channel.subscribed', { agentId: this.agentId, channel });
-    } catch (error: unknown) {
+    } catch (error) {
       this.alertService.error('agent.channel.subscribe.failed', `Failed to subscribe to channel ${channel}`, { error: (error as Error).message });
     }
   }
@@ -85,7 +83,7 @@ export class InterAgentChatService implements OnModuleInit {
     };
     
     try {
-      await this.redisService.publish(channel, message);
+      await this.redisService.publish(channel, JSON.stringify(message));
       
       // Record metric
       this.monitoringService.recordMetric('agent.messages.sent', 1, { to: toAgentId });
@@ -94,7 +92,7 @@ export class InterAgentChatService implements OnModuleInit {
       this.eventEmitter.emit('agent.message.sent', message);
       
       return messageId;
-    } catch (error: unknown) {
+    } catch (error) {
       this.alertService.error('agent.message.send.failed', `Failed to send message to agent ${toAgentId}`, { error: (error as Error).message });
       throw error;
     }
@@ -117,7 +115,7 @@ export class InterAgentChatService implements OnModuleInit {
     };
     
     try {
-      await this.redisService.publish(channel, message);
+      await this.redisService.publish(channel, JSON.stringify(message));
       
       // Record metric
       this.monitoringService.recordMetric('agent.messages.broadcast', 1);
@@ -126,7 +124,7 @@ export class InterAgentChatService implements OnModuleInit {
       this.eventEmitter.emit('agent.message.broadcast', message);
       
       return messageId;
-    } catch (error: unknown) {
+    } catch (error) {
       this.alertService.error('agent.message.broadcast.failed', 'Failed to broadcast message', { error: (error as Error).message });
       throw error;
     }
@@ -144,17 +142,17 @@ export class InterAgentChatService implements OnModuleInit {
    */
   async checkHealth(): Promise<{ status: string; details?: any }> {
     try {
-      const redisHealth = await this.redisService.checkHealth();
+      const redisHealth = await this.redisService.get('health-check');
       
-      if (redisHealth.status !== 'healthy') {
+      if (!redisHealth || redisHealth !== 'healthy') {
         return {
           status: 'unhealthy',
-          details: { redis: redisHealth.details },
+          details: { redis: redisHealth || 'unreachable' },
         };
       }
       
       return { status: 'healthy' };
-    } catch (error: unknown) {
+    } catch (error) {
       return {
         status: 'unhealthy',
         details: (error as Error).message,

@@ -4,10 +4,11 @@ export interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
   value?: number;
   max?: number;
   className?: string;
+  showValue?: boolean;
 }
 
 export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
-  ({ value = 0, max = 100, className = '', ...props }, ref) => {
+  ({ value = 0, max = 100, className = '', showValue = false, ...props }, ref) => {
     // Calculate percentage
     const percentage = (value / max) * 100;
     
@@ -25,6 +26,11 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
           className="h-full bg-blue-600 transition-all duration-300 ease-in-out"
           style={{ width: `${percentage}%` }}
         />
+        {showValue && (
+          <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white">
+            {Math.round(percentage)}%
+          </div>
+        )}
       </div>
     );
   }

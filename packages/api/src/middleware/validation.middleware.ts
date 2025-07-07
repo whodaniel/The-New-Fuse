@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { ApiError } from './error.middleware.js';
+import { ApiError } from './error.middleware';
 
 /**
  * Validation schema interface

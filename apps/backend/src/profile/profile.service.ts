@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { UsersService } from '../users/users.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { ProfileUpdatedEvent } from './events/profile.events.js';
-import { StorageService } from '../services/storage.service.js';
+import { UsersService } from '../users/users.service';
+import { EventBus } from '../events/event-bus.service';
+import { ProfileUpdatedEvent } from './events/profile.events';
+import { StorageService } from '../services/storage.service';
 
 @Injectable()
 export class ProfileService {

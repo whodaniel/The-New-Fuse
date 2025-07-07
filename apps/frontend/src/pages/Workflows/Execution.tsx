@@ -41,7 +41,7 @@ const WorkflowExecution: React.FC = () => {
         setExecutionLogs((prev: any) => [...prev, `[${new Date().toISOString()}] Executing node: ${node.data.name || node.id}`]);
 
         // Simulate execution time
-        await new Promise(resolv(e: any) => setTimeout(resolve, 1000));
+        await new Promise((resolve: any) => setTimeout(resolve, 1000));
 
         // Randomly succeed or fail for demo purposes
         const success = Math.random() > 0.2;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@/test/helpers/render';
-import { ChatBubble } from '../ChatBubble.tsx';
+import { ChatBubble } from '../ChatBubble';
 import { vi } from 'vitest';
 describe('ChatBubble', () => {
     const defaultProps = {

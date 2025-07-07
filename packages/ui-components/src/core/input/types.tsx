@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Input } from './Input.tsx';
+import { Input } from './Input';
 
 // Use a Union type for size instead of "number"
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {

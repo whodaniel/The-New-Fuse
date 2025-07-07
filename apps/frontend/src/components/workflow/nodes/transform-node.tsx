@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 import { NodeProps } from 'reactflow';
-import { BaseNode } from './base-node.tsx';
+import { BaseNode } from './base-node';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select } from '@/components/ui/select';

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSearch } from '@/hooks/useSearch';
-import { SearchFilters } from './SearchFilters.js';
-import { SearchResults } from './SearchResults.js';
+import { SearchFilters } from './SearchFilters';
+import { SearchResults } from './SearchResults';
 
 export const GlobalSearch: React.FC = () => {
   const { query, filters, results, search } = useSearch();

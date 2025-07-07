@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Table } from "@the-new-fuse/fairtable-core";
+import { Table } from "../../fairtable-core/src";
 import { PlusIcon, TrashIcon, TableCellsIcon } from './Icons';
 import EditableText from './EditableText';
 import Modal from './Modal'; // For delete confirmation

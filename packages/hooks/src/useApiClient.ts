@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { ApiClientContext } from './types/index.js';
+import { ApiClientContext } from './types/index';
 
 export const useApiClient = (): any => {
   const context = useContext(ApiClientContext);

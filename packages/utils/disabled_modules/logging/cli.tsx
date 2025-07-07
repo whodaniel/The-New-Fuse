@@ -7,7 +7,7 @@ exports.cli = void 0;
 // Plugin CAN ONLY BE USE IN DEVELOPMENT.
 import prompts_1 from '@inquirer/prompts';
 const chalk_1 = __importDefault(require("chalk"));
-import error_1 from '../error.js';
+import error_1 from '../error';
 const cli = {
     name: cli',
     startupConfig: {

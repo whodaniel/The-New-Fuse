@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { HealthService, HealthStatus } from '../services/healthService.js';
-import { AuthGuard } from '../guards/authGuard.js';
+import { HealthService, HealthStatus } from '../services/healthService';
+import { AuthGuard } from '../guards/authGuard';
 
 @ApiTags('Health')
 @Controller('health')

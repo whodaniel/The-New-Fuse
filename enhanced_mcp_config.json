@@ -1,0 +1,308 @@
+{
+  "version": "2.0.0",
+  "metadata": {
+    "created_at": "2025-06-27T06:00:00.000Z",
+    "updated_at": "2025-06-27T06:00:00.000Z",
+    "managed_by": "enhanced-mcp-config-manager",
+    "oauth_enabled": true,
+    "discovery_enabled": true,
+    "health_monitoring_enabled": true
+  },
+  "mcpServers": {
+    "enhanced-config-manager": {
+      "name": "enhanced-config-manager",
+      "command": "npx",
+      "args": ["tsx", "./src/mcp/unified-config-server.ts"],
+      "env": {
+        "HTTP_PORT": "3773",
+        "OAUTH_PORT": "3001",
+        "LOG_LEVEL": "info",
+        "ENABLE_OAUTH": "true",
+        "ENABLE_DISCOVERY": "true"
+      },
+      "description": "Enhanced OAuth-integrated MCP configuration management server",
+      "enabled": true,
+      "version": "2.0.0",
+      "created_at": "2025-06-27T06:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["configuration", "oauth", "management", "core"],
+      "priority": 9,
+      "oauth": {
+        "required": true,
+        "scopes": ["mcp:admin", "tnf:config:admin"],
+        "client_id": "tnf_enhanced_config_manager_1751004000000",
+        "discovery_endpoint": "http://localhost:3001/.well-known/oauth-authorization-server"
+      },
+      "health_check": {
+        "enabled": true,
+        "endpoint": "/health",
+        "interval": 30000,
+        "timeout": 5000,
+        "oauth_protected": false
+      },
+      "monitoring": {
+        "oauth_health_check": true,
+        "token_validation_endpoint": "http://localhost:3001/oauth/introspect",
+        "discovery_endpoint": "http://localhost:3773/mcp/discovery"
+      }
+    },
+    "the-new-fuse-main": {
+      "name": "the-new-fuse-main",
+      "command": "npx",
+      "args": ["tsx", "./src/mcp/server.ts"],
+      "env": {
+        "MCP_PORT": "3001",
+        "WORKSPACE_ROOT": "./",
+        "LOG_LEVEL": "info",
+        "OAUTH_ENABLED": "true",
+        "TNF_OAUTH_PORT": "3001"
+      },
+      "description": "The New Fuse MCP Server with complete platform capabilities and OAuth integration",
+      "enabled": true,
+      "version": "2.1.0",
+      "created_at": "2025-06-27T05:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["platform", "core", "oauth", "agents", "workflows"],
+      "priority": 10,
+      "oauth": {
+        "required": true,
+        "scopes": ["mcp:read", "mcp:write", "tnf:agents", "tnf:workflows"],
+        "client_id": "tnf_main_server_1751003000000",
+        "discovery_endpoint": "http://localhost:3001/.well-known/oauth-authorization-server"
+      },
+      "health_check": {
+        "enabled": true,
+        "endpoint": "/health",
+        "interval": 15000,
+        "timeout": 3000,
+        "oauth_protected": true
+      },
+      "monitoring": {
+        "oauth_health_check": true,
+        "token_validation_endpoint": "http://localhost:3001/oauth/introspect",
+        "sse_endpoint": "http://localhost:3001/mcp/main/sse"
+      }
+    },
+    "tnf-relay-server": {
+      "name": "tnf-relay-server",
+      "command": "node",
+      "args": ["./comprehensive-tnf-relay.js"],
+      "env": {
+        "RELAY_PORT": "3011",
+        "MCP_ENABLED": "true",
+        "OAUTH_ENABLED": "true",
+        "LOG_LEVEL": "info"
+      },
+      "description": "TNF relay and API interception services with MCP and OAuth support",
+      "enabled": true,
+      "version": "1.2.0",
+      "created_at": "2025-06-27T04:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["relay", "interception", "api", "oauth"],
+      "priority": 8,
+      "oauth": {
+        "required": true,
+        "scopes": ["mcp:admin", "tnf:relay"],
+        "client_id": "tnf_relay_server_1751002000000",
+        "discovery_endpoint": "http://localhost:3001/.well-known/oauth-authorization-server"
+      },
+      "health_check": {
+        "enabled": true,
+        "endpoint": "/health",
+        "interval": 30000,
+        "timeout": 5000,
+        "oauth_protected": true
+      },
+      "monitoring": {
+        "oauth_health_check": true,
+        "token_validation_endpoint": "http://localhost:3001/oauth/introspect",
+        "sse_endpoint": "http://localhost:3001/mcp/relay/sse"
+      }
+    },
+    "context7-server": {
+      "name": "context7-server",
+      "command": "npx",
+      "args": ["-y", "mcp-agent-router"],
+      "env": {
+        "CONTEXT_PORT": "3012",
+        "OAUTH_CLIENT_ID": "tnf_context7_server_1751001000000"
+      },
+      "description": "Context management and agent routing with OAuth integration",
+      "enabled": true,
+      "version": "1.0.0",
+      "created_at": "2025-06-27T03:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["context", "routing", "agents"],
+      "priority": 6,
+      "oauth": {
+        "required": false,
+        "scopes": ["mcp:read", "tnf:context"],
+        "client_id": "tnf_context7_server_1751001000000"
+      },
+      "health_check": {
+        "enabled": true,
+        "endpoint": "/health",
+        "interval": 60000,
+        "timeout": 5000,
+        "oauth_protected": false
+      }
+    },
+    "filesystem": {
+      "name": "filesystem",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-filesystem", "--allow-dir", "./data"],
+      "env": {
+        "FILESYSTEM_ROOT": "./data",
+        "READ_ONLY": "false"
+      },
+      "description": "Filesystem access MCP server with restricted directory access",
+      "enabled": true,
+      "version": "1.0.0",
+      "created_at": "2025-06-27T02:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["filesystem", "data", "storage"],
+      "priority": 5,
+      "oauth": {
+        "required": false,
+        "scopes": ["mcp:read", "tnf:filesystem"]
+      },
+      "health_check": {
+        "enabled": true,
+        "interval": 60000,
+        "timeout": 5000
+      }
+    },
+    "browsermcp": {
+      "name": "browsermcp",
+      "command": "npx",
+      "args": ["@browsermcp/mcp@latest"],
+      "env": {
+        "BROWSER_TIMEOUT": "30000",
+        "HEADLESS": "true"
+      },
+      "description": "Browser automation and web scraping MCP server",
+      "enabled": true,
+      "version": "latest",
+      "created_at": "2025-06-27T01:00:00.000Z",
+      "updated_at": "2025-06-27T06:00:00.000Z",
+      "tags": ["browser", "automation", "web", "scraping"],
+      "priority": 4,
+      "oauth": {
+        "required": false,
+        "scopes": ["mcp:read", "tnf:browser"]
+      },
+      "health_check": {
+        "enabled": false,
+        "reason": "Browser automation servers may not have health endpoints"
+      }
+    }
+  },
+  "templates": {
+    "oauth-secure-server": {
+      "description": "Template for OAuth-secured MCP servers",
+      "enabled": true,
+      "oauth": {
+        "required": true,
+        "scopes": ["mcp:read"],
+        "discovery_endpoint": "http://localhost:3001/.well-known/oauth-authorization-server"
+      },
+      "health_check": {
+        "enabled": true,
+        "interval": 30000,
+        "timeout": 5000,
+        "oauth_protected": true
+      },
+      "monitoring": {
+        "oauth_health_check": true,
+        "token_validation_endpoint": "http://localhost:3001/oauth/introspect"
+      },
+      "priority": 7,
+      "tags": ["secure", "oauth", "monitored"]
+    },
+    "basic-mcp-server": {
+      "description": "Basic MCP server template without OAuth",
+      "enabled": true,
+      "oauth": {
+        "required": false
+      },
+      "health_check": {
+        "enabled": true,
+        "interval": 60000,
+        "timeout": 5000,
+        "oauth_protected": false
+      },
+      "priority": 5,
+      "tags": ["basic", "public"]
+    },
+    "high-priority-server": {
+      "description": "High-priority MCP server with enhanced monitoring",
+      "enabled": true,
+      "oauth": {
+        "required": true,
+        "scopes": ["mcp:read", "mcp:write"],
+        "discovery_endpoint": "http://localhost:3001/.well-known/oauth-authorization-server"
+      },
+      "health_check": {
+        "enabled": true,
+        "interval": 15000,
+        "timeout": 3000,
+        "oauth_protected": true
+      },
+      "monitoring": {
+        "oauth_health_check": true,
+        "token_validation_endpoint": "http://localhost:3001/oauth/introspect",
+        "enhanced_monitoring": true
+      },
+      "priority": 9,
+      "tags": ["critical", "production", "monitored", "secure"]
+    }
+  },
+  "discovery": {
+    "auto_register": true,
+    "health_check_interval": 30000,
+    "discovery_endpoints": [
+      "http://localhost:3001/mcp/discovery",
+      "http://localhost:3773/mcp/discovery"
+    ],
+    "oauth_discovery_endpoints": [
+      "http://localhost:3001/.well-known/oauth-authorization-server",
+      "http://localhost:3001/.well-known/oauth-protected-resource"
+    ]
+  },
+  "oauth": {
+    "enabled": true,
+    "authorization_server": "http://localhost:3001",
+    "default_scopes": ["mcp:read"],
+    "admin_scopes": ["mcp:admin", "tnf:config:admin"],
+    "management_scopes": ["mcp:write", "tnf:config:manage"],
+    "client_registration": {
+      "auto_register_servers": true,
+      "default_grant_types": ["client_credentials"],
+      "default_auth_method": "client_secret_basic"
+    }
+  },
+  "monitoring": {
+    "enabled": true,
+    "health_check_interval": 30000,
+    "oauth_validation_interval": 300000,
+    "discovery_refresh_interval": 600000,
+    "metrics": {
+      "enabled": true,
+      "endpoint": "/metrics",
+      "oauth_protected": true
+    },
+    "alerting": {
+      "enabled": false,
+      "webhook_url": null,
+      "alert_on_oauth_failures": true,
+      "alert_on_health_failures": true
+    }
+  },
+  "security": {
+    "configuration_backup_enabled": true,
+    "audit_logging_enabled": true,
+    "oauth_token_validation": true,
+    "secure_defaults": true,
+    "require_oauth_for_admin_operations": true
+  }
+}

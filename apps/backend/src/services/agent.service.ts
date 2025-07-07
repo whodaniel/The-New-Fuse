@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 import { Agent, AgentStatus } from '@prisma/client';
-import { CreateAgentDto, UpdateAgentDto, AgentResponseDto } from 'packages/api/src/dto/agent.dto.js';
+import { CreateAgentDto, UpdateAgentDto, AgentResponseDto } from '@the-new-fuse/types';
 
 @Injectable()
 export class AgentService {

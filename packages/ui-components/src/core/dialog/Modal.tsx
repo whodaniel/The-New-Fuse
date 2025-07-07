@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './index.tsx';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './index';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ export interface ModalProps {
   className?: string;
 }
 
-export const Modal = ({
+export const DialogModal = ({
   isOpen,
   onClose,
   title,
@@ -39,6 +39,7 @@ export const Modal = ({
   );
 };
 
-Modal.displayName = 'Modal';
+DialogModal.displayName = 'DialogModal';
 
-export default Modal;
+export default DialogModal;
+export { DialogModal as Modal };

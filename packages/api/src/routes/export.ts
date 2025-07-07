@@ -1,9 +1,10 @@
 import { Router, Request, Response } from 'express';
-import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
-import { authenticate } from '../middleware/auth.js';
-import { validateBody } from '../middleware/validation.middleware.js';
-import { exportSchema } from '../schemas/export.schema.js';
+// import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
+import { authenticate } from '../middleware/auth';
+import { validateBody } from '../middleware/validation.middleware';
+import { exportSchema } from '../schemas/export.schema';
 
+type ExportFormat = 'pdf' | 'md' | 'txt';
 const router = Router();
 
 /**
@@ -18,14 +19,9 @@ router.post('/conversation', authenticate, validateBody(exportSchema), async (re
     return;
   }
   try {
-    const buffer = await ConversationExportService.export(conversation, format);
-    const mime =
-      format === 'pdf' ? 'application/pdf' :
-      format === 'md' ? 'text/markdown' :
-      'text/plain';
-    res.setHeader('Content-Type', mime);
-    res.setHeader('Content-Disposition', `attachment; filename=conversation.${format}`);
-    res.send(buffer);
+    // TODO: Re-enable once core package is fixed
+    // const buffer = await ConversationExportService.export(conversation, format);
+    res.status(501).json({ error: 'Export service temporarily disabled - core package needs repair' });
   } catch (err: any) {
     res.status(500).json({ error: err.message || 'Export failed' });
   }

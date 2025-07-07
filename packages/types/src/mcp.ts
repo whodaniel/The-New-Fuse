@@ -15,6 +15,7 @@ export interface MCPTool {
   name: string;
   description: string;
   parameters: unknown;
+  execute?: (params: any) => Promise<any>;
 }
 
 export interface MCPResource {

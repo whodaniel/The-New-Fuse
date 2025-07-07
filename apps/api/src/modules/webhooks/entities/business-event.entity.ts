@@ -7,16 +7,16 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 @Index('idx_business_events_correlation', ['correlationId'])
 export class BusinessEvent {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 50 })
-  type: string;
+  type!: string;
 
   @Column({ type: 'varchar', length: 50 })
-  source: string;
+  source!: string;
 
   @Column({ name: 'organization_id', type: 'uuid' })
-  organizationId: string;
+  organizationId!: string;
 
   @Column({ name: 'user_id', type: 'uuid', nullable: true })
   userId?: string;
@@ -25,27 +25,27 @@ export class BusinessEvent {
   correlationId?: string;
 
   @Column({ type: 'jsonb' })
-  data: Record<string, any>;
+  data!: Record<string, any>;
 
   @Column({ type: 'jsonb' })
-  metadata: Record<string, any>;
+  metadata!: Record<string, any>;
 
-  @Column({ 
-    name: 'processing_status', 
-    type: 'varchar', 
-    length: 20, 
-    default: 'pending' 
+  @Column({
+    name: 'processing_status',
+    type: 'varchar',
+    length: 20,
+    default: 'pending'
   })
-  processingStatus: string;
+  processingStatus!: string;
 
   @Column({ name: 'retry_count', type: 'int', default: 0 })
-  retryCount: number;
+  retryCount!: number;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn({ name: 'updated_at' })
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @Column({ name: 'processed_at', type: 'timestamp', nullable: true })
   processedAt?: Date;

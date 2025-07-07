@@ -2,20 +2,20 @@ import React, { useState, useRef, useEffect } from "react";
 import SlashCommandsButton, {
   SlashCommands,
   useSlashCommands,
-} from './SlashCommands.js';
+} from './SlashCommands';
 import debounce from "lodash.debounce";
 import { PaperPlaneRight } from "@phosphor-icons/react";
-import StopGenerationButton from './StopGenerationButton.js';
+import StopGenerationButton from './StopGenerationButton';
 import AvailableAgentsButton, {
   AvailableAgents,
   useAvailableAgents,
-} from './AgentMenu.js';
-import TextSizeButton from './TextSizeMenu.js';
-import SpeechToText from './SpeechToText.js';
+} from './AgentMenu';
+import TextSizeButton from './TextSizeMenu';
+import SpeechToText from './SpeechToText';
 import { Tooltip } from "react-tooltip";
-import AttachmentManager from './Attachments.js';
-import AttachItem from './AttachItem.js';
-import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper.js';
+import AttachmentManager from './Attachments';
+import AttachItem from './AttachItem';
+import { PASTE_ATTACHMENT_EVENT } from '../DnDWrapper';
 import useTextSize from "@/hooks/useTextSize";
 
 export const PROMPT_INPUT_EVENT = "set_prompt_input";

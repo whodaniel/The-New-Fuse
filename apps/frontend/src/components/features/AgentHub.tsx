@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import components_1 from '../components.js';
+import components_1 from '../components';
 import material_1 from '@mui/material';
-import store_1 from '../store.js';
+import store_1 from '../store';
 const AgentHub = () => {
     const { agents, selectedAgent, setSelectedAgent } = (0, store_1.default)();
     const [activeTab, setActiveTab] = react_1.default.useState(0);

@@ -4,9 +4,9 @@
  */
 
 import { Module } from '@nestjs/common';
-import { WorkflowController } from './controllers/workflow.controller.js';
-import { WorkflowService } from './services/workflow.service.js';
-import { PrismaService } from '../services/prisma.service.js';
+import { WorkflowController } from './controllers/workflow.controller';
+import { WorkflowService } from './services/workflow.service';
+import { PrismaService } from '../services/prisma.service';
 
 @Module({
   controllers: [WorkflowController],

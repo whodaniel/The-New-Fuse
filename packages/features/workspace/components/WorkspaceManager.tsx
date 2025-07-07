@@ -15,9 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true }): crypto.randomUUID
         };
         const updatedMessages: unknown, user }): void {
     const [activeThread, setActiveThread]  = require("react");
-import EnhancedChatBubble_1 from '../chat/EnhancedChatBubble.js';
-import ui_1 from '../ui.js';
-import agent_llm_1 from '../../services/llm/agent-llm.js';
+import EnhancedChatBubble_1 from '../chat/EnhancedChatBubble';
+import ui_1 from '../ui';
+import agent_llm_1 from '../../services/llm/agent-llm';
 function WorkspaceManager(): JSX.Element { workspace(0, react_1.useState): updatedMessages })));
         setMessage('');
         try {

@@ -2,7 +2,7 @@
 
 set -e
 
-echo "🔨 Building MCP server..."
+echo "🔨 Building The New Fuse MCP Server..."
 
 # Navigate to project root
 cd "$(dirname "$0")"
@@ -10,18 +10,14 @@ cd "$(dirname "$0")"
 # Create dist directory if it doesn't exist
 mkdir -p dist/mcp
 
-# Build the MCP server
-echo "Compiling TypeScript..."
-npx tsc --project src/mcp/tsconfig.json
+# Build the MCP server with bun
+echo "📦 Compiling TypeScript with bun..."
+bun build src/mcp/server.ts --outdir dist/mcp --target node --format esm
 
-# Make the server executable
-echo "Making server executable..."
-chmod +x dist/mcp/server.js
-
-# Add shebang if not present
-if ! head -1 dist/mcp/server.js | grep -q "#!/usr/bin/env node"; then
-    sed -i '1i#!/usr/bin/env node' dist/mcp/server.js
+# Copy any necessary files
+if [ -f "src/mcp/package.json" ]; then
+    cp src/mcp/package.json dist/mcp/
 fi
 
-echo "✅ MCP server built successfully!"
-echo "📍 Location: dist/mcp/server.js"
+echo "✅ MCP Server build complete!"
+echo "📁 Output: dist/mcp/server.js"

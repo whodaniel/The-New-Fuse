@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { sessionManager, Session } from '@your-org/security';
-import { useToast } from './ui/use-toast.js';
+import { useToast } from './ui/use-toast';
 
 interface SessionProviderProps {
   children: React.ReactNode;

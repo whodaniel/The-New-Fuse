@@ -1,6 +1,6 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { RedisService } from './RedisService.js';
-import { AgentService } from './agent.service.js';
+import { RedisService } from './RedisService';
+import { AgentService } from './agent.service';
 
 @Injectable()
 export class ComposerService implements OnModuleInit {

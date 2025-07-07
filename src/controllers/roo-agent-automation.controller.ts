@@ -213,7 +213,7 @@ export class RooAgentAutomationController {
         agents,
         message: `Team '${createTeamDto.teamType}' created with ${agents.length} agents`
       };
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to create team', error);
       if ((error as Error).message.includes('not found')) {
         throw new BadRequestException(error.message);

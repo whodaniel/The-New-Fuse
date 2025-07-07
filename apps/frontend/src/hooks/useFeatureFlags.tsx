@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { api } from '../services/api.tsx';
+import { api } from '../services/api';
 
 interface FeatureFlag {
   name: string;

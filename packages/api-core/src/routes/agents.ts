@@ -1,6 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { authenticate } from '../middleware/auth.middleware.js';
-import { AgentService } from '../modules/services/agent.service.js';
+import { authenticate } from '../middleware/auth.middleware';
+import { AgentService } from '../modules/services/agent.service';
 
 // Add explicit Router type
 const router: Router = Router();

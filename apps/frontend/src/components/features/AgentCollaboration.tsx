@@ -2,11 +2,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentCollaboration = void 0;
 import react_1 from 'react';
 import react_query_1 from '@tanstack/react-query';
-import Card_1 from '../../../core/Card.js';
-import Button_1 from '../../../core/Button.js';
-import Select_1 from '../../../core/Select.js';
-import agentService_1 from '../../../../services/api/agentService.js';
-import websocket_1 from '../../../../services/websocket.js';
+import Card_1 from '../../../core/Card';
+import Button_1 from '../../../core/Button';
+import Select_1 from '../../../core/Select';
+import agentService_1 from '../../../../services/api/agentService';
+import websocket_1 from '../../../../services/websocket';
 import react_hot_toast_1 from 'react-hot-toast';
 const AgentCollaboration = () => {
     const [selectedAgents, setSelectedAgents] = (0, react_1.useState)([]);

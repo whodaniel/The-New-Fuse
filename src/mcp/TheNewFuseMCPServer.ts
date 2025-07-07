@@ -717,7 +717,7 @@ export class TheNewFuseMCPServer {
         console.error(`The New Fuse MCP Server running on http://localhost:${httpPort}`);
       });
 
-      const transport = new SSEServerTransport('/message', httpServer);
+      const transport = new SSEServerTransport('/message', httpServer as unknown as Server);
       await this.server.connect(transport);
     }
   }

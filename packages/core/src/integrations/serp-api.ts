@@ -1,0 +1,15 @@
+import google-search-results-nodejs'';
+  location?: string'
+ safe?active|off'
+ filter?country|'
+ displayedLink: string;sourceorganic' |featured_snippet|knowledge_graph'
+'
+   */'
+      const searchParams = '{ '';
+      q: 'query,'
+        google_domain: ''
+          // Parse organic results'
+               position:index'
+                source: ''
+            source: ''
+        } catch (error){ this.logger.error(''Error parsingsearchresults: ' '

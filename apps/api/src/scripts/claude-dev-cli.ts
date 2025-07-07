@@ -34,7 +34,7 @@ class ClaudeDevCLI {
           timeout: config.timeout || 30000
         };
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.log(chalk.yellow('Warning: Could not load config file, using defaults'));
     }
 

@@ -27,7 +27,7 @@ import {
   Select,
   Divider
 } from '@chakra-ui/react';
-import { useMcpServers, useMcpClients } from '../../hooks/useMcp.tsx';
+import { useMcpServers, useMcpClients } from '../../hooks/useMcp';
 
 export const McpMonitor: React.FC = () => {
   const toast = useToast();

@@ -1,5 +1,5 @@
-import { NLPEngine } from './NLPEngine.tsx';
-import { DashboardState } from '../collaboration/types.tsx';
+import { NLPEngine } from './NLPEngine';
+import { DashboardState } from '../collaboration/types';
 
 interface VoiceCommand {
   type: navigation' | 'action' | 'query' | 'control';

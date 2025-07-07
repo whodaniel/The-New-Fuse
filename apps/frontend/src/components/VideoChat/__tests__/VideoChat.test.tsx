@@ -2,7 +2,7 @@
 export {}
 import react_1 from 'react';
 import react_2 from '@testing-library/react';
-import VideoChat_1 from '../VideoChat.tsx';
+import VideoChat_1 from '../VideoChat';
 const mockMediaDevices = {
     getUserMedia: jest.fn()
 };

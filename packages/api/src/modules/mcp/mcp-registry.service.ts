@@ -82,7 +82,7 @@ export class MCPRegistryService {
     const url = `${this.backendApiUrl}/agents`;
     const data: CreateAgentDto = {
       name: params.name,
-      type: params.type,
+      type: params.type as any, // Type assertion needed since params.type is string
       metadata: params.metadata,
       // TODO: Add other necessary fields if CreateAgentDto evolves (e.g., initial status, role)
     };
@@ -92,9 +92,8 @@ export class MCPRegistryService {
     try {
       const headers = this.getAuthHeaders(); // Get headers with API key
 
-      const response = await firstValueFrom(
-        this.httpService.post<Agent>(url, data, { headers })
-      );
+      const response$ = this.httpService.post<Agent>(url, data, { headers });
+      const response = await firstValueFrom(response$);
 
       this.logger.log(`Successfully registered agent '${params.name}' with ID: ${response.data.id}`);
       return response.data;
@@ -125,7 +124,7 @@ export class MCPRegistryService {
         required: ['agentId'], // Only agentId is strictly required, others are optional updates
       },
       execute: async (params: { agentId: string; name?: string; type?: string; metadata?: Record<string, any> }) => {
-        return this.updateAgentProfile(params.agentId, { name: params.name, type: params.type, metadata: params.metadata });
+        return this.updateAgentProfile(params.agentId, { name: params.name, type: params.type as any, metadata: params.metadata });
       },
     };
   }
@@ -136,9 +135,8 @@ export class MCPRegistryService {
 
     try {
       const headers = this.getAuthHeaders(); // Get headers with API key
-      const response = await firstValueFrom(
-        this.httpService.put<Agent>(url, updates, { headers })
-      );
+      const response$ = this.httpService.put<Agent>(url, updates, { headers });
+      const response = await firstValueFrom(response$);
       this.logger.log(`Successfully updated agent '${agentId}'`);
       return response.data;
     } catch (error) {
@@ -174,9 +172,8 @@ export class MCPRegistryService {
 
     try {
       const headers = this.getAuthHeaders(); // Get headers with API key
-      const response = await firstValueFrom(
-        this.httpService.get<Agent>(url, { headers })
-      );
+      const response$ = this.httpService.get<Agent>(url, { headers });
+      const response = await firstValueFrom(response$);
       this.logger.log(`Successfully retrieved agent profile '${agentId}'`);
       return response.data;
     } catch (error) {
@@ -225,9 +222,8 @@ export class MCPRegistryService {
 
     try {
       const headers = this.getAuthHeaders(); // Get headers with API key
-      const response = await firstValueFrom(
-        this.httpService.get<Agent[]>(url, { headers })
-      );
+      const response$ = this.httpService.get<Agent[]>(url, { headers });
+      const response = await firstValueFrom(response$);
       this.logger.log(`Successfully found ${response.data.length} agents`);
       return response.data;
     } catch (error) {
@@ -264,9 +260,8 @@ export class MCPRegistryService {
 
     try {
       const headers = this.getAuthHeaders(); // Get headers with API key
-      const response = await firstValueFrom(
-        this.httpService.put<Agent>(url, { status }, { headers })
-      );
+      const response$ = this.httpService.put<Agent>(url, { status }, { headers });
+      const response = await firstValueFrom(response$);
       this.logger.log(`Successfully updated status for agent '${agentId}'`);
       return response.data;
     } catch (error) {
@@ -312,9 +307,8 @@ export class MCPRegistryService {
     try {
       const headers = this.getAuthHeaders();
       // The POST /entities endpoint performs an upsert
-      const response = await firstValueFrom(
-        this.httpService.post<RegisteredEntity>(url, data, { headers })
-      );
+      const response$ = this.httpService.post<RegisteredEntity>(url, data, { headers });
+      const response = await firstValueFrom(response$);
       this.logger.log(`Successfully registered/updated entity '${params.name}' with ID: ${response.data.id}`);
       return response.data;
     } catch (error) {
@@ -352,10 +346,8 @@ export class MCPRegistryService {
       this.logger.log(`Attempting to update entity '${entityId}' via API: ${url}`);
       try {
           const headers = this.getAuthHeaders();
-          const response = await firstValueFrom(
-              // Use PATCH for partial updates
-              this.httpService.patch<RegisteredEntity>(url, updates, { headers })
-          );
+          const response$ = this.httpService.patch<RegisteredEntity>(url, updates, { headers });
+          const response = await firstValueFrom(response$);
           this.logger.log(`Successfully updated entity '${entityId}'`);
           return response.data;
       } catch (error) {
@@ -390,9 +382,8 @@ export class MCPRegistryService {
       this.logger.log(`Attempting to get entity profile '${entityId}' via API: ${url}`);
       try {
           const headers = this.getAuthHeaders();
-          const response = await firstValueFrom(
-              this.httpService.get<RegisteredEntity>(url, { headers })
-          );
+          const response$ = this.httpService.get<RegisteredEntity>(url, { headers });
+          const response = await firstValueFrom(response$);
           this.logger.log(`Successfully retrieved entity profile '${entityId}'`);
           return response.data;
       } catch (error) {
@@ -435,9 +426,8 @@ export class MCPRegistryService {
       this.logger.log(`Attempting to find entities via API: ${url}`);
       try {
           const headers = this.getAuthHeaders();
-          const response = await firstValueFrom(
-              this.httpService.get<RegisteredEntity[]>(url, { headers })
-          );
+          const response$ = this.httpService.get<RegisteredEntity[]>(url, { headers });
+          const response = await firstValueFrom(response$);
           this.logger.log(`Successfully found ${response.data.length} entities`);
           return response.data;
       } catch (error) {

@@ -4,8 +4,8 @@ import {
   VersionDiff,
   Branch,
   VersionControlState,
-} from './types.tsx';
-import { DashboardState } from '../collaboration/types.tsx';
+} from './types';
+import { DashboardState } from '../collaboration/types';
 import deepDiff from 'deep-diff';
 
 export class VersionManager {

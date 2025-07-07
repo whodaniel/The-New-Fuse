@@ -1,4 +1,4 @@
-import { AgentService } from './agent.service.js';
+import { AgentService } from './agent.service';
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
 import { User } from '@prisma/client';
 export declare class AgentController {

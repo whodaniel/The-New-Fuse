@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter, MemoryRouter } from 'react-router-dom';
-import { AppRoutes } from './index.tsx';
+import { AppRoutes } from './index';
 import { AuthProvider } from '@/providers/AuthProvider';
 
 const MockProvider: React.React.FC<{ children: React.ReactNode }> = ({ children }) => (

@@ -1,12 +1,12 @@
 
 import React, { useState, useRef, useEffect, DragEvent } from 'react';
-import { Column, DataType, SelectOption as ColumnSelectOption, Table, AppState } from "@the-new-fuse/fairtable-core";
-import { DATA_TYPE_OPTIONS, SINGLE_SELECT_COLOR_PALETTE, DEFAULT_COLUMN_WIDTH, NEW_COLUMN_DEFAULT_NAME, DATA_TYPE_ICONS } from '@the-new-fuse/fairtable-core';
+import { Column, DataType, SelectOption as ColumnSelectOption, Table, AppState } from "../../fairtable-core/src";
+import { DATA_TYPE_OPTIONS, SINGLE_SELECT_COLOR_PALETTE, DEFAULT_COLUMN_WIDTH, NEW_COLUMN_DEFAULT_NAME, DATA_TYPE_ICONS } from '../../fairtable-core/src';
 import { PencilIcon, TrashIcon, ChevronDownIcon, PlusIcon, GripVerticalIcon, LinkIcon, FormulaIcon, DateIcon, AttachmentIcon, UrlIcon, EmailIcon, ClockIcon, ArrowUpIcon } from './Icons';
 import Modal from './Modal';
 import EditableText from './EditableText';
 import SelectInput, { SelectOptionItem } from './SelectInput';
-import { generateId } from '@the-new-fuse/fairtable-utils';
+import { generateId } from '../../fairtable-utils/src';
 
 interface ColumnHeaderProps {
   column: Column;
@@ -21,7 +21,7 @@ interface ColumnHeaderProps {
 }
 
 const DataTypeDisplay: React.FC<{type: DataType}> = ({ type }) => {
-  const typeInfo = DATA_TYPE_OPTIONS.find(opt => opt.value === type);
+  const typeInfo = DATA_TYPE_OPTIONS.find((opt: any) => opt.value === type);
   let iconComponent;
   switch(type) {
     case DataType.LINKED_RECORD: iconComponent = <LinkIcon className="w-3.5 h-3.5" />; break;
@@ -124,7 +124,7 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
     setEditingOptions(editingOptions.filter(opt => opt.id !== optionId));
   };
   
-  const dataTypeOptionsForSelect: SelectOptionItem[] = DATA_TYPE_OPTIONS.map(dt => ({
+  const dataTypeOptionsForSelect: SelectOptionItem[] = DATA_TYPE_OPTIONS.map((dt: any) => ({
     value: dt.value, 
     label: (
       <div className="flex items-center">
@@ -135,8 +135,8 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
   }));
   
   const tableOptionsForSelect: SelectOptionItem[] = allTables
-    .filter(t => t.id !== column.id) 
-    .map(t => ({value: t.id, label: t.name}));
+    .filter((t: Table) => t.id !== column.id) 
+    .map((t: Table) => ({value: t.id, label: t.name}));
 
   const readOnlyColumnType = column.type === DataType.CREATED_TIME || column.type === DataType.LAST_MODIFIED_TIME || column.type === DataType.VOTES;
 
@@ -272,7 +272,7 @@ const ColumnHeader: React.FC<ColumnHeaderProps> = ({
                   className="flex-grow px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-sky-500 focus:border-sky-500 sm:text-sm"
                 />
                 <SelectInput 
-                    options={SINGLE_SELECT_COLOR_PALETTE.map(c => ({value: c.value, label: <span className={`px-2 py-0.5 text-xs rounded-full ${c.value}`}>{c.name}</span>}))}
+                    options={SINGLE_SELECT_COLOR_PALETTE.map((c: any) => ({value: c.value, label: <span className={`px-2 py-0.5 text-xs rounded-full ${c.value}`}>{c.name}</span>}))}
                     value={selectedColor}
                     onChange={(val) => setSelectedColor(val)}
                     className="w-36"

@@ -1,5 +1,5 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { Modal } from './Modal.tsx';
+import { Modal } from './Modal';
 
 describe('Modal Component', () => {
   // Update the TypeScript type for animationPreset to accept string

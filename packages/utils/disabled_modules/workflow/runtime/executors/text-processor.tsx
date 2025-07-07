@@ -1,7 +1,7 @@
 
 export {}
 exports.TextProcessorNodeExecutor = void 0;
-import types_1 from '../types.js';
+import types_1 from '../types';
 class TextProcessorNodeExecutor {
     async validate(node): Promise<void> {
         const { operation } = node.data;

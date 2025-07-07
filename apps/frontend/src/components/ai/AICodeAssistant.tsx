@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAI } from '@/hooks/useAI';
-import { CodeSuggestions } from './CodeSuggestions.js';
-import { AutoComplete } from './AutoComplete.js';
+import { CodeSuggestions } from './CodeSuggestions';
+import { AutoComplete } from './AutoComplete';
 
 export const AICodeAssistant: React.FC = () => {
   const { suggestions, completions, context } = useAI();

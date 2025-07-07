@@ -1,3 +1,3 @@
-export * from './ThemeProvider.tsx';
-export * from './AuthProvider.tsx';
+export * from './ThemeProvider';
+export * from './AuthProvider';
 //# sourceMappingURL=index.js.map

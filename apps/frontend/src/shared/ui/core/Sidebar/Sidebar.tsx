@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '../Button.js';
-import { SidebarItem } from './SidebarItem.tsx';
+import { Button } from '../Button';
+import { SidebarItem } from './SidebarItem';
 import { cn } from '@/lib/utils';
 export function Sidebar({ items, bottomItems = [], activeView, onViewChange, className, expanded = false, onExpandedChange, width = {
     expanded: 'w-64',

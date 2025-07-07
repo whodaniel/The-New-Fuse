@@ -1,5 +1,24 @@
-import { TaskStatus, TaskPriority, TaskType } from '../../../task/types.tsx';
-import { WorkflowStep, WorkflowExecutionResult } from '../types.tsx';
+// import { TaskStatus, TaskPriority, TaskType } from '../../../task/types';
+
+// Define local task types
+enum TaskStatus {
+  PENDING = 'pending',
+  RUNNING = 'running',
+  COMPLETED = 'completed',
+  FAILED = 'failed'
+}
+enum TaskPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high',
+  URGENT = 'urgent'
+}
+enum TaskType {
+  WORKFLOW = 'workflow',
+  STEP = 'step',
+  VALIDATION = 'validation'
+}
+import { WorkflowStep, WorkflowExecutionResult } from '../types';
 
 interface Task {
   id: string;
@@ -62,7 +81,7 @@ export class WorkflowTaskQueue {
 
     return {
       success: task.status === TaskStatus.COMPLETED,
-      error: task.error,
+      error: task.error as string,
       output: task.output
     };
   }

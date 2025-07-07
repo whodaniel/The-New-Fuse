@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider.tsx';
-import { Button } from '../components/Button.js';
-import { Card } from '../components/Card.tsx';
-import { Input } from '../components/Input.js';
+import { ThemeProvider, ThemeToggle, useTheme } from './ThemeProvider';
+import { Button } from '../components/Button';
+import { Card } from '../components/Card';
+import { Input } from '../components/Input';
 import { Select } from '../components/Select';
 import { Checkbox } from '../components/Checkbox';
 import { Switch } from '../components/Switch';

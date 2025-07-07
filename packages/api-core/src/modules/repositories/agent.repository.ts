@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service.js';
+import { PrismaService } from '../../prisma/prisma.service';
 // Create local type definition until types package issue is resolved
 export interface Agent {
   id: string;
@@ -18,7 +18,7 @@ export interface Agent {
   userId?: string;
   deletedAt?: Date | null;
 }
-import { IBaseRepository } from '../services/base.service.js';
+import { IBaseRepository } from '../services/base.service';
 
 // Enums should be imported from types package to maintain consistency
 // This is a temporary definition that should be moved to the types package

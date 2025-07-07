@@ -1,7 +1,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { Table, View, Row, Column, CellValue, AppState, TimelineViewOptions, DataType } from "@the-new-fuse/fairtable-core";
-import { TIMELINE_DEFAULT_ITEM_DURATION_DAYS } from '@the-new-fuse/fairtable-core';
+import { Table, View, Row, Column, CellValue, AppState, TimelineViewOptions, DataType } from "../../fairtable-core/src";
+import { TIMELINE_DEFAULT_ITEM_DURATION_DAYS } from '../../fairtable-core/src';
 
 interface TimelineViewProps {
   table: Table;
@@ -44,9 +44,9 @@ const TimelineView: React.FC<TimelineViewProps> = ({
 
   const { startDateColumnId, endDateColumnId, labelColumnId } = timelineOptions;
 
-  const startDateColumn = useMemo(() => table.columns.find(c => c.id === startDateColumnId && c.type === DataType.DATE), [table.columns, startDateColumnId]);
-  const endDateColumn = useMemo(() => table.columns.find(c => c.id === endDateColumnId && c.type === DataType.DATE), [table.columns, endDateColumnId]);
-  const labelColumn = useMemo(() => table.columns.find(c => c.id === labelColumnId) || table.columns.find(c => c.id === table.columnOrder[0]), [table.columns, labelColumnId, table.columnOrder]);
+  const startDateColumn = useMemo(() => table.columns.find((c: Column) => c.id === startDateColumnId && c.type === DataType.DATE), [table.columns, startDateColumnId]);
+  const endDateColumn = useMemo(() => table.columns.find((c: Column) => c.id === endDateColumnId && c.type === DataType.DATE), [table.columns, endDateColumnId]);
+  const labelColumn = useMemo(() => table.columns.find((c: Column) => c.id === labelColumnId) || table.columns.find((c: Column) => c.id === table.columnOrder[0]), [table.columns, labelColumnId, table.columnOrder]);
 
   const timelineItems = useMemo(() => {
     if (!startDateColumn) return [];

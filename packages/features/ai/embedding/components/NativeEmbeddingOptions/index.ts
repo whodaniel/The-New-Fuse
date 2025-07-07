@@ -1,2 +1,2 @@
-export { NativeEmbeddingOptions } from './NativeEmbeddingOptions.tsx';
+export { NativeEmbeddingOptions } from './NativeEmbeddingOptions';
 //# sourceMappingURL=index.js.map

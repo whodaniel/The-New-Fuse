@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-// import { AgentRegistry } from './AgentRegistry.js';
-// import { AgentFactory } from './AgentFactory.js';
-// import { AgentCommunicationBus } from './AgentCommunicationBus.js';
+// import { AgentRegistry } from './AgentRegistry';
+// import { AgentFactory } from './AgentFactory';
+// import { AgentCommunicationBus } from './AgentCommunicationBus';
 
 @Injectable()
 export class AgentSystem {

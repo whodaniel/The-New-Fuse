@@ -1,4 +1,4 @@
-import { VersionControlState } from './types.tsx';
+import { VersionControlState } from './types';
 export declare class VersionManager {
     private state;
     private storage;

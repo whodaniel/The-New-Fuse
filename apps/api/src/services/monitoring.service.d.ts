@@ -1,5 +1,5 @@
 import { SystemMonitor, MetricsCollector, PerformanceMonitor } from '@the-new-fuse/core';
-import { AgentService } from './agent.service.js';
+import { AgentService } from './agent.service';
 export declare class MonitoringService {
     private readonly systemMonitor;
     private readonly metricsCollector;

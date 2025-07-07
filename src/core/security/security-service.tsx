@@ -9,7 +9,8 @@ import { Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import cors from 'cors';
-import { createHash } from 'crypto';
+// Refactored: Use centralized cryptoUtils for all cryptographic operations
+import { sha256 } from '../../utils/cryptoUtils';
 
 interface SecurityConfig {
   rateLimit: {
@@ -208,7 +209,7 @@ export class SecurityService {
   }
 
   public hashData(data: string): string {
-    return createHash('sha256').update(data).digest('hex');
+    return sha256(data);
     // Removed unreachable code:
     // const userInfo = {
     //   ip: req.ip || "unknown",

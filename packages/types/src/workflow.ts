@@ -53,3 +53,49 @@ export interface WorkflowService {
   update(id: string, dto: UpdateWorkflowDefinitionDto): Promise<WorkflowDefinition>;
   start(dto: StartWorkflowInstanceDto): Promise<WorkflowInstance>;
 }
+
+// Additional workflow types that are referenced in code
+export interface Workflow extends BaseEntity {
+  name: string;
+  description?: string;
+  status: WorkflowStatus;
+  steps: WorkflowStep[];
+  creator?: string;
+}
+
+export interface CreateWorkflowDto {
+  name: string;
+  description?: string;
+  steps: Omit<WorkflowStep, 'id'>[];
+  metadata?: unknown;
+}
+
+export interface UpdateWorkflowDto {
+  name?: string;
+  description?: string;
+  steps?: WorkflowStep[];
+  status?: WorkflowStatus;
+  metadata?: unknown;
+}
+
+export enum WorkflowExecutionStatus {
+  PENDING = "PENDING",
+  RUNNING = "RUNNING",
+  COMPLETED = "COMPLETED",
+  FAILED = "FAILED",
+  CANCELLED = "CANCELLED"
+}
+
+export interface WorkflowInput {
+  [key: string]: unknown;
+}
+
+export interface WorkflowExecution extends BaseEntity {
+  workflowId: string;
+  status: WorkflowExecutionStatus;
+  input?: WorkflowInput;
+  output?: unknown;
+  error?: string;
+  startedAt: Date;
+  completedAt?: Date;
+}

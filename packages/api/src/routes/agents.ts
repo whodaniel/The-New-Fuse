@@ -1,10 +1,10 @@
 import express, { Request, Response, NextFunction } from 'express';
-import agentService from '../services/agent.service.js';
-import { sendSuccess, sendCreated, sendNoContent } from '../utils/response.util.js';
-import { ApiError } from '../middleware/error.middleware.js';
-import { validateBody, validateParams } from '../middleware/validation.middleware.js';
-import { createAgentSchema, updateAgentSchema, agentIdSchema } from '../schemas/agent.schema.js';
-import { authenticate } from '../middleware/auth.js';
+import agentService from '../services/agent.service';
+import { sendSuccess, sendCreated, sendNoContent } from '../utils/response.util';
+import { ApiError } from '../middleware/error.middleware';
+import { validateBody, validateParams } from '../middleware/validation.middleware';
+import { createAgentSchema, updateAgentSchema, agentIdSchema } from '../schemas/agent.schema';
+import { authenticate } from '../middleware/auth';
 
 const router = express.Router();
 
@@ -30,7 +30,7 @@ router.get('/', authenticate, async (req: Request, res: Response, next: NextFunc
         // Use getAgents(userId) instead of findAll()
         const agents = await agentService.getAgents(req.user.id);
         sendSuccess(res, agents);
-    } catch (error: unknown) {
+    } catch (error) {
         // Use toError helper if available, otherwise keep existing error handling
         const err = error instanceof Error ? error : new Error('Failed to fetch agents');
         next(new ApiError(err.message || 'Failed to fetch agents', 500));
@@ -50,7 +50,7 @@ router.get('/:id', authenticate, validateParams(agentIdSchema), async (req: Requ
         //     return next(new ApiError('Agent not found', 404));
         // }
         sendSuccess(res, agent);
-    } catch (error: unknown) {
+    } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to fetch agent');
         if (err.message?.includes('not found')) {
              return next(new ApiError('Agent not found', 404));
@@ -69,7 +69,7 @@ router.post('/', authenticate, validateBody(createAgentSchema), async (req: Requ
         // Ensure req.body matches CreateAgentDto expected by the service
         const newAgent = await agentService.createAgent(req.body, req.user.id);
         sendCreated(res, newAgent);
-    } catch (error: unknown) {
+    } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to create agent');
          if (err.message?.includes('already exists')) {
              return next(new ApiError(err.message, 409)); // Conflict
@@ -92,7 +92,7 @@ router.put('/:id', authenticate, validateParams(agentIdSchema), validateBody(upd
         //     return next(new ApiError('Agent not found', 404));
         // }
         sendSuccess(res, updatedAgent);
-    } catch (error: unknown) {
+    } catch (error) {
          const err = error instanceof Error ? error : new Error('Failed to update agent');
          if (err.message?.includes('not found')) {
              return next(new ApiError('Agent not found', 404));
@@ -116,7 +116,7 @@ router.delete('/:id', authenticate, validateParams(agentIdSchema), async (req: R
         }
 
         sendNoContent(res);
-    } catch (error: unknown) {
+    } catch (error) {
         const err = error instanceof Error ? error : new Error('Failed to delete agent');
          if (err.message?.includes('not found')) {
              return next(new ApiError('Agent not found', 404));

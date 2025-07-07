@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { TraeAgent } from './trae-agent.js';
+import { TraeAgent } from './trae-agent';
 
 @Module({
   providers: [TraeAgent],

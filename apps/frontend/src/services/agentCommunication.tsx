@@ -1,4 +1,4 @@
-import { webSocketService } from './websocket.js';
+import { webSocketService } from './websocket';
 
 interface AgentMessage {
   id?: string;

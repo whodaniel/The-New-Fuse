@@ -1,0 +1,28 @@
+{
+  "name": "@the-new-fuse/test-utils",
+  "version": "1.0.0",
+  "description": "Testing utilities for The New Fuse",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "bun tsc",
+    "test": "bun test",
+    "clean": "bun rimraf dist"
+  },
+  "dependencies": {
+  "@testing-library/react": "^15.0.0",
+  "@testing-library/jest-dom": "^6.4.6"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  }
+}

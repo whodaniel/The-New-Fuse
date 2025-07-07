@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New Fuse - WebSocket Test</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    .section {
+      margin-bottom: 20px;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .section h2 {
+      margin-top: 0;
+      color: #3498db;
+    }
+    .connection-form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    input, select {
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 16px;
+    }
+    .button-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button.disconnect {
+      background-color: #e74c3c;
+    }
+    button.disconnect:hover {
+      background-color: #c0392b;
+    }
+    pre {
+      background-color: #f8f8f8;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      overflow-x: auto;
+      height: 200px;
+      overflow-y: auto;
+    }
+    .status {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .status-indicator {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-right: 10px;
+    }
+    .connected {
+      background-color: #2ecc71;
+    }
+    .disconnected {
+      background-color: #e74c3c;
+    }
+    .connecting {
+      background-color: #f39c12;
+      animation: blink 1s infinite;
+    }
+    .test-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .test-button {
+      display: flex;
+      align-items: center;
+    }
+    .test-button button {
+      flex: 1;
+      text-align: left;
+      padding: 12px 15px;
+    }
+    .message-input {
+      width: 100%;
+      min-height: 100px;
+      margin-top: 10px;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+    @keyframes blink {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>The New Fuse - WebSocket Test</h1>
+    
+    <div class="section">
+      <h2>Connection Status</h2>
+      <div class="status">
+        <div id="ws-status-indicator" class="status-indicator disconnected"></div>
+        <span id="ws-status-text">Disconnected</span>
+      </div>
+      
+      <div class="connection-form">
+        <div class="form-group">
+          <label for="ws-protocol">Protocol:</label>
+          <select id="ws-protocol">
+            <option value="ws">ws:// (Development)</option>
+            <option value="wss">wss:// (Production)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="ws-host">Host:</label>
+          <input type="text" id="ws-host" value="localhost">
+        </div>
+        <div class="form-group">
+          <label for="ws-port">Port:</label>
+          <input type="number" id="ws-port" value="3712">
+        </div>
+        <div class="form-group">
+          <label for="ws-path">Path (optional):</label>
+          <input type="text" id="ws-path" placeholder="e.g., /websocket">
+        </div>
+        
+        <div class="button-row">
+          <button id="connect-button">Connect</button>
+          <button id="disconnect-button" class="disconnect" disabled>Disconnect</button>
+          <button id="save-settings-button">Save as Default</button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Test Actions</h2>
+      <div class="test-actions">
+        <div class="test-button">
+          <button id="send-ping">Send Ping</button>
+        </div>
+        <div class="test-button">
+          <button id="request-status">Request Status</button>
+        </div>
+        <div class="test-button">
+          <button id="send-echo">Echo Message</button>
+        </div>
+        
+        <textarea id="custom-message" class="message-input" placeholder="Enter a custom JSON message to send..."></textarea>
+        <button id="send-custom">Send Custom Message</button>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Log</h2>
+      <button id="clear-log">Clear Log</button>
+      <pre id="log"></pre>
+    </div>
+  </div>
+
+  <script>
+    // WebSocket connection
+    let ws = null;
+    let reconnectTimeout = null;
+    
+    // Initialize elements
+    const wsStatusIndicator = document.getElementById('ws-status-indicator');
+    const wsStatusText = document.getElementById('ws-status-text');
+    const wsProtocol = document.getElementById('ws-protocol');
+    const wsHost = document.getElementById('ws-host');
+    const wsPort = document.getElementById('ws-port');
+    const wsPath = document.getElementById('ws-path');
+    const connectButton = document.getElementById('connect-button');
+    const disconnectButton = document.getElementById('disconnect-button');
+    const saveSettingsButton = document.getElementById('save-settings-button');
+    const sendPingButton = document.getElementById('send-ping');
+    const requestStatusButton = document.getElementById('request-status');
+    const sendEchoButton = document.getElementById('send-echo');
+    const customMessage = document.getElementById('custom-message');
+    const sendCustomButton = document.getElementById('send-custom');
+    const clearLogButton = document.getElementById('clear-log');
+    const log = document.getElementById('log');
+    
+    // Load settings
+    function loadSettings() {
+      chrome.storage.local.get([
+        'wsProtocol',
+        'wsHost',
+        'wsPort',
+        'wsPath'
+      ], (result) => {
+        wsProtocol.value = result.wsProtocol || 'ws';
+        wsHost.value = result.wsHost || 'localhost';
+        wsPort.value = result.wsPort || 3712;
+        wsPath.value = result.wsPath || '';
+        
+        logMessage('Settings loaded');
+      });
+    }
+    
+    // Save settings
+    function saveSettings() {
+      const settings = {
+        wsProtocol: wsProtocol.value,
+        wsHost: wsHost.value,
+        wsPort: parseInt(wsPort.value),
+        wsPath: wsPath.value
+      };
+      
+      chrome.storage.local.set(settings, () => {
+        logMessage('Settings saved');
+      });
+    }
+    
+    // Connect to WebSocket
+    function connectWebSocket() {
+      if (ws) {
+        ws.close();
+      }
+      
+      // Build WebSocket URL
+      const protocol = wsProtocol.value;
+      const host = wsHost.value;
+      const port = wsPort.value;
+      const path = wsPath.value;
+      
+      const url = `${protocol}://${host}:${port}${path}`;
+      logMessage(`Connecting to ${url}...`);
+      
+      try {
+        // Update UI
+        wsStatusIndicator.className = 'status-indicator connecting';
+        wsStatusText.textContent = 'Connecting...';
+        connectButton.disabled = true;
+        disconnectButton.disabled = false;
+        
+        // Create WebSocket
+        ws = new WebSocket(url);
+        
+        // Set up event handlers
+        ws.onopen = handleOpen;
+        ws.onclose = handleClose;
+        ws.onmessage = handleMessage;
+        ws.onerror = handleError;
+      } catch (error) {
+        logMessage(`Connection error: ${error.message}`, 'error');
+        wsStatusIndicator.className = 'status-indicator disconnected';
+        wsStatusText.textContent = 'Error';
+        connectButton.disabled = false;
+        disconnectButton.disabled = true;
+      }
+    }
+    
+    // Disconnect from WebSocket
+    function disconnectWebSocket() {
+      if (ws) {
+        ws.close();
+      }
+    }
+    
+    // Handle WebSocket open event
+    function handleOpen(event) {
+      logMessage('Connected!', 'success');
+      wsStatusIndicator.className = 'status-indicator connected';
+      wsStatusText.textContent = 'Connected';
+      connectButton.disabled = true;
+      disconnectButton.disabled = false;
+    }
+    
+    // Handle WebSocket close event
+    function handleClose(event) {
+      logMessage(`Disconnected (Code: ${event.code})`, event.wasClean ? 'info' : 'error');
+      wsStatusIndicator.className = 'status-indicator disconnected';
+      wsStatusText.textContent = 'Disconnected';
+      connectButton.disabled = false;
+      disconnectButton.disabled = true;
+      ws = null;
+    }
+    
+    // Handle WebSocket message event
+    function handleMessage(event) {
+      try {
+        const data = JSON.parse(event.data);
+        logMessage('⬇️ Received: ' + JSON.stringify(data, null, 2), 'received');
+      } catch (error) {
+        logMessage('⬇️ Received: ' + event.data, 'received');
+      }
+    }
+    
+    // Handle WebSocket error event
+    function handleError(event) {
+      logMessage('WebSocket error', 'error');
+    }
+    
+    // Send message to WebSocket
+    function sendMessage(message) {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        logMessage('Not connected', 'error');
+        return;
+      }
+      
+      try {
+        // Convert to string if needed
+        const data = typeof message === 'string' ? message : JSON.stringify(message);
+        ws.send(data);
+        logMessage('⬆️ Sent: ' + data, 'sent');
+      } catch (error) {
+        logMessage(`Send error: ${error.message}`, 'error');
+      }
+    }
+    
+    // Log message to console
+    function logMessage(message, type = 'info') {
+      const timestamp = new Date().toLocaleTimeString();
+      let formattedMessage = `[${timestamp}] ${message}`;
+      
+      // Add color based on type
+      let color = 'black';
+      switch (type) {
+        case 'success':
+          color = 'green';
+          break;
+        case 'error':
+          color = 'red';
+          break;
+        case 'sent':
+          color = 'blue';
+          break;
+        case 'received':
+          color = 'purple';
+          break;
+      }
+      
+      log.innerHTML += `<span style="color: ${color};">${formattedMessage}</span>\n`;
+      log.scrollTop = log.scrollHeight;
+    }
+    
+    // Set up event listeners
+    connectButton.addEventListener('click', connectWebSocket);
+    disconnectButton.addEventListener('click', disconnectWebSocket);
+    saveSettingsButton.addEventListener('click', saveSettings);
+    clearLogButton.addEventListener('click', () => {
+      log.innerHTML = '';
+    });
+    
+    // Test action handlers
+    sendPingButton.addEventListener('click', () => {
+      sendMessage({
+        type: 'ping',
+        time: Date.now()
+      });
+    });
+    
+    requestStatusButton.addEventListener('click', () => {
+      sendMessage({
+        type: 'status_request'
+      });
+    });
+    
+    sendEchoButton.addEventListener('click', () => {
+      sendMessage({
+        type: 'echo',
+        message: 'Hello from WebSocket Test Page',
+        time: Date.now()
+      });
+    });
+    
+    sendCustomButton.addEventListener('click', () => {
+      const message = customMessage.value.trim();
+      if (!message) {
+        logMessage('No message to send', 'error');
+        return;
+      }
+      
+      try {
+        // Try to parse as JSON
+        const jsonMessage = JSON.parse(message);
+        sendMessage(jsonMessage);
+      } catch (error) {
+        // If not valid JSON, send as string
+        sendMessage(message);
+      }
+    });
+    
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSettings();
+      logMessage('WebSocket Test Page initialized');
+    });
+  </script>
+</body>
+</html>

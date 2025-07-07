@@ -80,7 +80,7 @@ export class VectorStoreNode implements Node {
       }
       
       return result;
-    } catch (error: unknown) {
+    } catch (error) {
       // Track error if tracker is provided
       if (this.apiUsageTracker) {
         await this.apiUsageTracker.trackUsage({

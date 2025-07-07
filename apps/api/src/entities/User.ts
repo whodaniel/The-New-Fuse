@@ -9,45 +9,45 @@ import { AuthEvent } from './AuthEvent';
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ type: 'varchar', length: 255, unique: true })
-  email: string;
+  email!: string;
 
   @Column()
   @Exclude()
-  hashedPassword: string;
+  hashedPassword!: string;
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  name: string;
+  name!: string;
 
   @Column({ type: 'varchar', length: 50, default: 'user' })
-  role: string;
+  role!: string;
 
   @Column({ type: 'varchar', length: 500, nullable: true })
-  refreshToken: string | null;
+  refreshToken!: string | null;
 
   @OneToMany(() => Agent, agent => agent.user)
-  agents: Agent[];
+  agents!: Agent[];
 
   @OneToMany(() => Pipeline, pipeline => pipeline.user)
-  pipelines: Pipeline[];
+  pipelines!: Pipeline[];
 
   @OneToMany(() => AuthSession, session => session.user)
-  authSessions: AuthSession[];
+  authSessions!: AuthSession[];
 
   @OneToMany(() => LoginAttempt, attempt => attempt.user)
-  loginAttempts: LoginAttempt[];
+  loginAttempts!: LoginAttempt[];
 
   @OneToMany(() => AuthEvent, event => event.user)
-  authEvents: AuthEvent[];
+  authEvents!: AuthEvent[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt!: Date;
 }

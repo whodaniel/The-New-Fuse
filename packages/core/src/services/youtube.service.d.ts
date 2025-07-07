@@ -1,4 +1,5 @@
-interface VideoMetadata {
+import { ConfigService } from '../config/ConfigService';
+export interface VideoMetadata {
     id: string;
     title: string;
     description: string;
@@ -7,28 +8,18 @@ interface VideoMetadata {
     channelId: string;
     channelTitle: string;
     thumbnails: {
-        default: {
-            url: string;
-            width: number;
-            height: number;
-        };
-        medium: {
-            url: string;
-            width: number;
-            height: number;
-        };
-        high: {
-            url: string;
-            width: number;
-            height: number;
-        };
+        default: string;
+        medium: string;
+        high: string;
     };
     tags: string[];
 }
-export declare class YoutubeService {
-    private apiKey;
-    constructor(apiKey: string);
+export declare class YouTubeService {
+    private readonly configService;
+    private readonly logger;
+    private readonly apiKey;
+    constructor(configService: ConfigService);
     getVideoMetadata(videoId: string): Promise<VideoMetadata>;
     private parseDuration;
 }
-export {};
+//# sourceMappingURL=youtube.service.d.ts.map

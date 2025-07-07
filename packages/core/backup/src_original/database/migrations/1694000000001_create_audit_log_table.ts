@@ -1,0 +1,27 @@
+
+export class CreateAuditLogTable1694000000001 implements MigrationInterface { public async up(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.createTable(
+      new Table({
+        name: 'audit_log'
+            name: 'id'
+            type: 'uuid'
+            default: 'uuid_generate_v4()'
+          { name: 'user_id'
+            type: 'uuid'
+          { name: 'action'
+            type: 'varchar'
+          { name: 'table_name'
+            type: 'varchar'
+          { name: 'record_id'
+            type: 'text'
+          { name: 'old_values'
+            type: 'jsonb'
+          { name: 'new_values'
+            type: 'jsonb'
+          { name: 'created_at'
+            type: 'timestamp'
+          { columnNames: ['user_id'
+            referencedTableName: 'users'
+            referencedColumnNames: ['id'
+            onDelete: 'SET NULL'
+    await queryRunner.dropTable('audit_log'

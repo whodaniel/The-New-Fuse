@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { WorkflowStep, WorkflowStatus, WorkflowState } from './types.tsx';
+import { WorkflowStep, WorkflowStatus, WorkflowState } from './types';
 
 // Create placeholder components until actual implementations are available
 const WorkflowControls: FC<{
@@ -140,17 +140,17 @@ export const WorkflowEngine: FC<WorkflowEngineProps> = ({
       />
       <WorkflowProgress
         steps={steps}
-        currentStep={state.currentStep}
+        currentStep={state.currentStepId}
         completedSteps={state.completedSteps}
       />
       <WorkflowStepViewer
-        step={steps.find((s: WorkflowStep) => s.id === state.currentStep)}
+        step={steps.find((s: WorkflowStep) => s.id === state.currentStepId)}
         onExecute={executeStep}
       />
       {state.error && (
         <WorkflowError
-          error={state.error}
-          onRetry={() => executeStep(state.currentStep!)}
+          error={new Error(state.error?.message || 'Unknown workflow error')}
+          onRetry={() => executeStep(state.currentStepId!)}
         />
       )}
     </div>

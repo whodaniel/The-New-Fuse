@@ -64,7 +64,7 @@ export async function startWebSocketServer(config: ServerConfig): Promise<{ succ
   //   serverProcess = { port: config.port, on: () => {}, stop: () => {} }; // Mock serverProcess
   //   broadcastStatus('Starting...', 'starting'); // Initial status
   //   // Wait for a confirmation message from the native host or a timeout
-  // } catch (error: unknown) {
+  // } catch (error) {
   //   console.error('Failed to send native message to start server:', error);
   //   broadcastLog(\`Failed to request server start: ${(error as Error).message}\`, 'error');
   //   broadcastStatus('Failed to Start', 'stopped');
@@ -133,7 +133,7 @@ export async function stopWebSocketServer(): Promise<{ success: boolean; error?:
   // try {
   //   await chrome.runtime.sendNativeMessage('com.your.native.host', { command: 'stop_server' });
   //   // Assume success, actual status might come via another message
-  // } catch (error: unknown) {
+  // } catch (error) {
   //   console.error('Failed to send native message to stop server:', error);
   //   broadcastLog(\`Failed to request server stop: ${(error as Error).message}\`, 'error');
   //   broadcastStatus('Failed to Stop', 'running'); // Remains running if stop command failed

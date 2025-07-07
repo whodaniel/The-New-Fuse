@@ -3,7 +3,7 @@
     return kind === "m" ? f : kind === "a" ? f.call(receiver) : f ? f.value : state.get(receiver);
 };
 var _PiperTTSClient_instances, _PiperTTSClient_getWorker;
-import showToast from '../toast.js';
+import showToast from '../toast';
 class PiperTTSClient {
     constructor({ voiceId } = { voiceId: null }) {
         _PiperTTSClient_instances.add(this);

@@ -181,7 +181,7 @@ class WorkflowEditor {
             const nodeId = this.selectedNode.id;
             this.jsPlumbInstance.removeAllEndpoints(nodeId);
             this.workflow.connections = this.workflow.connections.filter(conn => conn.sourceId !== nodeId && conn.targetId !== nodeId);
-            this.workflow.nodes = this.workflow.nodes.filter(nod(e: any) => node.id !== nodeId);
+            this.workflow.nodes = this.workflow.nodes.filter((node: any) => node.id !== nodeId);
             this.selectedNode.remove();
             this.clearSelection();
             this.saveWorkflow();

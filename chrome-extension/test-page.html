@@ -3,249 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The New Fuse - Extension Test Page</title>
+    <title>TNF Extension Test Page</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            min-height: 100vh;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin: 20px 0;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: #f5f5f5;
         }
         .test-section {
-            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
             padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .chat-simulation {
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 10px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        input[type="text"], textarea {
-            width: 100%;
+        .status-indicator {
             padding: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
+            border-radius: 6px;
             margin: 10px 0;
         }
-        input[type="text"]::placeholder, textarea::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .test-chat {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 16px 0;
         }
-        button {
-            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        .test-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+        .test-button {
+            background: #007bff;
             color: white;
             border: none;
             padding: 10px 20px;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            margin: 5px;
-            transition: all 0.3s ease;
         }
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-        }
-        .send-button {
-            background: linear-gradient(135deg, #007bff 0%, #6610f2 100%) !important;
-        }
-        .messages {
-            height: 200px;
-            overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 10px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 5px;
-            margin: 10px 0;
-        }
-        .status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 12px;
-            z-index: 1000;
-        }
-        .instruction {
-            background: rgba(255, 193, 7, 0.2);
-            border: 1px solid rgba(255, 193, 7, 0.5);
-            border-radius: 5px;
-            padding: 15px;
-            margin: 10px 0;
+        .test-output {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 12px;
+            min-height: 100px;
         }
     </style>
 </head>
 <body>
-    <div class="status" id="extensionStatus">Extension Status: Checking...</div>
+    <h1>🔗 The New Fuse Extension Test Page</h1>
     
-    <div class="container">
-        <h1>🚀 The New Fuse - Extension Test Page</h1>
-        <p>This page is designed to test The New Fuse Chrome Extension functionality.</p>
+    <div class="test-section">
+        <h2>📊 System Status</h2>
+        <div id="relay-status" class="status-indicator warning">Checking TNF Relay connection...</div>
+        <div id="extension-status" class="status-indicator warning">Checking extension status...</div>
+        <div id="websocket-status" class="status-indicator warning">Checking WebSocket connection...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎯 Element Detection Test</h2>
+        <p>Use this mock chat interface to test element detection:</p>
         
-        <div class="instruction">
-            <h3>📋 Testing Instructions:</h3>
-            <ol>
-                <li>Load the extension in Chrome (chrome://extensions/ → Load unpacked)</li>
-                <li>Click the extension icon in the toolbar</li>
-                <li>Try the keyboard shortcut: <strong>Ctrl+Shift+F</strong></li>
-                <li>Test auto-detection of chat elements below</li>
-                <li>Test manual element selection</li>
-                <li>Try WebSocket connection (requires server running on port 3712)</li>
-            </ol>
+        <div class="test-chat">
+            <div class="test-output" id="mock-chat-output">
+                <div><strong>Assistant:</strong> Hello! This is a test chat interface for TNF element detection.</div>
+                <div><strong>User:</strong> Testing the extension...</div>
+            </div>
+            
+            <textarea 
+                class="test-input" 
+                id="mock-chat-input" 
+                placeholder="Type your message here..."
+                rows="3"></textarea>
+            
+            <button class="test-button" id="mock-send-button">Send Message</button>
+        </div>
+        
+        <div style="margin-top: 16px;">
+            <button onclick="testAutoDetection()" class="test-button">Test Auto-Detection</button>
+            <button onclick="testManualSelection()" class="test-button">Test Manual Selection</button>
+            <button onclick="clearHighlights()" class="test-button">Clear Highlights</button>
         </div>
     </div>
-
-    <div class="container">
-        <div class="test-section">
-            <h2>💬 Chat Interface Simulation</h2>
-            <p>This simulates a typical chat interface for testing element detection:</p>
-            
-            <div class="chat-simulation">
-                <div class="messages" id="chatOutput">
-                    <div>System: Welcome to the test chat!</div>
-                    <div>User: Hello, this is a test message</div>
-                    <div>Assistant: I can see your message. Extension testing in progress.</div>
-                </div>
-                
-                <div style="display: flex; gap: 10px; margin-top: 10px;">
-                    <input type="text" id="chatInput" placeholder="Type your message here..." style="flex: 1;">
-                    <button class="send-button" id="sendButton" onclick="sendTestMessage()">Send</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="test-section">
-            <h2>🔧 Alternative Input Types</h2>
-            <p>Different input types for testing element detection:</p>
-            
-            <textarea placeholder="This is a textarea input..." rows="3"></textarea>
-            <br>
-            <div contenteditable="true" style="border: 1px solid rgba(255,255,255,0.3); padding: 10px; border-radius: 5px; background: rgba(255,255,255,0.1); min-height: 40px;">
-                This is a contenteditable div...
-            </div>
-            <br>
-            <button onclick="testAction()">Alternative Button</button>
-        </div>
-
-        <div class="test-section">
-            <h2>📊 Extension Status</h2>
-            <div id="extensionInfo">
-                <p>Checking extension status...</p>
-            </div>
-        </div>
+    
+    <div class="test-section">
+        <h2>🤖 AI Automation Test</h2>
+        <div id="automation-status" class="status-indicator warning">No active session</div>
+        <button onclick="startTestSession()" class="test-button">Start Test Session</button>
+        <button onclick="sendTestMessage()" class="test-button">Send Test Message</button>
+        <button onclick="stopTestSession()" class="test-button">Stop Session</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📋 Extension Instructions</h2>
+        <ol>
+            <li><strong>Install Extension:</strong> Load unpacked from chrome://extensions/</li>
+            <li><strong>Click Extension Icon:</strong> Should show TNF popup interface</li>
+            <li><strong>Test Auto-Detection:</strong> Should identify the chat elements above</li>
+            <li><strong>Test Manual Selection:</strong> Click elements in order (input → button → output)</li>
+            <li><strong>Start AI Session:</strong> Should enable automation features</li>
+            <li><strong>Test on Real Sites:</strong> Try on ChatGPT, Claude, or Gemini</li>
+        </ol>
     </div>
 
     <script>
-        // Test chat functionality
-        function sendTestMessage() {
-            const input = document.getElementById('chatInput');
-            const output = document.getElementById('chatOutput');
-            const message = input.value.trim();
-            
-            if (message) {
-                const messageDiv = document.createElement('div');
-                messageDiv.textContent = `User: ${message}`;
-                output.appendChild(messageDiv);
-                output.scrollTop = output.scrollHeight;
-                input.value = '';
-                
-                // Simulate response
-                setTimeout(() => {
-                    const responseDiv = document.createElement('div');
-                    responseDiv.textContent = `Assistant: I received "${message}"`;
-                    output.appendChild(responseDiv);
-                    output.scrollTop = output.scrollHeight;
-                }, 1000);
+        // Test functions
+        let testSession = null;
+        
+        async function checkRelayStatus() {
+            try {
+                const response = await fetch('http://localhost:3000/status');
+                const data = await response.json();
+                document.getElementById('relay-status').className = 'status-indicator success';
+                document.getElementById('relay-status').textContent = `✅ TNF Relay v${data.version} - ${data.stats.chromeExtensions} extensions connected`;
+            } catch (error) {
+                document.getElementById('relay-status').className = 'status-indicator error';
+                document.getElementById('relay-status').textContent = '❌ TNF Relay not available - Start with: ./start-enhanced-relay.sh';
             }
         }
-
-        function testAction() {
-            alert('Alternative button clicked!');
-        }
-
-        // Check extension status
+        
         function checkExtensionStatus() {
-            const statusEl = document.getElementById('extensionStatus');
-            const infoEl = document.getElementById('extensionInfo');
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                document.getElementById('extension-status').className = 'status-indicator success';
+                document.getElementById('extension-status').textContent = '✅ Chrome Extension API available';
+            } else {
+                document.getElementById('extension-status').className = 'status-indicator error';
+                document.getElementById('extension-status').textContent = '❌ Chrome Extension not detected';
+            }
+        }
+        
+        function checkWebSocketStatus() {
+            try {
+                const ws = new WebSocket('ws://localhost:3001');
+                
+                ws.onopen = () => {
+                    document.getElementById('websocket-status').className = 'status-indicator success';
+                    document.getElementById('websocket-status').textContent = '✅ WebSocket connection successful';
+                    ws.close();
+                };
+                
+                ws.onerror = () => {
+                    document.getElementById('websocket-status').className = 'status-indicator error';
+                    document.getElementById('websocket-status').textContent = '❌ WebSocket connection failed';
+                };
+            } catch (error) {
+                document.getElementById('websocket-status').className = 'status-indicator error';
+                document.getElementById('websocket-status').textContent = '❌ WebSocket not available';
+            }
+        }
+        
+        function testAutoDetection() {
+            // Simulate auto-detection by highlighting elements
+            highlightElement('mock-chat-input', 'Chat Input Detected', '#10b981');
+            highlightElement('mock-send-button', 'Send Button Detected', '#3b82f6');
+            highlightElement('mock-chat-output', 'Chat Output Detected', '#f59e0b');
             
-            // Check if extension is loaded
-            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
-                statusEl.textContent = 'Extension Status: ✅ Loaded';
-                statusEl.style.background = 'rgba(40, 167, 69, 0.8)';
-                
-                infoEl.innerHTML = `
-                    <p>✅ Extension is loaded and active</p>
-                    <p>Extension ID: ${chrome.runtime.id}</p>
-                    <p>Try clicking the extension icon or using Ctrl+Shift+F</p>
-                `;
-            } else {
-                statusEl.textContent = 'Extension Status: ❌ Not Loaded';
-                statusEl.style.background = 'rgba(220, 53, 69, 0.8)';
-                
-                infoEl.innerHTML = `
-                    <p>❌ Extension not detected</p>
-                    <p>Make sure to:</p>
-                    <ul>
-                        <li>Load the extension in chrome://extensions/</li>
-                        <li>Enable Developer mode</li>
-                        <li>Refresh this page after loading</li>
-                    </ul>
-                `;
-            }
+            alert('✅ Auto-detection simulation complete! Check highlighted elements.');
         }
-
-        // Check for content script injection
-        function checkContentScript() {
-            if (window.theNewFuse) {
-                console.log('✅ The New Fuse content script is loaded');
-                return true;
-            } else {
-                console.log('❌ The New Fuse content script not found');
-                return false;
-            }
+        
+        function testManualSelection() {
+            alert('Manual selection mode would start here. Click elements in order: Input → Button → Output');
         }
-
-        // Allow Enter key to send messages
-        document.getElementById('chatInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendTestMessage();
+        
+        function highlightElement(id, label, color) {
+            const element = document.getElementById(id);
+            element.style.outline = `3px solid ${color}`;
+            element.style.boxShadow = `0 0 10px ${color}50`;
+            element.setAttribute('data-tnf-label', label);
+        }
+        
+        function clearHighlights() {
+            document.querySelectorAll('[data-tnf-label]').forEach(el => {
+                el.style.outline = '';
+                el.style.boxShadow = '';
+                el.removeAttribute('data-tnf-label');
+            });
+        }
+        
+        function startTestSession() {
+            testSession = { active: true, startTime: Date.now() };
+            document.getElementById('automation-status').className = 'status-indicator success';
+            document.getElementById('automation-status').textContent = '✅ Test session active';
+        }
+        
+        function sendTestMessage() {
+            if (!testSession?.active) {
+                alert('Start a test session first!');
+                return;
+            }
+            
+            const input = document.getElementById('mock-chat-input');
+            const output = document.getElementById('mock-chat-output');
+            
+            const message = input.value || 'Test message from TNF Extension';
+            
+            // Simulate typing
+            input.value = '';
+            let i = 0;
+            const typeInterval = setInterval(() => {
+                input.value = message.substring(0, i + 1);
+                i++;
+                if (i >= message.length) {
+                    clearInterval(typeInterval);
+                    
+                    // Simulate send
+                    setTimeout(() => {
+                        const newMessage = document.createElement('div');
+                        newMessage.innerHTML = `<strong>User:</strong> ${message}`;
+                        output.appendChild(newMessage);
+                        input.value = '';
+                    }, 500);
+                }
+            }, 50);
+        }
+        
+        function stopTestSession() {
+            testSession = null;
+            document.getElementById('automation-status').className = 'status-indicator warning';
+            document.getElementById('automation-status').textContent = 'No active session';
+        }
+        
+        // Mock send button functionality
+        document.getElementById('mock-send-button').addEventListener('click', () => {
+            const input = document.getElementById('mock-chat-input');
+            const output = document.getElementById('mock-chat-output');
+            
+            if (input.value.trim()) {
+                const newMessage = document.createElement('div');
+                newMessage.innerHTML = `<strong>User:</strong> ${input.value}`;
+                output.appendChild(newMessage);
+                input.value = '';
+                output.scrollTop = output.scrollHeight;
             }
         });
-
-        // Check status on page load
-        document.addEventListener('DOMContentLoaded', function() {
+        
+        // Initialize status checks
+        document.addEventListener('DOMContentLoaded', () => {
+            checkRelayStatus();
             checkExtensionStatus();
-            
-            // Check again after a delay to catch late-loading extensions
-            setTimeout(() => {
-                checkExtensionStatus();
-                checkContentScript();
-            }, 2000);
+            checkWebSocketStatus();
         });
-
-        console.log('🧪 The New Fuse test page loaded');
-        console.log('Available elements for testing:');
-        console.log('- Input field: #chatInput');
-        console.log('- Send button: #sendButton');
-        console.log('- Output area: #chatOutput');
+        
+        // Show extension connection status
+        window.addEventListener('message', (event) => {
+            if (event.data.source === 'tnf_extension') {
+                console.log('TNF Extension message:', event.data);
+            }
+        });
     </script>
-    <script src="test-extension.js"></script>
 </body>
 </html>

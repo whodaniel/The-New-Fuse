@@ -1,7 +1,7 @@
 import { test as base, Page, TestInfo } from '@playwright/test';
 import { NavigationUtils } from '../utils/navigation.utils';
 import { TestHelpers } from '../utils/test-helpers';
-import { TestReporter } from '../utils/test-reporter.js';
+import { TestReporter } from '../utils/test-reporter';
 import { DashboardPage } from '../pages/dashboard.page';
 import { WorkflowEditorPage } from '../pages/workflow-editor.page';
 import { SettingsPage } from '../pages/settings.page';

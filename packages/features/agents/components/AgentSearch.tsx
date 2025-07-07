@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AgentSearch = void 0;
 import react_1 from 'react';
 import lucide_react_1 from 'lucide-react';
-import Input_1 from '../ui/Input/Input.js';
+import Input_1 from '../ui/Input/Input';
 import useDebounce_1 from '@/hooks/useDebounce';
 const AgentSearch = ({ onSearch, placeholder = 'Search agents...', }) => {
     const [searchQuery, setSearchQuery] = react_1.default.useState('');

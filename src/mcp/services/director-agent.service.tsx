@@ -180,7 +180,7 @@ export class DirectorAgentService {
           }
         });
       }
-    } catch (error: unknown) {
+    } catch (error) {
       // Update task on error
       task.status = 'failed';
       task.error = (error as Error).message;

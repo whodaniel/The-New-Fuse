@@ -1,4 +1,5 @@
-import prismaService from './services/prisma.service.js';
+import prismaService from './services/prisma.service';
+import { AgentType as PrismaAgentType, AgentStatus as PrismaAgentStatus } from '@the-new-fuse/database/generated/prisma';
 
 async function testDatabaseConnection() {
   try {
@@ -12,8 +13,10 @@ async function testDatabaseConnection() {
     const agent = await prismaService.agent.create({
       data: {
         name: 'Test Agent',
-        type: 'AI_ASSISTANT' as any, // Use a valid enum value with type casting
-        // Remove capabilities as it's not in the schema
+        type: 'GENERIC' as any, // Use a valid enum value from the schema
+        description: 'Test agent description',
+        status: PrismaAgentStatus.IDLE,
+        userId: 'test-user-id'
       }
     });
     console.log('Created test agent:', agent);

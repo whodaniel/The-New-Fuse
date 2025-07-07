@@ -1,58 +1,92 @@
-// Initialize with some mock data, including the MOCK_USER_ID used in controller
-const userProfilesStore = new Map([
-    ['mockUserId123', {
-            id: 'mockUserId123',
-            email: 'user@example.com',
-            displayName: 'Mock User',
-            bio: 'This is a mock user bio.',
-            preferences: {
-                theme: 'dark',
-                notifications: true,
-            }
-        }],
-    ['anotherUser456', {
-            id: 'anotherUser456',
-            email: 'another@example.com',
-            displayName: 'Another User',
-            bio: 'Loves coding.',
-            preferences: {
-                theme: 'light',
-                notifications: false,
-            }
-        }]
-]);
-/**
- * Retrieves a user's profile by their ID.
- * @param userId The ID of the user.
- * @returns The user profile, or null if not found.
- */
-export const getUserProfileById = async (userId) => {
-    const profile = userProfilesStore.get(userId);
-    return profile ? { ...profile } : null; // Return a copy
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-/**
- * Updates a user's profile by their ID.
- * @param userId The ID of the user.
- * @param profileData Partial data to update the profile.
- * @returns The updated user profile, or null if not found.
- */
-export const updateUserProfileById = async (userId, profileData) => {
-    const existingProfile = userProfilesStore.get(userId);
-    if (!existingProfile) {
-        return null;
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.userService = exports.UserService = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("./prisma.service");
+let UserService = class UserService {
+    prisma;
+    constructor(prisma) {
+        this.prisma = prisma;
     }
-    // Merge new data with existing profile data
-    // Ensure 'id' and 'email' are not overwritten by partial update if they are part of profileData
-    const updatedProfile = {
-        ...existingProfile,
-        ...profileData,
-        id: existingProfile.id, // Preserve original ID
-        email: existingProfile.email, // Preserve original email
-        preferences: {
-            ...existingProfile.preferences,
-            ...profileData.preferences,
-        },
-    };
-    userProfilesStore.set(userId, updatedProfile);
-    return { ...updatedProfile }; // Return a copy
+    async findAll() {
+        return this.prisma.user.findMany();
+    }
+    async findOne(id) {
+        return this.prisma.user.findUnique({
+            where: { id }
+        });
+    }
+    async findByEmail(email) {
+        return this.prisma.user.findUnique({
+            where: { email }
+        });
+    }
+    async findByUsername(username) {
+        return this.prisma.user.findUnique({
+            where: { username }
+        });
+    }
+    async findUserByEmail(email) {
+        return this.findByEmail(email);
+    }
+    async findUserByUsername(username) {
+        return this.findByUsername(username);
+    }
+    async createUser(email, password, username) {
+        return this.create({
+            email,
+            password,
+            username
+        });
+    }
+    async getUserProfileById(userId) {
+        return this.findOne(userId);
+    }
+    async updateUserProfileById(userId, profileData) {
+        try {
+            return await this.update(userId, profileData);
+        }
+        catch (error) {
+            return null;
+        }
+    }
+    async create(data) {
+        return this.prisma.user.create({
+            data: {
+                ...data,
+                createdAt: new Date(),
+                updatedAt: new Date()
+            }
+        });
+    }
+    async update(id, data) {
+        return this.prisma.user.update({
+            where: { id },
+            data: {
+                ...data,
+                updatedAt: new Date()
+            }
+        });
+    }
+    async delete(id) {
+        return this.prisma.user.delete({
+            where: { id }
+        });
+    }
 };
+exports.UserService = UserService;
+exports.UserService = UserService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+], UserService);
+// Export the service instance for compatibility
+exports.userService = new UserService(null); // Will be properly injected in DI container

@@ -115,7 +115,7 @@ class PromptManager {
             });
 
             return result;
-        } catch (error: unknown) {
+        } catch (error) {
             const responseTime = Date.now() - startTime;
             prompt.updateMetrics(false, responseTime);
             

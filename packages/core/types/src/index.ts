@@ -12,7 +12,7 @@ export {
     type Agent,
     type AgentConfig,
     type AgentMetadata
-} from './agent.js';
+} from './agent';
 
 // Export message types
 export {
@@ -21,7 +21,7 @@ export {
     MessageStatus,
     type Message,
     type MessageOptions
-} from './messages.js';
+} from './messages';
 
 // Export task types
 export {
@@ -29,20 +29,20 @@ export {
     TaskPriority,
     type Task,
     type TaskConfig
-} from './task.js';
+} from './task';
 
 // Export workflow types
 export {
     WorkflowStatus,
     type Workflow,
     type WorkflowNode
-} from './workflow.js';
+} from './workflow';
 
 // Export node types
-export * from './nodes/types.js';
+export * from './nodes/types';
 
 // Export flow types
-export * from './flow.js';
+export * from './flow';
 
 // Export security types
-export * from './security.js';
+export * from './security';

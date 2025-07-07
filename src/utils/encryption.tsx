@@ -1,6 +1,5 @@
-import { createCipheriv, createDecipheriv, createPublicKey, createPrivateKey } from 'crypto';
+import { encrypt, decrypt, hmacSha256, timingSafeEqual } from './cryptoUtils';
 import { Logger } from './logger.tsx';
-import CryptoJS from 'crypto-js';
 
 const logger = new Logger('Encryption');
 
@@ -21,12 +20,9 @@ export class EncryptionService {
     }
   }
 
+  // Key pair generation should use a secure method; placeholder removed.
   private async generateKeyPair(): Promise<KeyPair> {
-    const keyBuffer = CryptoJS.lib.WordArray.random(32);
-    return {
-      publicKey: Buffer.from(keyBuffer.toString(), 'hex'),
-      privateKey: Buffer.from(keyBuffer.toString(), 'hex')
-    };
+    throw new Error('Key pair generation not implemented. Use a secure asymmetric algorithm.');
   }
 
   async exportPublicKey(): Promise<string> {
@@ -41,43 +37,30 @@ export class EncryptionService {
     }
   }
 
-  async encrypt(data: Buffer, publicKey: Buffer): Promise<Buffer> {
+  async encrypt(data: Buffer, key: Buffer): Promise<string> {
     try {
-      const iv = CryptoJS.lib.WordArray.random(16);
-      const cipher = createCipheriv('aes-256-gcm', publicKey, iv);
-      const encrypted = Buffer.concat([
-        iv,
-        Buffer.from(cipher.update(data)),
-        Buffer.from(cipher.final())
-      ]);
-      return encrypted;
+      return encrypt(data.toString('utf8'), key);
     } catch (error) {
       logger.error('E2E encryption error:', error);
       throw error;
     }
   }
 
-  async decrypt(data: Buffer, privateKey: Buffer): Promise<Buffer> {
+  async decrypt(encryptedText: string, key: Buffer): Promise<string> {
     try {
-      const iv = data.subarray(0, 16);
-      const encryptedData = data.subarray(16);
-      const decipher = createDecipheriv('aes-256-gcm', privateKey, iv);
-      return Buffer.concat([
-        Buffer.from(decipher.update(encryptedData)),
-        Buffer.from(decipher.final())
-      ]);
+      return decrypt(encryptedText, key);
     } catch (error) {
       logger.error('E2E decryption error:', error);
       throw error;
     }
   }
 
-  createMessageSignature(message: string, userId: string): string {
-    return CryptoJS.HmacSHA256(message, userId).toString();
+  createMessageSignature(message: string, key: string): string {
+    return hmacSha256(message, key);
   }
 
-  verifyMessageSignature(message: string, signature: string, userId: string): boolean {
-    const computedSignature = this.createMessageSignature(message, userId);
-    return computedSignature === signature;
+  verifyMessageSignature(message: string, signature: string, key: string): boolean {
+    const computedSignature = this.createMessageSignature(message, key);
+    return timingSafeEqual(computedSignature, signature);
   }
 }

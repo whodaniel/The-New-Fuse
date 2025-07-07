@@ -1,7 +1,7 @@
 import { PrismaService } from '@the-new-fuse/database';
 import { ConfigService } from '@nestjs/config';
-import { AgentFactory } from './agent.factory.js';
-import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto.js';
+import { AgentFactory } from './agent.factory';
+import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
 import { UnifiedMonitorService } from '@the-new-fuse/core';
 export declare class AgentsService {
     private prisma;

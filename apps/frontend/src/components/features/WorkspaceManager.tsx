@@ -1,9 +1,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WorkspaceManager = void 0;
 import react_1 from 'react';
-import Card_1 from '../../../core/Card.js';
-import Button_1 from '../../../core/Button.js';
-import Input_1 from '../../../core/Input.js';
+import Card_1 from '../../../core/Card';
+import Button_1 from '../../../core/Button';
+import Input_1 from '../../../core/Input';
 const WorkspaceManager = () => {
     const [workspaces, setWorkspaces] = react_1.default.useState([]);
     const [showCreateForm, setShowCreateForm] = react_1.default.useState(false);

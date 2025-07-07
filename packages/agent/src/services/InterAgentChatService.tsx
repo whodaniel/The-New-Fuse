@@ -1,17 +1,19 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
-import { UUID, Message, MessageType } from '@the-new-fuse/types'; // Assuming types are available
+import { BaseService } from '../core/BaseService'; // Corrected import path
+import { Logger } from '../utils/Logger';
+import { UUID, Message } from '@the-new-fuse/types'; // Assuming types are available
 
 // Define specific message structures for inter-agent chat if needed
 export interface ChatMessage extends Message {
   senderAgentId: UUID;
   recipientAgentId: UUID;
   conversationId?: UUID; // Optional: to group messages
+  sender: string; // Add missing sender property
 }
 
 export interface BroadcastMessage extends Message {
   senderAgentId: UUID;
   topic?: string; // Optional: for pub/sub style broadcasts
+  sender: string; // Add missing sender property
 }
 
 // Interface for the underlying transport mechanism (e.g., Redis Pub/Sub, WebSocket, gRPC)
@@ -36,7 +38,7 @@ export class InterAgentChatService extends BaseService {
   private currentAgentId: UUID; // ID of the agent instance using this service
 
   constructor(transport: ChatTransport, agentId: UUID) {
-    super();
+    super({ name: 'InterAgentChatService' });
     this.logger = new Logger('InterAgentChatService');
     this.transport = transport;
     this.currentAgentId = agentId;
@@ -54,8 +56,8 @@ export class InterAgentChatService extends BaseService {
       await this.transport.connect();
       await this.transport.subscribeToAgent(this.currentAgentId);
       this.logger.info(`Transport connected and subscribed to Agent ${this.currentAgentId}.`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to initialize chat transport: ${(error as Error).message}`, error);
+    } catch (error) {
+      this.logger.error(`Failed to initialize chat transport: ${(error as Error).message}`);
       // Implement retry or error handling strategy
     }
   }
@@ -70,24 +72,25 @@ export class InterAgentChatService extends BaseService {
   async sendMessage(
     recipientAgentId: UUID,
     content: string | Record<string, unknown>,
-    type: MessageType = 'chat',
+    _type: any = 'chat',
     conversationId?: UUID
   ): Promise<void> {
     const message: ChatMessage = {
       id: crypto.randomUUID(), // Generate a unique message ID
       senderAgentId: this.currentAgentId,
       recipientAgentId: recipientAgentId,
-      timestamp: new Date(),
-      type: type,
+      timestamp: Date.now(),
+      type: 'chat' as any, // TODO: Fix MessageType enum
       content: content,
       conversationId: conversationId,
+      sender: this.currentAgentId,
     };
 
     try {
       await this.transport.sendMessage(message);
       this.logger.debug(`Sent message ${message.id} to Agent ${recipientAgentId}.`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to send message to Agent ${recipientAgentId}: ${(error as Error).message}`, error);
+    } catch (error) {
+      this.logger.error(`Failed to send message to Agent ${recipientAgentId}: ${(error as Error).message}`);
       throw error; // Re-throw for the caller to handle
     }
   }
@@ -100,23 +103,23 @@ export class InterAgentChatService extends BaseService {
    */
   async broadcast(
     content: string | Record<string, unknown>,
-    type: MessageType = 'broadcast',
     topic?: string
   ): Promise<void> {
      const message: BroadcastMessage = {
       id: crypto.randomUUID(), // Generate a unique message ID
       senderAgentId: this.currentAgentId,
-      timestamp: new Date(),
-      type: type,
+      timestamp: Date.now(),
+      type: 'broadcast' as any, // TODO: Fix MessageType enum
       content: content,
       topic: topic,
+      sender: this.currentAgentId,
     };
 
     try {
       await this.transport.broadcastMessage(message);
       this.logger.debug(`Broadcasted message ${message.id}${topic ? ` on topic ${topic}` : ''}.`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to broadcast message: ${(error as Error).message}`, error);
+    } catch (error) {
+      this.logger.error(`Failed to broadcast message: ${(error as Error).message}`);
       throw error; // Re-throw for the caller to handle
     }
   }
@@ -156,8 +159,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.subscribeToTopic(topic);
       this.logger.info(`Subscribed to topic: ${topic}`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to subscribe to topic ${topic}: ${(error as Error).message}`, error);
+    } catch (error) {
+      this.logger.error(`Failed to subscribe to topic ${topic}: ${(error as Error).message}`);
     }
   }
 
@@ -174,8 +177,8 @@ export class InterAgentChatService extends BaseService {
     try {
       await this.transport.unsubscribeFromTopic(topic);
       this.logger.info(`Unsubscribed from topic: ${topic}`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to unsubscribe from topic ${topic}: ${(error as Error).message}`, error);
+    } catch (error) {
+      this.logger.error(`Failed to unsubscribe from topic ${topic}: ${(error as Error).message}`);
     }
   }
 
@@ -185,7 +188,7 @@ export class InterAgentChatService extends BaseService {
       await this.transport.disconnect();
       this.logger.info('Chat transport disconnected.');
     } catch (error) {
-      this.logger.error(`Error disconnecting chat transport: ${error.message}`, error);
+      this.logger.error(`Error disconnecting chat transport: ${(error as Error).message}`);
     }
   }
 }

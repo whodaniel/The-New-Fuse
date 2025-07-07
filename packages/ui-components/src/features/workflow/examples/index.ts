@@ -1,1 +1,1 @@
-export { WorkflowExample } from './WorkflowExample.tsx';
+export { default as WorkflowExample } from './WorkflowExample';

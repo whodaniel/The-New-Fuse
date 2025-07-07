@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from '@the-new-fuse/database';
+import { PrismaService } from '@the-new-fuse/database';
 import * as bcrypt from 'bcrypt';
 import { User } from '@the-new-fuse/types';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly databaseService: DatabaseService) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.databaseService.client().user.findUnique({ 
+    const user = await this.prismaService.user.findUnique({ 
       where: { email } 
     });
 
@@ -26,7 +26,7 @@ export class AuthService {
     name?: string;
   }): Promise<User> {
     const hashedPassword = await bcrypt.hash(data.password, 10);
-    return this.databaseService.client().user.create({
+    return this.prismaService.user.create({
       data: {
         ...data,
         password: hashedPassword,
@@ -37,7 +37,7 @@ export class AuthService {
   }
 
   async logout(userId: string): Promise<void> {
-    await this.databaseService.client().session.deleteMany({ 
+    await this.prismaService.session.deleteMany({ 
       where: { userId } 
     });
   }

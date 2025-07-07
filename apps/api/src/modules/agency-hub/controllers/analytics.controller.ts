@@ -14,12 +14,12 @@ import { ServiceCategoryRouterService } from '@the-new-fuse/core/services/servic
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { Roles } from '../../../decorators/roles.decorator';
-import { EnhancedUserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('analytics')
 @Controller('api/analytics')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles(EnhancedUserRole.AGENCY_OWNER, EnhancedUserRole.AGENCY_ADMIN)
+@Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
 @ApiBearerAuth()
 export class AnalyticsController {
   constructor(
@@ -60,7 +60,7 @@ export class AnalyticsController {
           clientSatisfaction: serviceMetrics.clientSatisfaction || 0
         }
       };
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get analytics overview',
         HttpStatus.NOT_FOUND
@@ -82,7 +82,7 @@ export class AnalyticsController {
         timeframe,
         granularity
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get performance metrics',
         HttpStatus.NOT_FOUND
@@ -104,7 +104,7 @@ export class AnalyticsController {
         timeframe,
         categoryId
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get provider performance',
         HttpStatus.NOT_FOUND
@@ -126,7 +126,7 @@ export class AnalyticsController {
         timeframe,
         breakdown
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get quality trends',
         HttpStatus.NOT_FOUND
@@ -146,7 +146,7 @@ export class AnalyticsController {
         agencyId,
         timeframe
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get utilization metrics',
         HttpStatus.NOT_FOUND
@@ -168,7 +168,7 @@ export class AnalyticsController {
         timeframe,
         breakdown
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get cost analysis',
         HttpStatus.NOT_FOUND
@@ -188,7 +188,7 @@ export class AnalyticsController {
         agencyId,
         timeframe
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get bottleneck analysis',
         HttpStatus.NOT_FOUND
@@ -208,7 +208,7 @@ export class AnalyticsController {
         agencyId,
         horizon
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get predictive analytics',
         HttpStatus.NOT_FOUND
@@ -240,7 +240,7 @@ export class AnalyticsController {
         format,
         includeMetrics
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to export analytics data',
         HttpStatus.NOT_FOUND

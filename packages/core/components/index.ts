@@ -1,21 +1,21 @@
 // UI Components
-export * from './ui/Button.js';
-export * from './ui/Input.js';
-export * from './ui/Select.js';
-export * from './ui/Modal.js';
-export * from './ui/Tooltip.js';
+export * from './ui/Button';
+export * from './ui/Input';
+export * from './ui/Select';
+export * from './ui/Modal';
+export * from './ui/Tooltip';
 
 // Layout Components
-export * from './layout/Split.js';
-export * from './layout/Card.js';
-export * from './layout/Container.js';
+export * from './layout/Split';
+export * from './layout/Card';
+export * from './layout/Container';
 
 // Feature Components
-export * from './chat/ChatCore.tsx';
-export * from './workspace/BaseWorkspace.js';
-export * from './workflow/WorkflowCore.js';
+export * from './chat/ChatCore';
+export * from './workspace/BaseWorkspace';
+export * from './workflow/WorkflowCore';
 
 // Utility Components
-export * from './utils/ErrorBoundary.js';
-export * from './utils/LoadingSpinner.js';
-export * from './utils/Portal.js';
+export * from './utils/ErrorBoundary';
+export * from './utils/LoadingSpinner';
+export * from './utils/Portal';

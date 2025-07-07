@@ -1,6 +1,6 @@
-export { FeatureStage, type FeatureProgress, type CodeMetrics, type QualitativeAssessment } from './types.js';
-export { FeatureTracker } from './FeatureTracker.tsx';
-export { useFeatureTracker } from './hooks/useFeatureTracker.tsx';
-export { FeatureProgress as FeatureProgressComponent } from './components/FeatureProgress.tsx';
-export * from './components/FeatureProgress.tsx';
-export * from './examples/FeatureTrackingExample.tsx';
+export { FeatureStage, type FeatureProgress, type CodeMetrics, type QualitativeAssessment } from './types';
+export { FeatureTracker } from './FeatureTracker';
+export { useFeatureTracker } from './hooks/useFeatureTracker';
+export { FeatureProgress as FeatureProgressComponent } from './components/FeatureProgress';
+export * from './components/FeatureProgress';
+export * from './examples/FeatureTrackingExample';

@@ -1,9 +1,9 @@
 export {}
 exports.useMessages = useMessages;
 import react_1 from 'react';
-import chatService_1 from '../services/api/chatService.js';
-import SocketContext_1 from '../services/SocketContext.js';
-import message_utils_1 from '../utils/message-utils.js';
+import chatService_1 from '../services/api/chatService';
+import SocketContext_1 from '../services/SocketContext';
+import message_utils_1 from '../utils/message-utils';
 function useMessages(selectedAgent, conversationId): any {
     const [messages, setMessages] = (0, react_1.useState)([]);
     const [isTyping, setIsTyping] = (0, react_1.useState)(false);

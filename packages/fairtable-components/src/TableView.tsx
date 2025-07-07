@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useCallback, DragEvent } from 'react';
-import { Table, Column, Row, DataType, CellValue, AppState, View } from "@the-new-fuse/fairtable-core";
-import { DEFAULT_COLUMN_WIDTH, ROW_HEIGHT } from '@the-new-fuse/fairtable-core';
+import { Table, Column, Row, DataType, CellValue, AppState, View } from "../../fairtable-core/src";
+import { DEFAULT_COLUMN_WIDTH, ROW_HEIGHT } from '../../fairtable-core/src';
 import { PlusIcon, TrashIcon } from './Icons';
 import ColumnHeader from './ColumnHeader';
 import TableCell from './TableCell';
@@ -81,7 +81,7 @@ const GridView: React.FC<GridViewProps> = ({
   }, [resizingColumn, handleMouseMove, handleMouseUp]);
 
   const handleStartResize = (columnId: string, startX: number) => {
-    const column = table.columns.find(c => c.id === columnId);
+    const column = table.columns.find((c: Column) => c.id === columnId);
     if (column) {
       setResizingColumn({ id: columnId, startX, startWidth: column.width || DEFAULT_COLUMN_WIDTH });
     }

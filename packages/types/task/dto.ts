@@ -1,4 +1,4 @@
-import { TaskStatus, TaskType } from '../core.js';
+import { TaskStatus, TaskType } from '../core';
 
 /**
  * Data Transfer Object for creating a new task

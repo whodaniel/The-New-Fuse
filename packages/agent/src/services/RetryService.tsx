@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@packages/utils'; // Assuming Logger is available
+import { BaseService } from '../core/BaseService';
+import { Logger } from '../utils/Logger';
 
 /**
  * Options for configuring retry behavior.
@@ -36,7 +36,7 @@ export class RetryService extends BaseService {
   private logger: Logger;
 
   constructor() {
-    super();
+    super({ name: 'RetryService' });
     this.logger = new Logger('RetryService');
     this.logger.info('RetryService initialized.');
   }
@@ -68,8 +68,8 @@ export class RetryService extends BaseService {
           this.logger.info(`Operation succeeded on attempt ${attempt}.`);
         }
         return result;
-      } catch (error: unknown) {
-        this.logger.warn(`Attempt ${attempt} failed: ${(error as Error).message}`, error);
+      } catch (error) {
+        this.logger.warn(`Attempt ${attempt} failed: ${error instanceof Error ? error.message : String(error)}`);
 
         if (attempt >= config.maxAttempts) {
           this.logger.error(`Operation failed after ${attempt} attempts. Giving up.`);
@@ -87,7 +87,7 @@ export class RetryService extends BaseService {
           try {
             config.onRetry(attempt, delay, error as Error);
           } catch (onRetryError) {
-            this.logger.error(`Error in onRetry callback: ${onRetryError.message}`, onRetryError);
+            this.logger.error(`Error in onRetry callback: ${(onRetryError as Error).message}`);
             // Continue with the retry despite the callback error
           }
         }

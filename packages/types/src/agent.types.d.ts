@@ -1,4 +1,4 @@
-import { JsonValue, DataMap } from './common-types.tsx';
+import { JsonValue, DataMap } from './common-types';
 export interface AgentConfig {
     tools?: AgentTool[];
     memory?: boolean;

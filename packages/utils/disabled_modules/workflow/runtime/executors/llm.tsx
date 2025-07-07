@@ -1,8 +1,8 @@
 
 export {}
 exports.LLMNodeExecutor = void 0;
-import types_1 from '../types.js';
-import registry_1 from '../../../providers/registry.js';
+import types_1 from '../types';
+import registry_1 from '../../../providers/registry';
 class LLMNodeExecutor {
     async validate(node): Promise<void> {
         const { provider, model } = node.data;

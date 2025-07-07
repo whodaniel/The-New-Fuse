@@ -1,3 +1,3 @@
-export * from './Captcha.tsx';
-export * from './types.js';
+export * from './Captcha';
+export * from './types';
 //# sourceMappingURL=index.js.map

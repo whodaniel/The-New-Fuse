@@ -1,83 +1,41 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EncryptionService = void 0;
+const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
+const cryptoUtils_1 = require("../../src/utils/cryptoUtils");
+let EncryptionService = class EncryptionService {
+    configService;
+    algorithm = 'aes-256-cbc';
+    key;
+    constructor(configService) {
+        this.configService = configService;
+        const encryptionKey = this.configService.get('ENCRYPTION_KEY');
+        if (!encryptionKey) {
+            throw new Error('ENCRYPTION_KEY must be defined in environment variables');
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
+        this.key = Buffer.from(encryptionKey, 'hex');
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    async encrypt(text) {
+        // Use centralized cryptoUtils for encryption
+        return (0, cryptoUtils_1.encrypt)(text, this.key);
     }
-    return useValue ? value : void 0;
+    async decrypt(encryptedText) {
+        // Use centralized cryptoUtils for decryption
+        return (0, cryptoUtils_1.decrypt)(encryptedText, this.key);
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Injectable } from '@nestjs/common';
-import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
-let EncryptionService = (() => {
-    let _classDecorators = [Injectable()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var EncryptionService = _classThis = class {
-        constructor(configService) {
-            this.configService = configService;
-            this.algorithm = 'aes-256-cbc';
-            const encryptionKey = this.configService.get('ENCRYPTION_KEY');
-            if (!encryptionKey) {
-                throw new Error('ENCRYPTION_KEY must be defined in environment variables');
-            }
-            this.key = Buffer.from(encryptionKey, 'hex');
-        }
-        async encrypt(text) {
-            const iv = randomBytes(16);
-            const cipher = createCipheriv(this.algorithm, this.key, iv);
-            const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-            return iv.toString('hex') + ':' + encrypted.toString('hex');
-        }
-        async decrypt(encryptedText) {
-            const [ivHex, encryptedHex] = encryptedText.split(':');
-            const iv = Buffer.from(ivHex, 'hex');
-            const decipher = createDecipheriv(this.algorithm, this.key, iv);
-            const decrypted = Buffer.concat([
-                decipher.update(Buffer.from(encryptedHex, 'hex')),
-                decipher.final(),
-            ]);
-            return decrypted.toString();
-        }
-    };
-    __setFunctionName(_classThis, "EncryptionService");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        EncryptionService = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return EncryptionService = _classThis;
-})();
-export { EncryptionService };
+exports.EncryptionService = EncryptionService;
+exports.EncryptionService = EncryptionService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [config_1.ConfigService])
+], EncryptionService);

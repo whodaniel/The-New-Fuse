@@ -17,7 +17,7 @@ import { AgentSwarmOrchestrationService } from '@the-new-fuse/core/services/agen
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { Roles } from '../../../decorators/roles.decorator';
-import { EnhancedUserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 
 @ApiTags('swarm')
 @Controller('api/swarm')
@@ -30,7 +30,7 @@ export class SwarmController {
 
   @Post(':agencyId/executions')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENCY_MANAGER, EnhancedUserRole.AGENT_OPERATOR)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER, UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Create new swarm execution' })
   @ApiResponse({ status: 201, description: 'Swarm execution created' })
   async createExecution(
@@ -44,7 +44,7 @@ export class SwarmController {
         executionDto.executionPlan,
         executionDto.configuration
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to create execution',
         HttpStatus.BAD_REQUEST
@@ -67,7 +67,7 @@ export class SwarmController {
         limit,
         offset
       });
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get executions',
         HttpStatus.NOT_FOUND
@@ -81,7 +81,7 @@ export class SwarmController {
   async getExecution(@Param('executionId') executionId: string) {
     try {
       return await this.swarmOrchestrationService.getExecutionDetails(executionId);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Execution not found',
         HttpStatus.NOT_FOUND
@@ -91,7 +91,7 @@ export class SwarmController {
 
   @Put('executions/:executionId/status')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENT_OPERATOR)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Update execution status' })
   @ApiResponse({ status: 200, description: 'Status updated successfully' })
   async updateExecutionStatus(
@@ -104,7 +104,7 @@ export class SwarmController {
         statusDto.status,
         statusDto.reason
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update status',
         HttpStatus.BAD_REQUEST
@@ -114,7 +114,7 @@ export class SwarmController {
 
   @Post('executions/:executionId/steps/:stepId/update')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENT_OPERATOR)
+  @Roles(UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Update execution step progress' })
   @ApiResponse({ status: 200, description: 'Step updated successfully' })
   async updateExecutionStep(
@@ -128,7 +128,7 @@ export class SwarmController {
         stepId,
         stepUpdateDto
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update step',
         HttpStatus.BAD_REQUEST
@@ -138,7 +138,7 @@ export class SwarmController {
 
   @Post('executions/:executionId/messages')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENT_OPERATOR)
+  @Roles(UserRole.AGENT_OPERATOR)
   @ApiOperation({ summary: 'Send message in swarm execution' })
   @ApiResponse({ status: 201, description: 'Message sent successfully' })
   async sendMessage(
@@ -154,7 +154,7 @@ export class SwarmController {
         messageDto.content,
         messageDto.priority
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to send message',
         HttpStatus.BAD_REQUEST
@@ -175,7 +175,7 @@ export class SwarmController {
         agentId,
         limit
       });
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get messages',
         HttpStatus.NOT_FOUND
@@ -200,13 +200,13 @@ export class SwarmController {
 
   @Post(':agencyId/health-check')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN)
+  @Roles(UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Perform swarm health check' })
   @ApiResponse({ status: 200, description: 'Health check completed' })
   async performHealthCheck(@Param('agencyId') agencyId: string) {
     try {
       return await this.swarmOrchestrationService.performHealthCheck(agencyId);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Health check failed',
         HttpStatus.INTERNAL_SERVER_ERROR
@@ -226,7 +226,7 @@ export class SwarmController {
         agencyId,
         timeframe
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get metrics',
         HttpStatus.NOT_FOUND

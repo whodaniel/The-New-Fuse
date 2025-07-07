@@ -4,24 +4,24 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { BaseService } from './base.service.js';
-import { AgentRepository } from '@the-new-fuse/database/src/repositories/agent.repository';
+import { BaseService } from './base.service';
+import { AgentRepository } from '../repositories/agent.repository';
 import { 
-  Agent, 
+  Agent as AppAgent, 
   CreateAgentDto, 
   UpdateAgentDto, 
   AgentStatus, 
   AgentCapability 
 } from '@the-new-fuse/types';
-import { PrismaService } from '../../services/prisma.service.js';
+import { PrismaService } from '../../services/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
-export class AgentService extends BaseService<Agent> {
+export class AgentService extends BaseService<AppAgent> {
   // Change logger visibility to protected
   protected readonly logger = new Logger(AgentService.name);
-  private readonly repository: AgentRepository;
+  protected readonly repository: AgentRepository;
 
   constructor(private readonly prisma: PrismaService) {
     // Initialize the repository with the prisma client
@@ -36,7 +36,7 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Created agent
    */
-  async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
+  async createAgent(data: CreateAgentDto, userId: string): Promise<AppAgent> {
     try {
       // Check for existing agent with same name
       const existingAgent = await this.repository.findOne({ 
@@ -70,7 +70,7 @@ export class AgentService extends BaseService<Agent> {
       
       // Make sure metadata is included in the returned agent
       return this.addMetadataIfMissing(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error creating agent: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not create agent: ${err.message}`);
@@ -82,15 +82,33 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Array of agents
    */
-  async getAgents(userId: string): Promise<Agent[]> {
+  async getAgents(userId: string): Promise<AppAgent[]> {
     try {
       const agents = await this.repository.findAll({ userId });
       // Make sure metadata is included in all returned agents
       return agents.map(agent => this.addMetadataIfMissing(agent));
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agents: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agents: ${err.message}`);
+    }
+  }
+
+  /**
+   * Find agents with filters
+   * @param filters Agent filters
+   * @param userId User ID
+   * @returns Array of agents
+   */
+  async findAgents(filters: Record<string, any>, userId: string): Promise<AppAgent[]> {
+    try {
+      const searchCriteria = { ...filters, userId };
+      const agents = await this.repository.findAll(searchCriteria);
+      return agents.map(agent => this.addMetadataIfMissing(agent));
+    } catch (error) {
+      const err = toError(error);
+      this.logger.error(`Error finding agents: ${err.message}`, err.stack);
+      throw new Error(`Could not find agents: ${err.message}`);
     }
   }
 
@@ -100,14 +118,14 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Agent or null if not found
    */
-  async getAgentById(id: string, userId: string): Promise<Agent> {
+  async getAgentById(id: string, userId: string): Promise<AppAgent> {
     try {
       const agent = await this.repository.findOne({ id, userId });
       if (!agent) {
         throw new Error(`Agent with ID ${id} not found`);
       }
       return this.addMetadataIfMissing(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agent by ID: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agent ${id}: ${err.message}`);
@@ -121,7 +139,7 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Updated agent
    */
-  async updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<Agent> {
+  async updateAgent(id: string, updates: UpdateAgentDto, userId: string): Promise<AppAgent> {
     try {
       // Check if agent exists and belongs to user
       await this.getAgentById(id, userId);
@@ -135,8 +153,8 @@ export class AgentService extends BaseService<Agent> {
         ...(updates.capabilities && { capabilities: updates.capabilities }),
         ...(updates.systemPrompt || updates.configuration ? {
           metadata: {
-            ...(updates.systemPrompt && { systemPrompt: updates.systemPrompt }),
-            ...(updates.configuration && { configuration: updates.configuration })
+            systemPrompt: updates.systemPrompt,
+            configuration: updates.configuration
           }
         } : {}),
         updatedAt: new Date()
@@ -144,7 +162,7 @@ export class AgentService extends BaseService<Agent> {
 
       this.logger.log(`Updated agent: ${id}`);
       return this.addMetadataIfMissing(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating agent: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not update agent ${id}: ${err.message}`);
@@ -158,7 +176,7 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Updated agent
    */
-  async updateAgentStatus(id: string, status: AgentStatus, userId: string): Promise<Agent> {
+  async updateAgentStatus(id: string, status: AgentStatus, userId: string): Promise<AppAgent> {
     try {
       // Check if agent exists and belongs to user
       await this.getAgentById(id, userId);
@@ -171,7 +189,7 @@ export class AgentService extends BaseService<Agent> {
 
       this.logger.log(`Updated agent status: ${id} -> ${status}`);
       return this.addMetadataIfMissing(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error updating agent status: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not update status for agent ${id}: ${err.message}`);
@@ -194,7 +212,7 @@ export class AgentService extends BaseService<Agent> {
 
       this.logger.log(`Deleted agent: ${id}`);
       return true; // Return true on success
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error deleting agent: ${err.message}`, err.stack); // Use err
       // Rethrow specific errors or return false
@@ -215,7 +233,7 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Array of agents
    */
-  async getAgentsByCapability(capability: string, userId: string): Promise<Agent[]> {
+  async getAgentsByCapability(capability: string, userId: string): Promise<AppAgent[]> {
     try {
       // This is a more complex query that requires custom implementation
       const agents = await this.getAgents(userId);
@@ -224,16 +242,17 @@ export class AgentService extends BaseService<Agent> {
       return agents.filter(agent => {
         if (!agent.capabilities) return false;
         
-        // Handle both string[] and AgentCapability[]
-        return agent.capabilities.some((cap: string | AgentCapability) => {
+        // Handle both string[] and AgentCapabilityConfig[]
+        return agent.capabilities.some((cap: any) => {
           if (typeof cap === 'string') {
             return cap === capability;
-          } else {
-            return cap === capability;
+          } else if (typeof cap === 'object' && cap.name) {
+            return cap.name === capability;
           }
+          return false;
         });
       });
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agents by capability: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve agents by capability ${capability}: ${err.message}`);
@@ -245,14 +264,14 @@ export class AgentService extends BaseService<Agent> {
    * @param userId User ID
    * @returns Array of active agents
    */
-  async getActiveAgents(userId: string): Promise<Agent[]> {
+  async getActiveAgents(userId: string): Promise<AppAgent[]> {
     try {
       const agents = await this.repository.findAll({ 
         userId, 
         status: AgentStatus.ACTIVE 
       });
       return agents.map(agent => this.addMetadataIfMissing(agent));
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting active agents: ${err.message}`, err.stack); // Use err
       throw new Error(`Could not retrieve active agents: ${err.message}`);
@@ -263,7 +282,7 @@ export class AgentService extends BaseService<Agent> {
    * Helper method to ensure metadata is present on agent objects
    * Adds empty metadata if missing
    */
-  private addMetadataIfMissing(agent: any): Agent {
+  private addMetadataIfMissing(agent: any): AppAgent {
     if (!agent) return agent;
     
     if (!agent.metadata) {
@@ -273,6 +292,6 @@ export class AgentService extends BaseService<Agent> {
       };
     }
     
-    return agent as Agent;
+    return agent as AppAgent;
   }
 }

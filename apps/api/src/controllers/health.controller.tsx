@@ -23,7 +23,7 @@ export class HealthController {
         database: 'connected',
         timestamp: new Date().toISOString(),
       };
-    } catch (error: unknown) {
+    } catch (error) {
       return {
         status: 'error',
         database: 'disconnected',

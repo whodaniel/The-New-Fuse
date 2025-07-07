@@ -13,8 +13,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { MCPMarketplaceService, MCPMarketplaceServer } from '../services/MCPMarketplaceService.js';
-import { useMcpServers } from '../hooks/useMcp.tsx';
+import { MCPMarketplaceService, MCPMarketplaceServer } from '../services/MCPMarketplaceService';
+import { useMcpServers } from '../hooks/useMcp';
 import { StarRating } from '@/components/ui/star-rating';
 import { Icons } from '@/components/ui/icons';
 import { Label } from '@/components/ui/label';

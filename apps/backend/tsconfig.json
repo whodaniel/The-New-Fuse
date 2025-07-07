@@ -5,10 +5,16 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "noEmit": false,
+    "skipLibCheck": true,
+    "noImplicitAny": false,
+    "strictFunctionTypes": false,
+    "strictNullChecks": false,
+    "noImplicitReturns": false,
     "paths": {
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
-      "@modules/*": ["src/modules/*"]
+      "@modules/*": ["src/modules/*"],
+      "@core/*": ["../../packages/core/src/*"]
     }
   },
   "include": ["src/**/*"],

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppThunk } from '../index.tsx';
-import fetcher from '../../services/api/fetcher.js';
-import { transformApiToStoreAgent, Agent } from '../../types/agent.js';
+import { AppThunk } from '../index';
+import fetcher from '../../services/api/fetcher';
+import { transformApiToStoreAgent, Agent } from '../../types/agent';
 
 interface AgentState {
     agents: Agent[];

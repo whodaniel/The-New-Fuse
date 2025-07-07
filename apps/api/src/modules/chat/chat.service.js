@@ -1,66 +1,226 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatService = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../prisma/prisma.service");
+const agents_service_1 = require("../../agents/agents.service");
+let ChatService = class ChatService {
+    prisma;
+    agentsService;
+    constructor(prisma, agentsService) {
+        this.prisma = prisma;
+        this.agentsService = agentsService;
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
-    }
-    return useValue ? value : void 0;
-};
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Injectable } from '@nestjs/common';
-let ChatService = (() => {
-    let _classDecorators = [Injectable()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var ChatService = _classThis = class {
-        async findAll() {
+    async findAll(userId) {
+        try {
+            // Get all chat sessions for the user
+            const chats = await this.prisma.chat?.findMany({
+                where: { userId },
+                include: {
+                    messages: {
+                        orderBy: { createdAt: 'asc' },
+                        include: {
+                            agent: true
+                        }
+                    },
+                    agents: true
+                }
+            }) || [];
+            return chats;
+        }
+        catch (error) {
+            console.error('Error fetching chats:', error);
             return [];
         }
-        async findOne(id) {
-            return { id, messages: [] };
+    }
+    async findOne(id, userId) {
+        try {
+            const chat = await this.prisma.chat?.findFirst({
+                where: { id, userId },
+                include: {
+                    messages: {
+                        orderBy: { createdAt: 'asc' },
+                        include: {
+                            agent: true
+                        }
+                    },
+                    agents: true
+                }
+            });
+            if (!chat) {
+                return { id, messages: [], agents: [] };
+            }
+            return chat;
         }
-        async create(createChatDto) {
+        catch (error) {
+            console.error('Error fetching chat:', error);
+            return { id, messages: [], agents: [] };
+        }
+    }
+    async create(userId, createChatDto) {
+        try {
+            const chat = await this.prisma.chat?.create({
+                data: {
+                    ...createChatDto,
+                    userId,
+                },
+                include: {
+                    messages: true,
+                    agents: true
+                }
+            });
+            return chat || { id: Date.now().toString(), ...createChatDto };
+        }
+        catch (error) {
+            console.error('Error creating chat:', error);
             return { id: Date.now().toString(), ...createChatDto };
         }
-    };
-    __setFunctionName(_classThis, "ChatService");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        ChatService = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return ChatService = _classThis;
-})();
-export { ChatService };
+    }
+    async addMessage(chatId, userId, messageData) {
+        try {
+            const message = await this.prisma.message?.create({
+                data: {
+                    ...messageData,
+                    chatId,
+                    userId,
+                    createdAt: new Date(),
+                },
+                include: {
+                    agent: true
+                }
+            });
+            return message || { id: Date.now().toString(), ...messageData };
+        }
+        catch (error) {
+            console.error('Error adding message:', error);
+            return { id: Date.now().toString(), ...messageData };
+        }
+    }
+    async createConversationRule(userId, ruleData) {
+        try {
+            const rule = await this.prisma.conversationRule?.create({
+                data: {
+                    ...ruleData,
+                    userId,
+                }
+            });
+            return rule || { id: Date.now().toString(), ...ruleData };
+        }
+        catch (error) {
+            console.error('Error creating conversation rule:', error);
+            return { id: Date.now().toString(), ...ruleData };
+        }
+    }
+    async getConversationRules(userId) {
+        try {
+            const rules = await this.prisma.conversationRule?.findMany({
+                where: { userId }
+            }) || [];
+            return rules;
+        }
+        catch (error) {
+            console.error('Error fetching conversation rules:', error);
+            return [];
+        }
+    }
+    async createSynthesisJob(userId, jobData) {
+        try {
+            const job = await this.prisma.synthesisJob?.create({
+                data: {
+                    ...jobData,
+                    userId,
+                }
+            });
+            return job || { id: Date.now().toString(), ...jobData };
+        }
+        catch (error) {
+            console.error('Error creating synthesis job:', error);
+            return { id: Date.now().toString(), ...jobData };
+        }
+    }
+    async getSynthesisJobs(userId) {
+        try {
+            const jobs = await this.prisma.synthesisJob?.findMany({
+                where: { userId },
+                orderBy: { timestamp: 'desc' }
+            }) || [];
+            return jobs;
+        }
+        catch (error) {
+            console.error('Error fetching synthesis jobs:', error);
+            return [];
+        }
+    }
+    async generateAgentResponse(prompt, agentId, userId) {
+        try {
+            // Get the agent details
+            const agents = await this.agentsService.findAll(userId);
+            const agent = agents.find(a => a.id === agentId);
+            if (!agent) {
+                throw new Error('Agent not found');
+            }
+            // Mock AI response generation - replace with actual AI service integration
+            const response = await this.mockAIResponse(prompt, agent.config?.systemPrompt || 'You are a helpful assistant.');
+            return response;
+        }
+        catch (error) {
+            console.error('Error generating agent response:', error);
+            return 'I apologize, but I encountered an error while processing your request.';
+        }
+    }
+    async mockAIResponse(prompt, systemPrompt) {
+        // Simulate AI processing time
+        await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 2000));
+        // Return a mock response based on the prompt
+        const responses = [
+            `Based on your message about "${prompt.substring(0, 30)}...", I can help you with that.`,
+            `I understand you're asking about: ${prompt.substring(0, 50)}. Let me provide some insights.`,
+            `That's an interesting question about "${prompt.substring(0, 40)}...". Here's my perspective:`,
+            `Regarding your inquiry: "${prompt.substring(0, 45)}...", I'd like to share some thoughts.`
+        ];
+        return responses[Math.floor(Math.random() * responses.length)];
+    }
+    async automateConversation(chatId, userId, conversationGoal) {
+        try {
+            // Get chat with agents and rules
+            const chat = await this.findOne(chatId, userId);
+            const rules = await this.getConversationRules(userId);
+            if (!chat.agents || chat.agents.length === 0) {
+                throw new Error('No agents found in chat');
+            }
+            // Start automated conversation flow
+            const firstAgent = chat.agents[0];
+            const initialPrompt = conversationGoal
+                ? `As ${firstAgent.name}, start the conversation based on this goal: "${conversationGoal}"`
+                : `As ${firstAgent.name}, start a new conversation.`;
+            const response = await this.generateAgentResponse(initialPrompt, firstAgent.id, userId);
+            await this.addMessage(chatId, userId, {
+                content: response,
+                sender: 'agent',
+                agentId: firstAgent.id,
+                agentName: firstAgent.name,
+                type: 'text'
+            });
+            return { success: true, message: 'Automation started' };
+        }
+        catch (error) {
+            console.error('Error automating conversation:', error);
+            return { success: false, message: error.message };
+        }
+    }
+};
+exports.ChatService = ChatService;
+exports.ChatService = ChatService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        agents_service_1.AgentsService])
+], ChatService);

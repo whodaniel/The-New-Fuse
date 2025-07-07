@@ -1,9 +1,12 @@
-import { ApiError } from './errorHandler';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authenticate = authenticate;
+const errorHandler_1 = require("./errorHandler");
 /**
  * Authentication middleware
  * Verifies that the user is authenticated before proceeding
  */
-export function authenticate(req, res, next) {
+function authenticate(req, res, next) {
     // TODO: Implement proper authentication
     // This is just a placeholder implementation
     const token = req.headers.authorization?.split(' ')[1];
@@ -13,6 +16,6 @@ export function authenticate(req, res, next) {
     }
     else {
         // In a real implementation, we would verify the token
-        next(new ApiError(401, 'Unauthorized'));
+        next(new errorHandler_1.ApiError(401, 'Unauthorized'));
     }
 }

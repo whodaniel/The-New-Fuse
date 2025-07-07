@@ -1,5 +1,5 @@
-import { test } from '../../fixtures/test.fixture.js'; // Corrected import path
-import { VisualTesting } from '../../utils/visual-testing.js';
+import { test } from '../../fixtures/test.fixture'; // Corrected import path
+import { VisualTesting } from '../../utils/visual-testing';
 
 test.describe('Visual Regression Tests - UI Components', () => {
   let visualTesting: VisualTesting;
@@ -16,8 +16,8 @@ test.describe('Visual Regression Tests - UI Components', () => {
     await visualTesting.compareResponsive('dashboard-responsive');
   });
 
-  test('workflow editor components should match baseline', async ({ workflowEditor }) => {
-    await workflowEditor.navigateToEditor();
+  test('workflow editor components should match baseline', async ({ workflowEditorPage }) => {
+    await workflowEditorPage.navigateToEditor();
     
     // Test main editor components
     await visualTesting.compareElement('[data-testid="workflow-canvas"]', 'workflow-canvas');
@@ -25,7 +25,7 @@ test.describe('Visual Regression Tests - UI Components', () => {
     await visualTesting.compareElement('[data-testid="workflow-toolbar"]', 'workflow-toolbar');
     
     // Test node interactions
-    await workflowEditor.addNode('source');
+    await workflowEditorPage.addNode('source');
     await visualTesting.compareElement('[data-node-type="source"]', 'source-node');
   });
 
@@ -72,11 +72,11 @@ test.describe('Visual Regression Tests - UI Components', () => {
     await visualTesting.compareElement('[data-status="failed"]', 'workflow-failed');
   });
 
-  test('modal dialogs should match baseline', async ({ workflowEditor }) => {
-    await workflowEditor.navigateToEditor();
+  test('modal dialogs should match baseline', async ({ workflowEditorPage }) => {
+    await workflowEditorPage.navigateToEditor();
     
     // Open and test save dialog
-    await workflowEditor.saveWorkflow();
+    await workflowEditorPage.saveWorkflow();
     await visualTesting.compareElement('[data-testid="save-dialog"]', 'save-dialog');
     
     // Test dialog responsive behavior

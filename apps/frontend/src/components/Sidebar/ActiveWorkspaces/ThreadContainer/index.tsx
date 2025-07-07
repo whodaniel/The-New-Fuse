@@ -4,7 +4,7 @@ import { Plus, CircleNotch, Trash } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import ThreadItem from './ThreadItem.js';
+import ThreadItem from './ThreadItem';
 export const THREAD_RENAME_EVENT = "renameThread";
 const STYLES = {
     loadingContainer: "flex flex-col bg-pulse w-full h-10 items-center justify-center",

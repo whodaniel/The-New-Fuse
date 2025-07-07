@@ -1,0 +1,9 @@
+{
+    "prompt_id": "sample_prompt_3",
+    "description": "Sample prompt for edge case testing",
+    "template": "Greetings from {domain}! Key terms: {key_terms}",
+    "context": {
+        "domain": "edge_case",
+        "key_terms": ["boundary", "limit"]
+    }
+}

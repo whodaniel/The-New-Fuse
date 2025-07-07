@@ -1,1 +1,2 @@
-export declare const useFeatureToggle: () => {};
+export declare const useFeatureToggle: () => any;
+//# sourceMappingURL=useFeatureToggle.d.ts.map

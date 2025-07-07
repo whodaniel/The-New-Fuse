@@ -1,6 +1,6 @@
 export {}
 exports.WorkflowVersionManager = void 0;
-import types_1 from '../runtime/types.js';
+import types_1 from '../runtime/types';
 class WorkflowVersionManager {
     constructor(storage) {
         this.storage = storage;

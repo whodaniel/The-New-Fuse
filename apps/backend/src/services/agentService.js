@@ -1,157 +1,123 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var _a;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentService = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../../prisma/prisma.service");
+let AgentService = class AgentService {
+    prisma;
+    constructor(prisma) {
+        this.prisma = prisma;
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    async createAgent(data, userId) {
+        // Add userId to the data
+        const agentData = {
+            ...data,
+            userId,
+        };
+        const agent = await this.prisma.agent.create({
+            data: agentData
+        });
+        return agent;
     }
-    return useValue ? value : void 0;
-};
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Injectable } from '@nestjs/common';
-let AgentService = (() => {
-    let _classDecorators = [Injectable()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var AgentService = _classThis = class {
-        constructor(prisma) {
-            this.prisma = prisma;
-        }
-        async createAgent(data, userId) {
-            // Add userId to the data
-            const agentData = {
-                ...data,
-                userId,
-            };
-            const agent = await this.prisma.agent.create({
-                data: agentData
-            });
-            return agent;
-        }
-        async getAgents(userId) {
-            const agents = await this.prisma.agent.findMany({
-                where: {
-                    userId
-                }
-            });
-            return agents;
-        }
-        async getAgentById(id, userId) {
-            const agent = await this.prisma.agent.findFirst({
-                where: {
-                    id,
-                    userId
-                }
-            });
-            return agent;
-        }
-        async createAgentsInTransaction(agents) {
-            return await this.prisma.$transaction(async (tx) => {
-                const createdAgents = [];
-                for (const agent of agents) {
-                    const createdAgent = await tx.agent.create({
-                        data: agent
-                    });
-                    createdAgents.push(createdAgent);
-                }
-                return createdAgents;
-            });
-        }
-        async updateAgentStatus(id, status, userId) {
-            await this.prisma.agent.update({
-                where: {
-                    id,
-                    userId
-                },
-                data: {
-                    status
-                }
-            });
-            return this.getAgentById(id, userId);
-        }
-        async getActiveAgents(userId) {
-            const agents = await this.prisma.agent.findMany({
-                where: {
-                    userId,
-                    status: 'ACTIVE'
-                }
-            });
-            return agents;
-        }
-        async getAgentsByCapability(capability, userId) {
-            const agents = await this.prisma.agent.findMany({
-                where: {
-                    userId,
-                    capabilities: {
-                        has: capability
-                    }
-                }
-            });
-            return agents;
-        }
-        async updateAgent(id, data, userId) {
-            const agent = await this.prisma.agent.update({
-                where: {
-                    id,
-                    userId
-                },
-                data
-            });
-            return agent;
-        }
-        async deleteAgent(id, userId) {
-            try {
-                await this.prisma.agent.delete({
-                    where: {
-                        id,
-                        userId
-                    }
+    async getAgents(userId) {
+        const agents = await this.prisma.agent.findMany({
+            where: {
+                userId
+            }
+        });
+        return agents;
+    }
+    async getAgentById(id, userId) {
+        const agent = await this.prisma.agent.findFirst({
+            where: {
+                id,
+                userId
+            }
+        });
+        return agent;
+    }
+    async createAgentsInTransaction(agents) {
+        return await this.prisma.$transaction(async (tx) => {
+            const createdAgents = [];
+            for (const agent of agents) {
+                const createdAgent = await tx.agent.create({
+                    data: agent
                 });
-                return true;
+                createdAgents.push(createdAgent);
             }
-            catch (error) {
-                console.error(`Error deleting agent: ${error}`);
-                return false;
+            return createdAgents;
+        });
+    }
+    async updateAgentStatus(id, status, userId) {
+        await this.prisma.agent.update({
+            where: {
+                id,
+                userId
+            },
+            data: {
+                status
             }
+        });
+        return this.getAgentById(id, userId);
+    }
+    async getActiveAgents(userId) {
+        const agents = await this.prisma.agent.findMany({
+            where: {
+                userId,
+                status: 'ACTIVE'
+            }
+        });
+        return agents;
+    }
+    async getAgentsByCapability(capability, userId) {
+        const agents = await this.prisma.agent.findMany({
+            where: {
+                userId,
+                capabilities: {
+                    has: capability
+                }
+            }
+        });
+        return agents;
+    }
+    async updateAgent(id, data, userId) {
+        const agent = await this.prisma.agent.update({
+            where: {
+                id,
+                userId
+            },
+            data
+        });
+        return agent;
+    }
+    async deleteAgent(id, userId) {
+        try {
+            await this.prisma.agent.delete({
+                where: {
+                    id,
+                    userId
+                }
+            });
+            return true;
         }
-    };
-    __setFunctionName(_classThis, "AgentService");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AgentService = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return AgentService = _classThis;
-})();
-export { AgentService };
+        catch (error) {
+            console.error(`Error deleting agent: ${error}`);
+            return false;
+        }
+    }
+};
+exports.AgentService = AgentService;
+exports.AgentService = AgentService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_1.PrismaService !== "undefined" && prisma_service_1.PrismaService) === "function" ? _a : Object])
+], AgentService);

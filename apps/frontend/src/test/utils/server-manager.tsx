@@ -1,6 +1,6 @@
 import { spawn, ChildProcess } from 'child_process';
 import * as http from 'http';
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 export class ServerManager {
   private static instance: ServerManager;

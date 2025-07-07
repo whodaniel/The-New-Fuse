@@ -1,5 +1,5 @@
-import { LoggingService } from '../services/logging.js';
-import { ProgressTracker } from '../services/progress_tracker.js';
+import { LoggingService } from '../services/logging';
+import { ProgressTracker } from '../services/progress_tracker';
 export class ConnectionManager {
     constructor() {
         this.bridge = CascadeBridge.getInstance();

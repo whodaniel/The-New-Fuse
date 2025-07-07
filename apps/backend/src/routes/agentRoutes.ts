@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { agentController } from '../controllers/agentController.js';
+import { agentController } from '../controllers/agentController';
 
 const router = express.Router();
 

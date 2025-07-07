@@ -1,6 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
-import { JwtAuthGuard } from './jwt-auth.guard.js'; // Assuming this exists and works
-import { ApiKeyAuthGuard } from './api-key-auth.guard.js';
+import { JwtAuthGuard } from './jwt-auth.guard'; // Assuming this exists and works
+import { ApiKeyAuthGuard } from './api-key-auth.guard';
 
 @Injectable()
 export class ServiceOrUserAuthGuard implements CanActivate {

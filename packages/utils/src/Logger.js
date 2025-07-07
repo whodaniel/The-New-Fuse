@@ -1,6 +1,22 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Logger = exports.LoggingService = void 0;
 /**
- * DEPRECATED: Use LoggingService from @the-new-fuse/core instead.
- * This file now re-exports the core LoggingService for compatibility.
+ * Temporary stub for LoggingService until core package is built
  */
-export { LoggingService as Logger } from '@the-new-fuse/core/src/services/LoggingService';
-//# sourceMappingURL=Logger.js.map
+class LoggingService {
+    log(message) {
+        console.log(message);
+    }
+    error(message) {
+        console.error(message);
+    }
+    warn(message) {
+        console.warn(message);
+    }
+    info(message) {
+        console.info(message);
+    }
+}
+exports.LoggingService = LoggingService;
+exports.Logger = LoggingService;

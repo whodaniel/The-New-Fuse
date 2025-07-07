@@ -1,7 +1,9 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { BaseService } from '../core/BaseService'; // Corrected import path
+import { Logger } from '../utils/Logger';
 import { Message, MessageType } from '@the-new-fuse/types'; // Assuming types are available
-import Ajv, { Schema, ValidateFunction } from 'ajv';
+const Ajv = require('ajv');
+type ValidateFunction = any;
+type Schema = any;
 import addFormats from 'ajv-formats';
 
 // Define basic schema for a generic message
@@ -10,7 +12,7 @@ const baseMessageSchema: Schema = {
   properties: {
     id: { type: 'string', format: 'uuid' },
     timestamp: { type: 'string', format: 'date-time' },
-    type: { type: 'string', enum: Object.values(MessageType) }, // Use MessageType enum values
+    type: { type: 'string', enum: ['chat', 'broadcast', 'task_assignment', 'generic'] as any }, // Use MessageType enum values
     content: {}, // Allow any content for the base schema
     senderAgentId: { type: 'string', format: 'uuid', nullable: true }, // Optional sender
     // Add other common fields if necessary
@@ -24,7 +26,7 @@ const taskAssignmentSchema: Schema = {
   type: 'object',
   properties: {
     ...baseMessageSchema.properties, // Inherit base properties
-    type: { const: MessageType.TASK_ASSIGNMENT }, // Specific type
+    type: { const: 'task_assignment' as any }, // Specific type
     content: {
       type: 'object',
       properties: {
@@ -45,11 +47,11 @@ const taskAssignmentSchema: Schema = {
  */
 export class MessageValidator extends BaseService {
   private logger: Logger;
-  private ajv: Ajv;
-  private validators: Map<MessageType | string, ValidateFunction>;
+  private ajv: any;
+  private validators: Map<string, ValidateFunction>;
 
   constructor() {
-    super();
+    super({ name: 'MessageValidator' });
     this.logger = new Logger('MessageValidator');
     this.ajv = new Ajv({ allErrors: true });
     addFormats(this.ajv); // Add formats like date-time, uuid
@@ -57,8 +59,8 @@ export class MessageValidator extends BaseService {
     this.validators = new Map();
 
     // Compile standard schemas
-    this.addSchema(MessageType.GENERIC, baseMessageSchema); // Register base schema for generic type
-    this.addSchema(MessageType.TASK_ASSIGNMENT, taskAssignmentSchema);
+    this.addSchema('generic', baseMessageSchema); // Register base schema for generic type
+    this.addSchema('task_assignment', taskAssignmentSchema);
     // TODO: Add schemas for all other defined MessageTypes
 
     this.logger.info('MessageValidator initialized.');
@@ -69,13 +71,13 @@ export class MessageValidator extends BaseService {
    * @param messageType The type of message the schema applies to.
    * @param schema The JSON schema definition.
    */
-  addSchema(messageType: MessageType | string, schema: Schema): void {
+  addSchema(messageType: string, schema: Schema): void {
     try {
       const validate = this.ajv.compile(schema);
       this.validators.set(messageType, validate);
       this.logger.info(`Schema added/updated for message type: ${messageType}`);
-    } catch (error: unknown) {
-      this.logger.error(`Failed to compile schema for type ${messageType}: ${(error as Error).message}`, { schema, error });
+    } catch (error) {
+      this.logger.error(`Failed to compile schema for type ${messageType}: ${(error as Error).message}`);
       // Decide how to handle schema compilation errors
     }
   }
@@ -88,7 +90,7 @@ export class MessageValidator extends BaseService {
    */
   validate(message: unknown): message is Message {
     if (typeof message !== 'object' || message === null || !('type' in message)) {
-      this.logger.warn('Validation failed: Input is not an object or lacks a "type" property.', { message });
+      this.logger.warn('Validation failed: Input is not an object or lacks a "type" property.');
       return false;
     }
 
@@ -98,7 +100,7 @@ export class MessageValidator extends BaseService {
     // Fallback to generic schema if specific one not found
     if (!validator) {
        this.logger.debug(`No specific schema found for type "${messageType}". Falling back to generic schema.`);
-       validator = this.validators.get(MessageType.GENERIC);
+       validator = this.validators.get('generic');
     }
 
     if (!validator) {
@@ -107,12 +109,9 @@ export class MessageValidator extends BaseService {
       return true; // Or false, depending on desired strictness
     }
 
-    const isValid = validator(message);
+    const isValid = validator(message) as boolean;
     if (!isValid) {
-      this.logger.warn(`Validation failed for message type "${messageType}":`, {
-        errors: validator.errors,
-        message: this.sanitizeMessageForLog(message), // Avoid logging sensitive data
-      });
+      this.logger.warn(`Validation failed for message type "${messageType}": ${JSON.stringify((validator as any).errors)}`);
     } else {
        this.logger.debug(`Validation successful for message type "${messageType}".`);
     }
@@ -142,8 +141,8 @@ export class MessageValidator extends BaseService {
    * @param messageType The message type whose last errors are requested.
    * @returns An array of validation errors, or null if no validator exists or no errors occurred.
    */
-  getLastErrors(messageType: MessageType | string): Ajv['errors'] | null | undefined {
+  getLastErrors(messageType: string): any {
      const validator = this.validators.get(messageType);
-     return validator?.errors;
+     return (validator as any)?.errors;
   }
 }

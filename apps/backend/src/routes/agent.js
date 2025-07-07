@@ -1,14 +1,20 @@
-import express from 'express';
-import { auth } from '../middleware/auth.js';
-import { AgentService } from '../services/agentService.js';
-import { PrismaService } from '../lib/prisma.service.js';
-import { ConfigService } from '@nestjs/config';
-const router = express.Router();
-const prismaService = new PrismaService();
-const configService = new ConfigService();
-const agentService = new AgentService(prismaService, configService);
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.agentRouter = void 0;
+const express_1 = __importDefault(require("express"));
+const auth_1 = require("../middleware/auth");
+const agentService_1 = require("../services/agentService");
+const prisma_service_1 = require("../lib/prisma.service");
+const config_1 = require("@nestjs/config");
+const router = express_1.default.Router();
+const prismaService = new prisma_service_1.PrismaService();
+const configService = new config_1.ConfigService();
+const agentService = new agentService_1.AgentService(prismaService, configService);
 // Protected routes - require authentication
-router.use((req, res, next) => auth(req, res, next));
+router.use((req, res, next) => (0, auth_1.auth)(req, res, next));
 // Get all agents
 router.get('/', async (req, res) => {
     try {
@@ -94,4 +100,4 @@ router.delete('/:id', async (req, res) => {
         });
     }
 });
-export const agentRouter = router;
+exports.agentRouter = router;

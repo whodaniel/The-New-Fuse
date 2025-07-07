@@ -1,10 +1,6 @@
-import type { ServerProcess } from './launchWebSocketServer.js'; 
 
 // Use type assertion for the dynamic import
 const launchWebSocketServer = await import('./launchWebSocketServer.js') as any;
-
-// Import server management functionality
-import { setupServerMessageHandlers } from './src/background/server-manager.js';
 
 // ...existing code...
 
@@ -14,12 +10,8 @@ import { setupServerMessageHandlers } from './src/background/server-manager.js';
                 port: currentRedisConfig.port,
                 username: currentRedisConfig.username,
                 password: currentRedisConfig.password,
-                tls: currentRedisConfig.tls
-            };
+                tls: currentRedisConfig.tls,
+            } as any; // Explicitly cast to any to resolve potential type issues
         }
-
-        code: message.code as string,
-        filename: message.filename as string,
-        view: message.view as string,
-        query: message.query as string,
-```
+// Start the WebSocket server
+await launchWebSocketServer.launchWebSocketServer();

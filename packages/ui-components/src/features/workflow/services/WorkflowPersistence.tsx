@@ -1,4 +1,4 @@
-import { Workflow, WorkflowExecution, WorkflowStep } from '../types.tsx';
+import { Workflow, WorkflowExecution, WorkflowStep } from '../types';
 
 /**
  * Service responsible for persisting workflow definitions and execution states

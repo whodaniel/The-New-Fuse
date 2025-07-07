@@ -37,9 +37,10 @@ export async function activateSimpleChat(context: vscode.ExtensionContext) {
                             new vscode.LanguageModelChatMessage(vscode.LanguageModelChatMessageRole.User, userMessage)
                         ];
                         
-                        const chatRequest = await model.sendRequest(messages, {}, new vscode.CancellationTokenSource().token);
-                        
+                        const chatRequest = await model.sendRequest(messages, {}, new vscode.CancellationTokenSource().token);                        
                         let responseText = '';
+                        // @ts-ignore - The .stream property is part of the proposed Language Model API and might not be in your current @types/vscode version.
+                        // Please ensure your package.json's "engines.vscode" is up to date and you've run `npm install`.
                         for await (const chunk of chatRequest.stream) {
                             responseText += chunk;
                             // Post incremental updates to the webview

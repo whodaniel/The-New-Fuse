@@ -1,9 +1,9 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
-// import { AgentHierarchy } from './agent_hierarchy.js';
-// import { Department } from './departments.js';
-// import { Task } from './task.js';
-// import { AgentAction } from './agent_action.js';
-// import { APIModel } from './api_model.js';
+// import { AgentHierarchy } from './agent_hierarchy';
+// import { Department } from './departments';
+// import { Task } from './task';
+// import { AgentAction } from './agent_action';
+// import { APIModel } from './api_model';
 import { ObjectType, Field, Int } from '@nestjs/graphql';
 
 export enum AgentType {

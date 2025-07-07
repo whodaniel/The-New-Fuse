@@ -1,7 +1,7 @@
 import { WebSocketGateway, WebSocketServer, OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { RedisService } from '../services/redis.service.js';
+import { RedisService } from '../services/redis.service';
 import { Redis } from 'ioredis';
 
 @WebSocketGateway({
@@ -54,7 +54,7 @@ export class AgentCommunicationGateway implements OnGatewayInit, OnGatewayConnec
       });
       
       this.logger.log('Redis subscriptions established');
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Failed to setup Redis subscriptions: ${(error as Error).message}`);
     }
   }

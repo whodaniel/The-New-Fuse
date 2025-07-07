@@ -100,17 +100,17 @@
   },
   "mcpServers": {
     "the-new-fuse-main": {
-      "command": "node",
-      "args": ["./dist/mcp/server.js"],
+      "command": "/Users/<owner>/.nvm/versions/node/v22.16.0/bin/node",
+      "args": ["./src/mcp/server.ts"],
       "env": {
-        "PORT": "3000",
+        "MCP_PORT": "3001",
         "WORKSPACE_ROOT": "./",
         "LOG_LEVEL": "info",
         "ENABLE_STREAMABLE_HTTP": "true",
         "ENABLE_PROGRESS_NOTIFICATIONS": "true",
         "ENHANCED_UI": "true"
       },
-      "description": "The New Fuse MCP Server with complete platform capabilities"
+      "description": "The New Fuse MCP Server with complete platform capabilities and internal client integration"
     },
     "filesystem": {
       "command": "npx",

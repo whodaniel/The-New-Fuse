@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../node_modules/.prisma/client"
-  previewFeatures = ["driverAdapters", "metrics", "tracing", "fullTextSearch", "fullTextIndex"]
+  previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
 }
 
 datasource db {
@@ -19,17 +19,29 @@ model User {
   role         UserRole  @default(USER)
   chats        Chat[]
   sessions     Session[]
+  agents       Agent[]   // Add missing relationship
+  pipelines    Pipeline[] // Add missing relationship
+  tasks        Task[]    // Add missing relationship
 }
 
 model Agent {
   id                String              @id @default(uuid())
   name              String
   type              AgentType
+  status            AgentStatus         @default(INACTIVE) // Add missing status field
+  description       String?             // Add missing field
+  systemPrompt      String?             // Add missing field
+  configuration     Json?               // Add missing field
+  userId            String              // Add missing field
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   metadata          AgentMetadata?
   chats             Chat[]
   codeExecutions    CodeExecutionUsage[]
+  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade) // Add missing relationship
+  pipelines         Pipeline[]          // Add missing relationship
+  tasks             Task[]              // Add missing relationship
+  workflows         Workflow[]          // Add missing relationship
 }
 
 model Session {
@@ -76,21 +88,149 @@ model Message {
   chat      Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
 }
 
+// Add missing models referenced by TypeORM entities
+model Pipeline {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  config      Json?
+  status      PipelineStatus @default(DRAFT)
+  agentId     String?
+  userId      String
+  agent       Agent?   @relation(fields: [agentId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  steps       WorkflowStep[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  title       String
+  description String?
+  status      TaskStatus   @default(PENDING)
+  priority    TaskPriority @default(MEDIUM)
+  agentId     String?
+  userId      String
+  agent       Agent?       @relation(fields: [agentId], references: [id])
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metadata    Json?
+  executionId String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  completedAt DateTime?
+}
+
+model Workflow {
+  id          String         @id @default(uuid())
+  name        String
+  description String?
+  definition  Json           // Workflow definition JSON
+  status      WorkflowStatus @default(DRAFT)
+  agentId     String?
+  userId      String?
+  agent       Agent?         @relation(fields: [agentId], references: [id])
+  steps       WorkflowStep[]
+  executions  WorkflowExecution[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+}
+
+model WorkflowStep {
+  id          String    @id @default(uuid())
+  name        String
+  type        String
+  config      Json?
+  order       Int
+  workflowId  String?
+  pipelineId  String?
+  workflow    Workflow? @relation(fields: [workflowId], references: [id])
+  pipeline    Pipeline? @relation(fields: [pipelineId], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model WorkflowExecution {
+  id         String                 @id @default(uuid())
+  workflowId String
+  status     WorkflowExecutionStatus @default(PENDING)
+  input      Json?
+  output     Json?
+  error      String?
+  startedAt  DateTime               @default(now())
+  completedAt DateTime?
+  workflow   Workflow               @relation(fields: [workflowId], references: [id])
+}
+
+// Updated enums to match TypeScript types
+enum AgentType {
+  BASIC
+  CHAT
+  WORKFLOW
+  TASK
+  ASSISTANT
+  ANALYSIS  // Keep this for backward compatibility
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  IDLE
+  BUSY
+  ERROR
+}
+
 enum UserRole {
   USER
   ADMIN
-}
-
-enum AgentType {
-  CHAT
-  TASK
-  ANALYSIS
+  SUPER_ADMIN
+  AGENCY_OWNER
+  AGENCY_ADMIN
+  AGENCY_MANAGER
+  AGENT_OPERATOR
 }
 
 enum MessageRole {
   USER
   AGENT
   SYSTEM
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum PipelineStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
 }
 
 model CodeExecutionUsage {

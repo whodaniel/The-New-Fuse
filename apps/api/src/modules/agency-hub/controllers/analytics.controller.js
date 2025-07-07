@@ -1,193 +1,238 @@
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+var _a, _b, _c;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AnalyticsController = void 0;
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const enhanced_agency_service_1 = require("@the-new-fuse/core/services/enhanced-agency.service");
+const agent_swarm_orchestration_service_1 = require("@the-new-fuse/core/services/agent-swarm-orchestration.service");
+const service_category_router_service_1 = require("@the-new-fuse/core/services/service-category-router.service");
+const auth_guard_1 = require("../../../guards/auth.guard");
+const roles_guard_1 = require("../../../guards/roles.guard");
+const roles_decorator_1 = require("../../../decorators/roles.decorator");
+const client_1 = require("@prisma/client");
+let AnalyticsController = class AnalyticsController {
+    enhancedAgencyService;
+    swarmOrchestrationService;
+    serviceCategoryRouter;
+    constructor(enhancedAgencyService, swarmOrchestrationService, serviceCategoryRouter) {
+        this.enhancedAgencyService = enhancedAgencyService;
+        this.swarmOrchestrationService = swarmOrchestrationService;
+        this.serviceCategoryRouter = serviceCategoryRouter;
     }
-    return useValue ? value : void 0;
-};
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+    async getAnalyticsOverview(agencyId, timeframe = '30d') {
+        try {
+            const [agencyAnalytics, swarmMetrics, serviceMetrics] = await Promise.all([
+                this.enhancedAgencyService.getAnalytics(agencyId, timeframe),
+                this.swarmOrchestrationService.getPerformanceMetrics(agencyId, timeframe),
+                this.serviceCategoryRouter.getCategoryPerformance(agencyId, timeframe)
+            ]);
+            return {
+                timeframe,
+                generatedAt: new Date().toISOString(),
+                agency: agencyAnalytics,
+                swarm: swarmMetrics,
+                services: serviceMetrics,
+                summary: {
+                    totalExecutions: swarmMetrics.totalExecutions || 0,
+                    totalRequests: serviceMetrics.totalRequests || 0,
+                    averageQuality: serviceMetrics.averageQuality || 0,
+                    providerUtilization: serviceMetrics.providerUtilization || 0,
+                    clientSatisfaction: serviceMetrics.clientSatisfaction || 0
+                }
+            };
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get analytics overview', common_1.HttpStatus.NOT_FOUND);
         }
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+    async getPerformanceMetrics(agencyId, timeframe = '7d', granularity = 'hour') {
+        try {
+            return await this.swarmOrchestrationService.getDetailedMetrics(agencyId, timeframe, granularity);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get performance metrics', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getProviderPerformance(agencyId, timeframe = '30d', categoryId) {
+        try {
+            return await this.serviceCategoryRouter.getProviderPerformance(agencyId, timeframe, categoryId);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get provider performance', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getQualityTrends(agencyId, timeframe = '90d', breakdown = 'category') {
+        try {
+            return await this.enhancedAgencyService.getQualityTrends(agencyId, timeframe, breakdown);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get quality trends', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getUtilizationMetrics(agencyId, timeframe = '24h') {
+        try {
+            return await this.swarmOrchestrationService.getUtilizationMetrics(agencyId, timeframe);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get utilization metrics', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getCostAnalysis(agencyId, timeframe = '30d', breakdown = 'category') {
+        try {
+            return await this.enhancedAgencyService.getCostAnalysis(agencyId, timeframe, breakdown);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get cost analysis', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getBottleneckAnalysis(agencyId, timeframe = '7d') {
+        try {
+            return await this.swarmOrchestrationService.identifyBottlenecks(agencyId, timeframe);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get bottleneck analysis', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async getPredictiveAnalytics(agencyId, horizon = '30d') {
+        try {
+            return await this.enhancedAgencyService.getPredictiveAnalytics(agencyId, horizon);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to get predictive analytics', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
+    async exportAnalyticsData(agencyId, timeframe = '30d', format = 'json', include // comma-separated list
+    ) {
+        try {
+            const includeMetrics = include ? include.split(',') : [
+                'executions',
+                'requests',
+                'providers',
+                'quality',
+                'costs'
+            ];
+            return await this.enhancedAgencyService.exportAnalyticsData(agencyId, timeframe, format, includeMetrics);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to export analytics data', common_1.HttpStatus.NOT_FOUND);
+        }
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Controller, Get, UseGuards, HttpStatus, HttpException, } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { AuthGuard } from '../../../guards/auth.guard';
-import { RolesGuard } from '../../../guards/roles.guard';
-import { Roles } from '../../../decorators/roles.decorator';
-import { EnhancedUserRole } from '@prisma/client';
-let AnalyticsController = (() => {
-    let _classDecorators = [ApiTags('analytics'), Controller('api/analytics'), UseGuards(AuthGuard, RolesGuard), Roles(EnhancedUserRole.AGENCY_OWNER, EnhancedUserRole.AGENCY_ADMIN), ApiBearerAuth()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    let _instanceExtraInitializers = [];
-    let _getAnalyticsOverview_decorators;
-    let _getPerformanceMetrics_decorators;
-    let _getProviderPerformance_decorators;
-    let _getQualityTrends_decorators;
-    let _getUtilizationMetrics_decorators;
-    let _getCostAnalysis_decorators;
-    let _getBottleneckAnalysis_decorators;
-    let _getPredictiveAnalytics_decorators;
-    let _exportAnalyticsData_decorators;
-    var AnalyticsController = _classThis = class {
-        constructor(enhancedAgencyService, swarmOrchestrationService, serviceCategoryRouter) {
-            this.enhancedAgencyService = (__runInitializers(this, _instanceExtraInitializers), enhancedAgencyService);
-            this.swarmOrchestrationService = swarmOrchestrationService;
-            this.serviceCategoryRouter = serviceCategoryRouter;
-        }
-        async getAnalyticsOverview(agencyId, timeframe = '30d') {
-            try {
-                const [agencyAnalytics, swarmMetrics, serviceMetrics] = await Promise.all([
-                    this.enhancedAgencyService.getAnalytics(agencyId, timeframe),
-                    this.swarmOrchestrationService.getPerformanceMetrics(agencyId, timeframe),
-                    this.serviceCategoryRouter.getCategoryPerformance(agencyId, timeframe)
-                ]);
-                return {
-                    timeframe,
-                    generatedAt: new Date().toISOString(),
-                    agency: agencyAnalytics,
-                    swarm: swarmMetrics,
-                    services: serviceMetrics,
-                    summary: {
-                        totalExecutions: swarmMetrics.totalExecutions || 0,
-                        totalRequests: serviceMetrics.totalRequests || 0,
-                        averageQuality: serviceMetrics.averageQuality || 0,
-                        providerUtilization: serviceMetrics.providerUtilization || 0,
-                        clientSatisfaction: serviceMetrics.clientSatisfaction || 0
-                    }
-                };
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get analytics overview', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getPerformanceMetrics(agencyId, timeframe = '7d', granularity = 'hour') {
-            try {
-                return await this.swarmOrchestrationService.getDetailedMetrics(agencyId, timeframe, granularity);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get performance metrics', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getProviderPerformance(agencyId, timeframe = '30d', categoryId) {
-            try {
-                return await this.serviceCategoryRouter.getProviderPerformance(agencyId, timeframe, categoryId);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get provider performance', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getQualityTrends(agencyId, timeframe = '90d', breakdown = 'category') {
-            try {
-                return await this.enhancedAgencyService.getQualityTrends(agencyId, timeframe, breakdown);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get quality trends', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getUtilizationMetrics(agencyId, timeframe = '24h') {
-            try {
-                return await this.swarmOrchestrationService.getUtilizationMetrics(agencyId, timeframe);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get utilization metrics', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getCostAnalysis(agencyId, timeframe = '30d', breakdown = 'category') {
-            try {
-                return await this.enhancedAgencyService.getCostAnalysis(agencyId, timeframe, breakdown);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get cost analysis', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getBottleneckAnalysis(agencyId, timeframe = '7d') {
-            try {
-                return await this.swarmOrchestrationService.identifyBottlenecks(agencyId, timeframe);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get bottleneck analysis', HttpStatus.NOT_FOUND);
-            }
-        }
-        async getPredictiveAnalytics(agencyId, horizon = '30d') {
-            try {
-                return await this.enhancedAgencyService.getPredictiveAnalytics(agencyId, horizon);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to get predictive analytics', HttpStatus.NOT_FOUND);
-            }
-        }
-        async exportAnalyticsData(agencyId, timeframe = '30d', format = 'json', include // comma-separated list
-        ) {
-            try {
-                const includeMetrics = include ? include.split(',') : [
-                    'executions',
-                    'requests',
-                    'providers',
-                    'quality',
-                    'costs'
-                ];
-                return await this.enhancedAgencyService.exportAnalyticsData(agencyId, timeframe, format, includeMetrics);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to export analytics data', HttpStatus.NOT_FOUND);
-            }
-        }
-    };
-    __setFunctionName(_classThis, "AnalyticsController");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _getAnalyticsOverview_decorators = [Get(':agencyId/overview'), ApiOperation({ summary: 'Get comprehensive agency analytics overview' }), ApiResponse({ status: 200, description: 'Analytics overview retrieved' })];
-        _getPerformanceMetrics_decorators = [Get(':agencyId/performance'), ApiOperation({ summary: 'Get detailed performance metrics' }), ApiResponse({ status: 200, description: 'Performance metrics retrieved' })];
-        _getProviderPerformance_decorators = [Get(':agencyId/providers/performance'), ApiOperation({ summary: 'Get provider performance analytics' }), ApiResponse({ status: 200, description: 'Provider performance retrieved' })];
-        _getQualityTrends_decorators = [Get(':agencyId/quality-trends'), ApiOperation({ summary: 'Get quality trend analysis' }), ApiResponse({ status: 200, description: 'Quality trends retrieved' })];
-        _getUtilizationMetrics_decorators = [Get(':agencyId/utilization'), ApiOperation({ summary: 'Get resource utilization metrics' }), ApiResponse({ status: 200, description: 'Utilization metrics retrieved' })];
-        _getCostAnalysis_decorators = [Get(':agencyId/cost-analysis'), ApiOperation({ summary: 'Get cost analysis and billing insights' }), ApiResponse({ status: 200, description: 'Cost analysis retrieved' })];
-        _getBottleneckAnalysis_decorators = [Get(':agencyId/bottlenecks'), ApiOperation({ summary: 'Identify performance bottlenecks' }), ApiResponse({ status: 200, description: 'Bottleneck analysis retrieved' })];
-        _getPredictiveAnalytics_decorators = [Get(':agencyId/predictions'), ApiOperation({ summary: 'Get predictive analytics and recommendations' }), ApiResponse({ status: 200, description: 'Predictions retrieved' })];
-        _exportAnalyticsData_decorators = [Get(':agencyId/export'), ApiOperation({ summary: 'Export analytics data' }), ApiResponse({ status: 200, description: 'Analytics data exported' })];
-        __esDecorate(_classThis, null, _getAnalyticsOverview_decorators, { kind: "method", name: "getAnalyticsOverview", static: false, private: false, access: { has: obj => "getAnalyticsOverview" in obj, get: obj => obj.getAnalyticsOverview }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getPerformanceMetrics_decorators, { kind: "method", name: "getPerformanceMetrics", static: false, private: false, access: { has: obj => "getPerformanceMetrics" in obj, get: obj => obj.getPerformanceMetrics }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getProviderPerformance_decorators, { kind: "method", name: "getProviderPerformance", static: false, private: false, access: { has: obj => "getProviderPerformance" in obj, get: obj => obj.getProviderPerformance }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getQualityTrends_decorators, { kind: "method", name: "getQualityTrends", static: false, private: false, access: { has: obj => "getQualityTrends" in obj, get: obj => obj.getQualityTrends }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getUtilizationMetrics_decorators, { kind: "method", name: "getUtilizationMetrics", static: false, private: false, access: { has: obj => "getUtilizationMetrics" in obj, get: obj => obj.getUtilizationMetrics }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getCostAnalysis_decorators, { kind: "method", name: "getCostAnalysis", static: false, private: false, access: { has: obj => "getCostAnalysis" in obj, get: obj => obj.getCostAnalysis }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getBottleneckAnalysis_decorators, { kind: "method", name: "getBottleneckAnalysis", static: false, private: false, access: { has: obj => "getBottleneckAnalysis" in obj, get: obj => obj.getBottleneckAnalysis }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getPredictiveAnalytics_decorators, { kind: "method", name: "getPredictiveAnalytics", static: false, private: false, access: { has: obj => "getPredictiveAnalytics" in obj, get: obj => obj.getPredictiveAnalytics }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _exportAnalyticsData_decorators, { kind: "method", name: "exportAnalyticsData", static: false, private: false, access: { has: obj => "exportAnalyticsData" in obj, get: obj => obj.exportAnalyticsData }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AnalyticsController = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return AnalyticsController = _classThis;
-})();
-export { AnalyticsController };
+exports.AnalyticsController = AnalyticsController;
+__decorate([
+    (0, common_1.Get)(':agencyId/overview'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get comprehensive agency analytics overview' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Analytics overview retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getAnalyticsOverview", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/performance'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get detailed performance metrics' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Performance metrics retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __param(2, (0, common_1.Query)('granularity')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getPerformanceMetrics", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/providers/performance'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get provider performance analytics' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Provider performance retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __param(2, (0, common_1.Query)('categoryId')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getProviderPerformance", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/quality-trends'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get quality trend analysis' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Quality trends retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __param(2, (0, common_1.Query)('breakdown')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getQualityTrends", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/utilization'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get resource utilization metrics' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Utilization metrics retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getUtilizationMetrics", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/cost-analysis'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get cost analysis and billing insights' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Cost analysis retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __param(2, (0, common_1.Query)('breakdown')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getCostAnalysis", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/bottlenecks'),
+    (0, swagger_1.ApiOperation)({ summary: 'Identify performance bottlenecks' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Bottleneck analysis retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getBottleneckAnalysis", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/predictions'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get predictive analytics and recommendations' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Predictions retrieved' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('horizon')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "getPredictiveAnalytics", null);
+__decorate([
+    (0, common_1.Get)(':agencyId/export'),
+    (0, swagger_1.ApiOperation)({ summary: 'Export analytics data' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Analytics data exported' }),
+    __param(0, (0, common_1.Param)('agencyId')),
+    __param(1, (0, common_1.Query)('timeframe')),
+    __param(2, (0, common_1.Query)('format')),
+    __param(3, (0, common_1.Query)('include')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AnalyticsController.prototype, "exportAnalyticsData", null);
+exports.AnalyticsController = AnalyticsController = __decorate([
+    (0, swagger_1.ApiTags)('analytics'),
+    (0, common_1.Controller)('api/analytics'),
+    (0, common_1.UseGuards)(auth_guard_1.AuthGuard, roles_guard_1.RolesGuard),
+    (0, roles_decorator_1.Roles)(client_1.UserRole.AGENCY_OWNER, client_1.UserRole.AGENCY_ADMIN),
+    (0, swagger_1.ApiBearerAuth)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof enhanced_agency_service_1.EnhancedAgencyService !== "undefined" && enhanced_agency_service_1.EnhancedAgencyService) === "function" ? _a : Object, typeof (_b = typeof agent_swarm_orchestration_service_1.AgentSwarmOrchestrationService !== "undefined" && agent_swarm_orchestration_service_1.AgentSwarmOrchestrationService) === "function" ? _b : Object, typeof (_c = typeof service_category_router_service_1.ServiceCategoryRouterService !== "undefined" && service_category_router_service_1.ServiceCategoryRouterService) === "function" ? _c : Object])
+], AnalyticsController);

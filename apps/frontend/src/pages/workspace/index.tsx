@@ -3,12 +3,12 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
-import { WorkspaceLayout } from './WorkspaceLayout.tsx';
+import { WorkspaceLayout } from './WorkspaceLayout';
 import { useWorkspace } from '@/hooks/useWorkspace';
-import WorkspaceOverview from './Overview.tsx';
-import WorkspaceSettings from './Settings.tsx';
-import WorkspaceMembers from './Members.tsx';
-import WorkspaceAnalytics from './Analytics.tsx';
+import WorkspaceOverview from './Overview';
+import WorkspaceSettings from './Settings';
+import WorkspaceMembers from './Members';
+import WorkspaceAnalytics from './Analytics';
 const WorkspaceRoutes = () => {
     const { workspaces, createWorkspace } = useWorkspace();
     if (!(workspaces === null || workspaces === void 0 ? void 0 : workspaces.length)) {

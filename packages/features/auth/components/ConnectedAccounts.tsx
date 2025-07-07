@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", { value: true }): google',
             icon: (<svg className = require("react");
 const AuthContext_1: //www.w3.org/2000/svg">
           <path d = require("@/contexts/AuthContext");
-import Button_1 from '../ui/Button/Button.js';
+import Button_1 from '../ui/Button/Button';
 import useToast_1 from '@/hooks/useToast';
 const ConnectedAccounts = () => {
     var _a, _b;

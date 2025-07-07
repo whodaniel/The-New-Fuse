@@ -13,11 +13,11 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { EntityService } from './entity.service.js';
-import { CreateEntityDto } from './dto/create-entity.dto.js';
-import { UpdateEntityDto } from './dto/update-entity.dto.js';
-import { BaseController } from '../controllers/base.controller.js'; // Adjust path if needed
-import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard.js'; // Adjust path if needed
+import { EntityService } from './entity.service';
+import { CreateEntityDto } from './dto/create-entity.dto';
+import { UpdateEntityDto } from './dto/update-entity.dto';
+import { BaseController } from '../controllers/base.controller'; // Adjust path if needed
+import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard'; // Adjust path if needed
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
 import { RegisteredEntity, Prisma } from '@the-new-fuse/database/generated/prisma';
 import { ApiResponse as FuseApiResponse } from '@the-new-fuse/types'; // Assuming a standard response wrapper
@@ -62,7 +62,7 @@ export class EntityController extends BaseController {
          where.type = type;
      }
      if (name) {
-         where.name = { contains: name, mode: 'insensitive' }; // Example: case-insensitive contains search
+         where.name = { contains: name, mode: 'insensitive' } as any; // Example: case-insensitive contains search
      }
 
     return this.handleAsync(

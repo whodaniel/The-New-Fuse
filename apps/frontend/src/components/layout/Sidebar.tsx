@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { useLayout } from '../../contexts/LayoutContext.tsx';
-import { useAuth } from '../../providers/AuthProvider.tsx';
+import { useLayout } from '../../contexts/LayoutContext';
+import { useAuth } from '../../providers/AuthProvider';
 
 interface SidebarProps {
     className?: string;

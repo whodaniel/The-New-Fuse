@@ -1,251 +1,44 @@
 import * as vscode from 'vscode';
 import { LLMProviderManager } from '../../llm/LLMProviderManager';
-import { ConfigurationService } from '../core/ConfigurationService';
-import { NotificationService } from '../core/NotificationService';
-import { LLMProvider, LLMProviderHealth } from '../../types/llm';
 
-/**
- * Service to act as an intermediary for all LLM interactions.
- */
+export interface CompletionOptions {
+    prompt: string;
+    languageId: string;
+    position: vscode.Position;
+    linePrefix: string;
+    context?: any;
+    n?: number;
+}
+
+export interface CompletionSuggestion {
+    content: string;
+    confidence?: number;
+}
+
 export class LLMService {
+    constructor(private llmManager: LLMProviderManager) {}
 
-    /**
-     * Ask the LLM a question about a code snippet.
-     * @param code The selected code.
-     * @param question The user's question.
-     * @param languageId The language of the code.
-     * @returns The LLM's answer as a string.
-     */
-    async askAboutCode(code: string, question: string, languageId: string): Promise<string> {
-        const prompt = `You are an expert developer assistant. The user has selected the following code (${languageId}):\n\n${code}\n\nQuestion: ${question}\n\nPlease provide a concise, clear answer.`;
-        // Use your existing completion/generation method
-        const response = await this.getCompletion({
-            prompt,
-            languageId,
-            type: 'code_explanation'
-        });
-        return response?.content || 'No answer available.';
-    }
-
-    /**
-     * Get multiple code completion suggestions from the LLM.
-     * @param options Options for the completion request, including prompt, languageId, n, etc.
-     * @returns An array of completion objects: [{ content: string }]
-     */
-    async getCompletions(options: any): Promise<Array<{ content: string }>> {
-        // If your provider supports n completions, use it; otherwise, call getCompletion n times.
-        const n = options.n || 3;
-        if (typeof this.getCompletion === 'function' && this.getCompletion.length > 0) {
-            // Try to call provider with n completions if supported
-            if (this.llmProviderManager.getCurrentProvider()?.supportsMultipleCompletions) {
-                const completions = await this.llmProviderManager.getCurrentProvider().getCompletions(options);
-                return completions || [];
-            }
-        }
-        // Fallback: call getCompletion n times in parallel
-        const promises = [];
-        for (let i = 0; i < n; i++) {
-            promises.push(this.getCompletion(options));
-        }
-        const results = await Promise.all(promises);
-        return results.filter(r => r && r.content);
-    }
-
-    private llmProviderManager: LLMProviderManager;
-    private configurationService: ConfigurationService;
-    private notificationService: NotificationService;
-
-    constructor(
-        llmProviderManager: LLMProviderManager,
-        configurationService: ConfigurationService,
-        notificationService: NotificationService
-    ) {
-        this.llmProviderManager = llmProviderManager;
-        this.configurationService = configurationService;
-        this.notificationService = notificationService;
-    }
-
-    /**
-     * Sends a prompt to the currently selected LLM provider.
-     * @param prompt The prompt to send.
-     * @param options Additional options for the LLM request.
-     * @returns A promise that resolves to the LLM's response string or null if an error occurs.
-     */
-    async generateResponse(prompt: string, options?: any): Promise<string | null> {
+    async getCompletions(options: CompletionOptions): Promise<CompletionSuggestion[]> {
         try {
-            const currentProvider = this.llmProviderManager.getCurrentProvider();
-            if (!currentProvider) {
-                this.notificationService.showErrorMessage('No LLM provider selected. Please select a provider.');
-                return null;
-            }
-
-            const maxTokens = await this.configurationService.get<number>('llm.maxTokens', 2048);
-            const temperature = await this.configurationService.get<number>('llm.temperature', 0.7);
-
-            const requestOptions = {
-                ...options,
-                maxTokens,
-                temperature,
-            };
-
-            // Assuming the provider has a 'generateResponse' or similar method
-            // This might need adjustment based on the actual LLMProvider interface
-            if (typeof (currentProvider as any).generateResponse === 'function') {
-                return await (currentProvider as any).generateResponse(prompt, requestOptions);
-            } else if (typeof (currentProvider as any).chat === 'function') { // Fallback for providers with a 'chat' method
-                 const messages = [{ role: 'user', content: prompt }];
-                 const response = await (currentProvider as any).chat(messages, requestOptions);
-                 return response?.content ?? null;
-            } else {
-                this.notificationService.showErrorMessage(`The selected LLM provider (${currentProvider.name}) does not support direct response generation or chat.`);
-                console.error(`Provider ${currentProvider.name} does not have a compatible generation method.`);
-                return null;
-            }
-        } catch (error: any) {
-            this.notificationService.showErrorMessage(`Error generating response: ${error.message}`);
-            console.error('Error in LLMService.generateResponse:', error);
-            return null;
-        }
-    }
-
-    /**
-     * Gets the list of available LLM providers.
-     * @returns An array of LLMProvider objects.
-     */
-    getAvailableProviders(): LLMProvider[] {
-        return this.llmProviderManager.getProviders();
-    }
-
-    /**
-     * Selects an LLM provider by its ID.
-     * @param providerId The ID of the provider to select.
-     * @returns True if the provider was selected successfully, false otherwise.
-     */
-    async selectProvider(providerId: string): Promise<boolean> {
-        try {
-            await this.llmProviderManager.selectProvider(providerId);
-            const provider = this.llmProviderManager.getProviderById(providerId);
-            if (provider) {
-                this.notificationService.showInformationMessage(`LLM Provider set to: ${provider.name}`);
-                return true;
-            }
-            return false;
-        } catch (error: any) {
-            this.notificationService.showErrorMessage(`Error selecting provider: ${error.message}`);
-            return false;
-        }
-    }
-
-    /**
-     * Gets the currently selected LLM provider.
-     * @returns The current LLMProvider or undefined if none is selected.
-     */
-    getCurrentProvider(): LLMProvider | undefined {
-        return this.llmProviderManager.getCurrentProvider();
-    }
-
-    /**
-     * Selects an LLM model for the current provider.
-     * @param modelId The ID of the model to select.
-     * @returns True if the model was selected successfully, false otherwise.
-     */
-    async selectModel(modelId: string): Promise<boolean> {
-        const currentProvider = this.llmProviderManager.getCurrentProvider();
-        if (!currentProvider) {
-            this.notificationService.showErrorMessage('No LLM provider selected. Cannot select a model.');
-            return false;
-        }
-        try {
-            // Assuming LLMProviderManager has a method to set the model for the current provider
-            // This might involve updating configuration or an internal state in LLMProviderManager
-            await this.llmProviderManager.setCurrentProviderModel(modelId);
-            this.notificationService.showInformationMessage(`Model set to: ${modelId} for provider ${currentProvider.name}`);
-            return true;
-        } catch (error: any) {
-            this.notificationService.showErrorMessage(`Error selecting model: ${error.message}`);
-            return false;
-        }
-    }
-
-    /**
-     * Checks the health of the current LLM provider.
-     * @returns A promise that resolves to the health status of the provider.
-     */
-    async checkProviderHealth(): Promise<LLMProviderHealth | null> {
-        const currentProvider = this.llmProviderManager.getCurrentProvider();
-        if (!currentProvider) {
-            this.notificationService.showErrorMessage('No LLM provider selected to check health.');
-            return null;
-        }
-        try {
-            return await this.llmProviderManager.checkProviderHealth(currentProvider.id);
-        } catch (error: any) {
-            this.notificationService.showErrorMessage(`Error checking provider health: ${error.message}`);
-            return {
-                providerId: currentProvider.id,
-                isHealthy: false,
-                details: `Error: ${error.message}`,
-                timestamp: new Date().toISOString(),
-            };
-        }
-    }
-
-    /**
-     * Gets the available models for the current provider.
-     * @returns A promise that resolves to an array of model IDs or an empty array if an error occurs or no provider is selected.
-     */
-    async getAvailableModels(): Promise<string[]> {
-        const currentProvider = this.llmProviderManager.getCurrentProvider();
-        if (!currentProvider) {
-            this.notificationService.showInformationMessage('No LLM provider selected to fetch models.');
-            return [];
-        }
-        try {
-            // Assuming LLMProviderManager or the provider itself has a method to list models
-            if (typeof currentProvider.getModels === 'function') {
-                return await currentProvider.getModels();
-            }
-            // Fallback if getModels is not directly on provider, but on manager
-            const models = await this.llmProviderManager.getProviderModels(currentProvider.id);
-            return models.map(m => typeof m === 'string' ? m : m.id); // Adjust based on actual model structure
-        } catch (error: any) {
-            this.notificationService.showErrorMessage(`Error fetching models for ${currentProvider.name}: ${error.message}`);
+            const response = await this.llmManager.generateResponse(
+                `Complete this ${options.languageId} code:\n${options.prompt}`
+            );
+            
+            return [{
+                content: response,
+                confidence: 0.8
+            }];
+        } catch (error) {
+            console.error('LLMService completion error:', error);
             return [];
         }
     }
 
-    /**
-     * Handle webview messages for LLM operations
-     */
-    public async handleWebviewMessage(payload: any): Promise<any> {
-        if (!payload || !payload.type) {
-            throw new Error('Invalid payload: type is required');
-        }
+    async generateResponse(prompt: string): Promise<string> {
+        return await this.llmManager.generateResponse(prompt);
+    }
 
-        switch (payload.type) {
-            case 'generateText':
-                if (!payload.prompt) {
-                    throw new Error('Invalid payload: prompt is required for generateText');
-                }
-                return await this.generateResponse(payload.prompt, payload.options);
-
-            case 'getProviders':
-                return this.llmProviderManager.getAvailableProviders();
-
-            case 'getCurrentProvider':
-                return this.llmProviderManager.getCurrentProvider();
-
-            case 'setProvider':
-                if (!payload.providerId) {
-                    throw new Error('Invalid payload: providerId is required for setProvider');
-                }
-                return await this.llmProviderManager.selectProvider(payload.providerId);
-
-            case 'getModels':
-                return await this.getAvailableModels();
-
-            default:
-                throw new Error(`Unsupported LLM operation: ${payload.type}`);
-        }
+    async getAvailableProviders() {
+        return await this.llmManager.getAvailableProviders();
     }
 }

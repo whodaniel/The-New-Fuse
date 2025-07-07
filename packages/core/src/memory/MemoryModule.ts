@@ -1,22 +1,24 @@
 import { Module } from '@nestjs/common';
-import { MemoryManager } from './MemoryManager.tsx';
-import { MemoryOptimizer } from './MemoryOptimizer.tsx';
-import { MemoryIndexer } from './MemoryIndexer.tsx';
-import { DatabaseModule } from '@the-new-fuse/database';
+import { MemoryManager } from './MemoryManager';
+import { MemoryOptimizer } from './MemoryOptimizer';
+import { MemoryIndexer } from './MemoryIndexer';
+import { VectorMemoryStore } from './VectorMemoryStore';
+import { MemoryLeakDetector } from './MemoryLeakDetector';
 
 @Module({
-  imports: [
-    DatabaseModule
-  ],
   providers: [
     MemoryManager,
     MemoryOptimizer,
-    MemoryIndexer
+    MemoryIndexer,
+    VectorMemoryStore,
+    MemoryLeakDetector,
   ],
   exports: [
     MemoryManager,
     MemoryOptimizer,
-    MemoryIndexer
-  ]
+    MemoryIndexer,
+    VectorMemoryStore,
+    MemoryLeakDetector,
+  ],
 })
 export class MemoryModule {}

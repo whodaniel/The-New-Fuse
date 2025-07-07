@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
-import { InsightEngine } from '../ai/InsightEngine.js';
-import { OptimizationEngine } from '../ai/OptimizationEngine.js';
-import { SearchEngine } from '../ai/SearchEngine.js';
+import { InsightEngine } from '../ai/InsightEngine';
+import { OptimizationEngine } from '../ai/OptimizationEngine';
+import { SearchEngine } from '../ai/SearchEngine';
 import {
   Insight,
   InsightConfig,
@@ -9,9 +9,9 @@ import {
   SearchConfig,
   SearchResult,
   SearchSuggestion,
-} from '../ai/types.js';
-import { DashboardState } from '../collaboration/types.js';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
+} from '../ai/types';
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 
 export function useAI(
   analyticsManager: AnalyticsManager,

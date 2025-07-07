@@ -1,5 +1,5 @@
-import { BaseLLMProvider, LLMConfig } from './base.tsx';
-import { providerRegistry } from './registry.tsx';
+import { BaseLLMProvider, LLMConfig } from './base.js';
+import { providerRegistry } from './registry.js';
 
 interface HuggingFaceConfig extends LLMConfig {
     task?: 'text-generation' | 'text2text-generation' | 'conversational';

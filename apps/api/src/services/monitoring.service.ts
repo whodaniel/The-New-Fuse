@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SystemMonitor, MetricsCollector, PerformanceMonitor } from '@the-new-fuse/core';
-import { AgentService } from './agent.service.js';
+import { AgentService } from './agent.service';
 
 @Injectable()
 export class MonitoringService {
@@ -91,7 +91,7 @@ export class MonitoringService {
         status: 'ok',
         latency: 0,
       };
-    } catch (error: unknown) { // Explicitly type error as unknown
+    } catch (error) { // Explicitly type error as unknown
       return {
         status: 'error',
         // Check if error is an instance of Error before accessing message

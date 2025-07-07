@@ -1,4 +1,7 @@
+import { getApiUrl, getWebSocketUrl, getFrontendUrl } from './config/ports';
+
 export const config = {
-    apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+    apiUrl: getApiUrl(),
+    webSocketUrl: getWebSocketUrl(),
+    frontendUrl: getFrontendUrl(),
 };
-//# sourceMappingURL=config.js.map

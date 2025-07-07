@@ -2,19 +2,18 @@
   "name": "@the-new-fuse/agent",
   "version": "1.0.0",
   "private": true,
-  "packageManager": "bun@1.0.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "npx tsc",
-    "clean": "rimraf dist build .turbo .next node_modules .cache .eslintcache .tsbuildinfo && rimraf --glob \".pnp.*\" \"*.log\"",
-    "lint": "eslint src --ext .ts,.tsx",
+    "build": "tsc --build",
+    "clean": "rimraf dist .turbo .tsbuildinfo",
+    "lint": "eslint src",
     "test": "jest"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/core": "^11.0.0",
-    "@nestjs/graphql": "^12.3.0",
+    "@nestjs/graphql": "12.0.0",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
@@ -27,8 +26,8 @@
     "typeorm": "^0.3.17"
   },
   "devDependencies": {
-    "@types/react": "^16.14.60",
-    "@types/react-dom": "^16.8.5",
+  "@types/react": "^18.3.1",
+  "@types/react-dom": "^18.3.0",
     "typescript": "^5.8.3"
   }
 }

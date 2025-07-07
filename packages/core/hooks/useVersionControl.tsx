@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { VersionManager } from '../version/VersionManager.js';
+import { VersionManager } from '../version/VersionManager';
 import {
   Version,
   VersionDiff,
   Branch,
   VersionControlState,
-} from '../version/types.js';
-import { DashboardState } from '../collaboration/types.js';
-import { User } from '../collaboration/types.js';
+} from '../version/types';
+import { DashboardState } from '../collaboration/types';
+import { User } from '../collaboration/types';
 
 export function useVersionControl(
   initialState: VersionControlState,

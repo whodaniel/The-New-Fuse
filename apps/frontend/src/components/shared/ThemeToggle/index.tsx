@@ -1,2 +1,2 @@
-export { ThemeToggle } from './ThemeToggle.tsx';
+export { ThemeToggle } from './ThemeToggle';
 //# sourceMappingURL=index.js.map

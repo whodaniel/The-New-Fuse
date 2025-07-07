@@ -4,7 +4,7 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
-import { HealthService, HealthIndicatorResult } from '../services/health.service.js';
+import { HealthService, HealthIndicatorResult } from '../services/health.service';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('health')

@@ -1,7 +1,7 @@
 /**
  * Core module that exports all fundamental types and enums
  */
-export * from './enums.js';
-export * from './base-types.tsx';
-export * from './interfaces.js';
-export * from './dtos.js';
+export * from './enums';
+export * from './base-types';
+export * from './interfaces';
+export * from './dtos';

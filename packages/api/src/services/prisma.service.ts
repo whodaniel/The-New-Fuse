@@ -39,7 +39,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
           this.logger.debug(`Duration: ${e.duration}ms`);
         });
       }
-    } catch (error: unknown) {
+    } catch (error) {
       const err = error as Error;
       this.logger.error(`Failed to connect to database: ${err.message}`, err.stack);
       throw error;
@@ -55,10 +55,31 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     try {
       await this.$disconnect();
       this.logger.log('Database connection closed');
-    } catch (error: unknown) {
+    } catch (error) {
       const err = error as Error;
       this.logger.error(`Error closing database connection: ${err.message}`, err.stack);
     }
+  }
+
+  /**
+   * Enable shutdown hooks for graceful shutdown
+   */
+  async enableShutdownHooks(app: any): Promise<void> {
+    this.logger.log('Enabling shutdown hooks...');
+    
+    // Handle SIGINT
+    process.on('SIGINT', async () => {
+      this.logger.log('Received SIGINT, closing database connection...');
+      await this.$disconnect();
+      await app.close();
+    });
+
+    // Handle SIGTERM
+    process.on('SIGTERM', async () => {
+      this.logger.log('Received SIGTERM, closing database connection...');
+      await this.$disconnect();
+      await app.close();
+    });
   }
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '../card/ConsolidatedCard.tsx';
-import { Button } from '../button/Button.tsx';
-import { Badge } from '../badge/Badge.js';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '../card/ConsolidatedCard';
+import { Button } from '../button/Button';
+import { Badge } from '../badge/Badge';
 import {
   PlayCircle,
   PauseCircle,

@@ -1,5 +1,5 @@
-import { TaskType, TaskStatus, TaskPriority, AgentStatus, AgentRole, AgentCapability, EventType } from './enums.js';
-import { BaseEntity } from './base-types.tsx';
+import { TaskType, TaskStatus, TaskPriority, AgentStatus, AgentRole, AgentCapability, EventType } from './enums';
+import { BaseEntity } from './base-types';
 export interface Agent extends BaseEntity {
     name: string;
     description?: string;

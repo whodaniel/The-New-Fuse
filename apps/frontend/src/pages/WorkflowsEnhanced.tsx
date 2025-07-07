@@ -22,7 +22,7 @@ import {
   ModalBody,
   ModalCloseButton
 } from '@chakra-ui/react';
-import { WorkflowCanvas } from '../components/WorkflowBuilder/WorkflowCanvas.tsx';
+import { WorkflowCanvas } from '../components/WorkflowBuilder/WorkflowCanvas';
 import { ModularPromptTemplatingSystem, PromptTemplateServiceImpl, PromptTemplate } from '@the-new-fuse/prompt-templating';
 
 export const WorkflowsPage: React.FC = () => {

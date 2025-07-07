@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { OnboardingAdminService } from '../../../services/onboarding-admin.service.js';
+import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 import {
   Box,
   Heading,
@@ -13,11 +13,11 @@ import {
   AlertIcon,
   useToast
 } from '@chakra-ui/react';
-import { OnboardingGeneralSettings } from './OnboardingGeneralSettings.tsx';
-import { OnboardingStepsConfig } from './OnboardingStepsConfig.tsx';
-import { OnboardingWizardPreview } from './OnboardingWizardPreview.tsx';
-import { OnboardingAISettings } from './OnboardingAISettings.tsx';
-import { OnboardingUserTypes } from './OnboardingUserTypes.tsx';
+import { OnboardingGeneralSettings } from './OnboardingGeneralSettings';
+import { OnboardingStepsConfig } from './OnboardingStepsConfig';
+import { OnboardingWizardPreview } from './OnboardingWizardPreview';
+import { OnboardingAISettings } from './OnboardingAISettings';
+import { OnboardingUserTypes } from './OnboardingUserTypes';
 
 export const OnboardingAdmin: React.FC = () => {
   const toast = useToast();

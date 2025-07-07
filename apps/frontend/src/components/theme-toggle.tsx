@@ -1,8 +1,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ThemeToggle = ThemeToggle;
 import react_1 from 'react';
-import button_1 from './ui/button.tsx';
-import theme_context_1 from '../contexts/theme-context.js';
+import button_1 from './ui/button';
+import theme_context_1 from '../contexts/theme-context';
 function ThemeToggle() {
     const { theme, toggleTheme } = (0, theme_context_1.useTheme)();
     return (<button_1.Button variant="ghost" size="icon" onClick={toggleTheme} className="w-9 h-9">

@@ -88,7 +88,8 @@ wss.on('connection', (ws, req) => {
 
   // Handle disconnection
   ws.on('close', (code, reason) => {
-    console.log(`Client disconnected. Code: ${code}, Reason: ${reason || 'No reason provided'}`);
+    const reasonString = reason.toString();
+    console.log(`Client disconnected. Code: ${code}, Reason: ${reasonString || 'No reason provided'}`);
     clients.delete(ws);
   });
 

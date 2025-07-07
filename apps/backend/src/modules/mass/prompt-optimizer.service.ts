@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { PrismaService } from '../../lib/prisma/prisma.service';
 import { 
   MassOptimizationConfig, 
   ValidationDataset, 

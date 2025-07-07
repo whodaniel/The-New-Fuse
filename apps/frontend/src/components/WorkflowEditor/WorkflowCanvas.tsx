@@ -1,19 +1,19 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { ReactFlow, Controls, Background, MiniMap, Panel } from 'reactflow';
 import { useSelector, useDispatch } from 'react-redux';
-import { NodeLibrary } from './NodeLibrary.js';
-import { ExecutionOverlay } from './ExecutionOverlay.js';
-import { WorkflowToolbar } from './WorkflowToolbar.js';
-import { NodeInspector } from './NodeInspector.js';
-import { ErrorBoundary } from '../shared/ErrorBoundary.js';
-import { useWorkflowHistory } from '../../hooks/useWorkflowHistory.js';
-import { useAutoSave } from '../../hooks/useAutoSave.js';
-import { useWorkflowValidation } from '../../hooks/useWorkflowValidation.tsx';
-import { useRealTimeCollaboration } from '../../hooks/useRealTimeCollaboration.tsx';
-import { WorkflowAnalytics } from './WorkflowAnalytics.js';
-import { CUSTOM_NODE_TYPES } from './nodes.js';
-import { CUSTOM_EDGE_TYPES } from './edges.js';
-import type { WorkflowState } from '../../types/workflow.tsx';
+import { NodeLibrary } from './NodeLibrary';
+import { ExecutionOverlay } from './ExecutionOverlay';
+import { WorkflowToolbar } from './WorkflowToolbar';
+import { NodeInspector } from './NodeInspector';
+import { ErrorBoundary } from '../shared/ErrorBoundary';
+import { useWorkflowHistory } from '../../hooks/useWorkflowHistory';
+import { useAutoSave } from '../../hooks/useAutoSave';
+import { useWorkflowValidation } from '../../hooks/useWorkflowValidation';
+import { useRealTimeCollaboration } from '../../hooks/useRealTimeCollaboration';
+import { WorkflowAnalytics } from './WorkflowAnalytics';
+import { CUSTOM_NODE_TYPES } from './nodes';
+import { CUSTOM_EDGE_TYPES } from './edges';
+import type { WorkflowState } from '../../types/workflow';
 
 export const WorkflowCanvas: React.FC = () => {
   const dispatch = useDispatch();

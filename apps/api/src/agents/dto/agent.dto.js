@@ -1,138 +1,104 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
-    }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
-    }
-    return useValue ? value : void 0;
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { IsString, IsOptional, IsArray, IsObject, IsEnum } from 'class-validator';
-import { AgentType, AgentStatus } from '@the-new-fuse/core/types';
-let CreateAgentDto = (() => {
-    var _a;
-    let _name_decorators;
-    let _name_initializers = [];
-    let _name_extraInitializers = [];
-    let _description_decorators;
-    let _description_initializers = [];
-    let _description_extraInitializers = [];
-    let _type_decorators;
-    let _type_initializers = [];
-    let _type_extraInitializers = [];
-    let _capabilities_decorators;
-    let _capabilities_initializers = [];
-    let _capabilities_extraInitializers = [];
-    let _config_decorators;
-    let _config_initializers = [];
-    let _config_extraInitializers = [];
-    let _systemPrompt_decorators;
-    let _systemPrompt_initializers = [];
-    let _systemPrompt_extraInitializers = [];
-    return _a = class CreateAgentDto {
-            constructor() {
-                this.name = __runInitializers(this, _name_initializers, void 0);
-                this.description = (__runInitializers(this, _name_extraInitializers), __runInitializers(this, _description_initializers, void 0));
-                this.type = (__runInitializers(this, _description_extraInitializers), __runInitializers(this, _type_initializers, void 0));
-                this.capabilities = (__runInitializers(this, _type_extraInitializers), __runInitializers(this, _capabilities_initializers, void 0));
-                this.config = (__runInitializers(this, _capabilities_extraInitializers), __runInitializers(this, _config_initializers, void 0));
-                this.systemPrompt = (__runInitializers(this, _config_extraInitializers), __runInitializers(this, _systemPrompt_initializers, void 0));
-                __runInitializers(this, _systemPrompt_extraInitializers);
-            }
-        },
-        (() => {
-            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-            _name_decorators = [IsString()];
-            _description_decorators = [IsOptional(), IsString()];
-            _type_decorators = [IsEnum(AgentType)];
-            _capabilities_decorators = [IsOptional(), IsArray()];
-            _config_decorators = [IsOptional(), IsObject()];
-            _systemPrompt_decorators = [IsOptional(), IsString()];
-            __esDecorate(null, null, _name_decorators, { kind: "field", name: "name", static: false, private: false, access: { has: obj => "name" in obj, get: obj => obj.name, set: (obj, value) => { obj.name = value; } }, metadata: _metadata }, _name_initializers, _name_extraInitializers);
-            __esDecorate(null, null, _description_decorators, { kind: "field", name: "description", static: false, private: false, access: { has: obj => "description" in obj, get: obj => obj.description, set: (obj, value) => { obj.description = value; } }, metadata: _metadata }, _description_initializers, _description_extraInitializers);
-            __esDecorate(null, null, _type_decorators, { kind: "field", name: "type", static: false, private: false, access: { has: obj => "type" in obj, get: obj => obj.type, set: (obj, value) => { obj.type = value; } }, metadata: _metadata }, _type_initializers, _type_extraInitializers);
-            __esDecorate(null, null, _capabilities_decorators, { kind: "field", name: "capabilities", static: false, private: false, access: { has: obj => "capabilities" in obj, get: obj => obj.capabilities, set: (obj, value) => { obj.capabilities = value; } }, metadata: _metadata }, _capabilities_initializers, _capabilities_extraInitializers);
-            __esDecorate(null, null, _config_decorators, { kind: "field", name: "config", static: false, private: false, access: { has: obj => "config" in obj, get: obj => obj.config, set: (obj, value) => { obj.config = value; } }, metadata: _metadata }, _config_initializers, _config_extraInitializers);
-            __esDecorate(null, null, _systemPrompt_decorators, { kind: "field", name: "systemPrompt", static: false, private: false, access: { has: obj => "systemPrompt" in obj, get: obj => obj.systemPrompt, set: (obj, value) => { obj.systemPrompt = value; } }, metadata: _metadata }, _systemPrompt_initializers, _systemPrompt_extraInitializers);
-            if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        })(),
-        _a;
-})();
-export { CreateAgentDto };
-let UpdateAgentDto = (() => {
-    var _a;
-    let _name_decorators;
-    let _name_initializers = [];
-    let _name_extraInitializers = [];
-    let _description_decorators;
-    let _description_initializers = [];
-    let _description_extraInitializers = [];
-    let _capabilities_decorators;
-    let _capabilities_initializers = [];
-    let _capabilities_extraInitializers = [];
-    let _config_decorators;
-    let _config_initializers = [];
-    let _config_extraInitializers = [];
-    let _systemPrompt_decorators;
-    let _systemPrompt_initializers = [];
-    let _systemPrompt_extraInitializers = [];
-    let _status_decorators;
-    let _status_initializers = [];
-    let _status_extraInitializers = [];
-    return _a = class UpdateAgentDto {
-            constructor() {
-                this.name = __runInitializers(this, _name_initializers, void 0);
-                this.description = (__runInitializers(this, _name_extraInitializers), __runInitializers(this, _description_initializers, void 0));
-                this.capabilities = (__runInitializers(this, _description_extraInitializers), __runInitializers(this, _capabilities_initializers, void 0));
-                this.config = (__runInitializers(this, _capabilities_extraInitializers), __runInitializers(this, _config_initializers, void 0));
-                this.systemPrompt = (__runInitializers(this, _config_extraInitializers), __runInitializers(this, _systemPrompt_initializers, void 0));
-                this.status = (__runInitializers(this, _systemPrompt_extraInitializers), __runInitializers(this, _status_initializers, void 0));
-                __runInitializers(this, _status_extraInitializers);
-            }
-        },
-        (() => {
-            const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-            _name_decorators = [IsOptional(), IsString()];
-            _description_decorators = [IsOptional(), IsString()];
-            _capabilities_decorators = [IsOptional(), IsArray()];
-            _config_decorators = [IsOptional(), IsObject()];
-            _systemPrompt_decorators = [IsOptional(), IsString()];
-            _status_decorators = [IsOptional(), IsEnum(AgentStatus)];
-            __esDecorate(null, null, _name_decorators, { kind: "field", name: "name", static: false, private: false, access: { has: obj => "name" in obj, get: obj => obj.name, set: (obj, value) => { obj.name = value; } }, metadata: _metadata }, _name_initializers, _name_extraInitializers);
-            __esDecorate(null, null, _description_decorators, { kind: "field", name: "description", static: false, private: false, access: { has: obj => "description" in obj, get: obj => obj.description, set: (obj, value) => { obj.description = value; } }, metadata: _metadata }, _description_initializers, _description_extraInitializers);
-            __esDecorate(null, null, _capabilities_decorators, { kind: "field", name: "capabilities", static: false, private: false, access: { has: obj => "capabilities" in obj, get: obj => obj.capabilities, set: (obj, value) => { obj.capabilities = value; } }, metadata: _metadata }, _capabilities_initializers, _capabilities_extraInitializers);
-            __esDecorate(null, null, _config_decorators, { kind: "field", name: "config", static: false, private: false, access: { has: obj => "config" in obj, get: obj => obj.config, set: (obj, value) => { obj.config = value; } }, metadata: _metadata }, _config_initializers, _config_extraInitializers);
-            __esDecorate(null, null, _systemPrompt_decorators, { kind: "field", name: "systemPrompt", static: false, private: false, access: { has: obj => "systemPrompt" in obj, get: obj => obj.systemPrompt, set: (obj, value) => { obj.systemPrompt = value; } }, metadata: _metadata }, _systemPrompt_initializers, _systemPrompt_extraInitializers);
-            __esDecorate(null, null, _status_decorators, { kind: "field", name: "status", static: false, private: false, access: { has: obj => "status" in obj, get: obj => obj.status, set: (obj, value) => { obj.status = value; } }, metadata: _metadata }, _status_initializers, _status_extraInitializers);
-            if (_metadata) Object.defineProperty(_a, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        })(),
-        _a;
-})();
-export { UpdateAgentDto };
-export class AgentResponseDto {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentResponseDto = exports.UpdateAgentDto = exports.CreateAgentDto = void 0;
+const class_validator_1 = require("class-validator");
+const types_1 = require("@the-new-fuse/types");
+class CreateAgentDto {
+    name;
+    description;
+    type;
+    capabilities;
+    config;
+    systemPrompt;
 }
+exports.CreateAgentDto = CreateAgentDto;
+__decorate([
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsEnum)(types_1.AgentType),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "type", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], CreateAgentDto.prototype, "capabilities", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsObject)(),
+    __metadata("design:type", Object)
+], CreateAgentDto.prototype, "config", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], CreateAgentDto.prototype, "systemPrompt", void 0);
+class UpdateAgentDto {
+    name;
+    description;
+    capabilities;
+    config;
+    systemPrompt;
+    status;
+}
+exports.UpdateAgentDto = UpdateAgentDto;
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "name", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "description", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsArray)(),
+    __metadata("design:type", Array)
+], UpdateAgentDto.prototype, "capabilities", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsObject)(),
+    __metadata("design:type", Object)
+], UpdateAgentDto.prototype, "config", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsString)(),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "systemPrompt", void 0);
+__decorate([
+    (0, class_validator_1.IsOptional)(),
+    (0, class_validator_1.IsEnum)(types_1.AgentStatus),
+    __metadata("design:type", String)
+], UpdateAgentDto.prototype, "status", void 0);
+class AgentResponseDto {
+    id;
+    name;
+    description;
+    type;
+    status;
+    capabilities;
+    config;
+    systemPrompt;
+    userId;
+    createdAt;
+    updatedAt;
+}
+exports.AgentResponseDto = AgentResponseDto;

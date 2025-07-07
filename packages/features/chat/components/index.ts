@@ -1,2 +1,2 @@
-export { ChatBubble } from './ChatBubble.tsx';
+export { ChatBubble } from './ChatBubble';
 //# sourceMappingURL=index.js.map

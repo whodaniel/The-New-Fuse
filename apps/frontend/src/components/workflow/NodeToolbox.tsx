@@ -130,8 +130,8 @@ export const NodeToolbox: React.FC = () => {
         <h4 className="text-sm font-medium mb-2">Agents & Tools</h4>
         <div className="space-y-2">
           {nodeTypes
-            .filter(nod(e: any) => ['agent', 'tool'].includes(node.category))
-            .map(nod(e: any) => (
+            .filter((node: any) => ['agent', 'tool'].includes(node.category))
+            .map((node: any) => (
               <div
                 key={node.type}
                 className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"
@@ -158,8 +158,8 @@ export const NodeToolbox: React.FC = () => {
         <h4 className="text-sm font-medium mb-2">Flow Control</h4>
         <div className="space-y-2">
           {nodeTypes
-            .filter(nod(e: any) => node.category === 'flow')
-            .map(nod(e: any) => (
+            .filter((node: any) => node.category === 'flow')
+            .map((node: any) => (
               <div
                 key={node.type}
                 className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"
@@ -186,8 +186,8 @@ export const NodeToolbox: React.FC = () => {
         <h4 className="text-sm font-medium mb-2">Input & Output</h4>
         <div className="space-y-2">
           {nodeTypes
-            .filter(nod(e: any) => node.category === 'io')
-            .map(nod(e: any) => (
+            .filter((node: any) => node.category === 'io')
+            .map((node: any) => (
               <div
                 key={node.type}
                 className="flex items-center p-2 border border-dashed rounded-md cursor-grab hover:bg-gray-50 transition-colors"

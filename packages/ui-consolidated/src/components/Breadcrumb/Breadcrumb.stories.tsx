@@ -4,7 +4,7 @@ import {
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbSeparator,
-} from './Breadcrumb.tsx';
+} from './Breadcrumb';
 
 const meta: Meta<typeof Breadcrumb> = {
   title: 'Components/Breadcrumb',

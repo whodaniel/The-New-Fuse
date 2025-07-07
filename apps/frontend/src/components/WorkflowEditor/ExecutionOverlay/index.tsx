@@ -1,9 +1,9 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { ExecutionStatus } from './ExecutionStatus.js';
-import { ExecutionPath } from './ExecutionPath.js';
-import { useWorkflowExecution } from '../../../hooks/useWorkflowExecution.js';
-import type { WorkflowState } from '../../../types/workflow.tsx';
+import { ExecutionStatus } from './ExecutionStatus';
+import { ExecutionPath } from './ExecutionPath';
+import { useWorkflowExecution } from '../../../hooks/useWorkflowExecution';
+import type { WorkflowState } from '../../../types/workflow';
 
 export const ExecutionOverlay: React.FC = () => {
   const { isExecuting, currentNode, executionPath } = useSelector(

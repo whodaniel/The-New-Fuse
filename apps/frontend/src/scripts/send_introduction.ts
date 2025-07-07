@@ -1,5 +1,5 @@
-import { LoggingService } from '../services/logging.js';
-import { ConnectionManager } from './connect_and_send.js';
+import { LoggingService } from '../services/logging';
+import { ConnectionManager } from './connect_and_send';
 export class IntroductionManager {
     constructor() {
         this.bridge = CascadeBridge.getInstance();

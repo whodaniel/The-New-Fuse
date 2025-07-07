@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.js';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 import {
   UserAction,
   DashboardMetrics,
   PerformanceMetrics,
   UserMetrics,
-} from '../analytics/types.js';
-import { User } from '../collaboration/types.js';
+} from '../analytics/types';
+import { User } from '../collaboration/types';
 
 export function useAnalytics(currentUser: User): any {
   const [manager] = useState(() => new AnalyticsManager());

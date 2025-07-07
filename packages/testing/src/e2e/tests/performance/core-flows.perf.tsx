@@ -74,8 +74,7 @@ test.describe('Performance Tests - Core Flows', () => {
       navigationTimes[section] = performance.now() - startTime;
       
       expect(navigationTimes[section]).toBeLessThan(
-        PERFORMANCE_THRESHOLDS.navigation,
-        `Navigation to ${section} took too long`
+        PERFORMANCE_THRESHOLDS.navigation
       );
     }
     

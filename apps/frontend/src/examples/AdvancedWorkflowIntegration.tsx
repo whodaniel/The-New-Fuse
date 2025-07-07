@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
-import { useWorkflowIntegration } from '../hooks/useWorkflowIntegration.js';
-import { AgentWorkflowManager } from '../components/AgentWorkflowManager.tsx';
-import { StatusMonitor } from '../components/StatusMonitor.tsx';
+import { useWorkflowIntegration } from '../hooks/useWorkflowIntegration';
+import { AgentWorkflowManager } from '../components/AgentWorkflowManager';
+import { StatusMonitor } from '../components/StatusMonitor';
 import { DataAnalysisTool } from '@the-new-fuse/core/tools/data-analysis';
 import { VisualizationTool } from '@the-new-fuse/core/tools/visualization';
 import { StatisticalTool } from '@the-new-fuse/core/tools/statistical';

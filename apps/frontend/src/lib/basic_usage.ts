@@ -6,7 +6,7 @@ var __asyncValues = (this && this.__asyncValues) || function (o): any {
     function settle(resolve, reject, d, v): any { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
 };
 export {}
-import client_1 from '../src/client.js';
+import client_1 from '../src/client';
 async function main(): any {
     var _a, e_1, _b, _c;
     var _d, _e, _f;

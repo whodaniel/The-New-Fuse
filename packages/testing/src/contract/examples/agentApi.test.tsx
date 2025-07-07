@@ -3,7 +3,13 @@ import { ContractEnforcer, ContractDefinition } from '../contractEnforcer';
 import { SchemaValidator } from '../schemaValidator';
 import { TestUtils } from '../testUtils';
 import { CreateAgentDto, Agent, AgentType, AgentStatus } from '@the-new-fuse/types';
-import { ProtocolType } from '@the-new-fuse/core';
+// Define ProtocolType locally since core package has issues
+enum ProtocolType {
+  HTTP = 'http',
+  WEBSOCKET = 'websocket',
+  MCP = 'mcp',
+  GRPC = 'grpc'
+}
 import { SecurityScheme } from '@the-new-fuse/types';
 
 const CREATE_AGENT_CONTRACT_KEY = 'createAgent'; // Define the missing constant
@@ -24,8 +30,8 @@ describe('Agent API Contract Tests', () => {
       path: '/api/agents',
       requestSchema: CreateAgentDto,
       responseSchema: Agent,
-      protocol: ProtocolType.REST,
-      security: SecurityScheme.JWT
+      protocol: ProtocolType.HTTP,
+      security: { type: 'bearer', bearerFormat: 'JWT' } as SecurityScheme
     };
 
     contractEnforcer.registerContract(CREATE_AGENT_CONTRACT_KEY, createAgentContract);
@@ -35,7 +41,7 @@ describe('Agent API Contract Tests', () => {
     it('should validate valid create agent request', async () => {
       const validRequest: CreateAgentDto = {
         name: 'Test Agent',
-        type: AgentType.BASE,
+        type: AgentType.BASIC,
         // @ts-ignore
         config: { key: 'value' }, // Adjusted to remove potential type error if config is not in CreateAgentDto
         description: 'Test agent description'
@@ -50,7 +56,7 @@ describe('Agent API Contract Tests', () => {
       const invalidRequest = {
         // Missing required 'name' field
         // @ts-ignore
-        type: AgentType.BASE
+        type: AgentType.BASIC
       };
 
       // @ts-ignore
@@ -63,11 +69,11 @@ describe('Agent API Contract Tests', () => {
       const validResponse: Agent = {
         id: '123',
         name: 'Test Agent',
-        type: AgentType.BASE,
+        type: AgentType.BASIC,
         // @ts-ignore
         isActive: true, // Adjusted to remove potential type error if isActive is not in Agent
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         status: AgentStatus.ACTIVE // Added missing status
       };
 

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { EntityService } from './entity.service.js';
-import { EntityController } from './entity.controller.js';
-import { PrismaService } from '../../services/prisma.service.js'; // Adjust path if needed
-import { AuthModule } from '../auth/auth.module.js'; // Import AuthModule for guards
+import { EntityService } from './entity.service';
+import { EntityController } from './entity.controller';
+import { PrismaService } from '../../services/prisma.service'; // Adjust path if needed
+import { AuthModule } from '../auth/auth.module'; // Import AuthModule for guards
 
 @Module({
   imports: [

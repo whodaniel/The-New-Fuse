@@ -4,12 +4,11 @@
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'events';
 import { Logger } from 'winston';
-import { v4 as uuidv4 } from 'uuid';
 
-import { BaseBridge, MessageType, Priority } from '../bridges.js';
-import { ContextManager, ContextType } from '../context/manager.js';
-import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery.js';
-import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics.js';
+import { BaseBridge, MessageType, Priority } from './bridges';
+import { ContextManager, ContextType } from './context/manager';
+import { ErrorRecovery, ErrorCategory, ErrorSeverity } from './error/recovery';
+import { MetricsRegistry, PerformanceMonitor } from './monitoring/metrics';
 
 // Create logger
 const logger = (Logger as any).createLogger({
@@ -109,7 +108,7 @@ export abstract class BaseAgent extends EventEmitter {
     protected async sendMessage(
         message: Record<string, unknown>,
         messageType: MessageType,
-        priority: Priority = Priority.NORMAL
+        priority: Priority = Priority.MEDIUM
     ): Promise<void> {
         if (!this.bridge) {
             throw new Error('Bridge not initialized');

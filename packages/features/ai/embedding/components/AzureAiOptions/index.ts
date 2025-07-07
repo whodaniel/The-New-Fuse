@@ -1,2 +1,2 @@
-export { AzureAiOptions } from './AzureAiOptions.tsx';
+export { AzureAiOptions } from './AzureAiOptions';
 //# sourceMappingURL=index.js.map

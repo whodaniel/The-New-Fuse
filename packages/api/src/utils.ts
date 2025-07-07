@@ -2,4 +2,4 @@
  * Re-export utility functions
  */
 
-export * from './utils/index.js';
+export * from './utils/index';

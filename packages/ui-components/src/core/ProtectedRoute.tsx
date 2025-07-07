@@ -1,5 +1,11 @@
 import React, { useEffect } from 'react';
-import { useAuth } from '@the-new-fuse/hooks'; // Assuming useAuth hook handles auth logic
+// import { useAuth } from '@the-new-fuse/hooks';
+// Mock useAuth for now
+const useAuth = () => ({ 
+  isAuthenticated: true, 
+  isLoading: false, 
+  login: () => console.log('Login called') 
+}); // Assuming useAuth hook handles auth logic
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

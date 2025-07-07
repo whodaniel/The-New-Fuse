@@ -63,7 +63,7 @@ export const BaseNode: React.React.FC<BaseNodeProps> = memo(({
       )}
       
       {/* Input handles */}
-      {inputHandles.map(handl(e: any) => (
+      {inputHandles.map((handle: any) => (
         <Handle
           key={`input-${handle.id}`}
           id={handle.id}
@@ -75,7 +75,7 @@ export const BaseNode: React.React.FC<BaseNodeProps> = memo(({
       ))}
       
       {/* Output handles */}
-      {outputHandles.map(handl(e: any) => (
+      {outputHandles.map((handle: any) => (
         <Handle
           key={`output-${handle.id}`}
           id={handle.id}

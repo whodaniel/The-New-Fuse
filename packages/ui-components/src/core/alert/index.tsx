@@ -1,5 +1,5 @@
 import React from "react";
-import { cn } from '../utils/cn.js'; // Added file extension
+import { cn } from '../../utils/cn';
 
 export interface AlertProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "destructive" | "warning" | "success" | "info";

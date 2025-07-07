@@ -30,7 +30,7 @@ function processFile(filePath: string): void {
       fs.writeFileSync(filePath, content, "utf8");
       console.log(`Fixed imports in ${filePath}`);
     }
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(`Error processing file ${filePath}:`, error);
   }
 }
@@ -53,11 +53,11 @@ function scanDirectory(directory: string): void {
         ) {
           processFile(fullPath);
         }
-      } catch (error: unknown) {
+      } catch (error) {
         console.error(`Error processing ${fullPath}:`, error);
       }
     }
-  } catch (error: unknown) {
+  } catch (error) {
     console.error(`Error scanning directory ${directory}:`, error);
   }
 }

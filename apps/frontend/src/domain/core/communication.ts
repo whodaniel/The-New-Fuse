@@ -1,4 +1,4 @@
-import { LoggingService } from '../../services/logging.js';
+import { LoggingService } from '../../services/logging';
 export class CommunicationManager extends EventEmitter {
     constructor(config = {}) {
         super();

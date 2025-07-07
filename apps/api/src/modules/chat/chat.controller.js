@@ -1,80 +1,169 @@
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatController = void 0;
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const chat_service_1 = require("./chat.service");
+// Mock auth guard for compatibility - replace with actual auth guard
+class MockAuthGuard {
+    canActivate() {
+        return true;
     }
-    return useValue ? value : void 0;
-};
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
+}
+let ChatController = class ChatController {
+    chatService;
+    constructor(chatService) {
+        this.chatService = chatService;
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+    async getChats(req) {
+        const userId = req.user?.id || 'default-user'; // Fallback for development
+        return this.chatService.findAll(userId);
+    }
+    async getChat(id, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.findOne(id, userId);
+    }
+    async createChat(createChatDto, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.create(userId, createChatDto);
+    }
+    async addMessage(chatId, messageData, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.addMessage(chatId, userId, messageData);
+    }
+    async automateConversation(chatId, automateDto, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.automateConversation(chatId, userId, automateDto.conversationGoal);
+    }
+    async createConversationRule(ruleData, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.createConversationRule(userId, ruleData);
+    }
+    async getConversationRules(req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.getConversationRules(userId);
+    }
+    async createSynthesisJob(jobData, req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.createSynthesisJob(userId, jobData);
+    }
+    async getSynthesisJobs(req) {
+        const userId = req.user?.id || 'default-user';
+        return this.chatService.getSynthesisJobs(userId);
+    }
+    async generateResponse(chatId, generateDto, req) {
+        const userId = req.user?.id || 'default-user';
+        const response = await this.chatService.generateAgentResponse(generateDto.prompt, generateDto.agentId, userId);
+        return { response };
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Controller, Get, Post } from '@nestjs/common';
-import { ApiTags, ApiOperation } from '@nestjs/swagger';
-let ChatController = (() => {
-    let _classDecorators = [ApiTags('chat'), Controller('chat')];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    let _instanceExtraInitializers = [];
-    let _getChats_decorators;
-    let _getChat_decorators;
-    let _createChat_decorators;
-    var ChatController = _classThis = class {
-        constructor(chatService) {
-            this.chatService = (__runInitializers(this, _instanceExtraInitializers), chatService);
-        }
-        async getChats() {
-            return this.chatService.findAll();
-        }
-        async getChat(id) {
-            return this.chatService.findOne(id);
-        }
-        async createChat(createChatDto) {
-            return this.chatService.create(createChatDto);
-        }
-    };
-    __setFunctionName(_classThis, "ChatController");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _getChats_decorators = [Get(), ApiOperation({ summary: 'Get all chats' })];
-        _getChat_decorators = [Get(':id'), ApiOperation({ summary: 'Get chat by ID' })];
-        _createChat_decorators = [Post(), ApiOperation({ summary: 'Create new chat' })];
-        __esDecorate(_classThis, null, _getChats_decorators, { kind: "method", name: "getChats", static: false, private: false, access: { has: obj => "getChats" in obj, get: obj => obj.getChats }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getChat_decorators, { kind: "method", name: "getChat", static: false, private: false, access: { has: obj => "getChat" in obj, get: obj => obj.getChat }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _createChat_decorators, { kind: "method", name: "createChat", static: false, private: false, access: { has: obj => "createChat" in obj, get: obj => obj.createChat }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        ChatController = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return ChatController = _classThis;
-})();
-export { ChatController };
+exports.ChatController = ChatController;
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all chats for user' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "getChats", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get chat by ID' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "getChat", null);
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create new chat' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "createChat", null);
+__decorate([
+    (0, common_1.Post)(':id/messages'),
+    (0, swagger_1.ApiOperation)({ summary: 'Add message to chat' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "addMessage", null);
+__decorate([
+    (0, common_1.Post)(':id/automate'),
+    (0, swagger_1.ApiOperation)({ summary: 'Start automated conversation' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "automateConversation", null);
+__decorate([
+    (0, common_1.Post)('rules'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create conversation rule' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "createConversationRule", null);
+__decorate([
+    (0, common_1.Get)('rules/all'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all conversation rules' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "getConversationRules", null);
+__decorate([
+    (0, common_1.Post)('synthesis'),
+    (0, swagger_1.ApiOperation)({ summary: 'Create synthesis job' }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "createSynthesisJob", null);
+__decorate([
+    (0, common_1.Get)('synthesis/all'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all synthesis jobs' }),
+    __param(0, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "getSynthesisJobs", null);
+__decorate([
+    (0, common_1.Post)(':id/generate-response'),
+    (0, swagger_1.ApiOperation)({ summary: 'Generate agent response' }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __param(2, (0, common_1.Request)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:returntype", Promise)
+], ChatController.prototype, "generateResponse", null);
+exports.ChatController = ChatController = __decorate([
+    (0, swagger_1.ApiTags)('chat'),
+    (0, common_1.Controller)('chat'),
+    (0, common_1.UseGuards)(MockAuthGuard),
+    (0, swagger_1.ApiBearerAuth)(),
+    __metadata("design:paramtypes", [chat_service_1.ChatService])
+], ChatController);

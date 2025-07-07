@@ -208,18 +208,70 @@ class EnhancedTNFRelay {
                 await this.handleTabActivated(ws, message);
                 break;
             default:
-                await this.log(`Unknown message type: ${message.type}`, 'WARN');
-                ws.send(JSON.stringify({
-                    type: 'ERROR',
-                    error: `Unknown message type: ${message.type}`
-                }));
+                if (message.target) {
+                    await this.forwardMessage(ws, message);
+                } else {
+                    await this.log(`Unknown message type without target: ${message.type}`, 'WARN');
+                    ws.send(JSON.stringify({
+                        type: 'ERROR',
+                        error: `Unknown message type without a target: ${message.type}`
+                    }));
+                }
+        }
+    }
+
+    async forwardMessage(ws, message) {
+        const { target } = message;
+        
+        await this.log(`Attempting to forward message to ${target}`);
+        await this.log(`Available agents: ${Array.from(this.agents.values()).map(a => a.id).join(', ')}`);
+
+        let targetWs = null;
+
+        // Search in agents by their registered ID
+        for (const agentInfo of this.agents.values()) {
+            if (agentInfo.id === target) {
+                targetWs = agentInfo.ws;
+                await this.log(`Found target agent: ${target}`);
+                break;
+            }
+        }
+
+        // Search in chrome extensions if not found in agents
+        if (!targetWs) {
+            for (const extInfo of this.chromeExtensions.values()) {
+                if (extInfo.id === target) {
+                    targetWs = extInfo.ws;
+                    await this.log(`Found target extension: ${target}`);
+                    break;
+                }
+            }
+        }
+
+        if (targetWs && targetWs.readyState === WebSocket.OPEN) {
+            await this.log(`Forwarding message of type ${message.type} from ${ws.clientId} to ${target}`);
+            const forwardedMessage = { ...message, sender: ws.clientId, forwarded: true };
+            targetWs.send(JSON.stringify(forwardedMessage));
+            
+            // Send confirmation back to sender
+            ws.send(JSON.stringify({
+                type: 'MESSAGE_FORWARDED',
+                messageId: message.id,
+                target: target
+            }));
+        } else {
+            await this.log(`Target client ${target} not found or not connected.`, 'WARN');
+            ws.send(JSON.stringify({
+                type: 'ERROR',
+                error: `Target client ${target} not found or not connected.`
+            }));
         }
     }
     
     async handleRegistration(ws, message) {
         const { payload } = message;
         const clientInfo = {
-            id: ws.clientId,
+            id: payload.id, // Use the agent's self-declared ID
             type: payload.type,
             capabilities: payload.capabilities || [],
             registeredAt: new Date().toISOString(),
@@ -232,6 +284,7 @@ class EnhancedTNFRelay {
         } else {
             this.agents.set(ws.clientId, clientInfo);
             await this.log(`Agent registered: ${ws.clientId} (${payload.type})`);
+            await this.log(`Current agents: ${JSON.stringify(Array.from(this.agents.keys()))}`);
         }
         
         ws.send(JSON.stringify({

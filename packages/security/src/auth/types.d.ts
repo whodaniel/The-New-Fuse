@@ -16,7 +16,7 @@ export interface AuthenticatedRequest extends Request {
 export interface AuthToken {
     token: string;
     expiresIn: number;
-    type: access' | 'refresh';
+    type: 'access' | 'refresh';
 }
 export interface LoginResult {
     user: User;

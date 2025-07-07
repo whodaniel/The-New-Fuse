@@ -92,4 +92,23 @@ export function DialogTrigger({ asChild, children }: DialogTriggerProps) {
   return <>{children}</>;
 }
 
+interface DialogCloseProps {
+  asChild?: boolean;
+  children: React.ReactNode;
+}
+
+export function DialogClose({ asChild, children }: DialogCloseProps) {
+  return <>{children}</>;
+}
+
 export default Dialog;
+
+// Named exports for compound component pattern
+export const Root = Dialog;
+export const Content = DialogContent;
+export const Header = DialogHeader;
+export const Title = DialogTitle;
+export const Description = DialogDescription;
+export const Footer = DialogFooter;
+export const Trigger = DialogTrigger;
+export const Close = DialogClose;

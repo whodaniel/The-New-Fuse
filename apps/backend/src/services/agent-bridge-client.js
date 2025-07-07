@@ -1,7 +1,12 @@
-import { io } from 'socket.io-client';
-export class AgentBridgeClient {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentBridgeClient = void 0;
+const socket_io_client_1 = require("socket.io-client");
+class AgentBridgeClient {
+    socket;
+    messageHandlers;
     constructor(serverUrl = 'http://localhost:3000') {
-        this.socket = io(serverUrl);
+        this.socket = (0, socket_io_client_1.io)(serverUrl);
         this.messageHandlers = new Map();
         this.setupEventHandlers();
     }
@@ -45,6 +50,7 @@ export class AgentBridgeClient {
         this.socket.disconnect();
     }
 }
+exports.AgentBridgeClient = AgentBridgeClient;
 // Example usage for Roo Coder:
 /*
 const client = new AgentBridgeClient();

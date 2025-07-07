@@ -1,16 +1,16 @@
 import React from 'react';
 import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
-import { ScriptRunner } from './ScriptRunner.tsx';
-import { UserManagement } from './UserManagement.tsx';
-import { SystemMetrics } from './SystemMetrics.tsx';
-import { RoleManager } from './RoleManager.tsx';
-import { ServiceMonitor } from './ServiceMonitor.tsx';
-import { SystemConfig } from './SystemConfig.tsx';
-import { AuditLogs } from './AuditLogs.tsx';
-import { FeatureFlags } from './FeatureFlags.tsx';
-import { ApiMonitor } from './ApiMonitor.tsx';
-import { DatabaseAdmin } from './DatabaseAdmin.tsx';
-import { McpMonitor } from './McpMonitor.js'; // Import the new component
+import { ScriptRunner } from './ScriptRunner';
+import { UserManagement } from './UserManagement';
+import { SystemMetrics } from './SystemMetrics';
+import { RoleManager } from './RoleManager';
+import { ServiceMonitor } from './ServiceMonitor';
+import { SystemConfig } from './SystemConfig';
+import { AuditLogs } from './AuditLogs';
+import { FeatureFlags } from './FeatureFlags';
+import { ApiMonitor } from './ApiMonitor';
+import { DatabaseAdmin } from './DatabaseAdmin';
+import { McpMonitor } from './McpMonitor'; // Import the new component
 
 /**
  * Admin Panel component that provides centralized access to all administrative functions.

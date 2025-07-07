@@ -66,7 +66,7 @@ export class AgentService {
         this.logger.log(`Created agent ${agent.id} (${agent.name})`);
         return this.transformPrismaAgent(agent);
       });
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to create agent: ${errorMessage}`);
       throw error;
@@ -80,7 +80,7 @@ export class AgentService {
       });
 
       return agents.map((agent) => this.transformPrismaAgent(agent));
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agents: ${errorMessage}`);
       throw error;
@@ -98,7 +98,7 @@ export class AgentService {
       }
 
       return this.transformPrismaAgent(agent);
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agent: ${errorMessage}`);
       throw error;
@@ -147,7 +147,7 @@ export class AgentService {
         this.logger.log(`Updated agent ${id}`);
         return this.transformPrismaAgent(agent);
       });
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to update agent: ${errorMessage}`);
       throw error;
@@ -162,7 +162,7 @@ export class AgentService {
       });
 
       this.logger.log(`Deleted agent ${id}`);
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to delete agent: ${errorMessage}`);
       throw error;
@@ -185,7 +185,7 @@ export class AgentService {
       });
 
       return agents.map((agent) => this.transformPrismaAgent(agent));
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get agents by capability: ${errorMessage}`);
       throw error;
@@ -203,7 +203,7 @@ export class AgentService {
       });
 
       return agents.map((agent) => this.transformPrismaAgent(agent));
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to get active agents: ${errorMessage}`);
       throw error;
@@ -223,7 +223,7 @@ export class AgentService {
 
       this.logger.log(`Updated agent status ${id} -> ${status}`);
       return this.transformPrismaAgent(agent);
-    } catch (error: unknown) {
+    } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Unknown error";
       this.logger.error(`Failed to update agent status: ${errorMessage}`);
       throw error;

@@ -1,5 +1,5 @@
 import React from 'react';
-import { OnboardingAdmin } from '../../components/admin/onboarding/OnboardingAdmin.tsx';
+import { OnboardingAdmin } from '../../components/admin/onboarding/OnboardingAdmin';
 import { Box, Heading } from '@chakra-ui/react';
 
 /**

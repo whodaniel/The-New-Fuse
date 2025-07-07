@@ -1,15 +1,15 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../lib/prisma/prisma.module.js';
-import { MassController } from './mass.controller.js';
-import { MassOrchestrationService } from './mass-orchestration.service.js';
-import { PromptOptimizerService } from './prompt-optimizer.service.js';
-import { TopologyOptimizerService } from './topology-optimizer.service.js';
-import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service.js';
-import { AggregateService } from './building-blocks/aggregate.service.js';
-import { ReflectService } from './building-blocks/reflect.service.js';
-import { DebateService } from './building-blocks/debate.service.js';
-import { CustomAgentService } from './building-blocks/custom-agent.service.js';
-import { ToolUseService } from './building-blocks/tool-use.service.js';
+import { PrismaModule } from '../lib/prisma/prisma.module';
+import { MassController } from './mass.controller';
+import { MassOrchestrationService } from './mass-orchestration.service';
+import { PromptOptimizerService } from './prompt-optimizer.service';
+import { TopologyOptimizerService } from './topology-optimizer.service';
+import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
+import { AggregateService } from './building-blocks/aggregate.service';
+import { ReflectService } from './building-blocks/reflect.service';
+import { DebateService } from './building-blocks/debate.service';
+import { CustomAgentService } from './building-blocks/custom-agent.service';
+import { ToolUseService } from './building-blocks/tool-use.service';
 
 @Module({
   imports: [PrismaModule],

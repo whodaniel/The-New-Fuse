@@ -1,2 +1,2 @@
-export { CohereEmbeddingOptions } from './CohereOptions.tsx';
+export { CohereEmbeddingOptions } from './CohereOptions';
 //# sourceMappingURL=index.js.map

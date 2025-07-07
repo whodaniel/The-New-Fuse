@@ -1,4 +1,4 @@
-import { TypingIndicator } from './TypingIndicator.tsx';
+import { TypingIndicator } from './TypingIndicator';
 
 // Inside your chat component:
 <TypingIndicator 

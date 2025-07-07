@@ -3,9 +3,9 @@ import React from "react";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
 import react_2 from '@testing-library/react';
-import TwoFactorAuth_1 from '../TwoFactorAuth.tsx';
-import AuthContext_1 from '../../../contexts/AuthContext.js';
-import testUtils_1 from '../../../utils/testUtils.js';
+import TwoFactorAuth_1 from '../TwoFactorAuth';
+import AuthContext_1 from '../../../contexts/AuthContext';
+import testUtils_1 from '../../../utils/testUtils';
 describe('TwoFactorAuth', () => {
     it('renders the component', () => {
         (0, react_2.render)(<AuthContext_1.AuthContext.Provider value={testUtils_1.mockAuthContextValue}>

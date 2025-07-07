@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Workspace from "@/models/workspace";
-import LoadingChat from './LoadingChat.js';
-import ChatContainer from './ChatContainer.js';
+import LoadingChat from './LoadingChat';
+import ChatContainer from './ChatContainer';
 import paths from "@/utils/paths";
-import ModalWrapper from '../ModalWrapper.js';
+import ModalWrapper from '../ModalWrapper';
 import { useParams } from "react-router-dom";
-import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper.js';
+import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper';
 import { WorkspaceData } from "@/types/workspace";
 
 interface ChatMessage {

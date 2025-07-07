@@ -16,7 +16,7 @@ export class AuthService {
     this.jwtSecret = secret;
   }
 
-  async validateCredentials(credentials: UserCredentialsType): Promise<boolean> {
+  async validateCredentials(_credentials: UserCredentialsType): Promise<boolean> {
     // Validation implementation would go here
     return true;
   }

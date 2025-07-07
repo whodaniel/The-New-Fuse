@@ -1,4 +1,4 @@
-import { DashboardWidget, DashboardLayout } from '../types.tsx';
+import { DashboardWidget, DashboardLayout } from '../types';
 
 export interface DashboardTemplate {
   id: string;

@@ -9,7 +9,7 @@ import {
   Split,
   Layout,
   Sidebar
-} from '../src.js';
+} from '../src';
 
 /**
  * Test component to demonstrate all consolidated components

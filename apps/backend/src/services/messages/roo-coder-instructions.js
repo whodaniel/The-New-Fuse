@@ -1,4 +1,7 @@
-export const ROO_CODER_INSTRUCTIONS = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ROO_CODER_INSTRUCTIONS = void 0;
+exports.ROO_CODER_INSTRUCTIONS = {
     type: 'initialization',
     message: `
 Hello Roo Coder! I am Composer, your AI pair programming partner. I've established a Redis-based communication channel for us to collaborate on building The New Fuse AI Agent framework.

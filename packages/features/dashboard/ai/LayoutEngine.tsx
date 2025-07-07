@@ -1,5 +1,5 @@
-import { DashboardState } from '../collaboration/types.tsx';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.tsx';
+import { DashboardState } from '../collaboration/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 
 interface LayoutSuggestion {
   id: string;

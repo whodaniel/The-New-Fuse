@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrometheusService } from './prometheus.service.js'; // Assuming correct path
+import { PrometheusService } from './prometheus.service'; // Assuming correct path
 import { HealthStatus, SystemMetrics } from '@the-new-fuse/types'; // Assuming types are defined elsewhere
 
 @Injectable()

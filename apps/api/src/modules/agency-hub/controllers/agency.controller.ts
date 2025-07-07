@@ -16,7 +16,10 @@ import { EnhancedAgencyService } from '@the-new-fuse/core/services/enhanced-agen
 import { AuthGuard } from '../../guards/auth.guard';
 import { RolesGuard } from '../../guards/roles.guard';
 import { Roles } from '../../decorators/roles.decorator';
-import { EnhancedUserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
+
+// Type definitions
+export type AgentId = string;
 
 @ApiTags('agencies')
 @Controller('api/agencies')
@@ -27,13 +30,13 @@ export class AgencyController {
 
   @Post()
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.SUPER_ADMIN)
+  @Roles(UserRole.SUPER_ADMIN)
   @ApiOperation({ summary: 'Create a new agency with swarm capabilities' })
   @ApiResponse({ status: 201, description: 'Agency created successfully' })
   async createAgency(@Body() createAgencyDto: any) {
     try {
       return await this.enhancedAgencyService.createAgencyWithSwarm(createAgencyDto);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to create agency',
         HttpStatus.BAD_REQUEST
@@ -47,7 +50,7 @@ export class AgencyController {
   async getAgency(@Param('agencyId') agencyId: string) {
     try {
       return await this.enhancedAgencyService.getAgencyWithSwarmStatus(agencyId);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Agency not found',
         HttpStatus.NOT_FOUND
@@ -57,7 +60,7 @@ export class AgencyController {
 
   @Put(':agencyId')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_OWNER, EnhancedUserRole.AGENCY_ADMIN)
+  @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Update agency configuration' })
   @ApiResponse({ status: 200, description: 'Agency updated successfully' })
   async updateAgency(
@@ -69,7 +72,7 @@ export class AgencyController {
         agencyId,
         updateAgencyDto
       );
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to update agency',
         HttpStatus.BAD_REQUEST
@@ -79,7 +82,7 @@ export class AgencyController {
 
   @Post(':agencyId/swarm/initialize')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_OWNER, EnhancedUserRole.AGENCY_ADMIN)
+  @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Initialize swarm for agency' })
   @ApiResponse({ status: 200, description: 'Swarm initialized successfully' })
   async initializeSwarm(
@@ -88,7 +91,7 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.initializeSwarm(agencyId, config);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to initialize swarm',
         HttpStatus.BAD_REQUEST
@@ -102,7 +105,7 @@ export class AgencyController {
   async getSwarmStatus(@Param('agencyId') agencyId: string) {
     try {
       return await this.enhancedAgencyService.getSwarmStatus(agencyId);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get swarm status',
         HttpStatus.NOT_FOUND
@@ -112,7 +115,7 @@ export class AgencyController {
 
   @Post(':agencyId/providers/register')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_ADMIN, EnhancedUserRole.AGENCY_MANAGER)
+  @Roles(UserRole.AGENCY_ADMIN, UserRole.AGENCY_MANAGER)
   @ApiOperation({ summary: 'Register service providers' })
   @ApiResponse({ status: 201, description: 'Providers registered successfully' })
   async registerProviders(
@@ -121,7 +124,7 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.registerProviders(agencyId, providersDto);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to register providers',
         HttpStatus.BAD_REQUEST
@@ -142,7 +145,7 @@ export class AgencyController {
         categoryId,
         active
       });
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get providers',
         HttpStatus.NOT_FOUND
@@ -152,7 +155,7 @@ export class AgencyController {
 
   @Get(':agencyId/analytics')
   @UseGuards(RolesGuard)
-  @Roles(EnhancedUserRole.AGENCY_OWNER, EnhancedUserRole.AGENCY_ADMIN)
+  @Roles(UserRole.AGENCY_OWNER, UserRole.AGENCY_ADMIN)
   @ApiOperation({ summary: 'Get agency performance analytics' })
   @ApiResponse({ status: 200, description: 'Analytics retrieved successfully' })
   async getAnalytics(
@@ -161,7 +164,7 @@ export class AgencyController {
   ) {
     try {
       return await this.enhancedAgencyService.getAnalytics(agencyId, timeframe);
-    } catch (error: unknown) {
+    } catch (error) {
       throw new HttpException(
         (error as Error).message || 'Failed to get analytics',
         HttpStatus.NOT_FOUND

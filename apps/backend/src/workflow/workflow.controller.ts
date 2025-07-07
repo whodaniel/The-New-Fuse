@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Param, Body, UseGuards, Req } from '@nestjs/common';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger } from '@nestjs/common';
 
 @Controller('workflows')
 export class WorkflowController {
-  private logger = new Logger('WorkflowController');
+  private logger = new Logger(WorkflowController.name);
   
   constructor() {
     this.logger.log('WorkflowController initialized');

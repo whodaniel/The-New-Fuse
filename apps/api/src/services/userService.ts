@@ -1,87 +1,98 @@
-// In-memory store for user profiles
-// In a real application, this would be a database.
-interface UserProfile {
-    id: string;
-    email: string; // Assuming email is a unique identifier and part of the profile
-    displayName?: string;
-    bio?: string;
-    preferences?: {
-        theme?: 'light' | 'dark' | 'system';
-        notifications?: boolean;
-    };
-    // Add other fields from the existing User model if necessary
-    // For example, if registration creates a user with a password hash, that shouldn't be here.
-    // This profile is for displayable and editable user information.
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+import { User } from '@prisma/client';
+
+@Injectable()
+export class UserService {
+  constructor(private prisma: PrismaService) {}
+
+  async findAll(): Promise<User[]> {
+    return this.prisma.user.findMany();
+  }
+
+  async findOne(id: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { id }
+    });
+  }
+
+  async findByEmail(email: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { email }
+    });
+  }
+
+  async findByUsername(username: string): Promise<User | null> {
+    return this.prisma.user.findUnique({
+      where: { username }
+    });
+  }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.findByEmail(email);
+  }
+
+  async findUserByUsername(username: string): Promise<User | null> {
+    return this.findByUsername(username);
+  }
+
+  async createUser(email: string, password: string, username: string): Promise<User> {
+    return this.create({
+      email,
+      password,
+      username
+    });
+  }
+
+  async getUserProfileById(userId: string): Promise<User | null> {
+    return this.findOne(userId);
+  }
+
+  async updateUserProfileById(userId: string, profileData: Partial<User>): Promise<User | null> {
+    try {
+      return await this.update(userId, profileData);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }
+    });
+  }
+
+  async update(id: string, data: Partial<User>): Promise<User> {
+    return this.prisma.user.update({
+      where: { id },
+      data: {
+        ...data,
+        updatedAt: new Date()
+      }
+    });
+  }
+
+  async delete(id: string): Promise<User> {
+    return this.prisma.user.delete({
+      where: { id }
+    });
+  }
 }
 
-// Initialize with some mock data, including the MOCK_USER_ID used in controller
-const userProfilesStore: Map<string, UserProfile> = new Map([
-    ['mockUserId123', {
-        id: 'mockUserId123',
-        email: 'user@example.com',
-        displayName: 'Mock User',
-        bio: 'This is a mock user bio.',
-        preferences: {
-            theme: 'dark',
-            notifications: true,
-        }
-    }],
-    ['anotherUser456', {
-        id: 'anotherUser456',
-        email: 'another@example.com',
-        displayName: 'Another User',
-        bio: 'Loves coding.',
-        preferences: {
-            theme: 'light',
-            notifications: false,
-        }
-    }]
-]);
+export interface UserProfile {
+  id: string;
+  email: string;
+  username: string;
+  displayName?: string;
+  bio?: string;
+  preferences?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
-/**
- * Retrieves a user's profile by their ID.
- * @param userId The ID of the user.
- * @returns The user profile, or null if not found.
- */
-export const getUserProfileById = async (userId: string): Promise<UserProfile | null> => {
-    const profile = userProfilesStore.get(userId);
-    return profile ? { ...profile } : null; // Return a copy
-};
-
-/**
- * Updates a user's profile by their ID.
- * @param userId The ID of the user.
- * @param profileData Partial data to update the profile.
- * @returns The updated user profile, or null if not found.
- */
-export const updateUserProfileById = async (
-    userId: string,
-    profileData: Partial<UserProfile>
-): Promise<UserProfile | null> => {
-    const existingProfile = userProfilesStore.get(userId);
-    if (!existingProfile) {
-        return null;
-    }
-
-    // Merge new data with existing profile data
-    // Ensure 'id' and 'email' are not overwritten by partial update if they are part of profileData
-    const updatedProfile: UserProfile = {
-        ...existingProfile,
-        ...profileData,
-        id: existingProfile.id, // Preserve original ID
-        email: existingProfile.email, // Preserve original email
-        preferences: {
-            ...existingProfile.preferences,
-            ...profileData.preferences,
-        },
-    };
-
-    userProfilesStore.set(userId, updatedProfile);
-    return { ...updatedProfile }; // Return a copy
-};
-
-// Potentially, a function to create a basic profile when a user registers,
-// if not handled by the registration service itself.
-// For now, we assume profiles are created or exist.
-
-export { UserProfile };
+// Export the service instance for compatibility
+export const userService = new UserService(null as any); // Will be properly injected in DI container

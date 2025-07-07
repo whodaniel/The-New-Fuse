@@ -1,4 +1,6 @@
 import { EventEmitter } from 'events';
+import { WebSocketService } from './WebSocketService';
+
 export class AgentChatService extends EventEmitter {
     constructor() {
         super();

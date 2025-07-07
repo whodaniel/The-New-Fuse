@@ -1,4 +1,4 @@
-import { LogoContext } from '../LogoContext.tsx';
+import { LogoContext } from '../LogoContext';
 export default function useLogo(): any {
     const { logo, setLogo, loginLogo, isCustomLogo } = useContext(LogoContext);
     return { logo, setLogo, loginLogo, isCustomLogo };

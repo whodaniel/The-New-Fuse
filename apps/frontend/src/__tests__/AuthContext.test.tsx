@@ -2,8 +2,8 @@
 import '@testing-library/jest-dom/extend-expect';
 
 import { render, screen, act, waitFor } from '@testing-library/react';
-import { AuthProvider, useAuth } from '../AuthContext.tsx';
-import { auth } from '../lib/firebase.js';
+import { AuthProvider, useAuth } from '../AuthContext';
+import { auth } from '../lib/firebase';
 import { User } from 'firebase/auth';
 import { vi } from 'vitest';
 

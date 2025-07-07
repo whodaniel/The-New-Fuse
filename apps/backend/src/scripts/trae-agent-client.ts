@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis';
-import { TraeMonitor } from '../services/agent/trae-monitor.js';
+import { TraeMonitor } from '../services/agent/trae-monitor';
 import { Logger } from '@nestjs/common';
 
 interface AgentMessage {
@@ -220,7 +220,7 @@ class TraeAgentClient {
 }
 
 // Start the Trae Agent client
-async function main(): any {
+async function main(): Promise<void> {
   const client = new TraeAgentClient();
   
   // Handle process termination
@@ -238,7 +238,7 @@ async function main(): any {
 }
 
 // Run the main function
-main().catch(error => {
+main().catch((error: any) => {
   console.error('Fatal error:', error);
   process.exit(1);
 });

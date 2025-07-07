@@ -1,5 +1,5 @@
-import { Navigation } from './Navigation.js';
-import { Table } from './Table.js';
-import { Chart } from './Chart.js';
-import { Form } from './Form.tsx';
+import { Navigation } from './Navigation';
+import { Table } from './Table';
+import { Chart } from './Chart';
+import { Form } from './Form';
 export { Layout, Navigation, Table, Chart, Form };

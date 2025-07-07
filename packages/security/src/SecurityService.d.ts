@@ -1,7 +1,7 @@
-import { EncryptionService } from './EncryptionService.js';
-import { RateLimitingService } from './rate-limiting.js';
-import { AuthService } from './auth.js';
-import { AuditService } from './audit.js';
+import { EncryptionService } from './EncryptionService';
+import { RateLimitingService } from './rate-limiting';
+import { AuthService } from './auth';
+import { AuditService } from './audit';
 export declare class SecurityService {
     private readonly encryption;
     private readonly rateLimit;

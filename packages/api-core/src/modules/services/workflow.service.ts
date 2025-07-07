@@ -4,7 +4,7 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { BaseService } from './base.service.js';
+import { BaseService } from './base.service';
 
 // Define local types until types package issue is resolved
 export interface Workflow {

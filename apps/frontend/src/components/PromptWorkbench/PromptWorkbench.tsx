@@ -17,14 +17,14 @@ import {
   useDisclosure,
   Select
 } from '@chakra-ui/react';
-import { PromptEditor } from './PromptEditor.tsx';
-import { VariableManager } from './VariableManager.tsx';
-import { TestCaseManager } from './TestCaseManager.tsx';
-import { ResultsViewer } from './ResultsViewer.tsx';
-import { VersionHistory } from './VersionHistory.tsx';
-import { PromptSaveModal } from './PromptSaveModal.tsx';
-import { usePromptTemplates } from '../../hooks/usePromptTemplates.tsx';
-import { useModels } from '../../hooks/useModels.tsx';
+import { PromptEditor } from './PromptEditor';
+import { VariableManager } from './VariableManager';
+import { TestCaseManager } from './TestCaseManager';
+import { ResultsViewer } from './ResultsViewer';
+import { VersionHistory } from './VersionHistory';
+import { PromptSaveModal } from './PromptSaveModal';
+import { usePromptTemplates } from '../../hooks/usePromptTemplates';
+import { useModels } from '../../hooks/useModels';
 
 export const PromptWorkbench: React.FC = () => {
   const toast = useToast();
@@ -104,7 +104,7 @@ export const PromptWorkbench: React.FC = () => {
         title: 'Generation complete',
         status: 'success',
       });
-    } catch (error: unknown) {
+    } catch (error) {
       toast({
         title: 'Generation failed',
         description: (error as Error).message,

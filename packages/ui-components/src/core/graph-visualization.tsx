@@ -11,9 +11,9 @@ import ReactFlow, {
   NodeChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
-import { useGraphWebSocket } from '../../hooks/useGraphWebSocket.js';
-import { MemoryGraphAdapter } from '../../memory/memory-graph-adapter.js';
-import styles from './graph-visualization.module.css.js';
+import { useGraphWebSocket } from '../hooks/useGraphWebSocket';
+import { MemoryGraphAdapter } from '../memory/memory-graph-adapter';
+import styles from './graph-visualization.module.css';
 
 interface NodeData {
   label: string;
@@ -186,8 +186,9 @@ export function GraphVisualization({
       if (change.type === "select") {
         selectNodes(
           changes
-            .filter((c) => c.type === "select" && c.selected)
-            .map((c) => c.id)
+            .filter((c) => c.type === "select" && 'selected' in c && c.selected)
+            .map((c) => 'id' in c ? c.id : '')
+            .filter(Boolean)
         );
       }
     });
@@ -218,7 +219,7 @@ export function GraphVisualization({
   );
 
   const nodes = useMemo(() => {
-    return data.nodes.map(toReactFlowNode);
+    return data.nodes.map((node) => toReactFlowNode(node as GraphNode));
   }, [data.nodes]);
 
   if (loading) {

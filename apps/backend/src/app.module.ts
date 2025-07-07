@@ -1,14 +1,14 @@
-import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { MassModule } from './modules/mass/mass.module.js';
-
-// Import route modules - these align with frontend router expectations
-import { authRoutes } from './routes/authRoutes.js';
-import { agentRoutes } from './routes/agentRoutes.js';
-import { workspaceRoutes } from './routes/workspaceRoutes.js';
-import { taskRoutes } from './routes/taskRoutes.js';
+import { JwtModule } from '@nestjs/jwt';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { MassModule } from './modules/mass/mass.module';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { EventBus } from './events/event-bus.service';
+import { LoggingService } from './services/logging.service';
 
 // Create a comprehensive module to support all frontend routing expectations
 
@@ -18,44 +18,16 @@ import { taskRoutes } from './routes/taskRoutes.js';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'your-secret-key',
+      signOptions: { expiresIn: '7d' },
+    }),
+    PrismaModule,
+    AuthModule,
+    UsersModule,
     MassModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, EventBus, LoggingService],
 })
-export class AppModule {
-  configure(consumer: MiddlewareConsumer): void {
-    // Mount API routes that align with frontend expectations
-    // These routes support all the paths defined in ComprehensiveRouter.tsx
-    
-    // Authentication routes (/auth/*)
-    consumer
-      .apply(authRoutes)
-      .forRoutes({ path: 'api/auth/*', method: RequestMethod.ALL });
-    
-    // Agent routes (/agents/*)
-    consumer
-      .apply(agentRoutes)
-      .forRoutes({ path: 'api/agents/*', method: RequestMethod.ALL });
-    
-    // Workspace routes (/workspace/*)
-    consumer
-      .apply(workspaceRoutes)
-      .forRoutes({ path: 'api/workspace/*', method: RequestMethod.ALL });
-    
-    // Task routes (/tasks/*)
-    consumer
-      .apply(taskRoutes)
-      .forRoutes({ path: 'api/tasks/*', method: RequestMethod.ALL });
-    
-    // MASS optimization routes (/mass/*)
-    // Note: MASS routes are handled by the MassModule directly
-    
-    // Additional routes can be added here as needed for:
-    // - /api/workflows/*
-    // - /api/suggestions/*  
-    // - /api/admin/*
-    // - /api/analytics/*
-    // - /api/settings/*
-  }
-}
+export class AppModule {}

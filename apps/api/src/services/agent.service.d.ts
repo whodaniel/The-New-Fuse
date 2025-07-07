@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
-import { Agent } from '../entities/agent.entity.tsx';
-import { CreateAgentDto, UpdateAgentDto } from '../dtos/agent.dto.tsx';
+import { Agent } from '../entities/agent.entity';
+import { CreateAgentDto, UpdateAgentDto } from '../dtos/agent.dto';
 import { AgentFactory } from '@the-new-fuse/core';
 export declare class AgentService {
     private readonly agentRepository;

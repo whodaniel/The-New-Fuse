@@ -1,9 +1,9 @@
 import React from 'react';
-import { useMemoryInspector, MemoryItem } from '../hooks/useMemoryInspector.tsx';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index.tsx';
-import { List, ListItem } from '../../../core/list/index.tsx';
-import { ScrollArea } from '../../../core/scroll-area.tsx';
-import { Badge } from '../../../core/badge.tsx';
+import { useMemoryInspector, MemoryItem } from '../hooks/useMemoryInspector';
+import { Card, CardContent, CardHeader, CardTitle } from '../../../core/card/index';
+import { List, ListItem } from '../../../core/list/index';
+import { ScrollArea } from '../../../core/scroll-area';
+import { Badge } from '../../../core/badge';
 
 interface MemoryInspectorProps {
   agentId: string;

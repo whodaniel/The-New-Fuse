@@ -1,2 +1,2 @@
-export { Switch } from './Switch.tsx';
+export { Switch } from './Switch';
 //# sourceMappingURL=index.js.map

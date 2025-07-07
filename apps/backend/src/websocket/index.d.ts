@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
-import { AgentService } from '../services/agent.service.js';
-import { ChatService } from '../services/chatService.js';
+import { AgentService } from '../services/agent.service';
+import { ChatService } from '../services/chatService';
 export declare function initializeWebSocket(server: any, deps: {
     agentService: AgentService;
     chatService: ChatService;

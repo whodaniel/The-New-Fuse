@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Box, Container } from '@chakra-ui/react';
-import { UserTypeDetection } from '../../components/onboarding/UserTypeDetection.tsx';
-import { OnboardingWizard } from '../../components/wizard/OnboardingWizard.tsx';
-import { WizardProvider } from '../../components/wizard/WizardProvider.tsx';
+import { UserTypeDetection } from '../../components/onboarding/UserTypeDetection';
+import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
+import { WizardProvider } from '../../components/wizard/WizardProvider';
 import { useNavigate } from 'react-router-dom';
 
 export const OnboardingFlow: React.FC = () => {

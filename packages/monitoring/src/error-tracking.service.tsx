@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { PrismaService } from '../../../src/core/database/(prisma as any).service.js';
+import { PrismaService } from '../../../src/core/database/(prisma as any).service';
 
 export interface ErrorDetails {
   message: string;

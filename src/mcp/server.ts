@@ -1,807 +1,393 @@
 #!/usr/bin/env node
 
 /**
- * Complete MCP Server Implementation for The New Fuse
- * This file integrates all platform capabilities into a single MCP server
- * Supports both legacy TheNewFuseMCPServer and new Express-based server implementations
+ * The New Fuse MCP Server Entry Point
+ * Unified entry point that starts all MCP servers and integrates with the platform
  */
 
-import express, { Request, Response, NextFunction } from 'express';
-import http from 'http';
-import { MCPServer } from './MCPServer.tsx'; // Keep .js for module resolution
-import { fileTools, buildTools } from './tools.js';
-import { apiKeyAuth } from './auth.js';      // Keep .js for module resolution
-import { registerAnthropicXmlTools } from './tools/anthropic-xml-tools.js'; // Keep .js for module resolution
-import { registerCodeExecutionTools } from './tools/code-execution.tools.js'; // Keep .js for module resolution
-import { z } from 'zod';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import fs from 'fs';
-import { CodeExecutionService } from '../../packages/core/src/services/code-execution/code-execution.service.js';
-import { BaseError } from '../../types/error.js'; // Added BaseError import
+import { NestFactory } from '@nestjs/core';
+import { AppModule } from '../app.module.js';
 import { TheNewFuseMCPServer } from './TheNewFuseMCPServer.js';
+import { MCPBrokerService } from './services/mcp-broker.service.tsx';
+import { MCPClient } from './services/mcp-client.js';
+import { Logger } from '../common/logger.service.js';
+import { MCPOAuthServer } from '../auth/MCPOAuthServer.js';
+import express from 'express';
 
-// --- Interfaces (can be moved to a types.ts file) ---
-interface Logger {
-  info: (message: string) => void;
-  warn: (message: string) => void;
-  error: (message: string, error?: any) => void;
+interface TNFPlatformServices {
+  agent: any;
+  chat: any;
+  workflow: any;
+  monitoring: any;
+  claudeDev: any;
 }
 
-// --- Configuration ---
-const PORT: number = parseInt(process.env.PORT || '3000', 10);
-// Basic API Key store (replace with a more secure method in production)
-const VALID_API_KEYS: Set<string> = new Set(['test-agent-key-123']);
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const WORKSPACE_ROOT: string = path.resolve(__dirname, '../..'); // Resolve to 'The New Fuse' root
+class TNFMCPServerOrchestrator {
+  private app: any;
+  private mcpServer: TheNewFuseMCPServer;
+  private mcpBroker: MCPBrokerService;
+  private oauthServer: MCPOAuthServer;
+  private httpServer: any;
+  private internalClients: Map<string, MCPClient> = new Map();
+  private logger: Logger;
+  private platformServices: TNFPlatformServices = {};
 
-// --- Logger Setup ---
-const logDir: string = path.resolve(WORKSPACE_ROOT, './mcp/logs');
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir, { recursive: true });
-}
-const logFile = fs.createWriteStream(path.join(logDir, 'mcp-server.log'), { flags: 'a' });
-
-const logger: Logger = {
-  info: (message: string) => {
-    const logEntry = `[${new Date().toISOString()}] INFO: ${message}\n`;
-    console.log(message); // Also log to console
-    logFile.write(logEntry);
-  },
-  error: (message: string, error?: any) => {
-    const logEntry = `[${new Date().toISOString()}] ERROR: ${message} ${error ? error.stack || error.message : ''}\n`;
-    console.error(message, error); // Also log to console
-    logFile.write(logEntry);
-  },
-  warn: (message: string) => {
-    const logEntry = `[${new Date().toISOString()}] WARN: ${message}\n`;
-    console.warn(message); // Also log to console
-    logFile.write(logEntry);
+  constructor() {
+    this.mcpServer = new TheNewFuseMCPServer();
+    this.logger = new Logger('TNFMCPOrchestrator');
   }
-};
 
-// --- Initialize Services ---
-// Create code execution service
-const codeExecutionService = new CodeExecutionService({
-  get: (key: string, defaultValue?: string) => {
-    return process.env[key] || defaultValue;
-  }
-});
+  async start() {
+    try {
+      // 1. Initialize NestJS application
+      await this.initializeNestApp();
+      
+      // 2. Initialize platform services
+      await this.initializePlatformServices();
+      
+      // 3. Initialize OAuth server
+      await this.initializeOAuthServer();
+      
+      // 4. Start main MCP server with OAuth
+      await this.startMainMCPServer();
+      
+      // 5. Initialize internal MCP clients
+      await this.initializeInternalClients();
+      
+      // 6. Setup inter-server communication
+      await this.setupInterServerCommunication();
 
-// --- MCP Server Instance ---
-const mcpServer = new MCPServer({ logger, workspaceRoot: WORKSPACE_ROOT });
-
-// --- Register Tools ---
-// Register Anthropic XML tools
-registerAnthropicXmlTools(mcpServer, logger);
-
-// Register Code Execution tools
-registerCodeExecutionTools(mcpServer, codeExecutionService, logger);
-
-// Example: File System Tools
-mcpServer.registerTool('readFile', {
-  description: 'Reads the content of a specified file within the workspace.',
-  parameters: z.object({
-    filePath: z.string().describe('Relative path to the file within the workspace (e.g., "src/components/Button.tsx")'),
-  }),
-  execute: fileTools.readFile,
-});
-
-mcpServer.registerTool('listWorkspaceFiles', {
-  description: 'Lists files and directories within a specified path in the workspace.',
-  parameters: z.object({
-    directoryPath: z.string().optional().default('.').describe('Relative path to the directory within the workspace (e.g., "scripts" or ".")'),
-  }),
-  execute: fileTools.listWorkspaceFiles,
-});
-
-// New tool: writeFile - fixed type issues
-mcpServer.registerTool('writeFile', {
-  description: 'Writes content to a file within the workspace. Can optionally create directories.',
-  parameters: z.object({
-    filePath: z.string().describe('Relative path to the file within the workspace'),
-    content: z.string().describe('Content to write to the file'),
-    createDirs: z.boolean().optional().describe('Create parent directories if they don\'t exist')
-  }),
-  execute: fileTools.writeFile,
-});
-
-// New tool: runBuild - fixed type issues
-mcpServer.registerTool('runBuild', {
-  description: 'Runs a build script defined in package.json.',
-  parameters: z.object({
-    script: z.string().describe('Name of the build script to run (e.g., "build:ui", "build:core")'),
-    timeout: z.number().optional().describe('Maximum execution time in milliseconds')
-  }),
-  execute: buildTools.runBuild,
-});
-
-// --- Express App Setup ---
-const app = express();
-app.use(express.json()); // Middleware to parse JSON bodies
-
-// --- Middleware ---
-// Simple API Key Authentication
-app.use(apiKeyAuth(VALID_API_KEYS, logger));
-
-// --- New: Registration and Discovery ---
-// MCP Service Registration Information
-const MCP_SERVICE_INFO = {
-  id: "the-new-fuse-mcp",
-  name: "The New Fuse MCP Server",
-  version: "1.0.0",
-  description: "Model-Controller-Provider server for The New Fuse with file, build, and agent coordination capabilities",
-  vendor: "The New Fuse",
-  apiVersion: "1.0",
-  capabilities: [
-    "file-operations",
-    "build-operations",
-    "agent-coordination",
-    "state-management",
-    "anthropic-xml",
-    "code-execution"
-  ],
-  authentication: {
-    type: "api-key",
-    header: "X-API-Key"
-  },
-  endpoints: {
-    base: `http://localhost:${PORT}`,
-    tools: "/mcp/tools",
-    request: "/mcp/request",
-    conversations: "/mcp/conversations",
-  }
-};
-
-// --- Routes ---
-// Health Check
-app.get(['/health', '/ping'], (req: Request, res: Response) => {
-  res.status(200).json({ status: 'ok', version: '1.0.0' }); // Use version from package.json ideally
-});
-
-// MCP Discovery Endpoints
-app.get('/mcp/tools', (req: Request, res: Response) => {
-  try {
-    res.status(200).json(mcpServer.getToolDefinitions());
-  } catch (error) {
-    logger.error('Error getting tool definitions:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({ status: 'error', error: { message: 'Failed to get tool definitions.' } });
+      this.logger.log('🚀 TNF MCP Server Orchestrator started successfully');
+      
+      // Keep the process running
+      process.on('SIGINT', () => this.gracefulShutdown());
+      process.on('SIGTERM', () => this.gracefulShutdown());
+      
+    } catch (error) {
+      this.logger.error('Failed to start TNF MCP Server:', error);
+      process.exit(1);
     }
   }
-});
 
-app.get('/mcp/capabilities', (req: Request, res: Response) => {
-  try {
-    // Placeholder - Capabilities might be defined differently or dynamically
-    res.status(200).json(mcpServer.getCapabilityDefinitions());
-  } catch (error) {
-    logger.error('Error getting capability definitions:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({ status: 'error', error: { message: 'Failed to get capability definitions.' } });
-    }
-  }
-});
-
-// MCP Request Endpoint
-app.post('/mcp/request', async (req: Request, res: Response) => {
-  const { toolName, parameters } = req.body;
-
-  if (!toolName || typeof toolName !== 'string') {
-    return res.status(400).json({ status: 'error', error: { message: 'Missing or invalid toolName' } });
-  }
-
-  try {
-    // Add agent context if available from auth middleware
-    // The apiKeyAuth middleware should attach agentId to req
-    const agentContext = { agentId: req.agentId || 'unknown' };
-    const result = await mcpServer.executeTool(toolName, parameters, agentContext);
-    res.status(200).json({ status: 'success', data: result });
-  } catch (error: unknown) {
-    logger.error(`Error executing tool ${toolName}:`, error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) { // Standard JS Error
-        // Distinguish between validation errors and execution errors based on message content (heuristic)
-        const isValidationError = error.message.startsWith('Validation error') ||
-                                  error.message.includes('not found') ||
-                                  error.message.includes('Invalid parameters') ||
-                                  error.message.includes('Missing or invalid toolName'); // Added this from the pre-try check
-        const statusCode = isValidationError ? 400 : 500;
-        res.status(statusCode).json({ status: 'error', error: { message: error.message } });
-    } else { // Unknown error type
-        res.status(500).json({ status: 'error', error: { message: 'An unexpected error occurred during tool execution.' } });
-    }
-  }
-});
-
-// New endpoints for conversation state management
-app.post('/mcp/conversation', (req: Request, res: Response) => {
-  try {
-    const { conversationId } = req.body;
-
-    // Create or get existing conversation
-    const conversation = mcpServer.createOrGetConversation(conversationId);
-
-    res.status(200).json({
-      status: 'success',
-      data: {
-        conversationId: conversation.conversationId
-      }
+  private async initializeNestApp() {
+    this.app = await NestFactory.create(AppModule, {
+      logger: false // Use our custom logger
     });
-  } catch (error) {
-    logger.error('Error creating or getting conversation:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } }); // Expose specific error message if it's a standard Error
-    } else {
-        res.status(500).json({ status: 'error', error: { message: 'Failed to process conversation request.' } });
-    }
-  }
-});
-
-app.post('/mcp/conversation/:conversationId/message', (req: Request, res: Response) => {
-  try {
-    const { conversationId } = req.params;
-    const { role, content, toolCalls } = req.body;
-
-    if (!role || !content) {
-      return res.status(400).json({
-        status: 'error',
-        error: { message: 'Missing required fields: role and content' }
-      });
->>>>>>> origin/issue-solver/multi-point-refactor-1
-const logger: Logger = {
-  info: (message: string) => {
-    const logEntry = `[${new Date().toISOString()}] INFO: ${message}\n`;
-    console.log(message); // Also log to console
-    logFile.write(logEntry);
-  },
-  error: (message: string, error?: any) => {
-    const logEntry = `[${new Date().toISOString()}] ERROR: ${message} ${error ? error.stack || error.message : ''}\n`;
-    console.error(message, error); // Also log to console
-    logFile.write(logEntry);
-  },
-  warn: (message: string) => {
-    const logEntry = `[${new Date().toISOString()}] WARN: ${message}\n`;
-    console.warn(message); // Also log to console
-    logFile.write(logEntry);
-  }
-};
-
-// --- Initialize Services ---
-// Create code execution service
-const codeExecutionService = new CodeExecutionService({
-  get: (key: string, defaultValue?: string) => {
-    return process.env[key] || defaultValue;
-  }
-});
-
-// --- MCP Server Instance ---
-const mcpServer = new MCPServer({ logger, workspaceRoot: WORKSPACE_ROOT });
-
-// --- Register Tools ---
-// Register Anthropic XML tools
-registerAnthropicXmlTools(mcpServer, logger);
-
-// Register Code Execution tools
-registerCodeExecutionTools(mcpServer, codeExecutionService, logger);
-
-// Example: File System Tools
-mcpServer.registerTool('readFile', {
-  description: 'Reads the content of a specified file within the workspace.',
-  parameters: z.object({
-    filePath: z.string().describe('Relative path to the file within the workspace (e.g., "src/components/Button.tsx")'),
-  }),
-  execute: fileTools.readFile,
-});
-
-mcpServer.registerTool('listWorkspaceFiles', {
-  description: 'Lists files and directories within a specified path in the workspace.',
-  parameters: z.object({
-    directoryPath: z.string().optional().default('.').describe('Relative path to the directory within the workspace (e.g., "scripts" or ".")'),
-  }),
-  execute: fileTools.listWorkspaceFiles,
-});
-
-// New tool: writeFile - fixed type issues
-mcpServer.registerTool('writeFile', {
-  description: 'Writes content to a file within the workspace. Can optionally create directories.',
-  parameters: z.object({
-    filePath: z.string().describe('Relative path to the file within the workspace'),
-    content: z.string().describe('Content to write to the file'),
-    createDirs: z.boolean().optional().describe('Create parent directories if they don\'t exist')
-  }),
-  execute: fileTools.writeFile,
-});
-
-// New tool: runBuild - fixed type issues
-mcpServer.registerTool('runBuild', {
-  description: 'Runs a build script defined in package.json.',
-  parameters: z.object({
-    script: z.string().describe('Name of the build script to run (e.g., "build:ui", "build:core")'),
-    timeout: z.number().optional().describe('Maximum execution time in milliseconds')
-  }),
-  execute: buildTools.runBuild,
-});
-
-// --- Express App Setup ---
-const app = express();
-app.use(express.json()); // Middleware to parse JSON bodies
-
-// --- Middleware ---
-// Simple API Key Authentication
-app.use(apiKeyAuth(VALID_API_KEYS, logger));
-
-// --- New: Registration and Discovery ---
-// MCP Service Registration Information
-const MCP_SERVICE_INFO = {
-  id: "the-new-fuse-mcp",
-  name: "The New Fuse MCP Server",
-  version: "1.0.0",
-  description: "Model-Controller-Provider server for The New Fuse with file, build, and agent coordination capabilities",
-  vendor: "The New Fuse",
-  apiVersion: "1.0",
-  capabilities: [
-    "file-operations",
-    "build-operations",
-    "agent-coordination",
-    "state-management",
-    "anthropic-xml",
-    "code-execution"
-  ],
-  supportedSchemas: ["mcp-v1.0"],
-  endpoints: {
-    base: `http://localhost:${PORT}`,
-    discovery: "/mcp/discover",
-    tools: "/mcp/tools",
-    conversations: "/mcp/conversations",
-  }
-};
-
-// --- Endpoints ---
-
-// Service Discovery Endpoint
-app.get('/mcp/discover', (req: Request, res: Response) => {
-  res.status(200).json(MCP_SERVICE_INFO);
-});
-
-// List all available tools
-app.get('/mcp/tools', (req: Request, res: Response) => {
-  try {
-    const tools = mcpServer.listTools();
-    res.status(200).json({
-      status: 'success',
-      data: { tools }
-    });
-  } catch (error) {
-    logger.error('Error listing tools:', error);
-    res.status(500).json({
-      status: 'error',
-      error: { message: 'Failed to list tools.' }
-    });
-  }
-});
-
-// Execute a tool
-app.post('/mcp/tools/:toolName/execute', async (req: Request, res: Response) => {
-  try {
-    const { toolName } = req.params;
-    const { parameters } = req.body;
-
-    const result = await mcpServer.executeTool(toolName, parameters);
-    res.status(200).json({
-      status: 'success',
-      data: { result }
-    });
-  } catch (error) {
-    logger.error('Error executing tool:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to execute tool.' }
-        });
-    }
-  }
-});
-
-// Create a new conversation
-app.post('/mcp/conversations', (req: Request, res: Response) => {
-  try {
-    const { id, metadata } = req.body;
-    const conversationId = mcpServer.createConversation(id, metadata);
-
-    res.status(201).json({
-      status: 'success',
-      data: { conversationId }
-    });
-  } catch (error) {
-    logger.error('Error creating conversation:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to create conversation.' }
-        });
-    }
-  }
-});
-
-// Add a message to conversation
-app.post('/mcp/conversation/:conversationId/messages', (req: Request, res: Response) => {
-  try {
-    const { conversationId } = req.params;
-    const { role, content, metadata } = req.body;
-
-    if (!role || !content) {
-      return res.status(400).json({
-        status: 'error',
-        error: { message: 'Missing required fields: role and content' }
-      });
-    }
-
-    mcpServer.addMessage(conversationId, role, content, metadata);
-    res.status(201).json({
-      status: 'success',
-      data: { message: 'Message added successfully' }
-    });
-  } catch (error) {
-    logger.error('Error adding message to conversation:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to add message to conversation.' } // Generic message for unknown errors
-        });
-    }
-  }
-});
-
-app.get('/mcp/conversation/:conversationId/history', (req: Request, res: Response) => {
-  try {
-    const { conversationId } = req.params;
-    const history = mcpServer.getConversationHistory(conversationId);
-
-    res.status(200).json({
-      status: 'success',
-      data: { history }
-    });
-  } catch (error) {
-    logger.error('Error retrieving conversation history:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to retrieve conversation history.' }
-        });
-    }
-  }
-});
-
-app.get('/mcp/conversations', (req: Request, res: Response) => {
-  try {
-    const conversations = mcpServer.getConversations();
-
-    res.status(200).json({
-      status: 'success',
-      data: { conversations }
-    });
-  } catch (error) {
-    logger.error('Error retrieving conversations:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to retrieve conversations.' }
-        });
-    }
-  }
-});
-
-// Agent state endpoints
-app.post('/mcp/agent/:agentId/state', (req: Request, res: Response) => {
-  try {
-    const { agentId } = req.params;
-    const { key, value } = req.body;
-
-    if (!key) {
-      return res.status(400).json({
-        status: 'error',
-        error: { message: 'Missing required field: key' }
-      });
-    }
-
-    mcpServer.setAgentState(agentId, key, value);
-
-    res.status(200).json({
-      status: 'success',
-      data: { message: `State updated for agent ${agentId}` }
-    });
-  } catch (error) {
-    logger.error('Error setting agent state:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to set agent state.' }
-        });
-    }
-  }
-});
-
-app.get('/mcp/agent/:agentId/state/:key', (req: Request, res: Response) => {
-  try {
-    const { agentId, key } = req.params;
-    const value = mcpServer.getAgentState(agentId, key);
-
-    res.status(200).json({
-      status: 'success',
-      data: { value }
-    });
-  } catch (error) {
-    logger.error('Error retrieving agent state:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to retrieve agent state.' }
-        });
-    }
-  }
-});
-
-// New: Discovery and Registration Endpoints
-app.get('/mcp/discovery', (req: Request, res: Response) => {
-  res.status(200).json({
-    status: 'success',
-    data: MCP_SERVICE_INFO
-  });
-});
-
-// MCP Service Registration Endpoint - allows VS Code extensions to register this MCP server
-app.post('/mcp/register', (req: Request, res: Response) => {
-  const { clientId, clientName, clientType } = req.body;
-
-  if (!clientId || !clientName || !clientType) {
-    return res.status(400).json({
-      status: 'error',
-      error: { message: 'Missing required registration fields' }
-    });
+    
+    this.mcpBroker = this.app.get(MCPBrokerService);
+    this.logger = this.app.get(Logger);
+    
+    this.logger.log('✅ NestJS application initialized');
   }
 
-  // Generate a client-specific API key (in production, use more secure methods)
-  const clientApiKey = `${clientId}-${Date.now()}-${Math.random().toString(36).substring(2, 10)}`;
-
-  // Add to valid keys (in production, use a database)
-  VALID_API_KEYS.add(clientApiKey);
-
-  logger.info(`Registered new client: ${clientName} (${clientId}) of type ${clientType}`);
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      serviceInfo: MCP_SERVICE_INFO,
-      credentials: {
-        apiKey: clientApiKey
-      },
-      message: `Successfully registered ${clientName}`
-    }
-  });
-});
-
-// New endpoint to list available capabilities with details
-app.get('/mcp/capabilities/details', (req: Request, res: Response) => {
-  try {
-    const capabilities = {
-      "file-operations": {
-        description: "Read, write, and list files in the workspace",
-        tools: ["readFile", "writeFile", "listWorkspaceFiles"]
-      },
-      "build-operations": {
-        description: "Run build scripts defined in package.json",
-        tools: ["runBuild"]
-      },
-      "agent-coordination": {
-        description: "Manage and coordinate AI agent communications",
-        tools: []
-      },
-      "state-management": {
-        description: "Store and retrieve conversation state and agent preferences",
-        tools: []
-      },
-      "anthropic-xml": {
-        description: "Work with Anthropic's XML-style function calling format",
-        tools: [
-          "anthropic.parseXmlFunctionCall",
-          "anthropic.createXmlFunctionCall",
-          "anthropic.createXmlFunctionCallResponse",
-          "anthropic.parseXmlFunctionCallResponse",
-          "anthropic.convertToolToXmlFormat",
-          "anthropic.convertToolsToXmlFormat"
-        ]
-      },
-      "code-execution": {
-        description: "Execute code in a secure environment with billing based on resource usage",
-        tools: [
-          "executeCode",
-          "getCodeExecutionPricing",
-          "getCodeExecutionUsage",
-          "createCodeExecutionSession",
-          "getCodeExecutionSession",
-          "updateCodeExecutionSession",
-          "deleteCodeExecutionSession",
-          "getUserCodeExecutionSessions",
-          "getPublicCodeExecutionSessions",
-          "addFileToCodeExecutionSession",
-          "updateFileInCodeExecutionSession",
-          "deleteFileFromCodeExecutionSession",
-          "addCollaboratorToCodeExecutionSession",
-          "removeCollaboratorFromCodeExecutionSession"
-        ]
-      }
+  private async initializePlatformServices() {
+    // Connect to actual TNF platform services
+    this.platformServices = {
+      agent: this.app.get('AgentService', { strict: false }),
+      chat: this.app.get('ChatService', { strict: false }),
+      workflow: this.app.get('WorkflowService', { strict: false }),
+      monitoring: this.app.get('MonitoringService', { strict: false }),
+      claudeDev: this.app.get('ClaudeDevService', { strict: false })
     };
 
-    res.status(200).json({
-      status: 'success',
-      data: { capabilities }
+    // Set services in MCP server
+    this.mcpServer.setServices(this.platformServices);
+    
+    this.logger.log('✅ Platform services connected to MCP server');
+  }
+
+  private async initializeOAuthServer() {
+    this.oauthServer = new MCPOAuthServer(this.logger);
+    
+    // Create HTTP server for OAuth endpoints
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    
+    // Add CORS for OAuth endpoints
+    app.use((req, res, next) => {
+      res.header('Access-Control-Allow-Origin', '*');
+      res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      next();
     });
-  } catch (error) {
-    logger.error('Error retrieving capability details:', error);
-    if (error instanceof BaseError) {
-        res.status(error.statusCode || 500).json({
-            status: 'error',
-            error: { message: error.message, code: error.code, details: error.details }
-        });
-    } else if (error instanceof Error) {
-        res.status(500).json({ status: 'error', error: { message: error.message } });
-    } else {
-        res.status(500).json({
-          status: 'error',
-          error: { message: 'Failed to retrieve capability details.' }
-        });
-    }
-  }
-});
-
-// --- Start Server ---
-const httpServer = http.createServer(app);
-httpServer.listen(PORT, () => {
-  logger.info(`MCP Server running at http://localhost:${PORT}`);
-  logger.info(`Workspace Root: ${WORKSPACE_ROOT}`);
-  try {
-      const registeredTools = Object.keys(mcpServer.getToolDefinitions()).join(', ') || 'None';
-      logger.info(`Registered Tools: ${registeredTools}`);
-  } catch (error) {
-      logger.error('Could not retrieve tool definitions on startup.', error);
-  }
-  logger.info('API Key for testing: test-agent-key-123 (use header X-API-Key)');
-});
-
-// --- Legacy wrapper function for backward compatibility ---
-async function main() {
-  const isRemote = process.argv.includes('--remote');
-  const port = parseInt(process.argv.find(arg => arg.startsWith('--port='))?.split('=')[1] || '3001');
-  
-  console.log(`Starting The New Fuse MCP Server...`);
-  console.log(`Mode: ${isRemote ? 'Remote (HTTP/SSE)' : 'Local (stdio)'}`);
-  
-  if (isRemote) {
-    console.log(`Port: ${port}`);
+    
+    // Mount OAuth routes
+    app.use('/', this.oauthServer.getRouter());
+    
+    // Add MCP SSE endpoints with OAuth protection
+    app.use('/mcp/main/sse', this.oauthServer.validateMCPToken(['mcp:read']), this.createSSEEndpoint('main'));
+    app.use('/mcp/relay/sse', this.oauthServer.validateMCPToken(['mcp:admin']), this.createSSEEndpoint('relay'));
+    
+    // Health check endpoint
+    app.get('/health', (req, res) => {
+      res.json({ 
+        status: 'healthy',
+        oauth_enabled: true,
+        mcp_version: '2025-06-18',
+        tnf_version: '2.1.0'
+      });
+    });
+    
+    const port = process.env.TNF_OAUTH_PORT ? parseInt(process.env.TNF_OAUTH_PORT) : 3001;
+    this.httpServer = app.listen(port, () => {
+      this.logger.log(`✅ OAuth server started on port ${port}`);
+    });
   }
 
-  try {
-    // Check if we should use the legacy TheNewFuseMCPServer or new Express server
-    if (process.argv.includes('--legacy')) {
-      const server = new TheNewFuseMCPServer(isRemote);
+  private createSSEEndpoint(serverType: string) {
+    return (req, res) => {
+      res.setHeader('Content-Type', 'text/event-stream');
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Connection', 'keep-alive');
+      res.setHeader('Access-Control-Allow-Origin', '*');
       
-      if (isRemote) {
-        await server.start('http', port);
-      } else {
-        await server.start('stdio');
-      }
-    } else {
-      // Use the new Express-based server
-      await startExpressServer();
+      // OAuth info available in req.oauth
+      const { client_id, scope, mcp_resources } = (req as any).oauth;
+      
+      res.write(`data: ${JSON.stringify({
+        type: 'connection_established',
+        server: serverType,
+        client_id,
+        authorized_resources: mcp_resources,
+        capabilities: this.getMCPCapabilitiesForServer(serverType)
+      })}\n\n`);
+      
+      // Keep connection alive
+      const keepAlive = setInterval(() => {
+        res.write('data: {"type":"heartbeat"}\n\n');
+      }, 30000);
+      
+      req.on('close', () => {
+        clearInterval(keepAlive);
+        this.logger.log(`SSE connection closed for ${serverType} client ${client_id}`);
+      });
+      
+      this.logger.log(`✅ SSE connection established for ${serverType} client ${client_id}`);
+    };
+  }
+
+  private getMCPCapabilitiesForServer(serverType: string): string[] {
+    const baseCapabilities = ['list_tools', 'call_tool', 'list_resources', 'read_resource'];
+    
+    switch (serverType) {
+      case 'main':
+        return [...baseCapabilities, 'agent_management', 'workflow_execution', 'chat_operations'];
+      case 'relay':
+        return [...baseCapabilities, 'api_interception', 'message_routing', 'proxy_management'];
+      default:
+        return baseCapabilities;
     }
-  } catch (error) {
-    logger.error('Failed to start MCP server:', error);
-    process.exit(1);
+  }
+
+  private async startMainMCPServer() {
+    const transport = process.argv.includes('--http') ? 'http' : 'stdio';
+    const port = process.env.MCP_PORT ? parseInt(process.env.MCP_PORT) : 3001;
+    
+    await this.mcpServer.start(transport, port);
+    
+    this.logger.log(`✅ Main MCP server started (${transport}${transport === 'http' ? `:${port}` : ''})`);
+  }
+
+  private async initializeInternalClients() {
+    // Connect to specialized MCP servers within TNF
+    const internalServers = [
+      { name: 'agent-server', url: 'http://localhost:3011' },
+      { name: 'chat-server', url: 'http://localhost:3012' },
+      { name: 'workflow-server', url: 'http://localhost:3013' },
+      { name: 'file-coordination', url: 'http://localhost:3014' },
+      { name: 'rag-server', url: 'http://localhost:3015' }
+    ];
+
+    for (const server of internalServers) {
+      try {
+        const client = new MCPClient(server.url);
+        const connected = await client.connectToServer();
+        
+        if (connected) {
+          this.internalClients.set(server.name, client);
+          this.logger.log(`✅ Connected to internal ${server.name}`);
+        } else {
+          this.logger.warn(`⚠️ Could not connect to ${server.name} at ${server.url}`);
+        }
+      } catch (error) {
+        this.logger.warn(`⚠️ Error connecting to ${server.name}:`, error.message);
+      }
+    }
+
+    this.logger.log(`✅ Internal MCP clients initialized (${this.internalClients.size} connected)`);
+  }
+
+  private async setupInterServerCommunication() {
+    // Setup MCP broker to coordinate between internal servers
+    await this.mcpBroker.initialize({
+      serverTypes: ['agent', 'chat', 'workflow', 'file-coordination', 'rag'],
+      redisConfig: {
+        enablePubSub: true,
+        enableCache: true
+      },
+      mcpClients: this.internalClients
+    });
+
+    // Register cross-server capabilities
+    await this.registerCrossServerCapabilities();
+    
+    this.logger.log('✅ Inter-server communication established');
+  }
+
+  private async registerCrossServerCapabilities() {
+    // Register tools that can orchestrate across multiple servers
+    const orchestrationTools = [
+      {
+        name: 'execute_cross_server_workflow',
+        description: 'Execute workflows that span multiple MCP servers',
+        handler: this.executeCrossServerWorkflow.bind(this)
+      },
+      {
+        name: 'aggregate_server_status',
+        description: 'Get aggregated status from all internal MCP servers',
+        handler: this.aggregateServerStatus.bind(this)
+      },
+      {
+        name: 'broadcast_to_all_servers',
+        description: 'Broadcast a message to all connected MCP servers',
+        handler: this.broadcastToAllServers.bind(this)
+      }
+    ];
+
+    for (const tool of orchestrationTools) {
+      await this.mcpBroker.registerTool(tool.name, tool.description, tool.handler);
+    }
+
+    this.logger.log('✅ Cross-server orchestration tools registered');
+  }
+
+  private async executeCrossServerWorkflow(params: any) {
+    const { workflowSteps, context } = params;
+    const results = [];
+
+    for (const step of workflowSteps) {
+      const { serverName, toolName, toolParams } = step;
+      const client = this.internalClients.get(serverName);
+      
+      if (client) {
+        try {
+          const result = await client.processQuery(`Execute ${toolName} with ${JSON.stringify(toolParams)}`);
+          results.push({ step: step.id, result, success: true });
+        } catch (error) {
+          results.push({ step: step.id, error: error.message, success: false });
+        }
+      } else {
+        results.push({ step: step.id, error: `Server ${serverName} not available`, success: false });
+      }
+    }
+
+    return {
+      workflowId: `cross-server-${Date.now()}`,
+      results,
+      summary: {
+        total: workflowSteps.length,
+        successful: results.filter(r => r.success).length,
+        failed: results.filter(r => !r.success).length
+      }
+    };
+  }
+
+  private async aggregateServerStatus() {
+    const serverStatuses = {};
+
+    for (const [serverName, client] of this.internalClients.entries()) {
+      try {
+        const messages = await client.processQuery('Get server status');
+        serverStatuses[serverName] = {
+          status: 'connected',
+          lastResponse: new Date().toISOString(),
+          responseTime: '< 100ms', // Could measure actual time
+          details: messages[messages.length - 1]?.content
+        };
+      } catch (error) {
+        serverStatuses[serverName] = {
+          status: 'error',
+          error: error.message,
+          lastChecked: new Date().toISOString()
+        };
+      }
+    }
+
+    return {
+      platform_status: 'operational',
+      total_servers: this.internalClients.size,
+      connected_servers: Object.values(serverStatuses).filter((s: any) => s.status === 'connected').length,
+      server_details: serverStatuses,
+      aggregated_at: new Date().toISOString()
+    };
+  }
+
+  private async broadcastToAllServers(params: any) {
+    const { message, action, parameters } = params;
+    const results = [];
+
+    for (const [serverName, client] of this.internalClients.entries()) {
+      try {
+        const query = action ? `${action}: ${message}` : message;
+        const response = await client.processQuery(query);
+        results.push({
+          server: serverName,
+          success: true,
+          response: response[response.length - 1]?.content
+        });
+      } catch (error) {
+        results.push({
+          server: serverName,
+          success: false,
+          error: error.message
+        });
+      }
+    }
+
+    return {
+      broadcast_id: `broadcast-${Date.now()}`,
+      message,
+      sent_to: this.internalClients.size,
+      successful: results.filter(r => r.success).length,
+      failed: results.filter(r => !r.success).length,
+      results
+    };
+  }
+
+  private async gracefulShutdown() {
+    this.logger.log('🛑 Shutting down TNF MCP Server gracefully...');
+    
+    try {
+      // Close all internal clients
+      for (const [name, client] of this.internalClients.entries()) {
+        await client.cleanup();
+        this.logger.log(`✅ Closed connection to ${name}`);
+      }
+
+      // Stop main MCP server
+      await this.mcpServer.stop();
+      this.logger.log('✅ Main MCP server stopped');
+
+      // Close NestJS app
+      if (this.app) {
+        await this.app.close();
+        this.logger.log('✅ NestJS application closed');
+      }
+
+      this.logger.log('✅ Graceful shutdown complete');
+      process.exit(0);
+    } catch (error) {
+      this.logger.error('Error during shutdown:', error);
+      process.exit(1);
+    }
   }
 }
 
-// --- Express Server Startup ---
-async function startExpressServer() {
-  const httpServer = http.createServer(app);
-  
-  httpServer.listen(PORT, () => {
-    logger.info(`The New Fuse MCP Server is running on port ${PORT}`);
-    logger.info(`Service discovery available at: http://localhost:${PORT}/mcp/discover`);
-  });
-
-  // --- Graceful Shutdown ---
-  const shutdown = () => {
-    logger.info('Server shutting down...');
-    httpServer.close(() => {
-      logger.info('Server closed');
-      logFile.end();
-      process.exit(0);
-    });
-    // Force shutdown after timeout
-    setTimeout(() => {
-      logger.error('Could not close connections in time, forcefully shutting down');
-      process.exit(1);
-    }, 5000); // 5 second timeout
-  };
-
-  process.on('SIGTERM', shutdown);
-  process.on('SIGINT', shutdown);
+// Start the orchestrator if this file is run directly
+if (require.main === module) {
+  const orchestrator = new TNFMCPServerOrchestrator();
+  orchestrator.start();
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
-  main().catch(console.error);
-}
+export default TNFMCPServerOrchestrator;

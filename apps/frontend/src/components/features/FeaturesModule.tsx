@@ -1,14 +1,14 @@
 import React from 'react';
-import { AgentModule } from './agents/AgentModule.js';
-import { TimelineModule } from '../features/timeline/TimelineModule.js';
-import { AnalyticsModule } from './analytics/AnalyticsModule.js';
-import { APIModule } from './api/APIModule.js';
-import { AuthenticationModule } from './auth/AuthenticationModule.js';
-import { CommunicationModule } from './communication/CommunicationModule.js';
-import { DataModule } from './data/DataModule.js';
-import { MarketplaceModule } from './marketplace/MarketplaceModule.js';
-import { SettingsModule } from './settings/SettingsModule.js';
-import { WorkflowModule } from './workflow/WorkflowModule.js';
+import { AgentModule } from './agents/AgentModule';
+import { TimelineModule } from '../features/timeline/TimelineModule';
+import { AnalyticsModule } from './analytics/AnalyticsModule';
+import { APIModule } from './api/APIModule';
+import { AuthenticationModule } from './auth/AuthenticationModule';
+import { CommunicationModule } from './communication/CommunicationModule';
+import { DataModule } from './data/DataModule';
+import { MarketplaceModule } from './marketplace/MarketplaceModule';
+import { SettingsModule } from './settings/SettingsModule';
+import { WorkflowModule } from './workflow/WorkflowModule';
 
 export const FeaturesModule: React.FC = () => {
   return (

@@ -15,10 +15,10 @@ import {
   Checkbox as ChakraCheckbox,
 } from '@chakra-ui/react';
 import { Navigate, Link as RouterLink } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth.tsx';
+import { useAuthContext } from '../contexts/AuthContext';
 
 export function Login() {
-  const { isAuthenticated, login } = useAuth();
+  const { isAuthenticated, login } = useAuthContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);

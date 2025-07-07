@@ -3,30 +3,30 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 @Entity('sse_subscriptions')
 export class SseSubscription {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ name: 'client_id', type: 'varchar', length: 255 })
-  clientId: string;
+  clientId!: string;
 
   @Column({ name: 'user_id', type: 'uuid' })
-  userId: string;
+  userId!: string;
 
   @Column({ name: 'organization_id', type: 'uuid' })
-  organizationId: string;
+  organizationId!: string;
 
   @Column({ name: 'event_types', type: 'text', array: true })
-  eventTypes: string[];
+  eventTypes!: string[];
 
   @Column({ type: 'jsonb', nullable: true })
   filters?: Record<string, any>;
 
   @CreateDateColumn({ name: 'created_at' })
-  createdAt: Date;
+  createdAt!: Date;
 
-  @Column({ 
-    name: 'last_heartbeat', 
-    type: 'timestamp', 
-    default: () => 'CURRENT_TIMESTAMP' 
+  @Column({
+    name: 'last_heartbeat',
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP'
   })
-  lastHeartbeat: Date;
+  lastHeartbeat!: Date;
 }

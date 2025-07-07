@@ -1,1 +1,1 @@
-export { Input, type InputProps, inputVariants } from './Input.tsx';
+export { Input, type InputProps, inputVariants } from './Input';

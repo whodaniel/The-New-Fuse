@@ -1,4 +1,4 @@
-import { WorkflowStep } from '../types.tsx';
+import { WorkflowStep } from '../types';
 
 export interface WorkflowMetrics {
   totalSteps: number;

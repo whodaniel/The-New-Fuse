@@ -4,10 +4,10 @@ import {
   WorkflowStep, 
   WorkflowContext, 
   ExecutionResult 
-} from '../types.tsx';
-import { WorkflowExecutor } from './WorkflowExecutor.tsx';
-import { WorkflowMetricsTracker } from './WorkflowMetricsTracker.tsx';
-import { WorkflowTaskQueue } from './WorkflowTaskQueue.tsx';
+} from '../types';
+import { WorkflowExecutor } from './WorkflowExecutor';
+import { WorkflowMetricsTracker } from './WorkflowMetricsTracker';
+import { WorkflowTaskQueue } from './WorkflowTaskQueue';
 
 export class WorkflowEngine {
   private static instance: WorkflowEngine;
@@ -40,7 +40,7 @@ export class WorkflowEngine {
 
   public async startWorkflow(
     workflowId: string,
-    initialContext: WorkflowContext = {}
+    initialContext: WorkflowContext = { variables: {} }
   ): Promise<string> {
     const definition = this.workflowDefinitions.get(workflowId);
     

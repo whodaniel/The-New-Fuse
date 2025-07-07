@@ -14,7 +14,7 @@ export class AgentController {
         success: true,
         agents: []
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -32,7 +32,7 @@ export class AgentController {
         success: true,
         agent: { id: 'new-agent-id', ...req.body }
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -51,7 +51,7 @@ export class AgentController {
         success: true,
         agent: { id, name: 'Agent ' + id, type: 'default' }
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -70,7 +70,7 @@ export class AgentController {
         success: true,
         agent: { id, ...req.body }
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -89,7 +89,7 @@ export class AgentController {
         success: true,
         message: `Agent ${id} deleted successfully`
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -108,7 +108,7 @@ export class AgentController {
         success: true,
         message: `Agent ${id} started successfully`
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -127,7 +127,7 @@ export class AgentController {
         success: true,
         message: `Agent ${id} stopped successfully`
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message
@@ -147,7 +147,7 @@ export class AgentController {
         status: 'running',
         agentId: id
       });
-    } catch (error: unknown) {
+    } catch (error) {
       res.status(500).json({
         success: false,
         message: (error as Error).message

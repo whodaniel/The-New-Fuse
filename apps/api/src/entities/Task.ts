@@ -5,47 +5,47 @@ import { TaskExecution } from './TaskExecution';
 @Entity()
 export class Task {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  type: string;
+  type!: string;
 
   @Column()
-  status: string;
+  status!: string;
 
   @Column({ default: 0 })
-  priority: number;
+  priority!: number;
 
   @Column({ type: 'jsonb', nullable: true })
-  data: any;
+  data!: any;
 
   @Column({ type: 'jsonb', nullable: true })
-  result: any;
+  result!: any;
 
   @Column({ nullable: true })
-  error: string;
+  error!: string;
 
   @Column({ nullable: true })
-  startTime: Date;
+  startTime!: Date;
 
   @Column({ nullable: true })
-  endTime: Date;
+  endTime!: Date;
 
   @ManyToOne(() => Pipeline, pipeline => pipeline.tasks)
-  pipeline: Pipeline;
+  pipeline!: Pipeline;
 
   @Column()
-  pipelineId: string;
+  pipelineId!: string;
 
   @OneToMany(() => TaskExecution, execution => execution.task)
-  taskExecutions: TaskExecution[];
+  taskExecutions!: TaskExecution[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt!: Date;
 }

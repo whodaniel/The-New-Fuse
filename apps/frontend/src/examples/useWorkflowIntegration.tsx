@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket.js';
+import { useWebSocket } from '../hooks/useWebSocket';
 
 interface WorkflowState {
   isConnected: boolean;

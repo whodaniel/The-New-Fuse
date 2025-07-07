@@ -21,4 +21,4 @@ export {
   QueryOptions,
   HealthCheck,
   ApiResponse
-} from './common.js';
+} from './common';

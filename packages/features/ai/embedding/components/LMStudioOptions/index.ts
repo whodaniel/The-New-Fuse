@@ -1,2 +1,2 @@
-export { LMStudioEmbeddingOptions } from './LMStudioOptions.tsx';
+export { LMStudioEmbeddingOptions } from './LMStudioOptions';
 //# sourceMappingURL=index.js.map

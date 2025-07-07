@@ -1,8 +1,8 @@
-import { ServerManager } from '../utils/server-manager.tsx';
-import { TestCleanup } from '../utils/cleanup.tsx';
-import { VisualRegression } from '../utils/visual-regression.tsx';
-import { logger } from '../utils/logger.js';
-import { PerformanceMonitor } from '../utils/performance.tsx';
+import { ServerManager } from '../utils/server-manager';
+import { TestCleanup } from '../utils/cleanup';
+import { VisualRegression } from '../utils/visual-regression';
+import { logger } from '../utils/logger';
+import { PerformanceMonitor } from '../utils/performance';
 
 beforeAll(async () => {
   logger.info('Setting up E2E test environment');

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Button, Select, Text, useToast, VStack, FormControl, FormLabel } from '@chakra-ui/react';
-import { useSocket } from '../../hooks/useSocket.js';
+import { useSocket } from '../../hooks/useSocket';
 
 const AVAILABLE_SCRIPTS = {
   dev: 'Start Development',

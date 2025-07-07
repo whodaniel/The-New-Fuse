@@ -13,7 +13,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
-import { AuthService } from './auth.service.js';
+import { AuthService } from './auth.service';
 
 export interface AgentJwtPayload {
   sub: string;           // Agent ID
@@ -112,7 +112,7 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       this.logger.debug(`Agent authenticated successfully: ${payload.agentId}`);
       return agentInfo;
 
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error;
       }

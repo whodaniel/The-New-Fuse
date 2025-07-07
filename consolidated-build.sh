@@ -286,36 +286,19 @@ echo -e "🏗️ ${YELLOW}Building packages...${NC}"
 if [ "$incremental" == true ]; then
   echo -e "${CYAN}Building packages incrementally in dependency order...${NC}"
   
-  echo -e "🧩 ${YELLOW}Building types package...${NC}"
-  cd packages/types && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building utils package...${NC}"
-  cd packages/utils && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building core package...${NC}"
-  cd packages/core && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building database package...${NC}"
-  cd packages/database && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building UI packages...${NC}"
-  cd packages/ui && bun run build && cd ../..
-  [ -d "packages/ui-components" ] && cd packages/ui-components && bun run build && cd ../..
-  [ -d "packages/ui-consolidated" ] && cd packages/ui-consolidated && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building feature packages...${NC}"
-  [ -d "packages/feature-tracker" ] && cd packages/feature-tracker && bun run build && cd ../..
-  [ -d "packages/feature-suggestions" ] && cd packages/feature-suggestions && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building API packages...${NC}"
-  [ -d "packages/api-types" ] && cd packages/api-types && bun run build && cd ../..
-  cd packages/api-core && bun run build && cd ../..
-  cd packages/api && bun run build && cd ../..
-  [ -d "packages/api-client" ] && cd packages/api-client && bun run build && cd ../..
-  
-  echo -e "🧩 ${YELLOW}Building frontend and backend packages...${NC}"
-  [ -d "packages/frontend" ] && cd packages/frontend && bun run build && cd ../..
-  [ -d "packages/backend" ] && cd packages/backend && bun run build && cd ../..
+  # Leverage turbo to build packages in dependency order
+  # This assumes your turbo.json is correctly configured with build dependencies
+  bun run build --filter=./packages/*
+
+  # If you need to build apps specifically after packages, you can add:
+  # bun run build --filter=./apps/*
+
+  # For watch mode, turbo handles persistent tasks
+  if [ "$watch" == true ]; then
+    echo -e "${CYAN}Starting watch mode for all packages...${NC}"
+    bun run dev --filter=./packages/*
+    bun run dev --filter=./apps/*
+  fi
   
 elif [ ${#packages[@]} -gt 0 ]; then
   # Build specified packages

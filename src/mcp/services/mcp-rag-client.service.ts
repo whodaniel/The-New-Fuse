@@ -231,7 +231,7 @@ export class MCPRAGClientService implements OnModuleInit {
         server_url: this.ragServerUrl,
         ...response.data
       };
-    } catch (error: unknown) {
+    } catch (error) {
       return {
         status: 'error',
         connected: false,

@@ -1,4 +1,4 @@
-import LiveSyncToggle from './Features/LiveSync/toggle.js';
+import LiveSyncToggle from './Features/LiveSync/toggle';
 
 export const configurableFeatures = {
   experimental_live_file_sync: {

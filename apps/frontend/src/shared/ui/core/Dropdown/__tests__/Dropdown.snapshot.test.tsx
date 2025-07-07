@@ -1,6 +1,6 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Dropdown } from '../Dropdown.js';
+import { Dropdown } from '../Dropdown';
 
 describe('Dropdown Snapshots', () => {
   it('renders basic dropdown correctly', () => {

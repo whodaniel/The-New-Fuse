@@ -1,6 +1,6 @@
-export { Button, buttonVariants } from './Button.js';
-export type { ButtonProps } from './Button.js';
-export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader.tsx';
-export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader.tsx';
-export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, cardVariants, } from './Card.js';
-export type { CardProps } from './Card.js';
+export { Button, buttonVariants } from './Button';
+export type { ButtonProps } from './Button';
+export { Preloader, FullScreenLoader, preloaderVariants } from './Preloader';
+export type { PreloaderProps, PreloaderSize, PreloaderVariant } from './Preloader';
+export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, cardVariants, } from './Card';
+export type { CardProps } from './Card';

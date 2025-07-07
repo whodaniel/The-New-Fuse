@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ExportController } from '../controllers/export.controller.js';
-import { ConversationExportService } from '@the-new-fuse/core';
+import { ExportController } from '../controllers/export.controller';
+// import { ConversationExportService } from '@the-new-fuse/core';
 
 @Module({
   controllers: [ExportController],
-  providers: [ConversationExportService],
-  exports: [ConversationExportService]
+  providers: [], // ConversationExportService temporarily disabled
+  exports: []    // ConversationExportService temporarily disabled
 })
 export class ExportModule {}

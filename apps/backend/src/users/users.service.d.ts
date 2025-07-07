@@ -1,6 +1,6 @@
-import { PrismaService } from '../prisma/prisma.service.js';
-import { LoggingService } from '../services/logging.service.js';
-import { EventBus } from '../events/event-bus.service.js';
+import { PrismaService } from '../prisma/prisma.service';
+import { LoggingService } from '../services/logging.service';
+import { EventBus } from '../events/event-bus.service';
 export declare class UsersService {
     private prisma;
     private logger;

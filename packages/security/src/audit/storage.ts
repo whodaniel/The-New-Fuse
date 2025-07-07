@@ -17,7 +17,7 @@ export class InMemoryAuditStorage implements AuditStorage {
   async store(entry: Record<string, unknown>): Promise<void> {
     this.entries.push(entry);
     // this.logger.debug('Stored audit entry', { entry });
-    console.debug('Stored audit entry', { entry });
+    // console.debug('Stored audit entry', { entry });
   }
 
   async query(filter: Record<string, unknown>): Promise<Record<string, unknown>[]> {

@@ -10,11 +10,11 @@ import {
   HttpStatus,
   HttpCode 
 } from '@nestjs/common';
-import { UsersService } from './users.service.js';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-import { RolesGuard } from '../auth/guards/roles.guard.js';
-import { Roles } from '../auth/decorators/roles.decorator.js';
-import { CreateUserDto, UpdateUserDto } from './dto/user.dto.js';
+import { UsersService } from './users.service';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { CreateUserDto, UpdateUserDto } from './dto/user.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 @ApiTags('users')
@@ -40,7 +40,7 @@ export class UsersController {
   @Get(':id')
   @ApiOperation({ summary: 'Get user by id' })
   async findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+    return this.usersService.findById(id);
   }
 
   @Put(':id')

@@ -1,5 +1,5 @@
 /**
  * Layout Components Entry Point
  */
-export * from './AppLayout/index.js';
-export * from './MainLayout/index.js';
+export * from './AppLayout/index';
+export * from './MainLayout/index';

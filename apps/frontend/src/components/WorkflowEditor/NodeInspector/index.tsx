@@ -1,10 +1,10 @@
 import React from 'react';
 import { Tab } from '@headlessui/react';
-import { ConfigurationPanel } from './ConfigurationPanel.js';
-import { InputsPanel } from './InputsPanel.js';
-import { OutputsPanel } from './OutputsPanel.js';
-import { HistoryPanel } from './HistoryPanel.js';
-import type { Node } from '../../../types/workflow.tsx';
+import { ConfigurationPanel } from './ConfigurationPanel';
+import { InputsPanel } from './InputsPanel';
+import { OutputsPanel } from './OutputsPanel';
+import { HistoryPanel } from './HistoryPanel';
+import type { Node } from '../../../types/workflow';
 
 interface NodeInspectorProps {
   node: Node;

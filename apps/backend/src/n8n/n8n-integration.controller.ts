@@ -3,8 +3,8 @@ import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 import { Logger } from '@the-new-fuse/utils';
-import { N8nMetadataService } from './n8n-metadata.service.js';
-import { WorkflowValidator } from './workflow.validator.js';
+import { N8nMetadataService } from './n8n-metadata.service';
+import { WorkflowValidator } from './workflow.validator';
 
 @Controller('n8n')
 export class N8nIntegrationController {

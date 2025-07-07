@@ -40,7 +40,7 @@ export class ModelContextProtocolClient implements MCPClient {
                 try {
                     const response = JSON.parse(data.toString()) as MCPResponse;
                     this.handleResponse(response);
-                } catch (error: unknown) {
+                } catch (error) {
                     console.error('MCP: Failed to parse response:', error);
                 }
             });

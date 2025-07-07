@@ -1,111 +1,79 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
-        }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
-        }
-    }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
-    }
-    return useValue ? value : void 0;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AppModule = void 0;
+const common_1 = require("@nestjs/common");
+const config_1 = require("@nestjs/config");
+const jwt_1 = require("@nestjs/jwt");
+const throttler_1 = require("@nestjs/throttler");
+const llm_provider_config_1 = __importDefault(require("./config/llm-provider.config"));
+const app_controller_1 = require("./app.controller");
+const app_service_1 = require("./app.service");
+const auth_module_1 = require("./modules/auth/auth.module");
+const agent_module_1 = require("./modules/agent.module");
+const chat_module_1 = require("./modules/chat/chat.module");
+const task_module_1 = require("./modules/task/task.module");
+const cache_service_1 = require("./cache/cache.service");
+const websocket_gateway_1 = require("./websocket/websocket.gateway");
+const monitoring_service_1 = require("./services/monitoring.service");
+const monitoring_controller_1 = require("./controllers/monitoring.controller");
+const entity_discovery_module_1 = require("./modules/discovery/entity-discovery.module");
+const ClaudeDevAutomationModule_1 = require("./modules/ClaudeDevAutomationModule");
+const TNFMCPModule_1 = require("./mcp/TNFMCPModule");
+const a2a_core_1 = require("@the-new-fuse/a2a-core");
+const database_1 = require("@the-new-fuse/database");
+const wallets_module_1 = require("./wallets/wallets.module");
+const transactions_module_1 = require("./transactions/transactions.module");
+const web3auth_module_1 = require("./web3auth/web3auth.module");
+const smart_account_module_1 = require("./smart-accounts/smart-account.module");
+const monitoring_module_1 = require("./monitoring/monitoring.module");
+let AppModule = class AppModule {
 };
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { ThrottlerModule } from '@nestjs/throttler';
-import llmProviderConfig from './config/llm-provider.config.js';
-import { AppController } from './app.controller.js';
-import { AppService } from './app.service.js';
-import { AuthModule } from './modules/auth/auth.module.js';
-import { ChatModule } from './modules/chat/chat.module.js';
-import { TaskModule } from './modules/task/task.module.js';
-import { CacheService } from './cache/cache.service.js';
-import { WebsocketGateway } from './websocket/websocket.gateway.js';
-import { MonitoringService } from './services/monitoring.service.js';
-import { MonitoringController } from './controllers/monitoring.controller.js';
-import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module.js';
-import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule.js';
-import { TNFMCPModule } from './mcp/TNFMCPModule.js';
-let AppModule = (() => {
-    let _classDecorators = [Module({
-            imports: [
-                ConfigModule.forRoot({
-                    isGlobal: true,
-                    load: [llmProviderConfig],
+exports.AppModule = AppModule;
+exports.AppModule = AppModule = __decorate([
+    (0, common_1.Module)({
+        imports: [
+            config_1.ConfigModule.forRoot({
+                isGlobal: true,
+                load: [llm_provider_config_1.default],
+            }),
+            // Use Prisma instead of TypeORM
+            database_1.DatabaseModule,
+            jwt_1.JwtModule.registerAsync({
+                imports: [config_1.ConfigModule],
+                useFactory: (config) => ({
+                    secret: config.get('JWT_SECRET'),
+                    signOptions: { expiresIn: '15m' },
                 }),
-                TypeOrmModule.forRootAsync({
-                    imports: [ConfigModule],
-                    useFactory: (config) => ({
-                        type: 'postgres',
-                        url: config.get('DATABASE_URL'),
-                        entities: [__dirname + '/entities/*.entity{.ts,.js}'],
-                        synchronize: true,
-                    }),
-                    inject: [ConfigService],
-                }),
-                JwtModule.registerAsync({
-                    imports: [ConfigModule],
-                    useFactory: (config) => ({
-                        secret: config.get('JWT_SECRET'),
-                        signOptions: { expiresIn: '15m' },
-                    }),
-                    inject: [ConfigService],
-                }),
-                ThrottlerModule.forRoot([{
-                        ttl: 60000, // 60 seconds in milliseconds
-                        limit: 10,
-                    }]),
-                AuthModule,
-                ChatModule,
-                TaskModule,
-                EntityDiscoveryModule,
-                ClaudeDevAutomationModule,
-                TNFMCPModule, // Add The New Fuse MCP Module
-            ],
-            controllers: [AppController, MonitoringController],
-            providers: [AppService, CacheService, MonitoringService, WebsocketGateway],
-        })];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var AppModule = _classThis = class {
-    };
-    __setFunctionName(_classThis, "AppModule");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AppModule = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return AppModule = _classThis;
-})();
-export { AppModule };
+                inject: [config_1.ConfigService],
+            }),
+            throttler_1.ThrottlerModule.forRoot([{
+                    ttl: 60000, // 60 seconds in milliseconds
+                    limit: 10,
+                }]),
+            auth_module_1.AuthModule,
+            agent_module_1.AgentModule, // Add our new agent module
+            chat_module_1.ChatModule,
+            task_module_1.TaskModule,
+            entity_discovery_module_1.EntityDiscoveryModule,
+            ClaudeDevAutomationModule_1.ClaudeDevAutomationModule,
+            TNFMCPModule_1.TNFMCPModule, // Add The New Fuse MCP Module
+            a2a_core_1.A2ACoreModule.forRoot(), // Add A2A Protocol Module
+            wallets_module_1.WalletsModule, // Web3Auth Wallet Module
+            transactions_module_1.TransactionsModule, // Blockchain Transaction Module
+            web3auth_module_1.Web3authModule, // Web3Auth Integration Module
+            smart_account_module_1.SmartAccountModule, // Smart Account (ERC-4337) Module
+            monitoring_module_1.MonitoringModule, // Wallet Platform Monitoring
+        ],
+        controllers: [app_controller_1.AppController, monitoring_controller_1.MonitoringController, a2a_core_1.A2AController],
+        providers: [app_service_1.AppService, cache_service_1.CacheService, monitoring_service_1.MonitoringService, websocket_gateway_1.WebsocketGateway],
+    })
+], AppModule);

@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { BaseService } from '../core/BaseService'; // Corrected import path
+import { Logger } from '../utils/Logger';
 import { WorkflowDefinition, WorkflowStep, Task } from '@the-new-fuse/types'; // Assuming types are available
 
 // Placeholder interfaces for GDesigner interaction
@@ -24,7 +24,7 @@ export class GDesignerAdapter extends BaseService {
   private nodeMapping: GDesignerNodeMapping;
 
   constructor() {
-    super();
+    super({ name: 'GDesignerAdapter' });
     this.logger = new Logger('GDesignerAdapter');
     // TODO: Define the mapping from GDesigner node types to internal Step/Task types
     this.nodeMapping = {
@@ -59,19 +59,15 @@ export class GDesignerAdapter extends BaseService {
           const step: WorkflowStep = {
             // Default/placeholder values
             id: `step-${node.id}`, // Need proper UUID generation
-            workflowId: 'temp-workflow-id', // Should be set later
-            createdAt: new Date(),
-            updatedAt: new Date(),
             name: node.data?.label || `${node.type}-${node.id}`,
             order: stepOrder -1,
             type: node.type, // Or a mapped internal type
             config: node.data || {},
-            status: 'pending', // Default status
             ...partialStep, // Overwrite defaults with mapped values
           };
           steps.push(step);
         } catch (error) {
-          this.logger.error(`Error mapping node ${node.id} (type: ${node.type}): ${error.message}`, error);
+          this.logger.error(`Error mapping node ${node.id} (type: ${node.type}): ${error instanceof Error ? error.message : String(error)}`);
           // Decide how to handle mapping errors (skip step, fail adaptation?)
         }
       } else {
@@ -84,11 +80,11 @@ export class GDesignerAdapter extends BaseService {
     const definition: Partial<WorkflowDefinition> = {
       name: gdesignerWorkflow.name,
       description: `Adapted from GDesigner workflow ${gdesignerWorkflow.id}`,
-      version: '1.0.0', // Or derive from GDesigner data
-      triggerType: 'manual', // Or determine from start node
+      // version: '1.0.0', // Or derive from GDesigner data // Removed since it doesn't exist in WorkflowDefinition type
+      // triggerType: 'manual', // Or determine from start node // Removed since it doesn't exist in WorkflowDefinition type
       steps: steps,
       // initialContext: {}, // Extract from start node?
-      tags: ['gdesigner-adapted'],
+      // tags: ['gdesigner-adapted'], // Removed since it doesn't exist in WorkflowDefinition type
     };
 
     this.logger.info(`Successfully adapted workflow "${gdesignerWorkflow.name}". Found ${steps.length} steps.`);

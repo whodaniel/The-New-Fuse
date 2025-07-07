@@ -1,4 +1,7 @@
-export class WorkflowValidator {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WorkflowValidator = void 0;
+class WorkflowValidator {
     validate(nodes, edges, nodeTypes) {
         const errors = [];
         // Check for required nodes
@@ -108,3 +111,4 @@ export class WorkflowValidator {
         return errors;
     }
 }
+exports.WorkflowValidator = WorkflowValidator;

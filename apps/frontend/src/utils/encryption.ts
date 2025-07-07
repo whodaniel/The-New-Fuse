@@ -1,6 +1,9 @@
 export {}
 exports.verifyMessageSignature = exports.createMessageSignature = exports.E2EEncryption = exports.MessageEncryption = void 0;
+// NOTE: This is a browser-only file. For all Node.js/server cryptography, use src/utils/cryptoUtils.ts exclusively.
+// If you need browser crypto, consider using the Web Crypto API or a browser polyfill, and document it here.
 import crypto_js_1 from 'crypto-js';
+// Deprecated: Use centralized cryptoUtils.ts for all Node/server cryptography.
 class MessageEncryption {
     constructor(encryptionKey) {
         this.key = encryptionKey;
@@ -25,11 +28,13 @@ class MessageEncryption {
         }
     }
     static generateKey() {
+        // For browser, use Web Crypto API if possible. This is legacy.
         return crypto_js_1.default.lib.WordArray.random(32).toString();
     }
     static createRoomKey(roomId, userIds) {
         const sortedUserIds = [...userIds].sort().join('-');
         const baseString = `${roomId}-${sortedUserIds}`;
+        // For browser, use Web Crypto API if possible. This is legacy.
         return crypto_js_1.default.SHA256(baseString).toString();
     }
 }

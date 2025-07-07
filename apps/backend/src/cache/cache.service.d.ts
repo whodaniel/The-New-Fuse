@@ -1,5 +1,5 @@
-import { RedisService } from '../services/redis.service.js';
-import { LoggingService } from '../services/logging.service.js';
+import { RedisService } from '../services/redis.service';
+import { LoggingService } from '../services/logging.service';
 export declare class CacheService {
     private readonly redisService;
     private readonly logger;

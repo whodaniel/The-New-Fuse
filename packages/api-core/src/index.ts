@@ -4,19 +4,19 @@
  */
 
 // Re-export controllers
-export * from './controllers/health.controller.js';
+export * from './controllers/health.controller';
 
 // Re-export services
-export * from './services/health.service.js';
-export * from './modules/services/base.service.js';
-export * from './modules/services/agent.service.js';
-export * from './modules/services/workflow.service.js';
+export * from './services/health.service';
+export * from './modules/services/base.service';
+export * from './modules/services/agent.service';
+export * from './modules/services/workflow.service';
 
 // Re-export repositories
-export * from './modules/repositories/agent.repository.js';
+export * from './modules/repositories/agent.repository';
 
 // Re-export types and enums
-export { WorkflowStatus } from './modules/services/workflow.service.js';
-export { AgentType } from './modules/repositories/agent.repository.js';
+export { WorkflowStatus } from './modules/services/workflow.service';
+export { AgentType } from './modules/repositories/agent.repository';
 
 // Add barrel exports for other modules as they are developed

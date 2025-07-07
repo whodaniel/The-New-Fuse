@@ -1,19 +1,9 @@
 import { Module, Global } from '@nestjs/common';
-import { CascadeService } from './services/CascadeService.js';
-import { CascadeMiddleware } from './middleware/cascade.middleware.tsx';
-import { CascadeGuard } from './guards/cascade.guard.tsx';
+import { CascadeService } from './services/CascadeService';
 
 @Global()
 @Module({
-  providers: [
-    CascadeService,
-    CascadeMiddleware,
-    CascadeGuard
-  ],
-  exports: [
-    CascadeService,
-    CascadeMiddleware,
-    CascadeGuard
-  ],
+  providers: [CascadeService],
+  exports: [CascadeService],
 })
 export class CascadeModule {}

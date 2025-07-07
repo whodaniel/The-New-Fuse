@@ -1,6 +1,6 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { cn } from '../../lib/utils.tsx';
-import { ModalProps } from '../types.tsx';
+import { cn } from '../../lib/utils';
+import { ModalProps } from '../types';
 
 const Modal = forwardRef<HTMLDivElement, ModalProps>(
   ({ isOpen = false, onClose, title, className = '', children, ...props }, ref) => {

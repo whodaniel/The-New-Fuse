@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { WorkflowStep, WorkflowMetrics, MonitoringEvent } from '../types.tsx';
+import { WorkflowStep, WorkflowMetrics, MonitoringEvent } from '../types';
 
 export class WorkflowMonitor extends EventEmitter {
   private static instance: WorkflowMonitor;

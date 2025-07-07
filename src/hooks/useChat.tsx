@@ -64,7 +64,7 @@ export const useChat = ({
         messages: response.messages,
         isLoading: false,
       }));
-    } catch (error: unknown) {
+    } catch (error) {
       setState((prev) => ({ ...prev, error, isLoading: false }));
     }
   };
@@ -133,7 +133,7 @@ export const useChat = ({
           messages: [...prev.messages, { ...message, id: response.data.url }],
           isLoading: false,
         }));
-      } catch (error: unknown) {
+      } catch (error) {
         setState((prev) => ({ ...prev, error: error as Error, isLoading: false }));
       }
     },

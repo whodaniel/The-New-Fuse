@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Workflow } from '../entities/workflow.entity.tsx';
+import { Workflow } from '../entities/workflow.entity';
 import { WorkflowEngine, WorkflowExecutor } from '@the-new-fuse/core';
 import { CreateWorkflowDto, WorkflowExecutionStatus, WorkflowInput } from '@the-new-fuse/types';
 

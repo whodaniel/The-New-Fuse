@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import * as d3 from 'd3';
-import { TimelineViewProps } from '../../../types/components.tsx';
-import { D3Selection, TimelineScales, ZoomBehavior } from '../../../types/d3.js';
-import { TimelineEvent, TimelineBranch } from '../../../types/timeline.js';
+import { TimelineViewProps } from '../../../types/components';
+import { D3Selection, TimelineScales, ZoomBehavior } from '../../../types/d3';
+import { TimelineEvent, TimelineBranch } from '../../../types/timeline';
 
 export const EnhancedTimelineView: React.React.FC<TimelineViewProps> = ({
   events,

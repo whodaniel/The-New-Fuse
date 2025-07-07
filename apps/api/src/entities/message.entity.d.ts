@@ -1,6 +1,6 @@
-import { User } from './user.entity.tsx';
-import { ChatRoom } from './chat-room.entity.tsx';
-import { Agent } from './agent.entity.tsx';
+import { User } from './user.entity';
+import { ChatRoom } from './chat-room.entity';
+import { Agent } from './agent.entity';
 export declare class Message {
     id: string;
     content: string;

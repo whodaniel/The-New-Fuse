@@ -1,7 +1,12 @@
-import express from 'express';
-import { getUserProfile, updateUserProfile } from '../controllers/userController';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = __importDefault(require("express"));
+const userController_1 = require("../controllers/userController");
 // import { authenticateToken } from '../middleware/auth'; // Assuming auth middleware exists or will be added
-const router = express.Router();
+const router = express_1.default.Router();
 /**
  * @swagger
  * tags:
@@ -44,7 +49,7 @@ const router = express.Router();
  *       404:
  *         description: User profile not found
  */
-router.get('/profile', /* authenticateToken, */ getUserProfile); // Placeholder for auth middleware
+router.get('/profile', /* authenticateToken, */ userController_1.getUserProfile); // Placeholder for auth middleware
 /**
  * @swagger
  * /api/users/profile:
@@ -107,5 +112,5 @@ router.get('/profile', /* authenticateToken, */ getUserProfile); // Placeholder 
  *       404:
  *         description: User profile not found
  */
-router.put('/profile', /* authenticateToken, */ updateUserProfile); // Placeholder for auth middleware
-export default router;
+router.put('/profile', /* authenticateToken, */ userController_1.updateUserProfile); // Placeholder for auth middleware
+exports.default = router;

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { AppDispatch } from '../store.js';
-import fetcher from '../../services/api/fetcher.js';
-import { transformApiConversation } from '../../types/api.js';
+import { AppDispatch } from '../store';
+import fetcher from '../../services/api/fetcher';
+import { transformApiConversation } from '../../types/api';
 
 interface Conversation {
   id: string;

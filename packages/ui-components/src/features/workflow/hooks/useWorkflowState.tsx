@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { WorkflowState, WorkflowStatus } from '../types.tsx';
+import { WorkflowState, WorkflowStatus } from '../types';
 
 export function useWorkflowState(workflowId: string) {
   const [state, setState] = useState<WorkflowState>({

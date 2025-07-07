@@ -1,4 +1,4 @@
-import type { JsonValue, DataMap } from './common-types.tsx';
+import type { JsonValue, DataMap } from './common-types';
 
 export interface WebSocketMessage {
   type: string;

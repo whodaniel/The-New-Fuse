@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { ChatService } from '../services/chatService.js';
-import { authMiddleware } from '../middleware/auth.js';
+import { ChatService } from '../services/chatService';
+import { authMiddleware } from '../middleware/auth';
 
 // Define interface to extend Express Request
 interface AuthenticatedRequest extends Request {

@@ -1,21 +1,27 @@
-import passport from 'passport';
-import jwt from 'jsonwebtoken';
-import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs';
-import { generateToken } from '../utils/token.js';
-const prisma = new PrismaClient();
-export const googleAuth = passport.authenticate('google', {
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authController = exports.getCurrentUser = exports.logout = exports.login = exports.register = exports.googleAuthCallback = exports.googleAuth = void 0;
+const passport_1 = __importDefault(require("passport"));
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const client_1 = require("@prisma/client");
+const bcryptjs_1 = __importDefault(require("bcryptjs"));
+const token_1 = require("../utils/token");
+const prisma = new client_1.PrismaClient();
+exports.googleAuth = passport_1.default.authenticate('google', {
     scope: ['profile', 'email'],
 });
-export const googleAuthCallback = [
-    passport.authenticate('google', { session: false }),
+exports.googleAuthCallback = [
+    passport_1.default.authenticate('google', { session: false }),
     async (req, res) => {
         try {
             const user = req.user;
             if (!user) {
                 throw new Error('No user from Google');
             }
-            const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '24h' });
+            const token = jsonwebtoken_1.default.sign({ id: user.id }, process.env.JWT_SECRET || 'your-secret-key', { expiresIn: '24h' });
             await prisma.session.create({
                 data: {
                     userId: user.id,
@@ -32,7 +38,7 @@ export const googleAuthCallback = [
         }
     },
 ];
-export const register = async (req, res) => {
+const register = async (req, res) => {
     try {
         const { email, password, name } = req.body;
         // Check if user exists
@@ -46,7 +52,7 @@ export const register = async (req, res) => {
             });
         }
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcryptjs_1.default.hash(password, 10);
         // Create user
         const user = await prisma.user.create({
             data: {
@@ -56,7 +62,7 @@ export const register = async (req, res) => {
             }
         });
         // Generate token
-        const token = generateToken(user.id);
+        const token = (0, token_1.generateToken)(user.id);
         // Create session
         await prisma.session.create({
             data: {
@@ -85,7 +91,8 @@ export const register = async (req, res) => {
         });
     }
 };
-export const login = async (req, res) => {
+exports.register = register;
+const login = async (req, res) => {
     try {
         const { email, password } = req.body;
         // Find user
@@ -99,7 +106,7 @@ export const login = async (req, res) => {
             });
         }
         // Check password
-        const isValidPassword = await bcrypt.compare(password, user.password);
+        const isValidPassword = await bcryptjs_1.default.compare(password, user.password);
         if (!isValidPassword) {
             return res.status(401).json({
                 success: false,
@@ -107,7 +114,7 @@ export const login = async (req, res) => {
             });
         }
         // Generate token
-        const token = generateToken(user.id);
+        const token = (0, token_1.generateToken)(user.id);
         // Create session
         await prisma.session.create({
             data: {
@@ -136,7 +143,8 @@ export const login = async (req, res) => {
         });
     }
 };
-export const logout = async (req, res) => {
+exports.login = login;
+const logout = async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
@@ -162,7 +170,8 @@ export const logout = async (req, res) => {
         });
     }
 };
-export const getCurrentUser = async (req, res) => {
+exports.logout = logout;
+const getCurrentUser = async (req, res) => {
     try {
         const token = req.headers.authorization?.split(' ')[1];
         if (!token) {
@@ -172,7 +181,7 @@ export const getCurrentUser = async (req, res) => {
             });
         }
         // Verify token
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'your-secret-key');
         // Get user
         const user = await prisma.user.findUnique({
             where: { id: decoded.userId }
@@ -201,4 +210,14 @@ export const getCurrentUser = async (req, res) => {
             message: 'Error getting current user'
         });
     }
+};
+exports.getCurrentUser = getCurrentUser;
+// Export the controller object for use in routes
+exports.authController = {
+    register: exports.register,
+    login: exports.login,
+    logout: exports.logout,
+    getCurrentUser: exports.getCurrentUser,
+    googleAuth: exports.googleAuth,
+    googleAuthCallback: exports.googleAuthCallback
 };

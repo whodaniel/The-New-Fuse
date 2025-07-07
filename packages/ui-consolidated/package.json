@@ -19,7 +19,7 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "lint": "eslint src --ext .ts,.tsx",
+    "lint": "eslint src",
     "clean": "rimraf dist .turbo node_modules",
     "typecheck": "tsc --noEmit",
     "test": "jest",

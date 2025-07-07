@@ -1,1 +1,1 @@
-export * from './ProviderSettings.tsx';
+export * from './ProviderSettings.js';

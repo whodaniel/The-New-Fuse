@@ -1,4 +1,4 @@
-import { LLMProviderService, CreateLLMProviderDTO, LLMProviderDTO } from './llm-provider.service.js';
+import { LLMProviderService, CreateLLMProviderDTO, LLMProviderDTO } from './llm-provider.service';
 export declare class LLMProviderController {
     private readonly llmProviderService;
     constructor(llmProviderService: LLMProviderService);

@@ -1,4 +1,4 @@
-import { NLPEngine } from './NLPEngine.tsx';
+import { NLPEngine } from './NLPEngine';
 export declare class VoiceEngine {
     private nlpEngine;
     private recognition;

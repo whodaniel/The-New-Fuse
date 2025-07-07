@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { PrometheusService } from './PrometheusService.js';
-import { RedisService } from './RedisService.js';
+import { PrometheusService } from './PrometheusService';
+import { RedisService } from './RedisService';
 
 @Injectable()
 export class MonitoringService {

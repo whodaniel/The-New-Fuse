@@ -1,5 +1,5 @@
-import highlight from 'highlight.js';
-import { getFileExtension } from '../directories.tsx';
+import highlight from 'highlight';
+import { getFileExtension } from '../directories';
 
 interface HighlightOptions {
   language?: string;

@@ -2,7 +2,7 @@
 export {}
 exports.createLLMNode = exports.LLMNode = void 0;
 import jsx_runtime_1 from 'react/jsx-runtime';
-import registry_1 from '../../providers/registry.js';
+import registry_1 from '../../providers/registry';
 const LLMNode = ({ data }): any => {
     const providers = registry_1.providerRegistry.getAllProviders();
     const selectedProvider = providers.find(p => p.id === data.provider);

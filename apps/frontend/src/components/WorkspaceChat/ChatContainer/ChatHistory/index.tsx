@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
-import HistoricalMessage from './HistoricalMessage.js';
-import PromptReply from './PromptReply.js';
-import { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace.js';
-import ManageWorkspace from '../../../Modals/ManageWorkspace.js';
+import HistoricalMessage from './HistoricalMessage';
+import PromptReply from './PromptReply';
+import { useManageWorkspaceModal } from '../../../Modals/ManageWorkspace';
+import ManageWorkspace from '../../../Modals/ManageWorkspace';
 import { ArrowDown } from "@phosphor-icons/react";
 import debounce from "lodash.debounce";
 import useUser from "@/hooks/useUser";
-import Chartable from './Chartable.js';
+import Chartable from './Chartable';
 import Workspace from "@/models/workspace";
 import { useParams } from "react-router-dom";
 import paths from "@/utils/paths";

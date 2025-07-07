@@ -18,7 +18,7 @@ export class JwtAuthGuard implements CanActivate {
       const payload = this.jwtService.verify(token);
       request.user = payload;
       return true;
-    } catch (error: unknown) {
+    } catch (error) {
       // Fix for TS18046: 'error' is of type 'unknown'
       if (error instanceof Error) {
         throw new UnauthorizedException('Authentication failed: ' + error.message);

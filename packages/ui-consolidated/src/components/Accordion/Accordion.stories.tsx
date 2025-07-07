@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
   AccordionContent,
-} from './Accordion.tsx';
+} from './Accordion';
 
 const meta: Meta<typeof Accordion> = {
   title: 'Components/Accordion',

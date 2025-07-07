@@ -1,31 +1,23 @@
 import * as vscode from 'vscode';
 
-/**
- * Provides a centralized way to access and manage extension settings.
- */
 export class ConfigurationService {
-    private static readonly CONFIGURATION_SCOPE = 'theNewFuse';
+    constructor(private context: vscode.ExtensionContext) {}
 
-    /**
-     * Gets a specific configuration value.
-     * @param key The configuration key.
-     * @param defaultValue The default value if the key is not found.
-     * @returns The configuration value.
-     */
-    public get<T>(key: string, defaultValue?: T): T | undefined {
-        const configuration = vscode.workspace.getConfiguration(ConfigurationService.CONFIGURATION_SCOPE);
-        return configuration.get<T>(key, defaultValue);
+    get<T>(key: string, defaultValue?: T): T {
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        return config.get<T>(key, defaultValue as T);
     }
 
-    /**
-     * Updates a configuration value.
-     * @param key The configuration key to update.
-     * @param value The new value.
-     * @param target The configuration target (Global or Workspace).
-     * @returns A promise that resolves when the configuration has been updated.
-     */
-    public async update(key: string, value: any, target: vscode.ConfigurationTarget = vscode.ConfigurationTarget.Global): Promise<void> {
-        const configuration = vscode.workspace.getConfiguration(ConfigurationService.CONFIGURATION_SCOPE);
-        await configuration.update(key, value, target);
+    async update(key: string, value: any, target = vscode.ConfigurationTarget.Global): Promise<void> {
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        await config.update(key, value, target);
+    }
+
+    onConfigurationChanged(callback: () => void): vscode.Disposable {
+        return vscode.workspace.onDidChangeConfiguration(event => {
+            if (event.affectsConfiguration('theNewFuse')) {
+                callback();
+            }
+        });
     }
 }

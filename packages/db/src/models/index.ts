@@ -1,21 +1,20 @@
+import { z } from 'zod';
 
-export {}
-exports.UpdateAgentDto = exports.CreateAgentDto = exports.AgentSchema = void 0;
-import zod_1 from 'zod';
-exports.AgentSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    systemPrompt: zod_1.z.string(),
-    maxTokens: zod_1.z.number().optional(),
-    temperature: zod_1.z.number().optional(),
-    createdAt: zod_1.z.date(),
-    updatedAt: zod_1.z.date(),
+export const AgentSchema = z.object({
+    id: z.string(),
+    name: z.string(),
+    description: z.string().optional(),
+    systemPrompt: z.string(),
+    maxTokens: z.number().optional(),
+    temperature: z.number().optional(),
+    createdAt: z.date(),
+    updatedAt: z.date(),
 });
-exports.CreateAgentDto = exports.AgentSchema.omit({
+
+export const CreateAgentDto = AgentSchema.omit({
     id: true,
     createdAt: true,
     updatedAt: true
 });
-exports.UpdateAgentDto = exports.AgentSchema.partial();
-export {};
+
+export const UpdateAgentDto = AgentSchema.partial();

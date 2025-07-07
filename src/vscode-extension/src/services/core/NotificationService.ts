@@ -1,53 +1,35 @@
 import * as vscode from 'vscode';
 
-/**
- * Provides a standardized way to show VS Code notifications.
- */
 export class NotificationService {
-    /**
-     * Shows an informational message.
-     * @param message The message to show.
-     * @param items Optional Quick Pick items to include in the message.
-     * @returns A promise that resolves to the selected item or undefined if the message is dismissed.
-     */
-    public showInfo(message: string, ...items: string[]): Thenable<string | undefined> {
-        return vscode.window.showInformationMessage(message, ...items);
+    constructor(private context: vscode.ExtensionContext) {}
+
+    showInfo(message: string): void {
+        vscode.window.showInformationMessage(message);
     }
 
-    /**
-     * Shows a warning message.
-     * @param message The message to show.
-     * @param items Optional Quick Pick items to include in the message.
-     * @returns A promise that resolves to the selected item or undefined if the message is dismissed.
-     */
-    public showWarning(message: string, ...items: string[]): Thenable<string | undefined> {
-        return vscode.window.showWarningMessage(message, ...items);
+    showWarning(message: string): void {
+        vscode.window.showWarningMessage(message);
     }
 
-    /**
-     * Shows an error message.
-     * @param message The message to show.
-     * @param items Optional Quick Pick items to include in the message.
-     * @returns A promise that resolves to the selected item or undefined if the message is dismissed.
-     */
-    public showError(message: string, ...items: string[]): Thenable<string | undefined> {
-        return vscode.window.showErrorMessage(message, ...items);
+    showError(message: string): void {
+        vscode.window.showErrorMessage(message);
     }
 
-    // Alias methods for backward compatibility
-    public showInformationMessage(message: string, ...items: string[]): Thenable<string | undefined> {
-        return this.showInfo(message, ...items);
+    async showProgress<T>(
+        title: string,
+        task: (progress: vscode.Progress<{ message?: string; increment?: number }>) => Promise<T>
+    ): Promise<T> {
+        return vscode.window.withProgress(
+            {
+                location: vscode.ProgressLocation.Notification,
+                title,
+                cancellable: false
+            },
+            task
+        );
     }
 
-    public showInformation(message: string, ...items: string[]): Thenable<string | undefined> {
-        return this.showInfo(message, ...items);
-    }
-
-    public showWarningMessage(message: string, ...items: string[]): Thenable<string | undefined> {
-        return this.showWarning(message, ...items);
-    }
-
-    public showErrorMessage(message: string, ...items: string[]): Thenable<string | undefined> {
-        return this.showError(message, ...items);
+    async showChoice(message: string, ...choices: string[]): Promise<string | undefined> {
+        return vscode.window.showInformationMessage(message, ...choices);
     }
 }

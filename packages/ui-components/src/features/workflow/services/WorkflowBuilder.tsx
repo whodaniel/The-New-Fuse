@@ -1,4 +1,4 @@
-import { WorkflowDefinition, WorkflowStep, WorkflowCondition } from '../types.tsx'; // Added .js extension
+import { WorkflowDefinition, WorkflowStep, WorkflowCondition } from '../types';
 
 /**
  * A builder class for creating workflow definitions
@@ -124,7 +124,7 @@ export class WorkflowBuilder {
       parameters: { workflow: subWorkflow },
       dependencies: [],
       status: 'pending',
-      startTime: null,
+      startTime: undefined,
       endTime: null,
       error: undefined,
     };

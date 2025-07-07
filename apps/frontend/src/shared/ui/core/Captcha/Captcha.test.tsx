@@ -1,5 +1,5 @@
 import { render, screen } from '@/test/helpers/render';
-import { Captcha } from './Captcha.tsx';
+import { Captcha } from './Captcha';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 describe('Captcha', () => {
     beforeEach(() => {

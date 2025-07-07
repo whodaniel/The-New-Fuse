@@ -4,10 +4,10 @@ import * as Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { GearSix, SquaresFour, UploadSimple } from "@phosphor-icons/react";
 import Workspace from "@/models/workspace";
-import ManageWorkspace, { useManageWorkspaceModal, } from '../../Modals/ManageWorkspace.js';
+import ManageWorkspace, { useManageWorkspaceModal, } from '../../Modals/ManageWorkspace';
 import paths from "@/utils/paths";
 import useUser from "@/hooks/useUser";
-import ThreadContainer from './ThreadContainer.js';
+import ThreadContainer from './ThreadContainer';
 const STYLES = {
     container: "flex flex-col gap-y-2",
     workspaceItem: "flex flex-col w-full group",

@@ -1,4 +1,4 @@
-import { getFileExtension } from './directories.tsx';
+import { getFileExtension } from './directories';
 
 export interface FileValidationOptions {
   maxSize?: number;

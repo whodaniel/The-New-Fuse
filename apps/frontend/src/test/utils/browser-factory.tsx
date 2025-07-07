@@ -2,7 +2,7 @@ import { Builder, WebDriver } from 'selenium-webdriver';
 import chrome from 'selenium-webdriver/chrome';
 import firefox from 'selenium-webdriver/firefox';
 import safari from 'selenium-webdriver/safari';
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 export type BrowserType = 'chrome' | 'firefox' | 'safari';
 

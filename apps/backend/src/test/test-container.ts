@@ -1,5 +1,5 @@
 import { Container } from 'inversify';
-// import { ConfigService, DatabaseService, TYPES } from '@the-new-fuse/core';
+import { ConfigService, DatabaseService, TYPES } from '@the-new-fuse/core';
 
 export async function createTestContainer(): Promise<Container> {
   const container = new Container();

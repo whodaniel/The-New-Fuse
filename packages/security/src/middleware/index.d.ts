@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from 'express';
-import type { AuthenticatedRequest, User } from '../auth/types.js';
+import type { AuthenticatedRequest, User } from '../auth/types';
 
 export interface RateLimitConfig {
     windowMs: number;

@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState, DragEvent } from 'react';
-import { Table, View, Row, Column, CellValue, AppState, KanbanViewOptions, DataType, SelectOption } from "@the-new-fuse/fairtable-core";
+import { Table, View, Row, Column, CellValue, AppState, KanbanViewOptions, DataType, SelectOption } from "../../fairtable-core/src";
 import TableCell from './TableCell'; // For rendering card content, or a simplified card display
 import { PlusIcon } from './Icons'; // For "Add new" in unclassified
 
@@ -39,7 +39,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({
   const [isDraggingOverLane, setIsDraggingOverLane] = useState<string | null>(null);
 
   const groupByColumn = useMemo(() => {
-    return table.columns.find(c => c.id === kanbanOptions.groupByColumnId);
+    return table.columns.find((c: Column) => c.id === kanbanOptions.groupByColumnId);
   }, [table.columns, kanbanOptions.groupByColumnId]);
 
   const lanes = useMemo(() => {
@@ -50,7 +50,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({
 
     // Initialize lanes for SINGLE_SELECT options first to maintain their order
     if (groupByColumn.type === DataType.SINGLE_SELECT && groupByColumn.options) {
-      groupByColumn.options.forEach(option => {
+      groupByColumn.options.forEach((option: any) => {
         grouped[option.id] = {
           id: option.id,
           title: option.name,
@@ -76,9 +76,9 @@ const KanbanView: React.FC<KanbanViewProps> = ({
         const linkedIds = Array.isArray(groupValue) ? groupValue as string[] : [];
         laneId = linkedIds.length > 0 ? linkedIds[0] : null; 
         if (laneId && !grouped[laneId]) {
-            const linkedTable = appState.tables.find(t => t.id === groupByColumn.linkedTableId);
-            const linkedRowData = linkedTable?.rows.find(r => r.id === laneId);
-            const primaryColLinked = linkedTable?.columns.find(c => c.id === linkedTable.columnOrder[0]);
+            const linkedTable = appState.tables.find((t: Table) => t.id === groupByColumn.linkedTableId);
+            const linkedRowData = linkedTable?.rows.find((r: Row) => r.id === laneId);
+            const primaryColLinked = linkedTable?.columns.find((c: Column) => c.id === linkedTable.columnOrder[0]);
             const title = linkedRowData && primaryColLinked ? String(linkedRowData.data[primaryColLinked.id] ?? laneId) : (laneId || 'Unknown Link');
             grouped[laneId] = { id: laneId, title: title, rows: [], representativeValue: [laneId] }; // Store as array for LINKED_RECORD
         }
@@ -99,8 +99,8 @@ const KanbanView: React.FC<KanbanViewProps> = ({
     let orderedLanes = Object.values(grouped);
 
     if (groupByColumn.type === DataType.SINGLE_SELECT && groupByColumn.options) {
-        const optionOrder = groupByColumn.options.map(opt => opt.id);
-        orderedLanes.sort((a, b) => {
+        const optionOrder = groupByColumn.options.map((opt: any) => opt.id);
+        orderedLanes.sort((a: KanbanLane, b: KanbanLane) => {
             if (a.id === uncategorizedId) return 1; 
             if (b.id === uncategorizedId) return -1;
             const indexA = optionOrder.indexOf(a.id);
@@ -115,7 +115,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({
   }, [groupByColumn, rowsToDisplay, appState.tables]);
 
   const primaryDisplayColumn = useMemo(() => {
-    return columnsToDisplay.find(c => c.type === DataType.TEXT && c.id !== groupByColumn?.id) || columnsToDisplay[0];
+    return columnsToDisplay.find((c: Column) => c.type === DataType.TEXT && c.id !== groupByColumn?.id) || columnsToDisplay[0];
   }, [columnsToDisplay, groupByColumn]);
 
   const handleDragStart = (e: DragEvent<HTMLDivElement>, rowId: string, originalLaneId: string) => {
@@ -143,7 +143,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({
 
     const { rowId, originalLaneId } = draggedItem;
     if (originalLaneId !== targetLaneId) {
-      const targetLane = lanes.find(l => l.id === targetLaneId);
+      const targetLane = lanes.find((l: KanbanLane) => l.id === targetLaneId);
       if (targetLane) {
         let newValue = targetLane.representativeValue;
         // Ensure the value format matches the column type (e.g., boolean string to boolean)
@@ -207,7 +207,7 @@ const KanbanView: React.FC<KanbanViewProps> = ({
                      if (cellValue === null || cellValue === undefined || String(cellValue).trim() === '') {
                         displayValue = <span className="text-slate-400 italic">empty</span>
                     } else if (col.type === DataType.SINGLE_SELECT && col.options) {
-                        const opt = col.options.find(o => o.id === cellValue);
+                        const opt = col.options.find((o: any) => o.id === cellValue);
                         displayValue = opt ? <span className={`text-xs px-1.5 py-0.5 rounded-full ${opt.colorClass}`}>{opt.name}</span> : '...';
                     } else if (col.type === DataType.LINKED_RECORD && Array.isArray(cellValue) && cellValue.length > 0) {
                         displayValue = <button 

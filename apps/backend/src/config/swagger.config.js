@@ -1,6 +1,9 @@
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-export function setupSwagger(app) {
-    const config = new DocumentBuilder()
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.setupSwagger = setupSwagger;
+const swagger_1 = require("@nestjs/swagger");
+function setupSwagger(app) {
+    const config = new swagger_1.DocumentBuilder()
         .setTitle('The New Fuse API')
         .setDescription(`
       The New Fuse is a cutting-edge AI Agent builder and task workflow builder SaaS platform.
@@ -27,11 +30,11 @@ export function setupSwagger(app) {
         description: 'API key for service-to-service communication'
     }, 'api-key')
         .build();
-    const document = SwaggerModule.createDocument(app, config, {
+    const document = swagger_1.SwaggerModule.createDocument(app, config, {
         deepScanRoutes: true,
         operationIdFactory: (controllerKey, methodKey) => methodKey
     });
-    SwaggerModule.setup('api/docs', app, document, {
+    swagger_1.SwaggerModule.setup('api/docs', app, document, {
         swaggerOptions: {
             persistAuthorization: true,
             tagsSorter: 'alpha',

@@ -7,7 +7,7 @@ import button_1 from '@/components/ui/button';
 import textarea_1 from '@/components/ui/textarea';
 import card_1 from '@/components/ui/card';
 import lucide_react_1 from 'lucide-react';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function MultiModalInteraction() {
     const [input, setInput] = (0, react_1.useState)('');
     const [isRecording, setIsRecording] = (0, react_1.useState)(false);

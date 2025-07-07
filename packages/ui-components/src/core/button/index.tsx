@@ -1,9 +1,9 @@
 import React from "react";
-import { cn } from '../../utils/cn.tsx'; // Updated import path with file extension
+import { cn } from '../../utils/cn'; // Updated import path with file extension
 
 // Define ButtonProps with expected properties
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'default' | 'primary' | 'secondary' | 'ghost' | 'outline';
+  variant?: 'default' | 'primary' | 'secondary' | 'ghost' | 'outline' | 'destructive';
   size?: 'default' | 'sm' | 'lg';
   isLoading?: boolean;
   startIcon?: React.ReactNode;

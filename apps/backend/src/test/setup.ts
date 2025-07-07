@@ -1,9 +1,9 @@
 import { Container } from 'inversify';
 import { Connection } from 'typeorm';
-// import { DatabaseService } from '@the-new-fuse/core/database';
-// import { ConfigService } from '@the-new-fuse/core/config';
-// import { TYPES } from '@the-new-fuse/core/di/types';
-import { createTestContainer } from './test-container.js';
+import { DatabaseService } from '@the-new-fuse/core/database';
+import { ConfigService } from '@the-new-fuse/core/config';
+import { TYPES } from '@the-new-fuse/core/di/types';
+import { createTestContainer } from './test-container';
 
 let container: Container;
 let connection: Connection;

@@ -1,4 +1,4 @@
-import { AgentCapability, AgentRole, AgentStatus } from './agent-types.d.js';
+import { AgentCapability, AgentRole, AgentStatus } from './agent-types.d';
 
 export interface Agent {
     id: string;

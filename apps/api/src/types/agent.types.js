@@ -1,11 +1,14 @@
-export var AgentStatus;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentCapability = exports.AgentStatus = void 0;
+var AgentStatus;
 (function (AgentStatus) {
     AgentStatus["IDLE"] = "idle";
     AgentStatus["BUSY"] = "busy";
     AgentStatus["ERROR"] = "error";
     AgentStatus["OFFLINE"] = "offline";
-})(AgentStatus || (AgentStatus = {}));
-export var AgentCapability;
+})(AgentStatus || (exports.AgentStatus = AgentStatus = {}));
+var AgentCapability;
 (function (AgentCapability) {
     AgentCapability["CHAT"] = "chat";
     AgentCapability["WORKFLOW"] = "workflow";
@@ -13,4 +16,4 @@ export var AgentCapability;
     AgentCapability["CODE"] = "code";
     AgentCapability["ANALYSIS"] = "analysis";
     AgentCapability["INTEGRATION"] = "integration";
-})(AgentCapability || (AgentCapability = {}));
+})(AgentCapability || (exports.AgentCapability = AgentCapability = {}));

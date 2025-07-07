@@ -16,7 +16,7 @@ import {
 } from "@phosphor-icons/react";
 import System from "@/models/system";
 import paths from "@/utils/paths";
-import SettingsButton from '../SettingsButton.js';
+import SettingsButton from '../SettingsButton';
 
 export const MAX_ICONS = 3;
 

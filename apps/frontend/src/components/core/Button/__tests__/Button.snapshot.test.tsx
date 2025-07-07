@@ -1,6 +1,6 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Button } from '../Button.js';
+import { Button } from '../Button';
 
 describe('Button Snapshots', () => {
   it('renders default button correctly', () => {

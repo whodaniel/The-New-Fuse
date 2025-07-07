@@ -4,6 +4,7 @@
  * This controller acts as a bridge between external services and the core agency hub
  */
 
+import * as crypto from 'crypto';
 import {
   Controller,
   Get,
@@ -26,27 +27,33 @@ import {
   ApiQuery,
 } from '@nestjs/swagger';
 
-// Import from core packages
-import { EnhancedAgencyService } from './packages/core/src/services/enhanced-agency.service';
-import { AgentSwarmOrchestrationService } from './agent-swarm-orchestration.service';
+// Import from core packages using workspace aliases (recommended for monorepos)
+import { EnhancedAgencyService } from '@the-new-fuse/core/services/enhanced-agency.service';
+import { AgentSwarmOrchestrationService } from './agent-swarm-orchestration.service'; // Assuming this is a local service
 
-export interface SimpleAgencyRequest {
-  name: string;
-  subdomain: string;
-  adminEmail: string;
-  adminName: string;
-  enableSwarmOrchestration?: boolean;
-}
+// Import DTOs and interfaces from the dedicated DTO file
+import {
+  CreateAgencyDto,
+  AgencyStatusResponseDto,
+  StandardResponseDto,
+  ToggleSwarmDto,
+} from './agency.dto';
 
-export interface AgencyStatusResponse {
+// These interfaces should ideally be in agency.dto.ts
+interface AgencyCreationData {
   id: string;
   name: string;
   subdomain: string;
-  status: 'active' | 'inactive' | 'suspended';
   swarmEnabled: boolean;
-  activeAgents: number;
-  lastActivity: Date;
+  status: 'active';
 }
+
+interface AgencyMetricsData {
+  swarmStatus: any; // TODO: Define a specific type for swarmStatus
+  executionMetrics: any; // TODO: Define a specific type for executionMetrics
+  timestamp: Date;
+}
+
 
 @ApiTags('Agency Management')
 @Controller('agency')
@@ -68,7 +75,9 @@ export class AgencyController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'Subdomain already exists' })
   @HttpCode(HttpStatus.CREATED)
-  async createAgency(@Body() createAgencyDto: SimpleAgencyRequest) {
+  async createAgency(
+    @Body() createAgencyDto: CreateAgencyDto,
+  ): Promise<StandardResponseDto<AgencyCreationData>> {
     this.logger.log(`Creating new agency: ${createAgencyDto.name}`);
     
     try {
@@ -112,21 +121,26 @@ export class AgencyController {
   @ApiOperation({ summary: 'Get agency status' })
   @ApiParam({ name: 'agencyId', description: 'Agency ID' })
   @ApiResponse({ status: 200, description: 'Agency status retrieved' })
-  @ApiResponse({ status: 404, description: 'Agency not found' })
-  async getAgencyStatus(@Param('agencyId') agencyId: string): Promise<AgencyStatusResponse> {
+  @ApiResponse({ status: 404, description: 'Agency not found' }) // Use AgencyStatusResponseDto for consistency
+  async getAgencyStatus(
+    @Param('agencyId') agencyId: string,
+  ): Promise<StandardResponseDto<AgencyStatusResponseDto>> {
     this.logger.log(`Retrieving agency status: ${agencyId}`);
     
     const agency = await this.enhancedAgencyService.getAgencyById(agencyId);
     const swarmStatus = await this.swarmOrchestrationService.getSwarmStatus(agencyId);
     
     return {
-      id: agency.id,
-      name: agency.name,
-      subdomain: agency.subdomain,
-      status: agency.status as 'active' | 'inactive' | 'suspended',
-      swarmEnabled: swarmStatus.isSwarmEnabled,
-      activeAgents: swarmStatus.activeProviders,
-      lastActivity: new Date() // This should come from actual activity tracking
+      success: true,
+      data: {
+        id: agency.id,
+        name: agency.name,
+        subdomain: agency.subdomain,
+        status: agency.status as 'active' | 'inactive' | 'suspended',
+        swarmEnabled: swarmStatus.isSwarmEnabled,
+        activeAgents: swarmStatus.activeProviders,
+        lastActivity: new Date(), // This should come from actual activity tracking
+      },
     };
   }
 
@@ -136,41 +150,49 @@ export class AgencyController {
   @Get()
   @ApiOperation({ summary: 'List all agencies' })
   @ApiQuery({ name: 'page', required: false, type: Number })
-  @ApiQuery({ name: 'limit', required: false, type: Number })
-  @ApiResponse({ status: 200, description: 'Agencies retrieved successfully' })
+  @ApiQuery({ name: 'limit', required: false, type: Number }) // Use AgencyListQueryDto for consistency
   async listAgencies(
     @Query('page') page = 1,
     @Query('limit') limit = 20
-  ) {
-    this.logger.log('Retrieving agencies list');
+  ): Promise<StandardResponseDto<{ items: (AgencyStatusResponseDto | null)[], pagination: object }>> {
+    this.logger.log(`Retrieving agencies list, page: ${page}, limit: ${limit}`);
     
-    const agencies = await this.enhancedAgencyService.getAllAgencies({
+    // Assuming the service returns data and a total count for proper pagination
+    const { data: agencies, total } = await this.enhancedAgencyService.getAllAgencies({
       page,
       limit
     });
 
-    const agencyStatuses = await Promise.all(
+    const agencyStatuses: AgencyStatusResponseDto[] = await Promise.all(
       agencies.map(async (agency) => {
-        const swarmStatus = await this.swarmOrchestrationService.getSwarmStatus(agency.id);
-        return {
-          id: agency.id,
-          name: agency.name,
-          subdomain: agency.subdomain,
-          status: agency.status,
-          swarmEnabled: swarmStatus.isSwarmEnabled,
-          activeAgents: swarmStatus.activeProviders
-        };
+        try {
+          const swarmStatus = await this.swarmOrchestrationService.getSwarmStatus(agency.id);
+          return {
+            id: agency.id,
+            name: agency.name,
+            subdomain: agency.subdomain,
+            status: agency.status as 'active' | 'inactive' | 'suspended',
+            swarmEnabled: swarmStatus.isSwarmEnabled,
+            activeAgents: swarmStatus.activeProviders,
+          };
+        } catch (error) {
+            this.logger.error(`Failed to get swarm status for agency ${agency.id}`, error.stack);
+            // Return a default state or null if one agency fails, to not fail the whole list
+            return null;
+        }
       })
     );
 
     return {
       success: true,
-      data: agencyStatuses,
-      pagination: {
-        page,
-        limit,
-        total: agencies.length
-      }
+      data: {
+        items: agencyStatuses.filter(Boolean), // Filter out any nulls from failed lookups
+        pagination: {
+          page,
+          limit,
+          total: total,
+        },
+      },
     };
   }
 
@@ -183,8 +205,8 @@ export class AgencyController {
   @ApiResponse({ status: 200, description: 'Swarm configuration updated' })
   async toggleSwarmOrchestration(
     @Param('agencyId') agencyId: string,
-    @Body() body: { enabled: boolean }
-  ) {
+    @Body() body: ToggleSwarmDto
+  ): Promise<StandardResponseDto<null>> {
     this.logger.log(`Toggling swarm orchestration for agency: ${agencyId}, enabled: ${body.enabled}`);
     
     if (body.enabled) {
@@ -195,7 +217,8 @@ export class AgencyController {
 
     return {
       success: true,
-      message: `Swarm orchestration ${body.enabled ? 'enabled' : 'disabled'} for agency`
+      message: `Swarm orchestration ${body.enabled ? 'enabled' : 'disabled'} for agency`,
+      data: null
     };
   }
 
@@ -206,7 +229,7 @@ export class AgencyController {
   @ApiOperation({ summary: 'Get agency swarm metrics' })
   @ApiParam({ name: 'agencyId', description: 'Agency ID' })
   @ApiResponse({ status: 200, description: 'Metrics retrieved successfully' })
-  async getAgencyMetrics(@Param('agencyId') agencyId: string) {
+  async getAgencyMetrics(@Param('agencyId') agencyId: string): Promise<StandardResponseDto<AgencyMetricsData>> {
     this.logger.log(`Retrieving metrics for agency: ${agencyId}`);
     
     const swarmStatus = await this.swarmOrchestrationService.getSwarmStatus(agencyId);
@@ -229,7 +252,7 @@ export class AgencyController {
   @ApiOperation({ summary: 'Delete an agency' })
   @ApiParam({ name: 'agencyId', description: 'Agency ID' })
   @ApiResponse({ status: 200, description: 'Agency deleted successfully' })
-  async deleteAgency(@Param('agencyId') agencyId: string) {
+  async deleteAgency(@Param('agencyId') agencyId: string): Promise<StandardResponseDto<null>> {
     this.logger.log(`Deleting agency: ${agencyId}`);
     
     // Disable swarm first
@@ -240,7 +263,8 @@ export class AgencyController {
     
     return {
       success: true,
-      message: 'Agency deleted successfully'
+      message: 'Agency deleted successfully',
+      data: null
     };
   }
 
@@ -249,6 +273,7 @@ export class AgencyController {
    * In production, this should be replaced with a more secure method
    */
   private generateTemporaryPassword(): string {
-    return Math.random().toString(36).slice(-12) + Math.random().toString(36).slice(-12);
+    // Use Node.js crypto for generating a secure random string, which is much more secure.
+    return crypto.randomBytes(16).toString('hex');
   }
 }

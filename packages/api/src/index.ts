@@ -3,13 +3,13 @@
  */
 
 // Export API types and interfaces
-export * from './types.js';
+export * from './types';
 
 // Export API services
-export * from './services.js';
+export * from './services';
 
 // Export API utilities
-export * from './utils.js';
+export * from './utils';
 
 // Export API constants
-export * from './constants.js';
+export * from './constants';

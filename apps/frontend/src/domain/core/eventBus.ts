@@ -1,4 +1,4 @@
-import { LoggingService } from '../../services/logging.js';
+import { LoggingService } from '../../services/logging';
 export class EventBus extends EventEmitter {
     constructor() {
         super();

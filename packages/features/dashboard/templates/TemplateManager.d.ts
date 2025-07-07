@@ -1,4 +1,4 @@
-import { DashboardState } from '../collaboration/types.tsx';
+import { DashboardState } from '../collaboration/types';
 import { DatabaseService } from '@the-new-fuse/database';
 export interface Template {
     id: string;

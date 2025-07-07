@@ -1,5 +1,9 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FULLSTACK_PROJECT_SETUP_TEMPLATE = exports.SENIOR_CODE_REVIEWER_TEMPLATE = exports.ClaudeDevTemplateUtils = exports.ClaudeDevTemplateRegistry = void 0;
 // Template Registry
-export class ClaudeDevTemplateRegistry {
+class ClaudeDevTemplateRegistry {
+    static templates = new Map();
     static registerTemplate(template) {
         this.templates.set(template.id, template);
     }
@@ -16,7 +20,7 @@ export class ClaudeDevTemplateRegistry {
         return Array.from(this.templates.values()).filter(t => t.tags.includes(tag));
     }
 }
-ClaudeDevTemplateRegistry.templates = new Map();
+exports.ClaudeDevTemplateRegistry = ClaudeDevTemplateRegistry;
 // 1. Senior Code Reviewer Template
 const SENIOR_CODE_REVIEWER_TEMPLATE = {
     id: 'senior-code-reviewer',
@@ -204,6 +208,7 @@ Team experience level: {{teamLevel}}`,
         },
     ],
 };
+exports.SENIOR_CODE_REVIEWER_TEMPLATE = SENIOR_CODE_REVIEWER_TEMPLATE;
 // 2. Full-Stack Project Setup Template
 const FULLSTACK_PROJECT_SETUP_TEMPLATE = {
     id: 'fullstack-project-setup',
@@ -388,8 +393,9 @@ Create migration plan and setup tools.`,
         },
     ],
 };
+exports.FULLSTACK_PROJECT_SETUP_TEMPLATE = FULLSTACK_PROJECT_SETUP_TEMPLATE;
 // Export templates registry and utility functions
-export class ClaudeDevTemplateUtils {
+class ClaudeDevTemplateUtils {
     static createAgentFromTemplate(templateId, customizations) {
         const template = ClaudeDevTemplateRegistry.getTemplate(templateId);
         if (!template) {
@@ -481,8 +487,7 @@ ${workflow.steps.map(step => `1. **${step.name}** (${step.type}): ${step.descrip
     `.trim();
     }
 }
+exports.ClaudeDevTemplateUtils = ClaudeDevTemplateUtils;
 // Initialize templates on module load
 ClaudeDevTemplateRegistry.registerTemplate(SENIOR_CODE_REVIEWER_TEMPLATE);
 ClaudeDevTemplateRegistry.registerTemplate(FULLSTACK_PROJECT_SETUP_TEMPLATE);
-// Export all templates and utilities
-export { SENIOR_CODE_REVIEWER_TEMPLATE, FULLSTACK_PROJECT_SETUP_TEMPLATE, };

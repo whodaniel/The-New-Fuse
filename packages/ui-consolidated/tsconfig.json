@@ -26,7 +26,7 @@
       "@the-new-fuse/types": ["../types/src"]
     }
   },
-  "include": ["src"],
+  "include": ["src/**/*"],
   "references": [
     { "path": "./tsconfig.node.json" },
     { "path": "../api-client" },

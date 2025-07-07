@@ -1,20 +1,25 @@
-import { Redis } from 'ioredis';
-import { TraeMonitor } from '../services/agent/trae-monitor.js';
-import { Logger } from '@nestjs/common';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const ioredis_1 = require("ioredis");
+const trae_monitor_1 = require("../services/agent/trae-monitor");
+const common_1 = require("@nestjs/common");
 class TraeAgentClient {
+    logger = new common_1.Logger(TraeAgentClient.name);
+    redis;
+    subscriber;
+    monitor;
+    isConnected = false;
+    channels = {
+        primary: 'agent:trae',
+        broadcast: 'agent:broadcast',
+        augment: 'agent:augment',
+        heartbeat: 'agent:heartbeat'
+    };
     constructor() {
-        this.logger = new Logger(TraeAgentClient.name);
-        this.isConnected = false;
-        this.channels = {
-            primary: 'agent:trae',
-            broadcast: 'agent:broadcast',
-            augment: 'agent:augment',
-            heartbeat: 'agent:heartbeat'
-        };
         const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
-        this.redis = new Redis(redisUrl);
-        this.subscriber = new Redis(redisUrl);
-        this.monitor = new TraeMonitor();
+        this.redis = new ioredis_1.Redis(redisUrl);
+        this.subscriber = new ioredis_1.Redis(redisUrl);
+        this.monitor = new trae_monitor_1.TraeMonitor();
         this.setupEventHandlers();
         this.initialize();
     }
@@ -190,7 +195,7 @@ async function main() {
     });
 }
 // Run the main function
-main().catch(error => {
+main().catch((error) => {
     console.error('Fatal error:', error);
     process.exit(1);
 });

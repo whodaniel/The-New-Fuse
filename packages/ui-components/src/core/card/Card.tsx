@@ -1,6 +1,6 @@
 import React from 'react';
-import { cn } from '@/utils/cn';
-interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+import { cn } from '../../utils/cn';
+interface CardProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'title'> {
   title?: React.ReactNode;
   header?: React.ReactNode;
   footer?: React.ReactNode;

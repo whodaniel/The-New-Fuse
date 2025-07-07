@@ -2,7 +2,7 @@
   "mcpServers": {
     "the-new-fuse-main": {
       "command": "node",
-      "args": ["/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/dist/mcp/server.js"],
+      "args": ["--loader", "tsx/esm", "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/server.ts"],
       "env": {
         "NODE_ENV": "development",
         "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/fuse",
@@ -13,7 +13,7 @@
     },
     "the-new-fuse-remote": {
       "command": "node", 
-      "args": ["/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/dist/mcp/server.js", "--remote", "--port=3001"],
+      "args": ["--loader", "tsx/esm", "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/mcp/server.ts", "--remote", "--port=3001"],
       "env": {
         "NODE_ENV": "development"
       },

@@ -2,7 +2,7 @@
  * Data Transfer Objects (DTOs) for API requests and responses
  */
 
-import { AgentCapability, AgentRole, AgentStatus } from './enums.js';
+import { AgentCapability, AgentRole, AgentStatus } from './enums';
 
 // Agent DTOs
 export interface CreateAgentDto {

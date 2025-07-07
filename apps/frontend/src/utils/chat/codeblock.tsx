@@ -1,4 +1,4 @@
-import { detectLanguage, highlightCode } from './highlight.tsx';
+import { detectLanguage, highlightCode } from './highlight';
 
 interface CodeBlock {
   language: string;

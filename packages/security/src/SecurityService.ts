@@ -15,16 +15,24 @@ export class SecurityService {
   ) {}
 
   async encrypt(data: string): Promise<{ encrypted: Buffer; iv: Buffer; tag: Buffer; salt?: Buffer }> {
-    const { encryptedData, iv, authTag } = await this.encryption.encrypt(data, Buffer.from(process.env.ENCRYPTION_KEY || ''));
+    const encryptedString = await this.encryption.encrypt(data, Buffer.from(process.env.ENCRYPTION_KEY || ''));
+    // Parse the "iv:tag:encryptedData" format
+    const parts = encryptedString.split(':');
+    const iv = Buffer.from(parts[0], 'hex');
+    const tag = Buffer.from(parts[1], 'hex');
+    const encryptedData = Buffer.from(parts[2], 'hex');
+    
     return {
       encrypted: encryptedData,
       iv,
-      tag: authTag
+      tag
     };
   }
 
-  async decrypt(encryptedData: Buffer, iv: Buffer, tag: Buffer, salt?: Buffer): Promise<string> {
-    return this.encryption.decrypt(encryptedData, Buffer.from(process.env.ENCRYPTION_KEY || ''), iv, tag);
+  async decrypt(encryptedData: Buffer, iv: Buffer, tag: Buffer, _salt?: Buffer): Promise<string> {
+    // Reconstruct the "iv:tag:encryptedData" format
+    const encryptedString = `${iv.toString('hex')}:${tag.toString('hex')}:${encryptedData.toString('hex')}`;
+    return this.encryption.decrypt(encryptedString, Buffer.from(process.env.ENCRYPTION_KEY || ''));
   }
 
   async checkRateLimit(req: Request): Promise<boolean> {

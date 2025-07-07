@@ -1,4 +1,4 @@
-import { RedisService } from './redis.service.js';
+import { RedisService } from './redis.service';
 export declare class AgentCommunicationService {
     private readonly redis;
     constructor(redis: RedisService);

@@ -1,5 +1,5 @@
 import { forwardRef } from "react";
-import { cn } from '../../utils/index.js';
+import { cn } from '../../utils/index';
 
 // Fix the Input interface to correctly handle the size property
 export interface InputProps {

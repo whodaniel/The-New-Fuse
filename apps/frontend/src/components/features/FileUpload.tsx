@@ -2,9 +2,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileUpload = void 0;
 import react_1 from 'react';
 import react_dropzone_1 from 'react-dropzone';
-import Button_1 from '../../../core/Button.js';
+import Button_1 from '../../../core/Button';
 import react_hot_toast_1 from 'react-hot-toast';
-import websocket_1 from '../../../../services/websocket.js';
+import websocket_1 from '../../../../services/websocket';
 const FileUpload = ({ onUploadComplete, disabled }) => {
     const onDrop = (0, react_1.useCallback)(async (acceptedFiles) => {
         try {

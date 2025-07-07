@@ -4,8 +4,8 @@ import react_1 from 'react';
 import icons_material_1 from '@mui/icons-material';
 import use_debounce_1 from 'use-debounce';
 import axios_1 from 'axios';
-import ui_1 from '../../shared/components/ui.js';
-import ui_2 from '../../shared/components/ui.js';
+import ui_1 from '../../shared/components/ui';
+import ui_2 from '../../shared/components/ui';
 const MessageSearch = () => {
     const [searchTerm, setSearchTerm] = (0, react_1.useState)('');
     const [searchResults, setSearchResults] = (0, react_1.useState)([]);

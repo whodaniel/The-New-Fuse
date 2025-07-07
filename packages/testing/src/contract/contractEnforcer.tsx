@@ -1,6 +1,7 @@
 import { Type } from '@nestjs/common';
 import { SchemaValidator } from './schemaValidator';
-import { ProtocolType } from '@the-new-fuse/core';
+// Define ProtocolType locally since core package has issues
+type ProtocolType = 'http' | 'websocket' | 'mcp' | 'grpc';
 import { SecurityScheme } from '@the-new-fuse/types';
 
 export interface ContractDefinition<T = any> { // Added default type for T
@@ -57,7 +58,7 @@ export class ContractEnforcer {
 
     return `
 import { Test } from '@nestjs/testing';
-import { ${contract.requestSchema.name}, ${contract.responseSchema.name} } from './types.js';
+import { ${contract.requestSchema.name}, ${contract.responseSchema.name} } from './types';
 import { SchemaValidator } from './schemaValidator';
 
 describe('${contractName} Contract Tests', () => {

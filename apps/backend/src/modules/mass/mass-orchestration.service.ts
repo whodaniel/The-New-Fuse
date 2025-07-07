@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../lib/prisma/prisma.service.js';
+import { PrismaService } from '../lib/prisma/prisma.service';
 import { 
   MassOptimizationConfig, 
   TopologyOptimizationConfig, 
@@ -7,9 +7,9 @@ import {
   WorkflowTopology,
   AgentPromptVersion 
 } from '@the-new-fuse/types';
-import { PromptOptimizerService } from './prompt-optimizer.service.js';
-import { TopologyOptimizerService } from './topology-optimizer.service.js';
-import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service.js';
+import { PromptOptimizerService } from './prompt-optimizer.service';
+import { TopologyOptimizerService } from './topology-optimizer.service';
+import { WorkflowPromptOptimizerService } from './workflow-prompt-optimizer.service';
 
 @Injectable()
 export class MassOrchestrationService {

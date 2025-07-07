@@ -1,13 +1,20 @@
-import { EventEmitter } from 'events';
-import { Redis } from 'ioredis';
-export class EnhancedAgent extends EventEmitter {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.EnhancedAgent = void 0;
+const events_1 = require("events");
+const ioredis_1 = require("ioredis");
+class EnhancedAgent extends events_1.EventEmitter {
+    name;
+    redisUrl;
+    pubClient;
+    subClient;
+    channels = [];
     constructor(name, redisUrl) {
         super();
         this.name = name;
         this.redisUrl = redisUrl;
-        this.channels = [];
-        this.pubClient = new Redis(redisUrl);
-        this.subClient = new Redis(redisUrl);
+        this.pubClient = new ioredis_1.Redis(redisUrl);
+        this.subClient = new ioredis_1.Redis(redisUrl);
     }
     async initialize() {
         try {
@@ -51,3 +58,4 @@ export class EnhancedAgent extends EventEmitter {
         }
     }
 }
+exports.EnhancedAgent = EnhancedAgent;

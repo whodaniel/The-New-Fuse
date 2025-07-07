@@ -1,7 +1,7 @@
 import * as jwt from 'jsonwebtoken';
 import { Request } from 'express';
-import { PrismaService } from '../prisma.service.js';
-import { HashingService } from './hashing.service.js';
+import { PrismaService } from '../prisma.service';
+import { HashingService } from './hashing.service';
 
 export interface User {
   id: string;
@@ -12,6 +12,23 @@ export interface User {
 export interface Permission {
   id: string;
   name: string;
+}
+
+// Extended types for Prisma queries
+interface UserWithPermissions {
+  id: string;
+  email: string;
+  name: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  passwordHash: string;
+  role: any;
+  userPermissions: Array<{
+    permission: {
+      id: string;
+      name: string;
+    };
+  }>;
 }
 
 export class AuthService {
@@ -34,14 +51,30 @@ export class AuthService {
       
       const user = await this.prisma.user.findUnique({
         where: { id: decoded.userId },
-        include: { permissions: true }
-      });
+        include: { 
+          userPermissions: { 
+            include: { 
+              permission: true 
+            } 
+          } 
+        } as any
+      }) as UserWithPermissions | null;
       
       if (!user) return false;
       
-      (req as any).user = user;
+      // Transform user data to match the expected User interface
+      const transformedUser: User = {
+        id: user.id,
+        email: user.email,
+        permissions: user.userPermissions.map((up: any) => ({
+          id: up.permission.id,
+          name: up.permission.name
+        }))
+      };
+      
+      (req as any).user = transformedUser;
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }

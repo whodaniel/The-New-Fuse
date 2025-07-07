@@ -4,10 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod): any {
 };
 export {}
 const openai_1 = __importDefault(require("openai"));
-import ai_provider_1 from './ai-provider.js';
-import classes_1 from './helpers/classes.js';
-import untooled_1 from './helpers/untooled.js';
-import index_1 from '../../../http/index.js';
+import ai_provider_1 from './ai-provider';
+import classes_1 from './helpers/classes';
+import untooled_1 from './helpers/untooled';
+import index_1 from '../../../http/index';
 class DeepSeekProvider extends (0, classes_1.InheritMultiple)([ai_provider_1.Provider, untooled_1.UnTooled]) {
     constructor(config = {}) {
         super();

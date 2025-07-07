@@ -90,7 +90,7 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
       this.subscriber = new (Redis as any)(redisUrl);
       
       this.logger.log('Connected to Redis');
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Failed to connect to Redis: ${(error as Error).message}`);
       throw error;
     }
@@ -107,7 +107,7 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
       ]);
       
       this.logger.log('Disconnected from Redis');
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Failed to disconnect from Redis: ${(error as Error).message}`);
     }
   }
@@ -142,7 +142,7 @@ export class MCPBrokerService implements OnModuleInit, OnModuleDestroy {
       });
       
       this.logger.log('Redis subscriptions set up');
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Failed to set up Redis subscriptions: ${(error as Error).message}`);
       throw error;
     }

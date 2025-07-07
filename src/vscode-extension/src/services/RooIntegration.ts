@@ -66,7 +66,7 @@ export class RooIntegration {
                     try {
                         const message = JSON.parse(data.toString());
                         this.handleIncomingWebSocketMessage(message);
-                    } catch (error: unknown) {
+                    } catch (error) {
                         this.outputChannel.appendLine(`Failed to parse WebSocket message: ${error}`);
                     }
                 });

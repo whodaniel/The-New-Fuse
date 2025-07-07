@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ChatService } from './chat.service.js';
-import { ChatController } from './chat.controller.js';
-import { PrismaModule } from '../prisma/prisma.module.js';
-import { RedisService } from '../services/redis.service.js';
+import { ChatService } from './chat.service';
+import { ChatController } from './chat.controller';
+import { PrismaModule } from '../prisma/prisma.module';
+import { RedisService } from '../services/redis.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Message } from '../entities/message.entity';
 

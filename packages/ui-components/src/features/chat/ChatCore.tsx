@@ -1,8 +1,8 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
-import { Button, Icon, Input, ErrorBoundary } from '../../shared/ui/index.js'; // Added .js extension assuming index file
-import { Message } from './types.js'; // Assuming types are defined locally
-import { ChatInput } from './ChatInput.js'; // Assuming ChatInput component exists
-import { MessageList } from './MessageList.js'; // Assuming MessageList component exists
+import { Button, Icon, Input, ErrorBoundary } from '../../shared/ui/index';
+import { Message, ChatParticipant } from './types';
+import { ChatInput } from './ChatInput';
+import { MessageList } from './MessageList';
 
 // ChatControls component with shared UI components
 interface ChatControlsProps {
@@ -89,7 +89,7 @@ const useMessageHandler = ({
 
 export interface ChatCoreProps {
   initialMessages?: Message[];
-  participants?: string[];
+  participants?: ChatParticipant[];
   threadId?: string;
   enableVoice?: boolean;
   enableVideo?: boolean;

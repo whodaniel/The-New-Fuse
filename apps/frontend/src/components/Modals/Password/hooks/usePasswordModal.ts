@@ -1,4 +1,4 @@
-import System from '../../../../models/system.js';
+import System from '../../../../models/system';
 export function usePasswordModal(isNewToken = false): any {
     const [loading, setLoading] = useState(true);
     const [requiresAuth, setRequiresAuth] = useState(true);

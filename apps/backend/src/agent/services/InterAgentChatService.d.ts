@@ -1,9 +1,9 @@
 import { OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { RedisService } from './RedisService.js';
-import { AlertService } from './AlertService.js';
-import { MonitoringService } from './MonitoringService.js';
+import { RedisService } from './RedisService';
+import { AlertService } from './AlertService';
+import { MonitoringService } from './MonitoringService';
 export declare class InterAgentChatService implements OnModuleInit {
     private readonly configService;
     private readonly redisService;

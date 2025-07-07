@@ -1,7 +1,7 @@
 export {}
 exports.useFlowMemory = void 0;
 import react_1 from 'react';
-import useFlowRouter_1 from './useFlowRouter.tsx';
+import useFlowRouter_1 from './useFlowRouter';
 const useFlowMemory = (memoryManager): any => {
     const { currentNode, navigateToNode } = (0, useFlowRouter_1.useFlowRouter)();
     const saveNodeMemory = (0, react_1.useCallback)(async (node) => {

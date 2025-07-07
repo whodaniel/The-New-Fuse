@@ -4,9 +4,9 @@
  */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from './prisma.service.js';
+import { PrismaService } from './prisma.service';
 import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
-import { toError } from '../utils/error.js'; // Import the helper
+import { toError } from '../utils/error'; // Import the helper
 
 @Injectable()
 export class HealthService extends HealthIndicator {
@@ -22,7 +22,7 @@ export class HealthService extends HealthIndicator {
       await this.prisma.$queryRaw`SELECT 1`;
       this.logger.log('Database health check successful');
       return this.getStatus(key, true);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error('Database health check failed', err.stack); // Use err.stack
       throw new HealthCheckError(

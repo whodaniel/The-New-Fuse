@@ -1,4 +1,4 @@
-import { Priority } from './core/enums.js';
+import { Priority } from './core/enums';
 
 export enum MessageType {
   COMMAND = 'COMMAND',

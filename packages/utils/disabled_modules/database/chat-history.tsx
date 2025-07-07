@@ -1,6 +1,6 @@
 
 export {}
-import workspaceChats_1 from '../../../../models/workspaceChats.js';
+import workspaceChats_1 from '../../../../models/workspaceChats';
 /**
  * Plugin to save chat history to AnythingLLM DB.
  */

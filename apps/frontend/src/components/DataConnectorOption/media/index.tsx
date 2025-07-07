@@ -1,8 +1,8 @@
-import Github from './github.svg.js';
-import Gitlab from './gitlab.svg.js';
-import YouTube from './youtube.svg.js';
-import Link from './link.svg.js';
-import Confluence from './confluence.jpeg.js';
+import Github from './github.svg';
+import Gitlab from './gitlab.svg';
+import YouTube from './youtube.svg';
+import Link from './link.svg';
+import Confluence from './confluence.jpeg';
 
 const ConnectorImages = {
   github: Github,

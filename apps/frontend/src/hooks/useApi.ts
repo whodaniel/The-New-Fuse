@@ -6,8 +6,8 @@ import {
   createAgentService,
   createWorkflowService
 } from '@the-new-fuse/api-client';
-import { useAuth } from './useAuth.tsx';
-import { useToast } from './useToast.js';
+import { useAuth } from './useAuth';
+import { useToast } from './useToast';
 
 /**
  * Hook for accessing API services

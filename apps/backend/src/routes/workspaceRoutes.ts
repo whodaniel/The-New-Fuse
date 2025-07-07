@@ -1,15 +1,9 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Response, NextFunction } from 'express';
+import { AuthenticatedRequest } from '../types/auth';
 
 const router = express.Router();
 
 // Workspace routes that align with frontend expectations
-interface AuthenticatedRequest extends Request {
-  user?: {
-    id: string;
-    email?: string;
-    name?: string;
-  };
-}
 
 function ensureAuthenticated(req: AuthenticatedRequest, res: Response, next: NextFunction): void {
   const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== 'false';

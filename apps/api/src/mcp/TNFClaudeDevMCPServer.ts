@@ -324,7 +324,7 @@ export class TNFClaudeDevMCPServer {
         }
       };
 
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error(`Tool call failed for ${name}:`, error);
       return {
         id: request.id,

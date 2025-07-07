@@ -1,8 +1,10 @@
 import { Subject, BehaviorSubject } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
 import { useA2ACommunication } from '@/hooks';
-import { workflowDatabaseService } from './WorkflowDatabaseService.js';
-import { webSocketService } from './WebSocketService.js';
+import { workflowDatabaseService } from './WorkflowDatabaseService';
+import { WebSocketService } from './WebSocketService';
+
+const webSocketService = WebSocketService.getInstance();
 
 export interface ExecutionUpdate {
   executionId: string;

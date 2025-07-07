@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 import react_1 from 'react';
-import useRedisClient_1 from '../../hooks/useRedisClient.js';
-import ChatMessage_1 from '../../components/ChatMessage.js';
-import ChatInput_1 from '../../components/ChatInput.js';
+import useRedisClient_1 from '../../hooks/useRedisClient';
+import ChatMessage_1 from '../../components/ChatMessage';
+import ChatInput_1 from '../../components/ChatInput';
 const WorkspaceChat = () => {
     const [messages, setMessages] = (0, react_1.useState)([]);
     const { subscribe, publish, getClient } = (0, useRedisClient_1.useRedisClient)();

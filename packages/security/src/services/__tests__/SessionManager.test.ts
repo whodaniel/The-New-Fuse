@@ -1,5 +1,5 @@
-import { DefaultSessionManager } from '../SessionManager.js';
-import { AuthUser } from '../../types/auth.js';
+import { DefaultSessionManager } from '../SessionManager';
+import { AuthUser } from '../../types/auth';
 
 describe('SessionManager', () => {
   let sessionManager: DefaultSessionManager;

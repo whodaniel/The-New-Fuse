@@ -2,7 +2,7 @@
 export {}
 exports.WizardInterface = WizardInterface;
 import react_1 from 'react';
-import WizardProvider_1 from './WizardProvider.tsx';
+import WizardProvider_1 from './WizardProvider';
 import material_1 from '@mui/material';
 const steps = [
     {

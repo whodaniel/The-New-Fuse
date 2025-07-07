@@ -4,14 +4,14 @@
  */
 
 // Export core components
-export * from './core/button/index.tsx';
-export * from './core/card/index.tsx';
-export * from './core/input/index.tsx';
-export * from './core/progress.tsx';
-export * from './core/badge.tsx';
-export * from './core/dialog/index.tsx';
-export * from './core/select/index.tsx';
-export * from './core/switch/index.tsx';
+export * from './core/button/index';
+export * from './core/card/index';
+export * from './core/input/index';
+export * from './core/progress';
+export * from './core/badge';
+export * from './core/dialog/index';
+export * from './core/select/index';
+export * from './core/switch/index';
 // Toast components and hooks
 export {
   Toast,
@@ -20,21 +20,21 @@ export {
   Toaster,
   useToast,
   toast
-} from './core/toast/index.tsx';
-export * from './core/label.tsx';
-export * from './core/checkbox.tsx';
+} from './core/toast/index';
+export * from './core/label';
+export * from './core/checkbox';
 
 // Export layout components
-export * from './layout/BaseLayout.js';
-export * from './layout/Navigation.js';
+export * from './layout/BaseLayout/index';
+export * from './layout/Navigation/index';
 
 // Export feature components
-export * from './features/workflow/components/WorkflowEditor.tsx';
-export * from './features/workflow/components/WorkflowVisualizer.tsx';
-export * from './features/workflow/components/WorkflowError.tsx';
+export * from './features/workflow/components/WorkflowEditor';
+export * from './features/workflow/components/WorkflowVisualizer';
+export * from './features/workflow/components/WorkflowError';
 
 // Export utilities
-export { cn, default as classNames } from './utils/cn.tsx';
+export { cn, default as classNames } from './utils/cn';
 
 // Export types
 export type {
@@ -48,7 +48,7 @@ export type {
   ToastVariant,
   ToasterToast,
   ToastActionType
-} from './core/types.tsx';
+} from './core/types';
 
 // Export workflow types
 export type {
@@ -59,4 +59,4 @@ export type {
   WorkflowError as WorkflowErrorType,
   WorkflowExecution,
   WorkflowMetrics
-} from './features/workflow/types.tsx';
+} from './features/workflow/types';

@@ -1,0 +1,62 @@
+/* Overlay for element selection mode */
+#tnf-selection-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 122, 255, 0.1);
+    z-index: 999999998;
+    cursor: crosshair;
+}
+
+/* Highlight for the element currently being hovered over */
+.tnf-element-highlight {
+    outline: 2px dashed #007aff !important;
+    background-color: rgba(0, 122, 255, 0.2) !important;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.3);
+    position: relative;
+    z-index: 999999999;
+    cursor: pointer;
+}
+
+/* Notification banner for selection mode */
+#tnf-selection-banner {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #007aff;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 999999999;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* Auto-detection indicator */
+.tnf-auto-detected {
+    outline: 2px solid #2ecc71 !important;
+    background-color: rgba(46, 204, 113, 0.1) !important;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

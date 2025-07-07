@@ -1,6 +1,6 @@
-import { Department } from './departments.js';
-import { AgentAction } from './agent_action.js';
-import { APIModel } from './api_model.js';
+import { Department } from './departments';
+import { AgentAction } from './agent_action';
+import { APIModel } from './api_model';
 export declare enum AgentType {
     HUMAN = "human",
     AI = "ai"
@@ -19,18 +19,18 @@ export declare enum AgentStatus {
     LEARNING = "learning"
 }
 export declare class Agent {
-    : any;
+    id: any;
     name: string;
     role: string;
-    : string;
+    description: string;
     channel: string;
     capabilities: string[];
-    : object;
+    personality: object;
     status: AgentStatus;
-    : string;
-    : object;
-    : object;
-    : object;
+    specialization: string;
+    language_proficiency: object;
+    metadata: object;
+    context: object;
     created_at: Date;
     last_active: Date;
     is_available: boolean;
@@ -39,7 +39,7 @@ export declare class Agent {
     agent_type: AgentType;
     integration_level: IntegrationLevel;
     department: Department;
-    : any;
+    tools: any;
     apis: APIModel[];
     actions: AgentAction[];
     constructor(name: string, role: string, channel: string, capabilities?: string[], description?: string, personality?: object, specialization?: string, language_proficiency?: object, agent_type?: AgentType, integration_level?: IntegrationLevel);

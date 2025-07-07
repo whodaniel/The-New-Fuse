@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'path';
 import { WebviewMessageRouter } from '../services/communication/WebviewMessageRouter'; // Adjusted path
 import { ChatService } from '../services/features/ChatService';
 import { NotificationService } from '../services/core/NotificationService';
@@ -38,7 +39,10 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
 
     webviewView.webview.options = {
       enableScripts: true,
-      localResourceRoots: [this._extensionUri, vscode.Uri.joinPath(this._extensionUri, 'media')]
+      localResourceRoots: [
+        this._extensionUri,
+        vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media')),
+      ],
     };
 
     // Set the webview for all providers
@@ -77,10 +81,20 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
    */
   private _getHtmlForWebview(webview: vscode.Webview): string {
     const nonce = getNonce();
-    const mainScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'tabbed-container.js')); // Updated to tabbed-container.js as per typical naming, assuming main.js was a placeholder or old name
-    const chatPanelScriptUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'chat-panel.js'));
-    const mainStyleUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
-    const codiconsUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'codicons', 'codicon.css'));
+    const mainScriptUri = webview.asWebviewUri(
+      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'tabbed-container.js'))
+    );
+    const chatPanelScriptUri = webview.asWebviewUri(
+      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'chat-panel.js'))
+    );
+    const mainStyleUri = webview.asWebviewUri(
+      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'main.css'))
+    );
+    const codiconsUri = webview.asWebviewUri(
+      vscode.Uri.file(
+        path.join(this._extensionUri.fsPath, 'media', 'codicons', 'codicon.css')
+      )
+    );
 
     return `<!DOCTYPE html>
     <html lang="en">
@@ -119,7 +133,7 @@ export class TabbedContainerProvider implements vscode.WebviewViewProvider {
                 ${this.chatViewProvider ? this.chatViewProvider.getHtmlForChatPanel(webview, nonce) : '<p>Chat panel loading...</p>'}
             </div>
             <div id="communication-content" class="tab-content-area" data-tab-id="communication">
-                ${this.communicationHubProvider ? this.communicationHubProvider.getHtmlBodySnippet(webview, nonce) : '<p>Communication Hub loading...</p>'}
+                ${this.communicationHubProvider ? this.communicationHubProvider.getHtmlBodySnippet(webview, nonce, path) : '<p>Communication Hub loading...</p>'}
             </div>
             <div id="dashboard-content" class="tab-content-area" data-tab-id="dashboard">
                 ${this.dashboardProvider ? this.dashboardProvider.getHtmlBodySnippet(webview, nonce) : '<p>Dashboard loading...</p>'}

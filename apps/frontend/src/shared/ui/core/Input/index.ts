@@ -1,2 +1,2 @@
-export { Input, inputVariants } from './Input.tsx';
+export { Input, inputVariants } from './Input';
 //# sourceMappingURL=index.js.map

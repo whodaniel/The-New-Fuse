@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { EntityDiscoveryService } from './entity-discovery.service.js';
-import { MCPModule } from '../mcp.module.js'; // Adjust path if needed
+import { EntityDiscoveryService } from './entity-discovery.service';
+import { MCPModule } from '../mcp.module'; // Adjust path if needed
 
 @Module({
   imports: [

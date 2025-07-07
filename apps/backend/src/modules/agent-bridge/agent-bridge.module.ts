@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { AgentBridgeService } from '../../services/agent-bridge.service.js';
-import { RedisModule } from '../redis/redis.module.js';
+import { AgentBridgeService } from '../../services/agent-bridge.service';
+import { RedisModule } from '../redis/redis.module';
 
 @Module({
   imports: [RedisModule],

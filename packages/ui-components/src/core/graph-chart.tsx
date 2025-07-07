@@ -202,3 +202,5 @@ export function GraphChart({
     </div>
   );
 }
+
+export { GraphChart as Chart };

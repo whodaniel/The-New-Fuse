@@ -1,6 +1,7 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
-import client, { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
+import { BaseService } from '../core/BaseService'; // Corrected import path
+import { Logger } from '../utils/Logger';
+import * as client from 'prom-client';
+import { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
 
 /**
  * Configuration options for the PrometheusService.
@@ -17,7 +18,7 @@ export interface PrometheusConfig {
 export class PrometheusService extends BaseService {
   private register: Registry;
   private logger: Logger;
-  private config: PrometheusConfig;
+  private serviceConfig: PrometheusConfig;
 
   // Example metrics (replace/extend as needed)
   public readonly requestsTotal: Counter<string>;
@@ -26,28 +27,28 @@ export class PrometheusService extends BaseService {
   public readonly responseSummary: Summary<string>;
 
   constructor(config: PrometheusConfig = {}) {
-    super();
+    super({ name: 'PrometheusService' });
     this.logger = new Logger('PrometheusService');
-    this.config = {
+    this.serviceConfig = {
       collectDefaultMetrics: true, // Default to collecting Node.js metrics
       ...config,
     };
     this.register = new client.Registry();
 
-    if (this.config.defaultLabels) {
-      this.register.setDefaultLabels(this.config.defaultLabels);
+    if (this.serviceConfig.defaultLabels) {
+      this.register.setDefaultLabels(this.serviceConfig.defaultLabels);
     }
 
-    if (this.config.collectDefaultMetrics) {
+    if (this.serviceConfig.collectDefaultMetrics) {
       client.collectDefaultMetrics({
         register: this.register,
-        prefix: this.config.prefix,
+        prefix: this.serviceConfig.prefix,
       });
       this.logger.info('Collecting default Node.js metrics.');
     }
 
     // --- Initialize Custom Metrics ---
-    const metricPrefix = this.config.prefix ? `${this.config.prefix}_` : '';
+    const metricPrefix = this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_` : '';
 
     this.requestsTotal = new client.Counter({
       name: `${metricPrefix}requests_total`,
@@ -130,7 +131,7 @@ export class PrometheusService extends BaseService {
    */
   createCounter<T extends string>(name: string, help: string, labelNames?: T[]): Counter<T> {
     const counter = new client.Counter<T>({
-      name: this.config.prefix ? `${this.config.prefix}_${name}` : name,
+      name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,
       labelNames,
       registers: [this.register],
@@ -143,7 +144,7 @@ export class PrometheusService extends BaseService {
    */
   createGauge<T extends string>(name: string, help: string, labelNames?: T[]): Gauge<T> {
     const gauge = new client.Gauge<T>({
-      name: this.config.prefix ? `${this.config.prefix}_${name}` : name,
+      name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,
       labelNames,
       registers: [this.register],
@@ -156,7 +157,7 @@ export class PrometheusService extends BaseService {
    */
   createHistogram<T extends string>(name: string, help: string, labelNames?: T[], buckets?: number[]): Histogram<T> {
     const histogram = new client.Histogram<T>({
-      name: this.config.prefix ? `${this.config.prefix}_${name}` : name,
+      name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,
       labelNames,
       buckets,
@@ -170,7 +171,7 @@ export class PrometheusService extends BaseService {
    */
   createSummary<T extends string>(name: string, help: string, labelNames?: T[], percentiles?: number[]): Summary<T> {
     const summary = new client.Summary<T>({
-      name: this.config.prefix ? `${this.config.prefix}_${name}` : name,
+      name: this.serviceConfig.prefix ? `${this.serviceConfig.prefix}_${name}` : name,
       help,
       labelNames,
       percentiles,

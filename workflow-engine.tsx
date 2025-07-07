@@ -166,7 +166,7 @@ export class WorkflowEngine {
       if (options.debugMode) {
         execution.logs.push(`[${new Date().toISOString()}] Workflow execution completed successfully`);
       }
-    } catch (error: unknown) {
+    } catch (error) {
       // Log error if debug mode is on
       if (options.debugMode) {
         execution.logs.push(`[${new Date().toISOString()}] Workflow execution failed: ${(error as Error).message}`);
@@ -310,7 +310,7 @@ export class WorkflowEngine {
           
           // Store result in final results
           finalResults[node.id] = result.data;
-        } catch (error: unknown) {
+        } catch (error) {
           // Mark node as executed but failed
           queuedNode.executed = true;
           

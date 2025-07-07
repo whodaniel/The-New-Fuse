@@ -1,9 +1,8 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { WebSocketServer, WebSocket } from 'ws';
-import Ajv from 'ajv';
-import { ValidateFunction } from 'ajv';
-import { MCPRegistryService } from './mcp-registry.service.js';
+import Ajv, { ValidateFunction } from 'ajv';
+import { MCPRegistryService } from './mcp-registry.service';
 import { MCPMessage, MCPTool, parseMCPMessage, createMCPResponse, createMCPError } from '@the-new-fuse/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -13,7 +12,7 @@ export class MCPRegistryServer implements OnModuleInit {
   private wss!: WebSocketServer;
   private tools: Map<string, MCPTool>;
   private port: number;
-  private ajv: Ajv.default; // Ajv instance
+  private ajv: InstanceType<typeof Ajv>; // Ajv instance
   private validatorCache: Map<string, ValidateFunction>; // Cache for compiled validators
 
   constructor(
@@ -22,7 +21,7 @@ export class MCPRegistryServer implements OnModuleInit {
   ) {
     this.port = this.configService.get<number>('MCP_REGISTRY_PORT', 3002); // Example port, configure as needed
     this.tools = new Map(this.registryService.getTools().map(tool => [tool.name, tool]));
-    this.ajv = new Ajv.default({ allErrors: true }); // Initialize Ajv, 'allErrors' provides more detail
+    this.ajv = new Ajv({ allErrors: true }); // Initialize Ajv, 'allErrors' provides more detail
     this.validatorCache = new Map(); // Initialize cache
     this.compileValidators(); // Pre-compile validators
   }
@@ -34,7 +33,7 @@ export class MCPRegistryServer implements OnModuleInit {
           const validate = this.ajv.compile(tool.parameters);
           this.validatorCache.set(tool.name, validate);
           this.logger.debug(`Compiled validator for tool: ${tool.name}`);
-        } catch (error: unknown) {
+        } catch (error) {
           const errorMessage = error instanceof Error ? error.message : 'Unknown error';
           const errorStack = error instanceof Error ? error.stack : undefined;
           this.logger.error(`Failed to compile schema for tool ${tool.name}: ${errorMessage}`, errorStack);
@@ -70,34 +69,37 @@ export class MCPRegistryServer implements OnModuleInit {
           }
 
           if (mcpMessage.type === 'request') {
-            const tool = this.tools.get(mcpMessage.tool_name);
+            const toolName = (mcpMessage as any).tool_name;
+            const parameters = (mcpMessage as any).parameters;
+            
+            const tool = this.tools.get(toolName);
             if (!tool || !tool.execute) {
-              throw new Error(`Tool '${mcpMessage.tool_name}' not found or not executable`);
+              throw new Error(`Tool '${toolName}' not found or not executable`);
             }
 
             // --- Parameter Validation ---
-            const validator = this.validatorCache.get(mcpMessage.tool_name);
+            const validator = this.validatorCache.get(toolName);
             if (validator) {
-              const valid = validator(mcpMessage.parameters);
+              const valid = validator(parameters);
               if (!valid) {
                 const errorText = this.ajv.errorsText(validator.errors);
-                this.logger.warn(`Invalid parameters for tool '${mcpMessage.tool_name}' from ${connectionId}: ${errorText}`);
+                this.logger.warn(`Invalid parameters for tool '${toolName}' from ${connectionId}: ${errorText}`);
                 throw new Error(`Invalid parameters: ${errorText}`);
               }
-              this.logger.debug(`Parameters validated successfully for tool '${mcpMessage.tool_name}' from ${connectionId}`);
+              this.logger.debug(`Parameters validated successfully for tool '${toolName}' from ${connectionId}`);
             } else if (tool.parameters && Object.keys(tool.parameters).length > 0) {
                 // If schema exists but wasn't compiled (e.g., due to error), reject the call
-                this.logger.error(`Schema found but no validator compiled for tool '${mcpMessage.tool_name}'. Rejecting call.`);
-                throw new Error(`Internal server error: Could not validate parameters for tool '${mcpMessage.tool_name}'.`);
+                this.logger.error(`Schema found but no validator compiled for tool '${toolName}'. Rejecting call.`);
+                throw new Error(`Internal server error: Could not validate parameters for tool '${toolName}'.`);
             }
             // --- End Parameter Validation ---
 
 
-            this.logger.log(`Executing tool '${mcpMessage.tool_name}' for ${connectionId} (ID: ${mcpMessage.id})`);
-            const result = await tool.execute(mcpMessage.parameters);
-            const response = createMCPResponse(mcpMessage.id, mcpMessage.tool_name, result);
+            this.logger.log(`Executing tool '${toolName}' for ${connectionId} (ID: ${mcpMessage.id})`);
+            const result = await tool.execute(parameters);
+            const response = createMCPResponse(mcpMessage.id, result);
             ws.send(JSON.stringify(response));
-            this.logger.log(`Sent response for tool '${mcpMessage.tool_name}' to ${connectionId} (ID: ${mcpMessage.id})`);
+            this.logger.log(`Sent response for tool '${toolName}' to ${connectionId} (ID: ${mcpMessage.id})`);
 
           } else {
             // Handle other message types if needed (e.g., 'response', 'error')
@@ -107,7 +109,7 @@ export class MCPRegistryServer implements OnModuleInit {
         } catch (error: any) {
           this.logger.error(`Error processing message from ${connectionId}: ${error.message}`, error.stack);
           if (mcpMessage && mcpMessage.id) {
-            const errorResponse = createMCPError(mcpMessage.id, mcpMessage.tool_name || 'unknown', error.message);
+            const errorResponse = createMCPError(mcpMessage.id, error.message);
             ws.send(JSON.stringify(errorResponse));
           } else {
             // Send generic error if message ID is unknown

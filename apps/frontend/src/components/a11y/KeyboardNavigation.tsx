@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useA11y } from './A11yProvider.tsx';
+import { useA11y } from './A11yProvider';
 
 interface KeyboardShortcut {
   key: string;

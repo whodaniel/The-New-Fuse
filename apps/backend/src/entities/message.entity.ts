@@ -1,23 +1,23 @@
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, ManyToOne } from 'typeorm';
-import { User } from './user.entity.js';
+import { User } from './user.entity';
 
 @Entity()
 export class Message {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column()
-  role: string;
+  role!: string;
 
   @Column('text')
-  content: string;
+  content!: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ManyToOne(() => User)
-  user: User;
+  user!: User;
 }

@@ -1,7 +1,7 @@
 export {}
 exports.useGraphAnalysis = useGraphAnalysis;
 import react_1 from 'react';
-import useSocket_1 from './useSocket.js';
+import useSocket_1 from './useSocket';
 function useGraphAnalysis(initialNodes = [], initialEdges = [], options = {}): any {
     const { autoAnalyze = false, analysisInterval = 5000, algorithms = ['all'] } = options;
     const socket = (0, useSocket_1.useSocket)();

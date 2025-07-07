@@ -1,2 +1,2 @@
-export { FileUpload } from './FileUpload.tsx';
+export { FileUpload } from './FileUpload';
 //# sourceMappingURL=index.js.map

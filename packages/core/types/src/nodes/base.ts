@@ -1,7 +1,7 @@
 
 export {}
 exports.BaseNode = void 0;
-import types_1 from './types.js';
+import types_1 from './types';
 class BaseNode {
     constructor(id, type, config, metadata) {
         this.id = id;

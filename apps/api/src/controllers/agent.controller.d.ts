@@ -1,4 +1,4 @@
-import { AgentService } from '../services/agent/AgentService.js';
+import { AgentService } from '../services/agent/AgentService';
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
 import { User } from '@the-new-fuse/database';
 export declare class AgentController {

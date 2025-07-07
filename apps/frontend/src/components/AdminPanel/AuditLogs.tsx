@@ -11,7 +11,7 @@ import {
   Input,
   HStack
 } from '@chakra-ui/react';
-import { useAuditLogs } from '../../hooks/useAuditLogs.tsx';
+import { useAuditLogs } from '../../hooks/useAuditLogs';
 
 export const AuditLogs: React.FC = () => {
   const { logs, filters, setFilters, loading } = useAuditLogs();

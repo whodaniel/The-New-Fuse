@@ -4,8 +4,8 @@
  */
 
 import { Injectable } from '@nestjs/common';
-import { BaseService } from './base.service.js';
-import { AgentRepository, Agent } from '../repositories/agent.repository.js';
+import { BaseService } from './base.service';
+import { AgentRepository, Agent } from '../repositories/agent.repository';
 
 // Define AgentCapability locally until types package issue is resolved
 export enum AgentCapability {

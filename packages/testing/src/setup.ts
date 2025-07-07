@@ -15,9 +15,12 @@ const mockMemoryUsage = {
 };
 
 process.memoryUsage = jest.fn(() => ({
-  ...mockMemoryUsage,
-  heapUsed: Math.floor(Math.random() * 1024 * 1024) // Simulate varying memory usage
-}));
+  heapUsed: Math.floor(Math.random() * 1024 * 1024), // Simulate varying memory usage
+  heapTotal: Math.floor(Math.random() * 2048 * 1024),
+  external: Math.floor(Math.random() * 512 * 1024),
+  arrayBuffers: Math.floor(Math.random() * 256 * 1024),
+  rss: Math.floor(Math.random() * 4096 * 1024)
+})) as any;
 
 // Set up console capture for sandbox tests
 const originalConsole = { ...console };

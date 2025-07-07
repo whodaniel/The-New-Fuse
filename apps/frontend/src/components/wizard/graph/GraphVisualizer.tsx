@@ -6,7 +6,7 @@ import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import DataCard_1 from '../../shared/DataCard.tsx';
+import DataCard_1 from '../../shared/DataCard';
 import dagre_1 from 'dagre';
 const layoutAlgorithms = {
     force: (nodes, edges) => {
@@ -120,7 +120,7 @@ function GraphVisualizer({ nodes: initialNodes, edges: initialEdges, config: ini
     }, [setNodes, setEdges, fitView, onLayoutChange]);
     const applyClustering = (0, react_1.useCallback)(() => {
         const { clusters, clusterMap } = clusterAlgorithms[clusterAlgorithm](nodes, edges);
-        setNodes(nodes.map(nod(e: any) => (Object.assign(Object.assign({}, node), { data: Object.assign(Object.assign({}, node.data), { cluster: clusterMap.get(node.id) }), style: Object.assign(Object.assign({}, node.style), { backgroundColor: `hsl(${(clusterMap.get(node.id) || 0) * 137.5}, 50%, 50%)` }) }))));
+        setNodes(nodes.map((node: any) => (Object.assign(Object.assign({}, node), { data: Object.assign(Object.assign({}, node.data), { cluster: clusterMap.get(node.id) }), style: Object.assign(Object.assign({}, node.style), { backgroundColor: `hsl(${(clusterMap.get(node.id) || 0) * 137.5}, 50%, 50%)` }) }))));
     }, [nodes, edges, clusterAlgorithm]);
     const findPath = (0, react_1.useCallback)(() => {
         if (!startNode || !endNode)
@@ -130,10 +130,10 @@ function GraphVisualizer({ nodes: initialNodes, edges: initialEdges, config: ini
     }, [nodes, edges, startNode, endNode]);
     const handleSearch = (0, react_1.useCallback)(() => {
         if (!searchTerm) {
-            setNodes(nodes => nodes.map(nod(e: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
+            setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
             return;
         }
-        setNodes(nodes => nodes.map(nod(e: any) => (Object.assign(Object.assign({}, node), { style: Object.assign(Object.assign({}, node.style), { opacity: node.data.label.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.2 }) }))));
+        setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: Object.assign(Object.assign({}, node.style), { opacity: node.data.label.toLowerCase().includes(searchTerm.toLowerCase()) ? 1 : 0.2 }) }))));
     }, [searchTerm]);
     const handleNodeClick = (0, react_1.useCallback)((event, node) => {
         if (pathfindingMode) {

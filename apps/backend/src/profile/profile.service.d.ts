@@ -1,6 +1,6 @@
-import { UsersService } from '../users/users.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { StorageService } from '../services/storage.service.js';
+import { UsersService } from '../users/users.service';
+import { EventBus } from '../events/event-bus.service';
+import { StorageService } from '../services/storage.service';
 export declare class ProfileService {
     private usersService;
     private eventBus;

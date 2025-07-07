@@ -1,17 +1,17 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Center, Spinner } from '@chakra-ui/react';
-import { useAuth } from '../../hooks/useAuth.tsx';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
 }
 
 export function ProtectedRoute({ children }: ProtectedRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthContext();
   const location = useLocation();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Center h="100vh">
         <Spinner

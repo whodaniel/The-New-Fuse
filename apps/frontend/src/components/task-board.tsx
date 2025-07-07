@@ -8,7 +8,7 @@ import button_1 from '@/components/ui/button';
 import input_1 from '@/components/ui/input';
 import scroll_area_1 from '@/components/ui/scroll-area';
 import draggable_1 from '@/components/ui/draggable';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function TaskBoard() {
     const [tasks, setTasks] = (0, react_1.useState)([]);
     const [newTaskTitle, setNewTaskTitle] = (0, react_1.useState)('');

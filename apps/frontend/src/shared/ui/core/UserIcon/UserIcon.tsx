@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
-import { Skeleton } from '../Skeleton.js';
+import { Skeleton } from '../Skeleton';
 export const userIconVariants = cva('relative flex-shrink-0 overflow-hidden rounded-full', {
     variants: {
         size: {

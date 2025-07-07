@@ -1,9 +1,9 @@
-import { WorkflowBuilder } from './WorkflowBuilder.tsx';
-import { WorkflowDefinition, WorkflowStep } from '../types.tsx';
-import { communicationFlowTemplate } from '@the-new-fuse/core/src/workflow/communicationFlowTemplate';
+import { WorkflowBuilder } from './WorkflowBuilder';
+import { WorkflowDefinition, WorkflowStep } from '../types';
+// import { communicationFlowTemplate } from '@the-new-fuse/core/src/workflow/communicationFlowTemplate';
 
 // Define a workflow template interface that extends the builder
-interface WorkflowTemplate extends WorkflowBuilder {
+interface WorkflowTemplate {
   id: string;
   name: string;
   description: string;
@@ -133,7 +133,7 @@ export class WorkflowTemplateManager {
     this.templates.set(conditionalTemplate.id, conditionalTemplate);
     
     // Register generic communication flow template
-    this.templates.set(communicationFlowTemplate.id, communicationFlowTemplate);
+    // this.templates.set(communicationFlowTemplate.id, communicationFlowTemplate);
   }
   
   /**

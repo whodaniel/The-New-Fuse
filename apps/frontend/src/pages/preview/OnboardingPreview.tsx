@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Box, Center, Spinner, Text } from '@chakra-ui/react';
-import { OnboardingWizard } from '../../components/wizard/OnboardingWizard.tsx';
+import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
 
 /**
  * Onboarding Preview Page

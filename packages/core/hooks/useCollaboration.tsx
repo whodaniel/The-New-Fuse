@@ -1,12 +1,12 @@
 import { useEffect, useCallback, useState } from 'react';
-import { CollaborationManager } from '../collaboration/CollaborationManager.js';
+import { CollaborationManager } from '../collaboration/CollaborationManager';
 import {
   User,
   Comment,
   Annotation,
   ActivityEvent,
   CollaborationState,
-} from '../collaboration/types.js';
+} from '../collaboration/types';
 
 export function useCollaboration(
   websocketUrl: string,

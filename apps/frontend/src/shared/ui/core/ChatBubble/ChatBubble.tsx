@@ -4,8 +4,8 @@ import { X, Check, Clock, Pencil } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Button } from '../Button.js';
-import { Input } from '../Input.js';
+import { Button } from '../Button';
+import { Input } from '../Input';
 export const chatBubbleVariants = cva('relative flex w-full mt-2 items-start group', {
     variants: {
         align: {

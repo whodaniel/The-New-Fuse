@@ -5,7 +5,7 @@ exports.PerformanceMetrics = PerformanceMetrics;
 import react_1 from 'react';
 import card_1 from '@/components/ui/card';
 import recharts_1 from 'recharts';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function PerformanceMetrics() {
     const [performanceData, setPerformanceData] = (0, react_1.useState)([]);
     (0, react_1.useEffect)(() => {

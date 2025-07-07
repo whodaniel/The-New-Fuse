@@ -1,7 +1,7 @@
 import { useEffect, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { io, Socket } from 'socket.io-client';
-import type { WorkflowState, Collaborator } from '../types/workflow.tsx';
+import type { WorkflowState, Collaborator } from '../types/workflow';
 
 export const useRealTimeCollaboration = (): any => {
   const workflowId = useSelector((state: WorkflowState) => state.workflow.id);

@@ -1,2 +1,2 @@
-export { CanViewChatHistory, CanViewChatHistoryProvider, useCanViewChatHistory } from './CanViewChatHistory.tsx';
+export { CanViewChatHistory, CanViewChatHistoryProvider, useCanViewChatHistory } from './CanViewChatHistory';
 //# sourceMappingURL=index.js.map

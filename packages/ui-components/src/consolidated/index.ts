@@ -1,13 +1,13 @@
 // Export consolidated components
-export * from './Button.tsx';
-export { Label, labelVariants, type LabelProps } from './Label.tsx';
-export * from './Layout.tsx';
+export * from './Button';
+export { Label, labelVariants, type LabelProps } from './Label';
+export * from './Layout';
 
 // Export utility functions
-export * from './utils.js';
+export * from './utils';
 
 // Export types
-export * from './types.tsx';
+export * from './types';
 
 export {
   Card,
@@ -18,4 +18,4 @@ export {
   CardFooter,
   cardVariants,
   type CardProps
-} from './Card.tsx';
+} from './Card';

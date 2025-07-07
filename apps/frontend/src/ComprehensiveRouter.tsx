@@ -22,6 +22,29 @@ import AgentsPage from './pages/agents/AgentsPage';
 import WorkspaceAnalytics from './pages/workspace/WorkspaceAnalytics';
 import ChatPage from './pages/chat/ChatPage';
 
+// Import real page components to replace LazyPage placeholders
+import Workflows from './pages/Workflows';
+import { WorkflowsPage as WorkflowsEnhanced } from './pages/WorkflowsEnhanced';
+import WorkflowBuilder from './pages/Workflows/Builder';
+import WorkflowEditorWrapper from './components/WorkflowEditor';
+import Analytics from './pages/Analytics';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import { Landing } from './pages/Landing';
+import { LandingPage } from './pages/LandingPage';
+import SimpleLanding from './pages/SimpleLanding';
+import TestPage from './pages/Test';
+import DebugPageComponent from './pages/Debug';
+import DebugRoutingComponent from './pages/DebugRouting';
+import AllPages from './pages/AllPages';
+
+// Import unified agent creator
+import { UnifiedAgentCreator } from './pages/Agents/UnifiedAgentCreator';
+
+// Import NFT Page Components
+import NFTMarketplacePage from './pages/agents/NFTMarketplacePage';
+import RevenueDashboardPage from './pages/agents/RevenueDashboardPage';
+
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
   <div className="p-8 max-w-4xl mx-auto">
@@ -59,6 +82,7 @@ function ComprehensiveNavigation() {
             </button>
             {activeDropdown === 'core' && (
               <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
+                <Link to="/agents/nft-marketplace" className="block px-4 py-2 hover:bg-gray-100 bg-gradient-to-r from-purple-100 to-blue-100 font-semibold">💎 NFT Marketplace</Link>
                 <Link to="/multi-agent-chat" className="block px-4 py-2 hover:bg-gray-100">🤖 Multi-Agent Chat</Link>
                 <Link to="/ai-portal" className="block px-4 py-2 hover:bg-gray-100">🤖 AI Agent Portal</Link>
                 <Link to="/chat" className="block px-4 py-2 hover:bg-gray-100">💬 Chat</Link>
@@ -99,6 +123,8 @@ function ComprehensiveNavigation() {
               <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
                 <Link to="/agents" className="block px-4 py-2 hover:bg-gray-100">📋 All Agents</Link>
                 <Link to="/agents/new" className="block px-4 py-2 hover:bg-gray-100">➕ New Agent</Link>
+                <Link to="/agents/nft-marketplace" className="block px-4 py-2 hover:bg-gray-100">💎 NFT Marketplace</Link>
+                <Link to="/agents/revenue-dashboard" className="block px-4 py-2 hover:bg-gray-100">💰 Revenue Dashboard</Link>
                 <Link to="/dashboard/agents" className="block px-4 py-2 hover:bg-gray-100">📊 Agent Dashboard</Link>
                 <Link to="/dashboard/agents/new" className="block px-4 py-2 hover:bg-gray-100">🆕 Create Agent</Link>
               </div>
@@ -119,7 +145,9 @@ function ComprehensiveNavigation() {
                 <Link to="/tasks/new" className="block px-4 py-2 hover:bg-gray-100">➕ New Task</Link>
                 <Link to="/workflows" className="block px-4 py-2 hover:bg-gray-100">🔄 Workflows</Link>
                 <Link to="/workflows/builder" className="block px-4 py-2 hover:bg-gray-100">🛠️ Workflow Builder</Link>
+                <Link to="/workflows/advanced-builder" className="block px-4 py-2 hover:bg-gray-100">🔧 Advanced Builder</Link>
                 <Link to="/workflows/templates" className="block px-4 py-2 hover:bg-gray-100">📄 Templates</Link>
+                <Link to="/workflows/executions" className="block px-4 py-2 hover:bg-gray-100">📊 Execution Monitor</Link>
                 <Link to="/suggestions" className="block px-4 py-2 hover:bg-gray-100">💡 Suggestions</Link>
               </div>
             )}
@@ -220,7 +248,7 @@ function ComprehensiveNavigation() {
                 <Link to="/build-info" className="block px-4 py-2 hover:bg-gray-100">📋 Build Info</Link>
                 <Link to="/debug-routing" className="block px-4 py-2 hover:bg-gray-100">🔀 Debug Routing</Link>
                 <Link to="/all-pages" className="block px-4 py-2 hover:bg-gray-100">📋 All Pages List</Link>
-                <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 hover:bg-gray-100">🟢 Server Status</a>
+                <a href="http://localhost:3001" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 hover:bg-gray-100">🟢 API Server Status</a>
               </div>
             )}
           </div>
@@ -408,8 +436,16 @@ export default function ComprehensiveRouter() {
         <Route path="/ai-portal" element={<AIAgentPortal />} />
         <Route path="/chat" element={<ChatPage />} />
         <Route path="/agents" element={<AgentsPage />} />
-        <Route path="/agents/new" element={<LazyPage name="New Agent" path="/agents/new" />} />
+        <Route path="/agents/new" element={<UnifiedAgentCreator />} />
         <Route path="/agents/:id" element={<LazyPage name="Agent Detail" path="/agents/:id" />} />
+        
+        {/* NFT Marketplace */}
+        <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
+        <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
+        <Route path="/agents/revenue-dashboard/:agentId" element={<RevenueDashboardPage />} />
+        <Route path="/marketplace" element={<NFTMarketplacePage />} />
+        <Route path="/marketplace/agent/:id" element={<LazyPage name="Agent NFT Details" path="/marketplace/agent/:id" />} />
+        <Route path="/revenue" element={<RevenueDashboardPage />} />
         
         {/* Workspace */}
         <Route path="/workspace/overview" element={<Overview />} />
@@ -423,11 +459,14 @@ export default function ComprehensiveRouter() {
         <Route path="/tasks/new" element={<LazyPage name="New Task" path="/tasks/new" />} />
         <Route path="/tasks/:id" element={<LazyPage name="Task Detail" path="/tasks/:id" />} />
         <Route path="/tasks/:id/edit" element={<LazyPage name="Edit Task" path="/tasks/:id/edit" />} />
-        <Route path="/workflows" element={<LazyPage name="Workflows" path="/workflows" />} />
-        <Route path="/workflows/builder" element={<LazyPage name="Workflow Builder" path="/workflows/builder" />} />
+        <Route path="/workflows" element={<Workflows />} />
+        <Route path="/workflows/builder" element={<WorkflowBuilder />} />
+        <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
+        <Route path="/workflows/advanced-builder/:id" element={<WorkflowEditorWrapper />} />
         <Route path="/workflows/templates" element={<LazyPage name="Workflow Templates" path="/workflows/templates" />} />
         <Route path="/workflows/:id" element={<LazyPage name="Workflow Detail" path="/workflows/:id" />} />
         <Route path="/workflows/:id/execution" element={<LazyPage name="Workflow Execution" path="/workflows/:id/execution" />} />
+        <Route path="/workflows/executions" element={<LazyPage name="Workflow Execution History" path="/workflows/executions" />} />
         <Route path="/suggestions" element={<LazyPage name="Suggestions" path="/suggestions" />} />
         <Route path="/suggestions/new" element={<LazyPage name="New Suggestion" path="/suggestions/new" />} />
         <Route path="/suggestions/:id" element={<LazyPage name="Suggestion Detail" path="/suggestions/:id" />} />
@@ -445,7 +484,7 @@ export default function ComprehensiveRouter() {
         
         {/* Dashboard Sub-routes */}
         <Route path="/dashboard/agents" element={<LazyPage name="Agent Dashboard" path="/dashboard/agents" />} />
-        <Route path="/dashboard/agents/new" element={<LazyPage name="Create Agent" path="/dashboard/agents/new" />} />
+        <Route path="/dashboard/agents/new" element={<UnifiedAgentCreator />} />
         <Route path="/dashboard/agents/:id" element={<LazyPage name="Agent Dashboard Detail" path="/dashboard/agents/:id" />} />
         <Route path="/dashboard/analytics" element={<LazyPage name="Dashboard Analytics" path="/dashboard/analytics" />} />
         <Route path="/dashboard/settings" element={<LazyPage name="Dashboard Settings" path="/dashboard/settings" />} />
@@ -461,18 +500,18 @@ export default function ComprehensiveRouter() {
         <Route path="/general-settings/embedding" element={<LazyPage name="Embedding Preferences" path="/general-settings/embedding" />} />
         
         {/* Authentication */}
-        <Route path="/login" element={<LazyPage name="Login" path="/login" />} />
-        <Route path="/register" element={<LazyPage name="Register" path="/register" />} />
-        <Route path="/auth/login" element={<LazyPage name="Auth Login" path="/auth/login" />} />
-        <Route path="/auth/register" element={<LazyPage name="Auth Register" path="/auth/register" />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/register" element={<Register />} />
         <Route path="/auth/sso" element={<LazyPage name="SSO Authentication" path="/auth/sso" />} />
         <Route path="/auth/google-callback" element={<LazyPage name="Google OAuth Callback" path="/auth/google-callback" />} />
         <Route path="/auth/oauth-callback" element={<LazyPage name="OAuth Callback" path="/auth/oauth-callback" />} />
         
         {/* Landing & Marketing */}
-        <Route path="/landing" element={<LazyPage name="Landing Page" path="/landing" />} />
-        <Route path="/landing-page" element={<LazyPage name="Landing Page Alt" path="/landing-page" />} />
-        <Route path="/simple-landing" element={<LazyPage name="Simple Landing" path="/simple-landing" />} />
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/landing-page" element={<LandingPage />} />
+        <Route path="/simple-landing" element={<SimpleLanding />} />
         <Route path="/onboarding" element={<LazyPage name="Onboarding Flow" path="/onboarding" />} />
         <Route path="/preview/onboarding" element={<LazyPage name="Onboarding Preview" path="/preview/onboarding" />} />
         
@@ -481,7 +520,7 @@ export default function ComprehensiveRouter() {
         <Route path="/legal/terms" element={<LazyPage name="Terms of Service" path="/legal/terms" />} />
         
         {/* Analytics */}
-        <Route path="/analytics" element={<LazyPage name="Analytics" path="/analytics" />} />
+        <Route path="/analytics" element={<Analytics />} />
         
         {/* Components & Demos */}
         <Route path="/components" element={<ComponentsShowcase />} />
@@ -489,14 +528,14 @@ export default function ComprehensiveRouter() {
         <Route path="/graph-demo" element={<GraphDemo />} />
         <Route path="/frontend-showcase" element={<FrontendShowcase />} />
         <Route path="/layout-example" element={<LayoutExample />} />
-        <Route path="/test" element={<LazyPage name="Test Page" path="/test" />} />
+        <Route path="/test" element={<TestPage />} />
         <Route path="/components-nav" element={<LazyPage name="Components Navigation" path="/components-nav" />} />
         
         {/* Development & Debug */}
-        <Route path="/debug" element={<DebugPage />} />
+        <Route path="/debug" element={<DebugPageComponent />} />
         <Route path="/build-info" element={<BuildInfoPage />} />
-        <Route path="/debug-routing" element={<LazyPage name="Debug Routing" path="/debug-routing" />} />
-        <Route path="/all-pages" element={<LazyPage name="All Pages List" path="/all-pages" />} />
+        <Route path="/debug-routing" element={<DebugRoutingComponent />} />
+        <Route path="/all-pages" element={<AllPages />} />
         
         {/* Error Handling */}
         <Route path="/404" element={<LazyPage name="Page Not Found" path="/404" />} />

@@ -12,6 +12,16 @@ export type {
   ValidationResult
 } from './core/base-types';
 
+// User types
+export type {
+  UserRole,
+  UserPreferences
+} from './user';
+
+export {
+  Permission
+} from './user';
+
 // Common types
 export type {
   ApiResponse,
@@ -23,16 +33,26 @@ export { // Export classes as values
   Agent,
   CreateAgentDto,
   UpdateAgentDto,
+  AgentResponseDto,
 } from './agent';
 export type { // Export interfaces as types
-  AgentCapabilityConfig,
-  AgentCapability
+  AgentCapabilityConfig
 } from './agent';
 export {
   AgentStatus,
   AgentRole,
-  AgentType
+  AgentType,
+  AgentCapability
  } from './agent';
+
+// Messaging types
+export type {
+  AgentMessage,
+  AgentResponse
+} from './messaging';
+export {
+  PriorityQueue
+} from './messaging';
 
 // Workflow types
 export type {
@@ -42,10 +62,16 @@ export type {
   CreateWorkflowDefinitionDto,
   UpdateWorkflowDefinitionDto,
   StartWorkflowInstanceDto,
-  WorkflowService
+  WorkflowService,
+  Workflow,
+  CreateWorkflowDto,
+  UpdateWorkflowDto,
+  WorkflowExecutionStatus,
+  WorkflowInput,
+  WorkflowExecution
 } from './workflow';
 
-export type {  WorkflowStatus  } from './workflow';
+export {  WorkflowStatus  } from './workflow';
 
 // Task types
 export type {
@@ -73,7 +99,7 @@ export type {
   UpdateEntityDto
 } from './mcp';
 
-export type { 
+export {
   parseMCPMessage,
   createMCPResponse,
   createMCPError
@@ -86,6 +112,38 @@ export type {
   WebSocketHandler
 } from './websocket';
 
+// Message and Communication types
+export type {
+  Message,
+  MessageHandler,
+  MessageBroker,
+  MessageQueue,
+  MessageRouter,
+  MessageOptions
+} from './message';
+export { MessageType } from './message';
+
+// Communication types
+export type {
+  Channel,
+  ChannelOptions,
+  CommunicationProtocol
+} from './communication';
+export { WebSocketError } from './communication';
+
+// Command and Notification types
+export type {
+  Command,
+  CommandResult,
+  Notification,
+  NotificationOptions,
+  NotificationAction
+} from './commands';
+
+// Task types (additional exports)
+export type { Task, TaskResult as CoreTaskResult } from './task';
+export { TaskStatus, TaskType } from './task';
+
 // Service types
 export type { ServiceStatus } from './services';
 
@@ -93,6 +151,7 @@ export type { ServiceStatus } from './services';
 export * from './marketplace';
 export * from './metrics';
 export * from './security';
+export type { SecurityScheme } from './security';
 export * from './user';
 export * from './state';
 export * from './validation';

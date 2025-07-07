@@ -1,5 +1,19 @@
 import { createMatcher, validateSchema } from './utils';
-import { WorkflowSchema } from '@the-new-fuse/core'; // Corrected import path (assuming schema is here)
+import { z } from 'zod';
+
+// Local WorkflowSchema definition to avoid circular dependencies
+const WorkflowSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  status: z.enum(['DRAFT', 'ACTIVE', 'PAUSED', 'COMPLETED', 'ERROR']),
+  createdAt: z.string().or(z.date()),
+  updatedAt: z.string().or(z.date()),
+  steps: z.array(z.object({
+    id: z.string(),
+    name: z.string(),
+    status: z.enum(['DRAFT', 'ACTIVE', 'PAUSED', 'COMPLETED', 'ERROR']).optional()
+  })).optional()
+});
 
 export const toBeValidWorkflow = createMatcher(
   (received) => {

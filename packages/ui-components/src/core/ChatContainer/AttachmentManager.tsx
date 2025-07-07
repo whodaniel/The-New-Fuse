@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { DndUploaderContext } from './DnDWrapper.tsx';
+import { DndUploaderContext } from './DnDWrapper';
 
 interface AttachmentManagerProps {
   attachments?: File[];

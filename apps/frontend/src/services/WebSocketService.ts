@@ -1,6 +1,7 @@
 import { io, Socket } from 'socket.io-client';
 
 export class WebSocketService {
+  private static instance: WebSocketService;
   private socket: Socket;
   
   constructor() {
@@ -9,6 +10,13 @@ export class WebSocketService {
       reconnectionDelay: 1000,
       autoConnect: false
     });
+  }
+
+  static getInstance(): WebSocketService {
+    if (!WebSocketService.instance) {
+      WebSocketService.instance = new WebSocketService();
+    }
+    return WebSocketService.instance;
   }
 
   connect() {
@@ -24,5 +32,17 @@ export class WebSocketService {
     this.socket.on('agent:message', (data) => {
       // Handle agent messages
     });
+  }
+
+  send(event: string, data: any): Promise<void> {
+    return new Promise((resolve) => {
+      this.socket.emit(event, data, () => {
+        resolve();
+      });
+    });
+  }
+
+  disconnect() {
+    this.socket.disconnect();
   }
 }

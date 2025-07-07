@@ -3,7 +3,7 @@ module.exports = {
   displayName: 'ui-components',
   preset: 'ts-jest',
   testEnvironment: 'jsdom',
-  setupFilesAfterEnv: ['<rootDir>/../../jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.local.js'],
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: '<rootDir>/tsconfig.json',

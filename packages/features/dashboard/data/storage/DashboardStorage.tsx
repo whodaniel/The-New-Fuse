@@ -1,4 +1,4 @@
-import { DashboardState, ShareConfig } from '../exporters/types.tsx';
+import { DashboardState, ShareConfig } from '../exporters/types';
 
 export class DashboardStorage {
   private storage: Storage;

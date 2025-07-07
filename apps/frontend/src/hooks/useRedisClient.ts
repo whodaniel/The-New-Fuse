@@ -1,7 +1,7 @@
 export {}
 exports.useRedisClient = void 0;
 import react_1 from 'react';
-import redisClient_1 from '../core/redis/redisClient.js';
+import redisClient_1 from '../core/redis/redisClient';
 const useRedisClient = (): any => {
     const [client, setClient] = (0, react_1.useState)(null);
     (0, react_1.useEffect)(() => {

@@ -1,5 +1,5 @@
 import express from 'express';
-import { authController, googleAuth, googleAuthCallback } from '../controllers/authController.js';
+import { authController, googleAuth, googleAuthCallback } from '../controllers/authController';
 
 // Create the router
 export const authRouter = express.Router();

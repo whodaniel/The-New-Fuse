@@ -9,7 +9,7 @@ import {
   Button,
   useToast
 } from '@chakra-ui/react';
-import { useSystemConfig } from '../../hooks/useSystemConfig.tsx';
+import { useSystemConfig } from '../../hooks/useSystemConfig';
 
 export const SystemConfig: React.FC = () => {
   const { config, updateConfig, loading } = useSystemConfig();

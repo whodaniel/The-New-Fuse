@@ -1,7 +1,7 @@
-import { ClineBridge } from '../cline_bridge.tsx';
+import { ClineBridge } from '../cline_bridge';
 import { jest } from '@jest/globals';
-import { Task } from '../types/task.js';
-import { ImplementationPhase } from '../types/phase.js';
+import { Task } from '../types/task';
+import { ImplementationPhase } from '../types/phase';
 
 export interface PriorityFactors {
     basePriority: number;
@@ -88,13 +88,13 @@ describe('ClineBridge', () => {
 
     test('receives results correctly', async () => {
         await bridge.initialize();
-        const callback = jest.fn();
+        const callback = jest.fn() as jest.MockedFunction<(result: unknown) => Promise<void>>;
         
         await bridge.onResult(callback);
         
         // Simulate receiving a result
         const mockResult = { status: 'success', data: 'test' };
-        await bridge['client'].emit('message', 'AI_RESULT_CHANNEL', JSON.stringify(mockResult));
+        (bridge as any).client.emit('message', 'AI_RESULT_CHANNEL', JSON.stringify(mockResult));
         
         expect(callback).toHaveBeenCalledWith(mockResult);
     });

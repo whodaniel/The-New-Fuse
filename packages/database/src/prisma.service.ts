@@ -12,8 +12,40 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   }
 
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
+    // Use process.on instead of deprecated $on('beforeExit')
+    process.on('beforeExit', async () => {
       await app.close();
     });
   }
+
+  // Explicitly expose model access properties for better IDE support and type safety
+  // Based on the actual models available in the current Prisma client
+  get task() {
+    return super.task;
+  }
+
+  get agent() {
+    return super.agent;
+  }
+
+  get user() {
+    return super.user;
+  }
+
+  get message() {
+    return super.message;
+  }
+
+  get workflow() {
+    return super.workflow;
+  }
+
+  get workflowExecution() {
+    return super.workflowExecution;
+  }
+
+  // registeredEntity model not available in current schema
+  // get registeredEntity() {
+  //   return super.registeredEntity;
+  // }
 }

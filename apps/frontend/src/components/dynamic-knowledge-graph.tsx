@@ -5,7 +5,7 @@ exports.DynamicKnowledgeGraph = DynamicKnowledgeGraph;
 import react_1 from 'react';
 import react_force_graph_1 from 'react-force-graph';
 import card_1 from '@/components/ui/card';
-import websocket_1 from '../services/websocket.js';
+import websocket_1 from '../services/websocket';
 function DynamicKnowledgeGraph() {
     const fgRef = (0, react_1.useRef)();
     const [graphData, setGraphData] = (0, react_1.useState)({ nodes: [], links: [] });
@@ -20,7 +20,7 @@ function DynamicKnowledgeGraph() {
         <card_1.CardTitle>Dynamic Knowledge Graph</card_1.CardTitle>
       </card_1.CardHeader>
       <card_1.CardContent className="h-full">
-        <react_force_graph_1.ForceGraph3D ref={fgRef} graphData={graphData} nodeLabel="name" nodeAutoColorBy="group" linkDirectionalParticles={2} linkDirectionalParticleSpeed={d => d.value * 0.001} nodeThreeObject={nod(e: any) => {
+        <react_force_graph_1.ForceGraph3D ref={fgRef} graphData={graphData} nodeLabel="name" nodeAutoColorBy="group" linkDirectionalParticles={2} linkDirectionalParticleSpeed={d => d.value * 0.001} nodeThreeObject={(node: any) => {
             const sprite = new SpriteText(node.name);
             sprite.color = node.color;
             sprite.textHeight = 8;

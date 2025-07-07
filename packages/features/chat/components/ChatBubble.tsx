@@ -1,5 +1,5 @@
 import React from "react";
-import UserIcon from '../UserIcon.js';
+import UserIcon from '../UserIcon';
 import { userFromStorage } from "@/utils/request";
 export function ChatBubble(): JSX.Element { message, type, popMsg }) {
     var _a;

@@ -1,6 +1,6 @@
-import { ApiClient } from '../../core/ApiClient.js';
-import { ApiConfig } from '../../config/ApiConfig.js';
-import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types.js';
+import { ApiClient } from '../../core/ApiClient';
+import { ApiConfig } from '../../config/ApiConfig';
+import { Integration, IntegrationType, IntegrationConfig, AuthType } from '../types';
 
 /**
  * Pabbly Connect integration configuration

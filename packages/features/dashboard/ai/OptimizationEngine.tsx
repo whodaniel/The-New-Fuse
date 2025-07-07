@@ -1,7 +1,7 @@
-import { OptimizationSuggestion } from './types.tsx';
-import { DashboardState } from '../collaboration/types.tsx';
-import { PerformanceMetrics } from '../analytics/types.tsx';
-import { AnalyticsManager } from '../analytics/AnalyticsManager.tsx';
+import { OptimizationSuggestion } from './types';
+import { DashboardState } from '../collaboration/types';
+import { PerformanceMetrics } from '../analytics/types';
+import { AnalyticsManager } from '../analytics/AnalyticsManager';
 
 export class OptimizationEngine {
   private analyticsManager: AnalyticsManager;

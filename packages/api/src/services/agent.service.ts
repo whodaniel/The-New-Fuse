@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-import { Agent, AgentStatus } from '../types/agent.js';
-import { BaseService } from './base.service.js';
-import { toError } from '../utils/error.js';
+import { Agent, AgentStatus } from '../types/agent';
+import { BaseService } from './base.service';
+import { toError } from '../utils/error';
 
 export class AgentService extends BaseService<Agent> {
   public constructor() {
@@ -37,7 +37,7 @@ export class AgentService extends BaseService<Agent> {
       return agents
         .filter(agent => !(agent as any).deletedAt)
         .map(agent => this.transform(agent));
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'findAll'); 
     }
@@ -57,7 +57,7 @@ export class AgentService extends BaseService<Agent> {
       }
 
       return this.transform(agent);
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       return this.handleError(err, `findById(${id})`);
     }
@@ -93,7 +93,7 @@ export class AgentService extends BaseService<Agent> {
       });
 
       return this.transform(agent);
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'create');
     }
@@ -123,7 +123,7 @@ export class AgentService extends BaseService<Agent> {
       });
 
       return this.transform(agent);
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       return this.handleError(err, `update(${id})`);
     }
@@ -143,7 +143,7 @@ export class AgentService extends BaseService<Agent> {
         },
       });
       return true;
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       this.handleError(err, `delete(${id})`);
       return false;
@@ -187,7 +187,7 @@ export class AgentService extends BaseService<Agent> {
       return agents
         .filter(agent => !(agent as any).deletedAt)
         .map(agent => this.addMetadataIfMissing(agent));
-    } catch (error: unknown) {
+    } catch (error) {
       const err = toError(error);
       return this.handleError(err, 'findAgents');
     }

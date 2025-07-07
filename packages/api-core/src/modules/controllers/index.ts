@@ -1,3 +1,3 @@
 // Export all controllers
-export * from './agent.controller.js';
-export * from './workflow.controller.js';
+export * from './agent.controller';
+export * from './workflow.controller';

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
-import { LoggingService } from '../services/logging.service.js';
-import { EventBus } from '../events/event-bus.service.js';
-import { UserCreatedEvent, UserUpdatedEvent, UserDeletedEvent } from './events/user.events.js';
-import { hashPassword } from '../utils/auth.utils.js';
+import { PrismaService } from '../prisma/prisma.service';
+import { LoggingService } from '../services/logging.service';
+import { EventBus } from '../events/event-bus.service';
+import { UserCreatedEvent, UserUpdatedEvent, UserDeletedEvent } from './events/user.events';
+import { hashPassword } from '../utils/auth.utils';
 
 @Injectable()
 export class UsersService {

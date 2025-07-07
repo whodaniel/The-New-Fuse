@@ -2,9 +2,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FilterBar = void 0;
 import react_1 from 'react';
 import lucide_react_1 from 'lucide-react';
-import Input_1 from '../ui/Input/Input.js';
-import Select_1 from '../ui/Select/Select.js';
-import Button_1 from '../ui/Button/Button.js';
+import Input_1 from '../ui/Input/Input';
+import Select_1 from '../ui/Select/Select';
+import Button_1 from '../ui/Button/Button';
 const FilterBar = ({ categories, tags, onSearchChange, onCategoryChange, onTagChange, onSortChange, onPriceRangeChange, }) => {
     return (<div className="space-y-4">
       

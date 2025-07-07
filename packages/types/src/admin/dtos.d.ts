@@ -1,4 +1,4 @@
-import { Permission } from './permissions.js';
+import { Permission } from './permissions';
 export interface UpdateRolePermissionsDto {
     roleId: string;
     permissions: Permission[];

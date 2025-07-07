@@ -1,11 +1,10 @@
 import React from 'react';
 import { QueryClientProvider, QueryClient } from '@tanstack/react-query';
-import { ThemeProvider } from './providers/ThemeProvider.tsx';
-import { LayoutProvider } from './contexts/LayoutContext.tsx';
-import ErrorBoundary from './components/core/ErrorBoundary.tsx';
-// import { DevTools } from './components/dev/DevTools.tsx'; // Keep commented for now
-import ComprehensiveRouter from './ComprehensiveRouter.tsx';
-import { Toaster } from './components/ui/toast.tsx';
+import { ThemeProvider } from './providers/ThemeProvider';
+import { LayoutProvider } from './contexts/LayoutContext';
+import ErrorBoundary from './components/core/ErrorBoundary';
+// import { DevTools } from './components/dev/DevTools'; // Keep commented for now
+import ComprehensiveRouter from './ComprehensiveRouter';
 
 const queryClient = new QueryClient();
 
@@ -16,7 +15,6 @@ export function App() {
         <LayoutProvider>
           <ErrorBoundary>
             <ComprehensiveRouter />
-            <Toaster />
             {/* {process.env.NODE_ENV === 'development' && <DevTools />} */}
           </ErrorBoundary>
         </LayoutProvider>

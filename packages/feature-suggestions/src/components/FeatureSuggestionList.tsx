@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FeatureSuggestion, SuggestionStatus } from '../types.js';
+import { FeatureSuggestion, SuggestionStatus } from '../types';
 
 interface FeatureSuggestionCardProps {
   suggestion: FeatureSuggestion;

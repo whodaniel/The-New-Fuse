@@ -1,5 +1,5 @@
 import { ComponentProps } from 'react';
-import { Card as CardBase } from './card.js';
+import { Card as CardBase } from './card';
 import { Button as ButtonBase } from '@/components/core';
 
 export { ButtonBase };

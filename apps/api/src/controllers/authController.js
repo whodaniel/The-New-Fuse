@@ -1,4 +1,7 @@
-import { userService } from '../services/userService';
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.authController = void 0;
+const userService_1 = require("../services/userService");
 class AuthController {
     async register(req, res) {
         try {
@@ -9,17 +12,17 @@ class AuthController {
                 return;
             }
             // TODO: Add more robust validation (e.g., email format, password strength)
-            const existingUserByEmail = await userService.findUserByEmail(email);
+            const existingUserByEmail = await userService_1.userService.findByEmail(email);
             if (existingUserByEmail) {
                 res.status(409).json({ success: false, message: 'User with this email already exists' });
                 return;
             }
-            const existingUserByUsername = await userService.findUserByUsername(username);
+            const existingUserByUsername = await userService_1.userService.findUserByUsername(username);
             if (existingUserByUsername) {
                 res.status(409).json({ success: false, message: 'Username is already taken' });
                 return;
             }
-            const user = await userService.createUser(email, password, username);
+            const user = await userService_1.userService.createUser(email, password, username);
             if (!user) {
                 // This case should ideally be caught by the checks above, but as a fallback
                 res.status(500).json({ success: false, message: 'Failed to create user' });
@@ -35,4 +38,4 @@ class AuthController {
         }
     }
 }
-export const authController = new AuthController();
+exports.authController = new AuthController();

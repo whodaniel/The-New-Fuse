@@ -1,5 +1,5 @@
-import { CascadeBridge } from '../services/CascadeBridge.js';
-import { LoggingService } from '../services/logging.js';
+import { CascadeBridge } from '../services/CascadeBridge';
+import { LoggingService } from '../services/logging';
 
 interface ImprovementMessage {
   type: 'improvement';

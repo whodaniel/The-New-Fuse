@@ -1,5 +1,5 @@
 import React from 'react';
-import { useAuthContext } from '../../providers/AuthProvider.tsx';
+import { useAuthContext } from '../../providers/AuthProvider';
 
 /**
  * Protected route props

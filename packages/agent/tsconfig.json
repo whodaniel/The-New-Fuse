@@ -20,7 +20,6 @@
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
-    { "path": "../types" },
-    { "path": "../core" }
+    { "path": "../types" }
   ]
 }

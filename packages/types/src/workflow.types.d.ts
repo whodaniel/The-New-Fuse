@@ -1,5 +1,5 @@
-import { ServiceStatusType } from './services/service-types.tsx';
-import { ErrorCode } from './errors.tsx';
+import { ServiceStatusType } from './services/service-types';
+import { ErrorCode } from './errors';
 export interface CreateWorkflowDto {
     name: string;
     description?: string;

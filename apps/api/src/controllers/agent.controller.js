@@ -1,128 +1,299 @@
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentController = void 0;
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const jwt_auth_guard_1 = require("../auth/guards/jwt-auth.guard");
+const current_user_decorator_1 = require("../auth/decorators/current-user.decorator");
+const agent_service_1 = require("../services/agent.service");
+const types_1 = require("@the-new-fuse/types");
+let AgentController = class AgentController {
+    agentService;
+    constructor(agentService) {
+        this.agentService = agentService;
     }
-    return useValue ? value : void 0;
-};
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+    async createAgent(createAgentDto, user) {
+        try {
+            // Add userId from authenticated user
+            const agentData = {
+                ...createAgentDto,
+                userId: user.id
+            };
+            return await this.agentService.createAgent(agentData);
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to create agent', common_1.HttpStatus.BAD_REQUEST);
         }
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
+    async getAgents(user, type, status, search) {
+        try {
+            if (type) {
+                return this.agentService.findAgentsByType(type);
+            }
+            if (status) {
+                return this.agentService.findAgentsByStatus(status);
+            }
+            if (search) {
+                return this.agentService.searchAgents(user.id, search);
+            }
+            return this.agentService.findAgentsByUserId(user.id);
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to fetch agents', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getActiveAgents() {
+        try {
+            return this.agentService.getActiveAgents();
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to fetch active agents', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getAgentTypeCounts() {
+        try {
+            return this.agentService.getAgentTypeCounts();
+        }
+        catch (error) {
+            throw new common_1.HttpException(error.message || 'Failed to fetch agent type counts', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getAgentById(id) {
+        try {
+            return await this.agentService.findAgentById(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to fetch agent', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async getAgentStats(id) {
+        try {
+            return await this.agentService.getAgentStats(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to fetch agent stats', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    async updateAgent(id, updateAgentDto) {
+        try {
+            return await this.agentService.updateAgent(id, updateAgentDto);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to update agent', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async activateAgent(id) {
+        try {
+            return await this.agentService.activateAgent(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to activate agent', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async deactivateAgent(id) {
+        try {
+            return await this.agentService.deactivateAgent(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to deactivate agent', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async pauseAgent(id) {
+        try {
+            return await this.agentService.pauseAgent(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to pause agent', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async markAgentBusy(id) {
+        try {
+            return await this.agentService.markAgentBusy(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to mark agent as busy', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async markAgentError(id) {
+        try {
+            return await this.agentService.markAgentError(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to mark agent as error', common_1.HttpStatus.BAD_REQUEST);
+        }
+    }
+    async deleteAgent(id) {
+        try {
+            await this.agentService.deleteAgent(id);
+        }
+        catch (error) {
+            if (error instanceof common_1.HttpException) {
+                throw error;
+            }
+            throw new common_1.HttpException(error.message || 'Failed to delete agent', common_1.HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 };
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Controller, Get, Post, Put, Delete, UseGuards, HttpException, HttpStatus } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
-let AgentController = (() => {
-    let _classDecorators = [ApiTags('Agents'), Controller('agents'), UseGuards(JwtAuthGuard)];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    let _instanceExtraInitializers = [];
-    let _createAgent_decorators;
-    let _getAgents_decorators;
-    let _getAgentById_decorators;
-    let _updateAgent_decorators;
-    let _deleteAgent_decorators;
-    var AgentController = _classThis = class {
-        constructor(agentService) {
-            this.agentService = (__runInitializers(this, _instanceExtraInitializers), agentService);
-        }
-        async createAgent(data, user) {
-            try {
-                return await this.agentService.createAgent(data, user.id);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to create agent', HttpStatus.BAD_REQUEST);
-            }
-        }
-        async getAgents(user, capability, status) {
-            try {
-                if (capability) {
-                    return this.agentService.getAgentsByCapability(capability, user.id);
-                }
-                if (status) {
-                    return this.agentService.getAgentsByStatus(status, user.id);
-                }
-                return this.agentService.getAgents(user.id);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to fetch agents', HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        async getAgentById(id, user) {
-            try {
-                const agent = await this.agentService.getAgentById(id, user.id);
-                if (!agent) {
-                    throw new HttpException('Agent not found', HttpStatus.NOT_FOUND);
-                }
-                return agent;
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to fetch agent', HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-        async updateAgent(id, updates, user) {
-            try {
-                return await this.agentService.updateAgent(id, updates, user.id);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to update agent', HttpStatus.BAD_REQUEST);
-            }
-        }
-        async deleteAgent(id, user) {
-            try {
-                await this.agentService.deleteAgent(id, user.id);
-            }
-            catch (error) {
-                throw new HttpException(error.message || 'Failed to delete agent', HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-    };
-    __setFunctionName(_classThis, "AgentController");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        _createAgent_decorators = [Post(), ApiOperation({ summary: 'Create a new agent' }), ApiResponse({ status: HttpStatus.CREATED, type: Agent })];
-        _getAgents_decorators = [Get(), ApiOperation({ summary: 'Get all agents' }), ApiResponse({ status: HttpStatus.OK, type: [Agent] })];
-        _getAgentById_decorators = [Get(':id'), ApiOperation({ summary: 'Get agent by ID' }), ApiResponse({ status: HttpStatus.OK, type: Agent })];
-        _updateAgent_decorators = [Put(':id'), ApiOperation({ summary: 'Update agent' }), ApiResponse({ status: HttpStatus.OK, type: Agent })];
-        _deleteAgent_decorators = [Delete(':id'), ApiOperation({ summary: 'Delete agent' }), ApiResponse({ status: HttpStatus.NO_CONTENT })];
-        __esDecorate(_classThis, null, _createAgent_decorators, { kind: "method", name: "createAgent", static: false, private: false, access: { has: obj => "createAgent" in obj, get: obj => obj.createAgent }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getAgents_decorators, { kind: "method", name: "getAgents", static: false, private: false, access: { has: obj => "getAgents" in obj, get: obj => obj.getAgents }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _getAgentById_decorators, { kind: "method", name: "getAgentById", static: false, private: false, access: { has: obj => "getAgentById" in obj, get: obj => obj.getAgentById }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _updateAgent_decorators, { kind: "method", name: "updateAgent", static: false, private: false, access: { has: obj => "updateAgent" in obj, get: obj => obj.updateAgent }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(_classThis, null, _deleteAgent_decorators, { kind: "method", name: "deleteAgent", static: false, private: false, access: { has: obj => "deleteAgent" in obj, get: obj => obj.deleteAgent }, metadata: _metadata }, null, _instanceExtraInitializers);
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        AgentController = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return AgentController = _classThis;
-})();
-export { AgentController };
+exports.AgentController = AgentController;
+__decorate([
+    (0, common_1.Post)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Create a new agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.CREATED, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, current_user_decorator_1.CurrentUser)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [types_1.CreateAgentDto, Object]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "createAgent", null);
+__decorate([
+    (0, common_1.Get)(),
+    (0, swagger_1.ApiOperation)({ summary: 'Get all agents' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: [types_1.AgentResponseDto] }),
+    __param(0, (0, current_user_decorator_1.CurrentUser)()),
+    __param(1, (0, common_1.Query)('type')),
+    __param(2, (0, common_1.Query)('status')),
+    __param(3, (0, common_1.Query)('search')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, String, String, String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "getAgents", null);
+__decorate([
+    (0, common_1.Get)('active'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get active agents' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: [types_1.AgentResponseDto] }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "getActiveAgents", null);
+__decorate([
+    (0, common_1.Get)('stats/types'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get agent count by type' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "getAgentTypeCounts", null);
+__decorate([
+    (0, common_1.Get)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get agent by ID' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "getAgentById", null);
+__decorate([
+    (0, common_1.Get)(':id/stats'),
+    (0, swagger_1.ApiOperation)({ summary: 'Get agent statistics' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "getAgentStats", null);
+__decorate([
+    (0, common_1.Put)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Update agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, types_1.UpdateAgentDto]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "updateAgent", null);
+__decorate([
+    (0, common_1.Put)(':id/activate'),
+    (0, swagger_1.ApiOperation)({ summary: 'Activate agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "activateAgent", null);
+__decorate([
+    (0, common_1.Put)(':id/deactivate'),
+    (0, swagger_1.ApiOperation)({ summary: 'Deactivate agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "deactivateAgent", null);
+__decorate([
+    (0, common_1.Put)(':id/pause'),
+    (0, swagger_1.ApiOperation)({ summary: 'Pause agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "pauseAgent", null);
+__decorate([
+    (0, common_1.Put)(':id/busy'),
+    (0, swagger_1.ApiOperation)({ summary: 'Mark agent as busy' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "markAgentBusy", null);
+__decorate([
+    (0, common_1.Put)(':id/error'),
+    (0, swagger_1.ApiOperation)({ summary: 'Mark agent as error' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.OK, type: types_1.AgentResponseDto }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "markAgentError", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    (0, swagger_1.ApiOperation)({ summary: 'Delete agent' }),
+    (0, swagger_1.ApiResponse)({ status: common_1.HttpStatus.NO_CONTENT }),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AgentController.prototype, "deleteAgent", null);
+exports.AgentController = AgentController = __decorate([
+    (0, swagger_1.ApiTags)('Agents'),
+    (0, common_1.Controller)('agents'),
+    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),
+    __metadata("design:paramtypes", [agent_service_1.AgentService])
+], AgentController);

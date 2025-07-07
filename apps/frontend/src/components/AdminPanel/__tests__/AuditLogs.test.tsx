@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { AuditLogs } from '../AuditLogs.tsx';
-import { useAuditLogs } from '../../../hooks/useAuditLogs.tsx';
+import { AuditLogs } from '../AuditLogs';
+import { useAuditLogs } from '../../../hooks/useAuditLogs';
 
 jest.mock('../../../hooks/useAuditLogs');
 

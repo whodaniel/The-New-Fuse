@@ -1,10 +1,10 @@
 export {}
 exports.MCPWorkflowAdapter = void 0;
-import logger_1 from './logger.tsx';
-import messages_1 from './messages.js';
-import output_formatter_1 from './output_formatter.tsx';
-import workflow_manager_1 from './workflow_manager.js';
-import enhanced_communication_1 from './enhanced_communication.js';
+import logger_1 from './logger';
+import messages_1 from './messages';
+import output_formatter_1 from './output_formatter';
+import workflow_manager_1 from './workflow_manager';
+import enhanced_communication_1 from './enhanced_communication';
 const logger = new logger_1.Logger('MCPWorkflowAdapter');
 class MCPWorkflowAdapter {
     constructor() {

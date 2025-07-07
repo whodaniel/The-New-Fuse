@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button } from '../../../core/button.tsx';
-import { WorkflowStep } from '../types.tsx';
+import { Button } from '../../../core/button/index';
+import { WorkflowStep } from '../types';
 
 interface WorkflowStepViewerProps {
   step: WorkflowStep;

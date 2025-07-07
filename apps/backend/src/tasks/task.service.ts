@@ -1,11 +1,12 @@
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '@core/redis/redis.service.ts';
+import { Injectable, Logger } from '@nestjs/common';
+import { RedisService } from '@core/redis/redis.service';
 import { QueueService } from '@core/redis/queue.service';
 import { PubSubService } from '@core/redis/pubsub.service';
 import { REDIS_CHANNELS, REDIS_QUEUES } from '@core/config/redis.config';
 
 @Injectable()
 export class TaskService {
+  private readonly logger = new Logger(TaskService.name);
   constructor(
     private readonly redis: RedisService,
     private readonly queue: QueueService,
@@ -48,6 +49,12 @@ export class TaskService {
         result: 'success',
       });
     });
+  }
+
+  async processTask(id: string, data: any): Promise<void> {
+    this.logger.log(`Processing task ${id} with data: ${JSON.stringify(data)}`);
+    // Add your task processing logic here
+    // For example, you might call other services, perform computations, etc.
   }
 
   async subscribeToTaskUpdates(callback: (message: any) => void): Promise<void> {

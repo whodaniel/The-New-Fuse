@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Agent } from '@the-new-fuse/types';
-import { api } from '../services/api.tsx';
+import { api } from '../services/api';
 
 interface AgentState {
   agents: Agent[];

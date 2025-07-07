@@ -6,6 +6,7 @@ import { FeatureTracker } from '@the-new-fuse/feature-tracker';
 export class AgentCoordinator extends EventEmitter {
     private readonly messageQueue: PriorityQueue<AgentMessage>;
     private readonly agents: Map<string, AgentCapability[]> = new Map();
+    public readonly agentMap: Map<string, any> = new Map(); // For external access
 
     constructor(
         private readonly name: string,
@@ -58,6 +59,16 @@ export class AgentCoordinator extends EventEmitter {
 
     private notifySubscribers(response: AgentResponse): Promise<void> {
         // Implementation
+        return Promise.resolve();
+    }
+
+    start(): Promise<void> {
+        // Initialize the coordinator
+        return Promise.resolve();
+    }
+
+    stop(): Promise<void> {
+        // Stop the coordinator
         return Promise.resolve();
     }
 }

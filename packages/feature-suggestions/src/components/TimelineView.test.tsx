@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import TimelineView from './TimelineView.tsx';
-import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline.js';
+import TimelineView from './TimelineView';
+import { TimelineEvent, TimelineBranch, TimelineWorkflow } from '../types/timeline';
 
 // Helper function to convert TimelineWorkflow from the timeline.ts file
 // to the format expected by the TimelineView component

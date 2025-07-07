@@ -11,7 +11,7 @@ import {
   IconButton
 } from '@chakra-ui/react';
 import { ServiceStatusType } from '@the-new-fuse/types';
-import { useServices } from '../../hooks/useServices.js';
+import { useServices } from '../../hooks/useServices';
 
 export const ServiceMonitor: React.FC = () => {
   const { services, restartService } = useServices();

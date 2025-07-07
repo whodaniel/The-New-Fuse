@@ -1,4 +1,7 @@
-export function loadConfig() {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.loadConfig = loadConfig;
+function loadConfig() {
     return {
         redis: {
             host: process.env.REDIS_HOST || 'localhost',
@@ -12,4 +15,3 @@ export function loadConfig() {
         },
     };
 }
-//# sourceMappingURL=config.js.map

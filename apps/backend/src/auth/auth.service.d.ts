@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service.js';
-import { LoggingService } from '../services/logging.service.js';
-import { EventBus } from '../events/event-bus.service.js';
+import { UsersService } from '../users/users.service';
+import { LoggingService } from '../services/logging.service';
+import { EventBus } from '../events/event-bus.service';
 export declare class AuthService {
     private usersService;
     private jwtService;

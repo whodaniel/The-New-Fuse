@@ -1,8 +1,8 @@
-import { BaseProcessor } from './BaseProcessor.js'; // Assuming a BaseProcessor exists
-import { Logger } from '@the-new-fuse/utils';
+import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
+import { Logger } from '../utils/Logger';
 import { Command, CommandResult, Message, MessageType, UUID } from '@the-new-fuse/types';
-import { InterAgentChatService } from '../services/InterAgentChatService.tsx'; // Corrected import
-import { RedisService } from '../services/RedisService.tsx'; // Corrected import
+import { InterAgentChatService } from '../services/InterAgentChatService'; // Corrected import
+import { RedisService } from '../services/RedisService'; // Corrected import
 // Import other necessary services or types
 
 /**
@@ -68,13 +68,14 @@ export class CommandProcessor extends BaseProcessor {
     }
 
     // TODO: Add validation using MessageValidator service if available
-    const command = message.content as Command; // Type assertion, consider validation
+    const command = message.content as unknown as Command; // Type assertion, consider validation
 
     if (!command.commandType) {
         this.logger.warn(`Received command message ${message.id} without a commandType.`);
         return {
+            id: `result_${command.id || message.id}`,
             commandId: command.id || message.id, // Use command ID if present, else message ID
-            status: 'failed',
+            status: 'error' as const,
             error: 'Missing commandType in command content.',
             timestamp: new Date(),
         };
@@ -85,8 +86,9 @@ export class CommandProcessor extends BaseProcessor {
     if (!handler) {
       this.logger.warn(`No handler registered for command type: ${command.commandType} (Command ID: ${command.id || message.id})`);
       return {
+        id: `result_${command.id || message.id}`,
         commandId: command.id || message.id,
-        status: 'failed',
+        status: 'error' as const,
         error: `Command type "${command.commandType}" not supported by this agent.`,
         timestamp: new Date(),
       };
@@ -101,11 +103,12 @@ export class CommandProcessor extends BaseProcessor {
       // Example: if (message.senderAgentId) { await this.chatService.sendMessage(message.senderAgentId, result, MessageType.COMMAND_RESULT); }
       return result;
     } catch (error) {
-      this.logger.error(`Error executing handler for command ${command.commandType} (ID: ${command.id || message.id}): ${error.message}`, error);
+      this.logger.error(`Error executing handler for command ${command.commandType} (ID: ${command.id || message.id}): ${(error as Error).message}`);
       return {
+        id: `result_${command.id || message.id}`,
         commandId: command.id || message.id,
-        status: 'failed',
-        error: `Internal error processing command: ${error.message}`,
+        status: 'error' as const,
+        error: `Internal error processing command: ${(error as Error).message}`,
         timestamp: new Date(),
       };
     }
@@ -118,8 +121,9 @@ export class CommandProcessor extends BaseProcessor {
     // Example: Use redisService
     const pingTimestamp = await this.redisService.get(`agent:${agentId}:last_ping`);
     return {
+      id: `result_${command.id}`,
       commandId: command.id,
-      status: 'success',
+      status: 'success' as const,
       result: {
         message: 'pong',
         agentId: agentId,
@@ -134,8 +138,9 @@ export class CommandProcessor extends BaseProcessor {
      this.logger.debug(`Handling 'get_status' command (ID: ${command.id})`);
      // TODO: Implement logic to retrieve agent status (e.g., current task, health, load)
      return {
+       id: `result_${command.id}`,
        commandId: command.id,
-       status: 'success',
+       status: 'success' as const,
        result: {
          agentId: agentId,
          status: 'idle', // Placeholder

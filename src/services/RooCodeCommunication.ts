@@ -6,7 +6,8 @@
  */
 
 import { EventEmitter } from 'events';
-import * as crypto from 'crypto';
+// Refactored: Use centralized cryptoUtils for all cryptographic operations
+import { sha256 } from '../utils/cryptoUtils';
 
 // Define message types from the guide
 export type MessageType = 
@@ -319,10 +320,7 @@ export class RooCodeCommunication extends EventEmitter {
     // In a production system, this would use a proper cryptographic approach
     // For now, we use a simple hash of the agent ID and timestamp
     const timestamp = Date.now().toString();
-    return crypto
-      .createHash('sha256')
-      .update(`${this.agentId}:${timestamp}`)
-      .digest('hex');
+    return sha256(`${this.agentId}:${timestamp}`);
   }
   
   /**

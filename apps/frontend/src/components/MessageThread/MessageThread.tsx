@@ -3,10 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.MessageThread = void 0;
 import react_1 from 'react';
 import { format } from 'date-fns';
-import ui_1 from '../../shared/components/ui.js';
+import ui_1 from '../../shared/components/ui';
 import icons_material_1 from '@mui/icons-material';
-import MessageReactions_1 from '../MessageReactions/MessageReactions.js';
-import MarkdownRenderer_1 from '../MarkdownRenderer.tsx';
+import MessageReactions_1 from '../MessageReactions/MessageReactions';
+import MarkdownRenderer_1 from '../MarkdownRenderer';
 const MessageThread = ({ parentMessage, replies, onReply, onClose, currentUserId }) => {
     const [replyContent, setReplyContent] = (0, react_1.useState)('');
     const [isSubmitting, setIsSubmitting] = (0, react_1.useState)(false);

@@ -1,2 +1,2 @@
-export { SettingsButton } from './SettingsButton.tsx';
+export { SettingsButton } from './SettingsButton';
 //# sourceMappingURL=index.js.map

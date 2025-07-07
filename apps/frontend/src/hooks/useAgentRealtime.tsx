@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { io, Socket } from 'socket.io-client';
-import { Agent } from './useAgents.tsx';
+import { Agent } from './useAgents';
 
 type AgentEvent = 'agent:created' | 'agent:updated' | 'agent:deleted';
 

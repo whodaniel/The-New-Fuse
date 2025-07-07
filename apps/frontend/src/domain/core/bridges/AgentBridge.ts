@@ -1,8 +1,8 @@
-import { EventBus } from '../eventBus.js';
-import { StateManager } from '../stateManager.js';
-import { LoggingService } from '../../../services/logging.js';
-import { MessageFactory } from '../messageTypes.js';
-import { AgentStatus } from '../../../models/enums.js';
+import { EventBus } from '../eventBus';
+import { StateManager } from '../stateManager';
+import { LoggingService } from '../../../services/logging';
+import { MessageFactory } from '../messageTypes';
+import { AgentStatus } from '../../../models/enums';
 export class AgentBridge {
     constructor() {
         this.communicationManager = CommunicationManager.getInstance();

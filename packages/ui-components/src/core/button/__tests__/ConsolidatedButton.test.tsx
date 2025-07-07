@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Button } from '../ConsolidatedButton.tsx';
+import { Button } from '../ConsolidatedButton';
 
 describe('Button', () => {
   it('renders correctly with default props', () => {

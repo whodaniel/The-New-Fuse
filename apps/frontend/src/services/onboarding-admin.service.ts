@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { API_BASE_URL, API_TIMEOUT } from '../config/api.js';
+import { API_BASE_URL, API_TIMEOUT } from '../config/api';
 
 const API_ENDPOINT = `${API_BASE_URL}/api/admin/onboarding`;
 

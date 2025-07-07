@@ -1,12 +1,19 @@
-import { EventEmitter } from 'events';
-import { PriorityQueue } from '@the-new-fuse/types';
-export class AgentCoordinator extends EventEmitter {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentCoordinator = void 0;
+const events_1 = require("events");
+const types_1 = require("@the-new-fuse/types");
+class AgentCoordinator extends events_1.EventEmitter {
+    name;
+    featureTracker;
+    messageQueue;
+    agents = new Map();
+    agentMap = new Map(); // For external access
     constructor(name, featureTracker) {
         super();
         this.name = name;
         this.featureTracker = featureTracker;
-        this.agents = new Map();
-        this.messageQueue = new PriorityQueue();
+        this.messageQueue = new types_1.PriorityQueue();
     }
     async handleMessage(message) {
         const bestAgent = await this.findBestAgent(message);
@@ -45,4 +52,13 @@ export class AgentCoordinator extends EventEmitter {
         // Implementation
         return Promise.resolve();
     }
+    start() {
+        // Initialize the coordinator
+        return Promise.resolve();
+    }
+    stop() {
+        // Stop the coordinator
+        return Promise.resolve();
+    }
 }
+exports.AgentCoordinator = AgentCoordinator;

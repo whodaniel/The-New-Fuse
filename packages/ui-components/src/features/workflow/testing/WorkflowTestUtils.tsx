@@ -1,10 +1,10 @@
-import { WorkflowStep, WorkflowStatus, WorkflowState } from '../types.tsx';
+import { WorkflowStep, WorkflowStatus, WorkflowState } from '../types';
 
 export class WorkflowTestUtils {
   static createMockStep(overrides: Partial<WorkflowStep> = {}): WorkflowStep {
     return {
       id: `step-${Math.random().toString(36).substr(2, 9)}`,
-      type: 'test',
+      type: 'action',
       name: overrides.name || 'Test Step',
       action: 'test-action',
       parameters: {},
@@ -34,7 +34,7 @@ export class WorkflowTestUtils {
     for (let i = 0; i < numSteps; i++) {
       steps.push({
         id: `step-${i + 1}`,
-        type: 'test',
+        type: 'action',
         name: `Test Step ${i + 1}`,
         action: `Test Action ${i + 1}`,
         parameters: { testParam: `value-${i + 1}` }

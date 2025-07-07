@@ -27,7 +27,7 @@ router.get('/health', async (req, res) => {
       database: dbStatus,
       redis: redisStatus
     });
-  } catch (error: unknown) { // Add type annotation for error
+  } catch (error) { // Add type annotation for error
     res.status(500).json({
       status: 'unhealthy',
       error: error instanceof Error ? error.message : 'Unknown error',

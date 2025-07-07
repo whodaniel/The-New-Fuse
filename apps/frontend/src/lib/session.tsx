@@ -1,4 +1,4 @@
-import { baseHeaders } from './request.js';
+import { baseHeaders } from './request';
 
 export interface SessionValidationResponse {
   valid: boolean;

@@ -11,7 +11,7 @@ import {
   Switch,
   useToast
 } from '@chakra-ui/react';
-import { useRoles } from '../../hooks/useRoles.js';
+import { useRoles } from '../../hooks/useRoles';
 import { Permission } from '@the-new-fuse/types';
 
 export const RoleManager: React.FC = () => {

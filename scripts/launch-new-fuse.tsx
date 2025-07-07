@@ -35,7 +35,7 @@ class NewFuseLauncher {
 
       this.logger.log('The New Fuse system is now running');
 
-    } catch (error: unknown) {
+    } catch (error) {
       this.logger.error('Failed to launch The New Fuse:', (error as Error).message);
       process.exit(1);
     }

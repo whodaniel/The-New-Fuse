@@ -1,6 +1,6 @@
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useServices } from '../useServices.js';
-import { api } from '../../services/api.tsx';
+import { useServices } from '../useServices';
+import { api } from '../../services/api';
 
 jest.mock('../../services/api');
 

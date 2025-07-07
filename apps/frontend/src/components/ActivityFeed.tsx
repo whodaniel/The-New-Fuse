@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket.js';
-import { ScrollArea } from './ui/scroll-area.js';
-import { Card, CardHeader, CardContent } from './ui/card.tsx';
-import { Badge } from './ui/badge.tsx';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { ScrollArea } from './ui/scroll-area';
+import { Card, CardHeader, CardContent } from './ui/card';
+import { Badge } from './ui/badge';
 import { formatDistanceToNow, format } from 'date-fns';
-import { Button } from './ui/button.tsx';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select.js';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs.js';
+import { Button } from './ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { ChevronDown, ChevronUp, Filter, RefreshCw } from 'lucide-react';
 
 interface Activity {

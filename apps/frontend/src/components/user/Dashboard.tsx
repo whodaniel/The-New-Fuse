@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = Dashboard;
 import react_1 from 'react';
-import route_context_1 from '../contexts/route-context.js';
-import card_1 from '../components/ui/card.js';
-import components_1 from '../components.js';
+import route_context_1 from '../contexts/route-context';
+import card_1 from '../components/ui/card';
+import components_1 from '../components';
 function Dashboard() {
     const { setPageTitle } = (0, route_context_1.useRoute)();
     (0, react_1.useEffect)(() => {

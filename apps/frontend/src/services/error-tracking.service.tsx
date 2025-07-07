@@ -1,8 +1,8 @@
-import { ErrorService } from '../core/services/ErrorService.js';
+import { ErrorService } from '../core/services/ErrorService';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
-import { ErrorPriority, ErrorCategory } from '../shared/types/errors.js';
-import { Logger } from '../utils/logger.tsx';
+import { ErrorPriority, ErrorCategory } from '../shared/types/errors';
+import { Logger } from '../utils/logger';
 
 interface ErrorContext {
   category?: ErrorCategory;

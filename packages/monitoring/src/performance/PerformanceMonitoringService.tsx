@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MetricsService } from './metrics.service.js';
-import { TracingService } from './tracing.service.js';
+import { MetricsService } from './metrics.service';
+import { TracingService } from './tracing.service';
 
 interface PerformanceMetric {
   name: string;

@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { HttpModule } from '@nestjs/axios'; // Import HttpModule
-import { MCPService } from './services/mcp.service.js';
-import { MCPController } from './controllers/mcp.controller.js';
-import { MCPRegistryService } from './mcp/mcp-registry.service.js'; // Import new service
-import { MCPRegistryServer } from './mcp/mcp-registry.server.js'; // Import new server
+import { MCPService } from './services/mcp.service';
+import { MCPController } from './controllers/mcp.controller';
+import { MCPRegistryService } from './mcp/mcp-registry.service'; // Import new service
+import { MCPRegistryServer } from './mcp/mcp-registry.server'; // Import new server
 
 @Module({
   imports: [
@@ -26,6 +26,6 @@ import { MCPRegistryServer } from './mcp/mcp-registry.server.js'; // Import new 
 export class MCPModule {}
 
 // Keep existing exports, add new ones if necessary (though probably not for server/service)
-export * from './services/mcp.service.js';
-export * from './controllers/mcp.controller.js';
-// export * from './mcp-registry.service.js'; // Uncomment if needed elsewhere
+export * from './services/mcp.service';
+export * from './controllers/mcp.controller';
+// export * from './mcp-registry.service'; // Uncomment if needed elsewhere

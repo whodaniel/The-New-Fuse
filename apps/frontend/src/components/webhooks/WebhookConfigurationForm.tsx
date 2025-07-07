@@ -94,7 +94,7 @@ export function WebhookConfigurationForm({
       if (typeof config !== 'object' || config === null) {
         newErrors.configuration = 'Configuration must be a valid JSON object';
       }
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('JSON parsing error:', error);
       newErrors.configuration = 'Configuration must be valid JSON';
     }
@@ -126,7 +126,7 @@ export function WebhookConfigurationForm({
       }
 
       onSuccess?.();
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Failed to save webhook:', error);
     }
   };
@@ -152,7 +152,7 @@ export function WebhookConfigurationForm({
           ? 'Webhook test successful!'
           : result.error || 'Test failed',
       });
-    } catch (error: unknown) {
+    } catch (error) {
       console.error('Test webhook error:', error);
       setTestResult({
         success: false,

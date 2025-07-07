@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { Tooltip } from './Tooltip.tsx';
-import { Button } from '../Button.js';
+import { Tooltip } from './Tooltip';
+import { Button } from '../Button';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'Components/Tooltip',

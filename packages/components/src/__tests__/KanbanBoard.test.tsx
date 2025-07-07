@@ -1,5 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
-import { KanbanBoard } from '../components/KanbanBoard.js';
+import { KanbanBoard } from '../components/KanbanBoard';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 

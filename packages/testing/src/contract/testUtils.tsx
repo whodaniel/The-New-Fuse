@@ -23,7 +23,7 @@ export class TestUtils {
    */
   static createMockApiResponse<T>(data: T): ApiResponse<T> {
     return {
-      status: 'success',
+      success: true,
       data,
       message: 'Operation successful'
     };

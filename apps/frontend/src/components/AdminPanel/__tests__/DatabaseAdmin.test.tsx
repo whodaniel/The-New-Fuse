@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { DatabaseAdmin } from '../DatabaseAdmin.tsx';
-import { useDatabase } from '../../../hooks/useDatabase.tsx';
+import { DatabaseAdmin } from '../DatabaseAdmin';
+import { useDatabase } from '../../../hooks/useDatabase';
 
 jest.mock('../../../hooks/useDatabase');
 

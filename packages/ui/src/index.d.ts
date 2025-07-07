@@ -1,2 +1,2 @@
-export * from './components/Button.tsx';
-export * from './components/Card.tsx';
+export * from './components/Button';
+export * from './components/Card';

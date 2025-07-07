@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { Center, Spinner } from '@chakra-ui/react';
-import { useAuth } from '../../hooks/useAuth.tsx';
+import { useAuthContext } from '../../contexts/AuthContext';
 
 interface PublicRouteProps {
   children: React.ReactNode;
@@ -12,9 +12,9 @@ export function PublicRoute({
   children,
   redirectTo = '/dashboard',
 }: PublicRouteProps) {
-  const { isAuthenticated, loading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuthContext();
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Center h="100vh">
         <Spinner

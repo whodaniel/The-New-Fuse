@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Node, Edge } from '../types/workflow.tsx';
+import type { Node, Edge } from '../types/workflow';
 
 export const useWorkflowValidation = (): any => {
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
@@ -8,7 +8,7 @@ export const useWorkflowValidation = (): any => {
     const errors: string[] = [];
 
     // Check for disconnected nodes
-    nodes.forEach(nod(e: any) => {
+    nodes.forEach((node: any) => {
       const hasInputs = edges.some(edg(e: any) => edge.target === node.id);
       const hasOutputs = edges.some(edg(e: any) => edge.source === node.id);
 
@@ -24,7 +24,7 @@ export const useWorkflowValidation = (): any => {
     }
 
     // Check for required configurations
-    nodes.forEach(nod(e: any) => {
+    nodes.forEach((node: any) => {
       if (node.data.requiredConfig) {
         const missingConfig = node.data.requiredConfig.filter(
           config => !node.data.configuration?.[config]

@@ -1,9 +1,11 @@
 import { Controller, Post, Body, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
+// import { ConversationExportService, ExportFormat } from '@the-new-fuse/core';
 import { IsIn, IsNotEmpty, IsString } from 'class-validator';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
+
+type ExportFormat = 'pdf' | 'md' | 'txt';
 
 class ExportConversationDto {
   @IsString()
@@ -41,14 +43,11 @@ export class ExportController {
       return res.status(HttpStatus.BAD_REQUEST).json({ error: 'Missing conversation or format' });
     }
     try {
-      const buffer = await ConversationExportService.export(conversation, format);
-      const mime =
-        format === 'pdf' ? 'application/pdf' :
-        format === 'md' ? 'text/markdown' :
-        'text/plain';
-      res.setHeader('Content-Type', mime);
-      res.setHeader('Content-Disposition', `attachment; filename=conversation.${format}`);
-      res.send(buffer);
+      // TODO: Re-enable once core package is fixed
+      // const buffer = await ConversationExportService.export(conversation, format);
+      res.status(HttpStatus.NOT_IMPLEMENTED).json({ 
+        error: 'Export service temporarily disabled - core package needs repair' 
+      });
     } catch (err: any) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ error: err.message || 'Export failed' });
     }

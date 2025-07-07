@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, UseGuards, Req } from '@nestjs/common';
-import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard.js';
-import { MCPService } from '../services/mcp.service.js';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { MCPService } from '../services/mcp.service';
 
 interface ExecuteDirectiveDto {
   serverName: string;

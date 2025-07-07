@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { DashboardCore, CoreFeatures } from '../core.js';
-import { DashboardState } from '../collaboration/types.js';
+import { DashboardCore, CoreFeatures } from '../core';
+import { DashboardState } from '../collaboration/types';
 
 export function useDashboard(): unknown {
   const [core] = useState(() => new DashboardCore());

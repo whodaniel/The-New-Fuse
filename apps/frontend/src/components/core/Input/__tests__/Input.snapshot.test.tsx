@@ -1,6 +1,6 @@
 import React from 'react';
 import { assertSnapshot } from '@/test/helpers/snapshot';
-import { Input } from '../Input.js';
+import { Input } from '../Input';
 
 describe('Input Snapshots', () => {
   it('renders default input correctly', () => {

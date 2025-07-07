@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Column, DataType, CellValue, SelectOption as ColumnSelectOption, AttachmentFile, AppState, Table, Row } from "@the-new-fuse/fairtable-core";
+import { Column, DataType, CellValue, SelectOption as ColumnSelectOption, AttachmentFile, AppState, Table, Row } from "../../fairtable-core/src";
 import SelectInput, { SelectOptionItem } from './SelectInput';
 import { PencilIcon, LinkIcon, TrashIcon, PlusIcon, ArrowUpIcon } from './Icons'; 
-import { generateId } from '@the-new-fuse/fairtable-utils';
-import { evaluateFormula } from '@the-new-fuse/fairtable-core'; 
+import { generateId } from '../../fairtable-utils/src';
+import { evaluateFormula } from '../../fairtable-core/src'; 
 
 interface TableCellProps {
   value: CellValue;
@@ -189,7 +189,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
             className="w-full h-full p-2 border-2 border-sky-500 outline-none box-border text-sm"
           />);
       case DataType.SINGLE_SELECT:
-        const selectOptions: SelectOptionItem[] = (column.options || []).map(opt => ({
+        const selectOptions: SelectOptionItem[] = (column.options || []).map((opt: ColumnSelectOption) => ({
           value: opt.id,
           label: <span className={`px-2 py-0.5 text-xs rounded-full ${opt.colorClass}`}>{opt.name}</span>,
           colorClass: opt.colorClass,
@@ -231,7 +231,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
             <input type="checkbox" readOnly checked={!!value} className={`form-checkbox h-5 w-5 text-sky-600 rounded border-slate-400 focus:ring-sky-500 ${isReadOnly ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'}`} />
           </div>);
       case DataType.SINGLE_SELECT:
-        const selectedOption = (column.options || []).find(opt => opt.id === value);
+        const selectedOption = (column.options || []).find((opt: ColumnSelectOption) => opt.id === value);
         return selectedOption ? 
           <span className={`px-2 py-0.5 text-xs rounded-full ${selectedOption.colorClass}`}>{selectedOption.name}</span> 
           : emptyDisplay;
@@ -275,8 +275,8 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
           );
         }
         
-        const linkedTable = appState.tables.find(t => t.id === column.linkedTableId);
-        const primaryColumnOfLinkedTable = linkedTable?.columns.find(c => c.id === linkedTable.columnOrder[0]);
+        const linkedTable = appState.tables.find((t: Table) => t.id === column.linkedTableId);
+        const primaryColumnOfLinkedTable = linkedTable?.columns.find((c: Column) => c.id === linkedTable.columnOrder[0]);
 
         return (
             <button 
@@ -284,7 +284,7 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
                 className="w-full h-full flex flex-col items-start text-left text-sky-600 hover:text-sky-700 hover:bg-sky-50 p-1 rounded"
             >
                 {currentLinkedIds.map(linkedId => {
-                    const linkedRow = linkedTable?.rows.find(r => r.id === linkedId);
+                    const linkedRow = linkedTable?.rows.find((r: Row) => r.id === linkedId);
                     let displayValue = linkedId;
                     if (linkedRow && primaryColumnOfLinkedTable) {
                         displayValue = String(linkedRow.data[primaryColumnOfLinkedTable.id] ?? linkedId);
@@ -295,14 +295,14 @@ const TableCell: React.FC<TableCellProps> = ({ value, row, column, appState, onU
         );
       }
       case DataType.FORMULA:
-        const activeTable = appState.tables.find(t => t.id === appState.activeTableId); 
+        const activeTable = appState.tables.find((t: Table) => t.id === appState.activeTableId); 
         const formulaResult = evaluateFormula(column.formulaString || '', row, activeTable?.columns || [], activeTable?.rows || [], appState.tables);
         
         let formulaDisplayValue: React.ReactNode;
         if (formulaResult.value === null || formulaResult.value === undefined) {
             formulaDisplayValue = 'Empty';
         } else if (Array.isArray(formulaResult.value)) {
-            formulaDisplayValue = formulaResult.value.map(i => (typeof i === 'object' ? JSON.stringify(i) : String(i))).join(', ');
+            formulaDisplayValue = formulaResult.value.map((i: any) => (typeof i === 'object' ? JSON.stringify(i) : String(i))).join(', ');
         } else if (typeof formulaResult.value === 'object') {
             formulaDisplayValue = JSON.stringify(formulaResult.value);
         } else {

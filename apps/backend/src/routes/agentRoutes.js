@@ -1,6 +1,13 @@
-import express from 'express';
-import { agentController } from '../controllers/agentController.js';
-const router = express.Router();
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.agentRoutes = void 0;
+const express_1 = __importDefault(require("express"));
+const agentController_1 = require("../controllers/agentController");
+const router = express_1.default.Router();
+exports.agentRoutes = router;
 // Toggle this flag to enable/disable authentication requirement
 const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== 'false';
 function ensureAuthenticated(req, res, next) {
@@ -17,13 +24,23 @@ function ensureAuthenticated(req, res, next) {
         return next();
     }
     if (!req.user) {
-        return res.status(401).json({ error: 'Unauthorized: Authentication required.' });
+        res.status(401).json({ error: 'Unauthorized: Authentication required.' });
+        return;
     }
     next();
 }
-router.post('/', ensureAuthenticated, (req, res) => agentController.createAgent(req, res));
-router.get('/', ensureAuthenticated, (req, res) => agentController.getAgents(req, res));
-router.get('/:id', ensureAuthenticated, (req, res) => agentController.getAgentById(req, res));
-router.put('/:id', ensureAuthenticated, (req, res) => agentController.updateAgent(req, res));
-router.delete('/:id', ensureAuthenticated, (req, res) => agentController.deleteAgent(req, res));
-export { router as agentRoutes };
+router.post('/', ensureAuthenticated, async (req, res) => {
+    await agentController_1.agentController.createAgent(req, res);
+});
+router.get('/', ensureAuthenticated, async (req, res) => {
+    await agentController_1.agentController.getAgents(req, res);
+});
+router.get('/:id', ensureAuthenticated, async (req, res) => {
+    await agentController_1.agentController.getAgentById(req, res);
+});
+router.put('/:id', ensureAuthenticated, async (req, res) => {
+    await agentController_1.agentController.updateAgent(req, res);
+});
+router.delete('/:id', ensureAuthenticated, async (req, res) => {
+    await agentController_1.agentController.deleteAgent(req, res);
+});

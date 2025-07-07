@@ -46,7 +46,7 @@ export class DatabaseService {
         DatabaseService.getInstance().metrics.recordDbOperation('error');
         
         if (attempt < RETRY_ATTEMPTS) {
-          await new Promise(resolv(e: any) => setTimeout(resolve, RETRY_DELAY * attempt));
+          await new Promise((resolve: any) => setTimeout(resolve, RETRY_DELAY * attempt));
         }
       }
     }

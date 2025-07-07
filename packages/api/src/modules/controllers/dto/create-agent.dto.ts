@@ -1,18 +1,19 @@
-import { IsString, IsNotEmpty, IsOptional, IsArray } from 'class-validator';
-import type { CreateAgentDto as ICreateAgentDto } from '@the-new-fuse/types';
+import { IsString, IsNotEmpty, IsOptional, IsArray, IsEnum } from 'class-validator';
+import type { CreateAgentDto as ICreateAgentDto, AgentCapabilityConfig } from '@the-new-fuse/types';
+import { AgentType } from '@the-new-fuse/types';
 
 export class CreateAgentDto implements ICreateAgentDto {
   @IsString()
   @IsNotEmpty()
   name: string = '';
 
-  @IsString()
+  @IsEnum(AgentType)
   @IsNotEmpty()
-  type: string = '';
+  type: AgentType = AgentType.ASSISTANT;
 
   @IsArray()
   @IsOptional()
-  capabilities: string[] = [];
+  capabilities: AgentCapabilityConfig[] = [];
 
   @IsOptional()
   metadata?: Record<string, any>;

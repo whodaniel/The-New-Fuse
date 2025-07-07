@@ -20,7 +20,7 @@ import {
   Button,
   useToast
 } from '@chakra-ui/react';
-import { useWizard } from '../WizardProvider.tsx';
+import { useWizard } from '../WizardProvider';
 
 export const WorkspaceSetupStep: React.FC = () => {
   const { state, updateSessionData } = useWizard();

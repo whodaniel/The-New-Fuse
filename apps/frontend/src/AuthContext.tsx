@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
-import { auth } from './lib/firebase.js';
+import { auth } from './lib/firebase';
 
 interface AuthContextType {
   isAuthenticated: boolean;

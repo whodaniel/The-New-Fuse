@@ -1,13 +1,13 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ConfigService } from '@nestjs/config';
 import { User } from '../entities/User';
-import { Agent } from '../entities/Agent.js';
-import { Pipeline } from '../entities/Pipeline.js';
+import { Agent } from '../entities/Agent';
+import { Pipeline } from '../entities/Pipeline';
 import { Task } from '../entities/Task';
 import { TaskExecution } from '../entities/TaskExecution';
 import { AuthSession } from '../entities/AuthSession';
 import { LoginAttempt } from '../entities/LoginAttempt';
-import { AuthEvent } from '../entities/AuthEvent.js';
+import { AuthEvent } from '../entities/AuthEvent';
 
 export const getDatabaseConfig = (configService: ConfigService): TypeOrmModuleOptions => ({
   type: 'postgres',

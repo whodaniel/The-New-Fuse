@@ -1,8 +1,8 @@
 import { Test } from '@nestjs/testing';
-import { AdminController } from '../admin.controller.js';
-import { RoleService } from '../../services/role.service.js';
-import { AuditService } from '../../services/audit.service.js';
-import { MetricsService } from '../../services/metrics.service.js';
+import { AdminController } from '../admin.controller';
+import { RoleService } from '../../services/role.service';
+import { AuditService } from '../../services/audit.service';
+import { MetricsService } from '../../services/metrics.service';
 
 describe('AdminController', () => {
   let controller: AdminController;
@@ -40,7 +40,7 @@ describe('AdminController', () => {
 
   describe('getRoles', () => {
     it('should return all roles', async () => {
-      const roles = [{ id: '1', name: 'admin' }];
+      const roles = [{ id: '1', name: 'admin', permissions: [] }];
       jest.spyOn(roleService, 'getAllRoles').mockResolvedValue(roles);
       
       expect(await controller.getRoles()).toBe(roles);

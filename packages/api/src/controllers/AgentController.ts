@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 // Correct the import path for AgentService and PrismaService
-import { AgentService } from '../modules/services/agent.service.js';
-import { PrismaService } from '../services/prisma.service.js'; // Assuming PrismaService is here
-import { toError } from '../utils/error.js'; // Import the helper
-import { CurrentUser } from '../modules/decorators/current-user.decorator.js'; // Import CurrentUser decorator
+import { AgentService } from '../modules/services/agent.service';
+import { PrismaService } from '../services/prisma.service'; // Assuming PrismaService is here
+import { toError } from '../utils/error'; // Import the helper
+import { CurrentUser } from '../modules/decorators/current-user.decorator'; // Import CurrentUser decorator
 import { UseGuards, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'; // Import UseGuards and other decorators
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard.js'; // Import JwtAuthGuard
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard'; // Import JwtAuthGuard
 
 // Define User interface if not globally available
 interface User {
@@ -30,7 +30,7 @@ export class AgentController {
       // Pass userId to the service method
       const agents = await this.agentService.getAgents(user.id);
       return res.status(200).json(agents);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       return res.status(500).json({ error: err.message });
     }
@@ -48,7 +48,7 @@ export class AgentController {
       // }
 
       return res.status(200).json(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       // Handle specific "not found" errors potentially thrown by the service
       if (err.message?.includes('not found')) {
@@ -64,7 +64,7 @@ export class AgentController {
       // Pass userId to the service method
       const agent = await this.agentService.createAgent(createAgentDto, user.id);
       return res.status(201).json(agent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       // Handle potential duplicate name errors from the service
       if (err.message?.includes('already exists')) {
@@ -86,7 +86,7 @@ export class AgentController {
       // }
 
       return res.status(200).json(updatedAgent);
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
        if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
@@ -108,7 +108,7 @@ export class AgentController {
       }
 
       return res.status(204).send(); // No Content
-    } catch (error: unknown) { // Change to unknown
+    } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
        if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });

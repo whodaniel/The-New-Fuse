@@ -44,7 +44,7 @@ import {
   FiInfo
 } from 'react-icons/fi';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import { OnboardingAdminService } from '../../../services/onboarding-admin.service.js';
+import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
 
 interface OnboardingStepsConfigProps {
   onSave: () => void;

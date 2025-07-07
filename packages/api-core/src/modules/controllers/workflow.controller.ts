@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
-import { WorkflowDto, WorkflowExecutionDto } from '../../swagger/dto.classes.js';
-import { JwtAuthGuard } from '../../guards/jwt-auth.guard.js';
+import { WorkflowDto, WorkflowExecutionDto } from '../../swagger/dto.classes';
+import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
 
 @ApiTags('workflows')
 @Controller('workflows')

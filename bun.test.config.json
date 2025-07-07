@@ -1,0 +1,23 @@
+{
+  "test": {
+    "coverage": {
+      "enabled": true,
+      "threshold": {
+        "lines": 80,
+        "functions": 80,
+        "branches": 80,
+        "statements": 80
+      },
+      "exclude": [
+        "**/*.test.ts",
+        "**/*.spec.ts",
+        "**/dist/**",
+        "**/node_modules/**",
+        "**/*.d.ts"
+      ]
+    },
+    "environment": "jsdom",
+    "setupFiles": ["./jest.setup.cjs"],
+    "globalSetup": "./jest.global-setup.cjs"
+  }
+}

@@ -1,7 +1,7 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path
-import { Logger } from '@packages/utils'; // Assuming Logger is available
+import { BaseService } from '../core/BaseService';
+import { Logger } from '../utils/Logger';
 import Redis, { RedisOptions, Redis as RedisClient } from 'ioredis';
-import { ConfigService } from './ConfigService.js'; // Assuming a ConfigService exists
+import { ConfigService } from './ConfigService';
 
 /**
  * Service for interacting with a Redis instance.
@@ -14,7 +14,7 @@ export class RedisService extends BaseService {
   private options: RedisOptions;
 
   constructor(configService: ConfigService) {
-    super();
+    super({ name: 'RedisService' });
     this.logger = new Logger('RedisService');
     this.configService = configService;
 
@@ -47,53 +47,57 @@ export class RedisService extends BaseService {
         this.logger.info(`Connecting to Redis at ${this.options.host}:${this.options.port}...`);
         this.client = new (Redis as any)(this.options);
 
-        this.client.on('connect', () => {
-            this.logger.info('Redis client connected.');
-        });
+        if (this.client) {
+            this.client.on('connect', () => {
+                this.logger.info('Redis client connected.');
+            });
 
-        this.client.on('ready', () => {
-            this.logger.info('Redis client ready.');
-        });
+            this.client.on('ready', () => {
+                this.logger.info('Redis client ready.');
+            });
 
-        this.client.on('error', (error) => {
-            this.logger.error(`Redis client error: ${error.message}`, error);
-            // Depending on the error, you might want to attempt reconnection or handle specific cases
-        });
+            this.client.on('error', (error) => {
+                this.logger.error(`Redis client error: ${error.message}`);
+                // Depending on the error, you might want to attempt reconnection or handle specific cases
+            });
 
-        this.client.on('close', () => {
-            this.logger.warn('Redis connection closed.');
-        });
+            this.client.on('close', () => {
+                this.logger.warn('Redis connection closed.');
+            });
 
-        this.client.on('reconnecting', (delay) => {
-            this.logger.info(`Redis client reconnecting in ${delay}ms...`);
-        });
+            this.client.on('reconnecting', (delay: number) => {
+                this.logger.info(`Redis client reconnecting in ${delay}ms...`);
+            });
 
-        this.client.on('end', () => {
-            this.logger.warn('Redis connection ended. No more reconnections will be attempted.');
-            // Consider cleanup or state change here
-        });
+            this.client.on('end', () => {
+                this.logger.warn('Redis connection ended. No more reconnections will be attempted.');
+                // Consider cleanup or state change here
+            });
+        }
     }
 
     try {
         // For non-lazy connect or explicit connect, wait for ready state
-        if (!this.options.lazyConnect || this.client.status !== 'ready') {
-           await this.client.connect(); // ioredis connect() returns the client, use status or events
-           // Wait for the 'ready' event might be more robust
-           await new Promise<void>((resolve, reject) => {
-               const readyListener = () => {
-                   this.client?.removeListener('error', errorListener);
-                   resolve();
-               };
-               const errorListener = (err: Error) => {
-                   this.client?.removeListener('ready', readyListener);
-                   reject(err);
-               };
-               this.client?.once('ready', readyListener);
-               this.client?.once('error', errorListener); // Handle connection errors during initial connect
-           });
+        if (!this.options.lazyConnect || (this.client && this.client.status !== 'ready')) {
+           if (this.client) {
+               await this.client.connect(); // ioredis connect() returns the client, use status or events
+               // Wait for the 'ready' event might be more robust
+               await new Promise<void>((resolve, reject) => {
+                   const readyListener = () => {
+                       this.client?.removeListener('error', errorListener);
+                       resolve();
+                   };
+                   const errorListener = (err: Error) => {
+                       this.client?.removeListener('ready', readyListener);
+                       reject(err);
+                   };
+                   this.client?.once('ready', readyListener);
+                   this.client?.once('error', errorListener); // Handle connection errors during initial connect
+               });
+           }
         }
-    } catch (error: unknown) {
-        this.logger.error(`Failed to connect to Redis: ${(error as Error).message}`, error);
+    } catch (error) {
+        this.logger.error(`Failed to connect to Redis: ${error instanceof Error ? error.message : String(error)}`);
         this.client = null; // Ensure client is null on connection failure
         throw error; // Re-throw the error
     }
@@ -142,8 +146,8 @@ export class RedisService extends BaseService {
              this.client?.once('error', errorListener);
         });
     }
-     if (this.client.status !== 'ready') {
-        throw new Error(`Redis client is not ready. Status: ${this.client.status}`);
+     if (!this.client || this.client.status !== 'ready') {
+        throw new Error(`Redis client is not ready. Status: ${this.client?.status || 'null'}`);
     }
     return this.client;
   }
@@ -165,6 +169,9 @@ export class RedisService extends BaseService {
 
   async del(key: string | string[]): Promise<number> {
     const client = await this.getClient();
+    if (Array.isArray(key)) {
+      return client.del(...key);
+    }
     return client.del(key);
   }
 

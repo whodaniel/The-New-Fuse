@@ -1,4 +1,4 @@
-import { TaskPriority } from './core/enums.js';
+import { TaskPriority } from './core/enums';
 
 export const TaskType = {
   ANALYSIS: 'ANALYSIS',
@@ -12,7 +12,8 @@ export enum TaskStatus {
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED'
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
 }
 
 export interface TaskMetadata {

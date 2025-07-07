@@ -1,0 +1,9 @@
+{
+  "name": "com.thenewfuse.native_host",
+  "description": "Native host for The New Fuse to execute system-level commands and achieve full browser automation.",
+  "path": "/ABSOLUTE/PATH/TO/INSTALLED/host.py",
+  "type": "stdio",
+  "allowed_origins": [
+    "chrome-extension://YOUR_EXTENSION_ID_WILL_GO_HERE/"
+  ]
+}

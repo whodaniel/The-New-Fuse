@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { cn } from '../../lib/utils.tsx';
+import { cn } from '../../lib/utils';
 
 // Create a simplified Button component to replace the external import
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

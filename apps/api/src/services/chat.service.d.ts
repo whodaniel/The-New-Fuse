@@ -1,8 +1,8 @@
 import { Repository } from 'typeorm';
-import { ChatRoom } from '../entities/chat-room.entity.tsx';
-import { Message } from '../entities/message.entity.tsx';
-import { CreateMessageDto } from '../dtos/message.dto.tsx';
-import { WebSocketGateway } from '../gateways/websocket.gateway.js';
+import { ChatRoom } from '../entities/chat-room.entity';
+import { Message } from '../entities/message.entity';
+import { CreateMessageDto } from '../dtos/message.dto';
+import { WebSocketGateway } from '../gateways/websocket.gateway';
 export declare class ChatService {
     private readonly chatRoomRepository;
     private readonly messageRepository;

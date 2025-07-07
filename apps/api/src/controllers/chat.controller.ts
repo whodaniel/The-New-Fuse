@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Query } from '@nestjs/common';
-import { ChatService } from '../services/chat.service.js';
-import { CreateMessageDto } from '../dtos/message.dto.tsx';
-import { AuthGuard } from '../guards/auth.guard.tsx';
+import { ChatService } from '../services/chat.service';
+import { CreateMessageDto } from '../dtos/message.dto';
+import { AuthGuard } from '../guards/auth.guard';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('chat')

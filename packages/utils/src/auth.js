@@ -1,4 +1,7 @@
-export const getPasswordStrength = (password) => {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getPasswordStrength = void 0;
+const getPasswordStrength = (password) => {
     let score = 0;
     if (password.length >= 8)
         score++;
@@ -20,4 +23,4 @@ export const getPasswordStrength = (password) => {
     };
     return { score, ...strengthMap[score] };
 };
-//# sourceMappingURL=auth.js.map
+exports.getPasswordStrength = getPasswordStrength;

@@ -1,3 +1,3 @@
-export * from './ChatBubble.tsx';
-export * from './types.js';
+export * from './ChatBubble';
+export * from './types';
 //# sourceMappingURL=index.js.map

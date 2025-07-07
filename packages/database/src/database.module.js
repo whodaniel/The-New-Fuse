@@ -1,21 +1,40 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.DatabaseModule = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_js_1 = require("./prisma.service.js");
+import { Module, Global } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
+import { AgentRepository } from './repositories/agent.repository';
+import { UserRepository } from './repositories/user.repository';
+import { ChatMessageRepository } from './repositories/chat-message.repository';
+import { TaskRepository } from './repositories/task.repository';
+import { WorkflowRepository } from './repositories/workflow.repository';
+import { WorkflowExecutionRepository } from './repositories/workflow-execution.repository';
 let DatabaseModule = class DatabaseModule {
 };
-exports.DatabaseModule = DatabaseModule;
-exports.DatabaseModule = DatabaseModule = __decorate([
-    (0, common_1.Module)({
-        providers: [prisma_service_js_1.PrismaService],
-        exports: [prisma_service_js_1.PrismaService],
+DatabaseModule = __decorate([
+    Global(),
+    Module({
+        providers: [
+            PrismaService,
+            AgentRepository,
+            UserRepository,
+            ChatMessageRepository,
+            TaskRepository,
+            WorkflowRepository,
+            WorkflowExecutionRepository,
+        ],
+        exports: [
+            PrismaService,
+            AgentRepository,
+            UserRepository,
+            ChatMessageRepository,
+            TaskRepository,
+            WorkflowRepository,
+            WorkflowExecutionRepository,
+        ],
     })
 ], DatabaseModule);
-//# sourceMappingURL=database.module.js.map
+export { DatabaseModule };

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import { useLayout } from '../../contexts/LayoutContext.tsx';
-import { Sidebar } from './Sidebar.tsx';
-import { Header } from './Header.tsx';
-import { Footer } from './Footer.tsx';
+import { useLayout } from '../../contexts/LayoutContext';
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+import { Footer } from './Footer';
 
 export default function MainLayout() {
     const { layout } = useLayout();

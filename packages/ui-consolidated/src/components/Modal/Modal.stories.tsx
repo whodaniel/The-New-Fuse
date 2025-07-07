@@ -8,8 +8,8 @@ import {
   ModalDescription,
   ModalFooter,
   ModalCloseButton,
-} from './Modal.tsx';
-import { Button } from '../Button.js';
+} from './Modal';
+import { Button } from '../Button';
 
 const meta: Meta<typeof Modal> = {
   title: 'Components/Modal',

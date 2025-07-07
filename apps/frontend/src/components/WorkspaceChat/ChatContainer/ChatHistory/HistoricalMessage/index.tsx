@@ -1,15 +1,15 @@
 import React, { memo, ReactElement } from "react";
 import { Warning } from "@phosphor-icons/react";
-import UserIcon from '../../../../UserIcon.js';
-import Actions from './Actions.js';
+import UserIcon from '../../../../UserIcon';
+import Actions from './Actions';
 import renderMarkdown from "@/utils/chat/markdown";
 import { userFromStorage } from "@/utils/request";
-import Citations from '../Citation.js';
+import Citations from '../Citation';
 import { v4 } from "uuid";
 import createDOMPurify from "dompurify";
-import { EditMessageForm, useEditMessage } from './Actions/EditMessage.js';
-import { useWatchDeleteMessage } from './Actions/DeleteMessage.js';
-import TTSMessage from './Actions/TTSButton.js';
+import { EditMessageForm, useEditMessage } from './Actions/EditMessage';
+import { useWatchDeleteMessage } from './Actions/DeleteMessage';
+import TTSMessage from './Actions/TTSButton';
 import { WorkspaceData } from "@/types/workspace";
 import { TimeStamp } from "@/utils/TimeStamp";
 

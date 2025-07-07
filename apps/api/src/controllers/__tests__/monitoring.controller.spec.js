@@ -1,11 +1,16 @@
-import { Test } from '@nestjs/testing';
-import * as request from 'supertest';
-import { AppModule } from '../../app.module.js';
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const testing_1 = require("@nestjs/testing");
+const supertest_1 = __importDefault(require("supertest"));
+const app_module_1 = require("../../app.module");
 describe('MonitoringController (e2e)', () => {
     let app;
     beforeAll(async () => {
-        const moduleFixture = await Test.createTestingModule({
-            imports: [AppModule],
+        const moduleFixture = await testing_1.Test.createTestingModule({
+            imports: [app_module_1.AppModule],
         }).compile();
         app = moduleFixture.createNestApplication();
         await app.init();
@@ -14,7 +19,7 @@ describe('MonitoringController (e2e)', () => {
         await app.close();
     });
     it('/monitoring/memory (GET)', () => {
-        return request(app.getHttpServer())
+        return (0, supertest_1.default)(app.getHttpServer())
             .get('/monitoring/memory')
             .expect(200)
             .expect(res => {
@@ -26,7 +31,7 @@ describe('MonitoringController (e2e)', () => {
         });
     });
     it('/monitoring/metrics (GET)', () => {
-        return request(app.getHttpServer())
+        return (0, supertest_1.default)(app.getHttpServer())
             .get('/monitoring/metrics')
             .expect(200)
             .expect(res => {

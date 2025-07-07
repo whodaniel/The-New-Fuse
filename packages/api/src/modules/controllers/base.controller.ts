@@ -5,7 +5,7 @@
 
 import { Logger } from '@nestjs/common';
 import { ApiResponse } from '@the-new-fuse/types';
-import { toError } from '../../utils/error.js'; // Import the helper
+import { toError } from '../../utils/error'; // Import the helper
 
 export abstract class BaseController {
   protected readonly logger: Logger;
@@ -41,7 +41,7 @@ export abstract class BaseController {
     return {
       success: true,
       data,
-      error: null
+      error: undefined
     };
   }
 
@@ -65,9 +65,9 @@ export abstract class BaseController {
    * @param errorMessage Error message if operation fails
    * @returns Standardized API response
    */
-  protected handleError(error: unknown, errorMessage: string): ApiResponse<null> {
+  protected handleError<T>(error: unknown, errorMessage: string): ApiResponse<T> {
     const err = toError(error); // Use helper
     this.logger.error(`${errorMessage}: ${err.message}`, err.stack); // Use err.message and err.stack
-    return this.error(errorMessage, err.message); // Use err.message
+    return this.error<T>(errorMessage, err.message); // Use err.message
   }
 }

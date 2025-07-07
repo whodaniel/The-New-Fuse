@@ -2,8 +2,8 @@ import { Command } from 'commander';
 import * as inquirer from 'inquirer';
 import * as fs from 'fs';
 import * as path from 'path';
-import { DevelopmentLogger, FileChangeTracker } from '../../core/src/utils/LoggingUtils.js';
-import { FileSystemWatcher } from '../../core/src/utils/FileSystemWatcher.js';
+import { DevelopmentLogger, FileChangeTracker } from '../../core/src/utils/LoggingUtils';
+import { FileSystemWatcher } from '../../core/src/utils/FileSystemWatcher';
 
 /**
  * Create the log command

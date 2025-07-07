@@ -28,6 +28,14 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
     return this.client.setex(key, ttl, value);
   }
 
+  getSubClient(): Redis {
+    return this.subClient;
+  }
+
+  getPubClient(): Redis {
+    return this.pubClient;
+  }
+
   async del(key: string): Promise<number> {
     return this.client.del(key);
   }

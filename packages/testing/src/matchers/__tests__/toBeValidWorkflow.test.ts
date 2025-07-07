@@ -1,18 +1,18 @@
-import { toBeValidWorkflow } from '../toBeValidWorkflow.js';
-import { WorkflowStatus } from '@the-new-fuse/core';
+import { toBeValidWorkflow } from '../toBeValidWorkflow';
+import { WorkflowStatus } from '@the-new-fuse/types';
 
 describe('toBeValidWorkflow', () => {
   const validWorkflow = {
     id: '123',
     name: 'Test Workflow',
-    status: WorkflowStatus.PENDING,
+    status: WorkflowStatus.ACTIVE,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     steps: [
       {
         id: 'step1',
         name: 'First Step',
-        status: WorkflowStatus.PENDING
+        status: WorkflowStatus.ACTIVE
       }
     ]
   };

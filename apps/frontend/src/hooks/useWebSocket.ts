@@ -1,5 +1,5 @@
 import { useEffect, useCallback, useRef } from 'react';
-import { webSocketService } from '../services/websocket.service.tsx';
+import { webSocketService } from '../services/websocket.service';
 import { useSession } from '@your-org/security/react';
 
 interface WebSocketOptions {

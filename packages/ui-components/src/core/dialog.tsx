@@ -4,8 +4,8 @@
 import * as React from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { cn } from '../utils/cn.tsx'; // Fixed import path
-import { Modal as NewModal } from './dialog/Modal.tsx';
+import { cn } from '../utils/cn'; // Fixed import path
+import { Modal as NewModal } from './dialog/Modal';
 
 // Re-export the types for backward compatibility
 export interface ModalProps {
@@ -80,7 +80,7 @@ import {
   DialogFooter,
   DialogTrigger,
   DialogClose
-} from './dialog/index.tsx';
+} from './dialog/index';
 
 // Export them for direct use
 export {

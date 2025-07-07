@@ -758,7 +758,7 @@ This is a placeholder response. The actual implementation would:
         metadata: response.metadata 
       })}\n\n`);
 
-    } catch (error: unknown) {
+    } catch (error) {
       res.write(`data: ${JSON.stringify({ 
         type: 'error', 
         error: (error as Error).message,
@@ -861,7 +861,7 @@ This is a placeholder response. The actual implementation would:
             throw new Error(`Unknown operation type: ${operation.type}`);
         }
         results.push({ operation: operation.id, success: true, result });
-      } catch (error: unknown) {
+      } catch (error) {
         errors.push({ operation: operation.id, error: (error as Error).message });
       }
     }

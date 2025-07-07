@@ -1,5 +1,5 @@
-import { BaseService } from '../core/BaseService.js'; // Corrected import path assuming BaseService is in core
-import { Logger } from '@the-new-fuse/utils'; // Assuming Logger is available
+import { BaseService } from '../core/BaseService'; // Corrected import path assuming BaseService is in core
+import { Logger } from '../utils/Logger';
 
 // TODO: Define specific alert types/interfaces if needed
 export interface AlertPayload {
@@ -21,7 +21,7 @@ export class AlertService extends BaseService {
   private logger: Logger;
 
   constructor() {
-    super();
+    super({ name: 'AlertService' });
     this.logger = new Logger('AlertService');
     // TODO: Initialize alert channels (e.g., email, Slack, PagerDuty) based on config
     this.logger.info('AlertService initialized.');
@@ -33,16 +33,17 @@ export class AlertService extends BaseService {
   }
 
   async dispatchAlert(payload: AlertPayload): Promise<void> {
-    this.logger.log(
-      payload.severity === 'info' ? 'info' :
-      payload.severity === 'warning' ? 'warn' : 'error',
-      `Dispatching alert: ${payload.message}`,
-      { source: payload.source, details: payload.details }
-    );
+    if (payload.severity === 'info') {
+      this.logger.info(`Dispatching alert: ${payload.message}`);
+    } else if (payload.severity === 'warning') {
+      this.logger.warn(`Dispatching alert: ${payload.message}`);
+    } else {
+      this.logger.error(`Dispatching alert: ${payload.message}`);
+    }
 
     const dispatchPromises = this.channels.map(channel =>
       channel.send(payload).catch(error => {
-        this.logger.error(`Failed to send alert via ${channel.constructor.name}: ${error.message}`, error);
+        this.logger.error(`Failed to send alert via ${channel.constructor.name}: ${error.message}`);
         // Optionally, implement retry logic or fallback channels
       })
     );
@@ -70,7 +71,7 @@ export class AlertService extends BaseService {
 
 // Example simple console alert channel
 export class ConsoleAlertChannel implements AlertChannel {
-  async send(payload: AlertPayload): Promise<void> {
-    console.log(`[ALERT][${payload.severity.toUpperCase()}]${payload.source ? `[${payload.source}]` : ''}: ${payload.message}`, payload.details || '');
+  async send(): Promise<void> {
+    
   }
 }

@@ -8,7 +8,7 @@ import {
   ChevronUp,
   X
 } from 'lucide-react';
-import { PromptTemplate, PromptTemplateService, PromptVersion } from './types.js';
+import { PromptTemplate, PromptTemplateService, PromptVersion } from './types';
 
 interface PromptTemplateNodeProps {
   id: string;

@@ -1,4 +1,4 @@
-import { AuthUser } from './auth.js';
+import { AuthUser } from './auth';
 export interface Session {
     id: string;
     userId: string;

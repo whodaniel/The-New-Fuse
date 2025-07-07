@@ -1,5 +1,5 @@
-import { errorTracker } from '../services/error-tracking.service.tsx';
-import { ErrorCategory, ErrorPriority } from '../shared/types/errors.js';
+import { errorTracker } from '../services/error-tracking.service';
+import { ErrorCategory, ErrorPriority } from '../shared/types/errors';
 
 // 1. Basic API Error Handling
 async function fetchUserData(userId: string) {

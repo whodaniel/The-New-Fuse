@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import System from '../../../models/system.js';
-import { AUTH_TOKEN, AUTH_USER } from '../../../utils/constants.js';
-import paths from '../../../utils/paths.js';
+import System from '../../../models/system';
+import { AUTH_TOKEN, AUTH_USER } from '../../../utils/constants';
+import paths from '../../../utils/paths';
 import showToast from "@/utils/toast";
 import ModalWrapper from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";

@@ -1,4 +1,4 @@
-import { ApiClient } from '../client/ApiClient.js';
+import { ApiClient } from '../client/ApiClient';
 import type { AxiosRequestConfig } from 'axios';
 
 /**

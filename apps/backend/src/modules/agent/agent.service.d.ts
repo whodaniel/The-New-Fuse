@@ -1,5 +1,5 @@
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
-import { PrismaService } from '../../lib/prisma/prisma.service.js';
+import { PrismaService } from '../../lib/prisma/prisma.service';
 export declare class AgentService {
     private readonly prisma;
     private readonly logger;

@@ -1,7 +1,15 @@
-import { AgentCoordinator } from '../services/agent/agent-coordinator.js';
+import { AgentCoordinator } from '../services/agent/agent-coordinator';
 
-async function testCoordinator(): any {
-    const coordinator = new AgentCoordinator('CoordinatorAgent');
+// Simple mock FeatureTracker for testing
+class MockFeatureTracker {
+  track(feature: string, metadata?: any): void {
+    // Mock implementation
+  }
+}
+
+async function testCoordinator(): Promise<void> {
+    const mockFeatureTracker = new MockFeatureTracker();
+    const coordinator = new AgentCoordinator('CoordinatorAgent', mockFeatureTracker);
     
     try {
         await coordinator.start();

@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import SlashCommandIcon from './icons/SlashCommandIcon.js';
+import SlashCommandIcon from './icons/SlashCommandIcon';
 import { Tooltip } from "react-tooltip";
-import ResetCommand from './reset.js';
-import EndAgentSession from './endAgentSession.js';
-import SlashPresets from './SlashPresets.js';
+import ResetCommand from './reset';
+import EndAgentSession from './endAgentSession';
+import SlashPresets from './SlashPresets';
 
 interface SlashCommandsButtonProps {
   showing: boolean;

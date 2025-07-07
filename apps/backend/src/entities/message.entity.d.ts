@@ -1,4 +1,4 @@
-import { User } from './user.entity.js';
+import { User } from './user.entity';
 export declare class Message {
     id: string;
     userId: string;

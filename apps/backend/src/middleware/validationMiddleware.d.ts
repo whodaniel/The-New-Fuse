@@ -1,7 +1,7 @@
 import { NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { ValidationService } from '../services/validationService.js';
-import { LoggingService } from '../services/loggingService.js';
+import { ValidationService } from '../services/validationService';
+import { LoggingService } from '../services/loggingService';
 export interface ValidationOptions {
     dto?: new () => any;
     schema?: object;

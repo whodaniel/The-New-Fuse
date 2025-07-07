@@ -1,6 +1,6 @@
 export {}
-import resource_manager_1 from './resource_manager.js';
-import resource_1 from './types/resource.js';
+import resource_manager_1 from './resource_manager';
+import resource_1 from './types/resource';
 async function main(): any {
     const manager = new resource_manager_1.ResourceManager(resource_1.ModelType.CLAUDE_3_OPUS);
     

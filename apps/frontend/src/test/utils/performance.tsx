@@ -1,5 +1,5 @@
 import { PerformanceObserver, performance } from 'perf_hooks';
-import { logger } from './logger.js';
+import { logger } from './logger';
 
 export class PerformanceMonitor {
   private static metrics: Map<string, number[]> = new Map();

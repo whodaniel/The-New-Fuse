@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The New Fuse - Debug Tools</title>
+  <link rel="stylesheet" href="popup.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    body {
+      min-width: 800px;
+      min-height: 600px;
+      padding: 20px;
+    }
+    
+    .debug-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .debug-section {
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 15px;
+    }
+    
+    .debug-section h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+    }
+    
+    .debug-controls {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    
+    .debug-controls input[type="text"] {
+      flex: 1;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    .debug-controls button {
+      padding: 8px 16px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .debug-controls button:hover {
+      background-color: #3367d6;
+    }
+    
+    .debug-controls button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+    
+    .status-text {
+      font-weight: bold;
+      padding: 5px 10px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-left: 10px;
+    }
+    
+    .status-text.connected {
+      background-color: #d4edda;
+      color: #155724;
+    }
+    
+    .status-text.disconnected {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .status-text.connecting {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-text.error {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+    
+    .message-input {
+      width: 100%;
+      height: 100px;
+      font-family: monospace;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    
+    .log-container {
+      height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 10px;
+      background-color: #f8f9fa;
+      font-family: monospace;
+    }
+    
+    .log-entry {
+      padding: 5px;
+      margin: 5px 0;
+      border-radius: 3px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    
+    .log-entry.system {
+      background-color: #e9ecef;
+    }
+    
+    .log-entry.sent {
+      background-color: #e2f0fd;
+    }
+    
+    .log-entry.received {
+      background-color: #e8f5e9;
+    }
+    
+    .log-entry.error {
+      background-color: #ffebee;
+    }
+    
+    .log-timestamp {
+      font-weight: bold;
+      margin-right: 10px;
+      color: #666;
+    }
+    
+    .log-content {
+      display: block;
+      margin-top: 5px;
+    }
+    
+    .tab-container {
+      display: flex;
+      border-bottom: 1px solid #ccc;
+      margin-bottom: 15px;
+    }
+    
+    .tab {
+      padding: 10px 15px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      border-bottom: none;
+      border-radius: 4px 4px 0 0;
+      margin-right: 5px;
+    }
+    
+    .tab.active {
+      background-color: #f8f9fa;
+      border-color: #ccc;
+      border-bottom-color: #f8f9fa;
+      margin-bottom: -1px;
+    }
+    
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>The New Fuse - Debug Tools</h1>
+    <div class="action-buttons">
+      <button id="back-button" class="icon-button" title="Back to popup">
+        <i class="fas fa-arrow-left"></i>
+      </button>
+    </div>
+  </div>
+  
+  <div id="debug-container" class="debug-container">
+    <div class="tab-container">
+      <div class="tab active" data-tab="websocket-tab">WebSocket Tester</div>
+      <div class="tab" data-tab="logs-tab">Logs</div>
+      <div class="tab" data-tab="settings-tab">Settings</div>
+    </div>
+    
+    <div id="websocket-tab" class="tab-content active">
+      <div class="debug-section">
+        <h2>WebSocket Tester</h2>
+        <div class="debug-controls">
+          <input type="text" id="ws-test-url" placeholder="ws://localhost:3712" />
+          <button id="ws-test-connect">Connect</button>
+          <button id="ws-test-disconnect" disabled>Disconnect</button>
+          <span>Status: </span>
+          <span id="ws-test-status" class="status-text disconnected">Disconnected</span>
+        </div>
+        
+        <h3>Message</h3>
+        <textarea id="ws-test-message" class="message-input" placeholder="Enter JSON message to send..."></textarea>
+        <div class="debug-controls">
+          <button id="ws-test-send" disabled>Send</button>
+          <button id="ws-test-clear">Clear Log</button>
+        </div>
+        
+        <h3>Log</h3>
+        <div id="ws-test-log" class="log-container"></div>
+      </div>
+    </div>
+    
+    <div id="logs-tab" class="tab-content">
+      <div class="debug-section">
+        <h2>Extension Logs</h2>
+        <div class="debug-controls">
+          <button id="refresh-logs">Refresh</button>
+          <button id="clear-logs">Clear Logs</button>
+          <button id="export-logs">Export Logs</button>
+        </div>
+        
+        <div class="debug-controls">
+          <select id="log-level-filter">
+            <option value="all">All Levels</option>
+            <option value="debug">Debug</option>
+            <option value="info">Info</option>
+            <option value="warn">Warning</option>
+            <option value="error">Error</option>
+          </select>
+          <input type="text" id="log-search" placeholder="Search logs..." />
+          <button id="log-search-button">Search</button>
+        </div>
+        
+        <div id="extension-logs" class="log-container"></div>
+      </div>
+    </div>
+    
+    <div id="settings-tab" class="tab-content">
+      <div class="debug-section">
+        <h2>Debug Settings</h2>
+        <div class="setting-item checkbox">
+          <label for="debug-mode">Debug mode</label>
+          <input type="checkbox" id="debug-mode" />
+        </div>
+        <div class="setting-item checkbox">
+          <label for="verbose-logging">Verbose logging</label>
+          <input type="checkbox" id="verbose-logging" />
+        </div>
+        <div class="setting-item checkbox">
+          <label for="log-to-console">Log to console</label>
+          <input type="checkbox" id="log-to-console" checked />
+        </div>
+        <div class="setting-item checkbox">
+          <label for="log-to-storage">Log to storage</label>
+          <input type="checkbox" id="log-to-storage" checked />
+        </div>
+        <div class="setting-item">
+          <label for="max-log-size">Max log size</label>
+          <input type="number" id="max-log-size" value="1000" min="100" max="10000" step="100" />
+        </div>
+        <div class="setting-actions">
+          <button id="save-debug-settings" class="action-button">Save Settings</button>
+          <button id="reset-debug-settings" class="action-button danger">Reset to Defaults</button>
+        </div>
+      </div>
+      
+      <div class="debug-section">
+        <h2>Extension Information</h2>
+        <div class="setting-item">
+          <label>Version:</label>
+          <span class="setting-value">1.0.0</span>
+        </div>
+        <div class="setting-item">
+          <label>Chrome Version:</label>
+          <span id="chrome-version" class="setting-value">Unknown</span>
+        </div>
+        <div class="setting-item">
+          <label>Platform:</label>
+          <span id="platform-info" class="setting-value">Unknown</span>
+        </div>
+        <div class="setting-item">
+          <label>Extension ID:</label>
+          <span id="extension-id" class="setting-value">Unknown</span>
+        </div>
+        <div class="setting-actions">
+          <button id="copy-debug-info" class="action-button">Copy Debug Info</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="utils.js"></script>
+  <script src="logger.js"></script>
+  <script src="debug-tools.js"></script>
+  <script>
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+        
+        // Update active tab
+        document.querySelectorAll('.tab').forEach(t => {
+          t.classList.toggle('active', t === tab);
+        });
+        
+        // Update active content
+        document.querySelectorAll('.tab-content').forEach(content => {
+          content.classList.toggle('active', content.id === tabName);
+        });
+      });
+    });
+    
+    // Back button
+    document.getElementById('back-button').addEventListener('click', () => {
+      window.close();
+    });
+    
+    // Get Chrome version
+    document.getElementById('chrome-version').textContent = navigator.userAgent.match(/Chrome\/([0-9.]+)/)[1];
+    
+    // Get platform info
+    document.getElementById('platform-info').textContent = navigator.platform;
+    
+    // Get extension ID
+    document.getElementById('extension-id').textContent = chrome.runtime.id;
+    
+    // Copy debug info
+    document.getElementById('copy-debug-info').addEventListener('click', () => {
+      const debugInfo = {
+        version: '1.0.0',
+        chromeVersion: navigator.userAgent.match(/Chrome\/([0-9.]+)/)[1],
+        platform: navigator.platform,
+        extensionId: chrome.runtime.id,
+        userAgent: navigator.userAgent
+      };
+      
+      navigator.clipboard.writeText(JSON.stringify(debugInfo, null, 2))
+        .then(() => {
+          alert('Debug info copied to clipboard');
+        })
+        .catch(err => {
+          console.error('Failed to copy debug info:', err);
+          alert('Failed to copy debug info');
+        });
+    });
+    
+    // Load debug settings
+    chrome.storage.local.get('debugSettings', (data) => {
+      if (data.debugSettings) {
+        document.getElementById('debug-mode').checked = data.debugSettings.debugMode || false;
+        document.getElementById('verbose-logging').checked = data.debugSettings.verboseLogging || false;
+        document.getElementById('log-to-console').checked = data.debugSettings.logToConsole !== false;
+        document.getElementById('log-to-storage').checked = data.debugSettings.logToStorage !== false;
+        document.getElementById('max-log-size').value = data.debugSettings.maxLogSize || 1000;
+      }
+    });
+    
+    // Save debug settings
+    document.getElementById('save-debug-settings').addEventListener('click', () => {
+      const debugSettings = {
+        debugMode: document.getElementById('debug-mode').checked,
+        verboseLogging: document.getElementById('verbose-logging').checked,
+        logToConsole: document.getElementById('log-to-console').checked,
+        logToStorage: document.getElementById('log-to-storage').checked,
+        maxLogSize: parseInt(document.getElementById('max-log-size').value, 10)
+      };
+      
+      chrome.storage.local.set({ debugSettings }, () => {
+        alert('Debug settings saved');
+      });
+    });
+    
+    // Reset debug settings
+    document.getElementById('reset-debug-settings').addEventListener('click', () => {
+      const defaultSettings = {
+        debugMode: false,
+        verboseLogging: false,
+        logToConsole: true,
+        logToStorage: true,
+        maxLogSize: 1000
+      };
+      
+      document.getElementById('debug-mode').checked = defaultSettings.debugMode;
+      document.getElementById('verbose-logging').checked = defaultSettings.verboseLogging;
+      document.getElementById('log-to-console').checked = defaultSettings.logToConsole;
+      document.getElementById('log-to-storage').checked = defaultSettings.logToStorage;
+      document.getElementById('max-log-size').value = defaultSettings.maxLogSize;
+      
+      chrome.storage.local.set({ debugSettings: defaultSettings }, () => {
+        alert('Debug settings reset to defaults');
+      });
+    });
+    
+    // Refresh logs
+    document.getElementById('refresh-logs').addEventListener('click', () => {
+      const logLevelFilter = document.getElementById('log-level-filter').value;
+      const searchTerm = document.getElementById('log-search').value.toLowerCase();
+      
+      chrome.storage.local.get(null, (data) => {
+        const logKeys = Object.keys(data).filter(key => key.startsWith('logs_'));
+        const logs = [];
+        
+        for (const key of logKeys) {
+          const logEntries = data[key];
+          logs.push(...logEntries);
+        }
+        
+        // Sort by timestamp
+        logs.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+        
+        // Filter by level
+        const filteredLogs = logLevelFilter === 'all'
+          ? logs
+          : logs.filter(log => log.level === logLevelFilter);
+        
+        // Filter by search term
+        const searchFilteredLogs = searchTerm
+          ? filteredLogs.filter(log => {
+              const message = typeof log.message === 'string'
+                ? log.message.toLowerCase()
+                : JSON.stringify(log.message).toLowerCase();
+              return message.includes(searchTerm);
+            })
+          : filteredLogs;
+        
+        // Display logs
+        const logsContainer = document.getElementById('extension-logs');
+        logsContainer.innerHTML = '';
+        
+        for (const log of searchFilteredLogs) {
+          const logEntry = document.createElement('div');
+          logEntry.className = `log-entry ${log.level}`;
+          
+          const timestamp = document.createElement('span');
+          timestamp.className = 'log-timestamp';
+          timestamp.textContent = new Date(log.timestamp).toLocaleString();
+          
+          const level = document.createElement('span');
+          level.className = `log-level ${log.level}`;
+          level.textContent = log.level.toUpperCase();
+          
+          const name = document.createElement('span');
+          name.className = 'log-name';
+          name.textContent = `[${log.name}]`;
+          
+          const content = document.createElement('span');
+          content.className = 'log-content';
+          
+          if (typeof log.message === 'object') {
+            content.textContent = JSON.stringify(log.message, null, 2);
+          } else {
+            content.textContent = log.message;
+          }
+          
+          if (log.data) {
+            const data = document.createElement('pre');
+            data.className = 'log-data';
+            data.textContent = JSON.stringify(log.data, null, 2);
+            content.appendChild(data);
+          }
+          
+          logEntry.appendChild(timestamp);
+          logEntry.appendChild(level);
+          logEntry.appendChild(name);
+          logEntry.appendChild(content);
+          logsContainer.appendChild(logEntry);
+        }
+        
+        // Scroll to bottom
+        logsContainer.scrollTop = logsContainer.scrollHeight;
+      });
+    });
+    
+    // Clear logs
+    document.getElementById('clear-logs').addEventListener('click', () => {
+      if (confirm('Are you sure you want to clear all logs?')) {
+        chrome.storage.local.get(null, (data) => {
+          const logKeys = Object.keys(data).filter(key => key.startsWith('logs_'));
+          
+          chrome.storage.local.remove(logKeys, () => {
+            document.getElementById('extension-logs').innerHTML = '';
+            alert('Logs cleared');
+          });
+        });
+      }
+    });
+    
+    // Export logs
+    document.getElementById('export-logs').addEventListener('click', () => {
+      chrome.storage.local.get(null, (data) => {
+        const logKeys = Object.keys(data).filter(key => key.startsWith('logs_'));
+        const logs = {};
+        
+        for (const key of logKeys) {
+          logs[key] = data[key];
+        }
+        
+        const blob = new Blob([JSON.stringify(logs, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `the-new-fuse-logs-${new Date().toISOString().replace(/:/g, '-')}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+    });
+    
+    // Search logs
+    document.getElementById('log-search-button').addEventListener('click', () => {
+      document.getElementById('refresh-logs').click();
+    });
+    
+    document.getElementById('log-search').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        document.getElementById('log-search-button').click();
+      }
+    });
+    
+    // Initial log refresh
+    document.getElementById('refresh-logs').click();
+  </script>
+</body>
+</html>

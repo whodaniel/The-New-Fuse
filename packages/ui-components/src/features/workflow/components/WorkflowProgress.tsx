@@ -1,6 +1,6 @@
 import React from 'react';
-import { WorkflowStep, WorkflowStatus } from '../types.tsx';
-import { Progress } from '../../../core/progress.tsx';
+import { WorkflowStep, WorkflowStatus } from '../types';
+import { Progress } from '../../../core/progress';
 
 interface WorkflowProgressProps {
   steps: WorkflowStep[];

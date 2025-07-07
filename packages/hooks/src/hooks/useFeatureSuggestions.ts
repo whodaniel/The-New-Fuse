@@ -3,7 +3,7 @@ import type {
   FeatureSuggestion,
   SuggestionVote,
   FeatureConversion
-} from '../types/index.js';
+} from '../types/index';
 
 export const useFeatureSuggestions = (): any => {
   const submitSuggestion = useCallback(async () => {

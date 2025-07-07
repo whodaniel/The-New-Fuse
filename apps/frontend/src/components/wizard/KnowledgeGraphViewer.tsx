@@ -5,7 +5,7 @@ import reactflow_1 from 'reactflow';
 require("reactflow/dist/style.css");
 import material_1 from '@mui/material';
 import icons_material_1 from '@mui/icons-material';
-import WizardProvider_1 from './WizardProvider.tsx';
+import WizardProvider_1 from './WizardProvider';
 const nodeTypes = {
     concept: ConceptNode,
     relation: RelationNode,
@@ -49,7 +49,7 @@ function KnowledgeGraphViewer() {
         }
     };
     const formatNodes = (knowledgeNodes) => {
-        return knowledgeNodes.map(nod(e: any) => ({
+        return knowledgeNodes.map((node: any) => ({
             id: node.id,
             type: node.type,
             position: node.position,
@@ -96,10 +96,10 @@ function KnowledgeGraphViewer() {
     };
     const handleSearch = (0, react_1.useCallback)(() => {
         if (!searchTerm) {
-            setNodes(nodes => nodes.map(nod(e: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
+            setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: undefined }))));
             return;
         }
-        setNodes(nodes => nodes.map(nod(e: any) => (Object.assign(Object.assign({}, node), { style: node.data.label.toLowerCase().includes(searchTerm.toLowerCase())
+        setNodes(nodes => nodes.map((node: any) => (Object.assign(Object.assign({}, node), { style: node.data.label.toLowerCase().includes(searchTerm.toLowerCase())
                 ? { background: '#ff8', border: '2px solid #aa5' }
                 : { opacity: 0.3 } }))));
     }, [searchTerm]);

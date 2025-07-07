@@ -3,8 +3,8 @@
  */
 
 // Import enums to avoid duplication
-import { TaskStatus } from './enums.js';
-import { AgentCapability, AgentRole, AgentStatus } from '../agent-types.d.js';
+import { TaskStatus } from './enums';
+import { AgentCapability, AgentRole, AgentStatus } from '../agent-types.d';
 
 // Re-export required enums to maintain backward compatibility
 export { TaskStatus, AgentCapability, AgentRole, AgentStatus };

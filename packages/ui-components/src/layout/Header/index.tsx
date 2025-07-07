@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Button, Icon, Input, Dropdown } from '../../shared/ui/index.js';
-import { ErrorBoundary } from '../../shared/ui/ErrorBoundary.tsx';
+import { Button, Icon, Input, Dropdown } from '../../shared/ui/index';
+import { ErrorBoundary } from '../../shared/ui/ErrorBoundary';
 
 export function Header() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);

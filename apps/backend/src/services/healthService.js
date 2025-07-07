@@ -1,91 +1,82 @@
-var __esDecorate = (this && this.__esDecorate) || function (ctor, descriptorIn, decorators, contextIn, initializers, extraInitializers) {
-    function accept(f) { if (f !== void 0 && typeof f !== "function") throw new TypeError("Function expected"); return f; }
-    var kind = contextIn.kind, key = kind === "getter" ? "get" : kind === "setter" ? "set" : "value";
-    var target = !descriptorIn && ctor ? contextIn["static"] ? ctor : ctor.prototype : null;
-    var descriptor = descriptorIn || (target ? Object.getOwnPropertyDescriptor(target, contextIn.name) : {});
-    var _, done = false;
-    for (var i = decorators.length - 1; i >= 0; i--) {
-        var context = {};
-        for (var p in contextIn) context[p] = p === "access" ? {} : contextIn[p];
-        for (var p in contextIn.access) context.access[p] = contextIn.access[p];
-        context.addInitializer = function (f) { if (done) throw new TypeError("Cannot add initializers after decoration has completed"); extraInitializers.push(accept(f || null)); };
-        var result = (0, decorators[i])(kind === "accessor" ? { get: descriptor.get, set: descriptor.set } : descriptor[key], context);
-        if (kind === "accessor") {
-            if (result === void 0) continue;
-            if (result === null || typeof result !== "object") throw new TypeError("Object expected");
-            if (_ = accept(result.get)) descriptor.get = _;
-            if (_ = accept(result.set)) descriptor.set = _;
-            if (_ = accept(result.init)) initializers.unshift(_);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.HealthService = void 0;
+class HealthService {
+    services = new Map();
+    async getHealthStatus() {
+        const system = await this.getSystemHealth();
+        const services = this.getAllServiceHealth();
+        const overallStatus = this.calculateOverallStatus(services, system);
+        return {
+            status: overallStatus,
+            timestamp: new Date(),
+            services,
+            system,
+            uptime: process.uptime()
+        };
+    }
+    async checkService(name, healthCheckFn) {
+        const startTime = Date.now();
+        try {
+            const isHealthy = await healthCheckFn();
+            const responseTime = Date.now() - startTime;
+            const health = {
+                status: isHealthy ? 'up' : 'down',
+                responseTime,
+                lastCheck: new Date()
+            };
+            this.services.set(name, health);
+            return health;
         }
-        else if (_ = accept(result)) {
-            if (kind === "field") initializers.unshift(_);
-            else descriptor[key] = _;
+        catch (error) {
+            const health = {
+                status: 'down',
+                responseTime: Date.now() - startTime,
+                lastCheck: new Date(),
+                error: error.message
+            };
+            this.services.set(name, health);
+            return health;
         }
     }
-    if (target) Object.defineProperty(target, contextIn.name, descriptor);
-    done = true;
-};
-var __runInitializers = (this && this.__runInitializers) || function (thisArg, initializers, value) {
-    var useValue = arguments.length > 2;
-    for (var i = 0; i < initializers.length; i++) {
-        value = useValue ? initializers[i].call(thisArg, value) : initializers[i].call(thisArg);
+    getAllServiceHealth() {
+        const result = {};
+        this.services.forEach((health, name) => {
+            result[name] = health;
+        });
+        return result;
     }
-    return useValue ? value : void 0;
-};
-var __setFunctionName = (this && this.__setFunctionName) || function (f, name, prefix) {
-    if (typeof name === "symbol") name = name.description ? "[".concat(name.description, "]") : "";
-    return Object.defineProperty(f, "name", { configurable: true, value: prefix ? "".concat(prefix, " ", name) : name });
-};
-import { Injectable } from '@nestjs/common';
-let HealthService = (() => {
-    let _classDecorators = [Injectable()];
-    let _classDescriptor;
-    let _classExtraInitializers = [];
-    let _classThis;
-    var HealthService = _classThis = class {
-        constructor(redis, cache) {
-            this.redis = redis;
-            this.cache = cache;
-        }
-        async checkHealth() {
-            try {
-                // Check Redis health
-                await this.redis.ping();
-                // Check cache health
-                const stats = await this.cache.getCacheStats();
-                return {
-                    status: 'healthy',
-                    redis: true,
-                    cache: {
-                        status: true,
-                        stats,
-                    },
-                };
+    async getSystemHealth() {
+        const memUsage = process.memoryUsage();
+        return {
+            memory: {
+                used: memUsage.heapUsed,
+                total: memUsage.heapTotal,
+                percentage: (memUsage.heapUsed / memUsage.heapTotal) * 100
+            },
+            cpu: {
+                usage: 0 // Mock value - in real implementation would calculate CPU usage
+            },
+            disk: {
+                used: 0, // Mock value
+                total: 0, // Mock value
+                percentage: 0 // Mock value
             }
-            catch (error) {
-                return {
-                    status: 'unhealthy',
-                    redis: false,
-                    cache: {
-                        status: false,
-                        stats: {
-                            hitRate: 0,
-                            missRate: 0,
-                            size: 0,
-                        },
-                    },
-                };
-            }
+        };
+    }
+    calculateOverallStatus(services, system) {
+        const serviceStatuses = Object.values(services);
+        // If any critical service is down, overall status is unhealthy
+        const downServices = serviceStatuses.filter(s => s.status === 'down');
+        if (downServices.length > 0) {
+            return 'unhealthy';
         }
-    };
-    __setFunctionName(_classThis, "HealthService");
-    (() => {
-        const _metadata = typeof Symbol === "function" && Symbol.metadata ? Object.create(null) : void 0;
-        __esDecorate(null, _classDescriptor = { value: _classThis }, _classDecorators, { kind: "class", name: _classThis.name, metadata: _metadata }, null, _classExtraInitializers);
-        HealthService = _classThis = _classDescriptor.value;
-        if (_metadata) Object.defineProperty(_classThis, Symbol.metadata, { enumerable: true, configurable: true, writable: true, value: _metadata });
-        __runInitializers(_classThis, _classExtraInitializers);
-    })();
-    return HealthService = _classThis;
-})();
-export { HealthService };
+        // If any service is degraded or system metrics are concerning, status is degraded
+        const degradedServices = serviceStatuses.filter(s => s.status === 'degraded');
+        if (degradedServices.length > 0 || system.memory.percentage > 90) {
+            return 'degraded';
+        }
+        return 'healthy';
+    }
+}
+exports.HealthService = HealthService;

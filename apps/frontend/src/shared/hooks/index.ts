@@ -1,9 +1,9 @@
-export * from './useAuth.js';
-export * from './useChat.js';
-export * from './useFileUpload.js';
-export * from './useSpeechRecognition.js';
-export * from './useTheme.js';
-export * from './useToast.js';
-export * from './useWebRTC.js';
-export * from './useWebSocket.js';
+export * from './useAuth';
+export * from './useChat';
+export * from './useFileUpload';
+export * from './useSpeechRecognition';
+export * from './useTheme';
+export * from './useToast';
+export * from './useWebRTC';
+export * from './useWebSocket';
 //# sourceMappingURL=index.js.map

@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { Table, View, ViewType, Row, Column, CellValue, AppState, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "@the-new-fuse/fairtable-core";
+import { Table, View, ViewType, Row, Column, CellValue, AppState, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "../../fairtable-core/src";
 import GridView from './GridView'; 
 import KanbanView from './KanbanView'; 
 import TimelineView from './TimelineView';
@@ -74,7 +74,7 @@ const ActiveTableView: React.FC<ActiveTableViewProps> = (props) => {
   const columnsToDisplay = useMemo(() => {
     const order = view.columnOrder || table.columnOrder;
     return order
-        .map(colId => table.columns.find(c => c.id === colId))
+        .map((colId: string) => table.columns.find((c: Column) => c.id === colId))
         .filter(Boolean) as Column[];
   }, [table.columns, table.columnOrder, view.columnOrder]);
 
@@ -84,8 +84,8 @@ const ActiveTableView: React.FC<ActiveTableViewProps> = (props) => {
 
     if (view.filters && view.filters.length > 0) {
       filteredRows = filteredRows.filter(row => {
-        return view.filters.every(filter => {
-          const column = table.columns.find(c => c.id === filter.columnId);
+        return view.filters.every((filter: any) => {
+          const column = table.columns.find((c: Column) => c.id === filter.columnId);
           if (!column) return true; 
           return evaluateFilter(row.data[filter.columnId], filter.operator, filter.value, column.type);
         });
@@ -96,7 +96,7 @@ const ActiveTableView: React.FC<ActiveTableViewProps> = (props) => {
       const rowsToSort = [...filteredRows];
       rowsToSort.sort((a, b) => {
         for (const sortRule of view.sorts) {
-          const column = table.columns.find(c => c.id === sortRule.columnId);
+          const column = table.columns.find((c: Column) => c.id === sortRule.columnId);
           if (!column) continue;
 
           let valA = a.data[sortRule.columnId];

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useWebSocket } from '../hooks/useWebSocket.js';
-import { Alert } from './ui/alert.js';
-import { Button } from './ui/button.tsx';
-import { useToast } from './ui/use-toast.js';
+import { useWebSocket } from '../hooks/useWebSocket';
+import { Alert } from './ui/alert';
+import { Button } from './ui/button';
+import { useToast } from './ui/use-toast';
 
 interface RealTimeConnectionProps {
   children: React.ReactNode;
