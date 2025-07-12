@@ -1,125 +1,80 @@
 import React from 'react';
-import { EnhancedTimelineView } from '@the-new-fuse/feature-suggestions';
-import { SuggestionPriority } from '@the-new-fuse/feature-suggestions/src/types';
-const sampleEvents = [
+const timelineEvents = [
     {
-        id: '1',
-        type: 'SUGGESTION',
-        timestamp: new Date('2025-01-01'),
-        data: {
-            title: 'Add Dark Mode Support',
-            description: 'Implement system-wide dark mode with user preferences',
-            priority: SuggestionPriority.HIGH,
-            item: { id: 'sugg1' }
-        }
+      id: '1',
+      date: '2025-01-01',
+      title: 'Project Initiated',
+      description: 'The New Fuse project was started with ambitious goals for multi-agent communication.',
+      type: 'milestone'
     },
     {
-        id: '2',
-        type: 'TODO',
-        timestamp: new Date('2025-01-05'),
-        parentId: '1',
-        data: {
-            title: 'Create Color Palette',
-            description: 'Design dark mode color scheme',
-            item: { id: 'todo1' }
-        }
+      id: '2', 
+      date: '2025-02-15',
+      title: 'Core Architecture Completed',
+      description: 'Basic framework and routing system implemented.',
+      type: 'development'
     },
     {
-        id: '3',
-        type: 'FEATURE',
-        timestamp: new Date('2025-01-10'),
-        parentId: '2',
-        data: {
-            title: 'Theme Switcher',
-            description: 'Implement theme switching mechanism',
-            item: { id: 'feat1' }
-        }
+      id: '3',
+      date: '2025-03-01',
+      title: 'UI Components Added',
+      description: 'Comprehensive component library and design system created.',
+      type: 'feature'
     },
     {
-        id: '4',
-        type: 'WORKFLOW_STEP',
-        timestamp: new Date('2025-01-12'),
-        parentId: '3',
-        data: {
-            title: 'User Testing',
-            description: 'Conduct user testing for dark mode',
-            item: { id: 'workflow1' }
-        }
-    },
-    {
-        id: '5',
-        type: 'SUGGESTION',
-        timestamp: new Date('2025-01-15'),
-        data: {
-            title: 'Add Mobile Support',
-            description: 'Make the application responsive for mobile devices',
-            priority: SuggestionPriority.MEDIUM,
-            item: { id: 'sugg2' }
-        }
+      id: '4',
+      date: '2025-04-01',
+      title: 'Multi-Agent Chat Launched',
+      description: 'Real-time chat system with multiple AI agents now functional.',
+      type: 'feature'
     }
-];
-const sampleBranches = [
-    {
-        id: 'main',
-        name: 'main',
-        startEvent: '1',
-        status: 'ACTIVE'
-    },
-    {
-        id: 'mobile',
-        name: 'mobile-development',
-        parentBranchId: 'main',
-        startEvent: '5',
-        status: 'ACTIVE'
+  ];
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case 'milestone': return 'bg-blue-500';
+      case 'development': return 'bg-green-500';
+      case 'feature': return 'bg-purple-500';
+      default: return 'bg-gray-500';
     }
-];
-const sampleWorkflows = [
-    {
-        id: 'workflow1',
-        name: 'Dark Mode Implementation',
-        description: 'Workflow for implementing dark mode',
-        eventId: '4',
-        status: 'ACTIVE',
-        steps: [
-            {
-                id: 'step1',
-                type: 'DESIGN',
-                config: {},
-                nextSteps: ['step2']
-            },
-            {
-                id: 'step2',
-                type: 'DEVELOPMENT',
-                config: {},
-                nextSteps: ['step3']
-            },
-            {
-                id: 'step3',
-                type: 'TESTING',
-                config: {},
-                nextSteps: []
-            }
-        ]
-    }
-];
-const TimelineDemo = () => {
-    const handleEventClick = (event) => {
-        
-    };
-    const handleCreateBranch = (fromEventId, name) => {
-        
-    };
-    const handleMergeBranch = (fromEventId, toEventId) => {
-        
-    };
-    return (<div className="min-h-screen bg-gray-50 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">Timeline Demo</h1>
-        <div className="bg-white rounded-xl shadow-xl p-6">
-          <EnhancedTimelineView events={sampleEvents} branches={sampleBranches} workflows={sampleWorkflows} onEventClick={handleEventClick} onCreateBranch={handleCreateBranch} onMergeBranch={handleMergeBranch}/>
+  };
+
+const TimelineDemo: React.FC = () => {
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-8 text-center">📅 Timeline Demo</h1>
+      
+      <div className="max-w-4xl mx-auto">
+        <div className="relative">
+          {/* Timeline line */}
+          <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+          
+          {timelineEvents.map((event, index) => (
+            <div key={event.id} className="relative flex items-start mb-8">
+              {/* Timeline dot */}
+              <div className={`flex-shrink-0 w-4 h-4 rounded-full ${getTypeColor(event.type)} border-4 border-white shadow-lg z-10`}></div>
+              
+              {/* Content */}
+              <div className="ml-6 bg-white rounded-lg shadow-md p-6 flex-grow">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
+                  <span className="text-sm text-gray-500">{event.date}</span>
+                </div>
+                <p className="text-gray-700 mb-2">{event.description}</p>
+                <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium text-white ${getTypeColor(event.type)}`}>
+                  {event.type}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    </div>);
+      
+      <div className="text-center mt-8">
+        <p className="text-gray-600">This timeline showcases key milestones in The New Fuse development.</p>
+      </div>
+    </div>
+  );
 };
+
 export default TimelineDemo;
-//# sourceMappingURL=timeline-demo.js.map

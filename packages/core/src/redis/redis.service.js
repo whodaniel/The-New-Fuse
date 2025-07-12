@@ -11,9 +11,12 @@ var RedisService_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
 let RedisService = RedisService_1 = class RedisService {
+    configService;
+    logger = new Logger(RedisService_1.name);
+    redis;
+    subClient;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new Logger(RedisService_1.name);
         const redisConfig = {
             host: this.configService.getRedisHost(),
             port: this.configService.getRedisPort(),

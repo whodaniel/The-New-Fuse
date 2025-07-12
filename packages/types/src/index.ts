@@ -34,16 +34,11 @@ export { // Export classes as values
   CreateAgentDto,
   UpdateAgentDto,
   AgentResponseDto,
-} from './agent';
-export type { // Export interfaces as types
-  AgentCapabilityConfig
-} from './agent';
-export {
   AgentStatus,
   AgentRole,
   AgentType,
   AgentCapability
- } from './agent';
+} from './agent';
 
 // Messaging types
 export type {

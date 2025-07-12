@@ -13,11 +13,13 @@ import { Server } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
 let WebSocketManager = WebSocketManager_1 = class WebSocketManager extends EventEmitter {
+    configService;
+    logger = new Logger(WebSocketManager_1.name);
+    server;
+    clients = new Map();
     constructor(configService) {
         super();
         this.configService = configService;
-        this.logger = new Logger(WebSocketManager_1.name);
-        this.clients = new Map();
     }
     async onModuleInit() {
         const port = this.configService.get('WS_PORT', 8080);

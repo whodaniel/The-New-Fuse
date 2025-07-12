@@ -20,11 +20,12 @@ export var VectorMemoryEventType;
     VectorMemoryEventType["CACHE_MISS"] = "cache_miss";
 })(VectorMemoryEventType || (VectorMemoryEventType = {}));
 let VectorMemoryStore = VectorMemoryStore_1 = class VectorMemoryStore extends EventEmitter {
+    logger = new Logger(VectorMemoryStore_1.name);
+    config;
+    memoryItems = new Map();
+    embeddings = new Map();
     constructor() {
         super();
-        this.logger = new Logger(VectorMemoryStore_1.name);
-        this.memoryItems = new Map();
-        this.embeddings = new Map();
         this.config = {
             apiEndpoint: process.env.VECTOR_STORE_API_ENDPOINT || 'http://localhost:3000/api/vector-store',
             apiKey: process.env.VECTOR_STORE_API_KEY || '',

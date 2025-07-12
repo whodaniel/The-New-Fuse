@@ -1,24 +1,28 @@
-import { WorkflowExecution, WorkflowExecutionStatus } from '../types';
+import { WorkflowExecution, WorkflowExecutionStatus, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
-export declare class WorkflowExecutionRepository extends BaseRepository<WorkflowExecution> {
+export declare class WorkflowExecutionRepository extends BaseRepository<WorkflowExecution, Prisma.WorkflowExecutionCreateInput, Prisma.WorkflowExecutionUpdateInput, Prisma.WorkflowExecutionWhereInput> {
     constructor(prisma: PrismaService);
     private convertPrismaToApp;
     findById(id: string): Promise<WorkflowExecution | null>;
-    findMany(filters?: any): Promise<WorkflowExecution[]>;
-    create(data: any): Promise<WorkflowExecution>;
-    update(id: string, data: any): Promise<WorkflowExecution>;
+    findMany(filters?: Prisma.WorkflowExecutionWhereInput): Promise<WorkflowExecution[]>;
+    create(data: Prisma.WorkflowExecutionCreateInput): Promise<WorkflowExecution>;
+    update(id: string, data: Partial<WorkflowExecution>): Promise<WorkflowExecution>;
     delete(id: string): Promise<WorkflowExecution>;
-    findOne(filter?: any, include?: any): Promise<WorkflowExecution | null>;
-    findAll(filter?: any, orderBy?: any, skip?: number, take?: number): Promise<WorkflowExecution[]>;
-    count(filter?: any): Promise<number>;
-    protected countTotal(where: any): Promise<number>;
     findByWorkflowId(workflowId: string): Promise<WorkflowExecution[]>;
     findByStatus(status: WorkflowExecutionStatus): Promise<WorkflowExecution[]>;
     updateStatus(id: string, status: WorkflowExecutionStatus, output?: any, error?: string): Promise<WorkflowExecution>;
     getRunningExecutions(): Promise<WorkflowExecution[]>;
     getPendingExecutions(): Promise<WorkflowExecution[]>;
-    getExecutionStats(workflowId?: string): Promise<any>;
+    getExecutionStats(workflowId?: string): Promise<{
+        total: number;
+        completed: number;
+        failed: number;
+        successRate: number;
+        failureRate: number;
+        avgExecutionTimeMs: number;
+        byStatus: Record<string, number>;
+    }>;
     getRecentExecutions(workflowId?: string, limit?: number): Promise<WorkflowExecution[]>;
     getLongRunningExecutions(thresholdMinutes?: number): Promise<WorkflowExecution[]>;
     cancelExecution(id: string): Promise<WorkflowExecution>;

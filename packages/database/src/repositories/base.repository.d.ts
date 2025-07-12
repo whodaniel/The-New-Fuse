@@ -1,14 +1,15 @@
-import { PrismaClient } from '../types';
-export interface IRepository<T> {
+import { PrismaClient } from '../../generated/prisma';
+export interface IRepository<T, CreateInput, UpdateInput, WhereInput> {
     findById(id: string): Promise<T | null>;
-    findMany(filters?: any): Promise<T[]>;
-    create(data: any): Promise<T>;
-    update(id: string, data: any): Promise<T>;
+    findMany(filters?: WhereInput): Promise<T[]>;
+    create(data: CreateInput): Promise<T>;
+    update(id: string, data: UpdateInput): Promise<T>;
     delete(id: string): Promise<T>;
 }
-export declare abstract class BaseRepository<T> implements IRepository<T> {
+export declare abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> implements IRepository<T, CreateInput, UpdateInput, WhereInput> {
     protected prisma: PrismaClient;
-    constructor(prisma: PrismaClient);
+    private model;
+    constructor(prisma: PrismaClient, model: keyof PrismaClient);
     abstract findById(id: string): Promise<T | null>;
     abstract findMany(filters?: any): Promise<T[]>;
     abstract create(data: any): Promise<T>;
@@ -41,6 +42,6 @@ export declare abstract class BaseRepository<T> implements IRepository<T> {
     /**
      * Helper method to count total records for pagination
      */
-    protected countTotal(_where: any): Promise<number>;
+    protected countTotal(where: any): Promise<number>;
 }
 //# sourceMappingURL=base.repository.d.ts.map

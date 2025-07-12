@@ -13,11 +13,14 @@ import * as Redis from 'ioredis';
 import { AgentManager } from './AgentManager';
 import { AgentProcessor } from '../agent/AgentProcessor';
 let AgentSystem = AgentSystem_1 = class AgentSystem {
+    agentManager;
+    agentProcessor;
+    logger = new Logger(AgentSystem_1.name);
+    redis;
+    initialized = false;
     constructor(agentManager, agentProcessor) {
         this.agentManager = agentManager;
         this.agentProcessor = agentProcessor;
-        this.logger = new Logger(AgentSystem_1.name);
-        this.initialized = false;
         this.redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
         this.initialize();
     }

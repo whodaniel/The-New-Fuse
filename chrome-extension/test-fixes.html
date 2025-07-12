@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TNF Extension Fixes Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .response-container { border: 1px solid #ccc; padding: 20px; margin: 20px 0; }
+        .thinking-section { background: #f0f0f0; padding: 10px; margin: 10px 0; }
+        .show-more { background: #007bff; color: white; padding: 5px 10px; border: none; cursor: pointer; }
+        .hidden-content { display: none; }
+        .ai-response { background: #e8f4fd; padding: 15px; margin: 10px 0; }
+        .user-input { background: #ffe6e6; padding: 15px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>TNF Extension Test Page</h1>
+    
+    <div class="user-input" data-message-author-role="user">
+        <h2>User Input (Should NOT be captured)</h2>
+        <p>Solve this step by step: What is the square root of 144 plus the cube root of 27?</p>
+    </div>
+    
+    <div class="ai-response" data-message-author-role="model">
+        <h2>AI Response (Should be captured, excluding "Show thinking")</h2>
+        
+        <!-- This should be excluded -->
+        <div class="thinking-section">
+            <button aria-label="Show thinking">Show thinking</button>
+            <div style="display: none;">
+                <p>Let me think through this step by step...</p>
+                <p>First I need to calculate the square root of 144...</p>
+            </div>
+        </div>
+        
+        <!-- This should be included -->
+        <div class="actual-response">
+            <p>I'll solve this step by step:</p>
+            
+            <p><strong>Step 1:</strong> Find the square root of 144</p>
+            <p>√144 = 12 (since 12 × 12 = 144)</p>
+            
+            <p><strong>Step 2:</strong> Find the cube root of 27</p>
+            <p>∛27 = 3 (since 3 × 3 × 3 = 27)</p>
+            
+            <!-- Truncated content that should be expanded -->
+            <div class="more-content">
+                <p><strong>Step 3:</strong> Add them together</p>
+                <button class="show-more" onclick="showMore()">Show more</button>
+                <div class="hidden-content" id="hiddenContent">
+                    <p>12 + 3 = 15</p>
+                    <p><strong>Answer:</strong> The square root of 144 plus the cube root of 27 equals 15.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Navigation content that should NOT be captured -->
+    <nav role="navigation">
+        <button>New chat</button>
+        <button>Settings</button>
+        <button>Copy</button>
+        <button>Share</button>
+    </nav>
+
+    <script>
+        function showMore() {
+            document.getElementById('hiddenContent').style.display = 'block';
+            event.target.style.display = 'none';
+        }
+        
+        // Simulate loading the TNF extension
+        console.log('Loading TNF extension test...');
+    </script>
+    
+    <!-- Load our injectable UI for testing -->
+    <script src="injectable-ui.js"></script>
+    <script>
+        // Initialize the TNF extension for testing
+        window.addEventListener('load', () => {
+            console.log('Initializing TNF Injectable UI for testing...');
+            try {
+                const tnf = new TNFInjectableUI();
+                console.log('TNF Injectable UI initialized successfully');
+            } catch (error) {
+                console.error('Failed to initialize TNF Injectable UI:', error);
+            }
+        });
+    </script>
+</body>
+</html>

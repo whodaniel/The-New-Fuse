@@ -10,9 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var SemanticIndex_1;
 import { Injectable, Logger } from '@nestjs/common';
 let SemanticIndex = SemanticIndex_1 = class SemanticIndex {
+    logger = new Logger(SemanticIndex_1.name);
+    config;
+    items = new Map();
     constructor() {
-        this.logger = new Logger(SemanticIndex_1.name);
-        this.items = new Map();
         this.config = {
             dimension: parseInt(process.env.EMBEDDING_DIMENSION || '1536'),
             maxElements: parseInt(process.env.MAX_INDEX_ELEMENTS || '10000'),

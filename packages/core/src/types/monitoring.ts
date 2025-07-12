@@ -33,9 +33,19 @@ export interface SystemMetrics {
 }
 
 export interface HealthStatus {
-    status: 'healthy' | degraded' | unhealthy'
-            status:pass' | warn' | fail'
-    severity:info' | warning' | error' | critical'
-        operator:gt' | lt' | eq' | ne' | gte' | lte'
-    severity:info' | warning' | error' | critical'
-        type:memory' | file' | database'
+    status: 'healthy' | 'degraded' | 'unhealthy';
+}
+
+export interface HealthCheckResult {
+    status: 'pass' | 'warn' | 'fail';
+    component: string;
+    description?: string;
+    severity?: 'info' | 'warning' | 'error' | 'critical';
+    observedValue?: number;
+    observedUnit?: string;
+    targetValue?: number;
+    targetUnit?: string;
+    operator?: 'gt' | 'lt' | 'eq' | 'ne' | 'gte' | 'lte';
+    type?: 'memory' | 'file' | 'database' | 'network' | 'cpu' | 'disk';
+    details?: Record<string, unknown>;
+}

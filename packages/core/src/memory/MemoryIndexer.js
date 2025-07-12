@@ -10,12 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MemoryIndexer_1;
 import { Injectable, Logger } from '@nestjs/common';
 let MemoryIndexer = MemoryIndexer_1 = class MemoryIndexer {
+    logger = new Logger(MemoryIndexer_1.name);
+    textIndex = new Map();
+    metadataIndex = new Map();
+    tagIndex = new Map();
+    timestampIndex = new Map();
+    similarityThreshold;
     constructor() {
-        this.logger = new Logger(MemoryIndexer_1.name);
-        this.textIndex = new Map();
-        this.metadataIndex = new Map();
-        this.tagIndex = new Map();
-        this.timestampIndex = new Map();
         this.logger.log('Initializing MemoryIndexer');
         this.similarityThreshold = parseFloat(process.env.SIMILARITY_THRESHOLD || '0.8');
     }

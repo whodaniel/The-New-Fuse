@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../node_modules/.prisma/client"
+  output   = "../packages/database/generated/prisma"
   previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
 }
 
@@ -9,175 +9,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// =============================================================================
+// USER MANAGEMENT
+// =============================================================================
+
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  name         String?
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  passwordHash String
-  role         UserRole  @default(USER)
-  chats        Chat[]
-  sessions     Session[]
-  agents       Agent[]   // Add missing relationship
-  pipelines    Pipeline[] // Add missing relationship
-  tasks        Task[]    // Add missing relationship
-}
-
-model Agent {
-  id                String              @id @default(uuid())
-  name              String
-  type              AgentType
-  status            AgentStatus         @default(INACTIVE) // Add missing status field
-  description       String?             // Add missing field
-  systemPrompt      String?             // Add missing field
-  configuration     Json?               // Add missing field
-  userId            String              // Add missing field
-  createdAt         DateTime            @default(now())
-  updatedAt         DateTime            @updatedAt
-  metadata          AgentMetadata?
-  chats             Chat[]
-  codeExecutions    CodeExecutionUsage[]
-  user              User                @relation(fields: [userId], references: [id], onDelete: Cascade) // Add missing relationship
-  pipelines         Pipeline[]          // Add missing relationship
-  tasks             Task[]              // Add missing relationship
-  workflows         Workflow[]          // Add missing relationship
-}
-
-model Session {
-  id        String   @id @default(uuid())
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-}
-
-model AgentMetadata {
-  id                 String   @id @default(uuid())
-  agentId            String   @unique
-  version            String
-  lastActive         DateTime @default(now())
-  capabilities       Json     @default("{}")
-  personalityTraits  Json     @default("{}")
-  communicationStyle String   @default("NEUTRAL")
-  expertiseAreas     Json     @default("{}")
-  config             Json?
-  currentState       Json?
-  agent              Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
-}
-
-model Chat {
-  id        String    @id @default(uuid())
-  title     String?
-  userId    String
-  agentId   String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  messages  Message[]
-}
-
-model Message {
-  id        String     @id @default(uuid())
-  content   String
-  role      MessageRole
-  chatId    String
-  createdAt DateTime   @default(now())
-  chat      Chat       @relation(fields: [chatId], references: [id], onDelete: Cascade)
-}
-
-// Add missing models referenced by TypeORM entities
-model Pipeline {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  config      Json?
-  status      PipelineStatus @default(DRAFT)
-  agentId     String?
-  userId      String
-  agent       Agent?   @relation(fields: [agentId], references: [id])
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  steps       WorkflowStep[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Task {
-  id          String       @id @default(uuid())
-  title       String
-  description String?
-  status      TaskStatus   @default(PENDING)
-  priority    TaskPriority @default(MEDIUM)
-  agentId     String?
-  userId      String
-  agent       Agent?       @relation(fields: [agentId], references: [id])
-  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
-  metadata    Json?
-  executionId String?
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  completedAt DateTime?
-}
-
-model Workflow {
-  id          String         @id @default(uuid())
-  name        String
-  description String?
-  definition  Json           // Workflow definition JSON
-  status      WorkflowStatus @default(DRAFT)
-  agentId     String?
-  userId      String?
-  agent       Agent?         @relation(fields: [agentId], references: [id])
-  steps       WorkflowStep[]
-  executions  WorkflowExecution[]
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
-}
-
-model WorkflowStep {
-  id          String    @id @default(uuid())
-  name        String
-  type        String
-  config      Json?
-  order       Int
-  workflowId  String?
-  pipelineId  String?
-  workflow    Workflow? @relation(fields: [workflowId], references: [id])
-  pipeline    Pipeline? @relation(fields: [pipelineId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
-}
-
-model WorkflowExecution {
-  id         String                 @id @default(uuid())
-  workflowId String
-  status     WorkflowExecutionStatus @default(PENDING)
-  input      Json?
-  output     Json?
-  error      String?
-  startedAt  DateTime               @default(now())
-  completedAt DateTime?
-  workflow   Workflow               @relation(fields: [workflowId], references: [id])
-}
-
-// Updated enums to match TypeScript types
-enum AgentType {
-  BASIC
-  CHAT
-  WORKFLOW
-  TASK
-  ASSISTANT
-  ANALYSIS  // Keep this for backward compatibility
-}
-
-enum AgentStatus {
-  ACTIVE
-  INACTIVE
-  IDLE
-  BUSY
-  ERROR
+  id             String     @id @default(uuid())
+  email          String     @unique
+  username       String?    @unique
+  name           String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  hashedPassword String
+  role           UserRole   @default(USER)
+  roles          UserRole[] @default([USER])
+  isActive       Boolean    @default(true)
+  lastLogin      DateTime?
+  preferences    Json?
+  refreshToken   String?
+  deletedAt      DateTime?
+  
+  // Relationships
+  agents         Agent[]
+  pipelines      Pipeline[]
+  tasks          Task[]
+  workflows      Workflow[]
+  chatRooms      ChatRoom[]
+  messages       Message[]
+  authSessions   AuthSession[]
+  loginAttempts  LoginAttempt[]
+  authEvents     AuthEvent[]
+  
+  @@map("users")
 }
 
 enum UserRole {
@@ -190,10 +53,377 @@ enum UserRole {
   AGENT_OPERATOR
 }
 
+// =============================================================================
+// AUTHENTICATION
+// =============================================================================
+
+model AuthSession {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  
+  @@map("auth_sessions")
+}
+
+model LoginAttempt {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  ipAddress  String
+  successful Boolean
+  createdAt  DateTime @default(now())
+  
+  @@map("login_attempts")
+}
+
+model AuthEvent {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String
+  details   Json?
+  createdAt DateTime @default(now())
+  
+  @@map("auth_events")
+}
+
+// =============================================================================
+// AGENT SYSTEM
+// =============================================================================
+
+model Agent {
+  id                String               @id @default(uuid())
+  name              String
+  type              AgentType
+  status            AgentStatus          @default(INACTIVE)
+  description       String?
+  systemPrompt      String?
+  config            Json?
+  capabilities      AgentCapability[]    @default([])
+  provider          String               @default("default")
+  userId            String
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  deletedAt         DateTime?
+  
+  // Relationships
+  user              User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metadata          AgentMetadata?
+  nft               AgentNFT?
+  wallet            Wallet?
+  chats             Chat[]
+  messages          Message[]
+  codeExecutions    CodeExecutionUsage[]
+  pipelines         Pipeline[]
+  tasks             Task[]
+  workflows         Workflow[]
+  workflowSteps     WorkflowStep[]
+  
+  @@map("agents")
+}
+
+model AgentMetadata {
+  id       String @id @default(uuid())
+  agentId  String @unique
+  metadata Json   @default("{}")
+  
+  // Relationships
+  agent    Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  @@map("agent_metadata")
+}
+
+enum AgentType {
+  BASIC
+  CHAT
+  WORKFLOW
+  TASK
+  ASSISTANT
+  ANALYSIS
+  CONVERSATIONAL
+  IDE_EXTENSION
+  API
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  IDLE
+  BUSY
+  ERROR
+  OFFLINE
+  INITIALIZING
+  READY
+  TERMINATED
+}
+
+enum AgentCapability {
+  CODE_GENERATION
+  CODE_REVIEW
+  CODE_REFACTORING
+  CODE_EXECUTION
+  DEBUGGING
+  TESTING
+  DOCUMENTATION
+  ARCHITECTURE_DESIGN
+  OPTIMIZATION
+  SECURITY_AUDIT
+  PROJECT_MANAGEMENT
+  TOOL_USAGE
+  TASK_EXECUTION
+  FILE_MANAGEMENT
+  CODE_COMPLETION
+  CODE_SUGGESTIONS
+  SYNTAX_HIGHLIGHTING
+  ERROR_DETECTION
+  CODE_FORMATTING
+  INTELLISENSE
+  CHAT
+  WORKFLOW
+  RESEARCH
+  ANALYSIS
+  INTEGRATION
+}
+
+// =============================================================================
+// CHAT SYSTEM
+// =============================================================================
+
+model Chat {
+  id        String    @id @default(uuid())
+  title     String?
+  agentId   String
+  userId    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+  
+  // Relationships
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages  Message[]
+  
+  @@map("chats")
+}
+
+model ChatRoom {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  isPrivate     Boolean   @default(false)
+  owner         User      @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  settings      Json?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastMessageAt DateTime?
+  isActive      Boolean   @default(true)
+  deletedAt     DateTime?
+  
+  // Relationships
+  messages      Message[]
+  
+  @@map("chat_rooms")
+}
+
+model Message {
+  id              String      @id @default(uuid())
+  content         String      @db.Text
+  role            MessageRole @default(USER)
+  sender          User?       @relation(fields: [senderId], references: [id])
+  senderId        String?
+  senderName      String?     // For DTO compatibility - plain string sender
+  agent           Agent?      @relation(fields: [agentId], references: [id])
+  agentId         String?
+  chat            Chat?       @relation(fields: [chatId], references: [id])
+  chatId          String?
+  room            ChatRoom?   @relation(fields: [roomId], references: [id])
+  roomId          String?
+  parentMessage   Message?    @relation("MessageReplies", fields: [parentMessageId], references: [id])
+  parentMessageId String?
+  replies         Message[]   @relation("MessageReplies")
+  metadata        Json?
+  attachments     String[]    @default([])
+  timestamp       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  isEdited        Boolean     @default(false)
+  isDeleted       Boolean     @default(false)
+  reactions       Json?
+  
+  @@map("messages")
+}
+
 enum MessageRole {
   USER
   AGENT
   SYSTEM
+  ASSISTANT
+  TOOL
+}
+
+// =============================================================================
+// WORKFLOW SYSTEM
+// =============================================================================
+
+model Workflow {
+  id              String              @id @default(uuid())
+  name            String
+  description     String?
+  definition      Json?               // Workflow definition JSON
+  status          WorkflowStatus      @default(DRAFT)
+  creator         User?               @relation(fields: [creatorId], references: [id])
+  creatorId       String?
+  agent           Agent?              @relation(fields: [agentId], references: [id])
+  agentId         String?
+  metadata        Json?
+  isActive        Boolean             @default(true)
+  variables       Json?
+  triggers        Json?               @db.Json
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  lastExecutedAt  DateTime?
+  executionCount  Int                 @default(0)
+  statistics      Json?
+  deletedAt       DateTime?
+  
+  // Relationships
+  steps           WorkflowStep[]
+  executions      WorkflowExecution[]
+  
+  @@map("workflows")
+}
+
+model WorkflowStep {
+  id              String    @id @default(uuid())
+  name            String
+  type            String
+  config          Json?
+  order           Int       @default(0)
+  workflow        Workflow? @relation(fields: [workflowId], references: [id])
+  workflowId      String?
+  agent           Agent?    @relation(fields: [agentId], references: [id])
+  agentId         String?
+  nextSteps       String[]
+  conditions      Json?
+  transformations Json?
+  metadata        Json?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  lastExecutedAt  DateTime?
+  statistics      Json?
+  
+  @@map("workflow_steps")
+}
+
+model WorkflowExecution {
+  id          String                  @id @default(uuid())
+  workflow    Workflow                @relation(fields: [workflowId], references: [id])
+  workflowId  String
+  status      WorkflowExecutionStatus @default(PENDING)
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime                @default(now())
+  completedAt DateTime?
+  
+  @@map("workflow_executions")
+}
+
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// =============================================================================
+// PIPELINE SYSTEM
+// =============================================================================
+
+model Pipeline {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  configuration Json?
+  status        PipelineStatus @default(DRAFT)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  agent         Agent          @relation(fields: [agentId], references: [id])
+  agentId       String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  
+  // Relationships
+  tasks         Task[]
+  
+  @@map("pipelines")
+}
+
+enum PipelineStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+// =============================================================================
+// TASK SYSTEM
+// =============================================================================
+
+model Task {
+  id            String         @id @default(uuid())
+  type          String
+  status        TaskStatus     @default(PENDING)
+  priority      TaskPriority   @default(MEDIUM)
+  data          Json?
+  result        Json?
+  error         String?
+  startTime     DateTime?
+  endTime       DateTime?
+  pipeline      Pipeline       @relation(fields: [pipelineId], references: [id])
+  pipelineId    String
+  agent         Agent?         @relation(fields: [agentId], references: [id])
+  agentId       String?
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+  
+  // Relationships
+  taskExecutions TaskExecution[]
+  
+  @@map("tasks")
+}
+
+model TaskExecution {
+  id          String   @id @default(uuid())
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String
+  status      String
+  output      Json?
+  error       String?
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+  
+  @@map("task_executions")
 }
 
 enum TaskStatus {
@@ -211,27 +441,9 @@ enum TaskPriority {
   URGENT
 }
 
-enum PipelineStatus {
-  DRAFT
-  ACTIVE
-  PAUSED
-  COMPLETED
-  FAILED
-}
-
-enum WorkflowStatus {
-  DRAFT
-  PUBLISHED
-  ARCHIVED
-}
-
-enum WorkflowExecutionStatus {
-  PENDING
-  RUNNING
-  COMPLETED
-  FAILED
-  CANCELLED
-}
+// =============================================================================
+// CODE EXECUTION SYSTEM
+// =============================================================================
 
 model CodeExecutionUsage {
   id              String                @id @default(uuid())
@@ -239,9 +451,9 @@ model CodeExecutionUsage {
   clientId        String
   executionId     String                @unique
   language        CodeExecutionLanguage
-  code            String
+  code            String                @db.Text
   result          Json?
-  output          Json
+  output          Json?
   error           Json?
   executionTime   Int                   // in milliseconds
   memoryUsage     Int                   // in bytes
@@ -252,6 +464,8 @@ model CodeExecutionUsage {
   status          CodeExecutionStatus
   createdAt       DateTime              @default(now())
   completedAt     DateTime?
+  
+  // Relationships
   agent           Agent                 @relation(fields: [agentId], references: [id])
 
   @@index([agentId])
@@ -260,6 +474,24 @@ model CodeExecutionUsage {
   @@index([language])
   @@index([tier])
   @@index([status])
+  @@map("code_execution_usage")
+}
+
+model CodeExecutionSession {
+  id              String                @id @default(uuid())
+  name            String
+  description     String?
+  ownerId         String
+  collaborators   String[]
+  isPublic        Boolean               @default(false)
+  files           Json                  // Array of file objects
+  environment     Json                  // Environment configuration
+  createdAt       DateTime              @default(now())
+  updatedAt       DateTime              @updatedAt
+  expiresAt       DateTime?
+  storageUsage    Int                   @default(0) // in bytes
+  
+  @@map("code_execution_sessions")
 }
 
 enum CodeExecutionLanguage {
@@ -288,17 +520,214 @@ enum CodeExecutionStatus {
   CANCELLED
 }
 
-model CodeExecutionSession {
-  id              String                @id @default(uuid())
-  name            String
-  description     String?
-  ownerId         String
-  collaborators   String[]
-  isPublic        Boolean               @default(false)
-  files           Json                  // Array of file objects
-  environment     Json                  // Environment configuration
-  createdAt       DateTime              @default(now())
-  updatedAt       DateTime              @updatedAt
-  expiresAt       DateTime?
-  storageUsage    Int                   @default(0) // in bytes
+// =============================================================================
+// NFT AND MARKETPLACE MODELS
+// =============================================================================
+
+model AgentNFT {
+  id                  String                @id @default(uuid())
+  agentId             String                @unique
+  tokenId             Int                   @unique
+  contractAddress     String
+  smartAccountAddress String?
+  isFractionalized    Boolean               @default(false)
+  totalShares         Int                   @default(0)
+  metadataUri         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  agent               Agent?                @relation(fields: [agentId], references: [id])
+  fractionalShares    FractionalShare[]
+  revenueStreams      RevenueStream[]
+  marketplaceListings MarketplaceListing[]
+
+  @@map("agent_nfts")
+}
+
+model FractionalShare {
+  id          String   @id @default(uuid())
+  agentNFTId  String
+  ownerAddress String
+  shareAmount Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agentNFT    AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+
+  @@map("fractional_shares")
+}
+
+model RevenueStream {
+  id                    String              @id @default(uuid())
+  agentNFTId            String
+  streamName            String
+  description           String?
+  tokenAddress          String
+  totalRevenue          Decimal
+  distributedRevenue    Decimal
+  distributionThreshold Decimal
+  isActive              Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  agentNFT              AgentNFT            @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  distributions         RevenueDistribution[]
+
+  @@map("revenue_streams")
+}
+
+model RevenueDistribution {
+  id              String        @id @default(uuid())
+  revenueStreamId String
+  txHash          String
+  totalAmount     Decimal
+  distributedTo   Json
+  blockNumber     Int
+  createdAt       DateTime      @default(now())
+
+  revenueStream   RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+
+  @@map("revenue_distributions")
+}
+
+model MarketplaceListing {
+  id           String            @id @default(uuid())
+  agentNFTId   String
+  listingId    Int               @unique
+  seller       String
+  shareAmount  Decimal
+  pricePerShare Decimal
+  totalPrice   Decimal
+  status       MarketplaceStatus @default(ACTIVE)
+  expiresAt    DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  agentNFT     AgentNFT          @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  offers       MarketplaceOffer[]
+
+  @@map("marketplace_listings")
+}
+
+model MarketplaceOffer {
+  id          String           @id @default(uuid())
+  listingId   String
+  buyer       String
+  shareAmount Decimal
+  offerPrice  Decimal
+  status      OfferStatus      @default(PENDING)
+  expiresAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  listing     MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_offers")
+}
+
+enum MarketplaceStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+// =============================================================================
+// WALLET AND TRANSACTION MODELS
+// =============================================================================
+
+model Wallet {
+  id             String        @id @default(uuid())
+  address        String        @unique
+  agentId        String?       @unique
+  type           WalletType    @default(SMART_ACCOUNT)
+  balance        Decimal       @default(0)
+  nonce          Int           @default(0)
+  isActive       Boolean       @default(true)
+  lastActivity   DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  agent          Agent?        @relation(fields: [agentId], references: [id])
+  transactions   Transaction[]
+
+  @@map("wallets")
+}
+
+model Transaction {
+  id           String            @id @default(uuid())
+  hash         String            @unique
+  walletId     String
+  fromAddress  String
+  toAddress    String
+  value        Decimal
+  gasPrice     Decimal
+  gasUsed      Int
+  gasLimit     Int
+  status       TransactionStatus @default(PENDING)
+  blockNumber  Int?
+  blockHash    String?
+  type         TransactionType   @default(TRANSFER)
+  data         Json?
+  createdAt    DateTime          @default(now())
+  confirmedAt  DateTime?
+
+  wallet       Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId])
+  @@index([hash])
+  @@index([status])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+enum WalletType {
+  SMART_ACCOUNT
+  EOA
+  MULTI_SIG
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  CANCELLED
+}
+
+enum TransactionType {
+  TRANSFER
+  CONTRACT_CALL
+  CONTRACT_DEPLOYMENT
+  NFT_MINT
+  NFT_TRANSFER
+}
+
+// =============================================================================
+// LLM CONFIGURATION
+// =============================================================================
+
+model LLMConfig {
+  id            String    @id @default(uuid())
+  name          String
+  provider      String
+  modelName     String
+  apiKey        String    // Should be encrypted in production
+  apiEndpoint   String?
+  isCustom      Boolean   @default(false)
+  enabled       Boolean   @default(true)
+  priority      Int       @default(10)
+  retryConfig   Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  
+  @@map("llm_configs")
 }

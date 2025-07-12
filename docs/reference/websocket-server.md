@@ -4,8 +4,7 @@ The New Fuse includes a WebSocket server that enables communication between the 
 
 ## Updates
 
-The WebSocket server has been enhanced with the following features:
-
+The WebSocket server is a mature component with the following features:
 - **Secure WebSocket Support**: Added support for wss:// protocol using SSL certificates
 - **Improved Error Handling**: Enhanced error handling and reconnection logic with exponential backoff
 - **Multiple Client Support**: Added support for multiple connected clients with unique identifiers
@@ -48,6 +47,9 @@ The WebSocket server can be configured through the VS Code extension settings:
 - **Port**: The port on which the WebSocket server listens (default: 3710)
 - **Enable Chrome Integration**: Whether to enable the Chrome extension integration (default: true)
 - **Use Secure WebSocket**: Whether to use secure WebSocket (wss://) for Chrome extension communication (default: false)
+
+**Note:** For development and testing purposes, a standalone test server (`test-websocket-server-3711.cjs`) is often used, which runs on port **3711** to avoid conflicts with the primary VS Code extension server.
+
 - **Maximum Chrome Clients**: Maximum number of Chrome extension clients that can connect simultaneously (default: 5)
 - **Certificate Path**: Path to SSL certificate file for secure WebSocket connections
 - **Key Path**: Path to SSL key file for secure WebSocket connections
@@ -130,6 +132,8 @@ The WebSocket server uses a JSON-based message protocol for communication with t
 - **CODE_INPUT**: Code input message
 - **AI_OUTPUT**: AI output message
 - **SYSTEM**: System message
+- **DB_COMMAND**: (For Testing) Executes a command against a connected Redis instance.
+- **BROADCAST**: (For Testing/Relay) Sends a message to all connected clients and/or a Redis pub/sub channel.
 
 ### Message Format
 
@@ -227,19 +231,11 @@ If the WebSocket server fails to start:
 
 ### Connection Issues
 
-If the Chrome extension fails to connect to the WebSocket server:
-
-1. Make sure the WebSocket server is running
-2. Check that the WebSocket URL in the Chrome extension settings is correct
-3. Verify that the port is not blocked by a firewall
-4. Check the Chrome extension logs for any error messages
+Please refer to the [WebSocket Connection Guide](../guides/WEBSOCKET-CONNECTION-GUIDE.md) for detailed troubleshooting steps.
 
 ## Future Improvements
 
 Planned improvements for the WebSocket server include:
-
-- **Secure WebSocket Support**: Add support for wss:// protocol
-- **Multiple Client Support**: Improve handling of multiple connected clients
 - **Message Compression**: Implement message compression to reduce bandwidth usage
 - **Rate Limiting**: Add rate limiting to prevent abuse
 - **Connection Pooling**: Implement connection pooling for better performance

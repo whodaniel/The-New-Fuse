@@ -13,7 +13,7 @@ import {
   AgentStatus, 
   AgentCapability 
 } from '@the-new-fuse/types';
-import { PrismaService } from '../../services/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { v4 as uuidv4 } from 'uuid';
 import { toError } from '../../utils/error'; // Import the helper
 
@@ -21,7 +21,7 @@ import { toError } from '../../utils/error'; // Import the helper
 export class AgentService extends BaseService<AppAgent> {
   // Change logger visibility to protected
   protected readonly logger = new Logger(AgentService.name);
-  protected readonly repository: AgentRepository;
+  protected readonly repository: any;
 
   constructor(private readonly prisma: PrismaService) {
     // Initialize the repository with the prisma client
@@ -86,7 +86,7 @@ export class AgentService extends BaseService<AppAgent> {
     try {
       const agents = await this.repository.findAll({ userId });
       // Make sure metadata is included in all returned agents
-      return agents.map(agent => this.addMetadataIfMissing(agent));
+      return agents.map((agent: any) => this.addMetadataIfMissing(agent));
     } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting agents: ${err.message}`, err.stack); // Use err
@@ -104,7 +104,7 @@ export class AgentService extends BaseService<AppAgent> {
     try {
       const searchCriteria = { ...filters, userId };
       const agents = await this.repository.findAll(searchCriteria);
-      return agents.map(agent => this.addMetadataIfMissing(agent));
+      return agents.map((agent: any) => this.addMetadataIfMissing(agent));
     } catch (error) {
       const err = toError(error);
       this.logger.error(`Error finding agents: ${err.message}`, err.stack);
@@ -233,7 +233,7 @@ export class AgentService extends BaseService<AppAgent> {
    * @param userId User ID
    * @returns Array of agents
    */
-  async getAgentsByCapability(capability: string, userId: string): Promise<AppAgent[]> {
+  async getAgentsByCapability(capability: AgentCapability, userId: string): Promise<AppAgent[]> {
     try {
       // This is a more complex query that requires custom implementation
       const agents = await this.getAgents(userId);
@@ -242,15 +242,8 @@ export class AgentService extends BaseService<AppAgent> {
       return agents.filter(agent => {
         if (!agent.capabilities) return false;
         
-        // Handle both string[] and AgentCapabilityConfig[]
-        return agent.capabilities.some((cap: any) => {
-          if (typeof cap === 'string') {
-            return cap === capability;
-          } else if (typeof cap === 'object' && cap.name) {
-            return cap.name === capability;
-          }
-          return false;
-        });
+        // Handle AgentCapability[] enum array
+        return agent.capabilities.includes(capability);
       });
     } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
@@ -270,7 +263,7 @@ export class AgentService extends BaseService<AppAgent> {
         userId, 
         status: AgentStatus.ACTIVE 
       });
-      return agents.map(agent => this.addMetadataIfMissing(agent));
+      return agents.map((agent: any) => this.addMetadataIfMissing(agent));
     } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting active agents: ${err.message}`, err.stack); // Use err

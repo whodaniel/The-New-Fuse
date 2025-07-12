@@ -6,24 +6,17 @@
 import { Injectable } from '@nestjs/common';
 import { BaseService } from './base.service';
 import { AgentRepository, Agent } from '../repositories/agent.repository';
-
-// Define AgentCapability locally until types package issue is resolved
-export enum AgentCapability {
-  TEXT_GENERATION = 'text-generation',
-  CODE_GENERATION = 'code-generation',
-  ANALYSIS = 'analysis',
-  PLANNING = 'planning',
-  SEARCH = 'search',
-  KNOWLEDGE_BASE = 'knowledge-base',
-  COORDINATION = 'coordination',
-  COMMUNICATION = 'communication'
-}
+import { LocalAIDetectionService } from '@the-new-fuse/core/src/services/LocalAIDetectionService';
+import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 
 @Injectable()
 export class AgentService extends BaseService<Agent> {
   protected readonly repository: AgentRepository;
 
-  constructor(repository: AgentRepository) {
+  constructor(
+    repository: AgentRepository,
+    private localAIDetection: LocalAIDetectionService
+  ) {
     super('AgentService');
     this.repository = repository;
   }
@@ -33,6 +26,13 @@ export class AgentService extends BaseService<Agent> {
    */
   async getAgents(userId: string): Promise<Agent[]> {
     return this.repository.findAll({ userId });
+  }
+
+  /**
+   * Get all agents (for admin/monitoring use)
+   */
+  async findAll(): Promise<Agent[]> {
+    return this.repository.findAll({});
   }
 
   /**
@@ -78,7 +78,7 @@ export class AgentService extends BaseService<Agent> {
   /**
    * Get agents by capability for a user
    */
-  async getAgentsByCapability(capability: string | AgentCapability, userId: string): Promise<Agent[]> {
+  async getAgentsByCapability(capability: AgentCapability, userId: string): Promise<Agent[]> {
     const agents = await this.getAgents(userId);
     
     // Filter agents by capability
@@ -86,13 +86,122 @@ export class AgentService extends BaseService<Agent> {
       if (!agent.capabilities) return false;
       
       // Check if the agent has the capability
-      return agent.capabilities.some((cap: string) => {
-        if (typeof cap === 'string' && typeof capability === 'string') {
-          return cap === capability;
-        } else {
-          return cap === capability;
-        }
-      });
+      return agent.capabilities.includes(capability);
     });
+  }
+
+  /**
+   * Detect and register local AI providers as agents
+   */
+  async detectAndRegisterLocalAIs(userId: string): Promise<Agent[]> {
+    this.logger.log(`🔍 Detecting local AIs for user: ${userId}`);
+    
+    const detectedAgents = await this.localAIDetection.detectAndCreateAgents(userId);
+    const registeredAgents: Agent[] = [];
+
+    for (const agentDto of detectedAgents) {
+      try {
+        // Check if agent with this provider already exists
+        const existingAgents = await this.getAgents(userId);
+        const exists = existingAgents.some(agent => 
+          agent.configuration?.provider === agentDto.provider
+        );
+
+        if (!exists) {
+          const agentData = {
+          ...agentDto,
+          capabilities: Array.isArray(agentDto.capabilities) 
+            ? agentDto.capabilities.filter((cap): cap is AgentCapability => 
+                Object.values(AgentCapability).includes(cap as AgentCapability))
+            : [],
+          metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
+            ? agentDto.metadata as Record<string, unknown>
+            : {},
+          configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
+            ? agentDto.configuration as Record<string, unknown>
+            : {}
+        };
+        const agent = await this.createAgent(agentData, userId);
+          registeredAgents.push(agent);
+          this.logger.log(`✅ Registered local AI agent: ${agentDto.name}`);
+        } else {
+          this.logger.debug(`⚠️ Local AI agent already exists: ${agentDto.name}`);
+        }
+      } catch (error) {
+        this.logger.error(`❌ Failed to register ${agentDto.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    return registeredAgents;
+  }
+
+  /**
+   * Get all local AI agents for a user
+   */
+  async getLocalAIAgents(userId: string): Promise<Agent[]> {
+    const agents = await this.getAgents(userId);
+    return agents.filter(agent => 
+      agent.configuration?.localAI === true
+    );
+  }
+
+  /**
+   * Refresh local AI detection and update agents
+   */
+  async refreshLocalAIAgents(userId: string): Promise<Agent[]> {
+    this.logger.log(`🔄 Refreshing local AI agents for user: ${userId}`);
+    
+    // Get currently available local AIs
+    const availableProviders = await this.localAIDetection.detectAvailableAIs();
+    const availableProviderNames = availableProviders.map((p: any) => p.name);
+    
+    // Get existing local AI agents
+    const existingAgents = await this.getLocalAIAgents(userId);
+    
+    // Remove agents for providers that are no longer available
+    for (const agent of existingAgents) {
+      if (!availableProviderNames.includes(agent.configuration?.provider)) {
+        await this.deleteAgent(agent.id, userId);
+        this.logger.log(`🗑️ Removed unavailable AI agent: ${agent.name}`);
+      }
+    }
+    
+    // Add new agents for newly detected providers
+    return this.detectAndRegisterLocalAIs(userId);
+  }
+
+  /**
+   * Create default system agents for all detected local AIs
+   */
+  async createSystemLocalAIAgents(): Promise<Agent[]> {
+    this.logger.log('🚀 Creating default system agents for local AIs...');
+    
+    const systemAgents = await this.localAIDetection.createDefaultSystemAgents();
+    const registeredAgents: Agent[] = [];
+
+    for (const agentDto of systemAgents) {
+      try {
+        const agentData = {
+          ...agentDto,
+          capabilities: Array.isArray(agentDto.capabilities) 
+            ? agentDto.capabilities.filter((cap): cap is AgentCapability => 
+                Object.values(AgentCapability).includes(cap as AgentCapability))
+            : [],
+          metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
+            ? agentDto.metadata as Record<string, unknown>
+            : {},
+          configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
+            ? agentDto.configuration as Record<string, unknown>
+            : {}
+        };
+        const agent = await this.createAgent(agentData, 'system');
+        registeredAgents.push(agent);
+        this.logger.log(`✅ Created system agent: ${agentDto.name}`);
+      } catch (error) {
+        this.logger.error(`❌ Failed to create system agent ${agentDto.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    return registeredAgents;
   }
 }

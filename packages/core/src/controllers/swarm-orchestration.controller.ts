@@ -1,6 +1,6 @@
 /**
  * Swarm Orchestration Controller
- * Handles swarm execution, monitoring, and management endpoints
+ * Handles multi-agent swarm coordination, task distribution, and agent communication
  */
 
 import {
@@ -16,92 +16,200 @@ import {
   HttpCode,
   HttpStatus,
   Logger,
-  Sse,
-} from /@nestjs/common'';
-} from /@nestjs/swagger';
-import { Observable } from 'rxjs';
-import { TenantGuard } from /../guards/tenant.'guard';
-import { AgencyRoleGuard } from /../guards/agency-role.'guard';
-import { Roles } from /../decorators/roles.'decorator';
-import { TenantContext } from /../decorators/tenant-context.'decorator';
-@ApiTags('Swarm Orchestration'
-  @Post('execute'
-  @ApiOperation({ summary:Execute a swarm task'
-  @ApiResponse({ status: 201, description:Swarm execution started'
-  @ApiResponse({ status: 400, description:Invalid execution parameters'
-      priority?:LOW' | MEDIUM' | HIGH' | URGENT'
-      message:Swarm execution started successfully'
-  @Get('executions'
-  @ApiOperation({ summary:Get swarm executions for agency'
-  @ApiQuery({ name: 'status'
-  @ApiQuery({ name: 'page'
-  @ApiQuery({ name: 'limit'
-  @ApiResponse({ status: 200, description: Executions retrieved 'successfully'
-    @Query('status'
-    @Query('page'
-    @Query('limit'
-  @Get(/executions/:executionId'
-  @ApiOperation({ summary:Get specific swarm execution details'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-  @ApiResponse({ status: 200, description:Execution details retrieved'
-  @ApiResponse({ status: 404, description:Execution not found'
-    @Param('executionId'
-  @Put(/executions/:executionId/cancel'
-  @ApiOperation({ summary:Cancel a swarm execution'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-  @ApiResponse({ status: 200, description:Execution cancelled successfully'
-  @Roles('AGENCY_ADMIN', AGENCY_MANAGER'
-    @Param('executionId'
-      message:Swarm execution cancelled successfully'
-  @Put(/executions/:executionId/retry'
-  @ApiOperation({ summary:Retry a failed swarm execution'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-  @ApiResponse({ status: 200, description:Execution retried successfully'
-    @Param('executionId'
-  @Sse(/executions/:executionId/stream'
-  @ApiOperation({ summary:Stream real-time execution updates'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-    @Param('executionId'
-  @Get(/executions/:executionId/steps'
-  @ApiOperation({ summary:Get execution steps'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-  @ApiResponse({ status: 200, description:Execution steps retrieved'
-    @Param('executionId'
-  @Get(/executions/:executionId/messages'
-  @ApiOperation({ summary:Get execution messages'
-  @ApiParam({ name: 'executionId', description: Execution 'ID'
-  @ApiQuery({ name: 'agentId', required: false, description: Filter by agent 'ID'
-  @ApiResponse({ status: 200, description:Execution messages retrieved'
-    @Param('executionId'
-    @Query('')
-  @Get('hierarchy'
-  @ApiOperation({ summary:Get agency swarm hierarchy'
-  @ApiResponse({ status: 200, description:Swarm hierarchy retrieved'
-  @Post(/hierarchy/rebuild'
-  @ApiOperation({ summary:Rebuild swarm hierarchy'
-  @ApiResponse({ status: 200, description:Hierarchy rebuilt successfully'
-  @Roles('AGENCY_ADMIN'
-      message:Swarm hierarchy rebuilt successfully'
-  @Get('agents'
-  @ApiOperation({ summary:Get available swarm agents'
-  @ApiQuery({ name: 'capability', required: false, description: Filter by 'capability'
-  @ApiQuery({ name: 'status', required: false, description: Filter by 'status'
-  @ApiResponse({ status: 200, description:Swarm agents retrieved'
-    @Query('capability'
-    @Query('status'
-  @Put(/agents/:agentId/assign-role'
-  @ApiOperation({ summary:Assign role to swarm agent'
-  @ApiParam({ name: 'agentId', description: Agent 'ID'
-  @ApiResponse({ status: 200, description:Role assigned successfully'
-  @Roles('AGENCY_ADMIN', AGENCY_MANAGER'
-    @Param('agentId'
-  @Get(/analytics/performance'
-  @ApiOperation({ summary:Get swarm performance analytics'
-  @ApiQuery({ name: 'period', required: false, description: Time period (7d, 30d, 90d)'
-  @ApiResponse({ status: 200, description:Performance analytics retrieved'
-    @Query('period') period = 30'd';
-  @Get(/analytics/efficiency'
-  @ApiOperation({ summary:Get swarm efficiency metrics'
-  @ApiResponse({ status: 200, description:Efficiency metrics retrieved'
-  @Get('health'
-  @ApiOperation({ summary:Get swarm health status'
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { TenantGuard } from '../guards/tenant.guard';
+import { AgencyRoleGuard } from '../guards/agency-role.guard';
+import { Roles } from '../decorators/roles.decorator';
+import { TenantContext } from '../decorators/tenant-context.decorator';
+
+@Controller('swarm-orchestration')
+@ApiTags('Swarm Orchestration')
+@UseGuards(TenantGuard, AgencyRoleGuard)
+export class SwarmOrchestrationController {
+  private readonly logger = new Logger(SwarmOrchestrationController.name);
+
+  @Post('swarms')
+  @ApiOperation({ summary: 'Create a new agent swarm' })
+  @ApiResponse({ status: 201, description: 'Swarm created successfully' })
+  @ApiResponse({ status: 400, description: 'Invalid swarm configuration' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async createSwarm(@Body() createSwarmDto: any) {
+    this.logger.log('Creating new agent swarm');
+    // Logic to create swarm
+    return { message: 'Swarm created successfully' };
+  }
+
+  @Get('swarms')
+  @ApiOperation({ summary: 'Get all swarms for agency' })
+  @ApiQuery({ name: 'status', required: false, description: 'Filter by status' })
+  @ApiQuery({ name: 'type', required: false, description: 'Filter by swarm type' })
+  @ApiQuery({ name: 'page', required: false, description: 'Page number' })
+  @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
+  @ApiResponse({ status: 200, description: 'Swarms retrieved successfully' })
+  async getSwarms(
+    @Query('status') status: string,
+    @Query('type') type: string,
+    @Query('page') page: number,
+    @Query('limit') limit: number,
+  ) {
+    this.logger.log('Getting agency swarms');
+    // Logic to get swarms
+    return [];
+  }
+
+  @Get('swarms/:swarmId')
+  @ApiOperation({ summary: 'Get specific swarm details' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm details retrieved' })
+  @ApiResponse({ status: 404, description: 'Swarm not found' })
+  async getSwarmById(@Param('swarmId') swarmId: string) {
+    this.logger.log(`Getting swarm details for ID: ${swarmId}`);
+    // Logic to get swarm details
+    return {};
+  }
+
+  @Put('swarms/:swarmId')
+  @ApiOperation({ summary: 'Update swarm configuration' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm updated successfully' })
+  @ApiResponse({ status: 404, description: 'Swarm not found' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async updateSwarm(
+    @Param('swarmId') swarmId: string,
+    @Body() updateSwarmDto: any,
+  ) {
+    this.logger.log(`Updating swarm ID: ${swarmId}`);
+    // Logic to update swarm
+    return { message: 'Swarm updated successfully' };
+  }
+
+  @Delete('swarms/:swarmId')
+  @ApiOperation({ summary: 'Delete swarm' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm deleted successfully' })
+  @ApiResponse({ status: 404, description: 'Swarm not found' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async deleteSwarm(@Param('swarmId') swarmId: string) {
+    this.logger.log(`Deleting swarm ID: ${swarmId}`);
+    // Logic to delete swarm
+    return { message: 'Swarm deleted successfully' };
+  }
+
+  @Post('swarms/:swarmId/start')
+  @ApiOperation({ summary: 'Start swarm execution' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm started successfully' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async startSwarm(@Param('swarmId') swarmId: string) {
+    this.logger.log(`Starting swarm ID: ${swarmId}`);
+    // Logic to start swarm
+    return { message: 'Swarm started successfully' };
+  }
+
+  @Post('swarms/:swarmId/stop')
+  @ApiOperation({ summary: 'Stop swarm execution' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm stopped successfully' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async stopSwarm(@Param('swarmId') swarmId: string) {
+    this.logger.log(`Stopping swarm ID: ${swarmId}`);
+    // Logic to stop swarm
+    return { message: 'Swarm stopped successfully' };
+  }
+
+  @Get('swarms/:swarmId/status')
+  @ApiOperation({ summary: 'Get swarm execution status' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 200, description: 'Swarm status retrieved' })
+  async getSwarmStatus(@Param('swarmId') swarmId: string) {
+    this.logger.log(`Getting status for swarm ID: ${swarmId}`);
+    // Logic to get swarm status
+    return { status: 'running', agents: [], tasks: [] };
+  }
+
+  @Post('swarms/:swarmId/agents')
+  @ApiOperation({ summary: 'Add agent to swarm' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 201, description: 'Agent added to swarm' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async addAgentToSwarm(
+    @Param('swarmId') swarmId: string,
+    @Body() addAgentDto: any,
+  ) {
+    this.logger.log(`Adding agent to swarm ID: ${swarmId}`);
+    // Logic to add agent to swarm
+    return { message: 'Agent added to swarm successfully' };
+  }
+
+  @Delete('swarms/:swarmId/agents/:agentId')
+  @ApiOperation({ summary: 'Remove agent from swarm' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiParam({ name: 'agentId', description: 'Agent ID' })
+  @ApiResponse({ status: 200, description: 'Agent removed from swarm' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async removeAgentFromSwarm(
+    @Param('swarmId') swarmId: string,
+    @Param('agentId') agentId: string,
+  ) {
+    this.logger.log(`Removing agent ${agentId} from swarm ${swarmId}`);
+    // Logic to remove agent from swarm
+    return { message: 'Agent removed from swarm successfully' };
+  }
+
+  @Post('swarms/:swarmId/tasks')
+  @ApiOperation({ summary: 'Assign task to swarm' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiResponse({ status: 201, description: 'Task assigned to swarm' })
+  async assignTaskToSwarm(
+    @Param('swarmId') swarmId: string,
+    @Body() assignTaskDto: any,
+  ) {
+    this.logger.log(`Assigning task to swarm ID: ${swarmId}`);
+    // Logic to assign task to swarm
+    return { message: 'Task assigned to swarm successfully' };
+  }
+
+  @Get('swarms/:swarmId/metrics')
+  @ApiOperation({ summary: 'Get swarm performance metrics' })
+  @ApiParam({ name: 'swarmId', description: 'Swarm ID' })
+  @ApiQuery({ name: 'period', required: false, description: 'Time period for metrics' })
+  @ApiResponse({ status: 200, description: 'Swarm metrics retrieved' })
+  async getSwarmMetrics(
+    @Param('swarmId') swarmId: string,
+    @Query('period') period: string = '24h',
+  ) {
+    this.logger.log(`Getting metrics for swarm ID: ${swarmId}`);
+    // Logic to get swarm metrics
+    return { efficiency: 85, completedTasks: 42, activeAgents: 5 };
+  }
+
+  @Post('coordination/optimize')
+  @ApiOperation({ summary: 'Optimize swarm coordination' })
+  @ApiResponse({ status: 200, description: 'Coordination optimized' })
+  @Roles('AGENCY_ADMIN')
+  async optimizeCoordination(@Body() optimizeDto: any) {
+    this.logger.log('Optimizing swarm coordination');
+    // Logic to optimize coordination
+    return { message: 'Coordination optimized successfully' };
+  }
+
+  @Get('templates')
+  @ApiOperation({ summary: 'Get swarm templates' })
+  @ApiResponse({ status: 200, description: 'Swarm templates retrieved' })
+  async getSwarmTemplates() {
+    this.logger.log('Getting swarm templates');
+    // Logic to get templates
+    return [];
+  }
+
+  @Post('templates')
+  @ApiOperation({ summary: 'Create swarm template' })
+  @ApiResponse({ status: 201, description: 'Template created successfully' })
+  @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
+  async createSwarmTemplate(@Body() createTemplateDto: any) {
+    this.logger.log('Creating swarm template');
+    // Logic to create template
+    return { message: 'Template created successfully' };
+  }
+}

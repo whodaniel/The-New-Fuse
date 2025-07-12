@@ -37,10 +37,14 @@ export var Provider;
     Provider["OPENROUTER"] = "openrouter";
 })(Provider || (Provider = {}));
 let MessageHandler = MessageHandler_1 = class MessageHandler extends EventEmitter {
+    configService;
+    logger = new Logger(MessageHandler_1.name);
+    maxMemoryMessages;
+    agents;
+    conversationContexts;
     constructor(configService) {
         super();
         this.configService = configService;
-        this.logger = new Logger(MessageHandler_1.name);
         // Initialize configuration using ConfigService
         const cascadeApiKey = this.configService.getCascadeApiKey() || '';
         const clineApiKey = this.configService.getClineApiKey() || '';

@@ -7,9 +7,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var AgentProcessor_1;
 import { Injectable, Logger } from '@nestjs/common';
 let AgentProcessor = AgentProcessor_1 = class AgentProcessor {
-    constructor() {
-        this.logger = new Logger(AgentProcessor_1.name);
-    }
+    logger = new Logger(AgentProcessor_1.name);
     async processAgent(agent) {
         try {
             this.logger.log('Processing agent', { agentId: agent.config.id });

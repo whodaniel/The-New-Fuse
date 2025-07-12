@@ -56,6 +56,18 @@
                 }
             };
 
+            const setupGeminiCodeEnvironment = async () => {
+                try {
+                    const response = await fetch(`${RELAY_BASE_URL}/setup/gemini-code-env`, {
+                        method: 'POST'
+                    });
+                    const data = await response.json();
+                    alert(data.success ? 'Gemini Code environment configured! Restart your terminal.' : `Error: ${data.error}`);
+                } catch (error) {
+                    alert(`Error: ${error.message}`);
+                }
+            };
+
             useEffect(() => {
                 const loadData = async () => {
                     setIsLoading(true);
@@ -288,6 +300,14 @@
                                 }, [
                                     React.createElement(Terminal, { className: 'h-4 w-4' }),
                                     'Setup Claude Code'
+                                ]),
+                                React.createElement('button', {
+                                    key: 'gemini-code',
+                                    onClick: setupGeminiCodeEnvironment,
+                                    className: 'bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg flex items-center gap-2 transition-colors'
+                                }, [
+                                    React.createElement(Terminal, { className: 'h-4 w-4' }),
+                                    'Setup Gemini Code'
                                 ]),
                                 React.createElement('button', {
                                     key: 'vscode',

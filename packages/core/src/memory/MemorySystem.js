@@ -1,7 +1,6 @@
 export class MemorySystem {
-    constructor() {
-        this.memories = [];
-    }
+    memories = [];
+    constructor() { }
     async store(content) {
         this.memories.push(content);
     }

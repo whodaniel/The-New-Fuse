@@ -6,9 +6,29 @@ export interface BaseState {
 }
 
 export interface TaskState extends BaseState {
-    type: TASK;
+    type: 'TASK';
     data: {
-        status:PENDING' | RUNNING' | COMPLETED' | FAILED'
-    type:AGENT'
-        status: IDLE | BUSY' | ERROR'
-    type:SYSTEM'
+        status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
+        progress: number;
+        details?: string;
+    };
+}
+
+export interface AgentState extends BaseState {
+    type: 'AGENT';
+    data: {
+        status: 'IDLE' | 'BUSY' | 'ERROR';
+        currentTask?: string;
+        healthMetrics?: Record<string, unknown>;
+    };
+}
+
+export interface SystemState extends BaseState {
+    type: 'SYSTEM';
+    data: {
+        status: 'OPERATIONAL' | 'DEGRADED' | 'CRITICAL';
+        activeAgents: number;
+        pendingTasks: number;
+        systemLoad: number;
+    };
+}

@@ -1,9 +1,10 @@
 export class CircuitBreaker {
+    state = 'CLOSED';
+    failureCount = 0;
+    lastFailureTime = 0;
+    halfOpenRequests = 0;
+    config;
     constructor(config = {}) {
-        this.state = 'CLOSED';
-        this.failureCount = 0;
-        this.lastFailureTime = 0;
-        this.halfOpenRequests = 0;
         this.config = {
             failureThreshold: config.failureThreshold || 5,
             resetTimeout: config.resetTimeout || 60000, // 1 minute

@@ -15,6 +15,20 @@
 
 ## 📊 Overview & Status
 
+### 🚨 Current Development Status & Honest Assessment
+
+Based on the project's internal `SessionHonestAssessment`, there is a notable gap between the features that have been designed/claimed and those that are fully implemented and verified.
+
+**Key Takeaways:**
+- **Core UI & Structure:** The React popup, theming, and floating panel UI are well-established.
+- **Successful Analysis:** The project successfully identified core issues like "coherence drift" and discovered existing infrastructure to leverage.
+- **Implementation Gaps:** Key features like **Browser Agent Communication**, **VS Code Agent Discovery**, and **automated template integration** have been attempted but are **not yet functional** due to connection issues and a lack of end-to-end testing.
+- **Path Forward:** The immediate priority is to implement robust verification protocols, fix the underlying communication failures, and integrate the designed self-learning system to track progress honestly.
+
+This guide documents the **intended architecture and full feature set**. Testers should be aware that some advanced integration features are still under active development and may not be fully operational.
+
+---
+
 ### ✅ Implementation Status: COMPLETE & READY FOR TESTING
 
 The New Fuse Chrome Extension is a sophisticated React-based browser extension that provides AI-powered automation and integration capabilities. All major features have been implemented, tested, and are ready for comprehensive validation.
@@ -117,7 +131,7 @@ All features have been recovered from previous implementations and enhanced with
 
 #### **Real-Time Communication**
 - **VS Code Integration**: Direct connection to VS Code extension
-- **Port Configuration**: Default port 3712 with customizable settings
+- **Port Configuration**: Default port **3710** (VS Code) or **3711** (Test Server) with customizable settings
 - **Auto-Reconnection**: Intelligent reconnection with exponential backoff
 - **Message Queue**: Robust message handling with PING/PONG validation
 
@@ -126,6 +140,17 @@ All features have been recovered from previous implementations and enhanced with
 - **Response Capture**: Real-time capture of AI responses
 - **Human-like Typing**: Simulation of natural typing patterns
 - **Session Management**: AI session tracking and state management
+
+### **6. Structured Data Parsing & Validation**
+
+#### **Web LLM Adapter Pattern**
+- **Protocol Bridging**: A dedicated "Adapter" for each supported web LLM (Gemini, Claude, etc.) translates unstructured text responses into the structured JSON-RPC format required by the Core service.
+- **Prompt Engineering**: Adapters construct specialized prompts that instruct the web LLM to respond in a specific JSON format.
+- **Reliable Parsing**: Each adapter includes robust logic to extract, parse, and validate the JSON from the LLM's response, with comprehensive error handling for malformed or unexpected outputs.
+- **Scalability**: This pattern allows for easy addition of new web LLM integrations without affecting the core logic.
+
+For more details, see the [Web LLM Integration & Parsing Strategy Guide](../guides/WEB_LLM_INTEGRATION_AND_PARSING.md).
+
 
 ---
 
@@ -229,8 +254,8 @@ yarn package:chrome
 
 #### **WebSocket Connection Test**
 1. **Start VS Code** with The New Fuse extension
-2. **Configure WebSocket** in extension settings (port 3712)
-3. **Test Connection** using connect button
+2. **Configure WebSocket** in extension settings (port **3710** for VS Code, **3711** for test server)
+3. **Test Connection** using the Dashboard tab
 4. **Verify** real-time communication
 5. **Test** reconnection functionality
 
@@ -342,8 +367,11 @@ chrome-extension/src/
 │   ├── connection-manager.ts
 │   ├── index.ts
 │   └── message-handler.ts
-├── content/                 # Content scripts
-│   └── index.ts
+├── content/                 # Content scripts injected into web pages
+│   ├── index.ts             # Main content script entry point
+│   └── adapters/            # Modules for specific web LLM integrations
+│       ├── gemini-adapter.ts
+│       └── base-adapter.ts
 ├── popup/                   # Popup UI components
 │   ├── chat-manager.ts
 │   ├── accessibility.ts
@@ -447,8 +475,8 @@ chrome-extension/src/
 #### **WebSocket Connection Problems**
 **Problem**: Connection to VS Code extension fails
 **Solutions**:
-- Verify VS Code extension is running
-- Check WebSocket port configuration (default: 3712)
+- Verify VS Code extension is running (port 3710) or the test server is active (port 3711)
+- Check WebSocket port configuration in the extension's Settings tab.
 - Test network connectivity and firewall settings
 - Review connection logs for specific errors
 

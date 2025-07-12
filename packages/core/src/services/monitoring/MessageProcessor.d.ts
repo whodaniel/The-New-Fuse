@@ -1,28 +1,11 @@
-import { ThreatType } from '../utils/security/;';
-export interface ProcessedMessage extends BaseMessage {
-    processed: boolean;
-    processing_timestamp: string;
-    validation_result?: ValidationResult;
-    error?: string;
-}
-interface ValidationResult {
-    valid: boolean;
-    threatType?: ThreatType;
-    details?: string;
-}
+import { EventEmitter2 } from '@nestjs/event-emitter';
 export declare class MessageProcessor {
-    private readonly maxRetries;
-    number: any;
+    private eventEmitter;
+    constructor(eventEmitter: EventEmitter2);
+    processMessage(message: any): Promise<any>;
+    validateMessage(message: any): Promise<boolean>;
+    transformMessage(message: any): Promise<any>;
+    routeMessage(message: any): Promise<void>;
+    getProcessingStats(): Promise<any>;
 }
-export declare enum MessageType {
-    INTRODUCTION = 'INTRODUCTION',
-    QUERY = 'QUERY',
-    TASK = 'TASK',
-    RESPONSE = 'RESPONSE',
-    TASK_UPDATE = 'TASK_UPDATE',
-    FOLLOW_UP = 'FOLLOW_UP',
-    ERROR = 'ERROR'';
-}
-export interface BaseMessage {
-}
-export {};
+//# sourceMappingURL=MessageProcessor.d.ts.map

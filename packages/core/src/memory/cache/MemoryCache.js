@@ -10,14 +10,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MemoryCache_1;
 import { Injectable, Logger } from '@nestjs/common';
 let MemoryCache = MemoryCache_1 = class MemoryCache {
+    logger = new Logger(MemoryCache_1.name);
+    cache = new Map();
+    maxSize;
+    defaultTTL;
+    stats = {
+        hits: 0,
+        misses: 0,
+        evictions: 0,
+    };
     constructor(maxSize = 1000, defaultTTL = 3600000) {
-        this.logger = new Logger(MemoryCache_1.name);
-        this.cache = new Map();
-        this.stats = {
-            hits: 0,
-            misses: 0,
-            evictions: 0,
-        };
         this.maxSize = maxSize;
         this.defaultTTL = defaultTTL;
     }

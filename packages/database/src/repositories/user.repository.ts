@@ -1,20 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { User, UserRole } from '../types';
+import { User, UserRole, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class UserRepository {
   constructor(private prisma: PrismaService) {}
 
-  private mapDatabaseUserToUser(dbUser: any): User {
+  private mapDatabaseUserToUser(dbUser: User): User {
     return {
       id: dbUser.id,
       email: dbUser.email,
-      name: dbUser.name || undefined, // Convert null to undefined
+      name: dbUser.name ?? null,
       passwordHash: dbUser.passwordHash,
       role: dbUser.role,
       createdAt: dbUser.createdAt,
-      updatedAt: dbUser.updatedAt
+      updatedAt: dbUser.updatedAt,
     };
   }
 
@@ -50,7 +50,7 @@ export class UserRepository {
     return this.mapDatabaseUserToUser(user);
   }
 
-  async findMany(filters?: any): Promise<User[]> {
+  async findMany(filters?: Prisma.UserWhereInput): Promise<User[]> {
     const users = await this.prisma.user.findMany({
       where: filters,
       select: this.getUserSelect(),
@@ -62,38 +62,23 @@ export class UserRepository {
     return users.map(user => this.mapDatabaseUserToUser(user));
   }
 
-  async create(data: any): Promise<User> {
-    const dbData = {
-      email: data.email,
-      name: data.name,
-      passwordHash: data.passwordHash,
-      role: data.role
-    };
-
+  async create(data: Prisma.UserCreateInput): Promise<User> {
     const user = await this.prisma.user.create({
-      data: dbData,
+      data,
       select: this.getUserSelect()
     });
-
     return this.mapDatabaseUserToUser(user);
   }
 
-  async update(id: string, data: any): Promise<User> {
-    const dbData: any = {
-      updatedAt: new Date()
-    };
-
-    if (data.email !== undefined) dbData.email = data.email;
-    if (data.name !== undefined) dbData.name = data.name;
-    if (data.passwordHash !== undefined) dbData.passwordHash = data.passwordHash;
-    if (data.role !== undefined) dbData.role = data.role;
-
+  async update(id: string, data: Prisma.UserUpdateInput): Promise<User> {
     const user = await this.prisma.user.update({
       where: { id },
-      data: dbData,
+      data: {
+        ...data,
+        updatedAt: new Date()
+      },
       select: this.getUserSelect()
     });
-
     return this.mapDatabaseUserToUser(user);
   }
 
@@ -135,7 +120,7 @@ export class UserRepository {
     const user = await this.prisma.user.update({
       where: { id },
       data: {
-        role: role as any, // Cast to any to handle enum type
+        role,
         updatedAt: new Date()
       },
       select: this.getUserSelect()
@@ -171,7 +156,7 @@ export class UserRepository {
     return users.map(user => this.mapDatabaseUserToUser(user));
   }
 
-  async getUserStats(): Promise<any> {
+  async getUserStats(): Promise<{ total: number; recent: number; byRole: Record<string, number> }> {
     const totalUsers = await this.prisma.user.count();
 
     const roleStats = await this.prisma.user.groupBy({

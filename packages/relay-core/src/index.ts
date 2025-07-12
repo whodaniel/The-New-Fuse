@@ -3,14 +3,14 @@
  * The New Fuse Relay Core
  */
 
-export * from './types/index.js';
-export * from './server/RelayServer.js';
-export * from './transports/WebSocketTransport.js';
-export * from './transports/HTTPTransport.js';
-export * from './transports/FileTransport.js';
-export * from './transports/MCPTransport.js';
-export * from './utils/Logger.js';
-export * from './utils/AgentRegistry.js';
-export * from './utils/MessageRouter.js';
-export * from './services/MasterAgentRegistry.js';
-export * from './services/HeartbeatMonitoringService.js';
+export * from './types/index';
+export * from './server/RelayServer';
+export * from './transports/WebSocketTransport';
+export * from './transports/HTTPTransport';
+export * from './transports/FileTransport';
+export * from './transports/MCPTransport';
+export * from './utils/Logger';
+export * from './utils/AgentRegistry';
+export * from './utils/MessageRouter';
+export * from './services/MasterAgentRegistry';
+export * from './services/HeartbeatMonitoringService';

@@ -8,7 +8,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@nestjs/common';
-import { AgentStatus } from '../types';
+import { AgentStatus } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 let AgentRepository = class AgentRepository {
     prisma;
@@ -20,27 +20,40 @@ let AgentRepository = class AgentRepository {
         return {
             id: prismaAgent.id,
             name: prismaAgent.name,
-            description: prismaAgent.description || undefined,
+            description: prismaAgent.description,
             type: prismaAgent.type,
             status: prismaAgent.status,
-            capabilities: [], // Default empty array since not in schema
-            provider: 'default', // Default provider since not in schema
-            lastActive: new Date(), // Default to current time since not in schema
             userId: prismaAgent.userId,
-            metadata: prismaAgent.configuration || {},
+            metadata: prismaAgent.metadata,
             createdAt: prismaAgent.createdAt,
-            updatedAt: prismaAgent.updatedAt
+            updatedAt: prismaAgent.updatedAt,
+            capabilities: prismaAgent.capabilities,
+            provider: prismaAgent.provider,
+            lastActive: prismaAgent.lastActive,
+            nft: prismaAgent.nft || null,
+            workflows: prismaAgent.workflows || [],
+            user: prismaAgent.user || null
         };
     }
     async findById(id) {
         const result = await this.prisma.agent.findUnique({
-            where: { id }
+            where: { id },
+            include: {
+                user: true,
+                workflows: true,
+                nft: true
+            }
         });
         return result ? this.convertPrismaToApp(result) : null;
     }
     async findMany(filters) {
         const results = await this.prisma.agent.findMany({
             where: filters,
+            include: {
+                user: true,
+                workflows: true,
+                nft: true
+            },
             orderBy: {
                 updatedAt: 'desc'
             }
@@ -128,12 +141,7 @@ let AgentRepository = class AgentRepository {
         if (!agent)
             return null;
         const convertedAgent = this.convertPrismaToApp(agent);
-        return {
-            ...convertedAgent,
-            stats: {
-                lastActive: convertedAgent.lastActive
-            }
-        };
+        return convertedAgent;
     }
 };
 AgentRepository = __decorate([

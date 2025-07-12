@@ -16,9 +16,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Memory } from './memory.entity';
 let MemoryService = MemoryService_1 = class MemoryService {
+    memoryRepository;
+    logger = new Logger(MemoryService_1.name);
     constructor(memoryRepository) {
         this.memoryRepository = memoryRepository;
-        this.logger = new Logger(MemoryService_1.name);
     }
     async createMemory(createMemoryDto) {
         try {

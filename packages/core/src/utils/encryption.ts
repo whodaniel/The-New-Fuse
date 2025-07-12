@@ -1,42 +1,67 @@
 import * as CryptoJS from 'crypto-js';
 import { createCipheriv, createDecipheriv, scrypt, randomBytes, timingSafeEqual } from 'crypto';
-import { Logger } from 'winston';
 import { promisify } from 'util';
-      return iv.toString(CryptoJS.enc.Hex) : ''
-      this.logger?.error('Encryption error: ''
-      throw new Error('');
-      const parts = encryptedMessage.split(": '';
-        throw new Error('Invalid encrypted message format'
-      this.logger?.error('Decryption error: ''
-      throw new Error('');
-    const sortedUserIds = userIds.sort().join('')
-      this.logger?.info('E2E Encryption Initialized'
-      this.logger?.error('E2E initialization error: ''
-      throw new Error('');
-      'insecure-password-replace-me'
-      '
-        throw new Error('E2E encryption not initialized'
-      return this.keyPair.publicKey.toString('base64'
-      this.logger?.error('Public key export error:'';
-      throw new Error('');
-      throw new Error('');
-      // const publicKeyBuffer = Buffer.from(_recipientPublicKey, 'base64';
-      const cipher = createCipheriv('aes-256-gcm';
-      let encrypted = cipher.update(message, 'utf8', 'hex';
-      encrypted += cipher.final('hex';
-      return iv.toString('hex') :' + authTag.toString('hex') : ''
-      this.logger?.error('E2E encryption error: ''
-      throw new Error('');
-      throw new Error('E2E encryption not initialized"
-      const parts = encryptedMessage.split(": '';
-        throw new Error('Invalid encrypted message format'
-      const iv = Buffer.from(parts[0], 'hex';
-      const authTag = Buffer.from(parts[1], 'hex';
-      const encrypted = Buffer.from(parts[2], 'hex';
-      const decipher = createDecipheriv('aes-256-gcm';
-      let decrypted = decipher.update(encrypted, undefined, 'utf8';
-      decrypted += decipher.final('utf8';
-      this.logger?.error('E2E decryption error: ''
-      throw new Error('');
-  const computedSigBuffer = Buffer.from(computedSignature, 'hex';
-  const sigBuffer = Buffer.from(signature, ';
+
+// Placeholder for a logger utility
+const logger = {
+  info: (message: string) => console.log(`[INFO] ${message}`),
+  error: (message: string, error?: any) => console.error(`[ERROR] ${message}`, error),
+};
+
+const scryptAsync = promisify(scrypt);
+
+export class EncryptionService {
+  private algorithm = 'aes-256-gcm';
+  private ivLength = 16;
+  private saltLength = 64;
+  private keyLength = 32;
+
+  constructor() {}
+
+  async encrypt(text: string, secret: string): Promise<string> {
+    try {
+      const salt = randomBytes(this.saltLength);
+      const key = (await scryptAsync(secret, salt, this.keyLength)) as Buffer;
+      const iv = randomBytes(this.ivLength);
+      const cipher = createCipheriv(this.algorithm, key, iv);
+      let encrypted = cipher.update(text, 'utf8', 'hex');
+      encrypted += cipher.final('hex');
+      const authTag = cipher.getAuthTag();
+      return `${salt.toString('hex')}:${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
+    } catch (error) {
+      logger.error('Encryption error:', error);
+      throw new Error('Encryption failed');
+    }
+  }
+
+  async decrypt(encryptedText: string, secret: string): Promise<string> {
+    try {
+      const parts = encryptedText.split(':');
+      if (parts.length !== 4) {
+        throw new Error('Invalid encrypted message format');
+      }
+      const salt = Buffer.from(parts[0], 'hex');
+      const iv = Buffer.from(parts[1], 'hex');
+      const authTag = Buffer.from(parts[2], 'hex');
+      const encrypted = parts[3];
+
+      const key = (await scryptAsync(secret, salt, this.keyLength)) as Buffer;
+      const decipher = createDecipheriv(this.algorithm, key, iv);
+      decipher.setAuthTag(authTag);
+      let decrypted = decipher.update(encrypted, 'hex', 'utf8');
+      decrypted += decipher.final('utf8');
+      return decrypted;
+    } catch (error) {
+      logger.error('Decryption error:', error);
+      throw new Error('Decryption failed');
+    }
+  }
+
+  async hash(text: string): Promise<string> {
+    return CryptoJS.SHA256(text).toString();
+  }
+
+  async compareHash(text: string, hash: string): Promise<boolean> {
+    return this.hash(text).then(hashedText => hashedText === hash);
+  }
+}

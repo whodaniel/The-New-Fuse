@@ -25,6 +25,16 @@ SRC_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 HOST_SCRIPT_NAME="host.py"
 MANIFEST_NAME="$HOST_NAME.json"
 
+# --- Pre-flight checks ---
+if [ ! -f "$SRC_DIR/$HOST_SCRIPT_NAME" ]; then
+  echo "Error: Host script '$HOST_SCRIPT_NAME' not found in '$SRC_DIR'."
+  exit 1
+fi
+if [ ! -f "$SRC_DIR/$MANIFEST_NAME" ]; then
+  echo "Error: Manifest template '$MANIFEST_NAME' not found in '$SRC_DIR'."
+  exit 1
+fi
+
 # --- Installation ---
 echo "Installing The New Fuse native host..."
 

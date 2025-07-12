@@ -10,10 +10,10 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MetricsProcessor_1;
 import { Injectable, Logger } from '@nestjs/common';
 let MetricsProcessor = MetricsProcessor_1 = class MetricsProcessor {
+    logger = new Logger(MetricsProcessor_1.name);
+    metricsBuffer = [];
+    maxBufferSize = 1000;
     constructor() {
-        this.logger = new Logger(MetricsProcessor_1.name);
-        this.metricsBuffer = [];
-        this.maxBufferSize = 1000;
         this.logger.log('Metrics processor initialized');
         this.startPeriodicProcessing();
     }

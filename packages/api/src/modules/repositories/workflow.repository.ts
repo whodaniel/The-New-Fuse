@@ -1,13 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { BaseRepository } from '@the-new-fuse/database/src/repositories/base.repository';
 import { Workflow, WorkflowStatus } from '@the-new-fuse/types';
 
 @Injectable()
-export class WorkflowRepository extends BaseRepository<Workflow> {
-  constructor(protected readonly prisma: PrismaService) {
-    super(prisma);
-  }
+export class WorkflowRepository {
+  constructor(protected readonly prisma: PrismaService) {}
 
   // Helper method to convert Prisma Workflow to App Workflow
   private convertPrismaToApp(prismaWorkflow: any): Workflow {
@@ -41,7 +38,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
   }
 
   async findMany(filters?: any): Promise<Workflow[]> {
-    const where = this.buildWhereClause(filters);
+    const where = filters || {};
     const results = await this.prisma.workflow.findMany({ 
       where,
       include: {
@@ -89,7 +86,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 
   // Additional methods for compatibility with existing services
   async findAll(filter?: any, include?: any, orderBy?: any, skip?: number, take?: number): Promise<Workflow[]> {
-    const where = this.buildWhereClause(filter);
+    const where = filter || {};
     
     const options: any = {
       where,
@@ -103,8 +100,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     };
     
     if (orderBy?.field) {
-      const sortOptions = this.getSortOptions(orderBy.field, orderBy.direction);
-      Object.assign(options, sortOptions);
+      options.orderBy = { [orderBy.field]: orderBy.direction || 'asc' };
     }
     
     if (skip !== undefined) {
@@ -120,7 +116,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
   }
 
   async findOne(filter?: any, include?: any): Promise<Workflow | null> {
-    const where = this.buildWhereClause(filter);
+    const where = filter || {};
     const result = await this.prisma.workflow.findFirst({ 
       where, 
       include: include || {
@@ -136,7 +132,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
   }
 
   async count(filter?: any): Promise<number> {
-    const where = this.buildWhereClause(filter);
+    const where = filter || {};
     return this.prisma.workflow.count({ where });
   }
 

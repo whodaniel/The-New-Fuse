@@ -4,7 +4,6 @@
  */
 
 import { Injectable, Logger, InternalServerErrorException } from '@nestjs/common';
-import { BaseRepository } from '@the-new-fuse/database/src/repositories/base.repository';
 import { toError } from '../../utils/error'; // Import the helper
 
 @Injectable()
@@ -12,7 +11,7 @@ export abstract class BaseService<T> {
   protected readonly logger: Logger;
   
   constructor(
-    protected readonly repository: BaseRepository<T>,
+    protected readonly repository: any,
     serviceName: string
   ) {
     this.logger = new Logger(serviceName);

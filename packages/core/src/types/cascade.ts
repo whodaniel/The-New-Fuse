@@ -1,8 +1,10 @@
 import { EventEmitter } from 'events';
-  READ = 'read'';
-  WRITE = 'write'';
-  ACTIVE = 'active'';
-  INACTIVE = 'inactive'';
-      this.emit('')
-      this.emit('')
-    this.emit('')
+  export enum CascadeMode {
+  READ = 'read',
+  WRITE = 'write',
+}
+
+export enum CascadeState {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+}

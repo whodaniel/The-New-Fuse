@@ -10,9 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
 let MemoryManager = class MemoryManager {
+    configService;
+    redis;
+    defaultTTL = 3600; // 1 hour
     constructor(configService) {
         this.configService = configService;
-        this.defaultTTL = 3600; // 1 hour
         const redisConfig = {
             host: this.configService.getRedisHost(),
             port: this.configService.getRedisPort(),

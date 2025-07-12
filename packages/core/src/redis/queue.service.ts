@@ -1,33 +1,46 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
+import { Injectable } from '@nestjs/common';
 
+export interface QueueTask<T = any> {
+  id: string;
+  type: string;
+  data: T;
+  priority?: number;
+  retryCount?: number;
+  maxRetries?: number;
+  createdAt?: Date;
+}
 
-export interface QueueTask<T = any>    { id: string
-  type: string
-  data: T
-  priority?: number
-  retryCount?: number
-  maxRetries?: number }
-  createdAt?: Date }
+export interface RedisService {
+  zadd(key: string, score: number, member: string): Promise<number>;
+  zpopmax(key: string): Promise<string[]>;
+}
 
-@Injectable();
-export class QueueService { constructor(private readonly redis: RedisService) { }
+@Injectable()
+export class QueueService {
+  constructor(private readonly redis: RedisService) {}
 
-  async enqueue(queueName: string, task: QueueTask, priority: number = 1): Promise<void> { const taskStr = JSON.stringify({
+  async enqueue(queueName: string, task: QueueTask, priority: number = 1): Promise<void> {
+    const taskStr = JSON.stringify({
       ...task,
       createdAt: new Date(),
-      retryCount: task.retryCount || 0, }
+      retryCount: task.retryCount || 0,
       maxRetries: task.maxRetries || 3,
     });
- 
+
     await this.redis.zadd(queueName, priority, taskStr);
   }
 
-  async dequeue<T>(queueName: string): Promise<QueueTask<T> | null> { const result = await this.redis.zpopmax(queueName);
-    if (!result.length) return null };
+  async dequeue<T>(queueName: string): Promise<QueueTask<T> | null> {
+    const result = await this.redis.zpopmax(queueName);
+    if (!result.length) return null;
     return JSON.parse(result[0]);
   }
-  async retry(queueName: string, task: QueueTask, retryPenalty: number = 0.5): Promise<void> { const newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0);
+
+  async retry(queueName: string, task: QueueTask, retryPenalty: number = 0.5): Promise<void> {
+    const newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0);
     await this.enqueue(queueName, {
-      ...task, }
-      retryCount: (task.retryCount || 0)+1 }, newPriority);
+      ...task,
+      retryCount: (task.retryCount || 0) + 1
+    }, newPriority);
+  }
 }

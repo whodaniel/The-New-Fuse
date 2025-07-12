@@ -7,8 +7,8 @@ const DebugPage: React.FC = () => {
     viewport: `${window.innerWidth}x${window.innerHeight}`,
     url: window.location.href,
     timestamp: new Date().toISOString(),
-    buildId: process.env.REACT_APP_BUILD_ID || 'development',
-    version: process.env.REACT_APP_VERSION || '0.1.0',
+    buildId: import.meta.env.VITE_BUILD_ID || 'development',
+    version: import.meta.env.VITE_VERSION || '0.1.0',
   };
 
   return (

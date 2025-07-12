@@ -1,108 +1,108 @@
-'';
-'';
-'';
-requirements: Record < string, any > ';
-priority: LOW;
-' | MEDIUM' | HIGH;
-';
-proficiencyLevel: BEGINNER;
-' | INTERMEDIATE' | ADVANCED;
-' | ';
-EXPERT;
-';
-type: SERVICE_LOOKUP;
-' | PROVIDER_MATCHING' | QUALITY_CONTROL;
-' | ANALYTICS' | COMMUNICATION;
-' | CUSTOM';
-flowType: HANDOFF;
-' | COLLABORATION' | SUPERVISION;
-';
-relationshipType: MANAGES;
-' | COORDINATES' | SUPPORTS;
-';
-status: INITIALIZING;
-' | ROUTING' | EXECUTING;
-' | COLLABORATING' | COMPLETED;
-' | FAILED';
-status: PENDING;
-' | IN_PROGRESS' | COMPLETED;
-' | FAILED';
-if (request.priority === HIGH)
-    ' || request.priority === ';
-';;
-stepId: '';
-stepId: 'planning';
-dependencies: [',
-    dependencies, config.hierarchy.managers.length > 0 ? ['planning'] : [',
-        stepId, '',
-        stepId, 'finalization',
-        dependencies, [',
-            execution.status = '',
-            execution.status = '',
-            this.eventEmitter.emit('swarm.execution.', completed, ', execution.status = 'FAILED', ';, this.eventEmitter.emit('swarm.execution.'))]]];
-const pendingSteps = execution.executionPlan.filter(s => s.status === '');
-if (step.status === '')
-    ;
-step.status = '';
-step.status = '';
-step.status = '';
-ANALYZE_REQUEST;
-';
-CREATE_EXECUTION_PLAN;
-';
-EXECUTE_SPECIALIST_TASK;
-';
-QUALITY_REVIEW;
-';
-requiredSkills: ['problem_solving', technical_analysis, ',
-    riskFactors, ['timeline_constraint',
-        recommendedApproach, '',
-        successCriteria, ['functional_requirements_met',
-            deliverables, ['technical_implementation']]]];
-const completedSteps = execution.executionPlan.filter(s => s.status === '');
-recommendations: avgQuality < config.qualityThreshold ? ['require_rework', additional_review, '] : ['
-        .filter(s => s.status === COMPLETED, ';, nextSteps, ['client_delivery', feedback_collection, ',
-        this.logger.log(''),
-        this.createQueue('system_events', this.createQueue('agent_coordination', this.createQueue('quality_alerts', this.createQueue(''), this.eventEmitter.emit('message.', a.type === MANAGER, ';(a.capabilities)?.some?.((c) => c.category === 'management', ';, a.type === SPECIALIST, ';(!managers.includes(a.id) && a.type !== 'SUPPORT', ';, a.type === SUPPORT, ';(a.capabilities)?.some?.((c) => c.category === 'support', ';)))))))])]
-    :
-;
-if (cap.proficiencyLevel === 'EXPERT')
-    ';;
-if (cap.proficiencyLevel === '')
-    ;
-status: '';
-const qualityReviewStep = execution.executionPlan.find(s => s.action === '');
-[AgencyTier.TRIAL];
-Basic;
-collaboration;
-protocols.Focus;
-on;
-learning;
-and;
-simple;
-tasks.;
-'[AgencyTier.STARTER];
-Standard;
-operational;
-procedures.Moderate;
-complexity;
-handling.;
-'[AgencyTier.PROFESSIONAL];
-Advanced;
-collaboration;
-protocols.Complex;
-task;
-orchestration.;
-'[AgencyTier.ENTERPRISE];
-Enterprise - grade;
-procedures.Full;
-automation;
-and;
-optimization.;
-';
-if (execution && execution.status === 'EXECUTING')
-    ';;
-execution.status = '';
-step.agentId === agentId && step.status === '';
-successRate: completedSteps.length / (completedSteps.length + executions.flatMap(e => e.executionPlan).filter(s => s.agentId === agentId && s.status === ''));
-export {};
+/**
+ * Agent Swarm Orchestration Service
+ * Inspired by the Python Agency Hub/s swarm architecture
+ * Implements hierarchical agent organization, communication flows, and service routing
+ */
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var AgentSwarmOrchestrationService_1;
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '@the-new-fuse/database';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+let AgentSwarmOrchestrationService = AgentSwarmOrchestrationService_1 = class AgentSwarmOrchestrationService {
+    prisma;
+    eventEmitter;
+    logger = new Logger(AgentSwarmOrchestrationService_1.name);
+    constructor(prisma, eventEmitter) {
+        this.prisma = prisma;
+        this.eventEmitter = eventEmitter;
+    }
+    async initializeSwarm(agencyId, config) {
+        // Mock implementation
+        return { message: 'Swarm orchestration not implemented' };
+    }
+    async executeSwarmTask(taskId, config) {
+        // Mock implementation
+        return { message: 'Swarm task execution not implemented' };
+    }
+    async getSwarmStatus(agencyId) {
+        // Mock implementation
+        return { message: 'Swarm status not implemented' };
+    }
+    async getSwarmMetrics(agencyId, timeframe) {
+        // Mock implementation
+        return { message: 'Swarm metrics not implemented' };
+    }
+    async manageAgentCommunication(agencyId, messageData) {
+        // Mock implementation
+        return { message: 'Agent communication not implemented' };
+    }
+    async orchestrateServiceRequest(requestId, agencyId) {
+        // Mock implementation
+        return { message: 'Service request orchestration not implemented' };
+    }
+    async getExecutionMetrics(agencyId) {
+        // Mock implementation
+        return {
+            totalExecutions: 0,
+            completedExecutions: 0,
+            failedExecutions: 0,
+            averageExecutionTime: 0,
+            message: 'Execution metrics not implemented'
+        };
+    }
+    async createExecution(agencyId, serviceRequestId, executionPlan, configuration) {
+        // Mock implementation
+        return { message: 'Execution creation not implemented' };
+    }
+    async getExecutions(agencyId, filters) {
+        // Mock implementation
+        return { message: 'Executions retrieval not implemented' };
+    }
+    async getExecutionDetails(executionId) {
+        // Mock implementation
+        return { message: 'Execution details not implemented' };
+    }
+    async updateExecutionStatus(executionId, status, reason) {
+        // Mock implementation
+        return { message: 'Status update not implemented' };
+    }
+    async updateExecutionStep(executionId, stepId, stepUpdate) {
+        // Mock implementation
+        return { message: 'Step update not implemented' };
+    }
+    async sendMessage(executionId, fromAgentId, toAgentId, type, content, priority) {
+        // Mock implementation
+        return { message: 'Message sending not implemented' };
+    }
+    async getMessages(executionId, filters) {
+        // Mock implementation
+        return { message: 'Messages retrieval not implemented' };
+    }
+    streamExecutionProgress(executionId) {
+        // Mock implementation
+        const { of } = require('rxjs');
+        return of({ message: 'Progress streaming not implemented' });
+    }
+    async performHealthCheck(agencyId) {
+        // Mock implementation
+        return { message: 'Health check not implemented' };
+    }
+    async getPerformanceMetrics(agencyId, timeframe) {
+        // Mock implementation
+        return { message: 'Performance metrics not implemented' };
+    }
+};
+AgentSwarmOrchestrationService = AgentSwarmOrchestrationService_1 = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [PrismaService,
+        EventEmitter2])
+], AgentSwarmOrchestrationService);
+export { AgentSwarmOrchestrationService };

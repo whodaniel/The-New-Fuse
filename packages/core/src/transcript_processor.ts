@@ -29,7 +29,7 @@ class TranscriptProcessor {
             });
             textParts.push(entry.text); // Add text to parts
         }
-        return textParts.join(/ ); // Return joined text
+        return textParts.join(' '); // Return joined text
     }
 
     /**

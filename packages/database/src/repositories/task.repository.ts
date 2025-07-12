@@ -1,29 +1,30 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskStatus, TaskPriority } from '../types';
+import { Task, TaskStatus, TaskPriority } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
+import { Prisma } from '../../generated/prisma';
 
 @Injectable()
 export class TaskRepository {
   constructor(private prisma: PrismaService) {}
 
-  private mapDatabaseTaskToTask(dbTask: any): Task {
+  private mapDatabaseTaskToTask(dbTask: Task): Task {
     return {
       id: dbTask.id,
       title: dbTask.title,
-      description: dbTask.description || undefined,
+      description: dbTask.description ?? null,
       status: dbTask.status,
       priority: dbTask.priority,
-      type: 'default', // Default value since not available in current schema
       createdAt: dbTask.createdAt,
       updatedAt: dbTask.updatedAt,
-      dueDate: undefined, // Not available in current schema
-      assignedTo: dbTask.agentId || undefined,
-      createdBy: dbTask.userId,
-      metadata: dbTask.metadata,
-      tags: [], // Default empty array since not available in current schema
-      dependencies: [], // Default empty array since not available in current schema
-      error: undefined, // Not available in current schema
-      completedAt: dbTask.completedAt || undefined
+      assignedTo: dbTask.assignedTo ?? null,
+      createdBy: dbTask.createdBy,
+      metadata: dbTask.metadata ?? null,
+      completedAt: dbTask.completedAt ?? null,
+      type: dbTask.type,
+      dueDate: dbTask.dueDate ?? null,
+      tags: dbTask.tags,
+      dependencies: dbTask.dependencies,
+      error: dbTask.error ?? null,
     };
   }
 
@@ -34,13 +35,17 @@ export class TaskRepository {
       description: true,
       status: true,
       priority: true,
+      type: true,
       createdAt: true,
       updatedAt: true,
-      userId: true,
-      agentId: true,
+      dueDate: true,
+      assignedTo: true,
+      createdBy: true,
       metadata: true,
+      tags: true,
+      dependencies: true,
+      error: true,
       completedAt: true,
-      executionId: true
     };
   }
 
@@ -54,7 +59,7 @@ export class TaskRepository {
     return this.mapDatabaseTaskToTask(task);
   }
 
-  async findMany(filters?: any): Promise<Task[]> {
+  async findMany(filters?: Prisma.TaskWhereInput): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       where: filters,
       select: this.getTaskSelect(),
@@ -67,48 +72,23 @@ export class TaskRepository {
     return tasks.map(task => this.mapDatabaseTaskToTask(task));
   }
 
-  async create(data: any): Promise<Task> {
-    // Map the interface fields to the database fields
-    const dbData = {
-      title: data.title,
-      description: data.description,
-      status: data.status,
-      priority: data.priority,
-      userId: data.createdBy, // Map createdBy to userId
-      agentId: data.assignedTo, // Map assignedTo to agentId
-      metadata: data.metadata,
-      executionId: data.executionId
-    };
-    
+  async create(data: Prisma.TaskCreateInput): Promise<Task> {
     const task = await this.prisma.task.create({
-      data: dbData,
+      data,
       select: this.getTaskSelect()
     });
-    
     return this.mapDatabaseTaskToTask(task);
   }
 
-  async update(id: string, data: any): Promise<Task> {
-    // Map the interface fields to the database fields
-    const dbData: any = {
-      updatedAt: new Date()
-    };
-    
-    if (data.title !== undefined) dbData.title = data.title;
-    if (data.description !== undefined) dbData.description = data.description;
-    if (data.status !== undefined) dbData.status = data.status;
-    if (data.priority !== undefined) dbData.priority = data.priority;
-    if (data.createdBy !== undefined) dbData.userId = data.createdBy;
-    if (data.assignedTo !== undefined) dbData.agentId = data.assignedTo;
-    if (data.metadata !== undefined) dbData.metadata = data.metadata;
-    if (data.completedAt !== undefined) dbData.completedAt = data.completedAt;
-    
+  async update(id: string, data: Prisma.TaskUpdateInput): Promise<Task> {
     const task = await this.prisma.task.update({
       where: { id },
-      data: dbData,
+      data: {
+        ...data,
+        updatedAt: new Date()
+      },
       select: this.getTaskSelect()
     });
-    
     return this.mapDatabaseTaskToTask(task);
   }
 
@@ -123,7 +103,7 @@ export class TaskRepository {
 
   async findByCreatedBy(userId: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { userId },
+      where: { createdBy: userId },
       select: this.getTaskSelect(),
       orderBy: [
         { priority: 'desc' },
@@ -136,7 +116,7 @@ export class TaskRepository {
 
   async findByAssignedTo(agentId: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { agentId },
+      where: { assignedTo: agentId },
       select: this.getTaskSelect(),
       orderBy: [
         { priority: 'desc' },
@@ -195,7 +175,7 @@ export class TaskRepository {
     const task = await this.prisma.task.update({
       where: { id },
       data: {
-        agentId,
+        assignedTo: agentId,
         status: TaskStatus.IN_PROGRESS,
         updatedAt: new Date()
       },
@@ -205,8 +185,8 @@ export class TaskRepository {
     return this.mapDatabaseTaskToTask(task);
   }
 
-  async getTaskStats(createdBy?: string): Promise<any> {
-    const where = createdBy ? { userId: createdBy } : {};
+  async getTaskStats(createdBy?: string): Promise<{ total: number; completed: number; overdue: number; completionRate: number; byStatus: Record<string, number>; byPriority: Record<string, number> }> {
+    const where = createdBy ? { createdBy: createdBy } : {};
 
     const statusCounts = await this.prisma.task.groupBy({
       by: ['status'],
@@ -240,11 +220,11 @@ export class TaskRepository {
       completed: completedTasks,
       overdue: overdueTasks,
       completionRate: totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0,
-      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: any, _count: any }) => {
+      byStatus: statusCounts.reduce((acc: Record<string, number>, { status, _count }: { status: TaskStatus, _count: { id: number } }) => {
         acc[status] = _count.id;
         return acc;
       }, {} as Record<string, number>),
-      byPriority: priorityCounts.reduce((acc: Record<string, number>, { priority, _count }: { priority: any, _count: any }) => {
+      byPriority: priorityCounts.reduce((acc: Record<string, number>, { priority, _count }: { priority: TaskPriority, _count: { id: number } }) => {
         acc[priority] = _count.id;
         return acc;
       }, {} as Record<string, number>)
@@ -253,7 +233,7 @@ export class TaskRepository {
 
   async getRecentTasks(createdBy: string, limit = 10): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { userId: createdBy },
+      where: { createdBy: createdBy },
       select: this.getTaskSelect(),
       orderBy: {
         updatedAt: 'desc'
@@ -267,7 +247,7 @@ export class TaskRepository {
   async searchTasks(createdBy: string, query: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       where: {
-        userId: createdBy,
+        createdBy: createdBy,
         OR: [
           {
             title: {

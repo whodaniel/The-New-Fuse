@@ -11,10 +11,12 @@ var SemanticSearch_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 let SemanticSearch = SemanticSearch_1 = class SemanticSearch {
+    configService;
+    logger = new Logger(SemanticSearch_1.name);
+    config;
+    items = new Map();
     constructor(configService) {
         this.configService = configService;
-        this.logger = new Logger(SemanticSearch_1.name);
-        this.items = new Map();
         this.config = {
             dimension: this.configService.get('EMBEDDING_DIMENSION', 1536),
             metric: this.configService.get('EMBEDDING_METRIC', 'cosine'),

@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 let MemoryClustering = class MemoryClustering {
+    configService;
     constructor(configService) {
         this.configService = configService;
     }

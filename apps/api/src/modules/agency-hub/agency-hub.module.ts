@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AgencyHubModule as CoreAgencyHubModule } from '@the-new-fuse/core/modules/agency-hub.module';
+// import { AgencyHubModule as CoreAgencyHubModule } from '@the-new-fuse/core';
 
 // Import existing controllers to maintain compatibility
 import { AgencyController } from './controllers/agency.controller';
@@ -10,7 +10,7 @@ import { AnalyticsController } from './controllers/analytics.controller';
 @Module({
   imports: [
     // Import the comprehensive Agency Hub module from core
-    CoreAgencyHubModule,
+    // CoreAgencyHubModule,
   ],
   controllers: [
     // Keep existing controllers for backward compatibility
@@ -21,6 +21,6 @@ import { AnalyticsController } from './controllers/analytics.controller';
     AnalyticsController,
   ],
   // Re-export everything from the core module
-  exports: [CoreAgencyHubModule],
+  // exports: [CoreAgencyHubModule],
 })
 export class AgencyHubModule {}

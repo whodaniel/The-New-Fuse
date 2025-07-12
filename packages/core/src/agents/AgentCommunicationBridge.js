@@ -13,14 +13,17 @@ import { Subject } from 'rxjs';
 import { RedisService } from '../redis/redis.service';
 import { CircuitBreaker } from '../resilience/CircuitBreaker';
 let AgentCommunicationBridge = AgentCommunicationBridge_1 = class AgentCommunicationBridge {
+    redisService;
+    websocketGateway;
+    messageValidator;
+    channels = new Map();
+    logger = new Logger(AgentCommunicationBridge_1.name);
+    circuitBreaker = new CircuitBreaker();
     constructor(redisService, websocketGateway, // WebSocketGateway instance
     messageValidator) {
         this.redisService = redisService;
         this.websocketGateway = websocketGateway;
         this.messageValidator = messageValidator;
-        this.channels = new Map();
-        this.logger = new Logger(AgentCommunicationBridge_1.name);
-        this.circuitBreaker = new CircuitBreaker();
         this.initializeRedisSubscriptions();
     }
     async broadcastMessage(message) {

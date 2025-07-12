@@ -4,9 +4,7 @@
  * Configures test environment with all unified framework components
  */
 
-import { Logger } from '@the-new-fuse/relay-core';
-import { MasterAgentRegistry } from '@the-new-fuse/relay-core';
-import { HeartbeatMonitoringService } from '@the-new-fuse/relay-core';
+import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
 import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 import { PrismaClient } from '@prisma/client';

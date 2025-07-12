@@ -10,9 +10,12 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var VectorMemoryCache_1;
 import { Injectable, Logger } from '@nestjs/common';
 let VectorMemoryCache = VectorMemoryCache_1 = class VectorMemoryCache {
+    logger = new Logger(VectorMemoryCache_1.name);
+    cache = new Map();
+    maxSize;
+    embeddingDimension;
+    similarityThreshold;
     constructor() {
-        this.logger = new Logger(VectorMemoryCache_1.name);
-        this.cache = new Map();
         this.maxSize = parseInt(process.env.VECTOR_CACHE_SIZE || '1000');
         this.embeddingDimension = parseInt(process.env.EMBEDDING_DIMENSION || '1536');
         this.similarityThreshold = parseFloat(process.env.SIMILARITY_THRESHOLD || '0.7');

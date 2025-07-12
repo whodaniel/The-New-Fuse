@@ -16,6 +16,15 @@ export var MemoryType;
     MemoryType["WORKFLOW"] = "workflow";
 })(MemoryType || (MemoryType = {}));
 let Memory = class Memory {
+    id;
+    content;
+    type;
+    metadata;
+    importance;
+    tags;
+    searchVector;
+    createdAt;
+    updatedAt;
 };
 __decorate([
     PrimaryGeneratedColumn('uuid'),

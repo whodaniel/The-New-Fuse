@@ -8,24 +8,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@nestjs/common';
-import { WorkflowStatus, WorkflowExecutionStatus } from '../types';
+import { WorkflowStatus, WorkflowExecutionStatus } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 let WorkflowRepository = class WorkflowRepository extends BaseRepository {
     constructor(prisma) {
-        super(prisma);
+        super(prisma, 'workflow');
     }
     // Helper method to convert Prisma Workflow to App Workflow
     convertPrismaToApp(prismaWorkflow) {
         return {
             id: prismaWorkflow.id,
             name: prismaWorkflow.name,
-            description: prismaWorkflow.description || undefined,
-            status: prismaWorkflow.status,
+            description: prismaWorkflow.description ?? null,
             definition: prismaWorkflow.definition,
+            version: prismaWorkflow.version,
+            isEnabled: prismaWorkflow.isEnabled,
+            status: prismaWorkflow.status,
             createdAt: prismaWorkflow.createdAt,
             updatedAt: prismaWorkflow.updatedAt,
-            executions: prismaWorkflow.executions ? prismaWorkflow.executions.map((exec) => this.convertExecutionPrismaToApp(exec)) : undefined
+            lastExecutedAt: prismaWorkflow.lastExecutedAt ?? null,
+            agentId: prismaWorkflow.agentId ?? null,
+            userId: prismaWorkflow.userId ?? null,
+            executions: prismaWorkflow.executions?.map((exec) => this.convertExecutionPrismaToApp(exec)) ?? [],
+            steps: prismaWorkflow.steps?.map((step) => ({ ...step })) ?? [],
         };
     }
     // Helper method to convert Prisma WorkflowExecution to App WorkflowExecution
@@ -34,14 +40,13 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             id: prismaExecution.id,
             workflowId: prismaExecution.workflowId,
             status: prismaExecution.status,
-            input: prismaExecution.input || undefined,
-            output: prismaExecution.output || undefined,
-            error: prismaExecution.error || undefined,
-            startedAt: prismaExecution.startedAt || undefined,
-            finishedAt: prismaExecution.finishedAt || undefined,
+            input: prismaExecution.input ?? null,
+            output: prismaExecution.output ?? null,
+            error: prismaExecution.error ?? null,
+            startedAt: prismaExecution.startedAt,
+            completedAt: prismaExecution.completedAt ?? null,
             createdAt: prismaExecution.createdAt,
             updatedAt: prismaExecution.updatedAt,
-            workflow: prismaExecution.workflow ? this.convertPrismaToApp(prismaExecution.workflow) : undefined
         };
     }
     async findById(id) {
@@ -53,21 +58,20 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
                         startedAt: 'desc'
                     },
                     take: 10
-                }
+                },
+                agent: true,
+                user: true,
             }
         });
         return result ? this.convertPrismaToApp(result) : null;
     }
     async findMany(filters) {
-        const where = this.buildWhereClause(filters);
         const results = await this.prisma.workflow.findMany({
-            where,
+            where: filters,
             include: {
-                _count: {
-                    select: {
-                        executions: true
-                    }
-                }
+                executions: true,
+                agent: true,
+                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -79,7 +83,9 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         const result = await this.prisma.workflow.create({
             data,
             include: {
-                executions: true
+                executions: true,
+                agent: true,
+                user: true,
             }
         });
         return this.convertPrismaToApp(result);
@@ -92,7 +98,9 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
                 updatedAt: new Date()
             },
             include: {
-                executions: true
+                executions: true,
+                agent: true,
+                user: true,
             }
         });
         return this.convertPrismaToApp(result);
@@ -103,69 +111,41 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         });
         return this.convertPrismaToApp(result);
     }
-    // Additional methods required by BaseRepository pattern
-    async findOne(filter, include) {
-        const where = this.buildWhereClause(filter);
-        const result = await this.prisma.workflow.findFirst({
-            where,
-            include: include || {
-                executions: {
-                    orderBy: {
-                        startedAt: 'desc'
-                    },
-                    take: 10
-                }
-            }
-        });
-        return result ? this.convertPrismaToApp(result) : null;
-    }
-    async findAll(filter, include, orderBy, skip, take) {
-        const where = this.buildWhereClause(filter);
-        const paginationOptions = this.getPaginationOptions(skip ? Math.floor(skip / (take || 100)) + 1 : undefined, take);
-        const sortOptions = this.getSortOptions(orderBy?.field, orderBy?.direction);
+    async findByUserId(userId) {
         const results = await this.prisma.workflow.findMany({
-            where,
-            include: include || {
-                _count: {
-                    select: {
-                        executions: true
-                    }
-                }
+            where: { userId },
+            include: {
+                executions: true,
+                agent: true,
+                user: true,
             },
-            orderBy: sortOptions.orderBy || { updatedAt: 'desc' },
-            skip: paginationOptions.skip,
-            take: paginationOptions.take
+            orderBy: {
+                updatedAt: 'desc'
+            }
         });
         return results.map(workflow => this.convertPrismaToApp(workflow));
     }
-    async count(filter) {
-        const where = this.buildWhereClause(filter);
-        return this.prisma.workflow.count({ where });
-    }
-    async countTotal(where) {
-        return this.prisma.workflow.count({ where });
-    }
-    // Note: Workflow model doesn't have userId field in current schema
-    // This method is kept for compatibility but will return empty array
-    async findByUserId(_userId) {
-        // Since there's no userId field in Workflow, return empty array
-        return [];
-    }
-    // Note: Workflow model doesn't have agentId field in current schema
-    // This method is kept for compatibility but will return empty array
-    async findByAgentId(_agentId) {
-        // Since there's no agentId field in Workflow, return empty array
-        return [];
+    async findByAgentId(agentId) {
+        const results = await this.prisma.workflow.findMany({
+            where: { agentId },
+            include: {
+                executions: true,
+                agent: true,
+                user: true,
+            },
+            orderBy: {
+                updatedAt: 'desc'
+            }
+        });
+        return results.map(workflow => this.convertPrismaToApp(workflow));
     }
     async findByStatus(status) {
         const results = await this.prisma.workflow.findMany({
-            where: { status: status },
+            where: { status },
             include: {
-                _count: {
-                    select: {
-                        executions: true
-                    }
-                }
+                executions: true,
+                agent: true,
+                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -177,17 +157,17 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         const result = await this.prisma.workflow.update({
             where: { id },
             data: {
-                status: status,
+                status,
                 updatedAt: new Date()
             },
             include: {
-                executions: true
+                executions: true,
+                agent: true,
+                user: true,
             }
         });
         return this.convertPrismaToApp(result);
     }
-    // Note: WorkflowStep model doesn't exist in current schema
-    // Steps are stored in the definition JSON field
     async addStep(workflowId, stepData) {
         const workflow = await this.prisma.workflow.findUnique({
             where: { id: workflowId }
@@ -209,8 +189,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         });
         return this.convertPrismaToApp(result);
     }
-    // Note: WorkflowStep model doesn't exist in current schema
-    // Steps are stored in the definition JSON field
     async removeStep(workflowId, stepId) {
         const workflow = await this.prisma.workflow.findUnique({
             where: { id: workflowId }
@@ -232,8 +210,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         });
         return this.convertPrismaToApp(result);
     }
-    // Note: WorkflowStep model doesn't exist in current schema
-    // Steps are stored in the definition JSON field
     async reorderSteps(workflowId, stepOrders) {
         const workflow = await this.prisma.workflow.findUnique({
             where: { id: workflowId }
@@ -319,11 +295,9 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
                 ]
             },
             include: {
-                _count: {
-                    select: {
-                        executions: true
-                    }
-                }
+                executions: true,
+                agent: true,
+                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'

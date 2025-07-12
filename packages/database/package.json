@@ -6,13 +6,13 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "db:generate": "echo 'Using manual Prisma client'",
+    "db:generate": "prisma generate",
     "lint": "eslint src"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.0",
     "@nestjs/config": "^3.3.0",
-    "@prisma/client": "^6.11.0",
+    "@prisma/client": "6.11.0",
     "prisma": "6.11.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"

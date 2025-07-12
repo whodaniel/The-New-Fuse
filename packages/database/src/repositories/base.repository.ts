@@ -1,18 +1,20 @@
-import { PrismaClient } from '../types';
+import { PrismaClient, Prisma } from '../../generated/prisma';
 
-export interface IRepository<T> {
+export interface IRepository<T, CreateInput, UpdateInput, WhereInput> {
   findById(id: string): Promise<T | null>;
-  findMany(filters?: any): Promise<T[]>;
-  create(data: any): Promise<T>;
-  update(id: string, data: any): Promise<T>;
+  findMany(filters?: WhereInput): Promise<T[]>;
+  create(data: CreateInput): Promise<T>;
+  update(id: string, data: UpdateInput): Promise<T>;
   delete(id: string): Promise<T>;
 }
 
-export abstract class BaseRepository<T> implements IRepository<T> {
+export abstract class BaseRepository<T, CreateInput, UpdateInput, WhereInput> implements IRepository<T, CreateInput, UpdateInput, WhereInput> {
   protected prisma: PrismaClient;
+  private model: keyof PrismaClient;
 
-  constructor(prisma: PrismaClient) {
+  constructor(prisma: PrismaClient, model: keyof PrismaClient) {
     this.prisma = prisma;
+    this.model = model;
   }
 
   abstract findById(id: string): Promise<T | null>;
@@ -88,8 +90,8 @@ export abstract class BaseRepository<T> implements IRepository<T> {
   /**
    * Helper method to count total records for pagination
    */
-  protected async countTotal(_where: any): Promise<number> {
+  protected async countTotal(where: any): Promise<number> {
     // This should be implemented by subclasses for their specific model
-    return 0;
+    return (this.prisma[this.model] as any).count({ where });
   }
 }

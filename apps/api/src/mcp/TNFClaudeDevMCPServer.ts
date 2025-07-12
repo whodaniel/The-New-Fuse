@@ -39,7 +39,7 @@ export interface MCPTool {
 @Injectable()
 export class TNFClaudeDevMCPServer {
   private readonly logger = new Logger(TNFClaudeDevMCPServer.name);
-  private readonly tools: MCPTool[] = [];
+  private tools: MCPTool[] = [];
 
   constructor(
     private readonly claudeDevService: ClaudeDevAutomationService,

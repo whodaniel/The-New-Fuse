@@ -12,12 +12,12 @@ import { EventEmitter } from 'events';
 import { Injectable, Logger } from '@nestjs/common';
 import { v4 as uuidv4 } from 'uuid';
 let AgentOrchestrator = AgentOrchestrator_1 = class AgentOrchestrator extends EventEmitter {
+    logger = new Logger(AgentOrchestrator_1.name);
+    tasks = new Map();
+    agents = new Map();
+    taskQueue = [];
     constructor() {
         super();
-        this.logger = new Logger(AgentOrchestrator_1.name);
-        this.tasks = new Map();
-        this.agents = new Map();
-        this.taskQueue = [];
         this.logger.log('AgentOrchestrator initialized');
     }
     addTask(task) {

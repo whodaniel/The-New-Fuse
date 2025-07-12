@@ -5,6 +5,7 @@
 
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
+import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 // Create local type definition until types package issue is resolved
 export interface Agent {
   id: string;
@@ -13,9 +14,12 @@ export interface Agent {
   type: string;
   status: string;
   role?: string;
-  capabilities: string[];
+  capabilities: AgentCapability[];
   metadata: Record<string, unknown>;
+  configuration?: Record<string, unknown>;
   userId?: string;
+  createdAt: Date;
+  updatedAt: Date;
   deletedAt?: Date | null;
 }
 import { IBaseRepository } from '../services/base.service';

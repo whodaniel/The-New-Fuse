@@ -6,38 +6,38 @@ import { User } from './User';
 @Entity()
 export class Pipeline {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  configuration: Record<string, any>;
+  configuration!: Record<string, any>;
 
   @ManyToOne(() => User, user => user.pipelines)
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @ManyToOne(() => Agent, agent => agent.pipelines)
-  agent: Agent;
+  agent!: Agent;
 
   @Column()
-  agentId: string;
+  agentId!: string;
 
   @OneToMany(() => Task, task => task.pipeline)
-  tasks: Task[];
+  tasks!: Task[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt!: Date;
 }

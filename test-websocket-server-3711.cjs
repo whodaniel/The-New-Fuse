@@ -2,8 +2,12 @@ const WebSocket = require('ws');
 const readline = require('readline');
 const redis = require('redis');
 
-// Get port from environment variable or use default
-const PORT = parseInt(process.env.WS_PORT || '3712', 10);
+/**
+ * This is a high-fidelity test WebSocket server for The New Fuse Chrome Extension.
+ * It simulates the behavior of the main VS Code extension's WebSocket server and
+ * includes advanced features like a CLI and Redis pub/sub integration for comprehensive testing.
+ */
+const PORT = parseInt(process.env.WS_PORT || '3711', 10);
 
 // Redis client configuration
 let redisClient = null;
@@ -249,43 +253,77 @@ wss.on('connection', (ws) => {
 
   // Handle messages from client
   ws.on('message', (message) => {
+    let request;
     try {
-      const data = JSON.parse(message);
-      console.log('\nReceived:', data);
-      
-      // Auto-respond to pings
-      if (data.type === 'PING') {
-        ws.send(JSON.stringify({
-          type: 'PONG',
-          timestamp: Date.now()
-        }));
-      }
-      
-      // Handle database commands
-      if (data.type === 'DB_COMMAND' && data.database === 'redis') {
-        handleRedisClientCommand(ws, data);
-      }
-      
-      // Handle broadcast requests
-      if (data.type === 'BROADCAST') {
-        // Add timestamp if not present
-        if (!data.timestamp) {
-          data.timestamp = Date.now();
-        }
-        
-        // Broadcast to connected clients
-        broadcastToClients(data);
-        
-        // Publish to Redis if enabled
-        if (pubClient && pubClient.isOpen && data.useRedis !== false) {
-          publishToRedis('websocket-broadcast', data);
-        }
-      }
-      
-      rl.prompt();
+      request = JSON.parse(message);
     } catch (error) {
-      console.error('Error parsing message:', error);
+      console.error('Error parsing JSON:', error);
+      ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        error: { code: -32700, message: 'Parse error' },
+        id: null
+      }));
+      return;
     }
+
+    // Validate JSON-RPC structure
+    if (request.jsonrpc !== '2.0' || !request.method) {
+      ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        error: { code: -32600, message: 'Invalid Request' },
+        id: request.id || null
+      }));
+      return;
+    }
+
+    console.log(`\nReceived RPC Method: ${request.method}`, request.params || {});
+
+    const { method, params, id } = request;
+
+    // Function to send a JSON-RPC response
+    const sendRpcResponse = (result) => {
+      if (id) { // Only send response for requests, not notifications
+        ws.send(JSON.stringify({ jsonrpc: '2.0', result, id }));
+      }
+    };
+
+    // Function to send a JSON-RPC error
+    const sendRpcError = (code, message, data) => {
+      if (id) {
+        ws.send(JSON.stringify({ jsonrpc: '2.0', error: { code, message, data }, id }));
+      }
+    };
+
+    switch (method) {
+      case 'PING':
+        sendRpcResponse({ status: 'PONG', timestamp: Date.now() });
+        break;
+      
+      case 'DB_COMMAND':
+        if (params && params.database === 'redis') {
+          handleRedisClientCommand(ws, id, params);
+        } else {
+          sendRpcError(-32602, 'Invalid params', 'Missing or invalid "database" parameter for DB_COMMAND');
+        }
+        break;
+
+      case 'BROADCAST':
+        const broadcastPayload = {
+          ...params,
+          timestamp: params.timestamp || Date.now()
+        };
+        broadcastToClients({ jsonrpc: '2.0', method: 'EVENT_BROADCAST', params: broadcastPayload });
+        if (pubClient && pubClient.isOpen && params.useRedis !== false) {
+          publishToRedis('websocket-broadcast', broadcastPayload);
+        }
+        // This is a notification, so no response is sent
+        break;
+
+      default:
+        sendRpcError(-32601, 'Method not found', `Method "${method}" is not supported.`);
+    }
+
+    rl.prompt();
   });
 
   // Handle client disconnection
@@ -304,35 +342,33 @@ wss.on('connection', (ws) => {
 });
 
 // Handle Redis commands from clients
-async function handleRedisClientCommand(ws, data) {
-  const { command, args = [] } = data;
+async function handleRedisClientCommand(ws, id, params) {
+  const { command, args = [] } = params;
   
   if (!command) {
-    sendResponse(ws, { error: 'No command specified' });
+    sendRpcError(-32602, 'Invalid params', 'No command specified');
     return;
   }
   
   if (!redisClient || !redisClient.isOpen) {
-    sendResponse(ws, { error: 'Redis is not connected' });
+    sendRpcError(-32001, 'Server error', 'Redis is not connected');
     return;
   }
   
   try {
     const result = await executeRedisCommand(command, args);
-    sendResponse(ws, result);
+    if (id) {
+      ws.send(JSON.stringify({ jsonrpc: '2.0', result, id }));
+    }
   } catch (error) {
-    sendResponse(ws, { error: error.message });
+    if (id) {
+      ws.send(JSON.stringify({
+        jsonrpc: '2.0',
+        error: { code: -32002, message: 'Redis command failed', data: error.message },
+        id
+      }));
+    }
   }
-}
-
-// Send response to client
-function sendResponse(ws, data) {
-  ws.send(JSON.stringify({
-    type: 'DB_RESPONSE',
-    database: 'redis',
-    ...data,
-    timestamp: Date.now()
-  }));
 }
 
 // Handle server startup

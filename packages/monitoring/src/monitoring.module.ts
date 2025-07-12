@@ -1,29 +1,27 @@
-import { Module } from '@nestjs/common';
+// Monitoring Module - NestJS module configuration for monitoring dashboard
+// Integrates all monitoring services and controllers
+
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { MonitoringService } from './(monitoring as any).service';
-import { PrismaModule } from '../../core/src/database/(prisma as any).module';
-import { ErrorTrackingService } from './error-(tracking as any).service';
-import { SecurityLoggingService } from './security-(logging as any).service';
-import { PerformanceMonitoringService } from './performance-(monitoring as any).service';
+import { MonitoringDashboardService } from './dashboard.service';
+import { MonitoringDashboardController } from './dashboard.controller';
+
+// Import other service modules (these would need to be created as proper modules)
+// import { CacheModule } from '../../cache/src/cache.module';
+// import { QueueModule } from '../../job-queue/src/queue.module';
+// import { WebSocketModule } from '../../websocket/src/websocket.module';
+// import { A2AModule } from '../../a2a-enhanced/src/a2a.module';
 
 @Module({
   imports: [
     ConfigModule,
-    PrismaModule,
+    // CacheModule,
+    // QueueModule,
+    // WebSocketModule,
+    // A2AModule,
   ],
-  providers: [
-    MonitoringService,
-    ErrorTrackingService,
-    SecurityLoggingService,
-    PerformanceMonitoringService
-  ],
-  exports: [
-    MonitoringService,
-    ErrorTrackingService,
-    SecurityLoggingService,
-    PerformanceMonitoringService
-  ]
+  controllers: [MonitoringDashboardController],
+  providers: [MonitoringDashboardService],
+  exports: [MonitoringDashboardService],
 })
-
 export class MonitoringModule {}

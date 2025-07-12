@@ -16,7 +16,8 @@ async function testDatabaseConnection() {
         type: 'GENERIC' as any, // Use a valid enum value from the schema
         description: 'Test agent description',
         status: PrismaAgentStatus.IDLE,
-        userId: 'test-user-id'
+        userId: 'test-user-id',
+        provider: 'test-provider' // Add required provider field
       }
     });
     console.log('Created test agent:', agent);

@@ -43,6 +43,8 @@ model Agent {
   userId       String?
   type         AgentType   @default(GENERIC)
   user         User?       @relation("UserAgents", fields: [userId], references: [id])
+  workflows    Workflow[]
+  nft          AgentNFT?
 
   @@map("agents")
 }
@@ -69,12 +71,13 @@ model User {
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   agents       Agent[]       @relation("UserAgents")
-  chatMessages ChatMessage[]
+  messages     Message[]
+  workflows    Workflow[]
 
   @@map("users")
 }
 
-model ChatMessage {
+model Message {
   id        String   @id @default(uuid())
   content   String
   role      String
@@ -85,7 +88,7 @@ model ChatMessage {
   updatedAt DateTime @updatedAt
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("chat_messages")
+  @@map("messages")
 }
 
 model A2AAgent {
@@ -195,6 +198,108 @@ model A2AHeartbeat {
   @@map("a2a_heartbeats")
 }
 
+model AgentNFT {
+  id                  String                @id @default(uuid())
+  agentId             String                @unique
+  tokenId             Int                   @unique
+  contractAddress     String
+  smartAccountAddress String?
+  isFractionalized    Boolean               @default(false)
+  totalShares         Int                   @default(0)
+  metadataUri         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  agent               Agent?                @relation(fields: [agentId], references: [id])
+  fractionalShares    FractionalShare[]
+  revenueStreams      RevenueStream[]
+  marketplaceListings MarketplaceListing[]
+
+  @@map("agent_nfts")
+}
+
+model FractionalShare {
+  id          String   @id @default(uuid())
+  agentNFTId  String
+  ownerAddress String
+  shareAmount Decimal
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agentNFT    AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+
+  @@map("fractional_shares")
+}
+
+model RevenueStream {
+  id                    String              @id @default(uuid())
+  agentNFTId            String
+  streamName            String
+  description           String?
+  tokenAddress          String
+  totalRevenue          Decimal
+  distributedRevenue    Decimal
+  distributionThreshold Decimal
+  isActive              Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  agentNFT              AgentNFT            @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  distributions         RevenueDistribution[]
+
+  @@map("revenue_streams")
+}
+
+model RevenueDistribution {
+  id              String        @id @default(uuid())
+  revenueStreamId String
+  txHash          String
+  totalAmount     Decimal
+  distributedTo   Json
+  blockNumber     Int
+  createdAt       DateTime      @default(now())
+
+  revenueStream   RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+
+  @@map("revenue_distributions")
+}
+
+model MarketplaceListing {
+  id           String            @id @default(uuid())
+  agentNFTId   String
+  listingId    Int               @unique
+  seller       String
+  shareAmount  Decimal
+  pricePerShare Decimal
+  totalPrice   Decimal
+  status       MarketplaceStatus @default(ACTIVE)
+  expiresAt    DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  agentNFT     AgentNFT          @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  offers       MarketplaceOffer[]
+
+  @@map("marketplace_listings")
+}
+
+model MarketplaceOffer {
+  id          String     @id @default(uuid())
+  listingId   String
+  offerId     Int        @unique
+  buyer       String
+  offerPrice  Decimal
+  shareAmount Decimal
+  status      OfferStatus @default(ACTIVE)
+  expiresAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  listing     MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_offers")
+}
+
 enum TaskStatus {
   PENDING
   IN_PROGRESS
@@ -269,6 +374,21 @@ enum A2AConversationStatus {
   FAILED
 }
 
+enum MarketplaceStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+enum OfferStatus {
+  ACTIVE
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
 model Workflow {
   id             String   @id @default(uuid())
   name           String   @unique
@@ -327,6 +447,7 @@ model WorkflowExecution {
 
 enum WorkflowStatus {
   DRAFT
+  ACTIVE
   PUBLISHED
   ARCHIVED
 }
@@ -335,6 +456,7 @@ enum WorkflowExecutionStatus {
   PENDING
   RUNNING
   COMPLETED
+  SUCCEEDED
   FAILED
   CANCELLED
   PAUSED

@@ -15,15 +15,21 @@ import { VectorMemoryCache } from './cache/VectorMemoryCache';
 import { MemoryCache } from './cache/MemoryCache';
 import { AdvancedClustering } from './clustering/AdvancedClustering';
 let EnhancedMemoryManager = EnhancedMemoryManager_1 = class EnhancedMemoryManager {
+    configService;
+    eventEmitter;
+    vectorCache;
+    memoryCache;
+    clustering;
+    logger = new Logger(EnhancedMemoryManager_1.name);
+    config;
+    optimizationInterval = null;
+    memoryLeakDetector = null;
     constructor(configService, eventEmitter, vectorCache, memoryCache, clustering) {
         this.configService = configService;
         this.eventEmitter = eventEmitter;
         this.vectorCache = vectorCache;
         this.memoryCache = memoryCache;
         this.clustering = clustering;
-        this.logger = new Logger(EnhancedMemoryManager_1.name);
-        this.optimizationInterval = null;
-        this.memoryLeakDetector = null;
         this.config = {
             shortTermCapacity: this.configService.get('memory.shortTermCapacity', 1000),
             workingMemoryCapacity: this.configService.get('memory.workingMemoryCapacity', 100),

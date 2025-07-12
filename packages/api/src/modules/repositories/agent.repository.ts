@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-// Correct the import path for BaseRepository
-import { BaseRepository } from '@the-new-fuse/database/src/repositories/base.repository'; 
 import { AgentCapability, AgentRole, AgentStatus, Agent as AppAgent } from '@the-new-fuse/types';
 import { Agent as PrismaAgent } from '@the-new-fuse/database/generated/prisma';
 
@@ -19,10 +17,8 @@ export interface AgentWithCapabilities {
 }
 
 @Injectable()
-export class AgentRepository extends BaseRepository<AppAgent> {
-  constructor(protected readonly prisma: PrismaService) {
-    super(prisma);
-  }
+export class AgentRepository {
+  constructor(protected readonly prisma: PrismaService) {}
 
   // Helper method to convert Prisma Agent to App Agent
   private convertPrismaToApp(prismaAgent: any): AppAgent {
@@ -47,8 +43,7 @@ export class AgentRepository extends BaseRepository<AppAgent> {
   }
 
   async findMany(filters?: any): Promise<AppAgent[]> {
-    const where = this.buildWhereClause(filters);
-    const results = await this.prisma.agent.findMany({ where });
+    const results = await this.prisma.agent.findMany({ where: filters || {} });
     return results.map(agent => this.convertPrismaToApp(agent));
   }
 

@@ -24,8 +24,8 @@
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@the-new-fuse/relay-core": ["../relay-core/src/index"],
-      "@the-new-fuse/relay-core/*": ["../relay-core/src/*"],
+      "@tnf/relay-core": ["../relay-core/src/index"],
+      "@tnf/relay-core/*": ["../relay-core/src/*"],
       "@the-new-fuse/workflow-engine": ["../workflow-engine/src/index"],
       "@the-new-fuse/workflow-engine/*": ["../workflow-engine/src/*"]
     }

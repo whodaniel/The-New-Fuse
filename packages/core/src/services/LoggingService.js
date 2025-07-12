@@ -11,6 +11,8 @@ import { Injectable } from '@nestjs/common';
 import { createLogger, format, transports } from 'winston';
 import { ConfigService } from '../config/ConfigService';
 let LoggingService = class LoggingService {
+    configService;
+    logger;
     constructor(configService) {
         this.configService = configService;
         this.initializeWinston();

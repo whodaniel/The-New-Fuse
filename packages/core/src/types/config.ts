@@ -8,4 +8,10 @@ export interface ConfigOptions {
 
 export interface DatabaseConfig {
   url: string;
-  type: 'postgres' | mysql' | sqlite'
+  type: 'postgres' | 'mysql' | 'sqlite';
+  host?: string;
+  port?: number;
+  database?: string;
+  username?: string;
+  password?: string;
+}

@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Observable, map } from 'rxjs';
-import { AgentSwarmOrchestrationService } from '@the-new-fuse/core/services/agent-swarm-orchestration.service';
+import { AgentSwarmOrchestrationService } from '@the-new-fuse/core';
 import { AuthGuard } from '../../../guards/auth.guard';
 import { RolesGuard } from '../../../guards/roles.guard';
 import { Roles } from '../../../decorators/roles.decorator';

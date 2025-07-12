@@ -18,11 +18,11 @@ let UserRepository = class UserRepository {
         return {
             id: dbUser.id,
             email: dbUser.email,
-            name: dbUser.name || undefined, // Convert null to undefined
+            name: dbUser.name ?? null,
             passwordHash: dbUser.passwordHash,
             role: dbUser.role,
             createdAt: dbUser.createdAt,
-            updatedAt: dbUser.updatedAt
+            updatedAt: dbUser.updatedAt,
         };
     }
     getUserSelect() {
@@ -65,33 +65,19 @@ let UserRepository = class UserRepository {
         return users.map(user => this.mapDatabaseUserToUser(user));
     }
     async create(data) {
-        const dbData = {
-            email: data.email,
-            name: data.name,
-            passwordHash: data.passwordHash,
-            role: data.role
-        };
         const user = await this.prisma.user.create({
-            data: dbData,
+            data,
             select: this.getUserSelect()
         });
         return this.mapDatabaseUserToUser(user);
     }
     async update(id, data) {
-        const dbData = {
-            updatedAt: new Date()
-        };
-        if (data.email !== undefined)
-            dbData.email = data.email;
-        if (data.name !== undefined)
-            dbData.name = data.name;
-        if (data.passwordHash !== undefined)
-            dbData.passwordHash = data.passwordHash;
-        if (data.role !== undefined)
-            dbData.role = data.role;
         const user = await this.prisma.user.update({
             where: { id },
-            data: dbData,
+            data: {
+                ...data,
+                updatedAt: new Date()
+            },
             select: this.getUserSelect()
         });
         return this.mapDatabaseUserToUser(user);
@@ -128,7 +114,7 @@ let UserRepository = class UserRepository {
         const user = await this.prisma.user.update({
             where: { id },
             data: {
-                role: role, // Cast to any to handle enum type
+                role,
                 updatedAt: new Date()
             },
             select: this.getUserSelect()

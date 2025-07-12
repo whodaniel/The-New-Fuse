@@ -1,10 +1,12 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middleware/auth.middleware';
 import { AgentService } from '../modules/services/agent.service';
+import { AgentRepository } from '../modules/repositories/agent.repository';
+import { LocalAIDetectionService } from '@the-new-fuse/core/src/services/LocalAIDetectionService';
 
 // Add explicit Router type
 const router: Router = Router();
-const agentService = new AgentService({} as any); // This would normally be injected
+const agentService = new AgentService({} as AgentRepository, {} as LocalAIDetectionService); // This would normally be injected
 
 // Get all agents
 router.get('/', authenticate, async (req: Request, res: Response, next: NextFunction): Promise<void> => {

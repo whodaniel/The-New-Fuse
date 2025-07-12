@@ -11,9 +11,11 @@ var YouTubeService_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
 let YouTubeService = YouTubeService_1 = class YouTubeService {
+    configService;
+    logger = new Logger(YouTubeService_1.name);
+    apiKey;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new Logger(YouTubeService_1.name);
         this.apiKey = this.configService.get('YOUTUBE_API_KEY') || '';
     }
     async getVideoMetadata(videoId) {

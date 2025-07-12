@@ -259,7 +259,7 @@ export const AgentNFTMarketplace: React.FC<AgentNFTMarketplaceProps> = ({
             Discover, trade, and invest in AI Agent NFTs
           </p>
         </div>
-        <Button onClick={() => window.location.href = '/agents/create'}>
+        <Button onClick={() => window.location.href = '/agents/new'}>
           <Plus className="w-4 h-4 mr-2" />
           Create Agent
         </Button>

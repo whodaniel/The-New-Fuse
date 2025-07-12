@@ -12,15 +12,17 @@ export interface ToastProps {
 
 interface Toast {
   id: string;
-  message: string;
-  type: ToastType;
+  title?: string;
+  description?: string;
+  variant: 'success' | 'destructive' | 'warning' | 'info';
   duration?: number;
 }
 
 interface ToastContextType {
   toasts: Toast[];
-  addToast: (message: string, type: ToastType, duration?: number) => void;
+  addToast: (toast: ToastProps) => void;
   removeToast: (id: string) => void;
+  toast: (toast: ToastProps) => void;
 }
 
 export const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -36,33 +38,31 @@ export const useToast = () => {
 export const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const addToast = (message: string, type: ToastType, duration = 5000) => {
+  const addToast = (toastProps: ToastProps) => {
     const id = Math.random().toString(36).substring(2, 9);
-    const newToast = { id, message, type, duration };
+    const newToast: Toast = { 
+      id, 
+      title: toastProps.title,
+      description: toastProps.description,
+      variant: toastProps.variant || 'info',
+      duration: toastProps.duration || 5000
+    };
     setToasts((prevToasts) => [...prevToasts, newToast]);
+
+    // Auto-remove after duration
+    if (newToast.duration > 0) {
+      setTimeout(() => {
+        removeToast(id);
+      }, newToast.duration);
+    }
   };
 
   const removeToast = (id: string) => {
     setToasts((prevToasts) => prevToasts.filter((toast) => toast.id !== id));
   };
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setToasts((prevToasts) => {
-        if (prevToasts.length === 0) return prevToasts;
-        const [firstToast, ...rest] = prevToasts;
-        if (firstToast.duration && Date.now() > firstToast.duration) {
-          return rest;
-        }
-        return prevToasts;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   return (
-    <ToastContext.Provider value={{ toasts, addToast, removeToast }}>
+    <ToastContext.Provider value={{ toasts, addToast, removeToast, toast: addToast }}>
       {children}
     </ToastContext.Provider>
   );
@@ -77,18 +77,21 @@ export const Toaster = () => {
         <div
           key={toast.id}
           className={`rounded-md px-6 py-4 text-white shadow-lg transform transition-all duration-300 ease-in-out ${
-            toast.type === 'success'
+            toast.variant === 'success'
               ? 'bg-green-500'
-              : toast.type === 'error'
+              : toast.variant === 'destructive'
               ? 'bg-red-500'
-              : toast.type === 'warning'
+              : toast.variant === 'warning'
               ? 'bg-yellow-500'
               : 'bg-blue-500'
           }`}
           role="alert"
         >
           <div className="flex items-center justify-between">
-            <p>{toast.message}</p>
+            <div>
+              {toast.title && <p className="font-semibold">{toast.title}</p>}
+              {toast.description && <p className="text-sm opacity-90">{toast.description}</p>}
+            </div>
             <button
               onClick={() => removeToast(toast.id)}
               className="ml-4 focus:outline-none"

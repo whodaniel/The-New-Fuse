@@ -12,9 +12,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as WebSocket from 'ws';
 let WebSocketService = WebSocketService_1 = class WebSocketService {
+    configService;
+    logger = new Logger(WebSocketService_1.name);
+    wss;
     constructor(configService) {
         this.configService = configService;
-        this.logger = new Logger(WebSocketService_1.name);
     }
     async onModuleInit() {
         const port = Number(this.configService.get('WS_PORT', 8080));

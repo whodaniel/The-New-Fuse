@@ -4,23 +4,23 @@ import { User } from './User';
 @Entity()
 export class AuthEvent {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ManyToOne(() => User, user => user.authEvents)
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @Column()
-  type: string;
+  type!: string;
 
   @Column({ nullable: true })
-  description: string;
+  description!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  metadata: Record<string, any>;
+  metadata!: Record<string, any>;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 }

@@ -11,10 +11,11 @@ var SharedMemory_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
 let SharedMemory = SharedMemory_1 = class SharedMemory {
+    redisService;
+    logger = new Logger(SharedMemory_1.name);
+    memoryItems = new Map();
     constructor(redisService) {
         this.redisService = redisService;
-        this.logger = new Logger(SharedMemory_1.name);
-        this.memoryItems = new Map();
         this.logger.log('SharedMemory service initialized');
     }
     async store(item) {

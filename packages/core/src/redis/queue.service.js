@@ -1,6 +1,14 @@
-createdAt ?  : Date;
-;
-export class QueueService {
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+import { Injectable } from '@nestjs/common';
+let QueueService = class QueueService {
     redis;
     constructor(redis) {
         this.redis = redis;
@@ -10,20 +18,26 @@ export class QueueService {
             ...task,
             createdAt: new Date(),
             retryCount: task.retryCount || 0,
-        }, maxRetries, task.maxRetries || 3);
+            maxRetries: task.maxRetries || 3,
+        });
+        await this.redis.zadd(queueName, priority, taskStr);
     }
-    ;
-}
-await this.redis.zadd(queueName, priority, taskStr);
-async;
-dequeue(queueName, string);
-Promise < (QueueTask) | null > { const: result = await this.redis.zpopmax(queueName),
-    if(, result) { }, : .length, return: null };
-return JSON.parse(result[0]);
-async;
-retry(queueName, string, task, QueueTask, retryPenalty, number = 0.5);
-Promise < void  > { const: newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0),
-    await, this: .enqueue(queueName, {
-        ...task,
-    }, retryCount, (task.retryCount || 0) + 1) }, newPriority;
-;
+    async dequeue(queueName) {
+        const result = await this.redis.zpopmax(queueName);
+        if (!result.length)
+            return null;
+        return JSON.parse(result[0]);
+    }
+    async retry(queueName, task, retryPenalty = 0.5) {
+        const newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0);
+        await this.enqueue(queueName, {
+            ...task,
+            retryCount: (task.retryCount || 0) + 1
+        }, newPriority);
+    }
+};
+QueueService = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [Object])
+], QueueService);
+export { QueueService };

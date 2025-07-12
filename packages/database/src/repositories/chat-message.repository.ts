@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { ChatMessage } from '../types';
+import { Message } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
+import { Prisma } from '../../generated/prisma';
 
 @Injectable()
 export class ChatMessageRepository {
   constructor(private prisma: PrismaService) {}
 
-  private mapDatabaseMessageToChatMessage(dbMessage: any): ChatMessage {
+  private mapDatabaseMessageToChatMessage(dbMessage: Message): Message {
     return {
       id: dbMessage.id,
       content: dbMessage.content,
-      role: dbMessage.role, // MessageRole to string
-      userId: 'unknown', // Not available in current schema
-      sessionId: dbMessage.chatId, // Map chatId to sessionId
-      metadata: dbMessage.metadata || {},
+      role: dbMessage.role,
+      userId: dbMessage.userId,
+      sessionId: dbMessage.sessionId,
+      metadata: dbMessage.metadata ?? null,
       createdAt: dbMessage.createdAt,
-      updatedAt: dbMessage.createdAt // Use createdAt since updatedAt doesn't exist
+      updatedAt: dbMessage.updatedAt,
     };
   }
 
@@ -24,12 +25,15 @@ export class ChatMessageRepository {
       id: true,
       content: true,
       role: true,
-      chatId: true,
-      createdAt: true
+      userId: true,
+      sessionId: true,
+      metadata: true,
+      createdAt: true,
+      updatedAt: true,
     };
   }
 
-  async findById(id: string): Promise<ChatMessage | null> {
+  async findById(id: string): Promise<Message | null> {
     const message = await this.prisma.message.findUnique({
       where: { id },
       select: this.getMessageSelect()
@@ -39,7 +43,7 @@ export class ChatMessageRepository {
     return this.mapDatabaseMessageToChatMessage(message);
   }
 
-  async findMany(filters?: any): Promise<ChatMessage[]> {
+  async findMany(filters?: Prisma.MessageWhereInput): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
       where: filters,
       select: this.getMessageSelect(),
@@ -51,39 +55,32 @@ export class ChatMessageRepository {
     return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async create(data: any): Promise<ChatMessage> {
-    // Map ChatMessage interface to database Message fields
-    const dbData = {
-      content: data.content,
-      role: data.role,
-      chatId: data.sessionId || data.chatId // Map sessionId to chatId
-    };
-
+  async create(
+    data: Prisma.MessageCreateInput | Prisma.MessageUncheckedCreateInput
+  ): Promise<Message> {
     const message = await this.prisma.message.create({
-      data: dbData,
+      data,
       select: this.getMessageSelect()
     });
-
     return this.mapDatabaseMessageToChatMessage(message);
   }
 
-  async update(id: string, data: any): Promise<ChatMessage> {
-    const dbData: any = {};
-
-    if (data.content !== undefined) dbData.content = data.content;
-    if (data.role !== undefined) dbData.role = data.role;
-    if (data.sessionId !== undefined) dbData.chatId = data.sessionId;
-
+  async update(
+    id: string,
+    data: Prisma.MessageUpdateInput | Prisma.MessageUncheckedUpdateInput
+  ): Promise<Message> {
     const message = await this.prisma.message.update({
       where: { id },
-      data: dbData,
+      data: {
+        ...data,
+        updatedAt: new Date()
+      },
       select: this.getMessageSelect()
     });
-
     return this.mapDatabaseMessageToChatMessage(message);
   }
 
-  async delete(id: string): Promise<ChatMessage> {
+  async delete(id: string): Promise<Message> {
     const message = await this.prisma.message.delete({
       where: { id },
       select: this.getMessageSelect()
@@ -92,14 +89,20 @@ export class ChatMessageRepository {
     return this.mapDatabaseMessageToChatMessage(message);
   }
 
-  async findByUserId(userId: string): Promise<ChatMessage[]> {
-    // Since userId doesn't exist in the current schema, return empty array
-    return [];
+  async findByUserId(userId: string): Promise<Message[]> {
+    const messages = await this.prisma.message.findMany({
+      where: { userId },
+      select: this.getMessageSelect(),
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
+    return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async findBySessionId(sessionId: string): Promise<ChatMessage[]> {
+  async findBySessionId(sessionId: string): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
-      where: { chatId: sessionId },
+      where: { sessionId },
       select: this.getMessageSelect(),
       orderBy: {
         createdAt: 'asc'
@@ -109,7 +112,7 @@ export class ChatMessageRepository {
     return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async findByRole(role: string): Promise<ChatMessage[]> {
+  async findByRole(role: string): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
       where: { role: role as any }, // Cast to any to handle MessageRole enum
       select: this.getMessageSelect(),
@@ -121,10 +124,10 @@ export class ChatMessageRepository {
     return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async getRecentMessages(userId: string, limit = 50): Promise<ChatMessage[]> {
-    // Since userId doesn't exist in the current schema, get recent messages regardless of user
+  async getRecentMessages(userId: string, limit = 50): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
       select: this.getMessageSelect(),
+      where: { userId },
       orderBy: {
         createdAt: 'desc'
       },
@@ -134,10 +137,10 @@ export class ChatMessageRepository {
     return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async searchMessages(userId: string, query: string): Promise<ChatMessage[]> {
-    // Since userId doesn't exist in the current schema, search all messages
+  async searchMessages(userId: string, query: string): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
       where: {
+        userId,
         content: {
           contains: query,
           mode: 'insensitive'
@@ -152,16 +155,18 @@ export class ChatMessageRepository {
     return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
   }
 
-  async getMessageStats(userId?: string): Promise<any> {
-    // Since userId doesn't exist in the current schema, get stats for all messages
+  async getMessageStats(userId?: string): Promise<{ total: number; recent: number; byRole: Record<string, number> }> {
+    const whereClause = userId ? { userId } : {};
+
     const roleStats = await this.prisma.message.groupBy({
       by: ['role'],
+      where: whereClause,
       _count: {
         id: true
       }
     });
 
-    const totalMessages = await this.prisma.message.count();
+    const totalMessages = await this.prisma.message.count({ where: whereClause });
 
     const recentMessages = await this.prisma.message.count({
       where: {
@@ -174,16 +179,16 @@ export class ChatMessageRepository {
     return {
       total: totalMessages,
       recent: recentMessages,
-      byRole: roleStats.reduce((acc: Record<string, number>, { role, _count }: { role: any, _count: any }) => {
+      byRole: roleStats.reduce((acc: Record<string, number>, { role, _count }: { role: string, _count: { id: number } }) => {
         acc[role] = _count.id;
         return acc;
       }, {} as Record<string, number>)
     };
   }
 
-  async getConversationMessages(sessionId: string, limit = 100): Promise<ChatMessage[]> {
+  async getConversationMessages(sessionId: string, limit = 100): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
-      where: { chatId: sessionId },
+      where: { sessionId },
       orderBy: {
         createdAt: 'asc'
       },
@@ -196,13 +201,12 @@ export class ChatMessageRepository {
 
   async deleteMessagesBySessionId(sessionId: string): Promise<number> {
     const result = await this.prisma.message.deleteMany({
-      where: { chatId: sessionId }
+      where: { sessionId }
     });
     return result.count;
   }
 
-  async getMessagesByDateRange(from: Date, to: Date): Promise<ChatMessage[]> {
-    // Since userId doesn't exist in the current schema, get messages by date range for all users
+  async getMessagesByDateRange(from: Date, to: Date): Promise<Message[]> {
     const messages = await this.prisma.message.findMany({
       where: {
         createdAt: {

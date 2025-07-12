@@ -1,0 +1,463 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id           String       @id @default(uuid())
+  title        String
+  description  String?
+  status       TaskStatus   @default(PENDING)
+  priority     TaskPriority @default(MEDIUM)
+  type         String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  dueDate      DateTime?
+  assignedTo   String?
+  createdBy    String
+  metadata     Json?
+  tags         String[]     @default([])
+  dependencies String[]     @default([])
+  error        String?
+  completedAt  DateTime?
+
+  @@map("tasks")
+}
+
+model Agent {
+  id           String      @id @default(uuid())
+  name         String
+  description  String?
+  status       AgentStatus @default(IDLE)
+  capabilities String[]
+  provider     String
+  lastActive   DateTime    @default(now())
+  metadata     Json?
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  userId       String?
+  type         AgentType   @default(GENERIC)
+  user         User?       @relation("UserAgents", fields: [userId], references: [id])
+  workflows    Workflow[]
+  nft          AgentNFT?
+
+  @@map("agents")
+}
+
+model RegisteredEntity {
+  id          String       @id @default(uuid())
+  name        String
+  type        String
+  description String?
+  metadata    Json?
+  status      EntityStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@map("registered_entities")
+}
+
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  name         String?
+  passwordHash String
+  role         UserRole   @default(USER)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  agents       Agent[]    @relation("UserAgents")
+  messages     Message[]
+  workflows    Workflow[]
+
+  @@map("users")
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+  role      String
+  userId    String
+  sessionId String?
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("messages")
+}
+
+model A2AAgent {
+  id               String                       @id @default(uuid())
+  agentId          String                       @unique
+  name             String
+  type             String
+  version          String
+  description      String?
+  metadata         Json?
+  endpoints        Json?
+  authentication   Json?
+  status           A2AAgentStatus               @default(OFFLINE)
+  lastHeartbeat    DateTime?
+  registeredAt     DateTime                     @default(now())
+  updatedAt        DateTime                     @updatedAt
+  capabilities     A2AAgentCapability[]
+  conversations    A2AConversationParticipant[]
+  heartbeats       A2AHeartbeat[]
+  sentMessages     A2AMessage[]                 @relation("SentMessages")
+  receivedMessages A2AMessage[]                 @relation("ReceivedMessages")
+
+  @@map("a2a_agents")
+}
+
+model A2AAgentCapability {
+  id          String   @id @default(uuid())
+  agentId     String
+  name        String
+  description String?
+  version     String
+  parameters  Json?
+  metadata    Json?
+  agent       A2AAgent @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@unique([agentId, name])
+  @@map("a2a_agent_capabilities")
+}
+
+model A2AMessage {
+  id              String             @id @default(uuid())
+  messageId       String             @unique
+  protocolVersion String             @default("1.0.0")
+  timestamp       DateTime
+  fromAgentId     String
+  toAgentId       String?
+  type            A2AMessageType
+  priority        A2AMessagePriority @default(MEDIUM)
+  conversationId  String?
+  requestId       String?
+  ttl             Int?
+  payload         Json
+  routing         Json?
+  signature       String?
+  checksum        String?
+  metadata        Json?
+  deliveredAt     DateTime?
+  acknowledgedAt  DateTime?
+  createdAt       DateTime           @default(now())
+  conversation    A2AConversation?   @relation(fields: [conversationId], references: [id])
+  fromAgent       A2AAgent           @relation("SentMessages", fields: [fromAgentId], references: [id])
+  toAgent         A2AAgent?          @relation("ReceivedMessages", fields: [toAgentId], references: [id])
+
+  @@map("a2a_messages")
+}
+
+model A2AConversation {
+  id             String                       @id @default(uuid())
+  conversationId String                       @unique
+  initiatorId    String
+  topic          String?
+  status         A2AConversationStatus        @default(ACTIVE)
+  createdAt      DateTime                     @default(now())
+  updatedAt      DateTime                     @updatedAt
+  participants   A2AConversationParticipant[]
+  messages       A2AMessage[]
+
+  @@map("a2a_conversations")
+}
+
+model A2AConversationParticipant {
+  id             String          @id @default(uuid())
+  conversationId String
+  agentId        String
+  joinedAt       DateTime        @default(now())
+  leftAt         DateTime?
+  role           String?
+  agent          A2AAgent        @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  conversation   A2AConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+
+  @@unique([conversationId, agentId])
+  @@map("a2a_conversation_participants")
+}
+
+model A2AHeartbeat {
+  id                String         @id @default(uuid())
+  agentId           String
+  timestamp         DateTime
+  status            A2AAgentStatus
+  load              Float?
+  activeConnections Int?
+  lastActivity      DateTime?
+  metadata          Json?
+  createdAt         DateTime       @default(now())
+  agent             A2AAgent       @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("a2a_heartbeats")
+}
+
+model AgentNFT {
+  id                  String   @id @default(uuid())
+  agentId             String   @unique
+  tokenId             Int      @unique
+  contractAddress     String
+  smartAccountAddress String?
+  isFractionalized    Boolean  @default(false)
+  totalShares         Int      @default(0)
+  metadataUri         String?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  agent               Agent?               @relation(fields: [agentId], references: [id])
+  fractionalShares    FractionalShare[]
+  revenueStreams      RevenueStream[]
+  marketplaceListings MarketplaceListing[]
+
+  @@map("agent_nfts")
+}
+
+model FractionalShare {
+  id           String   @id @default(uuid())
+  agentNFTId   String
+  ownerAddress String
+  shareAmount  Decimal
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  agentNFT AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+
+  @@map("fractional_shares")
+}
+
+model RevenueStream {
+  id                    String   @id @default(uuid())
+  agentNFTId            String
+  streamName            String
+  description           String?
+  tokenAddress          String
+  totalRevenue          Decimal
+  distributedRevenue    Decimal
+  distributionThreshold Decimal
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  agentNFT      AgentNFT              @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  distributions RevenueDistribution[]
+
+  @@map("revenue_streams")
+}
+
+model RevenueDistribution {
+  id              String   @id @default(uuid())
+  revenueStreamId String
+  txHash          String
+  totalAmount     Decimal
+  distributedTo   Json
+  blockNumber     Int
+  createdAt       DateTime @default(now())
+
+  revenueStream RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+
+  @@map("revenue_distributions")
+}
+
+model MarketplaceListing {
+  id            String            @id @default(uuid())
+  agentNFTId    String
+  listingId     Int               @unique
+  seller        String
+  shareAmount   Decimal
+  pricePerShare Decimal
+  totalPrice    Decimal
+  status        MarketplaceStatus @default(ACTIVE)
+  expiresAt     DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  agentNFT AgentNFT           @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  offers   MarketplaceOffer[]
+
+  @@map("marketplace_listings")
+}
+
+model MarketplaceOffer {
+  id          String      @id @default(uuid())
+  listingId   String
+  offerId     Int         @unique
+  buyer       String
+  offerPrice  Decimal
+  shareAmount Decimal
+  status      OfferStatus @default(ACTIVE)
+  expiresAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  listing MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("marketplace_offers")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum AgentStatus {
+  IDLE
+  BUSY
+  ERROR
+  OFFLINE
+}
+
+enum AgentType {
+  GENERIC
+  CODER
+  ANALYZER
+  COORDINATOR
+  COMMUNICATOR
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  PENDING
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  AGENT
+}
+
+enum A2AAgentStatus {
+  ONLINE
+  OFFLINE
+  BUSY
+  IDLE
+  ERROR
+}
+
+enum A2AMessageType {
+  HANDSHAKE
+  REQUEST
+  RESPONSE
+  NOTIFICATION
+  HEARTBEAT
+  ERROR
+  BROADCAST
+}
+
+enum A2AMessagePriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum A2AConversationStatus {
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+enum MarketplaceStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+enum OfferStatus {
+  ACTIVE
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+model Workflow {
+  id             String         @id @default(uuid())
+  name           String         @unique
+  description    String?
+  definition     Json
+  version        String         @default("1.0.0")
+  isEnabled      Boolean        @default(true)
+  status         WorkflowStatus @default(DRAFT)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  lastExecutedAt DateTime?
+
+  // Relations
+  agentId String?
+  agent   Agent?  @relation(fields: [agentId], references: [id])
+  userId  String?
+  user    User?   @relation(fields: [userId], references: [id])
+
+  executions WorkflowExecution[]
+  steps      WorkflowStep[]
+
+  @@map("workflows")
+}
+
+model WorkflowStep {
+  id         String   @id @default(uuid())
+  workflowId String
+  workflow   Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  order      Int
+  type       String
+  config     Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([workflowId])
+  @@map("workflow_steps")
+}
+
+model WorkflowExecution {
+  id          String                  @id @default(uuid())
+  workflowId  String
+  status      WorkflowExecutionStatus @default(PENDING)
+  input       Json?
+  output      Json?
+  error       Json?
+  startedAt   DateTime
+  completedAt DateTime?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  workflow Workflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+
+  @@index([workflowId])
+  @@map("workflow_executions")
+}
+
+enum WorkflowStatus {
+  DRAFT
+  ACTIVE
+  PUBLISHED
+  ARCHIVED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  SUCCEEDED
+  FAILED
+  CANCELLED
+  PAUSED
+}

@@ -13,12 +13,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MetricsProcessor } from '../security/metricsProcessor';
 import { AgentCommunicationBridge } from './AgentCommunicationBridge';
 let AgentCommunicationManager = AgentCommunicationManager_1 = class AgentCommunicationManager extends EventEmitter {
+    communicationBridge;
+    metricsProcessor;
+    logger = new Logger(AgentCommunicationManager_1.name);
+    channels = new Map();
+    config;
     constructor(communicationBridge, metricsProcessor) {
         super();
         this.communicationBridge = communicationBridge;
         this.metricsProcessor = metricsProcessor;
-        this.logger = new Logger(AgentCommunicationManager_1.name);
-        this.channels = new Map();
         this.config = {
             level: 'info',
             type: 'direct',

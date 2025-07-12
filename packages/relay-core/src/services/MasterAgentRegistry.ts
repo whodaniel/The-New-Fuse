@@ -7,8 +7,12 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '../utils/Logger.js';
-import { PrismaClient, Agent, AgentMetadata, Task, AgentType, AgentStatus, TaskStatus, TaskPriority } from '@prisma/client';
+import { Logger } from '../utils/Logger';
+import { Agent, Task, AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
+import { PrismaClient } from '@prisma/client';
+import { ethers } from 'ethers';
+import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
+import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
 // import { AgentRegistry, Agent as LegacyAgent } from '../../../../src/services/AgentRegistry.js';
 // import { AgentMetadataManager } from '../../../../src/services/AgentMetadataManager.js';
@@ -51,6 +55,20 @@ class AgentMetadataManager {
   getMetadata(agentId: string): any {
     return this.metadata.get(agentId);
   }
+}
+
+// Re-export BlockchainConfig for compatibility
+export { BlockchainConfig } from './shared/BlockchainService.js';
+
+// On-chain agent data
+export interface OnChainAgentData {
+  tokenId?: number;
+  contractAddress?: string;
+  tbaAddress?: string;
+  isOnChain: boolean;
+  mintTransactionHash?: string;
+  mintBlockNumber?: number;
+  lastOnChainUpdate?: Date;
 }
 
 // Enhanced agent profile that integrates with existing schema
@@ -120,6 +138,9 @@ export interface MasterAgentProfile {
   verificationHash: string; // Merkle tree verification
   onboardingCompleted: boolean;
   protocolChecklistCompleted: boolean;
+  
+  // On-chain integration data
+  onChainData: OnChainAgentData;
   
   // Enhanced metadata (integrates with AgentMetadata)
   metadata: {
@@ -228,13 +249,32 @@ export class MasterAgentRegistry extends EventEmitter {
     syncStatus: 'pending'
   };
 
-  constructor(prisma: PrismaClient, logger: Logger) {
+  // Blockchain integration (using shared service)
+  private blockchainService: BlockchainService | null = null;
+  private vcIssuanceService: VCIssuanceService | null = null;
+  private blockchainConfig: BlockchainConfig | null = null;
+  private agentNFTContract: ethers.Contract | null = null;
+  private web3Provider: ethers.providers.JsonRpcProvider | null = null;
+  private wallet: ethers.Wallet | null = null;
+
+  constructor(
+    prisma: PrismaClient, 
+    logger: Logger, 
+    blockchainConfig?: BlockchainConfig,
+    vcPrivateKey?: string
+  ) {
     super();
     this.logger = logger;
     this.prisma = prisma;
     this.legacyRegistry = new AgentRegistry();
     this.metadataManager = new AgentMetadataManager();
     this.onboardingProtocol = {} as UniversalOnboardingProtocol; // Stub
+    
+    // Initialize blockchain service
+    if (blockchainConfig) {
+      this.blockchainService = new BlockchainService(blockchainConfig, logger);
+      this.initializeBlockchainIntegration();
+    }
     
     // Initialize system metrics
     this.systemMetrics = {
@@ -251,6 +291,11 @@ export class MasterAgentRegistry extends EventEmitter {
       onboardingCompletionRate: 0,
       protocolComplianceRate: 0
     };
+    
+    // Initialize VCIssuanceService if private key provided
+    if (vcPrivateKey) {
+      this.vcIssuanceService = new VCIssuanceService(prisma, logger, vcPrivateKey);
+    }
     
     this.initializeUniversalOnboardingProtocol();
     this.loadExistingAgents();
@@ -330,6 +375,15 @@ export class MasterAgentRegistry extends EventEmitter {
         verificationHash: '',
         onboardingCompleted: false,
         protocolChecklistCompleted: false,
+        onChainData: {
+          isOnChain: false,
+          tokenId: undefined,
+          contractAddress: undefined,
+          tbaAddress: undefined,
+          mintTransactionHash: undefined,
+          mintBlockNumber: undefined,
+          lastOnChainUpdate: undefined
+        },
         metadata: {
           version: '1.0.0',
           personalityTraits: {},
@@ -402,6 +456,38 @@ export class MasterAgentRegistry extends EventEmitter {
       let spreadsheetRowId: string | undefined;
       if (this.spreadsheetIntegration.enabled) {
         spreadsheetRowId = await this.syncAgentToSpreadsheet(completeProfile);
+      }
+
+      // 8. Mint Agent NFT on blockchain if enabled
+      if (this.blockchainService && this.blockchainService.isBlockchainConnected() && this.blockchainService.getAgentNFTContract()) {
+        try {
+          const onChainData = await this.mintAgentNFT(completeProfile);
+          if (onChainData) {
+            completeProfile.onChainData = onChainData;
+            // Update the in-memory cache
+            this.agentProfiles.set(agentId, completeProfile);
+            
+            // Update database with on-chain data
+            await this.prisma.agent.update({
+              where: { id: agentId },
+              data: {
+                metadata: {
+                  update: {
+                    config: {
+                      ...dbAgent.metadata?.config,
+                      onChainData: onChainData
+                    }
+                  }
+                }
+              }
+            });
+            
+            this.logger.info(`🔗 Agent ${agentId} minted on blockchain: Token ID ${onChainData.tokenId}`);
+          }
+        } catch (error) {
+          this.logger.error(`❌ Blockchain minting failed for ${agentId}: ${error instanceof Error ? error.message : String(error)}`);
+          // Continue with registration even if blockchain minting fails
+        }
       }
 
       this.logger.info(`✅ MASTER REGISTRATION COMPLETE: ${agentId} (${completeProfile.type} on ${completeProfile.platform})`);
@@ -955,6 +1041,15 @@ export class MasterAgentRegistry extends EventEmitter {
       verificationHash: '',
       onboardingCompleted: false,
       protocolChecklistCompleted: false,
+      onChainData: config.onChainData || {
+        isOnChain: false,
+        tokenId: undefined,
+        contractAddress: undefined,
+        tbaAddress: undefined,
+        mintTransactionHash: undefined,
+        mintBlockNumber: undefined,
+        lastOnChainUpdate: undefined
+      },
       metadata: {
         version: metadata.version || '1.0.0',
         personalityTraits: metadata.personalityTraits || {},
@@ -965,6 +1060,106 @@ export class MasterAgentRegistry extends EventEmitter {
         notes: ''
       }
     };
+  }
+
+  // ============ Verifiable Credentials Integration ============
+
+  /**
+   * Issue a Verifiable Credential for an agent
+   * @param agentId Agent ID to issue credential for
+   * @param requestedCapabilities Capabilities to verify and include
+   * @returns Promise<VerifiableCredential | null>
+   */
+  async issueAgentCredential(
+    agentId: string, 
+    requestedCapabilities: string[] = []
+  ): Promise<any | null> {
+    try {
+      if (!this.vcIssuanceService) {
+        this.logger.warn('VCIssuanceService not initialized - skipping credential issuance');
+        return null;
+      }
+
+      const agent = this.agentProfiles.get(agentId);
+      if (!agent) {
+        throw new Error(`Agent ${agentId} not found`);
+      }
+
+      // Use all enabled capabilities if none specified
+      const capabilities = requestedCapabilities.length > 0 
+        ? requestedCapabilities
+        : Object.entries(agent.capabilities)
+            .filter(([_, enabled]) => enabled)
+            .map(([capability, _]) => capability);
+
+      const vcRequest: VCIssuanceRequest = {
+        agentId,
+        requestedCapabilities: capabilities,
+        requesterSignature: 'system_generated' // In practice, this would be a proper signature
+      };
+
+      const credential = await this.vcIssuanceService.issueCredential(vcRequest);
+      
+      this.logger.info(`✅ Verifiable Credential issued for agent: ${agentId}`);
+      this.emit('credential_issued', { agentId, credentialId: credential.id });
+      
+      return credential;
+
+    } catch (error) {
+      this.logger.error(`Failed to issue credential for agent ${agentId}: ${error}`);
+      return null;
+    }
+  }
+
+  /**
+   * Verify an agent's Verifiable Credential
+   * @param credential The credential to verify
+   * @returns Promise<boolean>
+   */
+  async verifyAgentCredential(credential: any): Promise<boolean> {
+    try {
+      if (!this.vcIssuanceService) {
+        this.logger.warn('VCIssuanceService not initialized - cannot verify credential');
+        return false;
+      }
+
+      const result = await this.vcIssuanceService.verifyCredential(credential);
+      return result.isValid;
+
+    } catch (error) {
+      this.logger.error(`Failed to verify credential: ${error}`);
+      return false;
+    }
+  }
+
+  /**
+   * Get VCIssuanceService instance
+   * @returns VCIssuanceService instance or null
+   */
+  getVCIssuanceService(): VCIssuanceService | null {
+    return this.vcIssuanceService;
+  }
+
+  /**
+   * Get BlockchainService instance
+   * @returns BlockchainService instance or null
+   */
+  getBlockchainService(): BlockchainService | null {
+    return this.blockchainService;
+  }
+
+  /**
+   * Check blockchain connection health
+   */
+  async checkBlockchainHealth(): Promise<{ healthy: boolean; details: any }> {
+    if (!this.blockchainService) {
+      return {
+        healthy: false,
+        details: { error: 'Blockchain service not initialized' }
+      };
+    }
+
+    return await this.blockchainService.checkHealth();
   }
 
   private updateSystemMetrics(): void {
@@ -1127,6 +1322,209 @@ export class MasterAgentRegistry extends EventEmitter {
     }
     
     return true;
+  }
+
+  /**
+   * BLOCKCHAIN INTEGRATION METHODS
+   * On-chain identity and economic primitives
+   */
+  
+  private async initializeBlockchainIntegration(): Promise<void> {
+    if (!this.blockchainConfig?.enabled) {
+      this.logger.info('🔗 Blockchain integration disabled');
+      return;
+    }
+
+    try {
+      // Initialize Web3 provider and wallet through blockchainService
+      if (!this.blockchainService) {
+        throw new Error('BlockchainService not initialized');
+      }
+
+      const provider = this.blockchainService.getProvider();
+      const wallet = this.blockchainService.getWallet();
+      const config = this.blockchainService.getConfig();
+
+      if (!provider) {
+        throw new Error('Blockchain provider not available');
+      }
+
+      // Initialize AgentNFTFactory contract
+      if (config.contractAddress && wallet) {
+        const agentNFTABI = [
+          // Core minting function
+          "function mintAgent(address owner, string calldata agentId, string calldata initialMetadata, string calldata legalContractURI, string calldata agentType) external returns (uint256)",
+          
+          // Metadata update functions
+          "function updateMetadata(uint256 tokenId, string calldata newMetadataURI) external",
+          "function updateAgentStatus(uint256 tokenId, bool isActive) external",
+          "function setTBAAddress(uint256 tokenId, address tbaAddress) external",
+          
+          // View functions
+          "function getAgentMetadata(uint256 tokenId) external view returns (tuple)",
+          "function getTokenIdByAgentId(string calldata agentId) external view returns (uint256)",
+          "function getCurrentTokenId() external view returns (uint256)",
+          
+          // Events
+          "event AgentMinted(uint256 indexed tokenId, string indexed agentId, address indexed creator, address tbaAddress, string legalContractURI)"
+        ];
+        
+        this.blockchainService.registerContract(
+          'AgentNFTContract',
+          config.contractAddress,
+          agentNFTABI
+        );
+        
+        // Test connection
+        const agentNFTContract = this.blockchainService.getContract('AgentNFTContract');
+        if (agentNFTContract) {
+          const currentTokenId = await agentNFTContract.getCurrentTokenId();
+          this.logger.info(`🔗 Blockchain integration initialized - Current Token ID: ${currentTokenId}`);
+        }
+      }
+    } catch (error) {
+      this.logger.error(`❌ Blockchain initialization failed: ${error instanceof Error ? error.message : String(error)}`);
+      if (this.blockchainConfig) {
+        this.blockchainConfig.enabled = false;
+      }
+    }
+  }
+
+  private async mintAgentNFT(profile: MasterAgentProfile): Promise<OnChainAgentData | null> {
+    const agentNFTContract = this.blockchainService?.getContract('AgentNFTContract');
+    const wallet = this.blockchainService?.getWallet();
+    const blockchainConfig = this.blockchainService?.getConfig();
+
+    if (!agentNFTContract || !wallet || !blockchainConfig) {
+      throw new Error('Blockchain integration not properly initialized');
+    }
+
+    try {
+      // Create metadata for IPFS upload (simplified - in production would upload to IPFS)
+      const metadata = {
+        name: profile.name,
+        description: profile.description || `${profile.type} agent in The New Fuse ecosystem`,
+        image: `https://api.the-new-fuse.io/agents/${profile.id}/avatar`,
+        attributes: [
+          { trait_type: "Agent Type", value: profile.type },
+          { trait_type: "Platform", value: profile.platform },
+          { trait_type: "Success Rate", value: profile.metrics.successRate },
+          { trait_type: "Total Tasks", value: profile.metrics.totalTasks },
+          { trait_type: "Created At", value: profile.registeredAt.toISOString() }
+        ],
+        properties: {
+          agentId: profile.id,
+          platform: profile.platform,
+          capabilities: profile.capabilities,
+          version: profile.metadata.version
+        }
+      };
+
+      // Mock IPFS hash (in production, upload to IPFS first)
+      const metadataURI = `ipfs://QmAgent${profile.id}Metadata`;
+      const legalContractURI = `ipfs://QmAgent${profile.id}Constitution`;
+
+      // Set gas configuration
+      const gasPrice = ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei');
+      
+      // Mint the Agent NFT
+      const tx = await agentNFTContract.mintAgent(
+        wallet.address, // Owner (for now, same as minter)
+        profile.id,          // Agent ID
+        metadataURI,         // Metadata URI
+        legalContractURI,    // Legal contract URI
+        profile.type,        // Agent type
+        {
+          gasLimit: blockchainConfig.gasLimit,
+          gasPrice: gasPrice
+        }
+      );
+
+      this.logger.info(`🔗 Agent NFT minting transaction sent: ${tx.hash}`);
+
+      // Wait for transaction confirmation
+      const receipt = await tx.wait();
+      
+      // Parse the AgentMinted event to get token ID
+      const mintEvent = receipt.events?.find((e: any) => e.event === 'AgentMinted');
+      const tokenId = mintEvent?.args?.tokenId?.toNumber();
+
+      if (!tokenId) {
+        throw new Error('Failed to parse token ID from mint transaction');
+      }
+
+      // TODO: In production, trigger TBA creation here
+      const tbaAddress = `0x${profile.id.slice(-40).padStart(40, '0')}`; // Mock TBA address
+
+      const onChainData: OnChainAgentData = {
+        isOnChain: true,
+        tokenId: tokenId,
+        contractAddress: blockchainConfig.contractAddress,
+        tbaAddress: tbaAddress,
+        mintTransactionHash: tx.hash,
+        mintBlockNumber: receipt.blockNumber,
+        lastOnChainUpdate: new Date()
+      };
+
+      this.logger.info(`✅ Agent NFT minted successfully - Token ID: ${tokenId}, TBA: ${tbaAddress}`);
+      
+      return onChainData;
+    } catch (error) {
+      this.logger.error(`❌ Agent NFT minting failed: ${error instanceof Error ? error.message : String(error)}`);
+      throw error;
+    }
+  }
+
+  async updateAgentOnChainMetadata(agentId: string, newMetadataURI: string): Promise<boolean> {
+    const agent = this.agentProfiles.get(agentId);
+    if (!agent || !agent.onChainData.isOnChain || !agent.onChainData.tokenId) {
+      throw new Error(`Agent ${agentId} is not on-chain or missing token ID`);
+    }
+
+    if (!this.blockchainService) {
+      throw new Error('Blockchain integration not available');
+    }
+
+    const agentNFTContract = this.blockchainService.getContract('AgentNFTContract');
+    const blockchainConfig = this.blockchainService.getConfig();
+
+    if (!agentNFTContract || !blockchainConfig) {
+      throw new Error('Blockchain integration not properly initialized');
+    }
+
+    try {
+      const tx = await agentNFTContract.updateMetadata(
+        agent.onChainData.tokenId,
+        newMetadataURI,
+        {
+          gasLimit: blockchainConfig.gasLimit,
+          gasPrice: ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei')
+        }
+      );
+
+      await tx.wait();
+      
+      agent.onChainData.lastOnChainUpdate = new Date();
+      this.agentProfiles.set(agentId, agent);
+      
+      this.logger.info(`🔗 Updated on-chain metadata for agent ${agentId}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`❌ Failed to update on-chain metadata for ${agentId}: ${error instanceof Error ? error.message : String(error)}`);
+      return false;
+    }
+  }
+
+  getBlockchainConfig(): BlockchainConfig {
+    if (!this.blockchainService) {
+      throw new Error('BlockchainService not initialized');
+    }
+    return this.blockchainService.getConfig();
+  }
+
+  async getOnChainAgentData(agentId: string): Promise<OnChainAgentData | null> {
+    const agent = this.agentProfiles.get(agentId);
+    return agent?.onChainData || null;
   }
 
   /**

@@ -5,32 +5,32 @@ import { Pipeline } from './Pipeline';
 @Entity()
 export class Agent {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  name: string;
+  name!: string;
 
   @Column()
-  type: string;
+  type!: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  config: Record<string, any>;
+  config!: Record<string, any>;
 
   @ManyToOne(() => User, user => user.agents)
-  user: User;
+  user!: User;
 
   @Column()
-  userId: string;
+  userId!: string;
 
   @OneToMany(() => Pipeline, pipeline => pipeline.agent)
-  pipelines: Pipeline[];
+  pipelines!: Pipeline[];
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date;
+  deletedAt!: Date;
 }

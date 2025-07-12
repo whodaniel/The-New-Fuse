@@ -7,15 +7,15 @@ import { MonitoringService } from '../services/monitoring.service';
 export class MonitoringController {
   constructor(private readonly monitoringService: MonitoringService) {}
 
-  @Get('metrics')
-  @ApiOperation({ summary: 'Get system metrics' })
-  async getMetrics() {
-    return this.monitoringService.getMetrics();
+  @Get('memory')
+  @ApiOperation({ summary: 'Get memory items and stats' })
+  async getMemory() {
+    return this.monitoringService.getMemoryItems();
   }
 
-  @Get('health')
-  @ApiOperation({ summary: 'Get system health' })
-  async getHealth() {
-    return this.monitoringService.getHealth();
+  @Get('metrics')
+  @ApiOperation({ summary: 'Get custom metrics: step and memory' })
+  async getCustomMetrics() {
+    return this.monitoringService.getCustomMetrics();
   }
 }

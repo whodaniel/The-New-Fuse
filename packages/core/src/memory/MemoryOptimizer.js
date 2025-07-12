@@ -10,8 +10,11 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MemoryOptimizer_1;
 import { Injectable, Logger } from '@nestjs/common';
 let MemoryOptimizer = MemoryOptimizer_1 = class MemoryOptimizer {
+    logger = new Logger(MemoryOptimizer_1.name);
+    maxMemoryUsage;
+    cleanupThreshold;
+    config;
     constructor() {
-        this.logger = new Logger(MemoryOptimizer_1.name);
         this.maxMemoryUsage = parseInt(process.env.MAX_MEMORY_USAGE || '1000000000'); // 1GB
         this.cleanupThreshold = parseFloat(process.env.CLEANUP_THRESHOLD || '0.8');
         this.config = {

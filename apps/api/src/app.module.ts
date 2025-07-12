@@ -13,6 +13,8 @@ import { CacheService } from './cache/cache.service';
 import { WebsocketGateway } from './websocket/websocket.gateway';
 import { MonitoringService } from './services/monitoring.service';
 import { MonitoringController } from './controllers/monitoring.controller';
+import { LLMProviderController } from './llm/llm-provider.controller';
+import { LLMProviderService } from './llm/llm-provider.service';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -58,7 +60,7 @@ import { MonitoringModule } from './monitoring/monitoring.module';
     SmartAccountModule, // Smart Account (ERC-4337) Module
     MonitoringModule, // Wallet Platform Monitoring
   ],
-  controllers: [AppController, MonitoringController, A2AController],
-  providers: [AppService, CacheService, MonitoringService, WebsocketGateway],
+  controllers: [AppController, MonitoringController, A2AController, LLMProviderController],
+  providers: [AppService, CacheService, MonitoringService, WebsocketGateway, LLMProviderService],
 })
 export class AppModule {}

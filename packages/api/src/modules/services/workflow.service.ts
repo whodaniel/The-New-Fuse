@@ -18,8 +18,8 @@ export class WorkflowService extends BaseService<Workflow> {
   // Change from private to protected to match BaseService
   protected readonly logger = new Logger(WorkflowService.name);
   // Change repository visibility to protected
-  protected readonly repository: WorkflowRepository;
-  private readonly executionRepository: WorkflowExecutionRepository;
+  protected readonly repository: any;
+  private readonly executionRepository: any;
 
   constructor(protected readonly prisma: PrismaService) {
     // Initialize the repository with the prisma client
@@ -77,7 +77,7 @@ export class WorkflowService extends BaseService<Workflow> {
   async getWorkflows(userId: string): Promise<Workflow[]> {
     try {
       const workflows = await this.repository.findAll({ userId });
-      return workflows.map(workflow => this.addRequiredProperties(workflow));
+      return workflows.map((workflow: any) => this.addRequiredProperties(workflow));
     } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflows: ${err.message}`, err.stack); // Use err
@@ -226,7 +226,7 @@ export class WorkflowService extends BaseService<Workflow> {
       });
       
       // Convert status string to the proper enum value
-      return executions.map(execution => this.convertExecutionStatus(execution));
+      return executions.map((execution: any) => this.convertExecutionStatus(execution));
     } catch (error) { // Change to unknown
       const err = toError(error); // Use helper
       this.logger.error(`Error getting workflow executions: ${err.message}`, err.stack); // Use err

@@ -2,6 +2,29 @@ import React, { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select } from '@/components/ui/select';
+
+// Simple placeholder components for demo
+const Container = ({ children, size, className }: any) => (
+  <div className={`container ${size === 'sm' ? 'max-w-sm' : size === 'md' ? 'max-w-md' : size === 'lg' ? 'max-w-lg' : 'max-w-xl'} mx-auto ${className}`}>
+    {children}
+  </div>
+);
+
+const Split = ({ children, direction = 'horizontal', className }: any) => (
+  <div className={`${direction === 'vertical' ? 'flex flex-col' : 'flex'} ${className}`}>
+    {children}
+  </div>
+);
+
+const Sidebar = ({ children, open, collapsed, onClose, className }: any) => (
+  <div className={`bg-gray-100 p-4 ${open ? 'block' : 'hidden'} ${collapsed ? 'w-16' : 'w-64'} ${className}`}>
+    {children}
+    {onClose && <button onClick={onClose} className="mt-2 text-sm">Close</button>}
+  </div>
+);
 // Temporarily using local components instead of ui-consolidated
 // import {
 //   Badge,
@@ -20,6 +43,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
  */
 const ComponentsShowcase: React.FC = () => {
   const [inputValue, setInputValue] = useState('');
+  const [selectValue, setSelectValue] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   
   return (
     <div className="min-h-screen bg-white">
@@ -88,37 +114,43 @@ const ComponentsShowcase: React.FC = () => {
         <section className="mb-12">
           <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Inputs</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="default-input">Default Input</Label>
               <Input 
-                label="Default Input" 
+                id="default-input"
                 placeholder="Enter text here" 
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
               />
             </div>
             
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="disabled-input">Disabled Input</Label>
               <Input 
-                label="Disabled Input" 
+                id="disabled-input"
                 placeholder="This input is disabled" 
                 disabled
               />
             </div>
             
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="error-input">Input with Error</Label>
               <Input 
-                label="Input with Error" 
+                id="error-input"
                 placeholder="Enter text here" 
-                error="This field is required"
+                className="border-red-500"
               />
+              <p className="text-sm text-red-500">This field is required</p>
             </div>
             
-            <div>
+            <div className="space-y-2">
+              <Label htmlFor="success-input">Input with Success</Label>
               <Input 
-                label="Input with Success" 
+                id="success-input"
                 placeholder="Enter text here" 
-                success="Looks good!"
+                className="border-green-500"
               />
+              <p className="text-sm text-green-500">Looks good!</p>
             </div>
           </div>
         </section>

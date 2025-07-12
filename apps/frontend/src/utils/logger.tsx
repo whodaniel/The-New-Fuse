@@ -21,29 +21,47 @@ export class Logger {
   }
 
   private log(level: LogLevel, message: string | Error, options?: LogOptions): void {
-    if (!this.isDevelopment) return;
-
     const formattedMessage = this.formatMessage(level, message instanceof Error ? message.message : message, {
       timestamp: true,
       ...options,
     });
 
-    switch (level) {
-      case 'debug':
-        console.debug(formattedMessage, options?.context || '');
-        break;
-      case 'info':
-        console.info(formattedMessage, options?.context || '');
-        break;
-      case 'warn':
-        console.warn(formattedMessage, options?.context || '');
-        break;
-      case 'error':
-        console.error(formattedMessage, options?.context || '');
-        if (message instanceof Error) {
-          console.error(message.stack);
+    // Enhanced logging with production support
+    const logData = {
+      level,
+      message: message instanceof Error ? message.message : message,
+      context: this.context,
+      timestamp: new Date().toISOString(),
+      ...options?.context,
+      ...(message instanceof Error && { stack: message.stack, error: message.name })
+    };
+
+    // Development logging (detailed)
+    if (this.isDevelopment) {
+      switch (level) {
+        case 'debug':
+          console.debug(formattedMessage, logData);
+          break;
+        case 'info':
+          console.info(formattedMessage, logData);
+          break;
+        case 'warn':
+          console.warn(formattedMessage, logData);
+          break;
+        case 'error':
+          console.error(formattedMessage, logData);
+          break;
+      }
+    } else {
+      // Production logging (errors and warns only, structured)
+      if (level === 'error' || level === 'warn') {
+        console[level](JSON.stringify(logData));
+        
+        // Send to monitoring service if available
+        if (typeof window !== 'undefined' && (window as any).monitoring) {
+          (window as any).monitoring.log(logData);
         }
-        break;
+      }
     }
   }
 

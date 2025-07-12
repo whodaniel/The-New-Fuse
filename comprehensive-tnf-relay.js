@@ -81,6 +81,13 @@ class ComprehensiveTNFRelay {
             enabled: true,
             target: 'claude_desktop'
         });
+
+        this.interceptRules.set('api.gemini.com', {
+            action: 'intercept_and_route',
+            description: 'Gemini API calls',
+            enabled: true,
+            target: 'gemini'
+        });
     }
 
     setupMCPServer() {
@@ -356,6 +363,17 @@ class ComprehensiveTNFRelay {
             });
         });
 
+        // Add health endpoint for consistency
+        app.get('/health', (req, res) => {
+            res.json({
+                status: 'ok',
+                port: this.ports.http,
+                version: this.version,
+                timestamp: new Date().toISOString(),
+                relay: this.relayId
+            });
+        });
+
         app.get('/agents', (req, res) => {
             res.json({ agents: Array.from(this.agents.values()) });
         });
@@ -380,8 +398,17 @@ class ComprehensiveTNFRelay {
 
         app.post('/setup/claude-code-env', async (req, res) => {
             try {
-                await this.setupClaudeCodeEnvironment();
+                await this.setupLLMCodeEnvironment('Claude', 'claude');
                 res.json({ success: true, message: 'Claude Code environment configured' });
+            } catch (error) {
+                res.status(500).json({ error: error.message });
+            }
+        });
+
+        app.post('/setup/gemini-code-env', async (req, res) => {
+            try {
+                await this.setupLLMCodeEnvironment('Gemini', 'gemini');
+                res.json({ success: true, message: 'Gemini Code environment configured' });
             } catch (error) {
                 res.status(500).json({ error: error.message });
             }
@@ -468,9 +495,30 @@ class ComprehensiveTNFRelay {
 
     async startUIServer() {
         const app = express();
+        
+        // Add CORS headers for UI server
+        app.use((req, res, next) => {
+            res.header('Access-Control-Allow-Origin', '*');
+            res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+            res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+            next();
+        });
+        
+        // Health endpoint for UI server
+        app.get('/health', (req, res) => {
+            res.json({
+                status: 'ok',
+                port: this.ports.ui,
+                service: 'TNF UI Server',
+                timestamp: new Date().toISOString()
+            });
+        });
+        
         app.use(express.static(path.join(__dirname, 'ui-build')));
         
         app.get('*', (req, res) => {
+            // Don't serve HTML for health endpoint
+            if (req.path === '/health') return;
             res.sendFile(path.join(__dirname, 'ui-build', 'index.html'));
         });
 
@@ -502,6 +550,16 @@ class ComprehensiveTNFRelay {
             }
         }
         return false;
+    }
+
+    getInterceptRule(url) {
+        const hostname = new URL(url).hostname;
+        for (const [rule, config] of this.interceptRules) {
+            if (config.enabled && hostname.includes(rule)) {
+                return config;
+            }
+        }
+        return null;
     }
 
     async interceptHTTPRequest(req, res, requestUrl) {
@@ -554,8 +612,14 @@ class ComprehensiveTNFRelay {
 
             this.interceptedMessages.push(messageEntry);
 
-            const claudeMessage = await this.formatForClaudeDesktop(interceptData);
-            await this.routeToClaudeDesktop(claudeMessage, interceptData);
+            const rule = this.getInterceptRule(interceptData.url);
+            if (rule && rule.target === 'gemini') {
+                const geminiMessage = await this.formatForClaudeDesktop(interceptData); // Using same format for now
+                await this.routeToGemini(geminiMessage, interceptData);
+            } else {
+                const claudeMessage = await this.formatForClaudeDesktop(interceptData);
+                await this.routeToClaudeDesktop(claudeMessage, interceptData);
+            }
 
             await this.log(`Processed intercepted request: ${messageEntry.id}`);
 
@@ -619,7 +683,33 @@ class ComprehensiveTNFRelay {
         }
     }
 
-    async setupClaudeCodeEnvironment() {
+    async routeToGemini(geminiMessage, interceptData) {
+        try {
+            const geminiSocket = new WebSocket('ws://localhost:3713');
+
+            geminiSocket.on('open', () => {
+                const message = {
+                    type: 'API_INTERCEPT',
+                    payload: {
+                        geminiMessage,
+                        interceptData
+                    }
+                };
+                geminiSocket.send(JSON.stringify(message));
+                this.log('Message sent to Gemini MCP Server');
+                geminiSocket.close();
+            });
+
+            geminiSocket.on('error', (error) => {
+                this.log(`Error connecting to Gemini MCP Server: ${error.message}`, 'ERROR');
+            });
+
+        } catch (error) {
+            await this.log(`Error routing to Gemini MCP Server: ${error.message}`, 'ERROR');
+        }
+    }
+
+    async setupLLMCodeEnvironment(llmName, commandName) {
         try {
             const envScript = `#!/bin/bash
 export HTTP_PROXY="http://localhost:${this.ports.proxy}"
@@ -629,26 +719,26 @@ export https_proxy="$HTTPS_PROXY"
 export NODE_TLS_REJECT_UNAUTHORIZED=0
 export TNF_INTERCEPT_ACTIVE=1
 
-claude_with_tnf() {
-    echo "[$(date)] Claude Code: $*" >> "${this.workspaceDir}/claude-code-activity.log"
-    command claude "$@"
+${commandName}_with_tnf() {
+    echo "[$(date)] ${llmName} Code: $*" >> "${this.workspaceDir}/${llmName.toLowerCase()}-code-activity.log"
+    command ${commandName} "$@"
 }
 
-alias claude='claude_with_tnf'
-alias claude-original='command claude'
+alias ${commandName}='${commandName}_with_tnf'
+alias ${commandName}-original='command ${commandName}'
 
-echo "🔧 TNF Claude Code environment loaded"
+echo "🔧 TNF ${llmName} Code environment loaded"
 echo "💡 Proxy: $HTTP_PROXY"
 `;
 
-            const envPath = path.join(process.env.HOME, '.tnf-claude-env');
+            const envPath = path.join(process.env.HOME, `.tnf-${llmName.toLowerCase()}-env`);
             await fs.writeFile(envPath, envScript);
             
-            await this.log(`Created Claude Code environment script: ${envPath}`);
+            await this.log(`Created ${llmName} Code environment script: ${envPath}`);
             return envPath;
 
         } catch (error) {
-            await this.log(`Error setting up Claude Code environment: ${error.message}`, 'ERROR');
+            await this.log(`Error setting up ${llmName} Code environment: ${error.message}`, 'ERROR');
             throw error;
         }
     }
@@ -869,7 +959,7 @@ echo "💡 Proxy: $HTTP_PROXY"
             target
         });
 
-        await this.log(`MCP: Added intercept rule for ${hostname} -> ${action}`);
+        await this.log(`MCP: Added intercept rule for ${hostname} -> ${action} (target: ${target})`);
 
         return {
             content: [
@@ -1051,6 +1141,21 @@ if (require.main === module) {
                     await new Promise(() => {});
                 } else {
                     console.error('❌ Failed to start TNF Relay');
+                    process.exit(1);
+                }
+                break;
+                
+            case '--mcp':
+                const mcpStarted = await relay.startMCPServer();
+                if (mcpStarted) {
+                    // Keep the process running for MCP stdio communication
+                    process.on('SIGINT', async () => {
+                        await relay.stop();
+                        process.exit(0);
+                    });
+                    await new Promise(() => {});
+                } else {
+                    console.error('❌ Failed to start MCP Server');
                     process.exit(1);
                 }
                 break;

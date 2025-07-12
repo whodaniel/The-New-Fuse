@@ -1,4 +1,1 @@
-import { Task, TaskMetadata, TaskStatusType  } from '';
-  offset?: number'
-  orderBy?: string'
-  order?:ASC'
+import { Task, TaskMetadata, TaskStatusType } from '@the-new-fuse/database';

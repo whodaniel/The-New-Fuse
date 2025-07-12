@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { AgentNFT, FractionalShare, RevenueStream, MarketplaceListing } from '@prisma/client';
+import { AgentNFT, FractionalShare, RevenueStream, MarketplaceListing } from '@the-new-fuse/database/generated/prisma';
 import { ethers, BigNumber } from 'ethers';
 
 export interface MintAgentNftDto {

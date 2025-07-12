@@ -10,12 +10,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var MemoryLeakDetector_1;
 import { Injectable, Logger } from '@nestjs/common';
 let MemoryLeakDetector = MemoryLeakDetector_1 = class MemoryLeakDetector {
+    logger = new Logger(MemoryLeakDetector_1.name);
+    config;
+    memoryProfiles = [];
+    warnings = [];
+    samplingInterval = null;
+    isMonitoring = false;
     constructor() {
-        this.logger = new Logger(MemoryLeakDetector_1.name);
-        this.memoryProfiles = [];
-        this.warnings = [];
-        this.samplingInterval = null;
-        this.isMonitoring = false;
         this.config = {
             samplingInterval: parseInt(process.env.MEMORY_SAMPLING_INTERVAL || '30000'), // 30 seconds
             memoryThreshold: parseInt(process.env.MEMORY_THRESHOLD || '1073741824'), // 1GB

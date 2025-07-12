@@ -1,4 +1,8 @@
 import { BaseEntity } from './core/base-types';
+import { AgentCapability, AgentStatus, AgentRole } from './core/enums';
+
+// Re-export the enums for external use
+export { AgentCapability, AgentStatus, AgentRole };
 
 export enum AgentType {
   BASIC = "BASIC",
@@ -6,32 +10,6 @@ export enum AgentType {
   WORKFLOW = "WORKFLOW",
   TASK = "TASK",
   ASSISTANT = "ASSISTANT"
-}
-
-export enum AgentStatus {
-  ACTIVE = "ACTIVE",
-  INACTIVE = "INACTIVE",
-  IDLE = "IDLE",
-  BUSY = "BUSY",
-  ERROR = "ERROR"
-}
-
-export enum AgentRole {
-  USER = "USER",
-  ASSISTANT = "ASSISTANT",
-  SYSTEM = "SYSTEM",
-  OPTIMIZATION = "OPTIMIZATION"
-}
-
-export enum AgentCapability {
-  CHAT = "CHAT",
-  CODE_GENERATION = "CODE_GENERATION",
-  FILE_MANAGEMENT = "FILE_MANAGEMENT",
-  DATA_ANALYSIS = "DATA_ANALYSIS",
-  WORKFLOW_EXECUTION = "WORKFLOW_EXECUTION",
-  API_INTEGRATION = "API_INTEGRATION",
-  MONITORING = "MONITORING",
-  AUTOMATION = "AUTOMATION"
 }
 
 // Changed from interface to class that implements BaseEntity
@@ -44,7 +22,7 @@ export class Agent implements BaseEntity {
   status: AgentStatus;
   description?: string;
   systemPrompt?: string;
-  capabilities?: AgentCapabilityConfig[];
+  capabilities?: AgentCapability[];
   configuration?: unknown;
 
   constructor(data: Partial<Agent>) {
@@ -67,7 +45,7 @@ export class CreateAgentDto {
   type: AgentType;
   description?: string;
   systemPrompt?: string;
-  capabilities?: AgentCapabilityConfig[];
+  capabilities?: AgentCapability[];
   configuration?: unknown;
   metadata?: unknown;
   role?: AgentRole;
@@ -91,7 +69,7 @@ export class UpdateAgentDto {
   name?: string;
   description?: string;
   systemPrompt?: string;
-  capabilities?: AgentCapabilityConfig[];
+  capabilities?: AgentCapability[];
   configuration?: unknown;
   status?: AgentStatus;
   metadata?: unknown;
@@ -117,7 +95,7 @@ export class AgentResponseDto {
   type: AgentType;
   description?: string;
   status: AgentStatus;
-  capabilities?: AgentCapabilityConfig[];
+  capabilities?: AgentCapability[];
   provider?: string;
   lastActive?: Date;
   metadata?: unknown;
@@ -139,8 +117,3 @@ export class AgentResponseDto {
   }
 }
 
-export interface AgentCapabilityConfig {
-  name: string;
-  description?: string;
-  parameters?: unknown;
-}

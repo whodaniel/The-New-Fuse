@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthCheck, HealthCheckResult } from '@nestjs/terminus';
-import { RedisService } from '@core/redis/redis.service.ts';
+import { RedisService } from '@the-new-fuse/core';
 
 @Injectable()
 export class RedisHealthIndicator extends HealthIndicator {

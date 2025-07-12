@@ -104,7 +104,7 @@ code --install-extension the-new-fuse-*.vsix
 1. Open Chrome and navigate to `chrome://extensions/`
 2. Enable "Developer mode" in the top right
 3. Click "Load unpacked"
-4. Select the `src/chrome-extension` directory
+4. Select the `chrome-extension/dist` directory
 5. The extension will be loaded and ready to use
 
 #### Production Installation

@@ -20,11 +20,13 @@ export var AgentStatus;
     AgentStatus["STOPPED"] = "stopped";
 })(AgentStatus || (AgentStatus = {}));
 let AgentManager = AgentManager_1 = class AgentManager {
+    agentProcessor;
+    communicationManager;
+    logger = new Logger(AgentManager_1.name);
+    agents = new Map();
     constructor(agentProcessor, communicationManager) {
         this.agentProcessor = agentProcessor;
         this.communicationManager = communicationManager;
-        this.logger = new Logger(AgentManager_1.name);
-        this.agents = new Map();
     }
     async createAgent(config) {
         try {

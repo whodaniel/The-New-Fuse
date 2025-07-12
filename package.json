@@ -39,6 +39,7 @@
     "analyze:circular": "bunx madge --circular apps/api/src",
     "audit": "bun audit",
     "mcp:api-wrapper": "node --loader tsx/esm src/mcp/complete-api-mcp-server.ts",
+    "dev:gemini-mcp": "node apps/mcp-servers/gemini-mcp-server.js",
     "mcp:test-wrapper": "echo '{\"method\":\"tools/list\"}' | node --loader tsx/esm src/mcp/complete-api-mcp-server.ts"
   },
   "devDependencies": {

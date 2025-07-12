@@ -1,16 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from '@core/redis/redis.service';
-import { QueueService } from '@core/redis/queue.service';
-import { PubSubService } from '@core/redis/pubsub.service';
-import { REDIS_CHANNELS, REDIS_QUEUES } from '@core/config/redis.config';
+import { RedisService, REDIS_CHANNELS, REDIS_QUEUES } from '@the-new-fuse/core';
+// Note: QueueService and PubSubService may need to be implemented or imported differently
 
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
   constructor(
     private readonly redis: RedisService,
-    private readonly queue: QueueService,
-    private readonly pubsub: PubSubService,
+    // private readonly queue: QueueService, // TODO: Implement QueueService
+    // private readonly pubsub: PubSubService, // TODO: Implement PubSubService
   ) {}
 
   async createTask(data: any): Promise<string> {
@@ -20,18 +18,18 @@ export class TaskService {
     await this.redis.set(taskId, JSON.stringify(data));
     
     // Add to processing queue
-    await this.queue.enqueue(REDIS_QUEUES.TASK_QUEUE, {
-      id: taskId,
-      data,
-      timestamp: new Date().toISOString(),
-    });
+    // await this.queue.enqueue(REDIS_QUEUES.TASK_QUEUE, {
+    //   id: taskId,
+    //   data,
+    //   timestamp: new Date().toISOString(),
+    // });
     
     // Notify subscribers
-    await this.pubsub.publish(REDIS_CHANNELS.TASK_UPDATES, {
-      type: 'TASK_CREATED',
-      taskId,
-      data,
-    });
+    // await this.pubsub.publish(REDIS_CHANNELS.TASK_UPDATES, {
+    //   type: 'TASK_CREATED',
+    //   taskId,
+    //   data,
+    // });
     
     return taskId;
   }

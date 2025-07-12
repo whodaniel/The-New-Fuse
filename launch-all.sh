@@ -90,9 +90,10 @@ echo -e "${YELLOW}Starting Docker services...${NC}"
 docker compose down --remove-orphans
 docker compose up -d
 
-# Step 7: Launch WebSocket server for communication
-echo -e "\n${CYAN}${BOLD}STEP 7: LAUNCHING WEBSOCKET SERVER${NC}"
-echo -e "${YELLOW}Starting WebSocket server...${NC}"
+# Step 7: Launch TEST WebSocket server for client development
+echo -e "\n${CYAN}${BOLD}STEP 7: LAUNCHING TEST WEBSOCKET SERVER${NC}"
+echo -e "${YELLOW}Starting standalone test server on port 3711...${NC}"
+echo -e "${YELLOW}(Note: This is for client-side testing. The primary server runs inside the VS Code extension on port 3710.)${NC}"
 cd "$SCRIPT_DIR"
 node test-websocket-server-3711.cjs &
 WEBSOCKET_PID=$!

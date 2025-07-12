@@ -1,42 +1,47 @@
 import { Injectable } from '@nestjs/common';
-import { Workflow, WorkflowStatus, WorkflowExecutionStatus } from '../types';
+import { Workflow, WorkflowStatus, WorkflowExecutionStatus, WorkflowExecution, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 
 @Injectable()
-export class WorkflowRepository extends BaseRepository<Workflow> {
+export class WorkflowRepository extends BaseRepository<Workflow, Prisma.WorkflowCreateInput, Prisma.WorkflowUpdateInput, Prisma.WorkflowWhereInput> {
   constructor(prisma: PrismaService) {
-    super(prisma);
+    super(prisma, 'workflow');
   }
 
   // Helper method to convert Prisma Workflow to App Workflow
-  private convertPrismaToApp(prismaWorkflow: any): Workflow {
+  private convertPrismaToApp(prismaWorkflow: Workflow & { executions?: WorkflowExecution[], steps?: any[], agent?: any, user?: any }): any {
     return {
       id: prismaWorkflow.id,
       name: prismaWorkflow.name,
-      description: prismaWorkflow.description || undefined,
-      status: prismaWorkflow.status,
+      description: prismaWorkflow.description ?? null,
       definition: prismaWorkflow.definition,
+      version: prismaWorkflow.version,
+      isEnabled: prismaWorkflow.isEnabled,
+      status: prismaWorkflow.status,
       createdAt: prismaWorkflow.createdAt,
       updatedAt: prismaWorkflow.updatedAt,
-      executions: prismaWorkflow.executions ? prismaWorkflow.executions.map((exec: any) => this.convertExecutionPrismaToApp(exec)) : undefined
-    } as Workflow;
+      lastExecutedAt: prismaWorkflow.lastExecutedAt ?? null,
+      agentId: prismaWorkflow.agentId ?? null,
+      userId: prismaWorkflow.userId ?? null,
+      executions: prismaWorkflow.executions?.map((exec: any) => this.convertExecutionPrismaToApp(exec)) ?? [],
+      steps: prismaWorkflow.steps?.map((step) => ({ ...step })) ?? [],
+    };
   }
 
   // Helper method to convert Prisma WorkflowExecution to App WorkflowExecution
-  private convertExecutionPrismaToApp(prismaExecution: any): any {
+  private convertExecutionPrismaToApp(prismaExecution: WorkflowExecution): WorkflowExecution {
     return {
       id: prismaExecution.id,
       workflowId: prismaExecution.workflowId,
       status: prismaExecution.status,
-      input: prismaExecution.input || undefined,
-      output: prismaExecution.output || undefined,
-      error: prismaExecution.error || undefined,
-      startedAt: prismaExecution.startedAt || undefined,
-      finishedAt: prismaExecution.finishedAt || undefined,
+      input: prismaExecution.input ?? null,
+      output: prismaExecution.output ?? null,
+      error: prismaExecution.error ?? null,
+      startedAt: prismaExecution.startedAt,
+      completedAt: prismaExecution.completedAt ?? null,
       createdAt: prismaExecution.createdAt,
       updatedAt: prismaExecution.updatedAt,
-      workflow: prismaExecution.workflow ? this.convertPrismaToApp(prismaExecution.workflow) : undefined
     };
   }
 
@@ -49,22 +54,21 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
             startedAt: 'desc'
           },
           take: 10
-        }
+        },
+        agent: true,
+        user: true,
       }
     });
     return result ? this.convertPrismaToApp(result) : null;
   }
 
-  async findMany(filters?: any): Promise<Workflow[]> {
-    const where = this.buildWhereClause(filters);
+  async findMany(filters?: Prisma.WorkflowWhereInput): Promise<Workflow[]> {
     const results = await this.prisma.workflow.findMany({
-      where,
+      where: filters,
       include: {
-        _count: {
-          select: {
-            executions: true
-          }
-        }
+        executions: true,
+        agent: true,
+        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -73,17 +77,19 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     return results.map(workflow => this.convertPrismaToApp(workflow));
   }
 
-  async create(data: any): Promise<Workflow> {
+  async create(data: Prisma.WorkflowCreateInput): Promise<Workflow> {
     const result = await this.prisma.workflow.create({
       data,
       include: {
-        executions: true
+        executions: true,
+        agent: true,
+        user: true,
       }
     });
     return this.convertPrismaToApp(result);
   }
 
-  async update(id: string, data: any): Promise<Workflow> {
+  async update(id: string, data: Prisma.WorkflowUpdateInput): Promise<Workflow> {
     const result = await this.prisma.workflow.update({
       where: { id },
       data: {
@@ -91,7 +97,9 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
         updatedAt: new Date()
       },
       include: {
-        executions: true
+        executions: true,
+        agent: true,
+        user: true,
       }
     });
     return this.convertPrismaToApp(result);
@@ -104,76 +112,43 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     return this.convertPrismaToApp(result);
   }
 
-  // Additional methods required by BaseRepository pattern
-  async findOne(filter?: any, include?: any): Promise<Workflow | null> {
-    const where = this.buildWhereClause(filter);
-    const result = await this.prisma.workflow.findFirst({ 
-      where, 
-      include: include || {
-        executions: {
-          orderBy: {
-            startedAt: 'desc'
-          },
-          take: 10
-        }
-      }
-    });
-    return result ? this.convertPrismaToApp(result) : null;
-  }
-
-  async findAll(filter?: any, include?: any, orderBy?: any, skip?: number, take?: number): Promise<Workflow[]> {
-    const where = this.buildWhereClause(filter);
-    const paginationOptions = this.getPaginationOptions(skip ? Math.floor(skip / (take || 100)) + 1 : undefined, take);
-    const sortOptions = this.getSortOptions(orderBy?.field, orderBy?.direction);
-    
+  async findByUserId(userId: string): Promise<Workflow[]> {
     const results = await this.prisma.workflow.findMany({
-      where,
-      include: include || {
-        _count: {
-          select: {
-            executions: true
-          }
-        }
+      where: { userId },
+      include: {
+        executions: true,
+        agent: true,
+        user: true,
       },
-      orderBy: sortOptions.orderBy || { updatedAt: 'desc' },
-      skip: paginationOptions.skip,
-      take: paginationOptions.take
+      orderBy: {
+        updatedAt: 'desc'
+      }
     });
     return results.map(workflow => this.convertPrismaToApp(workflow));
   }
 
-  async count(filter?: any): Promise<number> {
-    const where = this.buildWhereClause(filter);
-    return this.prisma.workflow.count({ where });
-  }
-
-  protected async countTotal(where: any): Promise<number> {
-    return this.prisma.workflow.count({ where });
-  }
-
-  // Note: Workflow model doesn't have userId field in current schema
-  // This method is kept for compatibility but will return empty array
-  async findByUserId(_userId: string): Promise<Workflow[]> {
-    // Since there's no userId field in Workflow, return empty array
-    return [];
-  }
-
-  // Note: Workflow model doesn't have agentId field in current schema
-  // This method is kept for compatibility but will return empty array
-  async findByAgentId(_agentId: string): Promise<Workflow[]> {
-    // Since there's no agentId field in Workflow, return empty array
-    return [];
+  async findByAgentId(agentId: string): Promise<Workflow[]> {
+    const results = await this.prisma.workflow.findMany({
+      where: { agentId },
+      include: {
+        executions: true,
+        agent: true,
+        user: true,
+      },
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    });
+    return results.map(workflow => this.convertPrismaToApp(workflow));
   }
 
   async findByStatus(status: WorkflowStatus): Promise<Workflow[]> {
     const results = await this.prisma.workflow.findMany({
-      where: { status: status as any },
+      where: { status },
       include: {
-        _count: {
-          select: {
-            executions: true
-          }
-        }
+        executions: true,
+        agent: true,
+        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -186,18 +161,18 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     const result = await this.prisma.workflow.update({
       where: { id },
       data: {
-        status: status as any,
+        status,
         updatedAt: new Date()
       },
       include: {
-        executions: true
+        executions: true,
+        agent: true,
+        user: true,
       }
     });
     return this.convertPrismaToApp(result);
   }
 
-  // Note: WorkflowStep model doesn't exist in current schema
-  // Steps are stored in the definition JSON field
   async addStep(workflowId: string, stepData: any): Promise<any> {
     const workflow = await this.prisma.workflow.findUnique({
       where: { id: workflowId }
@@ -223,8 +198,6 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     return this.convertPrismaToApp(result);
   }
 
-  // Note: WorkflowStep model doesn't exist in current schema
-  // Steps are stored in the definition JSON field
   async removeStep(workflowId: string, stepId: string): Promise<any> {
     const workflow = await this.prisma.workflow.findUnique({
       where: { id: workflowId }
@@ -250,8 +223,6 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
     return this.convertPrismaToApp(result);
   }
 
-  // Note: WorkflowStep model doesn't exist in current schema
-  // Steps are stored in the definition JSON field
   async reorderSteps(workflowId: string, stepOrders: Array<{ id: string; order: number }>): Promise<void> {
     const workflow = await this.prisma.workflow.findUnique({
       where: { id: workflowId }
@@ -293,7 +264,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 
     const activeWorkflows = await this.prisma.workflow.count({
       where: {
-        status: WorkflowStatus.ACTIVE as any
+        status: WorkflowStatus.ACTIVE
       }
     });
 
@@ -309,7 +280,7 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
 
     const successfulExecutions = await this.prisma.workflowExecution.count({
       where: {
-        status: WorkflowExecutionStatus.SUCCEEDED as any
+        status: WorkflowExecutionStatus.SUCCEEDED
       }
     });
 
@@ -349,11 +320,9 @@ export class WorkflowRepository extends BaseRepository<Workflow> {
         ]
       },
       include: {
-        _count: {
-          select: {
-            executions: true
-          }
-        }
+        executions: true,
+        agent: true,
+        user: true,
       },
       orderBy: {
         updatedAt: 'desc'

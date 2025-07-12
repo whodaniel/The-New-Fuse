@@ -1,13 +1,48 @@
-import { DurableObject } from ';@cloudflare/workers-types';
-import { openai } from /;@ai-sdk/openai'';
-interface Message { role: 'user' | 'assistant' | '
-    const messages: Message[] = [...state.messages, { role: 'user', content: '';
-    const stream = await streamText({ model: this.openai('gpt-4';
-    for await (const chunk of stream) { if (chunk.type === 'text'';
-      } else if (chunk.type === '';
-      await this.sendMessage({ type: ''
-    await this.sendMessage({ type: ''
-    throw new Error('');
-    throw new Error('');
-    throw new Error('');
-    throw new Error('');
+import { DurableObject } from '@cloudflare/workers-types';
+
+interface Message {
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+}
+
+interface AgentState {
+  messages: Message[];
+  status: string;
+}
+
+export class CloudflareAgentServer extends DurableObject {
+  private state: AgentState = {
+    messages: [],
+    status: 'idle'
+  };
+
+  async handleMessage(content: string): Promise<string> {
+    try {
+      const userMessage: Message = { role: 'user', content };
+      this.state.messages.push(userMessage);
+      
+      // Process the message (placeholder implementation)
+      const response = `Processed: ${content}`;
+      
+      const assistantMessage: Message = { role: 'assistant', content: response };
+      this.state.messages.push(assistantMessage);
+      
+      return response;
+    } catch (error) {
+      throw new Error(`Failed to handle message: ${(error as Error).message}`);
+    }
+  }
+
+  async getState(): Promise<AgentState> {
+    return this.state;
+  }
+
+  async updateStatus(status: string): Promise<void> {
+    this.state.status = status;
+  }
+
+  async sendMessage(message: any): Promise<void> {
+    // Send message implementation
+    console.log('Sending message:', message);
+  }
+}

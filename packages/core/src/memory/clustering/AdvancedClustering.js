@@ -12,10 +12,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { VectorMemoryCache } from '../cache/VectorMemoryCache';
 let AdvancedClustering = AdvancedClustering_1 = class AdvancedClustering {
+    configService;
+    vectorCache;
+    logger = new Logger(AdvancedClustering_1.name);
+    defaultConfig;
     constructor(configService, vectorCache) {
         this.configService = configService;
         this.vectorCache = vectorCache;
-        this.logger = new Logger(AdvancedClustering_1.name);
         this.defaultConfig = {
             algorithm: 'kmeans',
             numClusters: 5,

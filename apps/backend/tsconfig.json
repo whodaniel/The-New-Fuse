@@ -13,16 +13,10 @@
     "paths": {
       "@/*": ["src/*"],
       "@app/*": ["src/app/*"],
-      "@modules/*": ["src/modules/*"],
-      "@core/*": ["../../packages/core/src/*"]
+      "@modules/*": ["src/modules/*"]
     }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"],
-  "references": [
-    { "path": "../../packages/types" },
-    { "path": "../../packages/utils" },
-    { "path": "../../packages/database" },
-    { "path": "../../packages/core" }
-  ]
+  "references": []
 }

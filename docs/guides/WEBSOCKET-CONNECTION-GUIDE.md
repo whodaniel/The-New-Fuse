@@ -1,6 +1,8 @@
 # WebSocket Connection Guide
 
-This guide provides instructions for fixing the WebSocket connection issue between the Chrome extension and the VSCode extension.
+This guide provides instructions for testing the WebSocket connection between the Chrome extension and its backend services.
+
+**Note on Ports:** The primary VS Code extension WebSocket server runs on port **3710**. For isolated testing, a standalone test server is provided on port **3711**. This guide focuses on the test server.
 
 ## The Issue
 
@@ -44,7 +46,7 @@ Once the WebSocket server is running, you can test the connection with the Chrom
 1. Load the Chrome extension in Chrome:
    - Go to `chrome://extensions/`
    - Enable "Developer mode"
-   - Click "Load unpacked" and select the `chrome-extension` directory
+   - Click "Load unpacked" and select the `chrome-extension/dist` directory
 
 2. Click on the extension icon to open the popup
 3. The extension should automatically try to connect to the WebSocket server

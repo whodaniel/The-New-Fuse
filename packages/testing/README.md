@@ -1,107 +1,87 @@
-# @the-new-fuse/testing
+# Automated Testing Suite for Agent Workflows
 
-Testing utilities for The New Fuse platform.
+Comprehensive integration testing framework for The New Fuse agent workflow pipeline with advanced test orchestration, scheduling, and analytics.
 
 ## Overview
 
-This package provides testing utilities for The New Fuse platform, including:
+This package provides a complete automated testing solution for agent workflows, including:
 
-- Artifact generation and management
-- Custom Jest matchers
-- Test data generators
-- Performance testing utilities
-- Contract testing tools
+- **Integration tests** for entire agent workflow pipeline
+- **Test orchestration** with parallel execution and scheduling
+- **Performance testing** under load conditions
+- **Error handling** and recovery mechanism testing
+- **Agent communication** (A2A protocol) testing
+- **Test analytics** and comprehensive reporting
+- **CI/CD integration** with automated test scheduling
+
+## Features
+
+### 🔄 **Comprehensive Test Scenarios**
+- Agent registration and discovery
+- Simple and complex workflow execution
+- Parallel task processing
+- Agent-to-Agent communication
+- Error handling and recovery
+- Load and performance testing
+
+### 🚀 **Advanced Test Orchestration**
+- Parallel test execution
+- Configurable timeout and retry mechanisms
+- Test scheduling with cron expressions
+- Real-time test monitoring
+- Automated cleanup and data management
+
+### 📊 **Analytics and Reporting**
+- Test success/failure analytics
+- Performance trend analysis
+- Detailed test reports with recommendations
+- Historical data tracking
+- Top failure identification
+
+### 🔧 **Integration Points**
+- Redis cache testing
+- Job queue performance validation
+- WebSocket connection testing
+- A2A protocol efficiency testing
+- Database performance monitoring
+
+## Architecture
+
+```
+packages/testing/
+├── src/
+│   ├── agent-workflow.test-suite.ts    # Core test scenarios
+│   ├── test-runner.service.ts          # Test orchestration service
+│   ├── test-runner.controller.ts       # REST API endpoints
+│   └── testing.module.ts               # NestJS module configuration
+├── e2e/                                # End-to-end tests
+├── performance/                        # Performance testing
+└── docs/                               # Testing documentation
+```
 
 ## Installation
 
 ```bash
-bun add -D @the-new-fuse/testing
+npm install
 ```
 
-## Usage
+## Configuration
 
-### Artifact Generation
+Set the following environment variables:
 
-```typescript
-import { artifactManager } from '@the-new-fuse/testing';
+```env
+# Test Configuration
+TEST_TIMEOUT=300000
+TEST_RETRY_ATTEMPTS=3
+TEST_PARALLEL=true
+TEST_MAX_CONCURRENT=3
+TEST_ENVIRONMENT=development
+TEST_CLEANUP=true
+TEST_VERBOSE=false
 
-describe('My Test Suite', () => {
-  it('should generate an artifact', () => {
-    // Test code...
-    
-    // Generate an artifact
-    const artifactPath = artifactManager.createArtifact({
-      name: 'test-result',
-      content: { foo: 'bar', baz: 123 },
-      metadata: {
-        testName: 'should generate an artifact',
-        category: 'example'
-      }
-    });
-    
-    console.log(`Artifact generated: ${artifactPath}`);
-  });
-  
-  it('should create a snapshot', () => {
-    const data = { user: { id: 123, name: 'Test User' } };
-    
-    // Create a snapshot
-    artifactManager.createSnapshot('user-data', data);
-  });
-  
-  it('should create a log', () => {
-    const logEntries = [
-      { level: 'info', message: 'Test started' },
-      { level: 'debug', message: 'Processing data' },
-      { level: 'info', message: 'Test completed' }
-    ];
-    
-    // Create a log
-    artifactManager.createLog('test-log', logEntries);
-  });
-});
+# Redis Test Database
+REDIS_TEST_DB=15
+
+# Test Scheduling
+TEST_SCHEDULE_ENABLED=true
 ```
-
-### Custom Jest Matchers
-
-```typescript
-import { artifactMatchers } from '@the-new-fuse/testing';
-
-// Extend Jest's expect
-expect.extend(artifactMatchers);
-
-describe('Custom Matchers', () => {
-  it('should generate an artifact using a matcher', () => {
-    const result = { success: true, data: [1, 2, 3] };
-    
-    // Generate artifact using the matcher
-    expect(result).toGenerateArtifact('test-result');
-  });
-});
-```
-
-## API Reference
-
-### ArtifactManager
-
-The `ArtifactManager` class provides methods for generating and managing test artifacts.
-
-#### Methods
-
-- `createArtifact(options)`: Create a new artifact
-- `createSnapshot(name, data, metadata)`: Create a snapshot artifact
-- `createLog(name, entries, metadata)`: Create a log artifact
-- `createReport(name, data, metadata)`: Create a report artifact
-- `listArtifacts()`: List all artifacts for the current run
-- `getArtifact(name)`: Get an artifact by name
-
-## Contributing
-
-1. Create a feature branch: `git checkout -b feature/my-feature`
-2. Make your changes
-3. Run tests: `bun test`
-4. Submit a pull request
-
-## License
-
-MIT

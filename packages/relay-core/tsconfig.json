@@ -10,7 +10,13 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "composite": true,
-    "declaration": true
+    "declaration": true,
+    "baseUrl": ".",
+    "paths": {
+      "@the-new-fuse/database": ["../database/dist"],
+      "@the-new-fuse/database/*": ["../database/dist/*"]
+    },
+    "types": ["node"]
   },
   "include": ["src/**/*"]
 }

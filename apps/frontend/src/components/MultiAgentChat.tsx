@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback, createContext, useContext } from 'react';
-import { initializeApp } from "firebase/app";
+import app from '../lib/firebase';
 import { 
     getAuth, 
     signInAnonymously, 
@@ -200,23 +200,13 @@ const AppProvider = ({ children }) => {
 
     // --- Firebase Initialization ---
     useEffect(() => {
-        setLogLevel('debug');
-        const firebaseConfig = {
-            apiKey: process.env.REACT_APP_FIREBASE_API_KEY || "",
-            authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN || "",
-            projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID || "",
-            storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET || "",
-            messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || "",
-            appId: process.env.REACT_APP_FIREBASE_APP_ID || ""
-        };
-
-        if (!firebaseConfig.apiKey) {
-             setIsDataLoading(false);
-             setMessages([{ id: 'welcome-msg', text: "Welcome! Firebase not configured. Create agents to begin.", sender: 'system' }]);
-             return;
-        }
-
-        const app = initializeApp(firebaseConfig);
+        // Fallback mode without Firebase for now
+        setIsDataLoading(false);
+        setMessages([
+            { id: 'welcome-msg', text: "🎉 Welcome to Multi-Agent Chat! This is a demo mode.", sender: 'system' },
+            { id: 'demo-msg', text: "Firebase integration is available but currently in fallback mode. You can create agents and chat in demo mode.", sender: 'system' }
+        ]);
+        return;
         const firestoreDb = getFirestore(app);
         const firebaseAuth = getAuth(app);
         setDb(firestoreDb);

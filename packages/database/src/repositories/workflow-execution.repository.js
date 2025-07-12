@@ -8,57 +8,36 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@nestjs/common';
-import { WorkflowExecutionStatus } from '../types';
+import { WorkflowExecutionStatus } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
 let WorkflowExecutionRepository = class WorkflowExecutionRepository extends BaseRepository {
     constructor(prisma) {
-        super(prisma);
+        super(prisma, 'workflowExecution');
     }
     convertPrismaToApp(prismaExecution) {
         return {
             id: prismaExecution.id,
             workflowId: prismaExecution.workflowId,
             status: prismaExecution.status,
-            input: prismaExecution.input || undefined,
-            output: prismaExecution.output || undefined,
-            error: prismaExecution.error || undefined,
-            startedAt: prismaExecution.startedAt || undefined,
-            finishedAt: prismaExecution.completedAt || undefined,
-            createdAt: prismaExecution.createdAt || new Date(),
-            updatedAt: prismaExecution.updatedAt || new Date()
+            input: prismaExecution.input ?? null,
+            output: prismaExecution.output ?? null,
+            error: prismaExecution.error ?? null,
+            startedAt: prismaExecution.startedAt,
+            completedAt: prismaExecution.completedAt ?? null,
+            createdAt: prismaExecution.createdAt,
+            updatedAt: prismaExecution.updatedAt,
         };
     }
     async findById(id) {
         const result = await this.prisma.workflowExecution.findUnique({
             where: { id },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
         });
         return result ? this.convertPrismaToApp(result) : null;
     }
     async findMany(filters) {
-        const where = this.buildWhereClause(filters);
         const results = await this.prisma.workflowExecution.findMany({
-            where,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
+            where: filters,
             orderBy: {
                 startedAt: 'desc'
             }
@@ -68,115 +47,37 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
     async create(data) {
         const result = await this.prisma.workflowExecution.create({
             data,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
         });
         return this.convertPrismaToApp(result);
     }
     async update(id, data) {
+        const { id: _, workflowId: __, createdAt: ___, ...updateData } = data;
+        // Handle null values for JSON fields
+        const cleanData = { ...updateData };
+        if (cleanData.input === null)
+            cleanData.input = undefined;
+        if (cleanData.output === null)
+            cleanData.output = undefined;
+        if (cleanData.error === null)
+            cleanData.error = undefined;
         const result = await this.prisma.workflowExecution.update({
             where: { id },
             data: {
-                ...data,
+                ...cleanData,
                 updatedAt: new Date()
             },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
         });
         return this.convertPrismaToApp(result);
     }
     async delete(id) {
         const result = await this.prisma.workflowExecution.delete({
             where: { id },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
         });
         return this.convertPrismaToApp(result);
-    }
-    // Additional methods required by BaseRepository pattern
-    async findOne(filter, include) {
-        const where = this.buildWhereClause(filter);
-        const result = await this.prisma.workflowExecution.findFirst({
-            where,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
-        });
-        return result ? this.convertPrismaToApp(result) : null;
-    }
-    async findAll(filter, orderBy, skip, take) {
-        const where = this.buildWhereClause(filter);
-        const paginationOptions = this.getPaginationOptions(skip ? Math.floor(skip / (take || 100)) + 1 : undefined, take);
-        const sortOptions = this.getSortOptions(orderBy?.field, orderBy?.direction);
-        const results = await this.prisma.workflowExecution.findMany({
-            where,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
-            orderBy: sortOptions.orderBy || { startedAt: 'desc' },
-            skip: paginationOptions.skip,
-            take: paginationOptions.take
-        });
-        return results.map(result => this.convertPrismaToApp(result));
-    }
-    async count(filter) {
-        const where = this.buildWhereClause(filter);
-        return this.prisma.workflowExecution.count({ where });
-    }
-    async countTotal(where) {
-        return this.prisma.workflowExecution.count({ where });
     }
     async findByWorkflowId(workflowId) {
         const results = await this.prisma.workflowExecution.findMany({
             where: { workflowId },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
             orderBy: {
                 startedAt: 'desc'
             }
@@ -186,16 +87,6 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
     async findByStatus(status) {
         const results = await this.prisma.workflowExecution.findMany({
             where: { status: status },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
             orderBy: {
                 startedAt: 'desc'
             }
@@ -219,16 +110,6 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
         const result = await this.prisma.workflowExecution.update({
             where: { id },
             data: updateData,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            }
         });
         return this.convertPrismaToApp(result);
     }
@@ -264,7 +145,7 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
         const completedWithTimes = await this.prisma.workflowExecution.findMany({
             where: {
                 ...where,
-                status: WorkflowExecutionStatus.SUCCEEDED,
+                status: WorkflowExecutionStatus.COMPLETED,
                 completedAt: { not: null }
             },
             select: {
@@ -295,16 +176,6 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
         const where = workflowId ? { workflowId } : {};
         const results = await this.prisma.workflowExecution.findMany({
             where,
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
             orderBy: {
                 startedAt: 'desc'
             },
@@ -320,16 +191,6 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
                 startedAt: {
                     lt: threshold
                 }
-            },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
             },
             orderBy: {
                 startedAt: 'asc'
@@ -347,24 +208,15 @@ let WorkflowExecutionRepository = class WorkflowExecutionRepository extends Base
         }
         // Create a new execution based on the failed one
         return this.create({
-            workflowId: execution.workflowId,
-            input: execution.input,
-            status: WorkflowExecutionStatus.PENDING
+            workflow: { connect: { id: execution.workflowId } },
+            input: execution.input || {},
+            status: WorkflowExecutionStatus.PENDING,
+            startedAt: new Date(),
         });
     }
     async getExecutionHistory(workflowId, limit = 50) {
         const results = await this.prisma.workflowExecution.findMany({
             where: { workflowId },
-            select: {
-                id: true,
-                workflowId: true,
-                status: true,
-                input: true,
-                output: true,
-                error: true,
-                startedAt: true,
-                completedAt: true
-            },
             orderBy: {
                 startedAt: 'desc'
             },

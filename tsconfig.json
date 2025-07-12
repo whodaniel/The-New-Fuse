@@ -11,6 +11,7 @@
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "paths": {
       "@the-new-fuse/*": ["./packages/*/src"]
     }
@@ -19,7 +20,11 @@
     "apps/backend/src/**/*.ts",
     "apps/backend/src/**/*.tsx",
     "apps/api/src/**/*.ts",
-    "apps/api/src/**/*.tsx"
+    "apps/api/src/**/*.tsx",
+    "packages/*/src/**/*.ts",
+    "packages/*/src/**/*.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "ts-node": {
     "esm": true,

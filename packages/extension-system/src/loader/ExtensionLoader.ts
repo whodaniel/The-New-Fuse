@@ -9,7 +9,7 @@ import { EventEmitter } from 'events';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { glob } from 'glob';
-import { Logger } from '@the-new-fuse/relay-core';
+import { Logger } from '@tnf/relay-core';
 import {
   UnifiedExtension,
   ExtensionManifest,

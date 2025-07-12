@@ -1,88 +1,185 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 
-interface SelectContextValue {
+// Simple select component that matches the API used in the pages
+interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
+  value?: string;
+  onChange?: (value: string) => void;
+  onValueChange?: (value: string) => void;
+  className?: string;
+  children: React.ReactNode;
+}
+
+const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
+  ({ className = '', onChange, onValueChange, children, ...props }, ref) => {
+    // Handle both onChange and onValueChange patterns
+    const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const value = e.target.value;
+      onChange?.(value);
+      onValueChange?.(value);
+    };
+
+    // Check if children contain option elements (simple pattern) or components (advanced pattern)
+    const hasOptionChildren = React.Children.toArray(children).some(
+      child => React.isValidElement(child) && child.type === 'option'
+    );
+
+    if (hasOptionChildren) {
+      // Simple select with option children
+      return (
+        <select
+          className={`
+            flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+            ring-offset-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+            disabled:cursor-not-allowed disabled:opacity-50
+            ${className}
+          `}
+          onChange={handleChange}
+          ref={ref}
+          {...props}
+        >
+          {children}
+        </select>
+      );
+    } else {
+      // Advanced select - wrap in SelectRoot context
+      return (
+        <SelectRoot value={props.value} onValueChange={onValueChange || onChange}>
+          {children}
+        </SelectRoot>
+      );
+    }
+  }
+);
+
+Select.displayName = 'Select';
+
+// Advanced Select components for shadcn/ui compatibility
+interface SelectContextType {
   value?: string;
   onValueChange?: (value: string) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
 }
 
-const SelectContext = createContext<SelectContextValue | undefined>(undefined);
+const SelectContext = React.createContext<SelectContextType | undefined>(undefined);
 
-interface SelectProps {
+interface SelectRootProps {
   value?: string;
   onValueChange?: (value: string) => void;
   children: React.ReactNode;
-  className?: string;
+  defaultValue?: string;
 }
 
-const Select = ({ value, onValueChange, children, className = '' }: SelectProps) => {
+const SelectRoot: React.FC<SelectRootProps> = ({ value, onValueChange, children, defaultValue }) => {
   const [open, setOpen] = useState(false);
-  
+  const [internalValue, setInternalValue] = useState(defaultValue || value || '');
+
+  const currentValue = value !== undefined ? value : internalValue;
+
+  const handleValueChange = (newValue: string) => {
+    if (value === undefined) {
+      setInternalValue(newValue);
+    }
+    onValueChange?.(newValue);
+    setOpen(false);
+  };
+
   return (
-    <SelectContext.Provider value={{ value, onValueChange, open, setOpen }}>
-      <div className={`relative ${className}`}>
-        {children}
-      </div>
+    <SelectContext.Provider value={{ value: currentValue, onValueChange: handleValueChange, open, setOpen }}>
+      {children}
     </SelectContext.Provider>
   );
 };
 
-interface SelectTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+interface SelectTriggerProps {
   className?: string;
   children: React.ReactNode;
 }
 
-const SelectTrigger = React.forwardRef<HTMLButtonElement, SelectTriggerProps>(
-  ({ className = '', children, ...props }, ref) => {
-    const context = useContext(SelectContext);
-    if (!context) throw new Error('SelectTrigger must be used within Select');
-    
-    return (
-      <button
-        ref={ref}
-        type="button"
-        className={`
-          flex h-10 w-full items-center justify-between rounded-md border border-gray-300 
-          bg-white px-3 py-2 text-sm ring-offset-white placeholder:text-gray-500 
-          focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
-          disabled:cursor-not-allowed disabled:opacity-50
-          ${className}
-        `}
-        onClick={() => context.setOpen(!context.open)}
-        {...props}
-      >
-        {children}
-        <svg className="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
-      </button>
-    );
-  }
-);
+const SelectTrigger: React.FC<SelectTriggerProps> = ({ className = '', children }) => {
+  const context = React.useContext(SelectContext);
+  const ref = useRef<HTMLButtonElement>(null);
 
-SelectTrigger.displayName = 'SelectTrigger';
+  if (!context) {
+    throw new Error('SelectTrigger must be used within a Select');
+  }
+
+  return (
+    <button
+      ref={ref}
+      type="button"
+      className={`
+        flex h-10 w-full items-center justify-between rounded-md border border-gray-300 bg-white px-3 py-2 text-sm
+        ring-offset-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+        disabled:cursor-not-allowed disabled:opacity-50
+        ${className}
+      `}
+      onClick={() => context.setOpen(!context.open)}
+    >
+      {children}
+      <svg className="h-4 w-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+      </svg>
+    </button>
+  );
+};
+
+interface SelectValueProps {
+  placeholder?: string;
+}
+
+const SelectValue: React.FC<SelectValueProps> = ({ placeholder = 'Select...' }) => {
+  const context = React.useContext(SelectContext);
+
+  if (!context) {
+    throw new Error('SelectValue must be used within a Select');
+  }
+
+  return <span>{context.value || placeholder}</span>;
+};
 
 interface SelectContentProps {
   className?: string;
   children: React.ReactNode;
 }
 
-const SelectContent = ({ className = '', children }: SelectContentProps) => {
-  const context = useContext(SelectContext);
-  if (!context) throw new Error('SelectContent must be used within Select');
-  
-  if (!context.open) return null;
-  
+const SelectContent: React.FC<SelectContentProps> = ({ className = '', children }) => {
+  const context = React.useContext(SelectContext);
+  const ref = useRef<HTMLDivElement>(null);
+
+  if (!context) {
+    throw new Error('SelectContent must be used within a Select');
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        context.setOpen(false);
+      }
+    };
+
+    if (context.open) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }
+  }, [context.open, context]);
+
+  if (!context.open) {
+    return null;
+  }
+
   return (
-    <div className={`
-      absolute top-full left-0 z-50 mt-1 min-w-full overflow-hidden rounded-md border 
-      border-gray-200 bg-white text-gray-950 shadow-md
-      ${className}
-    `}>
-      <div className="p-1">
-        {children}
-      </div>
+    <div
+      ref={ref}
+      className={`
+        absolute z-50 min-w-[8rem] overflow-hidden rounded-md border border-gray-200 bg-white p-1 text-gray-950 shadow-lg
+        animate-in fade-in-0 zoom-in-95
+        ${className}
+      `}
+    >
+      {children}
     </div>
   );
 };
@@ -93,49 +190,46 @@ interface SelectItemProps {
   children: React.ReactNode;
 }
 
-const SelectItem = ({ value, className = '', children }: SelectItemProps) => {
-  const context = useContext(SelectContext);
-  if (!context) throw new Error('SelectItem must be used within Select');
-  
+const SelectItem: React.FC<SelectItemProps> = ({ value, className = '', children }) => {
+  const context = React.useContext(SelectContext);
+
+  if (!context) {
+    throw new Error('SelectItem must be used within a Select');
+  }
+
+  const isSelected = context.value === value;
+
   return (
     <div
       className={`
-        relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 
-        text-sm outline-none hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none 
-        data-[disabled]:opacity-50
+        relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none
+        hover:bg-gray-100 focus:bg-gray-100 data-[disabled]:pointer-events-none data-[disabled]:opacity-50
+        ${isSelected ? 'bg-gray-100' : ''}
         ${className}
       `}
-      onClick={() => {
-        context.onValueChange?.(value);
-        context.setOpen(false);
-      }}
+      onClick={() => context.onValueChange?.(value)}
     >
-      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        {context.value === value && (
+      {isSelected && (
+        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
           </svg>
-        )}
-      </span>
+        </span>
+      )}
       {children}
     </div>
   );
 };
 
-interface SelectValueProps {
-  placeholder?: string;
-  className?: string;
-}
-
-const SelectValue = ({ placeholder, className = '' }: SelectValueProps) => {
-  const context = useContext(SelectContext);
-  if (!context) throw new Error('SelectValue must be used within Select');
-  
-  return (
-    <span className={className}>
-      {context.value || placeholder}
-    </span>
-  );
+// Export both simple and advanced versions
+export { 
+  Select, 
+  SelectRoot as SelectContainer,
+  SelectTrigger, 
+  SelectContent, 
+  SelectItem, 
+  SelectValue 
 };
 
-export { Select, SelectTrigger, SelectContent, SelectItem, SelectValue };
+// Default export for backwards compatibility
+export default Select;

@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "the-new-fuse-main": {
+      "command": "node",
+      "args": [
+        "./comprehensive-tnf-relay.js",
+        "--mcp-mode"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "TNF_RELAY_PORT": "3001",
+        "LOG_LEVEL": "info"
+      }
+    },
+    "filesystem": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse"
+      ]
+    }
+  }
+}

@@ -1,7 +1,9 @@
 export class BaseRepository {
     prisma;
-    constructor(prisma) {
+    model;
+    constructor(prisma, model) {
         this.prisma = prisma;
+        this.model = model;
     }
     /**
      * Helper method to handle pagination
@@ -68,8 +70,8 @@ export class BaseRepository {
     /**
      * Helper method to count total records for pagination
      */
-    async countTotal(_where) {
+    async countTotal(where) {
         // This should be implemented by subclasses for their specific model
-        return 0;
+        return this.prisma[this.model].count({ where });
     }
 }

@@ -12,8 +12,10 @@ import express from 'express';
  * Provides comprehensive AI agency platform capabilities via MCP
  */
 export class TheNewFuseMCPServer {
+    server;
+    isRemote;
+    services = {};
     constructor(isRemote = false) {
-        this.services = {};
         this.isRemote = isRemote;
         this.server = new Server({
             name: 'the-new-fuse',

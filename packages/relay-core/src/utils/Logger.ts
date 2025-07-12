@@ -4,8 +4,8 @@
  * Logger for The New Fuse Relay System
  */
 
-import fs from 'fs/promises';
-import path from 'path';
+import * as fs from 'fs/promises';
+import * as path from 'path';
 
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 

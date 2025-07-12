@@ -90,7 +90,7 @@ To test the WebSocket connection from the Chrome extension:
 1. Load the Chrome extension in Chrome:
    - Go to `chrome://extensions/`
    - Enable "Developer mode"
-   - Click "Load unpacked" and select the `chrome-extension-package` directory
+   - Click "Load unpacked" and select the `chrome-extension/dist` directory
 
 2. Click on the extension icon to open the popup
 3. Click "Connect" to establish a WebSocket connection

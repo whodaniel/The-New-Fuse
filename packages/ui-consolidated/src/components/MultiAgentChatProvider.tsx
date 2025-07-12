@@ -61,7 +61,8 @@ const providerDetails = {
   sambanova: { icon: () => <span>⚡</span>, name: "SambaNova" },
   deepseek: { icon: () => <span>🔍</span>, name: "DeepSeek" },
   mistral: { icon: () => <span>🌪️</span>, name: "Mistral" },
-  openrouter: { icon: () => <span>🛣️</span>, name: "OpenRouter" }
+  openrouter: { icon: () => <span>🛣️</span>, name: "OpenRouter" },
+  'claude-code-cli': { icon: () => <span>💻</span>, name: "Claude Code CLI (Local)" }
 };
 
 // Multi-Agent Chat Provider Component

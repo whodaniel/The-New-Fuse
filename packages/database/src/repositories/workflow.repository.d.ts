@@ -1,21 +1,17 @@
-import { Workflow, WorkflowStatus } from '../types';
+import { Workflow, WorkflowStatus, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
 import { BaseRepository } from './base.repository';
-export declare class WorkflowRepository extends BaseRepository<Workflow> {
+export declare class WorkflowRepository extends BaseRepository<Workflow, Prisma.WorkflowCreateInput, Prisma.WorkflowUpdateInput, Prisma.WorkflowWhereInput> {
     constructor(prisma: PrismaService);
     private convertPrismaToApp;
     private convertExecutionPrismaToApp;
     findById(id: string): Promise<Workflow | null>;
-    findMany(filters?: any): Promise<Workflow[]>;
-    create(data: any): Promise<Workflow>;
-    update(id: string, data: any): Promise<Workflow>;
+    findMany(filters?: Prisma.WorkflowWhereInput): Promise<Workflow[]>;
+    create(data: Prisma.WorkflowCreateInput): Promise<Workflow>;
+    update(id: string, data: Prisma.WorkflowUpdateInput): Promise<Workflow>;
     delete(id: string): Promise<Workflow>;
-    findOne(filter?: any, include?: any): Promise<Workflow | null>;
-    findAll(filter?: any, include?: any, orderBy?: any, skip?: number, take?: number): Promise<Workflow[]>;
-    count(filter?: any): Promise<number>;
-    protected countTotal(where: any): Promise<number>;
-    findByUserId(_userId: string): Promise<Workflow[]>;
-    findByAgentId(_agentId: string): Promise<Workflow[]>;
+    findByUserId(userId: string): Promise<Workflow[]>;
+    findByAgentId(agentId: string): Promise<Workflow[]>;
     findByStatus(status: WorkflowStatus): Promise<Workflow[]>;
     updateStatus(id: string, status: WorkflowStatus): Promise<Workflow>;
     addStep(workflowId: string, stepData: any): Promise<any>;
