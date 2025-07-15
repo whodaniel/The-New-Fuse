@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import * as yargs from 'yargs';
-import * as chalk from 'chalk';
-import * as ora from 'ora';
+import yargs from 'yargs';
+import chalk from 'chalk';
+import ora from 'ora';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -105,6 +105,70 @@ class ClaudeDevCLI {
       }
     }
   }
+
+  async listTemplates(category?: string): Promise<void> {
+    this.spinner.start('Loading templates...');
+    
+    try {
+      const endpoint = category ? `/templates?category=${category}` : '/templates';
+      const templates = await this.makeRequest(endpoint);
+      
+      this.spinner.stop();
+      
+      if (templates.length === 0) {
+        console.log(chalk.yellow('No templates found.'));
+        return;
+      }
+      
+      console.log(chalk.bold(`\n📋 ${category ? `${category.charAt(0).toUpperCase() + category.slice(1)} ` : ''}Templates:\n`));
+      
+      templates.forEach((template: any) => {
+        console.log(`${chalk.cyan(template.id)} - ${template.name}`);
+        console.log(`  ${chalk.gray(template.description)}`);
+        console.log(`  Category: ${chalk.yellow(template.category)}`);
+        console.log('');
+      });
+    } catch (error) {
+      this.spinner.stop();
+      console.log(chalk.red(`✗ Error: ${(error as Error).message}`));
+    }
+  }
+
+  async getTemplate(templateId: string): Promise<void> {
+    this.spinner.start('Loading template...');
+    
+    try {
+      const template = await this.makeRequest(`/templates/${templateId}`);
+      
+      this.spinner.stop();
+      
+      console.log(chalk.bold(`\n📄 Template: ${template.name}\n`));
+      console.log(`ID: ${chalk.cyan(template.id)}`);
+      console.log(`Category: ${chalk.yellow(template.category)}`);
+      console.log(`Description: ${template.description}`);
+      
+      if (template.parameters && template.parameters.length > 0) {
+        console.log(chalk.bold('\nParameters:'));
+        template.parameters.forEach((param: any) => {
+          console.log(`  ${chalk.cyan(param.name)} ${param.required ? chalk.red('(required)') : chalk.gray('(optional)')}`);
+          console.log(`    Type: ${param.type}`);
+          console.log(`    Description: ${param.description}`);
+          if (param.default) {
+            console.log(`    Default: ${param.default}`);
+          }
+          console.log('');
+        });
+      }
+      
+      if (template.example) {
+        console.log(chalk.bold('Example:'));
+        console.log(template.example);
+      }
+    } catch (error) {
+      this.spinner.stop();
+      console.log(chalk.red(`✗ Error: ${(error as Error).message}`));
+    }
+  }
 }
 
 // Export for use as a module
@@ -114,7 +178,7 @@ export default ClaudeDevCLI;
 if (require.main === module) {
   const cli = new ClaudeDevCLI();
 
-  yargs
+  yargs(process.argv.slice(2))
     .scriptName('claude-dev')
     .usage('$0 <cmd> [args]')
     .command(
@@ -148,5 +212,5 @@ if (require.main === module) {
     .alias('help', 'h')
     .alias('version', 'v')
     .demandCommand(1, 'You need at least one command before moving on')
-    .argv;
+    .parse();
 }

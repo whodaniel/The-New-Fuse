@@ -42,9 +42,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -68,9 +69,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -94,9 +96,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -122,9 +125,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -148,9 +152,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -172,9 +177,10 @@ export class McpGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'MCP OAuth service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }

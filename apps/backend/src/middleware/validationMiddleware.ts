@@ -28,7 +28,7 @@ export class ValidationMiddleware implements NestMiddleware {
         if (options.validateBody && req.body) {
           if (options.dto) {
             const result = await this.validationService.validateRequest(req.body, options.dto);
-            if (!result.isValid) {
+            if (!result.success) {
               throw new BadRequestException({
                 message: 'Validation failed',
                 errors: result.errors
@@ -45,7 +45,7 @@ export class ValidationMiddleware implements NestMiddleware {
 
           if (options.rules) {
             validationPromises.push(
-              this.validationService.validateValue(req.body, options.rules)
+              Promise.resolve(this.validationService.validateValue(req.body, options.rules))
             );
           }
         }
@@ -61,7 +61,7 @@ export class ValidationMiddleware implements NestMiddleware {
 
           if (options.rules) {
             validationPromises.push(
-              this.validationService.validateValue(req.query, options.rules)
+              Promise.resolve(this.validationService.validateValue(req.query, options.rules))
             );
           }
         }
@@ -77,7 +77,7 @@ export class ValidationMiddleware implements NestMiddleware {
 
           if (options.rules) {
             validationPromises.push(
-              this.validationService.validateValue(req.params, options.rules)
+              Promise.resolve(this.validationService.validateValue(req.params, options.rules))
             );
           }
         }
@@ -93,7 +93,7 @@ export class ValidationMiddleware implements NestMiddleware {
         this.logger.error('Request validation failed', {
           path: req.path,
           method: req.method,
-          error
+          error: error as Error
         });
 
         if (error instanceof BadRequestException) {

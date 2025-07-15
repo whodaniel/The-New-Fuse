@@ -7,17 +7,29 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private prisma: PrismaClient;
 
   constructor(private config: DatabaseConfig) {
-    this.prisma = new PrismaClient(this.config.getPrismaConfig(): Promise<any> {
-    await this.prisma.$connect(): Promise<any> {
-    await this.prisma.$disconnect(): PrismaClient {
+    this.prisma = new PrismaClient(this.config.getPrismaConfig());
+  }
+
+  async onModuleInit(): Promise<void> {
+    await this.prisma.$connect();
+  }
+
+  async onModuleDestroy(): Promise<void> {
+    await this.prisma.$disconnect();
+  }
+
+  getClient(): PrismaClient {
     return this.prisma;
   }
 
-  async transaction<T>() => Promise<void> {
+  async transaction<T>(
     fn: (prisma: PrismaClient) => Promise<T>
   ): Promise<T> {
-    return this.prisma.$transaction(fn): Promise<any> {
-    if(process.env.NODE_ENV === 'production': unknown) {
+    return this.prisma.$transaction(fn);
+  }
+
+  async cleanDatabase(): Promise<any> {
+    if (process.env.NODE_ENV === 'production') {
       throw new Error('Cannot clean database in production');
     }
 

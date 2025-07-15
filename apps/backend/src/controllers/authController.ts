@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import passport from 'passport';
 import jwt, { SignOptions } from 'jsonwebtoken';
-import { PrismaClient, User } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 import { generateToken } from '../utils/token';
 
 const prisma = new PrismaClient();
 
 interface AuthenticatedRequest extends Request {
-  user?: User;
+  user?: any;
 }
 
 export const googleAuth = passport.authenticate('google', {

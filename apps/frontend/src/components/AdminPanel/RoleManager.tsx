@@ -47,7 +47,7 @@ export const RoleManager: React.FC = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {roles.map(rol(e: any) => (
+          {roles.map((role: any) => (
             <Tr key={role.id}>
               <Td>{role.name}</Td>
               {permissions.map(perm => (

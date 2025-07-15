@@ -1,7 +1,7 @@
 import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AgentNFT, FractionalShare, RevenueStream, MarketplaceListing } from '@the-new-fuse/database/generated/prisma';
-import { ethers, BigNumber } from 'ethers';
+import { ethers, providers } from 'ethers';
 
 export interface MintAgentNftDto {
   agentId: string;
@@ -37,7 +37,7 @@ export class AgentNftService {
   private agentNftContract: ethers.Contract;
   private marketplaceContract: ethers.Contract;
   private revenueDistributorContract: ethers.Contract;
-  private provider: ethers.Provider;
+  private provider: providers.JsonRpcProvider;
   private wallet: ethers.Wallet;
 
   constructor(private readonly prisma: PrismaService) {
@@ -47,7 +47,7 @@ export class AgentNftService {
   private initializeContracts() {
     try {
       // Initialize provider
-      this.provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
+      this.provider = new providers.JsonRpcProvider(process.env.RPC_URL);
       
       // Initialize wallet
       this.wallet = new ethers.Wallet(process.env.PRIVATE_KEY, this.provider);

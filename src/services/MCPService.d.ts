@@ -80,3 +80,4 @@ export declare class MCPService extends EventEmitter {
      */
     private log;
 }
+//# sourceMappingURL=MCPService.d.ts.map

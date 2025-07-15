@@ -8,7 +8,7 @@ import { ConfigService } from '@nestjs/config';
 
 const prisma = new PrismaClient();
 const configService = new ConfigService();
-const redisService = new RedisService(configService);
+const redisService = new RedisService();
 
 declare global {
   namespace Express {
@@ -61,7 +61,7 @@ export const auth = async (req: Request, res: Response, next: NextFunction): Pro
     
     // Cache user in Redis for 1 hour
     try {
-      await redisService.setex(`user:${user.id}`, 3600, JSON.stringify(user));
+      await redisService.set(`user:${user.id}`, JSON.stringify(user), 3600);
     } catch (redisError) {
       console.warn('Redis cache set error:', redisError);
     }

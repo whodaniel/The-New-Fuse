@@ -78,7 +78,7 @@ function WorkspaceManager({ workspace, user }) {
       <div className="flex-1 flex flex-col">
         {activeThread ? (<>
             <div className="flex-1 overflow-y-auto p-4">
-              {activeThread.messages.map(messag(e: any) => (<EnhancedChatBubble_1.EnhancedChatBubble key={message.id} message={message} agents={workspace.agents} workspace={workspace}/>))}
+              {activeThread.messages.map((message: any) => (<EnhancedChatBubble_1.EnhancedChatBubble key={message.id} message={message} agents={workspace.agents} workspace={workspace}/>))}
             </div>
             <div className="p-4 border-t border-gray-200 dark:border-gray-700">
               <div className="flex gap-2">

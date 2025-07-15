@@ -1,10 +1,34 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Switch } from '@/components/ui/switch';
 // Temporarily using local components instead of ui-consolidated
 // import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
 import { FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
-import { MonacoEditor } from '@the-new-fuse/ui-components/monaco-editor';
+// import { MonacoEditor } from '@the-new-fuse/ui-components/monaco-editor';
+
+// Temporary placeholder components
+const DatePicker = ({ value, onChange }: { value: Date | null, onChange: (date: Date | null) => void }) => (
+  <input
+    type="date"
+    value={value ? value.toISOString().split('T')[0] : ''}
+    onChange={(e) => onChange(e.target.value ? new Date(e.target.value) : null)}
+    className="px-3 py-2 border border-gray-300 rounded-md"
+  />
+);
+
+const Select = ({ value, onChange, options }: { value: string, onChange: (value: string) => void, options: { label: string, value: string }[] }) => (
+  <select
+    value={value}
+    onChange={(e) => onChange(e.target.value)}
+    className="px-3 py-2 border border-gray-300 rounded-md"
+  >
+    {options.map(option => (
+      <option key={option.value} value={option.value}>{option.label}</option>
+    ))}
+  </select>
+);
 
 interface FeatureFlagConditionsEditorProps {
   conditions: FeatureFlagConditions;
@@ -227,7 +251,7 @@ export function FeatureFlagConditionsEditor({
         <Card className="p-4">
           <h3 className="text-lg font-medium mb-4">Device Type Targeting</h3>
           <div className="space-y-2">
-            {['desktop', 'mobile', 'tablet'].map(devic(e: any) => (
+            {['desktop', 'mobile', 'tablet'].map((device: any) => (
               <div key={device} className="flex items-center space-x-2">
                 <Switch
                   checked={(conditions.deviceTypes || []).includes(device)}
@@ -263,22 +287,15 @@ export function FeatureFlagConditionsEditor({
                     updateConditions('customRules', customRules);
                   }}
                 />
-                <div className="h-[200px] border rounded">
-                  <MonacoEditor
-                    language="javascript"
-                    value={rule.condition}
-                    onChange={(value) => {
-                      const customRules = [...(conditions.customRules || [])];
-                      customRules[index] = { ...rule, condition: value };
-                      updateConditions('customRules', customRules);
-                    }}
-                    options={{
-                      minimap: { enabled: false },
-                      lineNumbers: 'off',
-                      fontSize: 12,
-                    }}
-                  />
-                </div>
+                <textarea
+                  className="w-full h-[200px] border rounded p-2 font-mono text-sm"
+                  value={rule.condition}
+                  onChange={(e) => {
+                    const customRules = [...(conditions.customRules || [])];
+                    customRules[index] = { ...rule, condition: e.target.value };
+                    updateConditions('customRules', customRules);
+                  }}
+                />
                 <Button
                   variant="destructive"
                   onClick={() => {

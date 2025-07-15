@@ -76,7 +76,7 @@ export class WebSocketService implements OnGatewayConnection, OnGatewayDisconnec
     return undefined;
   }
 
-  private broadcastUserStatus(userId: string, status: online' | 'offline'): void {
+  private broadcastUserStatus(userId: string, status: 'online' | 'offline'): void {
     this.server.emit('userStatus', {
       userId,
       status,

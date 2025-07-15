@@ -10,42 +10,40 @@ export class TaskRepository {
   private mapDatabaseTaskToTask(dbTask: Task): Task {
     return {
       id: dbTask.id,
-      title: dbTask.title,
-      description: dbTask.description ?? null,
+      type: dbTask.type,
       status: dbTask.status,
       priority: dbTask.priority,
+      data: dbTask.data,
+      result: dbTask.result,
+      error: dbTask.error,
+      startTime: dbTask.startTime,
+      endTime: dbTask.endTime,
+      pipelineId: dbTask.pipelineId,
+      agentId: dbTask.agentId,
+      userId: dbTask.userId,
       createdAt: dbTask.createdAt,
       updatedAt: dbTask.updatedAt,
-      assignedTo: dbTask.assignedTo ?? null,
-      createdBy: dbTask.createdBy,
-      metadata: dbTask.metadata ?? null,
-      completedAt: dbTask.completedAt ?? null,
-      type: dbTask.type,
-      dueDate: dbTask.dueDate ?? null,
-      tags: dbTask.tags,
-      dependencies: dbTask.dependencies,
-      error: dbTask.error ?? null,
+      deletedAt: dbTask.deletedAt,
     };
   }
 
   private getTaskSelect() {
     return {
       id: true,
-      title: true,
-      description: true,
+      type: true,
       status: true,
       priority: true,
-      type: true,
+      data: true,
+      result: true,
+      error: true,
+      startTime: true,
+      endTime: true,
+      pipelineId: true,
+      agentId: true,
+      userId: true,
       createdAt: true,
       updatedAt: true,
-      dueDate: true,
-      assignedTo: true,
-      createdBy: true,
-      metadata: true,
-      tags: true,
-      dependencies: true,
-      error: true,
-      completedAt: true,
+      deletedAt: true,
     };
   }
 
@@ -101,9 +99,9 @@ export class TaskRepository {
     return this.mapDatabaseTaskToTask(task);
   }
 
-  async findByCreatedBy(userId: string): Promise<Task[]> {
+  async findByUserId(userId: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { createdBy: userId },
+      where: { userId },
       select: this.getTaskSelect(),
       orderBy: [
         { priority: 'desc' },
@@ -114,9 +112,9 @@ export class TaskRepository {
     return tasks.map(task => this.mapDatabaseTaskToTask(task));
   }
 
-  async findByAssignedTo(agentId: string): Promise<Task[]> {
+  async findByAgentId(agentId: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { assignedTo: agentId },
+      where: { agentId },
       select: this.getTaskSelect(),
       orderBy: [
         { priority: 'desc' },
@@ -159,7 +157,7 @@ export class TaskRepository {
     };
 
     if (status === TaskStatus.COMPLETED) {
-      updateData.completedAt = new Date();
+      updateData.endTime = new Date();
     }
 
     const task = await this.prisma.task.update({
@@ -175,8 +173,9 @@ export class TaskRepository {
     const task = await this.prisma.task.update({
       where: { id },
       data: {
-        assignedTo: agentId,
+        agentId,
         status: TaskStatus.IN_PROGRESS,
+        startTime: new Date(),
         updatedAt: new Date()
       },
       select: this.getTaskSelect()
@@ -185,8 +184,8 @@ export class TaskRepository {
     return this.mapDatabaseTaskToTask(task);
   }
 
-  async getTaskStats(createdBy?: string): Promise<{ total: number; completed: number; overdue: number; completionRate: number; byStatus: Record<string, number>; byPriority: Record<string, number> }> {
-    const where = createdBy ? { createdBy: createdBy } : {};
+  async getTaskStats(userId?: string): Promise<{ total: number; completed: number; overdue: number; completionRate: number; byStatus: Record<string, number>; byPriority: Record<string, number> }> {
+    const where = userId ? { userId } : {};
 
     const statusCounts = await this.prisma.task.groupBy({
       by: ['status'],
@@ -231,9 +230,9 @@ export class TaskRepository {
     };
   }
 
-  async getRecentTasks(createdBy: string, limit = 10): Promise<Task[]> {
+  async getRecentTasks(userId: string, limit = 10): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
-      where: { createdBy: createdBy },
+      where: { userId },
       select: this.getTaskSelect(),
       orderBy: {
         updatedAt: 'desc'
@@ -244,19 +243,13 @@ export class TaskRepository {
     return tasks.map(task => this.mapDatabaseTaskToTask(task));
   }
 
-  async searchTasks(createdBy: string, query: string): Promise<Task[]> {
+  async searchTasks(userId: string, query: string): Promise<Task[]> {
     const tasks = await this.prisma.task.findMany({
       where: {
-        createdBy: createdBy,
+        userId,
         OR: [
           {
-            title: {
-              contains: query,
-              mode: 'insensitive'
-            }
-          },
-          {
-            description: {
+            type: {
               contains: query,
               mode: 'insensitive'
             }

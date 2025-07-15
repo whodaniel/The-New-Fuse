@@ -127,6 +127,26 @@ async function bootstrap() {
     customfavIcon: '/favicon.ico',
   });
 
+  // Root endpoint for health checks and basic info
+  const rootHandler = (req, res) => {
+    res.json({
+      name: 'The New Fuse - Unified API Gateway',
+      version: process.env.npm_package_version || '1.0.0',
+      status: 'operational',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      documentation: '/docs',
+      health: '/health',
+      api: '/v1',
+      environment: process.env.NODE_ENV || 'development'
+    });
+  };
+
+  app.getHttpAdapter().get('/', rootHandler);
+  app.getHttpAdapter().head('/', (req, res) => {
+    res.status(200).end();
+  });
+
   // Health check endpoint
   app.getHttpAdapter().get('/health', (req, res) => {
     res.json({
@@ -137,7 +157,7 @@ async function bootstrap() {
       version: process.env.npm_package_version || '1.0.0',
       services: {
         agents: 'active',
-        webhooks: 'active', 
+        webhooks: 'active',
         sse: 'active',
         mcp: 'active'
       }

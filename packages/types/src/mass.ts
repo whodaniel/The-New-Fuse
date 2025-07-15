@@ -20,6 +20,8 @@ export interface MassOptimizationConfig {
   userId: string;
   validationDatasetId: string;
   optimizationRounds: number;
+  maxCandidates?: number;
+  evaluationSampleSize?: number;
   llmConfig: {
     model: string;
     temperature: number;

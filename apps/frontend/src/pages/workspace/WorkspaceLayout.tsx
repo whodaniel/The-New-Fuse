@@ -3,7 +3,7 @@ import { Outlet, NavLink, useParams } from 'react-router-dom';
 import { BarChart, Settings, Users, Home, ChevronDown, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useWorkspace } from '@/hooks/useWorkspace';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator, } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, } from '@/components/ui/dropdown-menu';
 export const WorkspaceLayout = () => {
     const { workspaceId } = useParams();
     const { workspaces, currentWorkspace, selectWorkspace, createWorkspace } = useWorkspace();

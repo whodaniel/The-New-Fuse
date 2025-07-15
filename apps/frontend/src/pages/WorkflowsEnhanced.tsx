@@ -199,7 +199,11 @@ export const WorkflowsPage: React.FC = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">
                           Default LLM Model
                         </label>
-                        <select className="w-full px-3 py-2 border border-gray-300 rounded-md">
+                        <select 
+                          className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          title="Select default LLM model"
+                          placeholder="Choose a model"
+                        >
                           <option>GPT-4</option>
                           <option>GPT-3.5 Turbo</option>
                           <option>Claude-3 Sonnet</option>
@@ -214,6 +218,8 @@ export const WorkflowsPage: React.FC = () => {
                           type="number" 
                           defaultValue={300}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          title="Set execution timeout in seconds"
+                          placeholder="300"
                         />
                       </div>
                       <div>
@@ -224,6 +230,8 @@ export const WorkflowsPage: React.FC = () => {
                           type="number" 
                           defaultValue={5}
                           className="w-full px-3 py-2 border border-gray-300 rounded-md"
+                          title="Set maximum concurrent executions"
+                          placeholder="5"
                         />
                       </div>
                     </VStack>
@@ -234,15 +242,30 @@ export const WorkflowsPage: React.FC = () => {
                     <VStack spacing={4} align="stretch">
                       <div className="flex items-center justify-between">
                         <span>Enable version tracking</span>
-                        <input type="checkbox" defaultChecked className="form-checkbox" />
+                        <input 
+                          type="checkbox" 
+                          defaultChecked 
+                          className="form-checkbox"
+                          title="Enable or disable version tracking for templates"
+                        />
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Auto-save templates</span>
-                        <input type="checkbox" defaultChecked className="form-checkbox" />
+                        <input 
+                          type="checkbox" 
+                          defaultChecked 
+                          className="form-checkbox"
+                          title="Enable or disable auto-saving of templates"
+                        />
                       </div>
                       <div className="flex items-center justify-between">
                         <span>Show usage analytics</span>
-                        <input type="checkbox" defaultChecked className="form-checkbox" />
+                        <input 
+                          type="checkbox" 
+                          defaultChecked 
+                          className="form-checkbox"
+                          title="Enable or disable usage analytics for templates"
+                        />
                       </div>
                     </VStack>
                   </Box>

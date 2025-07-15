@@ -126,7 +126,7 @@ function GraphVisualizer({ nodes: initialNodes, edges: initialEdges, config: ini
         if (!startNode || !endNode)
             return;
         const path = pathAlgorithms.aStar(nodes, edges, startNode, endNode);
-        setEdges(edges.map(edg(e: any) => (Object.assign(Object.assign({}, edge), { style: Object.assign(Object.assign({}, edge.style), { stroke: path.includes(edge.id) ? '#ff0000' : '#000000', strokeWidth: path.includes(edge.id) ? 3 : 1 }) }))));
+        setEdges(edges.map((edge: any) => (Object.assign(Object.assign({}, edge), { style: Object.assign(Object.assign({}, edge.style), { stroke: path.includes(edge.id) ? '#ff0000' : '#000000', strokeWidth: path.includes(edge.id) ? 3 : 1 }) }))));
     }, [nodes, edges, startNode, endNode]);
     const handleSearch = (0, react_1.useCallback)(() => {
         if (!searchTerm) {

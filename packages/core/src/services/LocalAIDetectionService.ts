@@ -5,7 +5,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { spawn } from 'child_process';
-import { AgentType, AgentStatus, CreateAgentDto, AgentCapability } from '@the-new-fuse/types';
+import { AgentType, CreateAgentDto, AgentCapability } from '@the-new-fuse/types';
 
 export interface LocalAIProvider {
   name: string;
@@ -155,21 +155,13 @@ export class LocalAIDetectionService {
     });
   }
 
-  createAgentFromProvider(provider: LocalAIProvider, userId: string): CreateAgentDto {
-    return new CreateAgentDto({
+  createAgentFromProvider(provider: LocalAIProvider, _userId: string): CreateAgentDto {
+    return {
       name: provider.name,
       type: AgentType.ASSISTANT,
       description: provider.description,
       systemPrompt: `You are ${provider.name}, a local AI assistant. You have access to ${provider.capabilities.join(', ')} capabilities.`,
-      capabilities: provider.capabilities.map(cap => ({
-        name: cap,
-        description: `${cap} capability provided by ${provider.name}`,
-        parameters: {
-          provider: provider.name,
-          command: provider.command,
-          apiEndpoint: provider.apiEndpoint
-        }
-      })),
+      capabilities: provider.capabilities,
       configuration: {
         provider: provider.name,
         command: provider.command,
@@ -181,9 +173,8 @@ export class LocalAIDetectionService {
         detectedAt: new Date(),
         providerType: 'local',
         version: 'auto-detected'
-      },
-      provider: provider.name
-    });
+      }
+    };
   }
 
   async detectAndCreateAgents(userId: string): Promise<CreateAgentDto[]> {

@@ -57,7 +57,7 @@ function KnowledgeGraphViewer() {
         }));
     };
     const formatEdges = (knowledgeEdges) => {
-        return knowledgeEdges.map(edg(e: any) => ({
+        return knowledgeEdges.map((edge: any) => ({
             id: edge.id,
             source: edge.source,
             target: edge.target,

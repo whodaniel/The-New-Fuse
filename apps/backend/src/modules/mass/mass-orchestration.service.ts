@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../lib/prisma/prisma.service';
-import { 
-  MassOptimizationConfig, 
-  TopologyOptimizationConfig, 
-  OptimizationJob, 
+import { PrismaService } from '../../prisma/prisma.service';
+import {
+  MassOptimizationConfig,
+  TopologyOptimizationConfig,
+  OptimizationJob,
   WorkflowTopology,
-  AgentPromptVersion 
+  AgentPromptVersion
 } from '@the-new-fuse/types';
 import { PromptOptimizerService } from './prompt-optimizer.service';
 import { TopologyOptimizerService } from './topology-optimizer.service';
@@ -49,8 +49,9 @@ export class MassOrchestrationService {
 
       return this.getOptimizationJob(job.id);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`MASS Stage 1 failed for agent ${agentId}:`, error);
-      await this.updateJobStatus(job.id, 'failed', error.message);
+      await this.updateJobStatus(job.id, 'failed', errorMessage);
       throw error;
     }
   }
@@ -82,8 +83,9 @@ export class MassOrchestrationService {
 
       return this.getOptimizationJob(job.id);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`MASS Stage 2 failed:`, error);
-      await this.updateJobStatus(job.id, 'failed', error.message);
+      await this.updateJobStatus(job.id, 'failed', errorMessage);
       throw error;
     }
   }
@@ -115,8 +117,9 @@ export class MassOrchestrationService {
 
       return this.getOptimizationJob(job.id);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       this.logger.error(`MASS Stage 3 failed for topology ${topologyId}:`, error);
-      await this.updateJobStatus(job.id, 'failed', error.message);
+      await this.updateJobStatus(job.id, 'failed', errorMessage);
       throw error;
     }
   }

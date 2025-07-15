@@ -27,26 +27,46 @@ export abstract class BaseRepository<T extends BaseEntity>
       // Implementation details...
       return [] as T[];
     } catch(error: unknown) {
-      return this.handleError(error, "find"): string, options?: QueryOptions): Promise<T | null> {
+      return this.handleError(error, "find");
+    }
+  }
+
+  async findOne(id: string, options?: QueryOptions): Promise<T | null> {
     try {
       // Implementation details...
       return null;
     } catch(error: unknown) {
-      return this.handleError(error, "findOne"): Partial<T>): Promise<T> {
+      return this.handleError(error, "findOne");
+    }
+  }
+
+  async create(data: Partial<T>): Promise<T> {
     try {
       // Implementation details...
       return {} as T;
     } catch(error: unknown) {
-      return this.handleError(error, "create"): string, data: Partial<T>): Promise<T> {
+      return this.handleError(error, "create");
+    }
+  }
+
+  async update(id: string, data: Partial<T>): Promise<T> {
     try {
       // Implementation details...
       return {} as T;
     } catch(error: unknown) {
-      return this.handleError(error, "update"): string): Promise<void> {
+      return this.handleError(error, "update");
+    }
+  }
+
+  async delete(id: string): Promise<void> {
     try {
       // Implementation details...
     } catch(error: unknown) {
-      this.handleError(error, "delete"): unknown, operation: string): never {
+      this.handleError(error, "delete");
+    }
+  }
+
+  private handleError(error: unknown, operation: string): never {
     this.metrics.incrementCounter("repository_errors_total", {
       operation,
       entity: this.entityName,

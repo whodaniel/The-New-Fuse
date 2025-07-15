@@ -10,7 +10,7 @@ export declare class WorkflowRepository extends BaseRepository<Workflow, Prisma.
     create(data: Prisma.WorkflowCreateInput): Promise<Workflow>;
     update(id: string, data: Prisma.WorkflowUpdateInput): Promise<Workflow>;
     delete(id: string): Promise<Workflow>;
-    findByUserId(userId: string): Promise<Workflow[]>;
+    findByCreatorId(creatorId: string): Promise<Workflow[]>;
     findByAgentId(agentId: string): Promise<Workflow[]>;
     findByStatus(status: WorkflowStatus): Promise<Workflow[]>;
     updateStatus(id: string, status: WorkflowStatus): Promise<Workflow>;

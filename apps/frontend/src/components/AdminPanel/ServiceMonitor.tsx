@@ -29,7 +29,7 @@ export const ServiceMonitor: React.FC = () => {
           </Tr>
         </Thead>
         <Tbody>
-          {services.map(servic(e: any) => (
+          {services.map((service: any) => (
             <Tr key={service.id}>
               <Td>{service.name}</Td>
               <Td>

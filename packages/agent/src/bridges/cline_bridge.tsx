@@ -30,7 +30,7 @@ export class ClineBridge {
         this.communication = new DirectCommunication(
             'cline_ai',
             'cascade_ai',
-            AgentRole.OPTIMIZATION
+            AgentRole.ARCHITECT
         );
     }
 

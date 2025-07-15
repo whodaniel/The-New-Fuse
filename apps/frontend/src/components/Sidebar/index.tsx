@@ -9,8 +9,8 @@ import NewWorkspaceModal, {
 import ActiveWorkspaces from './ActiveWorkspaces';
 import useLogo from "@/hooks/useLogo";
 import useUser from "@/hooks/useUser";
-import Footer from '../Footer';
-import SettingsButton from '../SettingsButton';
+import { Footer } from '../Footer';
+import { SettingsButton } from '../SettingsButton';
 import paths from "@/utils/paths";
 
 const STYLES = {
@@ -36,7 +36,7 @@ const STYLES = {
   } duration-500 fixed top-0 left-0 bg-theme-bg-secondary bg-opacity-75 w-screen h-screen`,
   mobileSidebarContent: "relative h-[100vh] fixed top-0 left-0 rounded-r-[26px] bg-theme-bg-sidebar w-[80%] p-[18px]",
   mobileContentWrapper: "w-full h-full flex flex-col overflow-x-hidden items-between",
-  mobileHeader: "flex w-full items-center justify-between gap-x-4",
+  mobileHeaderInner: "flex w-full items-center justify-between gap-x-4",
   mobileLogoContainer: "flex shrink-1 w-fit items-center justify-start",
   mobileSettingsContainer: "flex gap-x-2 items-center text-slate-500 shink-0",
   mobileMainContent: "h-full flex flex-col w-full justify-between pt-4",

@@ -35,6 +35,7 @@
     "db:reset": "turbo run db:reset",
     "db:studio": "turbo run db:studio",
     "verify": "./scripts/verify-features.sh",
+    "audit:routes": "node scripts/route-audit.js",
     "health-check": "bun run type-check && bun run test && bun run build",
     "analyze:circular": "bunx madge --circular apps/api/src",
     "audit": "bun audit",
@@ -43,8 +44,9 @@
     "mcp:test-wrapper": "echo '{\"method\":\"tools/list\"}' | node --loader tsx/esm src/mcp/complete-api-mcp-server.ts"
   },
   "devDependencies": {
-    "@types/node": "^20.19.4",
+    "@types/node": "^24.0.13",
     "eslint": "^8.57.1",
+    "glob": "^11.0.3",
     "madge": "^8.0.0",
     "prettier": "^3.6.2",
     "prisma": "6.11.0",
@@ -56,11 +58,13 @@
     "@modelcontextprotocol/sdk": "^1.15.0",
     "@phosphor-icons/react": "^2.1.10",
     "@prisma/client": "6.11.0",
+    "@types/otplib": "^10.0.0",
     "@types/react-speech-recognition": "^3.9.6",
     "canvas": "^3.1.2",
     "chokidar": "^4.0.3",
     "diff": "^8.0.2",
     "node-fetch": "^3.3.2",
+    "otplib": "^12.0.1",
     "react-speech-recognition": "^4.0.1",
     "tsx": "^4.20.3",
     "ws": "^8.18.3"

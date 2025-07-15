@@ -3,14 +3,14 @@ import { PrismaService } from '@the-new-fuse/database';
 import { ConfigService } from '@nestjs/config';
 import { AgentFactory } from './agent.factory';
 import { CreateAgentDto, UpdateAgentDto } from './dto/agent.dto';
-import { UnifiedMonitorService } from '@the-new-fuse/core';
+import { UnifiedMonitoringService } from '@the-new-fuse/core';
 
 @Injectable()
 export class AgentsService {
   constructor(
     private prisma: PrismaService,
     private config: ConfigService,
-    private monitoring: UnifiedMonitorService,
+    private monitoring: UnifiedMonitoringService,
     private agentFactory: AgentFactory,
   ) {}
 
@@ -59,7 +59,12 @@ export class AgentsService {
 
     return this.prisma.agent.update({
       where: { id },
-      data: dto
+      data: {
+        name: dto.name,
+        description: dto.description,
+        capabilities: dto.capabilities as any,
+        config: dto.config
+      }
     });
   }
 }

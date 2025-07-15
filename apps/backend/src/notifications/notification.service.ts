@@ -4,6 +4,7 @@ import { EventBus } from '../events/event-bus.service';
 import { LoggingService } from '../services/logging.service';
 import { EmailService } from '../services/email.service';
 import { NotificationSentEvent } from './events/notification.events';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class NotificationService {
@@ -11,7 +12,8 @@ export class NotificationService {
     private usersService: UsersService,
     private eventBus: EventBus,
     private logger: LoggingService,
-    private emailService: EmailService
+    private emailService: EmailService,
+    private prisma: PrismaService
   ) {}
 
   async sendNotification(userId: string, type: string, data: any) {
@@ -27,7 +29,7 @@ export class NotificationService {
     });
 
     if (user.emailNotifications) {
-      await this.emailService.sendEmail(user.email, type, data);
+      await this.emailService.sendNotificationEmail(user.email, type, data);
     }
 
     await this.eventBus.publish(new NotificationSentEvent(user, type, data));

@@ -6,8 +6,9 @@ export {
     UserRole, 
     WorkflowStatus, 
     WorkflowExecutionStatus, 
-    PrismaClient 
-} from '@prisma/client';
+    PrismaClient,
+    Prisma
+} from '../generated/prisma';
 
 export type { 
     Agent, 
@@ -15,4 +16,4 @@ export type {
     User, 
     Workflow, 
     WorkflowExecution 
-} from '@prisma/client';
+} from '../generated/prisma';

@@ -5,7 +5,7 @@ import { Agent, AgentStatus, CreateAgentDto, UpdateAgentDto, MCPTool, Registered
 import { firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { URLSearchParams } from 'url';
-import { Prisma } from '@prisma/client'; // Import Prisma for JsonValue
+import { Prisma } from '@the-new-fuse/database'; // Import Prisma for JsonValue
 
 @Injectable()
 export class MCPRegistryService {

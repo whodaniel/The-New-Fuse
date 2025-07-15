@@ -4,7 +4,7 @@ export declare class DatabaseService {
     private readonly prisma;
     constructor(prisma: PrismaService);
     get client(): PrismaService;
-    get llmConfigs(): any;
+    get llmConfigs(): import("@the-new-fuse/database/generated/prisma").Prisma.LLMConfigDelegate<import("@the-new-fuse/database/generated/prisma/runtime/library").DefaultArgs, import("@the-new-fuse/database/generated/prisma").Prisma.PrismaClientOptions>;
     findUser(where: {
         email: string;
     }): Promise<User | null>;

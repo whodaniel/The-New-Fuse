@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,8 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserRepository = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../prisma.service");
 let UserRepository = class UserRepository {
     prisma;
     constructor(prisma) {
@@ -18,22 +21,36 @@ let UserRepository = class UserRepository {
         return {
             id: dbUser.id,
             email: dbUser.email,
-            name: dbUser.name ?? null,
-            passwordHash: dbUser.passwordHash,
+            username: dbUser.username,
+            name: dbUser.name,
+            hashedPassword: dbUser.hashedPassword,
             role: dbUser.role,
+            roles: dbUser.roles,
+            isActive: dbUser.isActive,
+            lastLogin: dbUser.lastLogin,
+            preferences: dbUser.preferences,
+            refreshToken: dbUser.refreshToken,
             createdAt: dbUser.createdAt,
             updatedAt: dbUser.updatedAt,
+            deletedAt: dbUser.deletedAt,
         };
     }
     getUserSelect() {
         return {
             id: true,
             email: true,
+            username: true,
             name: true,
-            passwordHash: true,
+            hashedPassword: true,
             role: true,
+            roles: true,
+            isActive: true,
+            lastLogin: true,
+            preferences: true,
+            refreshToken: true,
             createdAt: true,
-            updatedAt: true
+            updatedAt: true,
+            deletedAt: true
         };
     }
     async findById(id) {
@@ -99,11 +116,11 @@ let UserRepository = class UserRepository {
         });
         return users.map(user => this.mapDatabaseUserToUser(user));
     }
-    async updatePassword(id, passwordHash) {
+    async updatePassword(id, hashedPassword) {
         const user = await this.prisma.user.update({
             where: { id },
             data: {
-                passwordHash,
+                hashedPassword,
                 updatedAt: new Date()
             },
             select: this.getUserSelect()
@@ -176,8 +193,8 @@ let UserRepository = class UserRepository {
         });
     }
 };
-UserRepository = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [PrismaService])
+exports.UserRepository = UserRepository;
+exports.UserRepository = UserRepository = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], UserRepository);
-export { UserRepository };

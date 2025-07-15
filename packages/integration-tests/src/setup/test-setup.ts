@@ -4,12 +4,14 @@
  * Configures test environment with all unified framework components
  */
 
-import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
+import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@tnf/relay-core';
 import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
+import { AgentRegistryAdapter } from './agent-registry-adapter';
+import { HeartbeatServiceAdapter } from './heartbeat-adapter';
 
 // Global test configuration
 export interface TestEnvironment {
@@ -48,21 +50,6 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
     }
   });
 
-  // Setup Master Agent Registry
-  const agentRegistryConfig = {
-    enableMerkleTree: true,
-    enableSpreadsheetIntegration: false, // Disable for tests
-    enableHeartbeatMonitoring: true,
-    onboardingRequired: true,
-    protocolComplianceRequired: true,
-    redisConnection: null, // Use in-memory for tests
-    maxAgents: 100,
-    stagnationThresholdMs: 60000,
-    cleanupIntervalMs: 30000
-  };
-
-  const agentRegistry = new MasterAgentRegistry(prisma, logger);
-
   // Setup Heartbeat Monitoring
   const heartbeatConfig = {
     intervalMs: 5000,
@@ -74,39 +61,35 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
 
   const heartbeatService = new HeartbeatMonitoringService(heartbeatConfig, logger);
 
-  // Create adapter for heartbeat service to match expected interface
-  const heartbeatAdapter = {
-    registerAgent: (executionId: string, workflowId: string) => {
-      heartbeatService.registerAgent(executionId);
-    },
-    recordActivity: (executionId: string, type: string, metadata: any) => {
-      heartbeatService.recordActivity(executionId, type, metadata);
+  // Setup MasterAgentRegistry
+  const masterRegistry = new MasterAgentRegistry(
+    prisma,
+    logger,
+    {
+      enabled: false,
+      providerUrl: 'http://localhost:8545',
+      contractAddress: '0x0000000000000000000000000000000000000000',
+      privateKey: '0x0000000000000000000000000000000000000000000000000000000000000000',
+      chainId: 1337,
+      gasLimit: 3000000,
+      maxGasPrice: '20'
     }
-  };
-  
-  // Create adapter for agent registry to match expected interface
-  const agentRegistryAdapter = {
-    getAllAgents: () => [],
-    getAgentProfile: (agentId: string) => ({}),
-    addAgentTodo: async (agentId: string, todo: any) => 'test-todo-id',
-    agents: new Map(),
-    unregisterAgent: (agentId: string) => {},
-    getAgent: (agentId: string) => undefined,
-    getAgentCount: () => 0,
-    registerAgent: (agent: any) => {},
-    updateAgentStatus: (agentId: string) => {},
-    getAllActiveAgents: () => []
-  };
+  );
 
-  // Setup Workflow Engine
+  // Create adapters for workflow engine compatibility
+  const heartbeatAdapter = new HeartbeatServiceAdapter(heartbeatService);
+
+  // Setup Workflow Engine - uses local HeartbeatMonitoringService interface
   const workflowSystem = WorkflowEngineFactory.createDefault(
     prisma,
-    agentRegistryAdapter,
+    masterRegistry,
     heartbeatAdapter,
     logger
   );
 
-  // Setup Extension System
+  // Setup Extension System - ExtensionSystemFactory expects AgentRegistry interface
+  // Create adapter for extension system compatibility
+  const agentRegistryAdapter = new AgentRegistryAdapter(masterRegistry);
   const extensionManager = ExtensionSystemFactory.createDefault(
     testDataDir,
     logger,
@@ -129,7 +112,7 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   globalTestEnv = {
     logger,
     prisma,
-    agentRegistry,
+    agentRegistry: masterRegistry,
     heartbeatService,
     workflowEngine: workflowSystem,
     extensionManager,
@@ -180,6 +163,7 @@ export const TestHelpers = {
     const agentProfile = {
       name,
       type: type as any,
+      userId: 'test-user',
       capabilities: {
         codeGeneration: false,
         fileOperations: true,
@@ -199,27 +183,25 @@ export const TestHelpers = {
         handoffTemplating: false,
         stagnationRecovery: false
       },
+      platform: 'integrated' as const,
+      location: 'test-environment',
+      description: `Test agent: ${name}`,
+      systemPrompt: `You are a test agent named ${name} for integration testing purposes.`,
       configuration: {
         maxConcurrentTasks: 5,
         timeoutMs: 30000
-      },
-      metadata: {
-        version: '1.0.0',
-        personalityTraits: {},
-        communicationStyle: 'direct',
-        expertiseAreas: ['testing'],
-        specializations: ['test-execution'],
-        limitations: ['test-only'],
-        notes: 'Test agent created for integration testing',
-        testAgent: true,
-        createdInTest: new Date()
       }
     };
 
-    const result = await env.agentRegistry.registerAgent({ ...agentProfile, userId: 'test-user' });
+    const result = await env.agentRegistry.registerAgent(agentProfile);
+    if (!result.success) {
+      throw new Error(`Failed to register test agent: ${result.agentId}`);
+    }
+    
+    const profile = env.agentRegistry.getAgentProfile(result.agentId);
     return {
       agentId: result.agentId,
-      profile: await env.agentRegistry.getAgentProfile(result.agentId)
+      profile: profile
     };
   },
 

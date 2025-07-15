@@ -1,95 +1,165 @@
 import * as vscode from 'vscode';
-
-export interface ChatSession {
-    id: string;
-    title: string;
-    messages: ChatMessage[];
-    createdAt: Date;
-    updatedAt: Date;
-}
+import { ConfigurationService } from '../core/ConfigurationService';
+import { NotificationService } from '../core/NotificationService';
 
 export interface ChatMessage {
     id: string;
     content: string;
     role: 'user' | 'assistant' | 'system';
-    timestamp: Date;
+    timestamp: number;
+    sessionId: string;
+    metadata?: any;
+}
+
+export interface ChatSession {
+    id: string;
+    title: string;
+    messages: ChatMessage[];
+    createdAt: number;
+    updatedAt: number;
+    isActive: boolean;
 }
 
 export class ChatService {
-    private sessions: ChatSession[] = [];
-    private currentSession: ChatSession | null = null;
+    private sessions: Map<string, ChatSession> = new Map();
+    private currentSessionId?: string;
 
-    constructor(private context: vscode.ExtensionContext) {
+    constructor(
+        private context: vscode.ExtensionContext,
+        private configService: ConfigurationService,
+        private notificationService: NotificationService
+    ) {
         this.loadSessions();
     }
 
+    async initialize(): Promise<void> {
+        // Initialize chat service
+        console.log('ChatService initialized');
+    }
+
     async createNewSession(title?: string): Promise<ChatSession> {
+        const sessionId = `session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
         const session: ChatSession = {
-            id: this.generateId(),
-            title: title || `Chat ${this.sessions.length + 1}`,
+            id: sessionId,
+            title: title || `Chat ${new Date().toLocaleString()}`,
             messages: [],
-            createdAt: new Date(),
-            updatedAt: new Date()
+            createdAt: Date.now(),
+            updatedAt: Date.now(),
+            isActive: true
         };
 
-        this.sessions.push(session);
-        this.currentSession = session;
+        this.sessions.set(sessionId, session);
+        this.currentSessionId = sessionId;
         await this.saveSessions();
+        
         return session;
     }
 
-    async addMessage(content: string, role: 'user' | 'assistant' | 'system'): Promise<void> {
-        if (!this.currentSession) {
-            await this.createNewSession();
+    async addMessage(content: string, role: 'user' | 'assistant' | 'system', sessionId?: string): Promise<ChatMessage> {
+        const targetSessionId = sessionId || this.currentSessionId;
+        if (!targetSessionId) {
+            throw new Error('No active session');
+        }
+
+        const session = this.sessions.get(targetSessionId);
+        if (!session) {
+            throw new Error('Session not found');
         }
 
         const message: ChatMessage = {
-            id: this.generateId(),
+            id: `msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
             content,
             role,
-            timestamp: new Date()
+            timestamp: Date.now(),
+            sessionId: targetSessionId
         };
 
-        this.currentSession!.messages.push(message);
-        this.currentSession!.updatedAt = new Date();
+        session.messages.push(message);
+        session.updatedAt = Date.now();
+        
         await this.saveSessions();
+        return message;
     }
 
-    getCurrentSession(): ChatSession | null {
-        return this.currentSession;
+    async getCurrentSession(): Promise<ChatSession | undefined> {
+        if (!this.currentSessionId) return undefined;
+        return this.sessions.get(this.currentSessionId);
     }
 
-    getAllSessions(): ChatSession[] {
-        return this.sessions;
+    async getSession(sessionId: string): Promise<ChatSession | undefined> {
+        return this.sessions.get(sessionId);
     }
 
-    async clearHistory(): Promise<void> {
-        this.sessions = [];
-        this.currentSession = null;
-        await this.saveSessions();
+    async getAllSessions(): Promise<ChatSession[]> {
+        return Array.from(this.sessions.values());
     }
 
-    private async loadSessions(): Promise<void> {
-        try {
-            const stored = this.context.globalState.get<ChatSession[]>('chatSessions', []);
-            this.sessions = stored;
-            if (this.sessions.length > 0) {
-                this.currentSession = this.sessions[this.sessions.length - 1];
-            }
-        } catch (error) {
-            console.error('Failed to load chat sessions:', error);
+    async switchSession(sessionId: string): Promise<void> {
+        if (!this.sessions.has(sessionId)) {
+            throw new Error('Session not found');
         }
+        this.currentSessionId = sessionId;
+    }
+
+    async clearHistory(sessionId?: string): Promise<void> {
+        if (sessionId) {
+            const session = this.sessions.get(sessionId);
+            if (session) {
+                session.messages = [];
+                session.updatedAt = Date.now();
+            }
+        } else {
+            this.sessions.clear();
+            this.currentSessionId = undefined;
+        }
+        await this.saveSessions();
+    }
+
+    async deleteSession(sessionId: string): Promise<void> {
+        this.sessions.delete(sessionId);
+        if (this.currentSessionId === sessionId) {
+            this.currentSessionId = undefined;
+        }
+        await this.saveSessions();
     }
 
     private async saveSessions(): Promise<void> {
-        try {
-            await this.context.globalState.update('chatSessions', this.sessions);
-        } catch (error) {
-            console.error('Failed to save chat sessions:', error);
+        const sessionsData = Array.from(this.sessions.entries());
+        await this.context.globalState.update('chatSessions', sessionsData);
+    }
+
+    private async loadSessions(): Promise<void> {
+        const sessionsData = this.context.globalState.get<[string, ChatSession][]>('chatSessions', []);
+        this.sessions = new Map(sessionsData);
+        
+        // Set first session as active if none is set
+        if (!this.currentSessionId && this.sessions.size > 0) {
+            this.currentSessionId = Array.from(this.sessions.keys())[0];
         }
     }
 
-    private generateId(): string {
-        return Math.random().toString(36).substr(2, 9);
+    async exportSession(sessionId: string): Promise<any> {
+        const session = this.sessions.get(sessionId);
+        if (!session) {
+            throw new Error('Session not found');
+        }
+        
+        return {
+            session,
+            exportedAt: Date.now(),
+            version: '1.0'
+        };
+    }
+
+    async importSession(sessionData: any): Promise<ChatSession> {
+        if (!sessionData.session) {
+            throw new Error('Invalid session data');
+        }
+        
+        const session = sessionData.session as ChatSession;
+        this.sessions.set(session.id, session);
+        await this.saveSessions();
+        
+        return session;
     }
 }

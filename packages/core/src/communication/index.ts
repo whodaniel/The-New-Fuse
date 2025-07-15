@@ -1,6 +1,6 @@
-// Communication module exports
-export { CommunicationService } from /./CommunicationService'';
-export { CommunicationProtocol } from /./CommunicationProtocol'';
-export { CommunicationModule } from /./CommunicationModule'';
-export { ChannelManager } from /./channel'';
-export { EnhancedAgent } from /./enhancedAgent'';
+export * from './CommunicationModule';
+export * from './CommunicationService';
+export * from './CommunicationProtocol';
+export * from './CommunicationTypes';
+export * from './enhancedAgent';
+export * from './MessageBroker';

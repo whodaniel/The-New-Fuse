@@ -8,7 +8,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import { Agent, Task, AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
+import { AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
 import { PrismaClient } from '@prisma/client';
 import { ethers } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
@@ -851,23 +851,23 @@ export class MasterAgentRegistry extends EventEmitter {
 
     try {
       // This would integrate with the existing fairtable-adapters package
-      const spreadsheetRow = {
-        'Agent ID': agent.id,
-        'Name': agent.name,
-        'Type': agent.type,
-        'Status': agent.status,
-        'Platform': agent.platform,
-        'Capabilities': Object.entries(agent.capabilities)
-          .filter(([_, enabled]) => enabled)
-          .map(([cap, _]) => cap)
-          .join(', '),
-        'Success Rate': `${agent.metrics.successRate}%`,
-        'Total Tasks': agent.metrics.totalTasks,
-        'Last Seen': agent.lastSeen.toISOString(),
-        'Onboarding Complete': agent.onboardingCompleted ? 'Yes' : 'No',
-        'Protocol Compliant': agent.protocolChecklistCompleted ? 'Yes' : 'No',
-        'Verification Hash': agent.verificationHash.substring(0, 12) + '...'
-      };
+      // const spreadsheetRow = {
+      //   'Agent ID': agent.id,
+      //   'Name': agent.name,
+      //   'Type': agent.type,
+      //   'Status': agent.status,
+      //   'Platform': agent.platform,
+      //   'Capabilities': Object.entries(agent.capabilities)
+      //     .filter(([_, enabled]) => enabled)
+      //     .map(([cap, _]) => cap)
+      //     .join(', '),
+      //   'Success Rate': `${agent.metrics.successRate}%`,
+      //   'Total Tasks': agent.metrics.totalTasks,
+      //   'Last Seen': agent.lastSeen.toISOString(),
+      //   'Onboarding Complete': agent.onboardingCompleted ? 'Yes' : 'No',
+      //   'Protocol Compliant': agent.protocolChecklistCompleted ? 'Yes' : 'No',
+      //   'Verification Hash': agent.verificationHash.substring(0, 12) + '...'
+      // };
 
       // Mock integration - in real implementation would use fairtable-adapters
       const rowId = `row_${agent.id}`;
@@ -1217,11 +1217,14 @@ export class MasterAgentRegistry extends EventEmitter {
   private convertToLegacyType(type: AgentType): any {
     const mapping = {
       'BASIC': 'LLM',
-      'CHAT': 'LLM', 
+      'CHAT': 'LLM',
       'WORKFLOW': 'ORCHESTRATOR',
       'TASK': 'TOOL',
       'ASSISTANT': 'HYBRID',
-      'ANALYSIS': 'ANALYSIS'
+      'ANALYSIS': 'ANALYSIS',
+      'CONVERSATIONAL': 'LLM',
+      'IDE_EXTENSION': 'HYBRID',
+      'API': 'TOOL'
     };
     return mapping[type] || 'HYBRID';
   }
@@ -1232,7 +1235,11 @@ export class MasterAgentRegistry extends EventEmitter {
       'INACTIVE': 'INACTIVE',
       'IDLE': 'INACTIVE',
       'BUSY': 'BUSY',
-      'ERROR': 'ERROR'
+      'ERROR': 'ERROR',
+      'OFFLINE': 'INACTIVE',
+      'INITIALIZING': 'ACTIVE',
+      'READY': 'ACTIVE',
+      'TERMINATED': 'INACTIVE'
     };
     return mapping[status] || 'INACTIVE';
   }
@@ -1401,24 +1408,24 @@ export class MasterAgentRegistry extends EventEmitter {
 
     try {
       // Create metadata for IPFS upload (simplified - in production would upload to IPFS)
-      const metadata = {
-        name: profile.name,
-        description: profile.description || `${profile.type} agent in The New Fuse ecosystem`,
-        image: `https://api.the-new-fuse.io/agents/${profile.id}/avatar`,
-        attributes: [
-          { trait_type: "Agent Type", value: profile.type },
-          { trait_type: "Platform", value: profile.platform },
-          { trait_type: "Success Rate", value: profile.metrics.successRate },
-          { trait_type: "Total Tasks", value: profile.metrics.totalTasks },
-          { trait_type: "Created At", value: profile.registeredAt.toISOString() }
-        ],
-        properties: {
-          agentId: profile.id,
-          platform: profile.platform,
-          capabilities: profile.capabilities,
-          version: profile.metadata.version
-        }
-      };
+      // const metadata = {
+      //   name: profile.name,
+      //   description: profile.description || `${profile.type} agent in The New Fuse ecosystem`,
+      //   image: `https://api.the-new-fuse.io/agents/${profile.id}/avatar`,
+      //   attributes: [
+      //     { trait_type: "Agent Type", value: profile.type },
+      //     { trait_type: "Platform", value: profile.platform },
+      //     { trait_type: "Success Rate", value: profile.metrics.successRate },
+      //     { trait_type: "Total Tasks", value: profile.metrics.totalTasks },
+      //     { trait_type: "Created At", value: profile.registeredAt.toISOString() }
+      //   ],
+      //   properties: {
+      //     agentId: profile.id,
+      //     platform: profile.platform,
+      //     capabilities: profile.capabilities,
+      //     version: profile.metadata.version
+      //   }
+      // };
 
       // Mock IPFS hash (in production, upload to IPFS first)
       const metadataURI = `ipfs://QmAgent${profile.id}Metadata`;
@@ -1592,7 +1599,11 @@ export class MasterAgentRegistry extends EventEmitter {
       'INACTIVE': 0,
       'IDLE': 0,
       'BUSY': 0,
-      'ERROR': 0
+      'ERROR': 0,
+      'OFFLINE': 0,
+      'INITIALIZING': 0,
+      'READY': 0,
+      'TERMINATED': 0
     };
     
     for (const agent of agents) {

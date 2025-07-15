@@ -52,3 +52,4 @@ export declare function decrypt(encryptedText: string, key: Buffer): string;
  * @returns {boolean} True if the strings are equal.
  */
 export declare function timingSafeEqual(a: string, b: string): boolean;
+//# sourceMappingURL=cryptoUtils.d.ts.map

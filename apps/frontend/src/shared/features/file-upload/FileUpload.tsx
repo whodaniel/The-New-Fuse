@@ -14,7 +14,7 @@ export function FileUpload({ onUpload, maxSize = 10 * 1024 * 1024, acceptedTypes
     const onDrop = React.useCallback(async (acceptedFiles) => {
         if (acceptedFiles.length === 0)
             return;
-        const newFiles = acceptedFiles.map(fil(e: any) => ({
+        const newFiles = acceptedFiles.map((file: any) => ({
             file,
             progress: 0
         }));

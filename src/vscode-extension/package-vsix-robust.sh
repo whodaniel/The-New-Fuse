@@ -2,12 +2,8 @@
 set -euo pipefail
 
 echo "📦 Packaging The New Fuse Extension (Robust Script)..."
-BASE_DIR="\$( cd "\$( dirname "\${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-echo "SCRIPT_DEBUG: Current directory is \$BASE_DIR. Ensuring script operates from here."
-cd "\$BASE_DIR"
-
 if [ ! -f "package.json" ]; then
-    echo "❌ package.json not found in \$BASE_DIR. This script must be run from the root of the vscode-extension project (e.g., src/vscode-extension/)."
+    echo "❌ package.json not found in $(pwd). This script must be run from the root of the vscode-extension project (e.g., src/vscode-extension/)."
     exit 1
 fi
 echo "✅ Found package.json in current directory."
@@ -96,7 +92,7 @@ if [ "\$BUILD_SUCCESSFUL" = false ]; then
 fi
 
 # Verify main entry point file exists
-MAIN_ENTRY_FROM_PACKAGE_JSON=\$(grep '"main":' package.json | sed -n 's/.*"main": "\(.*\)",/\1/p' | tr -d '[:space:]')
+MAIN_ENTRY_FROM_PACKAGE_JSON=$(node -p "require('./package.json').main")
 echo "ℹ️ Expected main entry from package.json: '\$MAIN_ENTRY_FROM_PACKAGE_JSON'"
 if [ ! -f "\$MAIN_ENTRY_FROM_PACKAGE_JSON" ]; then
     echo "❌ CRITICAL: Main entry file '\$MAIN_ENTRY_FROM_PACKAGE_JSON' (from package.json) not found after build!"

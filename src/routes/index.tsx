@@ -15,6 +15,11 @@ const ForgotPassword = React.lazy(() => import('@/pages/auth/ForgotPassword'));
 const ResetPassword = React.lazy(() => import('@/pages/auth/ResetPassword'));
 const NotFound = React.lazy(() => import('@/pages/NotFound'));
 
+// Additional routes that are missing
+const Agents = React.lazy(() => import('@/pages/Agents').catch(() => ({ default: () => <div>Agents page coming soon</div> })));
+const Workflows = React.lazy(() => import('@/pages/Workflows').catch(() => ({ default: () => <div>Workflows page coming soon</div> })));
+const Analytics = React.lazy(() => import('@/pages/Analytics').catch(() => ({ default: () => <div>Analytics page coming soon</div> })));
+
 export const routes: RouteObject[] = [
   {
     path: '/',
@@ -135,6 +140,57 @@ export const routes: RouteObject[] = [
               </Center>
             }>
               <Settings />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'agents',
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={
+              <Center h="100vh">
+                <Spinner
+                  size="xl"
+                  color="brand.500"
+                />
+              </Center>
+            }>
+              <Agents />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'workflows',
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={
+              <Center h="100vh">
+                <Spinner
+                  size="xl"
+                  color="brand.500"
+                />
+              </Center>
+            }>
+              <Workflows />
+            </Suspense>
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: 'analytics',
+        element: (
+          <ProtectedRoute>
+            <Suspense fallback={
+              <Center h="100vh">
+                <Spinner
+                  size="xl"
+                  color="brand.500"
+                />
+              </Center>
+            }>
+              <Analytics />
             </Suspense>
           </ProtectedRoute>
         ),

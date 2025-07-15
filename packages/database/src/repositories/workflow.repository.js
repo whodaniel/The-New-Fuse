@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,11 +8,13 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { WorkflowStatus, WorkflowExecutionStatus } from '../../generated/prisma';
-import { PrismaService } from '../prisma.service';
-import { BaseRepository } from './base.repository';
-let WorkflowRepository = class WorkflowRepository extends BaseRepository {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.WorkflowRepository = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_1 = require("../../generated/prisma");
+const prisma_service_1 = require("../prisma.service");
+const base_repository_1 = require("./base.repository");
+let WorkflowRepository = class WorkflowRepository extends base_repository_1.BaseRepository {
     constructor(prisma) {
         super(prisma, 'workflow');
     }
@@ -22,14 +25,12 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             name: prismaWorkflow.name,
             description: prismaWorkflow.description ?? null,
             definition: prismaWorkflow.definition,
-            version: prismaWorkflow.version,
-            isEnabled: prismaWorkflow.isEnabled,
             status: prismaWorkflow.status,
             createdAt: prismaWorkflow.createdAt,
             updatedAt: prismaWorkflow.updatedAt,
             lastExecutedAt: prismaWorkflow.lastExecutedAt ?? null,
             agentId: prismaWorkflow.agentId ?? null,
-            userId: prismaWorkflow.userId ?? null,
+            creatorId: prismaWorkflow.creatorId ?? null,
             executions: prismaWorkflow.executions?.map((exec) => this.convertExecutionPrismaToApp(exec)) ?? [],
             steps: prismaWorkflow.steps?.map((step) => ({ ...step })) ?? [],
         };
@@ -45,8 +46,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             error: prismaExecution.error ?? null,
             startedAt: prismaExecution.startedAt,
             completedAt: prismaExecution.completedAt ?? null,
-            createdAt: prismaExecution.createdAt,
-            updatedAt: prismaExecution.updatedAt,
         };
     }
     async findById(id) {
@@ -60,7 +59,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
                     take: 10
                 },
                 agent: true,
-                user: true,
             }
         });
         return result ? this.convertPrismaToApp(result) : null;
@@ -71,7 +69,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -85,7 +82,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             }
         });
         return this.convertPrismaToApp(result);
@@ -100,7 +96,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             }
         });
         return this.convertPrismaToApp(result);
@@ -111,13 +106,12 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         });
         return this.convertPrismaToApp(result);
     }
-    async findByUserId(userId) {
+    async findByCreatorId(creatorId) {
         const results = await this.prisma.workflow.findMany({
-            where: { userId },
+            where: { creatorId },
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -131,7 +125,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -145,7 +138,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -163,7 +155,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             }
         });
         return this.convertPrismaToApp(result);
@@ -244,7 +235,7 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         const totalWorkflows = await this.prisma.workflow.count();
         const activeWorkflows = await this.prisma.workflow.count({
             where: {
-                status: WorkflowStatus.ACTIVE
+                status: prisma_1.WorkflowStatus.ACTIVE
             }
         });
         // Get execution stats
@@ -257,7 +248,7 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         const totalExecutions = await this.prisma.workflowExecution.count();
         const successfulExecutions = await this.prisma.workflowExecution.count({
             where: {
-                status: WorkflowExecutionStatus.SUCCEEDED
+                status: prisma_1.WorkflowExecutionStatus.COMPLETED
             }
         });
         return {
@@ -297,7 +288,6 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
             include: {
                 executions: true,
                 agent: true,
-                user: true,
             },
             orderBy: {
                 updatedAt: 'desc'
@@ -306,8 +296,8 @@ let WorkflowRepository = class WorkflowRepository extends BaseRepository {
         return results.map(workflow => this.convertPrismaToApp(workflow));
     }
 };
-WorkflowRepository = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [PrismaService])
+exports.WorkflowRepository = WorkflowRepository;
+exports.WorkflowRepository = WorkflowRepository = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], WorkflowRepository);
-export { WorkflowRepository };

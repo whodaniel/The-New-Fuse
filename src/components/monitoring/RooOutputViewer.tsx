@@ -201,6 +201,7 @@ export const RooOutputViewer: React.FC<Props> = ({ eventEmitter, monitoringServi
         ) : (
           <p className="empty-message">No errors to display.</p>
         )}
+      </div>
 
       <style jsx>{`
         .roo-output-viewer {

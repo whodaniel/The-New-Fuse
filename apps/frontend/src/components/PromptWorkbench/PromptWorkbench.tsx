@@ -159,7 +159,7 @@ export const PromptWorkbench: React.FC = () => {
             onChange={(e) => handleTemplateSelect(e.target.value)}
             w="250px"
           >
-            {templates.map(templat(e: any) => (
+            {templates.map((template: any) => (
               <option key={template.id} value={template.id}>{template.name}</option>
             ))}
           </Select>

@@ -44,7 +44,7 @@ export class AgentRepository {
 
   async findMany(filters?: any): Promise<AppAgent[]> {
     const results = await this.prisma.agent.findMany({ where: filters || {} });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: any) => this.convertPrismaToApp(agent));
   }
 
   async create(data: any): Promise<AppAgent> {
@@ -65,7 +65,7 @@ export class AgentRepository {
   // Additional methods for compatibility with existing services
   async findAll(filter?: any, include?: any, orderBy?: any, skip?: number, take?: number): Promise<AppAgent[]> {
     const results = await this.prisma.agent.findMany({ where: filter, include, orderBy, skip, take });
-    return results.map(agent => this.convertPrismaToApp(agent));
+    return results.map((agent: any) => this.convertPrismaToApp(agent));
   }
 
   async findOne(filter?: any, include?: any): Promise<AppAgent | null> {

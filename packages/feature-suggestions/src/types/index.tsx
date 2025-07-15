@@ -1,5 +1,5 @@
 // Import enums from the central types package
-import { SuggestionStatus as CoreSuggestionStatus, SuggestionPriority as CoreSuggestionPriority } from '@the-new-fuse/types/core/suggestion-enums';
+import { SuggestionStatus as CoreSuggestionStatus, SuggestionPriority as CoreSuggestionPriority } from '@the-new-fuse/types';
 
 // Re-export the standardized enums
 export { CoreSuggestionStatus as SuggestionStatus, CoreSuggestionPriority as SuggestionPriority };

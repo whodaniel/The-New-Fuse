@@ -12,7 +12,7 @@ export declare class UserRepository {
     update(id: string, data: Prisma.UserUpdateInput): Promise<User>;
     delete(id: string): Promise<User>;
     findByRole(role: UserRole): Promise<User[]>;
-    updatePassword(id: string, passwordHash: string): Promise<User>;
+    updatePassword(id: string, hashedPassword: string): Promise<User>;
     updateRole(id: string, role: UserRole): Promise<User>;
     searchUsers(query: string): Promise<User[]>;
     getUserStats(): Promise<{

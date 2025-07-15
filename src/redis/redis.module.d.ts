@@ -1,2 +1,3 @@
-export declare class RedisModule {}
-export default RedisModule;
+export declare class RedisModule {
+}
+//# sourceMappingURL=redis.module.d.ts.map

@@ -63,9 +63,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -103,9 +104,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -138,9 +140,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -176,9 +179,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -218,9 +222,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -259,9 +264,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }
@@ -297,9 +303,10 @@ export class AgentGatewayController {
         );
         return res.status(response.status).json(response.data);
       } catch (fallbackError) {
+        const fallbackErrorMessage = fallbackError instanceof Error ? fallbackError.message : 'Unknown error';
         return res.status(HttpStatus.BAD_GATEWAY).json({
           message: 'Agent services unavailable',
-          error: fallbackError.message,
+          error: fallbackErrorMessage,
         });
       }
     }

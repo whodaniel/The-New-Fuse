@@ -6,7 +6,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 // import { PerformanceInterceptor } from '../interceptors/performance.interceptor';
 // import { CurrentUser } from '../modules/decorators/current-user.decorator';
-import { User } from '@prisma/client';
+import { User } from '@the-new-fuse/database';
 
 // Consolidated DTOs for batch operations
 interface BatchOperationRequest<T> {

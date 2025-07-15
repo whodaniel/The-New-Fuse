@@ -120,149 +120,238 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.TaskScalarFieldEnum = {
+exports.Prisma.UserScalarFieldEnum = {
   id: 'id',
-  title: 'title',
-  description: 'description',
-  status: 'status',
-  priority: 'priority',
-  type: 'type',
+  email: 'email',
+  username: 'username',
+  name: 'name',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  dueDate: 'dueDate',
-  assignedTo: 'assignedTo',
-  createdBy: 'createdBy',
-  metadata: 'metadata',
-  tags: 'tags',
-  dependencies: 'dependencies',
-  error: 'error',
-  completedAt: 'completedAt'
+  hashedPassword: 'hashedPassword',
+  role: 'role',
+  roles: 'roles',
+  isActive: 'isActive',
+  lastLogin: 'lastLogin',
+  preferences: 'preferences',
+  refreshToken: 'refreshToken',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.AuthSessionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.LoginAttemptScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  ipAddress: 'ipAddress',
+  successful: 'successful',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.AuthEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type',
+  details: 'details',
+  createdAt: 'createdAt'
 };
 
 exports.Prisma.AgentScalarFieldEnum = {
   id: 'id',
   name: 'name',
-  description: 'description',
+  type: 'type',
   status: 'status',
+  description: 'description',
+  systemPrompt: 'systemPrompt',
+  config: 'config',
   capabilities: 'capabilities',
   provider: 'provider',
-  lastActive: 'lastActive',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.AgentMetadataScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  metadata: 'metadata'
+};
+
+exports.Prisma.ChatScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  agentId: 'agentId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.ChatRoomScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  isPrivate: 'isPrivate',
+  ownerId: 'ownerId',
+  settings: 'settings',
   metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  userId: 'userId',
-  type: 'type'
-};
-
-exports.Prisma.RegisteredEntityScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  description: 'description',
-  metadata: 'metadata',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.UserScalarFieldEnum = {
-  id: 'id',
-  email: 'email',
-  name: 'name',
-  passwordHash: 'passwordHash',
-  role: 'role',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  lastMessageAt: 'lastMessageAt',
+  isActive: 'isActive',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
   role: 'role',
+  senderId: 'senderId',
+  senderName: 'senderName',
+  agentId: 'agentId',
+  chatId: 'chatId',
+  roomId: 'roomId',
+  parentMessageId: 'parentMessageId',
+  metadata: 'metadata',
+  attachments: 'attachments',
+  timestamp: 'timestamp',
+  updatedAt: 'updatedAt',
+  isEdited: 'isEdited',
+  isDeleted: 'isDeleted',
+  reactions: 'reactions'
+};
+
+exports.Prisma.WorkflowScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  definition: 'definition',
+  status: 'status',
+  creatorId: 'creatorId',
+  agentId: 'agentId',
+  metadata: 'metadata',
+  isActive: 'isActive',
+  variables: 'variables',
+  triggers: 'triggers',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastExecutedAt: 'lastExecutedAt',
+  executionCount: 'executionCount',
+  statistics: 'statistics',
+  deletedAt: 'deletedAt'
+};
+
+exports.Prisma.WorkflowStepScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  config: 'config',
+  order: 'order',
+  workflowId: 'workflowId',
+  agentId: 'agentId',
+  nextSteps: 'nextSteps',
+  conditions: 'conditions',
+  transformations: 'transformations',
+  metadata: 'metadata',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  lastExecutedAt: 'lastExecutedAt',
+  statistics: 'statistics'
+};
+
+exports.Prisma.WorkflowExecutionScalarFieldEnum = {
+  id: 'id',
+  workflowId: 'workflowId',
+  status: 'status',
+  input: 'input',
+  output: 'output',
+  error: 'error',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.PipelineScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  configuration: 'configuration',
+  status: 'status',
   userId: 'userId',
-  sessionId: 'sessionId',
-  metadata: 'metadata',
+  agentId: 'agentId',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
-exports.Prisma.A2AAgentScalarFieldEnum = {
+exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
-  agentId: 'agentId',
-  name: 'name',
   type: 'type',
-  version: 'version',
-  description: 'description',
-  metadata: 'metadata',
-  endpoints: 'endpoints',
-  authentication: 'authentication',
   status: 'status',
-  lastHeartbeat: 'lastHeartbeat',
-  registeredAt: 'registeredAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.A2AAgentCapabilityScalarFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  name: 'name',
-  description: 'description',
-  version: 'version',
-  parameters: 'parameters',
-  metadata: 'metadata'
-};
-
-exports.Prisma.A2AMessageScalarFieldEnum = {
-  id: 'id',
-  messageId: 'messageId',
-  protocolVersion: 'protocolVersion',
-  timestamp: 'timestamp',
-  fromAgentId: 'fromAgentId',
-  toAgentId: 'toAgentId',
-  type: 'type',
   priority: 'priority',
-  conversationId: 'conversationId',
-  requestId: 'requestId',
-  ttl: 'ttl',
-  payload: 'payload',
-  routing: 'routing',
-  signature: 'signature',
-  checksum: 'checksum',
-  metadata: 'metadata',
-  deliveredAt: 'deliveredAt',
-  acknowledgedAt: 'acknowledgedAt',
-  createdAt: 'createdAt'
+  data: 'data',
+  result: 'result',
+  error: 'error',
+  startTime: 'startTime',
+  endTime: 'endTime',
+  pipelineId: 'pipelineId',
+  agentId: 'agentId',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
-exports.Prisma.A2AConversationScalarFieldEnum = {
+exports.Prisma.TaskExecutionScalarFieldEnum = {
   id: 'id',
-  conversationId: 'conversationId',
-  initiatorId: 'initiatorId',
-  topic: 'topic',
+  taskId: 'taskId',
+  status: 'status',
+  output: 'output',
+  error: 'error',
+  startedAt: 'startedAt',
+  completedAt: 'completedAt'
+};
+
+exports.Prisma.CodeExecutionUsageScalarFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  clientId: 'clientId',
+  executionId: 'executionId',
+  language: 'language',
+  code: 'code',
+  result: 'result',
+  output: 'output',
+  error: 'error',
+  executionTime: 'executionTime',
+  memoryUsage: 'memoryUsage',
+  computeUnits: 'computeUnits',
+  cost: 'cost',
+  tier: 'tier',
+  environment: 'environment',
   status: 'status',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  completedAt: 'completedAt'
 };
 
-exports.Prisma.A2AConversationParticipantScalarFieldEnum = {
+exports.Prisma.CodeExecutionSessionScalarFieldEnum = {
   id: 'id',
-  conversationId: 'conversationId',
-  agentId: 'agentId',
-  joinedAt: 'joinedAt',
-  leftAt: 'leftAt',
-  role: 'role'
-};
-
-exports.Prisma.A2AHeartbeatScalarFieldEnum = {
-  id: 'id',
-  agentId: 'agentId',
-  timestamp: 'timestamp',
-  status: 'status',
-  load: 'load',
-  activeConnections: 'activeConnections',
-  lastActivity: 'lastActivity',
-  metadata: 'metadata',
-  createdAt: 'createdAt'
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId',
+  collaborators: 'collaborators',
+  isPublic: 'isPublic',
+  files: 'files',
+  environment: 'environment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  expiresAt: 'expiresAt',
+  storageUsage: 'storageUsage'
 };
 
 exports.Prisma.AgentNFTScalarFieldEnum = {
@@ -328,52 +417,81 @@ exports.Prisma.MarketplaceListingScalarFieldEnum = {
 exports.Prisma.MarketplaceOfferScalarFieldEnum = {
   id: 'id',
   listingId: 'listingId',
-  offerId: 'offerId',
   buyer: 'buyer',
-  offerPrice: 'offerPrice',
   shareAmount: 'shareAmount',
+  offerPrice: 'offerPrice',
   status: 'status',
   expiresAt: 'expiresAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.WorkflowScalarFieldEnum = {
+exports.Prisma.WalletScalarFieldEnum = {
+  id: 'id',
+  address: 'address',
+  agentId: 'agentId',
+  type: 'type',
+  balance: 'balance',
+  nonce: 'nonce',
+  isActive: 'isActive',
+  lastActivity: 'lastActivity',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.TransactionScalarFieldEnum = {
+  id: 'id',
+  hash: 'hash',
+  walletId: 'walletId',
+  fromAddress: 'fromAddress',
+  toAddress: 'toAddress',
+  value: 'value',
+  gasPrice: 'gasPrice',
+  gasUsed: 'gasUsed',
+  gasLimit: 'gasLimit',
+  status: 'status',
+  blockNumber: 'blockNumber',
+  blockHash: 'blockHash',
+  type: 'type',
+  data: 'data',
+  createdAt: 'createdAt',
+  confirmedAt: 'confirmedAt'
+};
+
+exports.Prisma.RegisteredEntityScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  type: 'type',
   description: 'description',
-  definition: 'definition',
-  version: 'version',
-  isEnabled: 'isEnabled',
+  metadata: 'metadata',
+  config: 'config',
   status: 'status',
+  version: 'version',
+  namespace: 'namespace',
+  tags: 'tags',
+  capabilities: 'capabilities',
+  dependencies: 'dependencies',
+  isPublic: 'isPublic',
+  ownerId: 'ownerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  lastExecutedAt: 'lastExecutedAt',
-  agentId: 'agentId',
-  userId: 'userId'
+  deletedAt: 'deletedAt'
 };
 
-exports.Prisma.WorkflowStepScalarFieldEnum = {
+exports.Prisma.LLMConfigScalarFieldEnum = {
   id: 'id',
-  workflowId: 'workflowId',
-  order: 'order',
-  type: 'type',
-  config: 'config',
+  name: 'name',
+  provider: 'provider',
+  modelName: 'modelName',
+  apiKey: 'apiKey',
+  apiEndpoint: 'apiEndpoint',
+  isCustom: 'isCustom',
+  enabled: 'enabled',
+  priority: 'priority',
+  retryConfig: 'retryConfig',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WorkflowExecutionScalarFieldEnum = {
-  id: 'id',
-  workflowId: 'workflowId',
-  status: 'status',
-  input: 'input',
-  output: 'output',
-  error: 'error',
-  startedAt: 'startedAt',
-  completedAt: 'completedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -405,6 +523,309 @@ exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
 };
+
+exports.Prisma.UserOrderByRelevanceFieldEnum = {
+  id: 'id',
+  email: 'email',
+  username: 'username',
+  name: 'name',
+  hashedPassword: 'hashedPassword',
+  refreshToken: 'refreshToken'
+};
+
+exports.Prisma.AuthSessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  token: 'token'
+};
+
+exports.Prisma.LoginAttemptOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  ipAddress: 'ipAddress'
+};
+
+exports.Prisma.AuthEventOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  type: 'type'
+};
+
+exports.Prisma.AgentOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  systemPrompt: 'systemPrompt',
+  provider: 'provider',
+  userId: 'userId'
+};
+
+exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentId: 'agentId'
+};
+
+exports.Prisma.ChatOrderByRelevanceFieldEnum = {
+  id: 'id',
+  title: 'title',
+  agentId: 'agentId',
+  userId: 'userId'
+};
+
+exports.Prisma.ChatRoomOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId'
+};
+
+exports.Prisma.MessageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  content: 'content',
+  senderId: 'senderId',
+  senderName: 'senderName',
+  agentId: 'agentId',
+  chatId: 'chatId',
+  roomId: 'roomId',
+  parentMessageId: 'parentMessageId',
+  attachments: 'attachments'
+};
+
+exports.Prisma.WorkflowOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  creatorId: 'creatorId',
+  agentId: 'agentId'
+};
+
+exports.Prisma.WorkflowStepOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  type: 'type',
+  workflowId: 'workflowId',
+  agentId: 'agentId',
+  nextSteps: 'nextSteps'
+};
+
+exports.Prisma.WorkflowExecutionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  workflowId: 'workflowId',
+  error: 'error'
+};
+
+exports.Prisma.PipelineOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  userId: 'userId',
+  agentId: 'agentId'
+};
+
+exports.Prisma.TaskOrderByRelevanceFieldEnum = {
+  id: 'id',
+  type: 'type',
+  error: 'error',
+  pipelineId: 'pipelineId',
+  agentId: 'agentId',
+  userId: 'userId'
+};
+
+exports.Prisma.TaskExecutionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  taskId: 'taskId',
+  status: 'status',
+  error: 'error'
+};
+
+exports.Prisma.CodeExecutionUsageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  clientId: 'clientId',
+  executionId: 'executionId',
+  code: 'code',
+  environment: 'environment'
+};
+
+exports.Prisma.CodeExecutionSessionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  ownerId: 'ownerId',
+  collaborators: 'collaborators'
+};
+
+exports.Prisma.AgentNFTOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentId: 'agentId',
+  contractAddress: 'contractAddress',
+  smartAccountAddress: 'smartAccountAddress',
+  metadataUri: 'metadataUri'
+};
+
+exports.Prisma.FractionalShareOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentNFTId: 'agentNFTId',
+  ownerAddress: 'ownerAddress'
+};
+
+exports.Prisma.RevenueStreamOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentNFTId: 'agentNFTId',
+  streamName: 'streamName',
+  description: 'description',
+  tokenAddress: 'tokenAddress'
+};
+
+exports.Prisma.RevenueDistributionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  revenueStreamId: 'revenueStreamId',
+  txHash: 'txHash'
+};
+
+exports.Prisma.MarketplaceListingOrderByRelevanceFieldEnum = {
+  id: 'id',
+  agentNFTId: 'agentNFTId',
+  seller: 'seller'
+};
+
+exports.Prisma.MarketplaceOfferOrderByRelevanceFieldEnum = {
+  id: 'id',
+  listingId: 'listingId',
+  buyer: 'buyer'
+};
+
+exports.Prisma.WalletOrderByRelevanceFieldEnum = {
+  id: 'id',
+  address: 'address',
+  agentId: 'agentId'
+};
+
+exports.Prisma.TransactionOrderByRelevanceFieldEnum = {
+  id: 'id',
+  hash: 'hash',
+  walletId: 'walletId',
+  fromAddress: 'fromAddress',
+  toAddress: 'toAddress',
+  blockHash: 'blockHash'
+};
+
+exports.Prisma.RegisteredEntityOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  version: 'version',
+  namespace: 'namespace',
+  tags: 'tags',
+  capabilities: 'capabilities',
+  dependencies: 'dependencies',
+  ownerId: 'ownerId'
+};
+
+exports.Prisma.LLMConfigOrderByRelevanceFieldEnum = {
+  id: 'id',
+  name: 'name',
+  provider: 'provider',
+  modelName: 'modelName',
+  apiKey: 'apiKey',
+  apiEndpoint: 'apiEndpoint'
+};
+exports.UserRole = exports.$Enums.UserRole = {
+  USER: 'USER',
+  ADMIN: 'ADMIN',
+  SUPER_ADMIN: 'SUPER_ADMIN',
+  AGENCY_OWNER: 'AGENCY_OWNER',
+  AGENCY_ADMIN: 'AGENCY_ADMIN',
+  AGENCY_MANAGER: 'AGENCY_MANAGER',
+  AGENT_OPERATOR: 'AGENT_OPERATOR'
+};
+
+exports.AgentType = exports.$Enums.AgentType = {
+  BASIC: 'BASIC',
+  CHAT: 'CHAT',
+  WORKFLOW: 'WORKFLOW',
+  TASK: 'TASK',
+  ASSISTANT: 'ASSISTANT',
+  ANALYSIS: 'ANALYSIS',
+  CONVERSATIONAL: 'CONVERSATIONAL',
+  IDE_EXTENSION: 'IDE_EXTENSION',
+  API: 'API'
+};
+
+exports.AgentStatus = exports.$Enums.AgentStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  IDLE: 'IDLE',
+  BUSY: 'BUSY',
+  ERROR: 'ERROR',
+  OFFLINE: 'OFFLINE',
+  INITIALIZING: 'INITIALIZING',
+  READY: 'READY',
+  TERMINATED: 'TERMINATED'
+};
+
+exports.AgentCapability = exports.$Enums.AgentCapability = {
+  CODE_GENERATION: 'CODE_GENERATION',
+  CODE_REVIEW: 'CODE_REVIEW',
+  CODE_REFACTORING: 'CODE_REFACTORING',
+  CODE_EXECUTION: 'CODE_EXECUTION',
+  DEBUGGING: 'DEBUGGING',
+  TESTING: 'TESTING',
+  DOCUMENTATION: 'DOCUMENTATION',
+  ARCHITECTURE_DESIGN: 'ARCHITECTURE_DESIGN',
+  OPTIMIZATION: 'OPTIMIZATION',
+  SECURITY_AUDIT: 'SECURITY_AUDIT',
+  PROJECT_MANAGEMENT: 'PROJECT_MANAGEMENT',
+  TOOL_USAGE: 'TOOL_USAGE',
+  TASK_EXECUTION: 'TASK_EXECUTION',
+  FILE_MANAGEMENT: 'FILE_MANAGEMENT',
+  CODE_COMPLETION: 'CODE_COMPLETION',
+  CODE_SUGGESTIONS: 'CODE_SUGGESTIONS',
+  SYNTAX_HIGHLIGHTING: 'SYNTAX_HIGHLIGHTING',
+  ERROR_DETECTION: 'ERROR_DETECTION',
+  CODE_FORMATTING: 'CODE_FORMATTING',
+  INTELLISENSE: 'INTELLISENSE',
+  CHAT: 'CHAT',
+  WORKFLOW: 'WORKFLOW',
+  RESEARCH: 'RESEARCH',
+  ANALYSIS: 'ANALYSIS',
+  INTEGRATION: 'INTEGRATION'
+};
+
+exports.MessageRole = exports.$Enums.MessageRole = {
+  USER: 'USER',
+  AGENT: 'AGENT',
+  SYSTEM: 'SYSTEM',
+  ASSISTANT: 'ASSISTANT',
+  TOOL: 'TOOL'
+};
+
+exports.WorkflowStatus = exports.$Enums.WorkflowStatus = {
+  DRAFT: 'DRAFT',
+  PUBLISHED: 'PUBLISHED',
+  ARCHIVED: 'ARCHIVED',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
+exports.WorkflowExecutionStatus = exports.$Enums.WorkflowExecutionStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PipelineStatus = exports.$Enums.PipelineStatus = {
+  DRAFT: 'DRAFT',
+  ACTIVE: 'ACTIVE',
+  PAUSED: 'PAUSED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+};
+
 exports.TaskStatus = exports.$Enums.TaskStatus = {
   PENDING: 'PENDING',
   IN_PROGRESS: 'IN_PROGRESS',
@@ -420,63 +841,30 @@ exports.TaskPriority = exports.$Enums.TaskPriority = {
   URGENT: 'URGENT'
 };
 
-exports.AgentStatus = exports.$Enums.AgentStatus = {
-  IDLE: 'IDLE',
-  BUSY: 'BUSY',
-  ERROR: 'ERROR',
-  OFFLINE: 'OFFLINE'
+exports.CodeExecutionLanguage = exports.$Enums.CodeExecutionLanguage = {
+  JAVASCRIPT: 'JAVASCRIPT',
+  TYPESCRIPT: 'TYPESCRIPT',
+  PYTHON: 'PYTHON',
+  RUBY: 'RUBY',
+  SHELL: 'SHELL',
+  HTML: 'HTML',
+  CSS: 'CSS'
 };
 
-exports.AgentType = exports.$Enums.AgentType = {
-  GENERIC: 'GENERIC',
-  CODER: 'CODER',
-  ANALYZER: 'ANALYZER',
-  COORDINATOR: 'COORDINATOR',
-  COMMUNICATOR: 'COMMUNICATOR'
+exports.CodeExecutionTier = exports.$Enums.CodeExecutionTier = {
+  BASIC: 'BASIC',
+  STANDARD: 'STANDARD',
+  PREMIUM: 'PREMIUM',
+  ENTERPRISE: 'ENTERPRISE'
 };
 
-exports.EntityStatus = exports.$Enums.EntityStatus = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE',
-  PENDING: 'PENDING'
-};
-
-exports.UserRole = exports.$Enums.UserRole = {
-  USER: 'USER',
-  ADMIN: 'ADMIN',
-  AGENT: 'AGENT'
-};
-
-exports.A2AAgentStatus = exports.$Enums.A2AAgentStatus = {
-  ONLINE: 'ONLINE',
-  OFFLINE: 'OFFLINE',
-  BUSY: 'BUSY',
-  IDLE: 'IDLE',
-  ERROR: 'ERROR'
-};
-
-exports.A2AMessageType = exports.$Enums.A2AMessageType = {
-  HANDSHAKE: 'HANDSHAKE',
-  REQUEST: 'REQUEST',
-  RESPONSE: 'RESPONSE',
-  NOTIFICATION: 'NOTIFICATION',
-  HEARTBEAT: 'HEARTBEAT',
-  ERROR: 'ERROR',
-  BROADCAST: 'BROADCAST'
-};
-
-exports.A2AMessagePriority = exports.$Enums.A2AMessagePriority = {
-  LOW: 'LOW',
-  MEDIUM: 'MEDIUM',
-  HIGH: 'HIGH',
-  URGENT: 'URGENT'
-};
-
-exports.A2AConversationStatus = exports.$Enums.A2AConversationStatus = {
-  ACTIVE: 'ACTIVE',
-  PAUSED: 'PAUSED',
+exports.CodeExecutionStatus = exports.$Enums.CodeExecutionStatus = {
+  PENDING: 'PENDING',
+  RUNNING: 'RUNNING',
   COMPLETED: 'COMPLETED',
-  FAILED: 'FAILED'
+  FAILED: 'FAILED',
+  TIMEOUT: 'TIMEOUT',
+  CANCELLED: 'CANCELLED'
 };
 
 exports.MarketplaceStatus = exports.$Enums.MarketplaceStatus = {
@@ -487,51 +875,81 @@ exports.MarketplaceStatus = exports.$Enums.MarketplaceStatus = {
 };
 
 exports.OfferStatus = exports.$Enums.OfferStatus = {
-  ACTIVE: 'ACTIVE',
+  PENDING: 'PENDING',
   ACCEPTED: 'ACCEPTED',
   REJECTED: 'REJECTED',
   CANCELLED: 'CANCELLED',
   EXPIRED: 'EXPIRED'
 };
 
-exports.WorkflowStatus = exports.$Enums.WorkflowStatus = {
-  DRAFT: 'DRAFT',
-  ACTIVE: 'ACTIVE',
-  PUBLISHED: 'PUBLISHED',
-  ARCHIVED: 'ARCHIVED'
+exports.WalletType = exports.$Enums.WalletType = {
+  SMART_ACCOUNT: 'SMART_ACCOUNT',
+  EOA: 'EOA',
+  MULTI_SIG: 'MULTI_SIG'
 };
 
-exports.WorkflowExecutionStatus = exports.$Enums.WorkflowExecutionStatus = {
+exports.TransactionStatus = exports.$Enums.TransactionStatus = {
   PENDING: 'PENDING',
-  RUNNING: 'RUNNING',
-  COMPLETED: 'COMPLETED',
-  SUCCEEDED: 'SUCCEEDED',
+  CONFIRMED: 'CONFIRMED',
   FAILED: 'FAILED',
-  CANCELLED: 'CANCELLED',
-  PAUSED: 'PAUSED'
+  CANCELLED: 'CANCELLED'
+};
+
+exports.TransactionType = exports.$Enums.TransactionType = {
+  TRANSFER: 'TRANSFER',
+  CONTRACT_CALL: 'CONTRACT_CALL',
+  CONTRACT_DEPLOYMENT: 'CONTRACT_DEPLOYMENT',
+  NFT_MINT: 'NFT_MINT',
+  NFT_TRANSFER: 'NFT_TRANSFER'
+};
+
+exports.RegisteredEntityType = exports.$Enums.RegisteredEntityType = {
+  AGENT: 'AGENT',
+  WORKFLOW: 'WORKFLOW',
+  TOOL: 'TOOL',
+  SERVICE: 'SERVICE',
+  INTEGRATION: 'INTEGRATION',
+  TEMPLATE: 'TEMPLATE',
+  COMPONENT: 'COMPONENT',
+  MODULE: 'MODULE'
+};
+
+exports.EntityStatus = exports.$Enums.EntityStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  DEPRECATED: 'DEPRECATED',
+  PENDING: 'PENDING',
+  FAILED: 'FAILED'
 };
 
 exports.Prisma.ModelName = {
-  Task: 'Task',
-  Agent: 'Agent',
-  RegisteredEntity: 'RegisteredEntity',
   User: 'User',
+  AuthSession: 'AuthSession',
+  LoginAttempt: 'LoginAttempt',
+  AuthEvent: 'AuthEvent',
+  Agent: 'Agent',
+  AgentMetadata: 'AgentMetadata',
+  Chat: 'Chat',
+  ChatRoom: 'ChatRoom',
   Message: 'Message',
-  A2AAgent: 'A2AAgent',
-  A2AAgentCapability: 'A2AAgentCapability',
-  A2AMessage: 'A2AMessage',
-  A2AConversation: 'A2AConversation',
-  A2AConversationParticipant: 'A2AConversationParticipant',
-  A2AHeartbeat: 'A2AHeartbeat',
+  Workflow: 'Workflow',
+  WorkflowStep: 'WorkflowStep',
+  WorkflowExecution: 'WorkflowExecution',
+  Pipeline: 'Pipeline',
+  Task: 'Task',
+  TaskExecution: 'TaskExecution',
+  CodeExecutionUsage: 'CodeExecutionUsage',
+  CodeExecutionSession: 'CodeExecutionSession',
   AgentNFT: 'AgentNFT',
   FractionalShare: 'FractionalShare',
   RevenueStream: 'RevenueStream',
   RevenueDistribution: 'RevenueDistribution',
   MarketplaceListing: 'MarketplaceListing',
   MarketplaceOffer: 'MarketplaceOffer',
-  Workflow: 'Workflow',
-  WorkflowStep: 'WorkflowStep',
-  WorkflowExecution: 'WorkflowExecution'
+  Wallet: 'Wallet',
+  Transaction: 'Transaction',
+  RegisteredEntity: 'RegisteredEntity',
+  LLMConfig: 'LLMConfig'
 };
 
 /**

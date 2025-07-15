@@ -14,10 +14,10 @@ export class FirebaseAuthGuard implements CanActivate {
     }
 
     try {
-      const decodedToken = await this.authService.validateFirebaseToken(token);
+      const decodedToken = await (this.authService as any).validateFirebaseToken(token);
       request.user = decodedToken;
       return true;
-    } catch (error) {
+    } catch (_error) {
       throw new UnauthorizedException('Invalid token');
     }
   }

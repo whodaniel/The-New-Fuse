@@ -3,9 +3,9 @@ import Workspace from "@/models/workspace";
 import LoadingChat from './LoadingChat';
 import ChatContainer from './ChatContainer';
 import paths from "@/utils/paths";
-import ModalWrapper from '../ModalWrapper';
+import { ModalWrapper } from '../ModalWrapper';
 import { useParams } from "react-router-dom";
-import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper';
+// import { DnDFileUploaderProvider } from './ChatContainer/DnDWrapper';
 import { WorkspaceData } from "@/types/workspace";
 
 interface ChatMessage {
@@ -78,9 +78,7 @@ export default function WorkspaceChat({ loading, workspace }: WorkspaceChatProps
 
   setEventDelegatorForCodeSnippets();
   return (
-    <DnDFileUploaderProvider workspace={workspace}>
-      <ChatContainer workspace={workspace} knownHistory={history} />
-    </DnDFileUploaderProvider>
+    <ChatContainer workspace={workspace} knownHistory={history} />
   );
 }
 

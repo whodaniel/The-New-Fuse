@@ -177,7 +177,7 @@ const Agents: React.FC = () => {
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value)}
                 >
-                  {agentTypes.map(typ(e: any) => (
+                  {agentTypes.map((type: any) => (
                     <option key={type} value={type}>{type}</option>
                   ))}
                 </select>
@@ -209,7 +209,10 @@ const Agents: React.FC = () => {
                     </div>
                     <div className="flex items-center">
                       {getStatusBadge(agent.status)}
-                      <button className="ml-2 text-gray-500 hover:text-gray-700">
+                      <button 
+                        className="ml-2 text-gray-500 hover:text-gray-700"
+                        title="More options"
+                      >
                         <MoreVertical className="h-4 w-4" />
                       </button>
                     </div>
@@ -239,6 +242,7 @@ const Agents: React.FC = () => {
                     variant="outline" 
                     size="sm"
                     onClick={() => navigate(`/agents/${agent.id}`)}
+                    title="View agent details"
                   >
                     View Details
                   </Button>

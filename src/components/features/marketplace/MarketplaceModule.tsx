@@ -1,1679 +1,308 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { z } from 'zod';
-import { Button, Card, CardContent, CardHeader, CardTitle } from '../components/core/CoreModule.js';
+import { Button, Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Star, Download } from 'lucide-react';
+import { api } from '@/lib/api';
+import logger from 'your-logger-library';
+
 const marketItemSchema = z.object({
-    import React, { FC } from 'react';
-id: z.id(),
-name: z.string().min(3),
-;
-description: z.string().min(10),
-;
-type: z.enum(['agent', 'workflow', 'plugin']),
-;
-price: z.number().min(0),
-;
-author: z.object({
-    import React, { FC } from 'react';
-id: z.id(),
-name: z.name(),
-avatar: z.string().optional(),
-;
-rating: z.number().min(0).max(5),
-;
-downloads: z.number().min(0),
-;
-tags: z.array(z.string()),
-;
-version: z.version(),
-compatibility: z.array(z.string()),
-;
-createdAt: z.string().datetime(),
-;
-updatedAt: z.string().datetime(),
-;
-;
-as;
-any;
-infer;
-type: string[];
-priceRange: [number, number];
-rating: number;
-compatibility: string[];
-sortBy: 'popular' | 'recent' | 'rating' | 'price';
-filters: FilterState;
-onFilterChange: (filters) => void ;
-export const FilterBar = React.forwardRef();
-({ filters, onFilterChange }, ref) => ;
-JSX.Element;
-{
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    const handleTypeChange = (type) => , JSX, Element, { import: React, }, { FC }, from;
-    'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    const newTypes = filters.(type).includes(type);
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    filters.type.filter(t => t !== type, unknown);
-    [...filters.type, type];
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
+  id: z.string(),
+  name: z.string().min(3),
+  description: z.string().min(10),
+  type: z.enum(['agent', 'workflow', 'plugin']),
+  price: z.number().min(0),
+  author: z.object({
+    id: z.string(),
+    name: z.string(),
+    avatar: z.string().optional(),
+  }),
+  rating: z.number().min(0).max(5),
+  downloads: z.number().min(0),
+  tags: z.array(z.string()),
+  version: z.string(),
+  compatibility: z.array(z.string()),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+type MarketItem = z.infer<typeof marketItemSchema>;
+
+interface FilterState {
+  type: string[];
+  priceRange: [number, number];
+  rating: number;
+  compatibility: string[];
+  sortBy: 'popular' | 'recent' | 'rating' | 'price';
+}
+
+interface FilterBarProps {
+  filters: FilterState;
+  onFilterChange: (filters: FilterState) => void;
+}
+
+export const FilterBar: React.FC<FilterBarProps> = ({ filters, onFilterChange }) => {
+  const handleTypeChange = (type: string) => {
+    const newTypes = filters.type.includes(type)
+      ? filters.type.filter(t => t !== type)
+      : [...filters.type, type];
     onFilterChange({ ...filters, type: newTypes });
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-    import React, { FC } from 'react';
-}
-;
-const handlePriceChange = (range) => , JSX, Element, { import: React, }, { FC }, from;
-'react';
-onFilterChange({ ...filters, priceRange: range });
-;
-const handleRatingChange = (rating) => , JSX, Element, { import: React, }, { FC }, from;
-'react';
-onFilterChange({ ...filters, rating });
-;
-const handleSortChange = (sortBy) => , JSX, Element, { import: React, }, { FC }, from;
-'react';
-onFilterChange({ ...filters, sortBy });
-;
-return ();
-<div ref={ref} className="space-y-6 p-4 bg-card rounded-lg">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <h3 className="text-lg font-semibold mb-2">Type</h3>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="space-y-2">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            {['agent', 'workflow', 'plugin'].map(type => ())}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <label key={type} className="flex items-center space-x-2">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                <input import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  type="checkbox"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  checked={filters.(type).includes(type)}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  onChange={(e) => e}: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>) => handleTypeChange(type)}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  className="rounded border-gray-300"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                />
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                <span className="capitalize">{type}</span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              </label>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            ))}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+  };
 
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <h3 className="text-lg font-semibold mb-2">Price Range</h3>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="flex items-center space-x-4">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <input import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              type="number"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              value={filters.priceRange[0]}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              onChange={(e) => e}: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e) => handlePriceChange([+(e as any).(target as any).value, (filters as any).priceRange[1]])}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              className="w-24 rounded-md border p-1"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            />
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <span>to</span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <input import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              type="number"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              value={filters.priceRange[1]}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              onChange={(e) => e}: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e) => handlePriceChange([(filters as any).priceRange[0], +(e as any).(target as any).value])}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              className="w-24 rounded-md border p-1"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            />
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+  const handlePriceChange = (range: [number, number]) => {
+    onFilterChange({ ...filters, priceRange: range });
+  };
 
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <h3 className="text-lg font-semibold mb-2">Minimum Rating</h3>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <input import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            type="range"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            min="0"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            max="5"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            step="(0 as any).5"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            value={filters.rating}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            onChange={(e) => e}: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e) => handleRatingChange(+(e as any).(target as any).value)}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            className="w-full"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          />
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="text-sm text-muted-foreground mt-1">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            {filters.rating} stars and up
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+  const handleRatingChange = (rating: number) => {
+    onFilterChange({ ...filters, rating });
+  };
 
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <h3 className="text-lg font-semibold mb-2">Sort By</h3>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <select import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            value={filters.sortBy}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            onChange={(e) => e}: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e: React.ChangeEvent<HTMLInputElement>) =>e) => handleSortChange((e as any).(target as any).value as FilterState['sortBy'])}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            className="w-full rounded-md border p-2"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          >
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <option value="popular">Most Popular</option>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <option value="recent">Most Recent</option>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <option value="rating">Highest Rated</option>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <option value="price">Lowest Price</option>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </select>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+  const handleSortChange = (sortBy: FilterState['sortBy']) => {
+    onFilterChange({ ...filters, sortBy });
+  };
+
+  return (
+    <div className="space-y-6 p-4 bg-card rounded-lg">
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Type</h3>
+        <div className="space-y-2">
+          {['agent', 'workflow', 'plugin'].map(type => (
+            <label key={type} className="flex items-center space-x-2">
+              <input
+                type="checkbox"
+                checked={filters.type.includes(type)}
+                onChange={() => handleTypeChange(type)}
+                className="rounded border-gray-300"
+              />
+              <span className="capitalize">{type}</span>
+            </label>
+          ))}
         </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
       </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    );
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  }
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-(FilterBar as any).displayName = 'FilterBar';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
 
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-// Marketplace Card Component
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-interface MarketplaceCardProps {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  item: MarketItem;
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  onInstall: (item: MarketItem) => void;
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-export const MarketplaceCard = (React as any).forwardRef<HTMLDivElement />, MarketplaceCardProps>(
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  ({item, onInstall}, ref) => : JSX.Element {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    const {toast} = useToast();
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    const [isInstalling, setIsInstalling] = (React as any).useState(false);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    const handleInstall = async (): Promise<void> () => : JSX.Element {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      setIsInstalling(true);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      try {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        await (api as any).post(`/marketplace/install/${item.id}`);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        onInstall(item);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        (toast as any).success(`Successfully installed ${item.name}`);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      } catch (error:unknown){}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        (toast as any).error(`Failed to install ${item.name}`);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      } finally {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        setIsInstalling(false);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      }
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    };
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    return (
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      <Card ref={ref}>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <CardHeader>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="flex items-start justify-between">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <CardTitle>{item.name}</CardTitle>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <div className="flex items-center space-x-2 mt-1">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                <span className="text-sm text-muted-foreground">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  by {item.(author).name}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                </span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                <span className="text-sm text-muted-foreground">•</span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                <span className="text-sm text-muted-foreground">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  v{item.version}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                </span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <div className="text-lg font-bold">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              {item.price === 0 ? 'Free' : `$${item.(price).toFixed(2)}`}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        </CardHeader>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        <CardContent>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <p className="text-sm text-muted-foreground mb-4">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            {item.description}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </p>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="flex flex-wrap gap-2 mb-4">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            {item.tags.map(tag => ())}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <span import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                key={tag}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                className="px-2 py-1 bg-primary/10 text-primary rounded-full text-xs"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              >
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                {tag}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              </span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            ))}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <div className="flex items-center justify-between">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <div className="flex items-center space-x-4">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <div className="flex items-center">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                {[...Array(5)].map((_, i) => ())}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  <svg import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    key={i}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    className={`w-4 h-4 ${}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                      i < /> (item as any).rating ? 'text-yellow-400' : 'text-gray-300'
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    }`}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    fill="currentColor"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    viewBox="0 0 20 20"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  >
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                    <path d="(M9 as any).049 (2 as any).(927c as any).3-.921 (1 as any).603-.921 (1 as any).902 (0l1 as any).07 (3 as any).292a1 1 0 (00 as any).95.(69h3 as any).(462c as any).969 0 (1 as any).371 (1 as any).(24 as any).588 (1 as any).81l-(2 as any).8 (2 as any).034a1 1 0 00-.364 (1 as any).(118l1 as any).07 (3 as any).292c.(3 as any).921-.755 (1 as any).688-(1 as any).54 (1 as any).118l-(2 as any).8-(2 as any).034a1 1 0 00-(1 as any).175 0l-(2 as any).8 (2 as any).034c-.(784 as any).57-(1 as any).838-.197-(1 as any).539-(1 as any).(118l1 as any).07-(3 as any).292a1 1 0 00-.364-(1 as any).(118L2 as any).98 (8 as any).72c-.783-.57-.38-(1 as any).(81 as any).588-(1 as any).(81h3 as any).461a1 1 0 (00 as any).951-.(69l1 as any).07-(3 as any).292z"/>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                  </svg>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                ))}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              <span className="text-sm text-muted-foreground">
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-                {item.(downloads).toLocaleString()} downloads
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              </span>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            <Button import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              onClick={handleInstall}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              disabled={isInstalling}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            >
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-              {isInstalling ? 'Installing...' : 'Install'}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            </Button>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        </CardContent>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      </Card>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    );
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  }
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-(MarketplaceCard as any).displayName = 'MarketplaceCard';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-// Marketplace Grid Component
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-interface MarketplaceGridProps {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  items: MarketItem[];
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  onInstall: (item: MarketItem) => void;
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-export const MarketplaceGrid = (React as any).forwardRef<HTMLDivElement />, MarketplaceGridProps>(
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  ({items, onInstall}, ref) => : JSX.Element {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    return (
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      <div import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        ref={ref}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-      >
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        {items.map(item => ())}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-          <MarketplaceCard import React/>, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            key={item.id}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            item={item}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-            onInstall={onInstall}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Price Range</h3>
+        <div className="flex items-center space-x-4">
+          <input
+            type="number"
+            value={filters.priceRange[0]}
+            onChange={(e) => handlePriceChange([+e.target.value, filters.priceRange[1]])}
+            className="w-24 rounded-md border p-1"
+            aria-label="Minimum price"
+            placeholder="Min"
           />
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-        ))}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+          <span>to</span>
+          <input
+            type="number"
+            value={filters.priceRange[1]}
+            onChange={(e) => handlePriceChange([filters.priceRange[0], +e.target.value])}
+            className="w-24 rounded-md border p-1"
+            aria-label="Maximum price"
+            placeholder="Max"
+          />
+        </div>
       </div>
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-    );
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  }
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-);
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-(MarketplaceGrid as any).displayName = 'MarketplaceGrid';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
 
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-// Export types
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-export type {}
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  MarketItem,
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  FilterState,
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  FilterBarProps,
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  MarketplaceCardProps,
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-  MarketplaceGridProps,
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
-import React, {FC} from 'react';
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Minimum Rating</h3>
+        <input
+          type="range"
+          min="0"
+          max="5"
+          step="0.5"
+          value={filters.rating}
+          onChange={(e) => handleRatingChange(+e.target.value)}
+          className="w-full"
+          aria-label="Minimum rating"
+        />
+        <div className="text-sm text-muted-foreground mt-1">
+          {filters.rating} stars and up
+        </div>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-semibold mb-2">Sort By</h3>
+        <select
+          value={filters.sortBy}
+          onChange={(e) => handleSortChange(e.target.value as FilterState['sortBy'])}
+          className="w-full rounded-md border p-2"
+          aria-label="Sort by"
+        >
+          <option value="popular">Most Popular</option>
+          <option value="recent">Most Recent</option>
+          <option value="rating">Highest Rated</option>
+          <option value="price">Lowest Price</option>
+        </select>
+      </div>
+    </div>
+  );
 };
-</></></></></></></></></></></></></></></></></></></></></></></></></>;
+
+interface MarketItemCardProps {
+  item: MarketItem;
+  onInstall: (itemId: string) => void;
+}
+
+const MarketItemCard: React.FC<MarketItemCardProps> = ({ item, onInstall }) => {
+  return (
+    <Card className="hover:shadow-lg transition-shadow">
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-lg">{item.name}</CardTitle>
+            <div className="flex items-center space-x-2 mt-1">
+              <span className="text-sm text-muted-foreground">by {item.author.name}</span>
+              <div className="flex items-center">
+                <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                <span className="text-sm ml-1">{item.rating}</span>
+              </div>
+              <div className="flex items-center">
+                <Download className="w-4 h-4 text-muted-foreground" />
+                <span className="text-sm ml-1">{item.downloads}</span>
+              </div>
+            </div>
+          </div>
+          <Badge variant="outline" className="capitalize">
+            {item.type}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm text-muted-foreground mb-4">{item.description}</p>
+        
+        <div className="flex flex-wrap gap-2 mb-4">
+          {item.tags.map(tag => (
+            <Badge key={tag} variant="secondary" className="text-xs">
+              {tag}
+            </Badge>
+          ))}
+        </div>
+
+        <div className="flex items-center justify-between">
+          <span className="text-2xl font-bold">${item.price}</span>
+          <Button onClick={() => onInstall(item.id)}>Install</Button>
+        </div>
+
+        <div className="mt-2 text-xs text-muted-foreground">
+          Version {item.version} • Compatible with: {item.compatibility.join(', ')}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export const MarketplaceModule: React.FC = () => {
+  const [items, setItems] = useState<MarketItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<MarketItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState<FilterState>({
+    type: [],
+    priceRange: [0, 1000],
+    rating: 0,
+    compatibility: [],
+    sortBy: 'popular',
+  });
+
+  useEffect(() => {
+    fetchMarketplaceItems();
+  }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [items, filters]);
+
+  const fetchMarketplaceItems = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get('/marketplace/items');
+      const validatedItems = response.data.map((item: any) => marketItemSchema.parse(item));
+      setItems(validatedItems);
+    } catch (error) {
+      logger.error('Failed to fetch marketplace items:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const applyFilters = () => {
+    let filtered = [...items];
+
+    // Filter by type
+    if (filters.type.length > 0) {
+      filtered = filtered.filter(item => filters.type.includes(item.type));
+    }
+
+    // Filter by price range
+    filtered = filtered.filter(
+      item => item.price >= filters.priceRange[0] && item.price <= filters.priceRange[1]
+    );
+
+    // Filter by rating
+    filtered = filtered.filter(item => item.rating >= filters.rating);
+
+    // Sort items
+    switch (filters.sortBy) {
+      case 'popular':
+        filtered.sort((a, b) => b.downloads - a.downloads);
+        break;
+      case 'recent':
+        filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        break;
+      case 'rating':
+        filtered.sort((a, b) => b.rating - a.rating);
+        break;
+      case 'price':
+        filtered.sort((a, b) => a.price - b.price);
+        break;
+    }
+
+    setFilteredItems(filtered);
+  };
+
+  const handleInstall = async (itemId: string) => {
+    try {
+      await api.post(`/marketplace/items/${itemId}/install`);
+      // Refresh the items to update download counts
+      fetchMarketplaceItems();
+    } catch (error) {
+      logger.error('Failed to install item:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">Marketplace</h1>
+        <p className="text-muted-foreground">Discover and install agents, workflows, and plugins</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-1">
+          <FilterBar filters={filters} onFilterChange={setFilters} />
+        </div>
+
+        <div className="lg:col-span-3">
+          {filteredItems.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">No items found matching your filters.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {filteredItems.map(item => (
+                <MarketItemCard key={item.id} item={item} onInstall={handleInstall} />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};

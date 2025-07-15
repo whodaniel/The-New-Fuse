@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
+import { Agent, CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentType, AgentStatus, AgentCapability } from '@the-new-fuse/types';
 import { PrismaService } from '../../lib/prisma/prisma.service';
-import { Prisma, Agent as PrismaAgent } from '@prisma/client';
+import { PrismaClient, Prisma, Agent as PrismaAgent, AgentStatus as PrismaAgentStatus } from '@prisma/client';
 
 @Injectable()
 export class AgentService {
@@ -9,17 +9,28 @@ export class AgentService {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  private mapPrismaStatusToType(prismaStatus: PrismaAgentStatus): AgentStatus {
+    // Since the enums now match, we can do a simple string mapping
+    return prismaStatus as unknown as AgentStatus;
+  }
+
+  private mapTypeStatusToPrisma(typeStatus: AgentStatus): PrismaAgentStatus {
+    // Since the enums now match, we can do a simple string mapping
+    return typeStatus as unknown as PrismaAgentStatus;
+  }
+
   private transformPrismaAgent(agent: PrismaAgent): Agent {
     return {
       id: agent.id,
       name: agent.name,
       description: agent.description || undefined,
       systemPrompt: agent.systemPrompt || undefined,
-      capabilities: agent.capabilities,
-      status: agent.status,
-      configuration: agent.configuration,
-      createdAt: agent.createdAt.toISOString(),
-      updatedAt: agent.updatedAt.toISOString()
+      capabilities: (agent.capabilities as string[]).map(cap => cap as AgentCapability) || [],
+      status: this.mapPrismaStatusToType(agent.status),
+      configuration: agent.config,
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      type: agent.type as AgentType
     };
   }
 
@@ -43,8 +54,8 @@ export class AgentService {
             description: data.description,
             systemPrompt: data.systemPrompt,
             capabilities: data.capabilities || [],
-            status: AgentStatus.INACTIVE,
-            configuration: data.configuration,
+            status: this.mapTypeStatusToPrisma(AgentStatus.INACTIVE),
+            config: data.configuration as any,
             userId
           }
         });
@@ -178,7 +189,7 @@ export class AgentService {
         where: {
           userId,
           deletedAt: null,
-          status: AgentStatus.ACTIVE
+          status: this.mapTypeStatusToPrisma(AgentStatus.ACTIVE)
         }
       });
 
@@ -194,7 +205,7 @@ export class AgentService {
     try {
       const agent = await this.prisma.agent.update({
         where: { id },
-        data: { status }
+        data: { status: this.mapTypeStatusToPrisma(status) }
       });
 
       this.logger.log(`Updated agent status: ${id} -> ${status}`);

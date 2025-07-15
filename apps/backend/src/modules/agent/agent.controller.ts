@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Put, Delete, Body, Param, UseGuards, Query } from '@nestjs/common';
 import { AgentService } from './agent.service';
 import { Agent, CreateAgentDto, UpdateAgentDto, AgentStatus } from '@the-new-fuse/types';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { User } from '@prisma/client';
+import { JwtAuthGuard } from '@/auth/guards/jwt-auth.guard';
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { Prisma } from '@prisma/client';
 
 @Controller('agents')
 @UseGuards(JwtAuthGuard)
@@ -13,14 +13,14 @@ export class AgentController {
   @Post()
   async createAgent(
     @Body() data: CreateAgentDto,
-    @CurrentUser() user: User
+    @CurrentUser() user: any
   ): Promise<Agent> {
     return this.agentService.createAgent(data, user.id);
   }
 
   @Get()
   async getAgents(
-    @CurrentUser() user: User,
+    @CurrentUser() user: any,
     @Query('capability') capability?: string
   ): Promise<Agent[]> {
     if (capability) {
@@ -30,14 +30,14 @@ export class AgentController {
   }
 
   @Get('active')
-  async getActiveAgents(@CurrentUser() user: User): Promise<Agent[]> {
+  async getActiveAgents(@CurrentUser() user: any): Promise<Agent[]> {
     return this.agentService.getActiveAgents(user.id);
   }
 
   @Get(':id')
   async getAgentById(
     @Param('id') id: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: any
   ): Promise<Agent> {
     return this.agentService.getAgentById(id, user.id);
   }
@@ -46,7 +46,7 @@ export class AgentController {
   async updateAgent(
     @Param('id') id: string,
     @Body() updates: UpdateAgentDto,
-    @CurrentUser() user: User
+    @CurrentUser() user: any
   ): Promise<Agent> {
     return this.agentService.updateAgent(id, updates, user.id);
   }
@@ -55,7 +55,7 @@ export class AgentController {
   async updateAgentStatus(
     @Param('id') id: string,
     @Body('status') status: AgentStatus,
-    @CurrentUser() user: User
+    @CurrentUser() user: any
   ): Promise<Agent> {
     return this.agentService.updateAgentStatus(id, status, user.id);
   }
@@ -63,7 +63,7 @@ export class AgentController {
   @Delete(':id')
   async deleteAgent(
     @Param('id') id: string,
-    @CurrentUser() user: User
+    @CurrentUser() user: any
   ): Promise<void> {
     return this.agentService.deleteAgent(id, user.id);
   }

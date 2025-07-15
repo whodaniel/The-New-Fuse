@@ -82,7 +82,7 @@ const WorkflowTemplates: React.FC = () => {
   const [selectedComplexity, setSelectedComplexity] = useState<string | null>(null);
 
   // Filter templates based on search query and filters
-  const filteredTemplates = mockTemplates.filter(templat(e: any) => {
+  const filteredTemplates = mockTemplates.filter((template: any) => {
     const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       template.description.toLowerCase().includes(searchQuery.toLowerCase());
 
@@ -93,8 +93,8 @@ const WorkflowTemplates: React.FC = () => {
   });
 
   // Get unique categories and complexities
-  const categories = Array.from(new Set(mockTemplates.map(templat(e: any) => template.category)));
-  const complexities = Array.from(new Set(mockTemplates.map(templat(e: any) => template.complexity)));
+  const categories = Array.from(new Set(mockTemplates.map((template: any) => template.category)));
+  const complexities = Array.from(new Set(mockTemplates.map((template: any) => template.complexity)));
 
   // Handle use template
   const handleUseTemplate = (templateId: string) => {
@@ -236,7 +236,7 @@ const WorkflowTemplates: React.FC = () => {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {filteredTemplates.map(templat(e: any) => (
+                  {filteredTemplates.map((template: any) => (
                     <Card key={template.id} className="overflow-hidden">
                       <CardHeader className="pb-2">
                         <div className="flex justify-between items-start">

@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../../lib/prisma/prisma.service';
-import { 
-  MassOptimizationConfig, 
-  ValidationDataset, 
+import {
+  MassOptimizationConfig,
+  ValidationDataset,
   PerformanceMetrics,
   PromptDefinition,
-  AgentPromptVersion 
+  AgentPromptVersion
 } from '@the-new-fuse/types';
 
 @Injectable()
@@ -339,7 +339,7 @@ export class LlmInteractionService {
       this.logger.error(`Agent execution failed for ${agentId}:`, error);
       return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : String(error),
         agentId
       };
     }

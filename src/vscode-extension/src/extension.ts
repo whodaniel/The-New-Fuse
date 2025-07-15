@@ -1,31 +1,71 @@
 import * as vscode from 'vscode';
-import { ChatProvider } from './views/ChatProvider';
+import { TabbedContainerProvider } from './views/TabbedContainerProvider';
+import { ChatViewProvider } from './views/ChatViewProvider';
+import { CommunicationHubProvider } from './views/CommunicationHubProvider';
+import { DashboardProvider } from './views/DashboardProvider';
+import { SettingsViewProvider } from './views/SettingsViewProvider';
 import { LLMProviderManager } from './llm/LLMProviderManager';
 import { ApiClient } from './services/ApiClient';
 import { ConfigurationManager } from './config/ConfigurationManager';
+import { ChatService } from './services/features/ChatService';
+import { LLMService } from './services/features/LLMService';
+import { ConfigurationService } from './services/core/ConfigurationService';
+import { NotificationService } from './services/core/NotificationService';
+import { WebviewMessageRouter } from './services/communication/WebviewMessageRouter';
+import { AgentCommunicationService } from './services/AgentCommunicationService';
 
 export async function activate(context: vscode.ExtensionContext) {
-    console.log('Activating The New Fuse extension...');
+    console.log('Activating The New Fuse extension with full tabbed interface...');
 
     // Initialize core services
     const configManager = new ConfigurationManager(context);
     const apiClient = new ApiClient(configManager);
     const llmManager = new LLMProviderManager(configManager);
-
-    // Initialize chat provider
-    const chatProvider = new ChatProvider(context, apiClient, llmManager);
     
-    // Register webview providers
-    const tabbedContainerProvider = vscode.window.registerWebviewViewProvider(
+    // Initialize enhanced services
+    const configService = new ConfigurationService(context);
+    const notificationService = new NotificationService(context);
+    const chatService = new ChatService(context, configService, notificationService);
+    const llmService = new LLMService(llmManager, configService);
+    
+    // Initialize view providers
+    const chatViewProvider = new ChatViewProvider(chatService, notificationService, context.extensionUri);
+    const communicationService = new AgentCommunicationService(context);
+    const communicationHubProvider = new CommunicationHubProvider(context.extensionUri, communicationService);
+    const dashboardProvider = new DashboardProvider(context.extensionUri);
+    const settingsProvider = new SettingsViewProvider(context.extensionUri, configService);
+    
+    // Initialize message router
+    const webviewMessageRouter = new WebviewMessageRouter(
+        chatService,
+        llmService,
+        configService,
+        notificationService
+    );
+
+    // Create tabbed container provider with all features
+    const tabbedContainerProvider = new TabbedContainerProvider(
+        context,
+        webviewMessageRouter,
+        chatViewProvider,
+        communicationHubProvider,
+        dashboardProvider,
+        settingsProvider,
+        notificationService
+    );
+    
+    // Register the tabbed container provider
+    const providerRegistration = vscode.window.registerWebviewViewProvider(
         'theNewFuse.tabbedContainer',
-        chatProvider,
+        tabbedContainerProvider,
         { webviewOptions: { retainContextWhenHidden: true } }
     );
 
-    // Register commands
+    // Register enhanced commands
     const commands = [
         vscode.commands.registerCommand('the-new-fuse.showChat', () => {
-            chatProvider.show();
+            tabbedContainerProvider.focus();
+            tabbedContainerProvider.switchToTab('chat');
         }),
         
         vscode.commands.registerCommand('the-new-fuse.selectLLMProvider', async () => {
@@ -45,18 +85,34 @@ export async function activate(context: vscode.ExtensionContext) {
             output.show();
             output.appendLine('System Status: Active');
         }),
+
+        vscode.commands.registerCommand('theNewFuse.showCommunicationHub', () => {
+            tabbedContainerProvider.focus();
+            tabbedContainerProvider.switchToTab('communication');
+        }),
+
+        vscode.commands.registerCommand('theNewFuse.showDashboard', () => {
+            tabbedContainerProvider.focus();
+            tabbedContainerProvider.switchToTab('dashboard');
+        }),
+
+        vscode.commands.registerCommand('theNewFuse.showSettings', () => {
+            tabbedContainerProvider.focus();
+            tabbedContainerProvider.switchToTab('settings');
+        }),
     ];
 
     // Add to subscriptions
     context.subscriptions.push(
-        tabbedContainerProvider,
+        providerRegistration,
         ...commands
     );
 
     // Initialize services
     await llmManager.initialize();
+    await llmService.initialize();
 
-    console.log('The New Fuse extension activated successfully!');
+    console.log('The New Fuse extension activated successfully with full tabbed interface!');
 }
 
 async function runSystemDiagnostic(

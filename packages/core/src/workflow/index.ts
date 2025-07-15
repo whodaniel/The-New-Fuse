@@ -1,20 +1,31 @@
-import { Container } from 'inversify';
-import { WorkflowAuditSystem } from './audit';
-import { WorkflowResourceManager } from /./resources'';
-import { WorkflowSecurityManager } from /./security'';
-import { WorkflowTestFramework } from /./testing'';
-import { WorkflowAnalytics } from /./analytics'';
-import { WorkflowRecoverySystem } from /./recovery'';
-import { WorkflowAPIGateway } from /./gateway'';
-import { WorkflowEngine } from /./engine'';
-import { WorkflowErrorRecovery } from /./errorRecovery'';
-export * from /./audit'';
-export * from /./resources'';
-export * from /./security'';
-export * from /./testing'';
-export * from /./analytics'';
-export * from /./recovery'';
-export * from /./gateway'';
-export * from /./engine'';
-export * from /./errorRecovery'';
-export * from /./monitor'';
+/**
+ * Workflow Module - Main exports
+ */
+
+// Core workflow classes
+export * from './types';
+export * from './validator';
+export * from './versioning';
+export * from './engine';
+export * from './executor';
+export * from './monitor';
+export * from './WorkflowTemplates';
+
+// Workflow nodes
+export * from './nodes';
+
+// Utility classes
+export * from './audit';
+export * from './resources';
+export * from './security';
+export * from './testing';
+export * from './analytics';
+export * from './recovery';
+export * from './gateway';
+export * from './errorRecovery';
+export * from './concurrency';
+export * from './debugger';
+export * from './statePersistence';
+
+// Workflow module
+export * from './workflow.module';

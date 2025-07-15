@@ -1,4 +1,20 @@
-import { /* TODO: specify imports */ } from /@nestjs/common'';
-import { SmartAPIGateway } from /../api-management/SmartAPIGateway'';
-import './tasks/ComponentAnalysisTask.js';
-import './services/ComponentAnalysisNotifier.js';
+import { Module } from '@nestjs/common';
+import { DatabaseModule } from '@the-new-fuse/database';
+import { TaskExecutor } from './TaskExecutor';
+import { TaskManager } from './TaskManager';
+import { TaskQueue } from './TaskQueue';
+import { TaskService } from './TaskService';
+import { TaskScheduler } from './TaskScheduler';
+
+@Module({
+  imports: [DatabaseModule],
+  providers: [
+    TaskExecutor,
+    TaskManager,
+    TaskQueue,
+    TaskService,
+    TaskScheduler,
+  ],
+  exports: [TaskExecutor, TaskManager, TaskService, TaskScheduler],
+})
+export class TaskModule {}

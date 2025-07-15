@@ -17,7 +17,7 @@ export declare class LocalAIDetectionService {
     private readonly supportedProviders;
     detectAvailableAIs(): Promise<LocalAIProvider[]>;
     checkProviderAvailability(provider: LocalAIProvider): Promise<boolean>;
-    createAgentFromProvider(provider: LocalAIProvider, userId: string): CreateAgentDto;
+    createAgentFromProvider(provider: LocalAIProvider, _userId: string): CreateAgentDto;
     detectAndCreateAgents(userId: string): Promise<CreateAgentDto[]>;
     createDefaultSystemAgents(): Promise<CreateAgentDto[]>;
     refreshAgentProviders(userId: string): Promise<CreateAgentDto[]>;

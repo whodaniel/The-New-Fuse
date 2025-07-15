@@ -1,1 +1,3 @@
-export declare class AgentModule {}
+export declare class AgentModule {
+}
+//# sourceMappingURL=agent.module.d.ts.map

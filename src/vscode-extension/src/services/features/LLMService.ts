@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { LLMProviderManager } from '../../llm/LLMProviderManager';
+import { ConfigurationService } from '../core/ConfigurationService';
 
 export interface CompletionOptions {
     prompt: string;
@@ -16,7 +17,16 @@ export interface CompletionSuggestion {
 }
 
 export class LLMService {
-    constructor(private llmManager: LLMProviderManager) {}
+    constructor(
+        private llmManager: LLMProviderManager,
+        private configService: ConfigurationService
+    ) {}
+
+    async initialize(): Promise<void> {
+        // Initialize LLM service with configuration
+        const providers = await this.llmManager.getAvailableProviders();
+        console.log(`LLMService initialized with ${providers.length} providers`);
+    }
 
     async getCompletions(options: CompletionOptions): Promise<CompletionSuggestion[]> {
         try {
@@ -40,5 +50,21 @@ export class LLMService {
 
     async getAvailableProviders() {
         return await this.llmManager.getAvailableProviders();
+    }
+
+    async getCurrentProvider() {
+        return this.configService.get('llmProvider');
+    }
+
+    async switchProvider() {
+        return await this.llmManager.selectProvider();
+    }
+
+    async getProviderConfig(providerId: string) {
+        return this.configService.get(`providers.${providerId}`, {});
+    }
+
+    async updateProviderConfig(providerId: string, config: any) {
+        await this.configService.update(`providers.${providerId}`, config);
     }
 }

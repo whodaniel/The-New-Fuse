@@ -1,18 +1,31 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { AgentRepository } from '@the-new-fuse/database';
-import { CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentType } from '@the-new-fuse/types';
+import { CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentType, AgentCapability } from '@the-new-fuse/types';
+import { Prisma } from '@the-new-fuse/database/generated/prisma';
 
 @Injectable()
 export class AgentService {
   constructor(private agentRepository: AgentRepository) {}
 
-  async createAgent(createAgentDto: CreateAgentDto): Promise<AgentResponseDto> {
+  async createAgent(createAgentDto: CreateAgentDto, userId: string): Promise<AgentResponseDto> {
     try {
-      const agentData = {
-        ...createAgentDto,
-        status: AgentStatus.INACTIVE,
-        // Ensure userId is provided
-        userId: createAgentDto.userId || '', // This should come from authenticated user context
+      if (!userId) {
+        throw new BadRequestException('userId is required to create an agent');
+      }
+
+      const agentData: Prisma.AgentCreateInput = {
+        name: createAgentDto.name,
+        type: createAgentDto.type as any,
+        description: createAgentDto.description,
+        systemPrompt: createAgentDto.systemPrompt,
+        capabilities: createAgentDto.capabilities as any,
+        config: createAgentDto.configuration,
+        metadata: createAgentDto.metadata,
+        provider: createAgentDto.provider,
+        status: AgentStatus.INACTIVE as any,
+        user: {
+          connect: { id: userId }
+        }
       };
 
       const agent = await this.agentRepository.create(agentData);
@@ -24,7 +37,7 @@ export class AgentService {
 
   async findAllAgents(userId?: string, filters?: any): Promise<AgentResponseDto[]> {
     try {
-      const whereClause = {
+      const whereClause: Prisma.AgentWhereInput = {
         ...filters,
         ...(userId && { userId })
       };
@@ -32,7 +45,7 @@ export class AgentService {
       const agents = await this.agentRepository.findMany(whereClause);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents: ${error.message}`);
@@ -48,7 +61,7 @@ export class AgentService {
 
       return new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -65,10 +78,17 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      const agent = await this.agentRepository.update(id, updateAgentDto);
+      const updateData: Prisma.AgentUpdateInput = {
+        ...updateAgentDto,
+        type: updateAgentDto.type as any,
+        status: updateAgentDto.status as any,
+        capabilities: updateAgentDto.capabilities ? { set: updateAgentDto.capabilities as any } : undefined,
+      };
+
+      const agent = await this.agentRepository.update(id, updateData);
       return new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -99,7 +119,7 @@ export class AgentService {
       const agents = await this.agentRepository.findByType(type);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents by type: ${error.message}`);
@@ -111,7 +131,7 @@ export class AgentService {
       const agents = await this.agentRepository.findByStatus(status);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents by status: ${error.message}`);
@@ -123,7 +143,7 @@ export class AgentService {
       const agents = await this.agentRepository.findByUserId(userId);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch user agents: ${error.message}`);
@@ -140,7 +160,7 @@ export class AgentService {
       const agent = await this.agentRepository.updateStatus(id, status);
       return new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -199,7 +219,7 @@ export class AgentService {
 
   async searchAgents(userId: string, query: string): Promise<AgentResponseDto[]> {
     try {
-      const agents = await this.agentRepository.findMany({
+      const whereClause: Prisma.AgentWhereInput = {
         userId,
         OR: [
           {
@@ -215,11 +235,12 @@ export class AgentService {
             }
           }
         ]
-      });
+      };
 
+      const agents = await this.agentRepository.findMany(whereClause);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: agent.metadata?.lastActive
+        lastActive: new Date()
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to search agents: ${error.message}`);

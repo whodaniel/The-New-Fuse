@@ -1,110 +1,81 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { ChatService, ChatMessage, ChatSession } from '../services/features/ChatService';
+import { ChatService } from '../services/features/ChatService';
 import { NotificationService } from '../services/core/NotificationService';
 
 export class ChatViewProvider {
-    private webview?: vscode.Webview;
-    // Store extensionUri to resolve resource paths in getHtmlForChatPanel
-    private extensionUri: vscode.Uri;
+    private _webview?: vscode.Webview;
+    private _extensionUri: vscode.Uri;
 
     constructor(
         private chatService: ChatService,
         private notificationService: NotificationService,
-        extensionUri: vscode.Uri // Added extensionUri to constructor
+        extensionUri: vscode.Uri
     ) {
-        this.extensionUri = extensionUri;
+        this._extensionUri = extensionUri;
     }
 
     public setWebview(webview: vscode.Webview): void {
-        this.webview = webview;
+        this._webview = webview;
     }
 
-    /**
-     * Generates the HTML content for the chat panel.
-     * This HTML will be injected into the TabbedContainerProvider's webview.
-     * @param webview The webview instance from TabbedContainerProvider.
-     * @param nonce A nonce for Content Security Policy.
-     * @returns HTML string for the chat panel.
-     */
-    public getHtmlForChatPanel(webview: vscode.Webview, nonce: string): string {
-        // Helper to get resource URIs, using the stored extensionUri
-        const getUri = (pathList: string[]) => webview.asWebviewUri(vscode.Uri.file(path.join(this.extensionUri.fsPath, ...pathList)));
+    public getHtmlBodySnippet(webview: vscode.Webview, nonce: string, path: any): string {
+        const scriptUri = webview.asWebviewUri(
+            vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'chat-panel.js'))
+        );
+        
+        const styleUri = webview.asWebviewUri(
+            vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'chat-panel.css'))
+        );
 
-        // Example: If you have specific CSS for the chat panel
-        // const chatPanelCss = getUri(['media', 'chat-panel.css']);
-        // <link href="${chatPanelCss}" rel="stylesheet" nonce="${nonce}">
-
-        // Basic HTML structure for the chat panel
-        const chatPanelJs = getUri(['media', 'chat-panel.js']);
-        const chatPanelCss = getUri(['media', 'chat-panel.css']);
         return `
-            <link href="${chatPanelCss}" rel="stylesheet" nonce="${nonce}">
-            <div id="chat-panel-container">
-                <div id="chat-messages">
-                    <!-- Chat messages will be rendered here by client-side JavaScript -->
+            <link href="${styleUri}" rel="stylesheet">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <h3><i class="codicon codicon-comment-discussion"></i> AI Chat</h3>
+                    <div class="chat-controls">
+                        <button id="new-session-btn" class="btn-small" title="New Session">
+                            <i class="codicon codicon-add"></i>
+                        </button>
+                        <button id="clear-chat-btn" class="btn-small" title="Clear Chat">
+                            <i class="codicon codicon-trash"></i>
+                        </button>
+                    </div>
                 </div>
-                <div id="chat-input-area">
-                    <textarea id="chat-input" placeholder="Type your message..."></textarea>
-                    <button id="send-button">Send</button>
+                
+                <div class="chat-sessions">
+                    <select id="session-selector" class="session-selector">
+                        <option value="">Select Session...</option>
+                    </select>
                 </div>
-                <div id="thinking-indicator" style="display:none;">Thinking...</div>
+                
+                <div class="chat-messages" id="chat-messages">
+                    <div class="welcome-message">
+                        <i class="codicon codicon-rocket"></i>
+                        <p>Welcome to The New Fuse AI Assistant!</p>
+                        <p>Start a conversation or select an existing session.</p>
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-row">
+                        <textarea 
+                            id="chat-input" 
+                            class="chat-input" 
+                            placeholder="Ask me anything about your code..."
+                            rows="3"
+                        ></textarea>
+                        <button id="send-message-btn" class="send-button">
+                            <i class="codicon codicon-send"></i>
+                        </button>
+                    </div>
+                </div>
             </div>
-            <script nonce="${nonce}" src="${chatPanelJs}"></script>
+            
+            <script nonce="${nonce}" src="${scriptUri}"></script>
         `;
     }
 
-    public updateChatMessages(messages: ChatMessage[], currentSessionId: string): void {
-        if (!this.webview) {
-            console.warn('ChatViewProvider: Webview not set. Cannot update chat messages.');
-            return;
-        }
-        this.webview.postMessage({
-            command: 'chat:renderMessages',
-            payload: { messages, currentSessionId }
-        });
-    }
-
-    public appendChatMessage(message: ChatMessage): void {
-        if (!this.webview) {
-            console.warn('ChatViewProvider: Webview not set. Cannot append chat message.');
-            return;
-        }
-        this.webview.postMessage({
-            command: 'chat:appendMessage',
-            payload: message
-        });
-    }
-
-    public setThinkingIndicator(isThinking: boolean): void {
-        if (!this.webview) {
-            console.warn('ChatViewProvider: Webview not set. Cannot set thinking indicator.');
-            return;
-        }
-        this.webview.postMessage({
-            command: 'chat:setThinking',
-            payload: isThinking
-        });
-    }
-
-    public clearUserInput(): void {
-        if (!this.webview) {
-            console.warn('ChatViewProvider: Webview not set. Cannot clear user input.');
-            return;
-        }
-        this.webview.postMessage({
-            command: 'chat:clearInput'
-        });
-    }
-
-    public setActiveSession(session: ChatSession | null): void {
-        if (!this.webview) {
-            console.warn('ChatViewProvider: Webview not set. Cannot set active session.');
-            return;
-        }
-        this.webview.postMessage({
-            command: 'chat:setActiveSession',
-            payload: session
-        });
+    public dispose(): void {
+        this._webview = undefined;
     }
 }

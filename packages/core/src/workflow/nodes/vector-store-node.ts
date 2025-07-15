@@ -1,20 +1,72 @@
+import { WorkflowStep, WorkflowContext } from '../types';
 
-// Assuming VectorStore and EmbeddingService are defined elsewhere and imported
-// For example, if they were in types.ts:
-// 
-// Corrected type definition
 type VectorStoreOperation = 'store' | 'search' | 'delete' | 'clear';
-        case 'store'
-            throw new Error('');
-            operation: 'store'
-        case 'search'
-            throw new Error('');
-            operation: 'search'
-        case 'delete'
-            throw new Error('');
-            operation: 'delete'
-        case 'clear'
-          if (namespace && typeof vectorStore.clearNamespace === 'function'';
-          } else if (typeof vectorStore.clear === '';
-            operation: ''
-    } catch (error) { // Using '
+
+export interface VectorStoreConfig {
+  operation: VectorStoreOperation;
+  namespace?: string;
+  documents?: Array<{
+    id: string;
+    content: string;
+    metadata?: Record<string, unknown>;
+  }>;
+  query?: string;
+  limit?: number;
+}
+
+export class VectorStoreNodeHandler {
+  constructor(private dependencies: unknown) {}
+
+  async handle(step: WorkflowStep, _context: WorkflowContext): Promise<unknown> {
+    try {
+      const config = step.config as VectorStoreConfig;
+
+      if (!config.operation) {
+        throw new Error('Vector store operation is required');
+      }
+
+      // Vector store operations would be implemented here
+      // This is a placeholder for actual vector store integration
+      switch (config.operation) {
+        case 'store':
+          if (!config.documents) {
+            throw new Error('Documents are required for store operation');
+          }
+          return {
+            operation: 'store',
+            count: config.documents.length,
+            success: true
+          };
+
+        case 'search':
+          if (!config.query) {
+            throw new Error('Query is required for search operation');
+          }
+          return {
+            operation: 'search',
+            query: config.query,
+            results: [],
+            success: true
+          };
+
+        case 'delete':
+          return {
+            operation: 'delete',
+            success: true
+          };
+
+        case 'clear':
+          return {
+            operation: 'clear',
+            namespace: config.namespace,
+            success: true
+          };
+
+        default:
+          throw new Error(`Unsupported vector store operation: ${config.operation}`);
+      }
+    } catch (error) {
+      throw new Error(`Vector store operation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+}

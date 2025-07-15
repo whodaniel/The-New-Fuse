@@ -137,7 +137,7 @@ export function ConnectionManager() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Types</SelectItem>
-                {connectionTypes.map(typ(e: any) => (
+                {connectionTypes.map((type: any) => (
                   <SelectItem key={type} value={type}>{type}</SelectItem>
                 ))}
               </SelectContent>

@@ -28,7 +28,8 @@ export enum SuggestionStatus {
     CONVERTED = 'CONVERTED'
 }
 
-export * from '@the-new-fuse/types/core/enums';
+// Import from types package instead of direct file
+export * from '@the-new-fuse/types';
 
 export interface FeatureSuggestion {
   id: string;

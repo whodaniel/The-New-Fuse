@@ -7,17 +7,19 @@ export class AgentCommunicationService {
     constructor(private readonly redis: RedisService) {}
 
     async broadcastMessage(message: AgentMessage) {
-        await this.redis.publish('agent:broadcast', message);
+        await this.redis.publish('agent:broadcast', JSON.stringify(message));
     }
 
-    async createDirectChannel(agentId: string) {
+    async createDirectChannel(agentId: string, callback?: (message: string) => void) {
         const channelId = `agent:direct:${agentId}`;
-        await this.redis.subscribe(channelId);
+        if (callback) {
+            await this.redis.subscribe(channelId, callback);
+        }
         return channelId;
     }
 
     async sendDirectMessage(targetAgent: string, message: AgentMessage) {
         const channel = `agent:direct:${targetAgent}`;
-        await this.redis.publish(channel, message);
+        await this.redis.publish(channel, JSON.stringify(message));
     }
 }

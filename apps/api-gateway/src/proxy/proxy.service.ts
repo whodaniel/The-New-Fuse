@@ -100,22 +100,23 @@ export class ProxyService {
       const response = await firstValueFrom(this.httpService.request(config));
       return response;
     } catch (error) {
-      this.logger.error(`Proxy request failed for ${serviceName}:`, error.message);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.error(`Proxy request failed for ${serviceName}:`, errorMessage);
       
-      if (error.response) {
+      if (error instanceof Error && 'response' in error && typeof error.response === 'object' && 'status' in error.response && 'data' in error.response) {
         // Forward the error response from the backend service
         throw new BadGatewayException({
           message: 'Backend service error',
           service: serviceName,
-          statusCode: error.response.status,
-          error: error.response.data,
+          statusCode: (error.response as { status: number }).status,
+          error: (error.response as { data: any }).data,
         });
       }
       
       throw new BadGatewayException({
         message: 'Service unavailable',
         service: serviceName,
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -132,7 +133,8 @@ export class ProxyService {
       );
       return response.status === 200;
     } catch (error) {
-      this.logger.warn(`Health check failed for ${serviceName}: ${error.message}`);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      this.logger.warn(`Health check failed for ${serviceName}: ${errorMessage}`);
       return false;
     }
   }

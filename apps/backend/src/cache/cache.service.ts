@@ -19,13 +19,13 @@ export class CacheService {
     try {
       const serializedValue = JSON.stringify(value);
       if (ttl) {
-        await this.redisService.getClient().set(key, serializedValue, 'EX', ttl);
+        await this.redisService.getSubClient().set(key, serializedValue, 'EX', ttl);
       } else {
-        await this.redisService.getClient().set(key, serializedValue);
+        await this.redisService.getSubClient().set(key, serializedValue);
       }
-      this.logger.debug(`Cache set: ${key}`, { ttl });
+      this.logger.debug(`Cache set: ${key}, TTL: ${ttl}`);
     } catch (error) {
-      this.logger.error(`Failed to set cache for key: ${key}`, error);
+      this.logger.error(`Failed to set cache for key: ${key}. Error: ${error}`);
       throw error;
     }
   }
@@ -37,12 +37,12 @@ export class CacheService {
    */
   async get<T>(key: string): Promise<T | null> {
     try {
-      const value = await this.redisService.getClient().get(key);
+      const value = await this.redisService.getSubClient().get(key);
       if (!value) return null;
       
       return JSON.parse(value) as T;
     } catch (error) {
-      this.logger.error(`Failed to get cache for key: ${key}`, error);
+      this.logger.error(`Failed to get cache for key: ${key}. Error: ${error}`);
       return null;
     }
   }
@@ -53,10 +53,10 @@ export class CacheService {
    */
   async delete(key: string): Promise<void> {
     try {
-      await this.redisService.getClient().del(key);
+      await this.redisService.getSubClient().del(key);
       this.logger.debug(`Cache deleted: ${key}`);
     } catch (error) {
-      this.logger.error(`Failed to delete cache for key: ${key}`, error);
+      this.logger.error(`Failed to delete cache for key: ${key}. Error: ${error}`);
       throw error;
     }
   }
@@ -68,10 +68,10 @@ export class CacheService {
    */
   async exists(key: string): Promise<boolean> {
     try {
-      const result = await this.redisService.getClient().exists(key);
+      const result = await this.redisService.getSubClient().exists(key);
       return result === 1;
     } catch (error) {
-      this.logger.error(`Failed to check existence for key: ${key}`, error);
+      this.logger.error(`Failed to check existence for key: ${key}. Error: ${error}`);
       return false;
     }
   }
@@ -85,10 +85,10 @@ export class CacheService {
   async hset(key: string, field: string, value: any): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
-      await this.redisService.getClient().hset(key, field, serializedValue);
+      await this.redisService.getSubClient().hset(key, field, serializedValue);
       this.logger.debug(`Cache hset: ${key}.${field}`);
     } catch (error) {
-      this.logger.error(`Failed to set hash cache for key: ${key}.${field}`, error);
+      this.logger.error(`Failed to set hash cache for key: ${key}.${field}. Error: ${error}`);
       throw error;
     }
   }
@@ -101,12 +101,12 @@ export class CacheService {
    */
   async hget<T>(key: string, field: string): Promise<T | null> {
     try {
-      const value = await this.redisService.getClient().hget(key, field);
+      const value = await this.redisService.getSubClient().hget(key, field);
       if (!value) return null;
       
       return JSON.parse(value) as T;
     } catch (error) {
-      this.logger.error(`Failed to get hash cache for key: ${key}.${field}`, error);
+      this.logger.error(`Failed to get hash cache for key: ${key}.${field}. Error: ${error}`);
       return null;
     }
   }

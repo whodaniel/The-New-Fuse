@@ -1,5 +1,10 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateAgentStatusDtoSchema = exports.updateAgentDtoSchema = exports.createAgentDtoSchema = exports.agentMetricsSchema = exports.agentConfigurationSchema = exports.agentProfileSchema = exports.baseAgentSchema = exports.agentFrameworkSchema = exports.agentToolTypeSchema = exports.agentCapabilitySchema = exports.agentRoleSchema = exports.agentTypeSchema = exports.agentStatusSchema = exports.AgentFramework = exports.AgentToolType = exports.AgentCapability = exports.AgentRole = exports.AgentType = exports.AgentStatus = void 0;
-import zod_1 from 'zod';
+const zod_2 = __importDefault(require("zod"));
 // Base enums
 var AgentStatus;
 (function (AgentStatus) {
@@ -94,51 +99,51 @@ var AgentFramework;
     AgentFramework["CLI"] = "CLI";
 })(AgentFramework || (exports.AgentFramework = AgentFramework = {}));
 // Zod schemas
-exports.agentStatusSchema = zod_1.z.nativeEnum(AgentStatus);
-exports.agentTypeSchema = zod_1.z.nativeEnum(AgentType);
-exports.agentRoleSchema = zod_1.z.nativeEnum(AgentRole);
-exports.agentCapabilitySchema = zod_1.z.nativeEnum(AgentCapability);
-exports.agentToolTypeSchema = zod_1.z.nativeEnum(AgentToolType);
-exports.agentFrameworkSchema = zod_1.z.nativeEnum(AgentFramework);
-exports.baseAgentSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
+exports.agentStatusSchema = zod_2.default.z.nativeEnum(AgentStatus);
+exports.agentTypeSchema = zod_2.default.z.nativeEnum(AgentType);
+exports.agentRoleSchema = zod_2.default.z.nativeEnum(AgentRole);
+exports.agentCapabilitySchema = zod_2.default.z.nativeEnum(AgentCapability);
+exports.agentToolTypeSchema = zod_2.default.z.nativeEnum(AgentToolType);
+exports.agentFrameworkSchema = zod_2.default.z.nativeEnum(AgentFramework);
+exports.baseAgentSchema = zod_2.default.z.object({
+    id: zod_2.default.z.string(),
+    name: zod_2.default.z.string(),
+    description: zod_2.default.z.string().optional(),
+    capabilities: zod_2.default.z.array(exports.agentCapabilitySchema),
     status: exports.agentStatusSchema,
-    lastActive: zod_1.z.date(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+    lastActive: zod_2.default.z.date(),
+    metadata: zod_2.default.z.record(zod_2.default.z.unknown()).optional(),
 });
 exports.agentProfileSchema = exports.baseAgentSchema.extend({
     type: exports.agentTypeSchema,
     role: exports.agentRoleSchema,
     framework: exports.agentFrameworkSchema,
-    provider: zod_1.z.string(),
-    config: zod_1.z.record(zod_1.z.unknown()),
+    provider: zod_2.default.z.string(),
+    config: zod_2.default.z.record(zod_2.default.z.unknown()),
 });
-exports.agentConfigurationSchema = zod_1.z.object({
-    provider: zod_1.z.string(),
-    config: zod_1.z.record(zod_1.z.unknown()),
+exports.agentConfigurationSchema = zod_2.default.z.object({
+    provider: zod_2.default.z.string(),
+    config: zod_2.default.z.record(zod_2.default.z.unknown()),
 });
-exports.agentMetricsSchema = zod_1.z.object({
-    successRate: zod_1.z.number(),
-    totalTasks: zod_1.z.number(),
-    averageResponseTime: zod_1.z.number(),
-    lastUpdated: zod_1.z.date(),
+exports.agentMetricsSchema = zod_2.default.z.object({
+    successRate: zod_2.default.z.number(),
+    totalTasks: zod_2.default.z.number(),
+    averageResponseTime: zod_2.default.z.number(),
+    lastUpdated: zod_2.default.z.date(),
 });
 // Zod schemas for DTOs
-exports.createAgentDtoSchema = zod_1.z.object({
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
+exports.createAgentDtoSchema = zod_2.default.z.object({
+    name: zod_2.default.z.string(),
+    description: zod_2.default.z.string().optional(),
     type: exports.agentTypeSchema,
     role: exports.agentRoleSchema,
     framework: exports.agentFrameworkSchema,
-    provider: zod_1.z.string(),
-    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
-    config: zod_1.z.record(zod_1.z.unknown()),
+    provider: zod_2.default.z.string(),
+    capabilities: zod_2.default.z.array(exports.agentCapabilitySchema),
+    config: zod_2.default.z.record(zod_2.default.z.unknown()),
 });
 exports.updateAgentDtoSchema = exports.createAgentDtoSchema.partial();
-exports.updateAgentStatusDtoSchema = zod_1.z.object({
+exports.updateAgentStatusDtoSchema = zod_2.default.z.object({
     status: exports.agentStatusSchema,
 });
 //# sourceMappingURL=agent.js.mapexport {};

@@ -1,7 +1,7 @@
 import { JsonRpcRequest, JsonRpcResponse } from '../types';
 // Assume a connection manager exists and is imported.
 // This file would be responsible for the actual WebSocket send/receive logic.
-import * as webSocketManager from './connection-manager';
+import { connectionManager } from './connection-manager';
 
 /**
  * @file Manages message routing between the WebSocket, background script, and content scripts.
@@ -35,7 +35,7 @@ export async function handleRpcRequestFromCore(request: JsonRpcRequest): Promise
         payload: request,
       });
       console.log(`[Background] Received response for ID ${request.id}. Sending back to Core.`);
-      webSocketManager.sendMessage(response);
+      connectionManager.sendMessage(response);
     } catch (error: unknown) {
       console.error(`[Background] Error forwarding RPC request to tab ${tabId}:`, error);
       const errorMessage = error instanceof Error ? error.message : String(error);
@@ -44,7 +44,7 @@ export async function handleRpcRequestFromCore(request: JsonRpcRequest): Promise
         error: { code: -32003, message: 'Failed to communicate with content script', data: errorMessage },
         id: request.id,
       };
-      webSocketManager.sendMessage(errorResponse);
+      connectionManager.sendMessage(errorResponse);
     }
   } else {
     console.warn('[Background] No active tab found for RPC request.');
@@ -53,7 +53,7 @@ export async function handleRpcRequestFromCore(request: JsonRpcRequest): Promise
       error: { code: -32004, message: 'No active tab found to execute request' },
       id: request.id,
     };
-    webSocketManager.sendMessage(errorResponse);
+    connectionManager.sendMessage(errorResponse);
   }
 }
 
@@ -97,14 +97,14 @@ export function handleRuntimeMessage(
           method: 'BROADCAST', // This could be more specific, e.g., 'web.chat.sendMessage'
           params: message.payload,
         };
-        webSocketManager.sendMessage(broadcastMessage);
+        connectionManager.sendMessage(broadcastMessage);
         sendResponse({ success: true, message: 'Broadcast forwarded to relay.' });
         break;
 
       case MESSAGE_TYPES.UPDATE_WEBSOCKET_URL:
         if (typeof message.payload?.url === 'string') {
           console.log('[Background] Received request to update WebSocket URL:', message.payload.url);
-          webSocketManager.updateConnectionUrl(message.payload.url);
+          connectionManager.updateConnectionUrl(message.payload.url);
           sendResponse({ success: true, message: 'WebSocket URL update initiated.' });
         } else {
           sendResponse({ success: false, message: 'Invalid URL payload for UPDATE_WEBSOCKET_URL.' });

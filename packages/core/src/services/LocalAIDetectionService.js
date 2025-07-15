@@ -11,7 +11,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var LocalAIDetectionService_1;
 import { Injectable, Logger } from '@nestjs/common';
 import { spawn } from 'child_process';
-import { AgentType, CreateAgentDto, AgentCapability } from '@the-new-fuse/types';
+import { AgentType, AgentCapability } from '@the-new-fuse/types';
 let LocalAIDetectionService = LocalAIDetectionService_1 = class LocalAIDetectionService {
     logger = new Logger(LocalAIDetectionService_1.name);
     supportedProviders = [
@@ -142,21 +142,13 @@ let LocalAIDetectionService = LocalAIDetectionService_1 = class LocalAIDetection
             }, 5000);
         });
     }
-    createAgentFromProvider(provider, userId) {
-        return new CreateAgentDto({
+    createAgentFromProvider(provider, _userId) {
+        return {
             name: provider.name,
             type: AgentType.ASSISTANT,
             description: provider.description,
             systemPrompt: `You are ${provider.name}, a local AI assistant. You have access to ${provider.capabilities.join(', ')} capabilities.`,
-            capabilities: provider.capabilities.map(cap => ({
-                name: cap,
-                description: `${cap} capability provided by ${provider.name}`,
-                parameters: {
-                    provider: provider.name,
-                    command: provider.command,
-                    apiEndpoint: provider.apiEndpoint
-                }
-            })),
+            capabilities: provider.capabilities,
             configuration: {
                 provider: provider.name,
                 command: provider.command,
@@ -168,9 +160,8 @@ let LocalAIDetectionService = LocalAIDetectionService_1 = class LocalAIDetection
                 detectedAt: new Date(),
                 providerType: 'local',
                 version: 'auto-detected'
-            },
-            provider: provider.name
-        });
+            }
+        };
     }
     async detectAndCreateAgents(userId) {
         const availableProviders = await this.detectAvailableAIs();

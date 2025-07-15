@@ -15,11 +15,11 @@ interface ModuleNavProps {
   }>;
 }
 
-export const ModuleNavigation: FC<ModuleNavProps> = ({ module, items }) => {
-  const location: ''}`}
-          >
-            {item.icon && <span className = useLocation();
-  const { activeModule } = useModuleContext(): unknown) {
+export const ModuleNavigation: React.FC<ModuleNavProps> = ({ module, items }) => {
+  const location = useLocation();
+  const { activeModule } = useModuleContext();
+  
+  if (!activeModule) {
     return null;
   }
 
@@ -29,7 +29,9 @@ export const ModuleNavigation: FC<ModuleNavProps> = ({ module, items }) => {
         <div key={item.path} className="nav-item">
           <Link
             to={item.path}
-            className={`nav-link ${location.pathname === item.path ? 'active' "icon">{item.icon}</span>}
+            className={`nav-link ${location.pathname === item.path ? 'active' : ''}`}
+          >
+            {item.icon && <span className="icon">{item.icon}</span>}
             <span className="label">{item.label}</span>
           </Link>
           {item.children && (
@@ -52,7 +54,7 @@ export const ModuleNavigation: FC<ModuleNavProps> = ({ module, items }) => {
 };
 
 // Module-specific navigation configurations
-export const WorkspaceNavigation: FC = (): JSX.Element => () => (
+export const WorkspaceNavigation: React.FC = () => (
   <ModuleNavigation
     module="workspace"
     items={[
@@ -63,7 +65,7 @@ export const WorkspaceNavigation: FC = (): JSX.Element => () => (
   />
 );
 
-export const AgentNavigation: FC = (): JSX.Element => () => (
+export const AgentNavigation: React.FC = () => (
   <ModuleNavigation
     module="agents"
     items={[
@@ -82,7 +84,7 @@ export const AgentNavigation: FC = (): JSX.Element => () => (
   />
 );
 
-export const AnalyticsNavigation: FC = (): JSX.Element => () => (
+export const AnalyticsNavigation: React.FC = () => (
   <ModuleNavigation
     module="analytics"
     items={[

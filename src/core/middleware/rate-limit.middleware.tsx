@@ -32,7 +32,7 @@ export class RateLimitMiddleware {
     @inject(TYPES.ErrorHandler) private errorHandler: ErrorHandler
   ) {}
 
-  public createMiddleware(options: Partial<RateLimitConfig> = {}): (req: Request, res: Response, next: NextFunction) => Promise<void> (
+  public createMiddleware(options: Partial<RateLimitConfig> = {}): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     const config: RateLimitConfig = {
       windowMs: options.windowMs || this.config.get<number>('rateLimit.windowMs', 60 * 1000),
       max: options.max || this.config.get<number>('rateLimit.max', 60),
@@ -85,10 +85,6 @@ export class RateLimitMiddleware {
         count: 1,
         resetTime
       };
-          this.logger.warn('Rate limit exceeded', {
-            ip await this.cache.get<RateLimitInfo>(key): 1,
-        resetTime,
-      };
 
       await this.cache.set(key, newInfo, { ttl: windowMs });
       return newInfo;
@@ -96,36 +92,35 @@ export class RateLimitMiddleware {
 
     info.count++;
     await this.cache.set(key, info, {
-      ttl: info.resetTime.getTime(): Request): string {
+      ttl: info.resetTime.getTime() - Date.now()
+    });
+    
+    return info;
+  }
+
+  private defaultKeyGenerator(req: Request): string {
     return req.ip;
   }
 
-  private defaultSkip(req: Request): boolean {
+  private defaultSkip(_req: Request): boolean {
     return false;
   }
 
-  public static auth(): (req: Request, res: Response, next: NextFunction) => Promise<void> (
-      const now = new Date();
-
-    if (!info || now > info.resetTime) {
-this.logger.debug('Rate limit check', {
-      ip: req.ip,
-      path: req.path,
-      now: now.toISOString(),
-      resetTime: info?.resetTime.toISOString(),
-      count: info?.count
-    });
-      const resetTime: 15 * 60 * 1000,
+  public static auth(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
+    return new RateLimitMiddleware(
+      container.get(TYPES.CacheService),
+      container.get(TYPES.ConfigService),
+      container.get(TYPES.LoggingService),
+      container.get(TYPES.TimeService),
+      container.get(TYPES.ErrorHandler)
+    ).createMiddleware({
+      windowMs: 15 * 60 * 1000, // 15 minutes
       max: 5,
       message: 'Too many login attempts, please try again later',
     });
   }
 
-  public static api(): (req: Request, res: Response, next: NextFunction) => Promise<void> (
-      return this.time.addToDate(now, {
-        milliseconds: 1000,
-        count: 5
-    });
+  public static api(): (req: Request, res: Response, next: NextFunction) => Promise<void> {
     return new RateLimitMiddleware(
       container.get(TYPES.CacheService),
       container.get(TYPES.ConfigService),
@@ -133,26 +128,13 @@ this.logger.debug('Rate limit check', {
       container.get(TYPES.TimeService),
       container.get(TYPES.ErrorHandler)
     ).createMiddleware({
-      windowMs: 60000
-    });
-    return new RateLimitMiddleware(
-      container.get(TYPES.CacheService),
-      container.get(TYPES.ConfigService),
-      container.get(TYPES.LoggingService),
-      container.get(TYPES.TimeService),
-      container.get(TYPES.ErrorHandler)
-    ).createMiddleware({
-      windowMs: 60 * 1000,
+      windowMs: 60 * 1000, // 1 minute
       max: 60,
     });
   }
 }
 
 export function createIpRateLimiter(options: RateLimitConfig): (req: Request, res: Response, next: NextFunction) => Promise<void> {
-    return new RateLimitMiddleware(
-        container.get(TYPES.CacheService),
-        options
-    ).createMiddleware(options);
   return new RateLimitMiddleware(
     container.get(TYPES.CacheService),
     container.get(TYPES.ConfigService),

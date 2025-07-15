@@ -12,9 +12,9 @@ const sessionConfig: SessionOptions = {
   },
 };
 
-const jwtConfig: process.env.JWT_SECRET || "jwt-secret-key",
-  jwtFromRequest: (req: unknown)  = {
-  secretOrKey> req.cookies?.jwt,
+const jwtConfig = {
+  secretOrKey: process.env.JWT_SECRET || "jwt-secret-key",
+  jwtFromRequest: (req: any) => req.cookies?.jwt,
 };
 
 export { sessionConfig, jwtConfig };

@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { ethers } from 'ethers';
+import { ethers, providers, constants, utils } from 'ethers';
 
 // Contract ABIs (would normally be imported from compiled contracts)
 export const AGENT_NFT_ABI = [
@@ -48,7 +48,7 @@ export const SMART_ACCOUNT_FACTORY_ABI = [
 @Injectable()
 export class SmartContractService {
   private readonly logger = new Logger(SmartContractService.name);
-  private provider: ethers.providers.Provider;
+  private provider: providers.JsonRpcProvider;
   private wallet: ethers.Wallet;
   private agentNftContract: ethers.Contract;
   private marketplaceContract: ethers.Contract;
@@ -63,7 +63,7 @@ export class SmartContractService {
     try {
       // Initialize provider based on environment
       const rpcUrl = process.env.RPC_URL || 'http://localhost:8545';
-      this.provider = new ethers.JsonRpcProvider(rpcUrl);
+      this.provider = new providers.JsonRpcProvider(rpcUrl);
       
       // Initialize wallet
       const privateKey = process.env.PRIVATE_KEY;
@@ -74,25 +74,25 @@ export class SmartContractService {
       
       // Initialize contract instances
       this.agentNftContract = new ethers.Contract(
-        process.env.AGENT_NFT_CONTRACT_ADDRESS || ethers.ZeroAddress,
+        process.env.AGENT_NFT_CONTRACT_ADDRESS || constants.AddressZero,
         AGENT_NFT_ABI,
         this.wallet
       );
       
       this.marketplaceContract = new ethers.Contract(
-        process.env.MARKETPLACE_CONTRACT_ADDRESS || ethers.ZeroAddress,
+        process.env.MARKETPLACE_CONTRACT_ADDRESS || constants.AddressZero,
         MARKETPLACE_ABI,
         this.wallet
       );
       
       this.revenueDistributorContract = new ethers.Contract(
-        process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || ethers.ZeroAddress,
+        process.env.REVENUE_DISTRIBUTOR_CONTRACT_ADDRESS || constants.AddressZero,
         REVENUE_DISTRIBUTOR_ABI,
         this.wallet
       );
       
       this.smartAccountFactoryContract = new ethers.Contract(
-        process.env.SMART_ACCOUNT_FACTORY_ADDRESS || ethers.ZeroAddress,
+        process.env.SMART_ACCOUNT_FACTORY_ADDRESS || constants.AddressZero,
         SMART_ACCOUNT_FACTORY_ABI,
         this.wallet
       );
@@ -150,7 +150,7 @@ export class SmartContractService {
       const tx = await this.marketplaceContract.listShares(
         agentTokenId,
         shareAmount,
-        ethers.parseEther(pricePerShare),
+        utils.parseEther(pricePerShare),
         duration
       );
       const receipt = await tx.wait();
@@ -171,7 +171,7 @@ export class SmartContractService {
   async buyShares(listingId: number, totalPrice: string): Promise<string> {
     try {
       const tx = await this.marketplaceContract.buyShares(listingId, {
-        value: ethers.parseEther(totalPrice)
+        value: utils.parseEther(totalPrice)
       });
       const receipt = await tx.wait();
       return receipt.transactionHash;
@@ -184,7 +184,7 @@ export class SmartContractService {
   async makeOffer(listingId: number, shareAmount: number, offerPrice: string): Promise<{ offerId: number, txHash: string }> {
     try {
       const tx = await this.marketplaceContract.makeOffer(listingId, shareAmount, {
-        value: ethers.parseEther(offerPrice)
+        value: utils.parseEther(offerPrice)
       });
       const receipt = await tx.wait();
       
@@ -219,7 +219,7 @@ export class SmartContractService {
         agentTokenId,
         streamName,
         tokenAddress,
-        ethers.parseEther(distributionThreshold)
+        utils.parseEther(distributionThreshold)
       );
       const receipt = await tx.wait();
       
@@ -239,14 +239,14 @@ export class SmartContractService {
   async addRevenue(streamId: number, amount: string, tokenAddress?: string): Promise<string> {
     try {
       let tx;
-      if (tokenAddress === ethers.constants.AddressZero || !tokenAddress) {
+      if (tokenAddress === constants.AddressZero || !tokenAddress) {
         // ETH payment
-        tx = await this.revenueDistributorContract.addRevenue(streamId, ethers.parseEther(amount), {
-          value: ethers.parseEther(amount)
+        tx = await this.revenueDistributorContract.addRevenue(streamId, utils.parseEther(amount), {
+          value: utils.parseEther(amount)
         });
       } else {
         // ERC20 token payment (would need approval first)
-        tx = await this.revenueDistributorContract.addRevenue(streamId, ethers.parseEther(amount));
+        tx = await this.revenueDistributorContract.addRevenue(streamId, utils.parseEther(amount));
       }
       
       const receipt = await tx.wait();
@@ -266,7 +266,7 @@ export class SmartContractService {
       const distributedAmount = distributeEvent?.args?.totalAmount?.toString();
       
       return {
-        distributedAmount: ethers.formatEther(distributedAmount || '0'),
+        distributedAmount: utils.formatEther(distributedAmount || '0'),
         txHash: receipt.transactionHash
       };
     } catch (error) {

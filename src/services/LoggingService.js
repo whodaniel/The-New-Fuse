@@ -1,14 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.LoggingService = exports.LogLevel = void 0;
-var LogLevel;
+export var LogLevel;
 (function (LogLevel) {
     LogLevel["ERROR"] = "error";
     LogLevel["WARN"] = "warn";
     LogLevel["INFO"] = "info";
     LogLevel["DEBUG"] = "debug";
-})(LogLevel || (exports.LogLevel = LogLevel = {}));
-class LoggingService {
+})(LogLevel || (LogLevel = {}));
+export class LoggingService {
+    serviceName;
     constructor(serviceName) {
         this.serviceName = serviceName;
     }
@@ -44,4 +42,3 @@ class LoggingService {
         logFn(JSON.stringify(logEntry));
     }
 }
-exports.LoggingService = LoggingService;

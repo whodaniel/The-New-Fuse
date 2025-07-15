@@ -142,6 +142,32 @@ export { TaskStatus, TaskType } from './task';
 // Service types
 export type { ServiceStatus } from './services';
 
+// MASS Framework types
+export type {
+  MassOptimizationConfig,
+  TopologyOptimizationConfig,
+  ValidationInputItem,
+  ValidationDataset,
+  PerformanceMetrics,
+  PromptDefinition,
+  AgentPromptVersion,
+  WorkflowNode,
+  WorkflowEdge,
+  WorkflowTopology,
+  OptimizationJob,
+  MassBlockType,
+  MassBlockConfig,
+  AggregateConfig,
+  ReflectConfig,
+  DebateConfig,
+  CustomConfig,
+  ToolUseConfig,
+  AgentWithMass,
+  CreateOptimizedAgentDto,
+  CreateTopologyDto,
+  OptimizeTopologyDto
+} from './mass';
+
 // Other core exports
 export * from './marketplace';
 export * from './metrics';
@@ -155,3 +181,6 @@ export * from './session';
 export * from './suggestion';
 export * from './export';
 export * from './webhooks';
+
+// Core enums
+export { SuggestionStatus, SuggestionPriority } from './core/enums';

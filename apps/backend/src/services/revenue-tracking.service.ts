@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { SmartContractService } from './smart-contract.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 
 export interface RevenueEvent {
   agentId: string;
@@ -67,7 +67,7 @@ export class RevenueTrackingService {
             streamName: `${data.source} Revenue`,
             tokenAddress: data.tokenAddress,
             totalRevenue: '0',
-            distributionThreshold: ethers.parseEther('0.1').toString(), // Default threshold
+            distributionThreshold: utils.parseEther('0.1').toString(), // Default threshold
           }
         });
       }
@@ -87,7 +87,7 @@ export class RevenueTrackingService {
         try {
           await this.smartContractService.addRevenue(
             parseInt(revenueStream.id), // This would need to be the on-chain stream ID
-            ethers.formatEther(data.amount),
+            utils.formatEther(data.amount),
             data.tokenAddress
           );
         } catch (error) {
@@ -122,12 +122,12 @@ export class RevenueTrackingService {
         return;
       }
 
-      const totalRevenue = BigNumber.from(revenueStream.totalRevenue);
-      const distributedRevenue = BigNumber.from(revenueStream.distributedRevenue);
-      const pendingRevenue = totalRevenue.sub(distributedRevenue);
-      const distributionThreshold = BigNumber.from(revenueStream.distributionThreshold);
+      const totalRevenue = utils.parseEther(revenueStream.totalRevenue);
+      const distributedRevenue = utils.parseEther(revenueStream.distributedRevenue);
+      const pendingRevenue = totalRevenue - distributedRevenue;
+      const distributionThreshold = utils.parseEther(revenueStream.distributionThreshold);
 
-      if (pendingRevenue.gte(distributionThreshold)) {
+      if (pendingRevenue >= distributionThreshold) {
         this.logger.log(`Triggering automatic distribution for stream ${revenueStreamId}`);
         await this.distributeRevenue(revenueStreamId);
       }
@@ -155,11 +155,11 @@ export class RevenueTrackingService {
         throw new Error('Revenue stream not found or not fractionalized');
       }
 
-      const totalRevenue = BigNumber.from(revenueStream.totalRevenue);
-      const distributedRevenue = ethers.BigNumber.from(revenueStream.distributedRevenue);
-      const pendingRevenue = totalRevenue.sub(distributedRevenue);
+      const totalRevenue = utils.parseEther(revenueStream.totalRevenue);
+      const distributedRevenue = utils.parseEther(revenueStream.distributedRevenue);
+      const pendingRevenue = totalRevenue - distributedRevenue;
 
-      if (pendingRevenue.lte(0)) {
+      if (pendingRevenue <= 0) {
         throw new Error('No pending revenue to distribute');
       }
 
@@ -169,7 +169,7 @@ export class RevenueTrackingService {
 
       const recipients = revenueStream.agentNFT.fractionalShares.map(share => {
         const sharePercentage = share.shareAmount / totalShares;
-        const amount = pendingRevenue.mul(share.shareAmount).div(totalShares);
+        const amount = (pendingRevenue * BigInt(share.shareAmount)) / BigInt(totalShares);
         
         return {
           address: share.ownerAddress,
@@ -212,7 +212,7 @@ export class RevenueTrackingService {
         blockNumber
       };
 
-      this.logger.log(`Revenue distributed successfully: ${ethers.utils.formatEther(pendingRevenue)} ETH to ${recipients.length} recipients`);
+      this.logger.log(`Revenue distributed successfully: ${utils.formatEther(pendingRevenue)} ETH to ${recipients.length} recipients`);
       return result;
     } catch (error) {
       this.logger.error('Failed to distribute revenue:', error);
@@ -337,11 +337,11 @@ export class RevenueTrackingService {
       });
 
       const totalRevenue = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(ethers.utils.formatEther(stream.totalRevenue || '0')), 0
+        (sum, stream) => sum + parseFloat(utils.formatEther(stream.totalRevenue || '0')), 0
       );
 
       const totalDistributed = revenueStreams.reduce(
-        (sum, stream) => sum + parseFloat(ethers.utils.formatEther(stream.distributedRevenue || '0')), 0
+        (sum, stream) => sum + parseFloat(utils.formatEther(stream.distributedRevenue || '0')), 0
       );
 
       const distributionCount = revenueStreams.reduce(

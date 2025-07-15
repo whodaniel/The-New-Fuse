@@ -11,18 +11,18 @@ export declare class ChatMessageRepository {
     create(data: Prisma.MessageCreateInput | Prisma.MessageUncheckedCreateInput): Promise<Message>;
     update(id: string, data: Prisma.MessageUpdateInput | Prisma.MessageUncheckedUpdateInput): Promise<Message>;
     delete(id: string): Promise<Message>;
-    findByUserId(userId: string): Promise<Message[]>;
-    findBySessionId(sessionId: string): Promise<Message[]>;
+    findBySenderId(senderId: string): Promise<Message[]>;
+    findByChatId(chatId: string): Promise<Message[]>;
     findByRole(role: string): Promise<Message[]>;
-    getRecentMessages(userId: string, limit?: number): Promise<Message[]>;
-    searchMessages(userId: string, query: string): Promise<Message[]>;
-    getMessageStats(userId?: string): Promise<{
+    getRecentMessages(senderId: string, limit?: number): Promise<Message[]>;
+    searchMessages(senderId: string, query: string): Promise<Message[]>;
+    getMessageStats(senderId?: string): Promise<{
         total: number;
         recent: number;
         byRole: Record<string, number>;
     }>;
-    getConversationMessages(sessionId: string, limit?: number): Promise<Message[]>;
-    deleteMessagesBySessionId(sessionId: string): Promise<number>;
+    getConversationMessages(chatId: string, limit?: number): Promise<Message[]>;
+    deleteMessagesByChatId(chatId: string): Promise<number>;
     getMessagesByDateRange(from: Date, to: Date): Promise<Message[]>;
 }
 //# sourceMappingURL=chat-message.repository.d.ts.map

@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,8 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma.service';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ChatMessageRepository = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_service_1 = require("../prisma.service");
 let ChatMessageRepository = class ChatMessageRepository {
     prisma;
     constructor(prisma) {
@@ -19,11 +22,19 @@ let ChatMessageRepository = class ChatMessageRepository {
             id: dbMessage.id,
             content: dbMessage.content,
             role: dbMessage.role,
-            userId: dbMessage.userId,
-            sessionId: dbMessage.sessionId,
+            senderId: dbMessage.senderId,
+            senderName: dbMessage.senderName,
+            agentId: dbMessage.agentId,
+            chatId: dbMessage.chatId,
+            roomId: dbMessage.roomId,
+            parentMessageId: dbMessage.parentMessageId,
             metadata: dbMessage.metadata ?? null,
-            createdAt: dbMessage.createdAt,
+            attachments: dbMessage.attachments,
+            timestamp: dbMessage.timestamp,
             updatedAt: dbMessage.updatedAt,
+            isEdited: dbMessage.isEdited,
+            isDeleted: dbMessage.isDeleted,
+            reactions: dbMessage.reactions,
         };
     }
     getMessageSelect() {
@@ -31,11 +42,19 @@ let ChatMessageRepository = class ChatMessageRepository {
             id: true,
             content: true,
             role: true,
-            userId: true,
-            sessionId: true,
+            senderId: true,
+            senderName: true,
+            agentId: true,
+            chatId: true,
+            roomId: true,
+            parentMessageId: true,
             metadata: true,
-            createdAt: true,
+            attachments: true,
+            timestamp: true,
             updatedAt: true,
+            isEdited: true,
+            isDeleted: true,
+            reactions: true,
         };
     }
     async findById(id) {
@@ -52,7 +71,7 @@ let ChatMessageRepository = class ChatMessageRepository {
             where: filters,
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'desc'
+                timestamp: 'desc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
@@ -82,22 +101,22 @@ let ChatMessageRepository = class ChatMessageRepository {
         });
         return this.mapDatabaseMessageToChatMessage(message);
     }
-    async findByUserId(userId) {
+    async findBySenderId(senderId) {
         const messages = await this.prisma.message.findMany({
-            where: { userId },
+            where: { senderId },
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'desc'
+                timestamp: 'desc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
-    async findBySessionId(sessionId) {
+    async findByChatId(chatId) {
         const messages = await this.prisma.message.findMany({
-            where: { sessionId },
+            where: { chatId },
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'asc'
+                timestamp: 'asc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
@@ -107,26 +126,26 @@ let ChatMessageRepository = class ChatMessageRepository {
             where: { role: role }, // Cast to any to handle MessageRole enum
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'desc'
+                timestamp: 'desc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
-    async getRecentMessages(userId, limit = 50) {
+    async getRecentMessages(senderId, limit = 50) {
         const messages = await this.prisma.message.findMany({
             select: this.getMessageSelect(),
-            where: { userId },
+            where: { senderId },
             orderBy: {
-                createdAt: 'desc'
+                timestamp: 'desc'
             },
             take: limit
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
-    async searchMessages(userId, query) {
+    async searchMessages(senderId, query) {
         const messages = await this.prisma.message.findMany({
             where: {
-                userId,
+                senderId,
                 content: {
                     contains: query,
                     mode: 'insensitive'
@@ -134,13 +153,13 @@ let ChatMessageRepository = class ChatMessageRepository {
             },
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'desc'
+                timestamp: 'desc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
-    async getMessageStats(userId) {
-        const whereClause = userId ? { userId } : {};
+    async getMessageStats(senderId) {
+        const whereClause = senderId ? { senderId } : {};
         const roleStats = await this.prisma.message.groupBy({
             by: ['role'],
             where: whereClause,
@@ -151,7 +170,7 @@ let ChatMessageRepository = class ChatMessageRepository {
         const totalMessages = await this.prisma.message.count({ where: whereClause });
         const recentMessages = await this.prisma.message.count({
             where: {
-                createdAt: {
+                timestamp: {
                     gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) // Last 7 days
                 }
             }
@@ -165,41 +184,41 @@ let ChatMessageRepository = class ChatMessageRepository {
             }, {})
         };
     }
-    async getConversationMessages(sessionId, limit = 100) {
+    async getConversationMessages(chatId, limit = 100) {
         const messages = await this.prisma.message.findMany({
-            where: { sessionId },
+            where: { chatId },
             orderBy: {
-                createdAt: 'asc'
+                timestamp: 'asc'
             },
             take: limit,
             select: this.getMessageSelect()
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
-    async deleteMessagesBySessionId(sessionId) {
+    async deleteMessagesByChatId(chatId) {
         const result = await this.prisma.message.deleteMany({
-            where: { sessionId }
+            where: { chatId }
         });
         return result.count;
     }
     async getMessagesByDateRange(from, to) {
         const messages = await this.prisma.message.findMany({
             where: {
-                createdAt: {
+                timestamp: {
                     gte: from,
                     lte: to
                 }
             },
             select: this.getMessageSelect(),
             orderBy: {
-                createdAt: 'asc'
+                timestamp: 'asc'
             }
         });
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
 };
-ChatMessageRepository = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [PrismaService])
+exports.ChatMessageRepository = ChatMessageRepository;
+exports.ChatMessageRepository = ChatMessageRepository = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], ChatMessageRepository);
-export { ChatMessageRepository };

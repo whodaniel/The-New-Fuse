@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "paths": {
+      "@/*": ["./src/*"],
       "@the-new-fuse/*": ["./packages/*/src"]
     }
   },

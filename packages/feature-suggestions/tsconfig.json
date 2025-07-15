@@ -1,5 +1,5 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "jsx": "react-jsx",
@@ -16,7 +16,7 @@
       "@the-new-fuse/types/*": ["../types/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../types/src/**/*"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../types" },

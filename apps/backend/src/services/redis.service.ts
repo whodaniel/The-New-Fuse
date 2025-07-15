@@ -1,130 +1,125 @@
-import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Redis } from 'ioredis';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from '@nestjs/common';
+import Redis from 'ioredis';
 
 @Injectable()
-export class RedisService implements OnModuleInit, OnModuleDestroy {
+export class RedisService {
+  private readonly logger = new Logger(RedisService.name);
   private client: Redis;
-  private pubClient: Redis;
-  private subClient: Redis;
+  private subscriber: Redis;
 
-  constructor(private readonly configService: ConfigService) {
-    const redisUrl = this.configService.get<string>('REDIS_URL') || 'redis://localhost:6379';
-    
-    this.client = new (Redis as any)(redisUrl);
-    this.pubClient = new (Redis as any)(redisUrl);
-    this.subClient = new (Redis as any)(redisUrl);
+  constructor() {
+    this.client = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      db: parseInt(process.env.REDIS_DB || '0'),
+    });
+
+    this.subscriber = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379'),
+      password: process.env.REDIS_PASSWORD,
+      db: parseInt(process.env.REDIS_DB || '0'),
+    });
+
+    this.client.on('connect', () => {
+      this.logger.log('Connected to Redis');
+    });
+
+    this.client.on('error', (error) => {
+      this.logger.error('Redis connection error:', error);
+    });
   }
 
   async get(key: string): Promise<string | null> {
     return this.client.get(key);
   }
 
-  async set(key: string, value: string): Promise<'OK'> {
-    return this.client.set(key, value);
-  }
-
-  async setex(key: string, ttl: number, value: string): Promise<'OK'> {
-    return this.client.setex(key, ttl, value);
-  }
-
-  getSubClient(): Redis {
-    return this.subClient;
-  }
-
-  getPubClient(): Redis {
-    return this.pubClient;
-  }
-
-  async del(key: string): Promise<number> {
-    return this.client.del(key);
-  }
-
-  async exists(key: string): Promise<number> {
-    return this.client.exists(key);
-  }
-
-  async flushall(): Promise<'OK'> {
-    return this.client.flushall();
-  }
-
-  async publish(channel: string, message: string): Promise<number> {
-    return this.pubClient.publish(channel, message);
-  }
-
-  async subscribe(channel: string): Promise<void> {
-    await this.subClient.subscribe(channel);
-  }
-
-  async onModuleInit() {
-    // Subscribe to agent communication channels
-    await this.subClient.subscribe('agent:composer', 'agent:roo-coder');
-
-    this.subClient.on('message', (channel: string, message: string) => {
-      this.handleAgentMessage(channel, message);
-    });
-  }
-
-  async onModuleDestroy() {
-    await this.client.quit();
-    await this.pubClient.quit();
-    await this.subClient.quit();
-  }
-
-  private async handleAgentMessage(channel: string, message: string) {
-    try {
-      const data = JSON.parse(message);
-      
-      switch (channel) {
-        case 'agent:composer':
-          await this.handleComposerMessage(data);
-          break;
-        case 'agent:roo-coder':
-          await this.handleRooCoderMessage(data);
-          break;
-      }
-    } catch (error) {
-      console.error('Error handling agent message:', error);
+  async set(key: string, value: string, ttl?: number): Promise<void> {
+    if (ttl) {
+      await this.client.setex(key, ttl, value);
+    } else {
+      await this.client.set(key, value);
     }
   }
 
-  private async handleComposerMessage(data: any) {
-    // Handle messages from Composer agent
-    
+  async del(key: string): Promise<void> {
+    await this.client.del(key);
   }
 
-  private async handleRooCoderMessage(data: any) {
-    // Handle messages from Roo Coder agent
-    
+  async exists(key: string): Promise<boolean> {
+    const result = await this.client.exists(key);
+    return result === 1;
   }
 
-  async sendToComposer(message: any) {
-    await this.pubClient.publish('agent:composer', JSON.stringify(message));
+  async lpush(key: string, ...values: string[]): Promise<number> {
+    return this.client.lpush(key, ...values);
   }
 
-  async sendToRooCoder(message: any) {
-    await this.pubClient.publish('agent:roo-coder', JSON.stringify(message));
+  async rpop(key: string): Promise<string | null> {
+    return this.client.rpop(key);
   }
 
-  // Helper methods for agent communication
-  async getAgentState(agentId: string): Promise<any> {
-    const state = await this.client.get(`agent:state:${agentId}`);
-    return state ? JSON.parse(state) : null;
+  async llen(key: string): Promise<number> {
+    return this.client.llen(key);
   }
 
-  async setAgentState(agentId: string, state: any): Promise<void> {
-    await this.client.set(`agent:state:${agentId}`, JSON.stringify(state));
+  async publish(channel: string, message: string): Promise<number> {
+    return this.client.publish(channel, message);
   }
 
-  async clearAgentState(agentId: string): Promise<void> {
-    await this.client.del(`agent:state:${agentId}`);
+  async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
+    this.subscriber.subscribe(channel);
+    this.subscriber.on('message', (receivedChannel, message) => {
+      if (receivedChannel === channel) {
+        callback(message);
+      }
+    });
+  }
+
+  async unsubscribe(channel: string): Promise<void> {
+    this.subscriber.unsubscribe(channel);
   }
 
   async getTasks(): Promise<any[]> {
-    // Implementation...
+    const tasks = await this.client.lrange('tasks', 0, -1);
+    return tasks.map(task => JSON.parse(task));
   }
 
-  async cleanup(): Promise<void> {
-    // Implementation...
+  async addTask(task: any): Promise<void> {
+    await this.client.lpush('tasks', JSON.stringify(task));
+  }
+
+  async getQueueLength(queueName: string): Promise<number> {
+    return this.client.llen(queueName);
+  }
+
+  async flushAll(): Promise<void> {
+    await this.client.flushall();
+  }
+
+  getSubClient(): Redis {
+    return this.subscriber;
+  }
+
+  async sendToComposer(message: any): Promise<void> {
+    await this.publish('composer:messages', JSON.stringify(message));
+  }
+
+  async sendToRooCoder(message: any): Promise<void> {
+    await this.publish('roocoder:messages', JSON.stringify(message));
+  }
+
+  async subscribeToChannel(channel: string, callback: (message: string) => void): Promise<void> {
+    await this.subscribe(channel, callback);
+  }
+
+  async ping(): Promise<string> {
+    return this.client.ping();
+  }
+
+  async disconnect(): Promise<void> {
+    await this.client.disconnect();
+    await this.subscriber.disconnect();
   }
 }

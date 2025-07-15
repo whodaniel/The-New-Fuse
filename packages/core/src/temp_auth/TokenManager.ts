@@ -1,24 +1,87 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
+import { Injectable, Logger } from '@nestjs/common';
+import { RedisService } from '@the-new-fuse/redis';
+import { DatabaseService } from '@the-new-fuse/database';
+import { TokenPayload, AuthEventType } from './AuthTypes';
 
+@Injectable()
+export class TokenManager {
+  private readonly logger = new Logger(TokenManager.name);
 
-import { /* TODO: specify imports */ } from /@the-new-fuse/utils/;
-import { /* TODO: specify imports */ } from '@the-new-fuse/database';
-import events from '';
-   payload:Omit<TokenPayload, issuedAt|expiresAt'
-    } catch (error) { this.logger.error('')
-    } catch (error){ this.logger.error(''Failed to generate refresh token: ' '
-    } catch (error) { this.logger.error('')
-    } catch (error){ this.logger.error(''Failed to validate refresh token: ' ', error as Error);'
-  async revokeToken(token: ''
-      // Add to blacklist'
-      await this.redis.set('')
-     EX'
-      // Revokerefreshtoken'
-    } catch (error) { this.logger.error('')
-      const pattern = refresh_token: '';
-            const payload= 'JSON.parse(token)'';
-           if(payload.userId' === 'userId) {'';
-            // Skip invalid tokens'
-      await this.recordTokenEvent(userId, AuthEventType.SESSION_REVOKED, { allSessions: 'true'
-    } catch (error) { this.logger.error(''Failed to revoke all user tokens: ' ', error as Error);'
-    await (this.db as any).authEvents.create({ data: ''
+  constructor(
+    private readonly redis: RedisService,
+    private readonly db: DatabaseService
+  ) {}
+
+  async generateRefreshToken(payload: Omit<TokenPayload, 'issuedAt' | 'expiresAt'>): Promise<string> {
+    try {
+      const token = this.generateToken(payload);
+      return token;
+    } catch (error) {
+      this.logger.error('Failed to generate refresh token:', error as Error);
+      throw error;
+    }
+  }
+
+  async validateRefreshToken(token: string): Promise<TokenPayload | null> {
+    try {
+      const payload = this.parseToken(token);
+      return payload;
+    } catch (error) {
+      this.logger.error('Failed to validate refresh token:', error as Error);
+      return null;
+    }
+  }
+
+  async revokeToken(token: string): Promise<void> {
+    try {
+      await this.redis.set(`blacklist:${token}`, '1', 'EX', 86400);
+    } catch (error) {
+      this.logger.error('Failed to revoke token:', error as Error);
+      throw error;
+    }
+  }
+
+  async revokeAllUserTokens(userId: string): Promise<void> {
+    try {
+      const pattern = `refresh_token:${userId}:*`;
+      const keys = await this.redis.keys(pattern);
+      
+      if (keys.length > 0) {
+        await this.redis.del(...keys);
+      }
+      
+      await this.recordTokenEvent(userId, AuthEventType.TOKEN_REFRESH, { allSessions: true });
+    } catch (error) {
+      this.logger.error('Failed to revoke all user tokens:', error as Error);
+      throw error;
+    }
+  }
+
+  private generateToken(payload: Omit<TokenPayload, 'issuedAt' | 'expiresAt'>): string {
+    // Implementation would use JWT or similar
+    return JSON.stringify({
+      ...payload,
+      issuedAt: Date.now(),
+      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
+    });
+  }
+
+  private parseToken(token: string): TokenPayload {
+    return JSON.parse(token);
+  }
+
+  private async recordTokenEvent(userId: string, eventType: AuthEventType, metadata: any): Promise<void> {
+    try {
+      await (this.db as any).authEvents.create({
+        data: {
+          userId,
+          eventType,
+          metadata,
+          timestamp: new Date()
+        }
+      });
+    } catch (error) {
+      this.logger.error('Failed to record token event:', error as Error);
+    }
+  }
+}

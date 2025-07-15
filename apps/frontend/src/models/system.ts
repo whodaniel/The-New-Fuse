@@ -1,4 +1,5 @@
-    static checkAuth(isNewToken) {
+class System {
+    static checkAuth(isNewToken: boolean) {
         throw new Error('Method not implemented.');
     }
     static async getEmbeddingSettings() {

@@ -17,13 +17,11 @@ export class AgentRepository {
       type: prismaAgent.type,
       status: prismaAgent.status,
       userId: prismaAgent.userId,
-      metadata: prismaAgent.metadata,
+      config: prismaAgent.config,
       createdAt: prismaAgent.createdAt,
       updatedAt: prismaAgent.updatedAt,
-      capabilities: prismaAgent.capabilities.filter((cap): cap is AgentCapability => 
-        Object.values(AgentCapability).includes(cap as AgentCapability)),
+      capabilities: prismaAgent.capabilities as unknown as AgentCapability[],
       provider: prismaAgent.provider,
-      lastActive: prismaAgent.lastActive,
       nft: prismaAgent.nft || null,
       workflows: prismaAgent.workflows || [],
       user: prismaAgent.user || null

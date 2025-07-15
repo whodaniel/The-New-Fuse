@@ -90,8 +90,8 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       }
 
       // Validate agent exists and is active (if auth service provides this)
-      if (this.authService.validateAgent) {
-        const isValidAgent = await this.authService.validateAgent(payload.agentId);
+      if ((this.authService as any).validateAgent) {
+        const isValidAgent = await (this.authService as any).validateAgent(payload.agentId);
         if (!isValidAgent) {
           this.logger.warn(`Agent validation failed for: ${payload.agentId}`);
           throw new UnauthorizedException('Agent not found or inactive');
@@ -117,7 +117,7 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
         throw error;
       }
       
-      this.logger.error(`Agent JWT validation error: ${(error as Error).message}`, error.stack);
+      this.logger.error(`Agent JWT validation error: ${(error as Error).message}`, (error as Error).stack);
       throw new UnauthorizedException('Agent authentication failed');
     }
   }
@@ -143,7 +143,7 @@ export class AgentJwtStrategy extends PassportStrategy(Strategy, 'agent-jwt') {
       constructor(configService: ConfigService, authService: AuthService) {
         super(configService, authService);
         // Override the token extraction to support both standard and custom headers
-        this.jwtFromRequest = ExtractJwt.fromExtractors([
+        (this as any).jwtFromRequest = ExtractJwt.fromExtractors([
           ExtractJwt.fromAuthHeaderAsBearerToken(),
           AgentJwtStrategy.extractAgentTokenFromHeader,
         ]);

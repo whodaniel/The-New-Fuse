@@ -255,10 +255,10 @@ class PopupInterface {
     const { tnf } = this.state;
     const indicator = relayStatusEl.querySelector('.indicator');
     if (tnf.relayConnected) {
-      indicator.className = 'indicator connected';
+      if (indicator) indicator.className = 'indicator connected';
       relayStatusEl.innerHTML = '<span class="indicator connected"></span>TNF Connected';
     } else {
-      indicator.className = 'indicator disconnected';
+      if (indicator) indicator.className = 'indicator disconnected';
       relayStatusEl.innerHTML = '<span class="indicator disconnected"></span>TNF Disconnected';
     }
   }
@@ -603,10 +603,10 @@ class PopupInterface {
 
     const indicator = relayStatusEl.querySelector('.indicator');
     if (this.state.relayConnected) {
-      indicator.className = 'indicator connected';
+      if (indicator) indicator.className = 'indicator connected';
       relayStatusEl.textContent = 'Connected';
     } else {
-      indicator.className = 'indicator disconnected';
+      if (indicator) indicator.className = 'indicator disconnected';
       relayStatusEl.textContent = 'Disconnected';
     }
   }
@@ -642,7 +642,7 @@ class PopupInterface {
     }
 
     const indicator = currentAIEl.querySelector('.indicator');
-    indicator.className = `indicator ${connected ? 'connected' : 'unknown'}`;
+    if (indicator) indicator.className = `indicator ${connected ? 'connected' : 'unknown'}`;
     currentAIEl.innerHTML = `<span class="indicator ${connected ? 'connected' : 'unknown'}"></span>${aiType}`;
   }
 
@@ -662,10 +662,10 @@ class PopupInterface {
 
     const indicator = pageReadyEl.querySelector('.indicator');
     if (isAIPage) {
-      indicator.className = 'indicator connected';
+      if (indicator) indicator.className = 'indicator connected';
       pageReadyEl.innerHTML = '<span class="indicator connected"></span>Ready';
     } else {
-      indicator.className = 'indicator unknown';
+      if (indicator) indicator.className = 'indicator unknown';
       pageReadyEl.innerHTML = '<span class="indicator unknown"></span>Not AI page';
     }
   }

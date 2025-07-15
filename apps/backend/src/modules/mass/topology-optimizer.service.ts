@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../lib/prisma/prisma.service';
-import { 
-  TopologyOptimizationConfig, 
-  WorkflowTopology, 
-  WorkflowNode, 
-  WorkflowEdge, 
+import { PrismaService } from '../../prisma/prisma.service';
+import {
+  TopologyOptimizationConfig,
+  WorkflowTopology,
+  WorkflowNode,
+  WorkflowEdge,
   PerformanceMetrics,
-  MassBlockType 
+  MassBlockType
 } from '@the-new-fuse/types';
 import { EvaluationHarnessService } from './prompt-optimizer.service';
 
@@ -199,7 +199,7 @@ export class TopologyOptimizerService {
     agents: any[],
     influenceScores: Record<string, number>,
     config: TopologyOptimizationConfig
-  ): Promise<WorkflowTopology | null> {
+  ): Promise<WorkflowTopology> {
     const topAgents = this.selectTopAgentsByInfluence(agents, influenceScores, config.maxAgents || 5);
     
     switch (pattern) {
@@ -216,7 +216,7 @@ export class TopologyOptimizerService {
       case 'aggregate':
         return this.createAggregateTopology(topAgents, config);
       default:
-        return null;
+        throw new Error(`Unknown topology pattern: ${pattern}`);
     }
   }
 

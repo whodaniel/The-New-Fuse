@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Param, HttpException, HttpStatus } from '@
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
-import { Logger } from '@the-new-fuse/utils';
+import { Logger } from '@nestjs/common';
 import { N8nMetadataService } from './n8n-metadata.service';
 import { WorkflowValidator } from './workflow.validator';
 
@@ -16,7 +16,7 @@ export class N8nIntegrationController {
     private readonly configService: ConfigService,
     private readonly metadataService: N8nMetadataService,
   ) {
-    this.logger = new Logger({ prefix: 'N8nIntegrationController' });
+    this.logger = new Logger(N8nIntegrationController.name);
     this.validator = new WorkflowValidator();
   }
 
@@ -67,7 +67,7 @@ export class N8nIntegrationController {
 
       return response.data;
     } catch (error) {
-      this.logger.error('Failed to create workflow', error);
+      this.logger.error(`Failed to create workflow: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -77,7 +77,7 @@ export class N8nIntegrationController {
     try {
       return await this.metadataService.getAllNodeTypes();
     } catch (error) {
-      this.logger.error('Failed to fetch node types', error);
+      this.logger.error(`Failed to fetch node types: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -87,7 +87,7 @@ export class N8nIntegrationController {
     try {
       return await this.metadataService.getNodeTypeDescription(type);
     } catch (error) {
-      this.logger.error(`Failed to fetch node type description for ${type}`, error);
+      this.logger.error(`Failed to fetch node type description for ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -115,7 +115,7 @@ export class N8nIntegrationController {
 
       return response.data;
     } catch (error) {
-      this.logger.error(`Failed to fetch credentials for type ${type}`, error);
+      this.logger.error(`Failed to fetch credentials for type ${type}: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }
@@ -149,7 +149,7 @@ export class N8nIntegrationController {
 
       return response.data;
     } catch (error) {
-      this.logger.error('Failed to test workflow', error);
+      this.logger.error(`Failed to test workflow: ${error instanceof Error ? error.message : 'Unknown error'}`);
       throw error;
     }
   }

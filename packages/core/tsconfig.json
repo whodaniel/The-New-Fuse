@@ -8,9 +8,11 @@
     "jsx": "react-jsx",
     "noEmit": false,
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "module": "CommonJS",
+    "moduleResolution": "Node"
   },
-  "include": ["src/**/*"],
+  "include": ["src/index.ts", "src/task/types.ts"],
   "exclude": [
     "node_modules",
     "dist",

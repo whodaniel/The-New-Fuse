@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../lib/prisma/prisma.module';
+import { PrismaModule } from '../../prisma/prisma.module';
 import { MassController } from './mass.controller';
 import { MassOrchestrationService } from './mass-orchestration.service';
 import { PromptOptimizerService } from './prompt-optimizer.service';

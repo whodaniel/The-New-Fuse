@@ -1,53 +1,99 @@
-interface APIManager {
+export interface APIManager {
   validateAPISpec(spec: any): Promise<{ valid: boolean; errors?: string[] }>;
   createIntegration(service: any, spec: any): Promise<any>;
 }
 
-interface IntegrationRegistry {
+export interface IntegrationRegistry {
   registerIntegration(integration: any): Promise<any>;
 }
 
-interface ExternalService {
+export interface ExternalService {
   id: string;
   name: string;
   spec: any;
 }
 
-interface APIRequest {
+export interface APIRequest {
   path: string;
   method: string;
   headers: Record<string, string>;
   body?: any;
 }
 
-interface APIResponse {
+export interface APIResponse {
   status: number;
   headers: Record<string, string>;
   body: any;
 }
 
-interface RegistrationResult {
-  integrationId: string;
-  endpoints: string[];
-  documentation: string;
-}
-
-export class WorkflowAPIGateway {
+export class WorkflowGateway {
   constructor(
-    private readonly apiManager: APIManager,
-    private readonly integrationRegistry: IntegrationRegistry,
+    private apiManager: APIManager,
+    private integrationRegistry: IntegrationRegistry
   ) {}
 
-  async registerExternalService(
-    service: ExternalService,
-  ): Promise<RegistrationResult> {
-    // Validate the API spec
-    const validationResult = await this.apiManager.validateAPISpec(service.spec);
-    if (!validationResult.valid) {
-      throw new Error(`Invalid API spec: ${validationResult.errors?.join('';`'}`;
-        headers: { "Content-Type": /application/json'
-          error: error instanceof Error ? error.message : ''
-    return '';
-      headers: { "Content-Type": /application/json'
-        error: ''
-      headers: { 'Content-Type'
+  async registerExternalService(service: ExternalService): Promise<void> {
+    try {
+      // Validate the API specification
+      const validationResult = await this.apiManager.validateAPISpec(service.spec);
+      if (!validationResult.valid) {
+        throw new Error(`Invalid API spec: ${validationResult.errors?.join(', ')}`);
+      }
+
+      // Create integration
+      const integration = await this.apiManager.createIntegration(service, service.spec);
+      
+      // Register with integration registry
+      await this.integrationRegistry.registerIntegration(integration);
+      
+    } catch (error) {
+      throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  }
+
+  async makeAPICall(serviceId: string, request: APIRequest): Promise<APIResponse> {
+    try {
+      // Implementation would make actual API call
+      return {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: { success: true }
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+        body: { 
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }
+      };
+    }
+  }
+
+  async handleWebhook(serviceId: string, payload: any): Promise<APIResponse> {
+    try {
+      // Implementation would process webhook
+      return {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+        body: { received: true }
+      };
+    } catch (error) {
+      return {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+        body: { 
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }
+      };
+    }
+  }
+
+  async getServiceStatus(serviceId: string): Promise<{ status: 'active' | 'inactive' | 'error'; lastCheck: Date }> {
+    // Implementation would check service health
+    return {
+      status: 'active',
+      lastCheck: new Date()
+    };
+  }
+}

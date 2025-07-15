@@ -1,227 +1,224 @@
 import * as vscode from 'vscode';
-import * as path from 'path';
-import { WebviewMessageRouter } from '../services/communication/WebviewMessageRouter'; // Adjusted path
-import { ChatService } from '../services/features/ChatService';
-import { NotificationService } from '../services/core/NotificationService';
+import { WebviewMessageRouter } from '../services/communication/WebviewMessageRouter';
 import { ChatViewProvider } from './ChatViewProvider';
 import { CommunicationHubProvider } from './CommunicationHubProvider';
 import { DashboardProvider } from './DashboardProvider';
 import { SettingsViewProvider } from './SettingsViewProvider';
+import { NotificationService } from '../services/core/NotificationService';
 
-/**
- * Provider for the tabbed container webview.
- * This class is responsible for rendering the main tabbed UI and delegating
- * messages from the webview to the WebviewMessageRouter.
- */
 export class TabbedContainerProvider implements vscode.WebviewViewProvider {
-  public static readonly viewType = 'theNewFuse.tabbedContainer';
-  private _view?: vscode.WebviewView;
-  private _extensionUri: vscode.Uri;
+    public static readonly viewType = 'theNewFuse.tabbedContainer';
+    private _view?: vscode.WebviewView;
+    private _currentTab: string = 'chat';
+    private _isInitialized = false;
 
-  constructor(
-    private readonly context: vscode.ExtensionContext,
-    private readonly webviewMessageRouter: WebviewMessageRouter,
-    private readonly chatViewProvider: ChatViewProvider,
-    private readonly communicationHubProvider: CommunicationHubProvider,
-    private readonly dashboardProvider: DashboardProvider,
-    private readonly settingsProvider: SettingsViewProvider,
-    private readonly notificationService: NotificationService,
-  ) {
-    this._extensionUri = context.extensionUri;
-  }
+    constructor(
+        private context: vscode.ExtensionContext,
+        private webviewMessageRouter: WebviewMessageRouter,
+        private chatViewProvider: ChatViewProvider,
+        private communicationHubProvider: CommunicationHubProvider,
+        private dashboardProvider: DashboardProvider,
+        private settingsProvider: SettingsViewProvider,
+        private notificationService: NotificationService
+    ) {}
 
-  resolveWebviewView(
-    webviewView: vscode.WebviewView,
-    _context: vscode.WebviewViewResolveContext, // Renamed to avoid conflict with class member
-    _token: vscode.CancellationToken,
-  ) {
-    this._view = webviewView;
+    public resolveWebviewView(
+        webviewView: vscode.WebviewView,
+        context: vscode.WebviewViewResolveContext,
+        _token: vscode.CancellationToken
+    ) {
+        this._view = webviewView;
+        this._view.webview.options = {
+            enableScripts: true,
+            localResourceRoots: [this.context.extensionUri]
+        };
 
-    webviewView.webview.options = {
-      enableScripts: true,
-      localResourceRoots: [
-        this._extensionUri,
-        vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media')),
-      ],
-    };
-
-    // Set the webview for all providers
-    if (this.chatViewProvider) {
-        this.chatViewProvider.setWebview(webviewView.webview);
-    }
-    if (this.communicationHubProvider) {
-        this.communicationHubProvider.setHostWebview(webviewView.webview);
-        // Register the communication hub provider with the message router
-        this.webviewMessageRouter.setCommunicationHubProvider(this.communicationHubProvider);
-    }
-    if (this.dashboardProvider) {
-        this.dashboardProvider.setHostWebview(webviewView.webview);
-    }
-    if (this.settingsProvider) {
-        this.settingsProvider.setHostWebview(webviewView.webview);
+        this._view.webview.html = this._getHtmlForWebview(this._view.webview);
+        this._setupMessageHandlers();
+        this._initializeProviders();
     }
 
-    webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
+    private _setupMessageHandlers() {
+        if (!this._view) return;
 
-    // Handle messages from the webview
-    webviewView.webview.onDidReceiveMessage(
-        async (message) => {
-            // Delegate all messages to the WebviewMessageRouter
-            if (this.webviewMessageRouter) {
-                await this.webviewMessageRouter.handleMessage(webviewView.webview, message);
+        this._view.webview.onDidReceiveMessage(async (message) => {
+            try {
+                // Route messages to appropriate providers
+                switch (message.command) {
+                    case 'switchTab':
+                        this.switchToTab(message.tab);
+                        break;
+                    case 'getCurrentTab':
+                        if (this._view) {
+                            this._view.webview.postMessage({
+                                command: 'currentTab',
+                                tab: this._currentTab
+                            });
+                        }
+                        break;
+                    case 'initialize':
+                        this._sendInitialState();
+                        break;
+                    default:
+                        // Route to webview message router for chat/LLM operations
+                        if (this._view) {
+                            const response = await this.webviewMessageRouter.handleMessage(
+                                this._view.webview,
+                                message
+                            );
+                            if (response) {
+                                this._view.webview.postMessage(response);
+                            }
+                        }
+                }
+            } catch (error) {
+                console.error('Error handling message:', error);
+                this.notificationService.showError(`Error: ${error}`);
             }
-        },
-        undefined,
-        this.context.subscriptions
-    );
-  }
+        });
+    }
 
-  /**
-   * Generate the HTML for the webview.
-   */
-  private _getHtmlForWebview(webview: vscode.Webview): string {
-    const nonce = getNonce();
-    const mainScriptUri = webview.asWebviewUri(
-      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'tabbed-container.js'))
-    );
-    const chatPanelScriptUri = webview.asWebviewUri(
-      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'chat-panel.js'))
-    );
-    const mainStyleUri = webview.asWebviewUri(
-      vscode.Uri.file(path.join(this._extensionUri.fsPath, 'media', 'main.css'))
-    );
-    const codiconsUri = webview.asWebviewUri(
-      vscode.Uri.file(
-        path.join(this._extensionUri.fsPath, 'media', 'codicons', 'codicon.css')
-      )
-    );
+    private _initializeProviders() {
+        if (!this._view) return;
 
-    return `<!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="Content-Security-Policy" content="
-            default-src 'none';
-            style-src ${webview.cspSource} 'unsafe-inline';
-            font-src ${webview.cspSource};
-            img-src ${webview.cspSource} https: data:;
-            script-src 'nonce-${nonce}';
-        ">
-        <link href="${mainStyleUri}" rel="stylesheet">
-        <link href="${codiconsUri}" rel="stylesheet">
-        <title>The New Fuse</title>
-    </head>
-    <body>
-        <div class="tab-container">
-            <nav class="tab-nav">
-                <button class="tab-button active" data-tab-id="chat">
-                    <span class="codicon codicon-comment-discussion"></span> Chat
-                </button>
-                <button class="tab-button" data-tab-id="communication">
-                    <span class="codicon codicon-radio-tower"></span> Communication
-                </button>
-                <button class="tab-button" data-tab-id="dashboard">
-                    <span class="codicon codicon-dashboard"></span> Dashboard
-                </button>
-                <button class="tab-button" data-tab-id="settings">
-                    <span class="codicon codicon-settings-gear"></span> Settings
-                </button>
-            </nav>
+        // Initialize all providers with the webview
+        this.chatViewProvider.setWebview(this._view.webview);
+        this.communicationHubProvider.setHostWebview(this._view.webview);
+        this.dashboardProvider.setHostWebview(this._view.webview);
+        this.settingsProvider.setHostWebview(this._view.webview);
 
-            <div id="chat-content" class="tab-content-area active" data-tab-id="chat">
-                ${this.chatViewProvider ? this.chatViewProvider.getHtmlForChatPanel(webview, nonce) : '<p>Chat panel loading...</p>'}
-            </div>
-            <div id="communication-content" class="tab-content-area" data-tab-id="communication">
-                ${this.communicationHubProvider ? this.communicationHubProvider.getHtmlBodySnippet(webview, nonce, path) : '<p>Communication Hub loading...</p>'}
-            </div>
-            <div id="dashboard-content" class="tab-content-area" data-tab-id="dashboard">
-                ${this.dashboardProvider ? this.dashboardProvider.getHtmlBodySnippet(webview, nonce) : '<p>Dashboard loading...</p>'}
-            </div>
-            <div id="settings-content" class="tab-content-area" data-tab-id="settings">
-                ${this.settingsProvider ? this.settingsProvider.getHtmlBodySnippet(webview, nonce) : '<p>Settings loading...</p>'}
-            </div>
-        </div>
+        // Set communication hub provider for message routing
+        this.webviewMessageRouter.setCommunicationHubProvider(this.communicationHubProvider);
+
+        this._isInitialized = true;
+    }
+
+    public switchToTab(tab: string): void {
+        this._currentTab = tab;
+        if (this._view) {
+            this._view.webview.postMessage({
+                command: 'tabSwitched',
+                tab: tab
+            });
+        }
+    }
+
+    public focus(): void {
+        if (this._view) {
+            this._view.show?.(true);
+        }
+    }
+
+    public getCurrentTab(): string {
+        return this._currentTab;
+    }
+
+    private _sendInitialState() {
+        if (!this._view) return;
+
+        this._view.webview.postMessage({
+            command: 'initialState',
+            tabs: [
+                { id: 'chat', label: 'Chat', icon: 'comment-discussion' },
+                { id: 'communication', label: 'Communication Hub', icon: 'organization' },
+                { id: 'dashboard', label: 'Dashboard', icon: 'graph' },
+                { id: 'settings', label: 'Settings', icon: 'settings-gear' }
+            ],
+            currentTab: this._currentTab
+        });
+    }
+
+    private _getHtmlForWebview(webview: vscode.Webview): string {
+        const scriptUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'tabbed-container.js')
+        );
         
-        <!-- Connection Status Indicator (Example) -->
-        <div id="connection-status-indicator" style="position: fixed; bottom: 5px; right: 10px; padding: 5px; background-color: #333; color: white; border-radius: 3px;">
-            Status: Disconnected
-        </div>
+        const styleUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'media', 'tabbed-container.css')
+        );
 
-        <!-- Notification Area (Example) -->
-        <div id="webview-notification-area" style="position: fixed; top: 10px; right: 10px; z-index: 1000;">
-            <!-- Notifications will be appended here by main.js -->
-        </div>
+        const codiconsUri = webview.asWebviewUri(
+            vscode.Uri.joinPath(this.context.extensionUri, 'node_modules', '@vscode/codicons', 'dist', 'codicon.css')
+        );
 
-        <script nonce="${nonce}" src="${mainScriptUri}"></script>
-        <script nonce="${nonce}" src="${chatPanelScriptUri}"></script>
-    </body>
-    </html>`;
-  }
+        const nonce = this._getNonce();
 
-  /**
-   * Sends a message to the webview to switch to the specified tab.
-   * @param tabId The ID of the tab to switch to.
-   */
-  public switchToTab(tabId: 'chat' | 'communication' | 'dashboard' | 'settings'): void {
-    if (this._view) {
-      this._view.webview.postMessage({
-        command: 'switchToTab',
-        payload: { tabId }
-      });
+        return `<!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src 'nonce-${nonce}'; font-src ${webview.cspSource};">
+                <link href="${codiconsUri}" rel="stylesheet">
+                <link href="${styleUri}" rel="stylesheet">
+                <title>The New Fuse</title>
+            </head>
+            <body>
+                <div class="tabbed-container">
+                    <div class="tab-header">
+                        <nav class="tab-nav" role="tablist" aria-label="Main navigation">
+                            <button class="tab-button active" data-tab="chat" role="tab" aria-selected="true" aria-controls="chat-tab" title="Chat">
+                                <i class="codicon codicon-comment-discussion" aria-hidden="true"></i>
+                                <span>Chat</span>
+                            </button>
+                            <button class="tab-button" data-tab="communication" role="tab" aria-selected="false" aria-controls="communication-tab" title="Communication Hub">
+                                <i class="codicon codicon-organization" aria-hidden="true"></i>
+                                <span>Communication</span>
+                            </button>
+                            <button class="tab-button" data-tab="dashboard" role="tab" aria-selected="false" aria-controls="dashboard-tab" title="Dashboard">
+                                <i class="codicon codicon-graph" aria-hidden="true"></i>
+                                <span>Dashboard</span>
+                            </button>
+                            <button class="tab-button" data-tab="settings" role="tab" aria-selected="false" aria-controls="settings-tab" title="Settings">
+                                <i class="codicon codicon-settings-gear" aria-hidden="true"></i>
+                                <span>Settings</span>
+                            </button>
+                        </nav>
+                        <div class="connection-status disconnected" id="connection-status">
+                            <i class="codicon codicon-circle-filled" aria-hidden="true"></i>
+                            <span>Disconnected</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="chat-tab" class="tab-panel active" role="tabpanel" aria-labelledby="chat-tab">
+                            ${this.chatViewProvider.getHtmlBodySnippet(webview, nonce, require('path'))}
+                        </div>
+                        
+                        <div id="communication-tab" class="tab-panel" role="tabpanel" aria-labelledby="communication-tab" aria-hidden="true">
+                            ${this.communicationHubProvider.getHtmlBodySnippet(webview, nonce, require('path'))}
+                        </div>
+                        
+                        <div id="dashboard-tab" class="tab-panel" role="tabpanel" aria-labelledby="dashboard-tab" aria-hidden="true">
+                            ${this.dashboardProvider.getHtmlBodySnippet(webview, nonce, require('path'))}
+                        </div>
+                        
+                        <div id="settings-tab" class="tab-panel" role="tabpanel" aria-labelledby="settings-tab" aria-hidden="true">
+                            ${this.settingsProvider.getHtmlBodySnippet(webview, nonce, require('path'))}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="notification-container" id="notification-container" aria-live="polite" aria-atomic="true"></div>
+                
+                <script nonce="${nonce}" src="${scriptUri}"></script>
+            </body>
+            </html>`;
     }
-  }
 
-  /**
-   * Sends a message to the webview to display a notification.
-   * @param type The type of notification ('success', 'error', 'warning').
-   * @param message The message to display.
-   */
-  public showNotification(type: 'success' | 'error' | 'warning', message: string): void {
-    if (this._view) {
-      this._view.webview.postMessage({
-        command: 'showNotification',
-        payload: { type, message }
-      });
+    private _getNonce(): string {
+        let text = '';
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        for (let i = 0; i < 32; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
     }
-  }
 
-  /**
-   * Sends a message to the webview to update a connection status indicator.
-   * @param isConnected Whether the connection is active.
-   */
-  public updateConnectionStatus(isConnected: boolean): void {
-    if (this._view) {
-      this._view.webview.postMessage({
-        command: 'updateConnectionStatus',
-        payload: { isConnected }
-      });
+    public dispose(): void {
+        this.chatViewProvider.dispose();
+        this.communicationHubProvider.dispose();
+        this.dashboardProvider.dispose();
+        this.settingsProvider.dispose();
     }
-  }
-  
-  /**
-   * Public method to focus the view
-   */
-  public focus() {
-    if (this._view) {
-      this._view.show(true); // The `true` argument preserves focus.
-    }
-  }
-
-  public dispose() {
-    // Any disposables managed by this provider directly would be disposed here.
-    // For example, if we had created any event listeners on vscode objects
-    // not automatically handled by context.subscriptions.
-    // In this refactored version, most heavy lifting and resource management
-    // are delegated or handled by `context.subscriptions` for the message listener.
-  }
-}
-
-function getNonce() {
-  let text = '';
-  const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  for (let i = 0; i < 32; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
 }

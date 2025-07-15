@@ -1,90 +1,115 @@
 import { handleRpcRequestFromCore, handleBroadcastFromRelay } from './message-handler';
+import { JsonRpcRequest, JsonRpcResponse } from '../types';
 
-// --- Configuration ---
-const DEFAULT_WEBSOCKET_URL = 'ws://localhost:3710'; // Default for VS Code Core
-const MAX_RECONNECT_ATTEMPTS = 10;
-const PING_INTERVAL_MS = 30000; // 30 seconds
-const PONG_TIMEOUT_MS = 5000; // 5 seconds to wait for a PONG response
-
-// --- State ---
-let ws: WebSocket | null = null;
-let connectionUrl: string = DEFAULT_WEBSOCKET_URL;
-let isConnected: boolean = false;
-let reconnectAttempts: number = 0;
-let pendingMessages: any[] = [];
-let pingInterval: ReturnType<typeof setInterval> | null = null;
-let pongTimeout: ReturnType<typeof setTimeout> | null = null;
+// --- Type Definitions ---
+export type WebSocketMessage =
+  | JsonRpcRequest
+  | JsonRpcResponse
+  | { type: 'PING' }
+  | { type: 'PONG' }
+  // JSON-RPC Notification for broadcast
+  | { jsonrpc: '2.0'; method: string; params: any };
 
 /**
- * Initializes the WebSocket connection manager.
- * This should be called from the main background script entry point.
+ * Manages the WebSocket connection, including reconnection logic and message queuing.
+ * This is implemented as a singleton to ensure a single connection instance.
  */
-export function init() {
-  // Load the saved URL from storage, then connect.
-  chrome.storage.local.get(['webSocketUrl'], (result) => {
-    connectionUrl = result.webSocketUrl || DEFAULT_WEBSOCKET_URL;
-    connect();
-  });
-}
+class ConnectionManager {
+  // --- Configuration ---
+  private readonly DEFAULT_WEBSOCKET_URL = 'ws://localhost:3710';
+  private readonly MAX_RECONNECT_ATTEMPTS = 10;
+  private readonly PING_INTERVAL_MS = 30000; // 30 seconds
+  private readonly PONG_TIMEOUT_MS = 5000; // 5 seconds
 
-/**
- * Establishes a WebSocket connection.
- */
-function connect() {
-  if (ws && (ws.readyState === WebSocket.OPEN || ws.readyState === WebSocket.CONNECTING)) {
-    console.log('[ConnManager] WebSocket is already open or connecting.');
-    return;
+  // --- State ---
+  private ws: WebSocket | null = null;
+  private connectionUrl: string = this.DEFAULT_WEBSOCKET_URL;
+  private isConnected: boolean = false;
+  private reconnectAttempts: number = 0;
+  private pendingMessages: WebSocketMessage[] = [];
+  private pingInterval: ReturnType<typeof setInterval> | null = null;
+  private pongTimeout: ReturnType<typeof setTimeout> | null = null;
+
+  /**
+   * Initializes the connection manager.
+   * This should be called from the main background script entry point.
+   */
+  public init() {
+    chrome.storage.local.get(['webSocketUrl'], (result) => {
+      this.connectionUrl = result.webSocketUrl || this.DEFAULT_WEBSOCKET_URL;
+      this.connect();
+    });
   }
 
-  console.log(`[ConnManager] Attempting to connect to ${connectionUrl}...`);
-  try {
-    ws = new WebSocket(connectionUrl);
-    ws.onopen = onOpen;
-    ws.onmessage = onMessage;
-    ws.onclose = onClose;
-    ws.onerror = onError;
-  } catch (error) {
-    console.error('[ConnManager] WebSocket instantiation failed:', error);
-    scheduleReconnect();
-  }
-}
-
-/**
- * Handles the WebSocket connection opening.
- */
-function onOpen() {
-  console.log(`[ConnManager] WebSocket connection established to ${connectionUrl}.`);
-  isConnected = true;
-  reconnectAttempts = 0;
-  startPing();
-  processPendingMessages();
-}
-
-/**
- * Handles incoming messages from the WebSocket server.
- * @param event The message event.
- */
-function onMessage(event: MessageEvent) {
-  try {
-    const message = JSON.parse(event.data);
-
-    // Handle PONG for heartbeat
-    if (message.type === 'PONG') {
-      if (pongTimeout) clearTimeout(pongTimeout);
+  /**
+   * Updates the WebSocket URL, saves it, and triggers a reconnection.
+   * @param newUrl The new WebSocket URL.
+   */
+  public updateConnectionUrl(newUrl: string) {
+    if (newUrl === this.connectionUrl) {
+      console.log(`[ConnManager] URL is already set to ${newUrl}. No change.`);
       return;
     }
 
-    console.log('[ConnManager] Received message:', message);
+    console.log(`[ConnManager] Updating WebSocket URL to: ${newUrl}`);
+    this.connectionUrl = newUrl;
+    chrome.storage.local.set({ webSocketUrl: newUrl });
 
-    // Delegate message handling based on its structure
-    if (message.method && message.id) {
-      handleRpcRequestFromCore(message);
-    } else if (message.method && !message.id) {
-      handleBroadcastFromRelay(message);
-    } else if (message.result || message.error) {
-      console.log('[ConnManager] Received JSON-RPC response:', message);
+    if (this.ws) {
+      this.reconnectAttempts = 0; // Reset for a quick reconnect
+      this.ws.close();
     } else {
-      console.warn('[ConnManager] Received unhandled message format:', message);
+      this.connect(); // If not connected, connect immediately
+    }
+  }
+
+  /**
+   * Sends a message over the WebSocket. If disconnected, queues the message.
+   * @param message The message object to send.
+   */
+  public sendMessage(message: WebSocketMessage) {
+    if (this.isConnected && this.ws?.readyState === WebSocket.OPEN) {
+      try {
+        this.ws.send(JSON.stringify(message));
+        console.log('[ConnManager] Sent message:', message);
+      } catch (error) {
+        console.error('[ConnManager] Failed to send message, queuing:', error);
+        this.queueMessage(message);
+      }
+    } else {
+      console.log('[ConnManager] WebSocket not connected, queuing message.');
+      this.queueMessage(message);
+    }
+  }
+
+  private connect = () => {
+    if (this.ws && (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING)) {
+      console.log('[ConnManager] WebSocket is already open or connecting.');
+      return;
+    }
+
+    console.log(`[ConnManager] Attempting to connect to ${this.connectionUrl}...`);
+    try {
+      this.ws = new WebSocket(this.connectionUrl);
+      this.ws.onopen = this.onOpen;
+      this.ws.onmessage = this.onMessage;
+      this.ws.onclose = this.onClose;
+      this.ws.onerror = this.onError;
+    } catch (error) {
+      console.error('[ConnManager] WebSocket instantiation failed:', error);
+      this.scheduleReconnect();
+    }
+  };
+
+  private onOpen = () => {
+    console.log(`[ConnManager] WebSocket connection established to ${this.connectionUrl}.`);
+    this.isConnected = true;
+    this.reconnectAttempts = 0;
+    this.startPing();
+    this.processPendingMessages();
+  };
+
+  private onMessage = (event
     }
   } catch (error) {
     console.error('[ConnManager] Error processing incoming message:', error);

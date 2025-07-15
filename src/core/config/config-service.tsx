@@ -13,13 +13,23 @@ export class ConfigService {
   }
 
   get<T>(key: string, defaultValue?: T): T {
-    const value: string, value: unknown): void {
-    this.config[key]  = this.config[key];
-    if(value === undefined: unknown) {
-      if(defaultValue === undefined: unknown) {
+    const value = this.config[key];
+    if (value === undefined) {
+      if (defaultValue === undefined) {
         throw new Error(
           `Configuration key ${key} not found and no default value provided`,
-        ): string): boolean {
+        );
+      }
+      return defaultValue;
+    }
+    return value as T;
+  }
+
+  set(key: string, value: unknown): void {
+    this.config[key] = value;
+  }
+
+  has(key: string): boolean {
     return key in this.config;
   }
 

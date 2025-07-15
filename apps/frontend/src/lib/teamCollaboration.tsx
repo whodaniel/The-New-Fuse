@@ -182,7 +182,7 @@ class TeamCollaborationManager {
         const container = document.querySelector('.team-chat');
         if (!container || !this.chat)
             return;
-        const chatHtml = this.chat.messages.map(messag(e: any) => {
+        const chatHtml = this.chat.messages.map((message: any) => {
             const member = this.members.get(message.userId);
             const isCurrentUser = message.userId === this.getCurrentUserId();
             return `

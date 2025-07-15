@@ -29,6 +29,11 @@ model User {
   workflowTopologies WorkflowTopology[]
   optimizationJobs   OptimizationJob[]
   validationDatasets ValidationDataset[]
+  
+  // NFT and revenue relations
+  agentNFTs       AgentNFT[]
+  fractionalShares FractionalShare[]
+  revenueStreams  RevenueStream[]
 }
 
 model Session {
@@ -43,6 +48,13 @@ model Session {
 enum AgentStatus {
   ACTIVE
   INACTIVE
+  IDLE
+  BUSY
+  ERROR
+  OFFLINE
+  INITIALIZING
+  READY
+  TERMINATED
   ARCHIVED
 }
 
@@ -150,4 +162,34 @@ model ChatMessage {
 
   @@index([userId])
   @@map("chat_messages")
+}
+
+model AgentNFT {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model FractionalShare {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model RevenueStream {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

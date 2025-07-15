@@ -9,11 +9,12 @@ import {
   ChartBar,
   FileMagnifyingGlass,
 } from "@phosphor-icons/react";
-import RAGImage from "@/media/agents/rag-memory.png";
-import SummarizeImage from "@/media/agents/view-summarize.png";
-import ScrapeWebsitesImage from "@/media/agents/scrape-websites.png";
-import GenerateChartsImage from "@/media/agents/generate-charts.png";
-import GenerateSaveImages from "@/media/agents/generate-save-files.png";
+// Placeholder for agent skill images
+const RAGImage = "";
+const SummarizeImage = "";
+const ScrapeWebsitesImage = "";
+const GenerateChartsImage = "";
+const GenerateSaveImages = "";
 
 export const defaultSkills = {
   "rag-memory": {

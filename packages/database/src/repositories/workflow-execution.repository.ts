@@ -19,8 +19,6 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
       error: prismaExecution.error ?? null,
       startedAt: prismaExecution.startedAt,
       completedAt: prismaExecution.completedAt ?? null,
-      createdAt: prismaExecution.createdAt,
-      updatedAt: prismaExecution.updatedAt,
     };
   }
 
@@ -49,7 +47,7 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
   }
 
   async update(id: string, data: Partial<WorkflowExecution>): Promise<WorkflowExecution> {
-    const { id: _, workflowId: __, createdAt: ___, ...updateData } = data;
+        const { id: _, workflowId: __, ...updateData } = data;
     
     // Handle null values for JSON fields
     const cleanData: any = { ...updateData };
@@ -100,7 +98,7 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
       updatedAt: new Date()
     };
 
-    if (status === WorkflowExecutionStatus.SUCCEEDED || status === WorkflowExecutionStatus.FAILED) {
+        if (status === WorkflowExecutionStatus.COMPLETED || status === WorkflowExecutionStatus.FAILED) {
       updateData.completedAt = new Date();
     }
 
@@ -143,7 +141,7 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
     const completedExecutions = await this.prisma.workflowExecution.count({
       where: {
         ...where,
-        status: WorkflowExecutionStatus.SUCCEEDED as any
+                status: WorkflowExecutionStatus.COMPLETED as any
       }
     });
 

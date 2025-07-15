@@ -33,12 +33,25 @@ export class WorkflowService {
       throw new Error('Workflow not found');
     }
 
-    const executionId = await this.workflowEngine.startExecution(workflow, input);
-    return executionId;
+    const execution = await this.workflowEngine.startWorkflow(workflow, input, workflowId);
+    return execution.id;
   }
 
   async getExecutionStatus(executionId: string): Promise<WorkflowExecutionStatus> {
-    return this.workflowExecutor.getExecutionStatus(executionId);
+    const execution = this.workflowEngine.getWorkflowStatus(executionId);
+    if (!execution) {
+      throw new Error('Execution not found');
+    }
+    
+    return {
+      id: execution.id,
+      status: execution.status,
+      templateId: execution.templateId,
+      startedAt: execution.startedAt,
+      completedAt: execution.completedAt,
+      error: execution.error,
+      steps: execution.steps
+    };
   }
 
   async updateWorkflow(id: string, data: Partial<CreateWorkflowDto>): Promise<Workflow> {

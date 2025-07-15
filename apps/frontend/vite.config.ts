@@ -60,6 +60,9 @@ export default defineConfig(({ mode }) => {
       minify: isProduction,
       target: 'es2020',
       rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+        },
         output: {
           manualChunks: {
             // Core React runtime
@@ -99,7 +102,7 @@ export default defineConfig(({ mode }) => {
           changeOrigin: true,
         },
       } : undefined,
-      // Add CORS headers for development
+      // Add CORS headers for development and SPA fallback
       configureServer: (server) => {
         server.middlewares.use((req, res, next) => {
           res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins for development
@@ -109,6 +112,18 @@ export default defineConfig(({ mode }) => {
             res.writeHead(204);
             res.end();
             return;
+          }
+          next();
+        });
+        
+        // SPA fallback - serve index.html for all non-API routes
+        server.middlewares.use((req, res, next) => {
+          if (req.url && 
+              !req.url.startsWith('/api') && 
+              !req.url.startsWith('/ws') && 
+              !req.url.includes('.') && 
+              req.method === 'GET') {
+            req.url = '/';
           }
           next();
         });

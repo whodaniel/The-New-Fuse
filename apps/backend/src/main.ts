@@ -37,11 +37,11 @@ async function bootstrap(): Promise<void> {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('api/docs', app as any, document);
 
   // Monitoring
   // await monitoringService.onModuleInit();
 
-  await app.listen(configService.get('PORT', 3001));
+  await (app as any).listen(configService.get('PORT', 3001));
 }
 bootstrap();

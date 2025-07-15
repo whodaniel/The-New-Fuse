@@ -15,12 +15,20 @@ const GraphDemo = lazy(() => import('./pages/graph-demo').then(module => ({ defa
 const AdminPanel = lazy(() => import('./pages/Admin/AdminPanel'));
 const TasksPage = lazy(() => import('./pages/Tasks/TasksPage'));
 const AgentsPage = lazy(() => import('./pages/Agents/AgentsPage'));
+const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
 const WorkflowBuilder = lazy(() => import('./pages/Workflows/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
-const Analytics = lazy(() => import('./pages/Analytics'));
-const Dashboard = lazy(() => import('./pages/Dashboard').then(module => ({ default: module.Dashboard })));
+const Analytics = lazy(() => import('./pages/dashboard/analytics'));
+const Dashboard = lazy(() => import('./pages/dashboard/index'));
 const Settings = lazy(() => import('./pages/Settings'));
+const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
+const SettingsNotifications = lazy(() => import('./pages/settings/Notifications'));
+const SettingsSecurity = lazy(() => import('./pages/settings/Security'));
+const SettingsAPI = lazy(() => import('./pages/settings/API'));
+const WorkspaceOverview = lazy(() => import('./pages/workspace/Overview'));
+const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
+const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator').then(module => ({ default: module.UnifiedAgentCreator })));
@@ -42,6 +50,93 @@ import DebugRoutingComponent from './pages/DebugRouting';
 import AllPages from './pages/AllPages';
 import BuildInfoPage from './pages/BuildInfo';
 
+// Suggestions components
+const SuggestionsPage = lazy(() => import('./pages/Suggestions'));
+const NewSuggestionPage = lazy(() => import('./pages/Suggestions/New'));
+const SuggestionDetailPage = lazy(() => import('./pages/Suggestions/Detail'));
+
+// Additional Admin components
+const AdminUserManagement = lazy(() => import('./pages/Admin/UserManagement'));
+const AdminSystemHealth = lazy(() => import('./pages/Admin/SystemHealth'));
+const AdminFeatureFlags = lazy(() => import('./pages/Admin/FeatureFlags'));
+const AdminPortManagement = lazy(() => import('./pages/Admin/PortManagement'));
+
+// Auth components
+const AuthIndexPage = lazy(() => import('./pages/auth'));
+const ForgotPasswordPage = lazy(() => import('./pages/auth/ForgotPassword'));
+const ResetPasswordPage = lazy(() => import('./pages/auth/ResetPassword'));
+const SSOPage = lazy(() => import('./pages/auth/SSO'));
+const GoogleCallbackPage = lazy(() => import('./pages/auth/GoogleCallback'));
+const OAuthCallbackPage = lazy(() => import('./pages/auth/OAuthCallback'));
+
+// Landing components
+const LandingIndexPage = lazy(() => import('./pages/Landing'));
+const OnboardingFlowPage = lazy(() => import('./pages/OnboardingFlow'));
+
+// Workspace components
+const WorkspaceOverviewPage = lazy(() => import('./pages/workspace/Overview'));
+const WorkspaceMembersPage = lazy(() => import('./pages/workspace/Members'));
+
+// Task components  
+const TaskDetailPage = lazy(() => import('./pages/Tasks/Detail'));
+const TaskEditPage = lazy(() => import('./pages/Tasks/Edit'));
+const NewTaskPage = lazy(() => import('./pages/Tasks/New'));
+
+// Additional pages
+const UnauthorizedPage = lazy(() => import('./pages/Unauthorized'));
+const AIAgentPortalPage = lazy(() => import('./pages/AIAgentPortal'));
+const FrontendShowcasePage = lazy(() => import('./pages/FrontendShowcase'));
+const SimpleTestPage = lazy(() => import('./pages/SimpleTest'));
+
+// Chat pages
+const ChatPage = lazy(() => import('./pages/chat/ChatPage'));
+
+// Admin pages that exist
+const AdminOnboardingPage = lazy(() => import('./pages/Admin/Onboarding'));
+const AdminDashboardPage = lazy(() => import('./pages/Admin/Dashboard'));
+const ExperimentalFeaturesPage = lazy(() => import('./pages/Admin/ExperimentalFeatures/features'));
+
+// Legal pages
+const PrivacyPolicyPage = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfServicePage = lazy(() => import('./pages/legal/TermsOfService'));
+
+// Workspace pages
+const WorkspaceLayoutPage = lazy(() => import('./pages/workspace/WorkspaceLayout'));
+const WorkspaceIndexPage = lazy(() => import('./pages/workspace'));
+
+// Additional component pages
+const ComponentsNavPage = lazy(() => import('./pages/ComponentsNav'));
+const HomePage = lazy(() => import('./pages/Home'));
+const LandingPageAlt = lazy(() => import('./pages/LandingPage'));
+const SimpleLandingPage = lazy(() => import('./pages/SimpleLanding'));
+
+// Enhanced workflow pages
+const WorkflowsEnhancedPage = lazy(() => import('./pages/WorkflowsEnhanced'));
+const WorkflowDetailPage = lazy(() => import('./pages/Workflows/Detail'));
+const WorkflowExecutionPage = lazy(() => import('./pages/Workflows/Execution'));
+const WorkflowTemplatesPage = lazy(() => import('./pages/Workflows/Templates'));
+
+// Preview pages
+const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPreview'));
+
+// Remaining specialized settings routes
+const WorkspaceLLMSelectionPage = lazy(() => import('./pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/ChatModelSelection'));
+const AgentModelSelectionPage = lazy(() => import('./pages/WorkspaceSettings/AgentConfig/AgentModelSelection'));
+
+// Agent-specific routes
+const UnifiedAgentCreatorPage = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
+
+// Admin tools routes
+const AdminAgentSkillsPage = lazy(() => import('./pages/Admin/Agents/skills'));
+
+// Additional missing routes from audit
+const TasksPageComponent = lazy(() => import('./pages/Tasks/TasksPage'));
+const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettings'));
+const GeneralSettingsEmbeddingPage = lazy(() => import('./pages/GeneralSettings/EmbeddingPreference'));
+
+// Main workspace page
+const MainPage = lazy(() => import('./pages/Main'));
+
 // Create fallback components for pages that might have import issues
 const LazyPage = ({ name, path }: { name: string; path: string }) => (
   <div className="p-8 max-w-4xl mx-auto">
@@ -54,374 +149,13 @@ const LazyPage = ({ name, path }: { name: string; path: string }) => (
   </div>
 );
 
-// Comprehensive Navigation Component
-function ComprehensiveNavigation() {
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+import SmartNavigation from './components/SmartNavigation';
 
-  const toggleDropdown = (dropdown: string) => {
-    setActiveDropdown(activeDropdown === dropdown ? null : dropdown);
-  };
-
-  return (
-    <nav className="bg-blue-600 text-white p-4 shadow-lg relative">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
-        <h1 className="text-xl font-bold">🚀 The New Fuse</h1>
-        <div className="flex items-center space-x-2 flex-wrap">
-          <Link to="/" className="hover:text-blue-200 px-3 py-2 rounded transition-colors">Home</Link>
-          
-          {/* Core Application Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('core')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-blue-700 flex items-center"
-            >
-              🎯 Core Apps <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'core' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/agents/nft-marketplace" className="block px-4 py-2 hover:bg-gray-100 bg-gradient-to-r from-purple-100 to-blue-100 font-semibold">💎 NFT Marketplace</Link>
-                <Link to="/multi-agent-chat" className="block px-4 py-2 hover:bg-gray-100">🤖 Multi-Agent Chat</Link>
-                <Link to="/ai-portal" className="block px-4 py-2 hover:bg-gray-100">🤖 AI Agent Portal</Link>
-                <Link to="/chat" className="block px-4 py-2 hover:bg-gray-100">💬 Chat</Link>
-                <Link to="/analytics" className="block px-4 py-2 hover:bg-gray-100">📊 Analytics</Link>
-                <Link to="/dashboard" className="block px-4 py-2 hover:bg-gray-100">📊 Dashboard</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Workspace Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('workspace')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-green-600 flex items-center"
-            >
-              🏢 Workspace <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'workspace' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/workspace/overview" className="block px-4 py-2 hover:bg-gray-100">📋 Overview</Link>
-                <Link to="/workspace/analytics" className="block px-4 py-2 hover:bg-gray-100">📊 Analytics</Link>
-                <Link to="/workspace/members" className="block px-4 py-2 hover:bg-gray-100">👥 Members</Link>
-                <Link to="/workspace/settings" className="block px-4 py-2 hover:bg-gray-100">⚙️ Settings</Link>
-                <Link to="/workspace-chat" className="block px-4 py-2 hover:bg-gray-100">💬 Workspace Chat</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Agents Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('agents')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-purple-600 flex items-center"
-            >
-              🤖 Agents <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'agents' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/agents" className="block px-4 py-2 hover:bg-gray-100">📋 All Agents</Link>
-                <Link to="/agents/new" className="block px-4 py-2 hover:bg-gray-100">➕ New Agent</Link>
-                <Link to="/agents/nft-marketplace" className="block px-4 py-2 hover:bg-gray-100">💎 NFT Marketplace</Link>
-                <Link to="/agents/revenue-dashboard" className="block px-4 py-2 hover:bg-gray-100">💰 Revenue Dashboard</Link>
-                <Link to="/dashboard/agents" className="block px-4 py-2 hover:bg-gray-100">📊 Agent Dashboard</Link>
-                <Link to="/dashboard/agents/new" className="block px-4 py-2 hover:bg-gray-100">🆕 Create Agent</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Tasks & Workflows Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('tasks')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-indigo-600 flex items-center"
-            >
-              📋 Tasks & Workflows <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'tasks' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/tasks" className="block px-4 py-2 hover:bg-gray-100">📋 All Tasks</Link>
-                <Link to="/tasks/new" className="block px-4 py-2 hover:bg-gray-100">➕ New Task</Link>
-                <Link to="/workflows" className="block px-4 py-2 hover:bg-gray-100">🔄 Workflows</Link>
-                <Link to="/workflows/builder" className="block px-4 py-2 hover:bg-gray-100">🛠️ Workflow Builder</Link>
-                <Link to="/workflows/advanced-builder" className="block px-4 py-2 hover:bg-gray-100">🔧 Advanced Builder</Link>
-                <Link to="/workflows/templates" className="block px-4 py-2 hover:bg-gray-100">📄 Templates</Link>
-                <Link to="/workflows/executions" className="block px-4 py-2 hover:bg-gray-100">📊 Execution Monitor</Link>
-                <Link to="/suggestions" className="block px-4 py-2 hover:bg-gray-100">💡 Suggestions</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Admin Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('admin')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-red-600 flex items-center"
-            >
-              👨‍💼 Admin <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'admin' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/admin" className="block px-4 py-2 hover:bg-gray-100">🏠 Admin Home</Link>
-                <Link to="/admin/users" className="block px-4 py-2 hover:bg-gray-100">👥 Users</Link>
-                <Link to="/admin/workspaces" className="block px-4 py-2 hover:bg-gray-100">🏢 Workspaces</Link>
-                <Link to="/admin/system-health" className="block px-4 py-2 hover:bg-gray-100">💚 System Health</Link>
-                <Link to="/admin/feature-flags" className="block px-4 py-2 hover:bg-gray-100">🏴 Feature Flags</Link>
-                <Link to="/admin/port-management" className="block px-4 py-2 hover:bg-gray-100">🔌 Port Management</Link>
-                <Link to="/admin/settings" className="block px-4 py-2 hover:bg-gray-100">⚙️ Admin Settings</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Settings Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('settings')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-gray-600 flex items-center"
-            >
-              ⚙️ Settings <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'settings' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/settings" className="block px-4 py-2 hover:bg-gray-100">⚙️ General</Link>
-                <Link to="/settings/general" className="block px-4 py-2 hover:bg-gray-100">🔧 General Settings</Link>
-                <Link to="/settings/appearance" className="block px-4 py-2 hover:bg-gray-100">🎨 Appearance</Link>
-                <Link to="/settings/notifications" className="block px-4 py-2 hover:bg-gray-100">🔔 Notifications</Link>
-                <Link to="/settings/security" className="block px-4 py-2 hover:bg-gray-100">🔒 Security</Link>
-                <Link to="/settings/api" className="block px-4 py-2 hover:bg-gray-100">🔌 API</Link>
-                <Link to="/general-settings" className="block px-4 py-2 hover:bg-gray-100">⚙️ General Settings</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Auth Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('auth')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-yellow-600 flex items-center"
-            >
-              🔐 Auth <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'auth' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/login" className="block px-4 py-2 hover:bg-gray-100">🔑 Login</Link>
-                <Link to="/register" className="block px-4 py-2 hover:bg-gray-100">📝 Register</Link>
-                <Link to="/auth/sso" className="block px-4 py-2 hover:bg-gray-100">🔗 SSO</Link>
-                <Link to="/auth/login" className="block px-4 py-2 hover:bg-gray-100">🔐 Auth Login</Link>
-                <Link to="/auth/register" className="block px-4 py-2 hover:bg-gray-100">📋 Auth Register</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Demos & Components Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('demos')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-teal-600 flex items-center"
-            >
-              🎨 Demos <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'demos' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/components" className="block px-4 py-2 hover:bg-gray-100">🎨 UI Components</Link>
-                <Link to="/timeline-demo" className="block px-4 py-2 hover:bg-gray-100">⏰ Timeline Demo</Link>
-                <Link to="/graph-demo" className="block px-4 py-2 hover:bg-gray-100">📈 Graph Demo</Link>
-                <Link to="/frontend-showcase" className="block px-4 py-2 hover:bg-gray-100">🎯 Frontend Showcase</Link>
-                <Link to="/layout-example" className="block px-4 py-2 hover:bg-gray-100">📱 Layout Example</Link>
-                <Link to="/test" className="block px-4 py-2 hover:bg-gray-100">🧪 Test Page</Link>
-              </div>
-            )}
-          </div>
-
-          {/* Dev Tools Dropdown */}
-          <div className="relative">
-            <button 
-              onClick={() => toggleDropdown('dev')}
-              className="hover:text-blue-200 px-3 py-2 rounded transition-colors bg-orange-600 flex items-center"
-            >
-              🔧 Dev Tools <span className="ml-1">▼</span>
-            </button>
-            {activeDropdown === 'dev' && (
-              <div className="absolute top-full left-0 mt-1 bg-white text-black rounded shadow-lg z-50 min-w-48">
-                <Link to="/debug" className="block px-4 py-2 hover:bg-gray-100">🐛 Debug Info</Link>
-                <Link to="/build-info" className="block px-4 py-2 hover:bg-gray-100">📋 Build Info</Link>
-                <Link to="/debug-routing" className="block px-4 py-2 hover:bg-gray-100">🔀 Debug Routing</Link>
-                <Link to="/all-pages" className="block px-4 py-2 hover:bg-gray-100">📋 All Pages List</Link>
-                <a href="/api/health" target="_blank" rel="noopener noreferrer" className="block px-4 py-2 hover:bg-gray-100">🟢 API Server Status</a>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </nav>
-  );
-}
-
-// Enhanced Home page component
-function HomePage() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12">
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
-            🚀 The New Fuse
-          </h1>
-          <p className="text-xl text-gray-600 mb-8">
-            Complete Multi-Agent Communication Platform - Production Ready
-          </p>
-          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg inline-block">
-            ✅ React Development Server is Running
-          </div>
-          <div className="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded-lg inline-block mt-2">
-            🎯 95+ Pages Available | Complete Navigation System
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="text-3xl mb-4">🤖</div>
-            <h3 className="text-xl font-semibold mb-2">AI Agents</h3>
-            <p className="text-gray-600 mb-4">Multi-agent communication system</p>
-            <Link to="/multi-agent-chat" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors inline-block">
-              Open Chat
-            </Link>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="text-3xl mb-4">🏢</div>
-            <h3 className="text-xl font-semibold mb-2">Workspace</h3>
-            <p className="text-gray-600 mb-4">Complete workspace management</p>
-            <Link to="/workspace/overview" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors inline-block">
-              View Workspace
-            </Link>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="text-3xl mb-4">📋</div>
-            <h3 className="text-xl font-semibold mb-2">Tasks & Workflows</h3>
-            <p className="text-gray-600 mb-4">Manage tasks and workflows</p>
-            <Link to="/tasks" className="bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors inline-block">
-              View Tasks
-            </Link>
-          </div>
-
-          <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition-shadow">
-            <div className="text-3xl mb-4">👨‍💼</div>
-            <h3 className="text-xl font-semibold mb-2">Admin Panel</h3>
-            <p className="text-gray-600 mb-4">System administration</p>
-            <Link to="/admin" className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition-colors inline-block">
-              Admin Panel
-            </Link>
-          </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <h2 className="text-2xl font-bold mb-4">🎉 Production-Ready Features</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            <ul className="text-left space-y-2">
-              <li>✅ Complete navigation system (95+ pages)</li>
-              <li>✅ Comprehensive routing with React Router</li>
-              <li>✅ Multi-agent chat with Firebase integration</li>
-              <li>✅ Full workspace management system</li>
-              <li>✅ Task and workflow management</li>
-              <li>✅ Admin panel with all controls</li>
-            </ul>
-            <ul className="text-left space-y-2">
-              <li>✅ Authentication system (Login/Register/SSO)</li>
-              <li>✅ Settings and configuration pages</li>
-              <li>✅ Analytics and dashboard components</li>
-              <li>✅ Debug tools and development utilities</li>
-              <li>✅ Component showcases and demos</li>
-              <li>✅ Hot reload and TypeScript support</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Debug page component
-function DebugPage() {
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">🐛 Debug Information</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Server Info</h2>
-          <ul className="space-y-2">
-            <li><strong>Port:</strong> 3000</li>
-            <li><strong>Environment:</strong> Development</li>
-            <li><strong>Hot Reload:</strong> ✅ Active</li>
-            <li><strong>Router:</strong> ✅ Comprehensive Router</li>
-            <li><strong>Pages:</strong> 95+ Available</li>
-          </ul>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">Routing Details</h2>
-          <ul className="space-y-2">
-            <li><strong>Current Path:</strong> {window.location.pathname}</li>
-            <li><strong>Base URL:</strong> {window.location.origin}</li>
-            <li><strong>Navigation:</strong> Comprehensive</li>
-            <li><strong>Categories:</strong> 8 Main Sections</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Build info page component
-function BuildInfoPage() {
-  return (
-    <div className="p-8 max-w-4xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">📋 Build Information</h1>
-      <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-xl font-semibold mb-4">Environment Details</h2>
-        <ul className="space-y-2">
-          <li><strong>Build Tool:</strong> Vite</li>
-          <li><strong>Framework:</strong> React 18.2.0</li>
-          <li><strong>TypeScript:</strong> ✅ Enabled</li>
-          <li><strong>Hot Module Replacement:</strong> ✅ Active</li>
-          <li><strong>Development Mode:</strong> ✅ Active</li>
-          <li><strong>Navigation System:</strong> ✅ Comprehensive</li>
-          <li><strong>Pages Available:</strong> 95+</li>
-          <li><strong>Production Ready:</strong> ✅ Yes</li>
-          <li><strong>Build Time:</strong> {new Date().toLocaleString()}</li>
-        </ul>
-      </div>
-    </div>
-  );
-}
-
-// Enhanced Dashboard component
-function DashboardPage() {
-  return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6">📊 Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">🤖 Agents</h2>
-          <p className="text-3xl font-bold text-blue-600">12</p>
-          <p className="text-sm text-gray-600">Active Agents</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">📋 Tasks</h2>
-          <p className="text-3xl font-bold text-green-600">34</p>
-          <p className="text-sm text-gray-600">Active Tasks</p>
-        </div>
-        <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h2 className="text-xl font-semibold mb-4">🔄 Workflows</h2>
-          <p className="text-3xl font-bold text-purple-600">8</p>
-          <p className="text-sm text-gray-600">Running Workflows</p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
+// Remove the old ComprehensiveNavigation component and replace with SmartNavigation
 export default function ComprehensiveRouter() {
   return (
     <div>
-      <ComprehensiveNavigation />
+      <SmartNavigation />
       <Suspense fallback={<LoadingFallback name="Page" />}>
         <Routes>
         {/* Core Routes */}
@@ -435,12 +169,12 @@ export default function ComprehensiveRouter() {
         <Route path="/chat" element={<LazyPage name="Chat" path="/chat" />} />
         <Route path="/agents" element={<AgentsPage />} />
         <Route path="/agents/new" element={<UnifiedAgentCreator />} />
-        <Route path="/agents/:id" element={<LazyPage name="Agent Detail" path="/agents/:id" />} />
+        <Route path="/agents/:id" element={<AgentDetail />} />
         <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
         <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
-        <Route path="/workspace/overview" element={<LazyPage name="Workspace Overview" path="/workspace/overview" />} />
+        <Route path="/workspace/overview" element={<WorkspaceOverview />} />
         <Route path="/workspace/analytics" element={<WorkspaceAnalytics />} />
-        <Route path="/workspace/members" element={<LazyPage name="Workspace Members" path="/workspace/members" />} />
+        <Route path="/workspace/members" element={<WorkspaceMembers />} />
         <Route path="/workspace/settings" element={<WorkspaceSettings />} />
         <Route path="/tasks" element={<TasksPage />} />
         <Route path="/workflows" element={<Workflows />} />
@@ -448,8 +182,8 @@ export default function ComprehensiveRouter() {
         <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
         <Route path="/workflows/templates" element={<LazyPage name="Workflow Templates" path="/workflows/templates" />} />
         <Route path="/admin" element={<AdminPanel />} />
-        <Route path="/admin/users" element={<LazyPage name="User Management" path="/admin/users" />} />
-        <Route path="/admin/system-health" element={<LazyPage name="System Health" path="/admin/system-health" />} />
+        <Route path="/admin/users" element={<AdminUserManagement />} />
+        <Route path="/admin/system-health" element={<AdminSystemHealth />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="/settings/general" element={<LazyPage name="General Settings" path="/settings/general" />} />
         <Route path="/login" element={<LoginPage />} />
@@ -464,27 +198,143 @@ export default function ComprehensiveRouter() {
         <Route path="/all-pages" element={<AllPages />} />
         <Route path="/analytics" element={<Analytics />} />
         
-        {/* Missing routes that have dropdown links */}
-        <Route path="/workspace-chat" element={<LazyPage name="Workspace Chat" path="/workspace-chat" />} />
+        {/* Suggestions Routes */}
+        <Route path="/suggestions" element={<SuggestionsPage />} />
+        <Route path="/suggestions/new" element={<NewSuggestionPage />} />
+        <Route path="/suggestions/:id" element={<SuggestionDetailPage />} />
+        
+        {/* Enhanced Admin Routes - Additional admin features */}
+        <Route path="/admin/feature-flags" element={<AdminFeatureFlags />} />
+        <Route path="/admin/port-management" element={<AdminPortManagement />} />
+        <Route path="/admin/workspaces" element={<LazyPage name="Workspace Management" path="/admin/workspaces" />} />
+        <Route path="/admin/settings" element={<LazyPage name="Admin Settings" path="/admin/settings" />} />
+        
+        {/* Enhanced Auth Routes */}
+        <Route path="/auth" element={<AuthIndexPage />} />
+        <Route path="/auth/login" element={<LoginPage />} />
+        <Route path="/auth/register" element={<RegisterPage />} />
+        <Route path="/auth/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/auth/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/auth/sso" element={<SSOPage />} />
+        <Route path="/auth/google-callback" element={<GoogleCallbackPage />} />
+        <Route path="/auth/oauth-callback" element={<OAuthCallbackPage />} />
+        
+        {/* Enhanced Landing Routes */}
+        <Route path="/landing" element={<LandingIndexPage />} />
+        <Route path="/onboarding" element={<OnboardingFlowPage />} />
+        
+        {/* Enhanced Workspace Routes - Fixed duplications */}
+        <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
+        
+        {/* Enhanced Task Routes */}
+        <Route path="/tasks/new" element={<NewTaskPage />} />
+        <Route path="/tasks/:id" element={<TaskDetailPage />} />
+        <Route path="/tasks/:id/edit" element={<TaskEditPage />} />
+        
+        {/* Enhanced Dashboard Routes */}
         <Route path="/dashboard/agents" element={<LazyPage name="Agent Dashboard" path="/dashboard/agents" />} />
         <Route path="/dashboard/agents/new" element={<LazyPage name="Create Agent" path="/dashboard/agents/new" />} />
-        <Route path="/tasks/new" element={<LazyPage name="New Task" path="/tasks/new" />} />
-        <Route path="/admin/workspaces" element={<LazyPage name="Workspace Management" path="/admin/workspaces" />} />
-        <Route path="/admin/feature-flags" element={<LazyPage name="Feature Flags" path="/admin/feature-flags" />} />
-        <Route path="/admin/port-management" element={<LazyPage name="Port Management" path="/admin/port-management" />} />
-        <Route path="/admin/settings" element={<LazyPage name="Admin Settings" path="/admin/settings" />} />
-        <Route path="/settings/appearance" element={<LazyPage name="Appearance Settings" path="/settings/appearance" />} />
-        <Route path="/settings/notifications" element={<LazyPage name="Notification Settings" path="/settings/notifications" />} />
-        <Route path="/settings/security" element={<LazyPage name="Security Settings" path="/settings/security" />} />
-        <Route path="/settings/api" element={<LazyPage name="API Settings" path="/settings/api" />} />
+        <Route path="/dashboard/agents/:id" element={<LazyPage name="Agent Detail Dashboard" path="/dashboard/agents/:id" />} />
+        
+        {/* Enhanced Settings Routes */}
+        <Route path="/settings/appearance" element={<SettingsAppearance />} />
+        <Route path="/settings/notifications" element={<SettingsNotifications />} />
+        <Route path="/settings/security" element={<SettingsSecurity />} />
+        <Route path="/settings/api" element={<SettingsAPI />} />
         <Route path="/general-settings" element={<LazyPage name="General Settings" path="/general-settings" />} />
-        <Route path="/auth/login" element={<LazyPage name="Auth Login" path="/auth/login" />} />
-        <Route path="/auth/register" element={<LazyPage name="Auth Register" path="/auth/register" />} />
-        <Route path="/auth/sso" element={<LazyPage name="SSO Authentication" path="/auth/sso" />} />
+        <Route path="/general-settings/embedding" element={<LazyPage name="Embedding Preferences" path="/general-settings/embedding" />} />
+        
+        {/* Enhanced Component Routes */}
+        <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
         <Route path="/layout-example" element={<LazyPage name="Layout Example" path="/layout-example" />} />
+        <Route path="/simple-test" element={<SimpleTestPage />} />
+        
+        {/* Additional Routes */}
         <Route path="/test" element={<TestPage />} />
         <Route path="/workflows/executions" element={<LazyPage name="Workflow Executions" path="/workflows/executions" />} />
-        <Route path="/suggestions" element={<LazyPage name="Suggestions" path="/suggestions" />} />
+        <Route path="/workflows/:id" element={<LazyPage name="Workflow Detail" path="/workflows/:id" />} />
+        <Route path="/workflows/:id/execution" element={<LazyPage name="Workflow Execution" path="/workflows/:id/execution" />} />
+        <Route path="/unauthorized" element={<UnauthorizedPage />} />
+        <Route path="/ai-agent-portal" element={<AIAgentPortalPage />} />
+        
+        {/* Critical Missing Routes */}
+        <Route path="/dashboard/analytics" element={<Analytics />} />
+        <Route path="/dashboard/settings" element={<LazyPage name="Dashboard Settings" path="/dashboard/settings" />} />
+        <Route path="/components-showcase" element={<ComponentsShowcase />} />
+        <Route path="/not-found" element={<LazyPage name="Not Found Alt" path="/not-found" />} />
+        
+        {/* High Priority Missing Routes - Using Actual Components */}
+        <Route path="/chat-page" element={<ChatPage />} />
+        <Route path="/workspace-chat" element={<WorkspaceChatPage />} />
+        <Route path="/workspace/chat" element={<WorkspaceChatPage />} />
+        <Route path="/workspace/layout" element={<WorkspaceLayoutPage />} />
+        <Route path="/workspace" element={<WorkspaceIndexPage />} />
+        
+        {/* Admin Routes - Existing Components */}
+        <Route path="/admin/onboarding" element={<AdminOnboardingPage />} />
+        <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+        <Route path="/admin/experimental-features" element={<ExperimentalFeaturesPage />} />
+        
+        {/* Legal Pages - Actual Components */}
+        <Route path="/legal/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/legal/terms" element={<TermsOfServicePage />} />
+        
+        {/* Enhanced Landing Pages */}
+        <Route path="/landing-page" element={<LandingPageAlt />} />
+        <Route path="/simple-landing" element={<SimpleLandingPage />} />
+        <Route path="/home-page" element={<HomePage />} />
+        
+        {/* Component Navigation */}
+        <Route path="/components-nav" element={<ComponentsNavPage />} />
+        
+        {/* Enhanced Workflow Routes */}
+        <Route path="/workflows-enhanced" element={<WorkflowsEnhancedPage />} />
+        <Route path="/workflows/detail" element={<WorkflowDetailPage />} />
+        <Route path="/workflows/execution" element={<WorkflowExecutionPage />} />
+        <Route path="/workflows/templates" element={<WorkflowTemplatesPage />} />
+        
+        {/* Preview Routes */}
+        <Route path="/preview/onboarding" element={<OnboardingPreviewPage />} />
+        
+        {/* Remaining Specialized Settings Routes */}
+        <Route path="/workspace-settings/llm-selection" element={<WorkspaceLLMSelectionPage />} />
+        <Route path="/workspace-settings/chat-model" element={<WorkspaceLLMSelectionPage />} />
+        <Route path="/workspace-settings/agent-model" element={<AgentModelSelectionPage />} />
+        
+        {/* Agent-Specific Routes */}
+        <Route path="/agents/unified-creator" element={<UnifiedAgentCreatorPage />} />
+        
+        {/* Admin Tools Routes */}
+        <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
+        <Route path="/admin/agents/web-search" element={<LazyPage name="Web Search Selection" path="/admin/agents/web-search" />} />
+        
+        {/* Additional Missing Routes from Audit */}
+        <Route path="/tasks-page" element={<TasksPageComponent />} />
+        <Route path="/general-settings" element={<GeneralSettingsPage />} />
+        <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
+        <Route path="/general-settings/community-hub" element={<LazyPage name="Community Hub" path="/general-settings/community-hub" />} />
+        
+        {/* Main workspace page */}
+        <Route path="/main" element={<MainPage />} />
+        
+        {/* Additional missing routes */}
+        <Route path="/admin/layout" element={<LazyPage name="Admin Layout" path="/admin/layout" />} />
+        <Route path="/multi-agent-chat-demo" element={<MultiAgentChat />} />
+        <Route path="/api/admin/database" element={<LazyPage name="Admin Database API" path="/api/admin/database" />} />
+        <Route path="/api/admin/features" element={<LazyPage name="Admin Features API" path="/api/admin/features" />} />
+        <Route path="/package/dashboard" element={<LazyPage name="Package Dashboard" path="/package/dashboard" />} />
+        <Route path="/package/login" element={<LazyPage name="Package Login" path="/package/login" />} />
+        <Route path="/package/agents" element={<LazyPage name="Package Agents" path="/package/agents" />} />
+        <Route path="/package/workflows" element={<LazyPage name="Package Workflows" path="/package/workflows" />} />
+        <Route path="/user/profile" element={<LazyPage name="User Profile" path="/user/profile" />} />
+        
+        {/* HTML prototype routes (for reference) */}
+        <Route path="/html/dashboard" element={<LazyPage name="HTML Dashboard Prototype" path="/html/dashboard" />} />
+        <Route path="/html/admin" element={<LazyPage name="HTML Admin Prototype" path="/html/admin" />} />
+        <Route path="/html/agents" element={<LazyPage name="HTML Agents Prototype" path="/html/agents" />} />
+        <Route path="/html/chat" element={<LazyPage name="HTML Chat Prototype" path="/html/chat" />} />
+        <Route path="/html/tasks" element={<LazyPage name="HTML Tasks Prototype" path="/html/tasks" />} />
+        <Route path="/html/workflows" element={<LazyPage name="HTML Workflows Prototype" path="/html/workflows" />} />
         
         {/* Error Handling */}
         <Route path="/404" element={<LazyPage name="Page Not Found" path="/404" />} />

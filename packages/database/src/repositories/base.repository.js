@@ -1,4 +1,7 @@
-export class BaseRepository {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.BaseRepository = void 0;
+class BaseRepository {
     prisma;
     model;
     constructor(prisma, model) {
@@ -75,3 +78,4 @@ export class BaseRepository {
         return this.prisma[this.model].count({ where });
     }
 }
+exports.BaseRepository = BaseRepository;

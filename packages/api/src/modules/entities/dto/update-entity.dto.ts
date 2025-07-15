@@ -1,6 +1,6 @@
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsString, IsOptional, IsObject } from 'class-validator';
-import { Prisma } from '@prisma/client'; // Import Prisma namespace for JsonValue type
+import { Prisma } from '@the-new-fuse/database'; // Import Prisma namespace for JsonValue type
 
 export class UpdateEntityDto {
   @ApiPropertyOptional({ description: 'New unique identifier/name for the entity', example: 'openai-gpt4-turbo' })

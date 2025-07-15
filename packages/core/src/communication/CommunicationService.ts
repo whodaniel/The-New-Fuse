@@ -1,25 +1,115 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { EventEmitter } from '';
-  LOW = 'low'';
-  NORMAL = 'normal'';
-  HIGH = 'high'';
-  URGENT = 'urgent'';
-  COMMAND = 'command'';
-  EVENT = 'event'';
-  REQUEST = 'request'';
-  RESPONSE = 'response'';
-  ERROR = '';
-      pattern: ''
-    this.logger.log('CommunicationService initialized and subscribed to responses.'
-      this.logger.error('Error sending message: ''
-        throw new Error('Message ID is undefined after creation.'
-      this.logger.error('Error sending request: ''
-        channel: 'broadcast'
-      this.logger.error('Error broadcasting message: ''
-      this.logger.warn('Received response without a clear correlationId or id'
-      const errorPayload = (message as any).payload?.error || (message as any).error || { message: 'Unknown error in response';
-      const error = new Error(typeof errorPayload === 'string' ? errorPayload : errorPayload.message || 'Unknown error';
-      if (typeof errorPayload === 'object'';
-      const responseData = message.content !== undefined ? message : (message as any).payload?.data !== undefined ? (message as any).payload : 'message';
-      this.emit('messageFailed', { messageId: message.id, error: ''
-      this.emit('')
+import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { CommunicationProtocol, MessageProtocol } from './CommunicationProtocol';
+
+export interface UserConnection {
+  userId: string;
+  socketId: string;
+  connectedAt: Date;
+}
+
+@Injectable()
+export class CommunicationService {
+  private connections: Map<string, UserConnection> = new Map();
+  private userSockets: Map<string, string> = new Map();
+
+  constructor(
+    private eventEmitter: EventEmitter2,
+    private protocol: CommunicationProtocol,
+  ) {}
+
+  async connectUser(userId: string, socketId: string): Promise<void> {
+    const connection: UserConnection = {
+      userId,
+      socketId,
+      connectedAt: new Date(),
+    };
+
+    this.connections.set(socketId, connection);
+    this.userSockets.set(userId, socketId);
+
+    this.eventEmitter.emit('user.connected', { userId, socketId });
+  }
+
+  async disconnectUser(socketId: string): Promise<void> {
+    const connection = this.connections.get(socketId);
+    if (connection) {
+      this.connections.delete(socketId);
+      this.userSockets.delete(connection.userId);
+      
+      this.eventEmitter.emit('user.disconnected', { 
+        userId: connection.userId, 
+        socketId 
+      });
+    }
+  }
+
+  async sendMessage(
+    senderId: string,
+    recipientId: string,
+    type: string,
+    payload: any,
+  ): Promise<void> {
+    const recipientSocketId = this.userSockets.get(recipientId);
+    if (!recipientSocketId) return;
+
+    const message = this.protocol.createMessage(type, payload, senderId, recipientId);
+    
+    this.eventEmitter.emit('message.sent', {
+      socketId: recipientSocketId,
+      message,
+    });
+  }
+
+  async broadcastMessage(
+    senderId: string,
+    type: string,
+    payload: any,
+    excludeUserIds?: string[],
+  ): Promise<void> {
+    const message = this.protocol.createMessage(type, payload, senderId);
+    
+    this.connections.forEach((connection) => {
+      if (!excludeUserIds?.includes(connection.userId)) {
+        this.eventEmitter.emit('message.sent', {
+          socketId: connection.socketId,
+          message,
+        });
+      }
+    });
+  }
+
+  async processIncomingMessage(socketId: string, data: any): Promise<void> {
+    const connection = this.connections.get(socketId);
+    if (!connection) return;
+
+    try {
+      const message: MessageProtocol = {
+        type: data.type,
+        payload: data.payload,
+        timestamp: new Date(),
+        senderId: connection.userId,
+        recipientId: data.recipientId,
+      };
+
+      await this.protocol.processMessage(message);
+    } catch (error) {
+      this.eventEmitter.emit('message.error', {
+        socketId,
+        error: error.message,
+      });
+    }
+  }
+
+  getUserSocketId(userId: string): string | undefined {
+    return this.userSockets.get(userId);
+  }
+
+  getConnectedUsers(): string[] {
+    return Array.from(this.userSockets.keys());
+  }
+
+  isUserConnected(userId: string): boolean {
+    return this.userSockets.has(userId);
+  }
+}

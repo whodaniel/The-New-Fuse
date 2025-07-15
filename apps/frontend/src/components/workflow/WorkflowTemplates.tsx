@@ -230,7 +230,7 @@ export const WorkflowTemplates: React.React.FC<WorkflowTemplatesProps> = ({ onAp
   const [selectedCategory, setSelectedCategory] = useState('Basic');
   
   // Filter templates by category
-  const filteredTemplates = WORKFLOW_TEMPLATES.filter(templat(e: any) => 
+  const filteredTemplates = WORKFLOW_TEMPLATES.filter((template: any) => 
     template.category === selectedCategory
   );
   
@@ -270,7 +270,7 @@ export const WorkflowTemplates: React.React.FC<WorkflowTemplatesProps> = ({ onAp
             <TabsContent key={category} value={category} className="mt-0">
               <ScrollArea className="h-[400px] pr-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredTemplates.map(templat(e: any) => (
+                  {filteredTemplates.map((template: any) => (
                     <Card key={template.id} className="overflow-hidden">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-lg">{template.name}</CardTitle>

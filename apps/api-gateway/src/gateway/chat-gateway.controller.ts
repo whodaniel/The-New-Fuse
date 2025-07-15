@@ -40,9 +40,10 @@ export class ChatGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Chat service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -66,9 +67,10 @@ export class ChatGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Chat service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -92,9 +94,10 @@ export class ChatGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Chat service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }
@@ -120,9 +123,10 @@ export class ChatGatewayController {
       );
       return res.status(response.status).json(response.data);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       return res.status(HttpStatus.BAD_GATEWAY).json({
         message: 'Chat service unavailable',
-        error: error.message,
+        error: errorMessage,
       });
     }
   }

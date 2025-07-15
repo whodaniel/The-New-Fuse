@@ -249,6 +249,7 @@ export interface WebhookRegistrationRequest {
   endpoint_url: string;
   secret_key: string;
   configuration: Record<string, any>;
+  organization_id?: string;
 }
 
 export interface WebhookRegistrationResponse {

@@ -1,26 +1,39 @@
-import { MCPServer, MCPServerOptions } from './MCPServer.tsx';
-import { AgentService } from '../services/agentService.js';
-/**
- * MCP Server implementation for the Agent System
- * Provides capabilities for agent registration, discovery, and communication
- */
+import { z } from 'zod';
+import { MCPServer } from './MCPServer.tsx';
+import { AgentService } from '../agents/agent.service.js';
+declare const agentCapabilitySchema: z.ZodObject<{
+    id: z.ZodString;
+    name: z.ZodString;
+    description: z.ZodString;
+    version: z.ZodString;
+    parameters: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+    returns: z.ZodOptional<z.ZodRecord<z.ZodString, z.ZodUnknown>>;
+}, "strip", z.ZodTypeAny, {
+    id?: string;
+    name?: string;
+    description?: string;
+    parameters?: Record<string, unknown>;
+    version?: string;
+    returns?: Record<string, unknown>;
+}, {
+    id?: string;
+    name?: string;
+    description?: string;
+    parameters?: Record<string, unknown>;
+    version?: string;
+    returns?: Record<string, unknown>;
+}>;
 export declare class MCPAgentServer extends MCPServer {
-  private readonly agentService;
-  constructor(agentService: AgentService, options?: MCPServerOptions);
-  /**
-   * Register a new capability for an agent
-   */
-  private registerNewCapability;
-  /**
-   * Route a message between agents
-   */
-  private routeAgentMessage;
-  /**
-   * Discover agents based on criteria
-   */
-  private discoverAgents;
-  /**
-   * Monitor agent state changes
-   */
-  private monitorAgentState;
+    private readonly agentService;
+    private apiToolRegistrar;
+    private apiValidator;
+    constructor(agentService: AgentService, options?: MCPServerOptions);
+    registerNewCapability(capability: z.infer<typeof agentCapabilitySchema>): Promise<{
+        success: boolean;
+        capabilityId: string;
+    }>;
+    private validateCapability;
+    private notifyCapabilityUpdate;
 }
+export {};
+//# sourceMappingURL=MCPAgentServer.d.ts.map

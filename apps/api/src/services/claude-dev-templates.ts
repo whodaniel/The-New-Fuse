@@ -50,7 +50,7 @@ export interface ClaudeDevTemplateExample {
 }
 
 // Template Registry
-export class ClaudeDevTemplateRegistry {
+class ClaudeDevTemplateRegistry {
   private static templates: Map<string, ClaudeDevTemplate> = new Map();
 
   static registerTemplate(template: ClaudeDevTemplate): void {
@@ -84,42 +84,27 @@ const SENIOR_CODE_REVIEWER_TEMPLATE: ClaudeDevTemplate = {
   author: 'The New Fuse Platform',
   tags: ['code-review', 'quality', 'security', 'performance', 'architecture'],
   defaultConfiguration: {
-    autoApprove: false,
-    maxFileOperations: 200,
-    allowedDirectories: ['src/', 'lib/', 'components/', 'pages/', 'utils/', 'tests/'],
-    taskTimeout: 600000, // 10 minutes
-    concurrentTasks: 2,
-    integrations: {
-      workspace: true,
-      terminal: false,
-      browser: false,
-      vscode: true,
-    },
-    capabilities: {
-      fileOperations: true,
-      codeAnalysis: true,
-      terminalAccess: false,
-      webBrowsing: false,
-      imageProcessing: false,
-    },
-    automationLevel: 'semi-auto',
-    notifications: {
-      onTaskStart: true,
-      onTaskComplete: true,
-      onError: true,
-      onApprovalRequired: true,
-    },
+    maxConcurrentTasks: 2,
+    timeout: 600000, // 10 minutes
+    retryAttempts: 3,
+    logLevel: 'info' as const,
+    enableMetrics: true,
+    enableCache: true,
+    cacheSize: 100,
+    autoBackup: true,
+    backupInterval: 3600000,
   },
   defaultPermissions: {
-    canCreateFiles: false,
-    canDeleteFiles: false,
-    canModifyFiles: false,
-    canExecuteTerminal: false,
-    canBrowseWeb: false,
-    canAccessWorkspace: true,
-    allowedFileTypes: ['.ts', '.js', '.tsx', '.jsx', '.py', '.go', '.rs', '.java', '.cs'],
-    restrictedPaths: ['node_modules/', '.git/', 'dist/', 'build/'],
-    maxFileSize: 5242880, // 5MB
+    canCreateAgents: false,
+    canDeleteAgents: false,
+    canModifyAgents: true,
+    canExecuteTasks: true,
+    canViewStatistics: true,
+    canManageTemplates: false,
+    canAccessLogs: true,
+    canExportData: false,
+    maxAgentsPerUser: 5,
+    maxTasksPerDay: 50,
   },
   prompts: {
     systemPrompt: `You are a Senior Code Reviewer with 15+ years of experience in software development. Your expertise spans multiple programming languages, architectural patterns, security best practices, and performance optimization. 
@@ -272,42 +257,27 @@ const FULLSTACK_PROJECT_SETUP_TEMPLATE: ClaudeDevTemplate = {
   author: 'The New Fuse Platform',
   tags: ['project-setup', 'scaffolding', 'configuration', 'tooling', 'best-practices'],
   defaultConfiguration: {
-    autoApprove: false,
-    maxFileOperations: 500,
-    allowedDirectories: ['./', 'src/', 'config/', 'scripts/', 'docs/'],
-    taskTimeout: 900000, // 15 minutes
-    concurrentTasks: 3,
-    integrations: {
-      workspace: true,
-      terminal: true,
-      browser: false,
-      vscode: true,
-    },
-    capabilities: {
-      fileOperations: true,
-      codeAnalysis: true,
-      terminalAccess: true,
-      webBrowsing: false,
-      imageProcessing: false,
-    },
-    automationLevel: 'semi-auto',
-    notifications: {
-      onTaskStart: true,
-      onTaskComplete: true,
-      onError: true,
-      onApprovalRequired: true,
-    },
+    maxConcurrentTasks: 3,
+    timeout: 900000, // 15 minutes
+    retryAttempts: 2,
+    logLevel: 'info' as const,
+    enableMetrics: true,
+    enableCache: true,
+    cacheSize: 200,
+    autoBackup: true,
+    backupInterval: 1800000, // 30 minutes
   },
   defaultPermissions: {
-    canCreateFiles: true,
-    canDeleteFiles: false,
-    canModifyFiles: true,
-    canExecuteTerminal: true,
-    canBrowseWeb: false,
-    canAccessWorkspace: true,
-    allowedFileTypes: ['.ts', '.js', '.json', '.md', '.yml', '.yaml', '.env', '.gitignore'],
-    restrictedPaths: [],
-    maxFileSize: 1048576, // 1MB
+    canCreateAgents: true,
+    canDeleteAgents: false,
+    canModifyAgents: true,
+    canExecuteTasks: true,
+    canViewStatistics: true,
+    canManageTemplates: true,
+    canAccessLogs: true,
+    canExportData: true,
+    maxAgentsPerUser: 10,
+    maxTasksPerDay: 100,
   },
   prompts: {
     systemPrompt: `You are a Full-Stack Project Setup Specialist with expertise in modern development tooling and best practices. You help teams quickly bootstrap new projects with proper architecture, tooling, and configuration.
@@ -448,7 +418,7 @@ Create migration plan and setup tools.`,
 };
 
 // Export templates registry and utility functions
-export class ClaudeDevTemplateUtils {
+class ClaudeDevTemplateUtils {
   static createAgentFromTemplate(templateId: string, customizations?: {
     configuration?: Partial<ClaudeDevConfiguration>;
     permissions?: Partial<ClaudeDevPermissions>;

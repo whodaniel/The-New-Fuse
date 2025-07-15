@@ -50,7 +50,15 @@ export class CreateUsersTable1704693781 implements MigrationInterface {
           {
             name: 'updated_at',
             type: 'timestamp',
-            default: 'now(): QueryRunner): Promise<void> {
+            default: 'now()',
+          },
+        ],
+      }),
+      true,
+    );
+  }
+
+  public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.dropTable('users');
   }
 }

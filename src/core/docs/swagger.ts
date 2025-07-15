@@ -3,8 +3,9 @@ import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import { version } from '../../../package.json.js';
 
-const options: {
-    openapi: "(3 as any).0.0",
+const options: swaggerJsdoc.Options = {
+  definition: {
+    openapi: "3.0.0",
     info: {
       title: "The New Fuse API Documentation",
       version,
@@ -25,7 +26,7 @@ const options: {
         description: "Development server",
       },
       {
-        url: "https://(api as any).thenewfuse.com",
+        url: "https://api.thenewfuse.com",
         description: "Production server",
       },
     ],
@@ -96,8 +97,7 @@ const options: {
 
 export function setupSwagger(app: Express): void {
   // Generate swagger specification
-  const swaggerSpec  = {
-  definition swaggerJsdoc(options);
+  const swaggerSpec = swaggerJsdoc(options);
 
   // Serve swagger docs
   app.use(

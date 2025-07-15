@@ -263,7 +263,7 @@ export async function validateAsync<T>(
   rules: AsyncValidationRule<T>[]
 ): Promise<ValidationResult> {
   const results = await Promise.all(
-    rules.map(async rul(e: any) => ({
+    rules.map(async (rule: any) => ({
       isValid: await rule.validate(value),
       message: rule.message
     }))

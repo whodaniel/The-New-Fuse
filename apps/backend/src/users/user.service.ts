@@ -1,39 +1,48 @@
-import { Injectable } from '@nestjs/common';
-import { RedisService } from '@core/redis/redis.service';
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+import { RedisService } from '../services/redis.service';
 
 @Injectable()
-export class UserService {
-  private readonly CACHE_TTL = 3600; // 1 hour in seconds
-  private readonly CACHE_PREFIX = 'user:';
+export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
 
-  constructor(private readonly redis: RedisService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly redisService: RedisService,
+  ) {}
 
-  async getUserById(id: string): Promise<any> {
-    // Try to get from cache first
-    const cached = await this.redis.get(`${this.CACHE_PREFIX}${id}`);
-    if (cached) {
-      return JSON.parse(cached);
-    }
-
-    // If not in cache, fetch from database
-    const user = await this.fetchUserFromDb(id);
-    if (user) {
-      // Store in cache
-      await this.redis.set(
-        `${this.CACHE_PREFIX}${id}`,
-        JSON.stringify(user),
-        this.CACHE_TTL
-      );
-    }
-
-    return user;
+  async findOne(id: string) {
+    return this.prisma.user.findUnique({
+      where: { id },
+    });
   }
 
-  async invalidateUserCache(id: string): Promise<void> {
-    await this.redis.del(`${this.CACHE_PREFIX}${id}`);
+  async findByEmail(email: string) {
+    return this.prisma.user.findUnique({
+      where: { email },
+    });
   }
 
-  private async fetchUserFromDb(id: string): Promise<any> {
-    // Your database query logic here
+  async create(userData: any) {
+    return this.prisma.user.create({
+      data: userData,
+    });
+  }
+
+  async update(id: string, userData: any) {
+    return this.prisma.user.update({
+      where: { id },
+      data: userData,
+    });
+  }
+
+  async delete(id: string) {
+    return this.prisma.user.delete({
+      where: { id },
+    });
+  }
+
+  async findAll() {
+    return this.prisma.user.findMany();
   }
 }

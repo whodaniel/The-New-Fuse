@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,8 +8,10 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { FeatureStage } from './types';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.FeatureTracker = void 0;
+const common_1 = require("@nestjs/common");
+const types_1 = require("./types");
 let FeatureTracker = class FeatureTracker {
     features = new Map();
     constructor() { }
@@ -17,7 +20,7 @@ let FeatureTracker = class FeatureTracker {
             featureId,
             name,
             description,
-            currentStage: FeatureStage.ANALYSIS,
+            currentStage: types_1.FeatureStage.ANALYSIS,
             metrics: {
                 linesOfCode: 0,
                 filesModified: [],
@@ -66,7 +69,7 @@ let FeatureTracker = class FeatureTracker {
         return updatedFeature;
     }
     calculateCompletionPercentage(stage) {
-        const stages = Object.values(FeatureStage);
+        const stages = Object.values(types_1.FeatureStage);
         const currentIndex = stages.indexOf(stage);
         return Math.round((currentIndex / (stages.length - 1)) * 100);
     }
@@ -102,8 +105,8 @@ let FeatureTracker = class FeatureTracker {
         return `Feature ${feature.name} is in ${feature.currentStage} stage with ${feature.completionPercentage}% completion.`;
     }
 };
-FeatureTracker = __decorate([
-    Injectable(),
+exports.FeatureTracker = FeatureTracker;
+exports.FeatureTracker = FeatureTracker = __decorate([
+    (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [])
 ], FeatureTracker);
-export { FeatureTracker };

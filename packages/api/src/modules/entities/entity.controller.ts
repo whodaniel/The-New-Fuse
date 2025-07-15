@@ -19,7 +19,7 @@ import { UpdateEntityDto } from './dto/update-entity.dto';
 import { BaseController } from '../controllers/base.controller'; // Adjust path if needed
 import { ServiceOrUserAuthGuard } from '../auth/guards/service-or-user-auth.guard'; // Adjust path if needed
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery, ApiParam, ApiBody } from '@nestjs/swagger';
-import { RegisteredEntity, Prisma } from '@the-new-fuse/database/generated/prisma';
+import { RegisteredEntity, Prisma, RegisteredEntityType } from '@the-new-fuse/database/generated/prisma';
 import { ApiResponse as FuseApiResponse } from '@the-new-fuse/types'; // Assuming a standard response wrapper
 
 @ApiTags('Entities')
@@ -59,7 +59,7 @@ export class EntityController extends BaseController {
   ): Promise<FuseApiResponse<RegisteredEntity[]>> {
      const where: Prisma.RegisteredEntityWhereInput = {};
      if (type) {
-         where.type = type;
+         where.type = type as RegisteredEntityType;
      }
      if (name) {
          where.name = { contains: name, mode: 'insensitive' } as any; // Example: case-insensitive contains search

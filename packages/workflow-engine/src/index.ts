@@ -6,19 +6,19 @@
  */
 
 // Core engine components
-export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine.js';
-export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor.js';
-export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder.js';
+export { UnifiedWorkflowEngine, type WorkflowEngineConfig } from './engine/WorkflowEngine';
+export { WorkflowExecutor, type ExecutorConfig } from './executor/WorkflowExecutor';
+export { WorkflowBuilder, type BuilderConfig, type BuilderState, type BuilderAction } from './builder/WorkflowBuilder';
 
 // Repository and validation
-export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository.js';
-export { WorkflowValidator, type ValidatorConfig } from './validator/WorkflowValidator.js';
+export { WorkflowRepository, type RepositoryConfig } from './repository/WorkflowRepository';
+export { WorkflowValidator, type ValidatorConfig } from './validator/WorkflowValidator';
 
 // Types and interfaces
-export * from './types/WorkflowTypes.js';
+export * from './types/WorkflowTypes';
 
 // Utilities
-export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils.js';
+export { getErrorMessage, isError, createExecutionError } from './utils/errorUtils';
 
 // Utility functions
 export {
@@ -26,7 +26,7 @@ export {
   isAgentHandoffNode,
   isConditionNode,
   isLLMPromptNode
-} from './types/WorkflowTypes.js';
+} from './types/WorkflowTypes';
 
 /**
  * Workflow Engine Factory
@@ -36,22 +36,13 @@ export {
 import { PrismaClient } from '@prisma/client';
 import { Logger } from '@tnf/relay-core';
 
-// Temporary type definitions for services that aren't properly exported
-interface MasterAgentRegistry {
-  getAllAgents(): any[];
-  getAgentProfile(agentId: string): any;
-  addAgentTodo(agentId: string, todo: any): Promise<string>;
-}
-
-interface HeartbeatMonitoringService {
-  registerAgent(executionId: string, workflowId: string): void;
-  recordActivity(executionId: string, type: string, metadata: any): void;
-}
-import { UnifiedWorkflowEngine } from './engine/WorkflowEngine.js';
-import { WorkflowRepository } from './repository/WorkflowRepository.js';
-import { WorkflowValidator } from './validator/WorkflowValidator.js';
-import { WorkflowBuilder } from './builder/WorkflowBuilder.js';
-import { WorkflowExecutor } from './executor/WorkflowExecutor.js';
+// Import actual types from relay-core
+import { MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
+import { UnifiedWorkflowEngine } from './engine/WorkflowEngine';
+import { WorkflowRepository } from './repository/WorkflowRepository';
+import { WorkflowValidator } from './validator/WorkflowValidator';
+import { WorkflowBuilder } from './builder/WorkflowBuilder';
+import { WorkflowExecutor } from './executor/WorkflowExecutor';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration

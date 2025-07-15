@@ -13,7 +13,7 @@ export class HealthController {
   @ApiResponse({ status: 200, description: 'Service is healthy' })
   @ApiResponse({ status: 503, description: 'Service is unhealthy' })
   async getBasicHealth() {
-    const health = await this.healthService.getStatus();
+    const health = await this.healthService.getHealthStatus();
     return {
       status: health.status,
       timestamp: health.timestamp
@@ -101,6 +101,6 @@ export class HealthController {
   @ApiResponse({ status: 401, description: 'Unauthorized' })
   @ApiResponse({ status: 503, description: 'Service is unhealthy' })
   async getDetailedHealth(): Promise<HealthStatus> {
-    return this.healthService.getStatus();
+    return this.healthService.getHealthStatus();
   }
 } 

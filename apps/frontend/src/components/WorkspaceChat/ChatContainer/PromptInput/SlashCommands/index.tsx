@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import SlashCommandIcon from './icons/SlashCommandIcon';
+import SlashCommandIcon from '../icons/SlashCommandIcon';
 import { Tooltip } from "react-tooltip";
 import ResetCommand from './reset';
 import EndAgentSession from './endAgentSession';

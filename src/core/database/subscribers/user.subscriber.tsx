@@ -20,12 +20,15 @@ export class UserSubscriber {
         case 'create': {
           this.eventEmitter.emit('user.created', result);
           break;
+        }
         case 'update': {
           this.eventEmitter.emit('user.updated', result);
           break;
+        }
         case 'delete': {
           this.eventEmitter.emit('user.deleted', result);
           break;
+        }
       }
       
       return result;

@@ -10,11 +10,18 @@ export class UserRepository {
     return {
       id: dbUser.id,
       email: dbUser.email,
-      name: dbUser.name ?? null,
-      passwordHash: dbUser.passwordHash,
+      username: dbUser.username,
+      name: dbUser.name,
+      hashedPassword: dbUser.hashedPassword,
       role: dbUser.role,
+      roles: dbUser.roles,
+      isActive: dbUser.isActive,
+      lastLogin: dbUser.lastLogin,
+      preferences: dbUser.preferences,
+      refreshToken: dbUser.refreshToken,
       createdAt: dbUser.createdAt,
       updatedAt: dbUser.updatedAt,
+      deletedAt: dbUser.deletedAt,
     };
   }
 
@@ -22,11 +29,18 @@ export class UserRepository {
     return {
       id: true,
       email: true,
+      username: true,
       name: true,
-      passwordHash: true,
+      hashedPassword: true,
       role: true,
+      roles: true,
+      isActive: true,
+      lastLogin: true,
+      preferences: true,
+      refreshToken: true,
       createdAt: true,
-      updatedAt: true
+      updatedAt: true,
+      deletedAt: true
     };
   }
 
@@ -103,11 +117,11 @@ export class UserRepository {
     return users.map(user => this.mapDatabaseUserToUser(user));
   }
 
-  async updatePassword(id: string, passwordHash: string): Promise<User> {
+  async updatePassword(id: string, hashedPassword: string): Promise<User> {
     const user = await this.prisma.user.update({
       where: { id },
       data: {
-        passwordHash,
+        hashedPassword,
         updatedAt: new Date()
       },
       select: this.getUserSelect()

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, HealthCheck, HealthCheckResult } from '@nestjs/terminus';
-import { RedisService } from '@the-new-fuse/core';
+import { RedisService } from '../services/redis.service';
 
 @Injectable()
 export class RedisHealthIndicator extends HealthIndicator {
@@ -12,9 +12,9 @@ export class RedisHealthIndicator extends HealthIndicator {
   async isHealthy(): Promise<HealthCheckResult> {
     try {
       const result = await this.redis.ping();
-      return this.getStatus('redis', result === 'PONG');
+      return { status: 'ok', details: { redis: { status: 'up' } } };
     } catch (error) {
-      return this.getStatus('redis', false, { error: (error as Error).message });
+      return { status: 'error', details: { redis: { status: 'down', message: (error as Error).message } } };
     }
   }
 }

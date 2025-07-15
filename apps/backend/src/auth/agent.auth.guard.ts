@@ -6,7 +6,6 @@
 
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Observable } from 'rxjs';
 
 @Injectable()
 export class AgentAuthGuard implements CanActivate {
@@ -41,7 +40,7 @@ export class AgentAuthGuard implements CanActivate {
 
     } catch (error) {
       this.logger.debug(`Agent authentication failed: ${(error as Error).message}`);
-      throw new UnauthorizedException(`Agent authentication failed: ${error.message}`);
+      throw new UnauthorizedException(`Agent authentication failed: ${(error as Error).message}`);
     }
   }
 
@@ -93,7 +92,7 @@ export class AgentAuthGuard implements CanActivate {
       this.logger.debug(`Agent authenticated via JWT: ${payload.agentId}`);
       return true;
 
-    } catch (error) {
+    } catch (_error) {
       throw new UnauthorizedException('Invalid or expired agent token');
     }
   }

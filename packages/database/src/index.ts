@@ -23,6 +23,9 @@ export {
   TaskPriority,
   WorkflowStatus,
   WorkflowExecutionStatus,
+  // Prisma client and namespace
+  PrismaClient,
+  Prisma,
 } from './types';
 
 // Export database module and services

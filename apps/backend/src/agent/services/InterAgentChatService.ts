@@ -41,7 +41,14 @@ export class InterAgentChatService implements OnModuleInit {
     const channel = `${this.channelPrefix}:${this.agentId}`;
     
     try {
-      await this.redisService.subscribe(channel);
+      await this.redisService.subscribe(channel, (message) => {
+        try {
+          const parsedMessage = JSON.parse(message) as AgentMessage;
+          this.handleIncomingMessage(parsedMessage);
+        } catch (error) {
+          this.alertService.error('agent.message.parse.failed', 'Failed to parse incoming message', { error: (error as Error).message });
+        }
+      });
       
       this.monitoringService.logEvent('agent.channel.subscribed', { agentId: this.agentId, channel });
     } catch (error) {

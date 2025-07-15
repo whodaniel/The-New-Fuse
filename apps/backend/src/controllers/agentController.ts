@@ -13,7 +13,7 @@ interface AuthenticatedRequest extends Request {
 
 const prismaService = new PrismaService();
 const configService = new ConfigService();
-const agentService = new AgentService(prismaService, configService);
+const agentService = new AgentService(prismaService);
 
 export const agentController = {
   createAgent: async (req: AuthenticatedRequest, res: Response) => {

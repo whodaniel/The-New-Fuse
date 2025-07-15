@@ -1,8 +1,13 @@
-import { RedisConfig } from '../../../packages/core/src/config/redis_config';
+interface RedisConfigType {
+    host: string;
+    port: number;
+    db: number;
+    tls?: any;
+}
 
-export const redisConfig: RedisConfig = {
+export const redisConfig: RedisConfigType = {
     host: 'localhost',
     port: 6380,  // Using port 6380 as we configured in our Redis server
     db: 0,
-    tls: false
+    tls: undefined
 };

@@ -7,7 +7,7 @@ import System from "@/models/system";
 import showToast from "@/utils/toast";
 import PreLoader from "@/components/Preloader";
 import ChangeWarningModal from "@/components/ChangeWarning";
-import ModalWrapper from "@/components/ModalWrapper";
+import { ModalWrapper } from "@/components/ModalWrapper";
 import CTAButton from "@/components/lib/CTAButton";
 import { useModal } from "@/hooks/useModal";
 import { COMMON_STYLES } from "@/types/embedding";

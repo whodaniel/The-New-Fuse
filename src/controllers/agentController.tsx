@@ -14,6 +14,7 @@ import { CreateAgentDto, UpdateAgentDto } from "@the-new-fuse/types";
 import { AgentService } from '../services/agentService.js';
 import { PrismaService } from '../lib/prisma.service.tsx';
 import { ConfigService } from "@nestjs/config";
+import { Request } from 'express';
 
 @Controller("agents")
 @UseGuards(JwtAuthGuard)
@@ -24,20 +25,34 @@ export class AgentController {
     private readonly prismaService: PrismaService,
     private readonly configService: ConfigService,
   ) {
-    this.agentService = new AgentService(prismaService, configService): CreateAgentDto, @Req() req: Request) {
-    const userId: Request) {
-    const userId: id")
-  async getAgentById(@Param() => Promise<void> {"id"): string, @Req() req: Request) {
-    const userId: id")
+    this.agentService = new AgentService(prismaService, configService);
+  }
+
+  @Post()
+  async createAgent(@Body() data: CreateAgentDto, @Req() req: Request) {
+    const userId = req.user?.id;
+    return this.agentService.createAgent(data, userId);
+  }
+
+  @Get(':id')
+  async getAgentById(@Param("id") id: string, @Req() req: Request) {
+    const userId = req.user?.id;
+    return this.agentService.getAgentById(id, userId);
+  }
+
+  @Put(':id')
   async updateAgent(
-    @Param("id"): string,
+    @Param("id") id: string,
     @Body() updates: UpdateAgentDto,
     @Req() req: Request,
   ) {
-    const userId: id")
-  async deleteAgent(@Param() => Promise<void> {"id"): string, @Req() req: Request) {
-    const userId  = req.user?.id;
-    return this.agentService.createAgent(data, userId) req.user?.id;
+    const userId = req.user?.id;
+    return this.agentService.updateAgent(id, updates, userId);
+  }
+
+  @Delete(':id')
+  async deleteAgent(@Param("id") id: string, @Req() req: Request) {
+    const userId = req.user?.id;
     await this.agentService.deleteAgent(id, userId);
   }
 }

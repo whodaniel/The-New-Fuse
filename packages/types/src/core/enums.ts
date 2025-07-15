@@ -186,31 +186,27 @@ export enum SuggestionPriority {
 
 // Agent related enums
 export enum AgentStatus {
-  // Core statuses
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  PENDING = 'pending',
-  DELETED = 'deleted',
-
-  // Operational statuses
-  IDLE = 'idle',
-  BUSY = 'busy',
-  OFFLINE = 'offline',
-  ERROR = 'error',
-
-  // Extended statuses
-  INITIALIZING = 'initializing',
-  READY = 'ready',
-  TERMINATED = 'terminated',
-  LEARNING = 'learning'
+  ACTIVE = 'ACTIVE',
+  INACTIVE = 'INACTIVE',
+  IDLE = 'IDLE',
+  BUSY = 'BUSY',
+  ERROR = 'ERROR',
+  OFFLINE = 'OFFLINE',
+  INITIALIZING = 'INITIALIZING',
+  READY = 'READY',
+  TERMINATED = 'TERMINATED'
 }
 
 export enum AgentType {
-  HUMAN = 'human',
-  AI = 'ai',
-  CONVERSATIONAL = 'conversational',
-  IDE_EXTENSION = 'ide_extension',
-  API = 'api'
+  BASIC = 'BASIC',
+  CHAT = 'CHAT',
+  WORKFLOW = 'WORKFLOW',
+  TASK = 'TASK',
+  ASSISTANT = 'ASSISTANT',
+  ANALYSIS = 'ANALYSIS',
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API'
 }
 
 export enum AgentRole {
@@ -258,7 +254,12 @@ export enum AgentCapability {
   WORKFLOW = 'workflow',
   RESEARCH = 'research',
   ANALYSIS = 'analysis',
-  INTEGRATION = 'integration'
+  INTEGRATION = 'integration',
+  
+  // Data and automation capabilities
+  DATA_ANALYSIS = 'data_analysis',
+  AUTOMATION = 'automation',
+  API_INTEGRATION = 'api_integration'
 }
 
 export enum AgentFramework {

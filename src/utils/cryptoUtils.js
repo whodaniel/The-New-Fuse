@@ -1,14 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getUUID = getUUID;
-exports.getRandomBytes = getRandomBytes;
-exports.sha256 = sha256;
-exports.hmacSha256 = hmacSha256;
-exports.encrypt = encrypt;
-exports.decrypt = decrypt;
-exports.timingSafeEqual = timingSafeEqual;
-const crypto_1 = require("crypto");
-const uuid_1 = require("uuid");
+import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, timingSafeEqual as nodeTimingSafeEqual, } from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16; // For AES, this is always 16
 // Removed unused TAG_LENGTH constant
@@ -22,8 +13,8 @@ const KEY_LENGTH = 32; // For aes-256-gcm
  * Generates a v4 UUID.
  * @returns {string} A new UUID.
  */
-function getUUID() {
-    return (0, uuid_1.v4)();
+export function getUUID() {
+    return uuidv4();
 }
 /**
  * Example usage (remove direct crypto usage elsewhere):
@@ -34,8 +25,8 @@ function getUUID() {
  * @param {number} size - The number of bytes to generate.
  * @returns {Buffer} A buffer containing the random bytes.
  */
-function getRandomBytes(size) {
-    return (0, crypto_1.randomBytes)(size);
+export function getRandomBytes(size) {
+    return randomBytes(size);
 }
 /**
  * Creates a SHA-256 hash of the input data.
@@ -43,8 +34,8 @@ function getRandomBytes(size) {
  * @param {BinaryToTextEncoding} [encoding='hex'] - The output encoding.
  * @returns {string} The hashed data.
  */
-function sha256(data, encoding = 'hex') {
-    return (0, crypto_1.createHash)('sha256').update(data).digest(encoding);
+export function sha256(data, encoding = 'hex') {
+    return createHash('sha256').update(data).digest(encoding);
 }
 /**
  * Creates an HMAC-SHA256 signature.
@@ -53,8 +44,8 @@ function sha256(data, encoding = 'hex') {
  * @param {BinaryToTextEncoding} [encoding='hex'] - The output encoding.
  * @returns {string} The HMAC signature.
  */
-function hmacSha256(data, key, encoding = 'hex') {
-    return (0, crypto_1.createHmac)('sha256', key).update(data).digest(encoding);
+export function hmacSha256(data, key, encoding = 'hex') {
+    return createHmac('sha256', key).update(data).digest(encoding);
 }
 /**
  * Encrypts text using AES-256-GCM.
@@ -63,12 +54,12 @@ function hmacSha256(data, key, encoding = 'hex') {
  * @param {Buffer} key - The encryption key (must be 32 bytes).
  * @returns {string} The encrypted string, formatted as 'iv:tag:encryptedData'.
  */
-function encrypt(text, key) {
+export function encrypt(text, key) {
     if (key.length !== KEY_LENGTH) {
         throw new Error(`Invalid key length. Expected ${KEY_LENGTH} bytes.`);
     }
     const iv = getRandomBytes(IV_LENGTH);
-    const cipher = (0, crypto_1.createCipheriv)(ALGORITHM, key, iv);
+    const cipher = createCipheriv(ALGORITHM, key, iv);
     const encrypted = Buffer.concat([cipher.update(text, 'utf8'), cipher.final()]);
     const tag = cipher.getAuthTag();
     return `${iv.toString('hex')}:${tag.toString('hex')}:${encrypted.toString('hex')}`;
@@ -80,7 +71,7 @@ function encrypt(text, key) {
  * @param {Buffer} key - The decryption key (must be 32 bytes).
  * @returns {string} The decrypted plaintext.
  */
-function decrypt(encryptedText, key) {
+export function decrypt(encryptedText, key) {
     if (key.length !== KEY_LENGTH) {
         throw new Error(`Invalid key length. Expected ${KEY_LENGTH} bytes.`);
     }
@@ -92,7 +83,7 @@ function decrypt(encryptedText, key) {
     const iv = Buffer.from(ivHex, 'hex');
     const tag = Buffer.from(tagHex, 'hex');
     const encryptedData = Buffer.from(encryptedDataHex, 'hex');
-    const decipher = (0, crypto_1.createDecipheriv)(ALGORITHM, key, iv);
+    const decipher = createDecipheriv(ALGORITHM, key, iv);
     decipher.setAuthTag(tag);
     const decrypted = Buffer.concat([decipher.update(encryptedData), decipher.final()]);
     return decrypted.toString('utf8');
@@ -103,7 +94,7 @@ function decrypt(encryptedText, key) {
  * @param {string} b - The second string.
  * @returns {boolean} True if the strings are equal.
  */
-function timingSafeEqual(a, b) {
+export function timingSafeEqual(a, b) {
     if (typeof a !== 'string' || typeof b !== 'string') {
         return false;
     }
@@ -114,8 +105,8 @@ function timingSafeEqual(a, b) {
         // We still need to perform a comparison to prevent timing attacks.
         // We can compare `b` against itself, which will take the same amount of time
         // as a successful comparison, but will always fail if lengths are different.
-        (0, crypto_1.timingSafeEqual)(bBuff, bBuff);
+        nodeTimingSafeEqual(bBuff, bBuff);
         return false;
     }
-    return (0, crypto_1.timingSafeEqual)(aBuff, bBuff);
+    return nodeTimingSafeEqual(aBuff, bBuff);
 }

@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, Logger } from '@nestjs/common';
-import { TheNewFuseMCPServer } from '../../../../src/mcp/TheNewFuseMCPServer';
+import { TheNewFuseMCPServer } from './TheNewFuseMCPServer';
 import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
 import { WorkflowService } from '../services/workflow.service';

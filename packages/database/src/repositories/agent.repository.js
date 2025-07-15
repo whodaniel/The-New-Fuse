@@ -1,3 +1,4 @@
+"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7,9 +8,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-import { Injectable } from '@nestjs/common';
-import { AgentStatus } from '../../generated/prisma';
-import { PrismaService } from '../prisma.service';
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AgentRepository = void 0;
+const common_1 = require("@nestjs/common");
+const prisma_1 = require("../../generated/prisma");
+const prisma_service_1 = require("../prisma.service");
 let AgentRepository = class AgentRepository {
     prisma;
     constructor(prisma) {
@@ -24,12 +27,11 @@ let AgentRepository = class AgentRepository {
             type: prismaAgent.type,
             status: prismaAgent.status,
             userId: prismaAgent.userId,
-            metadata: prismaAgent.metadata,
+            config: prismaAgent.config,
             createdAt: prismaAgent.createdAt,
             updatedAt: prismaAgent.updatedAt,
             capabilities: prismaAgent.capabilities,
             provider: prismaAgent.provider,
-            lastActive: prismaAgent.lastActive,
             nft: prismaAgent.nft || null,
             workflows: prismaAgent.workflows || [],
             user: prismaAgent.user || null
@@ -120,7 +122,7 @@ let AgentRepository = class AgentRepository {
         return this.convertPrismaToApp(result);
     }
     async findActiveAgents() {
-        return this.findByStatus(AgentStatus.IDLE);
+        return this.findByStatus(prisma_1.AgentStatus.IDLE);
     }
     async countByType() {
         const counts = await this.prisma.agent.groupBy({
@@ -144,8 +146,8 @@ let AgentRepository = class AgentRepository {
         return convertedAgent;
     }
 };
-AgentRepository = __decorate([
-    Injectable(),
-    __metadata("design:paramtypes", [PrismaService])
+exports.AgentRepository = AgentRepository;
+exports.AgentRepository = AgentRepository = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], AgentRepository);
-export { AgentRepository };

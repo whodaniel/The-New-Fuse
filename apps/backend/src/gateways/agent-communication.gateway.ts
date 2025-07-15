@@ -42,14 +42,11 @@ export class AgentCommunicationGateway implements OnGatewayInit, OnGatewayConnec
           const data = JSON.parse(message);
           
           // Emit the message to WebSocket clients
-          this.server.emit(channel, {
-            type: channel,
-            payload: data
-          });
+          this.server.emit('agent:broadcast', { type: channel, payload: data });
           
           this.logger.debug(`Forwarded message from ${channel} to WebSocket clients`);
         } catch (error) {
-          this.logger.error(`Error processing Redis message: ${error.message}`);
+          this.logger.error(`Error processing Redis message: ${(error as Error).message}`);
         }
       });
       

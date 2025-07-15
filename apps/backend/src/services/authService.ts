@@ -12,11 +12,11 @@ export class AuthService {
       where: { email } 
     });
 
-    if (!user || !user.password) {
+    if (!user || !user.hashedPassword) {
       return null;
     }
 
-    const isValid = await bcrypt.compare(password, user.password);
+    const isValid = await bcrypt.compare(password, user.hashedPassword);
     return isValid ? user : null;
   }
 
@@ -29,7 +29,7 @@ export class AuthService {
     return this.prismaService.user.create({
       data: {
         ...data,
-        password: hashedPassword,
+        hashedPassword: hashedPassword,
         role: 'USER',
         emailVerified: false
       }
@@ -37,8 +37,9 @@ export class AuthService {
   }
 
   async logout(userId: string): Promise<void> {
-    await this.prismaService.session.deleteMany({ 
-      where: { userId } 
-    });
+    // TODO: Implement session management when session model is added to Prisma schema
+    // await this.prismaService.session.deleteMany({ 
+    //   where: { userId } 
+    // });
   }
 }

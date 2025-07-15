@@ -1,17 +1,27 @@
-import { Controller, Get, Post, Body, UseGuards } from '@nestjs/common';
-import { WalletMonitoringService } from './wallet-monitoring.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
+import { WalletMonitoringService, SystemHealth, SecurityAlert } from './wallet-monitoring.service';
 
 @Controller('monitoring')
 export class MonitoringController {
   constructor(private readonly monitoringService: WalletMonitoringService) {}
 
   @Get('health')
-  async getSystemHealth() {
+  async getSystemHealth(): Promise<{
+    health: SystemHealth;
+    recentAlerts: SecurityAlert[];
+    alertStats: {
+      total: number;
+      critical: number;
+      high: number;
+      medium: number;
+      low: number;
+    };
+  }> {
     return await this.monitoringService.getSystemMetrics();
   }
 
   @Get('alerts')
-  getRecentAlerts() {
+  getRecentAlerts(): SecurityAlert[] {
     return this.monitoringService.getRecentAlerts();
   }
 
@@ -21,7 +31,7 @@ export class MonitoringController {
     severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
     message: string;
     metadata?: any;
-  }) {
+  }): Promise<{ success: boolean }> {
     await this.monitoringService.createAlert(alertData as any);
     return { success: true };
   }

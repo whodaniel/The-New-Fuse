@@ -7,7 +7,7 @@ const router = express.Router();
 const REQUIRE_AUTH = process.env.REQUIRE_AUTH !== 'false';
 
 interface AuthenticatedRequest extends Request {
-  user?: {
+  user: {
     id: string;
     email?: string;
     name?: string;

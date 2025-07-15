@@ -6,14 +6,7 @@
  */
 
 import { EventEmitter } from 'events';
-import { Logger } from '@tnf/relay-core';
-
-// Temporary type definition for service that isn't properly exported
-interface MasterAgentRegistry {
-  getAllAgents(): any[];
-  getAgentProfile(agentId: string): any;
-  addAgentTodo(agentId: string, todo: any): Promise<string>;
-}
+import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
 import {
   WorkflowExecution,
   NodeExecution,

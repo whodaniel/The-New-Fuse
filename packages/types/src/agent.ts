@@ -9,7 +9,11 @@ export enum AgentType {
   CHAT = "CHAT",
   WORKFLOW = "WORKFLOW",
   TASK = "TASK",
-  ASSISTANT = "ASSISTANT"
+  ASSISTANT = "ASSISTANT",
+  ANALYSIS = "ANALYSIS",
+  CONVERSATIONAL = "CONVERSATIONAL",
+  IDE_EXTENSION = "IDE_EXTENSION",
+  API = "API"
 }
 
 // Changed from interface to class that implements BaseEntity

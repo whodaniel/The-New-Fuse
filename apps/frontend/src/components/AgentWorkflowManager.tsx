@@ -283,7 +283,7 @@ export function AgentWorkflowManager() {
                 <SelectValue placeholder="Select a template" />
               </SelectTrigger>
               <SelectContent>
-                {templates.map(templat(e: any) => (
+                {templates.map((template: any) => (
                   <SelectItem key={template.name} value={template.name}>
                     {template.name}
                   </SelectItem>

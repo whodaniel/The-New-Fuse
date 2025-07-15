@@ -9,11 +9,15 @@ export class AgentService {
 
   async createAgent(data: CreateAgentDto, userId: string): Promise<Agent> {
     const agentData = {
-      ...data,
-      userId,
+      name: data.name,
+      type: data.type,
+      description: data.description,
+      systemPrompt: data.systemPrompt,
       capabilities: data.capabilities || [],
-      status: data.status || AgentStatus.INACTIVE,
-      lastActive: data.lastActive ? new Date(data.lastActive) : new Date(),
+      config: data.configuration || {},
+      provider: data.provider || 'default',
+      userId,
+      status: AgentStatus.INACTIVE,
     };
     
     return this.prisma.agent.create({
@@ -43,8 +47,7 @@ export class AgentService {
         userId
       },
       data: { 
-        status,
-        lastActive: new Date()
+        status
       }
     });
     
@@ -56,9 +59,6 @@ export class AgentService {
       ...data,
     };
 
-    if (data.lastActive) {
-      updateData.lastActive = new Date(data.lastActive);
-    }
 
     return this.prisma.agent.update({
       where: {
@@ -83,12 +83,10 @@ export class AgentService {
       id: agent.id,
       name: agent.name,
       description: agent.description,
-      type: agent.type,
-      status: agent.status,
-      capabilities: agent.capabilities,
+      type: agent.type as any, // Type conversion needed between Prisma and types package
+      status: agent.status as any, // Type conversion needed between Prisma and types package
+      capabilities: agent.capabilities as any, // Type conversion needed between Prisma and types package
       provider: agent.provider,
-      lastActive: agent.lastActive,
-      metadata: agent.metadata,
       createdAt: agent.createdAt,
       updatedAt: agent.updatedAt,
     };

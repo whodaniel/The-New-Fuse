@@ -11,7 +11,7 @@ const AllPages: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
 
-  // Complete list based on ALL_PAGES_LIST.md and ComprehensiveRouter.tsx
+  // Complete list based on comprehensive monorepo audit - Updated to reflect 142+ actual pages
   const allPages: PageInfo[] = [
     // Core Application Pages
     { name: 'Home', path: '/', description: 'Enhanced Home Page with Production Status' },
@@ -21,11 +21,18 @@ const AllPages: React.FC = () => {
     // AI & Agents
     { name: 'Multi-Agent Chat', path: '/multi-agent-chat', description: 'Main Chat Interface' },
     { name: 'AI Agent Portal', path: '/ai-portal', description: 'Agent Management' },
+    { name: 'AI Agent Portal Index', path: '/ai-agent-portal', description: 'Agent Portal Index' },
     { name: 'Chat', path: '/chat', description: 'Basic Chat Interface' },
+    { name: 'Chat Page', path: '/chat-page', description: 'Dedicated Chat Page' },
     { name: 'All Agents', path: '/agents', description: 'Agent List' },
     { name: 'New Agent', path: '/agents/new', description: 'Create New Agent' },
+    { name: 'Agent Detail', path: '/agents/:id', description: 'Agent Details' },
+    { name: 'NFT Marketplace', path: '/agents/nft-marketplace', description: 'NFT Marketplace for Agents' },
+    { name: 'Revenue Dashboard', path: '/agents/revenue-dashboard', description: 'Agent Revenue Analytics' },
+    { name: 'Unified Agent Creator', path: '/agents/unified-creator', description: 'Advanced Agent Creation' },
     { name: 'Agent Dashboard', path: '/dashboard/agents', description: 'Agent Dashboard' },
     { name: 'Create Agent', path: '/dashboard/agents/new', description: 'Create Agent Form' },
+    { name: 'Agent Detail Dashboard', path: '/dashboard/agents/:id', description: 'Dashboard Agent Detail' },
 
     // Workspace Management
     { name: 'Workspace Overview', path: '/workspace/overview', description: 'Main Workspace View' },
@@ -33,17 +40,28 @@ const AllPages: React.FC = () => {
     { name: 'Workspace Members', path: '/workspace/members', description: 'Team Management' },
     { name: 'Workspace Settings', path: '/workspace/settings', description: 'Workspace Configuration' },
     { name: 'Workspace Chat', path: '/workspace-chat', description: 'Team Chat' },
+    { name: 'Workspace Chat Index', path: '/workspace/chat', description: 'Workspace Chat Index' },
+    { name: 'Workspace Layout', path: '/workspace/layout', description: 'Workspace Layout Management' },
 
     // Tasks & Workflows
     { name: 'All Tasks', path: '/tasks', description: 'Task Management' },
     { name: 'New Task', path: '/tasks/new', description: 'Create Task' },
+    { name: 'Task Detail', path: '/tasks/:id', description: 'Task Details' },
+    { name: 'Edit Task', path: '/tasks/:id/edit', description: 'Edit Task' },
+    { name: 'Tasks Page', path: '/tasks-page', description: 'Dedicated Tasks Page' },
     { name: 'Workflows', path: '/workflows', description: 'Workflow Management' },
     { name: 'Workflow Builder', path: '/workflows/builder', description: 'Visual Workflow Builder' },
     { name: 'Advanced Builder', path: '/workflows/advanced-builder', description: 'Advanced n8n-Compatible Workflow Builder' },
     { name: 'Workflow Templates', path: '/workflows/templates', description: 'Template Library' },
+    { name: 'Workflow Detail', path: '/workflows/:id', description: 'Workflow Details' },
+    { name: 'Workflow Execution', path: '/workflows/:id/execution', description: 'Workflow Execution View' },
     { name: 'Execution Monitor', path: '/workflows/executions', description: 'Workflow Execution History & Monitoring' },
+    { name: 'Enhanced Workflows', path: '/workflows-enhanced', description: 'Enhanced Workflow Interface' },
+
+    // Suggestions System
     { name: 'Suggestions', path: '/suggestions', description: 'AI Suggestions' },
     { name: 'New Suggestion', path: '/suggestions/new', description: 'Create Suggestion' },
+    { name: 'Suggestion Detail', path: '/suggestions/:id', description: 'Suggestion Details' },
 
     // Administration
     { name: 'Admin Panel', path: '/admin', description: 'Main Admin Dashboard' },
@@ -54,7 +72,11 @@ const AllPages: React.FC = () => {
     { name: 'Port Management', path: '/admin/port-management', description: 'Port Configuration' },
     { name: 'Admin Settings', path: '/admin/settings', description: 'Admin Configuration' },
     { name: 'Admin Onboarding', path: '/admin/onboarding', description: 'Admin Onboarding' },
+    { name: 'Admin Dashboard', path: '/admin/dashboard', description: 'Admin Dashboard View' },
+    { name: 'Admin Layout', path: '/admin/layout', description: 'Admin Layout Management' },
     { name: 'Experimental Features', path: '/admin/experimental-features', description: 'Beta Features' },
+    { name: 'Agent Skills Admin', path: '/admin/agents/skills', description: 'Agent Skills Management' },
+    { name: 'Web Search Selection', path: '/admin/agents/web-search', description: 'Web Search Provider Configuration' },
 
     // Dashboard & Analytics
     { name: 'Dashboard Analytics', path: '/dashboard/analytics', description: 'Analytics Dashboard' },
@@ -70,15 +92,23 @@ const AllPages: React.FC = () => {
     { name: 'API Settings', path: '/settings/api', description: 'API Configuration' },
     { name: 'General Settings Alt', path: '/general-settings', description: 'Alternative General Settings' },
     { name: 'Embedding Preferences', path: '/general-settings/embedding', description: 'Embedding Configuration' },
+    { name: 'Community Hub', path: '/general-settings/community-hub', description: 'Community Features' },
+    { name: 'Workspace LLM Selection', path: '/workspace-settings/llm-selection', description: 'LLM Configuration' },
+    { name: 'Chat Model Selection', path: '/workspace-settings/chat-model', description: 'Chat Model Settings' },
+    { name: 'Agent Model Selection', path: '/workspace-settings/agent-model', description: 'Agent Model Configuration' },
 
     // Authentication
     { name: 'Login', path: '/login', description: 'Main Login' },
     { name: 'Register', path: '/register', description: 'User Registration' },
     { name: 'Auth Login', path: '/auth/login', description: 'Authentication Login' },
     { name: 'Auth Register', path: '/auth/register', description: 'Authentication Registration' },
+    { name: 'Auth Index', path: '/auth', description: 'Authentication Hub' },
     { name: 'SSO Authentication', path: '/auth/sso', description: 'Single Sign-On' },
     { name: 'Google OAuth Callback', path: '/auth/google-callback', description: 'Google OAuth' },
     { name: 'OAuth Callback', path: '/auth/oauth-callback', description: 'General OAuth' },
+    { name: 'Forgot Password', path: '/auth/forgot-password', description: 'Password Recovery' },
+    { name: 'Reset Password', path: '/auth/reset-password', description: 'Password Reset' },
+    { name: 'Unauthorized', path: '/unauthorized', description: 'Access Denied Page' },
 
     // Landing & Marketing
     { name: 'Landing Page', path: '/landing', description: 'Marketing Landing' },
@@ -93,11 +123,14 @@ const AllPages: React.FC = () => {
 
     // Components & Demos
     { name: 'UI Components', path: '/components', description: 'Component Showcase' },
+    { name: 'Components Navigation', path: '/components-nav', description: 'Component Navigation' },
+    { name: 'Components Showcase', path: '/components-showcase', description: 'Advanced Component Demo' },
     { name: 'Timeline Demo', path: '/timeline-demo', description: 'Timeline Component' },
     { name: 'Graph Demo', path: '/graph-demo', description: 'Graph Visualization' },
     { name: 'Frontend Showcase', path: '/frontend-showcase', description: 'Frontend Demo' },
     { name: 'Layout Example', path: '/layout-example', description: 'Layout Demo' },
-    { name: 'Components Navigation', path: '/components-nav', description: 'Component Navigation' },
+    { name: 'Simple Test', path: '/simple-test', description: 'Simple Testing Interface' },
+    { name: 'Multi Agent Chat Demo', path: '/multi-agent-chat-demo', description: 'Multi Agent Chat Demo' },
 
     // Development & Debug
     { name: 'Debug Info', path: '/debug', description: 'Debug Information' },
@@ -106,25 +139,50 @@ const AllPages: React.FC = () => {
     { name: 'All Pages List', path: '/all-pages', description: 'Page Directory (Current Page)' },
     { name: 'Test Page', path: '/test', description: 'Testing Interface' },
 
+    // API Endpoints (Admin Access)
+    { name: 'Admin Database API', path: '/api/admin/database', description: 'Database Administration API' },
+    { name: 'Admin Features API', path: '/api/admin/features', description: 'Feature Management API' },
+    { name: 'Feature Evaluation API', path: '/api/admin/features/:id/evaluate', description: 'Feature Evaluation API' },
+
     // Error Handling
     { name: '404 Page', path: '/404', description: 'Not Found Page' },
+    { name: 'Not Found', path: '/not-found', description: 'Alternative Not Found Page' },
+
+    // Package-Level Pages (Alternative Implementations)
+    { name: 'Package Dashboard', path: '/package/dashboard', description: 'Package Dashboard Implementation' },
+    { name: 'Package Login', path: '/package/login', description: 'Package Login Implementation' },
+    { name: 'Package Agents', path: '/package/agents', description: 'Package Agents Implementation' },
+    { name: 'Package Workflows', path: '/package/workflows', description: 'Package Workflows Implementation' },
+    { name: 'User Profile', path: '/user/profile', description: 'User Profile Management' },
+
+    // Static HTML Pages (Development/Prototyping)
+    { name: 'HTML Dashboard', path: '/html/dashboard', description: 'HTML Dashboard Prototype' },
+    { name: 'HTML Admin', path: '/html/admin', description: 'HTML Admin Prototype' },
+    { name: 'HTML Agents', path: '/html/agents', description: 'HTML Agents Prototype' },
+    { name: 'HTML Chat', path: '/html/chat', description: 'HTML Chat Prototype' },
+    { name: 'HTML Tasks', path: '/html/tasks', description: 'HTML Tasks Prototype' },
+    { name: 'HTML Workflows', path: '/html/workflows', description: 'HTML Workflows Prototype' },
   ];
 
-  // Group pages by category
+  // Group pages by category - Updated for expanded page list
   const pageCategories = [
     { name: 'Core Application', pages: allPages.slice(0, 3) },
-    { name: 'AI & Agents', pages: allPages.slice(3, 13) },
-    { name: 'Workspace Management', pages: allPages.slice(13, 18) },
-    { name: 'Tasks & Workflows', pages: allPages.slice(18, 27) },
-    { name: 'Administration', pages: allPages.slice(27, 36) },
-    { name: 'Dashboard & Analytics', pages: allPages.slice(36, 39) },
-    { name: 'Settings & Configuration', pages: allPages.slice(39, 47) },
-    { name: 'Authentication', pages: allPages.slice(47, 54) },
-    { name: 'Landing & Marketing', pages: allPages.slice(54, 59) },
-    { name: 'Legal', pages: allPages.slice(59, 61) },
-    { name: 'Components & Demos', pages: allPages.slice(61, 67) },
-    { name: 'Development & Debug', pages: allPages.slice(67, 72) },
-    { name: 'Error Handling', pages: allPages.slice(72) },
+    { name: 'AI & Agents', pages: allPages.slice(3, 18) },
+    { name: 'Workspace Management', pages: allPages.slice(18, 25) },
+    { name: 'Tasks & Workflows', pages: allPages.slice(25, 37) },
+    { name: 'Suggestions System', pages: allPages.slice(37, 40) },
+    { name: 'Administration', pages: allPages.slice(40, 52) },
+    { name: 'Dashboard & Analytics', pages: allPages.slice(52, 55) },
+    { name: 'Settings & Configuration', pages: allPages.slice(55, 67) },
+    { name: 'Authentication', pages: allPages.slice(67, 78) },
+    { name: 'Landing & Marketing', pages: allPages.slice(78, 83) },
+    { name: 'Legal', pages: allPages.slice(83, 85) },
+    { name: 'Components & Demos', pages: allPages.slice(85, 94) },
+    { name: 'Development & Debug', pages: allPages.slice(94, 99) },
+    { name: 'API Endpoints', pages: allPages.slice(99, 102) },
+    { name: 'Error Handling', pages: allPages.slice(102, 104) },
+    { name: 'Package-Level Pages', pages: allPages.slice(104, 109) },
+    { name: 'Static HTML Pages', pages: allPages.slice(109) },
   ];
 
   // Filter pages based on search and category

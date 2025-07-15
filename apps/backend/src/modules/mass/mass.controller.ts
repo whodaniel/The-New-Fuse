@@ -13,7 +13,7 @@ import { AggregateService } from './building-blocks/aggregate.service';
 import { ReflectService } from './building-blocks/reflect.service';
 import { DebateService } from './building-blocks/debate.service';
 import { AuthGuard } from '@nestjs/passport';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
 
 @Controller('mass')
 @UseGuards(AuthGuard('jwt'))
@@ -146,10 +146,9 @@ export class MassController {
       maxRounds?: number;
     },
     @CurrentUser() user: any
-  ): Promise<{ result: any; reflectionHistory: any[]; executionMetrics: any }> {
+  ): Promise<{ result: any; executionMetrics: any }> {
     return this.reflectService.execute(
       request.predictorAgentId,
-      request.reflectorAgentId,
       request.input,
       {
         maxRounds: request.maxRounds || 3,
@@ -167,7 +166,7 @@ export class MassController {
       votingStrategy?: 'majority' | 'weighted' | 'consensus';
     },
     @CurrentUser() user: any
-  ): Promise<{ result: any; debateHistory: any[]; executionMetrics: any }> {
+  ): Promise<{ result: any; executionMetrics: any }> {
     return this.debateService.execute(
       request.debaterAgentIds,
       request.input,

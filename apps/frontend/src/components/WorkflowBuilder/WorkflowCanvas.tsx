@@ -13,10 +13,10 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 import { Box, useToast } from '@chakra-ui/react';
 import { NodeToolbar } from './NodeToolbar';
-import { WorkflowToolbar } from './WorkflowToolbar';
+import { WorkflowToolbar } from '../workflow/WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
 import { nodeTypes } from './nodes';
-import { edgeTypes } from './edges';
+import { edgeTypes } from '../workflow/edges';
 
 export const WorkflowCanvas: React.FC = () => {
   const toast = useToast();

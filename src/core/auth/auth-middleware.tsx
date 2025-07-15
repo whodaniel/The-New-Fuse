@@ -22,56 +22,87 @@ export class AuthMiddleware {
     @inject(TYPES.ErrorHandler) private errorHandler: ErrorHandler,
   ) {}
 
-  public authenticate = async(
+  public authenticate = async (
     req: Request,
     res: Response,
     next: NextFunction,
   ): Promise<void> => {
     try {
-      const token: unknown) {
-      this.logger.error("Authentication failed", {
-        error: error.message,
-        path: req.path,
-      }): unknown) {
+      const token = this.extractTokenFromHeader(req);
+      if (!token) {
         throw this.errorHandler.createError(
           "No token provided",
           "AUTH_NO_TOKEN",
           401,
-        ): string[]) => {
-    return async (): Promise<void> {req: Request, res: Response, next: NextFunction) => {
+        );
+      }
+
+      const user = await this.authService.validateToken(token);
+      req.user = user;
+      next();
+    } catch (error: any) {
+      this.logger.error("Authentication failed", {
+        error: error.message,
+        path: req.path,
+      });
+      res.status(error.statusCode || 401).json({
+        error: error.message,
+        code: error.code || "AUTH_FAILED"
+      });
+    }
+  };
+
+  public requireRoles = (roles: string[]) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        if(!req.user: unknown) {
+        if (!req.user) {
           throw this.errorHandler.createError(
             "User not authenticated",
             "AUTH_NO_USER",
             401,
-          ): unknown) {
+          );
+        }
+
+        const hasRole = roles.some((role) => req.user!.roles.includes(role));
+        if (!hasRole) {
+          throw this.errorHandler.createError(
+            "Insufficient roles",
+            "AUTH_INSUFFICIENT_ROLES",
+            403,
+          );
+        }
+
+        next();
+      } catch (error: any) {
         this.logger.error("Role check failed", {
           error: error.message,
           path: req.path,
           requiredRoles: roles,
           userRoles: req.user?.roles,
-        }): unknown) {
-          throw this.errorHandler.createError(
-            "Insufficient roles",
-            "AUTH_INSUFFICIENT_ROLES",
-            403,
-          ): string[]) => {
-    return async (): Promise<void> {req: Request, res: Response, next: NextFunction) => {
+        });
+        res.status(error.statusCode || 403).json({
+          error: error.message,
+          code: error.code || "AUTH_ROLE_FAILED"
+        });
+      }
+    };
+  };
+
+  public requirePermissions = (permissions: string[]) => {
+    return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
       try {
-        if(!req.user: unknown) {
+        if (!req.user) {
           throw this.errorHandler.createError(
             "User not authenticated",
             "AUTH_NO_USER",
             401,
-          ): unknown) {
-        this.logger.error("Permission check failed", {
-          error: error.message,
-          path: req.path,
-          requiredPermissions: permissions,
-          userPermissions: req.user?.permissions,
-        }): Request): string | null {
-    const authHeader: unknown) {
+          );
+        }
+
+        const hasPermission = permissions.some((permission) =>
+          req.user!.permissions.includes(permission),
+        );
+        if (!hasPermission) {
           throw this.errorHandler.createError(
             "Insufficient permissions",
             "AUTH_INSUFFICIENT_PERMISSIONS",
@@ -80,13 +111,26 @@ export class AuthMiddleware {
         }
 
         next();
-      } catch (error req.headers.authorization;
+      } catch (error: any) {
+        this.logger.error("Permission check failed", {
+          error: error.message,
+          path: req.path,
+          requiredPermissions: permissions,
+          userPermissions: req.user?.permissions,
+        });
+        res.status(error.statusCode || 403).json({
+          error: error.message,
+          code: error.code || "AUTH_PERMISSION_FAILED"
+        });
+      }
+    };
+  };
+
+  private extractTokenFromHeader(req: Request): string | null {
+    const authHeader = req.headers.authorization;
     if (!authHeader) return null;
 
-    const [type, token]  = permissions.some((permission) =>
-          req.user!.permissions.includes(permission),
-        );
-        if(!hasPermission authHeader.split(" ");
+    const [type, token] = authHeader.split(" ");
     return type === "Bearer" && token ? token : null;
   }
 }

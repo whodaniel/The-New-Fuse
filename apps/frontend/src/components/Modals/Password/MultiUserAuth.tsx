@@ -3,7 +3,7 @@ import System from '../../../models/system';
 import { AUTH_TOKEN, AUTH_USER } from '../../../utils/constants';
 import paths from '../../../utils/paths';
 import showToast from "@/utils/toast";
-import ModalWrapper from "@/components/ModalWrapper";
+import { ModalWrapper } from "@/components/ModalWrapper";
 import { useModal } from "@/hooks/useModal";
 import RecoveryCodeModal from "@/components/Modals/DisplayRecoveryCodeModal";
 import { useTranslation } from "react-i18next";

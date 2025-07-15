@@ -43,7 +43,7 @@ export class AgentController {
                 ...createAgentDto,
                 userId: user.id
             };
-            return await this.agentService.createAgent(agentData);
+            return await this.agentService.createAgent(agentData, user.id);
         } catch (error) {
             throw new HttpException(
                 (error as Error).message || 'Failed to create agent',

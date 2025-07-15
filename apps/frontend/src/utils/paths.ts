@@ -4,14 +4,20 @@ const paths = {
     settings: () => '/settings',
     admin: () => '/admin',
     agents: () => '/agents',
-    agentDetails: (id) => `/agents/${id}`,
+    agentDetails: (id: string) => `/agents/${id}`,
     embeddings: () => '/embeddings',
-    embeddingDetails: (id) => `/embeddings/${id}`,
+    embeddingDetails: (id: string) => `/embeddings/${id}`,
     chatHistory: () => '/chat/history',
-    chatDetails: (id) => `/chat/${id}`,
+    chatDetails: (id: string) => `/chat/${id}`,
     systemSettings: () => '/settings/system',
     userSettings: () => '/settings/user',
     apiKeys: () => '/settings/api-keys',
+    workspace: {
+        chat: (slug: string) => `/workspace/${slug}`,
+        thread: (slug: string, threadSlug: string) => `/workspace/${slug}/t/${threadSlug}`,
+        settings: (slug: string) => `/workspace/${slug}/settings`,
+        files: (slug: string) => `/workspace/${slug}/files`,
+    },
 };
 export default paths;
 //# sourceMappingURL=paths.js.map

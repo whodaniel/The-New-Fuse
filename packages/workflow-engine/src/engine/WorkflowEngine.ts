@@ -27,16 +27,12 @@ import {
 } from '../types/WorkflowTypes';
 import { getErrorMessage } from '../utils/errorUtils.js';
 
-// Temporary type definitions for services that aren't properly exported
-interface MasterAgentRegistry {
-  getAllAgents(): any[];
-  getAgentProfile(agentId: string): any;
-  addAgentTodo(agentId: string, todo: any): Promise<string>;
-}
+// Import actual types from relay-core
+import { MasterAgentRegistry } from '@tnf/relay-core';
 
 interface HeartbeatMonitoringService {
-  registerAgent(executionId: string, workflowId: string): void;
-  recordActivity(executionId: string, type: string, metadata: any): void;
+  registerAgent(agentId: string, expectedResponseTime?: number): void;
+  recordActivity(agentId: string, activityType: string, metadata?: any): void;
 }
 
 export interface WorkflowEngineConfig {
@@ -267,7 +263,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
     // Register with heartbeat monitoring if enabled
     if (this.config.enableHeartbeatMonitoring) {
-      this.heartbeatService.registerAgent(execution.id, execution.context.workflowId);
+      this.heartbeatService.registerAgent(execution.id, this.config.defaultTimeoutMs);
     }
   }
 
@@ -538,7 +534,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
     const todoId = await this.agentRegistry.addAgentTodo(agentId, {
       content: node.config.task,
       priority: node.config.priority,
-      category: 'workflow_task',
+      category: 'task',
       estimatedDuration: node.config.expectedDuration,
       context: {
         workflowExecutionId: context.executionId,

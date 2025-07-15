@@ -11,13 +11,13 @@ export declare class TaskRepository {
     create(data: Prisma.TaskCreateInput): Promise<Task>;
     update(id: string, data: Prisma.TaskUpdateInput): Promise<Task>;
     delete(id: string): Promise<Task>;
-    findByCreatedBy(userId: string): Promise<Task[]>;
-    findByAssignedTo(agentId: string): Promise<Task[]>;
+    findByUserId(userId: string): Promise<Task[]>;
+    findByAgentId(agentId: string): Promise<Task[]>;
     findByStatus(status: TaskStatus): Promise<Task[]>;
     findByPriority(priority: TaskPriority): Promise<Task[]>;
     updateStatus(id: string, status: TaskStatus): Promise<Task>;
     assignToAgent(id: string, agentId: string): Promise<Task>;
-    getTaskStats(createdBy?: string): Promise<{
+    getTaskStats(userId?: string): Promise<{
         total: number;
         completed: number;
         overdue: number;
@@ -25,7 +25,7 @@ export declare class TaskRepository {
         byStatus: Record<string, number>;
         byPriority: Record<string, number>;
     }>;
-    getRecentTasks(createdBy: string, limit?: number): Promise<Task[]>;
-    searchTasks(createdBy: string, query: string): Promise<Task[]>;
+    getRecentTasks(userId: string, limit?: number): Promise<Task[]>;
+    searchTasks(userId: string, query: string): Promise<Task[]>;
 }
 //# sourceMappingURL=task.repository.d.ts.map

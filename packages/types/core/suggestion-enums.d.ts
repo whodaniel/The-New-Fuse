@@ -17,3 +17,4 @@ export declare enum SuggestionPriority {
     HIGH = "high",
     CRITICAL = "critical"
 }
+//# sourceMappingURL=suggestion-enums.d.ts.map

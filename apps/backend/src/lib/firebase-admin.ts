@@ -1,3 +1,4 @@
+import { authenticator } from 'otplib';
 import * as admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import { getFirestore } from 'firebase-admin/firestore';
@@ -25,7 +26,7 @@ export const verify2FAToken = async (uid: string, token: string) => {
     const secret = user.customClaims?.['2faSecret'];
     if (!secret) return false;
     
-    import { authenticator  } from 'otplib';
+    
     return authenticator.verify({ token, secret });
   } catch (error) {
     console.error('2FA verification error:', error);

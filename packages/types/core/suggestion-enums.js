@@ -1,24 +1,21 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.SuggestionPriority = exports.SuggestionStatus = void 0;
 /**
  * Suggestion status enumeration
  */
-var SuggestionStatus;
+export var SuggestionStatus;
 (function (SuggestionStatus) {
     SuggestionStatus["SUBMITTED"] = "submitted";
     SuggestionStatus["UNDER_REVIEW"] = "under_review";
     SuggestionStatus["APPROVED"] = "approved";
     SuggestionStatus["REJECTED"] = "rejected";
     SuggestionStatus["IMPLEMENTED"] = "implemented";
-})(SuggestionStatus || (exports.SuggestionStatus = SuggestionStatus = {}));
+})(SuggestionStatus || (SuggestionStatus = {}));
 /**
  * Suggestion priority enumeration
  */
-var SuggestionPriority;
+export var SuggestionPriority;
 (function (SuggestionPriority) {
     SuggestionPriority["LOW"] = "low";
     SuggestionPriority["MEDIUM"] = "medium";
     SuggestionPriority["HIGH"] = "high";
     SuggestionPriority["CRITICAL"] = "critical";
-})(SuggestionPriority || (exports.SuggestionPriority = SuggestionPriority = {}));
+})(SuggestionPriority || (SuggestionPriority = {}));

@@ -1,28 +1,40 @@
-import { Container } from 'inversify';
-import { Connection } from 'typeorm';
-import { DatabaseService } from '@the-new-fuse/core/database';
-import { ConfigService } from '@the-new-fuse/core/config';
-import { TYPES } from '@the-new-fuse/core/di/types';
-import { createTestContainer } from './test-container';
+import { Test } from '@nestjs/testing';
+import { PrismaService } from '../prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 
-let container: Container;
-let connection: Connection;
+export async function setupTestModule() {
+  const moduleRef = await Test.createTestingModule({
+    providers: [
+      PrismaService,
+      {
+        provide: ConfigService,
+        useValue: {
+          get: jest.fn((key: string) => {
+            const config = {
+              DATABASE_URL: 'postgresql://test:test@localhost:5432/test',
+              REDIS_HOST: 'localhost',
+              REDIS_PORT: 6379,
+            };
+            return config[key];
+          }),
+        },
+      },
+    ],
+  }).compile();
 
-beforeAll(async () => {
-  // Create test container with mocked services
-  container = await createTestContainer();
+  return moduleRef;
+}
+
+export async function setupTestDatabase() {
+  const prisma = new PrismaService();
   
-  // Initialize test database
-  const dbService = container.get<DatabaseService>(TYPES.DatabaseService);
-  connection = await dbService.getConnection();
+  // Clean up test database
+  await prisma.$executeRaw`TRUNCATE TABLE "User" CASCADE`;
+  await prisma.$executeRaw`TRUNCATE TABLE "Agent" CASCADE`;
   
-  // Run migrations
-  await connection.runMigrations();
-});
+  return prisma;
+}
 
-afterAll(async () => {
-  // Close database connection
-  if (connection) {
-    await connection.close();
-  }
-});
+export async function teardownTestDatabase(prisma: PrismaService) {
+  await prisma.$disconnect();
+}

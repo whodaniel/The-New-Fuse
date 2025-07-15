@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FeatureFlagConditionsEditor } from '../../../components/AdminPanel/FeatureFlagConditions';
-import { FeatureFlag, FeatureFlagConditions, Environment } from '@the-new-fuse/types/featureFlags';
+import { FeatureFlag, FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-// Temporarily using local components instead of ui-consolidated
-// import { Button, Card, Input, Switch, Tabs, Toast } from '@the-new-fuse/ui-consolidated';
+import { Card } from '@/components/ui/card';
+import { toast } from '@/components/ui/toast';
+import { Switch } from '@/components/ui/switch';
+import { Tabs } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
 
 export default function FeatureFlagsAdmin() {
   const [features, setFeatures] = useState<FeatureFlag[]>([]);
@@ -22,8 +24,8 @@ export default function FeatureFlagsAdmin() {
       const data = await response.json();
       setFeatures(data);
     } catch (error) {
-      Toast.error('Failed to load features');
-      console.error('Failed to load features:', error);
+      toast.error('Failed to load features');
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -39,11 +41,11 @@ export default function FeatureFlagsAdmin() {
       
       if (!response.ok) throw new Error('Failed to create feature');
       
-      Toast.success('Feature created successfully');
+      toast.success('Feature created successfully');
       await loadFeatures();
     } catch (error) {
-      Toast.error('Failed to create feature');
-      console.error('Failed to create feature:', error);
+      toast.error('Failed to create feature');
+      console.error(error);
     }
   }
 
@@ -57,11 +59,11 @@ export default function FeatureFlagsAdmin() {
       
       if (!response.ok) throw new Error('Failed to update feature');
       
-      Toast.success('Feature updated successfully');
+      toast.success('Feature updated successfully');
       await loadFeatures();
     } catch (error) {
-      Toast.error('Failed to update feature');
-      console.error('Failed to update feature:', error);
+      toast.error('Failed to update feature');
+      console.error(error);
     }
   }
 
@@ -75,11 +77,11 @@ export default function FeatureFlagsAdmin() {
       
       if (!response.ok) throw new Error('Failed to delete feature');
       
-      Toast.success('Feature deleted successfully');
+      toast.success('Feature deleted successfully');
       await loadFeatures();
     } catch (error) {
-      Toast.error('Failed to delete feature');
-      console.error('Failed to delete feature:', error);
+      toast.error('Failed to delete feature');
+      console.error(error);
     }
   }
 
@@ -107,7 +109,7 @@ export default function FeatureFlagsAdmin() {
         <Card className="p-4">
           <h2 className="text-xl font-semibold mb-4">Feature List</h2>
           <div className="space-y-4">
-            {features.map(featur(e: any) => (
+            {features.map((feature: any) => (
               <Card key={feature.id} className="p-4 hover:bg-secondary/50 cursor-pointer"
                 onClick={() => {
                   setSelectedFeature(feature);
@@ -184,6 +186,8 @@ export default function FeatureFlagsAdmin() {
                   <div>
                     <label className="block text-sm mb-1">Stage</label>
                     <select
+                      title="Select an option"
+                      aria-label="Select an option"
                       value={selectedFeature.stage}
                       onChange={(e) => setSelectedFeature({
                         ...selectedFeature,
@@ -201,6 +205,8 @@ export default function FeatureFlagsAdmin() {
                   <div>
                     <label className="block text-sm mb-1">Priority</label>
                     <select
+                      title="Select an option"
+                      aria-label="Select an option"
                       value={selectedFeature.priority}
                       onChange={(e) => setSelectedFeature({
                         ...selectedFeature,

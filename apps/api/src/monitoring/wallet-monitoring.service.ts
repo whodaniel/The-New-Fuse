@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../services/prisma.service';
 
-interface SecurityAlert {
+export interface SecurityAlert {
   type: 'HIGH_RISK_TRANSACTION' | 'WEB3AUTH_FAILURE' | 'AGENT_ANOMALY' | 'BUNDLER_ERROR' | 'PAYMASTER_ERROR';
   severity: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
   message: string;
@@ -10,7 +10,7 @@ interface SecurityAlert {
   timestamp: Date;
 }
 
-interface SystemHealth {
+export interface SystemHealth {
   web3authStatus: 'healthy' | 'degraded' | 'down';
   bundlerStatus: 'healthy' | 'degraded' | 'down';
   paymasterBalance: string;
@@ -122,7 +122,7 @@ export class WalletMonitoringService {
   private async getSystemHealth(): Promise<SystemHealth> {
     // Get active agents count
     const activeAgents = await this.prisma.wallet.count({
-      where: { wallet_type: 'SMART_ACCOUNT' }
+      where: { type: 'SMART_ACCOUNT' }
     });
 
     // Get pending transactions
@@ -134,15 +134,15 @@ export class WalletMonitoringService {
     const last24h = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const last24hTransactions = await this.prisma.transaction.count({
       where: {
-        created_at: { gte: last24h }
+        createdAt: { gte: last24h }
       }
     });
 
     // Calculate average gas used
     const gasStats = await this.prisma.transaction.aggregate({
       where: {
-        created_at: { gte: last24h },
-        status: 'SUCCESS'
+        createdAt: { gte: last24h },
+        status: 'COMPLETED'
       },
       _avg: { value: true }
     });
@@ -207,27 +207,27 @@ export class WalletMonitoringService {
     // Find agents with unusually high transaction volume
     const highVolumeAgents = await this.prisma.wallet.findMany({
       where: {
-        wallet_type: 'SMART_ACCOUNT',
+        type: 'SMART_ACCOUNT',
         transactions: {
           some: {
-            created_at: { gte: oneHourAgo }
+            createdAt: { gte: oneHourAgo }
           }
         }
       },
       include: {
         transactions: {
           where: {
-            created_at: { gte: oneHourAgo }
+            createdAt: { gte: oneHourAgo }
           }
         },
-        user: true
+        agent: { include: { user: true } }
       }
     });
 
     return highVolumeAgents.filter(agent => 
       agent.transactions.length > 50 // More than 50 transactions per hour
     ).map(agent => ({
-      verifierId: agent.user.verifierId,
+      verifierId: agent.agent?.user?.username || 'unknown',
       transactionCount: agent.transactions.length,
       totalValue: agent.transactions.reduce((sum, tx) => sum + Number(tx.value), 0)
     }));
@@ -239,7 +239,7 @@ export class WalletMonitoringService {
     return this.prisma.transaction.findMany({
       where: {
         status: 'PENDING',
-        created_at: { lt: fifteenMinutesAgo }
+        createdAt: { lt: fifteenMinutesAgo }
       }
     });
   }

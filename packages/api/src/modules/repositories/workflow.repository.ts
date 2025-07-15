@@ -52,7 +52,7 @@ export class WorkflowRepository {
         updatedAt: 'desc'
       }
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: any) => this.convertPrismaToApp(workflow));
   }
 
   async create(data: any): Promise<Workflow> {
@@ -112,7 +112,7 @@ export class WorkflowRepository {
     }
     
     const results = await this.prisma.workflow.findMany(options);
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: any) => this.convertPrismaToApp(workflow));
   }
 
   async findOne(filter?: any, include?: any): Promise<Workflow | null> {
@@ -182,6 +182,6 @@ export class WorkflowRepository {
         updatedAt: 'desc'
       }
     });
-    return results.map(workflow => this.convertPrismaToApp(workflow));
+    return results.map((workflow: any) => this.convertPrismaToApp(workflow));
   }
 }

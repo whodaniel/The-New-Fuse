@@ -16,14 +16,12 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       name: prismaWorkflow.name,
       description: prismaWorkflow.description ?? null,
       definition: prismaWorkflow.definition,
-      version: prismaWorkflow.version,
-      isEnabled: prismaWorkflow.isEnabled,
       status: prismaWorkflow.status,
       createdAt: prismaWorkflow.createdAt,
       updatedAt: prismaWorkflow.updatedAt,
       lastExecutedAt: prismaWorkflow.lastExecutedAt ?? null,
       agentId: prismaWorkflow.agentId ?? null,
-      userId: prismaWorkflow.userId ?? null,
+      creatorId: prismaWorkflow.creatorId ?? null,
       executions: prismaWorkflow.executions?.map((exec: any) => this.convertExecutionPrismaToApp(exec)) ?? [],
       steps: prismaWorkflow.steps?.map((step) => ({ ...step })) ?? [],
     };
@@ -40,8 +38,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       error: prismaExecution.error ?? null,
       startedAt: prismaExecution.startedAt,
       completedAt: prismaExecution.completedAt ?? null,
-      createdAt: prismaExecution.createdAt,
-      updatedAt: prismaExecution.updatedAt,
     };
   }
 
@@ -56,7 +52,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
           take: 10
         },
         agent: true,
-        user: true,
       }
     });
     return result ? this.convertPrismaToApp(result) : null;
@@ -68,7 +63,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -83,7 +77,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       }
     });
     return this.convertPrismaToApp(result);
@@ -99,7 +92,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       }
     });
     return this.convertPrismaToApp(result);
@@ -112,13 +104,12 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
     return this.convertPrismaToApp(result);
   }
 
-  async findByUserId(userId: string): Promise<Workflow[]> {
+  async findByCreatorId(creatorId: string): Promise<Workflow[]> {
     const results = await this.prisma.workflow.findMany({
-      where: { userId },
+      where: { creatorId },
       include: {
         executions: true,
         agent: true,
-        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -133,7 +124,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -148,7 +138,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       },
       orderBy: {
         updatedAt: 'desc'
@@ -167,7 +156,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       }
     });
     return this.convertPrismaToApp(result);
@@ -280,7 +268,7 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
 
     const successfulExecutions = await this.prisma.workflowExecution.count({
       where: {
-        status: WorkflowExecutionStatus.SUCCEEDED
+                status: WorkflowExecutionStatus.COMPLETED
       }
     });
 
@@ -322,7 +310,6 @@ export class WorkflowRepository extends BaseRepository<Workflow, Prisma.Workflow
       include: {
         executions: true,
         agent: true,
-        user: true,
       },
       orderBy: {
         updatedAt: 'desc'

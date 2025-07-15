@@ -64,6 +64,9 @@ export const SearchFilterBar: FC<SearchFilterBarProps> = ({
             {...params}
             placeholder="Priority"
             sx={{ minWidth: 150 }}
+            InputLabelProps={{
+              shrink: true
+            }}
           />
         )}
         renderTags={(value, getTagProps) =>
@@ -93,6 +96,9 @@ export const SearchFilterBar: FC<SearchFilterBarProps> = ({
             {...params}
             placeholder="Tags"
             sx={{ minWidth: 200 }}
+            InputLabelProps={{
+              shrink: true
+            }}
           />
         )}
         renderTags={(value, getTagProps) =>

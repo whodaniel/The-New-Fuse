@@ -1,6 +1,6 @@
 import { Injectable, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
-import IORedis = require('ioredis');
+import * as IORedis from 'ioredis';
 
 @Injectable()
 export class MemoryManager implements OnModuleDestroy {

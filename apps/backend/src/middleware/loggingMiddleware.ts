@@ -30,14 +30,14 @@ export class LoggingMiddleware implements NestMiddleware {
     const originalWrite = res.write;
     const chunks: Buffer[] = [];
 
-    res.write = function(chunk: any) {
+    (res as any).write = (chunk: any) => {
       if (chunk) {
         chunks.push(Buffer.from(chunk));
       }
       return originalWrite.apply(res, arguments as any);
     };
 
-    res.end = function(chunk: any) {
+    (res as any).end = (chunk: any) => {
       if (chunk) {
         chunks.push(Buffer.from(chunk));
       }
@@ -66,7 +66,7 @@ export class LoggingMiddleware implements NestMiddleware {
       }
 
       originalEnd.apply(res, arguments as any);
-    }.bind(this);
+    };
 
     next();
   }

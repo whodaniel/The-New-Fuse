@@ -1,20 +1,18 @@
-import { OnModuleDestroy, OnModuleInit } from "@nestjs/common";
-import Redis from "ioredis";
-import { ConfigService } from "@nestjs/config";
-export declare class RedisService implements OnModuleInit, OnModuleDestroy {
-  private readonly configService?;
-  private client;
-  private pubClient;
-  subClient: Redis;
-  constructor(configService?: ConfigService);
-  get(key: string): Promise<string | null>;
-  set(key: string, value: string): Promise<"OK">;
-  setex(key: string, ttl: number, value: string): Promise<"OK">;
-  del(key: string): Promise<number>;
-  exists(key: string): Promise<number>;
-  flushall(): Promise<"OK">;
-  publish(channel: string, message: string): Promise<number>;
-  subscribe(channel: string): Promise<void>;
-  onModuleInit(): Promise<void>;
-  onModuleDestroy(): Promise<void>;
+import { OnModuleDestroy } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
+export declare class RedisService implements OnModuleDestroy {
+    private readonly configService;
+    private client;
+    private readonly logger;
+    constructor(configService: ConfigService);
+    connect(): Promise<void>;
+    onModuleDestroy(): Promise<void>;
+    getClient(): Redis;
+    set(key: string, value: string, mode?: string, duration?: number): Promise<void>;
+    get(key: string): Promise<string | null>;
+    del(key: string): Promise<void>;
+    keys(pattern: string): Promise<string[]>;
+    flushDb(): Promise<void>;
 }
+//# sourceMappingURL=redis.service.d.ts.map

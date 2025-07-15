@@ -57,11 +57,6 @@ export function getFileName(path: string): string {
   return normalizePath(path).split('/').pop() || '';
 }
 
-export function getFileExtension(fileName: string): string {
-  const parts = fileName.split('.');
-  return parts.length > 1 ? parts.pop() || '' : '';
-}
-
 export function getFileNameWithoutExtension(fileName: string): string {
   const extension = getFileExtension(fileName);
   return extension ? fileName.slice(0, -(extension.length + 1)) : fileName;

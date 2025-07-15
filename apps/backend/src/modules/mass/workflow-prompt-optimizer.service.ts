@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PrismaService } from '../../lib/prisma/prisma.service';
-import { 
-  MassOptimizationConfig, 
-  WorkflowTopology, 
-  PerformanceMetrics 
+import { PrismaService } from '../../prisma/prisma.service';
+import {
+  MassOptimizationConfig,
+  WorkflowTopology,
+  PerformanceMetrics
 } from '@the-new-fuse/types';
 import { EvaluationHarnessService } from './prompt-optimizer.service';
 
@@ -375,7 +375,7 @@ export class WorkflowPromptOptimizerService {
 
     for (const item of sampleItems) {
       try {
-        const result = await this.evaluationHarness.evaluateWorkflowWithNodes(
+        const result = await this.evaluationHarness.evaluateTopology(
           tempNodes,
           edges,
           item,

@@ -1,3 +1,31 @@
 import { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata, TaskDependency, Task } from '@the-new-fuse/types';
-import { z } from '';
-    type: z.enum(['REQUIRED'
+import { z } from 'zod';
+
+export const TaskSchema = z.object({
+  type: z.enum(['REQUIRED', 'OPTIONAL', 'BACKGROUND']),
+  priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'URGENT']),
+  status: z.enum(['PENDING', 'RUNNING', 'COMPLETED', 'FAILED', 'CANCELLED']),
+  metadata: z.object({
+    title: z.string(),
+    description: z.string().optional(),
+    tags: z.array(z.string()).optional(),
+    dueDate: z.date().optional(),
+  }),
+  dependencies: z.array(z.string()).optional(),
+});
+
+export type TaskConfig = z.infer<typeof TaskSchema>;
+
+export interface TaskExecutionContext {
+  taskId: string;
+  userId: string;
+  workspaceId?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface TaskResult<T = any> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  metadata?: Record<string, any>;
+}

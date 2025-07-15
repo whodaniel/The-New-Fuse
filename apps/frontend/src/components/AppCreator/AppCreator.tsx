@@ -95,7 +95,7 @@ function AppCreator() {
               {availableModules.map(category => (<div key={category.category} className="space-y-2">
                   <h3 className="font-medium text-gray-700">{category.category}</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {category.modules.map(modul(e: any) => (<ui_1.Card key={module.name} variant={selectedModules.includes(module.name) ? 'gradient' : 'default'} className="cursor-pointer transition-all" onClick={() => handleModuleToggle(module.name)}>
+                    {category.modules.map((module: any) => (<ui_1.Card key={module.name} variant={selectedModules.includes(module.name) ? 'gradient' : 'default'} className="cursor-pointer transition-all" onClick={() => handleModuleToggle(module.name)}>
                         <ui_1.CardContent className="p-4">
                           <h4 className="font-medium">{module.name}</h4>
                           <p className="text-sm text-gray-600">{module.description}</p>

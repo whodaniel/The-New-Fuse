@@ -41,7 +41,7 @@ export function useWorkflowIntegration(): any {
     send('initialize_workflow_monitoring');
 
     return () => {
-      subscriptions.forEach(unsubscrib(e: any) => unsubscribe());
+      subscriptions.forEach((unsubscribe: any) => unsubscribe());
     };
   }, [subscribe, send]);
 

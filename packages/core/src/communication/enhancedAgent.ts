@@ -1,10 +1,49 @@
-import { createClient } from ';redis';
-import { EventEmitter } from ';events';
-      url: process.env.REDIS_URL || /redis://localhost:6379'
-    this.redis.on('error', (err: Error) => logger.error('Redis Client Error';
-    this.emit('ready'
-      status: 'online'
-        priority: ''
-        this.emit('message'
-        this.emit('')
-    this.emit('')
+import { Injectable } from '@nestjs/common';
+import { CommunicationService } from './CommunicationService';
+import { MessageType } from './CommunicationTypes';
+
+export interface AgentMessage {
+  id: string;
+  agentId: string;
+  content: string;
+  type: MessageType;
+  metadata?: Record<string, any>;
+}
+
+export interface AgentResponse {
+  message: string;
+  confidence: number;
+  actions?: string[];
+}
+
+@Injectable()
+export class EnhancedAgent {
+  constructor(private communicationService: CommunicationService) {}
+
+  async processMessage(message: AgentMessage): Promise<AgentResponse> {
+    // Basic message processing logic
+    const response: AgentResponse = {
+      message: `Processed message: ${message.content}`,
+      confidence: 0.8,
+      actions: ['analyze', 'respond'],
+    };
+
+    // Send response back to user
+    await this.communicationService.sendMessage(
+      message.agentId,
+      message.id,
+      'agent_response',
+      response,
+    );
+
+    return response;
+  }
+
+  async broadcastStatus(agentId: string, status: string): Promise<void> {
+    await this.communicationService.broadcastMessage(
+      agentId,
+      'agent_status',
+      { agentId, status, timestamp: new Date() },
+    );
+  }
+}

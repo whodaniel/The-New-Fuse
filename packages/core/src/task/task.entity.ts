@@ -5,26 +5,58 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Index,
-} from ''typeorm';
-} from './types';
-@Entity('tasks'
-  @PrimaryGeneratedColumn('uuid'
-    type: 'enum'
-    type: 'enum'
-    type: 'enum'
-  @Column('jsonb'
-  @Column('jsonb'
-  @Column('jsonb'
-  @Column('jsonb'
-  @Column({ type: 'timestamp'
-  @Column({ type: 'timestamp'
-  @Column({ type: 'timestamp'
-  @Column('')
-  @Index(['status', priority'
-  @Index(['type', status'
-  @Index(['
-// Example: @Column({ type: 'varchar', length: 255, nullable: true, default: ''
-// Example: @ManyToOne(() => User, user => user.tasks, { eager: false, onDelete: SET ';
-// Example: @Column({ type: 'jsonb', nullable: true, default: () => ''{}/';
-// 1. Ensure all `@Column`, `@PrimaryGeneratedColumn`, `@CreateDateColumn`, `@UpdateDateColumn` decorators are followed by a valid property declaration: `propertyName!: ''``;
-// 2. Check options passed to decorators: `@Column({ type: ''``;
+} from 'typeorm';
+import { TaskStatus, TaskPriority } from './types';
+
+@Entity('tasks')
+@Index(['status', 'priority'])
+@Index(['type', 'status'])
+@Index(['userId'])
+export class Task {
+  @PrimaryGeneratedColumn('uuid')
+  id!: string;
+
+  @Column({ type: 'varchar', length: 255 })
+  type!: string;
+
+  @Column({ 
+    type: 'enum',
+    enum: TaskStatus,
+    default: TaskStatus.PENDING
+  })
+  status!: TaskStatus;
+
+  @Column({ 
+    type: 'enum',
+    enum: TaskPriority,
+    default: TaskPriority.MEDIUM
+  })
+  priority!: TaskPriority;
+
+  @Column('jsonb', { nullable: true })
+  data?: any;
+
+  @Column('jsonb', { nullable: true })
+  result?: any;
+
+  @Column('jsonb', { nullable: true })
+  metadata?: any;
+
+  @Column({ type: 'text', nullable: true })
+  error?: string;
+
+  @Column({ type: 'timestamp', nullable: true })
+  startTime?: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  endTime?: Date;
+
+  @Column({ type: 'uuid' })
+  userId!: string;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
+}

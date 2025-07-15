@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
 import { PrismaService } from '../services/prisma.service';
-import { SmartAccountService } from '../smart-accounts/smart-account.service';
+import { SmartAccountService, SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service';
 
 @Injectable()
 export class WalletsService {
@@ -13,7 +13,13 @@ export class WalletsService {
     private readonly smartAccountService: SmartAccountService
   ) {}
 
-  async createWallet(userId: string, verifierId: string, chainId: number = 1, userType: 'HUMAN' | 'AI' = 'HUMAN', enableSmartAccount: boolean = true) {
+  async createWallet(
+    userId: string,
+    verifierId: string,
+    _chainId: number = 1,
+    userType: 'HUMAN' | 'AI' = 'HUMAN',
+    enableSmartAccount: boolean = true
+  ): Promise<any> {
     try {
       this.logger.log(`Creating wallet for ${userType} user ${userId} with verifierId ${verifierId}`);
       
@@ -29,7 +35,7 @@ export class WalletsService {
         this.logger.log(`Wallet already exists for address ${eoaAddress}`);
         
         // If Smart Account not enabled and requested, enable it
-        if (enableSmartAccount && !existingWallet.smartAccountEnabled) {
+        if (enableSmartAccount && existingWallet.type !== 'SMART_ACCOUNT') {
           await this.smartAccountService.enableSmartAccountForWallet(existingWallet.id);
           return await this.prisma.wallet.findUnique({
             where: { id: existingWallet.id }
@@ -45,17 +51,25 @@ export class WalletsService {
       // Create new wallet record with EOA as primary
       const wallet = await this.prisma.wallet.create({
         data: {
-          userId,
           address: eoaAddress, // Primary EOA address
-          chain_id: chainId,
-          wallet_type: initialWalletType,
-          smartAccountEnabled: false, // Will be enabled below if requested
-          user: {
+          type: initialWalletType,
+          agent: {
             connectOrCreate: {
-              where: { verifierId },
+              where: { id: userId },
               create: {
-                verifierId,
-                userType
+                id: userId,
+                name: `Agent for ${verifierId}`,
+                type: userType === 'AI' ? 'AI_ASSISTANT' : 'HUMAN_AGENT',
+                user: {
+                  connectOrCreate: {
+                    where: { username: verifierId },
+                    create: {
+                      username: verifierId,
+                      email: `${verifierId}@tnf.ai`,
+                      role: userType === 'AI' ? 'AI_AGENT' : 'USER'
+                    }
+                  }
+                }
               }
             }
           }
@@ -83,15 +97,15 @@ export class WalletsService {
     }
   }
 
-  async enableSmartAccountForWallet(walletId: string) {
+  async enableSmartAccountForWallet(walletId: string): Promise<SmartAccountDeploymentResult> {
     return await this.smartAccountService.enableSmartAccountForWallet(walletId);
   }
 
-  async deploySmartAccountForWallet(walletId: string) {
+  async deploySmartAccountForWallet(walletId: string): Promise<SmartAccountDeploymentResult> {
     return await this.smartAccountService.deploySmartAccount(walletId);
   }
 
-  async getWalletWithSmartAccountInfo(walletId: string) {
+  async getWalletWithSmartAccountInfo(walletId: string): Promise<any> {
     const wallet = await this.prisma.wallet.findUnique({
       where: { id: walletId },
       include: { user: true, transactions: true }
@@ -103,19 +117,19 @@ export class WalletsService {
 
     return {
       ...wallet,
-      smartAccountInfo: wallet.smartAccountEnabled 
+      smartAccountInfo: wallet.type === 'SMART_ACCOUNT'
         ? await this.smartAccountService.getSmartAccountInfo(walletId)
         : null
     };
   }
 
-  async getWalletsByUserId(userId: string) {
+  async getWalletsByUserId(userId: string): Promise<any[]> {
     return this.prisma.wallet.findMany({
-      where: { userId }
+      where: { agent: { user: { id: userId } } }
     });
   }
 
-  async getWalletByAddress(address: string) {
+  async getWalletByAddress(address: string): Promise<any | null> {
     return this.prisma.wallet.findUnique({
       where: { address }
     });

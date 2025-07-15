@@ -1,17 +1,17 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { decode as HTMLDecode } from "he";
 import truncate from "truncate";
-import ModalWrapper from "@/components/ModalWrapper";
+import { ModalWrapper } from "@/components/ModalWrapper";
 import { middleTruncate } from "@/utils/directories";
 import {
   FileText,
   Info,
-  ArrowSquareOut,
-  GithubLogo,
+  ExternalLink,
+  Github,
   Link as LinkIcon,
   XCircle,
-  YoutubeLogo,
-} from "@phosphor-icons/react";
+  Youtube,
+} from "lucide-react";
 import ConfluenceLogo from "@/media/dataConnectors/confluence.png";
 import { toPercentString } from "@/utils/numbers";
 
