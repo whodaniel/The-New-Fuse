@@ -17,7 +17,7 @@
     "paths": {
       "@the-new-fuse/types": ["../types/dist"],
       "@the-new-fuse/types/*": ["../types/dist/*"],
-      "@the-new-fuse/database": ["../db/dist"],
+      "@the-new-fuse/database": ["../database/dist"],
       "@the-new-fuse/database/*": ["../db/dist/*"]
     }
   },

@@ -6,7 +6,7 @@ import { ThemeProvider } from './contexts/ThemeContext';
 import { AppRoutes } from './routes';
 import theme from './theme';
 
-export default function App() {
+export function App() {
   return (
     <ChakraProvider theme={theme}>
       <ThemeProvider>
@@ -19,3 +19,5 @@ export default function App() {
     </ChakraProvider>
   );
 }
+
+export default App;

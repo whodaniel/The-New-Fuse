@@ -1,1 +1,1 @@
-export * from '@the-new-fuse/ui-components/src/core/input';
+export { default as Input } from '@the-new-fuse/ui-components/src/core/input';
