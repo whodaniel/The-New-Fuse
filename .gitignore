@@ -25,10 +25,19 @@ src/**/*.js
 src/**/*.js.map
 src/**/*.d.ts
 src/**/*.d.ts.map
+packages/api-gateway/**/*.js
+packages/api-gateway/**/*.js.map
+packages/api-gateway/**/*.d.ts
+packages/api-gateway/**/*.d.ts.map
+src/renderer/
 
 # Specific generated directories
 generated/
 apps/backend/src/scheduling/
+
+# Documentation/Planning files
+REAL_USER_JOURNEYS.md
+USER_JOURNEY_MAP.md
 
 # Testing
 coverage/
@@ -36,6 +45,7 @@ coverage/
 # Environment variables
 .env
 .env.local
+.env.development.local
 .env.development.local
 .env.test.local
 .env.production.local
