@@ -8,6 +8,28 @@ build/
 dist/
 *.tsbuildinfo
 
+# Compiled output directories
+apps/*/dist/
+packages/*/dist/
+
+# Generated files within source directories
+apps/**/*.js
+apps/**/*.js.map
+apps/**/*.d.ts
+apps/**/*.d.ts.map
+packages/**/*.js
+packages/**/*.js.map
+packages/**/*.d.ts
+packages/**/*.d.ts.map
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+src/**/*.d.ts.map
+
+# Specific generated directories
+generated/
+apps/backend/src/scheduling/
+
 # Testing
 coverage/
 
@@ -19,6 +41,16 @@ coverage/
 .env.production.local
 
 # IDE and editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.history/
 
 # Large files we don't want in git
 temp-import-list.txt
@@ -27,7 +59,6 @@ file_structure.txt
 *.dylib.node
 *.wasm
 *.zip
-# Added to ignore large binaries and specific large files
 swc.darwin-x64.node
 schema-engine-darwin
 migration-engine-darwin
@@ -42,16 +73,6 @@ node-v*-*/
 # Yarn/npm cache files
 .yarn/cache/
 **/node_modules/@esbuild/
-.idea/
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-*.sublime-project
-*.sublime-workspace
-.DS_Store
-.history/
 
 # Logs
 logs
@@ -72,11 +93,10 @@ data/vector-db/
 .cache
 .parcel-cache
 
-# Generated files
+# Prisma client generated files (already covered by packages/*/dist/ but good to be explicit)
 packages/database/prisma/client/
 
 # Misc
-.DS_Store
 *.pem
 
 # Port Management
