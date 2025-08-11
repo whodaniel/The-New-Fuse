@@ -60,4 +60,3 @@ class WebSocketService extends EventEmitter {
 }
 
 export const webSocketService = new WebSocketService();
-//# sourceMappingURL=websocket.js.map

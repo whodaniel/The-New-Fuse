@@ -87,4 +87,3 @@ export class ResourceManager {
         return Math.ceil(text.length / 4);
     }
 }
-//# sourceMappingURL=resource_manager.js.map

@@ -59,7 +59,7 @@ export class ExtensionRegistry extends EventEmitter {
   };
   private initialized: boolean = false;
 
-  constructor(logger: Logger, config?: Partial<ExtensionRegistryConfig>) {
+    constructor(logger: Logger, config?: Partial<ExtensionRegistryConfig>) {
     super();
     this.logger = logger;
     this.config = {

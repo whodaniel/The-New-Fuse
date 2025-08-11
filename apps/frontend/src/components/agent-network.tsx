@@ -54,4 +54,3 @@ export const AgentNetwork = ({ agents, tasks, onNodeClick }) => {
       <ForceGraph2D ref={fgRef} graphData={{ nodes: agents, links: [] }} nodeLabel="name" nodeCanvasObject={nodeCanvasObject} nodePointerAreaPaint={nodePointerAreaPaint} onNodeClick={handleNodeClick} onWheel={handleZoom}/>
     </div>);
 };
-//# sourceMappingURL=agent-network.js.map

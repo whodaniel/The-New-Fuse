@@ -1,3 +1,3 @@
 import typeorm from 'typeorm';
-        session.userId = 'userId'';
+        session.userId = 'placeholder';
             order: '{ '

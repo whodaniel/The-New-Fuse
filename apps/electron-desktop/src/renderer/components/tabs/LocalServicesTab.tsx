@@ -25,7 +25,7 @@ import {
   FormControl,
   FormLabel
 } from '@chakra-ui/react'
-import { FiPlus, FiTrash2, FiRefreshCw, FiPlay, FiServer, FiActivity } from 'react-icons/fi'
+import { FiPlus, FiTrash2, FiRefreshCw, FiPlay, FiServer, FiActivity, FiExternalLink, FiMonitor } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
 
 export const LocalServicesTab: React.FC = () => {
@@ -39,6 +39,38 @@ export const LocalServicesTab: React.FC = () => {
   const [customCommand, setCustomCommand] = useState('')
   const [commandArgs, setCommandArgs] = useState('')
 
+  // Default TNF Services - Updated for current architecture
+  const defaultServices = [
+    { 
+      name: 'Theia IDE', 
+      port: 3006, 
+      url: 'http://localhost:3006',
+      description: 'AI-powered IDE with MCP integration',
+      type: 'development'
+    },
+    { 
+      name: 'Backend API', 
+      port: 3004, 
+      url: 'http://localhost:3004/api/health',
+      description: 'NestJS backend server (API endpoints)',
+      type: 'api'
+    },
+    { 
+      name: 'API Gateway', 
+      port: 5002, 
+      url: 'http://localhost:5002/v1',
+      description: 'Gateway and proxy service',
+      type: 'gateway'
+    },
+    { 
+      name: 'Electron Desktop', 
+      port: 5174, 
+      url: 'http://localhost:5174',
+      description: 'Electron renderer dev server',
+      type: 'development'
+    }
+  ]
+
   const predefinedCommands = [
     { value: 'restart_server', label: 'Restart Server', description: 'Restart a local development server' },
     { value: 'kill_process', label: 'Kill Process', description: 'Terminate a process by port' },
@@ -47,6 +79,42 @@ export const LocalServicesTab: React.FC = () => {
     { value: 'file_operation', label: 'File Operation', description: 'Perform file system operations' },
     { value: 'custom', label: 'Custom Command', description: 'Execute a custom command' }
   ]
+
+  // Auto-add default service ports to monitoring
+  React.useEffect(() => {
+    const addDefaultPorts = async () => {
+      for (const service of defaultServices) {
+        if (!monitored.includes(service.port)) {
+          try {
+            if (window.api) {
+              await window.api.portsAdd(service.port)
+            }
+          } catch (error) {
+            console.log(`Failed to add port ${service.port} to monitoring`)
+          }
+        }
+      }
+    }
+    addDefaultPorts()
+  }, [monitored])
+
+  const handleOpenService = (url: string) => {
+    if (window.api && window.api.openExternal) {
+      window.api.openExternal(url)
+    } else {
+      // Fallback to creating a new tab in the same window
+      window.open(url, '_blank')
+    }
+  }
+
+  const getServiceStatus = (port: number) => {
+    const status = statuses.find(s => s.port === port)
+    return status?.isOpen || false
+  }
+
+  const getServiceByPort = (port: number) => {
+    return defaultServices.find(service => service.port === port)
+  }
 
   const handleAddPort = async () => {
     if (monitored.includes(newPort)) {
@@ -202,6 +270,76 @@ export const LocalServicesTab: React.FC = () => {
 
   return (
     <VStack spacing={6} align="stretch">
+      {/* TNF Services Quick Access */}
+      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
+        <CardBody>
+          <VStack spacing={4} align="stretch">
+            <HStack justify="space-between">
+              <Text fontSize="lg" fontWeight="bold">TNF Services</Text>
+              <Badge colorScheme="blue" variant="solid">
+                Quick Access
+              </Badge>
+            </HStack>
+            
+            <Text fontSize="sm" color="gray.400">
+              Direct access to running TNF services - Browser Hub is now the central interface
+            </Text>
+
+            <Grid templateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap={4}>
+              {defaultServices.map(service => {
+                const isRunning = getServiceStatus(service.port)
+                return (
+                  <GridItem key={service.port}>
+                    <Card 
+                      size="sm" 
+                      bg={isRunning ? "green.900" : "red.900"} 
+                      borderColor={isRunning ? "green.400" : "red.400"}
+                      borderWidth="2px"
+                    >
+                      <CardBody>
+                        <VStack spacing={3}>
+                          <HStack justify="space-between" w="100%">
+                            <VStack align="start" spacing={0}>
+                              <Text fontWeight="bold" fontSize="md">{service.name}</Text>
+                              <Text fontSize="xs" color="gray.400">:{service.port}</Text>
+                            </VStack>
+                            <Badge 
+                              colorScheme={isRunning ? 'green' : 'red'} 
+                              variant="solid"
+                            >
+                              {isRunning ? 'Running' : 'Offline'}
+                            </Badge>
+                          </HStack>
+                          
+                          <Text fontSize="xs" color="gray.300" textAlign="center">
+                            {service.description}
+                          </Text>
+                          
+                          <HStack w="100%" justify="center">
+                            <Button
+                              size="xs"
+                              colorScheme={isRunning ? "blue" : "gray"}
+                              leftIcon={<FiExternalLink />}
+                              onClick={() => handleOpenService(service.url)}
+                              isDisabled={!isRunning}
+                              flex={1}
+                            >
+                              {isRunning ? 'Open' : 'Unavailable'}
+                            </Button>
+                          </HStack>
+                        </VStack>
+                      </CardBody>
+                    </Card>
+                  </GridItem>
+                )
+              })}
+            </Grid>
+          </VStack>
+        </CardBody>
+      </Card>
+
+      <Divider />
+
       {/* Native Host Status */}
       {!systemStatus.nativeHost && (
         <Alert status="warning" borderRadius="lg">
@@ -268,6 +406,7 @@ export const LocalServicesTab: React.FC = () => {
             <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={3}>
               {monitored.map(port => {
                 const status = getPortStatus(port)
+                const service = getServiceByPort(port)
                 return (
                   <GridItem key={port}>
                     <Card 
@@ -279,7 +418,12 @@ export const LocalServicesTab: React.FC = () => {
                       <CardBody>
                         <VStack spacing={2}>
                           <HStack justify="space-between" w="100%">
-                            <Text fontWeight="bold" fontSize="md">:{port}</Text>
+                            <VStack align="start" spacing={0}>
+                              <Text fontWeight="bold" fontSize="md">:{port}</Text>
+                              {service && (
+                                <Text fontSize="xs" color="blue.300">{service.name}</Text>
+                              )}
+                            </VStack>
                             <IconButton
                               aria-label="Remove port"
                               icon={<FiTrash2 />}
@@ -301,7 +445,19 @@ export const LocalServicesTab: React.FC = () => {
                                 {getStatusText(status.isOpen)}
                               </Badge>
                               
-                              {status.service && (
+                              {service && status.isOpen && (
+                                <Button
+                                  size="xs"
+                                  colorScheme="blue"
+                                  leftIcon={<FiExternalLink />}
+                                  onClick={() => handleOpenService(service.url)}
+                                  w="100%"
+                                >
+                                  Open
+                                </Button>
+                              )}
+                              
+                              {status.service && !service && (
                                 <Text fontSize="xs" color="gray.400" textAlign="center">
                                   {status.service}
                                 </Text>

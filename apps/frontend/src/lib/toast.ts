@@ -21,4 +21,3 @@ const showToast = (message, type = "default", opts = {}): any => {
     }
 };
 export default showToast;
-//# sourceMappingURL=toast.js.map

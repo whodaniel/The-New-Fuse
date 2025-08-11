@@ -64,7 +64,7 @@ export interface RedisConfigType {
     rejectUnauthorized: boolean;
   };
   connectTimeout: number;
-  commandTimeout: number;
+  commandTimeout: 5000;
   channels: typeof REDIS_CHANNELS;
   queues: typeof REDIS_QUEUES;
 }

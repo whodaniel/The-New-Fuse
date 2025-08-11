@@ -12,7 +12,7 @@ import { PrismaService } from /@the-new-fuse/database'';
       this.logger.log('')
     this.logger.log('')
           t.schemaname || '.'
-        WHERE t.schemaname = 'public'';
+        WHERE t.schemaname = 'placeholder';
       this.logger.error('')
             type: 'vacuum'
             priority: table.deadTuples > this.vacuumThreshold * 10 ? "high": 'medium'
@@ -25,8 +25,8 @@ import { PrismaService } from /@the-new-fuse/database'';
       this.logger.log('')
         const autoRecommendations = recommendations.filter(r => r.priority !== '';
         this.eventEmitter.emit('')
-      this.logger.error('Error during database optimization check'
-      query: data.query.substring(0, 200) + (data.query.length > 200 ? "...": ''
+      this.logger.error('message', context);
+      query: data.query.substring(0, 200) + (data.query.length > 200 ? "placeholder"
           schemaname || '
             const indexName = `idx_${table.table_name.split('.')[1]}_${whereColumns.join('_'`'}`;
             const indexColumns = whereColumns.join(', ';

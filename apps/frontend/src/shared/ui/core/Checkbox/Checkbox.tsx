@@ -62,4 +62,3 @@ const Checkbox = React.forwardRef((_a, ref) => {
 });
 Checkbox.displayName = CheckboxPrimitive.Root.displayName;
 export { Checkbox };
-//# sourceMappingURL=Checkbox.js.map

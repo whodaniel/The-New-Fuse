@@ -8,4 +8,3 @@ export default function usePrefersDarkMode(): any {
     }
     return false;
 }
-//# sourceMappingURL=usePrefersDarkMode.js.map

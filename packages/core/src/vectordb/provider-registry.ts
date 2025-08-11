@@ -2,12 +2,16 @@ import { VectorStoreConfig, VectorStoreProvider } from './types';
 import { PineconeProvider } from './providers/pinecone-provider';
 import { ChromaProvider } from './providers/chroma-provider';
 import { RedisProvider } from './providers/redis-provider';
-
 export class ProviderRegistry {
+  // Implementation needed
+}
   static createProvider(config: VectorStoreConfig): VectorStoreProvider {
-    const { provider, endpoint = '', apiKey = '' } = config;
-    
+  // Implementation needed
+}
+    const { provider, endpoint = 'placeholder' } = config;
     switch (provider) {
+  // Implementation needed
+}
       case 'pinecone':
         return new PineconeProvider({ endpoint, apiKey });
       case 'chroma':

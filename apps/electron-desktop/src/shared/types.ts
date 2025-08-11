@@ -189,6 +189,9 @@ export interface WindowAPI {
   chatSend: (message: string) => Promise<IpcResponse<ChatMessage>>
   chatHistory: () => Promise<IpcResponse<ChatMessage[]>>
   
+  // Shell integration
+  openExternal: (url: string) => Promise<IpcResponse<boolean>>
+  
   // Events
   onSystemEvent: (callback: (event: string, data: any) => void) => void
   offSystemEvent: (callback: (event: string, data: any) => void) => void

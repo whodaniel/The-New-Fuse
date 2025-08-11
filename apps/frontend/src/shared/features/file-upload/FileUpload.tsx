@@ -105,4 +105,3 @@ export function FileUpload({ onUpload, maxSize = 10 * 1024 * 1024, acceptedTypes
       </div>
     </Card>);
 }
-//# sourceMappingURL=FileUpload.js.map

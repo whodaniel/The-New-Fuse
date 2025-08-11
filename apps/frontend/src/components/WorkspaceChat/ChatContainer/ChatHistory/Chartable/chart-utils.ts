@@ -94,4 +94,3 @@ export const themeColorRange = [
     "pink",
     "rose",
 ];
-//# sourceMappingURL=chart-utils.js.map

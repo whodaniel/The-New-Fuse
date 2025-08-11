@@ -13,7 +13,7 @@
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host 0.0.0.0 --port 4173",
     "clear-ports": "node scripts/clear-ports.js",
-    "clean": "rimraf dist .turbo node_modules"
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@chakra-ui/avatar": "^2.3.0",

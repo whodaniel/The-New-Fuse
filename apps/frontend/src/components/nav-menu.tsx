@@ -51,4 +51,3 @@ function NavMenu() {
     </nav>);
 }
 export {};
-//# sourceMappingURL=nav-menu.js.map

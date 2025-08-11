@@ -1,8 +1,5 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ExportFormat = void 0;
 // Export types
-var ExportFormat;
+export var ExportFormat;
 (function (ExportFormat) {
     ExportFormat["JSON"] = "JSON";
     ExportFormat["CSV"] = "CSV";
@@ -10,4 +7,5 @@ var ExportFormat;
     ExportFormat["PDF"] = "PDF";
     ExportFormat["MARKDOWN"] = "MARKDOWN";
     ExportFormat["HTML"] = "HTML";
-})(ExportFormat || (exports.ExportFormat = ExportFormat = {}));
+})(ExportFormat || (ExportFormat = {}));
+//# sourceMappingURL=export.js.map

@@ -1,5 +1,9 @@
 declare module 'graphology' {
+  // Implementation needed
+}
   export class Graph {
+  // Implementation needed
+}
     addNode(node: string, attributes?: unknown): void;
     addEdge(source: string, target: string, attributes?: unknown): void;
     nodes(): string[];

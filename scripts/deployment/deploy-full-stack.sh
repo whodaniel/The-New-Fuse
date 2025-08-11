@@ -283,7 +283,8 @@ deploy_backend() {
     
     # Deploy API
     print_status "Deploying API service..."
-    docker-compose -f docker-compose.production.yml up -d api
+        kubectl apply -f k8s/{{ ENVIRONMENT }}/api-deployment.yaml
+    kubectl apply -f k8s/{{ ENVIRONMENT }}/api-service.yaml
     
     # Wait for API to be healthy
     print_status "Waiting for API to be healthy..."

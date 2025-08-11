@@ -55,4 +55,3 @@ async function main(): any {
 }
 main().catch(console.error);
 export {};
-//# sourceMappingURL=basic_usage.js.map

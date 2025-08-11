@@ -129,4 +129,3 @@ export class CommunicationManager extends EventEmitter {
         return ((_a = this.ws) === null || _a === void 0 ? void 0 : _a.readyState) === WebSocket.OPEN;
     }
 }
-//# sourceMappingURL=communication.js.map

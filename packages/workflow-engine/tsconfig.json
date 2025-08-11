@@ -1,8 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
+    "composite": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
@@ -24,22 +25,24 @@
     "resolveJsonModule": true,
     "paths": {
       "@/*": ["./src/*"],
-      "@tnf/relay-core": ["../relay-core/src/index"],
+      "@the-new-fuse/database": ["../database/src"],
+      "@the-new-fuse/database/*": ["../database/src/*"],
+      "@the-new-fuse/security": ["../security/src"],
+      "@the-new-fuse/security/*": ["../security/src/*"],
+      "@tnf/relay-core": ["../relay-core/src"],
       "@tnf/relay-core/*": ["../relay-core/src/*"]
     }
   },
-  "include": [
-    "src/**/*"
+  "include": ["src"],
+  "references": [
+    { "path": "../relay-core" },
+    { "path": "../security" },
+    { "path": "../database" }
   ],
   "exclude": [
     "node_modules",
     "dist",
     "**/*.test.ts",
     "**/*.spec.ts"
-  ],
-  "references": [
-    {
-      "path": "../relay-core"
-    }
   ]
 }

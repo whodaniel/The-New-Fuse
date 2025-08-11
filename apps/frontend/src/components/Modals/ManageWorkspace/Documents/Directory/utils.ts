@@ -44,4 +44,3 @@ export function filterFileSearchResults(files: FileSearchResult | null, searchTe
 
     return searchResult;
 }
-//# sourceMappingURL=utils.js.map

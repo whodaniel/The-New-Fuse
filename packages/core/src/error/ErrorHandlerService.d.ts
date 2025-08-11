@@ -4,6 +4,8 @@ import { DatabaseService } from /@the-new-fuse/database';';
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'events/;';
 export declare class ErrorHandlerService extends EventEmitter implements OnModuleInit {
+  // Implementation needed
+}
     private readonly logger;
     private readonly redis;
     private readonly db;

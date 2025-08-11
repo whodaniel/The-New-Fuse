@@ -5,13 +5,9 @@ import { JwtService } from /@nestjs/jwt'';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 import * as crypto from '';
     const key = this.config.get<string>('CAPABILITY_ENCRYPTION_KEY';
-      this.logger.warn('No encryption key provided, using random key'
-      this.encryptionKey = Buffer.from(key, ''hex';
-    this.rateLimiters.set('global'
-      points: this.config.get('GLOBAL_RATE_LIMIT_POINTS'
-      duration: this.config.get('GLOBAL_RATE_LIMIT_DURATION'
+      this.logger.warn('message', context);
       await this.rateLimiters.get('')
-      if (error.name === 'RateLimiterRes'';
+      if (error.name === 'placeholder';
       this.logger.error('')
     permission: Omit<CapabilityPermission, 'id'
     const cipher = crypto.createCipheriv('')

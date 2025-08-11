@@ -4,6 +4,8 @@
  */
 
 export interface WorkflowNodePort {
+  // Implementation needed
+}
   name: string;
   type: 'input' | 'output';
   dataType: string;
@@ -11,6 +13,8 @@ export interface WorkflowNodePort {
 }
 
 export interface WorkflowStepConfig {
+  // Implementation needed
+}
   [key: string]: any;
   url?: string;
   method?: string;
@@ -23,12 +27,16 @@ export interface WorkflowStepConfig {
   parallel?: boolean;
   timeout?: number;
   retry?: {
+  // Implementation needed
+}
     attempts: number;
     delay: number;
   };
 }
 
 export interface WorkflowStep {
+  // Implementation needed
+}
   id: string;
   name: string;
   type: WorkflowStepType;
@@ -36,6 +44,8 @@ export interface WorkflowStep {
   config: WorkflowStepConfig;
   dependencies?: string[];
   retryPolicy?: {
+  // Implementation needed
+}
     maxAttempts: number;
     backoff: 'linear' | 'exponential';
   };
@@ -44,6 +54,8 @@ export interface WorkflowStep {
 }
 
 export interface WorkflowTemplate {
+  // Implementation needed
+}
   id: string;
   name: string;
   version: string;
@@ -51,6 +63,8 @@ export interface WorkflowTemplate {
   tags?: string[];
   steps: WorkflowStep[];
   metadata?: {
+  // Implementation needed
+}
     author?: string;
     createdAt?: string;
     updatedAt?: string;
@@ -59,19 +73,27 @@ export interface WorkflowTemplate {
   };
   variables?: Record<string, any>;
   triggers?: {
+  // Implementation needed
+}
     type: 'manual' | 'scheduled' | 'webhook' | 'event';
     config?: any;
   }[];
 }
 
 export interface WorkflowExecution {
+  // Implementation needed
+}
   id: string;
   templateId: string;
   templateVersion: string;
   status: WorkflowStatus;
   context: Record<string, any>;
   steps: {
+  // Implementation needed
+}
     [stepId: string]: {
+  // Implementation needed
+}
       status: WorkflowStatus;
       output?: any;
       error?: string;
@@ -87,6 +109,8 @@ export interface WorkflowExecution {
 }
 
 export enum WorkflowStatus {
+  // Implementation needed
+}
   PENDING = 'pending',
   RUNNING = 'running',
   COMPLETED = 'completed',
@@ -98,6 +122,8 @@ export enum WorkflowStatus {
 }
 
 export enum WorkflowStepType {
+  // Implementation needed
+}
   API_CALL = 'API_CALL',
   DATA_TRANSFORM = 'DATA_TRANSFORM',
   CONDITION = 'CONDITION',
@@ -110,6 +136,8 @@ export enum WorkflowStepType {
 }
 
 export enum WorkflowCategory {
+  // Implementation needed
+}
   ACCESSIBILITY = 'ACCESSIBILITY',
   I18N = 'I18N',
   SECURITY = 'SECURITY',
@@ -118,6 +146,8 @@ export enum WorkflowCategory {
 }
 
 export interface WorkflowExecutionContext {
+  // Implementation needed
+}
   template: WorkflowTemplate;
   execution: WorkflowExecution;
   variables: Record<string, any>;
@@ -125,11 +155,17 @@ export interface WorkflowExecutionContext {
 }
 
 export interface WorkflowExecutionResult {
+  // Implementation needed
+}
   success: boolean;
   output?: any;
   error?: string;
   steps: {
+  // Implementation needed
+}
     [stepId: string]: {
+  // Implementation needed
+}
       success: boolean;
       output?: any;
       error?: string;
@@ -140,13 +176,17 @@ export interface WorkflowExecutionResult {
 }
 
 export interface WorkflowValidationResult {
+  // Implementation needed
+}
   valid: boolean;
   errors: string[];
   warnings: string[];
 }
 
 export interface WorkflowMigration {
+  // Implementation needed
+}
   fromVersion: string;
   toVersion: string;
-  migrate: (template: WorkflowTemplate) => WorkflowTemplate;
+  migrate(template: WorkflowTemplate) => WorkflowTemplate;
 }

@@ -136,4 +136,3 @@ function OptionsMenu({ containerRef, workspace, thread, onRemove, close }) {
       </button>
     </div>);
 }
-//# sourceMappingURL=index.js.map

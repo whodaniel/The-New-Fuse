@@ -1,10 +1,14 @@
 export declare const RedisChannels: {
+  // Implementation needed
+}
     MESSAGE_PROCESSING: string;
     PATTERN_RECOGNITION: string;
     STATE_UPDATES: string;
     SERVICE_HEALTH: string;
 };
 export declare const RedisConfig: {
+  // Implementation needed
+}
     HOST: string;
     PORT: number;
     KEY_PREFIX: string;

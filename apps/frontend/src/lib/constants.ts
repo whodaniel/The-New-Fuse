@@ -36,4 +36,3 @@ export function fullApiUrl(): any {
     return `${window.location.origin}/api`;
 }
 export const POPUP_BROWSER_EXTENSION_EVENT = "NEW_BROWSER_EXTENSION_CONNECTION";
-//# sourceMappingURL=constants.js.map

@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { PrismaService } from '../services/prisma.service';
+import { TransactionStatus } from '@the-new-fuse/database/generated/prisma';
 
 export interface SecurityAlert {
   type: 'HIGH_RISK_TRANSACTION' | 'WEB3AUTH_FAILURE' | 'AGENT_ANOMALY' | 'BUNDLER_ERROR' | 'PAYMASTER_ERROR';
@@ -142,7 +143,7 @@ export class WalletMonitoringService {
     const gasStats = await this.prisma.transaction.aggregate({
       where: {
         createdAt: { gte: last24h },
-        status: 'COMPLETED'
+        status: 'COMPLETED' as TransactionStatus
       },
       _avg: { value: true }
     });

@@ -15,4 +15,3 @@ function ThemeToggle() {
     </button_1.Button>);
 }
 export {};
-//# sourceMappingURL=theme-toggle.js.map

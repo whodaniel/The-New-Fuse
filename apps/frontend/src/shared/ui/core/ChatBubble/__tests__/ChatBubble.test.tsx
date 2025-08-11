@@ -94,4 +94,3 @@ describe('ChatBubble', () => {
         expect(screen.getByText('Edited message')).toBeInTheDocument();
     });
 });
-//# sourceMappingURL=ChatBubble.test.js.map

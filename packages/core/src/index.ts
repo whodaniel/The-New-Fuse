@@ -1,102 +1,77 @@
-// Minimal core package export to resolve import errors
-// TODO: Implement proper core functionality
+/**
+ * @fileoverview Core package exports for The New Fuse platform
+ * Production-ready implementations of core services and utilities
+ */
 
-export class SystemMonitor {
-  constructor() {}
-  start() {}
-  stop() {}
-}
+// Core Services - Only export what we've properly implemented
+export { SystemMonitor } from './services/SystemMonitor';
+export { MetricsCollector } from './services/MetricsCollector';
+export { PerformanceMonitor } from './services/PerformanceMonitor';
+export { UnifiedMonitoringService } from './services/UnifiedMonitoringService';
+export { LocalAIDetectionService } from './services/LocalAIDetectionService';
+export { AgentLLMService, LLMResponse } from './services/AgentLLMService';
+export { PromptService, PromptTemplate, PromptContext, GeneratedPrompt } from './services/PromptService';
+export { FeatureFlagService } from './services/FeatureFlagService';
+export { MongoFeatureFlagService } from './services/MongoFeatureFlagService';
 
-export class MetricsCollector {
-  constructor() {}
-  collect() {}
-}
+// Agent Services - Only export working implementations
+export { AgentOrchestrator, Task, Agent, TaskResult } from './agents/agent-orchestrator';
+export { AgentSwarmOrchestrationService } from './agents/AgentSwarmOrchestrationService';
 
-export class PerformanceMonitor {
-  constructor() {}
-  monitor() {}
-}
+// Memory System
+export { MemorySystem } from './memory/MemorySystem';
+export { MemoryManager } from './memory/MemoryManager';
 
-export class AgentLLMService {
-  constructor() {}
-  process() {}
-}
+// Workflow System
+export { WorkflowEngine } from './workflow/WorkflowEngine';
+export { WorkflowExecutor } from './workflow/WorkflowExecutor';
 
-export class MemorySystem {
-  constructor() {}
-  store() {}
-  retrieve() {}
-}
+// Configuration and Database
+export { ConfigService } from './config/ConfigService';
+export { DatabaseService } from './database/DatabaseService';
 
-export class PromptService {
-  constructor() {}
-  generatePrompt() {}
-}
+// Redis Services and Constants
+export { RedisService } from './redis/redis.service';
+export { REDIS_CHANNELS, REDIS_QUEUES } from './config/redis.config';
 
-export class WorkflowEngine {
-  constructor() {}
-  execute() {}
-}
+// Models
+export { FeatureFlag, FeatureFlagDocument } from './models/FeatureFlag';
 
-export class WorkflowExecutor {
-  constructor() {}
-  run() {}
-}
+// Types and Interfaces
+export * from './types/core';
+export * from './types/agent';
+export * from './types/memory';
+export * from './types/workflow';
+export * from './types/featureFlags';
 
-export class UnifiedMonitoringService {
-  constructor() {}
-  monitor() {}
-  recordMetric(metric: string, value: number, tags?: any) {}
-  captureError(error: Error, context?: any) {}
-}
+// Export monitoring types with explicit naming to avoid conflicts
+export { 
+  PerformanceMetrics, 
+  SystemMetrics, 
+  ApplicationMetrics, 
+  AgentMetrics, 
+  WorkflowMetrics,
+  Alert, 
+  AlertSeverity, 
+  AlertStatus, 
+  AlertCondition, 
+  AlertAction,
+  LogEntry, 
+  LogLevel,
+  Trace, 
+  Span, 
+  SpanLog,
+  Metric, 
+  MetricType, 
+  MetricSeries, 
+  MetricDataPoint,
+  HealthStatus as MonitoringHealthStatus,
+  ServiceHealth as MonitoringServiceHealth
+} from './types/monitoring';
 
-export class LocalAIDetectionService {
-  constructor() {}
-  detect() {}
-  detectAvailableAIs(): LocalAIProvider[] { return []; }
-  checkProviderAvailability(provider: LocalAIProvider): Promise<boolean> { return Promise.resolve(false); }
-}
+// Constants
+export * from './constants/types';
 
-export class AgentSwarmOrchestrationService {
-  constructor() {}
-  orchestrate() {}
-  createExecution() {}
-  getExecutions() {}
-  getExecutionDetails() {}
-}
-
-export interface LocalAIProvider {
-  name: string;
-  endpoint: string;
-  command?: string;
-  checkCommand?: string;
-}
-
-export interface MemoryContent {
-  id: string;
-  content: string;
-}
-
-export interface MemoryQuery {
-  query: string;
-}
-
-// Task enums for API compatibility
-export enum TaskStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  CANCELLED = 'CANCELLED',
-}
-
-export enum TaskPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-  URGENT = 'URGENT',
-}
-
-export class ConfigService {}
-export class DatabaseService {}
-export const TYPES = {};
+// Utilities
+export { Logger, logger } from './utils/logger';
+export * from './utils/errors';

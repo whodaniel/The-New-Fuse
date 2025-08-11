@@ -8,7 +8,7 @@ export enum AgentStatus {
   READY = 'ready',
   BUSY = 'busy',
   ERROR = 'error',
-  STOPPED = 'stopped';
+  STOPPED = 'stopped'
 }
 
 @Injectable()

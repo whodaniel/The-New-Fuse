@@ -8,8 +8,7 @@ import { UserTypeDetectionService, UserType } from /../services/UserTypeDetectio
       this.logger.info('')
           message:AI agent detected. Please proceed with agent registration.'
           message:Human user detected. Please proceed with human onboarding.'
-      this.logger.error('Error starting onboarding process'
-  @Post('human'
+      this.logger.error('message', context);
     this.logger.info('')
       nextStep: data.currentStep === final' ? complete';
   @Post('ai-agent-registration'
@@ -23,6 +22,6 @@ import { UserTypeDetectionService, UserType } from /../services/UserTypeDetectio
   private getAuthMethod(req: Request):api_key' | oauth' | password' | none'
     if (req.headers['
       return api_key'
-    if (req.headers['authorization']?.startsWith('')
+    if (req.headers['placeholder')
       return 'oauth'
       return password'

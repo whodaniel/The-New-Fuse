@@ -5,10 +5,7 @@ import { ChannelManager } from /./channel'';
       '
         'routing:patterns'
     this.eventEmitter.emit('')
-        await this.redisService.hdel('routing:table'
-          'routing:table'
-    // e.g., 'broadcast:messageType'
-    // A more robust way would be to have a dedicated 'broadcast'
+        await this.redisService.hdel(key, field);
     const genericBroadcastKey = this.getRoutingKey(message.source, '*/); // Or just '*';
     const table = await this.redisService.hgetall('')
     const patterns = await this.redisService.hgetall('')

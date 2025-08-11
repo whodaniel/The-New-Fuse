@@ -38,7 +38,7 @@ import { Test, TestingModule } from '@nestjs/testing';
       description:General information about The New Fuse platform'
   supportedModalities: ['text', image'
 describe('OnboardingConfigService'
-              if (key === 'DATABASE_URL'';
+              if (key === 'placeholder';
   it('should be defined'
   describe('getGeneralSettings'
     it('should return general settings from database if they exist';

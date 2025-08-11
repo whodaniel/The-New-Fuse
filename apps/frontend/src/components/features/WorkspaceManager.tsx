@@ -78,4 +78,3 @@ const WorkspaceManager = () => {
 exports.WorkspaceManager = WorkspaceManager;
 exports.default = exports.WorkspaceManager;
 export {};
-//# sourceMappingURL=WorkspaceManager.js.map

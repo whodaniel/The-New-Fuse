@@ -86,4 +86,3 @@ export class CascadeBridge extends EventEmitter {
         this.messageQueue = [];
     }
 }
-//# sourceMappingURL=CascadeBridge.js.map

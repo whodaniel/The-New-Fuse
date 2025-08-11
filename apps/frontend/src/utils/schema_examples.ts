@@ -138,4 +138,3 @@ exports.TOOL_SCHEMA = {
     required: ["name", "description", "parameters", "returns"]
 };
 export {};
-//# sourceMappingURL=schema_examples.js.map

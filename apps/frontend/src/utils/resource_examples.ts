@@ -47,4 +47,3 @@ async function main(): any {
 }
 main().catch(console.error);
 export {};
-//# sourceMappingURL=resource_examples.js.map

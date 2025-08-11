@@ -61,7 +61,6 @@ export class AgentOrchestrator extends EventEmitter {
 
     // Try to assign immediately
     this.tryAssignTask();
-
     return taskId;
   }
 
@@ -83,14 +82,12 @@ export class AgentOrchestrator extends EventEmitter {
       }
 
       this.logger.log(`Executing task ${taskId}`);
-      
       task.status = 'in_progress';
       task.updatedAt = new Date();
       this.emit('taskStarted', task);
 
       // Simulate task execution - replace with actual agent communication
       const result = await this.performTask(task);
-
       task.status = result.success ? 'completed' : 'failed';
       task.updatedAt = new Date();
       this.emit('taskCompleted', task);
@@ -126,7 +123,7 @@ export class AgentOrchestrator extends EventEmitter {
     task.status = 'failed';
     task.updatedAt = new Date();
     this.emit('taskCancelled', task);
-    
+
     // Remove from queue
     const index = this.taskQueue.indexOf(taskId);
     if (index > -1) {
@@ -147,8 +144,8 @@ export class AgentOrchestrator extends EventEmitter {
     task.updatedAt = new Date();
     this.taskQueue.push(taskId);
     this.emit('taskRetried', task);
-    
     this.tryAssignTask();
+
     return true;
   }
 
@@ -197,7 +194,10 @@ export class AgentOrchestrator extends EventEmitter {
       await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
       return { success: true, data: `Task ${task.id} completed` };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 

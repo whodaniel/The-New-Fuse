@@ -8,4 +8,3 @@ const HubItemComponent = {
     unknown: UnknownItem,
 };
 export default HubItemComponent;
-//# sourceMappingURL=index.js.map

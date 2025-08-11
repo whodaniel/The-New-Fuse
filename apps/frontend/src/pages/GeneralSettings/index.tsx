@@ -130,4 +130,3 @@ const GeneralSettings = () => {
     </div>);
 };
 export default GeneralSettings;
-//# sourceMappingURL=index.js.map

@@ -20,7 +20,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "lint": "eslint src",
-    "clean": "rimraf dist .turbo node_modules",
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "typecheck": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

@@ -110,17 +110,17 @@ export class SmartAccountController {
     }
   }
 
-  @Post('enable-all')
-  async enableSmartAccountForAllUsers() {
-    try {
-      await this.smartAccountService.enableSmartAccountForAllUsers();
-      return {
-        success: true,
-        message: 'Smart Account enablement initiated for all users'
-      };
-    } catch (error) {
-      this.logger.error('Failed to enable Smart Accounts for all users:', error);
-      throw error;
-    }
-  }
+  // @Post('enable-all')
+  // async enableSmartAccountForAllUsers() {
+  //   try {
+  //     // await this.smartAccountService.enableSmartAccountForAllUsers(); // This method does not exist in the service
+  //     return {
+  //       success: false, // Indicate that this operation is not yet supported
+  //       message: 'Bulk Smart Account enablement is not yet supported'
+  //     };
+  //   } catch (error) {
+  //     this.logger.error('Failed to enable Smart Accounts for all users:', error);
+  //     throw error;
+  //   }
+  // }
 }

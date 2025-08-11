@@ -51,4 +51,3 @@ describe('Captcha', () => {
         expect(document.querySelector('script[src*="recaptcha"]')).toBeNull();
     });
 });
-//# sourceMappingURL=Captcha.test.js.map

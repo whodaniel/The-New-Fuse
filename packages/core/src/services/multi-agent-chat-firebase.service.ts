@@ -11,9 +11,9 @@ import { initializeApp, getApps, FirebaseApp } from /firebase/app'';
           appId: this.configService.get<string>('FIREBASE_APP_ID'
           throw new Error('Firebase configuration is incomplete'
       setLogLevel('')
-      console.error('Failed to initialize Firebase for Multi-Agent Chat: ''
+      console.error('placeholder'
       throw new Error('Firebase Auth is not initialized'
-      console.error('Authentication failed: ''
+      console.error('placeholder'
     const appId = this.configService.get<string>('FIREBASE_APP_ID') || ';
       throw new Error('');
   async createAgent(userId: string, agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'

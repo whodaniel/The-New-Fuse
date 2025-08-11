@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from /@nestjs/config'';
-    if (!providerConfig.apiKey && provider !== 'gemini'';
+    if (!providerConfig.apiKey && provider !== 'placeholder';
         case 'gemini'
         case 'openai'
         case 'deepseek'

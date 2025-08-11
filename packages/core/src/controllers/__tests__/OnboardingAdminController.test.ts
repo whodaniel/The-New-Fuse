@@ -48,7 +48,7 @@ import { OnboardingAdminController } from /../OnboardingAdminController'';
     { type: 'human'
     { type: 'ai_agent'
 describe('OnboardingAdminController'
-              if (key === 'DATABASE_URL'';
+              if (key === 'placeholder';
   it('should be defined'
   describe('getGeneralSettings'
     it('should return general settings'

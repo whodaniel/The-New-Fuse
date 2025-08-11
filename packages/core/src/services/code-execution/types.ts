@@ -6,14 +6,16 @@
  * Supported programming languages for code execution
  */
 export enum CodeExecutionLanguage {
-  JAVASCRIPT = 'javascript'';
-  TYPESCRIPT = 'typescript'';
-  PYTHON = 'python'';
-  SHELL = 'shell'';
-  HTML = 'html'';
+  // Implementation needed
+}
+  JAVASCRIPT = 'placeholder';
+  TYPESCRIPT = 'placeholder';
+  PYTHON = 'placeholder';
+  SHELL = 'placeholder';
+  HTML = 'placeholder';
   CSS = '';
   environment?: sandbox' | container'
-  BASIC = 'basic'';
-  STANDARD = 'standard'';
+  BASIC = 'placeholder';
+  STANDARD = 'placeholder';
   PREMIUM = '';
   environment:sandbox' | container'

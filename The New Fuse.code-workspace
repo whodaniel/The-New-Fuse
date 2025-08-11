@@ -26,6 +26,8 @@
 				"readOnly": false,
 				"connectionTimeout": 30
 			}
-		]
+		],
+		"kiroAgent.configureMCP": "Enabled",
+		"html.autoClosingTags": false
 	}
 }

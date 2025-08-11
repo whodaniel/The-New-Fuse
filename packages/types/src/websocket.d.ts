@@ -1,8 +1,20 @@
-import * as WebSocket from 'ws';
-export interface WebSocketContextType {
-    connect: (url: string) => WebSocket;
-    sendMessage: (message: string) => void;
-    closeConnection: () => void;
+export interface WebSocketMessage {
+    id: string;
+    type: string;
+    data: unknown;
+    timestamp: Date;
 }
-export declare const WebSocketContext: import("react").Context<WebSocketContextType>;
+export interface WebSocketConfig {
+    url: string;
+    protocols?: string[];
+    reconnect?: boolean;
+    reconnectInterval?: number;
+    maxReconnectAttempts?: number;
+}
+export interface WebSocketHandler {
+    onConnect?: () => void;
+    onDisconnect?: () => void;
+    onMessage?: (message: WebSocketMessage) => void;
+    onError?: (error: Error) => void;
+}
 //# sourceMappingURL=websocket.d.ts.map

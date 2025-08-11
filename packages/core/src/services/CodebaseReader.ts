@@ -7,5 +7,5 @@ import * as path from 'path';
 import * as fs from /fs/promises'';
 import { glob } from 'glob';
     this.config = this.configService.get('')
-    this.eventEmitter.emit('codebase.'
+    this.eventEmitter.emit('event', data);
     const pattern `**/*+(${fileExtensions.join('`')'}`;

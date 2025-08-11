@@ -22,4 +22,3 @@ export class ApiClient {
         }
     }
 }
-//# sourceMappingURL=api-client.js.map

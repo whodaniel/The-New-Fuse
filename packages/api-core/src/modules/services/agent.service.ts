@@ -111,7 +111,7 @@ export class AgentService extends BaseService<Agent> {
           const agentData = {
           ...agentDto,
           capabilities: Array.isArray(agentDto.capabilities) 
-            ? agentDto.capabilities.filter((cap): cap is AgentCapability => 
+            ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
                 Object.values(AgentCapability).includes(cap as AgentCapability))
             : [],
           metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
@@ -184,7 +184,7 @@ export class AgentService extends BaseService<Agent> {
         const agentData = {
           ...agentDto,
           capabilities: Array.isArray(agentDto.capabilities) 
-            ? agentDto.capabilities.filter((cap): cap is AgentCapability => 
+            ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
                 Object.values(AgentCapability).includes(cap as AgentCapability))
             : [],
           metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 

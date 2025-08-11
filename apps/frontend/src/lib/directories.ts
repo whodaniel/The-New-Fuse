@@ -28,4 +28,3 @@ export function middleTruncate(str, n): any {
         return str.length > n ? str.substr(0, n - 8) + "..." + str.slice(-4) : str;
     }
 }
-//# sourceMappingURL=directories.js.map

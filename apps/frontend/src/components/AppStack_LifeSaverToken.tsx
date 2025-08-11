@@ -73,4 +73,3 @@ function AppStack_LifeSaverTokenContainer({ tokens, onTransfer }) {
     </div>);
 }
 export {};
-//# sourceMappingURL=AppStack_LifeSaverToken.js.map

@@ -63,4 +63,3 @@ const CardFooter = React.forwardRef((_a, ref) => {
 });
 CardFooter.displayName = "CardFooter";
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent, cardVariants, };
-//# sourceMappingURL=Card.js.map

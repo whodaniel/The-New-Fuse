@@ -191,7 +191,7 @@ if (require.main === module) {
           choices: ['development', 'analysis', 'automation', 'communication']
         });
       },
-      (argv) => cli.listTemplates(argv.category)
+      (argv) => cli.listTemplates(argv.category as string)
     )
     .command(
       'template <templateId>',
@@ -203,7 +203,7 @@ if (require.main === module) {
           demandOption: true
         });
       },
-      (argv) => cli.getTemplate(argv.templateId)
+      (argv) => cli.getTemplate(argv.templateId as string)
     )
     .example('$0 templates', 'List all templates')
     .example('$0 templates development', 'List development templates')

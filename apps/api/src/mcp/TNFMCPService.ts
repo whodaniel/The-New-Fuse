@@ -3,7 +3,6 @@ import { TheNewFuseMCPServer } from './TheNewFuseMCPServer';
 import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
 import { WorkflowService } from '../services/workflow.service';
-import { MonitoringService } from '../services/monitoring.service';
 import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
 
 @Injectable()
@@ -15,7 +14,6 @@ export class TNFMCPService implements OnModuleInit {
     private readonly agentService: AgentService,
     private readonly chatService: ChatService,
     private readonly workflowService: WorkflowService,
-    private readonly monitoringService: MonitoringService,
     private readonly claudeDevService: ClaudeDevAutomationService,
   ) {}
 
@@ -31,7 +29,6 @@ export class TNFMCPService implements OnModuleInit {
         agent: this.agentService,
         chat: this.chatService,
         workflow: this.workflowService,
-        monitoring: this.monitoringService,
         claudeDev: this.claudeDevService,
       });
 
@@ -68,7 +65,6 @@ export class TNFMCPService implements OnModuleInit {
         agent: !!this.agentService,
         chat: !!this.chatService,
         workflow: !!this.workflowService,
-        monitoring: !!this.monitoringService,
         claudeDev: !!this.claudeDevService,
       },
       timestamp: new Date().toISOString(),

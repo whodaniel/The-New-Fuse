@@ -62,4 +62,3 @@ createApp({
     }
 }).mount('#app');
 export {};
-//# sourceMappingURL=youtube_transcriber.js.map

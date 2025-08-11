@@ -146,4 +146,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.webTools = new WebToolsManager();
 });
 export {};
-//# sourceMappingURL=web_tools.js.map

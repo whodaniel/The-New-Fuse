@@ -1,7 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '../../config/ConfigService';
-
 export interface Chunk {
+  // Implementation needed
+}
   id: string;
   text: string;
   startIndex: number;
@@ -10,6 +11,8 @@ export interface Chunk {
 }
 
 export interface SemanticChunkerConfig {
+  // Implementation needed
+}
   maxChunkSize?: number;
   overlap?: number;
   provider?: 'openai' | 'anthropic' | 'local';
@@ -18,6 +21,8 @@ export interface SemanticChunkerConfig {
 }
 
 export interface SentenceEmbedding {
+  // Implementation needed
+}
   sentence: string;
   embedding: number[];
   index: number;
@@ -25,11 +30,16 @@ export interface SentenceEmbedding {
 
 @Injectable()
 export class SemanticChunker {
+  // Implementation needed
+}
   private readonly logger = new Logger(SemanticChunker.name);
   private readonly config: Required<SemanticChunkerConfig>;
-
   constructor(private readonly configService?: ConfigService) {
+  // Implementation needed
+}
     this.config = {
+  // Implementation needed
+}
       maxChunkSize: this.configService?.get<number>('chunking.maxChunkSize', 1000) || 1000,
       overlap: this.configService?.get<number>('chunking.overlap', 100) || 100,
       provider: this.configService?.get<'openai' | 'anthropic' | 'local'>('chunking.provider', 'local') || 'local',
@@ -39,11 +49,16 @@ export class SemanticChunker {
   }
 
   async chunk(text: string): Promise<Chunk[]> {
+  // Implementation needed
+}
     try {
+  // Implementation needed
+}
       // Split text into sentences
       const sentences = this.splitIntoSentences(text);
-      
       if (sentences.length === 0) {
+  // Implementation needed
+}
         return [];
       }
 
@@ -55,6 +70,8 @@ export class SemanticChunker {
       // For now, we'll use a simplified approach with paragraph-based chunking
       return await this.simpleSemanticChunk(sentences);
     } catch (error) {
+  // Implementation needed
+}
       this.logger.error('Error in semantic chunking:', error);
       // Fallback to simple chunking
       return this.fallbackChunk(text);
@@ -62,48 +79,60 @@ export class SemanticChunker {
   }
 
   private splitIntoSentences(text: string): string[] {
+  // Implementation needed
+}
     // Improved sentence splitting that handles abbreviations better
     const sentences = text
       .replace(/([.!?])\s*(?=[A-Z])/g, '$1|')
       .split('|')
       .map(s => s.trim())
       .filter(s => s.length > 0);
-    
     return sentences;
   }
 
   private async simpleSemanticChunk(sentences: string[]): Promise<Chunk[]> {
+  // Implementation needed
+}
     const chunks: Chunk[] = [];
     let currentChunk = '';
     let chunkStartIndex = 0;
     let chunkIndex = 0;
     let globalIndex = 0;
-
     for (let i = 0; i < sentences.length; i++) {
+  // Implementation needed
+}
       const sentence = sentences[i];
-      const potentialChunk = currentChunk + (currentChunk ? ' ' : '') + sentence;
-
+      const potentialChunk = currentChunk + (currentChunk ? 'placeholder') + sentence;
       if (potentialChunk.length > this.config.maxChunkSize && currentChunk) {
+  // Implementation needed
+}
         // Create chunk from current content
         chunks.push({
+  // Implementation needed
+}
           id: `semantic_chunk_${chunkIndex}`,
           text: currentChunk.trim(),
           startIndex: chunkStartIndex,
           endIndex: globalIndex - 1,
           metadata: {
+  // Implementation needed
+}
             chunkIndex,
             strategy: 'semantic',
             sentenceCount: currentChunk.split(/[.!?]+/).length - 1
           }
         });
-
         // Start new chunk with overlap
         currentChunk = sentence;
         chunkStartIndex = globalIndex;
         chunkIndex++;
       } else {
+  // Implementation needed
+}
         currentChunk = potentialChunk;
         if (!currentChunk || currentChunk === sentence) {
+  // Implementation needed
+}
           chunkStartIndex = globalIndex;
         }
       }
@@ -113,12 +142,18 @@ export class SemanticChunker {
 
     // Add the last chunk if it has content
     if (currentChunk.trim()) {
+  // Implementation needed
+}
       chunks.push({
+  // Implementation needed
+}
         id: `semantic_chunk_${chunkIndex}`,
         text: currentChunk.trim(),
         startIndex: chunkStartIndex,
         endIndex: globalIndex - 1,
         metadata: {
+  // Implementation needed
+}
           chunkIndex,
           strategy: 'semantic',
           sentenceCount: currentChunk.split(/[.!?]+/).length - 1
@@ -130,28 +165,33 @@ export class SemanticChunker {
   }
 
   private fallbackChunk(text: string): Chunk[] {
+  // Implementation needed
+}
     // Simple fallback chunking when semantic analysis fails
     const chunks: Chunk[] = [];
     const maxSize = this.config.maxChunkSize;
     let startIndex = 0;
     let chunkIndex = 0;
-
     while (startIndex < text.length) {
+  // Implementation needed
+}
       const endIndex = Math.min(startIndex + maxSize, text.length);
       const chunkText = text.slice(startIndex, endIndex);
-
       chunks.push({
+  // Implementation needed
+}
         id: `fallback_chunk_${chunkIndex}`,
         text: chunkText.trim(),
         startIndex,
         endIndex: endIndex - 1,
         metadata: {
+  // Implementation needed
+}
           chunkIndex,
           strategy: 'fallback',
           isFallback: true
         }
       });
-
       startIndex = endIndex - this.config.overlap;
       chunkIndex++;
     }
@@ -160,37 +200,48 @@ export class SemanticChunker {
   }
 
   async chunkByParagraphs(text: string): Promise<Chunk[]> {
+  // Implementation needed
+}
     const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
     const chunks: Chunk[] = [];
     let currentChunk = '';
     let chunkIndex = 0;
     let globalIndex = 0;
     let chunkStartIndex = 0;
-
     for (const paragraph of paragraphs) {
-      const potentialChunk = currentChunk + (currentChunk ? '\n\n' : '') + paragraph;
-
+  // Implementation needed
+}
+      const potentialChunk = currentChunk + (currentChunk ? 'placeholder') + paragraph;
       if (potentialChunk.length > this.config.maxChunkSize && currentChunk) {
+  // Implementation needed
+}
         // Create chunk from current content
         chunks.push({
+  // Implementation needed
+}
           id: `paragraph_chunk_${chunkIndex}`,
           text: currentChunk.trim(),
           startIndex: chunkStartIndex,
           endIndex: globalIndex - 1,
           metadata: {
+  // Implementation needed
+}
             chunkIndex,
             strategy: 'paragraph',
             paragraphCount: currentChunk.split(/\n\s*\n/).length
           }
         });
-
         // Start new chunk
         currentChunk = paragraph;
         chunkStartIndex = globalIndex;
         chunkIndex++;
       } else {
+  // Implementation needed
+}
         currentChunk = potentialChunk;
         if (!currentChunk || currentChunk === paragraph) {
+  // Implementation needed
+}
           chunkStartIndex = globalIndex;
         }
       }
@@ -200,12 +251,18 @@ export class SemanticChunker {
 
     // Add the last chunk
     if (currentChunk.trim()) {
+  // Implementation needed
+}
       chunks.push({
+  // Implementation needed
+}
         id: `paragraph_chunk_${chunkIndex}`,
         text: currentChunk.trim(),
         startIndex: chunkStartIndex,
         endIndex: globalIndex - 1,
         metadata: {
+  // Implementation needed
+}
           chunkIndex,
           strategy: 'paragraph',
           paragraphCount: currentChunk.split(/\n\s*\n/).length
@@ -217,47 +274,62 @@ export class SemanticChunker {
   }
 
   private calculateSimilarity(text1: string, text2: string): number {
+  // Implementation needed
+}
     // Simple word-based similarity calculation
     // In a real implementation, you'd use proper embeddings
     const words1 = new Set(text1.toLowerCase().split(/\s+/));
     const words2 = new Set(text2.toLowerCase().split(/\s+/));
-    
     const intersection = new Set(Array.from(words1).filter(x => words2.has(x)));
     const union = new Set([...Array.from(words1), ...Array.from(words2)]);
-    
     return intersection.size / union.size;
   }
 
   async mergeSmallChunks(chunks: Chunk[]): Promise<Chunk[]> {
+  // Implementation needed
+}
     const merged: Chunk[] = [];
     let currentChunk: Chunk | null = null;
-
     for (const chunk of chunks) {
+  // Implementation needed
+}
       if (!currentChunk) {
+  // Implementation needed
+}
         currentChunk = { ...chunk };
         continue;
       }
 
       if (currentChunk.text.length < this.config.minChunkSize) {
+  // Implementation needed
+}
         // Merge with next chunk
         const combinedContent = currentChunk.text + ' ' + chunk.text;
         currentChunk = {
+  // Implementation needed
+}
           ...currentChunk,
           text: combinedContent,
           endIndex: chunk.endIndex,
           metadata: {
+  // Implementation needed
+}
             ...currentChunk.metadata,
             merged: true,
             originalChunks: [currentChunk.id, chunk.id]
           }
         };
       } else {
+  // Implementation needed
+}
         merged.push(currentChunk);
         currentChunk = { ...chunk };
       }
     }
 
     if (currentChunk) {
+  // Implementation needed
+}
       merged.push(currentChunk);
     }
 
@@ -265,38 +337,48 @@ export class SemanticChunker {
   }
 
   async optimizeChunks(chunks: Chunk[]): Promise<Chunk[]> {
+  // Implementation needed
+}
     // Apply various optimization strategies
     let optimizedChunks = [...chunks];
-
     // Remove empty chunks
     optimizedChunks = optimizedChunks.filter(chunk => chunk.text.trim().length > 0);
-
     // Merge small chunks
     optimizedChunks = await this.mergeSmallChunks(optimizedChunks);
-
     // Update chunk IDs to be sequential
     optimizedChunks = optimizedChunks.map((chunk, index) => ({
+  // Implementation needed
+}
       ...chunk,
       id: `optimized_chunk_${index}`,
       metadata: {
+  // Implementation needed
+}
         ...chunk.metadata,
         optimized: true,
         finalIndex: index
       }
     }));
-
     return optimizedChunks;
   }
 
   getChunkingStats(chunks: Chunk[]): {
+  // Implementation needed
+}
     totalChunks: number;
     averageChunkSize: number;
     minChunkSize: number;
     maxChunkSize: number;
     totalCharacters: number;
   } {
+  // Implementation needed
+}
     if (chunks.length === 0) {
+  // Implementation needed
+}
       return {
+  // Implementation needed
+}
         totalChunks: 0,
         averageChunkSize: 0,
         minChunkSize: 0,
@@ -307,8 +389,9 @@ export class SemanticChunker {
 
     const sizes = chunks.map(chunk => chunk.text.length);
     const totalCharacters = sizes.reduce((sum, size) => sum + size, 0);
-
     return {
+  // Implementation needed
+}
       totalChunks: chunks.length,
       averageChunkSize: Math.round(totalCharacters / chunks.length),
       minChunkSize: Math.min(...sizes),

@@ -1,8 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Subject, Observable } from 'rxjs';
-import { RedisService } from '../redis/redis.service';
-import { WebSocketGateway } from '@nestjs/websockets';
-import { CircuitBreaker } from '../resilience/CircuitBreaker';
 
 export interface AgentMessage {
   id: string;
@@ -23,63 +20,100 @@ interface MessageValidator {
 export class AgentCommunicationBridge {
   private readonly channels = new Map<string, Subject<AgentMessage>>();
   private readonly logger = new Logger(AgentCommunicationBridge.name);
-  private readonly circuitBreaker = new CircuitBreaker();
- 
-  constructor(
-    private readonly redisService: RedisService,
-    private readonly websocketGateway: any, // WebSocketGateway instance
-    private readonly messageValidator: MessageValidator
-  ) {
-    this.initializeRedisSubscriptions();
+  private readonly messageQueue = new Map<string, AgentMessage[]>();
+  private circuitBreaker?: any; // CircuitBreaker type
+
+  constructor() {
+    this.logger.log('AgentCommunicationBridge initialized');
   }
 
-  async broadcastMessage(message: AgentMessage): Promise<void> {
+  async sendMessage(message: AgentMessage): Promise<void> {
     try {
-      await this.messageValidator.validate(message);
-      const channel = `agent:${message.recipient || 'broadcast'}`;
-      await this.redisService.set(channel, JSON.stringify(message));
-      this.logger.log('Message broadcasted', message);
-      await this.logCommunication(message);
-    } catch (error: unknown) {
-      this.logger.error('Failed to broadcast message', { error, message });
+      this.logger.debug(`Sending message from ${message.sender} to ${message.recipient}`);
+      
+      // Get or create channel for recipient
+      const channel = this.getOrCreateChannel(message.recipient);
+      
+      // Add timestamp if not provided
+      if (!message.timestamp) {
+        message.timestamp = new Date().toISOString();
+      }
+      
+      // Emit message to channel
+      channel.next(message);
+      
+      this.logger.debug(`Message sent successfully: ${message.id}`);
+    } catch (error) {
+      this.logger.error(`Failed to send message: ${message.id}`, error);
       throw error;
     }
   }
 
-  async sendDirectMessage(message: AgentMessage): Promise<void> {
-    try {
-      await this.messageValidator.validate(message);
-      const channel = `agent:${message.recipient}`;
-      await this.redisService.publish(channel, JSON.stringify(message));
-      this.logger.log('Direct message sent', message);
-      await this.logCommunication(message);
-    } catch (error: unknown) {
-      this.logger.error('Failed to send direct message', { error, message });
-      throw error;
-    }
+  subscribeToMessages(agentId: string): Observable<AgentMessage> {
+    const channel = this.getOrCreateChannel(agentId);
+    this.logger.debug(`Agent ${agentId} subscribed to messages`);
+    return channel.asObservable();
   }
 
-  getAgentChannel(agentId: string): Observable<AgentMessage> {
+  broadcastMessage(message: Omit<AgentMessage, 'recipient'>): Promise<void> {
+    const broadcastMessage: AgentMessage = {
+      ...message,
+      recipient: 'all',
+      type: 'broadcast'
+    };
+
+    return this.sendMessage(broadcastMessage);
+  }
+
+  async validateMessage(message: AgentMessage): Promise<boolean> {
+    // Basic validation
+    if (!message.id || !message.sender || !message.recipient) {
+      return false;
+    }
+
+    if (!message.type || !['direct', 'broadcast', 'task_request', 'task_response', 'status_update', 'error'].includes(message.type)) {
+      return false;
+    }
+
+    if (!message.priority || !['low', 'medium', 'high'].includes(message.priority)) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private getOrCreateChannel(agentId: string): Subject<AgentMessage> {
     if (!this.channels.has(agentId)) {
       this.channels.set(agentId, new Subject<AgentMessage>());
+      this.logger.debug(`Created new channel for agent: ${agentId}`);
     }
-    return this.channels.get(agentId)!.asObservable();
+    
+    return this.channels.get(agentId)!;
   }
 
-  private async initializeRedisSubscriptions(): Promise<void> {
-    const pattern = 'agent:*';
-    // Note: This is a simplified implementation
-    // In a real implementation, you'd use Redis pub/sub
-    this.logger.log('Redis subscriptions initialized');
+  getActiveChannels(): string[] {
+    return Array.from(this.channels.keys());
   }
 
-  private async logCommunication(message: AgentMessage): Promise<void> {
-    // Implementation for logging communications
-    this.logger.log('Communication logged', {
-      messageId: message.id,
-      from: message.sender,
-      to: message.recipient,
-      type: message.type
-    });
+  closeChannel(agentId: string): void {
+    const channel = this.channels.get(agentId);
+    if (channel) {
+      channel.complete();
+      this.channels.delete(agentId);
+      this.logger.debug(`Closed channel for agent: ${agentId}`);
+    }
+  }
+
+  async shutdown(): Promise<void> {
+    this.logger.log('Shutting down AgentCommunicationBridge...');
+    
+    // Close all channels
+    for (const [agentId, channel] of this.channels) {
+      channel.complete();
+      this.logger.debug(`Closed channel for agent: ${agentId}`);
+    }
+    
+    this.channels.clear();
+    this.logger.log('AgentCommunicationBridge shutdown complete');
   }
 }

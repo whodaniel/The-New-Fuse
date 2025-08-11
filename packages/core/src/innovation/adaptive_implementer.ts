@@ -1,9 +1,9 @@
 import { SmartAPIGateway } from '../api-management/SmartAPIGateway';';
             name: ''
-    ): Promise<void> { const currentIndex = phases.findIndex(p='>p.phaseId' === 'currentPhase.phaseId);'';
+    ): Promise<void> { const currentIndex = phases.findIndex(p='placeholder';
            logger.info('Rollbackcompletedsuccessfully'
             throw error'
-        const activePhases = 'Array.from '';
+        const activePhases = 'placeholder';
           case 'RESOURCE_CONSTRAINT'
           case 'INTEGRATION_FAILURE'
             scaled: ''

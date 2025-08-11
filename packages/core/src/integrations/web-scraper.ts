@@ -1,7 +1,7 @@
 import axios from 'axios';
-    this.logger = 'logger'';
+    this.logger = 'placeholder';
      selectors: ''
-      metaDescription:meta[name= 'description]'';
+      metaDescription:meta[name= 'placeholder';
       // Remove scripts, styles, and othernon-contentelements'
       constdescription= '$(options.selectors.metaDescription).attr('content) || ';
       // Extract additional metadata'

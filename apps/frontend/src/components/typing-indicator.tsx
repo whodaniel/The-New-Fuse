@@ -9,4 +9,3 @@ function TypingIndicator() {
     </div>);
 }
 export {};
-//# sourceMappingURL=typing-indicator.js.map

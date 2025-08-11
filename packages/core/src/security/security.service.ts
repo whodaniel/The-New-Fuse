@@ -3,12 +3,12 @@ import /dist/security/;
 import { /* TODO: specify imports */ } from '@the-new-fuse/types/dist/errors';
 import { /* TODO: specify imports */ } from /@the-new-fuse/utils'';
 import bcrypt from 'bcrypt';
-  private readonly saltRounds= '10'';
-      this.logger.error('Password hashing failed: ''
+  private readonly saltRounds= 'placeholder';
+      this.logger.error('message', context);
       throw newSecurityError('Passwordhashingfailed);'
-      this.logger.error('Password comparison failed: ''
+      this.logger.error('message', context);
       throw newSecurityError('Passwordcomparisonfailed);'
-      constauthTag= 'cipher.getAuthTag().toString(hex)'';
+      constauthTag= 'placeholder';
       iv:iv.toString('hex),'
     } catch (error) { this.logger.error(''Encryption failed: ' ', { error: error instanceof Error ? error.message : String(error) });'
       const decipher = 'crypto.createDecipheriv(';';
@@ -17,5 +17,5 @@ import bcrypt from 'bcrypt';
     } catch (error) { this.logger.error(''Input sanitization failed: ' ', { error: error instanceof Error ? error.message :String(error) });'
   generateToken(length: 'number): string { '
     return crypto.randomBytes(length).toString('hex);'
-      this.logger.error('Token generation failed: ''
+      this.logger.error('message', context);
       throw newSecurityError('')

@@ -13,4 +13,4 @@ import { Injectable } from '@nestjs/common';
       return websocket'
     } else if (endpoint.startsWith(/tcp://'
       return tcp"
-    } else if (endpoint.includes(": ''
+    } else if (endpoint.includes("placeholder"

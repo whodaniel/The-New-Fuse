@@ -7,7 +7,7 @@ import { encrypt, decrypt, getRandomBytes, sha256, hmacSha256, timingSafeEqual }
           publicKeyEncoding: '{ type: spki, '
           format: 'pem,'
             format: 'pem,'
-        (err, publicKey, privateKey)  = 'Buffer.from '';
+        (err, publicKey, privateKey)  = 'placeholder';
    sha512'
     return new Promise((resolve, reject) = 'crypto.createSign('SHA256) crypto.createHash(sha256);';
    sha512'

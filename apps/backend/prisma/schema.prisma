@@ -34,6 +34,8 @@ model User {
   agentNFTs       AgentNFT[]
   fractionalShares FractionalShare[]
   revenueStreams  RevenueStream[]
+  marketplaceListings MarketplaceListing[] // Added for User-MarketplaceListing relation
+  marketplaceOffers   MarketplaceOffer[]   // Added for User-MarketplaceOffer relation
 }
 
 model Session {
@@ -67,6 +69,7 @@ model Agent {
   capabilities  String[]    // Stored as array of strings
   status        AgentStatus @default(INACTIVE)
   config        Json?       // Changed from configuration to config
+  provider      String?     @default("default") // Added provider field
   userId        String      // Foreign key to User
   user          User        @relation(fields: [userId], references: [id])
   createdAt     DateTime    @default(now())
@@ -82,6 +85,9 @@ model Agent {
   promptVersions AgentPromptVersion[]
   parentAgent    Agent? @relation("AgentVersions", fields: [parentAgentId], references: [id])
   childAgents    Agent[] @relation("AgentVersions")
+  
+  // Added for AgentNFT relation
+  agentNFT       AgentNFT?
 
   @@index([userId])
   @@index([status])
@@ -164,32 +170,109 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  title     String
+  message   String   @db.Text
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@index([userId])
+  @@map("notifications")
+}
+
 model AgentNFT {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                  String            @id @default(cuid())
+  agentId             String            @unique // Connects to the Agent model
+  agent               Agent             @relation(fields: [agentId], references: [id])
+  tokenId             Int               @unique
+  contractAddress     String
+  smartAccountAddress String?
+  isFractionalized    Boolean           @default(false)
+  totalShares         Int               @default(0)
+  metadataUri         String?
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  
+  // Relations
+  fractionalShares    FractionalShare[]
+  revenueStreams      RevenueStream[]
+  marketplaceListings MarketplaceListing[]
+  ownerId             String?            // Added for User-AgentNFT relation
+  owner               User?              @relation(fields: [ownerId], references: [id])
 }
 
 model FractionalShare {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String   @id @default(cuid())
+  agentNFTId   String
+  agentNFT     AgentNFT @relation(fields: [agentNFTId], references: [id])
+  ownerAddress String
+  shareAmount  Decimal  @db.Decimal(65, 18) // Use Decimal for token amounts
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  ownerId      String?  // Added for User-FractionalShare relation
+  owner        User?    @relation(fields: [ownerId], references: [id])
 }
 
 model RevenueStream {
-  id          String   @id @default(cuid())
-  name        String
-  description String?
-  ownerId     String
-  owner       User     @relation(fields: [ownerId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String              @id @default(cuid())
+  agentNFTId            String
+  agentNFT              AgentNFT            @relation(fields: [agentNFTId], references: [id])
+  streamName            String
+  description           String?
+  tokenAddress          String
+  totalRevenue          Decimal             @default(0) @db.Decimal(65, 18)
+  distributedRevenue    Decimal             @default(0) @db.Decimal(65, 18)
+  distributionThreshold Decimal             @db.Decimal(65, 18)
+  isActive              Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  
+  // Relations
+  distributions         RevenueDistribution[]
+  ownerId               String?               // Added for User-RevenueStream relation
+  owner                 User?                 @relation(fields: [ownerId], references: [id])
+}
+
+model RevenueDistribution {
+  id              String      @id @default(cuid())
+  revenueStreamId String
+  revenueStream   RevenueStream @relation(fields: [revenueStreamId], references: [id])
+  txHash          String
+  totalAmount     Decimal     @db.Decimal(65, 18)
+  distributedTo   Json        // Store array of {address, amount}
+  blockNumber     Int
+  createdAt       DateTime    @default(now())
+}
+
+model MarketplaceListing {
+  id           String   @id @default(cuid())
+  agentNFTId   String   @unique
+  agentNFT     AgentNFT @relation(fields: [agentNFTId], references: [id])
+  price        Decimal  @db.Decimal(65, 18)
+  currency     String
+  status       String   @default("ACTIVE") // ACTIVE, SOLD, CANCELLED
+  sellerId     String
+  seller       User     @relation(fields: [sellerId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  offers       MarketplaceOffer[]
+}
+
+model MarketplaceOffer {
+  id            String   @id @default(cuid())
+  listingId     String
+  listing       MarketplaceListing @relation(fields: [listingId], references: [id])
+  buyerId       String
+  buyer         User     @relation(fields: [buyerId], references: [id])
+  offerAmount   Decimal  @db.Decimal(65, 18)
+  currency      String
+  status        String   @default("PENDING") // PENDING, ACCEPTED, REJECTED, CANCELLED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

@@ -32,4 +32,3 @@ function WebhookManager() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=webhook-manager.js.map

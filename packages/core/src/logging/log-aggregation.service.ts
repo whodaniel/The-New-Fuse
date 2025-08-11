@@ -14,14 +14,11 @@ import { PrismaClient } from /@prisma/client'';
       maxEntriesPerQuery: this.configService.get<number>('')
     this.logger.info('')
     this.logger.info('Stopped log aggregation service'
-      this.logger.error('Failed to ensure log directory exists'
-      this.logger.info('Performing initial log scan'
-      this.logger.error('Failed to perform initial log scan'
-      this.logger.error('Error during log scanning'
+      this.logger.error('message', context);
         .filter(file => file.endsWith('')
       this.logger.error('')
         return; // File hasn'
-      this.logger.error('Failed to store log entries'
+      this.logger.error('message', context);
       this.logger.error('')
           by: ['level'
           distinct: ['context'

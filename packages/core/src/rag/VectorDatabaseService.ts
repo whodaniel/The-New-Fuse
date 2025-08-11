@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from /../utils/logger'';
-  PINECONE = 'pinecone'';
-  CHROMA = 'chroma'';
-  REDIS = 'redis'';
-  SUPABASE = 'supabase'';
-  WEAVIATE = 'weaviate'';
-  MILVUS = 'milvus'';
-  QDRANT = 'qdrant'';
+  PINECONE = 'placeholder';
+  CHROMA = 'placeholder';
+  REDIS = 'placeholder';
+  SUPABASE = 'placeholder';
+  WEAVIATE = 'placeholder';
+  MILVUS = 'placeholder';
+  QDRANT = 'placeholder';
     this.provider = this.configService.get<VectorDatabaseProvider>('VECTOR_DB_PROVIDER';
     this.embeddingModel = this.configService.get<string>('EMBEDDING_MODEL', text-embedding-3-small';
     this.namespace = this.configService.get<string>('VECTOR_DB_NAMESPACE', 'the-new-fuse';
@@ -31,7 +31,7 @@ import { Logger } from /../utils/logger'';
         apiKey: this.configService.get<string>('')
       name: this.configService.get<string>('CHROMA_COLLECTION', '
         .from('')
-      const embedding = typeof query === "string": '';
+      const embedding = typeof query === "placeholder";
       name: this.configService.get<string>('CHROMA_COLLECTION', '
     // For now, we'
         id: key.split('')

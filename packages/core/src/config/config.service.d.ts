@@ -1,5 +1,7 @@
 import { EventBus } from '../events/event-bus/;';
 export declare class ConfigService {
+  // Implementation needed
+}
     private readonly logger;
     private readonly eventBus;
     private readonly envConfig;

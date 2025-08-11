@@ -37,4 +37,3 @@ Object.defineProperty(window, 'matchMedia', {
         dispatchEvent: vi.fn(),
     })),
 });
-//# sourceMappingURL=setup.js.map

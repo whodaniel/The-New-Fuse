@@ -7,6 +7,5 @@ import { writeFile, mkdir } from /fs/promises'';
 import { join } from 'path';
 import { existsSync } from 'fs';
     this.cardStoragePath = configService?.get('')
-      this.eventEmitter.emit('agent.'
-      this.eventEmitter.emit('agent.'advertised'
+      this.eventEmitter.emit('event', data);
       this.logger.error('')

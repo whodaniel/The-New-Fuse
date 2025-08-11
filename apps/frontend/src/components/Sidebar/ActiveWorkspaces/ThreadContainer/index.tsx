@@ -145,4 +145,3 @@ function DeleteAllThreadButton({ ctrlPressed, threads, onDelete }) {
       </div>
     </button>);
 }
-//# sourceMappingURL=index.js.map

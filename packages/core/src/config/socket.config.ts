@@ -1,6 +1,7 @@
 import { CorsOptions } from 'cors';
-
 export interface SocketIoConfig {
+  // Implementation needed
+}
   cors: CorsOptions;
   transports: string[];
   allowEIO3: boolean;
@@ -12,7 +13,7 @@ export interface SocketIoConfig {
   pingTimeout: number;
   pingInterval: number;
   maxHttpBufferSize: number;
-  allowRequest?: (req: any, callback: (err: string | null | undefined, success: boolean) => void) => void;
+  allowRequest?: (req: any, callback(err: string | null | undefined, success: boolean) => void) => void;
   perMessageDeflate?: boolean;
   httpCompression?: boolean;
   wsEngine?: string;
@@ -25,7 +26,11 @@ export interface SocketIoConfig {
 }
 
 export const socketConfig: SocketIoConfig = {
+  // Implementation needed
+}
   cors: {
+  // Implementation needed
+}
     origin: process.env.NODE_ENV === 'production' 
       ? [process.env.FRONTEND_URL || 'https://newfuse.app'] 
       : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:4200'],
@@ -46,6 +51,8 @@ export const socketConfig: SocketIoConfig = {
   httpCompression: false,
   wsEngine: 'ws',
   cookie: {
+  // Implementation needed
+}
     name: 'io',
     path: '/',
     httpOnly: true,
@@ -57,67 +64,95 @@ export const socketConfig: SocketIoConfig = {
   maxPayload: 1000000,
   closeOnBeforeunload: false
 };
-
 export interface SocketNamespaceConfig {
+  // Implementation needed
+}
   name: string;
-  auth?: (socket: any, next: (err?: any) => void) => void;
+  auth?: (socket: any, next(err?: any) => void) => void;
   adapter?: any;
   parser?: any;
   connectTimeout?: number;
-  middleware?: Array<(socket: any, next: (err?: any) => void) => void>;
+  middleware?: Array<(socket: any, next(err?: any) => void) => void>;
 }
 
 export const defaultNamespaces: SocketNamespaceConfig[] = [
   {
+  // Implementation needed
+}
     name: '/',
     connectTimeout: 30000
   },
   {
+  // Implementation needed
+}
     name: '/chat',
     connectTimeout: 45000,
-    auth: (socket, next) => {
+    auth(socket, next) => {
+  // Implementation needed
+}
       // Add authentication logic here
       const token = socket.handshake.auth.token;
       if (token) {
+  // Implementation needed
+}
         // Verify token
         next();
       } else {
+  // Implementation needed
+}
         next(new Error('Authentication required'));
       }
     }
   },
   {
+  // Implementation needed
+}
     name: '/agents',
     connectTimeout: 45000,
-    auth: (socket, next) => {
+    auth(socket, next) => {
+  // Implementation needed
+}
       // Add authentication logic here
       const token = socket.handshake.auth.token;
       if (token) {
+  // Implementation needed
+}
         // Verify token
         next();
       } else {
+  // Implementation needed
+}
         next(new Error('Authentication required'));
       }
     }
   },
   {
+  // Implementation needed
+}
     name: '/admin',
     connectTimeout: 30000,
-    auth: (socket, next) => {
+    auth(socket, next) => {
+  // Implementation needed
+}
       // Add admin authentication logic here
       const token = socket.handshake.auth.token;
       const role = socket.handshake.auth.role;
       if (token && role === 'admin') {
+  // Implementation needed
+}
         // Verify admin token
         next();
       } else {
+  // Implementation needed
+}
         next(new Error('Admin authentication required'));
       }
     }
   }
 ];
-
 export interface SocketRoomConfig {
+  // Implementation needed
+}
   name: string;
   maxUsers?: number;
   requireAuth?: boolean;
@@ -127,27 +162,36 @@ export interface SocketRoomConfig {
 
 export const defaultRooms: SocketRoomConfig[] = [
   {
+  // Implementation needed
+}
     name: 'general',
     maxUsers: 100,
     requireAuth: false,
     permissions: ['read', 'write']
   },
   {
+  // Implementation needed
+}
     name: 'agents',
     maxUsers: 50,
     requireAuth: true,
     permissions: ['read', 'write', 'execute']
   },
   {
+  // Implementation needed
+}
     name: 'admin',
     maxUsers: 10,
     requireAuth: true,
     permissions: ['read', 'write', 'execute', 'admin']
   }
 ];
-
 export const createSocketConfig = (overrides?: Partial<SocketIoConfig>): SocketIoConfig => {
+  // Implementation needed
+}
   return {
+  // Implementation needed
+}
     ...socketConfig,
     ...overrides
   };

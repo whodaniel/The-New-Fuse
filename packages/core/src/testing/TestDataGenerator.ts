@@ -1,16 +1,25 @@
 import { faker } from '@faker-js/faker';
-
 export class TestDataGenerator {
+  // Implementation needed
+}
   generate(schema: any): any {
+  // Implementation needed
+}
     if (typeof schema === 'string') {
+  // Implementation needed
+}
       return this.generateFromString(schema);
     }
     
     if (Array.isArray(schema)) {
+  // Implementation needed
+}
       return this.generateFromArray(schema);
     }
     
     if (typeof schema === 'object' && schema !== null) {
+  // Implementation needed
+}
       return this.generateFromObject(schema);
     }
     
@@ -18,7 +27,11 @@ export class TestDataGenerator {
   }
 
   private generateFromString(type: string): any {
+  // Implementation needed
+}
     switch (type.toLowerCase()) {
+  // Implementation needed
+}
       case 'string':
         return faker.lorem.word();
       case 'number':
@@ -45,7 +58,11 @@ export class TestDataGenerator {
   }
 
   private generateFromArray(schema: any[]): any {
+  // Implementation needed
+}
     if (schema.length === 0) {
+  // Implementation needed
+}
       return [];
     }
     
@@ -54,21 +71,31 @@ export class TestDataGenerator {
   }
 
   private generateFromObject(schema: any): any {
+  // Implementation needed
+}
     const result: any = {};
-    
     for (const [key, value] of Object.entries(schema)) {
+  // Implementation needed
+}
       if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+  // Implementation needed
+}
         const config = value as any;
-        
         if (config.type) {
+  // Implementation needed
+}
           switch (config.type) {
+  // Implementation needed
+}
             case 'string':
               result[key] = config.format 
                 ? this.generateFromString(config.format)
                 : faker.lorem.word();
               break;
             case 'number':
-              result[key] = faker.number.int({ 
+              result[key] = faker.number.int({
+  // Implementation needed
+}
                 min: config.min || 1, 
                 max: config.max || 100 
               });
@@ -86,9 +113,13 @@ export class TestDataGenerator {
               result[key] = this.generateFromString(config.type);
           }
         } else {
+  // Implementation needed
+}
           result[key] = this.generate(value);
         }
       } else {
+  // Implementation needed
+}
         result[key] = this.generate(value);
       }
     }
@@ -97,6 +128,8 @@ export class TestDataGenerator {
   }
 
   generateMany(schema: any, count: number): any[] {
+  // Implementation needed
+}
     return Array.from({ length: count }, () => this.generate(schema));
   }
 }

@@ -74,4 +74,3 @@ const PrivacyPolicy = () => {
     </div>);
 };
 export default PrivacyPolicy;
-//# sourceMappingURL=PrivacyPolicy.js.map

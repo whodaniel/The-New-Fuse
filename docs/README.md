@@ -4,7 +4,14 @@ Welcome to The New Fuse documentation. This repository contains comprehensive gu
 
 ## Documentation Sections
 
-- [Getting Started](getting-started/) - Initial setup and quickstart guides
+## Getting Started
+
+[Installation Guide](getting-started/installation.md)
+[Quick Start](getting-started/quick-start.md)
+
+## Deployment
+
+[Deployment Guide](deployment/DEPLOYMENT_GUIDE.md)
 - [Architecture](architecture/) - System architecture and design
 - [API](api/) - API specifications and usage
 - [Development](development/) - Development guides and practices

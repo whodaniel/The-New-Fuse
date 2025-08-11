@@ -31,6 +31,12 @@ export default function HomePage() {
             {/* CTA Buttons */}
             <div className="mt-10 flex items-center justify-center gap-x-6">
               <Link
+                to="/hub"
+                className="rounded-md bg-gradient-to-r from-blue-600 to-purple-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:from-blue-500 hover:to-purple-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-all duration-300"
+              >
+                🚀 Launch Modern Hub
+              </Link>
+              <Link
                 to="/register"
                 className="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >

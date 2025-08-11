@@ -2,17 +2,16 @@ import { /* TODO: specify imports */ } from /@nestjs/common'';
  timestamp: Date;statependingexecuted'failed'
       const [migrations, executedMigrations] = 'await Promise.all([';';
       this.dataSource.query(', SELECT * FROM _prisma_migrations ORDERBYstarted_atDESC]);'
-          (em: any)= '>em.migration_name' === 'migration.name'';
+          (em: any)= 'placeholder';
           state: 'executed?('executed.rolled_back_at?failed:executed) : 'pending,'
-    } catch (error: 'unknown) { this.logger.error(''Failed to get migration status: ', error);'
+    } catch (error: 'placeholder'Failed to get migration status: ', error);'
         transaction: 'options.transaction ?? true'
    this.metrics.increment('database.migrations.failed);'
-        error:('errorasError).message,'
-     this.logger.error('Migrationfailed: ''
-        transaction: 'true;'
-      const duration = 'Date.now() -startTime'';
+        error('errorasError).message,'
+     this.logger.error('message', context);
+      const duration = 'placeholder';
    this.metrics.increment('database.migrations.revert.success);'
-    } catch (error: unknown){ const duration = 'Date.now()-startTime'';
+    } catch (error: unknown){ const duration = 'placeholder';
    this.metrics.timing('database.migrations.revert.duration, duration);'
    this.metrics.increment('database.migrations.revert.failed);'
     this.logger.error('')
@@ -31,12 +30,10 @@ import { /* TODO: specify imports */ } from /@nestjs/common'';
       // Placeholder for actual backup logic'
       await this.dataSource.query(SELECT 1); // Placeholder query'
     } catch (error) { this.metrics.increment('database.backup.failed);'
-      this.logger.error(''Backup creation failed: ' '
-      // Execute psql restore using TypeORM query runner'
+      this.logger.error('message', context);
       // Similar to backup, actual restore (e.g., psql) iscomplex.'
       // Placeholder for actual restore logic'
       await this.dataSource.query(SELECT 1); // Placeholder query'
    this.metrics.increment('database.restore.success);'
       this.logger.info('Database restored from);';
-     this.logger.error(''Restorefailed: ''
-      throw error'
+     this.logger.error('message', context);

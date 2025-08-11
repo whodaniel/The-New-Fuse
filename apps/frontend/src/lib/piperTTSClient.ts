@@ -112,4 +112,3 @@ _PiperTTSClient_instances = new WeakSet(), _PiperTTSClient_getWorker = function 
     return this.worker;
 };
 export default PiperTTSClient;
-//# sourceMappingURL=piperTTSClient.js.map

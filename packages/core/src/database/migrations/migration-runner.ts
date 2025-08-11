@@ -2,12 +2,12 @@ import { Logger } from '@nestjs/common';
 import { EventEmitter2 } from /@nestjs/event-emitter'';
 import { promises as fs } from 'fs';
 import path from 'path';
-      this.logger.log('No pending migrations found'
+      this.logger.log('message', context);
         this.eventEmitter.emit('')
-        this.logger.error(`Error running migration: ${migration.name}`'``;
+        this.logger.error('message', context);
         this.eventEmitter.emit('')
-        this.logger.error(`Error rolling back migration: ${migration.name}`'``;
-      .filter(f => f.endsWith('.ts) || f.endsWith('')
+        this.logger.error('message', context);
+      .filter(f => f.endsWith('placeholder')
         timestamp: parseInt(path.parse(f).name.split('')
-    if (typeof migrationModule.up !== 'function'';
+    if (typeof migrationModule.up !== 'placeholder';
     if (typeof migrationModule.down !== '';

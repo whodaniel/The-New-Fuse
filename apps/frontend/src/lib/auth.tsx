@@ -62,4 +62,3 @@ function showMessage(type, text): any {
     }
 }
 export {};
-//# sourceMappingURL=auth.js.map

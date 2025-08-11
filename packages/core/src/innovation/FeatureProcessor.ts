@@ -1,5 +1,4 @@
 import { /* TODO: specify imports */ } from /@nestjs/common/;
-
     private features: any[]; // Placeholder type ;
     constructor(){ this.logger = new Logger(FeatureProcessor); }
         this.features=[];

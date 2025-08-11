@@ -2,11 +2,11 @@
   "name": "@the-new-fuse/ui-components",
   "version": "0.1.0",
   "description": "UI Components for The New Fuse",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/src/index.js",
+  "types": "dist/src/index.d.ts",
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && mkdir -p dist/src/core/toast && cp src/core/toast/toast.css dist/src/core/toast/ 2>/dev/null || true",
     "clean": "rimraf dist",
     "test": "jest",
     "lint": "eslint src"

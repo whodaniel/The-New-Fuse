@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { User } from '@prisma/client';
+import { User, Prisma } from '@the-new-fuse/database/generated/prisma';
 
 @Injectable()
 export class UserService {
@@ -36,11 +36,15 @@ export class UserService {
     return this.findByUsername(username);
   }
 
-  async createUser(email: string, password: string, username: string): Promise<User> {
-    return this.create({
-      email,
-      password,
-      username
+  async createUser(email: string, hashedPassword: string, username: string): Promise<User> {
+    return this.prisma.user.create({
+      data: {
+        email,
+        hashedPassword,
+        username,
+        role: 'USER',
+        // Add other required fields if any, based on your schema.prisma
+      },
     });
   }
 
@@ -54,16 +58,6 @@ export class UserService {
     } catch (error) {
       return null;
     }
-  }
-
-  async create(data: Omit<User, 'id' | 'createdAt' | 'updatedAt'>): Promise<User> {
-    return this.prisma.user.create({
-      data: {
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
-    });
   }
 
   async update(id: string, data: Partial<User>): Promise<User> {
@@ -93,6 +87,3 @@ export interface UserProfile {
   createdAt: Date;
   updatedAt: Date;
 }
-
-// Export the service instance for compatibility
-export const userService = new UserService(null as any); // Will be properly injected in DI container

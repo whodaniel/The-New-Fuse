@@ -1,10 +1,14 @@
 export enum ChannelType {
+  // Implementation needed
+}
   DIRECT = 'direct',
   GROUP = 'group',
   BROADCAST = 'broadcast',
 }
 
 export enum MessageType {
+  // Implementation needed
+}
   TEXT = 'text',
   IMAGE = 'image',
   FILE = 'file',
@@ -12,6 +16,8 @@ export enum MessageType {
 }
 
 export interface Channel {
+  // Implementation needed
+}
   id: string;
   name: string;
   type: ChannelType;
@@ -21,6 +27,8 @@ export interface Channel {
 }
 
 export interface Message {
+  // Implementation needed
+}
   id: string;
   channelId: string;
   senderId: string;
@@ -31,6 +39,8 @@ export interface Message {
 }
 
 export interface ChannelService {
+  // Implementation needed
+}
   createChannel(name: string, type: ChannelType, participants: string[]): Promise<Channel>;
   getChannel(id: string): Promise<Channel | null>;
   getUserChannels(userId: string): Promise<Channel[]>;

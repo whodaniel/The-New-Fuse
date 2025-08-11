@@ -1,13 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
-
 @Injectable()
 export class DatabaseConfig implements TypeOrmOptionsFactory {
+  // Implementation needed
+}
   constructor(private readonly configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
+  // Implementation needed
+}
     return {
+  // Implementation needed
+}
       type: 'postgres',
       host: this.configService.get('DB_HOST', 'localhost'),
       port: this.configService.get('DB_PORT', 5432),
@@ -24,6 +29,8 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       retryDelay: 3000,
       maxQueryExecutionTime: 1000,
       extra: {
+  // Implementation needed
+}
         connectionLimit: 20,
         acquireTimeout: 60000,
         timeout: 60000
@@ -33,6 +40,8 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
 }
 
 export const databaseConfig = {
+  // Implementation needed
+}
   host: process.env.DB_HOST || 'localhost',
   port: parseInt(process.env.DB_PORT || '5432'),
   username: process.env.DB_USERNAME,

@@ -22,7 +22,8 @@ import {
   NumberInputField,
   NumberInputStepper,
   NumberIncrementStepper,
-  NumberDecrementStepper
+  NumberDecrementStepper,
+  Box
 } from '@chakra-ui/react'
 import type { RootState } from '../../store/store'
 

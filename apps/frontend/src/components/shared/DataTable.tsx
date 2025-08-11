@@ -272,4 +272,3 @@ function DataTable({ columns: initialColumns, data, isLoading, loadingMessage, h
         </material_1.Paper>);
 }
 export {};
-//# sourceMappingURL=DataTable.js.map

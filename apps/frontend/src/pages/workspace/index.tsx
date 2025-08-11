@@ -47,4 +47,3 @@ const WorkspaceRoutes = () => {
     </Routes>);
 };
 export default WorkspaceRoutes;
-//# sourceMappingURL=index.js.map

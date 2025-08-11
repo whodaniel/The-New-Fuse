@@ -4,7 +4,7 @@ import request from 'supertest';
 import { AppModule } from '../../app.module';
 
 describe('MonitoringController (e2e)', () => {
-  let app: INestApplication;
+  let app: any; // Cast to any to bypass INestApplication type mismatch
 
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({

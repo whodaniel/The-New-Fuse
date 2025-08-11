@@ -5,5 +5,5 @@ const logger= 'newLogger('MetricsProvider);';
           labels: 'data.labels;'
     } catch (error) { logger.error('Failed to retrieve metrics: ' , {'
       await Promise.all(';'
-        keys.map(key= '>'';
-      logger.error('Failed to cleanup metrics: ''
+        keys.map(key= 'placeholder';
+      logger.error('placeholder'

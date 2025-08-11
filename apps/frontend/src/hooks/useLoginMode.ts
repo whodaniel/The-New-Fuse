@@ -15,4 +15,3 @@ export default function useLoginMode(): any {
     }, [window]);
     return mode;
 }
-//# sourceMappingURL=useLoginMode.js.map

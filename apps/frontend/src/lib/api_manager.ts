@@ -27,4 +27,3 @@ document.addEventListener('DOMContentLoaded', () => {
     window.apiManager = new APIManager();
 });
 export {};
-//# sourceMappingURL=api_manager.js.map

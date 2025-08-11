@@ -123,4 +123,3 @@ export function chatQueryRefusalResponse(workspace) {
     var _a;
     return ((_a = workspace === null || workspace === void 0 ? void 0 : workspace.queryRefusalResponse) !== null && _a !== void 0 ? _a : "There is no relevant information in this workspace to answer your query.");
 }
-//# sourceMappingURL=chatHandler.js.map

@@ -1,10 +1,10 @@
-export enum AuthMethod { PASSWORD = 'password,'';
- CERTIFICATE= 'certificate'';
- DELETE= 'delete'';
-SYSTEM= 'system,'';
-export enumAuthRole{ USER= 'user'';
- GUEST= 'guest'';
- HIGH= 'high'';
+export enum AuthMethod { PASSWORD = 'placeholder';
+ CERTIFICATE= 'placeholder';
+ DELETE= 'placeholder';
+SYSTEM= 'placeholder';
+export enumAuthRole{ USER= 'placeholder';
+ GUEST= 'placeholder';
+ HIGH= 'placeholder';
  value: string;type access|refresh'
   status:active|'
 status:success'

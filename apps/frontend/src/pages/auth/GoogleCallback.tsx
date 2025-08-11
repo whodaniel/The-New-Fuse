@@ -24,4 +24,3 @@ const GoogleCallback = () => {
     </div>);
 };
 export default GoogleCallback;
-//# sourceMappingURL=GoogleCallback.js.map

@@ -1,4 +1,5 @@
 import { spawn, ChildProcess } from 'child_process';
+import { join } from 'path';
 import { EventEmitter } from 'events';
 
 export class HybridBackend extends EventEmitter {
@@ -11,7 +12,9 @@ export class HybridBackend extends EventEmitter {
 
   async startNativeHost(): Promise<void> {
     try {
-      const hostPath = '../native/host.py';
+      const hostPath = join(__dirname, '../../native/host.py');
+      console.log('Starting native host from:', hostPath);
+      console.log('__dirname is:', __dirname);
       this.nativeHost = spawn('python3', [hostPath], {
         stdio: 'pipe'
       });

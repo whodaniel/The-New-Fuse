@@ -42,4 +42,3 @@ const fetchData = (endpoint, params): any => async (dispatch) => {
 exports.fetchData = fetchData;
 exports.default = apiSlice.reducer;
 export {};
-//# sourceMappingURL=api.js.map

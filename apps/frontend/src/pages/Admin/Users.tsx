@@ -122,4 +122,3 @@ const Users = () => {
     </div>);
 };
 export default Users;
-//# sourceMappingURL=Users.js.map

@@ -1,64 +1,174 @@
-import { Task, TaskDefinition } from './task';
-import { z } from 'zod';
-export interface WorkflowInstance extends Omit<Workflow, 'tasks' | 'edges'> {
-  currentStep?: string;
-  executionLog: string[];
+/**
+ * @fileoverview Workflow system type definitions
+ */
+
+import { WorkflowError } from '../utils/errors';
+
+// Workflow Definition Types
+export interface WorkflowDefinition {
+  id: string;
+  name: string;
+  description?: string;
+  version: string;
+  steps: WorkflowStep[];
+  triggers: WorkflowTrigger[];
+  variables: WorkflowVariable[];
+  metadata?: Record<string, any>;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export enum WorkflowNodeType {
+export interface WorkflowStep {
+  id: string;
+  name: string;
+  type: WorkflowStepType;
+  config: WorkflowStepConfig;
+  dependencies: string[];
+  conditions?: WorkflowCondition[];
+  timeout?: number;
+  retryPolicy?: RetryPolicy;
+  onSuccess?: WorkflowAction[];
+  onFailure?: WorkflowAction[];
+}
+
+export enum WorkflowStepType {
   TASK = 'TASK',
-  CONDITION = 'CONDITION',
+  DECISION = 'DECISION',
   PARALLEL = 'PARALLEL',
-  SEQUENCE = 'SEQUENCE',
+  LOOP = 'LOOP',
+  WAIT = 'WAIT',
+  WEBHOOK = 'WEBHOOK',
+  SCRIPT = 'SCRIPT',
+  HUMAN_INPUT = 'HUMAN_INPUT',
 }
 
-export type WorkflowStatus = 'draft' | 'active' | 'running' | 'completed' | 'failed' | 'cancelled';
-
-export interface WorkflowRetryPolicy {
-  maxRetries: number;
-  backoffStrategy: 'fixed' | 'exponential';
-  backoffDelayMs: number;
+export interface WorkflowStepConfig {
+  agentType?: string;
+  agentId?: string;
+  parameters: Record<string, any>;
+  inputMapping?: Record<string, string>;
+  outputMapping?: Record<string, string>;
+  resources?: {
+    memory?: number;
+    cpu?: number;
+    timeout?: number;
+  };
 }
 
-export interface WorkflowStepExecution {
-  stepId: string;
-  status: 'pending' | 'running' | 'completed' | 'failed';
+export interface WorkflowCondition {
+  type: 'expression' | 'script' | 'value';
+  condition: string;
+  operator?: 'equals' | 'not_equals' | 'greater' | 'less' | 'contains';
+  value?: any;
+}
+
+export interface RetryPolicy {
+  maxAttempts: number;
+  backoffStrategy: 'fixed' | 'exponential' | 'linear';
+  initialDelay: number;
+  maxDelay: number;
+  retryOn: string[]; // error codes or types
+}
+
+export interface WorkflowAction {
+  type: 'notify' | 'log' | 'set_variable' | 'trigger_workflow' | 'stop';
+  parameters: Record<string, any>;
+}
+
+// Workflow Execution Types
+export interface WorkflowExecution {
+  id: string;
+  workflowId: string;
+  status: WorkflowExecutionStatus;
   startTime: Date;
   endTime?: Date;
-  output?: any;
-  error?: string;
-  retryCount: number;
+  currentStep?: string;
+  variables: Record<string, any>;
+  stepExecutions: StepExecution[];
+  error?: WorkflowError;
+  metadata?: Record<string, any>;
 }
 
-export type WorkflowExecutionStatus = 'running' | 'completed' | 'failed' | 'pending' | 'cancelled';
+export enum WorkflowExecutionStatus {
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED',
+  PAUSED = 'PAUSED',
+}
 
-export const WorkflowSchema = z.object({
-  id: z.string().uuid().optional(),
-  name: z.string().min(1),
-  description: z.string().optional(),
-  definition: z.record(z.any()),
-  version: z.string().default('1.0.0'),
-  isEnabled: z.boolean().default(true),
-  status: z.enum(['draft', 'active', 'running', 'completed', 'failed', 'cancelled']),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
-  lastExecutedAt: z.date().optional().nullable(),
-  agentId: z.string().uuid().optional().nullable(),
-  userId: z.string().uuid().optional().nullable(),
-});
+export interface StepExecution {
+  stepId: string;
+  status: WorkflowExecutionStatus;
+  startTime: Date;
+  endTime?: Date;
+  input?: Record<string, any>;
+  output?: Record<string, any>;
+  error?: WorkflowError;
+  agentId?: string;
+  attempts: number;
+  logs: string[];
+}
 
-export const WorkflowRetryPolicySchema = z.object({
-  maxRetries: z.number().int().min(0).default(0),
-  backoffStrategy: z.enum(['fixed', 'exponential']).default('fixed'),
-  backoffDelayMs: z.number().int().min(0).default(1000),
-});
+// WorkflowError is now exported from utils/errors as a class
 
-export const WorkflowStepExecutionSchema = z.object({
-  stepId: z.string(),
-  status: z.enum(['pending', 'running', 'completed', 'failed']),
-  startTime: z.date(),
-  endTime: z.date().optional(),
-  output: z.any().optional(),
-  error: z.string().optional(),
-  retryCount: z.number().int().min(0).default(0),
-});
+// Workflow Triggers
+export interface WorkflowTrigger {
+  id: string;
+  type: WorkflowTriggerType;
+  config: WorkflowTriggerConfig;
+  enabled: boolean;
+  conditions?: WorkflowCondition[];
+}
+
+export enum WorkflowTriggerType {
+  MANUAL = 'MANUAL',
+  SCHEDULE = 'SCHEDULE',
+  EVENT = 'EVENT',
+  WEBHOOK = 'WEBHOOK',
+  FILE_CHANGE = 'FILE_CHANGE',
+  API_CALL = 'API_CALL',
+}
+
+export interface WorkflowTriggerConfig {
+  schedule?: string; // cron expression
+  eventType?: string;
+  webhookUrl?: string;
+  filePath?: string;
+  apiEndpoint?: string;
+  parameters?: Record<string, any>;
+}
+
+// Workflow Variables
+export interface WorkflowVariable {
+  name: string;
+  type: 'string' | 'number' | 'boolean' | 'object' | 'array';
+  defaultValue?: any;
+  required: boolean;
+  description?: string;
+  validation?: {
+    pattern?: string;
+    min?: number;
+    max?: number;
+    enum?: any[];
+  };
+}
+
+// Workflow Statistics
+export interface WorkflowStats {
+  totalExecutions: number;
+  successfulExecutions: number;
+  failedExecutions: number;
+  averageExecutionTime: number;
+  lastExecution?: Date;
+  mostCommonErrors: Array<{
+    error: string;
+    count: number;
+  }>;
+  performanceMetrics: {
+    throughput: number; // executions per hour
+    errorRate: number; // percentage
+    averageStepTime: Record<string, number>;
+  };
+}

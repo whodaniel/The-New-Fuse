@@ -1,28 +1,30 @@
-import { /* TODO: specify imports */ } from '@nestjs/common';
-import '../logging/LoggingService.js';
-   this.logger.error(''
-  /**'
-   */'
- this.server.on('connection'
-    socket.on(message, ('')
-   socket.on('close'
-   */'
-   this.emit('message'
-    this.logger.error('')
-   */'
-  private validateMessage(message: unknown): boolean{ if (typeof message !== object||message' === 'null) return false;'';
-  if('!typedMessage.type || typeoftypedMessage.type!== 'string) return false;'';
-  */'
-  private handleDisconnect(clientId: ''
- this.emit('disconnect'
-  this.logger.info('Clientdisconnected'
-  /**'
-   */'
-    this.logger.error('WebSocket error, { clientId'
- this.emit('error/, {clientId'
-   */'
-      if(client.readyState' === 'WebSocket.OPEN) {'';
-  async sendToClient(clientId: string, message: ''
-     if(client.readyState' === 'WebSocket.OPEN) {'';
-      this.server = 'null'';
-    this.logger.info('')
+import { Injectable, Logger } from '@nestjs/common';
+import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { Server } from 'socket.io';
+
+@Injectable()
+@WebSocketGateway({ cors: true })
+export class WebSocketService {
+  @WebSocketServer()
+  server: Server;
+
+  private readonly logger = new Logger(WebSocketService.name);
+
+  sendToAll(event: string, data: any): void {
+    this.server.emit(event, data);
+    this.logger.debug(`Broadcasted event: ${event}`);
+  }
+
+  sendToUser(userId: string, event: string, data: any): void {
+    this.server.to(userId).emit(event, data);
+    this.logger.debug(`Sent event to user ${userId}: ${event}`);
+  }
+
+  handleConnection(client: any): void {
+    this.logger.log(`Client connected: ${client.id}`);
+  }
+
+  handleDisconnect(client: any): void {
+    this.logger.log(`Client disconnected: ${client.id}`);
+  }
+}

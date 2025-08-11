@@ -1,74 +1,45 @@
-import { TaskType, TaskStatus, TaskPriority, AgentStatus, AgentRole, AgentCapability, EventType } from './enums';
-import { BaseEntity } from './base-types';
-export interface Agent extends BaseEntity {
+/**
+ * Core interface definitions for The New Fuse
+ */
+import { TaskStatus } from './enums';
+import { AgentCapability, AgentRole, AgentStatus } from '../agent-types.d';
+export { TaskStatus, AgentCapability, AgentRole, AgentStatus };
+/**
+ * Agent interface representing an AI agent in the system
+ */
+export interface Agent {
+    id: string;
     name: string;
     description?: string;
     type: string;
-    status: AgentStatus;
-    role?: AgentRole;
-    capabilities: AgentCapability[] | string[];
+    status: string;
+    role?: string;
+    capabilities: string[];
     metadata: Record<string, unknown>;
     userId?: string;
     deletedAt?: Date | null;
+    createdAt?: string;
+    updatedAt?: string;
 }
-export interface AgentConfig {
+/**
+ * Workflow interface for defining series of operations
+ */
+export interface Workflow {
     id: string;
     name: string;
     description?: string;
-    type: string;
-    systemPrompt?: string;
-    model?: string;
-    temperature?: number;
-    maxTokens?: number;
-    stopSequences?: string[];
-    contextWindow?: number;
-    capabilities?: AgentCapability[] | string[];
-    rateLimit?: {
-        requests: number;
-        window: number;
-    };
-    timeout?: number;
-    retries?: number;
-    maxConcurrentTasks?: number;
-    taskTimeout?: number;
-    memoryLimit?: number;
-    constraints?: {
-        maxTokensPerRequest?: number;
-        maxRequestsPerMinute?: number;
-        maxCostPerDay?: number;
-    };
+    status: string;
+    steps: WorkflowStep[];
+    metadata?: Record<string, unknown>;
+    deletedAt?: Date | null;
+    createdAt: string;
+    updatedAt: string;
 }
-export interface AgentMessage {
+/**
+ * Workflow step interface
+ */
+export interface WorkflowStep {
     id: string;
-    type: 'task' | 'notification' | 'command';
-    content: unknown;
-    metadata?: Record<string, unknown>;
-    timestamp: string;
-    priority?: 'low' | 'medium' | 'high';
-}
-export interface AgentErrorContext {
-    messageId: string;
-    messageType: 'task' | 'notification' | 'command';
-    timestamp: string;
-    metadata?: Record<string, unknown>;
-}
-export interface Event extends BaseEntity {
-    type: EventType;
-    data: Record<string, unknown>;
-    source: string;
-    timestamp: Date;
-}
-export interface Task extends BaseEntity {
-    type: TaskType;
-    status: TaskStatus;
-    priority: TaskPriority;
-    title: string;
-    description?: string;
-    metadata: Record<string, unknown>;
-    assignedTo?: string;
-    dependencies: string[];
-}
-export interface WorkflowStep extends BaseEntity {
     workflowId: string;
     name: string;
     type: string;
@@ -83,18 +54,14 @@ export interface WorkflowStep extends BaseEntity {
         outputName?: string;
     }>;
     order?: number;
-    status?: TaskStatus;
+    status?: string;
     result?: Record<string, unknown>;
 }
-export interface Workflow extends BaseEntity {
-    name: string;
-    description?: string;
-    status: string;
-    steps: WorkflowStep[];
-    metadata?: Record<string, unknown>;
-    deletedAt?: Date | null;
-}
-export interface WorkflowExecution extends BaseEntity {
+/**
+ * Workflow execution interface tracking the execution of a workflow
+ */
+export interface WorkflowExecution {
+    id: string;
     workflowId: string;
     status: 'running' | 'completed' | 'failed';
     startedAt: Date;
@@ -103,23 +70,7 @@ export interface WorkflowExecution extends BaseEntity {
     error?: string | null;
     stepResults: Record<string, unknown>;
     deletedAt?: Date | null;
+    createdAt: string;
+    updatedAt: string;
 }
-export type WorkflowExecutionStatus = {
-    id: string;
-    status: 'running' | 'completed' | 'failed';
-    progress?: number;
-    startedAt: string;
-    completedAt?: string;
-    error?: string;
-    result?: unknown;
-};
-export type WorkflowInput = Record<string, unknown>;
-export interface User {
-    id: string;
-    username: string;
-    email: string;
-    name?: string;
-    roles: string[];
-    createdAt: Date;
-    updatedAt: Date;
-}
+//# sourceMappingURL=interfaces.d.ts.map

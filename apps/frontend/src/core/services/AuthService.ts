@@ -175,4 +175,3 @@ export class AuthService {
         return this.stateManager.subscribe(['auth', 'user'], callback);
     }
 }
-//# sourceMappingURL=AuthService.js.map

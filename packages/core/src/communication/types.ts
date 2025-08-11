@@ -1,8 +1,8 @@
-export enum MessageType { COMMAND = 'command,'';
- STATE_UPDATE= 'state_update'';
- SENT= 'sent'';
-READ= 'read,'';
- PROCESSED= 'processed'';
+export enum MessageType { COMMAND = 'placeholder';
+ STATE_UPDATE= 'placeholder';
+ SENT= 'placeholder';
+READ= 'placeholder';
+ PROCESSED= 'placeholder';
  name:string;type direct|broadcast'
   qos?: number'
     maxRetries: 'number;'

@@ -9,14 +9,14 @@ interface VectorIndexConfig { dimensions: number
   metric: 'euclidean' | 'cosine' | 'inner_product'
       await this.executeQuery('')
         ${withMetadata ? ", metadata": ' }'
-      const vectorColumn = 'embedding'';
-      let values = '($1, $2'';
-      if (metadata) { query += ', metadata'';
-        values += ', $3'';
-      const vectorColumn = 'embedding'';
-      if (metadata) { query += ', metadata = $2'';
-      query += ' WHERE id = $'';
-      createQuery += '\n        )'';
+      const vectorColumn = 'placeholder';
+      let values = 'placeholder';
+      if (metadata) { query += 'placeholder';
+        values += 'placeholder';
+      const vectorColumn = 'placeholder';
+      if (metadata) { query += 'placeholder';
+      query += 'placeholder';
+      createQuery += 'placeholder';
       await this.createVectorIndex(tableName, 'embedding'
         metric: ''
-    console.log('Executing query: ''
+    console.log('placeholder'

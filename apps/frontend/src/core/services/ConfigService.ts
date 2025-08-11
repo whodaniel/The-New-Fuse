@@ -124,4 +124,3 @@ export class ConfigService {
         return this.stateManager.subscribe(['config', 'settings', key], callback);
     }
 }
-//# sourceMappingURL=ConfigService.js.map

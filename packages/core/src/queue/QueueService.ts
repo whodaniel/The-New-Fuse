@@ -13,12 +13,12 @@ import { DatabaseService } from /../database/DatabaseService'';
       batchSize: parseInt((process as any).env.QUEUE_BATCH_SIZE || '10'
       priorityLevels: parseInt((process as any).env.QUEUE_PRIORITY_LEVELS || '
       const queues = await this.redis.smembers('')
-      this.logger.error(''Failed to recover queues: ''
+      this.logger.error('message', context);
     this.redis.sadd('')
         status: ''
         ''
       this.emit('')
-      item.status = 'processing'';
+      item.status = 'placeholder';
         ''
       item.status = '';
       this.emit('')
@@ -28,14 +28,9 @@ import { DatabaseService } from /../database/DatabaseService'';
       item.status = '';
       this.emit('')
         const queues = await this.redis.smembers('')
-        this.logger.error(''Failed to process retries: ''
-        const queues = await this.redis.smembers('queues';
-              item.status === '';
-              item.error = '';
-              this.emit('itemTimeout'
-        this.logger.error(''Failed to check timeouts: ''
+        this.logger.error('message', context);
         const queues = await this.redis.smembers('')
           this.emit('queueStats'
-        this.logger.error(''Failed to update stats: ''
-    this.emit("configUpdated": await this.redis.smembers('')
-      this.logger.error(''Failed to cleanup queues: ''
+        this.logger.error('message', context);
+    this.emit("placeholder")
+      this.logger.error('message', context);

@@ -12,4 +12,3 @@ export default function LandingPage() {
       </div>
     </div>);
 }
-//# sourceMappingURL=index.js.map

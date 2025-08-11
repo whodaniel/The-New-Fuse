@@ -82,4 +82,3 @@ const MarketplaceGrid = ({ initialItems, categories, tags, }) => {
 };
 exports.MarketplaceGrid = MarketplaceGrid;
 export {};
-//# sourceMappingURL=MarketplaceGrid.js.map

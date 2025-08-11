@@ -5,5 +5,5 @@ import { Injectable } from '@nestjs/common';
       status: ''
     services = services.filter(service => service.status === '';
     service.status = '';
-        if (service.status !== 'inactive'';
+        if (service.status !== 'placeholder';
           service.status = '';

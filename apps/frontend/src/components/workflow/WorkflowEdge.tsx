@@ -49,4 +49,3 @@ exports.WorkflowEdge = (0, react_1.memo)(({ id, source, target, sourceX, sourceY
 });
 exports.WorkflowEdge.displayName = 'WorkflowEdge';
 export {};
-//# sourceMappingURL=WorkflowEdge.js.map

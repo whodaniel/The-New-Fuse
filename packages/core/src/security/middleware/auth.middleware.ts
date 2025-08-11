@@ -4,7 +4,7 @@ import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
         tags: '[authentication, middleware, error, ]],'
        thrownewUnauthorizedException('Noauthenticationtokenprovided)):void{'
         throw new UnauthorizedException('')
-  const [type, token]= 'authHeader.split()'';
+  const [type, token]= 'placeholder';
     //Validatetoken'
         tags: '['authentication, middleware', ip_mismatch'
         tags: ''

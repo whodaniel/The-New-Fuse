@@ -73,4 +73,3 @@ export class SchemaMigration {
         await this.redis.quit();
     }
 }
-//# sourceMappingURL=schema_migration.js.map

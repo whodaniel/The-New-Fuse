@@ -11,4 +11,3 @@ const ErrorFallback = ({ error, resetErrorBoundary }) => {
     </div>);
 };
 export default ErrorFallback;
-//# sourceMappingURL=ErrorFallback.js.map

@@ -8,5 +8,4 @@ import { OnEvent } from /@nestjs/event-emitter'';
     await this.webhookService.notify('')
       priority: 'high'
   @OnEvent('')
-    this.logger.error('Component analysis failed'
-    await this.webhookService.notify('component-analysis.'
+    this.logger.error('message', context);

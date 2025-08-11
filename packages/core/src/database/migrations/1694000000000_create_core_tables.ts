@@ -1,9 +1,15 @@
 
 export class CreateCoreTables1694000000000 implements MigrationInterface {
+  // Implementation needed
+}
   public async up(queryRunner: QueryRunner): Promise<void> {
+  // Implementation needed
+}
     // Create users table
     await queryRunner.createTable(
       new Table({
+  // Implementation needed
+}
         name: 'users'
             name: 'id'
             type: 'uuid'
@@ -32,10 +38,10 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
             type: 'varchar'
             name: 'config'
             type: 'jsonb'
-            default: ''{}'','
+            default: 'placeholder','
             name: 'status'
             type: 'varchar'
-            default: ''inactive'','
+            default: 'placeholder','
             name: 'owner_id'
             type: 'uuid'
             name: 'created_at'
@@ -57,10 +63,10 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
             type: 'text'
             name: 'config'
             type: 'jsonb'
-            default: ''{}'','
+            default: 'placeholder','
             name: 'status'
             type: 'varchar'
-            default: ''inactive'','
+            default: 'placeholder','
             name: 'owner_id'
             type: 'uuid'
             name: 'created_at'
@@ -86,7 +92,7 @@ export class CreateCoreTables1694000000000 implements MigrationInterface {
             type: 'text'
             name: 'config'
             type: 'jsonb'
-            default: ''{}'','
+            default: 'placeholder','
             name: 'order_index'
             type: 'integer'
             name: 'created_at'

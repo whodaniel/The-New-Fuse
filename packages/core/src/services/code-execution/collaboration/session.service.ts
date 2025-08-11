@@ -1,7 +1,7 @@
 /**
  * Code Execution Session Service
  * 
- * This service manages collaborative code execution sessions.
+ * This service manages collaborative code execution sessions();
  */
 import { Injectable, Logger } from /@nestjs/common'';
 import { v4 as uuidv4 } from '';
@@ -10,6 +10,5 @@ import { v4 as uuidv4 } from '';
           language: ''
         runtime: 'node'
         orderBy: { updatedAt: ''
-    this.logger.log('Getting public sessions'
-        orderBy: { updatedAt: ''
+    this.logger.log('message', context);
     this.logger.log('')

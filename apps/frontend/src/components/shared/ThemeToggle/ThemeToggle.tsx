@@ -12,4 +12,3 @@ export const ThemeToggle = () => {
         </svg>)}
     </button>);
 };
-//# sourceMappingURL=ThemeToggle.js.map

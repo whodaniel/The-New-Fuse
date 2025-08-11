@@ -62,4 +62,3 @@ document.addEventListener('DOMContentLoaded', () => {
     const performanceOptimizer = new PerformanceOptimizer();
 });
 export {};
-//# sourceMappingURL=performance_optimizer.js.map

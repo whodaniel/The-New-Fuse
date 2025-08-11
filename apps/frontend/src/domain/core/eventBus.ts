@@ -73,4 +73,3 @@ export class EventBus extends EventEmitter {
         return this.eventNames();
     }
 }
-//# sourceMappingURL=eventBus.js.map

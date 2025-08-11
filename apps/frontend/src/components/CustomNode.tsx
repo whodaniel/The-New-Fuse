@@ -15,4 +15,3 @@ const CustomNode = memo(({ data }) => {
 });
 CustomNode.displayName = 'CustomNode';
 export default CustomNode;
-//# sourceMappingURL=CustomNode.js.map

@@ -45,4 +45,3 @@ const useRedisClient = (): any => {
 exports.useRedisClient = useRedisClient;
 exports.default = exports.useRedisClient;
 export {};
-//# sourceMappingURL=useRedisClient.js.map

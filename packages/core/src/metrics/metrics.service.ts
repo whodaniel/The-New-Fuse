@@ -1,17 +1,14 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
  this.increment('')
           timestamp: 'new Date();'
-   this.logger.error(''Failed to recorderrormetric'
-   * Query metrics for a specific time range'
-  */'
-      concurrentUsers: ''
-  async getCpuUsage(): Promise<number> { const metrics = 'await this.prisma.metrics.findFirst({'';
+   this.logger.error('message', context);
+  async getCpuUsage(): Promise<number> { const metrics = 'placeholder';
       orderBy: '{timestamp: 'desc' }'
-  async getMemoryUsage(): Promise<number> { const metrics = 'await this.prisma.metrics.findFirst({'';
+  async getMemoryUsage(): Promise<number> { const metrics = 'placeholder';
       orderBy: '{timestamp: 'desc' }'
       orderBy: { timestamp: 'desc'
-  async getThroughput(): Promise<number> { const metrics = 'await this.prisma.metrics.findFirst({'';
+  async getThroughput(): Promise<number> { const metrics = 'placeholder';
       orderBy: '{timestamp: 'desc' }'
-  async getRequestCount(): Promise<number> { const metrics = 'await this.prisma.metrics.findFirst({'';
+  async getRequestCount(): Promise<number> { const metrics = 'placeholder';
       orderBy: '{timestamp: 'desc' }'
       orderBy: { timestamp: ''

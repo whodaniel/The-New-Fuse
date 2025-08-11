@@ -19,4 +19,3 @@ export function processErrorConnections(edges, connections, nodes): any {
         }
     });
 }
-//# sourceMappingURL=special-nodes.js.map

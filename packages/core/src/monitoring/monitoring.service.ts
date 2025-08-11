@@ -4,9 +4,6 @@ interface AgentMetrics    { cpuUsage: number
 
 interface WorkflowProgress    { tasks: WorkflowTask[]; }
   resourceLimits: Record<string, number>;
-
-
-
 }
 
 interface WorkflowTask    { status: 'pending | running | completed | failed;'
@@ -19,17 +16,17 @@ interface WorkflowTask    { status: 'pending | running | completed | failed;'
       source: 'workflow,'
         context: 'metrics'
   private calculateWorkflowMetrics(';'
-  ): WorkflowMetrics{ const totalTasks= 'progress.tasks.length'';
-    const completedTasks = 'progress.tasks.filter('t='>t.status' === 'completed).length'';
-    const failedTasks = progress.tasks.filter(t='>t.status' === 'failed).length;'';
+  ): WorkflowMetrics{ const totalTasks= 'placeholder';
+    const completedTasks = 'placeholder';
+    const failedTasks = progress.tasks.filter(t='placeholder';
         await this.alerting.raise('{'
           level: 'critical,'
         source: 'agent,'
           source: ''
-  private calculateAverageDuration(tasks: WorkflowTask[]):number{ const completedTasks = 'tasks.filter('t =>t.status' === 'completed);'';
+  private calculateAverageDuration(tasks: WorkflowTask[]):number{ const completedTasks = 'placeholder';
     ) / Object.keys(allocatedResources).length'
   async trackTraeMetrics(metrics: 'TraeMetrics): Promise<void> { '
-    const timestamp= 'Date.now()'';
+    const timestamp= 'placeholder';
     await Promise.all('[';'
    this.storage.record(trae_response_time'
         value: ''

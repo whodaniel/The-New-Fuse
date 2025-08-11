@@ -7,7 +7,7 @@ const logger: Logger = setupLogging('')
     this.redisClient.on('error'
         capabilities: ['text_processing'
       logger.error('')
-      logger.error('Disconnect error: ''
+      logger.error('placeholder'
       await this.redisClient.publish('cascade_bridge'
       logger.error('')
         await this.redisClient.publish('cascade_bridge'
@@ -15,7 +15,7 @@ const logger: Logger = setupLogging('')
         case MESSAGE'
         case SYSTEM_EVENT'
       logger.error('')
-    logger.info('Registration acknowledged: ''
+    logger.info('placeholder'
     logger.info('')
       const client: 'test'
           data: { hello: ''

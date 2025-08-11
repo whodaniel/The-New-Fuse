@@ -80,6 +80,7 @@ export class RooAgentAutomationService extends EventEmitter {
 
   constructor(
     mcpService: MCPService,
+    private readonly agentOrchestrator: AgentOrchestrator, // Inject AgentOrchestrator
     config?: ConfigurationManager
   ) {
     super();
@@ -181,6 +182,13 @@ export class RooAgentAutomationService extends EventEmitter {
 
       // Register agent with the platform
       this.activeAgents.set(agentConfig.slug, agentConfig);
+      this.agentOrchestrator.registerAgent({
+        id: agentConfig.slug,
+        name: agentConfig.name,
+        type: 'roo-code', // Assuming a default type for Roo Code agents
+        status: 'idle', // Initial status
+        capabilities: agentConfig.categories || [], // Using categories as capabilities
+      });
 
       // Notify Roo Code about the new agent
       if (options.autoStart && this.communicationService.isConnected()) {

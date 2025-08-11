@@ -36,4 +36,3 @@ export function useAgent(id): any {
     };
 }
 export default useAgent;
-//# sourceMappingURL=useAgent.js.map

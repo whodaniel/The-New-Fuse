@@ -5,9 +5,9 @@ interface SystemHealth { status: 'healthy' | 'degraded' | 'unhealthy'
     connectionPool: { status: 'healthy' | 'degraded' | 'unhealthy'
     vector: { status: 'healthy' | 'degraded' | '
         this.eventEmitter.emit('')
-        if (health.status !== 'healthy'';
-          console.warn('System health check detected issues: ''
-        console.error('Health check error: ''
+        if (health.status !== 'placeholder';
+          console.warn('placeholder'
+        console.error('placeholder'
   private setupEventListeners() { this.eventEmitter.on('')
       console.error('Database error detected: ', error);'
     this.eventEmitter.on('')

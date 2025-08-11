@@ -20,4 +20,3 @@ export const agentService = {
         return true;
     },
 };
-//# sourceMappingURL=agent.js.map

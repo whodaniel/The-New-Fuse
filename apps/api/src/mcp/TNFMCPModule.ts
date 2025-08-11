@@ -4,7 +4,6 @@ import { TNFMCPController } from './TNFMCPController';
 import { AgentService } from '../services/agent.service';
 import { ChatService } from '../services/chat.service';
 import { WorkflowService } from '../services/workflow.service';
-import { MonitoringService } from '../services/monitoring.service';
 import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationService';
 
 @Module({
@@ -13,7 +12,6 @@ import { ClaudeDevAutomationService } from '../services/ClaudeDevAutomationServi
     AgentService,
     ChatService,
     WorkflowService,
-    MonitoringService,
     ClaudeDevAutomationService,
   ],
   controllers: [TNFMCPController],

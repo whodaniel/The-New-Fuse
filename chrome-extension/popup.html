@@ -372,6 +372,130 @@
       outline: none;
       border-color: #667eea;
     }
+
+    .advanced-status-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    .status-card {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 10px;
+      border-left: 3px solid #667eea;
+    }
+
+    .status-card h4 {
+      margin: 0 0 8px 0;
+      font-size: 12px;
+      font-weight: 600;
+      color: #495057;
+      text-transform: uppercase;
+    }
+
+    .status-indicator.online {
+      color: #28a745;
+      font-weight: 500;
+    }
+
+    .status-indicator.offline {
+      color: #dc3545;
+      font-weight: 500;
+    }
+
+    .metric-item, .feature-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .feature-status.enabled {
+      color: #28a745;
+      font-weight: 500;
+    }
+
+    .feature-status.disabled {
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    .sync-status {
+      font-size: 10px;
+      color: #6c757d;
+      text-align: center;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .connection-quality {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 10px;
+      font-size: 9px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .connection-quality.good {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .connection-quality.fair {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .connection-quality.poor {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .feature-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      background: #f8f9fa;
+      border-radius: 4px;
+      margin-bottom: 4px;
+      font-size: 12px;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 32px;
+      height: 18px;
+      background: #ccc;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active {
+      background: #667eea;
+    }
+
+    .toggle-switch::before {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s;
+    }
+
+    .toggle-switch.active::before {
+      transform: translateX(14px);
+    }
   </style>
 </head>
 <body>
@@ -590,6 +714,37 @@
         </span>
       </div>
     </div>
+
+    <div class="conversation-section">
+      <div class="section-title">🔬 Advanced TNF Status</div>
+      <div id="tnf-advanced-status">
+        <!-- Advanced status will be populated by JavaScript -->
+      </div>
+    </div>
+
+    <div class="conversation-section">
+      <div class="section-title">⚡ Feature Management</div>
+      <div class="feature-toggle">
+        <span>Agent Swarm Orchestration</span>
+        <div class="toggle-switch" id="toggle-agent-swarm"></div>
+      </div>
+      <div class="feature-toggle">
+        <span>Workflow Automation</span>
+        <div class="toggle-switch" id="toggle-workflow-automation"></div>
+      </div>
+      <div class="feature-toggle">
+        <span>Real-time Monitoring</span>
+        <div class="toggle-switch" id="toggle-real-time-monitoring"></div>
+      </div>
+      <div class="feature-toggle">
+        <span>Advanced Analytics</span>
+        <div class="toggle-switch" id="toggle-advanced-analytics"></div>
+      </div>
+      <div class="button-group" style="margin-top: 8px;">
+        <button class="button button-primary" id="sync-with-tnf-core-btn">Sync with TNF Core</button>
+        <button class="button button-secondary" id="connect-orchestrator-btn">Connect Orchestrator</button>
+      </div>
+    </div>
   </div>
 
   <!-- Server Tab -->
@@ -654,6 +809,10 @@
   
   <div class="footer">
     Connected to The New Fuse relay system
+    <div class="sync-status" id="sync-status">
+      Last sync: <span id="last-sync-time">Never</span>
+      | Quality: <span class="connection-quality" id="connection-quality">Unknown</span>
+    </div>
   </div>
   
   <script src="popup.js"></script>

@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
 import { spawn } from 'child_process';
-import { Agent } from '@the-new-fuse/types';
 
 interface LocalAIConfiguration {
   localAI?: boolean;
@@ -10,6 +9,12 @@ interface LocalAIConfiguration {
   defaultModel?: string;
   autoDetected?: boolean;
   systemAgent?: boolean;
+}
+
+interface Agent {
+  id: string;
+  name: string;
+  configuration: LocalAIConfiguration;
 }
 
 export interface LLMResponse {
@@ -26,7 +31,7 @@ export interface LLMResponse {
 @Injectable()
 export class AgentLLMService {
   private readonly logger = new Logger(AgentLLMService.name);
-
+  
   constructor(private readonly configService: ConfigService) {}
 
   async processMessage(message: string, agent?: Agent): Promise<string> {
@@ -35,7 +40,7 @@ export class AgentLLMService {
     }
     
     const config = agent?.configuration as LocalAIConfiguration;
-    if (config?.localAI) {
+    if (config?.localAI && agent) {
       return this.processLocalAIMessage(message, agent);
     }
     
@@ -49,7 +54,7 @@ export class AgentLLMService {
     }
     
     const config = agent?.configuration as LocalAIConfiguration;
-    if (config?.localAI) {
+    if (config?.localAI && agent) {
       return this.getLocalAIResponse(prompt, agent);
     }
     
@@ -70,7 +75,7 @@ export class AgentLLMService {
     }
 
     this.logger.log(`🤖 Processing message with ${provider}`);
-
+    
     try {
       // Handle different local AI providers
       switch (provider) {
@@ -110,18 +115,18 @@ export class AgentLLMService {
       const process = spawn('claude', ['--model', 'claude-3-5-sonnet-20241022'], {
         stdio: 'pipe'
       });
-
+      
       let output = '';
       let error = '';
-
+      
       process.stdout.on('data', (data) => {
         output += data.toString();
       });
-
+      
       process.stderr.on('data', (data) => {
         error += data.toString();
       });
-
+      
       process.on('close', (code) => {
         if (code === 0) {
           resolve(output.trim());
@@ -129,11 +134,11 @@ export class AgentLLMService {
           reject(new Error(`Claude Code CLI exited with code ${code}: ${error}`));
         }
       });
-
+      
       process.on('error', (err) => {
         reject(new Error(`Failed to start Claude Code CLI: ${err.message}`));
       });
-
+      
       // Send the message to Claude
       process.stdin.write(message);
       process.stdin.end();
@@ -145,18 +150,18 @@ export class AgentLLMService {
       const process = spawn('gemini', ['chat'], {
         stdio: 'pipe'
       });
-
+      
       let output = '';
       let error = '';
-
+      
       process.stdout.on('data', (data) => {
         output += data.toString();
       });
-
+      
       process.stderr.on('data', (data) => {
         error += data.toString();
       });
-
+      
       process.on('close', (code) => {
         if (code === 0) {
           resolve(output.trim());
@@ -164,11 +169,11 @@ export class AgentLLMService {
           reject(new Error(`Gemini CLI exited with code ${code}: ${error}`));
         }
       });
-
+      
       process.on('error', (err) => {
         reject(new Error(`Failed to start Gemini CLI: ${err.message}`));
       });
-
+      
       // Send the message to Gemini
       process.stdin.write(message);
       process.stdin.end();
@@ -183,18 +188,18 @@ export class AgentLLMService {
       const process = spawn('ollama', ['run', model], {
         stdio: 'pipe'
       });
-
+      
       let output = '';
       let error = '';
-
+      
       process.stdout.on('data', (data) => {
         output += data.toString();
       });
-
+      
       process.stderr.on('data', (data) => {
         error += data.toString();
       });
-
+      
       process.on('close', (code) => {
         if (code === 0) {
           resolve(output.trim());
@@ -202,11 +207,11 @@ export class AgentLLMService {
           reject(new Error(`Ollama exited with code ${code}: ${error}`));
         }
       });
-
+      
       process.on('error', (err) => {
         reject(new Error(`Failed to start Ollama: ${err.message}`));
       });
-
+      
       // Send the message to Ollama
       process.stdin.write(message + '\n');
       process.stdin.end();
@@ -217,22 +222,26 @@ export class AgentLLMService {
     const config = agent.configuration as LocalAIConfiguration;
     const command = config?.command;
     
+    if (!command) {
+      throw new Error('No command specified for generic AI provider');
+    }
+    
     return new Promise((resolve, reject) => {
       const process = spawn(command, [], {
         stdio: 'pipe'
       });
-
+      
       let output = '';
       let error = '';
-
+      
       process.stdout.on('data', (data) => {
         output += data.toString();
       });
-
+      
       process.stderr.on('data', (data) => {
         error += data.toString();
       });
-
+      
       process.on('close', (code) => {
         if (code === 0) {
           resolve(output.trim() || 'No response from AI provider');
@@ -240,11 +249,11 @@ export class AgentLLMService {
           reject(new Error(`${command} exited with code ${code}: ${error}`));
         }
       });
-
+      
       process.on('error', (err) => {
         reject(new Error(`Failed to start ${command}: ${err.message}`));
       });
-
+      
       // Send the message
       process.stdin.write(message);
       process.stdin.end();
@@ -257,6 +266,7 @@ export class AgentLLMService {
   async getAvailableLocalAIAgents(userId: string): Promise<Agent[]> {
     // This would integrate with AgentService to get local AI agents
     // For now, return empty array as placeholder
+    this.logger.debug(`Getting available local AI agents for user: ${userId}`);
     return [];
   }
 

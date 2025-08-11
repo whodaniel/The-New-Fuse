@@ -66,4 +66,3 @@ export function Captcha({ onVerify, onExpire, onError, className, siteKey, theme
     };
     return (<div ref={containerRef} className={cn(captchaVariants({ variant, size }), className)} data-testid={dataTestId}/>);
 }
-//# sourceMappingURL=Captcha.js.map

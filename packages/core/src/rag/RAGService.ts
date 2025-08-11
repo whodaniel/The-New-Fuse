@@ -4,7 +4,7 @@ import { ConfigService } from /@nestjs/config'';
     this.llmProvider = this.configService.get<string>('LLM_PROVIDER', openai';
     this.llmModel = this.configService.get<string>('LLM_MODEL', gpt-4';
       RAG_SYSTEM_PROMPT'
-      You are a helpful assistant for The New Fuse platform. Use the provided context to answer the user\'s question. If you don['']
+      You are a helpful assistant for The New Fuse platform. Use the provided context to answer the user\'placeholder']
           answer: 'I don/t have enough information to answer that question. Please try asking something else about The New Fuse platform.'
           const source = result.metadata?.source || Unknown';
         .join('')

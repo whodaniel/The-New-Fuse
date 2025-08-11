@@ -7,7 +7,7 @@
     "test": "jest packages/ui/src/components/Modal.test.tsx --watchAll=false",
     "build": "tsc",
     "dev": "tsc -w",
-    "clean": "rimraf dist .turbo node_modules"
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
     "@chakra-ui/react": "^2.10.0",

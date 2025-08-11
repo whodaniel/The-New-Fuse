@@ -35,7 +35,7 @@ const TaskDetail = lazy(() => import('./pages/Tasks/Detail.js'));
 const NewTask = lazy(() => import('./pages/Tasks/New.js'));
 const EditTask = lazy(() => import('./pages/Tasks/Edit.js'));
 const TaskBoard = lazy(() => import('./pages/Tasks/Board.js'));
-const TaskCalendar = lazy(() => import('./pages/Tasks/Calendar.js'));
+const TaskCalendar = lazy(() => import('./pages/Tasks/Calendar.tsx'));
 const TaskReports = lazy(() => import('./pages/Tasks/Reports.js'));
 
 // Workflow pages

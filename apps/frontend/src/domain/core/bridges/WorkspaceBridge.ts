@@ -147,4 +147,3 @@ export class WorkspaceBridge {
         return this.stateManager.subscribe(['workspaces', workspaceId, 'members'], callback);
     }
 }
-//# sourceMappingURL=WorkspaceBridge.js.map

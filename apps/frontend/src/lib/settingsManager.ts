@@ -107,4 +107,3 @@ class SettingsManager {
 const settingsManager = SettingsManager.getInstance();
 exports.settingsManager = settingsManager;
 export {};
-//# sourceMappingURL=settingsManager.js.map

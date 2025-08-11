@@ -1,10 +1,12 @@
 export enum ErrorSeverity {
-  LOW = 'LOW,'';
-CRITICAL= 'CRITICAL'';
- VALIDATION= 'VALIDATION'';
- DATABASE= 'DATABASE'';
-BUSINESS= 'BUSINESS,'';
- SYSTEM= 'SYSTEM'';
+  // Implementation needed
+}
+  LOW = 'placeholder';
+CRITICAL= 'placeholder';
+ VALIDATION= 'placeholder';
+ DATABASE= 'placeholder';
+BUSINESS= 'placeholder';
+ SYSTEM= 'placeholder';
     super('')
       metadata'
-    this.validationErrors = 'validationErrors'';
+    this.validationErrors = 'placeholder';

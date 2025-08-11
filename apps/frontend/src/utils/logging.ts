@@ -48,4 +48,3 @@ function getLogger(app): any {
     return app.locals.logger;
 }
 export {};
-//# sourceMappingURL=logging.js.map

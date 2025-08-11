@@ -227,4 +227,3 @@ if (require.main === module) {
     run();
 }
 export {};
-//# sourceMappingURL=redis_client.js.map

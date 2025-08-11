@@ -18,6 +18,7 @@
     "skipLibCheck": true,
     "moduleResolution": "bundler",
     "baseUrl": ".",
+    "outDir": "./dist",
     "paths": {
       "@/*": ["src/*"],
       "@the-new-fuse/*": ["packages/*/src"]

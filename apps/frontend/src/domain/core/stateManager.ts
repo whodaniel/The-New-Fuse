@@ -138,4 +138,3 @@ export class StateManager {
         return JSON.parse(JSON.stringify(this.state));
     }
 }
-//# sourceMappingURL=stateManager.js.map

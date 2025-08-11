@@ -39,4 +39,3 @@ export default function useTextSize(): UseTextSizeReturn {
     setTextSize
   };
 }
-//# sourceMappingURL=useTextSize.js.map

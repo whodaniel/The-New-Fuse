@@ -5,7 +5,16 @@
  * Provides comprehensive interfaces for extension lifecycle management
  */
 
-import { WorkflowNode } from '@the-new-fuse/workflow-engine/types';
+// Conditional import to avoid build dependency issues
+// import { WorkflowNode } from '@the-new-fuse/workflow-engine';
+import { MasterAgentRegistry } from '@tnf/relay-core';
+
+// Local type definition to avoid dependency on workflow-engine build
+export interface WorkflowNode {
+  id: string;
+  type: string;
+  execute(context: any): Promise<any>;
+}
 
 // Core extension interfaces
 export interface UnifiedExtension {
@@ -157,7 +166,7 @@ export interface ExtensionContext {
   tempDirectory: string;
   environment: 'development' | 'staging' | 'production';
   userId?: string;
-  agentRegistry?: any;
+  agentRegistry?: MasterAgentRegistry;
   workflowEngine?: any;
   logger?: any;
   eventBus?: any;

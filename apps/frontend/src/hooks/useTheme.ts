@@ -39,4 +39,3 @@ export function useTheme(): any {
     }
     return { theme, setTheme, availableThemes };
 }
-//# sourceMappingURL=useTheme.js.map

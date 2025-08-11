@@ -1,13 +1,8 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.parseMCPMessage = parseMCPMessage;
-exports.createMCPResponse = createMCPResponse;
-exports.createMCPError = createMCPError;
-function parseMCPMessage(data) {
+export function parseMCPMessage(data) {
     // Implementation would go here
     return data;
 }
-function createMCPResponse(id, result) {
+export function createMCPResponse(id, result) {
     return {
         id,
         type: 'response',
@@ -15,7 +10,7 @@ function createMCPResponse(id, result) {
         timestamp: new Date()
     };
 }
-function createMCPError(id, error) {
+export function createMCPError(id, error) {
     return {
         id,
         type: 'error',
@@ -23,3 +18,4 @@ function createMCPError(id, error) {
         timestamp: new Date()
     };
 }
+//# sourceMappingURL=mcp.js.map

@@ -84,4 +84,3 @@ describe('Captcha', () => {
         expect(script).toHaveAttribute('defer');
     });
 });
-//# sourceMappingURL=Captcha.test.js.map

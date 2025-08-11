@@ -16,4 +16,3 @@ export function useLanguageOptions(): any {
         changeLanguage,
     };
 }
-//# sourceMappingURL=useLanguageOptions.js.map

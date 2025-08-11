@@ -15,7 +15,7 @@ export { ExtensionValidator, type ExtensionValidatorConfig, type SecurityScanRes
 export * from './types/ExtensionTypes.js';
 
 // Factory for creating extension system
-import { Logger, AgentRegistry } from '@tnf/relay-core';
+import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
 import { ExtensionManager } from './manager/ExtensionManager.js';
 import { ExtensionManagerConfig } from './types/ExtensionTypes.js';
 
@@ -39,7 +39,7 @@ export class ExtensionSystemFactory {
   static create(
     config: ExtensionSystemConfig,
     logger: Logger,
-    agentRegistry?: AgentRegistry,
+    agentRegistry?: MasterAgentRegistry,
     workflowEngine?: any
   ): ExtensionManager {
     const managerConfig: ExtensionManagerConfig = {
@@ -64,7 +64,7 @@ export class ExtensionSystemFactory {
   static createDefault(
     baseDirectory: string,
     logger: Logger,
-    agentRegistry?: AgentRegistry,
+    agentRegistry?: MasterAgentRegistry,
     workflowEngine?: any
   ): ExtensionManager {
     const config: ExtensionSystemConfig = {

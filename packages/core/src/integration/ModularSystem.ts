@@ -4,9 +4,6 @@ interface Module    { id: string
   version: string
   capabilities: string[]; }
   interfaces: Record<string, unknown>;
-
-
-
 }
 
 interface ProcessingGoal    { targetOutput: string

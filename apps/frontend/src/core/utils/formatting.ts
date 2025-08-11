@@ -120,4 +120,3 @@ export class DurationFormatter {
         return this.formatDuration(duration);
     }
 }
-//# sourceMappingURL=formatting.js.map

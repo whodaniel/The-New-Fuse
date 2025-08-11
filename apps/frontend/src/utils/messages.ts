@@ -53,4 +53,3 @@ function createTool(name, description, properties): any {
     };
 }
 export {};
-//# sourceMappingURL=messages.js.map

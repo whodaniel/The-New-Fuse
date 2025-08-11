@@ -38,10 +38,9 @@ export class Web3authService implements OnModuleInit {
       this.web3auth = new Web3Auth({
         clientId,
         web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET, // Use TESTNET for development
-        privateKeyProvider
       });
 
-      await this.web3auth.init();
+      await this.web3auth.init({ provider: privateKeyProvider as any });
       this.logger.log('Web3Auth initialized successfully');
     } catch (error) {
       this.logger.error('Failed to initialize Web3Auth:', error);
@@ -49,7 +48,7 @@ export class Web3authService implements OnModuleInit {
     }
   }
 
-  async getProvider(verifierId: string) {
+  async getProvider(verifierId: string): Promise<{ provider: any; account: any; walletClient: any }> {
     try {
       this.logger.log(`Getting provider for verifierId: ${verifierId}`);
 

@@ -49,7 +49,7 @@ export class ExtensionLoader extends EventEmitter {
   private sandboxes: Map<string, ExtensionSandbox> = new Map();
   private loadingPromises: Map<string, Promise<ExtensionLoadResult>> = new Map();
 
-  constructor(config: ExtensionLoaderConfig, logger: Logger) {
+    constructor(config: ExtensionLoaderConfig, logger: Logger) {
     super();
     this.config = config;
     this.logger = logger;

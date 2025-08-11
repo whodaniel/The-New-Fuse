@@ -1,12 +1,12 @@
 import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '../config/ConfigService';
-import * as IORedis from 'ioredis';
+import IORedis, { Redis } from 'ioredis';
 
 @Injectable()
 export class RedisService implements OnModuleDestroy {
   private readonly logger = new Logger(RedisService.name);
-  private readonly redis: IORedis.Redis;
-  private readonly subClient: IORedis.Redis;
+  private readonly redis: Redis;
+  private readonly subClient: Redis;
 
   constructor(private readonly configService: ConfigService) {
     const redisConfig = {
@@ -15,10 +15,8 @@ export class RedisService implements OnModuleDestroy {
       password: this.configService.getRedisPassword(),
       db: this.configService.getRedisDb()
     };
-
     this.redis = new IORedis(redisConfig);
     this.subClient = new IORedis(redisConfig);
-    
     this.logger.log('Redis service initialized');
   }
 
@@ -119,7 +117,7 @@ export class RedisService implements OnModuleDestroy {
   async subscribe(channel: string, callback: (message: string) => void): Promise<void> {
     try {
       await this.subClient.subscribe(channel);
-      this.subClient.on('message', (ch, message) => {
+      this.subClient.on('message', (ch: string, message: string) => {
         if (ch === channel) {
           callback(message);
         }

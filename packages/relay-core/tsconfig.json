@@ -14,7 +14,9 @@
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/database": ["../database/dist"],
-      "@the-new-fuse/database/*": ["../database/dist/*"]
+      "@the-new-fuse/database/*": ["../database/dist/*"],
+      "@the-new-fuse/security": ["../security/dist"],
+      "@the-new-fuse/security/*": ["../security/dist/*"]
     },
     "types": ["node"]
   },

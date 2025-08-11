@@ -90,7 +90,10 @@ export interface WorkflowInput {
   [key: string]: unknown;
 }
 
-export interface WorkflowExecution extends BaseEntity {
+export interface WorkflowExecution {
+  id?: string; // Made optional and removed BaseEntity extension
+  createdAt?: Date; // Made optional and removed BaseEntity extension
+  updatedAt?: Date; // Made optional and removed BaseEntity extension
   workflowId: string;
   status: WorkflowExecutionStatus;
   input?: WorkflowInput;
@@ -99,3 +102,4 @@ export interface WorkflowExecution extends BaseEntity {
   startedAt: Date;
   completedAt?: Date;
 }
+

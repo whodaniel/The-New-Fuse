@@ -7,11 +7,7 @@ import { /* TODO: specify imports */ } from '@the-new-fuse/database';
       this.logger.error('')
         error: ''
       //Attemptrecovery'
-    } catch (error): void { this.logger.error(''Failed to handlepipelinefailure: ' '
-    // Implement agent recoverylogic'
-   constmaxRetries: ''
-          recoveryAttempt: 'retries 1'
-          recoveryAttempt: 'null'
+    } catch (error): void { this.logger.error('message', context);
         })): void { retries+;'
       needsManualIntervention: 'true'
   pipeline: ''

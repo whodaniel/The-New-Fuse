@@ -94,4 +94,3 @@ exports.WorkflowNode = (0, react_1.memo)(({ id, data, selected }) => {
     </Card>);
 });
 export {};
-//# sourceMappingURL=WorkflowNode.js.map

@@ -22,6 +22,7 @@ export class UserRepository {
       createdAt: dbUser.createdAt,
       updatedAt: dbUser.updatedAt,
       deletedAt: dbUser.deletedAt,
+      emailVerified: dbUser.emailVerified,
     };
   }
 
@@ -40,7 +41,8 @@ export class UserRepository {
       refreshToken: true,
       createdAt: true,
       updatedAt: true,
-      deletedAt: true
+      deletedAt: true,
+      emailVerified: true,
     };
   }
 
@@ -78,7 +80,10 @@ export class UserRepository {
 
   async create(data: Prisma.UserCreateInput): Promise<User> {
     const user = await this.prisma.user.create({
-      data,
+      data: {
+        ...data,
+        emailVerified: false,
+      },
       select: this.getUserSelect()
     });
     return this.mapDatabaseUserToUser(user);

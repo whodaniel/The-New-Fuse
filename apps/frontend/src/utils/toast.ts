@@ -22,4 +22,3 @@ export default {
     showErrorToast,
     showInfoToast,
 };
-//# sourceMappingURL=toast.js.map

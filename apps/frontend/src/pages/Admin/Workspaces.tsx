@@ -117,4 +117,3 @@ const Workspaces = () => {
     </div>);
 };
 export default Workspaces;
-//# sourceMappingURL=Workspaces.js.map

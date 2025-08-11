@@ -116,4 +116,3 @@ if (require.main === module) {
     const rootPath = process.argv[2] || path.join(__dirname, '..');
     createDirectoryStructure(rootPath);
 }
-//# sourceMappingURL=organize_files.js.map

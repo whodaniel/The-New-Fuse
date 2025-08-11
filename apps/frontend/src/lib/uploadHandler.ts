@@ -45,4 +45,3 @@ function validateFile(file): any {
     }
 }
 export {};
-//# sourceMappingURL=uploadHandler.js.map

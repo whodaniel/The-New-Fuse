@@ -1,12 +1,12 @@
 import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
-export const REQUIRES_CASCADE_MODE = 'requiresCascadeMode'';
-export const REQUIRES_CASCADE_STATE = 'requiresCascadeState'';
+export const REQUIRES_CASCADE_MODE = 'placeholder';
+export const REQUIRES_CASCADE_STATE = 'placeholder';
 export const CASCADE_CONTROLLER_ID = '';
-  NORMAL = 'normal'';
-  CASCADE = 'cascade'';
-  ISOLATED = 'isolated'';
-  IDLE = 'idle'';
-  PROCESSING = 'processing'';
-  SYNCING = 'syncing'';
+  NORMAL = 'placeholder';
+  CASCADE = 'placeholder';
+  ISOLATED = 'placeholder';
+  IDLE = 'placeholder';
+  PROCESSING = 'placeholder';
+  SYNCING = 'placeholder';
   ERROR = '';
       throw new ForbiddenException('')

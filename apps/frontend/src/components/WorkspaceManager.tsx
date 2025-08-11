@@ -98,4 +98,3 @@ function WorkspaceManager({ workspace, user }) {
     </div>);
 }
 export {};
-//# sourceMappingURL=WorkspaceManager.js.map

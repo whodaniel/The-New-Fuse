@@ -28,6 +28,7 @@ model User {
   preferences    Json?
   refreshToken   String?
   deletedAt      DateTime?
+  emailVerified  Boolean    @default(false)
 
   // Relationships
   agents        Agent[]
@@ -254,6 +255,18 @@ model Message {
   reactions       Json?
 
   @@map("messages")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid())
+  userId    String
+  role      MessageRole
+  content   String      @db.Text
+  expiresAt DateTime    @default(dbgenerated("NOW() + INTERVAL '7 days'"))
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@map("chat_messages")
 }
 
 enum MessageRole {

@@ -7,13 +7,18 @@
     "declaration": true,
     "noEmit": false,
     "baseUrl": ".",
-    "traceResolution": true,
     "paths": {
       "@the-new-fuse/core": [
-        "../core/dist"
+        "../core/src"
       ],
       "@the-new-fuse/core/*": [
-        "../core/dist/*"
+        "../core/src/*"
+      ],
+      "@the-new-fuse/types": [
+        "../types"
+      ],
+      "@the-new-fuse/types/*": [
+        "../types/*"
       ]
     }
   },

@@ -48,4 +48,3 @@ export default function useUser(): UseUserReturn {
     isAuthenticated: !!user
   };
 }
-//# sourceMappingURL=useUser.js.map

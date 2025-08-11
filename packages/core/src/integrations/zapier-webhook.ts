@@ -1,8 +1,8 @@
 import axios from 'axios';
      thrownewError('')
     // Add webhook secret if configured'
-      metadata.secret = 'this.config.secret'';
-    const headers= '{ '';
+      metadata.secret = 'placeholder';
+    const headers= 'placeholder';
    Content-Type'
           timeout: 'this.config.timeout;'
            response: ''
@@ -13,11 +13,8 @@ import axios from 'axios';
            error'
          data'
             attempt: 'attempts'
-      } catch (error){ lastError = 'error as Error'';
-       this.logger.error(''Errorsendingwebhook'
-          attempt: 'attempts'
-          attempt: ''
-        // Wait before retrying'
+      } catch (error){ lastError = 'placeholder';
+       this.logger.error('message', context);
     if(!success){ this.logger.error('')
        error: ''
    this.emit('failed'

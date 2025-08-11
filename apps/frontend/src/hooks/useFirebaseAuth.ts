@@ -76,4 +76,3 @@ export function useFirebaseAuth(): any {
         logout,
     };
 }
-//# sourceMappingURL=useFirebaseAuth.js.map

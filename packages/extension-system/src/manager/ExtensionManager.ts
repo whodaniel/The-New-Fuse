@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import * as path from 'path';
-import { Logger, AgentRegistry } from '@tnf/relay-core';
+import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
 // import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
 import {
   UnifiedExtension,
@@ -41,7 +41,7 @@ export class ExtensionManager extends EventEmitter implements ExtensionAPI {
   private validator: ExtensionValidator;
   
   // Framework integration
-  private agentRegistry?: AgentRegistry;
+  private agentRegistry?: MasterAgentRegistry;
   private workflowEngine?: any;
   
   // State management
@@ -52,7 +52,7 @@ export class ExtensionManager extends EventEmitter implements ExtensionAPI {
   constructor(
     config: ExtensionManagerConfig,
     logger: Logger,
-    agentRegistry?: AgentRegistry,
+    agentRegistry?: MasterAgentRegistry,
     workflowEngine?: any
   ) {
     super();

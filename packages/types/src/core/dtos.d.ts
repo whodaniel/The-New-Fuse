@@ -6,7 +6,7 @@ export interface CreateAgentDto {
     name: string;
     description?: string;
     type: string;
-    capabilities: AgentCapability[] | string[];
+    capabilities: AgentCapability[];
     systemPrompt?: string;
     status?: AgentStatus;
     role?: AgentRole;
@@ -17,7 +17,7 @@ export interface UpdateAgentDto {
     description?: string;
     type?: string;
     systemPrompt?: string;
-    capabilities?: AgentCapability[] | string[];
+    capabilities?: AgentCapability[];
     status?: AgentStatus;
     role?: AgentRole;
     configuration?: Record<string, unknown>;
@@ -30,7 +30,7 @@ export interface AgentResponseDto {
     type: string;
     status: AgentStatus;
     role?: AgentRole;
-    capabilities: AgentCapability[] | string[];
+    capabilities: AgentCapability[];
     metadata: Record<string, unknown>;
     createdAt: Date;
     updatedAt: Date;
@@ -147,3 +147,4 @@ export interface ApiResponse<T> {
     error?: string | null;
     message?: string;
 }
+//# sourceMappingURL=dtos.d.ts.map

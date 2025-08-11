@@ -134,4 +134,3 @@ export const importWorkflow = (workflow): any => {
         edges: workflow.edges,
     };
 };
-//# sourceMappingURL=workflow.js.map

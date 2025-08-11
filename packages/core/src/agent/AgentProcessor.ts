@@ -1,15 +1,14 @@
-
 import { Injectable, Logger } from '@nestjs/common';
-import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent.d';
+import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent';
 
 @Injectable()
 export class AgentProcessor {
   private readonly logger = new Logger(AgentProcessor.name);
 
-  async processAgent(agent: Agent): Promise<{ 
-    success: boolean; 
-    message: string; 
-    result?: unknown; 
+  async processAgent(agent: Agent): Promise<{
+    success: boolean;
+    message: string;
+    result?: unknown;
   }> {
     try {
       this.logger.log('Processing agent', { agentId: agent.config.id });
@@ -36,7 +35,6 @@ export class AgentProcessor {
     } catch (error) {
       this.logger.error('Failed to process agent', { error, agentId: agent.config.id });
       await this.updateAgentStatus(agent.config.id, 'error');
-      
       return {
         success: false,
         message: 'Agent processing failed'

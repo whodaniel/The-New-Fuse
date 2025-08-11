@@ -199,4 +199,3 @@ for (const relationship of sampleNestedRelationships) {
 
 db.close();
 export {};
-//# sourceMappingURL=initDb.js.map

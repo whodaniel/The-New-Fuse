@@ -59,4 +59,3 @@ const ToastDescription = React.forwardRef((_a, ref) => {
 exports.ToastDescription = ToastDescription;
 ToastDescription.displayName = ToastPrimitives.Description.displayName;
 export {};
-//# sourceMappingURL=toast.js.map

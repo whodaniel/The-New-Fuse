@@ -34,10 +34,41 @@ src/renderer/
 # Specific generated directories
 generated/
 apps/backend/src/scheduling/
+.claude/
+.kiro/
+temp-theia-app/
 
 # Documentation/Planning files
 REAL_USER_JOURNEYS.md
 USER_JOURNEY_MAP.md
+README.md
+*_RESULTS.md
+*_USAGE.md
+*_REFERENCE.md
+*_SUMMARY.md
+*_SYSTEM.md
+*_COMPLETED.md
+*_HUB.md
+*_DELEGATION.md
+*_WORKFLOW.md
+*_READY.md
+*_ROADMAP.md
+*_GUIDE.md
+*_FEATURES.md
+TROUBLESHOOTING_GUIDE.md
+BROWSERMCP_TEST_RESULTS.md
+BROWSER_HUB_USAGE.md
+BUN_COMMANDS_REFERENCE.md
+CLEAN_COMMAND_FIX_SUMMARY.md
+ENHANCED_DELEGATION_SYSTEM.md
+FIXES_COMPLETED.md
+FUNCTIONAL_BROWSER_HUB.md
+GEMINI_TASK_DELEGATION.md
+INTEGRATED_WORKFLOW.md
+PRODUCTION_READY.md
+RESTORATION_ROADMAP.md
+SMART_BUILD_SYSTEM.md
+TEST_FEATURES.md
 
 # Testing
 coverage/

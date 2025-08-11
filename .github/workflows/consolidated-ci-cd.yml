@@ -268,10 +268,15 @@ jobs:
           kubectl rollout status deployment/api-staging --timeout=300s
           kubectl rollout status deployment/frontend-staging --timeout=300s
 
-      - name: Run smoke tests
+      - name: Run health checks
         run: |
-          kubectl wait --for=condition=ready pod -l app=api-staging --timeout=300s
-          kubectl wait --for=condition=ready pod -l app=frontend-staging --timeout=300s
+          ./scripts/deployment/deploy-full-stack.sh production true # Run with skip_tests to only verify
+
+      - name: Run Extended Deployment Status Report (Production)
+        run: ./scripts/deployment/deploy-status-extended.sh production
+
+      - name: Run Extended Deployment Status Report (Staging)
+        run: ./scripts/deployment/deploy-status-extended.sh staging
 
   deploy-production:
     needs: [docker-build, test]
@@ -305,20 +310,10 @@ jobs:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
 
       - name: Deploy to production
-        run: |
-          kubectl apply -f k8s/production/
-          kubectl set image deployment/api api=ghcr.io/${{ github.repository }}/api:${{ github.sha }}
-          kubectl set image deployment/frontend frontend=ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+        run: ./scripts/deployment/deploy-full-stack.sh production
 
       - name: Verify deployment
-        run: |
-          kubectl rollout status deployment/api --timeout=600s
-          kubectl rollout status deployment/frontend --timeout=600s
-
-      - name: Run health checks
-        run: |
-          kubectl wait --for=condition=ready pod -l app=api --timeout=600s
-          kubectl wait --for=condition=ready pod -l app=frontend --timeout=600s
+        run: ./scripts/deployment/deploy-full-stack.sh production true # Run with skip_tests to only verify
 
   notify:
     needs: [deploy-staging, deploy-production]

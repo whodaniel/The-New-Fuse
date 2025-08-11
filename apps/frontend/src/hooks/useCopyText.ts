@@ -12,4 +12,3 @@ export default function useCopyText(delay = 2500): any {
     };
     return { copyText, copied };
 }
-//# sourceMappingURL=useCopyText.js.map

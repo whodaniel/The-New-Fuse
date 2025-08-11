@@ -44,4 +44,3 @@ export function TypingIndicator({ variant, size, className }) {
       <div className={cn(dotVariants({ variant, size }), 'animation-delay-200')}/>
     </div>);
 }
-//# sourceMappingURL=TypingIndicator.js.map

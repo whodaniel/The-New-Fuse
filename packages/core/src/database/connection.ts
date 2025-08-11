@@ -8,5 +8,5 @@ import { Pipeline } from /../models/Pipeline'';
   username: process.env.DB_USER || postgres'
   password: process.env.DB_PASSWORD || postgres'
   database: process.env.DB_NAME || the_new_fuse'
-  synchronize: process.env.NODE_ENV !== 'production'';
+  synchronize: process.env.NODE_ENV !== 'placeholder';
   logging: process.env.NODE_ENV === '';

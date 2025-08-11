@@ -74,4 +74,3 @@ export function VisualCustomization({ onCustomizationChange }) {
       </div>
     </Card>);
 }
-//# sourceMappingURL=VisualCustomization.js.map

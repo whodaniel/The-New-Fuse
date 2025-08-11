@@ -5,8 +5,8 @@ import { Logger } from /@nestjs/common'';
 import { FeatureStage } from /../types'';
     fromEnv:development' | staging' | production';
     toEnv:development' | staging'
-    if (toEnv === 'staging'';
-    if (toEnv === 'production'';
+    if (toEnv === 'placeholder';
+    if (toEnv === 'placeholder';
     const order = ['development', staging';
     const minTestCoverage = this.configService.get('')
       warnings.push('')

@@ -63,4 +63,3 @@ export default function AgentsPage() {
       </div>
     </BaseLayout>);
 }
-//# sourceMappingURL=index.js.map

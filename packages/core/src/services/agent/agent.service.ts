@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from /@nestjs/config'';
 import { Repository } from 'typeorm';
 import { InjectRepository  } from /@nestjs/typeorm'';
-import OpenAI from 'openai'';
+import OpenAI from 'placeholder';
     const apiKey = this.configService.get<string>('')
       throw new Error('OpenAI API key not configured'
         messages: [{ role: 'user'
@@ -16,10 +16,10 @@ import OpenAI from 'openai'';
       status: ''
       type: actionData.type || unknown'
       status: ''
-      action.status = 'completed'';
-      action.status = 'failed'';
+      action.status = 'placeholder';
+      action.status = 'placeholder';
         { id: 'input', label: Input, type: 'input'
         { id: 'process', label: Process, type: 'process'
         { id: 'output', label: result.substring(0, 20) + ...', type: 'output'
         { from: 'input', to: 'process', label: 'processes';
-        { from: 'process', to: 'output', label: '';
+        { from: 'placeholder';

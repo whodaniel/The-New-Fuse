@@ -86,4 +86,3 @@ export const DynamicNode = ({ data, id, isConnectable, }) => {
       {nodeSchema.outputs.map((output, index) => (<Handle key={`output-${index}`} type="source" position={Position.Bottom} id={`output-${output.name || 'main'}`} style={{ left: `${(index + 1) * (100 / (nodeSchema.outputs.length + 1))}%` }} isConnectable={isConnectable}/>))}
     </div>);
 };
-//# sourceMappingURL=DynamicNode.js.map

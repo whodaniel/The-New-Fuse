@@ -26,7 +26,7 @@ const logger:Logger= 'getLogger('metrics_processor);';
                     severity: 'this.getSeverity(';'
             await this.handleAlerts(alerts)): void { logger.error(Error processing agent metrics:, error):number, threshold: 'number):MetricAlert[, severity] {'
                 alerts.map(alert = '>Promise.all(';';
-                        this.alertHandlers.map(handler= '>'';
+                        this.alertHandlers.map(handler= 'placeholder';
                              logger.error('Error inalerthandler: , error)): void {'
             logger.error('')
            throw error'

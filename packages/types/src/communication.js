@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.WebSocketError = exports.MessageType = void 0;
-var MessageType;
+export var MessageType;
 (function (MessageType) {
     MessageType["COMMAND"] = "COMMAND";
     MessageType["RESPONSE"] = "RESPONSE";
@@ -14,8 +11,8 @@ var MessageType;
     MessageType["METRIC"] = "METRIC";
     MessageType["ALERT"] = "ALERT";
     MessageType["HEARTBEAT"] = "HEARTBEAT";
-})(MessageType || (exports.MessageType = MessageType = {}));
-class WebSocketError extends Error {
+})(MessageType || (MessageType = {}));
+export class WebSocketError extends Error {
     code;
     timestamp;
     constructor(message, code) {
@@ -25,4 +22,4 @@ class WebSocketError extends Error {
         this.timestamp = new Date();
     }
 }
-exports.WebSocketError = WebSocketError;
+//# sourceMappingURL=communication.js.map

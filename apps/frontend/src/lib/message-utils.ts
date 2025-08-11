@@ -47,4 +47,3 @@ exports.formatTimestamp = formatTimestamp;
 const createSocketPayload = (message, conversationId): any => (Object.assign(Object.assign({}, message), { conversationId }));
 exports.createSocketPayload = createSocketPayload;
 export {};
-//# sourceMappingURL=message-utils.js.map

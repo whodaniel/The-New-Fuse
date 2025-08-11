@@ -21,4 +21,3 @@ export function useTheme(): any {
     }
     return context;
 }
-//# sourceMappingURL=ThemeContext.js.map

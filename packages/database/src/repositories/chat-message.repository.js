@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.ChatMessageRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma.service");
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
 let ChatMessageRepository = class ChatMessageRepository {
     prisma;
     constructor(prisma) {
@@ -217,8 +214,9 @@ let ChatMessageRepository = class ChatMessageRepository {
         return messages.map(message => this.mapDatabaseMessageToChatMessage(message));
     }
 };
-exports.ChatMessageRepository = ChatMessageRepository;
-exports.ChatMessageRepository = ChatMessageRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+ChatMessageRepository = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [PrismaService])
 ], ChatMessageRepository);
+export { ChatMessageRepository };
+//# sourceMappingURL=chat-message.repository.js.map

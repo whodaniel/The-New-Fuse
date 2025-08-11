@@ -29,4 +29,3 @@ export function Sidebar({ items, bottomItems = [], activeView, onViewChange, cla
       </div>
     </div>);
 }
-//# sourceMappingURL=Sidebar.js.map

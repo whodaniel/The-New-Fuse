@@ -157,4 +157,3 @@ export default function WorkflowEditorWrapper() {
       <WorkflowEditor />
     </ReactFlowProvider>);
 }
-//# sourceMappingURL=index.js.map

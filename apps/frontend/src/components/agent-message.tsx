@@ -33,4 +33,3 @@ const AgentMessage = ({ agent, message, isCurrentUser }) => {
     </Card>);
 };
 export default AgentMessage;
-//# sourceMappingURL=agent-message.js.map

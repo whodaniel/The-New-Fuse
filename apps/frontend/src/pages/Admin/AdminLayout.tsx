@@ -59,4 +59,3 @@ const AdminLayout = () => {
     </div>);
 };
 export default AdminLayout;
-//# sourceMappingURL=AdminLayout.js.map

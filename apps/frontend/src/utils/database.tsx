@@ -167,4 +167,3 @@ function getDb(): any {
 }
 
 export {};
-//# sourceMappingURL=database.js.map

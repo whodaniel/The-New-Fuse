@@ -33,4 +33,3 @@ export function useUserItems({ connectionKey }): any {
     }, [connectionKey]);
     return { loading, userItems };
 }
-//# sourceMappingURL=useUserItems.js.map

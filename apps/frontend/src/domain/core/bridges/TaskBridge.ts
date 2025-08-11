@@ -166,4 +166,3 @@ export class TaskBridge {
         return this.stateManager.subscribe(['tasks', taskId, 'status'], callback);
     }
 }
-//# sourceMappingURL=TaskBridge.js.map

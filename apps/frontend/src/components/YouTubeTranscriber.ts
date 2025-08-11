@@ -23,4 +23,3 @@ class YouTubeTranscriber {
     }
 }
 export { YouTubeTranscriber };
-//# sourceMappingURL=YouTubeTranscriber.js.map

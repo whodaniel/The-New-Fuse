@@ -1,32 +1,30 @@
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/User';
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from './prisma.service';
 import * as bcrypt from 'bcryptjs';
 import * as jwt from 'jsonwebtoken';
+import { User, Prisma } from '@the-new-fuse/database/generated/prisma';
 
-const userRepository = AppDataSource.getRepository(User);
+@Injectable()
+export class AuthService {
+  constructor(private prisma: PrismaService) {}
 
-export const authService = {
   async register({ name, email, password }: { name: string; email: string; password: string }) {
-    // Check if user already exists
-    const existingUser = await userRepository.findOne({ where: { email } });
+    const existingUser = await this.prisma.user.findUnique({ where: { email } });
     if (existingUser) {
       throw new Error('User with this email already exists');
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
-    const user = userRepository.create({
-      name,
-      email,
-      password: hashedPassword,
-      role: 'user'
+    const user = await this.prisma.user.create({
+      data: {
+        name,
+        email,
+        hashedPassword,
+        role: 'USER',
+      },
     });
 
-    await userRepository.save(user);
-
-    // Generate tokens
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || 'your-jwt-secret-key',
@@ -39,31 +37,32 @@ export const authService = {
       { expiresIn: '7d' }
     );
 
-    // Save refresh token to user
-    user.refreshToken = refreshToken;
-    await userRepository.save(user);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
 
     return {
       user,
       accessToken,
       refreshToken
     };
-  },
+  }
 
   async login({ email, password }: { email: string; password: string }) {
-    // Find user
-    const user = await userRepository.findOne({ where: { email } });
+    const user = await this.prisma.user.findUnique({
+      where: { email },
+      select: { id: true, hashedPassword: true, refreshToken: true, email: true, name: true, role: true },
+    });
     if (!user) {
       throw new Error('Invalid email or password');
     }
 
-    // Verify password
-    const isValidPassword = await bcrypt.compare(password, user.password);
+    const isValidPassword = await bcrypt.compare(password, user.hashedPassword);
     if (!isValidPassword) {
       throw new Error('Invalid email or password');
     }
 
-    // Generate tokens
     const accessToken = jwt.sign(
       { userId: user.id },
       process.env.JWT_SECRET || 'your-jwt-secret-key',
@@ -76,47 +75,44 @@ export const authService = {
       { expiresIn: '7d' }
     );
 
-    // Save refresh token to user
-    user.refreshToken = refreshToken;
-    await userRepository.save(user);
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { refreshToken },
+    });
 
     return {
       user,
       accessToken,
       refreshToken
     };
-  },
+  }
 
-  async getCurrentUser(userId: string) {
-    const user = await userRepository.findOne({ where: { id: userId } });
+  async getCurrentUser(userId: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new Error('User not found');
     }
-
-    return { user };
-  },
+    return user;
+  }
 
   async refreshToken(refreshToken: string) {
     try {
-      // Verify refresh token
       const decoded = jwt.verify(
         refreshToken,
         process.env.JWT_REFRESH_SECRET || 'your-jwt-refresh-secret-key'
       ) as { userId: string };
 
-      // Find user
-      const user = await userRepository.findOne({ 
-        where: { 
+      const user = await this.prisma.user.findUnique({
+        where: {
           id: decoded.userId,
-          refreshToken 
-        } 
+          refreshToken,
+        },
       });
 
       if (!user) {
         throw new Error('Invalid refresh token');
       }
 
-      // Generate new tokens
       const accessToken = jwt.sign(
         { userId: user.id },
         process.env.JWT_SECRET || 'your-jwt-secret-key',
@@ -129,9 +125,10 @@ export const authService = {
         { expiresIn: '7d' }
       );
 
-      // Save new refresh token to user
-      user.refreshToken = newRefreshToken;
-      await userRepository.save(user);
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { refreshToken: newRefreshToken },
+      });
 
       return {
         accessToken,
@@ -141,4 +138,4 @@ export const authService = {
       throw new Error('Invalid refresh token');
     }
   }
-};
+}

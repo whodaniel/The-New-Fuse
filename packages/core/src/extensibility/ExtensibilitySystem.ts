@@ -2,9 +2,6 @@ interface ExtensionPoint    { id: string
   name: string
   version: string }
   capabilities: Capability[];
-
-
-
  }
 
 interface Capability    { id: string
@@ -13,16 +10,10 @@ interface Capability    { id: string
 
 interface Requirement    { id: string }
   capabilities: string[];
-
-
-
  }
 
 interface ExtensionContext    { environment: string }
   constraints: Record<string, unknown>;
-
-
-
 }
 
 interface Extension    { id: string
@@ -32,15 +23,14 @@ interface Extension    { id: string
 interface UsagePattern    { frequency: number
   context: string }
   capabilities: string[];
-
-
-
  }
 
 export class ExtensibilitySystem { async registerExtensionPoint(
     point: ExtensionPoint, }
     capabilities: Capability[];
   ): Promise<void> {
+  // Implementation needed
+}
     // Extension point registration
     // Capability mapping
     // Integration validation

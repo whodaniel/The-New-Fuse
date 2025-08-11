@@ -8,4 +8,3 @@ function render(ui, options = {}): any {
 }
 export * from '@testing-library/react';
 export { render };
-//# sourceMappingURL=render.js.map

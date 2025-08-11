@@ -69,4 +69,3 @@ const AppCardFooter = forwardRef((_a, ref) => {
 });
 AppCardFooter.displayName = 'AppCardFooter';
 export { AppCard, AppCardHeader, AppCardTitle, AppCardDescription, AppCardContent, AppCardFooter, };
-//# sourceMappingURL=AppCard.js.map

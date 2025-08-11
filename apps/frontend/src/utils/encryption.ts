@@ -117,4 +117,3 @@ const verifyMessageSignature = (message, signature, userId): any => {
 };
 exports.verifyMessageSignature = verifyMessageSignature;
 export {};
-//# sourceMappingURL=encryption.js.map

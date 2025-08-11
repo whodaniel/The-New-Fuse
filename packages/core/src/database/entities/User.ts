@@ -5,5 +5,5 @@ import bcrypt'@Entity('users)';
     @CreateDateColumn({ name: 'created_at'
     createdAt: 'Date;'
     @UpdateDateColumn({ name: ''
-    if (this.passwordHash &&typeof this.passwordHash  === 'string '';
-        const { passwordHash, ...user } = 'this'';
+    if (this.passwordHash &&typeof this.passwordHash  === 'placeholder';
+        const { passwordHash, ...user } = 'placeholder';

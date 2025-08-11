@@ -10,8 +10,6 @@ import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
-import { AgentRegistryAdapter } from './agent-registry-adapter';
-import { HeartbeatServiceAdapter } from './heartbeat-adapter';
 
 // Global test configuration
 export interface TestEnvironment {
@@ -77,23 +75,21 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   );
 
   // Create adapters for workflow engine compatibility
-  const heartbeatAdapter = new HeartbeatServiceAdapter(heartbeatService);
 
   // Setup Workflow Engine - uses local HeartbeatMonitoringService interface
   const workflowSystem = WorkflowEngineFactory.createDefault(
     prisma,
     masterRegistry,
-    heartbeatAdapter,
+    heartbeatService,
     logger
   );
 
   // Setup Extension System - ExtensionSystemFactory expects AgentRegistry interface
   // Create adapter for extension system compatibility
-  const agentRegistryAdapter = new AgentRegistryAdapter(masterRegistry);
   const extensionManager = ExtensionSystemFactory.createDefault(
     testDataDir,
     logger,
-    agentRegistryAdapter,
+    masterRegistry,
     workflowSystem.engine
   );
 

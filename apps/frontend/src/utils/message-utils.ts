@@ -10,4 +10,3 @@ export const getAgentStatusColor = (status): any => {
             return 'bg-gray-500';
     }
 };
-//# sourceMappingURL=message-utils.js.map

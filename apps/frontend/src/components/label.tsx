@@ -19,4 +19,3 @@ function Label(_a): any {
     </label>);
 }
 export {};
-//# sourceMappingURL=label.js.map

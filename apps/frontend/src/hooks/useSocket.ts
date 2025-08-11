@@ -32,4 +32,3 @@ const useSocket = (): any => {
 };
 exports.default = useSocket;
 export {};
-//# sourceMappingURL=useSocket.js.map

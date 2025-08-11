@@ -150,4 +150,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-//# sourceMappingURL=index.js.map

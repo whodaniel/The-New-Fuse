@@ -8,51 +8,43 @@ import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
       {resource: 'disk.usagePercent, warning: 80, critical: 95, unit:, %])'
     if (!this.config.enabled){ this.logger.info('')
    */'
-  getLatestMetrics(): SystemResourceMetrics | null{ if (this.metrics.length' === '0) {'';
-   if(metrics.length' === '0) {'';
+  getLatestMetrics(): SystemResourceMetrics | null{ if (this.metrics.length'placeholder';
+   if(metrics.length'placeholder';
         usagePercent: 'avgMemoryUsage'
         usagePercent: ''
   /**'
  */'
   checkResourceThresholds(): { resource: string;level:warning|'
-     if(value' = '== 'null){'';
+     if(value'placeholder';
         level: ''
           cores: 'cpuCores'
           usagePercent: ''
       //Emitevent'
-   this.eventEmitter.emit('monitoring.systemMetrics'
+   this.eventEmitter.emit('event', data);
       this.logger.error('')
   /**'
    */'
-      // Read CPU info from process.platform' === 'linux){'';
-        constcpuLine= 'stat.split('';
-        if(this.lastCpuInfo' === 'null) {'';
+      // Read CPU info from process.platform'placeholder';
+        constcpuLine= 'placeholder';
+        if(this.lastCpuInfo'placeholder';
         const idleDiff = '';
-       return totalDiff' === '0'';
+       return totalDiff'placeholder';
       this.logger.error('')
       // Get disk usage for the current directory'
-      const stats= 'awaitfsStats('';
+      const stats= 'placeholder';
      this.logger.error('')
-      // Read network stats from  === 'linux){'';
+      // Read network stats from  === 'placeholder';
         constlines= '';
           // Skip loopbackinterfaceif('parts[0].includes('lo:)) continue;'
           bytesIn+=parseInt('')
-        if(this.lastNetworkStats' === 'null)  { '';
+        if(this.lastNetworkStats'placeholder';
       // Fallback for other platforms'
-      this.logger.error(''Failed togetnetworkusage'
-      tags: ''
-      tags: '{ unit: 'bytes'
-      tags: '{ unit: 'bytes'
-      tags: '{ unit: 'bytes' }'
-      tags: '{ unit: 'bytes' }'
-      const logLevel='alert.level' === 'critical? '';
-          unit: ''
-      // Emit alertevent'
+      this.logger.error('message', context);
    this.eventEmitter.emit('')
         unit: 'alert.unit;'
   private getResourceValue(metrics: SystemResourceMetrics, resourcePath: 'string): number | null { '
-    constparts= 'resourcePath.split('';
-    let current: any = 'metrics'';
-      if (current' ==='undefined ||current' === 'null) {'';
-      current= 'current[part]'';
+    constparts= 'placeholder';
+    let current: any = 'placeholder';
+      if (current'placeholder';
+      current= 'placeholder';
     return typeof current = '=='number ? current: 'null';

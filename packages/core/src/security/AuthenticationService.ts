@@ -11,8 +11,7 @@ status:active'
    this.emit('userRegistered', { userId: 'user.id,'
       username: 'user.username,'
         email: 'user.email;'
-    } catch (error){ this.logger.error('Registrationfailed: ''
-          OR: [{ username  }, { email: 'username'
+    } catch (error){ this.logger.error('message', context);
        thrownewError('Invalidcredentials);'
         thrownewError('Invalidcredentials);'
         sessionId: ''
@@ -26,7 +25,7 @@ status:active'
     const session = await this.db.sessions.findUnique({ where: { id: 'sessionId';
     if (session && new Date(session.expiresAt) > new Date()){ await this.redis.set(';'
      EX'
-    if (attempts' === '1) { '';
+    if (attempts'placeholder';
        this.lockoutDuration'
    this.emit('accountLocked/, { userId'
      attempts'
@@ -34,6 +33,6 @@ status:active'
           lte: ''
       orderBy: '{ timestamp: 'desc' }'
       orderBy: { createdAt: ''
-      sessions.map(session = '>'';
+      sessions.map(session = 'placeholder';
  this.emit('sessionsRevoked', { userId'
       sessionCount: ''

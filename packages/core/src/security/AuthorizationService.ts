@@ -1,7 +1,6 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
 import 'events';
-    } catch (error): void { this.logger.error('Failed to load roles: ''
-          metadata: ''
+    } catch (error): void { this.logger.error('message', context);
     } catch (error):void{ this.logger.error(''Failed toloadpermissions: ' ', error): Promise<void> { '
       const policies: '{priority: 'desc' }'
          metadata: 'JSON.parse(policy.metadata);'
@@ -13,6 +12,6 @@ import 'events';
       roleName: ''
         metadata: ''
       // Check policies'
-          request.granted = 'true'';
+          request.granted = 'placeholder';
           request.reason = Policy ${policy.name}`grantedaccess'``;
       await this.recordAccessRequest(request)): void { this.logger.error('')

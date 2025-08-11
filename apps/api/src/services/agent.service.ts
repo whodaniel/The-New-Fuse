@@ -18,9 +18,8 @@ export class AgentService {
         type: createAgentDto.type as any,
         description: createAgentDto.description,
         systemPrompt: createAgentDto.systemPrompt,
-        capabilities: createAgentDto.capabilities as any,
-        config: createAgentDto.configuration,
-        metadata: createAgentDto.metadata,
+        capabilities: createAgentDto.capabilities as unknown as Prisma.AgentCreateInput['capabilities'],
+        config: createAgentDto.configuration as Prisma.InputJsonValue,
         provider: createAgentDto.provider,
         status: AgentStatus.INACTIVE as any,
         user: {
@@ -29,7 +28,13 @@ export class AgentService {
       };
 
       const agent = await this.agentRepository.create(agentData);
-      return new AgentResponseDto(agent);
+      return new AgentResponseDto({
+        ...agent,
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
+      });
     } catch (error) {
       throw new BadRequestException(`Failed to create agent: ${error.message}`);
     }
@@ -45,7 +50,10 @@ export class AgentService {
       const agents = await this.agentRepository.findMany(whereClause);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents: ${error.message}`);
@@ -61,7 +69,10 @@ export class AgentService {
 
       return new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -80,15 +91,18 @@ export class AgentService {
 
       const updateData: Prisma.AgentUpdateInput = {
         ...updateAgentDto,
-        type: updateAgentDto.type as any,
-        status: updateAgentDto.status as any,
+        type: updateAgentDto.type as any, // This cast is necessary due to type mismatch
+        status: updateAgentDto.status as any, // This cast is necessary due to type mismatch
         capabilities: updateAgentDto.capabilities ? { set: updateAgentDto.capabilities as any } : undefined,
       };
 
       const agent = await this.agentRepository.update(id, updateData);
       return new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -119,7 +133,10 @@ export class AgentService {
       const agents = await this.agentRepository.findByType(type);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents by type: ${error.message}`);
@@ -128,10 +145,13 @@ export class AgentService {
 
   async findAgentsByStatus(status: AgentStatus): Promise<AgentResponseDto[]> {
     try {
-      const agents = await this.agentRepository.findByStatus(status);
+      const agents = await this.agentRepository.findByStatus(status as any);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch agents by status: ${error.message}`);
@@ -143,7 +163,10 @@ export class AgentService {
       const agents = await this.agentRepository.findByUserId(userId);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to fetch user agents: ${error.message}`);
@@ -157,10 +180,13 @@ export class AgentService {
         throw new NotFoundException(`Agent with ID ${id} not found`);
       }
 
-      const agent = await this.agentRepository.updateStatus(id, status);
+      const agent = await this.agentRepository.updateStatus(id, status as any); // This cast is necessary due to type mismatch
       return new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       });
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -240,7 +266,10 @@ export class AgentService {
       const agents = await this.agentRepository.findMany(whereClause);
       return agents.map(agent => new AgentResponseDto({
         ...agent,
-        lastActive: new Date()
+        type: agent.type as AgentType,
+        status: agent.status as AgentStatus,
+        capabilities: agent.capabilities ? agent.capabilities.map(cap => cap as AgentCapability) : [],
+        lastActive: new Date(),
       }));
     } catch (error) {
       throw new BadRequestException(`Failed to search agents: ${error.message}`);

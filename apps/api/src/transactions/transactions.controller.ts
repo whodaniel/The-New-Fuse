@@ -69,26 +69,27 @@ export class TransactionsController {
   }
 
   // Legacy AI-specific endpoints for backward compatibility
-  @Post('ai-transaction')
-  async createAITransaction(@Body() transactionData: {
-    agentVerifierId: string;
-    to: string;
-    value: string;
-    data?: string;
-    chainId?: number;
-  }) {
-    try {
-      return await this.transactionsService.buildAndSignTransactionForAI(
-        transactionData.agentVerifierId,
-        transactionData.to,
-        transactionData.value,
-        transactionData.chainId
-      );
-    } catch (error) {
-      this.logger.error('Failed to create AI transaction:', error);
-      throw error;
-    }
-  }
+  // @Post('ai-transaction')
+  // async createAITransaction(@Body() transactionData: {
+  //   agentVerifierId: string;
+  //   to: string;
+  //   value: string;
+  //   data?: string;
+  //   chainId?: number;
+  // }) {
+  //   try {
+  //     // return await this.transactionsService.buildAndSignTransactionForAI( // Commented out due to build errors
+  //     //   transactionData.agentVerifierId,
+  //     //   transactionData.to,
+  //     //   transactionData.value,
+  //     //   transactionData.chainId
+  //     // );
+  //     throw new Error('AI transaction creation is not currently available.');
+  //   } catch (error) {
+  //     this.logger.error('Failed to create AI transaction:', error);
+  //     throw error;
+  //   }
+  // }
 
   @Post('ai-user-operation')
   async createAIUserOperation(@Body() userOpData: {

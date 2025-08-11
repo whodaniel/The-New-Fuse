@@ -2,8 +2,9 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
-
 export interface WebSocketClient {
+  // Implementation needed
+}
   id: string;
   socket: Socket;
   connectedAt: Date;
@@ -12,6 +13,8 @@ export interface WebSocketClient {
 }
 
 export interface BroadcastMessage {
+  // Implementation needed
+}
   type: string;
   data: any;
   target?: string;
@@ -20,92 +23,119 @@ export interface BroadcastMessage {
 
 @Injectable()
 export class WebSocketManager extends EventEmitter implements OnModuleInit, OnModuleDestroy {
+  // Implementation needed
+}
   private readonly logger = new Logger(WebSocketManager.name);
   private server: Server;
   private readonly clients = new Map<string, WebSocketClient>();
-
   constructor(private readonly configService: ConfigService) {
+  // Implementation needed
+}
     super();
   }
 
   async onModuleInit() {
+  // Implementation needed
+}
     const port = this.configService.get<number>('WS_PORT', 8080);
-    
     this.server = new Server(port, {
+  // Implementation needed
+}
       cors: {
+  // Implementation needed
+}
         origin: this.configService.get('CORS_ORIGINS', '*'),
         methods: ['GET', 'POST'],
         credentials: true
       },
       transports: ['websocket', 'polling']
     });
-
     this.server.on('connection', (socket: Socket) => {
+  // Implementation needed
+}
       this.handleConnection(socket);
     });
-
     this.logger.log(`WebSocket server started on port ${port}`);
   }
 
   async onModuleDestroy() {
+  // Implementation needed
+}
     if (this.server) {
+  // Implementation needed
+}
       this.server.close(() => {
+  // Implementation needed
+}
         this.logger.log('WebSocket server closed');
       });
     }
   }
 
   private handleConnection(socket: Socket) {
+  // Implementation needed
+}
     const clientId = this.generateClientId();
     const client: WebSocketClient = {
+  // Implementation needed
+}
       id: clientId,
       socket,
       connectedAt: new Date(),
       lastActivity: new Date(),
       metadata: {}
     };
-
     this.clients.set(clientId, client);
     this.logger.log(`Client connected: ${clientId}`);
-
     socket.on('disconnect', (reason) => {
+  // Implementation needed
+}
       this.handleDisconnection(clientId, reason);
     });
-
     socket.on('error', (error) => {
+  // Implementation needed
+}
       this.logger.error(`Socket error for client ${clientId}:`, error);
       this.handleError(clientId, error);
     });
-
     socket.on('message', (data) => {
+  // Implementation needed
+}
       this.handleMessage(clientId, data);
     });
-
     socket.on('ping', () => {
+  // Implementation needed
+}
       this.handlePing(clientId);
     });
-
     socket.on('join-room', (room: string) => {
+  // Implementation needed
+}
       this.handleJoinRoom(clientId, room);
     });
-
     socket.on('leave-room', (room: string) => {
+  // Implementation needed
+}
       this.handleLeaveRoom(clientId, room);
     });
-
     // Send welcome message
     socket.emit('connected', {
+  // Implementation needed
+}
       clientId,
       timestamp: new Date().toISOString(),
       message: 'Connected to WebSocket server'
     });
-
     this.emit('clientConnected', client);
   }
 
   private handleDisconnection(clientId: string, reason: string) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       this.clients.delete(clientId);
       this.logger.log(`Client disconnected: ${clientId}, reason: ${reason}`);
       this.emit('clientDisconnected', { client, reason });
@@ -113,16 +143,24 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   private handleError(clientId: string, error: Error) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       this.logger.error(`Client error: ${clientId}`, error);
       this.emit('clientError', { client, error });
     }
   }
 
   private handleMessage(clientId: string, data: any) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.lastActivity = new Date();
       this.logger.debug(`Message from ${clientId}:`, data);
       this.emit('clientMessage', { client, data });
@@ -130,16 +168,24 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   private handlePing(clientId: string) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.lastActivity = new Date();
       client.socket.emit('pong', { timestamp: new Date().toISOString() });
     }
   }
 
   private handleJoinRoom(clientId: string, room: string) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.socket.join(room);
       this.logger.log(`Client ${clientId} joined room: ${room}`);
       this.emit('clientJoinedRoom', { client, room });
@@ -147,8 +193,12 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   private handleLeaveRoom(clientId: string, room: string) {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.socket.leave(room);
       this.logger.log(`Client ${clientId} left room: ${room}`);
       this.emit('clientLeftRoom', { client, room });
@@ -157,7 +207,11 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
 
   // Public methods
   broadcast(message: BroadcastMessage): void {
+  // Implementation needed
+}
     this.server.emit(message.type, {
+  // Implementation needed
+}
       ...message.data,
       timestamp: message.timestamp
     });
@@ -165,7 +219,11 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   broadcastToRoom(room: string, message: BroadcastMessage): void {
+  // Implementation needed
+}
     this.server.to(room).emit(message.type, {
+  // Implementation needed
+}
       ...message.data,
       timestamp: message.timestamp
     });
@@ -173,9 +231,15 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   sendToClient(clientId: string, type: string, data: any): boolean {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.socket.emit(type, {
+  // Implementation needed
+}
         ...data,
         timestamp: new Date().toISOString()
       });
@@ -185,8 +249,12 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   disconnectClient(clientId: string, reason?: string): boolean {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.socket.disconnect(reason);
       return true;
     }
@@ -194,30 +262,44 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   getClient(clientId: string): WebSocketClient | undefined {
+  // Implementation needed
+}
     return this.clients.get(clientId);
   }
 
   getAllClients(): WebSocketClient[] {
+  // Implementation needed
+}
     return Array.from(this.clients.values());
   }
 
   getConnectedClientsCount(): number {
+  // Implementation needed
+}
     return this.clients.size;
   }
 
   getClientsInRoom(room: string): WebSocketClient[] {
+  // Implementation needed
+}
     return Array.from(this.clients.values()).filter(client => 
       client.socket.rooms.has(room)
     );
   }
 
   isClientConnected(clientId: string): boolean {
+  // Implementation needed
+}
     return this.clients.has(clientId);
   }
 
   updateClientMetadata(clientId: string, metadata: Record<string, any>): boolean {
+  // Implementation needed
+}
     const client = this.clients.get(clientId);
     if (client) {
+  // Implementation needed
+}
       client.metadata = { ...client.metadata, ...metadata };
       return true;
     }
@@ -225,16 +307,24 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   }
 
   private generateClientId(): string {
+  // Implementation needed
+}
     return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
   // Health check methods
   async healthCheck(): Promise<{
+  // Implementation needed
+}
     status: string;
     connectedClients: number;
     uptime: number;
   }> {
+  // Implementation needed
+}
     return {
+  // Implementation needed
+}
       status: 'healthy',
       connectedClients: this.clients.size,
       uptime: process.uptime()
@@ -245,16 +335,21 @@ export class WebSocketManager extends EventEmitter implements OnModuleInit, OnMo
   cleanupInactiveClients(timeoutMs: number = 300000): number { // 5 minutes default
     const now = new Date();
     let cleaned = 0;
-
     for (const [clientId, client] of this.clients) {
+  // Implementation needed
+}
       const inactiveTime = now.getTime() - client.lastActivity.getTime();
       if (inactiveTime > timeoutMs) {
+  // Implementation needed
+}
         this.disconnectClient(clientId, 'Inactive timeout');
         cleaned++;
       }
     }
 
     if (cleaned > 0) {
+  // Implementation needed
+}
       this.logger.log(`Cleaned up ${cleaned} inactive clients`);
     }
 

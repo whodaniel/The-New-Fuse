@@ -1,25 +1,20 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-
 @Entity('pipelines')
 export class Pipeline {
+  // Implementation needed
+}
   @PrimaryGeneratedColumn('uuid')
   id!: string;
-
   @Column({ type: 'varchar', length: 255 })
   name!: string;
-
   @Column({ type: 'text', nullable: true })
   description?: string;
-
   @Column({ type: 'jsonb' })
   configuration!: Record<string, any>;
-
   @Column({ type: 'varchar', length: 50, default: 'active' })
   status!: 'active' | 'inactive' | 'error';
-
   @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
-
   @UpdateDateColumn({ type: 'timestamp' })
   updatedAt!: Date;
 }

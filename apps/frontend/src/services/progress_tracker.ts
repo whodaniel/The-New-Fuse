@@ -74,4 +74,3 @@ export class ProgressTracker extends EventEmitter {
         }
     }
 }
-//# sourceMappingURL=progress_tracker.js.map

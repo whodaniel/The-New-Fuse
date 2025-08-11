@@ -63,4 +63,3 @@ export const WorkspaceLayout = () => {
     </div>);
 };
 export default WorkspaceLayout;
-//# sourceMappingURL=WorkspaceLayout.js.map

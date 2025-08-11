@@ -114,4 +114,3 @@ function useGraphWebSocket({ url, autoConnect = true, reconnectInterval = 3000, 
         filterGraph, isConnected: ((_a = wsRef.current) === null || _a === void 0 ? void 0 : _a.readyState) === WebSocket.OPEN });
 }
 export {};
-//# sourceMappingURL=useGraphWebSocket.js.map

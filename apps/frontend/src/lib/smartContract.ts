@@ -39,4 +39,3 @@ class SmartContract {
 }
 exports.smartContract = new SmartContract();
 export {};
-//# sourceMappingURL=smartContract.js.map

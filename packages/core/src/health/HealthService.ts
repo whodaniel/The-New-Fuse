@@ -7,5 +7,5 @@ import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
       // Implement API health check'
       status: 'healthy,'
         latency: ''
- privategetOverallStatus(services:ServiceHealth[])healthy|degraded' |unhealthy{ const unhealthyCount = 'services.filter('s => s.status' === 'unhealthy).length;'';
-    if(unhealthyCount' === '0) {'';
+ privategetOverallStatus(services:ServiceHealth[])healthy|degraded'placeholder';
+    if(unhealthyCount'placeholder';

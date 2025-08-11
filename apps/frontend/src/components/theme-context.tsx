@@ -31,4 +31,3 @@ function useTheme(): any {
     return context;
 }
 export {};
-//# sourceMappingURL=theme-context.js.map

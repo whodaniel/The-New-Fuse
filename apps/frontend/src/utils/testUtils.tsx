@@ -36,4 +36,3 @@ export const mockWorkflowContextValue = {
 const customRender = (ui, options): any => render(ui, Object.assign({ wrapper: AllTheProviders }, options));
 export * from '@testing-library/react';
 export { customRender as render };
-//# sourceMappingURL=testUtils.js.map

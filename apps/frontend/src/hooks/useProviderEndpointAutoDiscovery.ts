@@ -77,4 +77,3 @@ export default function useProviderEndpointAutoDiscovery({ provider = null, init
         runAutoDetect: autoDetect,
     };
 }
-//# sourceMappingURL=useProviderEndpointAutoDiscovery.js.map

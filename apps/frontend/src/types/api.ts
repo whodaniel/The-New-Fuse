@@ -34,4 +34,3 @@ export const transformApiConversation = (apiConversation): any => {
         updatedAt: apiConversation.updatedAt,
     };
 };
-//# sourceMappingURL=api.js.map

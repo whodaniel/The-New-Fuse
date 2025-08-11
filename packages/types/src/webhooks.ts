@@ -41,6 +41,7 @@ export interface EventMetadata {
   priority: EventPriority;
   retry_count: number;
   max_retries: number;
+  source_metadata?: Record<string, any>; // Added source_metadata
 }
 
 export enum EventPriority {
@@ -184,7 +185,7 @@ export interface SSEClient {
   userId: string;
   organizationId: string;
   subscriptions: EventSubscription[];
-  response: Response;
+  response: any; // Changed to any to avoid type mismatch with express.Response
   lastHeartbeat: Date;
 }
 

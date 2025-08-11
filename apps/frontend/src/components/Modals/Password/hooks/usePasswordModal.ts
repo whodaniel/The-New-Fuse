@@ -21,4 +21,3 @@ export function usePasswordModal(isNewToken = false): any {
     }, [isNewToken]);
     return { loading, requiresAuth, mode };
 }
-//# sourceMappingURL=usePasswordModal.js.map

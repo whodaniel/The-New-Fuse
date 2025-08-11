@@ -9,11 +9,8 @@ import { ProtocolAdapterService } from /../protocols/ProtocolAdapterService'';
     this.wss.on('connection'
       const protocol = req.headers[';
       ws.on('message'
-          this.logger.error('Error handling WebSocket message'
+          this.logger.error('message', context);
       ws.on('')
     this.eventEmitter.on('a2a.'
-      this.eventEmitter.emit('a2a.'
-      this.logger.error('Error processing message'
-          type: 'error'
-          priority: 'high'
-          source: ''
+      this.eventEmitter.emit('event', data);
+      this.logger.error('message', context);

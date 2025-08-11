@@ -44,4 +44,3 @@ export async function getCurrentSession(): Promise<SessionValidationResponse | n
     return null;
   }
 }
-//# sourceMappingURL=session.js.map

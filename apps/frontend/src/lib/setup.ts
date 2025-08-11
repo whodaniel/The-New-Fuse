@@ -26,4 +26,3 @@ mockIntersectionObserver.mockReturnValue({
 });
 window.IntersectionObserver = mockIntersectionObserver;
 export {};
-//# sourceMappingURL=setup.js.map

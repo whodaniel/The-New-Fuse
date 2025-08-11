@@ -76,7 +76,7 @@
     "dev": "cross-env PORT=3001 bun --hot src/index.ts",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "clean": "rimraf dist .turbo node_modules",
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "lint": "npx eslint \"{src,apps,libs,test}/**/*.ts\"",
     "test": "jest",
     "test:integration": "jest --config jest-integration.config.js",

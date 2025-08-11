@@ -158,25 +158,26 @@ export declare enum SuggestionPriority {
     CRITICAL = "CRITICAL"
 }
 export declare enum AgentStatus {
-    ACTIVE = "active",
-    INACTIVE = "inactive",
-    PENDING = "pending",
-    DELETED = "deleted",
-    IDLE = "idle",
-    BUSY = "busy",
-    OFFLINE = "offline",
-    ERROR = "error",
-    INITIALIZING = "initializing",
-    READY = "ready",
-    TERMINATED = "terminated",
-    LEARNING = "learning"
+    ACTIVE = "ACTIVE",
+    INACTIVE = "INACTIVE",
+    IDLE = "IDLE",
+    BUSY = "BUSY",
+    ERROR = "ERROR",
+    OFFLINE = "OFFLINE",
+    INITIALIZING = "INITIALIZING",
+    READY = "READY",
+    TERMINATED = "TERMINATED"
 }
 export declare enum AgentType {
-    HUMAN = "human",
-    AI = "ai",
-    CONVERSATIONAL = "conversational",
-    IDE_EXTENSION = "ide_extension",
-    API = "api"
+    BASIC = "BASIC",
+    CHAT = "CHAT",
+    WORKFLOW = "WORKFLOW",
+    TASK = "TASK",
+    ASSISTANT = "ASSISTANT",
+    ANALYSIS = "ANALYSIS",
+    CONVERSATIONAL = "CONVERSATIONAL",
+    IDE_EXTENSION = "IDE_EXTENSION",
+    API = "API"
 }
 export declare enum AgentRole {
     ASSISTANT = "assistant",
@@ -190,6 +191,7 @@ export declare enum AgentCapability {
     CODE_GENERATION = "code_generation",
     CODE_REVIEW = "code_review",
     CODE_REFACTORING = "code_refactoring",
+    CODE_EXECUTION = "code_execution",
     DEBUGGING = "debugging",
     TESTING = "testing",
     DOCUMENTATION = "documentation",
@@ -210,7 +212,10 @@ export declare enum AgentCapability {
     WORKFLOW = "workflow",
     RESEARCH = "research",
     ANALYSIS = "analysis",
-    INTEGRATION = "integration"
+    INTEGRATION = "integration",
+    DATA_ANALYSIS = "data_analysis",
+    AUTOMATION = "automation",
+    API_INTEGRATION = "api_integration"
 }
 export declare enum AgentFramework {
     VSCODE = "vscode",
@@ -270,3 +275,4 @@ export declare enum EventType {
     AGENT_STATUS_CHANGED = "agent_status_changed",
     SYSTEM_ERROR = "system_error"
 }
+//# sourceMappingURL=enums.d.ts.map

@@ -1,10 +1,14 @@
 export enum AuthEventType {
+  // Implementation needed
+}
   TOKEN_REFRESH = 'TOKEN_REFRESH',
   PASSWORD_CHANGE = 'PASSWORD_CHANGE',
   ACCOUNT_LOCKED = 'ACCOUNT_LOCKED',
 }
 
 export interface TokenPayload {
+  // Implementation needed
+}
   userId: string;
   email: string;
   role: string;
@@ -13,5 +17,7 @@ export interface TokenPayload {
 }
 
 export interface AuthMetadata {
+  // Implementation needed
+}
   [key: string]: unknown;
 }

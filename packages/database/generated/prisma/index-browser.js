@@ -134,7 +134,8 @@ exports.Prisma.UserScalarFieldEnum = {
   lastLogin: 'lastLogin',
   preferences: 'preferences',
   refreshToken: 'refreshToken',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  emailVerified: 'emailVerified'
 };
 
 exports.Prisma.AuthSessionScalarFieldEnum = {
@@ -225,6 +226,16 @@ exports.Prisma.MessageScalarFieldEnum = {
   isEdited: 'isEdited',
   isDeleted: 'isDeleted',
   reactions: 'reactions'
+};
+
+exports.Prisma.ChatMessageScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  role: 'role',
+  content: 'content',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.WorkflowScalarFieldEnum = {
@@ -591,6 +602,12 @@ exports.Prisma.MessageOrderByRelevanceFieldEnum = {
   attachments: 'attachments'
 };
 
+exports.Prisma.ChatMessageOrderByRelevanceFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  content: 'content'
+};
+
 exports.Prisma.WorkflowOrderByRelevanceFieldEnum = {
   id: 'id',
   name: 'name',
@@ -932,6 +949,7 @@ exports.Prisma.ModelName = {
   Chat: 'Chat',
   ChatRoom: 'ChatRoom',
   Message: 'Message',
+  ChatMessage: 'ChatMessage',
   Workflow: 'Workflow',
   WorkflowStep: 'WorkflowStep',
   WorkflowExecution: 'WorkflowExecution',

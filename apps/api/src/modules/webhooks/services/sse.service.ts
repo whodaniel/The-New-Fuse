@@ -15,7 +15,7 @@ export class SSEService {
   private readonly logger = new Logger(SSEService.name);
   private readonly clients = new Map<string, SSEClient>();
   private readonly heartbeatInterval = 30000; // 30 seconds
-  private heartbeatTimer?: NodeJS.Timer;
+  private heartbeatTimer?: NodeJS.Timeout;
 
   constructor(
     @InjectRepository(SseSubscription)
@@ -112,7 +112,7 @@ export class SSEService {
       }
 
       const eventData = JSON.stringify(event);
-      client.response.write(`data: ${eventData}\n\n`);
+      (client.response as any).write(`data: ${eventData}\n\n`);
 
       // Update last heartbeat
       client.lastHeartbeat = new Date();
@@ -308,13 +308,13 @@ export class SSEService {
 
   onModuleDestroy(): void {
     if (this.heartbeatTimer) {
-      clearInterval(this.heartbeatTimer);
+      clearInterval(this.heartbeatTimer as NodeJS.Timeout);
     }
     
     // Close all client connections
     for (const client of this.clients.values()) {
       try {
-        client.response.end();
+        (client.response as any).end();
       } catch (error) {
         this.logger.error('Error closing SSE client connection', error);
       }

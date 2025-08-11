@@ -11,12 +11,14 @@ export interface Session {
 export interface AuthUser {
   id: string;
   email: string;
+  username?: string;
   roles: string[];
+  permissions?: string[];
 }
 
-class SessionManager {
+export class SessionManager {
   private sessions: Map<string, Session> = new Map();
-  
+
   createSession(userId: string, ttlMinutes: number = 60): Session {
     const now = new Date();
     const expiresAt = new Date(now);

@@ -16,29 +16,21 @@ export class NotificationService {
     private prisma: PrismaService
   ) {}
 
-  async sendNotification(userId: string, type: string, data: any) {
-    const user = await this.usersService.findOne(userId);
-    
+  async sendNotification(userId: string, type: string, title: string, message: string) {
     await this.prisma.notification.create({
       data: {
-        userId: user.id,
+        userId,
         type,
-        data,
-        read: false
+        title,
+        message
       }
     });
 
-    if (user.emailNotifications) {
-      await this.emailService.sendNotificationEmail(user.email, type, data);
-    }
-
-    await this.eventBus.publish(new NotificationSentEvent(user, type, data));
-    this.logger.info(`Notification sent to user ${userId}: ${type}`);
+    // Log notification sent
+    console.log(`Notification sent to user ${userId}: ${type}`);
   }
 
   async getUserNotifications(userId: string) {
-    await this.usersService.findOne(userId); // Verify user exists
-    
     return this.prisma.notification.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },

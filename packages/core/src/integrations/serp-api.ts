@@ -5,11 +5,11 @@ import google-search-results-nodejs'';
  displayedLink: string;sourceorganic' |featured_snippet|knowledge_graph'
 '
    */'
-      const searchParams = '{ '';
+      const searchParams = 'placeholder';
       q: 'query,'
         google_domain: ''
           // Parse organic results'
                position:index'
                 source: ''
             source: ''
-        } catch (error){ this.logger.error(''Error parsingsearchresults: ' '
+        } catch (error){ this.logger.error('message', context);

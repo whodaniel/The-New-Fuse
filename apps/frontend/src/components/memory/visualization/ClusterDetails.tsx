@@ -114,4 +114,3 @@ const ClusterDetails = ({ cluster, onClose }) => {
 };
 exports.ClusterDetails = ClusterDetails;
 export {};
-//# sourceMappingURL=ClusterDetails.js.map

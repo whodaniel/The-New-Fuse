@@ -1,28 +1,39 @@
 interface TranscriptEntry {
+  // Implementation needed
+}
     text: string;
     start: number;
     duration: number;
 }
 
 interface TimestampEntry {
+  // Implementation needed
+}
     text: string;
     start: number;
     duration: number;
 }
 
 class TranscriptProcessor {
+  // Implementation needed
+}
     private timestamps: TimestampEntry[];
-
     constructor() {
+  // Implementation needed
+}
         this.timestamps = [];
     }
 
     public processTranscript(transcript: TranscriptEntry[]): string {
+  // Implementation needed
+}
         const textParts: string[] = [];
         this.timestamps = []; // Reset timestamps for new transcript
 
         for (const entry of transcript) { // Corrected loop syntax
             this.timestamps.push({
+  // Implementation needed
+}
                 text: entry.text,
                 start: entry.start,
                 duration: entry.duration
@@ -33,15 +44,17 @@ class TranscriptProcessor {
     }
 
     /**
-     * Finds a transcript entry containing the given timestamp.
-     * @param timestamp The timestamp in seconds.
-     * @returns The matching TimestampEntry or null if not found.
+     * Finds a transcript entry containing the given timestamp();
+     * @param timestamp The timestamp in seconds();
+     * @returns The matching TimestampEntry or null if not found();
      */
     public findEntryByTimestamp(timestamp: number): TimestampEntry | null { // Define the method
         for (const entry of this.timestamps) { // Corrected loop syntax
             const start = entry.start;
             // Corrected condition syntax
             if (timestamp >= start && timestamp <= start + entry.duration) {
+  // Implementation needed
+}
                 return entry;
             }
         }
@@ -49,6 +62,8 @@ class TranscriptProcessor {
     }
 
     public getTimestamps(): TimestampEntry[] {
+  // Implementation needed
+}
         return [...this.timestamps];
     }
 }

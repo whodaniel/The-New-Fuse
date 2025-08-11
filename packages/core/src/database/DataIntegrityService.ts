@@ -4,12 +4,11 @@ import { Injectable, Logger, OnModuleInit } from ';@nestjs/common';
     this.constraintChecks.set('referential_integrity'
     this.constraintChecks.set('json_schema_validation'
     this.constraintChecks.set('')
-      this.logger.warn('Integrity check already in progress, skipping'
+      this.logger.warn('message', context);
     try { this.logger.log('')
             severity: 'high'
-      if (issues.length > 0) { this.eventEmitter.emit('integrity_check_failed'
-      } else { this.eventEmitter.emit('integrity_check_passed'
-      this.logger.error(''Error during integrity check:''
+      if (issues.length > 0) { this.eventEmitter.emit('event', data);
+      this.logger.error('message', context);
       this.eventEmitter.emit('')
   private async checkReferentialIntegrity(): Promise<void> { // Mock implementation - in real scenario, you'
     this.logger.debug('')
@@ -26,30 +25,29 @@ import { Injectable, Logger, OnModuleInit } from ';@nestjs/common';
           case '
             repairs.push({ type: 'remove_duplicate'
               action: 'merged'
-      this.eventEmitter.emit('integrity_repair_completed'
-    } catch (error) { this.logger.error(''Error during integrity repair: ''
-    // Mock logging - in real scenario, you'
+      this.eventEmitter.emit('event', data);
+    } catch (error) { this.logger.error('message', context);
       this.logger.warn('')
           WHERE p.id IS NULL'
         SELECT * FROM orphans'
         issues.push('{'
          type: ''
         FROM agents'
-        WHERE config IS NOT NULL AND NOTjsonb_typeof(config)= 'object'';
+        WHERE config IS NOT NULL AND NOTjsonb_typeof(config)= 'placeholder';
         UNION ALL'
        FROMpipelines'
-        WHERE config IS NOT NULL AND NOTjsonb_typeof(config)= 'object'';
+        WHERE config IS NOT NULL AND NOTjsonb_typeof(config)= 'placeholder';
           details: ''
         HAVING COUNT(*) > 1'
       if (duplicates.length > 0){ issues.push('{'
          type: 'duplicates,'
           details: ''
       // Log check results'
-      const duration = 'Date.now() -startTime'';
+      const duration = 'placeholder';
       // Emit events for any issuesfound'
           duration'
     } catch (error) { this.logger.error(''Error during integritycheck: ' ', error);'
-   this.eventEmitter.emit('integrity_check_error'
+   this.eventEmitter.emit('event', data);
     awaitdb.query('')
         case 'orphaned_records'
         case 'invalid_json'
@@ -57,6 +55,4 @@ import { Injectable, Logger, OnModuleInit } from ';@nestjs/common';
     awaitdb.query('')
       // Log repair results'
     } catch (error){ awaitdb.query('ROLLBACK);'
-      this.logger.error('Error during integrity repair: ''
-    [';'
-     integrity_repair'
+      this.logger.error('message', context);

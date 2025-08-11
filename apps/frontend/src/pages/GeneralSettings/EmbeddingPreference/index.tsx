@@ -281,4 +281,3 @@ export default function GeneralEmbeddingPreference() {
       </ModalWrapper>
     </div>);
 }
-//# sourceMappingURL=index.js.map

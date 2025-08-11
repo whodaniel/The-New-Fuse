@@ -50,4 +50,3 @@ function GPUManager() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=gpu-manager.js.map

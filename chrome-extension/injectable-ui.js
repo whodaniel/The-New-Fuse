@@ -29,7 +29,19 @@ class TNFInjectableUI {
         agentRegistered: false,
         mcpConfigLoaded: false,
         databaseConnected: false,
-        ports: {}
+        taskEngineStatus: false,
+        workflowEngineStatus: false,
+        ports: {},
+        coreApiStatus: false,
+        webSocketStatus: false,
+        databaseHealth: false,
+        agentOrchestrator: false
+      },
+      features: {
+        agentSwarmEnabled: false,
+        workflowAutomation: false,
+        realTimeMonitoring: false,
+        advancedAnalytics: false
       },
       performance: {
         injectionLatency: 0,
@@ -72,6 +84,7 @@ class TNFInjectableUI {
     this.setupMessageListener();
     this.setupKeyboardShortcuts();
     this.loadInitialState();
+    this.initializeTNFIntegration();
   }
 
   setState(newState) {
@@ -161,11 +174,14 @@ class TNFInjectableUI {
   }
 
   async loadInitialState() {
+    // Load conversation history
     chrome.runtime.sendMessage({ type: 'GET_CONVERSATION_HISTORY' }, (response) => {
       if (response && response.history) {
         this.setState({ conversationHistory: response.history });
       }
     });
+    
+    // Comprehensive TNF health check
     chrome.runtime.sendMessage({ type: 'TNF_HEALTH_CHECK' }, (response) => {
       if (response) {
         this.setState({
@@ -174,6 +190,12 @@ class TNFInjectableUI {
             agentRegistered: response.agent_registered,
             mcpConfigLoaded: response.mcp_config_loaded,
             databaseConnected: response.database_connected,
+            taskEngineStatus: response.task_engine_status || false,
+            workflowEngineStatus: response.workflow_engine_status || false,
+            coreApiStatus: response.core_api_status || false,
+            webSocketStatus: response.websocket_status || false,
+            databaseHealth: response.database_health || false,
+            agentOrchestrator: response.agent_orchestrator || false
           },
           portStatuses: {
             8765: response.port_8765,
@@ -184,16 +206,31 @@ class TNFInjectableUI {
         });
       }
     });
+    
+    // Load server status
     chrome.runtime.sendMessage({ type: 'GET_SERVER_STATUS' }, (response) => {
       if (response && response.status) {
         this.setState({ serverStatus: response.status });
       }
     });
+    
+    // Load port monitoring
     chrome.runtime.sendMessage({ type: 'GET_PORT_STATUS' }, (response) => {
       if (response && response.status) {
         this.setState({ portStatuses: response.status });
       }
     });
+    
+    // Load TNF features and performance data
+    chrome.storage.local.get(['tnfConfig', 'features', 'performance'], (result) => {
+      if (result.features) {
+        this.setState({ features: { ...this.state.features, ...result.features } });
+      }
+      if (result.performance) {
+        this.setState({ performance: { ...this.state.performance, ...result.performance } });
+      }
+    });
+    
     this.render();
   }
 
@@ -3366,6 +3403,270 @@ class TNFInjectableUI {
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+  // Enhanced TNF Integration Methods
+
+  async registerWithTNF() {
+    try {
+      const registrationData = {
+        agentId: `injectable-ui-${Date.now()}`,
+        agentType: 'browser_injection',
+        capabilities: [
+          'direct_injection',
+          'ai_communication',
+          'response_monitoring',
+          'cross_platform_bridge'
+        ],
+        currentAI: this.state.currentAI,
+        url: window.location.href,
+        features: this.state.features
+      };
+
+      const response = await chrome.runtime.sendMessage({
+        type: 'EXECUTE_TNF_COMMAND',
+        command: 'register_with_tnf',
+        data: registrationData
+      });
+
+      if (response?.success) {
+        this.setState({
+          tnf: {
+            ...this.state.tnf,
+            agentRegistered: true,
+            agentId: response.agentId,
+            registrationTime: new Date()
+          }
+        });
+        
+        await this.enableTNFFeatures();
+        console.log('✅ Injectable UI registered with TNF system');
+      } else {
+        console.error('❌ Failed to register with TNF:', response?.error);
+      }
+    } catch (error) {
+      console.error('Error registering injectable UI with TNF:', error);
+    }
+  }
+
+  async enableTNFFeatures() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'ENABLE_TNF_FEATURES',
+        features: ['agentSwarm', 'workflowAutomation', 'realTimeMonitoring', 'advancedAnalytics']
+      });
+
+      if (response?.success) {
+        this.setState({
+          features: {
+            agentSwarmEnabled: true,
+            workflowAutomation: true,
+            realTimeMonitoring: true,
+            advancedAnalytics: true
+          }
+        });
+        console.log('✅ TNF features enabled for injectable UI');
+      }
+    } catch (error) {
+      console.error('Error enabling TNF features:', error);
+    }
+  }
+
+  async connectToTNFOrchestrator() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'CONNECT_TNF_ORCHESTRATOR',
+        config: {
+          agentId: this.state.tnf.agentId,
+          capabilities: ['direct_injection', 'ai_communication'],
+          currentAI: this.state.currentAI,
+          url: window.location.href
+        }
+      });
+
+      if (response?.success) {
+        this.setState({
+          tnf: {
+            ...this.state.tnf,
+            agentOrchestrator: true
+          }
+        });
+        console.log('🎯 Injectable UI connected to TNF Agent Orchestrator');
+      }
+    } catch (error) {
+      console.error('Error connecting to TNF orchestrator:', error);
+    }
+  }
+
+  async synchronizeWithTNFCore() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'SYNC_WITH_TNF_CORE',
+        syncData: {
+          conversationHistory: this.state.conversationHistory,
+          currentAI: this.state.currentAI,
+          features: this.state.features,
+          performance: this.state.performance,
+          analytics: this.state.analytics,
+          url: window.location.href
+        }
+      });
+
+      if (response?.success) {
+        console.log('🔄 Injectable UI synchronized with TNF Core');
+        this.updatePerformanceMetrics();
+      }
+    } catch (error) {
+      console.error('Error synchronizing with TNF Core:', error);
+    }
+  }
+
+  async updatePerformanceMetrics() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'GET_PERFORMANCE_METRICS'
+      });
+
+      if (response?.success) {
+        this.setState({
+          performance: {
+            ...this.state.performance,
+            responseTime: response.metrics.responseTime || 0,
+            throughput: response.metrics.throughput || 0,
+            errorRate: response.metrics.errorRate || 0,
+            uptime: response.metrics.uptime || 0
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error updating performance metrics:', error);
+    }
+  }
+
+  async toggleFeature(featureName) {
+    const currentState = this.state.features[`${featureName}Enabled`] || this.state.features[featureName];
+    const newState = !currentState;
+
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'TOGGLE_TNF_FEATURE',
+        feature: featureName,
+        enabled: newState
+      });
+
+      if (response?.success) {
+        this.setState({
+          features: {
+            ...this.state.features,
+            [`${featureName}Enabled`]: newState,
+            [featureName]: newState
+          }
+        });
+        console.log(`🔄 Feature ${featureName} ${newState ? 'enabled' : 'disabled'}`);
+        this.render();
+      }
+    } catch (error) {
+      console.error(`Error toggling feature ${featureName}:`, error);
+    }
+  }
+
+  renderTNFAdvancedStatus() {
+    const { tnf, performance, features } = this.state;
+    
+    return `
+      <div class="tnf-advanced-status">
+        <div class="status-grid">
+          <div class="status-card">
+            <h4>Core Services</h4>
+            <div class="status-row">
+              <span>Task Engine:</span>
+              <span class="status-indicator ${tnf.taskEngineStatus ? 'online' : 'offline'}">
+                ${tnf.taskEngineStatus ? 'Online' : 'Offline'}
+              </span>
+            </div>
+            <div class="status-row">
+              <span>Workflow Engine:</span>
+              <span class="status-indicator ${tnf.workflowEngineStatus ? 'online' : 'offline'}">
+                ${tnf.workflowEngineStatus ? 'Online' : 'Offline'}
+              </span>
+            </div>
+            <div class="status-row">
+              <span>Agent Orchestrator:</span>
+              <span class="status-indicator ${tnf.agentOrchestrator ? 'online' : 'offline'}">
+                ${tnf.agentOrchestrator ? 'Connected' : 'Disconnected'}
+              </span>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <h4>Performance</h4>
+            <div class="metric-row">
+              <span>Response Time:</span>
+              <span class="metric-value">${performance.responseTime || 0}ms</span>
+            </div>
+            <div class="metric-row">
+              <span>Success Rate:</span>
+              <span class="metric-value">${performance.successRate || 0}%</span>
+            </div>
+            <div class="metric-row">
+              <span>Operations:</span>
+              <span class="metric-value">${performance.totalOperations || 0}</span>
+            </div>
+          </div>
+
+          <div class="status-card">
+            <h4>Features</h4>
+            <div class="feature-row">
+              <span>Agent Swarm:</span>
+              <div class="feature-toggle ${features.agentSwarmEnabled ? 'active' : ''}" 
+                   onclick="window.tnfInjectableUI.toggleFeature('agentSwarm')">
+                <div class="toggle-slider"></div>
+              </div>
+            </div>
+            <div class="feature-row">
+              <span>Workflow Auto:</span>
+              <div class="feature-toggle ${features.workflowAutomation ? 'active' : ''}" 
+                   onclick="window.tnfInjectableUI.toggleFeature('workflowAutomation')">
+                <div class="toggle-slider"></div>
+              </div>
+            </div>
+            <div class="feature-row">
+              <span>Real-time Monitor:</span>
+              <div class="feature-toggle ${features.realTimeMonitoring ? 'active' : ''}" 
+                   onclick="window.tnfInjectableUI.toggleFeature('realTimeMonitoring')">
+                <div class="toggle-slider"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="action-buttons">
+          <button onclick="window.tnfInjectableUI.registerWithTNF()" class="tnf-btn primary">
+            Register with TNF
+          </button>
+          <button onclick="window.tnfInjectableUI.synchronizeWithTNFCore()" class="tnf-btn secondary">
+            Sync with Core
+          </button>
+          <button onclick="window.tnfInjectableUI.connectToTNFOrchestrator()" class="tnf-btn secondary">
+            Connect Orchestrator
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  initializeTNFIntegration() {
+    // Auto-register with TNF on initialization
+    setTimeout(() => {
+      this.registerWithTNF();
+      this.connectToTNFOrchestrator();
+    }, 2000);
+
+    // Set up periodic synchronization
+    setInterval(() => {
+      this.synchronizeWithTNFCore();
+      this.updatePerformanceMetrics();
+    }, 30000); // Every 30 seconds
   }
 }
 

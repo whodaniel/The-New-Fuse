@@ -24,4 +24,3 @@ export function typeToPath(type): any {
             return "slash-commands";
     }
 }
-//# sourceMappingURL=utils.js.map

@@ -22,4 +22,3 @@ export function useTheme(): any {
     return context;
 }
 export default ThemeContext;
-//# sourceMappingURL=ThemeContext.js.map

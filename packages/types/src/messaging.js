@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.PriorityQueue = void 0;
-class PriorityQueue {
+export class PriorityQueue {
     items = [];
     enqueue(item, priority = 0) {
         this.items.push({ item, priority });
@@ -17,4 +14,4 @@ class PriorityQueue {
         return this.items.length;
     }
 }
-exports.PriorityQueue = PriorityQueue;
+//# sourceMappingURL=messaging.js.map

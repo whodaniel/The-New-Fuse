@@ -1,17 +1,19 @@
-import { DefaultSessionManager } from '../SessionManager';
+import { sessionManager } from '../SessionManager';
 import { AuthUser } from '../../types/auth';
 
 describe('SessionManager', () => {
-  let sessionManager: DefaultSessionManager;
+  let sessionManager: any;
   // Corrected mockUser object definition
   const mockUser: AuthUser = {
     id: '123', // Assuming ID is a string
     email: 'test@example.com',
-    roles: ['user']
+    username: 'testuser',
+    roles: ['user'],
+    permissions: [],
   };
 
   beforeEach(() => {
-    sessionManager = new DefaultSessionManager({
+    sessionManager = new sessionManager({
       maxConcurrentSessions: 2,
       sessionTimeout: 1000, // 1 second for testing
       extendOnActivity: true
@@ -59,7 +61,7 @@ describe('SessionManager', () => {
 
     const activeSessions = await sessionManager.getActiveUserSessions(mockUser.id);
     expect(activeSessions.length).toBe(2);
-    expect(activeSessions.find(s => s.id === session1.id)).toBeUndefined(); // The first session should be evicted
+    expect(activeSessions.find((s: any) => s.id === session1.id)).toBeUndefined(); // The first session should be evicted
   });
 
   // Corrected test function syntax

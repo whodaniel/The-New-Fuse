@@ -193,7 +193,7 @@ export class ChatService {
       }
 
       // Mock AI response generation - replace with actual AI service integration
-      const response = await this.mockAIResponse(prompt, agent.config?.systemPrompt || 'You are a helpful assistant.');
+      const response = await this.mockAIResponse(prompt, (agent.config as any)?.systemPrompt || 'You are a helpful assistant.');
       
       return response;
     } catch (error) {

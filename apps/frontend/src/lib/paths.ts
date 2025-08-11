@@ -173,4 +173,3 @@ export default {
         },
     },
 };
-//# sourceMappingURL=paths.js.map

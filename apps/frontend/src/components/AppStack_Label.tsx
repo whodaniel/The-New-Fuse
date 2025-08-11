@@ -19,4 +19,3 @@ function AppStack_Label(_a) {
     </label>);
 }
 export {};
-//# sourceMappingURL=AppStack_Label.js.map

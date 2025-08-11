@@ -10,4 +10,3 @@ function NodeConnection({ from, to }): any {
     </svg>);
 }
 export {};
-//# sourceMappingURL=node-connection.js.map

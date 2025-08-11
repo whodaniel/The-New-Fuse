@@ -11,4 +11,3 @@ export enum ThreatType {
     AUTH_BYPASS = "auth_bypass",
     CODE_EXECUTION = "code_execution"
 }
-//# sourceMappingURL=security.js.map

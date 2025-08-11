@@ -10,4 +10,3 @@ const ConnectorImages = {
     confluence: Confluence,
 };
 export default ConnectorImages;
-//# sourceMappingURL=index.js.map

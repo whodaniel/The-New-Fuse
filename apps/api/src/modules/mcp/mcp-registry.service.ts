@@ -23,11 +23,9 @@ export class MCPRegistryService {
       type: params.type,
       capabilities: params.capabilities,
       status: AgentStatus.ACTIVE,
-      userId: 'system', // Replace with actual user
+      // userId: 'system', // Removed as Agent type from @the-new-fuse/types does not have userId
       createdAt: new Date(),
       updatedAt: new Date(),
-      deletedAt: null,
-      config: params.configuration,
     };
 
     return agent;
@@ -59,11 +57,9 @@ export class MCPRegistryService {
       id: `entity-${Date.now()}`,
       name: params.name,
       type: params.type,
-      description: params.description,
+      // description: params.description, // Removed as RegisteredEntity type from @the-new-fuse/types does not have description
       metadata: params.metadata,
-      status: 'active',
       createdAt: new Date(),
-      updatedAt: new Date(),
     };
 
     return entity;

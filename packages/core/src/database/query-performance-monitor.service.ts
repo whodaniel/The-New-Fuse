@@ -8,10 +8,5 @@ import { EventEmitter2 } from /@nestjs/event-emitter'';
       trackBindParameters: this.configService.get<boolean>('')
       trackStackTrace: this.configService.get<boolean>('')
       this.logger.log('')
-    this.logger.log('Query performance monitor initialized'
-        source: ''
-      .replace(/\$\d+/g, '
-      .replace(/'[^']*//g, '
-      .replace(/\d+/g, '
-      .replace(/\s+/g, '
+    this.logger.log('message', context);
     this.logger.log('')

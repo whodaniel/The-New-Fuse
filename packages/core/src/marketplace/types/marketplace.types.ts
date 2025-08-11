@@ -1,10 +1,10 @@
 import { IntegrationType } from '@the-new-fuse/api-client/src/integrations/types';
-  INTEGRATION = 'integration'';
-  WORKFLOW_TEMPLATE = 'workflow_template'';
-  MICROSERVICE = 'microservice'';
-  AGENT = 'agent'';
-  FREE = 'free'';
-  ONE_TIME = 'one_time'';
-  SUBSCRIPTION = 'subscription'';
-  USAGE_BASED = 'usage_based'';
+  INTEGRATION = 'placeholder';
+  WORKFLOW_TEMPLATE = 'placeholder';
+  MICROSERVICE = 'placeholder';
+  AGENT = 'placeholder';
+  FREE = 'placeholder';
+  ONE_TIME = 'placeholder';
+  SUBSCRIPTION = 'placeholder';
+  USAGE_BASED = 'placeholder';
   billingPeriod?:monthly'

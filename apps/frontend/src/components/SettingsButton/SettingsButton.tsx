@@ -24,4 +24,3 @@ export function SettingsButton() {
       </Link>
     </div>);
 }
-//# sourceMappingURL=SettingsButton.js.map

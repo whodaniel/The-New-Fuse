@@ -9,4 +9,3 @@ export const API_ENDPOINTS = {
         ME: '/api/auth/me',
     },
 };
-//# sourceMappingURL=api.js.map

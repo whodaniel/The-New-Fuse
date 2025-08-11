@@ -34,4 +34,3 @@ export function SystemMetrics({ data = defaultData, className }) {
       </div>
     </Card>);
 }
-//# sourceMappingURL=SystemMetrics.js.map

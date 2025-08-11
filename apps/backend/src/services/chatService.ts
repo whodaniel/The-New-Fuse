@@ -13,11 +13,16 @@ export enum MessageRole {
 export class ChatService {
   constructor(private readonly prisma: PrismaService) {}
   async addMessage(userId: string, role: MessageRole, content: string): Promise<ChatMessage> {
+    // Set expiration to 30 days from now
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 30);
+
     return this.prisma.chatMessage.create({
       data: {
         userId,
         role,
-        content
+        content,
+        expiresAt
       }
     });
   }

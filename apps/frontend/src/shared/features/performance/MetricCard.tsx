@@ -29,4 +29,3 @@ export function MetricCard({ title, value, unit, history, color = '#2563eb' }) {
       </div>
     </Card>);
 }
-//# sourceMappingURL=MetricCard.js.map

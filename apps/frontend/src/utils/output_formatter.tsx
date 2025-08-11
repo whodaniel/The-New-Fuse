@@ -96,4 +96,3 @@ class OutputFormatter {
 }
 exports.OutputFormatter = OutputFormatter;
 export {};
-//# sourceMappingURL=output_formatter.js.map

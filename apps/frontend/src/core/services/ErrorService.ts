@@ -108,4 +108,3 @@ export class ErrorService {
         return this.stateManager.subscribe(['errors', 'history'], callback);
     }
 }
-//# sourceMappingURL=ErrorService.js.map

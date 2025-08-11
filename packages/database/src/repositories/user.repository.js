@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,10 +7,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.UserRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_service_1 = require("../prisma.service");
+import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma.service';
 let UserRepository = class UserRepository {
     prisma;
     constructor(prisma) {
@@ -33,6 +30,7 @@ let UserRepository = class UserRepository {
             createdAt: dbUser.createdAt,
             updatedAt: dbUser.updatedAt,
             deletedAt: dbUser.deletedAt,
+            emailVerified: dbUser.emailVerified,
         };
     }
     getUserSelect() {
@@ -50,7 +48,8 @@ let UserRepository = class UserRepository {
             refreshToken: true,
             createdAt: true,
             updatedAt: true,
-            deletedAt: true
+            deletedAt: true,
+            emailVerified: true,
         };
     }
     async findById(id) {
@@ -83,7 +82,10 @@ let UserRepository = class UserRepository {
     }
     async create(data) {
         const user = await this.prisma.user.create({
-            data,
+            data: {
+                ...data,
+                emailVerified: false,
+            },
             select: this.getUserSelect()
         });
         return this.mapDatabaseUserToUser(user);
@@ -193,8 +195,9 @@ let UserRepository = class UserRepository {
         });
     }
 };
-exports.UserRepository = UserRepository;
-exports.UserRepository = UserRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+UserRepository = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [PrismaService])
 ], UserRepository);
+export { UserRepository };
+//# sourceMappingURL=user.repository.js.map

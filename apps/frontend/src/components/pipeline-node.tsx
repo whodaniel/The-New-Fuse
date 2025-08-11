@@ -29,4 +29,3 @@ function PipelineNode({ node, onDrag, onConnect }) {
     </framer_motion_1.motion.div>);
 }
 export {};
-//# sourceMappingURL=pipeline-node.js.map

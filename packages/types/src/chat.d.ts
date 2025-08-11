@@ -1,22 +1,25 @@
 export interface ChatMessage {
     id: string;
-    userId: string;
-    role: 'user' | 'assistant';
     content: string;
-    expiresAt: Date;
+    role: string;
+    userId: string;
+    sessionId?: string;
+    metadata?: any;
     createdAt: Date;
     updatedAt: Date;
 }
 export interface ChatMessageCreateInput {
     userId: string;
-    role: 'user' | 'assistant';
+    role: 'user' | 'assistant' | 'system';
     content: string;
-    expiresAt: Date;
+    sessionId?: string;
+    metadata?: any;
 }
 export interface ChatMessageUpdateInput {
-    role?: 'user' | 'assistant';
+    role?: 'user' | 'assistant' | 'system';
     content?: string;
-    expiresAt?: Date;
+    sessionId?: string;
+    metadata?: any;
 }
 export interface ChatHistoryResponse {
     messages: ChatMessage[];

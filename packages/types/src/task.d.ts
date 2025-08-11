@@ -10,7 +10,8 @@ export declare enum TaskStatus {
     PENDING = "PENDING",
     IN_PROGRESS = "IN_PROGRESS",
     COMPLETED = "COMPLETED",
-    FAILED = "FAILED"
+    FAILED = "FAILED",
+    CANCELLED = "CANCELLED"
 }
 export interface TaskMetadata {
     description?: string;

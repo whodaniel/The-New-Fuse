@@ -1,52 +1,55 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Node, Edge, Connection, addEdge } from 'reactflow';
 import { v4 as uuidv4 } from 'uuid';
-
-export interface Workflow {
-  id: string;
-  name: string;
-  description?: string;
-  nodes: Node[];
-  edges: Edge[];
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { workflowService, Workflow, WorkflowExecution } from '@/services/WorkflowService';
 
 export const useWorkflow = () => {
   const [workflows, setWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflow, setCurrentWorkflow] = useState<Workflow | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+  const [executions, setExecutions] = useState<WorkflowExecution[]>([]);
   
   // Create a new workflow
-  const createWorkflow = useCallback((name: string, description?: string) => {
-    const newWorkflow: Workflow = {
-      id: uuidv4(),
-      name,
-      description,
-      nodes: [
-        {
-          id: 'input-1',
-          type: 'input',
-          position: { x: 100, y: 100 },
-          data: { 
-            name: 'Workflow Input',
+  const createWorkflow = useCallback(async (name: string, description?: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const newWorkflow = await workflowService.createWorkflow({
+        name,
+        description,
+        nodes: [
+          {
+            id: 'input-1',
             type: 'input',
-            config: {
-              inputMapping: {}
+            position: { x: 100, y: 100 },
+            data: { 
+              name: 'Workflow Input',
+              type: 'input',
+              config: {
+                inputMapping: {}
+              }
             }
           }
-        }
-      ],
-      edges: [],
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    setWorkflows(prev => [...prev, newWorkflow]);
-    setCurrentWorkflow(newWorkflow);
-    
-    return newWorkflow;
+        ],
+        edges: [],
+        status: 'draft',
+        version: 1,
+        createdBy: 'current-user', // TODO: Get from auth context
+        tags: [],
+      });
+      
+      setWorkflows(prev => [...prev, newWorkflow]);
+      setCurrentWorkflow(newWorkflow);
+      
+      return newWorkflow;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to create workflow'));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
   
   // Load workflows from API
@@ -55,76 +58,8 @@ export const useWorkflow = () => {
     setError(null);
     
     try {
-      // In a real app, this would fetch workflows from an API
-      // For now, we'll just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock data
-      const mockWorkflows: Workflow[] = [
-        {
-          id: '1',
-          name: 'Sample Workflow',
-          description: 'A sample workflow for demonstration',
-          nodes: [
-            {
-              id: 'input-1',
-              type: 'input',
-              position: { x: 100, y: 100 },
-              data: { 
-                name: 'Workflow Input',
-                type: 'input',
-                config: {
-                  inputMapping: {}
-                }
-              }
-            },
-            {
-              id: 'agent-1',
-              type: 'agent',
-              position: { x: 300, y: 100 },
-              data: { 
-                name: 'Code Assistant',
-                type: 'agent',
-                config: {
-                  agentId: 'agent-1'
-                }
-              }
-            },
-            {
-              id: 'output-1',
-              type: 'output',
-              position: { x: 500, y: 100 },
-              data: { 
-                name: 'Workflow Output',
-                type: 'output',
-                config: {
-                  outputMapping: {}
-                }
-              }
-            }
-          ],
-          edges: [
-            {
-              id: 'edge-input-agent',
-              source: 'input-1',
-              target: 'agent-1',
-              sourceHandle: 'default',
-              targetHandle: 'default'
-            },
-            {
-              id: 'edge-agent-output',
-              source: 'agent-1',
-              target: 'output-1',
-              sourceHandle: 'default',
-              targetHandle: 'default'
-            }
-          ],
-          createdAt: new Date(),
-          updatedAt: new Date()
-        }
-      ];
-      
-      setWorkflows(mockWorkflows);
+      const fetchedWorkflows = await workflowService.getWorkflows();
+      setWorkflows(fetchedWorkflows);
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to load workflows'));
     } finally {
@@ -138,14 +73,7 @@ export const useWorkflow = () => {
     setError(null);
     
     try {
-      // In a real app, this would save the workflow to an API
-      // For now, we'll just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      const updatedWorkflow = {
-        ...workflow,
-        updatedAt: new Date()
-      };
+      const updatedWorkflow = await workflowService.updateWorkflow(workflow.id, workflow);
       
       setWorkflows(prev => 
         prev.map(w => w.id === workflow.id ? updatedWorkflow : w)
@@ -170,9 +98,7 @@ export const useWorkflow = () => {
     setError(null);
     
     try {
-      // In a real app, this would delete the workflow from an API
-      // For now, we'll just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await workflowService.deleteWorkflow(id);
       
       setWorkflows(prev => prev.filter(w => w.id !== id));
       
@@ -188,27 +114,48 @@ export const useWorkflow = () => {
   }, [currentWorkflow]);
   
   // Execute a workflow
-  const executeWorkflow = useCallback(async (workflow: Workflow) => {
+  const executeWorkflow = useCallback(async (workflowId: string, input?: Record<string, any>) => {
     setLoading(true);
     setError(null);
     
     try {
-      // In a real app, this would execute the workflow via an API
-      // For now, we'll just simulate a delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Executing workflow:', workflow);
-      
-      return {
-        id: uuidv4(),
-        workflowId: workflow.id,
-        status: 'completed',
-        startTime: new Date(),
-        endTime: new Date(),
-        results: {}
-      };
+      const execution = await workflowService.executeWorkflow(workflowId, input);
+      setExecutions(prev => [...prev, execution]);
+      return execution;
     } catch (err) {
       setError(err instanceof Error ? err : new Error('Failed to execute workflow'));
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Load executions
+  const loadExecutions = useCallback(async (workflowId?: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const fetchedExecutions = await workflowService.getExecutions(workflowId);
+      setExecutions(fetchedExecutions);
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to load executions'));
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Get workflow by ID
+  const getWorkflow = useCallback(async (id: string) => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const workflow = await workflowService.getWorkflow(id);
+      setCurrentWorkflow(workflow);
+      return workflow;
+    } catch (err) {
+      setError(err instanceof Error ? err : new Error('Failed to get workflow'));
       throw err;
     } finally {
       setLoading(false);
@@ -218,6 +165,7 @@ export const useWorkflow = () => {
   return {
     workflows,
     currentWorkflow,
+    executions,
     loading,
     error,
     setCurrentWorkflow,
@@ -225,7 +173,9 @@ export const useWorkflow = () => {
     loadWorkflows,
     saveWorkflow,
     deleteWorkflow,
-    executeWorkflow
+    executeWorkflow,
+    loadExecutions,
+    getWorkflow
   };
 };
 

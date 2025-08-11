@@ -7,4 +7,3 @@ export default function Page() {
       <AppStacker />
     </div>);
 }
-//# sourceMappingURL=page.js.map

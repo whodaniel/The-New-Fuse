@@ -1,7 +1,7 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
 import /../../network/network.service.js;'';
     case 'TRANSACTION_ERROR'
-    case "TIMEOUT": ''
+    case "placeholder"
       case 'REQUEST_TIMEOUT'
     case 'SERVICE_UNAVAILABLE'
       default: ''

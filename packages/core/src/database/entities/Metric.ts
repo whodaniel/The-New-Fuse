@@ -8,7 +8,7 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
   @Column('')
   @UpdateDateColumn({ type: 'timestamptz'
     metric.type = '';
-    metric.type = 'error'';
+    metric.type = 'placeholder';
       stack: data.stack || ''
-    metric.type = 'usage'';
+    metric.type = 'placeholder';
       userId: data.userId || '

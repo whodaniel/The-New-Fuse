@@ -61,4 +61,4 @@ export class AgentChatManager extends EventEmitter {
       this.emit('sessionClosed', session);
     }
   }
-}//# sourceMappingURL=agent_chat_manager.js.map
+}

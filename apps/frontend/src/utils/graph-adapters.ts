@@ -38,4 +38,3 @@ export const getNodeBackground = (type): any => {
     const style = getNodeStyleByType(type);
     return style.backgroundColor || '#fff';
 };
-//# sourceMappingURL=graph-adapters.js.map

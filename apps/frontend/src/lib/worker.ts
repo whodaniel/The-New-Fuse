@@ -40,4 +40,3 @@ async function main(event): any {
     });
 }
 self.addEventListener("message", main);
-//# sourceMappingURL=worker.js.map

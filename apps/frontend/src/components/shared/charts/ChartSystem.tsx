@@ -131,4 +131,3 @@ const ChartSystem = ({ title, description, series, config, height = 400, width =
 };
 exports.ChartSystem = ChartSystem;
 export {};
-//# sourceMappingURL=ChartSystem.js.map

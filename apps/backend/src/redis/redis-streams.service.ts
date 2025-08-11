@@ -87,8 +87,8 @@ export class RedisStreamsService implements OnModuleInit, OnModuleDestroy {
       lazyConnect: true,
     };
 
-    this.redis = new Redis.Redis(redisConfig);
-    this.subscriber = new Redis.Redis(redisConfig);
+    this.redis = new Redis(redisConfig);
+    this.subscriber = new Redis(redisConfig);
 
     // Setup connection event handlers
     this.redis.on('connect', () => {

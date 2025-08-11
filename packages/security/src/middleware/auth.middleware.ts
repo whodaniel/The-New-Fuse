@@ -1,15 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
-
-interface User {
-  id: string;
-  roles: string[];
-}
+import { AuthUser } from '../services/SessionManager';
 
 export interface AuthenticatedRequest extends Request {
-  user?: User;
+  user?: AuthUser;
 }
 
-const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
+export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const token = req.headers.authorization?.split(' ')[1];
   
   if (!token) {
@@ -22,7 +18,10 @@ const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunc
     // For now just add a mock user
     req.user = {
       id: '123',
-      roles: ['user']
+      email: 'mock@example.com',
+      username: 'mockuser',
+      roles: ['user'],
+      permissions: [],
     };
     next();
   } catch {

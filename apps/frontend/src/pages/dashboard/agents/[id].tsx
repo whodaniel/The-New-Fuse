@@ -97,4 +97,3 @@ const AgentDetails = () => {
     </div>);
 };
 export default AgentDetails;
-//# sourceMappingURL=%5Bid%5D.js.map

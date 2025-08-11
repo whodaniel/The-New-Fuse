@@ -69,4 +69,3 @@ const SelectSeparator = React.forwardRef((_a, ref) => {
 exports.SelectSeparator = SelectSeparator;
 SelectSeparator.displayName = SelectPrimitive.Separator.displayName;
 export {};
-//# sourceMappingURL=select.js.map

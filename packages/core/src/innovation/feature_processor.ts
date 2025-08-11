@@ -1,6 +1,6 @@
 import '';
      recommendedPriorityhigh' |medium|low'
-           if(extractedFeatures.length' === '0) {'';
+           if(extractedFeatures.length'placeholder';
                 return { status: 'no_superior_features_found  };'
            return{ status: 'no_superior_features_found };'
         } catch (error){ logger.error('Errorprocessingfeatures:, error);'

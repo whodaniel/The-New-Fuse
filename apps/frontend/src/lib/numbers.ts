@@ -43,4 +43,3 @@ export function milliToHms(milli = 0): any {
     var sDisplay = s >= 0.01 ? s.toFixed(2) + "s" : "";
     return hDisplay + mDisplay + sDisplay;
 }
-//# sourceMappingURL=numbers.js.map

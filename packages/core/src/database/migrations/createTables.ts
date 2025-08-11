@@ -1,8 +1,12 @@
 
 export class CreateTables1635000000000 implements MigrationInterface { public async up(queryRunner: QueryRunner): Promise<void> {
+  // Implementation needed
+}
     // Create Users table
     await queryRunner.createTable(
       new Table({
+  // Implementation needed
+}
         name: 'users'
             name: 'id'
             type: 'uuid'
@@ -15,7 +19,7 @@ export class CreateTables1635000000000 implements MigrationInterface { public as
             type: 'varchar'
           { name: 'role'
             type: 'varchar'
-            default: ''user'','
+            default: 'placeholder','
           { name: 'created_at'
             type: 'timestamp'
           { name: 'updated_at'
@@ -47,7 +51,7 @@ export class CreateTables1635000000000 implements MigrationInterface { public as
             type: 'text'
           { name: 'status'
             type: 'varchar'
-            default: ''pending'','
+            default: 'placeholder','
           { name: 'created_at'
             type: 'timestamp'
           { name: 'updated_at'

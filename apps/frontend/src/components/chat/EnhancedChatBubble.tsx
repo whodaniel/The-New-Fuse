@@ -34,4 +34,3 @@ function EnhancedChatBubble({ message, agents, workspace }) {
     </div>);
 }
 export {};
-//# sourceMappingURL=EnhancedChatBubble.js.map

@@ -3,12 +3,15 @@
   "version": "1.0.0",
   "description": "Modular prompt templating system for The New Fuse",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
     "test": "jest",
-    "lint": "eslint src/**/*.ts"
+    "lint": "eslint src/**/*.ts",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "lucide-react": "^0.263.1",
@@ -20,7 +23,8 @@
     "@types/react-dom": "^18.2.0",
     "eslint": "^8.0.0",
     "jest": "^29.0.0",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "rimraf": "^5.0.10"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

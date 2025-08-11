@@ -51,11 +51,13 @@ export class AgentService {
         const agent = await tx.agent.create({
           data: {
             name: data.name,
+            type: data.type || 'ASSISTANT',
             description: data.description,
             systemPrompt: data.systemPrompt,
             capabilities: data.capabilities || [],
             status: this.mapTypeStatusToPrisma(AgentStatus.INACTIVE),
             config: data.configuration as any,
+            provider: data.provider || 'default',
             userId
           }
         });

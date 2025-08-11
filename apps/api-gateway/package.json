@@ -20,11 +20,9 @@
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.2",
-    "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.0.0",
-    "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
-    "@nestjs/swagger": "^7.0.0",
+    "@nestjs/swagger": "^7.1.17",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "axios": "^1.6.8",

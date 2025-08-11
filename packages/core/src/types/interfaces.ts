@@ -1,6 +1,8 @@
 // Core interfaces for the Fuse framework
 
 export interface IAgent {
+  // Implementation needed
+}
   id: string;
   name: string;
   capabilities: string[];
@@ -8,6 +10,8 @@ export interface IAgent {
 }
 
 export interface IMessage {
+  // Implementation needed
+}
   id: string;
   content: string;
   sender: string;
@@ -16,6 +20,8 @@ export interface IMessage {
 }
 
 export interface IPromptTemplate {
+  // Implementation needed
+}
   id: string;
   name: string;
   template: string;
@@ -23,6 +29,8 @@ export interface IPromptTemplate {
 }
 
 export interface IMemoryStore {
+  // Implementation needed
+}
   store(key: string, value: unknown, ttl?: number): Promise<void>;
   get(key: string): Promise<unknown>;
   delete(key: string): Promise<void>;
@@ -30,12 +38,16 @@ export interface IMemoryStore {
 }
 
 export interface ILLMProvider {
+  // Implementation needed
+}
   name: string;
   model: string;
   generateResponse(prompt: string, options?: any): Promise<string>;
 }
 
 export interface IAgentConfiguration {
+  // Implementation needed
+}
   id: string;
   name: string;
   model: string;
@@ -45,6 +57,8 @@ export interface IAgentConfiguration {
 }
 
 export interface ITaskResult {
+  // Implementation needed
+}
   success: boolean;
   result?: any;
   error?: string;
@@ -52,6 +66,8 @@ export interface ITaskResult {
 }
 
 export interface IServiceHealth {
+  // Implementation needed
+}
   healthy: boolean;
   message?: string;
   timestamp: Date;

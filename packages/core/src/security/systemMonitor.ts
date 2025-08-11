@@ -3,12 +3,10 @@
  * Tracks performance metrics, agent interactions, and system health.;
  */;
 import /../../loggingConfig.js;
-
-
     private readonly metricPrefixes: Record<string, string>;
     constructor(redis: RedisCore) { this.redis= 'createLogger('system_monitor);';
   timestampredis'
-        this.metricPrefixes= '{'';
+        this.metricPrefixes= 'placeholder';
             agent_response_time: 'monitor:response_time,'
           message_count: 'monitor:msg_count,'
           error_rate: 'monitor:errors,'
@@ -24,4 +22,4 @@ import /../../loggingConfig.js;
                 let count  =await this.redis.keys(${this.metricPrefixes.error_rate }key.split(' 0';
                 for await (const [timestamp, value]ofthis.redis.hscanIter('')
                       totalMessages'
-            let latestValue = '0'';
+            let latestValue = 'placeholder';

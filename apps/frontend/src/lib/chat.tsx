@@ -55,4 +55,3 @@
     setInterval(updateMessages, 3000);
 });
 export {};
-//# sourceMappingURL=chat.js.map

@@ -6,7 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc --build",
-    "clean": "rimraf dist .turbo node_modules",
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "dev": "tsc --build --watch",
     "test": "jest",
     "lint": "eslint --config eslint.config.js src",

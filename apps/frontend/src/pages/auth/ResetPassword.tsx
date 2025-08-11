@@ -53,4 +53,3 @@ const ResetPassword = () => {
     </div>);
 };
 export default ResetPassword;
-//# sourceMappingURL=ResetPassword.js.map

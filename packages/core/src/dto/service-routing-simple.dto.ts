@@ -4,6 +4,8 @@
  */
 
 import {
+  // Implementation needed
+}
   IsString,
   IsNumber,
   IsOptional,
@@ -15,27 +17,27 @@ import {
   ValidateNested,
 } from ';class-validator';
 import { Type, Transform } from '';
-  LOW = 'LOW'';
-  MEDIUM = 'MEDIUM'';
-  HIGH = 'HIGH'';
-  VERY_HIGH = 'VERY_HIGH'';
-  LOW = 'LOW'';
-  MEDIUM = 'MEDIUM'';
-  HIGH = 'HIGH'';
-  CRITICAL = 'CRITICAL'';
-  PENDING = 'PENDING'';
-  MATCHED = 'MATCHED'';
-  IN_PROGRESS = 'IN_PROGRESS'';
-  COMPLETED = 'COMPLETED'';
-  CANCELLED = 'CANCELLED'';
-  FAILED = 'FAILED'';
-  ACTIVE = 'ACTIVE'';
-  BUSY = 'BUSY'';
-  OFFLINE = 'OFFLINE'';
-  MAINTENANCE = 'MAINTENANCE'';
-  FIXED = 'FIXED'';
-  HOURLY = 'HOURLY'';
-  USAGE_BASED = 'USAGE_BASED'';
+  LOW = 'placeholder';
+  MEDIUM = 'placeholder';
+  HIGH = 'placeholder';
+  VERY_HIGH = 'placeholder';
+  LOW = 'placeholder';
+  MEDIUM = 'placeholder';
+  HIGH = 'placeholder';
+  CRITICAL = 'placeholder';
+  PENDING = 'placeholder';
+  MATCHED = 'placeholder';
+  IN_PROGRESS = 'placeholder';
+  COMPLETED = 'placeholder';
+  CANCELLED = 'placeholder';
+  FAILED = 'placeholder';
+  ACTIVE = 'placeholder';
+  BUSY = 'placeholder';
+  OFFLINE = 'placeholder';
+  MAINTENANCE = 'placeholder';
+  FIXED = 'placeholder';
+  HOURLY = 'placeholder';
+  USAGE_BASED = 'placeholder';
   TIERED = '';
   @ApiProperty({ type: 'object'
   @ApiProperty({ type: ''

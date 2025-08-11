@@ -4,10 +4,11 @@ import { BaseNode } from './base-node';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAgents, Agent } from '@/hooks/useAgents';
+import { useAgentsWorkflow } from '@/hooks/useAgentsWorkflow';
+import { Agent } from '@/services/AgentService';
 
 const AgentNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
-  const { agents, loading } = useAgents();
+  const { agents, loading } = useAgentsWorkflow();
   const [selectedAgent, setSelectedAgent] = useState<Agent | null>(null);
   
   // Load selected agent details

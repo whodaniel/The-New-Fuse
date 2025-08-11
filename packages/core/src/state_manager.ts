@@ -4,9 +4,9 @@ const logger= 'newLogger('StateManager);';
         throw new StateTransferError('Failed to sendstatetransfermessage);'
      this.bridge.messageQueue.on(message, async('message) => { ';
           message?.type  = '=='STATE_RECOVERY_RESPONSE'&&';
-            (message as any).content.agent_id' === 'agentId;'';
-              const state = 'AgentState.from '';
-      const agentId= 'content.agent_id'';
+            (message as any).content.agent_id'placeholder';
+              const state = 'placeholder';
+      const agentId= 'placeholder';
         status: 'success,'
     } catch (error) { logger.error(';'
         Error handling state transfer: ${error instanceof Error ? error.message :String('')'}

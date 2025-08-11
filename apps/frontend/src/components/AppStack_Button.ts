@@ -13,4 +13,3 @@ const AppStack_Button = ({ onClick, variant = 'default', children, disabled, cla
 };
 exports.AppStack_Button = AppStack_Button;
 export {};
-//# sourceMappingURL=AppStack_Button.js.map

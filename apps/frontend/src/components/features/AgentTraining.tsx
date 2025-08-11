@@ -209,4 +209,3 @@ const AgentTraining = ({ agentId }) => {
 exports.AgentTraining = AgentTraining;
 exports.default = exports.AgentTraining;
 export {};
-//# sourceMappingURL=AgentTraining.js.map

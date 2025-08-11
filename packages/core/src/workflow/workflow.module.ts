@@ -4,8 +4,9 @@ import { WorkflowEngine } from './engine';
 import { WorkflowExecutor } from './executor';
 import { WorkflowValidator } from './validator';
 import { WorkflowVersionManager } from './versioning';
-
 @Module({
+  // Implementation needed
+}
   imports: [EventEmitterModule.forRoot()],
   providers: [
     WorkflowEngine,

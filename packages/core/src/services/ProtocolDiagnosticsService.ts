@@ -12,18 +12,9 @@ import { ReliabilityMetricsService } from /./ReliabilityMetricsService'';
     this.eventEmitter.on('protocol.version.'
     this.eventEmitter.on('protocol.schema.'
         type: 'connection"
-        severity: avgHandshakeLatency > 5000 ? high": ''
+        severity: avgHandshakeLatency > 5000 ? high"placeholder"
           type: 'version_mismatch"
-          severity: successRate < 0.7 ? high": ''
+          severity: successRate < 0.7 ? high"placeholder"
         type: 'schema_violation"
         severity: errorRate > 0.1 ? high": 'medium'
-    this.eventEmitter.emit('protocol.issue.'
-        type: 'schema_violation"
-        severity: errorRate > 0.1 ? high": 'medium'
-      this.eventEmitter.emit('protocol.issue.'detected'
-      type: 'version_mismatch'
-      severity: 'high'
-    this.eventEmitter.emit('protocol.issue.'detected'
-      type: 'schema_violation'
-      severity: 'medium'
-    this.eventEmitter.emit('protocol.issue.'
+    this.eventEmitter.emit('event', data);

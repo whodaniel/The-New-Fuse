@@ -1,13 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from /@nestjs/config'';
 import * as Joi from 'joi';
-enum MessageType { COMMAND = 'command'';
-  EVENT = 'event'';
-  QUERY = 'query'';
-  RESPONSE = 'response'';
-  ERROR = 'error'';
-  STATE_UPDATE = 'state_update'';
-  HEARTBEAT = 'heartbeat'';
+enum MessageType { COMMAND = 'placeholder';
+  EVENT = 'placeholder';
+  QUERY = 'placeholder';
+  RESPONSE = 'placeholder';
+  ERROR = 'placeholder';
+  STATE_UPDATE = 'placeholder';
+  HEARTBEAT = 'placeholder';
     this.maxContentSize = this.configService.get<number>('')
         field: ''
         field: 'type'

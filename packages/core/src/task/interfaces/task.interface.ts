@@ -1,6 +1,7 @@
 import { Task } from '../entities/Task';
-
 export enum TaskEventType {
+  // Implementation needed
+}
   TASK_CREATED = 'TASK_CREATED',
   TASK_UPDATED = 'TASK_UPDATED',
   TASK_DELETED = 'TASK_DELETED',
@@ -11,6 +12,8 @@ export enum TaskEventType {
 }
 
 export enum TaskNotificationType {
+  // Implementation needed
+}
   ASSIGNMENT = 'ASSIGNMENT',
   STATUS_CHANGE = 'STATUS_CHANGE',
   MENTIONED = 'MENTIONED',
@@ -20,6 +23,8 @@ export enum TaskNotificationType {
 }
 
 export interface TaskEvent {
+  // Implementation needed
+}
   type: TaskEventType;
   task: Task;
   userId?: string;
@@ -28,6 +33,8 @@ export interface TaskEvent {
 }
 
 export interface TaskNotification {
+  // Implementation needed
+}
   id: string;
   type: TaskNotificationType;
   taskId: string;
@@ -40,6 +47,8 @@ export interface TaskNotification {
 }
 
 export interface TaskFilter {
+  // Implementation needed
+}
   status?: string[];
   priority?: string[];
   assigneeId?: string;
@@ -51,6 +60,8 @@ export interface TaskFilter {
 }
 
 export interface TaskStatistics {
+  // Implementation needed
+}
   total: number;
   completed: number;
   inProgress: number;

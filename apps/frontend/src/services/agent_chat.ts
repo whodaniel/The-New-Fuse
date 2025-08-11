@@ -43,4 +43,3 @@ export class AgentChatService extends EventEmitter {
         this.emit('clear');
     }
 }
-//# sourceMappingURL=agent_chat.js.map

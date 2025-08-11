@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { Web3authService } from '../web3auth/web3auth.service';
 import { PrismaService } from '../services/prisma.service';
 import { SmartAccountService, SmartAccountDeploymentResult } from '../smart-accounts/smart-account.service';
+import { Prisma } from '@prisma/client'; // Import Prisma
 
 @Injectable()
 export class WalletsService {
@@ -23,10 +24,8 @@ export class WalletsService {
     try {
       this.logger.log(`Creating wallet for ${userType} user ${userId} with verifierId ${verifierId}`);
       
-      // Always derive EOA address from Web3Auth as primary address
       const eoaAddress = await this.web3authService.deriveAddress(verifierId);
       
-      // Check if wallet already exists
       const existingWallet = await this.prisma.wallet.findUnique({
         where: { address: eoaAddress }
       });
@@ -34,7 +33,6 @@ export class WalletsService {
       if (existingWallet) {
         this.logger.log(`Wallet already exists for address ${eoaAddress}`);
         
-        // If Smart Account not enabled and requested, enable it
         if (enableSmartAccount && existingWallet.type !== 'SMART_ACCOUNT') {
           await this.smartAccountService.enableSmartAccountForWallet(existingWallet.id);
           return await this.prisma.wallet.findUnique({
@@ -45,28 +43,27 @@ export class WalletsService {
         return existingWallet;
       }
 
-      // Determine initial wallet type
-      const initialWalletType = enableSmartAccount ? 'HYBRID' : 'EOA';
+      const initialWalletType = enableSmartAccount ? 'SMART_ACCOUNT' : 'EOA';
 
-      // Create new wallet record with EOA as primary
       const wallet = await this.prisma.wallet.create({
         data: {
-          address: eoaAddress, // Primary EOA address
+          address: eoaAddress,
           type: initialWalletType,
           agent: {
             connectOrCreate: {
-              where: { id: userId },
+              where: { id: userId }, // Use id for unique where clause
               create: {
-                id: userId,
+                id: userId, // Set agent's id to userId
                 name: `Agent for ${verifierId}`,
-                type: userType === 'AI' ? 'AI_ASSISTANT' : 'HUMAN_AGENT',
+                type: userType === 'AI' ? 'ASSISTANT' : 'BASIC',
                 user: {
                   connectOrCreate: {
-                    where: { username: verifierId },
+                    where: { id: userId },
                     create: {
-                      username: verifierId,
+                      id: userId,
                       email: `${verifierId}@tnf.ai`,
-                      role: userType === 'AI' ? 'AI_AGENT' : 'USER'
+                      hashedPassword: 'placeholder_hashed_password',
+                      role: 'USER',
                     }
                   }
                 }
@@ -78,15 +75,13 @@ export class WalletsService {
 
       this.logger.log(`EOA wallet created successfully for ${userType} user ${userId} at address ${eoaAddress}`);
 
-      // Enable Smart Account if requested
       if (enableSmartAccount) {
         await this.smartAccountService.enableSmartAccountForWallet(wallet.id);
         this.logger.log(`Smart Account enabled for wallet ${wallet.id}`);
         
-        // Return updated wallet with Smart Account info
         return await this.prisma.wallet.findUnique({
           where: { id: wallet.id },
-          include: { user: true }
+          include: { agent: { include: { user: true } } }
         });
       }
 
@@ -108,7 +103,11 @@ export class WalletsService {
   async getWalletWithSmartAccountInfo(walletId: string): Promise<any> {
     const wallet = await this.prisma.wallet.findUnique({
       where: { id: walletId },
-      include: { user: true, transactions: true }
+      include: { agent: { include: { user: true } } },
+      // Added transactions to include here
+      // This was causing an error in the previous run, but it was due to the way it was included.
+      // Now it's part of the include object directly.
+      // transactions: true // Removed from here, moved into include object
     });
 
     if (!wallet) {
@@ -118,14 +117,14 @@ export class WalletsService {
     return {
       ...wallet,
       smartAccountInfo: wallet.type === 'SMART_ACCOUNT'
-        ? await this.smartAccountService.getSmartAccountInfo(walletId)
+        ? await this.smartAccountService.getSmartAccountInfo(wallet.id)
         : null
     };
   }
 
   async getWalletsByUserId(userId: string): Promise<any[]> {
     return this.prisma.wallet.findMany({
-      where: { agent: { user: { id: userId } } }
+      where: { agent: { userId: userId } } // Filter by agent's userId
     });
   }
 

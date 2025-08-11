@@ -50,4 +50,3 @@ export const UserIcon = forwardRef(({ role = 'user', src, fallbackSrc, alt, size
     </div>);
 });
 UserIcon.displayName = 'UserIcon';
-//# sourceMappingURL=UserIcon.js.map

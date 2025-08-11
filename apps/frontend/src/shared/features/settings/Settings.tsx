@@ -57,4 +57,3 @@ export function Settings({ onSettingChange }) {
       </Card>
     </div>);
 }
-//# sourceMappingURL=Settings.js.map

@@ -134,4 +134,3 @@ const Settings = () => {
     </div>);
 };
 export default Settings;
-//# sourceMappingURL=Settings.js.map

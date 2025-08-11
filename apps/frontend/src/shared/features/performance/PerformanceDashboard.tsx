@@ -84,4 +84,3 @@ export function PerformanceDashboard({ className }) {
         </div>)}
     </div>);
 }
-//# sourceMappingURL=PerformanceDashboard.js.map

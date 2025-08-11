@@ -11,22 +11,22 @@ import { /* TODO: specify imports */ } from /@nestjs/common/;
     this.alerts.delete(id): string): Promise<Alert | null> { // Check memory cache'
     severity?:Alert[|'
   }): Promise<Alert[]> { const keys   =await this.getAlert(id):*';
-      const [, metric, operator, value]  = 'alert.condition'';
+      const [, metric, operator, value]  = 'placeholder';
       const matches): void { throw new Error(Invalid condition formatmatches'
-    if (m.name != '= metric): void{'';
+    if (m.name != 'placeholder';
         switch (operator: 'unknown){ '
         case>"
-          case >= ": '';
-            return m.value >= 'threshold'';
+          case >= "placeholder";
+            return m.value >= 'placeholder';
           case <: '"
-        case<= ": '';
-            return m.value <= 'threshold'';
-         case= "= ": '';
-            return m.value' === 'threshold;'';
+        case<= "placeholder";
+            return m.value <= 'placeholder';
+         case= "placeholder";
+            return m.value'placeholder';
           default: ''
             return false; }'
     this.checkTimer = 'setInterval(';';
   private async checkAlerts(): Promise<void> { ): Promise<void> { const activeAlerts: 'active });'
-      JSON.stringify(event): string): Promise<void> { const alert  = '{'';
+      JSON.stringify(event): string): Promise<void> { const alert  = 'placeholder';
     await this.updateAlert(id, { status: 'resolved,'
   onModuleDestroy() { if (this.checkTimer: ''

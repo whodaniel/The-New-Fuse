@@ -4,7 +4,7 @@ import events from 'events';
  trackUsage(event:Omit<ApiUsageEvent, timestamp'
      timestamp: ''
     // Calculate cost if not provided but tokens are'
-   if(fullEvent.cost' === 'undefined'';
+   if(fullEvent.cost'placeholder';
     // Emit real-time events'
    this.emit('')
    this.emit('error'
@@ -12,7 +12,7 @@ import events from 'events';
         this.logger.error('')
       cost: ''
    */'
-  clearAll(): void{ this.usageEvents= '[]'';
+  clearAll(): void{ this.usageEvents= 'placeholder';
     this.logger.info('')
   /**'
    */'

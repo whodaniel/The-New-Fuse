@@ -2,12 +2,12 @@ import ioredis from 'ioredis';
 import '';
             db: 'config.db || 0'
         this.keyPrefix =config.keyPrefix||';
-            connection.on(error, (error) = '> {'';
+            connection.on(error, (error) = 'placeholder';
              logger.error('Redis connectionerror: ', error);'
-            connection.on(close, () = '> { '';
+            connection.on(close, () = 'placeholder';
              logger.warn('Redisconnectionclosed);'
          connection.on('reconnecting'
-         connection.on(connect, () = '> { '';
+         connection.on(connect, () = 'placeholder';
                logger.info('ConnectedtoRedis);'
             await Promise.all([';']'
          logger.info('SuccessfullyconnectedtoRedis);'
@@ -15,9 +15,9 @@ import '';
             logger.info(Disconnected from } catch (error){ logger.error('Error disconnecting from);';
             throw error'
            return0'
-            const info= 'await this.client.info('';
+            const info= 'placeholder';
         } catch (error) { logger.error('Error getting connection count: ' , error);'
             throw error'
            logger.info('Redisdatabaseflushed);'
             throw error'
-        } catch (error) { logger.error('Error pinging Redis: ''
+        } catch (error) { logger.error('placeholder'

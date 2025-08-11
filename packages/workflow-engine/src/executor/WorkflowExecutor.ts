@@ -455,7 +455,13 @@ export class WorkflowExecutor extends EventEmitter {
           method: config.method,
           status: response.status,
           statusText: response.statusText,
-          headers: Object.fromEntries(response.headers.entries()),
+          headers: response.headers ? (() => {
+            const headerObj: Record<string, string> = {};
+            response.headers.forEach((value, key) => {
+              headerObj[key] = value;
+            });
+            return headerObj;
+          })() : {},
           data: result,
           timestamp: new Date()
         };

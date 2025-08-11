@@ -1,212 +1,87 @@
-type Node = any;
-import { JsonValue, DataMap } from './common-types';
-export declare enum WorkflowStepType {
-    TASK = "task",
-    CONDITION = "condition",
-    LOOP = "loop",
-    PARALLEL = "parallel",
-    SEQUENCE = "sequence",
-    ERROR_HANDLER = "error_handler",
-    NOTIFICATION = "notification",
-    CUSTOM = "custom",
-    TRANSFORM = "transform",
-    VALIDATE = "validate",
-    PROCESS = "process",
-    ANALYSIS = "analysis",
-    SECURITY = "security",
-    ACCESSIBILITY = "accessibility",
-    I18N = "i18n",
-    DATA_FLOW = "data_flow",
-    DOCUMENTATION = "documentation",
-    REPORT = "report",
-    ANALYZE = "analyze"
-}
-export type WorkflowStatus = 'pending' | 'started' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused' | 'stopped';
-export declare enum ErrorSeverity {
-    LOW = "LOW",
-    MEDIUM = "MEDIUM",
-    HIGH = "HIGH",
-    CRITICAL = "CRITICAL"
-}
-export declare enum SecuritySeverity {
-    LOW = "LOW",
-    MEDIUM = "MEDIUM",
-    HIGH = "HIGH",
-    CRITICAL = "CRITICAL"
-}
-export interface WorkflowContext {
-    workflowId: string;
-    stepId: string;
-    input: Record<string, unknown>;
-    output: Record<string, unknown>;
-    metadata: Record<string, unknown>;
-    variables: Record<string, unknown>;
-    error?: Error;
+import { BaseEntity } from './core/base-types';
+export declare enum WorkflowStatus {
+    DRAFT = "DRAFT",
+    ACTIVE = "ACTIVE",
+    PAUSED = "PAUSED",
+    COMPLETED = "COMPLETED",
+    ERROR = "ERROR"
 }
 export interface WorkflowStep {
     id: string;
-    type: WorkflowStepType;
+    name: string;
+    type: string;
+    config: unknown;
+    order: number;
+}
+export interface WorkflowDefinition extends BaseEntity {
     name: string;
     description?: string;
     status: WorkflowStatus;
-    startTime: Date | null;
-    endTime: Date | null;
-    error?: string;
-    input: DataMap;
-    output: JsonValue;
-    dependencies?: string[];
-    config?: Record<string, unknown>;
-    metadata?: Record<string, unknown>;
-    retryCount?: number;
-    maxRetries?: number;
-    timeout?: number;
-    action?: (context: WorkflowContext) => Promise<void>;
-    parameters?: Record<string, unknown>;
+    steps: WorkflowStep[];
 }
-export interface WorkflowTemplate {
-    id: string;
+export interface WorkflowInstance extends BaseEntity {
+    definitionId: string;
+    status: WorkflowStatus;
+    currentStep?: string;
+    context?: unknown;
+}
+export interface CreateWorkflowDefinitionDto {
     name: string;
     description?: string;
-    version: string;
-    steps: WorkflowStep[];
-    metadata?: Record<string, unknown>;
-    variables?: Record<string, unknown>;
-    config?: Record<string, unknown>;
+    steps: Omit<WorkflowStep, 'id'>[];
 }
-export interface WorkflowInstance {
-    id: string;
-    templateId: string;
-    status: WorkflowStatus;
-    startTime: Date | null;
-    endTime: Date | null;
-    error?: string;
-    steps: WorkflowStep[];
-    variables: Record<string, unknown>;
-    metadata?: Record<string, unknown>;
-    input?: Record<string, unknown>;
-    output?: Record<string, unknown>;
+export interface UpdateWorkflowDefinitionDto {
+    name?: string;
+    description?: string;
+    steps?: WorkflowStep[];
+    status?: WorkflowStatus;
 }
-export interface WorkflowResult {
-    status: WorkflowStatus;
-    output: Record<string, unknown>;
+export interface StartWorkflowInstanceDto {
+    definitionId: string;
+    context?: unknown;
 }
-export interface WorkflowOutput {
-    status: WorkflowStatus;
-    data: Record<string, unknown>;
+export interface WorkflowService {
+    create(dto: CreateWorkflowDefinitionDto): Promise<WorkflowDefinition>;
+    update(id: string, dto: UpdateWorkflowDefinitionDto): Promise<WorkflowDefinition>;
+    start(dto: StartWorkflowInstanceDto): Promise<WorkflowInstance>;
 }
-export interface WorkflowEdge {
-    id: string;
-    source: string;
-    target: string;
-    type: string;
-    condition?: string;
-    metadata?: Record<string, unknown>;
-}
-export interface WorkflowGraph {
-    nodes: WorkflowStep[];
-    edges: WorkflowEdge[];
-    metadata?: Record<string, unknown>;
-}
-export interface WorkflowValidationError {
-    code: string;
-    message: string;
-    severity: ErrorSeverity;
-    path?: string;
-    metadata?: Record<string, unknown>;
-}
-export interface WorkflowValidationResult {
-    valid: boolean;
-    errors: WorkflowValidationError[];
-    warnings: WorkflowValidationError[];
-}
-export interface WorkflowNode extends Node {
-    type: 'input' | 'output' | 'default' | 'agent' | 'tool' | 'condition';
-    data: {
-        label: string;
-        description?: string;
-        inputs?: Record<string, unknown>;
-        outputs?: Record<string, unknown>;
-        error?: string;
-        status?: WorkflowStatus;
-        parameters?: WorkflowParameters;
-    };
-}
-export interface WorkflowParameters {
-    type?: string;
-    depth?: string;
-    format?: string;
-    includeGraph?: boolean;
-}
-export interface SystemPerformanceMetrics {
-    cpuUsage: number;
-    memoryUsage: number;
-    latency: number;
-    throughput: number;
-    errorRate: number;
-    requestCount: number;
-    responseTime: number;
-}
-export interface AnalysisResult {
-    id: string;
-    status: string;
-    metrics: SystemPerformanceMetrics;
-    timestamp: Date;
-}
-export interface SecurityVulnerability {
-    type: string;
-    id: string;
-    title: string;
-    severity: SecuritySeverity;
-    description: string;
-    cvss: number;
-    cve?: string;
-    location?: string;
-    affectedDependency?: string;
-    remediation?: string;
-    references?: string[];
-    metadata?: Record<string, JsonValue>;
-    timestamp: Date;
-}
-export interface SecurityScanResult {
-    vulnerabilities: SecurityVulnerability[];
-    totalVulnerabilities: number;
-    timestamp: Date;
-}
-export interface CodeQualityIssue {
-    type: string;
-    severity: ErrorSeverity;
-    description: string;
-    location: string;
-    rule: string;
-    fix?: string;
-}
-export interface DependencyNode {
-    id: string;
+export interface Workflow extends BaseEntity {
     name: string;
-    version: string;
-    label: string;
-    dependencies: string[];
-}
-export declare class WorkflowExecutionError extends Error {
-    readonly code?: string | undefined;
-    readonly details?: Record<string, unknown> | undefined;
-    constructor(message: string, code?: string | undefined, details?: Record<string, unknown> | undefined);
-}
-export declare class WorkflowError extends Error {
-    readonly code: string;
-    readonly workflowId: string;
-    readonly stepId?: string | undefined;
-    readonly details?: Record<string, unknown> | undefined;
-    constructor(message: string, code: string, workflowId: string, stepId?: string | undefined, details?: Record<string, unknown> | undefined);
-    static invalidStep(workflowId: string, stepId: string): WorkflowError;
-    static stepFailed(workflowId: string, stepId: string, details?: Record<string, unknown>): WorkflowError;
-    static workflowNotFound(workflowId: string): WorkflowError;
-    static invalidStatusTransition(workflowId: string, from: WorkflowStatus, to: WorkflowStatus): WorkflowError;
-}
-export interface WorkflowDefinition {
-    id: string;
+    description?: string;
+    status: WorkflowStatus;
     steps: WorkflowStep[];
-    onError?: (error: Error) => void;
+    creator?: string;
 }
-export {};
+export interface CreateWorkflowDto {
+    name: string;
+    description?: string;
+    steps: Omit<WorkflowStep, 'id'>[];
+    metadata?: unknown;
+}
+export interface UpdateWorkflowDto {
+    name?: string;
+    description?: string;
+    steps?: WorkflowStep[];
+    status?: WorkflowStatus;
+    metadata?: unknown;
+}
+export declare enum WorkflowExecutionStatus {
+    PENDING = "PENDING",
+    RUNNING = "RUNNING",
+    COMPLETED = "COMPLETED",
+    FAILED = "FAILED",
+    CANCELLED = "CANCELLED"
+}
+export interface WorkflowInput {
+    [key: string]: unknown;
+}
+export interface WorkflowExecution extends BaseEntity {
+    workflowId: string;
+    status: WorkflowExecutionStatus;
+    input?: WorkflowInput;
+    output?: unknown;
+    error?: string;
+    startedAt: Date;
+    completedAt?: Date;
+}
 //# sourceMappingURL=workflow.d.ts.map

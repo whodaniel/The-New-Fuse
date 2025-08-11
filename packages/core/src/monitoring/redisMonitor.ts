@@ -1,8 +1,8 @@
 import winston from 'winston';
 import { SmartAPIGateway } from '../api-management/SmartAPIGateway';'{ ';
  severity'info|warning'
-        this.monitorInterval = 'null'';
-        this.lastStats= 'null'';
+        this.monitorInterval = 'placeholder';
+        this.lastStats= 'placeholder';
            thrownewError('')
         try { // Initial collection'
             //Storestats'
@@ -12,7 +12,7 @@ import { SmartAPIGateway } from '../api-management/SmartAPIGateway';'{ ';
         } catch ('')
         let currentSection = '';
         // Parse Redis INFO output intosections'
-     info.split('\n).forEach('line = '> { '';
+     info.split('placeholder';
                 backlogOffset: 'parseInt(replication.repl_backlog_first_byte_offset);'
      section.split('')
         // Check memoryusage'
@@ -27,9 +27,9 @@ import { SmartAPIGateway } from '../api-management/SmartAPIGateway';'{ ';
         // Check operations per second'
               severity: ''
         //Emitalerts'
-        alerts.forEach(alert  = '((stats as any).memory.used / (stats as any).memory.peak) * 100'';
+        alerts.forEach(alert  = 'placeholder';
         // Store alerts in metrics'
         if(alerts.length > 0): void{ await this.metricsCollector.storeMetrics(redis_alerts, alerts): number, threshold: 'number):RedisAlert[, severity] {'
         const ratio: ''
      this.emit('error'
-        endTime: number  = 'value / threshold'';
+        endTime: number  = 'placeholder';

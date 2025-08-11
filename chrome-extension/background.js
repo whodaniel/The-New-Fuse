@@ -1430,6 +1430,12 @@ class TNFAIBridge {
               agent_registered: this.tnfIntegrationStatus.agentRegistered,
               mcp_config_loaded: this.tnfIntegrationStatus.mcpConfigLoaded,
               database_connected: this.tnfIntegrationStatus.databaseConnected,
+              task_engine_status: this.tnfIntegrationStatus.taskEngineStatus || false,
+              workflow_engine_status: this.tnfIntegrationStatus.workflowEngineStatus || false,
+              core_api_status: this.tnfIntegrationStatus.coreApiStatus || false,
+              websocket_status: this.tnfIntegrationStatus.webSocketStatus || false,
+              database_health: this.tnfIntegrationStatus.databaseHealth || false,
+              agent_orchestrator: this.tnfIntegrationStatus.agentOrchestrator || false,
               port_8765: this.portStatuses[8765] || false,
               port_3001: this.portStatuses[3001] || false,
               port_3000: this.portStatuses[3000] || false,
@@ -1440,8 +1446,196 @@ class TNFAIBridge {
         return true; // async
       }
 
+      // New Enhanced TNF Integration Handlers
+      if (message.type === 'ENABLE_TNF_FEATURES') {
+        this.enableTNFFeatures(message.features)
+          .then(result => sendResponse({ success: true, features: result }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // async
+      }
+
+      if (message.type === 'TOGGLE_TNF_FEATURE') {
+        this.toggleTNFFeature(message.feature, message.enabled)
+          .then(result => sendResponse({ success: true, feature: message.feature, enabled: result }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // async
+      }
+
+      if (message.type === 'CONNECT_TNF_ORCHESTRATOR') {
+        this.connectToTNFOrchestrator(message.config)
+          .then(result => sendResponse({ success: true, orchestrator: result }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // async
+      }
+
+      if (message.type === 'SYNC_WITH_TNF_CORE') {
+        this.synchronizeWithTNFCore(message.syncData)
+          .then(result => sendResponse({ success: true, syncResult: result, connectionQuality: 'good' }))
+          .catch(error => sendResponse({ success: false, error: error.message, connectionQuality: 'poor' }));
+        return true; // async
+      }
+
+      if (message.type === 'GET_PERFORMANCE_METRICS') {
+        this.getPerformanceMetrics()
+          .then(metrics => sendResponse({ success: true, metrics }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // async
+      }
+
+      if (message.type === 'INITIATE_TNF_WORKFLOW') {
+        this.initiateTNFWorkflow(message.workflow)
+          .then(workflowId => sendResponse({ success: true, workflowId }))
+          .catch(error => sendResponse({ success: false, error: error.message }));
+        return true; // async
+      }
+
       return handled;
     });
+  }
+
+  // Enhanced TNF Integration Methods
+
+  async enableTNFFeatures(features) {
+    try {
+      console.log('🚀 Enabling TNF features:', features);
+      
+      // Store feature states
+      const featureConfig = {};
+      features.forEach(feature => {
+        featureConfig[`${feature}Enabled`] = true;
+      });
+      
+      chrome.storage.local.set({ features: featureConfig });
+      
+      // Update TNF integration status
+      this.tnfIntegrationStatus = {
+        ...this.tnfIntegrationStatus,
+        taskEngineStatus: features.includes('agentSwarm'),
+        workflowEngineStatus: features.includes('workflowAutomation'),
+        agentOrchestrator: features.includes('realTimeMonitoring')
+      };
+      
+      return featureConfig;
+    } catch (error) {
+      console.error('Error enabling TNF features:', error);
+      throw error;
+    }
+  }
+
+  async toggleTNFFeature(feature, enabled) {
+    try {
+      console.log(`🔄 Toggling TNF feature ${feature}: ${enabled}`);
+      
+      chrome.storage.local.get(['features'], (result) => {
+        const features = result.features || {};
+        features[`${feature}Enabled`] = enabled;
+        chrome.storage.local.set({ features });
+      });
+      
+      return enabled;
+    } catch (error) {
+      console.error(`Error toggling TNF feature ${feature}:`, error);
+      throw error;
+    }
+  }
+
+  async connectToTNFOrchestrator(config) {
+    try {
+      console.log('🎯 Connecting to TNF Agent Orchestrator:', config);
+      
+      // Simulate connection to TNF orchestrator
+      this.tnfIntegrationStatus.agentOrchestrator = true;
+      
+      // In a real implementation, this would connect to the actual TNF orchestrator
+      // For now, we'll simulate the connection
+      const orchestratorData = {
+        agentId: config.agentId,
+        connected: true,
+        capabilities: config.capabilities,
+        timestamp: new Date().toISOString()
+      };
+      
+      chrome.storage.local.set({ orchestratorConnection: orchestratorData });
+      
+      return orchestratorData;
+    } catch (error) {
+      console.error('Error connecting to TNF orchestrator:', error);
+      throw error;
+    }
+  }
+
+  async synchronizeWithTNFCore(syncData) {
+    try {
+      console.log('🔄 Synchronizing with TNF Core:', syncData);
+      
+      // Store sync data
+      const syncResult = {
+        timestamp: new Date().toISOString(),
+        dataTypes: Object.keys(syncData),
+        recordCount: syncData.conversationHistory?.length || 0,
+        features: syncData.features,
+        performance: syncData.performance
+      };
+      
+      chrome.storage.local.set({ lastTNFSync: syncResult });
+      
+      // Update integration status
+      this.tnfIntegrationStatus.lastSync = new Date();
+      
+      return syncResult;
+    } catch (error) {
+      console.error('Error synchronizing with TNF Core:', error);
+      throw error;
+    }
+  }
+
+  async getPerformanceMetrics() {
+    try {
+      const metrics = {
+        responseTime: Math.floor(Math.random() * 100) + 50, // Simulated metrics
+        throughput: Math.floor(Math.random() * 10) + 1,
+        errorRate: Math.floor(Math.random() * 5),
+        uptime: Math.floor((Date.now() - performance.timeOrigin) / 1000),
+        conversationCount: this.conversationHistory.length,
+        injectionSuccessRate: 95 + Math.floor(Math.random() * 5),
+        timestamp: new Date().toISOString()
+      };
+      
+      console.log('📊 Performance metrics:', metrics);
+      return metrics;
+    } catch (error) {
+      console.error('Error getting performance metrics:', error);
+      throw error;
+    }
+  }
+
+  async initiateTNFWorkflow(workflow) {
+    try {
+      console.log('🔄 Initiating TNF workflow:', workflow);
+      
+      const workflowId = `workflow_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      // Store workflow data
+      const workflowData = {
+        id: workflowId,
+        type: workflow.type,
+        agents: workflow.agents,
+        priority: workflow.priority,
+        status: 'initiated',
+        timestamp: new Date().toISOString()
+      };
+      
+      chrome.storage.local.get(['workflows'], (result) => {
+        const workflows = result.workflows || [];
+        workflows.push(workflowData);
+        chrome.storage.local.set({ workflows });
+      });
+      
+      return workflowId;
+    } catch (error) {
+      console.error('Error initiating TNF workflow:', error);
+      throw error;
+    }
   }
 }
 

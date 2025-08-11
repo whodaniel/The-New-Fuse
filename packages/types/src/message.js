@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MessageType = void 0;
-var MessageType;
+export var MessageType;
 (function (MessageType) {
     MessageType["TEXT"] = "text";
     MessageType["COMMAND"] = "command";
@@ -11,4 +8,5 @@ var MessageType;
     MessageType["RESPONSE"] = "response";
     MessageType["NOTIFICATION"] = "notification";
     MessageType["TASK_ASSIGNMENT"] = "task_assignment";
-})(MessageType || (exports.MessageType = MessageType = {}));
+})(MessageType || (MessageType = {}));
+//# sourceMappingURL=message.js.map

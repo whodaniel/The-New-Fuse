@@ -6,7 +6,6 @@ import { EnvironmentValidationService } from /./EnvironmentValidationService'';
 import { MonitoringService } from /../monitoring/MonitoringService'';
     fromEnv:development' | staging' | production';
     toEnv:development' | staging'
-      this.eventEmitter.emit('deployment.'
-      this.eventEmitter.emit('deployment.'rollback'
+      this.eventEmitter.emit('event', data);
       this.logger.error('')
-      this.eventEmitter.emit('deployment.rollback.'
+      this.eventEmitter.emit('event', data);

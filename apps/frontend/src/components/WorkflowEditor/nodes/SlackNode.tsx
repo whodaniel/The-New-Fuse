@@ -64,4 +64,3 @@ export const slackNode = ({ data, isConnectable }) => {
       <Handle type="source" position={Position.Bottom} isConnectable={isConnectable}/>
     </div>);
 };
-//# sourceMappingURL=SlackNode.js.map

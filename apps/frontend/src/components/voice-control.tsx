@@ -70,4 +70,3 @@ function VoiceControl() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=voice-control.js.map

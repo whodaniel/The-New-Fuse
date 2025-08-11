@@ -7,7 +7,7 @@ status:firing'
           actions: ''
     } catch (error:unknown){ this.logger.error('')
         constinterval:Omit<AlertRule, id'
-    if (!alert ||alert.status' === 'resolvedresolved;'';
+    if (!alert ||alert.status'placeholder';
     // Update in database'
     await this.db.alertInstances.update({ where: { id: 'alertId'
       data: '{ '
@@ -18,5 +18,5 @@ status:firing'
     // Implement system notificationlogic'
      severity?low|'medium |high|critical'
       labels?:Record<string, string>'
-    }  = 'Array.from medium |high|critical'';
+    }  = 'placeholder';
       orderBy: { startsAt: ''

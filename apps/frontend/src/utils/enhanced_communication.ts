@@ -91,4 +91,3 @@ export class EnhancedCommunicationBus extends EventEmitter {
         return super.once(event, listener);
     }
 }
-//# sourceMappingURL=enhanced_communication.js.map

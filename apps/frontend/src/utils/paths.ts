@@ -20,4 +20,3 @@ const paths = {
     },
 };
 export default paths;
-//# sourceMappingURL=paths.js.map

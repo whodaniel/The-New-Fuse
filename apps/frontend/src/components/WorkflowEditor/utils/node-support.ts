@@ -17,4 +17,3 @@ export function getNodeCategoryFromMetadata(nodeTypeData): any {
     }
     return 'common';
 }
-//# sourceMappingURL=node-support.js.map

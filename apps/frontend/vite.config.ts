@@ -27,7 +27,10 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [
       react(),
-      tsconfigPaths(),
+      tsconfigPaths({
+        ignoreConfigErrors: true,
+        projects: [path.resolve(__dirname, 'tsconfig.json')]
+      }),
     ],
     resolve: {
       alias: {
@@ -101,6 +104,8 @@ export default defineConfig(({ mode }) => {
           ws: true,
           changeOrigin: true,
         },
+        // Allow Electron file:// webview origins by not relying on Origin header
+        // Vite will proxy requests regardless of missing/unknown Origin
       } : undefined,
       // Add CORS headers for development and SPA fallback
       configureServer: (server) => {

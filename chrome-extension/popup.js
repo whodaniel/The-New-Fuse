@@ -24,11 +24,31 @@ class PopupInterface {
         agentRegistered: false,
         mcpConfigLoaded: false,
         databaseConnected: false,
-        ports: {}
+        taskEngineStatus: false,
+        workflowEngineStatus: false,
+        ports: {},
+        coreApiStatus: false,
+        webSocketStatus: false,
+        databaseHealth: false,
+        agentOrchestrator: false
       },
       ui: {
         isLoading: true,
-        errorMessage: null
+        errorMessage: null,
+        lastSync: null,
+        connectionQuality: 'unknown'
+      },
+      features: {
+        agentSwarmEnabled: false,
+        workflowAutomation: false,
+        realTimeMonitoring: false,
+        advancedAnalytics: false
+      },
+      performance: {
+        responseTime: 0,
+        throughput: 0,
+        errorRate: 0,
+        uptime: 0
       }
     };
 
@@ -57,25 +77,44 @@ class PopupInterface {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       this.state.currentTab = tab;
 
+      // Load conversation history with TNF integration
       const historyResponse = await chrome.runtime.sendMessage({ type: 'GET_CONVERSATION_HISTORY' });
       this.state.conversationHistory = historyResponse?.history || [];
 
+      // Get comprehensive server status
       const serverStatusResponse = await chrome.runtime.sendMessage({ type: 'GET_SERVER_STATUS' });
       this.state.serverStatus = serverStatusResponse?.status || {};
 
+      // Get TNF port monitoring
       const portStatusResponse = await chrome.runtime.sendMessage({ type: 'GET_PORT_STATUS' });
       this.state.portStatuses = portStatusResponse?.status || {};
       
+      // Load master agent configuration
       const masterAgentResponse = await chrome.storage.local.get('masterAgent');
       this.state.masterAgent = masterAgentResponse?.masterAgent || null;
 
-      await this.updateStatus(); // Initial status check
+      // Load TNF-specific configurations
+      const tnfConfigResponse = await chrome.storage.local.get(['tnfConfig', 'features', 'performance']);
+      if (tnfConfigResponse.tnfConfig) {
+        this.state.tnf = { ...this.state.tnf, ...tnfConfigResponse.tnfConfig };
+      }
+      if (tnfConfigResponse.features) {
+        this.state.features = { ...this.state.features, ...tnfConfigResponse.features };
+      }
+      if (tnfConfigResponse.performance) {
+        this.state.performance = { ...this.state.performance, ...tnfConfigResponse.performance };
+      }
+
+      // Comprehensive status check
+      await this.updateStatus();
+      await this.updateTNFStatus();
+      await this.updatePerformanceMetrics();
 
     } catch (error) {
       console.error('Error loading initial state:', error);
       this.setState({ ui: { ...this.state.ui, errorMessage: 'Could not load initial state.' } });
     } finally {
-      this.setState({ ui: { ...this.state.ui, isLoading: false } });
+      this.setState({ ui: { ...this.state.ui, isLoading: false, lastSync: new Date() } });
     }
   }
 
@@ -119,6 +158,12 @@ class PopupInterface {
       'tnf-reload-config-btn': this.reloadTNFConfig,
       'tnf-start-comprehensive-btn': this.startTNFComprehensive,
       'tnf-health-check-btn': this.performTNFHealthCheck,
+      'sync-with-tnf-core-btn': this.synchronizeWithTNFCore,
+      'connect-orchestrator-btn': this.connectToTNFOrchestrator,
+      'toggle-agent-swarm': () => this.toggleFeature('agentSwarm'),
+      'toggle-workflow-automation': () => this.toggleFeature('workflowAutomation'),
+      'toggle-real-time-monitoring': () => this.toggleFeature('realTimeMonitoring'),
+      'toggle-advanced-analytics': () => this.toggleFeature('advancedAnalytics'),
     };
   }
 
@@ -145,6 +190,9 @@ class PopupInterface {
     this.renderPortStatus();
     this.renderAgentStatus();
     this.renderTNFIntegrationStatus();
+    this.renderTNFAdvancedStatus();
+    this.renderFeatureToggles();
+    this.renderSyncStatus();
     this.renderTabs();
     this.renderStatus();
   }
@@ -487,19 +535,58 @@ class PopupInterface {
 
   async registerWithTNF() {
     try {
+      // Enhanced TNF registration with comprehensive setup
+      const registrationData = {
+        agentId: `chrome-ext-${Date.now()}`,
+        agentType: 'browser_bridge',
+        capabilities: [
+          'web_injection',
+          'ai_communication',
+          'cross_platform_bridge',
+          'real_time_monitoring'
+        ],
+        masterAgent: this.state.masterAgent,
+        features: this.state.features
+      };
+
       const response = await chrome.runtime.sendMessage({
         type: 'EXECUTE_TNF_COMMAND',
-        command: 'register_with_tnf'
+        command: 'register_with_tnf',
+        data: registrationData
       });
 
       if (response?.success) {
+        // Update state with registration confirmation
+        this.setState({
+          tnf: {
+            ...this.state.tnf,
+            agentRegistered: true,
+            agentId: response.agentId,
+            registrationTime: new Date()
+          }
+        });
+        
+        // Enable advanced features after successful registration
+        await this.enableTNFFeatures();
         await this.updateTNFStatus();
-        console.log('Registered with TNF system');
+        console.log('✅ Successfully registered with TNF system');
       } else {
-        console.error('Failed to register with TNF:', response?.error);
+        console.error('❌ Failed to register with TNF:', response?.error);
+        this.setState({
+          ui: {
+            ...this.state.ui,
+            errorMessage: `TNF Registration failed: ${response?.error || 'Unknown error'}`
+          }
+        });
       }
     } catch (error) {
       console.error('Error registering with TNF:', error);
+      this.setState({
+        ui: {
+          ...this.state.ui,
+          errorMessage: `Registration error: ${error.message}`
+        }
+      });
     }
   }
 
@@ -676,6 +763,7 @@ class PopupInterface {
       this.updateStatus();
       this.updateTNFStatus();
       this.loadPortStatus();
+      this.updatePerformanceMetrics();
     }, 5000);
 
     // Initial updates
@@ -683,7 +771,258 @@ class PopupInterface {
       this.updateStatus();
       this.updateTNFStatus();
       this.loadPortStatus();
+      this.updatePerformanceMetrics();
     }, 1000);
+  }
+
+  // New TNF-specific methods
+
+  async enableTNFFeatures() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'ENABLE_TNF_FEATURES',
+        features: ['agentSwarm', 'workflowAutomation', 'realTimeMonitoring', 'advancedAnalytics']
+      });
+
+      if (response?.success) {
+        this.setState({
+          features: {
+            agentSwarmEnabled: true,
+            workflowAutomation: true,
+            realTimeMonitoring: true,
+            advancedAnalytics: true
+          }
+        });
+        console.log('✅ TNF features enabled successfully');
+      }
+    } catch (error) {
+      console.error('Error enabling TNF features:', error);
+    }
+  }
+
+  async updatePerformanceMetrics() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'GET_PERFORMANCE_METRICS'
+      });
+
+      if (response?.success) {
+        this.setState({
+          performance: {
+            responseTime: response.metrics.responseTime || 0,
+            throughput: response.metrics.throughput || 0,
+            errorRate: response.metrics.errorRate || 0,
+            uptime: response.metrics.uptime || 0
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Error updating performance metrics:', error);
+    }
+  }
+
+  async initiateTNFWorkflow() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'INITIATE_TNF_WORKFLOW',
+        workflow: {
+          type: 'ai_communication_bridge',
+          agents: [this.state.masterAgent],
+          priority: 'high'
+        }
+      });
+
+      if (response?.success) {
+        console.log('🔄 TNF workflow initiated:', response.workflowId);
+      }
+    } catch (error) {
+      console.error('Error initiating TNF workflow:', error);
+    }
+  }
+
+  async connectToTNFOrchestrator() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'CONNECT_TNF_ORCHESTRATOR',
+        config: {
+          agentId: this.state.tnf.agentId,
+          capabilities: ['web_injection', 'ai_communication'],
+          masterGroup: this.state.masterAgent?.group
+        }
+      });
+
+      if (response?.success) {
+        this.setState({
+          tnf: {
+            ...this.state.tnf,
+            agentOrchestrator: true
+          }
+        });
+        console.log('🎯 Connected to TNF Agent Orchestrator');
+      }
+    } catch (error) {
+      console.error('Error connecting to TNF orchestrator:', error);
+    }
+  }
+
+  async synchronizeWithTNFCore() {
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'SYNC_WITH_TNF_CORE',
+        syncData: {
+          conversationHistory: this.state.conversationHistory,
+          agentGroups: this.state.agentGroups,
+          masterAgent: this.state.masterAgent,
+          features: this.state.features
+        }
+      });
+
+      if (response?.success) {
+        this.setState({
+          ui: {
+            ...this.state.ui,
+            lastSync: new Date(),
+            connectionQuality: response.connectionQuality || 'good'
+          }
+        });
+        console.log('🔄 Synchronized with TNF Core');
+      }
+    } catch (error) {
+      console.error('Error synchronizing with TNF Core:', error);
+    }
+  }
+
+  renderTNFAdvancedStatus() {
+    const advancedStatusEl = document.getElementById('tnf-advanced-status');
+    if (!advancedStatusEl) return;
+
+    const { tnf, performance, features } = this.state;
+    
+    advancedStatusEl.innerHTML = `
+      <div class="advanced-status-grid">
+        <div class="status-card">
+          <h4>Core Services</h4>
+          <div class="status-item">
+            <span>Task Engine:</span>
+            <span class="status-indicator ${tnf.taskEngineStatus ? 'online' : 'offline'}">
+              ${tnf.taskEngineStatus ? 'Online' : 'Offline'}
+            </span>
+          </div>
+          <div class="status-item">
+            <span>Workflow Engine:</span>
+            <span class="status-indicator ${tnf.workflowEngineStatus ? 'online' : 'offline'}">
+              ${tnf.workflowEngineStatus ? 'Online' : 'Offline'}
+            </span>
+          </div>
+          <div class="status-item">
+            <span>Agent Orchestrator:</span>
+            <span class="status-indicator ${tnf.agentOrchestrator ? 'online' : 'offline'}">
+              ${tnf.agentOrchestrator ? 'Connected' : 'Disconnected'}
+            </span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h4>Performance Metrics</h4>
+          <div class="metric-item">
+            <span>Response Time:</span>
+            <span>${performance.responseTime}ms</span>
+          </div>
+          <div class="metric-item">
+            <span>Throughput:</span>
+            <span>${performance.throughput} ops/sec</span>
+          </div>
+          <div class="metric-item">
+            <span>Error Rate:</span>
+            <span>${performance.errorRate}%</span>
+          </div>
+          <div class="metric-item">
+            <span>Uptime:</span>
+            <span>${(performance.uptime / 3600).toFixed(1)}h</span>
+          </div>
+        </div>
+
+        <div class="status-card">
+          <h4>Advanced Features</h4>
+          <div class="feature-item">
+            <span>Agent Swarm:</span>
+            <span class="feature-status ${features.agentSwarmEnabled ? 'enabled' : 'disabled'}">
+              ${features.agentSwarmEnabled ? 'Enabled' : 'Disabled'}
+            </span>
+          </div>
+          <div class="feature-item">
+            <span>Workflow Automation:</span>
+            <span class="feature-status ${features.workflowAutomation ? 'enabled' : 'disabled'}">
+              ${features.workflowAutomation ? 'Enabled' : 'Disabled'}
+            </span>
+          </div>
+          <div class="feature-item">
+            <span>Real-time Monitoring:</span>
+            <span class="feature-status ${features.realTimeMonitoring ? 'enabled' : 'disabled'}">
+              ${features.realTimeMonitoring ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  async toggleFeature(featureName) {
+    const currentState = this.state.features[`${featureName}Enabled`] || this.state.features[featureName];
+    const newState = !currentState;
+
+    try {
+      const response = await chrome.runtime.sendMessage({
+        type: 'TOGGLE_TNF_FEATURE',
+        feature: featureName,
+        enabled: newState
+      });
+
+      if (response?.success) {
+        this.setState({
+          features: {
+            ...this.state.features,
+            [`${featureName}Enabled`]: newState,
+            [featureName]: newState
+          }
+        });
+        console.log(`🔄 Feature ${featureName} ${newState ? 'enabled' : 'disabled'}`);
+      }
+    } catch (error) {
+      console.error(`Error toggling feature ${featureName}:`, error);
+    }
+  }
+
+  renderFeatureToggles() {
+    const features = [
+      { id: 'toggle-agent-swarm', key: 'agentSwarmEnabled' },
+      { id: 'toggle-workflow-automation', key: 'workflowAutomation' },
+      { id: 'toggle-real-time-monitoring', key: 'realTimeMonitoring' },
+      { id: 'toggle-advanced-analytics', key: 'advancedAnalytics' }
+    ];
+
+    features.forEach(({ id, key }) => {
+      const toggle = document.getElementById(id);
+      if (toggle) {
+        const isEnabled = this.state.features[key];
+        toggle.classList.toggle('active', isEnabled);
+      }
+    });
+  }
+
+  renderSyncStatus() {
+    const lastSyncEl = document.getElementById('last-sync-time');
+    const connectionQualityEl = document.getElementById('connection-quality');
+
+    if (lastSyncEl && this.state.ui.lastSync) {
+      lastSyncEl.textContent = this.state.ui.lastSync.toLocaleTimeString();
+    }
+
+    if (connectionQualityEl) {
+      const quality = this.state.ui.connectionQuality || 'unknown';
+      connectionQualityEl.textContent = quality;
+      connectionQualityEl.className = `connection-quality ${quality}`;
+    }
   }
 }
 

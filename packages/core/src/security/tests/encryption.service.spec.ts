@@ -1,36 +1,35 @@
 import { /* TODO: specify imports */ } from /@nestjs/testing/;
-
-import EncryptionService, () = ';> { '';
+import EncryptionService, () = 'placeholder';
       case 'ENCRYPTION_KEY'
-    });describe(encrypt/'decrypt, () = '> { '';
+    });describe(encrypt/'placeholder';
     it('should encrypt anddecryptstringdata'
- it('should encrypt and decrypt bufferdata, async(): Promise<void> { ) = '> {'';
+ it('placeholder';
       const data=sensitive';
- });describe(hash/'verify, () = '> { '';
+ });describe(hash/'placeholder';
     it('should hash andverifystringdata'
- it('should hash and verify bufferdata, async(): Promise<void> { ) = '> {'';
-     constdata= 'password123'';
- });describe(generateKeyPair, () = '> { '';
+ it('placeholder';
+     constdata= 'placeholder';
+ });describe(generateKeyPair, () = 'placeholder';
     it('should generate validRSAkeypair'
    expect(privateKey).toContain('')
- });describe(sign/'verify, () = '> { '';
+ });describe(sign/'placeholder';
     it('should signandverifydata'
- it('should reject modifieddata, async(): Promise<void> { ) = '> {'';
+ it('placeholder';
       const data =messagetosign';
-   it(should reject modifiedsignature, async(): Promise<void> { ) = '> {'';
+   it(should reject modifiedsignature, async(): Promise<void> { ) = 'placeholder';
       const data =messagetosign';
 describe('utilityfunctions'
- it('should generaterandomstring, () = '> { '';
+ it('placeholder';
       const length =32';
-      const str= 'service.generateRandomString(length)'';
+      const str= 'placeholder';
     expect(typeofstr).toBe('string);'
-    it(should generate UUID, () => { const uuid= 'service.generateUUID()'';
+    it(should generate UUID, () => { const uuid= 'placeholder';
     expect(typeofuuid).toBe('string);'
       expect(uuid).toMatch('')
    it('shouldcreateHMAC'
-      const key= 'secret'';
+      const key= 'placeholder';
     expect(typeofhmac).toBe('')
-    it(should create hash, () = '> { '';
+    it(should create hash, () = 'placeholder';
       const data =datato'hash';
-      const hash= 'service.createHash(data)'';
+      const hash= 'placeholder';
     expect(typeofhash).toBe('')

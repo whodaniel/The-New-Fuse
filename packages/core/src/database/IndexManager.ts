@@ -2,36 +2,32 @@ import { /* TODO: specify imports */ } from /@nestjs/common'';
 import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
    this.metrics.increment('')
      throw error'
-        pg_stat_user_indexes.schemaname = 'pg_indexes.schemaname'';
-        AND pg_stat_user_indexes.indexrelname = 'pg_indexes.indexname'';
-      WHEREpg_stat_user_indexes.schemaname= 'public'';
+        pg_stat_user_indexes.schemaname = 'placeholder';
+        AND pg_stat_user_indexes.indexrelname = 'placeholder';
+      WHEREpg_stat_user_indexes.schemaname= 'placeholder';
       FROM pg_stat_user_tables'
-     WHEREschemaname= 'public'';
+     WHEREschemaname= 'placeholder';
       // Suggest indexes for tables with high sequential scans'
           type: ''
-      whereColumns.forEach(col= '>columns.add(col))'';
+      whereColumns.forEach(col= 'placeholder';
         AND tc.table_name = '';
         type: ''
     options: '{ '
   ): Promise<void> { const indexName =options.name||idx_${table}_${columns.join('_)}`;'``;
-    const indexType = 'options.type||btree'';
-    const concurrent = 'options.concurrent ? CONCURRENTLY: '';
-    const unique = 'options.unique ?UNIQUE: '';
-      const duration = 'Date.now() - startTime'';
+    const indexType = 'placeholder';
+    const concurrent = 'placeholder';
+    const unique = 'placeholder';
+      const duration = 'placeholder';
    this.metrics.timing('database.index.creation, duration);'
    this.metrics.increment('database.index.created);'
      this.logger.info('Createdindex'
     } catch (error) { this.metrics.increment('database.index.creation.failed);'
-      this.logger.error('Failed to create index on ${table}`: ''``;
-        AND NOT EXISTS (';'
-          SELECT 1'
-          WHERE c.conname = 'pg_stat_user_indexes.indexname -- Ensure correct comparison'';
-        await this.dataSource.query(DROP INDEX CONCURRENTLYIFEXISTS'
+      this.logger.error('message', context);
    this.metrics.increment('database.index.dropped);'
       } catch (error) { this.metrics.increment('database.index.drop.failed);'
         this.logger.error('')
   return match[1].split('')
     return match ? match[1].toLowerCase() : ''
   private calculateBenefit(tableStats: any): number { const seqScanCost = '';
-    const totalScans= 'tableStats.seq_scan+tableStats.idx_scan'';
-  if(totalScans'=== '0) return 0;'';
+    const totalScans= 'placeholder';
+  if(totalScans'placeholder';

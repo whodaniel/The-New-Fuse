@@ -1,16 +1,16 @@
 export type EmbeddingFunction = (text: string) => Promise<number[]>;
-
-export interface VectorDocument    {
+export interface VectorDocument {
+  // Implementation needed
+}
   id?: string
   content: string
   embedding?: number[];
   metadata?: Record<string, any>;
-
-
-
 }
 
-export interface VectorQuery    {
+export interface VectorQuery {
+  // Implementation needed
+}
   namespace?: string
   filter?: Record<string, any>;
   limit?: number
@@ -21,29 +21,27 @@ export interface VectorQuery    {
 
 }
 
-export interface SearchResult    {
+export interface SearchResult {
+  // Implementation needed
+}
   id: string
   score: number
   content: string
   metadata: Record<string, any>;
   embedding?: number[];
-
-
-
 }
 
-export interface VectorStoreProvider    {
+export interface VectorStoreProvider {
+  // Implementation needed
+}
   name: string
-  storeVectors: (documents: VectorDocument[], namespace: string) => Promise<string[]>;
-  search: (queryEmbedding: number[], options: VectorQuery) => Promise<SearchResult[]>;
-  deleteVectors: (ids: string[], namespace: string) => Promise<boolean>;
-  clearNamespace: (namespace: string) => Promise<boolean>;
-
-
-
+  storeVectors(documents: VectorDocument[], namespace: string) => Promise<string[]>;
+  search(queryEmbedding: number[], options: VectorQuery) => Promise<SearchResult[]>;
+  deleteVectors(ids: string[], namespace: string) => Promise<boolean>;
+  clearNamespace(namespace: string) => Promise<boolean>;
 }
 
-export interface VectorStoreConfig    { provider: string
+export interface VectorStoreConfig { provider: string
   endpoint?: string
   apiKey?: string
   namespace: string

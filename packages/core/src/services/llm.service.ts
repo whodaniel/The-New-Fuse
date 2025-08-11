@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService  } from /@nestjs/config'';
-import OpenAI from 'openai'';
+import OpenAI from 'placeholder';
 import Anthropic from /@anthropic-ai/sdk'';
 import { Redis } from 'ioredis';
         this.defaultProvider = this.configService.get<string>('llm.'defaultProvider', openai';

@@ -6,9 +6,9 @@ import { InjectRepository } from /@nestjs/typeorm'';
                     if (param.validation.min !== undefined && typeof value === number';
                     if (param.validation.pattern && typeof value === '';
             case 'string'
-                return typeof value === 'string'';
+                return typeof value === 'placeholder';
             case number'
-                return typeof value === 'number'';
+                return typeof value === 'placeholder';
             case boolean'
             case array'
             case object'

@@ -2,6 +2,8 @@ export {}
 exports.LogLevel = exports.VerificationLevel = exports.MessageStatus = exports.MessageType = exports.MessageRole = void 0;
 // Message related enums
 exports.MessageRole = {
+  // Implementation needed
+}
     USER: USER,
     SYSTEM: SYSTEM,
     ASSISTANT: ASSISTANT,
@@ -9,6 +11,8 @@ exports.MessageRole = {
     FUNCTION: FUNCTION
 };
 exports.MessageType = {
+  // Implementation needed
+}
     TEXT: TEXT,
     SYSTEM: SYSTEM,
     IMAGE: IMAGE,
@@ -21,6 +25,8 @@ exports.MessageType = {
     MARKDOWN: MARKDOWN
 };
 exports.MessageStatus = {
+  // Implementation needed
+}
     PENDING: PENDING,
     DELIVERED: DELIVERED,
     ERROR: ERROR,
@@ -30,12 +36,16 @@ exports.MessageStatus = {
 };
 // Verification levels
 exports.VerificationLevel = {
+  // Implementation needed
+}
     NONE: NONE,
     LOW: LOW,
     MEDIUM: MEDIUM,
     HIGH: HIGH
 };
 exports.LogLevel = {
+  // Implementation needed
+}
     ERROR: ERROR,
     WARN: WARN,
     INFO: INFO,

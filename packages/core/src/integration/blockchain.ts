@@ -8,4 +8,4 @@ import { /* TODO: specify imports */ } from /@ethersproject/providers/;
     console.log('');
   async connectWallet(): Promise<string[]> { // This method still relies on browser interaction (requesting accounts).'
     // or removal. For now, we leave it assuming it mightbecalled'
-   console.log('Walletconnected, accounts: ''
+   console.log('placeholder'

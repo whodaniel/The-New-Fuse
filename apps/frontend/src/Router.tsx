@@ -20,6 +20,7 @@ const SSO = lazy(() => import('./pages/auth/SSO'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Home = lazy(() => import('./pages/Home'));
 const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal/index'));
+const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
 
 // UI Component pages
 const ComponentsNav = lazy(() => import('./pages/ComponentsNav'));
@@ -32,6 +33,9 @@ const MultiAgentChat = lazy(() => import('./pages/MultiAgentChat'));
 const TimelineDemo = lazy(() => import('./pages/TimelineDemo'));
 const GraphDemo = lazy(() => import('./pages/graph-demo'));
 const Analytics = lazy(() => import('./pages/Analytics'));
+
+// Workflow pages
+const WorkflowRoutes = lazy(() => import('./routes/WorkflowRoutes'));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./pages/Admin/Dashboard'));
@@ -161,6 +165,9 @@ export default function Router() {
 
         {/* Protected routes */}
         <Route element={<ProtectedRoute />}>
+          {/* Modern Hub - Main entry point */}
+          <Route path="hub" element={<Suspense fallback={<Loading />}><ModernHub /></Suspense>} />
+          
           {/* Main dashboard */}
           <Route path="dashboard" element={<Suspense fallback={<Loading />}><Dashboard /></Suspense>} />
           <Route path="analytics" element={<Suspense fallback={<Loading />}><Analytics /></Suspense>} />
@@ -168,6 +175,9 @@ export default function Router() {
 
           {/* Onboarding */}
           <Route path="onboarding" element={<Suspense fallback={<Loading />}><OnboardingFlow /></Suspense>} />
+
+          {/* Workflow routes */}
+          <Route path="workflows/*" element={<Suspense fallback={<Loading />}><WorkflowRoutes /></Suspense>} />
 
           {/* Admin section */}
           <Route path="admin">

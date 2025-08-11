@@ -96,4 +96,3 @@ const TermsOfService = () => {
     </div>);
 };
 export default TermsOfService;
-//# sourceMappingURL=TermsOfService.js.map

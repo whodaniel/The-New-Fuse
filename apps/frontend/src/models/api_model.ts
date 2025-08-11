@@ -7,4 +7,3 @@ export class ApiErrorFactory {
         return error;
     }
 }
-//# sourceMappingURL=api_model.js.map

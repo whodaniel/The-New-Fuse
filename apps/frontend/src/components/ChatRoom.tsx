@@ -206,4 +206,3 @@ const ChatRoom = ({ roomId, title }) => {
 exports.ChatRoom = ChatRoom;
 exports.default = exports.ChatRoom;
 export {};
-//# sourceMappingURL=ChatRoom.js.map

@@ -91,4 +91,3 @@ export default function ActiveWorkspaces() {
       {showing && (<ManageWorkspace hideModal={hideModal} providedSlug={selectedWs ? selectedWs.slug : null}/>)}
     </div>);
 }
-//# sourceMappingURL=index.js.map

@@ -10,7 +10,7 @@ import { MetricsService } from /../monitoring/MetricsService'';
     this.pool.on('connect'
       this.metrics.increment('')
     this.pool.on('error'
-      this.logger.error('Unexpected error on idle client'
+      this.logger.error('message', context);
       this.metrics.increment('')
     this.pool.on('remove'
         this.metrics.gauge('')
@@ -20,10 +20,10 @@ import { MetricsService } from /../monitoring/MetricsService'';
         this.logger.error('')
   private calculateQueryMetrics(): PoolMetrics['
     const poolState = await this.pool.query('')
-      WHERE state = 'active'';
+      WHERE state = 'placeholder';
         AND NOW() - query_start > interval '
       WHERE state = '';
-        AND state = 'idle'';
+        AND state = 'placeholder';
         AND state_change < NOW() - interval '
       this.metrics.increment('')
       this.logger.info('Connection pool reset successfully'

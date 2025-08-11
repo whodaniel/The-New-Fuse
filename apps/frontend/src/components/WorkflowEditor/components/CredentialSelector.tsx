@@ -45,4 +45,3 @@ export const CredentialSelector = ({ credentialType, value, onChange, }) => {
       </button>
     </div>);
 };
-//# sourceMappingURL=CredentialSelector.js.map

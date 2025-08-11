@@ -35,4 +35,3 @@ function SystemMetrics() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=system-metrics.js.map

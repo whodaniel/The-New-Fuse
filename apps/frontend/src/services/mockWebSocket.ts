@@ -40,5 +40,3 @@ wss.on('connection', (ws) => {
         
     });
 });
-
-//# sourceMappingURL=mockWebSocket.js.map

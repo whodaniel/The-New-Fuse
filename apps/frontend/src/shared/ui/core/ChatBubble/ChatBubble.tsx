@@ -116,4 +116,3 @@ export function ChatBubble({ message, type, index, className, align, size = 'def
       </div>
     </div>);
 }
-//# sourceMappingURL=ChatBubble.js.map

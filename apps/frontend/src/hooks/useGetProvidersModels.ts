@@ -94,4 +94,3 @@ export default function useGetProviderModels(provider = null): any {
     }, [provider]);
     return { defaultModels, customModels, loading };
 }
-//# sourceMappingURL=useGetProvidersModels.js.map

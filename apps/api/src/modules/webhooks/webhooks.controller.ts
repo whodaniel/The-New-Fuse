@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 import { WebhooksService } from './webhooks.service';
 import { BusinessEventService } from './services/business-event.service';
 import { SSEService } from './services/sse.service';
@@ -27,6 +27,7 @@ import {
   EventHistoryRequest,
   EventHistoryResponse,
   IntegrationSource,
+  BusinessEventType, // Add BusinessEventType import
 } from '@the-new-fuse/types';
 
 @ApiTags('webhooks')
@@ -154,11 +155,11 @@ export class WebhooksController {
         userId,
         organizationId,
         subscriptions: [{
-          eventTypes: parsedEventTypes,
+          eventTypes: parsedEventTypes.map(type => type as BusinessEventType),
           filters: parsedFilters,
           priority: 'medium' as any,
         }],
-        response: res,
+        response: res as any,
         lastHeartbeat: new Date(),
       });
 

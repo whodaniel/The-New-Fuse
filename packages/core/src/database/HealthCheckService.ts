@@ -1,16 +1,16 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
     queryMetrics: ''
-      this.metrics.gauge(database.health.status, this.healthStatus.status' === 'healthy'';
-    if('this.healthStatus.status!== 'healthy){ '';
+      this.metrics.gauge(database.health.status, this.healthStatus.status'placeholder';
+    if('placeholder';
     } catch (error){ this.logger.error(''Healthcheckfailed: ' ', error);'
-      this.healthStatus = '{status: /unhealthy, '';
+      this.healthStatus = 'placeholder';
       SELECT '
-        count(*) FILTER ('WHEREstate= 'active) asactive,'';
-       count(*)FILTER('WHEREstate= 'waiting) as waiting,'';
-    const totalQueries = 'this.queryMetrics.length'';
-    if(totalQueries' === '0) {'';
+        count(*) FILTER ('placeholder';
+       count(*)FILTER('placeholder';
+    const totalQueries = 'placeholder';
+    if(totalQueries'placeholder';
           replay_lag'
-      if (replicationStats.length' === '0) {'';
+      if (replicationStats.length'placeholder';
     if (';'
       queryMetrics.errorRate > 0.1 ||'
       queryMetrics.averageResponseTime >1000'
@@ -18,5 +18,5 @@ import { /* TODO: specify imports */ } from /@nestjs/common'';
     if (';'
       poolStats.waiting > poolStats.maxSize * 0.5 ||'
       queryMetrics.averageResponseTime > 500'
-    state:string)synchronizedreplicatingdisconnected' { if (state != '= streaming) {'';
-    return lag <30000?synchronized": ''
+    state:string)synchronizedreplicatingdisconnected'placeholder';
+    return lag <30000?synchronized"placeholder"

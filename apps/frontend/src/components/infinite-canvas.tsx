@@ -60,4 +60,3 @@ function InfiniteCanvas() {
     </div>);
 }
 export {};
-//# sourceMappingURL=infinite-canvas.js.map

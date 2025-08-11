@@ -4,14 +4,17 @@
  */
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-
 export interface CacheOptions {
+  // Implementation needed
+}
   ttl?: number; // Time to live in seconds
   tags?: string[]; // Cache tags for invalidation
 }
 
 @Injectable()
 export class AgencyHubCacheService {
+  // Implementation needed
+}
   private readonly logger = new Logger(AgencyHubCacheService.name);
   private readonly cache = new Map<string, { value: unknown; expires: number; tags?: string[] }>();
   private readonly defaultTtl = 300; // 5 minutes
@@ -22,14 +25,19 @@ export class AgencyHubCacheService {
    * Get value from cache
    */
   async get<T>(key: string): Promise<T | null> {
+  // Implementation needed
+}
     const entry = this.cache.get(key);
-
     if (!entry) {
+  // Implementation needed
+}
       return null;
     }
 
     // Check if expired
     if (Date.now() > entry.expires) {
+  // Implementation needed
+}
       this.cache.delete(key);
       return null;
     }
@@ -42,15 +50,17 @@ export class AgencyHubCacheService {
    * Set value in cache
    */
   async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
+  // Implementation needed
+}
     const ttl = options.ttl || this.defaultTtl;
     const expires = Date.now() + ttl * 1000;
-
     this.cache.set(key, {
+  // Implementation needed
+}
       value,
       expires,
       tags: options.tags,
     });
-
     this.logger.debug(`Cache set for key: ${key}, TTL: ${ttl}s`);
   }
 
@@ -58,6 +68,8 @@ export class AgencyHubCacheService {
    * Delete value from cache
    */
   async del(key: string): Promise<void> {
+  // Implementation needed
+}
     this.cache.delete(key);
     this.logger.debug(`Cache deleted for key: ${key}`);
   }
@@ -66,6 +78,8 @@ export class AgencyHubCacheService {
    * Clear all cache entries
    */
   async clear(): Promise<void> {
+  // Implementation needed
+}
     this.cache.clear();
     this.logger.debug('Cache cleared');
   }
@@ -74,10 +88,15 @@ export class AgencyHubCacheService {
    * Invalidate cache entries by tags
    */
   async invalidateByTags(tags: string[]): Promise<void> {
+  // Implementation needed
+}
     const keysToDelete: string[] = [];
-    
     for (const [key, entry] of this.cache.entries()) {
+  // Implementation needed
+}
       if (entry.tags && entry.tags.some(tag => tags.includes(tag))) {
+  // Implementation needed
+}
         keysToDelete.push(key);
       }
     }

@@ -21,4 +21,3 @@ function MessageBubble({ message, agents }) {
     </div>);
 }
 export {};
-//# sourceMappingURL=message-bubble.js.map

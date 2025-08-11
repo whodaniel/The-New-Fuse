@@ -20,4 +20,3 @@ export function ThemeToggle({ className, iconClassName, showLabel = false }) {
         </span>)}
     </Button>);
 }
-//# sourceMappingURL=ThemeToggle.js.map

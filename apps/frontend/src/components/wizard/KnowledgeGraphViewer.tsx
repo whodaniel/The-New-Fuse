@@ -183,4 +183,3 @@ function NodeDetailsPanel({ node, onClose, onUpdate }) {
         </material_1.Paper>);
 }
 export {};
-//# sourceMappingURL=KnowledgeGraphViewer.js.map

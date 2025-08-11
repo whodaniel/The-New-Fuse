@@ -36,4 +36,3 @@ const TabsContent = React.forwardRef((_a, ref) => {
 exports.TabsContent = TabsContent;
 TabsContent.displayName = TabsPrimitive.Content.displayName;
 export {};
-//# sourceMappingURL=tabs.js.map

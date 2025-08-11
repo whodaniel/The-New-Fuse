@@ -17,4 +17,3 @@ function useRoute(): any {
     return context;
 }
 export {};
-//# sourceMappingURL=route-context.js.map

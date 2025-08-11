@@ -40,4 +40,3 @@ export interface ExtensionMessagePayload {
   contentType: string;
   body: Record<string, unknown>;
 }
-//# sourceMappingURL=types.js.map

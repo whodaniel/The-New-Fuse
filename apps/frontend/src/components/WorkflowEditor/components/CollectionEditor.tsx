@@ -67,4 +67,3 @@ export const CollectionEditor = ({ items, schema, onChange, }) => {
       </button>
     </div>);
 };
-//# sourceMappingURL=CollectionEditor.js.map

@@ -1,237 +1,381 @@
+/**
+ * @fileoverview Production-ready configuration service
+ */
+
 import { Injectable } from '@nestjs/common';
-import { ConfigService as NestConfigService } from '@nestjs/config';
+import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types/core';
+import { ServiceState, ENVIRONMENTS } from '../constants/types';
+import { logger } from '../utils/logger';
+import { ConfigurationError } from '../utils/errors';
 
 @Injectable()
-export class ConfigService extends NestConfigService {
-  getPort(): number {
-    return this.getOrThrow<number>('PORT', 3000);
+export class ConfigService {
+  private state: ServiceState = ServiceState.UNINITIALIZED;
+  private config: SystemConfig;
+  private readonly requiredEnvVars = [
+    'NODE_ENV',
+    'DATABASE_URL',
+    'REDIS_HOST',
+    'REDIS_PORT',
+  ];
+
+  constructor() {
+    logger.setContext({ service: 'ConfigService' });
+    this.config = this.loadConfiguration();
   }
 
-  getDatabaseUrl(): string {
-    return this.getOrThrow<string>('DATABASE_URL');
+  async start(): Promise<void> {
+    if (this.state === ServiceState.RUNNING) {
+      logger.warn('ConfigService is already running');
+      return;
+    }
+
+    try {
+      this.state = ServiceState.INITIALIZING;
+      logger.info('Starting ConfigService');
+
+      // Validate configuration
+      this.validateConfiguration();
+
+      this.state = ServiceState.RUNNING;
+      logger.info('ConfigService started successfully', { 
+        environment: this.config.environment 
+      });
+    } catch (error) {
+      this.state = ServiceState.ERROR;
+      logger.error('Failed to start ConfigService', error as Error);
+      throw error;
+    }
   }
 
-  getRedisUrl(): string {
-    return this.getOrThrow<string>('REDIS_URL');
+  async stop(): Promise<void> {
+    if (this.state === ServiceState.STOPPED) {
+      logger.warn('ConfigService is already stopped');
+      return;
+    }
+
+    try {
+      this.state = ServiceState.STOPPING;
+      logger.info('Stopping ConfigService');
+
+      this.state = ServiceState.STOPPED;
+      logger.info('ConfigService stopped successfully');
+    } catch (error) {
+      this.state = ServiceState.ERROR;
+      logger.error('Failed to stop ConfigService', error as Error);
+      throw error;
+    }
   }
 
-  getJwtSecret(): string {
-    return this.getOrThrow<string>('JWT_SECRET');
+  getState(): ServiceState {
+    return this.state;
+  }
+
+  // Configuration getters
+  get<T = any>(key: string, defaultValue?: T): T {
+    const keys = key.split('.');
+    let value: any = this.config;
+
+    for (const k of keys) {
+      if (value && typeof value === 'object' && k in value) {
+        value = value[k];
+      } else {
+        return defaultValue as T;
+      }
+    }
+
+    return value as T;
   }
 
   getEnvironment(): string {
-    return this.get<string>('NODE_ENV') || 'development';
+    return this.config.environment;
   }
 
   isDevelopment(): boolean {
-    return this.getEnvironment() === 'development';
+    return this.config.environment === ENVIRONMENTS.DEVELOPMENT;
   }
 
   isProduction(): boolean {
-    return this.getEnvironment() === 'production';
+    return this.config.environment === ENVIRONMENTS.PRODUCTION;
+  }
+
+  isStaging(): boolean {
+    return this.config.environment === ENVIRONMENTS.STAGING;
   }
 
   isTest(): boolean {
-    return this.getEnvironment() === 'test';
+    return this.config.environment === ENVIRONMENTS.TEST;
   }
 
-  // WebSocket Configuration
-  getWebSocketPort(): number {
-    return this.get<number>('WS_PORT', 8080);
+  getDatabaseConfig(): DatabaseConfig {
+    return this.config.database;
   }
 
-  // Redis Configuration
+  getRedisConfig(): RedisConfig {
+    return this.config.redis;
+  }
+
   getRedisHost(): string {
-    return this.get<string>('REDIS_HOST', 'localhost');
+    return this.config.redis.host;
   }
 
   getRedisPort(): number {
-    return this.get<number>('REDIS_PORT', 6379);
+    return this.config.redis.port;
   }
 
   getRedisPassword(): string | undefined {
-    return this.get<string>('REDIS_PASSWORD');
+    return this.config.redis.password;
   }
 
   getRedisDb(): number {
-    return this.get<number>('REDIS_DB', 0);
+    return this.config.redis.db || 0;
   }
 
-  // Database Configuration
-  getDatabaseHost(): string {
-    return this.get<string>('DB_HOST', 'localhost');
+  getMonitoringConfig(): MonitoringConfig {
+    return this.config.monitoring;
   }
 
-  getDatabasePort(): number {
-    return this.get<number>('DB_PORT', 5432);
+  getAIConfig(): AIConfig {
+    return this.config.ai;
   }
 
-  getDatabaseName(): string {
-    return this.getOrThrow<string>('DB_NAME');
+  // Environment variable helpers
+  getEnv(key: string, defaultValue?: string): string {
+    return process.env[key] || defaultValue || '';
   }
 
-  getDatabaseUsername(): string {
-    return this.getOrThrow<string>('DB_USERNAME');
+  getEnvNumber(key: string, defaultValue?: number): number {
+    const value = process.env[key];
+    if (!value) return defaultValue || 0;
+    
+    const parsed = parseInt(value, 10);
+    if (isNaN(parsed)) {
+      logger.warn('Invalid number in environment variable', { key, value });
+      return defaultValue || 0;
+    }
+    
+    return parsed;
   }
 
-  getDatabasePassword(): string {
-    return this.getOrThrow<string>('DB_PASSWORD');
+  getEnvBoolean(key: string, defaultValue?: boolean): boolean {
+    const value = process.env[key];
+    if (!value) return defaultValue || false;
+    
+    return value.toLowerCase() === 'true' || value === '1';
   }
 
-  // Security Configuration
-  getCorsOrigins(): string[] {
-    const origins = this.get<string>('CORS_ORIGINS', '*');
-    return origins === '*' ? ['*'] : origins.split(',');
+  getEnvArray(key: string, separator: string = ',', defaultValue?: string[]): string[] {
+    const value = process.env[key];
+    if (!value) return defaultValue || [];
+    
+    return value.split(separator).map(item => item.trim()).filter(Boolean);
   }
 
-  getJwtExpiresIn(): string {
-    return this.get<string>('JWT_EXPIRES_IN', '1h');
+  // Configuration validation
+  private validateConfiguration(): void {
+    logger.info('Validating configuration');
+
+    // Check required environment variables
+    const missing = this.requiredEnvVars.filter(key => !process.env[key]);
+    if (missing.length > 0) {
+      throw new ConfigurationError(
+        `Missing required environment variables: ${missing.join(', ')}`,
+        { missing }
+      );
+    }
+
+    // Validate environment
+    const validEnvironments = Object.values(ENVIRONMENTS);
+    if (!validEnvironments.includes(this.config.environment as any)) {
+      throw new ConfigurationError(
+        `Invalid environment: ${this.config.environment}. Must be one of: ${validEnvironments.join(', ')}`,
+        { environment: this.config.environment, validEnvironments }
+      );
+    }
+
+    // Validate database URL
+    if (!this.isValidUrl(this.config.database.url)) {
+      throw new ConfigurationError(
+        'Invalid database URL format',
+        { url: this.config.database.url }
+      );
+    }
+
+    // Validate Redis configuration
+    if (!this.config.redis.host || this.config.redis.port <= 0 || this.config.redis.port > 65535) {
+      throw new ConfigurationError(
+        'Invalid Redis configuration',
+        { host: this.config.redis.host, port: this.config.redis.port }
+      );
+    }
+
+    logger.info('Configuration validation completed successfully');
   }
 
-  // API Configuration
-  getApiPrefix(): string {
-    return this.get<string>('API_PREFIX', 'api');
+  private loadConfiguration(): SystemConfig {
+    logger.info('Loading configuration from environment');
+
+    const environment = (process.env.NODE_ENV || ENVIRONMENTS.DEVELOPMENT) as SystemConfig['environment'];
+
+    const config: SystemConfig = {
+      environment,
+      database: this.loadDatabaseConfig(),
+      redis: this.loadRedisConfig(),
+      monitoring: this.loadMonitoringConfig(),
+      ai: this.loadAIConfig(),
+    };
+
+    logger.info('Configuration loaded', { 
+      environment: config.environment,
+      databaseConfigured: !!config.database.url,
+      redisConfigured: !!config.redis.host,
+      monitoringEnabled: config.monitoring.enabled,
+      aiProvidersCount: config.ai.providers.length,
+    });
+
+    return config;
   }
 
-  getApiVersion(): string {
-    return this.get<string>('API_VERSION', 'v1');
+  private loadDatabaseConfig(): DatabaseConfig {
+    return {
+      url: this.getEnv('DATABASE_URL'),
+      maxConnections: this.getEnvNumber('DATABASE_MAX_CONNECTIONS', 10),
+      connectionTimeout: this.getEnvNumber('DATABASE_CONNECTION_TIMEOUT', 30000),
+      queryTimeout: this.getEnvNumber('DATABASE_QUERY_TIMEOUT', 60000),
+    };
   }
 
-  // Logging Configuration
-  getLogLevel(): string {
-    return this.get<string>('LOG_LEVEL', 'info');
+  private loadRedisConfig(): RedisConfig {
+    return {
+      host: this.getEnv('REDIS_HOST', 'localhost'),
+      port: this.getEnvNumber('REDIS_PORT', 6379),
+      password: this.getEnv('REDIS_PASSWORD'),
+      db: this.getEnvNumber('REDIS_DB', 0),
+      maxRetries: this.getEnvNumber('REDIS_MAX_RETRIES', 3),
+    };
   }
 
-  // Feature Flags
-  isSwaggerEnabled(): boolean {
-    return this.get<boolean>('SWAGGER_ENABLED', !this.isProduction());
+  private loadMonitoringConfig(): MonitoringConfig {
+    return {
+      enabled: this.getEnvBoolean('MONITORING_ENABLED', true),
+      metricsInterval: this.getEnvNumber('METRICS_INTERVAL', 30000),
+      logLevel: (this.getEnv('LOG_LEVEL', 'info') as MonitoringConfig['logLevel']),
+      enablePerformanceTracking: this.getEnvBoolean('ENABLE_PERFORMANCE_TRACKING', true),
+    };
   }
 
-  isMetricsEnabled(): boolean {
-    return this.get<boolean>('METRICS_ENABLED', true);
+  private loadAIConfig(): AIConfig {
+    const providers = this.getEnvArray('AI_PROVIDERS', ',', ['ollama', 'lmstudio']);
+    
+    return {
+      providers: providers.map(name => ({
+        name,
+        type: name as any,
+        endpoint: this.getEnv(`${name.toUpperCase()}_ENDPOINT`, `http://localhost:${this.getDefaultPort(name)}`),
+        command: this.getEnv(`${name.toUpperCase()}_COMMAND`, name),
+        checkCommand: this.getEnv(`${name.toUpperCase()}_CHECK_COMMAND`),
+        models: this.getEnvArray(`${name.toUpperCase()}_MODELS`, ',', []),
+      })),
+      defaultProvider: this.getEnv('DEFAULT_AI_PROVIDER', providers[0]),
+      maxConcurrentRequests: this.getEnvNumber('AI_MAX_CONCURRENT_REQUESTS', 5),
+      requestTimeout: this.getEnvNumber('AI_REQUEST_TIMEOUT', 30000),
+    };
   }
 
-  // External Services
-  getOpenAIApiKey(): string | undefined {
-    return this.get<string>('OPENAI_API_KEY');
+  private getDefaultPort(providerName: string): number {
+    const defaultPorts: Record<string, number> = {
+      ollama: 11434,
+      lmstudio: 1234,
+      localai: 8080,
+    };
+    
+    return defaultPorts[providerName] || 8080;
   }
 
-  getCloudflareApiKey(): string | undefined {
-    return this.get<string>('CLOUDFLARE_API_KEY');
+  private isValidUrl(url: string): boolean {
+    try {
+      new URL(url);
+      return true;
+    } catch {
+      return false;
+    }
   }
 
-  getFirebaseConfigPath(): string | undefined {
-    return this.get<string>('FIREBASE_CONFIG_PATH');
+  // Configuration updates (for runtime configuration changes)
+  updateConfig(path: string, value: any): void {
+    const keys = path.split('.');
+    let target: any = this.config;
+
+    for (let i = 0; i < keys.length - 1; i++) {
+      const key = keys[i];
+      if (!(key in target) || typeof target[key] !== 'object') {
+        target[key] = {};
+      }
+      target = target[key];
+    }
+
+    const finalKey = keys[keys.length - 1];
+    const oldValue = target[finalKey];
+    target[finalKey] = value;
+
+    logger.info('Configuration updated', { 
+      path, 
+      oldValue, 
+      newValue: value 
+    });
   }
 
-  // Agent Configuration
-  getMaxAgentConcurrency(): number {
-    return this.get<number>('MAX_AGENT_CONCURRENCY', 10);
+  // Configuration export/import for debugging
+  exportConfig(): Record<string, any> {
+    return {
+      ...this.config,
+      // Mask sensitive information
+      database: {
+        ...this.config.database,
+        url: this.maskSensitiveUrl(this.config.database.url),
+      },
+      redis: {
+        ...this.config.redis,
+        password: this.config.redis.password ? '***masked***' : undefined,
+      },
+    };
   }
 
-  getAgentTimeout(): number {
-    return this.get<number>('AGENT_TIMEOUT', 30000);
+  private maskSensitiveUrl(url: string): string {
+    try {
+      const parsed = new URL(url);
+      if (parsed.password) {
+        parsed.password = '***masked***';
+      }
+      return parsed.toString();
+    } catch {
+      return '***invalid-url***';
+    }
   }
 
-  // Qdrant Configuration
-  getQdrantUrl(): string {
-    return this.get<string>('QDRANT_URL', 'http://localhost:6333');
-  }
+  // Health check
+  async healthCheck(): Promise<{ status: 'healthy' | 'unhealthy'; details: Record<string, any> }> {
+    try {
+      const details = {
+        state: this.state,
+        environment: this.config.environment,
+        configurationValid: true,
+        requiredEnvVarsPresent: this.requiredEnvVars.every(key => !!process.env[key]),
+      };
 
-  getQdrantApiKey(): string | undefined {
-    return this.get<string>('QDRANT_API_KEY');
-  }
+      const status = this.state === ServiceState.RUNNING && details.requiredEnvVarsPresent 
+        ? 'healthy' 
+        : 'unhealthy';
 
-  // Memory Configuration
-  getMemoryRetentionDays(): number {
-    return this.get<number>('MEMORY_RETENTION_DAYS', 30);
-  }
-
-  getMemoryCapacity(): number {
-    return this.get<number>('MEMORY_CAPACITY', 10000);
-  }
-
-  // Enhanced Memory Configuration
-  getMemoryShortTermCapacity(): number {
-    return this.get<number>('memory.shortTermCapacity', 1000);
-  }
-
-  getMemoryWorkingCapacity(): number {
-    return this.get<number>('memory.workingMemoryCapacity', 100);
-  }
-
-  getMemoryLongTermRetentionDays(): number {
-    return this.get<number>('memory.longTermRetentionDays', 30);
-  }
-
-  getMemoryCompressionThreshold(): number {
-    return this.get<number>('memory.compressionThreshold', 0.8);
-  }
-
-  getMemoryEmbeddingDimension(): number {
-    return this.get<number>('memory.embeddingDimension', 1536);
-  }
-
-  isMemoryClusteringEnabled(): boolean {
-    return this.get<boolean>('memory.clusteringEnabled', true);
-  }
-
-  isMemoryAutoOptimizeEnabled(): boolean {
-    return this.get<boolean>('memory.autoOptimize', true);
-  }
-
-  // Document Chunking Configuration
-  getChunkingMaxChunkSize(): number {
-    return this.get<number>('chunking.maxChunkSize', 1000);
-  }
-
-  getChunkingOverlap(): number {
-    return this.get<number>('chunking.overlap', 100);
-  }
-
-  getChunkingProvider(): 'openai' | 'anthropic' | 'local' {
-    return this.get<'openai' | 'anthropic' | 'local'>('chunking.provider', 'local');
-  }
-
-  getChunkingSimilarityThreshold(): number {
-    return this.get<number>('chunking.similarityThreshold', 0.7);
-  }
-
-  getChunkingMinChunkSize(): number {
-    return this.get<number>('chunking.minChunkSize', 100);
-  }
-
-  // Agent and LLM Configuration
-  getCascadeApiKey(): string | undefined {
-    return this.get<string>('CASCADE_API_KEY');
-  }
-
-  getClineApiKey(): string | undefined {
-    return this.get<string>('CLINE_API_KEY');
-  }
-
-  getCascadeModel(): string {
-    return this.get<string>('CASCADE_MODEL', 'anthropic/claude-2');
-  }
-
-  getClineModel(): string {
-    return this.get<string>('CLINE_MODEL', 'anthropic/claude-2');
-  }
-
-  getMaxMemoryMessages(): number {
-    return this.get<number>('MAX_MEMORY_MESSAGES', 20);
-  }
-
-  // Service Integration Configuration
-  getServiceDiscoveryEnabled(): boolean {
-    return this.get<boolean>('SERVICE_DISCOVERY_ENABLED', true);
-  }
-
-  getMessageQueueEnabled(): boolean {
-    return this.get<boolean>('MESSAGE_QUEUE_ENABLED', true);
-  }
-
-  getHealthCheckInterval(): number {
-    return this.get<number>('HEALTH_CHECK_INTERVAL', 30000);
+      return { status, details };
+    } catch (error) {
+      return {
+        status: 'unhealthy',
+        details: {
+          error: (error as Error).message,
+          state: this.state,
+        },
+      };
+    }
   }
 }

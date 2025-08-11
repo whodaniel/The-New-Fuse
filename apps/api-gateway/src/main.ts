@@ -17,12 +17,18 @@ async function bootstrap() {
     logger: ['error', 'warn', 'log', 'debug', 'verbose'],
   });
 
-  // Enable CORS for all origins in development
+  // Enable CORS
+  // In dev: always allow, including file:// and electron origins (no Origin header)
   app.enableCors({
-    origin: process.env.NODE_ENV === 'production' 
+    origin: process.env.NODE_ENV === 'production'
       ? ['https://thenewfuse.com', 'https://app.thenewfuse.com']
-      : true,
+      : (origin, callback) => callback(null, true),
     credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'x-api-key'],
+    exposedHeaders: ['Content-Length', 'ETag'],
+    preflightContinue: false,
+    optionsSuccessStatus: 204,
   });
 
   // Global validation pipe

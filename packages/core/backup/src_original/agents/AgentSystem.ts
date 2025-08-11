@@ -39,7 +39,7 @@ export class AgentSystem {
       const agent = await this.agentManager.createAgent(config);
       
       // Store in Redis for persistence
-      await this.redis.hset(`agent:${config.id}`, {``;
+      await this.redis.hset(`agent:${config.id}`, {
         config: JSON.stringify(config),
         state: JSON.stringify(agent.state),
         created: new Date().toISOString()
@@ -61,7 +61,7 @@ export class AgentSystem {
       }
 
       // Try to load from Redis
-      const redisData = await this.redis.hgetall(`agent:${agentId}`);``;
+      const redisData = await this.redis.hgetall(`agent:${agentId}`);
       if (redisData.config) {
         const config = JSON.parse(redisData.config);
         const restoredAgent = await this.agentManager.createAgent(config);
@@ -79,7 +79,7 @@ export class AgentSystem {
     try {
       const deleted = await this.agentManager.deleteAgent(agentId);
       if (deleted) {
-        await this.redis.del(`agent:${agentId}`);``;
+        await this.redis.del(`agent:${agentId}`);
         this.logger.log('Agent deleted', { agentId });
       }
       return deleted;

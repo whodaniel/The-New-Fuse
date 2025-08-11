@@ -1,7 +1,4 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.FeatureStage = void 0;
-var FeatureStage;
+export var FeatureStage;
 (function (FeatureStage) {
     FeatureStage["ANALYSIS"] = "ANALYSIS";
     FeatureStage["DESIGN"] = "DESIGN";
@@ -10,4 +7,5 @@ var FeatureStage;
     FeatureStage["REVIEW"] = "REVIEW";
     FeatureStage["DEPLOYMENT"] = "DEPLOYMENT";
     FeatureStage["COMPLETED"] = "COMPLETED";
-})(FeatureStage || (exports.FeatureStage = FeatureStage = {}));
+})(FeatureStage || (FeatureStage = {}));
+//# sourceMappingURL=types.js.map

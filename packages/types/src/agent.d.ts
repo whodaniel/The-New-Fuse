@@ -1,34 +1,66 @@
-import { AgentCapability, AgentRole, AgentStatus } from './agent-types.d';
-
-export interface Agent {
+import { BaseEntity } from './core/base-types';
+import { AgentCapability, AgentStatus, AgentRole } from './core/enums';
+export { AgentCapability, AgentStatus, AgentRole };
+export declare enum AgentType {
+    BASIC = "BASIC",
+    CHAT = "CHAT",
+    WORKFLOW = "WORKFLOW",
+    TASK = "TASK",
+    ASSISTANT = "ASSISTANT",
+    ANALYSIS = "ANALYSIS",
+    CONVERSATIONAL = "CONVERSATIONAL",
+    IDE_EXTENSION = "IDE_EXTENSION",
+    API = "API"
+}
+export declare class Agent implements BaseEntity {
     id: string;
-    name: string;
-    description: string | null;
-    type: string;
-    capabilities: string[];
-    status: string;
-    userId: string;
     createdAt: Date;
     updatedAt: Date;
-    deletedAt: Date | null;
-    config?: Record<string, unknown>;
-}
-
-export interface CreateAgentDto {
     name: string;
+    type: AgentType;
+    status: AgentStatus;
     description?: string;
-    type: string;
-    capabilities: string[];
     systemPrompt?: string;
-    status?: AgentStatus;
-    configuration?: Record<string, unknown>;
+    capabilities?: AgentCapability[];
+    configuration?: unknown;
+    constructor(data: Partial<Agent>);
 }
-
-export interface UpdateAgentDto {
+export declare class CreateAgentDto {
+    name: string;
+    type: AgentType;
+    description?: string;
+    systemPrompt?: string;
+    capabilities?: AgentCapability[];
+    configuration?: unknown;
+    metadata?: unknown;
+    role?: AgentRole;
+    provider?: string;
+    constructor(data: Partial<CreateAgentDto>);
+}
+export declare class UpdateAgentDto {
     name?: string;
     description?: string;
     systemPrompt?: string;
-    capabilities?: string[];
+    capabilities?: AgentCapability[];
+    configuration?: unknown;
     status?: AgentStatus;
-    configuration?: Record<string, unknown>;
+    metadata?: unknown;
+    type?: AgentType;
+    role?: AgentRole;
+    constructor(data?: Partial<UpdateAgentDto>);
 }
+export declare class AgentResponseDto {
+    id: string;
+    name: string;
+    type: AgentType;
+    description?: string;
+    status: AgentStatus;
+    capabilities?: AgentCapability[];
+    provider?: string;
+    lastActive?: Date;
+    metadata?: unknown;
+    createdAt: Date;
+    updatedAt: Date;
+    constructor(data: Partial<AgentResponseDto>);
+}
+//# sourceMappingURL=agent.d.ts.map

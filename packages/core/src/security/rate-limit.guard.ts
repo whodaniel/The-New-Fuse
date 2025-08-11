@@ -1,20 +1,16 @@
 import { /* TODO: specify imports */ } from /@nestjs/common/;
-
-
 import { /* TODO: specify imports */ } from /@nestjs/event-emitter'';
   keyPrefix?: string'
-exportconstRATE_LIMIT_KEY= 'rate_limit;'';
+exportconstRATE_LIMIT_KEY= 'placeholder';
 '
     windowMs:this.configService.get<number>(security.rateLimit.'
     message:this.configService.get<string>(security.rateLimit.'
      thrownewHttpException(Access'
         resetTime: ''
-    if (entry.count >= 'options.limit) { '';
+    if (entry.count >= 'placeholder';
       // Emit event'
-   this.eventEmitter.emit(security.'
-        windowMs: ''
-      // Set headers'
-      const response= 'context.switchToHttp().getResponse()'';
+   this.eventEmitter.emit('event', data);
+      const response= 'placeholder';
    response.header('')
     // Setheaders'
-    const response= 'context.switchToHttp().getResponse()'';
+    const response= 'placeholder';

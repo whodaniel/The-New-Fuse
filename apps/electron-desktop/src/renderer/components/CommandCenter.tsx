@@ -124,7 +124,7 @@ export const CommandCenter: React.FC = () => {
             bgClip="text"
             fontWeight="bold"
           >
-            The New Fuse - Command Center
+            TNF Browser Hub
           </Heading>
           <Text color="gray.300" mt={2}>
             Hybrid AI-Powered Browser Automation System

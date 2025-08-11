@@ -21,4 +21,3 @@ const AdminIndex = (): any => {
     </Routes>);
 };
 export default AdminIndex;
-//# sourceMappingURL=index.js.map

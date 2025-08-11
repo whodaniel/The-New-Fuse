@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 export interface PerformanceMetrics {
+  // Implementation needed
+}
   averageResponseTime: number;
   requestCount: number;
   throughput: number;
@@ -12,6 +13,8 @@ export interface PerformanceMetrics {
 }
 
 export interface RequestRecord {
+  // Implementation needed
+}
   timestamp: Date;
   responseTime: number;
   success: boolean;
@@ -22,9 +25,10 @@ export interface RequestRecord {
 
 @Injectable()
 export class PerformanceAnalytics {
+  // Implementation needed
+}
   private metrics: RequestRecord[] = [];
   private readonly maxStoredMetrics = 50000;
-
   recordRequest(
     responseTime: number,
     success: boolean = true,
@@ -32,7 +36,11 @@ export class PerformanceAnalytics {
     method?: string,
     statusCode?: number
   ): void {
+  // Implementation needed
+}
     const record: RequestRecord = {
+  // Implementation needed
+}
       timestamp: new Date(),
       responseTime,
       success,
@@ -40,23 +48,27 @@ export class PerformanceAnalytics {
       method,
       statusCode
     };
-
     this.metrics.push(record);
-
     // Keep only the most recent metrics to prevent memory issues
     if (this.metrics.length > this.maxStoredMetrics) {
+  // Implementation needed
+}
       this.metrics = this.metrics.slice(-this.maxStoredMetrics);
     }
   }
 
   getMetrics(timeWindowMinutes: number = 60): PerformanceMetrics {
+  // Implementation needed
+}
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
-    
     const recentMetrics = this.metrics.filter(m => m.timestamp > windowStart);
-    
     if (recentMetrics.length === 0) {
+  // Implementation needed
+}
       return {
+  // Implementation needed
+}
         averageResponseTime: 0,
         requestCount: 0,
         throughput: 0,
@@ -70,12 +82,12 @@ export class PerformanceAnalytics {
 
     const responseTimes = recentMetrics.map(m => m.responseTime).sort((a, b) => a - b);
     const successfulRequests = recentMetrics.filter(m => m.success).length;
-    
     const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p99Index = Math.floor(responseTimes.length * 0.99);
-    
     return {
+  // Implementation needed
+}
       averageResponseTime: avgResponseTime,
       requestCount: recentMetrics.length,
       throughput: recentMetrics.length / timeWindowMinutes, // per minute
@@ -88,15 +100,19 @@ export class PerformanceAnalytics {
   }
 
   getEndpointMetrics(endpoint: string, timeWindowMinutes: number = 60): PerformanceMetrics {
+  // Implementation needed
+}
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
-    
     const filteredMetrics = this.metrics.filter(m => 
       m.timestamp > windowStart && m.endpoint === endpoint
     );
-    
     if (filteredMetrics.length === 0) {
+  // Implementation needed
+}
       return {
+  // Implementation needed
+}
         averageResponseTime: 0,
         requestCount: 0,
         throughput: 0,
@@ -110,12 +126,12 @@ export class PerformanceAnalytics {
 
     const responseTimes = filteredMetrics.map(m => m.responseTime).sort((a, b) => a - b);
     const successfulRequests = filteredMetrics.filter(m => m.success).length;
-    
     const avgResponseTime = responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length;
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p99Index = Math.floor(responseTimes.length * 0.99);
-    
     return {
+  // Implementation needed
+}
       averageResponseTime: avgResponseTime,
       requestCount: filteredMetrics.length,
       throughput: filteredMetrics.length / timeWindowMinutes,
@@ -128,6 +144,8 @@ export class PerformanceAnalytics {
   }
 
   getSlowRequests(thresholdMs: number = 1000, hours: number = 24): RequestRecord[] {
+  // Implementation needed
+}
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.metrics.filter(m => 
       m.timestamp > cutoff && m.responseTime > thresholdMs
@@ -135,18 +153,21 @@ export class PerformanceAnalytics {
   }
 
   getTopEndpoints(limit: number = 10, timeWindowMinutes: number = 60): Array<{endpoint: string; count: number}> {
+  // Implementation needed
+}
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
-    
     const recentMetrics = this.metrics.filter(m => m.timestamp > windowStart && m.endpoint);
     const endpointCounts: Record<string, number> = {};
-    
     recentMetrics.forEach(m => {
+  // Implementation needed
+}
       if (m.endpoint) {
+  // Implementation needed
+}
         endpointCounts[m.endpoint] = (endpointCounts[m.endpoint] || 0) + 1;
       }
     });
-    
     return Object.entries(endpointCounts)
       .map(([endpoint, count]) => ({ endpoint, count }))
       .sort((a, b) => b.count - a.count)
@@ -159,6 +180,8 @@ export class PerformanceAnalytics {
   }
 
   getTotalRequestCount(): number {
+  // Implementation needed
+}
     return this.metrics.length;
   }
 }

@@ -113,4 +113,3 @@ export class AgentBridge {
         return this.stateManager.subscribe(['agents', agentId, 'status'], callback);
     }
 }
-//# sourceMappingURL=AgentBridge.js.map

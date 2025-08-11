@@ -5,7 +5,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useMcpTools, MCPServer, MCPTool } from '@/hooks';
+import { useMcpTools } from '@/hooks/useMcpTools';
+import { MCPServer, MCPTool } from '@/services/MCPService';
 
 const MCPToolNode: React.React.FC<NodeProps> = memo(({ id, data }) => {
   const { servers, tools, loading } = useMcpTools();

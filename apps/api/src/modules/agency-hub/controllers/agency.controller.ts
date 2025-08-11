@@ -16,7 +16,6 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 // import { AuthGuard } from '../../guards/auth.guard';
 // import { RolesGuard } from '../../guards/roles.guard';
 // import { Roles } from '../../decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
 
 // Type definitions
 export type AgentId = string;

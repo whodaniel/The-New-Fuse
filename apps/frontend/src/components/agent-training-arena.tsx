@@ -54,4 +54,3 @@ export const AgentTrainingArena = ({ agentId }) => {
       </div>
     </Card>);
 };
-//# sourceMappingURL=agent-training-arena.js.map

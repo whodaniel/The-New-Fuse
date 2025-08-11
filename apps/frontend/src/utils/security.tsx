@@ -144,4 +144,3 @@ export const SecurityPolicies = {
     MEDIUM: MEDIUM_SECURITY_POLICY,
     LOW: LOW_SECURITY_POLICY
 };
-//# sourceMappingURL=security.js.map

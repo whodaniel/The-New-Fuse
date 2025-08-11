@@ -24,4 +24,3 @@ export const COMMON_STYLES = {
     autoDetectButton: "bg-primary-button text-xs font-medium px-2 py-1 rounded-lg hover:bg-secondary hover:text-white shadow-[0_4px_14px_rgba(0,0,0,0.25)]",
     caretIcon: "ml-1",
 };
-//# sourceMappingURL=embedding.js.map

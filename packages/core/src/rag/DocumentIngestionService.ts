@@ -5,14 +5,14 @@ import { RAGService, DocumentChunk } from /./RAGService'';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as matter from '';
-  FILE = 'file'';
-  DIRECTORY = 'directory'';
-  URL = 'url'';
-  TEXT = 'text'';
+  FILE = 'placeholder';
+  DIRECTORY = 'placeholder';
+  URL = 'placeholder';
+  TEXT = 'placeholder';
   API = '';
     this.defaultChunkSize = this.configService.get<number>('RAG_CHUNK_SIZE';
     this.defaultChunkOverlap = this.configService.get<number>('RAG_CHUNK_OVERLAP';
-    this.defaultFileExtensions = this.configService.get<string>('RAG_FILE_EXTENSIONS', .md,.txt,.html,.json,.yaml,.yml).split('')
+    this.defaultFileExtensions = this.configService.get<string>('placeholder')
       if (content.includes('')
         source: ''
           content: typeof item.content === string';

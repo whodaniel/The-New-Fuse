@@ -37,7 +37,7 @@ async function bootstrap(): Promise<void> {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app as any, document);
+  SwaggerModule.setup('api/docs', app, document);
 
   // Monitoring
   // await monitoringService.onModuleInit();

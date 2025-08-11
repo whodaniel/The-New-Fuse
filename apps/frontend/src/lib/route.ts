@@ -32,4 +32,3 @@ exports.config = {
     }
 };
 export {};
-//# sourceMappingURL=route.js.map

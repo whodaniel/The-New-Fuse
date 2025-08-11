@@ -4,6 +4,5 @@ import { Logger } from /../utils/logger'';
 import { AgentCardService } from /../services/AgentCardService'';
     priority: 'low' | 'medium' | '
       this.eventEmitter.emit('')
-      this.logger.error('Failed to handle A2A message'
-      throw new Error('Invalid message format: missing required header fields'
+      this.logger.error('message', context);
       throw new Error('');

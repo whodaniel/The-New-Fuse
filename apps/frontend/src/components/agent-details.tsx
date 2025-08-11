@@ -64,4 +64,3 @@ const AgentDetails = ({ name, status, avatar, performance, capabilities, model, 
     </VStack>);
 };
 export default AgentDetails;
-//# sourceMappingURL=agent-details.js.map

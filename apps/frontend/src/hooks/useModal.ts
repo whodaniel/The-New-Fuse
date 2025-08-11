@@ -4,4 +4,3 @@ export function useModal(): any {
     const closeModal = (): any => setIsOpen(false);
     return { isOpen, openModal, closeModal };
 }
-//# sourceMappingURL=useModal.js.map

@@ -30,4 +30,3 @@ function DynamicKnowledgeGraph() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=dynamic-knowledge-graph.js.map

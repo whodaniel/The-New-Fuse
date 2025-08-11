@@ -240,4 +240,3 @@ export const NewAgentForm = ({ form, onSubmit }) => {
       </form>
     </Form>);
 };
-//# sourceMappingURL=NewAgentForm.js.map

@@ -19,15 +19,15 @@ export class MCPRegistryServer {
       this.logger.error('Error handling MCP message:', error);
       const errorResponse = createMCPError(
         'unknown',
-        -1,
-        `Error processing message: ${error instanceof Error ? error.message : 'Unknown error'}`
+        { code: -1, message: `Error processing message: ${error instanceof Error ? error.message : 'Unknown error'}` }
       );
       return JSON.stringify(errorResponse);
     }
   }
 
   private async processMessage(message: MCPMessage): Promise<MCPMessage> {
-    const { id, method, params } = message;
+    const { id, data } = message;
+    const { method, params } = data as { method: string, params: any };
 
     try {
       switch (method) {
@@ -82,14 +82,13 @@ export class MCPRegistryServer {
           return createMCPResponse(id, tools);
 
         default:
-          return createMCPError(id, -32601, `Method not found: ${method}`);
+          return createMCPError(id, { code: -32601, message: `Method not found: ${method}` });
       }
     } catch (error) {
       this.logger.error(`Error processing method ${method}:`, error);
       return createMCPError(
         id,
-        -32603,
-        `Internal error processing ${method}: ${error instanceof Error ? error.message : 'Unknown error'}`
+        { code: -32603, message: `Internal error processing ${method}: ${error instanceof Error ? error.message : 'Unknown error'}` }
       );
     }
   }
@@ -99,7 +98,7 @@ export class MCPRegistryServer {
       {
         name: 'agent.register',
         description: 'Register a new agent in the system',
-        inputSchema: {
+        parameters: {
           type: 'object',
           properties: {
             name: { type: 'string' },
@@ -112,7 +111,7 @@ export class MCPRegistryServer {
       {
         name: 'agent.get',
         description: 'Get agent by ID',
-        inputSchema: {
+        parameters: {
           type: 'object',
           properties: {
             id: { type: 'string' }
@@ -123,7 +122,7 @@ export class MCPRegistryServer {
       {
         name: 'entity.register',
         description: 'Register a new entity in the system',
-        inputSchema: {
+        parameters: {
           type: 'object',
           properties: {
             name: { type: 'string' },

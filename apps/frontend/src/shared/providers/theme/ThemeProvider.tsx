@@ -18,4 +18,3 @@ export const useThemeContext = (): any => {
     }
     return context;
 };
-//# sourceMappingURL=ThemeProvider.js.map

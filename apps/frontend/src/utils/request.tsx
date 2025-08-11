@@ -145,4 +145,3 @@ export default {
   delete: del,
   uploadFile,
 };
-//# sourceMappingURL=request.js.map

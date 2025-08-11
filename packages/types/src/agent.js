@@ -1,42 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.AgentResponseDto = exports.UpdateAgentDto = exports.CreateAgentDto = exports.Agent = exports.AgentCapability = exports.AgentRole = exports.AgentStatus = exports.AgentType = void 0;
-var AgentType;
+import { AgentCapability, AgentStatus, AgentRole } from './core/enums';
+// Re-export the enums for external use
+export { AgentCapability, AgentStatus, AgentRole };
+export var AgentType;
 (function (AgentType) {
     AgentType["BASIC"] = "BASIC";
     AgentType["CHAT"] = "CHAT";
     AgentType["WORKFLOW"] = "WORKFLOW";
     AgentType["TASK"] = "TASK";
     AgentType["ASSISTANT"] = "ASSISTANT";
-})(AgentType || (exports.AgentType = AgentType = {}));
-var AgentStatus;
-(function (AgentStatus) {
-    AgentStatus["ACTIVE"] = "ACTIVE";
-    AgentStatus["INACTIVE"] = "INACTIVE";
-    AgentStatus["IDLE"] = "IDLE";
-    AgentStatus["BUSY"] = "BUSY";
-    AgentStatus["ERROR"] = "ERROR";
-})(AgentStatus || (exports.AgentStatus = AgentStatus = {}));
-var AgentRole;
-(function (AgentRole) {
-    AgentRole["USER"] = "USER";
-    AgentRole["ASSISTANT"] = "ASSISTANT";
-    AgentRole["SYSTEM"] = "SYSTEM";
-    AgentRole["OPTIMIZATION"] = "OPTIMIZATION";
-})(AgentRole || (exports.AgentRole = AgentRole = {}));
-var AgentCapability;
-(function (AgentCapability) {
-    AgentCapability["CHAT"] = "CHAT";
-    AgentCapability["CODE_GENERATION"] = "CODE_GENERATION";
-    AgentCapability["FILE_MANAGEMENT"] = "FILE_MANAGEMENT";
-    AgentCapability["DATA_ANALYSIS"] = "DATA_ANALYSIS";
-    AgentCapability["WORKFLOW_EXECUTION"] = "WORKFLOW_EXECUTION";
-    AgentCapability["API_INTEGRATION"] = "API_INTEGRATION";
-    AgentCapability["MONITORING"] = "MONITORING";
-    AgentCapability["AUTOMATION"] = "AUTOMATION";
-})(AgentCapability || (exports.AgentCapability = AgentCapability = {}));
+    AgentType["ANALYSIS"] = "ANALYSIS";
+    AgentType["CONVERSATIONAL"] = "CONVERSATIONAL";
+    AgentType["IDE_EXTENSION"] = "IDE_EXTENSION";
+    AgentType["API"] = "API";
+})(AgentType || (AgentType = {}));
 // Changed from interface to class that implements BaseEntity
-class Agent {
+export class Agent {
     id;
     createdAt;
     updatedAt;
@@ -60,9 +38,8 @@ class Agent {
         this.configuration = data.configuration;
     }
 }
-exports.Agent = Agent;
 // Changed from interface to class
-class CreateAgentDto {
+export class CreateAgentDto {
     name;
     type;
     description;
@@ -84,9 +61,8 @@ class CreateAgentDto {
         this.provider = data.provider || 'default';
     }
 }
-exports.CreateAgentDto = CreateAgentDto;
 // Changed from interface to class
-class UpdateAgentDto {
+export class UpdateAgentDto {
     name;
     description;
     systemPrompt;
@@ -108,8 +84,7 @@ class UpdateAgentDto {
         this.role = data.role;
     }
 }
-exports.UpdateAgentDto = UpdateAgentDto;
-class AgentResponseDto {
+export class AgentResponseDto {
     id;
     name;
     type;
@@ -135,4 +110,4 @@ class AgentResponseDto {
         this.updatedAt = data.updatedAt || new Date();
     }
 }
-exports.AgentResponseDto = AgentResponseDto;
+//# sourceMappingURL=agent.js.map

@@ -4,7 +4,7 @@ const logger:Logger= 'getLogger('performance_monitor);';
      logger.info('')
             // Check for concerning metrics'
             // GetRedismetrics';'
-       if(recentMetrics.length' === '0) return 0;'';
+       if(recentMetrics.length'placeholder';
             //Logmetrics'
            logger.info('Performancemetricscollected'
                 content: { timestamp: ''

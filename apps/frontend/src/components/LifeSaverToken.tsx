@@ -76,4 +76,3 @@ function LifeSaverTokenContainer({ tokens, onTransfer }) {
     </div>);
 }
 export {};
-//# sourceMappingURL=LifeSaverToken.js.map

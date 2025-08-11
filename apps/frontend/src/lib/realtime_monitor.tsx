@@ -97,4 +97,3 @@ document.addEventListener('DOMContentLoaded', () => {
     systemMonitor.startMonitoring();
 });
 export {};
-//# sourceMappingURL=realtime_monitor.js.map

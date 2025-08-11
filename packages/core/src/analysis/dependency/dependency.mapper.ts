@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 export interface DependencyInfo {
+  // Implementation needed
+}
   name: string;
   version: string;
   type?: 'direct' | 'dev' | 'peer';
@@ -9,6 +10,8 @@ export interface DependencyInfo {
 }
 
 export interface VulnerabilityInfo {
+  // Implementation needed
+}
   id: string;
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
@@ -18,9 +21,14 @@ export interface VulnerabilityInfo {
 
 @Injectable()
 export class DependencyMapper {
-  
+  // Implementation needed
+}
   mapToDependencyInfo(dependency: any): DependencyInfo {
+  // Implementation needed
+}
     return {
+  // Implementation needed
+}
       name: dependency.name || 'unknown',
       version: dependency.version || '0.0.0',
       type: dependency.type || 'direct',
@@ -30,7 +38,11 @@ export class DependencyMapper {
   }
 
   private mapToVulnerabilityInfo(vulnerability: any): VulnerabilityInfo {
+  // Implementation needed
+}
     return {
+  // Implementation needed
+}
       id: vulnerability.id || `vuln_${Date.now()}`,
       severity: vulnerability.severity || 'medium',
       title: vulnerability.title || 'Unknown vulnerability',
@@ -40,6 +52,8 @@ export class DependencyMapper {
   }
 
   mapDependencyArray(dependencies: any[]): DependencyInfo[] {
+  // Implementation needed
+}
     return dependencies.map(dep => this.mapToDependencyInfo(dep));
   }
 }

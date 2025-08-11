@@ -5,6 +5,6 @@
   "name": "features",
   "packageManager": "bun@1.0.0",
   "scripts": {
-    "clean": "rimraf dist .turbo node_modules"
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   }
 }

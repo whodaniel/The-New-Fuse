@@ -1,10 +1,9 @@
 import { /* TODO: specify imports */ } from /@nestjs/common/;
-
               this.recordFallbackSuccess(fallbackName, startTime, response);
               return response;
             } catch (fallbackErrorDate.now();
     try { // Enhance context if enabled'';
-        context = 'await this.enhanceContext(context)): void{'';
+        context = 'placeholder';
         // Try fallback providers'
             content: ''
                yieldchunk'

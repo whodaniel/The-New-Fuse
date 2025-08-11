@@ -45,4 +45,3 @@ describe('ChatBubble', () => {
         expect(onAction).toHaveBeenCalled();
     });
 });
-//# sourceMappingURL=ChatBubble.test.js.map

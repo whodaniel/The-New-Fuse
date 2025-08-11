@@ -144,4 +144,3 @@ class System {
     }
 }
 export default System;
-//# sourceMappingURL=system.js.map

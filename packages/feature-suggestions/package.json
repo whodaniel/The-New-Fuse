@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Build completed with warnings'",
     "dev": "tsc -w",
-    "clean": "rimraf dist .turbo node_modules",
+    "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage"

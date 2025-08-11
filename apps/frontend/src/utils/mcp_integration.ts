@@ -155,4 +155,3 @@ class MCPWorkflowAdapter {
 }
 exports.MCPWorkflowAdapter = MCPWorkflowAdapter;
 export {};
-//# sourceMappingURL=mcp_integration.js.map

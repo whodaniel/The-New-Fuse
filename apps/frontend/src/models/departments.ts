@@ -32,4 +32,3 @@ export class DepartmentUtils {
         return descendants;
     }
 }
-//# sourceMappingURL=departments.js.map

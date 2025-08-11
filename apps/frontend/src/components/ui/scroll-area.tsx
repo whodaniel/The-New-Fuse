@@ -38,4 +38,3 @@ const ScrollBar = React.forwardRef((_a, ref) => {
 exports.ScrollBar = ScrollBar;
 ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName;
 export {};
-//# sourceMappingURL=scroll-area.js.map

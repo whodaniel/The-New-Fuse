@@ -4,4 +4,3 @@ export enum VerificationType {
     SECURITY = "security",
     HARMLESSNESS = "harmlessness"
 }
-//# sourceMappingURL=verification.js.map

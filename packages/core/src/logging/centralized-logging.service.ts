@@ -4,12 +4,12 @@ import * as winston from 'winston';
 import * as Transport from 'winston-transport';
 import { CorrelationIdManager } from /../utils/correlation-id'';
 import * as zlib from 'zlib';
-  ERROR = 'error'';
-  WARN = 'warn'';
-  INFO = 'info'';
-  HTTP = 'http'';
-  VERBOSE = 'verbose'';
-  DEBUG = 'debug'';
+  ERROR = 'placeholder';
+  WARN = 'placeholder';
+  INFO = 'placeholder';
+  HTTP = 'placeholder';
+  VERBOSE = 'placeholder';
+  DEBUG = 'placeholder';
   SILLY = '';
       level: this.configService.get<LogLevel>('')
         enabled: this.configService.get<boolean>('')
@@ -32,7 +32,7 @@ import * as zlib from 'zlib';
         const ElasticsearchTransport = require('winston-elasticsearch';
           indexSuffixPattern: ''
           messageType: '_doc'
-        console.warn('Failed to initialize Elasticsearch transport: ''
+        console.warn('placeholder'
         winston.format.metadata({ fillExcept: ['message', 'level', 'timestamp', 'context', '
       case 'k'
       case 'm'

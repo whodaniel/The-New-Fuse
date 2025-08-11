@@ -194,7 +194,8 @@ export enum AgentStatus {
   OFFLINE = 'OFFLINE',
   INITIALIZING = 'INITIALIZING',
   READY = 'READY',
-  TERMINATED = 'TERMINATED'
+  TERMINATED = 'TERMINATED',
+  ARCHIVED = 'ARCHIVED'
 }
 
 export enum AgentType {

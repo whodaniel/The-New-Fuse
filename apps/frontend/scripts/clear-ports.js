@@ -7,11 +7,14 @@ import { execSync } from 'child_process';
  * Standard ports for The New Fuse:
  * - Frontend: 3000
  * - Backend API: 3001  
- * - WebSocket: 3002
+ * - API Gateway: 3005
+ * - Theia IDE: 3006, 3007, 3008
+ * - Backend App: 3004
  * - Database UI: 5555 (Prisma Studio)
  */
 
-const PORTS_TO_CLEAR = [3000, 3001, 3002, 5555];
+// Don't clear port 3008 as it's used by Theia IDE WebSocket server
+const PORTS_TO_CLEAR = [3000, 3001, 3004, 3005, 5173, 5174, 5555];
 
 function findProcessOnPort(port) {
   try {

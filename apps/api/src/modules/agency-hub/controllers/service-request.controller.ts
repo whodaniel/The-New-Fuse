@@ -17,7 +17,6 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagg
 // import { RolesGuard } from '../../../guards/roles.guard';
 // import { Roles } from '../../../decorators/roles.decorator';
 // import { CurrentUser } from '../../../decorators/current-user.decorator';
-import { UserRole } from '@prisma/client';
 
 @ApiTags('service-requests')
 @Controller('api/service-requests')

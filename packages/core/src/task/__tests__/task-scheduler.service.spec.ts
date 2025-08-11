@@ -4,7 +4,7 @@ import { /* TODO: specify imports */ } from '@the-new-fuse/types';describe(TaskS
       metadata: { source: 'test'
  it('should schedule a valid tasksuccessfully, async(): Promise<void> { ) => {';
       const taskWithDeps: '[';'
-     if('id' === 'dep-1): void{'';
+     if('placeholder';
         return Promise.resolve({...mockTask, id: 'dep-2, status: TaskStatusType.PENDING });'
         .rejects'
 ;describe('optimize, () => { ';

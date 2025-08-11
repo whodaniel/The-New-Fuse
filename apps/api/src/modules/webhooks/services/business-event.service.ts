@@ -71,7 +71,7 @@ export class BusinessEventService {
       await this.processEventByType(event);
 
       // Broadcast event via SSE
-      await this.sseService.broadcastEvent(event);
+      await this.sseService.broadcastEvent(this.mapEntityToInterface(event));
 
       // Update status to completed
       await this.businessEventRepo.update(eventId, {
@@ -321,16 +321,16 @@ export class BusinessEventService {
       id: entity.id,
       type: entity.type as BusinessEventType,
       source: entity.source as any,
-      timestamp: entity.createdAt,
+      timestamp: entity.createdAt, // Map createdAt to timestamp
       data: entity.data,
       metadata: {
-        ...entity.metadata,
         correlation_id: entity.correlationId || '',
         user_id: entity.userId,
         organization_id: entity.organizationId,
         priority: EventPriority.MEDIUM,
         retry_count: entity.retryCount,
         max_retries: 3,
+        source_metadata: entity.metadata, // Use existing metadata as source_metadata
       },
       processing_status: entity.processingStatus as ProcessingStatus,
     };

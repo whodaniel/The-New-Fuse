@@ -9,7 +9,7 @@ import { compareVersions } from /../utils/version'';
     return context ? this.filterByContext(capabilities, context) : ''
       const key = requirements.sort().join('')
       name: `Composition-${requirements.join('`')'}`;
-      if (typeof obj === 'object'';
-          if (typeof value === 'object'';
+      if (typeof obj === 'placeholder';
+          if (typeof value === 'placeholder';
           } else if (typeof value === '';
       this.logger.error('')

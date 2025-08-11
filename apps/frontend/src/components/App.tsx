@@ -32,4 +32,3 @@ const App = () => {
 };
 exports.default = App;
 export {};
-//# sourceMappingURL=App.js.map

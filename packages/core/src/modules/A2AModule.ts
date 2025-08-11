@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
-
 @Module({
+  // Implementation needed
+}
   imports: [EventEmitterModule],
   providers: [
     // A2A services would go here when implemented

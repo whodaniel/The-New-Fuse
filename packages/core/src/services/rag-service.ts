@@ -1,6 +1,8 @@
 // packages/core/src/services/rag-service.ts
 
 interface KnowledgeDocument {
+  // Implementation needed
+}
   path: string;
   content?: string; // Content can be loaded on demand
 }
@@ -24,8 +26,8 @@ const KNOWLEDGE_BASE_PATHS: string[] = [
         return 'Please provide a query to search for.'
 //   console.log('Testing RAG System...'
 //   const response1 = await ragService.query('architecture';
-//   console.log('\nQuery: architecture\nResponse: ''
+//   console.log('placeholder'
 //   const response2 = await ragService.query('development guide';
-//   console.log('\nQuery: development guide\nResponse: ''
+//   console.log('placeholder'
 //   const response3 = await ragService.query('nonexistent topic';
-//   console.log('\nQuery: nonexistent topic\nResponse: ''
+//   console.log('placeholder'

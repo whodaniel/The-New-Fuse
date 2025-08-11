@@ -66,12 +66,15 @@ export class TransactionsService {
       const transactionRecord = await this.prisma.$transaction(async (prisma) => {
         return await prisma.transaction.create({
           data: {
-            walletId: await this.getWalletIdByAddress(smartAccountAddress),
+            wallet: { connect: { id: await this.getWalletIdByAddress(smartAccountAddress) } },
             hash: userOpHash,
             fromAddress: smartAccountAddress,
             toAddress: to,
-            value: parseEther(value),
-            status: 'PENDING'
+            value: parseEther(value).toString(),
+            status: 'PENDING',
+            gasPrice: '0', // Dummy value
+            gasUsed: 0, // Dummy value
+            gasLimit: 0, // Dummy value
           }
         });
       });
@@ -244,7 +247,7 @@ export class TransactionsService {
         txHash = await this.smartAccountService.executeSmartAccountTransaction(
           walletId,
           to,
-          parseEther(value),
+          parseEther(value), // Value is already string, parseEther returns bigint
           data
         );
       } else {
@@ -256,12 +259,15 @@ export class TransactionsService {
       const transactionRecord = await this.prisma.$transaction(async (prisma) => {
         return await prisma.transaction.create({
           data: {
-            walletId,
+            wallet: { connect: { id: walletId } },
             hash: txHash,
             fromAddress: fromAddress,
             toAddress: to,
-            value: parseEther(value),
-            status: 'PENDING'
+            value: parseEther(value).toString(),
+            status: 'PENDING',
+            gasPrice: '0', // Dummy value
+            gasUsed: 0, // Dummy value
+            gasLimit: 0, // Dummy value
           }
         });
       });
@@ -324,7 +330,7 @@ export class TransactionsService {
       // Prepare transactions for Smart Account batch execution
       const transactions = batchData.transactions.map(tx => ({
         target: tx.to,
-        value: parseEther(tx.value),
+        value: BigInt(tx.value), // Convert string to bigint for batch execution
         data: tx.data || '0x'
       }));
 
@@ -340,12 +346,15 @@ export class TransactionsService {
           batchData.transactions.map(tx =>
             prisma.transaction.create({
               data: {
-                walletId,
+                wallet: { connect: { id: walletId } },
                 hash: `${txHash}-${Math.random().toString(36).substr(2, 9)}`, // Unique ID for batch items
                 fromAddress: wallet.address,
                 toAddress: tx.to,
-                value: parseEther(tx.value),
-                status: 'PENDING'
+                value: parseEther(tx.value).toString(),
+                status: 'PENDING',
+                gasPrice: '0', // Dummy value
+                gasUsed: 0, // Dummy value
+                gasLimit: 0, // Dummy value
               }
             })
           )
@@ -381,36 +390,39 @@ export class TransactionsService {
     const transaction = {
       to: to as `0x${string}`,
       value: parseEther(value),
-      data: data as `0x${string}`
+      data: data as `0x${string}`,
+      kzg: undefined,
+      account: provider.account,
+      chain: mainnet, // Add chain property
     };
 
     return await walletClient.sendTransaction(transaction);
   }
 
   // Legacy methods for backward compatibility
-  async buildAndSignTransactionForAI(
-    agentVerifierId: string,
-    to: string,
-    value: string,
-    chainId: number = 1
-  ) {
-    // Find wallet by verifierId
-    const wallet = await this.prisma.wallet.findFirst({
-      where: {
-        user: { verifierId: agentVerifierId }
-      }
-    });
+  // async buildAndSignTransactionForAI(
+  //   agentVerifierId: string,
+  //   to: string,
+  //   value: string,
+  //   chainId: number = 1
+  // ) {
+  //   // Find wallet by verifierId
+  //   const wallet = await this.prisma.wallet.findFirst({
+  //     where: {
+  //       agent: { user: { verifierId: agentVerifierId } }
+  //     }
+  //   });
 
-    if (!wallet) {
-      throw new Error(`Wallet not found for verifierId: ${agentVerifierId}`);
-    }
+  //   if (!wallet) {
+  //     throw new Error(`Wallet not found for verifierId: ${agentVerifierId}`);
+  //   }
 
-    return this.executeTransaction(wallet.id, {
-      to,
-      value,
-      useSmartAccount: true // AI agents prefer Smart Accounts
-    });
-  }
+  //   return this.executeTransaction(wallet.id, {
+  //     to,
+  //     value,
+  //     useSmartAccount: true // AI agents prefer Smart Accounts
+  //   });
+  // }
 
   private async performComplianceCheck(fromAddress: string, toAddress: string): Promise<ComplianceCheckResult> {
     try {

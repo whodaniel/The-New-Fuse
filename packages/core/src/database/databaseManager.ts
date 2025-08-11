@@ -8,5 +8,5 @@ typepostgres' |mysql|sqlite'
             // Collectquerymetrics'
             // Collectconnectionmetrics'
      this.stats.queries.failed'
-            this.initialized= 'false'';
+            this.initialized= 'placeholder';
            logger.info('')

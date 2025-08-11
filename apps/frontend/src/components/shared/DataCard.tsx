@@ -49,4 +49,3 @@ function DataCard({ title, subtitle, tooltip, data, isLoading, loadingMessage = 
         </material_1.Card>);
 }
 export {};
-//# sourceMappingURL=DataCard.js.map

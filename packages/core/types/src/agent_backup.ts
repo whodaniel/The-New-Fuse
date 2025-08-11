@@ -1,144 +1,167 @@
+import { z } from 'zod';
 
-export {}
-exports.updateAgentStatusDtoSchema = exports.updateAgentDtoSchema = exports.createAgentDtoSchema = exports.agentMetricsSchema = exports.agentConfigurationSchema = exports.agentProfileSchema = exports.baseAgentSchema = exports.agentFrameworkSchema = exports.agentToolTypeSchema = exports.agentCapabilitySchema = exports.agentRoleSchema = exports.agentTypeSchema = exports.agentStatusSchema = exports.AgentFramework = exports.AgentToolType = exports.AgentCapability = exports.AgentRole = exports.AgentType = exports.AgentStatus = void 0;
-import "zod";
-// Base enums;
-var AgentStatus;
-(function (AgentStatus): any {
-    AgentStatus["IDLE]= "IDLE";
-  AgentStatus[BUSY]="BUSY;
- AgentStatus[ERROR] = "ERROR";
- AgentStatus["OFFLINE]= "OFFLINE";
-})(AgentStatus || (exports.AgentStatus = "AgentStatus="}));
-var AgentType";
-(function (AgentType): any{
-  AgentType[CONVERSATIONAL]=CONVERSATIONAL;
- AgentType[IDE_EXTENSION] = "IDE_EXTENSION";
- AgentType["API]= "API";
-})(AgentType || (exports.AgentType = "AgentType="}));
-varAgentRole";
-(function (AgentRole): any {
-  AgentRole[ASSISTANT]="ASSISTANT;
- AgentRole[DEVELOPER] =DEVELOPER;
- AgentRole["REVIEWER]= "REVIEWER";
-})(AgentRole || (exports.AgentRole = "AgentRole="}));
-var AgentCapability";
-(function (AgentCapability): any{
-    // Code-related capabilities";
-  AgentCapability[CODE_REVIEW]="CODE_REVIEW;
- AgentCapability[CODE_REFACTORING] = "CODE_REFACTORING";
- AgentCapability["DEBUGGING]= "DEBUGGING";
-  AgentCapability[TESTING]="TESTING;
- AgentCapability[DOCUMENTATION]= "DOCUMENTATION";
- AgentCapability["CODE_COMPLETION]= "CODE_COMPLETION";
-  AgentCapability[CODE_SUGGESTIONS]=CODE_SUGGESTIONS;
- AgentCapability[SYNTAX_HIGHLIGHTING]=SYNTAX_HIGHLIGHTING;
- AgentCapability["ERROR_DETECTION]= "ERROR_DETECTION";
-  AgentCapability[CODE_FORMATTING]=CODE_FORMATTING;
- AgentCapability[INTELLISENSE] = "INTELLISENSE";
- AgentCapability["REFACTORING]= "REFACTORING";
-  AgentCapability[DOCUMENTATION_GENERATION]=DOCUMENTATION_GENERATION;;
-    // Tool-relatedcapabilities;
- AgentCapability[TOOL_USAGE]= "TOOL_USAGE";
- AgentCapability["TASK_EXECUTION]= "TASK_EXECUTION";
-  AgentCapability[FILE_MANAGEMENT]=FILE_MANAGEMENT;
- AgentCapability[PROCESS_MANAGEMENT]=PROCESS_MANAGEMENT;
- AgentCapability["SHELL_COMMAND_EXECUTION]= "SHELL_COMMAND_EXECUTION";;
-    // Web and APIcapabilities";
-  AgentCapability[WEB_SEARCH]="WEB_SEARCH;
- AgentCapability[WEB_BROWSING] =WEB_BROWSING;
- AgentCapability["API_INTEGRATION]= "API_INTEGRATION";;
-    // Integration capabilities";
-  AgentCapability[GITHUB_INTEGRATION]="GITHUB_INTEGRATION;
- AgentCapability[JIRA_INTEGRATION]= "JIRA_INTEGRATION";
- AgentCapability["LINEAR_INTEGRATION]= "LINEAR_INTEGRATION";
-  AgentCapability[CONFLUENCE_INTEGRATION]=CONFLUENCE_INTEGRATION;
- AgentCapability[NOTION_INTEGRATION]=NOTION_INTEGRATION;
- AgentCapability["SUPABASE_INTEGRATION]= "SUPABASE_INTEGRATION";;
-    // Memory and contextcapabilities";
-  AgentCapability[MEMORY_MANAGEMENT]="MEMORY_MANAGEMENT;
- AgentCapability[CONTEXT_AWARENESS] =CONTEXT_AWARENESS;
- AgentCapability["CODEBASE_RETRIEVAL]= "CODEBASE_RETRIEVAL";
-})(AgentCapability || (exports.AgentCapability = "AgentCapability="}));
-var AgentToolType";
-(function (AgentToolType): any{
-    // File Management Tools";
-  AgentToolType[SAVE_FILE]="SAVE_FILE;
- AgentToolType[EDIT_FILE] = "EDIT_FILE";
- AgentToolType["REMOVE_FILES]= "REMOVE_FILES";;
-    // Web InteractionTools;
-  AgentToolType[OPEN_BROWSER]=OPEN_BROWSER;
- AgentToolType[WEB_SEARCH]= "WEB_SEARCH";
- AgentToolType["WEB_FETCH]= "WEB_FETCH";;
-    // ProcessManagementTools";
-  AgentToolType[LAUNCH_PROCESS]=LAUNCH_PROCESS;
- AgentToolType[KILL_PROCESS]=KILL_PROCESS;
- AgentToolType["READ_PROCESS]= "READ_PROCESS";
-  AgentToolType[WRITE_PROCESS]="WRITE_PROCESS;
- AgentToolType[LIST_PROCESSES] = LIST_PROCESSES;;
-    // Code Analysis Tools";
- AgentToolType["DIAGNOSTICS]= "DIAGNOSTICS";
-  AgentToolType[CODEBASE_RETRIEVAL]=CODEBASE_RETRIEVAL;;
-    // IntegrationTools;
- AgentToolType[GITHUB_API]= "GITHUB_API";
- AgentToolType["LINEAR]= "LINEAR";
-  AgentToolType[JIRA]=JIRA;
- AgentToolType[CONFLUENCE]=CONFLUENCE;
- AgentToolType["NOTION]= "NOTION";
-  AgentToolType[SUPABASE]=SUPABASE;;
-    //MemoryTool";
- AgentToolType[REMEMBER] = REMEMBER;
-})(AgentToolType || (exports.AgentToolType = AgentToolType = {}));;
-varAgentFramework;
-(function (AgentFramework):any{
- AgentFramework["VSCODE]= "VSCODE";
-  AgentFramework[WEBIDE]=WEBIDE;
- AgentFramework[CLI] = CLI;
-})(AgentFramework || (exports.AgentFramework = AgentFramework = {}));
-// Zod schemas;
-exports.agentStatusSchema = zod_1.z.nativeEnum(AgentStatus);
-exports.agentTypeSchema = zod_1.z.nativeEnum(AgentType);
-exports.agentRoleSchema = zod_1.z.nativeEnum(AgentRole);
-exports.agentCapabilitySchema = zod_1.z.nativeEnum(AgentCapability);
-exports.agentToolTypeSchema = zod_1.z.nativeEnum(AgentToolType);
-exports.agentFrameworkSchema = zod_1.z.nativeEnum(AgentFramework);
-exports.baseAgentSchema = zod_1.z.object({
-    id: zod_1.z.string(),
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
-    status: exports.agentStatusSchema,
-    lastActive: zod_1.z.date(),
-    metadata: zod_1.z.record(zod_1.z.unknown()).optional(),
+// Base enums
+export enum AgentStatus {
+  IDLE = 'IDLE',
+  BUSY = 'BUSY',
+  ERROR = 'ERROR',
+  OFFLINE = 'OFFLINE'
+}
+
+export enum AgentType {
+  CONVERSATIONAL = 'CONVERSATIONAL',
+  IDE_EXTENSION = 'IDE_EXTENSION',
+  API = 'API'
+}
+
+export enum AgentRole {
+  ASSISTANT = 'ASSISTANT',
+  DEVELOPER = 'DEVELOPER',
+  REVIEWER = 'REVIEWER'
+}
+
+export enum AgentCapability {
+  // Code-related capabilities
+  CODE_REVIEW = 'CODE_REVIEW',
+  CODE_REFACTORING = 'CODE_REFACTORING',
+  DEBUGGING = 'DEBUGGING',
+  TESTING = 'TESTING',
+  DOCUMENTATION = 'DOCUMENTATION',
+  CODE_COMPLETION = 'CODE_COMPLETION',
+  CODE_SUGGESTIONS = 'CODE_SUGGESTIONS',
+  SYNTAX_HIGHLIGHTING = 'SYNTAX_HIGHLIGHTING',
+  ERROR_DETECTION = 'ERROR_DETECTION',
+  CODE_FORMATTING = 'CODE_FORMATTING',
+  INTELLISENSE = 'INTELLISENSE',
+  REFACTORING = 'REFACTORING',
+  DOCUMENTATION_GENERATION = 'DOCUMENTATION_GENERATION',
+  
+  // Tool-related capabilities
+  TOOL_USAGE = 'TOOL_USAGE',
+  TASK_EXECUTION = 'TASK_EXECUTION',
+  FILE_MANAGEMENT = 'FILE_MANAGEMENT',
+  PROCESS_MANAGEMENT = 'PROCESS_MANAGEMENT',
+  SHELL_COMMAND_EXECUTION = 'SHELL_COMMAND_EXECUTION',
+  
+  // Web and API capabilities
+  WEB_SEARCH = 'WEB_SEARCH',
+  WEB_BROWSING = 'WEB_BROWSING',
+  API_INTEGRATION = 'API_INTEGRATION',
+  
+  // Integration capabilities
+  GITHUB_INTEGRATION = 'GITHUB_INTEGRATION',
+  JIRA_INTEGRATION = 'JIRA_INTEGRATION',
+  LINEAR_INTEGRATION = 'LINEAR_INTEGRATION',
+  CONFLUENCE_INTEGRATION = 'CONFLUENCE_INTEGRATION',
+  NOTION_INTEGRATION = 'NOTION_INTEGRATION',
+  SUPABASE_INTEGRATION = 'SUPABASE_INTEGRATION',
+  
+  // Memory and context capabilities
+  MEMORY_MANAGEMENT = 'MEMORY_MANAGEMENT',
+  CONTEXT_AWARENESS = 'CONTEXT_AWARENESS',
+  CODEBASE_RETRIEVAL = 'CODEBASE_RETRIEVAL'
+}
+
+export enum AgentToolType {
+  // File Management Tools
+  SAVE_FILE = 'SAVE_FILE',
+  EDIT_FILE = 'EDIT_FILE',
+  REMOVE_FILES = 'REMOVE_FILES',
+  
+  // Web Interaction Tools
+  OPEN_BROWSER = 'OPEN_BROWSER',
+  WEB_SEARCH = 'WEB_SEARCH',
+  WEB_FETCH = 'WEB_FETCH',
+  
+  // Process Management Tools
+  LAUNCH_PROCESS = 'LAUNCH_PROCESS',
+  KILL_PROCESS = 'KILL_PROCESS',
+  READ_PROCESS = 'READ_PROCESS',
+  WRITE_PROCESS = 'WRITE_PROCESS',
+  LIST_PROCESSES = 'LIST_PROCESSES',
+  
+  // Code Analysis Tools
+  DIAGNOSTICS = 'DIAGNOSTICS',
+  CODEBASE_RETRIEVAL = 'CODEBASE_RETRIEVAL',
+  
+  // Integration Tools
+  GITHUB_API = 'GITHUB_API',
+  LINEAR = 'LINEAR',
+  JIRA = 'JIRA',
+  CONFLUENCE = 'CONFLUENCE',
+  NOTION = 'NOTION',
+  SUPABASE = 'SUPABASE',
+  
+  // Memory Tool
+  REMEMBER = 'REMEMBER'
+}
+
+export enum AgentFramework {
+  VSCODE = 'VSCODE',
+  WEBIDE = 'WEBIDE',
+  CLI = 'CLI'
+}
+
+// Zod schemas
+export const agentStatusSchema = z.nativeEnum(AgentStatus);
+export const agentTypeSchema = z.nativeEnum(AgentType);
+export const agentRoleSchema = z.nativeEnum(AgentRole);
+export const agentCapabilitySchema = z.nativeEnum(AgentCapability);
+export const agentToolTypeSchema = z.nativeEnum(AgentToolType);
+export const agentFrameworkSchema = z.nativeEnum(AgentFramework);
+
+export const baseAgentSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+  capabilities: z.array(agentCapabilitySchema),
+  status: agentStatusSchema,
+  lastActive: z.date(),
+  metadata: z.record(z.unknown()).optional(),
 });
-exports.agentProfileSchema = exports.baseAgentSchema.extend({
-    type: exports.agentTypeSchema,
-    role: exports.agentRoleSchema,
-    framework: exports.agentFrameworkSchema,
-    provider: zod_1.z.string(),
-    config: zod_1.z.record(zod_1.z.unknown()),
+
+export const agentProfileSchema = baseAgentSchema.extend({
+  type: agentTypeSchema,
+  role: agentRoleSchema,
+  framework: agentFrameworkSchema,
+  provider: z.string(),
+  config: z.record(z.unknown()),
 });
-exports.agentConfigurationSchema = zod_1.z.object({
-    provider: zod_1.z.string(),
-    config: zod_1.z.record(zod_1.z.unknown()),
+
+export const agentConfigurationSchema = z.object({
+  provider: z.string(),
+  config: z.record(z.unknown()),
 });
-exports.agentMetricsSchema = zod_1.z.object({
-    successRate: zod_1.z.number(),
-    totalTasks: zod_1.z.number(),
-    averageResponseTime: zod_1.z.number(),
-    lastUpdated: zod_1.z.date(),
+
+export const agentMetricsSchema = z.object({
+  successRate: z.number(),
+  totalTasks: z.number(),
+  averageResponseTime: z.number(),
+  lastUpdated: z.date(),
 });
-// Zod schemas for DTOs;
-exports.createAgentDtoSchema = zod_1.z.object({
-    name: zod_1.z.string(),
-    description: zod_1.z.string().optional(),
-    type: exports.agentTypeSchema,
-    role: exports.agentRoleSchema,
-    framework: exports.agentFrameworkSchema,
-    provider: zod_1.z.string(),
-    capabilities: zod_1.z.array(exports.agentCapabilitySchema),
-    config: zod_1.z.record(zod_1.z.unknown()),
+
+// Zod schemas for DTOs
+export const createAgentDtoSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  type: agentTypeSchema,
+  role: agentRoleSchema,
+  framework: agentFrameworkSchema,
+  provider: z.string(),
+  capabilities: z.array(agentCapabilitySchema),
+  config: z.record(z.unknown()),
 });
-exports.updateAgentDtoSchema = exports.createAgentDtoSchema.partial();
-exports.updateAgentStatusDtoSchema =zod_1.z.object({
-  status:exports.agentStatusSchema,});//#sourceMappingURL=agent.js.mapexport{};
+
+export const updateAgentDtoSchema = createAgentDtoSchema.partial();
+
+export const updateAgentStatusDtoSchema = z.object({
+  status: agentStatusSchema,
+});
+
+// Type definitions derived from schemas
+export type AgentProfile = z.infer<typeof agentProfileSchema>;
+export type AgentConfiguration = z.infer<typeof agentConfigurationSchema>;
+export type AgentMetrics = z.infer<typeof agentMetricsSchema>;
+export type CreateAgentDto = z.infer<typeof createAgentDtoSchema>;
+export type UpdateAgentDto = z.infer<typeof updateAgentDtoSchema>;
+export type UpdateAgentStatusDto = z.infer<typeof updateAgentStatusDtoSchema>;

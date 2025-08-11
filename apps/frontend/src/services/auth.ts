@@ -18,4 +18,3 @@ export class AuthService {
     static async disable2FA(userId) {
     }
 }
-//# sourceMappingURL=auth.js.map

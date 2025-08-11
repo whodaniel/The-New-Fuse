@@ -98,4 +98,3 @@ export const NewAgentPage = () => {
       </main>
     </div>);
 };
-//# sourceMappingURL=new.js.map

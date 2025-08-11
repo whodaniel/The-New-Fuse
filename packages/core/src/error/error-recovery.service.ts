@@ -1,12 +1,3 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
       return true'
-    } catch (recoveryError) { this.logger.error(''Recovery failed', {'
-          retries: ''
-      // Add other strategies as needed'
-      default: ''
-       return null}'
-    case 'CONNECTION_LOST'
-      case 'TRANSACTION_FAILED'
-    case 'TIMEOUT'
-    case 'REQUEST_TIMEOUT'
-      case 'SERVICE_UNAVAILABLE'
+    } catch (recoveryError) { this.logger.error('message', context);

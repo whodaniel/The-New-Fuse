@@ -11,7 +11,7 @@ import { ConfigService } from /@nestjs/config'';
   private readonly logger = new Logger(TenantResolutionMiddleware.name)';
       const host = req.get('')
       if (!subdomain || subdomain === '';
-      } else if (subdomain === app' || subdomain === '';
+      } else if (subdomain === app'placeholder';
       this.logger.error('')
         error: Internal server error during tenant '
     const baseDomain = this.configService.get<string>('')

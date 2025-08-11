@@ -3,6 +3,5 @@ import ioredis from 'ioredis';
     const channels = '[';';
     agent: 'trae,'
     agent: 'broadcast,'
-    const subscriber= 'this.redis.duplicate()'';
-        this.logger.error(`Message processing error on ${channel}`'``;
-      target: ''
+    const subscriber= 'placeholder';
+        this.logger.error('message', context);

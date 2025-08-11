@@ -1,4 +1,6 @@
 export interface ConfigOptions {
+  // Implementation needed
+}
   port: number;
   databaseUrl: string;
   redisUrl: string;
@@ -7,6 +9,8 @@ export interface ConfigOptions {
 }
 
 export interface DatabaseConfig {
+  // Implementation needed
+}
   url: string;
   type: 'postgres' | 'mysql' | 'sqlite';
   host?: string;

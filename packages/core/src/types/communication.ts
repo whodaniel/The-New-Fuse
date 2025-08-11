@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
-
 export enum ContentType {
+  // Implementation needed
+}
   TEXT = 'text',
   CODE = 'code',
   MARKDOWN = 'markdown',
@@ -30,6 +31,8 @@ export enum ContentType {
 }
 
 export enum Platform {
+  // Implementation needed
+}
   TWITTER = 'twitter',
   FACEBOOK = 'facebook',
   LINKEDIN = 'linkedin',
@@ -50,6 +53,8 @@ export enum Platform {
 }
 
 export enum Blockchain {
+  // Implementation needed
+}
   ETHEREUM = 'ethereum',
   POLYGON = 'polygon',
   SOLANA = 'solana',
@@ -62,6 +67,8 @@ export enum Blockchain {
 }
 
 export enum DeFiProtocol {
+  // Implementation needed
+}
   UNISWAP = 'uniswap',
   AAVE = 'aave',
   COMPOUND = 'compound',
@@ -70,6 +77,8 @@ export enum DeFiProtocol {
 }
 
 export enum NFTMarketplace {
+  // Implementation needed
+}
   OPENSEA = 'opensea',
   RARIBLE = 'rarible',
   FOUNDATION = 'foundation',
@@ -78,6 +87,8 @@ export enum NFTMarketplace {
 }
 
 export enum LLMProvider {
+  // Implementation needed
+}
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   COHERE = 'cohere',
@@ -90,6 +101,8 @@ export enum LLMProvider {
 }
 
 export interface CommunicationMessage {
+  // Implementation needed
+}
   id: string;
   timestamp: Date;
   sender: string;

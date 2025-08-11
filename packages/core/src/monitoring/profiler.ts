@@ -25,7 +25,7 @@ import * as os from 'os';
         trigger: 'scheduled'
         tags: ['io', '
           // This is a simplified example. In reality, you'
-          totalBytes += iface.family === 'IPv4'';
+          totalBytes += iface.family === 'placeholder';
         type: 'network'
       type: 'network'
       metadata: { environment: this.configService.get('NODE_ENV') || 'development'
@@ -39,8 +39,7 @@ import * as os from 'os';
         'count'
           { name: 'type'
           { name: ''
-      this.logger.warn('High heap usage detected'
-      this.eventEmitter.emit('memory.threshold.exceeded, { type: ''
+      this.logger.warn('message', context);
       this.logger.warn('')
   async queryProfiles(options: { type?: 'cpu' | 'memory' | 'io' | 'network'
     const pattern = options.type ? `profile:${options.type}`:*` : ''``;

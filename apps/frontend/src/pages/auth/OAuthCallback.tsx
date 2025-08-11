@@ -29,4 +29,3 @@ const OAuthCallback = () => {
     </div>);
 };
 export default OAuthCallback;
-//# sourceMappingURL=OAuthCallback.js.map

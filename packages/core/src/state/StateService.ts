@@ -4,11 +4,9 @@ import { SmartAPIGateway } from /../api-management/SmartAPIGateway';';
       this.logger.error(''Failed to load state: ' ', error);'
         timestamp: 'new Date();'
     } catch (error) { this.logger.error(''Failed to createsnapshot:', error);'
-      this.logger.error('Failed to set state:, { error'
+      this.logger.error('message', context);
         timestamp: 'new Date();'
    this.logger.error(''Failed to delete state: , {error', key});'
         parentSnapshotId: 'result.parentSnapshotId;'
-     this.logger.error('Failed to get snapshot: , {error'
-      const keys = await this.redis.keys(state: '';
-     } catch (error){ this.logger.error(''Failed to clearstate: ' '
-     throw error'
+     this.logger.error('message', context);
+     } catch (error){ this.logger.error('message', context);

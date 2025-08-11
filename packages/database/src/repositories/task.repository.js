@@ -1,4 +1,3 @@
-"use strict";
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -8,11 +7,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.TaskRepository = void 0;
-const common_1 = require("@nestjs/common");
-const prisma_1 = require("../../generated/prisma");
-const prisma_service_1 = require("../prisma.service");
+import { Injectable } from '@nestjs/common';
+import { TaskStatus } from '../../generated/prisma';
+import { PrismaService } from '../prisma.service';
 let TaskRepository = class TaskRepository {
     prisma;
     constructor(prisma) {
@@ -149,7 +146,7 @@ let TaskRepository = class TaskRepository {
             status,
             updatedAt: new Date()
         };
-        if (status === prisma_1.TaskStatus.COMPLETED) {
+        if (status === TaskStatus.COMPLETED) {
             updateData.endTime = new Date();
         }
         const task = await this.prisma.task.update({
@@ -164,7 +161,7 @@ let TaskRepository = class TaskRepository {
             where: { id },
             data: {
                 agentId,
-                status: prisma_1.TaskStatus.IN_PROGRESS,
+                status: TaskStatus.IN_PROGRESS,
                 startTime: new Date(),
                 updatedAt: new Date()
             },
@@ -192,7 +189,7 @@ let TaskRepository = class TaskRepository {
         const completedTasks = await this.prisma.task.count({
             where: {
                 ...where,
-                status: prisma_1.TaskStatus.COMPLETED
+                status: TaskStatus.COMPLETED
             }
         });
         const overdueTasks = 0; // Not available in current schema since no dueDate field
@@ -244,8 +241,9 @@ let TaskRepository = class TaskRepository {
         return tasks.map(task => this.mapDatabaseTaskToTask(task));
     }
 };
-exports.TaskRepository = TaskRepository;
-exports.TaskRepository = TaskRepository = __decorate([
-    (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
+TaskRepository = __decorate([
+    Injectable(),
+    __metadata("design:paramtypes", [PrismaService])
 ], TaskRepository);
+export { TaskRepository };
+//# sourceMappingURL=task.repository.js.map

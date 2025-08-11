@@ -1,7 +1,11 @@
 
 export class CreateAuditLogTable1694000000001 implements MigrationInterface { public async up(queryRunner: QueryRunner): Promise<void> {
+  // Implementation needed
+}
     await queryRunner.createTable(
       new Table({
+  // Implementation needed
+}
         name: 'audit_log'
             name: 'id'
             type: 'uuid'

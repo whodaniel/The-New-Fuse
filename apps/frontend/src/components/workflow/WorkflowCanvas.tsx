@@ -15,6 +15,7 @@ import { Box, useToast } from '@chakra-ui/react';
 import { NodeToolbar } from '../WorkflowBuilder/NodeToolbar';
 import { WorkflowToolbar } from './WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
+import { workflowValidationService } from '../../services/WorkflowValidationService';
 import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes } from './edges';
 
@@ -29,8 +30,29 @@ export const WorkflowCanvas: React.FC = () => {
   const [isExecuting, setIsExecuting] = useState(false);
 
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    [setEdges]
+    (connection: Connection) => {
+      // Validate connection before adding
+      const sourceNode = nodes.find(n => n.id === connection.source);
+      const targetNode = nodes.find(n => n.id === connection.target);
+      
+      if (sourceNode && targetNode) {
+        const validationErrors = workflowValidationService.validateEdgeConnection(sourceNode, targetNode);
+        const hasErrors = validationErrors.some(e => e.severity === 'error');
+        
+        if (hasErrors) {
+          toast({
+            title: 'Invalid Connection',
+            description: validationErrors[0].message,
+            status: 'error',
+            duration: 3000
+          });
+          return;
+        }
+      }
+      
+      setEdges((eds) => addEdge(connection, eds));
+    },
+    [setEdges, nodes, toast]
   );
 
   const onNodeClick = useCallback((_, node) => {
@@ -81,12 +103,32 @@ export const WorkflowCanvas: React.FC = () => {
   const handleSaveWorkflow = async () => {
     setIsSaving(true);
     try {
-      await saveWorkflow({
+      // Validate workflow before saving
+      const workflow = {
+        id: 'temp',
         name: workflowName,
         nodes,
         edges,
-        version: 1
-      });
+        status: 'draft' as const,
+        version: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'current-user'
+      };
+      
+      const validation = await workflowValidationService.validateWorkflow(workflow);
+      
+      if (!validation.valid) {
+        toast({
+          title: 'Validation Failed',
+          description: `${validation.errors.length} errors found. Please fix them before saving.`,
+          status: 'error',
+          duration: 5000
+        });
+        return;
+      }
+      
+      await saveWorkflow(workflow);
       toast({
         title: 'Workflow saved',
         status: 'success',
@@ -107,16 +149,48 @@ export const WorkflowCanvas: React.FC = () => {
   const handleExecuteWorkflow = async () => {
     setIsExecuting(true);
     try {
-      const result = await executeWorkflow({
+      // Validate workflow before execution
+      const workflow = {
+        id: 'temp',
+        name: workflowName,
         nodes,
-        edges
-      });
-      toast({
-        title: 'Workflow executed',
-        description: `Completed ${result.nodeCount} nodes in ${result.executionTime}ms`,
-        status: 'success',
-        duration: 3000
-      });
+        edges,
+        status: 'draft' as const,
+        version: 1,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        createdBy: 'current-user'
+      };
+      
+      const validation = await workflowValidationService.validateWorkflow(workflow);
+      
+      if (!validation.valid) {
+        toast({
+          title: 'Validation Failed',
+          description: `Cannot execute workflow with ${validation.errors.length} errors.`,
+          status: 'error',
+          duration: 5000
+        });
+        return;
+      }
+      
+      // Execute workflow if it has an ID (saved workflow)
+      if (workflow.id && workflow.id !== 'temp') {
+        const execution = await executeWorkflow(workflow.id);
+        toast({
+          title: 'Workflow execution started',
+          description: `Execution ID: ${execution.id}`,
+          status: 'success',
+          duration: 3000
+        });
+      } else {
+        toast({
+          title: 'Save Required',
+          description: 'Please save the workflow before executing it.',
+          status: 'warning',
+          duration: 3000
+        });
+      }
     } catch (err) {
       toast({
         title: 'Error executing workflow',

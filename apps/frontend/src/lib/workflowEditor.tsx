@@ -245,4 +245,3 @@ class WorkflowEditor {
 const workflowEditor = WorkflowEditor.getInstance();
 exports.workflowEditor = workflowEditor;
 export {};
-//# sourceMappingURL=workflowEditor.js.map

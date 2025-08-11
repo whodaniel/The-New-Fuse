@@ -71,4 +71,3 @@ function VoiceControlledCommander() {
     </card_1.Card>);
 }
 export {};
-//# sourceMappingURL=voice-controlled-commander.js.map

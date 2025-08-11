@@ -4,7 +4,9 @@ export declare enum MessageType {
     EVENT = "event",
     ERROR = "error",
     STATUS = "status",
-    RESPONSE = "response"
+    RESPONSE = "response",
+    NOTIFICATION = "notification",
+    TASK_ASSIGNMENT = "task_assignment"
 }
 import { Priority } from './core/enums';
 export interface Message {

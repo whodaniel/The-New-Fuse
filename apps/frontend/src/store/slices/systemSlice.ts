@@ -12,4 +12,3 @@ const createSystemSlice = (set): any => ({
 });
 exports.createSystemSlice = createSystemSlice;
 export {};
-//# sourceMappingURL=systemSlice.js.map

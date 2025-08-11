@@ -35,4 +35,3 @@ function RootLayout({ children, }) {
     </html>);
 }
 export {};
-//# sourceMappingURL=layout.js.map

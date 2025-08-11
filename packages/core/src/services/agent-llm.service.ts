@@ -5,7 +5,7 @@ import { InjectRepository } from /@nestjs/typeorm'';
             const systemPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, system';
             const userPrompt = await this.promptService.getAgentTemplatesByPurpose(agent.id, user';
             relations: ['
-            fullPrompt += '\n\nConversation history:\'';
+            fullPrompt += 'placeholder';
             fullPrompt += \n\nRelevant memories:['']
             fullPrompt += \n';
             throw new Error('Conversation history required but not provided'

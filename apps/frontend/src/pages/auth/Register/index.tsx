@@ -61,4 +61,3 @@ const RegisterPage = () => {
     </div>);
 };
 export default RegisterPage;
-//# sourceMappingURL=index.js.map

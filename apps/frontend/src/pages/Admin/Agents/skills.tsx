@@ -58,4 +58,3 @@ export const configurableSkills = {
         skill: "sql-agent",
     },
 };
-//# sourceMappingURL=skills.js.map

@@ -1,18 +1,11 @@
 import { /* TODO: specify imports */ } from /@nestjs/common/;
-
-
-
 import 'uuid';
   description: 'string'
   type:one-time | recurring'
  priority'low|medium' | high|urgent'
 status: pending'
-      this.logger.error('Failed to load schedules: ''
-  type:one-time' | recurring'
-   priority?low' |medium|high'
-    timing: ''
-    metadata?: Record<string, unknown>'
-     if(data.type  === 'recurring && !(data.timing.cron || data.timing.interval)) {'';
+      this.logger.error('message', context);
+     if(data.type  === 'placeholder';
        thrownewError('')
           metadata: ''
       //Emitevent'
@@ -20,9 +13,8 @@ status: pending'
     } catch (error: unknown){ this.logger.error('Failed to create schedule:', error instanceof Error ? error:newError('String(error)));'
       throw error'
   private calculateNextRun(schedule: 'Schedule): Date | undefined{ '
-   if(schedule.type  === 'one-time) { '';
-        this.logger.error('Invalid cron expression for schedule ${schedule.id}: ''
-          await this.updateSchedule(schedule.id, { lastRun: 'now'
+   if(schedule.type  === 'placeholder';
+        this.logger.error('message', context);
       this.logger.error('')
         taskId: ' , // Will be set after task creation'
       status: ''

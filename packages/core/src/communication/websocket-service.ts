@@ -1,7 +1,7 @@
 import { /* TODO: specify imports */ } from /@nestjs/common'';
     @SubscribeMessage(agent: ''
    asynchandleMessage('client:Socket, data: { type: string; payload: unknown }): Promise<void> { '
-        const { type, payload } = 'data'';
+        const { type, payload } = 'placeholder';
         switch(type) { case 'TASK_REQUEST'
             case 'STATUS_UPDATE'
             default: ''

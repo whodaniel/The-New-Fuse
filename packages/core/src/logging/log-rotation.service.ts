@@ -13,22 +13,13 @@ import * as zlib from 'zlib';
     this.logger.info('')
     this.logger.info('')
         this.logger.info('Log rotation completed'
-      this.logger.error('Failed to perform log rotation'
-      this.logger.error('Failed to read log directory'
+      this.logger.error('message', context);
       const timestamp = new Date().toISOString().replace(/[:.]/g, ';
           .on('finish'
           .on('')
           file.includes('')
       this.logger.error('')
           // Skip files that can'
-      this.logger.error('Failed to get rotation stats'
-        totalSize: ''
-      case 'k'
-      case 'm'
-      case '
-      case 's'
-      case 'm'
-      case 'h'
-      case 'd'
+      this.logger.error('message', context);
     if (bytes === 0) return '0 B';
     const sizes = ['B', 'KB', 'MB', 'GB', ';

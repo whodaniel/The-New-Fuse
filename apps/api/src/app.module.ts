@@ -11,10 +11,11 @@ import { ChatModule } from './modules/chat/chat.module';
 import { TaskModule } from './modules/task/task.module';
 import { CacheService } from './cache/cache.service';
 import { WebsocketGateway } from './websocket/websocket.gateway';
-import { MonitoringService } from './services/monitoring.service';
-import { MonitoringController } from './controllers/monitoring.controller';
 import { LLMProviderController } from './llm/llm-provider.controller';
 import { LLMProviderService } from './llm/llm-provider.service';
+import { SystemController } from './controllers/system.controller';
+import { WebSocketController } from './controllers/websocket.controller';
+import { WorkflowController } from './controllers/workflow.controller';
 import { EntityDiscoveryModule } from './modules/discovery/entity-discovery.module';
 import { ClaudeDevAutomationModule } from './modules/ClaudeDevAutomationModule';
 import { TNFMCPModule } from './mcp/TNFMCPModule';
@@ -60,7 +61,22 @@ import { MonitoringModule } from './monitoring/monitoring.module';
     SmartAccountModule, // Smart Account (ERC-4337) Module
     MonitoringModule, // Wallet Platform Monitoring
   ],
-  controllers: [AppController, MonitoringController, A2AController, LLMProviderController],
-  providers: [AppService, CacheService, MonitoringService, WebsocketGateway, LLMProviderService],
+  controllers: [
+    AppController, 
+    A2AController, 
+    LLMProviderController,
+    SystemController,
+    WebSocketController,
+    WorkflowController
+  ],
+  providers: [
+    AppService, 
+    CacheService, 
+    WebsocketGateway, 
+    LLMProviderService,
+    SystemController,
+    WebSocketController,
+    WorkflowController
+  ],
 })
 export class AppModule {}

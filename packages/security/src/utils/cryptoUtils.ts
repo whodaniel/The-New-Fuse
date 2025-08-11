@@ -12,6 +12,13 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16; // For AES, this is always 16
+// Removed unused TAG_LENGTH constant
+// --- Crypto Utility Module Refactor Plan Implementation ---
+// 1. This file is now the single source of cryptographic helpers for the project.
+// 2. All direct usages of Node.js 'crypto' in other files should be replaced with these functions.
+// 3. If you need to add new cryptographic helpers, add them here and document them.
+// 4. If browser support is needed, polyfills or Web Crypto API equivalents should be added here.
+
 const KEY_LENGTH = 32; // For aes-256-gcm
 
 /**
@@ -21,6 +28,11 @@ const KEY_LENGTH = 32; // For aes-256-gcm
 export function getUUID(): string {
   return uuidv4();
 }
+
+/**
+ * Example usage (remove direct crypto usage elsewhere):
+ *   import { getUUID, encrypt, decrypt, sha256, hmacSha256, timingSafeEqual } from './cryptoUtils';
+ */
 
 /**
  * Generates cryptographically secure random bytes.

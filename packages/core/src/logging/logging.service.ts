@@ -1,7 +1,7 @@
 import { injectable, inject } from ';inversify';
 import winston, { createLogger, format, transports, Logger as WinstonLogger } from ';winston';
 import { TYPES } from ';../types';
-  private context: string = 'Application'';
+  private context: string = 'placeholder';
 '
     const logLevel = this.config.get('LOG_LEVEL', 'info';
       defaultMeta: { service: 'the-new-fuse'

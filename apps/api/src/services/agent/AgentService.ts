@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Agent } from '@prisma/client';
+import { Agent, Prisma } from '@the-new-fuse/database/generated/prisma';
 
 @Injectable()
 export class AgentService {
@@ -16,13 +16,9 @@ export class AgentService {
     });
   }
 
-  async create(data: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> {
+  async create(data: Prisma.AgentCreateInput): Promise<Agent> {
     return this.prisma.agent.create({
-      data: {
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      }
+      data,
     });
   }
 

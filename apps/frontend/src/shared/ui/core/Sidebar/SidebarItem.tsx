@@ -14,4 +14,3 @@ export function SidebarItem({ icon: Icon, label, onClick, view, disabled, toolti
     }
     return content;
 }
-//# sourceMappingURL=SidebarItem.js.map

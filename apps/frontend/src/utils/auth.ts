@@ -48,4 +48,3 @@ exports.AuthManagerImpl = AuthManagerImpl;
 // should ideally become `exports.AuthManagerImpl = void 0;` or be handled by the build system.
 // For now, I will leave it and it can be cleaned in a separate step if needed.
 export {};
-//# sourceMappingURL=auth.js.map

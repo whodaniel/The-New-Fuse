@@ -28,4 +28,3 @@ export function useTheme(storageKey = 'ui-theme'): any {
     }, [state.theme, state.systemTheme]);
     return [state.theme, setTheme];
 }
-//# sourceMappingURL=useTheme.js.map

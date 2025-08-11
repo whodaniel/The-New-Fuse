@@ -59,4 +59,3 @@ const ForgotPassword = () => {
     </div>);
 };
 export default ForgotPassword;
-//# sourceMappingURL=ForgotPassword.js.map

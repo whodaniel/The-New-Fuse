@@ -1,13 +1,37 @@
-export type * from './core/index';
-export type DeepPartial<T> = {
-    [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
-};
-export type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-export type AsyncResult<T> = Promise<{
-    success: boolean;
-    data?: T;
-    error?: string;
-}>;
-export type JSONValue = string | number | boolean | null | JSONValue[] | {
-    [key: string]: JSONValue;
-};
+export type { JsonValue, DataMap, UnknownRecord, Primitive, BaseEntity, ISODateTime, UUID, BaseConfig, BaseResponse, ValidationResult } from './core/base-types';
+export type { UserRole, UserPreferences } from './user';
+export { Permission } from './user';
+export type { ApiResponse, Handler } from './common-types';
+export { // Export classes as values
+Agent, CreateAgentDto, UpdateAgentDto, AgentResponseDto, AgentStatus, AgentRole, AgentType, AgentCapability } from './agent';
+export type { AgentMessage, AgentResponse } from './messaging';
+export { PriorityQueue } from './messaging';
+export type { WorkflowStep, WorkflowDefinition, WorkflowInstance, CreateWorkflowDefinitionDto, UpdateWorkflowDefinitionDto, StartWorkflowInstanceDto, WorkflowService, Workflow, CreateWorkflowDto, UpdateWorkflowDto, WorkflowExecutionStatus, WorkflowInput, WorkflowExecution } from './workflow';
+export { WorkflowStatus } from './workflow';
+export type { TaskStatusType, TaskPriorityType, TaskTypeValue, TaskMetadata, TaskDependency, CreateTaskDto, UpdateTaskDto, TaskService, TaskQuery, TaskResult, TaskFilter } from './tasks';
+export type { MCPMessage, MCPError, MCPTool, MCPResource, RegisteredEntity, CreateEntityDto, UpdateEntityDto } from './mcp';
+export { parseMCPMessage, createMCPResponse, createMCPError } from './mcp';
+export type { WebSocketMessage, WebSocketConfig, WebSocketHandler } from './websocket';
+export type { Message, MessageHandler, MessageBroker, MessageQueue, MessageRouter, MessageOptions } from './message';
+export { MessageType } from './message';
+export type { Channel, ChannelOptions, CommunicationProtocol } from './communication';
+export { WebSocketError } from './communication';
+export type { Command, CommandResult, Notification, NotificationOptions, NotificationAction } from './commands';
+export type { Task, TaskResult as CoreTaskResult } from './task';
+export { TaskStatus, TaskType } from './task';
+export type { ServiceStatus } from './services';
+export type { MassOptimizationConfig, TopologyOptimizationConfig, ValidationInputItem, ValidationDataset, PerformanceMetrics, PromptDefinition, AgentPromptVersion, WorkflowNode, WorkflowEdge, WorkflowTopology, OptimizationJob, MassBlockType, MassBlockConfig, AggregateConfig, ReflectConfig, DebateConfig, CustomConfig, ToolUseConfig, AgentWithMass, CreateOptimizedAgentDto, CreateTopologyDto, OptimizeTopologyDto } from './mass';
+export * from './marketplace';
+export * from './metrics';
+export * from './security';
+export type { SecurityScheme } from './security';
+export * from './user';
+export * from './state';
+export * from './validation';
+export * from './chat';
+export * from './session';
+export * from './suggestion';
+export * from './export';
+export * from './webhooks';
+export { SuggestionStatus, SuggestionPriority } from './core/enums';
+//# sourceMappingURL=index.d.ts.map

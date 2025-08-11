@@ -55,4 +55,3 @@ const Switch = React.forwardRef((_a, ref) => {
 });
 Switch.displayName = SwitchPrimitives.Root.displayName;
 export { Switch, switchVariants, thumbVariants };
-//# sourceMappingURL=Switch.js.map

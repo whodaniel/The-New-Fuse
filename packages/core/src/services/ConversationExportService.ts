@@ -7,4 +7,4 @@ export type ExportFormat = 'pdf' | 'md' | 'txt';
     const inputFile = path.join(tempDir, ';
     fs.writeFileSync(inputFile, content, 'utf-8'
     if (format === '';
-      await execAsync(`pandoc '${inputFile}' -o '${outputFile}`'``;
+      await execAsync(`pandoc `${placeholder}` -o '${outputFile}`'``;

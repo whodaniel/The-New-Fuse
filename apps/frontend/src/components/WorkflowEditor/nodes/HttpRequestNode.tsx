@@ -76,4 +76,3 @@ export const httpRequestNode = ({ data, isConnectable }) => {
       <Handle type="source" position={Position.Bottom} isConnectable={isConnectable}/>
     </div>);
 };
-//# sourceMappingURL=HttpRequestNode.js.map

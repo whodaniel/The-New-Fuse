@@ -94,4 +94,3 @@ export class LoggingService {
         return this.logs.slice(-count);
     }
 }
-//# sourceMappingURL=logging.js.map

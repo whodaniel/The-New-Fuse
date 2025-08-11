@@ -5,4 +5,3 @@ export const MotionProvider = ({ children }): any => {
       {children}
     </MotionConfig>);
 };
-//# sourceMappingURL=MotionContext.js.map
