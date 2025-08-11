@@ -1,49 +1,27 @@
 {
-  "references": [
-    { "path": "packages/types" },
-    { "path": "packages/agent" },
-    { "path": "packages/core" },
-    { "path": "packages/database" },
-    { "path": "packages/utils" },
-    { "path": "apps/api" },
-    { "path": "apps/backend" }
-  ],
   "compilerOptions": {
     "target": "ES2022",
-    "module": "ESNext",
-    "lib": ["ESNext", "DOM"],
-    "jsx": "react-jsx",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "moduleResolution": "bundler",
-    "baseUrl": ".",
-    "outDir": "./dist",
-    "paths": {
-      "@/*": ["src/*"],
-      "@the-new-fuse/*": ["packages/*/src"]
-    },
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["jest", "node", "react"],
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
-    "incremental": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@the-new-fuse/*": ["packages/*"],
+      "@apps/*": ["apps/*"]
+    }
   },
-  "include": ["src/**/*", "packages/**/*"],
-  "exclude": [
-    "node_modules", 
-    "dist", 
-    "**/*.test.ts", 
-    "**/*.test.tsx", 
-    "**/*.spec.ts", 
-    "**/*.spec.tsx",
-    "**/coverage/**",
-    "**/.turbo/**"
-  ]
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

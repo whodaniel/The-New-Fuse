@@ -1,0 +1,115 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# Build outputs
+build/
+dist/
+*.tsbuildinfo
+
+# Compiled output directories
+apps/*/dist/
+packages/*/dist/
+
+# Generated files within source directories
+apps/**/*.js
+apps/**/*.js.map
+apps/**/*.d.ts
+apps/**/*.d.ts.map
+packages/**/*.js
+packages/**/*.js.map
+packages/**/*.d.ts
+packages/**/*.d.ts.map
+src/**/*.js
+src/**/*.js.map
+src/**/*.d.ts
+src/**/*.d.ts.map
+packages/api-gateway/**/*.js
+packages/api-gateway/**/*.js.map
+packages/api-gateway/**/*.d.ts
+packages/api-gateway/**/*.d.ts.map
+src/renderer/
+
+# Specific generated directories
+generated/
+apps/backend/src/scheduling/
+
+# Documentation/Planning files
+REAL_USER_JOURNEYS.md
+USER_JOURNEY_MAP.md
+
+# Testing
+coverage/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDE and editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+.history/
+
+# Large files we don't want in git
+temp-import-list.txt
+file_structure.txt
+.qodo/history.sqlite
+*.dylib.node
+*.wasm
+*.zip
+swc.darwin-x64.node
+schema-engine-darwin
+migration-engine-darwin
+*schema-engine-darwin*
+*query-engine-darwin*
+*migration-engine-darwin*
+
+# Node.js runtime directories
+node-v*/
+node-v*-*/
+
+# Yarn/npm cache files
+.yarn/cache/
+**/node_modules/@esbuild/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database
+*.sqlite
+*.db
+data/vector-db/
+
+# Cache
+.turbo
+.webpack
+.eslintcache
+.cache
+.parcel-cache
+
+# Prisma client generated files (already covered by packages/*/dist/ but good to be explicit)
+packages/database/prisma/client/
+
+# Misc
+*.pem
+
+# Port Management
+.port-management-backups/
+*.port-backup
+node_modules/.port-registry

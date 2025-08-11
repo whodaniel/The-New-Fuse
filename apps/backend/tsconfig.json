@@ -3,20 +3,17 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "baseUrl": ".",
-    "noEmit": false,
-    "skipLibCheck": true,
-    "noImplicitAny": false,
-    "strictFunctionTypes": false,
-    "strictNullChecks": false,
-    "noImplicitReturns": false,
+    "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-      "@app/*": ["src/app/*"],
-      "@modules/*": ["src/modules/*"]
+      "@/*": ["src/*"]
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
-  "references": []
+  "exclude": ["node_modules", "dist", "test", "**/*spec.ts"],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/core" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" }
+  ]
 }

@@ -1,34 +1,15 @@
 {
-  "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/*": ["./packages/*/src"]
-    }
-  },
-  "include": [
-    "apps/backend/src/**/*.ts",
-    "apps/backend/src/**/*.tsx",
-    "apps/api/src/**/*.ts",
-    "apps/api/src/**/*.tsx",
-    "src/**/*.ts",
-    "src/**/*.tsx"
-  ],
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  }
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/types" },
+    { "path": "./packages/agent" },
+    { "path": "./packages/core" },
+    { "path": "./packages/database" },
+    { "path": "./packages/utils" },
+    { "path": "./apps/api" },
+    { "path": "./apps/backend" },
+    { "path": "./apps/electron-desktop" },
+    { "path": "./apps/browser-hub" }
+  ]
 }

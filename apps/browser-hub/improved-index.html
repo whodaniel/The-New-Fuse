@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Browser Hub - Advanced Multi-Service Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Advanced Title Bar */
+        .title-bar {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            border-bottom: 2px solid #334155;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .title-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #60a5fa;
+            font-weight: 800;
+            font-size: 18px;
+        }
+
+        .title-bar .service-status {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 12px;
+        }
+
+        .service-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.partial {
+            background: #f59e0b;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .title-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .title-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .title-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .title-btn.danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        }
+
+        .title-btn.success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        /* Advanced Tab System */
+        .tab-system {
+            background: #1e293b;
+            border-bottom: 2px solid #334155;
+        }
+
+        .tab-controls {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            background: #374151;
+        }
+
+        .tab-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tab-action-btn {
+            background: #4b5563;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            color: #e5e7eb;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-action-btn:hover {
+            background: #6b7280;
+        }
+
+        .tab-bar {
+            height: 55px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            overflow-x: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #374151;
+        }
+
+        .tab-bar::-webkit-scrollbar {
+            height: 6px;
+        }
+
+        .tab-bar::-webkit-scrollbar-track {
+            background: #374151;
+        }
+
+        .tab-bar::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+
+        .tab {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border: 1px solid #6b7280;
+            border-radius: 12px 12px 0 0;
+            padding: 10px 16px;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 200px;
+            max-width: 280px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #ec4899);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e2e8f0;
+            border-bottom: 1px solid #0f172a;
+            transform: translateY(-2px);
+        }
+
+        .tab.active::before {
+            opacity: 1;
+        }
+
+        .tab:hover:not(.active) {
+            color: #e2e8f0;
+            transform: translateY(-1px);
+        }
+
+        .tab .favicon {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            flex-shrink: 0;
+        }
+
+        .tab .title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .tab .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .tab .close-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .new-tab-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            border: none;
+            width: 42px;
+            height: 42px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            margin-left: 12px;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .new-tab-btn:hover {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            transform: scale(1.05);
+        }
+
+        /* Advanced Navigation Bar */
+        .nav-bar {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            height: 60px;
+            display: flex;
+            align-items: center;
+            padding: 0 24px;
+            gap: 16px;
+            border-bottom: 2px solid #4b5563;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .nav-btn:hover {
+            background: linear-gradient(135deg, #6b7280 0%, #9ca3af 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .url-bar {
+            flex: 1;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border: 2px solid #4b5563;
+            border-radius: 24px;
+            padding: 0 24px;
+            height: 44px;
+            color: #e2e8f0;
+            font-size: 14px;
+            margin: 0 16px;
+            transition: all 0.2s;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .url-bar:focus {
+            outline: none;
+            border-color: #60a5fa;
+            box-shadow: 0 0 0 4px rgba(96, 165, 250, 0.1), inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Advanced Services Panel */
+        .services-panel {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            border-bottom: 2px solid #4b5563;
+            padding: 20px 24px;
+            max-height: 40vh;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #4b5563 #334155;
+        }
+
+        .services-panel::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .services-panel::-webkit-scrollbar-track {
+            background: #334155;
+        }
+
+        .services-panel::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 4px;
+        }
+
+        .services-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #4b5563;
+        }
+
+        .services-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            font-size: 16px;
+            color: #60a5fa;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 20px;
+        }
+
+        .service-category {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+        }
+
+        .service-category:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        .service-category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .service-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .service-btn {
+            background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: left;
+        }
+
+        .service-btn:hover {
+            background: linear-gradient(135deg, #4b5563 0%, #6b7280 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .service-btn.active {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        }
+
+        .service-btn .icon {
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .service-btn .text {
+            flex: 1;
+        }
+
+        /* Color themes for categories */
+        .ai-clis .service-category-header {
+            color: #f472b6;
+        }
+
+        .ai-clis .service-btn:hover {
+            background: linear-gradient(135deg, #ec4899 0%, #be185d 100%);
+        }
+
+        .automation .service-category-header {
+            color: #10b981;
+        }
+
+        .automation .service-btn:hover {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .mcp-server .service-category-header {
+            color: #f59e0b;
+        }
+
+        .mcp-server .service-btn:hover {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .tnf .service-category-header {
+            color: #8b5cf6;
+        }
+
+        .tnf .service-btn:hover {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        .ide .service-category-header {
+            color: #06b6d4;
+        }
+
+        .ide .service-btn:hover {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-viewport {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 40px;
+            background: radial-gradient(circle at center, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
+        }
+
+        .welcome-content h1 {
+            color: #60a5fa;
+            font-size: 3.5rem;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-weight: 800;
+            text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .welcome-content h2 {
+            color: #cbd5e1;
+            font-size: 1.75rem;
+            font-weight: 500;
+            margin-bottom: 36px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .welcome-content p {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            margin-bottom: 48px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+            color: white;
+            border: none;
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 60px;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .quick-action-btn.theia {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .quick-action-btn.terminal {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        }
+
+        .quick-action-btn.files {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+        }
+
+        /* Advanced Status Bar */
+        .status-bar {
+            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            font-size: 11px;
+            color: #cbd5e1;
+            border-top: 2px solid #334155;
+            box-shadow: 0 -2px 4px rgba(0,0,0,0.1);
+        }
+
+        .status-section {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .title-bar {
+                padding: 0 16px;
+            }
+            
+            .nav-bar {
+                padding: 0 16px;
+                gap: 8px;
+            }
+            
+            .services-panel {
+                padding: 16px;
+            }
+            
+            .tab {
+                min-width: 150px;
+                max-width: 200px;
+            }
+            
+            .welcome-content h1 {
+                font-size: 2.5rem;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading States */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: loading 2s infinite;
+        }
+
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Advanced Title Bar -->
+    <div class="title-bar">
+        <div class="logo">
+            <span>🚀</span>
+            <span>TNF Browser Hub</span>
+            <span style="font-size: 12px; color: #94a3b8; font-weight: 400;">Advanced Platform</span>
+        </div>
+        
+        <div class="service-status">
+            <div class="service-indicator">
+                <span class="status-dot connected"></span>
+                <span>Theia</span>
+            </div>
+            <div class="service-indicator">
+                <span class="status-dot partial"></span>
+                <span>MCP</span>
+            </div>
+            <div class="service-indicator">
+                <span class="status-dot"></span>
+                <span>AI</span>
+            </div>
+        </div>
+        
+        <div class="title-controls">
+            <button class="title-btn success" onclick="startAllServices()">
+                <span>▶️</span>
+                <span>Start All</span>
+            </button>
+            <button class="title-btn" onclick="openWorkspace()">
+                <span>📂</span>
+                <span>Workspace</span>
+            </button>
+            <button class="title-btn danger" onclick="emergencyStop()">
+                <span>⛔</span>
+                <span>Stop</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Advanced Tab System -->
+    <div class="tab-system">
+        <div class="tab-controls">
+            <div class="tab-actions">
+                <button class="tab-action-btn" onclick="duplicateTab()">Duplicate</button>
+                <button class="tab-action-btn" onclick="pinTab()">Pin</button>
+                <button class="tab-action-btn" onclick="muteTab()">Mute</button>
+                <button class="tab-action-btn" onclick="closeOtherTabs()">Close Others</button>
+            </div>
+            <div>
+                <span id="tabInfo">1 of 1 tabs</span>
+            </div>
+        </div>
+        
+        <div class="tab-bar" id="tabBar">
+            <div class="tab active" data-tab-id="welcome">
+                <span class="favicon">🏠</span>
+                <span class="title">TNF Hub Home</span>
+                <button class="close-btn" onclick="closeTab('welcome')">×</button>
+            </div>
+            <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">+</button>
+        </div>
+    </div>
+
+    <!-- Advanced Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-section">
+            <button class="nav-btn" onclick="goBack()" title="Back" id="backBtn">←</button>
+            <button class="nav-btn" onclick="goForward()" title="Forward" id="forwardBtn">→</button>
+            <button class="nav-btn" onclick="refresh()" title="Refresh">↻</button>
+            <button class="nav-btn" onclick="goHome()" title="Home">🏠</button>
+        </div>
+        
+        <input type="text" class="url-bar" placeholder="Search or enter address..." onkeypress="handleUrlEnter(event)" id="urlBar">
+        
+        <div class="nav-section">
+            <button class="nav-btn" onclick="navigateToUrl()" title="Go">→</button>
+            <button class="nav-btn" onclick="toggleBookmark()" title="Bookmark">⭐</button>
+            <button class="nav-btn" onclick="shareTab()" title="Share">📤</button>
+            <button class="nav-btn" onclick="toggleDevTools()" title="DevTools">🔧</button>
+        </div>
+    </div>
+
+    <!-- Advanced Services Panel -->
+    <div class="services-panel">
+        <div class="services-header">
+            <div class="services-title">
+                <span>⚡</span>
+                <span>Integrated Services Platform</span>
+            </div>
+            <div>
+                <button class="title-btn" onclick="refreshServices()">
+                    <span>🔄</span>
+                    <span>Refresh All</span>
+                </button>
+                <button class="title-btn" onclick="togglePanels()">
+                    <span>📋</span>
+                    <span>Toggle</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="services-grid">
+            <!-- IDE & Development -->
+            <div class="service-category ide">
+                <div class="service-category-header">
+                    <span>💻</span>
+                    <span>Development Environment</span>
+                    <div style="margin-left: auto;">
+                        <span class="status-dot connected"></span>
+                    </div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openTheiaIDE()">
+                        <span class="icon">💻</span>
+                        <span class="text">Theia IDE</span>
+                    </button>
+                    <button class="service-btn" onclick="openVSCode()">
+                        <span class="icon">⚡</span>
+                        <span class="text">VS Code</span>
+                    </button>
+                    <button class="service-btn" onclick="openTerminal()">
+                        <span class="icon">📟</span>
+                        <span class="text">Terminal</span>
+                    </button>
+                    <button class="service-btn" onclick="openFileManager()">
+                        <span class="icon">📁</span>
+                        <span class="text">Files</span>
+                    </button>
+                    <button class="service-btn" onclick="openGitInterface()">
+                        <span class="icon">🔀</span>
+                        <span class="text">Git</span>
+                    </button>
+                    <button class="service-btn" onclick="openDebugger()">
+                        <span class="icon">🐛</span>
+                        <span class="text">Debug</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- AI Services -->
+            <div class="service-category ai-clis">
+                <div class="service-category-header">
+                    <span>🧠</span>
+                    <span>AI Services</span>
+                    <div style="margin-left: auto;">
+                        <span class="status-dot partial"></span>
+                        <span class="status-dot partial"></span>
+                    </div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="askClaude()">
+                        <span class="icon">⭐</span>
+                        <span class="text">Claude</span>
+                    </button>
+                    <button class="service-btn" onclick="askGemini()">
+                        <span class="icon">💎</span>
+                        <span class="text">Gemini</span>
+                    </button>
+                    <button class="service-btn" onclick="analyzePage()">
+                        <span class="icon">🔍</span>
+                        <span class="text">Analyze</span>
+                    </button>
+                    <button class="service-btn" onclick="openChatGPT()">
+                        <span class="icon">🤖</span>
+                        <span class="text">ChatGPT</span>
+                    </button>
+                    <button class="service-btn" onclick="openCopilot()">
+                        <span class="icon">🚁</span>
+                        <span class="text">Copilot</span>
+                    </button>
+                    <button class="service-btn" onclick="aiWorkflow()">
+                        <span class="icon">⚙️</span>
+                        <span class="text">Workflow</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Automation & Testing -->
+            <div class="service-category automation">
+                <div class="service-category-header">
+                    <span>🤖</span>
+                    <span>Automation & Testing</span>
+                    <div style="margin-left: auto;">
+                        <span class="status-dot partial"></span>
+                        <span class="status-dot"></span>
+                    </div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="openPuppeteer()">
+                        <span class="icon">🎭</span>
+                        <span class="text">Puppeteer</span>
+                    </button>
+                    <button class="service-btn" onclick="openPlaywright()">
+                        <span class="icon">🎪</span>
+                        <span class="text">Playwright</span>
+                    </button>
+                    <button class="service-btn" onclick="takeScreenshot()">
+                        <span class="icon">📷</span>
+                        <span class="text">Screenshot</span>
+                    </button>
+                    <button class="service-btn" onclick="generatePDF()">
+                        <span class="icon">📄</span>
+                        <span class="text">PDF Export</span>
+                    </button>
+                    <button class="service-btn" onclick="startRecord()">
+                        <span class="icon">⏺</span>
+                        <span class="text">Record</span>
+                    </button>
+                    <button class="service-btn" onclick="runTests()">
+                        <span class="icon">✅</span>
+                        <span class="text">Test Suite</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- MCP & Protocols -->
+            <div class="service-category mcp-server">
+                <div class="service-category-header">
+                    <span>🖥</span>
+                    <span>MCP & Protocols</span>
+                    <div style="margin-left: auto;">
+                        <span class="status-dot"></span>
+                    </div>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="startMCP()">
+                        <span class="icon">🚀</span>
+                        <span class="text">Start MCP</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpStatus()">
+                        <span class="icon">📊</span>
+                        <span class="text">Status</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpLogs()">
+                        <span class="icon">📋</span>
+                        <span class="text">Logs</span>
+                    </button>
+                    <button class="service-btn" onclick="mcpConfig()">
+                        <span class="icon">⚙️</span>
+                        <span class="text">Config</span>
+                    </button>
+                    <button class="service-btn" onclick="protocolDebug()">
+                        <span class="icon">🔍</span>
+                        <span class="text">Debug</span>
+                    </button>
+                    <button class="service-btn" onclick="apiMonitor()">
+                        <span class="icon">📡</span>
+                        <span class="text">Monitor</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- TNF Framework -->
+            <div class="service-category tnf">
+                <div class="service-category-header">
+                    <span>🚀</span>
+                    <span>TNF Framework</span>
+                </div>
+                <div class="service-buttons">
+                    <button class="service-btn" onclick="extractElements()">
+                        <span class="icon">🔧</span>
+                        <span class="text">Extract</span>
+                    </button>
+                    <button class="service-btn" onclick="createWorkflow()">
+                        <span class="icon">⚡</span>
+                        <span class="text">Workflow</span>
+                    </button>
+                    <button class="service-btn" onclick="autoNavigate()">
+                        <span class="icon">🧭</span>
+                        <span class="text">Navigate</span>
+                    </button>
+                    <button class="service-btn" onclick="dataProcessor()">
+                        <span class="icon">📊</span>
+                        <span class="text">Process</span>
+                    </button>
+                    <button class="service-btn" onclick="orchestrate()">
+                        <span class="icon">🎼</span>
+                        <span class="text">Orchestrate</span>
+                    </button>
+                    <button class="service-btn" onclick="deployments()">
+                        <span class="icon">🚀</span>
+                        <span class="text">Deploy</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-viewport">
+            <div class="welcome-content">
+                <h1>
+                    <span>🚀</span>
+                    <span>TNF Browser Hub</span>
+                </h1>
+                <h2>Advanced Multi-Service Development Platform</h2>
+                <p>
+                    Seamlessly integrate development, automation, AI services, and web browsing 
+                    in one unified platform. Start coding with Theia IDE, automate tasks with 
+                    AI agents, or browse the web with advanced developer tools.
+                </p>
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn theia" onclick="openTheiaIDE()">
+                        <span>💻</span>
+                        <span>Launch Theia IDE</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="createNewTab()">
+                        <span>🌐</span>
+                        <span>New Browser Tab</span>
+                    </button>
+                    <button class="quick-action-btn terminal" onclick="openTerminal()">
+                        <span>📟</span>
+                        <span>Open Terminal</span>
+                    </button>
+                    <button class="quick-action-btn files" onclick="openWorkspace()">
+                        <span>📁</span>
+                        <span>Open Workspace</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Status Bar -->
+    <div class="status-bar">
+        <div class="status-section">
+            <div class="status-item">
+                <span class="status-dot connected"></span>
+                <span>System Ready</span>
+            </div>
+            <div class="status-item">
+                <span>Version 2.0</span>
+            </div>
+            <div class="status-item">
+                <span id="connectionStatus">Connected</span>
+            </div>
+        </div>
+        
+        <div class="status-section">
+            <div class="status-item">
+                <span id="tabCount">1 tab</span>
+            </div>
+            <div class="status-item">
+                <span id="memoryUsage">Memory: 0 MB</span>
+            </div>
+            <div class="status-item">
+                <span id="networkStatus">Online</span>
+            </div>
+            <div class="status-item">
+                <span class="status-dot connected"></span>
+                <span>⚡</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced Browser Hub Implementation
+        let tabs = [
+            { id: 'welcome', title: 'TNF Hub Home', url: 'about:home', favicon: '🏠', active: true, pinned: false, muted: false }
+        ];
+        let tabCounter = 1;
+        let services = {
+            theia: { status: 'connected', port: 3000 },
+            mcp: { status: 'partial', port: 8080 },
+            ai: { status: 'disconnected', port: null }
+        };
+
+        // Enhanced Tab Management
+        function createNewTab(url = 'about:blank', title = 'New Tab', favicon = '🌐') {
+            const tabId = `tab-${++tabCounter}`;
+            const newTab = {
+                id: tabId,
+                title: title,
+                url: url,
+                favicon: favicon,
+                active: false,
+                pinned: false,
+                muted: false
+            };
+            
+            // Deactivate all tabs
+            tabs.forEach(tab => tab.active = false);
+            
+            // Add new tab
+            tabs.push(newTab);
+            newTab.active = true;
+            
+            renderTabs();
+            updateStatusBar();
+            
+            if (url !== 'about:blank' && url !== 'about:home') {
+                navigateToUrl(url);
+            }
+        }
+
+        function closeTab(tabId) {
+            if (tabs.length <= 1) return;
+            
+            const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+            if (tabIndex === -1) return;
+            
+            const tab = tabs[tabIndex];
+            if (tab.pinned) return; // Can't close pinned tabs
+            
+            const wasActive = tab.active;
+            tabs.splice(tabIndex, 1);
+            
+            if (wasActive && tabs.length > 0) {
+                const newActiveIndex = Math.max(0, tabIndex - 1);
+                tabs[newActiveIndex].active = true;
+            }
+            
+            renderTabs();
+            updateStatusBar();
+        }
+
+        function switchToTab(tabId) {
+            tabs.forEach(tab => {
+                tab.active = (tab.id === tabId);
+            });
+            renderTabs();
+            updateUrlBar();
+        }
+
+        function duplicateTab() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                createNewTab(activeTab.url, `${activeTab.title} (Copy)`, activeTab.favicon);
+            }
+        }
+
+        function pinTab() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                activeTab.pinned = !activeTab.pinned;
+                renderTabs();
+            }
+        }
+
+        function muteTab() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                activeTab.muted = !activeTab.muted;
+                renderTabs();
+            }
+        }
+
+        function closeOtherTabs() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                tabs = tabs.filter(tab => tab.active || tab.pinned);
+                renderTabs();
+                updateStatusBar();
+            }
+        }
+
+        function renderTabs() {
+            const tabBar = document.getElementById('tabBar');
+            const newTabBtn = tabBar.querySelector('.new-tab-btn');
+            
+            // Remove existing tabs
+            tabBar.querySelectorAll('.tab').forEach(tab => tab.remove());
+            
+            // Add current tabs
+            tabs.forEach(tab => {
+                const tabElement = document.createElement('div');
+                tabElement.className = `tab ${tab.active ? 'active' : ''} ${tab.pinned ? 'pinned' : ''}`;
+                tabElement.setAttribute('data-tab-id', tab.id);
+                tabElement.onclick = () => switchToTab(tab.id);
+                
+                tabElement.innerHTML = `
+                    <span class="favicon">${tab.favicon}</span>
+                    <span class="title">${tab.title}${tab.muted ? ' 🔇' : ''}</span>
+                    ${!tab.pinned ? `<button class="close-btn" onclick="event.stopPropagation(); closeTab('${tab.id}')">×</button>` : ''}
+                `;
+                
+                tabBar.insertBefore(tabElement, newTabBtn);
+            });
+            
+            // Update tab info
+            const activeTabIndex = tabs.findIndex(tab => tab.active) + 1;
+            document.getElementById('tabInfo').textContent = `${activeTabIndex} of ${tabs.length} tabs`;
+        }
+
+        // Enhanced Navigation
+        function goBack() {
+            console.log('Navigate back');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('back');
+            }
+        }
+
+        function goForward() {
+            console.log('Navigate forward');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('forward');
+            }
+        }
+
+        function refresh() {
+            console.log('Refresh page');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('refresh');
+            }
+        }
+
+        function goHome() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                activeTab.url = 'about:home';
+                activeTab.title = 'TNF Hub Home';
+                renderTabs();
+                updateUrlBar();
+            }
+        }
+
+        function handleUrlEnter(event) {
+            if (event.key === 'Enter') {
+                navigateToUrl();
+            }
+        }
+
+        function navigateToUrl(url) {
+            const urlBar = document.getElementById('urlBar');
+            const targetUrl = url || urlBar.value.trim();
+            
+            if (targetUrl) {
+                console.log('Navigate to:', targetUrl);
+                
+                const activeTab = tabs.find(tab => tab.active);
+                if (activeTab) {
+                    activeTab.url = targetUrl;
+                    
+                    // Update title based on URL
+                    if (targetUrl.includes('theia') || targetUrl.includes(':3000')) {
+                        activeTab.title = 'Theia IDE';
+                        activeTab.favicon = '💻';
+                    } else if (targetUrl.includes('github')) {
+                        activeTab.title = 'GitHub';
+                        activeTab.favicon = '🐙';
+                    } else {
+                        try {
+                            const urlObj = new URL(targetUrl);
+                            activeTab.title = urlObj.hostname;
+                            activeTab.favicon = '🌐';
+                        } catch {
+                            activeTab.title = targetUrl;
+                            activeTab.favicon = '🌐';
+                        }
+                    }
+                    
+                    renderTabs();
+                    updateUrlBar();
+                }
+                
+                if (window.electronAPI) {
+                    window.electronAPI.navigateToUrl(targetUrl);
+                }
+            }
+        }
+
+        function updateUrlBar() {
+            const urlBar = document.getElementById('urlBar');
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab && urlBar) {
+                urlBar.value = activeTab.url === 'about:home' ? '' : activeTab.url;
+            }
+        }
+
+        function shareTab() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab && activeTab.url && activeTab.url !== 'about:blank' && activeTab.url !== 'about:home') {
+                if (navigator.share) {
+                    navigator.share({
+                        title: activeTab.title,
+                        url: activeTab.url
+                    });
+                } else {
+                    navigator.clipboard.writeText(activeTab.url);
+                    console.log('URL copied to clipboard');
+                }
+            }
+        }
+
+        function toggleBookmark() {
+            const activeTab = tabs.find(tab => tab.active);
+            if (activeTab) {
+                console.log('Toggle bookmark for:', activeTab.title);
+                // Implement bookmark functionality
+            }
+        }
+
+        function toggleDevTools() {
+            console.log('Toggle DevTools');
+            if (window.electronAPI) {
+                window.electronAPI.toggleDevTools();
+            }
+        }
+
+        // IDE Integration
+        async function openTheiaIDE() {
+            console.log('Opening Theia IDE');
+            
+            try {
+                // Check if Theia is running
+                const isRunning = await checkTheiaStatus();
+                if (!isRunning) {
+                    await startTheiaServer();
+                    // Wait a bit for server to start
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+                
+                createNewTab('http://localhost:3000', 'Theia IDE', '💻');
+                
+                if (window.electronAPI) {
+                    window.electronAPI.openTheia();
+                }
+            } catch (error) {
+                console.error('Failed to open Theia IDE:', error);
+            }
+        }
+
+        async function checkTheiaStatus() {
+            try {
+                const response = await fetch('http://localhost:3000', { 
+                    method: 'HEAD',
+                    signal: AbortSignal.timeout(5000)
+                });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        async function startTheiaServer() {
+            console.log('Starting Theia Server');
+            if (window.electronAPI) {
+                return window.electronAPI.startTheiaServer();
+            }
+            throw new Error('Electron API not available');
+        }
+
+        function openVSCode() {
+            console.log('Opening VS Code');
+            if (window.electronAPI) {
+                window.electronAPI.openVSCode();
+            }
+        }
+
+        function openTerminal() {
+            console.log('Opening Terminal');
+            if (window.electronAPI) {
+                window.electronAPI.openTerminal();
+            }
+        }
+
+        function openFileManager() {
+            createNewTab('file:///', 'File Manager', '📁');
+        }
+
+        function openWorkspace() {
+            console.log('Opening Workspace');
+            openTheiaIDE(); // Use Theia as primary workspace
+        }
+
+        function openGitInterface() {
+            createNewTab('https://github.com', 'GitHub', '🐙');
+        }
+
+        function openDebugger() {
+            console.log('Opening Debugger');
+            if (window.electronAPI) {
+                window.electronAPI.openDebugger();
+            }
+        }
+
+        // AI Services
+        function askClaude() {
+            createNewTab('https://claude.ai', 'Claude AI', '⭐');
+        }
+
+        function askGemini() {
+            createNewTab('https://gemini.google.com', 'Gemini', '💎');
+        }
+
+        function analyzePage() {
+            console.log('Analyzing current page');
+            if (window.electronAPI) {
+                window.electronAPI.analyzePage();
+            }
+        }
+
+        function openChatGPT() {
+            createNewTab('https://chat.openai.com', 'ChatGPT', '🤖');
+        }
+
+        function openCopilot() {
+            createNewTab('https://copilot.microsoft.com', 'Copilot', '🚁');
+        }
+
+        function aiWorkflow() {
+            console.log('Opening AI Workflow');
+            if (window.electronAPI) {
+                window.electronAPI.openAIWorkflow();
+            }
+        }
+
+        // Automation Services
+        function openPuppeteer() {
+            console.log('Opening Puppeteer');
+            if (window.electronAPI) {
+                window.electronAPI.openService('puppeteer');
+            }
+        }
+
+        function openPlaywright() {
+            console.log('Opening Playwright');
+            if (window.electronAPI) {
+                window.electronAPI.openService('playwright');
+            }
+        }
+
+        function takeScreenshot() {
+            console.log('Taking screenshot');
+            if (window.electronAPI) {
+                window.electronAPI.takeScreenshot();
+            }
+        }
+
+        function generatePDF() {
+            console.log('Generating PDF');
+            if (window.electronAPI) {
+                window.electronAPI.generatePDF();
+            }
+        }
+
+        function startRecord() {
+            console.log('Starting recording');
+            if (window.electronAPI) {
+                window.electronAPI.startRecord();
+            }
+        }
+
+        function runTests() {
+            console.log('Running test suite');
+            if (window.electronAPI) {
+                window.electronAPI.runTests();
+            }
+        }
+
+        // MCP Services
+        function startMCP() {
+            console.log('Starting MCP Server');
+            if (window.electronAPI) {
+                window.electronAPI.startMCP();
+            }
+        }
+
+        function mcpStatus() {
+            console.log('Checking MCP Status');
+            if (window.electronAPI) {
+                window.electronAPI.mcpStatus();
+            }
+        }
+
+        function mcpLogs() {
+            console.log('Viewing MCP Logs');
+            if (window.electronAPI) {
+                window.electronAPI.mcpLogs();
+            }
+        }
+
+        function mcpConfig() {
+            console.log('MCP Configuration');
+            if (window.electronAPI) {
+                window.electronAPI.mcpConfig();
+            }
+        }
+
+        function protocolDebug() {
+            console.log('Protocol Debugging');
+            if (window.electronAPI) {
+                window.electronAPI.protocolDebug();
+            }
+        }
+
+        function apiMonitor() {
+            console.log('API Monitoring');
+            if (window.electronAPI) {
+                window.electronAPI.apiMonitor();
+            }
+        }
+
+        // TNF Framework
+        function extractElements() {
+            console.log('Extracting elements');
+            if (window.electronAPI) {
+                window.electronAPI.extractElements();
+            }
+        }
+
+        function createWorkflow() {
+            console.log('Creating workflow');
+            if (window.electronAPI) {
+                window.electronAPI.createWorkflow();
+            }
+        }
+
+        function autoNavigate() {
+            console.log('Auto-navigating');
+            if (window.electronAPI) {
+                window.electronAPI.autoNavigate();
+            }
+        }
+
+        function dataProcessor() {
+            console.log('Data Processing');
+            if (window.electronAPI) {
+                window.electronAPI.dataProcessor();
+            }
+        }
+
+        function orchestrate() {
+            console.log('Orchestrating services');
+            if (window.electronAPI) {
+                window.electronAPI.orchestrate();
+            }
+        }
+
+        function deployments() {
+            console.log('Managing deployments');
+            if (window.electronAPI) {
+                window.electronAPI.deployments();
+            }
+        }
+
+        // System Controls
+        function startAllServices() {
+            console.log('Starting all services');
+            if (window.electronAPI) {
+                window.electronAPI.startAllServices();
+            }
+            updateServiceStatus();
+        }
+
+        function emergencyStop() {
+            console.log('Emergency stop');
+            if (window.electronAPI) {
+                window.electronAPI.emergencyStop();
+            }
+        }
+
+        function refreshServices() {
+            console.log('Refreshing services');
+            if (window.electronAPI) {
+                window.electronAPI.refreshServices();
+            }
+            updateServiceStatus();
+        }
+
+        function togglePanels() {
+            const servicesPanel = document.querySelector('.services-panel');
+            if (servicesPanel.style.display === 'none') {
+                servicesPanel.style.display = 'block';
+            } else {
+                servicesPanel.style.display = 'none';
+            }
+        }
+
+        // Status Updates
+        function updateStatusBar() {
+            const elements = {
+                tabCount: document.getElementById('tabCount'),
+                memoryUsage: document.getElementById('memoryUsage'),
+                connectionStatus: document.getElementById('connectionStatus'),
+                networkStatus: document.getElementById('networkStatus')
+            };
+            
+            if (elements.tabCount) {
+                elements.tabCount.textContent = `${tabs.length} tab${tabs.length !== 1 ? 's' : ''}`;
+            }
+            
+            // These would typically get real data from Electron
+            if (elements.memoryUsage) {
+                elements.memoryUsage.textContent = 'Memory: 0 MB';
+            }
+            
+            if (elements.connectionStatus) {
+                elements.connectionStatus.textContent = 'Connected';
+            }
+            
+            if (elements.networkStatus) {
+                elements.networkStatus.textContent = navigator.onLine ? 'Online' : 'Offline';
+            }
+        }
+
+        function updateServiceStatus() {
+            // Update service indicators
+            const indicators = document.querySelectorAll('.status-dot');
+            
+            // This would check real service status
+            checkTheiaStatus().then(isRunning => {
+                services.theia.status = isRunning ? 'connected' : 'disconnected';
+                updateServiceIndicators();
+            });
+        }
+
+        function updateServiceIndicators() {
+            const titleIndicators = document.querySelectorAll('.title-bar .status-dot');
+            if (titleIndicators.length >= 3) {
+                titleIndicators[0].className = `status-dot ${services.theia.status}`;
+                titleIndicators[1].className = `status-dot ${services.mcp.status}`;
+                titleIndicators[2].className = `status-dot ${services.ai.status}`;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            updateStatusBar();
+            updateUrlBar();
+            updateServiceStatus();
+            
+            // Update status periodically
+            setInterval(() => {
+                updateServiceStatus();
+                updateStatusBar();
+            }, 30000);
+            
+            // Handle online/offline status
+            window.addEventListener('online', updateStatusBar);
+            window.addEventListener('offline', updateStatusBar);
+        });
+
+        // Handle window resize and responsive behavior
+        window.addEventListener('resize', () => {
+            // Update any responsive elements if needed
+        });
+    </script>
+</body>
+</html>

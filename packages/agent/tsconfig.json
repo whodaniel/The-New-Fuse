@@ -5,26 +5,14 @@
     "rootDir": "./src",
     "composite": true,
     "declaration": true,
-    "noEmit": false,
-    "baseUrl": ".",
-    "paths": {
-      "@the-new-fuse/core": [
-        "../core/src"
-      ],
-      "@the-new-fuse/core/*": [
-        "../core/src/*"
-      ],
-      "@the-new-fuse/types": [
-        "../types"
-      ],
-      "@the-new-fuse/types/*": [
-        "../types/*"
-      ]
-    }
+    "declarationMap": true,
+    "tsBuildInfoFile": "./.tsbuildinfo"
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
-    { "path": "../types" }
+    { "path": "../types" },
+    { "path": "../core" },
+    { "path": "../utils" }
   ]
 }

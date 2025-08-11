@@ -3,35 +3,17 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "target": "ES2022",
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "skipLibCheck": true,
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
-    "strictFunctionTypes": false,
-    "strictBindCallApply": false,
-    "strictPropertyInitialization": false,
-    "noImplicitThis": false,
-    "noImplicitReturns": false,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "@/*": ["src/*"],
-      "@types/*": ["src/types/*"],
-      "@controllers/*": ["src/controllers/*"],
-      "@the-new-fuse/core": ["../../packages/core/src"],
-      "@the-new-fuse/core/*": ["../../packages/core/src/*"]
-    },
-    "jsx": "react-jsx",
-    "useUnknownInCatchVariables": false
+      "@/*": ["*"]
+    }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
+    { "path": "../../packages/types" },
     { "path": "../../packages/core" },
-    { "path": "../../packages/types" }
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" }
   ]
 }

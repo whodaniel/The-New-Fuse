@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Browser Hub - Enhanced with Theia IDE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #1a202c;
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Enhanced Title Bar with Theia Integration */
+        .title-bar {
+            background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            border-bottom: 1px solid #4a5568;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .title-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #63b3ed;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .title-bar .ide-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ide-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ide-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .ide-btn.theia {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+        }
+
+        .ide-btn.vscode {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+
+        /* Enhanced Tab System */
+        .tab-system {
+            background: #2d3748;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .tab-bar {
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .tab-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            background: #374151;
+            border: 1px solid #4a5568;
+            border-radius: 8px 8px 0 0;
+            padding: 8px 16px;
+            margin-right: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9ca3af;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-width: 180px;
+            max-width: 240px;
+        }
+
+        .tab.active {
+            background: #1a202c;
+            color: #e2e8f0;
+            border-bottom: 1px solid #1a202c;
+        }
+
+        .tab:hover {
+            color: #e2e8f0;
+        }
+
+        .tab .favicon {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .tab .title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        .tab .close-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab .close-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+
+        .new-tab-btn {
+            background: #4a5568;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            color: #e2e8f0;
+            cursor: pointer;
+            margin-left: 8px;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .new-tab-btn:hover {
+            background: #6b7280;
+            transform: scale(1.05);
+        }
+
+        /* Enhanced Navigation with IDE Features */
+        .nav-bar {
+            background: #374151;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            gap: 12px;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        .nav-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            background: #4a5568;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: #6b7280;
+            transform: translateY(-1px);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .url-bar {
+            flex: 1;
+            background: #1a202c;
+            border: 2px solid #4a5568;
+            border-radius: 20px;
+            padding: 0 20px;
+            height: 40px;
+            color: #e2e8f0;
+            font-size: 14px;
+            margin: 0 12px;
+            transition: border-color 0.2s;
+        }
+
+        .url-bar:focus {
+            outline: none;
+            border-color: #63b3ed;
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+        }
+
+        .ide-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding-left: 12px;
+            border-left: 1px solid #4a5568;
+        }
+
+        .browser-engine-selector {
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 4px;
+            color: #e2e8f0;
+            padding: 6px 8px;
+            font-size: 12px;
+            margin-left: 8px;
+            cursor: pointer;
+        }
+
+        .browser-engine-selector:focus {
+            outline: none;
+            border-color: #63b3ed;
+        }
+
+        /* Enhanced Services Panel */
+        .services-panel {
+            background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+            border-bottom: 1px solid #4a5568;
+            padding: 16px 20px;
+        }
+
+        .services-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .services-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .service-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ef4444;
+            font-size: 12px;
+        }
+
+        .refresh-services {
+            background: #4a5568;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            font-size: 11px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .refresh-services:hover {
+            background: #6b7280;
+        }
+
+        /* IDE Integration Panel */
+        .ide-panel {
+            background: #2d3748;
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 16px;
+            border: 1px solid #4a5568;
+        }
+
+        .ide-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: #48bb78;
+            font-weight: 600;
+        }
+
+        .ide-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ide-service-btn {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            color: white;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .ide-service-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .ide-service-btn.vscode {
+            background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a202c;
+            position: relative;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px;
+        }
+
+        .welcome-content h1 {
+            color: #63b3ed;
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            font-weight: 700;
+        }
+
+        .welcome-content h2 {
+            color: #9ca3af;
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 32px;
+        }
+
+        .welcome-content p {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+        }
+
+        .quick-actions {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .quick-action-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quick-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+
+        /* Enhanced Status Bar */
+        .status-bar {
+            background: linear-gradient(135deg, #374151 0%, #2d3748 100%);
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;  
+            padding: 0 20px;
+            font-size: 11px;
+            color: #9ca3af;
+            border-top: 1px solid #4a5568;
+        }
+
+        .status-left {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-right {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .status-dot.connected {
+            background: #10b981;
+        }
+
+        .status-dot.partial {
+            background: #f59e0b;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-bar {
+                padding: 0 12px;
+            }
+            
+            .services-panel {
+                padding: 12px;
+            }
+            
+            .tab {
+                min-width: 120px;
+                max-width: 160px;
+            }
+            
+            .welcome-content h1 {
+                font-size: 2rem;
+            }
+            
+            .quick-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Enhanced Title Bar -->
+    <div class="title-bar">
+        <div class="logo">
+            <span>🚀</span>
+            <span>TNF Browser Hub</span>
+            <span style="font-size: 12px; color: #9ca3af; font-weight: 400;">Enhanced with IDE</span>
+        </div>
+        <div class="ide-controls">
+            <button class="ide-btn theia" onclick="openTheiaIDE()">
+                <span>💻</span>
+                <span>Theia IDE</span>
+            </button>
+            <button class="ide-btn vscode" onclick="openVSCode()">
+                <span>⚡</span>
+                <span>VS Code</span>
+            </button>
+            <button class="ide-btn" onclick="openSettings()">
+                <span>⚙️</span>
+                <span>Settings</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Enhanced Tab System -->
+    <div class="tab-system">
+        <div class="tab-bar" id="tabBar">
+            <div class="tab active" data-tab-id="welcome">
+                <span class="favicon">🏠</span>
+                <span class="title">Welcome</span>
+                <button class="close-btn" onclick="closeTab('welcome')">×</button>
+            </div>
+            <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">+</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Navigation Bar -->
+    <div class="nav-bar">
+        <div class="nav-section">
+            <button class="nav-btn" onclick="goBack()" title="Back">←</button>
+            <button class="nav-btn" onclick="goForward()" title="Forward">→</button>
+            <button class="nav-btn" onclick="refresh()" title="Refresh">↻</button>
+        </div>
+        
+        <input type="text" class="url-bar" placeholder="Enter URL, search, or command..." onkeypress="handleUrlEnter(event)">
+        
+        <div class="nav-section">
+            <button class="nav-btn" onclick="navigateToUrl()" title="Go">→</button>
+            <button class="nav-btn" onclick="toggleDevTools()" title="DevTools">🔧</button>
+            <select class="browser-engine-selector" onchange="changeBrowserEngine(this.value)" title="Browser Engine">
+                <option value="chromium">Chromium</option>
+                <option value="webkit">WebKit</option>
+                <option value="firefox">Firefox</option>
+            </select>
+        </div>
+
+        <div class="ide-section">
+            <button class="nav-btn" onclick="openTerminal()" title="Terminal">📟</button>
+            <button class="nav-btn" onclick="openFileExplorer()" title="Files">📁</button>
+        </div>
+    </div>
+
+    <!-- Enhanced Services Panel -->
+    <div class="services-panel">
+        <div class="services-header">
+            <div class="services-title">
+                <span>🔧</span>
+                <span><strong>Development Services</strong></span>
+            </div>
+            <div class="service-status">
+                <span class="status-dot"></span>
+                <span>Services: 0/0</span>
+            </div>
+            <button class="refresh-services" onclick="refreshServices()">
+                <span>🔄</span>
+                <span>Refresh</span>
+            </button>
+        </div>
+
+        <!-- IDE Integration Panel -->
+        <div class="ide-panel">
+            <div class="ide-panel-header">
+                <span>💻</span>
+                <span>Integrated Development Environment</span>
+                <div style="margin-left: auto; display: flex; gap: 4px;">
+                    <span class="status-dot connected"></span>
+                    <span style="font-size: 11px;">Theia Ready</span>
+                </div>
+            </div>
+            <div class="ide-buttons">
+                <button class="ide-service-btn" onclick="openTheiaIDE()">
+                    <span>💻</span>
+                    <span>Open Theia IDE</span>
+                </button>
+                <button class="ide-service-btn" onclick="openTheiaTerminal()">
+                    <span>📟</span>
+                    <span>IDE Terminal</span>
+                </button>
+                <button class="ide-service-btn vscode" onclick="openVSCode()">
+                    <span>⚡</span>
+                    <span>VS Code</span>
+                </button>
+                <button class="ide-service-btn" onclick="openFileManager()">
+                    <span>📁</span>
+                    <span>File Manager</span>
+                </button>
+                <button class="ide-service-btn" onclick="openGitInterface()">
+                    <span>🔀</span>
+                    <span>Git Interface</span>
+                </button>
+                <button class="ide-service-btn" onclick="openDebugger()">
+                    <span>🐛</span>
+                    <span>Debugger</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Original Service Categories (from comprehensive-browser.html) -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px;">
+            <!-- Services from the original implementation will be included here -->
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="content-area">
+            <div class="welcome-content">
+                <h1>
+                    <span>🚀</span>
+                    <span>TNF Browser Hub</span>
+                </h1>
+                <h2>Enhanced with Theia IDE Integration</h2>
+                <p>Start coding, browsing, or automating with integrated development tools</p>
+                
+                <div class="quick-actions">
+                    <button class="quick-action-btn" onclick="openTheiaIDE()">
+                        <span>💻</span>
+                        <span>Launch Theia IDE</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="createNewTab()">
+                        <span>🌐</span>
+                        <span>New Browser Tab</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="openTerminal()">
+                        <span>📟</span>
+                        <span>Open Terminal</span>
+                    </button>
+                    <button class="quick-action-btn" onclick="openProjectExplorer()">
+                        <span>📁</span>
+                        <span>Project Explorer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <div class="status-indicator">
+                <span class="status-dot connected"></span>
+                <span>Theia IDE Ready</span>
+            </div>
+            <div class="status-indicator">
+                <span class="status-dot partial"></span>
+                <span>Browser Services</span>
+            </div>
+            <span>Connection: Active</span>
+        </div>
+        <div class="status-right">
+            <span id="tabCount">1 tab</span>
+            <span id="memoryUsage">Memory: 0 MB</span>
+            <div class="status-indicator">
+                <span class="status-dot connected"></span>
+                <span>System Ready</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Browser Hub with IDE Integration
+        let tabs = [
+            { id: 'welcome', title: 'Welcome', url: 'about:blank', favicon: '🏠', active: true }
+        ];
+        let tabCounter = 1;
+
+        // Tab Management
+        function createNewTab(url = 'about:blank', title = 'New Tab', engine = 'chromium') {
+            const tabId = `tab-${++tabCounter}`;
+            const newTab = {
+                id: tabId,
+                title: title,
+                url: url,
+                favicon: '🌐',
+                active: false,
+                engine: engine
+            };
+            
+            // Deactivate all tabs
+            tabs.forEach(tab => tab.active = false);
+            
+            // Add new tab
+            tabs.push(newTab);
+            newTab.active = true;
+            
+            // Create tab with specified engine
+            if (window.electronAPI) {
+                window.electronAPI.createNewTab({ url: url, engine: engine });
+            }
+            
+            renderTabs();
+            updateStatusBar();
+            
+            if (url !== 'about:blank') {
+                navigateToUrl(url);
+            }
+        }
+
+        function changeBrowserEngine(engine) {
+            console.log(`Changing browser engine to: ${engine}`);
+            if (window.electronAPI) {
+                window.electronAPI.setBrowserEngine(engine);
+            }
+            
+            // Visual feedback
+            const selector = document.querySelector('.browser-engine-selector');
+            selector.style.borderColor = '#10b981';
+            setTimeout(() => {
+                selector.style.borderColor = '#4a5568';
+            }, 1000);
+        }
+
+        function closeTab(tabId) {
+            if (tabs.length <= 1) return; // Keep at least one tab
+            
+            const tabIndex = tabs.findIndex(tab => tab.id === tabId);
+            if (tabIndex === -1) return;
+            
+            const wasActive = tabs[tabIndex].active;
+            tabs.splice(tabIndex, 1);
+            
+            if (wasActive && tabs.length > 0) {
+                // Activate the previous tab or the first one
+                const newActiveIndex = Math.max(0, tabIndex - 1);
+                tabs[newActiveIndex].active = true;
+            }
+            
+            renderTabs();
+            updateStatusBar();
+        }
+
+        function switchToTab(tabId) {
+            tabs.forEach(tab => {
+                tab.active = (tab.id === tabId);
+            });
+            renderTabs();
+        }
+
+        function renderTabs() {
+            const tabBar = document.getElementById('tabBar');
+            const newTabBtn = tabBar.querySelector('.new-tab-btn');
+            
+            // Remove existing tabs
+            tabBar.querySelectorAll('.tab').forEach(tab => tab.remove());
+            
+            // Add current tabs
+            tabs.forEach(tab => {
+                const tabElement = document.createElement('div');
+                tabElement.className = `tab ${tab.active ? 'active' : ''}`;
+                tabElement.setAttribute('data-tab-id', tab.id);
+                tabElement.onclick = () => switchToTab(tab.id);
+                
+                tabElement.innerHTML = `
+                    <span class="favicon">${tab.favicon}</span>
+                    <span class="title">${tab.title}</span>
+                    <button class="close-btn" onclick="event.stopPropagation(); closeTab('${tab.id}')">×</button>
+                `;
+                
+                tabBar.insertBefore(tabElement, newTabBtn);
+            });
+        }
+
+        // IDE Integration Functions
+        function openTheiaIDE() {
+            console.log('Opening Theia IDE');
+            
+            // First try to check if Theia is running
+            checkTheiaStatus().then(isRunning => {
+                if (!isRunning) {
+                    startTheiaServer();
+                }
+                
+                // Create new tab for Theia
+                createNewTab('http://localhost:3000', 'Theia IDE');
+                
+                if (window.electronAPI) {
+                    window.electronAPI.openTheia();
+                }
+            });
+        }
+
+        function openTheiaTerminal() {
+            console.log('Opening Theia Terminal');
+            if (window.electronAPI) {
+                window.electronAPI.openTheiaTerminal();
+            }
+        }
+
+        function openVSCode() {
+            console.log('Opening VS Code');
+            if (window.electronAPI) {
+                window.electronAPI.openVSCode();
+            }
+        }
+
+        function openTerminal() {
+            console.log('Opening Terminal');
+            if (window.electronAPI) {
+                window.electronAPI.openTerminal();
+            }
+        }
+
+        function openFileExplorer() {
+            console.log('Opening File Explorer');
+            if (window.electronAPI) {
+                window.electronAPI.openFileExplorer();
+            }
+        }
+
+        function openFileManager() {
+            createNewTab('file:///', 'File Manager');
+        }
+
+        function openGitInterface() {
+            console.log('Opening Git Interface in Theia');
+            if (window.electronAPI) {
+                window.electronAPI.openTheiaGit();
+            }
+        }
+
+        function openDebugger() {
+            console.log('Opening Debugger in Theia');
+            if (window.electronAPI) {
+                window.electronAPI.openTheiaDebugger();
+            }
+        }
+
+        function openProjectExplorer() {
+            console.log('Opening Project Explorer');
+            openTheiaIDE(); // For now, open Theia which has project explorer
+        }
+
+        // Theia Server Management
+        async function checkTheiaStatus() {
+            try {
+                const response = await fetch('http://localhost:3000', { 
+                    method: 'HEAD',
+                    timeout: 5000 
+                });
+                return response.ok;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function startTheiaServer() {
+            console.log('Starting Theia Server');
+            if (window.electronAPI) {
+                window.electronAPI.startTheiaServer();
+            } else {
+                // Fallback: try to start via command
+                console.warn('Electron API not available, cannot start Theia server automatically');
+            }
+        }
+
+        // Enhanced Navigation
+        function handleUrlEnter(event) {
+            if (event.key === 'Enter') {
+                navigateToUrl();
+            }
+        }
+
+        function navigateToUrl(url) {
+            const urlBar = document.querySelector('.url-bar');
+            const targetUrl = url || urlBar.value.trim();
+            
+            if (targetUrl) {
+                console.log('Navigate to:', targetUrl);
+                
+                // Update active tab
+                const activeTab = tabs.find(tab => tab.active);
+                if (activeTab) {
+                    activeTab.url = targetUrl;
+                    activeTab.title = new URL(targetUrl).hostname || targetUrl;
+                    renderTabs();
+                }
+                
+                if (window.electronAPI) {
+                    window.electronAPI.navigateToUrl(targetUrl);
+                }
+            }
+        }
+
+        // Standard Browser Functions
+        function goBack() {
+            console.log('Navigate back');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('back');
+            }
+        }
+
+        function goForward() {
+            console.log('Navigate forward');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('forward');
+            }
+        }
+
+        function refresh() {
+            console.log('Refresh page');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('refresh');
+            }
+        }
+
+        function toggleDevTools() {
+            console.log('Toggle DevTools');
+            if (window.electronAPI) {
+                window.electronAPI.toggleDevTools();
+            }
+        }
+
+        function openSettings() {
+            createNewTab('tnf://settings', 'Settings');
+        }
+
+        function refreshServices() {
+            console.log('Refreshing services');
+            if (window.electronAPI) {
+                window.electronAPI.refreshServices();
+            }
+            
+            // Update UI
+            updateServiceStatus();
+        }
+
+        // UI Updates
+        function updateStatusBar() {
+            const tabCountEl = document.getElementById('tabCount');
+            const memoryEl = document.getElementById('memoryUsage');
+            
+            if (tabCountEl) {
+                tabCountEl.textContent = `${tabs.length} tab${tabs.length !== 1 ? 's' : ''}`;
+            }
+            
+            if (memoryEl) {
+                // This would typically get real memory usage from Electron
+                memoryEl.textContent = 'Memory: 0 MB';
+            }
+        }
+
+        function updateServiceStatus() {
+            // Check Theia status
+            checkTheiaStatus().then(isRunning => {
+                const theiaIndicators = document.querySelectorAll('.status-dot');
+                theiaIndicators.forEach(dot => {
+                    if (dot.nextSibling?.textContent?.includes('Theia')) {
+                        dot.className = `status-dot ${isRunning ? 'connected' : 'partial'}`;
+                    }
+                });
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTabs();
+            updateStatusBar();
+            updateServiceStatus();
+            
+            // Check service status periodically
+            setInterval(updateServiceStatus, 30000);
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Update any responsive elements if needed
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      width: 300px;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .connected {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .disconnected {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    .button:hover {
+      background: #0056b3;
+    }
+    .button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .info {
+      font-size: 12px;
+      color: #666;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h3>Browser MCP</h3>
+  </div>
+  
+  <div id="status" class="status disconnected">
+    <strong>Disconnected</strong>
+    <br>
+    <span id="status-text">Not connected to current tab</span>
+  </div>
+  
+  <button id="connect-btn" class="button">Connect to Current Tab</button>
+  <button id="disconnect-btn" class="button" disabled>Disconnect</button>
+  <button id="screenshot-btn" class="button" disabled>Take Screenshot</button>
+  <button id="page-info-btn" class="button" disabled>Get Page Info</button>
+  
+  <div class="info">
+    <strong>Browser MCP Extension</strong><br>
+    Version 1.0.0<br>
+    <span id="connection-info">Ready to connect</span>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,24 +1,16 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true,
-    "sourceMap": true,
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
     "composite": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "declaration": true,
+    "declarationMap": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*", "**/*.spec.*"]
+  "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
+  "references": [
+    { "path": "../types" },
+    { "path": "../utils" }
+  ]
 }

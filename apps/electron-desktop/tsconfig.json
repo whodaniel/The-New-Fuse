@@ -1,23 +1,28 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "outDir": "./dist/renderer",
-    "rootDir": "./src/renderer",
-    "target": "ES2020",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "jsx": "react-jsx",
-    "declaration": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "skipLibCheck": true,
-    "strict": true
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": false,
+    "jsx": "react-jsx"
   },
-  "include": [
-    "src/renderer/**/*",
-    "src/shared/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "src/main"
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"],
+  "references": [
+    { "path": "../../packages/types" },
+    { "path": "../../packages/core" },
+    { "path": "../../packages/database" },
+    { "path": "../../packages/utils" },
+    { "path": "../../packages/mcp-core" }
   ]
 }

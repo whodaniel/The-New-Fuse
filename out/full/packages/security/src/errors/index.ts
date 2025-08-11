@@ -1,0 +1,1 @@
+export { EncryptionError } from "./EncryptionError";

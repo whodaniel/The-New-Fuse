@@ -1,0 +1,23 @@
+{
+  "name": "@the-new-fuse/codebase-analysis",
+  "version": "1.0.0",
+  "description": "Comprehensive codebase analysis and consolidation tool",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "test": "vitest",
+    "scan": "ts-node src/cli.ts scan",
+    "analyze": "ts-node src/cli.ts analyze"
+  },
+  "dependencies": {
+    "glob": "^10.3.10",
+    "typescript": "^5.3.3",
+    "@types/node": "^20.10.5"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "vitest": "^1.1.0"
+  }
+}

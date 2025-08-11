@@ -1,0 +1,2110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: ws: wss: http://localhost:* https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http://localhost:*; frame-src * data: http://localhost:*; child-src * data:; object-src *; connect-src * ws: wss:;">
+    <title>TNF Browser Hub - Enhanced Chrome-Compatible Browser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1d29;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Enhanced Resizable Sidebar */
+        .sidebar {
+            min-width: 60px;
+            max-width: 400px;
+            width: 280px;
+            background: #252836;
+            border-right: 1px solid #2d3142;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            position: relative;
+            resize: horizontal;
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            cursor: ew-resize;
+            z-index: 10;
+        }
+
+        .sidebar::after:hover {
+            background: #4f46e5;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-section-title,
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logo i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .sidebar-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sidebar-toggle, .settings-btn, .extensions-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-toggle:hover, .settings-btn:hover, .extensions-btn:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        /* Draggable Navigation Items */
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            margin: 0 8px;
+            user-select: none;
+        }
+
+        .nav-section-header:hover {
+            background: #2d3142;
+        }
+
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-arrow {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .section-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .nav-section-content {
+            max-height: 600px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 4px 0;
+        }
+
+        .nav-section-content.collapsed {
+            max-height: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            margin: 2px 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        .nav-item.draggable {
+            cursor: grab;
+        }
+
+        .nav-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .nav-item.drag-over {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .nav-item:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .nav-item i {
+            width: 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .status-dot.online { background: #10b981; }
+        .status-dot.warning { background: #f59e0b; }
+        .status-dot.offline { background: #ef4444; }
+
+        .drag-handle {
+            opacity: 0;
+            color: #6b7280;
+            cursor: grab;
+            margin-right: 4px;
+        }
+
+        .nav-item:hover .drag-handle {
+            opacity: 1;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a1d29;
+            min-width: 0;
+        }
+
+        /* Enhanced Browser Controls */
+        .browser-controls {
+            background: #252836;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            gap: 12px;
+            min-height: 50px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            background: #2d3142;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .address-bar {
+            flex: 1;
+            background: #2d3142;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .address-bar:focus {
+            border-color: #4f46e5;
+            background: #374151;
+        }
+
+        .browser-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .action-btn.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .extensions-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            font-size: 8px;
+        }
+
+        /* Enhanced Tab Management */
+        .tab-bar {
+            background: #1f2937;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            min-height: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-scroll-container {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tab-scroll-btn {
+            background: #374151;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-scroll-btn:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .tabs-container {
+            display: flex;
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #374151;
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            border-right: 1px solid #2d3142;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            max-width: 200px;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab.active {
+            background: #1a1d29;
+            color: #ffffff;
+            border-bottom: 2px solid #4f46e5;
+        }
+
+        .tab:hover:not(.active) {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 3px;
+            font-size: 10px;
+            opacity: 0.7;
+            margin-left: auto;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            opacity: 1;
+        }
+
+        .new-tab-btn {
+            background: #374151;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            border-left: 1px solid #2d3142;
+        }
+
+        .new-tab-btn:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            background: #1a1d29;
+            position: relative;
+        }
+
+        .content-view {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 8px;
+            margin: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .content-frame.hidden {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Settings Panel */
+        .settings-panel, .extensions-panel, .prompt-manager-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: #252836;
+            border-left: 1px solid #2d3142;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-panel.open, .extensions-panel.open, .prompt-manager-panel.open {
+            transform: translateX(0);
+        }
+
+        .settings-header, .extensions-header, .prompt-manager-header {
+            padding: 20px;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .settings-title, .extensions-title, .prompt-manager-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .settings-close, .extensions-close, .prompt-manager-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .settings-close:hover, .extensions-close:hover, .prompt-manager-close:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .settings-content, .extensions-content, .prompt-manager-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .settings-group {
+            margin-bottom: 32px;
+        }
+
+        .settings-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-item {
+            margin-bottom: 16px;
+        }
+
+        .settings-item-label {
+            font-size: 13px;
+            color: #d1d5db;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .settings-toggle {
+            background: #374151;
+            border: none;
+            border-radius: 20px;
+            width: 44px;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .settings-toggle.active {
+            background: #4f46e5;
+        }
+
+        .settings-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .settings-toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .settings-input, .prompt-input, .prompt-textarea {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .settings-input:focus, .prompt-input:focus, .prompt-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .prompt-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .prompt-btn {
+            background: #4f46e5;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-weight: 500;
+        }
+        .prompt-btn:hover {
+            background: #4338ca;
+        }
+
+
+        /* Extensions Management */
+        .extension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #2d3142;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .extension-icon {
+            width: 32px;
+            height: 32px;
+            background: #4f46e5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .extension-info {
+            flex: 1;
+        }
+
+        .extension-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .extension-desc {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* Terminal Integration */
+        .terminal-section {
+            background: #1f2937;
+            border-top: 1px solid #2d3142;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            transition: height 0.3s ease;
+        }
+
+        .terminal-section.hidden {
+            height: 0;
+            overflow: hidden;
+        }
+
+        .terminal-header {
+            padding: 8px 16px;
+            background: #374151;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 36px;
+        }
+
+        .terminal-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #d1d5db;
+        }
+
+        .terminal-controls {
+            display: flex;
+            gap: 4px;
+        }
+
+        .terminal-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .terminal-btn:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .terminal-content {
+            flex: 1;
+            background: #000000;
+            color: #00ff00;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 12px;
+            padding: 12px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .settings-panel,
+            .extensions-panel,
+            .prompt-manager-panel {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .tab {
+                min-width: 100px;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Custom Scrollbars */
+        .sidebar-body::-webkit-scrollbar, .settings-content::-webkit-scrollbar, .extensions-content::-webkit-scrollbar, .prompt-manager-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-body::-webkit-scrollbar-track, .settings-content::-webkit-scrollbar-track, .extensions-content::-webkit-scrollbar-track, .prompt-manager-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-body::-webkit-scrollbar-thumb, .settings-content::-webkit-scrollbar-thumb, .extensions-content::-webkit-scrollbar-thumb, .prompt-manager-content::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+
+        .sidebar-body::-webkit-scrollbar-thumb:hover, .settings-content::-webkit-scrollbar-thumb:hover, .extensions-content::-webkit-scrollbar-thumb:hover, .prompt-manager-content::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Enhanced Resizable Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                    <span class="logo-text">TNF Browser</span>
+                </div>
+                <div class="sidebar-controls">
+                    <button class="extensions-btn" onclick="toggleExtensions()" title="Extensions">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <div class="extensions-indicator"></div>
+                    </button>
+                    <button class="settings-btn" onclick="toggleSettings()" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse Sidebar">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-body">
+                <!-- Quick Access Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('quick-access')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-bolt"></i> Quick Access</span>
+                            <i class="fas fa-chevron-down section-arrow" id="quick-access-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="quick-access-section">
+                        <div class="nav-item draggable active" draggable="true" onclick="switchToTab('dashboard')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>TNF Dashboard</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:3007', 'Theia IDE')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-code"></i>
+                            <span>Theia IDE</span>
+                            <div class="status-dot warning"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://vscode.dev', 'VS Code Web')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-laptop-code"></i>
+                            <span>VS Code Web</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://claude.ai', 'Claude AI')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-robot"></i>
+                            <span>Claude AI</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://gemini.google.com', 'Gemini')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-gem"></i>
+                            <span>Gemini</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Services Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('ai-services')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-brain"></i> AI Services</span>
+                            <i class="fas fa-chevron-down section-arrow" id="ai-services-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="ai-services-section">
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://chat.openai.com', 'ChatGPT')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-comments"></i>
+                            <span>ChatGPT</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://perplexity.ai', 'Perplexity')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-search"></i>
+                            <span>Perplexity</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="togglePromptManager()">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-magic"></i>
+                            <span>Prompt Manager</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Development Tools Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('dev-tools')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-wrench"></i> Dev Tools</span>
+                            <i class="fas fa-chevron-down section-arrow" id="dev-tools-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="dev-tools-section">
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://github.com', 'GitHub')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="toggleTerminal()">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-terminal"></i>
+                            <span>Terminal</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:5555', 'Database')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-database"></i>
+                            <span>Database</span>
+                            <div class="status-dot warning"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Links Section -->
+                <div class="nav-section" id="custom-section">
+                    <div class="nav-section-header" onclick="toggleSection('custom-links')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-star"></i> Custom Links</span>
+                            <i class="fas fa-chevron-down section-arrow" id="custom-links-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="custom-links-section">
+                        <div class="nav-item add-menu-item" onclick="addCustomMenuItem()">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Custom Link</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('account')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-user"></i> Account</span>
+                            <i class="fas fa-chevron-down section-arrow" id="account-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="account-section">
+                        <div class="nav-item" onclick="openAccount()">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile</span>
+                        </div>
+                        <div class="nav-item" onclick="openSettings()">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="nav-item" onclick="openSignIn()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Sign In</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Enhanced Browser Controls -->
+            <div class="browser-controls">
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="backBtn" onclick="goBack()" disabled>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="nav-btn" id="forwardBtn" onclick="goForward()" disabled>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="nav-btn" onclick="refreshPage()">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="nav-btn" onclick="goHome()">
+                        <i class="fas fa-home"></i>
+                    </button>
+                </div>
+
+                <input type="text" class="address-bar" id="addressBar" 
+                       placeholder="Enter URL, search, or navigate to TNF services..." 
+                       onkeypress="handleAddressBarEnter(event)">
+
+                <div class="browser-actions">
+                    <button class="action-btn" onclick="toggleBookmarks()" title="Bookmarks">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="action-btn" onclick="showHistory()" title="History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button class="action-btn" onclick="showDownloads()" title="Downloads">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-btn" onclick="toggleDevTools()" title="Developer Tools">
+                        <i class="fas fa-code"></i>
+                    </button>
+                    <button class="action-btn" onclick="captureScreenshot()" title="Screenshot">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="action-btn" onclick="showMore()" title="More Options">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Tab Bar -->
+            <div class="tab-bar">
+                <div class="tab-scroll-container">
+                    <button class="tab-scroll-btn" onclick="scrollTabs('left')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="tabs-container" id="tabsContainer">
+                        <div class="tab active" id="tab-dashboard" onclick="switchToTab('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>TNF Dashboard</span>
+                            <button class="tab-close" onclick="event.stopPropagation(); closeTab('dashboard')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="tab-scroll-btn" onclick="scrollTabs('right')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea">
+                <div class="content-view">
+                    <iframe class="content-frame" id="frame-dashboard" src="http://localhost:3000"></iframe>
+                </div>
+            </div>
+
+            <!-- Terminal Section -->
+            <div class="terminal-section hidden" id="terminalSection">
+                <div class="terminal-header">
+                    <div class="terminal-title">
+                        <i class="fas fa-terminal"></i>
+                        Terminal Output
+                    </div>
+                    <div class="terminal-controls">
+                        <button class="terminal-btn" onclick="clearTerminal()" title="Clear">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button class="terminal-btn" onclick="toggleTerminal()" title="Hide">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="terminal-content" id="terminalContent">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2 class="settings-title">Settings</h2>
+            <button class="settings-close" onclick="toggleSettings()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-palette"></i>
+                    Appearance
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Dark Mode</label>
+                    <button class="settings-toggle active" onclick="toggleDarkMode(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Sidebar Width</label>
+                    <input type="range" class="settings-input" min="200" max="400" value="280" oninput="setSidebarWidth(this.value)">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Font Size</label>
+                    <select class="settings-input">
+                        <option>Small</option>
+                        <option selected>Medium</option>
+                        <option>Large</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-globe"></i>
+                    Browser
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Home Page</label>
+                    <input type="text" class="settings-input" placeholder="http://localhost:3000" value="http://localhost:3000">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Search Engine</label>
+                    <select class="settings-input">
+                        <option>Google</option>
+                        <option>Bing</option>
+                        <option>DuckDuckGo</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Block Ads</label>
+                    <button class="settings-toggle" onclick="toggleAdBlock(this)"></button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Privacy & Security
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Clear Cookies on Exit</label>
+                    <button class="settings-toggle" onclick="toggleClearCookies(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Block Third-party Cookies</label>
+                    <button class="settings-toggle active" onclick="toggleThirdPartyCookies(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Enable Do Not Track</label>
+                    <button class="settings-toggle active" onclick="toggleDoNotTrack(this)"></button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-cogs"></i>
+                    Advanced
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Developer Tools</label>
+                    <button class="settings-toggle active" onclick="toggleDevTools(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Terminal Integration</label>
+                    <button class="settings-toggle active" onclick="toggleTerminalIntegration(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Extensions</label>
+                    <button class="settings-toggle active" onclick="toggleExtensionsEnabled(this)"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Extensions Panel -->
+    <div class="extensions-panel" id="extensionsPanel">
+        <div class="extensions-header">
+            <h2 class="extensions-title">Extensions</h2>
+            <button class="extensions-close" onclick="toggleExtensions()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="extensions-content">
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-ad"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">AdBlock Plus</div>
+                    <div class="extension-desc">Block advertisements and pop-ups</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Privacy Badger</div>
+                    <div class="extension-desc">Automatically blocks trackers</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">React DevTools</div>
+                    <div class="extension-desc">Debug React components</div>
+                </div>
+                <button class="settings-toggle"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Dark Reader</div>
+                    <div class="extension-desc">Dark mode for all websites</div>
+                </div>
+                <button class="settings-toggle"></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompt Manager Panel -->
+    <div class="prompt-manager-panel" id="promptManagerPanel">
+        <div class="prompt-manager-header">
+            <h2 class="prompt-manager-title">Prompt Manager</h2>
+            <button class="prompt-manager-close" onclick="togglePromptManager()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="prompt-manager-content">
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-folder"></i>
+                    Folders
+                </div>
+                <div id="prompt-folders-list">
+                    <!-- Folders will be rendered here -->
+                </div>
+                <button class="prompt-btn" style="margin-top: 10px;" onclick="showNewFolderForm()">New Folder</button>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-file-alt"></i>
+                    Prompts
+                </div>
+                <div id="prompt-templates-list">
+                     <!-- Prompts will be rendered here -->
+                </div>
+                <button class="prompt-btn" style="margin-top: 10px;" onclick="showNewPromptForm()">New Prompt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Prompt Modal -->
+    <div id="newPromptModal" class="overlay" style="display: none; align-items: center; justify-content: center;">
+        <div style="background: #252836; padding: 20px; border-radius: 8px; width: 500px;" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 20px;">Create New Prompt</h3>
+            <form id="newPromptForm" onsubmit="event.preventDefault(); saveNewPrompt();">
+                <div class="settings-item">
+                    <label class="settings-item-label">Name</label>
+                    <input type="text" name="name" class="prompt-input" required>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Description</label>
+                    <input type="text" name="description" class="prompt-input">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Category</label>
+                    <input type="text" name="category" class="prompt-input">
+                </div>
+                 <div class="settings-item">
+                    <label class="settings-item-label">Tags (comma-separated)</label>
+                    <input type="text" name="tags" class="prompt-input">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Template</label>
+                    <textarea name="template" class="prompt-textarea" required></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="prompt-btn" style="background: #4b5563;" onclick="closeNewPromptModal()">Cancel</button>
+                    <button type="submit" class="prompt-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Input Modal -->
+    <div id="customInputModal" class="overlay" style="display: none; align-items: center; justify-content: center;">
+        <div style="background: #252836; padding: 20px; border-radius: 8px; width: 500px;" onclick="event.stopPropagation()">
+            <h3 id="customInputTitle" style="margin-bottom: 20px;">Input</h3>
+            <form id="customInputForm" onsubmit="event.preventDefault(); handleCustomInput();">
+                <div id="customInputFields"></div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="prompt-btn" style="background: #4b5563;" onclick="closeCustomInputModal()">Cancel</button>
+                    <button type="submit" class="prompt-btn">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+    <script>
+        // Global Variables
+        let activeTab = 'dashboard';
+        let tabs = {
+            dashboard: {
+                title: 'TNF Dashboard',
+                url: 'http://localhost:3000',
+                icon: 'fas fa-tachometer-alt',
+                frame: document.getElementById('frame-dashboard')
+            }
+        };
+        let tabHistory = {};
+        let sidebarCollapsed = false;
+        let terminalVisible = false;
+        
+        // Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.querySelector('.sidebar-toggle i');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            sidebar.classList.toggle('collapsed', sidebarCollapsed);
+            
+            if (sidebarCollapsed) {
+                icon.className = 'fas fa-chevron-right';
+            } else {
+                icon.className = 'fas fa-chevron-left';
+            }
+        }
+        
+        function setSidebarWidth(width) {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.width = width + 'px';
+        }
+        
+        // Section Management
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-section');
+            const arrow = document.getElementById(sectionId + '-arrow');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                arrow.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+                arrow.classList.add('collapsed');
+            }
+        }
+        
+        // Drag and Drop Functionality
+        let draggedElement = null;
+        
+        function initDragAndDrop() {
+            const draggableItems = document.querySelectorAll('.nav-item.draggable');
+            
+            draggableItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDragEnter(e) {
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+        }
+        
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                // Get parent container
+                const container = this.parentNode;
+                const draggedIndex = Array.from(container.children).indexOf(draggedElement);
+                const dropIndex = Array.from(container.children).indexOf(this);
+                
+                // Reorder elements
+                if (draggedIndex < dropIndex) {
+                    container.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    container.insertBefore(draggedElement, this);
+                }
+                
+                // Save new order to localStorage
+                saveMenuItemOrder();
+            }
+            
+            this.classList.remove('drag-over');
+            return false;
+        }
+        
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            
+            // Remove drag-over class from all items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+            
+            draggedElement = null;
+        }
+        
+        function saveMenuItemOrder() {
+            // Implementation to save menu order to localStorage
+            const sections = document.querySelectorAll('.nav-section-content');
+            const order = {};
+            
+            sections.forEach(section => {
+                const items = section.querySelectorAll('.nav-item.draggable');
+                order[section.id] = Array.from(items).map(item => ({
+                    text: item.textContent.trim(),
+                    onclick: item.getAttribute('onclick')
+                }));
+            });
+            
+            localStorage.setItem('menuItemOrder', JSON.stringify(order));
+        }
+        
+        // Tab Management
+        function createNewTab(url = 'about:blank', title = 'New Tab', icon = 'fas fa-globe') {
+            const tabId = 'tab-' + Date.now();
+            const frameId = 'frame-' + tabId;
+
+            // Create iframe for the new tab
+            const frame = document.createElement('iframe');
+            frame.id = frameId;
+            frame.className = 'content-frame hidden';
+            frame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation';
+            
+            // Handle CSP errors gracefully
+            frame.onerror = function() {
+                console.warn(`Failed to load ${url} in iframe due to CSP restrictions`);
+                frame.src = 'data:text/html,<html><body><h2>Content blocked by security policy</h2><p>The requested content cannot be displayed in a frame due to security restrictions.</p><p><a href="' + url + '" target="_blank">Open in new window</a></p></body></html>';
+            };
+            
+            frame.src = url;
+            document.getElementById('contentArea').appendChild(frame);
+            
+            // Create tab data
+            tabs[tabId] = {
+                title: title,
+                url: url,
+                icon: icon,
+                frame: frame
+            };
+            
+            // Create tab element
+            const tabElement = document.createElement('div');
+            tabElement.className = 'tab';
+            tabElement.id = tabId;
+            tabElement.onclick = () => switchToTab(tabId);
+            tabElement.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${title}</span>
+                <button class="tab-close" onclick="event.stopPropagation(); closeTab('${tabId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add to tabs container
+            document.getElementById('tabsContainer').appendChild(tabElement);
+            
+            // Switch to new tab
+            switchToTab(tabId);
+            
+            // Scroll to show new tab
+            scrollToTab(tabElement);
+        }
+        
+        function switchToTab(tabId) {
+            // Remove active class from all tabs and hide all frames
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content-frame').forEach(frame => frame.classList.add('hidden'));
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected tab and show its frame
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+
+            if (tabs[tabId]) {
+                tabs[tabId].frame.classList.remove('hidden');
+                activeTab = tabId;
+                updateAddressBar(tabs[tabId].url);
+            }
+            
+            // Handle special case for dashboard
+            if (tabId === 'dashboard') {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.textContent.includes('TNF Dashboard')) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        function closeTab(tabId) {
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.remove();
+            }
+
+            if (tabs[tabId]) {
+                tabs[tabId].frame.remove();
+                delete tabs[tabId];
+            }
+            
+            // If closed tab was active, switch to first available tab
+            if (activeTab === tabId) {
+                const remainingTabs = Object.keys(tabs);
+                if (remainingTabs.length > 0) {
+                    switchToTab(remainingTabs[0]);
+                } else {
+                    createNewTab();
+                }
+            }
+        }
+        
+        function scrollTabs(direction) {
+            const container = document.getElementById('tabsContainer');
+            const scrollAmount = 200;
+            
+            if (direction === 'left') {
+                container.scrollLeft -= scrollAmount;
+            } else {
+                container.scrollLeft += scrollAmount;
+            }
+        }
+        
+        function scrollToTab(tabElement) {
+            const container = document.getElementById('tabsContainer');
+            const tabRect = tabElement.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            if (tabRect.right > containerRect.right) {
+                container.scrollLeft += tabRect.right - containerRect.right + 20;
+            } else if (tabRect.left < containerRect.left) {
+                container.scrollLeft -= containerRect.left - tabRect.left + 20;
+            }
+        }
+        
+        // Browser Navigation
+        function goBack() {
+            if (tabs[activeTab]) {
+                tabs[activeTab].frame.contentWindow.history.back();
+            }
+        }
+        
+        function goForward() {
+            if (tabs[activeTab]) {
+                tabs[activeTab].frame.contentWindow.history.forward();
+            }
+        }
+        
+        function refreshPage() {
+             if (tabs[activeTab]) {
+                tabs[activeTab].frame.src = tabs[activeTab].frame.src;
+            }
+        }
+        
+        function goHome() {
+            switchToTab('dashboard');
+        }
+        
+        function handleAddressBarEnter(event) {
+            if (event.key === 'Enter') {
+                const url = event.target.value;
+                navigateToUrl(url);
+            }
+        }
+        
+        function navigateToUrl(url) {
+            // Add protocol if missing
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (url.includes('.') || url.startsWith('localhost')) {
+                    url = 'https://' + url;
+                } else {
+                    // Treat as search
+                    url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+                }
+            }
+            
+            if (activeTab && tabs[activeTab]) {
+                tabs[activeTab].url = url;
+                tabs[activeTab].frame.src = url;
+                updateAddressBar(url);
+            } else {
+                createNewTab(url, 'New Tab');
+            }
+        }
+        
+        function updateAddressBar(url) {
+            document.getElementById('addressBar').value = url;
+        }
+        
+        // Settings Management
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+            
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+        
+        // Extensions Management
+        function toggleExtensions() {
+            const panel = document.getElementById('extensionsPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+            
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+
+        // Prompt Manager
+        function togglePromptManager() {
+            const panel = document.getElementById('promptManagerPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+                loadPromptManager();
+            }
+        }
+        
+        function closeAllPanels(keepOverlay = false) {
+            document.getElementById('settingsPanel').classList.remove('open');
+            document.getElementById('extensionsPanel').classList.remove('open');
+            document.getElementById('promptManagerPanel').classList.remove('open');
+            if(!keepOverlay) {
+                document.getElementById('overlay').classList.remove('active');
+            }
+        }
+        
+        // Terminal Management
+        function toggleTerminal() {
+            const terminal = document.getElementById('terminalSection');
+            terminalVisible = !terminalVisible;
+            
+            if (terminalVisible) {
+                terminal.classList.remove('hidden');
+                updateTerminalOutput();
+            } else {
+                terminal.classList.add('hidden');
+            }
+        }
+        
+        function updateTerminalOutput() {
+            const terminalContent = document.getElementById('terminalContent');
+            if (window.electronAPI && typeof window.electronAPI.getTerminalOutput === 'function') {
+                window.electronAPI.getTerminalOutput().then(output => {
+                    terminalContent.textContent = output || 'No terminal output available.';
+                }).catch((error) => {
+                    console.error('Error getting terminal output:', error);
+                    terminalContent.textContent = 'Error getting terminal output.';
+                });
+            } else {
+                terminalContent.textContent = 
+                    'Terminal not available in browser mode.\nTo see terminal output, use the Electron app version.';
+            }
+        }
+        
+        function clearTerminal() {
+            if (window.electronAPI && typeof window.electronAPI.clearTerminal === 'function') {
+                window.electronAPI.clearTerminal();
+                updateTerminalOutput();
+            } else {
+                 document.getElementById('terminalContent').textContent = 'Terminal cleared.';
+            }
+        }
+        
+        // Browser Features
+        function toggleBookmarks() {
+            if (window.electronAPI) window.electronAPI.toggleBookmarks();
+        }
+        
+        function showHistory() {
+            if (window.electronAPI) window.electronAPI.showHistory();
+        }
+        
+        function showDownloads() {
+            if (window.electronAPI) window.electronAPI.showDownloads();
+        }
+        
+        function toggleDevTools() {
+             if (window.electronAPI) {
+                window.electronAPI.toggleDevTools();
+            }
+        }
+        
+        function captureScreenshot() {
+            if (window.electronAPI) window.electronAPI.takeScreenshot();
+        }
+        
+        function showMore() {
+            if (window.electronAPI) window.electronAPI.showMore();
+        }
+        
+        // Custom Input Modal
+        let customInputCallback;
+        function showCustomInput(title, fields, callback) {
+            document.getElementById('customInputTitle').textContent = title;
+            const fieldsContainer = document.getElementById('customInputFields');
+            fieldsContainer.innerHTML = '';
+            fields.forEach(field => {
+                fieldsContainer.innerHTML += `
+                    <div class="settings-item">
+                        <label class="settings-item-label">${field.label}</label>
+                        <input type="${field.type || 'text'}" name="${field.name}" class="prompt-input" required>
+                    </div>
+                `;
+            });
+            customInputCallback = callback;
+            document.getElementById('customInputModal').style.display = 'flex';
+        }
+
+        function closeCustomInputModal() {
+            document.getElementById('customInputModal').style.display = 'none';
+        }
+
+        function handleCustomInput() {
+            const form = document.getElementById('customInputForm');
+            const formData = new FormData(form);
+            const result = {};
+            for (let [key, value] of formData.entries()) {
+                result[key] = value;
+            }
+            if (customInputCallback) {
+                customInputCallback(result);
+            }
+            closeCustomInputModal();
+        }
+
+        // Custom Menu Items
+        let customMenuItems = JSON.parse(localStorage.getItem('customMenuItems') || '[]');
+        
+        function addCustomMenuItem() {
+            showCustomInput('Add Custom Link', [
+                {label: 'Name', name: 'name'},
+                {label: 'URL', name: 'url'},
+                {label: 'Icon (FontAwesome)', name: 'icon'}
+            ], (result) => {
+                 const menuItem = {
+                    id: Date.now().toString(),
+                    name: result.name,
+                    url: result.url,
+                    icon: result.icon || 'fas fa-link'
+                };
+                
+                customMenuItems.push(menuItem);
+                localStorage.setItem('customMenuItems', JSON.stringify(customMenuItems));
+                renderCustomMenuItems();
+            });
+        }
+        
+        function removeCustomMenuItem(itemId) {
+            customMenuItems = customMenuItems.filter(item => item.id !== itemId);
+            localStorage.setItem('customMenuItems', JSON.stringify(customMenuItems));
+            renderCustomMenuItems();
+        }
+        
+        function renderCustomMenuItems() {
+            const customSection = document.querySelector('#custom-links-section');
+            const addButton = customSection.querySelector('.add-menu-item');
+            
+            // Remove existing custom items
+            customSection.querySelectorAll('.nav-item:not(.add-menu-item)').forEach(item => item.remove());
+            
+            // Add custom menu items
+            customMenuItems.forEach(item => {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item draggable';
+                navItem.draggable = true;
+                navItem.innerHTML = `
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    <i class="${item.icon}"></i>
+                    <span>${item.name}</span>
+                    <button class="terminal-btn" onclick="event.stopPropagation(); removeCustomMenuItem('${item.id}')" style="margin-left: auto; padding: 2px 4px;">
+                        <i class="fas fa-times" style="font-size: 10px;"></i>
+                    </button>
+                `;
+                
+                navItem.onclick = (e) => {
+                    if (e.target.closest('.terminal-btn')) return;
+                    createNewTab(item.url, item.name);
+                };
+                
+                customSection.insertBefore(navItem, addButton);
+            });
+            
+            // Reinitialize drag and drop
+            initDragAndDrop();
+        }
+        
+        // Account Functions
+        function openAccount() {
+            createNewTab('http://localhost:3000/account', 'Account');
+        }
+        
+        function openSettings() {
+            toggleSettings();
+        }
+        
+        function openSignIn() {
+            createNewTab('http://localhost:3000/auth/signin', 'Sign In');
+        }
+        
+        // Prompt Manager Functions
+        let promptTemplates = [];
+        let promptFolders = JSON.parse(localStorage.getItem('promptFolders') || '[]');
+
+        function loadPromptManager() {
+            loadPromptTemplates();
+            renderPromptFolders();
+        }
+
+        function loadPromptTemplates() {
+            if (window.electronAPI) {
+                window.electronAPI.getPromptTemplates().then(templates => {
+                    promptTemplates = templates;
+                    renderPromptTemplates();
+                });
+            } else {
+                // Fallback for browser mode
+                promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                renderPromptTemplates();
+            }
+        }
+
+        function renderPromptTemplates() {
+            const list = document.getElementById('prompt-templates-list');
+            list.innerHTML = '';
+            promptTemplates.forEach(prompt => {
+                const item = document.createElement('div');
+                item.className = 'extension-item'; // Re-use styling
+                item.innerHTML = `
+                    <div class="extension-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="extension-info">
+                        <div class="extension-name">${prompt.name}</div>
+                        <div class="extension-desc">${prompt.description || ''}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        function renderPromptFolders() {
+            const list = document.getElementById('prompt-folders-list');
+            list.innerHTML = '';
+            promptFolders.forEach(folder => {
+                const item = document.createElement('div');
+                item.className = 'extension-item'; // Re-use styling
+                item.innerHTML = `
+                    <div class="extension-icon"><i class="fas fa-folder"></i></div>
+                    <div class="extension-info">
+                        <div class="extension-name">${folder.name}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function showNewPromptForm() {
+            document.getElementById('newPromptModal').style.display = 'flex';
+        }
+
+        function closeNewPromptModal() {
+            document.getElementById('newPromptModal').style.display = 'none';
+            document.getElementById('newPromptForm').reset();
+        }
+
+        function showNewFolderForm() {
+            showCustomInput('New Folder', [{label: 'Folder Name', name: 'name'}], (result) => {
+                const folder = {
+                    id: Date.now().toString(),
+                    name: result.name,
+                    prompts: []
+                };
+
+                promptFolders.push(folder);
+                localStorage.setItem('promptFolders', JSON.stringify(promptFolders));
+                renderPromptFolders();
+            });
+        }
+
+        function saveNewPrompt() {
+            const form = document.getElementById('newPromptForm');
+            const formData = new FormData(form);
+
+            const prompt = {
+                id: Date.now().toString(),
+                name: formData.get('name'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                template: formData.get('template'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
+                createdAt: new Date().toISOString()
+            };
+
+            if (window.electronAPI) {
+                window.electronAPI.createPromptTemplate(prompt).then(() => {
+                    loadPromptTemplates(); // Reload templates
+                });
+            } else {
+                promptTemplates.push(prompt);
+                localStorage.setItem('promptTemplates', JSON.stringify(promptTemplates));
+                renderPromptTemplates();
+            }
+
+            closeNewPromptModal();
+        }
+
+
+        // Settings Toggles
+        function toggleDarkMode(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for dark mode
+        }
+        
+        function toggleAdBlock(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for ad blocking
+        }
+        
+        function toggleClearCookies(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for cookie clearing
+        }
+        
+        function toggleThirdPartyCookies(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for third-party cookie blocking
+        }
+        
+        function toggleDoNotTrack(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for Do Not Track
+        }
+        
+        function toggleDevTools(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for dev tools
+        }
+        
+        function toggleTerminalIntegration(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for terminal integration
+        }
+        
+        function toggleExtensionsEnabled(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for extensions
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize drag and drop
+            initDragAndDrop();
+            
+            // Render custom menu items
+            renderCustomMenuItems();
+            
+            // Update terminal if needed
+            if (terminalVisible) {
+                updateTerminalOutput();
+            }
+            
+            // Initialize frame load handler
+            document.querySelectorAll('.content-frame').forEach(frame => {
+                frame.onload = function() {
+                    try {
+                        const url = frame.contentWindow.location.href;
+                        updateAddressBar(url);
+                        
+                        // Update tab title if available
+                        const title = frame.contentDocument.title;
+                        const activeTabId = Object.keys(tabs).find(id => tabs[id].frame === frame);
+                        if (title && activeTabId && tabs[activeTabId]) {
+                            tabs[activeTabId].title = title;
+                            const tab = document.getElementById(activeTabId);
+                            if (tab) {
+                                const span = tab.querySelector('span');
+                                if (span) span.textContent = title;
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions
+                        console.warn('Could not access frame content due to cross-origin restrictions.');
+                    }
+                };
+            });
+            
+            // Auto-update terminal every 5 seconds if visible
+            setInterval(() => {
+                if (terminalVisible) {
+                    updateTerminalOutput();
+                }
+            }, 5000);
+
+            // Set initial active tab
+            switchToTab('dashboard');
+        });
+        
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + T: New Tab
+            if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+                e.preventDefault();
+                createNewTab();
+            }
+            
+            // Ctrl/Cmd + W: Close Tab
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                if (Object.keys(tabs).length > 1) {
+                    closeTab(activeTab);
+                }
+            }
+            
+            // Ctrl/Cmd + R: Refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshPage();
+            }
+            
+            // Ctrl/Cmd + L: Focus Address Bar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                document.getElementById('addressBar').focus();
+                document.getElementById('addressBar').select();
+            }
+            
+            // F12: Toggle Dev Tools
+            if (e.key === 'F12') {
+                e.preventDefault();
+                toggleDevTools();
+            }
+        });
+    </script>
+</body>
+</html>

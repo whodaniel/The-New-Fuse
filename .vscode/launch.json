@@ -1,16 +1,51 @@
---- a/src/vscode-extension/src/utilities/getUri.ts
-+++ b/src/vscode-extension/src/utilities/getUri.ts
-@@ -1,4 +1,5 @@
- import * as vscode from 'vscode';
-+import * as path from 'path';
- 
- /**
-  * A helper function that returns a URI for a file/folder in the webview-ui/build folder.
-@@ -29,5 +30,5 @@
-  * @returns A URI to the resource.
-  */
- export function getUri(webview: vscode.Webview, extensionUri: vscode.Uri, pathList: string[]) {
--    return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
-+    return webview.asWebviewUri(vscode.Uri.file(path.join(extensionUri.fsPath, ...pathList)));
- }
-
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Node.js Program",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/src/main.ts",
+      "outFiles": [
+        "${workspaceFolder}/apps/**/*.js"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "runtimeArgs": ["--loader", "ts-node/esm"],
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Launch Frontend Dev Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/node_modules/vite/bin/vite.js",
+      "args": ["dev", "--config", "${workspaceFolder}/apps/frontend/vite.config.ts"],
+      "cwd": "${workspaceFolder}/apps/frontend",
+      "console": "integratedTerminal",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "Debug Backend API",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/api/src/main.ts",
+      "outFiles": [
+        "${workspaceFolder}/apps/api/**/*.js"
+      ],
+      "env": {
+        "NODE_ENV": "development",
+        "DEBUG": "*"
+      },
+      "console": "integratedTerminal",
+      "sourceMaps": true,
+      "runtimeArgs": ["--loader", "ts-node/esm"]
+    }
+  ]
+}

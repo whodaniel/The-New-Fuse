@@ -1,0 +1,145 @@
+name: Reusable Build Workflow
+
+on:
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+        description: 'Service name to build'
+      dockerfile:
+        required: true
+        type: string
+        description: 'Path to Dockerfile'
+      context:
+        required: false
+        type: string
+        default: '.'
+        description: 'Build context path'
+      build-args:
+        required: false
+        type: string
+        default: ''
+        description: 'Additional build arguments'
+      cache-key:
+        required: true
+        type: string
+        description: 'Cache key for dependencies'
+    outputs:
+      image-tag:
+        description: 'Built image tag'
+        value: ${{ jobs.build.outputs.image-tag }}
+      image-digest:
+        description: 'Built image digest'
+        value: ${{ jobs.build.outputs.image-digest }}
+    secrets:
+      GITHUB_TOKEN:
+        required: true
+      REGISTRY_USERNAME:
+        required: false
+      REGISTRY_PASSWORD:
+        required: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build:
+    name: Build ${{ inputs.service }}
+    runs-on: ubuntu-latest
+    outputs:
+      image-tag: ${{ steps.meta.outputs.tags }}
+      image-digest: ${{ steps.build.outputs.digest }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: '1.2.16'
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            **/node_modules
+            .turbo
+          key: ${{ inputs.cache-key }}
+
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/lib
+            packages/*/types
+            apps/*/dist
+            apps/*/.next
+            apps/*/build
+          key: build-${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ inputs.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ inputs.context }}
+          file: ${{ inputs.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ inputs.service }}
+          cache-to: type=gha,mode=max,scope=${{ inputs.service }}
+          build-args: |
+            SERVICE=${{ inputs.service }}
+            NODE_ENV=production
+            ${{ inputs.build-args }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ steps.meta.outputs.tags }}
+          format: spdx-json
+          output-file: ${{ inputs.service }}-sbom.spdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.service }}-sbom
+          path: ${{ inputs.service }}-sbom.spdx.json
+
+      - name: Run security scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ steps.meta.outputs.tags }}
+          format: 'sarif'
+          output: '${{ inputs.service }}-trivy-results.sarif'
+
+      - name: Upload security scan results
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: '${{ inputs.service }}-trivy-results.sarif'

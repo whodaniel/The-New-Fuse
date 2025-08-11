@@ -3,16 +3,20 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "rootDir": "./src",
     "composite": true,
     "declaration": true,
     "jsx": "react-jsx",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"]
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "baseUrl": ".",
+    "paths": {
+      "@ui-components/*": ["../ui-components/src/*"]
+    }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../ui-components/src/**/*"],
   "exclude": ["node_modules", "dist"],
   "references": [
     { "path": "../types" },
-    { "path": "../utils" }
+    { "path": "../utils" },
+    { "path": "../ui-components" }
   ]
 }

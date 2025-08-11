@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Browser Hub - Comprehensive Chrome-Compatible Browser</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #2d3748;
+            color: #e2e8f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Title Bar */
+        .title-bar {
+            background: #4a5568;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .title-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #63b3ed;
+            font-weight: 600;
+        }
+
+        .title-bar .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .title-bar button {
+            background: #4299e1;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .title-bar button:hover {
+            background: #3182ce;
+        }
+
+        /* Tab Bar */
+        .tab-bar {
+            background: #374151;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .new-tab-btn {
+            background: #4a5568;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            cursor: pointer;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .new-tab-btn:hover {
+            background: #6b7280;
+        }
+
+        /* Navigation Bar */
+        .nav-bar {
+            background: #374151;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 8px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .nav-btn {
+            background: #4a5568;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #6b7280;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .url-bar {
+            flex: 1;
+            background: #2d3748;
+            border: 1px solid #4a5568;
+            border-radius: 24px;
+            padding: 0 16px;
+            height: 36px;
+            color: #e2e8f0;
+            font-size: 14px;
+            margin: 0 8px;
+        }
+
+        .url-bar:focus {
+            outline: none;
+            border-color: #4299e1;
+        }
+
+        /* Services Panel */
+        .services-panel {
+            background: #374151;
+            border-bottom: 1px solid #2d3748;
+            padding: 12px 16px;
+        }
+
+        .service-category {
+            margin-bottom: 12px;
+        }
+
+        .service-category-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .service-category-header .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .service-category-header .status-indicator.connected {
+            background: #10b981;
+        }
+
+        .service-category-header .status-indicator.partial {
+            background: #f59e0b;
+        }
+
+        .service-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .service-btn {
+            background: #4a5568;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.2s;
+        }
+
+        .service-btn:hover {
+            background: #6b7280;
+        }
+
+        .service-btn.active {
+            background: #4299e1;
+        }
+
+        .service-btn .icon {
+            font-size: 14px;
+        }
+
+        /* Control Bar */
+        .control-bar {
+            background: #374151;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 8px;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2d3748;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .welcome-content h1 {
+            color: #63b3ed;
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .welcome-content h2 {
+            color: #9ca3af;
+            font-size: 1.25rem;
+            font-weight: 400;
+            margin-bottom: 24px;
+        }
+
+        .welcome-content p {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: #374151;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            font-size: 11px;
+            color: #9ca3af;
+            border-top: 1px solid #2d3748;
+        }
+
+        .status-left {
+            display: flex;
+            gap: 16px;
+        }
+
+        .status-right {
+            display: flex;
+            gap: 16px;
+        }
+
+        /* Service Category Colors */
+        .ai-clis .service-category-header {
+            color: #f472b6;
+        }
+
+        .automation .service-category-header {
+            color: #10b981;
+        }
+
+        .mcp-server .service-category-header {
+            color: #f59e0b;
+        }
+
+        .tnf .service-category-header {
+            color: #8b5cf6;
+        }
+
+        /* Refresh Button */
+        .refresh-btn {
+            background: #4a5568;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #e2e8f0;
+            font-size: 11px;
+            cursor: pointer;
+            margin-left: auto;
+        }
+
+        .refresh-btn:hover {
+            background: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="logo">
+            <span>🚀</span>
+            <span>TNF Browser Hub</span>
+        </div>
+        <div class="controls">
+            <button onclick="openExtensions()">Extensions</button>
+            <button onclick="openBookmarks()">Bookmarks</button>
+            <button onclick="openSettings()">Settings</button>
+        </div>
+    </div>
+
+    <!-- Tab Bar -->
+    <div class="tab-bar">
+        <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">+</button>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div class="nav-bar">
+        <button class="nav-btn" onclick="goBack()" title="Back">←</button>
+        <button class="nav-btn" onclick="goForward()" title="Forward">→</button>
+        <button class="nav-btn" onclick="refresh()" title="Refresh">↻</button>
+        <button class="nav-btn" onclick="closeTab()" title="Close">×</button>
+        <input type="text" class="url-bar" placeholder="Enter URL or search..." onkeypress="handleUrlEnter(event)">
+        <button class="nav-btn" onclick="navigateToUrl()" title="Go">→</button>
+        <button class="nav-btn" onclick="toggleDevTools()" title="DevTools">⚙</button>
+    </div>
+
+    <!-- Services Panel -->
+    <div class="services-panel">
+        <div class="service-category-header" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <span><strong>Services:</strong></span>
+            <span style="color: #ef4444;">● 0/0</span>
+            <button class="refresh-btn" onclick="refreshServices()">🔄 Refresh</button>
+        </div>
+
+        <!-- AI CLIs -->
+        <div class="service-category ai-clis">
+            <div class="service-category-header">
+                <span>🧠</span>
+                <span>AI CLIs:</span>
+                <span class="status-indicator partial"></span>
+                <span class="status-indicator partial"></span>
+            </div>
+            <div class="service-buttons">
+                <button class="service-btn" onclick="askClaude()">
+                    <span class="icon">⭐</span>
+                    <span>Ask Claude</span>
+                </button>
+                <button class="service-btn" onclick="askGemini()">
+                    <span class="icon">💎</span>
+                    <span>Ask Gemini</span>
+                </button>
+                <button class="service-btn" onclick="analyzePage()">
+                    <span class="icon">🔍</span>
+                    <span>Analyze Page</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Automation -->
+        <div class="service-category automation">
+            <div class="service-category-header">
+                <span>🤖</span>
+                <span>Automation:</span>
+                <span class="status-indicator partial"></span>
+                <span class="status-indicator partial"></span>
+            </div>
+            <div class="service-buttons">
+                <button class="service-btn" onclick="openPuppeteer()">
+                    <span class="icon">🎭</span>
+                    <span>Puppeteer</span>
+                </button>
+                <button class="service-btn" onclick="openPlaywright()">
+                    <span class="icon">🎪</span>
+                    <span>Playwright</span>
+                </button>
+                <button class="service-btn" onclick="takeScreenshot()">
+                    <span class="icon">📷</span>
+                    <span>Screenshot</span>
+                </button>
+                <button class="service-btn" onclick="generatePDF()">
+                    <span class="icon">📄</span>
+                    <span>PDF</span>
+                </button>
+                <button class="service-btn" onclick="startRecord()">
+                    <span class="icon">⏺</span>
+                    <span>Record</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- MCP Server -->
+        <div class="service-category mcp-server">
+            <div class="service-category-header">
+                <span>🖥</span>
+                <span>MCP Server:</span>
+                <span class="status-indicator"></span>
+            </div>
+            <div class="service-buttons">
+                <button class="service-btn" onclick="startMCP()">
+                    <span class="icon">🚀</span>
+                    <span>Start MCP</span>
+                </button>
+                <button class="service-btn" onclick="mcpStatus()">
+                    <span class="icon">📊</span>
+                    <span>Status</span>
+                </button>
+                <button class="service-btn" onclick="mcpLogs()">
+                    <span class="icon">📋</span>
+                    <span>Logs</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- TNF -->
+        <div class="service-category tnf">
+            <div class="service-category-header">
+                <span>🚀</span>
+                <span>TNF:</span>
+            </div>
+            <div class="service-buttons">
+                <button class="service-btn" onclick="extractElements()">
+                    <span class="icon">🔧</span>
+                    <span>Extract Elements</span>
+                </button>
+                <button class="service-btn" onclick="createWorkflow()">
+                    <span class="icon">⚡</span>
+                    <span>Create Workflow</span>
+                </button>
+                <button class="service-btn" onclick="autoNavigate()">
+                    <span class="icon">🧭</span>
+                    <span>Auto-Navigate</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <button class="service-btn" onclick="toggleBookmark()">
+            <span class="icon">⭐</span>
+            <span>Bookmark</span>
+        </button>
+        <button class="service-btn" onclick="showHistory()">
+            <span class="icon">📜</span>
+            <span>History</span>
+        </button>
+        <button class="service-btn" onclick="clearData()">
+            <span class="icon">🗑</span>
+            <span>Clear Data</span>
+        </button>
+        <button class="service-btn" onclick="togglePrivate()">
+            <span class="icon">🔒</span>
+        </button>
+        <span style="margin: 0 12px; font-size: 12px;">100%</span>
+        <button class="service-btn" onclick="togglePrivate2()">
+            <span class="icon">🔒</span>
+        </button>
+        <button class="service-btn" onclick="testAll()">
+            <span class="icon">✅</span>
+            <span>Test All</span>
+        </button>
+        <button class="service-btn" onclick="togglePanels()">
+            <span class="icon">⚙</span>
+            <span>Toggle Panels</span>
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="welcome-content">
+            <h1>
+                <span>🚀</span>
+                <span>TNF Browser Hub</span>
+            </h1>
+            <h2>Comprehensive Chrome-Compatible Browser</h2>
+            <p>Create a new tab or select a service to get started</p>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div class="status-left">
+            <span>Connection failed</span>
+        </div>
+        <div class="status-right">
+            <span>0 tabs</span>
+            <span>Memory: 0 MB</span>
+            <span>⚡</span>
+        </div>
+    </div>
+
+    <script>
+        // Browser functionality
+        let currentUrl = '';
+        let tabs = [];
+        let activeTabId = null;
+
+        function createNewTab() {
+            const tabId = Date.now();
+            tabs.push({
+                id: tabId,
+                url: 'about:blank',
+                title: 'New Tab'
+            });
+            activeTabId = tabId;
+            updateUI();
+        }
+
+        function goBack() {
+            console.log('Navigate back');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('back');
+            }
+        }
+
+        function goForward() {
+            console.log('Navigate forward');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('forward');
+            }
+        }
+
+        function refresh() {
+            console.log('Refresh page');
+            if (window.electronAPI) {
+                window.electronAPI.browserAction('refresh');
+            }
+        }
+
+        function closeTab() {
+            console.log('Close tab');
+            if (activeTabId && tabs.length > 1) {
+                tabs = tabs.filter(tab => tab.id !== activeTabId);
+                activeTabId = tabs[0]?.id || null;
+                updateUI();
+            }
+        }
+
+        function handleUrlEnter(event) {
+            if (event.key === 'Enter') {
+                navigateToUrl();
+            }
+        }
+
+        function navigateToUrl() {
+            const urlBar = document.querySelector('.url-bar');
+            const url = urlBar.value.trim();
+            if (url) {
+                console.log('Navigate to:', url);
+                currentUrl = url;
+                if (window.electronAPI) {
+                    window.electronAPI.navigateToUrl(url);
+                }
+                updateUI();
+            }
+        }
+
+        function toggleDevTools() {
+            console.log('Toggle DevTools');
+            if (window.electronAPI) {
+                window.electronAPI.toggleDevTools();
+            }
+        }
+
+        // Service functions
+        function askClaude() {
+            console.log('Opening Claude CLI');
+            if (window.electronAPI) {
+                window.electronAPI.openService('claude');
+            }
+        }
+
+        function askGemini() {
+            console.log('Opening Gemini CLI');
+            if (window.electronAPI) {
+                window.electronAPI.openService('gemini');
+            }
+        }
+
+        function analyzePage() {
+            console.log('Analyzing current page');
+            if (window.electronAPI) {
+                window.electronAPI.analyzePage();
+            }
+        }
+
+        function openPuppeteer() {
+            console.log('Opening Puppeteer');
+            if (window.electronAPI) {
+                window.electronAPI.openService('puppeteer');
+            }
+        }
+
+        function openPlaywright() {
+            console.log('Opening Playwright');
+            if (window.electronAPI) {
+                window.electronAPI.openService('playwright');
+            }
+        }
+
+        function takeScreenshot() {
+            console.log('Taking screenshot');
+            if (window.electronAPI) {
+                window.electronAPI.takeScreenshot();
+            }
+        }
+
+        function generatePDF() {
+            console.log('Generating PDF');
+            if (window.electronAPI) {
+                window.electronAPI.generatePDF();
+            }
+        }
+
+        function startRecord() {
+            console.log('Starting recording');
+            if (window.electronAPI) {
+                window.electronAPI.startRecord();
+            }
+        }
+
+        function startMCP() {
+            console.log('Starting MCP Server');
+            if (window.electronAPI) {
+                window.electronAPI.startMCP();
+            }
+        }
+
+        function mcpStatus() {
+            console.log('Checking MCP Status');
+            if (window.electronAPI) {
+                window.electronAPI.mcpStatus();
+            }
+        }
+
+        function mcpLogs() {
+            console.log('Viewing MCP Logs');
+            if (window.electronAPI) {
+                window.electronAPI.mcpLogs();
+            }
+        }
+
+        function extractElements() {
+            console.log('Extracting elements');
+            if (window.electronAPI) {
+                window.electronAPI.extractElements();
+            }
+        }
+
+        function createWorkflow() {
+            console.log('Creating workflow');
+            if (window.electronAPI) {
+                window.electronAPI.createWorkflow();
+            }
+        }
+
+        function autoNavigate() {
+            console.log('Auto-navigating');
+            if (window.electronAPI) {
+                window.electronAPI.autoNavigate();
+            }
+        }
+
+        function openExtensions() {
+            console.log('Opening extensions');
+            if (window.electronAPI) {
+                window.electronAPI.openExtensions();
+            }
+        }
+
+        function openBookmarks() {
+            console.log('Opening bookmarks');
+            if (window.electronAPI) {
+                window.electronAPI.openBookmarks();
+            }
+        }
+
+        function openSettings() {
+            console.log('Opening settings');
+            if (window.electronAPI) {
+                window.electronAPI.openSettings();
+            }
+        }
+
+        function refreshServices() {
+            console.log('Refreshing services');
+            if (window.electronAPI) {
+                window.electronAPI.refreshServices();
+            }
+        }
+
+        function toggleBookmark() {
+            console.log('Toggle bookmark');
+        }
+
+        function showHistory() {
+            console.log('Show history');
+        }
+
+        function clearData() {
+            console.log('Clear data');
+        }
+
+        function togglePrivate() {
+            console.log('Toggle private');
+        }
+
+        function togglePrivate2() {
+            console.log('Toggle private 2');
+        }
+
+        function testAll() {
+            console.log('Test all services');
+            if (window.electronAPI) {
+                window.electronAPI.testAll();
+            }
+        }
+
+        function togglePanels() {
+            console.log('Toggle panels');
+            const servicesPanel = document.querySelector('.services-panel');
+            const controlBar = document.querySelector('.control-bar');
+            
+            if (servicesPanel.style.display === 'none') {
+                servicesPanel.style.display = 'block';
+                controlBar.style.display = 'flex';
+            } else {
+                servicesPanel.style.display = 'none';
+                controlBar.style.display = 'none';
+            }
+        }
+
+        function updateUI() {
+            const statusBar = document.querySelector('.status-right');
+            if (statusBar) {
+                statusBar.innerHTML = `
+                    <span>${tabs.length} tabs</span>
+                    <span>Memory: 0 MB</span>
+                    <span>⚡</span>
+                `;
+            }
+        }
+
+        // Initialize
+        createNewTab();
+
+        // Add Theia IDE integration
+        function openTheiaIDE() {
+            console.log('Opening Theia IDE');
+            if (window.electronAPI) {
+                window.electronAPI.openTheia();
+            } else {
+                // Fallback to opening Theia in current window
+                const theiaUrl = 'http://localhost:3000'; // Default Theia port
+                window.location.href = theiaUrl;
+            }
+        }
+
+        // Add service status checking
+        async function checkServiceStatus() {
+            if (window.electronAPI) {
+                try {
+                    const status = await window.electronAPI.getServiceStatus();
+                    updateServiceIndicators(status);
+                } catch (error) {
+                    console.error('Failed to check service status:', error);
+                }
+            }
+        }
+
+        function updateServiceIndicators(status) {
+            // Update status indicators based on service availability
+            const indicators = document.querySelectorAll('.status-indicator');
+            indicators.forEach((indicator, index) => {
+                if (status && status[index]) {
+                    indicator.classList.add('connected');
+                } else {
+                    indicator.classList.remove('connected');
+                }
+            });
+        }
+
+        // Check status on load
+        document.addEventListener('DOMContentLoaded', () => {
+            checkServiceStatus();
+            setInterval(checkServiceStatus, 30000); // Check every 30 seconds
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,544 @@
+name: CI/CD Foundation Pipeline
+
+on:
+  push:
+    branches: [main, develop, staging]
+  pull_request:
+    branches: [main, develop, staging]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment for deployment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      skip_tests:
+        description: 'Skip test execution'
+        required: false
+        default: false
+        type: boolean
+      force_deploy:
+        description: 'Force deployment even if tests fail'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+  NODE_VERSION: '20'
+  BUN_VERSION: '1.2.16'
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Pipeline Configuration and Setup
+  setup:
+    name: Pipeline Setup
+    runs-on: ubuntu-latest
+    outputs:
+      cache-key: ${{ steps.cache-key.outputs.key }}
+      build-matrix: ${{ steps.build-matrix.outputs.matrix }}
+      deploy-environment: ${{ steps.deploy-env.outputs.environment }}
+      should-deploy: ${{ steps.deploy-env.outputs.should-deploy }}
+      version-tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate cache key
+        id: cache-key
+        run: |
+          echo "key=deps-${{ hashFiles('**/bun.lockb', '**/package.json', 'turbo.json') }}" >> $GITHUB_OUTPUT
+
+      - name: Generate build matrix
+        id: build-matrix
+        run: |
+          # Dynamically generate build matrix based on changed files
+          MATRIX='{"include":[]}'
+          
+          # Check for API changes
+          if git diff --name-only HEAD~1 | grep -E '^(apps/api|packages/core|packages/database)' || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MATRIX=$(echo $MATRIX | jq '.include += [{"service": "api", "dockerfile": "apps/api/Dockerfile", "context": "."}]')
+          fi
+          
+          # Check for Frontend changes
+          if git diff --name-only HEAD~1 | grep -E '^(apps/frontend|packages/ui)' || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MATRIX=$(echo $MATRIX | jq '.include += [{"service": "frontend", "dockerfile": "apps/frontend/Dockerfile", "context": "."}]')
+          fi
+          
+          # Check for Agent changes
+          if git diff --name-only HEAD~1 | grep -E '^(apps/agent|packages/agent-core)' || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            MATRIX=$(echo $MATRIX | jq '.include += [{"service": "agent", "dockerfile": "apps/agent/Dockerfile", "context": "."}]')
+          fi
+          
+          echo "matrix=$MATRIX" >> $GITHUB_OUTPUT
+
+      - name: Determine deployment environment
+        id: deploy-env
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "environment=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "environment=production" >> $GITHUB_OUTPUT
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            echo "environment=staging" >> $GITHUB_OUTPUT
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+            echo "environment=development" >> $GITHUB_OUTPUT
+            echo "should-deploy=true" >> $GITHUB_OUTPUT
+          else
+            echo "environment=none" >> $GITHUB_OUTPUT
+            echo "should-deploy=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Generate version tag
+        id: version
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            echo "tag=v$(date +%Y.%m.%d)-${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=${GITHUB_REF_NAME}-$(date +%Y%m%d)-${GITHUB_SHA::8}" >> $GITHUB_OUTPUT
+          fi
+
+  # Dependency Installation and Caching
+  dependencies:
+    name: Install Dependencies
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            **/node_modules
+            .turbo
+          key: ${{ needs.setup.outputs.cache-key }}
+          restore-keys: |
+            deps-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Validate package integrity
+        run: |
+          bun run audit
+          bun run type-check
+
+  # Code Quality and Linting
+  quality-checks:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    needs: [setup, dependencies]
+    strategy:
+      matrix:
+        check: [lint, format, type-check, security-scan]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            **/node_modules
+            .turbo
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Run linting
+        if: matrix.check == 'lint'
+        run: bun run lint
+
+      - name: Check formatting
+        if: matrix.check == 'format'
+        run: |
+          bun run format
+          git diff --exit-code || (echo "Code is not properly formatted" && exit 1)
+
+      - name: Type checking
+        if: matrix.check == 'type-check'
+        run: bun run type-check
+
+      - name: Security scanning
+        if: matrix.check == 'security-scan'
+        uses: securecodewarrior/github-action-add-sarif@v1
+        with:
+          sarif-file: 'security-scan-results.sarif'
+        continue-on-error: true
+
+  # Comprehensive Testing Suite
+  test-suite:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    needs: [setup, dependencies]
+    if: ${{ !inputs.skip_tests }}
+    strategy:
+      matrix:
+        test-type: [unit, integration, e2e]
+        shard: [1, 2, 3, 4]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            **/node_modules
+            .turbo
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Setup test database
+        if: matrix.test-type != 'unit'
+        run: |
+          docker run -d \
+            --name test-db \
+            -e POSTGRES_PASSWORD=test \
+            -e POSTGRES_USER=test \
+            -e POSTGRES_DB=test \
+            -p 5432:5432 \
+            postgres:15-alpine
+
+      - name: Generate Prisma client
+        run: bun run db:generate
+
+      - name: Run database migrations
+        if: matrix.test-type != 'unit'
+        run: bun run db:migrate
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+
+      - name: Run unit tests
+        if: matrix.test-type == 'unit'
+        run: bun run test:unit --shard=${{ matrix.shard }}/4
+
+      - name: Run integration tests
+        if: matrix.test-type == 'integration'
+        run: bun run test:integration --shard=${{ matrix.shard }}/4
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+
+      - name: Run E2E tests
+        if: matrix.test-type == 'e2e'
+        run: bun run test:e2e --shard=${{ matrix.shard }}/4
+        env:
+          DATABASE_URL: postgresql://test:test@localhost:5432/test
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results-${{ matrix.test-type }}-${{ matrix.shard }}
+          path: |
+            test-results/
+            coverage/
+            playwright-report/
+
+      - name: Upload coverage to Codecov
+        if: matrix.test-type == 'unit'
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          flags: ${{ matrix.test-type }}
+          fail_ci_if_error: false
+
+  # Build and Package Applications
+  build:
+    name: Build Applications
+    runs-on: ubuntu-latest
+    needs: [setup, dependencies, quality-checks]
+    if: always() && (needs.quality-checks.result == 'success' || inputs.force_deploy)
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+
+      - name: Restore dependencies cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            **/node_modules
+            .turbo
+          key: ${{ needs.setup.outputs.cache-key }}
+
+      - name: Cache Turbo build
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ github.sha }}
+          restore-keys: |
+            turbo-
+
+      - name: Generate Prisma client
+        run: bun run db:generate
+
+      - name: Build all packages
+        run: bun run build
+
+      - name: Cache build artifacts
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/lib
+            packages/*/types
+            apps/*/dist
+            apps/*/.next
+            apps/*/build
+          key: build-${{ github.sha }}
+
+      - name: Generate build manifest
+        run: |
+          echo "Build completed at $(date)" > build-manifest.txt
+          echo "Commit: ${{ github.sha }}" >> build-manifest.txt
+          echo "Branch: ${{ github.ref_name }}" >> build-manifest.txt
+          echo "Version: ${{ needs.setup.outputs.version-tag }}" >> build-manifest.txt
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build-manifest.txt
+            packages/*/dist
+            apps/*/dist
+            apps/*/.next
+            apps/*/build
+
+  # Container Image Building
+  docker-build:
+    name: Build Container Images
+    runs-on: ubuntu-latest
+    needs: [setup, build, test-suite]
+    if: always() && needs.build.result == 'success' && (needs.test-suite.result == 'success' || inputs.skip_tests || inputs.force_deploy)
+    strategy:
+      matrix: ${{ fromJson(needs.setup.outputs.build-matrix) }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Restore build cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            packages/*/dist
+            packages/*/lib
+            packages/*/types
+            apps/*/dist
+            apps/*/.next
+            apps/*/build
+          key: build-${{ github.sha }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.service }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=sha,prefix={{branch}}-
+            type=raw,value=${{ needs.setup.outputs.version-tag }}
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.service }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.service }}
+          build-args: |
+            SERVICE=${{ matrix.service }}
+            VERSION=${{ needs.setup.outputs.version-tag }}
+            NODE_ENV=production
+
+  # Deployment to Target Environment
+  deploy:
+    name: Deploy to ${{ needs.setup.outputs.deploy-environment }}
+    runs-on: ubuntu-latest
+    needs: [setup, docker-build]
+    if: needs.setup.outputs.should-deploy == 'true' && needs.docker-build.result == 'success'
+    environment:
+      name: ${{ needs.setup.outputs.deploy-environment }}
+      url: ${{ steps.deploy.outputs.url }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup deployment tools
+        run: |
+          # Install kubectl
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          chmod +x kubectl
+          sudo mv kubectl /usr/local/bin/
+          
+          # Install Helm
+          curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 | bash
+
+      - name: Configure Kubernetes
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > kubeconfig
+          export KUBECONFIG=./kubeconfig
+          kubectl config current-context
+
+      - name: Run pre-deployment checks
+        run: |
+          # Check cluster health
+          kubectl get nodes
+          kubectl get pods -n ${{ needs.setup.outputs.deploy-environment }}
+          
+          # Validate deployment manifests
+          kubectl apply --dry-run=client -f k8s/${{ needs.setup.outputs.deploy-environment }}/
+
+      - name: Deploy to Kubernetes
+        id: deploy
+        run: |
+          export KUBECONFIG=./kubeconfig
+          
+          # Update image tags in deployment manifests
+          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:${{ needs.setup.outputs.version-tag }}|g" k8s/${{ needs.setup.outputs.deploy-environment }}/api-deployment.yaml
+          sed -i "s|image:.*|image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:${{ needs.setup.outputs.version-tag }}|g" k8s/${{ needs.setup.outputs.deploy-environment }}/frontend-deployment.yaml
+          
+          # Apply deployments
+          kubectl apply -f k8s/${{ needs.setup.outputs.deploy-environment }}/
+          
+          # Wait for rollout to complete
+          kubectl rollout status deployment/api -n ${{ needs.setup.outputs.deploy-environment }} --timeout=600s
+          kubectl rollout status deployment/frontend -n ${{ needs.setup.outputs.deploy-environment }} --timeout=600s
+          
+          # Get service URL
+          SERVICE_URL=$(kubectl get service frontend -n ${{ needs.setup.outputs.deploy-environment }} -o jsonpath='{.status.loadBalancer.ingress[0].hostname}')
+          echo "url=https://$SERVICE_URL" >> $GITHUB_OUTPUT
+
+      - name: Run post-deployment verification
+        run: |
+          export KUBECONFIG=./kubeconfig
+          
+          # Health checks
+          kubectl get pods -n ${{ needs.setup.outputs.deploy-environment }} -l app=api
+          kubectl get pods -n ${{ needs.setup.outputs.deploy-environment }} -l app=frontend
+          
+          # Run smoke tests
+          ./scripts/smoke-tests.sh ${{ needs.setup.outputs.deploy-environment }}
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          export KUBECONFIG=./kubeconfig
+          kubectl rollout undo deployment/api -n ${{ needs.setup.outputs.deploy-environment }}
+          kubectl rollout undo deployment/frontend -n ${{ needs.setup.outputs.deploy-environment }}
+
+  # Post-deployment notifications and reporting
+  notify:
+    name: Deployment Notifications
+    runs-on: ubuntu-latest
+    needs: [setup, deploy]
+    if: always() && needs.setup.outputs.should-deploy == 'true'
+    steps:
+      - name: Determine deployment status
+        id: status
+        run: |
+          if [ "${{ needs.deploy.result }}" = "success" ]; then
+            echo "status=success" >> $GITHUB_OUTPUT
+            echo "emoji=✅" >> $GITHUB_OUTPUT
+          else
+            echo "status=failure" >> $GITHUB_OUTPUT
+            echo "emoji=❌" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@v1.25.0
+        with:
+          channel-id: 'deployments'
+          slack-message: |
+            ${{ steps.status.outputs.emoji }} **Deployment ${{ steps.status.outputs.status }}**
+            
+            **Environment:** ${{ needs.setup.outputs.deploy-environment }}
+            **Version:** ${{ needs.setup.outputs.version-tag }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            **Branch:** ${{ github.ref_name }}
+            **Workflow:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            
+            ${{ needs.deploy.result == 'success' && format('**URL:** {0}', needs.deploy.outputs.url) || '**Status:** Deployment failed - check logs' }}
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+
+      - name: Create GitHub Release
+        if: github.ref == 'refs/heads/main' && needs.deploy.result == 'success'
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ needs.setup.outputs.version-tag }}
+          release_name: Release ${{ needs.setup.outputs.version-tag }}
+          body: |
+            ## 🚀 Production Deployment
+            
+            **Version:** ${{ needs.setup.outputs.version-tag }}
+            **Commit:** ${{ github.sha }}
+            **Author:** ${{ github.actor }}
+            
+            ## 📦 Container Images
+            - API: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/api:${{ needs.setup.outputs.version-tag }}`
+            - Frontend: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/frontend:${{ needs.setup.outputs.version-tag }}`
+            
+            ## 🔗 Links
+            - [Workflow Run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - [Application URL](${{ needs.deploy.outputs.url }})
+          draft: false
+          prerelease: false
+
+      - name: Update deployment status
+        run: |
+          echo "Deployment completed with status: ${{ steps.status.outputs.status }}"
+          echo "Environment: ${{ needs.setup.outputs.deploy-environment }}"
+          echo "Version: ${{ needs.setup.outputs.version-tag }}"

@@ -1,0 +1,12 @@
+{
+  "name": "@the-new-fuse/theia-ide",
+  "version": "2.0.0",
+  "built": true,
+  "timestamp": "2025-08-10T21:09:11.909Z",
+  "features": [
+    "ai-powered",
+    "mcp-integration",
+    "real-time-collaboration",
+    "modern-ui"
+  ]
+}

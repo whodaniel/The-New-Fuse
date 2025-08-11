@@ -1,8 +1,6 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "lib": ["ES2022"],
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
@@ -10,15 +8,33 @@
     "sourceMap": true,
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "strictPropertyInitialization": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "composite": true,
-    "moduleResolution": "node",
-    "resolveJsonModule": true
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "backup/**/*", "**/*.test.*", "**/*.spec.*"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "references": [
+    {
+      "path": "../database"
+    },
+    {
+      "path": "../types"
+    },
+    {
+      "path": "../utils"
+    }
+  ]
 }
