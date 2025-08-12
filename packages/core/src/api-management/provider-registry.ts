@@ -1,7 +1,5 @@
 import { EventEmitter } from 'events';
 export interface ModelInfo {
-  // Implementation needed
-}
   id: string;
   name: string;
   description?: string;
@@ -11,8 +9,6 @@ export interface ModelInfo {
 }
 
 export interface ProviderInfo {
-  // Implementation needed
-}
   id: string;
   name: string;
   baseUrl: string;
@@ -21,31 +17,17 @@ export interface ProviderInfo {
   supportedFeatures?: string[];
 }
 
-export class ProviderRegistry extends EventEmitter {
-  // Implementation needed
-}
+export class ProviderRegistry {
   private providers = new Map<string, ProviderInfo>();
-  constructor() {
-  // Implementation needed
-}
-    super();
-    this.initializeDefaultProviders();
-  }
-
-  registerProvider(provider: ProviderInfo): void {
-  // Implementation needed
-}
+  constructor(): unknown {
+    super(): unknown {
     this.providers.set(provider.id, provider);
     this.emit('provider-registered', provider);
   }
 
-  unregisterProvider(providerId: string): boolean {
-  // Implementation needed
-}
+  unregisterProvider(): unknown {
     const provider = this.providers.get(providerId);
-    if (provider) {
-  // Implementation needed
-}
+    if(): unknown {
       this.providers.delete(providerId);
       this.emit('provider-unregistered', provider);
       return true;
@@ -53,21 +35,15 @@ export class ProviderRegistry extends EventEmitter {
     return false;
   }
 
-  getProvider(providerId: string): ProviderInfo | undefined {
-  // Implementation needed
-}
+  getProvider(): unknown {
     return this.providers.get(providerId);
   }
 
-  getAllProviders(): ProviderInfo[] {
-  // Implementation needed
-}
+  getAllProviders(): unknown {
     return Array.from(this.providers.values());
   }
 
-  getProviderModels(providerId: string): ModelInfo[] {
-  // Implementation needed
-}
+  getProviderModels(): unknown {
     const provider = this.providers.get(providerId);
     return provider ? provider.models : [];
   }
@@ -75,13 +51,9 @@ export class ProviderRegistry extends EventEmitter {
   findModelById(modelId: string): { provider: ProviderInfo; model: ModelInfo } | undefined {
   // Implementation needed
 }
-    for (const provider of this.providers.values()) {
-  // Implementation needed
-}
+    for(): unknown {
       const model = provider.models.find(m => m.id === modelId);
-      if (model) {
-  // Implementation needed
-}
+      if(): unknown {
         return { provider, model };
       }
     }
@@ -89,10 +61,8 @@ export class ProviderRegistry extends EventEmitter {
   }
 
   private initializeDefaultProviders(): void {
-  // Implementation needed
-}
-    // OpenAI Provider
-    this.registerProvider({
+// OpenAI Provider
+  }    this.registerProvider({
   // Implementation needed
 }
       id: 'openai',
@@ -166,13 +136,9 @@ export class ProviderRegistry extends EventEmitter {
     this.emit('default-providers-initialized');
   }
 
-  updateProvider(providerId: string, updates: Partial<ProviderInfo>): boolean {
-  // Implementation needed
-}
+  updateProvider(): unknown {
     const provider = this.providers.get(providerId);
-    if (provider) {
-  // Implementation needed
-}
+    if(): unknown {
       const updatedProvider = { ...provider, ...updates };
       this.providers.set(providerId, updatedProvider);
       this.emit('provider-updated', updatedProvider);
@@ -181,15 +147,11 @@ export class ProviderRegistry extends EventEmitter {
     return false;
   }
 
-  isProviderRegistered(providerId: string): boolean {
-  // Implementation needed
-}
+  isProviderRegistered(): unknown {
     return this.providers.has(providerId);
   }
 
-  getProviderCount(): number {
-  // Implementation needed
-}
+  getProviderCount(): unknown {
     return this.providers.size;
   }
 }

@@ -1,12 +1,9 @@
 export declare class RedisMonitor {
-  // Implementation needed
-}
-    private redisClient;
+private redisClient;
     private pubsub;
     private channels;
     private isRunning;
-    constructor(config: {
-  // Implementation needed
+    constructor(config: unknown;
 }
         host?: any;
         port?: number;
@@ -15,7 +12,5 @@ export declare class RedisMonitor {
 }
 
 interface RedisMonitorEvents {
-  // Implementation needed
-}
     someEvent(arg1: string, arg2: number) => void;
 }

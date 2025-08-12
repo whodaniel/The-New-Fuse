@@ -2,8 +2,6 @@ import { IsString, IsOptional, IsEnum, IsArray, IsDateString, IsUUID } from 'cla
 import { ApiProperty } from '@nestjs/swagger';
 import { TaskStatus, TaskPriority } from '../entities/Task';
 export class CreateTaskDto {
-  // Implementation needed
-}
   @ApiProperty({ description: 'Task title' })
   @IsString()
   title: string;
@@ -47,8 +45,6 @@ export class CreateTaskDto {
 }
 
 export class UpdateTaskDto {
-  // Implementation needed
-}
   @ApiProperty({ description: 'Task title', required: false })
   @IsOptional()
   @IsString()

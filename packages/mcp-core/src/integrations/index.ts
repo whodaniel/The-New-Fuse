@@ -32,6 +32,12 @@ export * from './platform-types';
 export * from './relay-core';
 export * from './database';
 
+// Workflow integration
+export {
+  MCPWorkflowIntegration,
+  type MCPWorkflowIntegrationConfig
+} from './MCPWorkflowIntegration';
+
 // Platform integration manager
 import { PlatformTypesBridge, PlatformUtils } from './platform-types';
 import { RelayIntegration, RelayIntegrationFactory } from './relay-core';

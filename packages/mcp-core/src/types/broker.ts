@@ -105,12 +105,12 @@ export interface RoutingInfo {
 export interface RetryPolicy {
   /** Maximum number of retry attempts */
   maxAttempts: number;
-  /** Initial delay in milliseconds */
-  initialDelay: number;
+  /** Base delay in milliseconds */
+  baseDelay: number;
   /** Maximum delay in milliseconds */
   maxDelay: number;
   /** Backoff multiplier */
-  backoffMultiplier: number;
+  backoffMultiplier?: number;
   /** Jitter factor (0-1) */
   jitter?: number;
 }
@@ -213,4 +213,67 @@ export interface BrokerOptions {
   discoveryCacheTTL?: number;
   /** Maximum concurrent requests */
   maxConcurrentRequests?: number;
+}
+
+/**
+ * Advanced service query interface with capability matching
+ */
+export interface AdvancedServiceQuery extends ServiceQuery {
+  /** Required capabilities that services must have */
+  requiredCapabilities?: string[];
+  /** Service ID to find compatible services with */
+  compatibleWith?: string;
+  /** Minimum health score (0-1) */
+  minHealthScore?: number;
+  /** Maximum age in milliseconds */
+  maxAge?: number;
+  /** Capability matching mode */
+  capabilityMatchMode?: 'all' | 'any' | 'exact';
+  /** Include services with partial capability matches */
+  includePartialMatches?: boolean;
+}
+
+/**
+ * Service compatibility analysis result
+ */
+export interface ServiceCompatibilityResult {
+  /** Whether services are compatible */
+  compatible: boolean;
+  /** Common capabilities between services */
+  commonCapabilities: string[];
+  /** Capabilities missing in first service */
+  missingInA: string[];
+  /** Capabilities missing in second service */
+  missingInB: string[];
+  /** Compatibility score (0-1) */
+  compatibilityScore: number;
+  /** Detailed compatibility analysis */
+  analysis?: {
+    /** Resource compatibility */
+    resourceCompatibility: boolean;
+    /** Tool compatibility */
+    toolCompatibility: boolean;
+    /** Version compatibility */
+    versionCompatibility: boolean;
+  };
+}
+
+/**
+ * Service recommendation options
+ */
+export interface ServiceRecommendationOptions {
+  /** Maximum number of recommendations */
+  maxRecommendations?: number;
+  /** Include compatible services */
+  includeCompatible?: boolean;
+  /** Include similar services */
+  includeSimilar?: boolean;
+  /** Weight recommendations by health score */
+  weightByHealth?: boolean;
+  /** Weight recommendations by usage patterns */
+  weightByUsage?: boolean;
+  /** Exclude services with specific tags */
+  excludeTags?: string[];
+  /** Include only services with specific tags */
+  includeTags?: string[];
 }

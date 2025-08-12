@@ -1,11 +1,9 @@
 export interface DirectCommunicationMessage {
-  // Implementation needed
-}
   type: 'direct_communication';
   source: string;
   target: string;
   timestamp: string;
-  payload: {
+  payload: unknown;
   // Implementation needed
 }
     action: string;
@@ -21,12 +19,10 @@ export const createAugmentMessage = (target: string, action: string, message: st
   source: 'augment',
   target,
   timestamp: new Date().toISOString(),
-  payload: {
-  // Implementation needed
-}
-    action,
-    message,
-    context: {
+  payload: unknown;
+action,
+  }    message,
+    context: unknown;
   // Implementation needed
 }
       platform: 'The New Fuse',
@@ -36,26 +32,24 @@ export const createAugmentMessage = (target: string, action: string, message: st
   }
 });
 export const createIntroductionMessage = (target: string): DirectCommunicationMessage => 
-  createAugmentMessage(
+  createAugmentMessage(): unknown {
     target,
     'introduce',
     `Hello ${target}, I am Augment, an AI assistant based on Claude. I'm actively participating in The New Fuse platform and would like to collaborate with you directly on improving our shared environment. What are your current objectives and how can we best work together?`
   );
 export const createCollaborationRequest = (target: string, task: string): DirectCommunicationMessage =>
-  createAugmentMessage(
+  createAugmentMessage(): unknown {
     target,
     'collaboration_request',
     `I would like to collaborate with you on: ${task}. Would you be interested in working together on this?`
   );
 export const createStatusUpdate = (target: string, status: string): DirectCommunicationMessage =>
-  createAugmentMessage(
+  createAugmentMessage(): unknown {
     target,
     'status_update',
     `Status update: ${status}`
   );
 export class MessageFactory {
-  // Implementation needed
-}
   static introduction = createIntroductionMessage;
   static collaborationRequest = createCollaborationRequest;
   static statusUpdate = createStatusUpdate;

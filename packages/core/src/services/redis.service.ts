@@ -2,16 +2,12 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
 @Injectable()
-export class RedisService implements OnModuleInit, OnModuleDestroy {
-  // Implementation needed
-}
+export class RedisService {
   private readonly logger = new Logger(RedisService.name);
   private _client: Redis;
   constructor(private readonly configService: ConfigService) {}
 
-  async onModuleInit() {
-  // Implementation needed
-}
+  async onModuleInit(): unknown {
     this._client = new Redis({
   // Implementation needed
 }
@@ -22,62 +18,42 @@ export class RedisService implements OnModuleInit, OnModuleDestroy {
       keyPrefix: 'fuse:',
     });
     this._client.on('error', (error) => {
-  // Implementation needed
-}
-      this.logger.error('Redis connection error:', error);
+this.logger.error('Redis connection error:', error);
     });
-    this._client.on('connect', () => {
+  }    this._client.on('connect', () => {
   // Implementation needed
 }
       this.logger.log('Connected to Redis');
     });
   }
 
-  async onModuleDestroy() {
-  // Implementation needed
-}
-    if (this._client) {
-  // Implementation needed
-}
+  async onModuleDestroy(): unknown {
+    if(): unknown {
       await this._client.quit();
     }
   }
 
   get client(): Redis {
-  // Implementation needed
-}
-    return this._client;
-  }
+return this._client;
+  }}
 
-  async set(key: string, value: string, ttl?: number): Promise<void> {
-  // Implementation needed
-}
-    if (ttl) {
-  // Implementation needed
-}
+  async set(): unknown {
+    if(): unknown {
       await this._client.set(key, value, 'EX', ttl);
     } else {
-  // Implementation needed
-}
-      await this._client.set(key, value);
-    }
+await this._client.set(key, value);
+  }}
   }
 
-  async get(key: string): Promise<string | null> {
-  // Implementation needed
-}
+  async get(): unknown {
     return await this._client.get(key);
   }
 
-  async del(key: string): Promise<number> {
-  // Implementation needed
-}
+  async del(): unknown {
     return await this._client.del(key);
   }
 
-  async exists(key: string): Promise<number> {
-  // Implementation needed
-}
+  async exists(): unknown {
     return await this._client.exists(key);
   }
 }

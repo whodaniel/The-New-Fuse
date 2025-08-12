@@ -1,6 +1,4 @@
 export interface AgentWorkflow {
-  // Implementation needed
-}
   id: string;
   name: string;
   description?: string;
@@ -15,8 +13,6 @@ export interface AgentWorkflow {
 }
 
 export interface WorkflowTask {
-  // Implementation needed
-}
   id: string;
   name: string;
   description?: string;
@@ -28,8 +24,6 @@ export interface WorkflowTask {
 }
 
 export interface APISpec {
-  // Implementation needed
-}
   // OpenAPI/Swagger spec URL
   specUrl?: string;
   // Manual endpoint definitions
@@ -47,8 +41,6 @@ export interface APISpec {
 }
 
 export interface APIEndpoint {
-  // Implementation needed
-}
   path: string;
   method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   description?: string;
@@ -72,8 +64,6 @@ export interface APIEndpoint {
 }
 
 export interface APIParameter {
-  // Implementation needed
-}
   name: string;
   in: 'query' | 'path' | 'header' | 'body';
   type: 'string' | 'number' | 'boolean' | 'array' | 'object';
@@ -83,8 +73,6 @@ export interface APIParameter {
 }
 
 export interface WorkflowExecutionContext {
-  // Implementation needed
-}
   workflowId: string;
   executionId: string;
   currentTask?: string;
@@ -96,8 +84,6 @@ export interface WorkflowExecutionContext {
 }
 
 export interface WorkflowStep {
-  // Implementation needed
-}
   id: string;
   taskId: string;
   status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
@@ -110,8 +96,6 @@ export interface WorkflowStep {
 }
 
 export interface WorkflowEngine {
-  // Implementation needed
-}
   executeWorkflow(workflow: AgentWorkflow, context?: Record<string, unknown>): Promise<WorkflowExecutionContext>;
   pauseWorkflow(executionId: string): Promise<void>;
   resumeWorkflow(executionId: string): Promise<void>;

@@ -7,11 +7,13 @@
 
 import { EventEmitter } from 'events';
 import { MCPRequest, MCPResponse, MCPNotification } from '../interfaces/IMCPMessage';
-import { RoutingMetrics, RoutingInfo } from '../types';
+import { IMessageRouter, EventCallback } from '../interfaces/IMessageRouter';
+import { RoutingMetrics, RoutingInfo, MCPServiceInfo } from '../types/broker';
 import { LoadBalancingStrategy } from '../types/common';
 import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
 import { LoadBalancer } from './LoadBalancer';
 import { EventSubscriptionManager, EventMatchResult } from './EventSubscriptionManager';
+import { MessageQueue, QueuedMessage } from './MessageQueue';
 
 /**
  * Request tracking information
@@ -28,17 +30,23 @@ interface RequestTracker {
 /**
  * Message Router class for routing MCP requests
  */
-export class MessageRouter extends EventEmitter {
+export class MessageRouter extends EventEmitter implements IMessageRouter {
   private loadBalancer: LoadBalancer;
   private eventSubscriptionManager?: EventSubscriptionManager;
+  private messageQueue: MessageQueue;
   private activeRequests: Map<string | number, RequestTracker> = new Map();
   private metrics: RoutingMetrics;
   private isStarted: boolean = false;
 
-  constructor(loadBalancer: LoadBalancer, eventSubscriptionManager?: EventSubscriptionManager) {
+  constructor(
+    loadBalancer: LoadBalancer, 
+    eventSubscriptionManager?: EventSubscriptionManager,
+    messageQueue?: MessageQueue
+  ) {
     super();
     this.loadBalancer = loadBalancer;
     this.eventSubscriptionManager = eventSubscriptionManager;
+    this.messageQueue = messageQueue || new MessageQueue();
     this.metrics = this.initializeMetrics();
   }
 
@@ -53,6 +61,8 @@ export class MessageRouter extends EventEmitter {
     if (this.eventSubscriptionManager) {
       await this.eventSubscriptionManager.start();
     }
+
+    await this.messageQueue.start();
 
     this.isStarted = true;
     console.log('Message router started');
@@ -81,6 +91,8 @@ export class MessageRouter extends EventEmitter {
       await this.eventSubscriptionManager.stop();
     }
 
+    await this.messageQueue.stop();
+
     this.isStarted = false;
     console.log('Message router stopped');
   }
@@ -90,8 +102,7 @@ export class MessageRouter extends EventEmitter {
    */
   async routeRequest(
     request: MCPRequest, 
-    targetService?: string,
-    routingInfo?: RoutingInfo
+    routing?: RoutingInfo
   ): Promise<MCPResponse> {
     if (!this.isStarted) {
       throw new MCPErrorClass(
@@ -111,6 +122,7 @@ export class MessageRouter extends EventEmitter {
 
       const requestId = request.id;
       const startTime = new Date();
+      const targetService = routing?.targetService;
 
       // Create request tracker with reject function
       const tracker: RequestTracker = {
@@ -129,7 +141,7 @@ export class MessageRouter extends EventEmitter {
         this.metrics.activeConnections++;
 
         // Route the request
-        const response = await this.performRouting(request, targetService, routingInfo, tracker);
+        const response = await this.performRouting(request, targetService, routing, tracker);
 
         // Update success metrics
         this.metrics.successfulRequests++;
@@ -191,8 +203,8 @@ export class MessageRouter extends EventEmitter {
       );
     }
 
-    // If no event subscription manager, fall back to broadcast
-    if (!this.eventSubscriptionManager) {
+    // If no event subscription manager or it's not started, fall back to broadcast
+    if (!this.eventSubscriptionManager || !this.eventSubscriptionManager['isStarted']) {
       await this.broadcastNotification(notification);
       return;
     }
@@ -238,6 +250,13 @@ export class MessageRouter extends EventEmitter {
   }
 
   /**
+   * Get routing metrics (interface method)
+   */
+  getRoutingMetrics(): RoutingMetrics {
+    return this.getMetrics();
+  }
+
+  /**
    * Reset metrics
    */
   resetMetrics(): void {
@@ -259,9 +278,102 @@ export class MessageRouter extends EventEmitter {
   }
 
   /**
+   * Get message queue
+   */
+  getMessageQueue(): MessageQueue {
+    return this.messageQueue;
+  }
+
+  /**
+   * Process queued messages for a service when it comes online
+   */
+  async processQueuedMessages(serviceId: string): Promise<void> {
+    if (!this.isStarted) {
+      return;
+    }
+
+    const queuedMessages = await this.messageQueue.dequeueMessagesForService(serviceId);
+    
+    if (queuedMessages.length === 0) {
+      return;
+    }
+
+    console.log(`Processing ${queuedMessages.length} queued messages for service ${serviceId}`);
+
+    for (const queuedMessage of queuedMessages) {
+      try {
+        await this.messageQueue.markMessageProcessing(queuedMessage.id);
+
+        if (queuedMessage.type === 'request') {
+          // Process queued request
+          const request = queuedMessage.message as MCPRequest;
+          try {
+            await this.sendRequestToService(request, serviceId, 30000);
+            await this.messageQueue.markMessageCompleted(queuedMessage.id);
+          } catch (error) {
+            await this.messageQueue.markMessageFailed(queuedMessage.id, error as Error);
+          }
+        } else {
+          // Process queued notification
+          const notification = queuedMessage.message as MCPNotification;
+          try {
+            await this.sendNotificationToService(notification, serviceId);
+            await this.messageQueue.markMessageCompleted(queuedMessage.id);
+          } catch (error) {
+            await this.messageQueue.markMessageFailed(queuedMessage.id, error as Error);
+          }
+        }
+      } catch (error) {
+        console.error(`Failed to process queued message ${queuedMessage.id}:`, error);
+      }
+    }
+  }
+
+  /**
+   * Queue a request for offline service
+   */
+  async queueRequest(
+    request: MCPRequest,
+    targetService: string,
+    options?: {
+      priority?: number;
+      maxRetries?: number;
+      timeoutMs?: number;
+    }
+  ): Promise<string> {
+    return await this.messageQueue.enqueueMessage(targetService, request, options);
+  }
+
+  /**
+   * Queue a notification for offline service
+   */
+  async queueNotification(
+    notification: MCPNotification,
+    targetService: string,
+    options?: {
+      priority?: number;
+      maxRetries?: number;
+      timeoutMs?: number;
+    }
+  ): Promise<string> {
+    return await this.messageQueue.enqueueMessage(targetService, notification, options);
+  }
+
+  /**
    * Subscribe a service to events matching a pattern
    */
   async subscribeToEvents(
+    serviceId: string,
+    pattern: string,
+    callback?: EventCallback
+  ): Promise<string> {
+    return this.subscribeToEventsAdvanced(serviceId, pattern, undefined, undefined, { callback });
+  }
+
+  /**
+   * Subscribe a service to events matching a pattern (advanced version)
+   */
+  async subscribeToEventsAdvanced(
     serviceId: string,
     pattern: string,
     patternType?: import('./EventSubscriptionManager').PatternType,
@@ -330,17 +442,45 @@ export class MessageRouter extends EventEmitter {
 
       try {
         // Select target service
-        const service = targetService 
-          ? this.loadBalancer.getAllServices().find(s => s.service.id === targetService)?.service
-          : this.loadBalancer.selectService(undefined, routingInfo?.loadBalancing);
+        let service: MCPServiceInfo | null = null;
+        
+        if (targetService) {
+          // Find specific target service
+          const allServices = this.loadBalancer.getAllServices();
+          const serviceInstance = allServices.find(s => s.service.id === targetService);
+          service = serviceInstance?.service || null;
+        } else {
+          // Use load balancer to select service
+          service = this.loadBalancer.selectService(undefined, routingInfo?.loadBalancing);
+        }
 
         if (!service) {
-          throw new MCPErrorClass(
-            MCPErrorCode.SERVICE_UNAVAILABLE,
-            targetService 
-              ? `Target service not available: ${targetService}`
-              : 'No available services for request routing'
-          );
+          // If no service is available, queue the request for later processing
+          if (targetService) {
+            console.log(`Service ${targetService} is offline, queuing request ${request.id}`);
+            await this.queueRequest(request, targetService, {
+              priority: routingInfo?.metadata?.priority || 5,
+              maxRetries: routingInfo?.retryPolicy?.maxAttempts || 3,
+              timeoutMs: routingInfo?.timeout || 300000
+            });
+            
+            // Return a deferred response indicating the request was queued
+            return {
+              jsonrpc: '2.0',
+              id: request.id,
+              result: {
+                status: 'queued',
+                message: 'Request queued for offline service',
+                targetService,
+                timestamp: new Date().toISOString()
+              }
+            };
+          } else {
+            throw new MCPErrorClass(
+              MCPErrorCode.SERVICE_UNAVAILABLE,
+              'No available services for request routing'
+            );
+          }
         }
 
         // Update service distribution metrics

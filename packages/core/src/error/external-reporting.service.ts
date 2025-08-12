@@ -3,11 +3,7 @@ import { /* TODO: specify imports */ } from /@nestjs/common/;
   }
 
   async reportError(error: Error, context?: Record<string, any>): Promise<void> { try {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+      try {
       // ... existing code for reporting, e.g., this.client.captureException(error, context); }
    console.error(/Reportederror:, error, context); // Placeholder} catch (reportingError) { '';
       console.error('placeholder'

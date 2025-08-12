@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { WorkflowStep, WorkflowContext } from '../types';
 export interface WebhookConfig {
-  // Implementation needed
-}
   url: string;
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
   headers?: Record<string, string>;
@@ -11,31 +9,21 @@ export interface WebhookConfig {
 }
 
 export class WebhookNodeHandler {
-  // Implementation needed
-}
   constructor(private dependencies: unknown) {}
 
-  async handle(step: WorkflowStep, _context: WorkflowContext): Promise<unknown> {
-  // Implementation needed
-}
+  async handle(): unknown {
     try {
-  // Implementation needed
-}
       const config = step.config as WebhookConfig;
-      if (!config.url) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error('Webhook URL is required');
       }
 
       const method = config.method || 'POST';
       const headers = {
-  // Implementation needed
-}
-        'Content-Type': 'application/json',
+'Content-Type': 'application/json',
         ...config.headers
       };
-      const response = await axios({
+  }      const response = await axios({
   // Implementation needed
 }
         url: config.url,
@@ -45,37 +33,25 @@ export class WebhookNodeHandler {
         timeout: config.timeout || 30000
       });
       return {
-  // Implementation needed
-}
-        success: true,
-        status: response.status,
+success: true,
+  }        status: response.status,
         data: response.data,
         headers: response.headers
       };
     } catch (error) {
-  // Implementation needed
-}
-      const lastError = error as Error;
-      throw new Error(`Webhook request failed: ${lastError?.message || 'Unknown error'}`);
+const lastError = error as Error;
+  }      throw new Error(`Webhook request failed: ${lastError?.message || 'Unknown error'}`);
     }
   }
 
   private interpolatePayload(payload: unknown, context: WorkflowContext): unknown {
-  // Implementation needed
-}
-    if (typeof payload === 'string') {
-  // Implementation needed
-}
-      return this.interpolateString(payload, context);
+if(): unknown {
+  }      return this.interpolateString(payload, context);
     }
     
-    if (typeof payload === 'object' && payload !== null) {
-  // Implementation needed
-}
+    if(): unknown {
       const interpolated: Record<string, unknown> = {};
-      for (const [key, value] of Object.entries(payload)) {
-  // Implementation needed
-}
+      for(): unknown {
         interpolated[key] = this.interpolatePayload(value, context);
       }
       return interpolated;
@@ -85,20 +61,13 @@ export class WebhookNodeHandler {
   }
 
   private interpolateString(template: string, context: WorkflowContext): string {
-  // Implementation needed
-}
-    return template.replace(/\{\{([^}]+)\}\}/g, (match, expr) => {
-  // Implementation needed
-}
+return template.replace(/\{\{([^}]+)\}\}/g, (match, expr) => {
+  }}
       const parts = expr.split('.');
       let value = context;
-      for (const part of parts) {
-  // Implementation needed
-}
+      for(): unknown {
         value = (value as Record<string, unknown>)[part];
-        if (value === undefined) {
-  // Implementation needed
-}
+        if(): unknown {
           return match;
         }
       }

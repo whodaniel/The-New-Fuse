@@ -6,8 +6,6 @@
  * Supported programming languages for code execution
  */
 export enum CodeExecutionLanguage {
-  // Implementation needed
-}
   JAVASCRIPT = 'placeholder';
   TYPESCRIPT = 'placeholder';
   PYTHON = 'placeholder';

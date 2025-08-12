@@ -72,6 +72,9 @@ export * from './handlers';
 // Server implementation
 export { MCPServer } from './server';
 
+// Client implementation
+export * from './client';
+
 // Broker implementation
 export * from './broker';
 
@@ -80,6 +83,9 @@ export * from './factory';
 
 // Integration bridges
 export * from './integrations';
+
+// Authentication and authorization
+export * from './auth';
 
 // Version information
 export const VERSION = '1.0.0';

@@ -67,7 +67,7 @@ export class IntegrationController {
   @ApiResponse({ status: 200, description: 'Action executed successfully' })
   @ApiResponse({ status: 404, description: 'Integration not found' })
   @ApiResponse({ status: 400, description: 'Failed to execute action' })
-  async executeIntegrationAction(
+  async executeIntegrationAction(): unknown {
     @Param('id') id: string,
     @Param('action') action: string,
     @Body() params: any

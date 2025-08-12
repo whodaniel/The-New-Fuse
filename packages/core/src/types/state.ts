@@ -1,17 +1,13 @@
 export interface BaseState {
-  // Implementation needed
-}
     id: string;
     version: number;
     timestamp: number;
     owner: string;
 }
 
-export interface TaskState extends BaseState {
-  // Implementation needed
-}
+export interface TaskState {
     type: 'TASK';
-    data: {
+    data: unknown;
   // Implementation needed
 }
         status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
@@ -20,11 +16,9 @@ export interface TaskState extends BaseState {
     };
 }
 
-export interface AgentState extends BaseState {
-  // Implementation needed
-}
+export interface AgentState {
     type: 'AGENT';
-    data: {
+    data: unknown;
   // Implementation needed
 }
         status: 'IDLE' | 'BUSY' | 'ERROR';
@@ -33,11 +27,9 @@ export interface AgentState extends BaseState {
     };
 }
 
-export interface SystemState extends BaseState {
-  // Implementation needed
-}
+export interface SystemState {
     type: 'SYSTEM';
-    data: {
+    data: unknown;
   // Implementation needed
 }
         status: 'OPERATIONAL' | 'DEGRADED' | 'CRITICAL';

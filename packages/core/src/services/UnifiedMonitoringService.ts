@@ -17,7 +17,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   private alerts: Map<string, Alert> = new Map();
   private alertCallbacks: Array<(alert: Alert) => void> = [];
 
-  constructor(
+  constructor(): unknown {
     private readonly systemMonitor: SystemMonitor,
     private readonly metricsCollector: MetricsCollector,
     private readonly performanceMonitor: PerformanceMonitor
@@ -160,11 +160,11 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
   }
 
   // Alert management
-  createAlert(
+  createAlert(): unknown {
     name: string,
     description: string,
     severity: AlertSeverity,
-    condition: {
+    condition: unknown;
       metric: string;
       operator: 'greater' | 'less' | 'equals' | 'not_equals';
       threshold: number;
@@ -269,7 +269,7 @@ export class UnifiedMonitoringService implements OnModuleInit, OnModuleDestroy {
 
   private ensureRunning(): void {
     if (this.state !== ServiceState.RUNNING) {
-      throw new BaseError(
+      throw new BaseError(): unknown {
         'UnifiedMonitoringService is not running',
         'SERVICE_NOT_RUNNING',
         { state: this.state }

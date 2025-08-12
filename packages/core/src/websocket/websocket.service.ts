@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 export interface WebSocketConnection {
-  // Implementation needed
-}
   id: string;
   clientId: string;
   status: 'connected' | 'disconnected';
@@ -12,8 +10,6 @@ export interface WebSocketConnection {
 }
 
 export interface WebSocketMessage {
-  // Implementation needed
-}
   id: string;
   type: string;
   data: any;
@@ -24,16 +20,12 @@ export interface WebSocketMessage {
 
 @Injectable()
 export class WebSocketService {
-  // Implementation needed
-}
   private readonly logger = new Logger(WebSocketService.name);
   private connections: Map<string, WebSocketConnection> = new Map();
   private messages: Map<string, WebSocketMessage> = new Map();
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async handleConnection(clientId: string, metadata?: Record<string, any>): Promise<WebSocketConnection> {
-  // Implementation needed
-}
+  async handleConnection(): unknown {
     const connection: WebSocketConnection = {
   // Implementation needed
 }
@@ -50,13 +42,9 @@ export class WebSocketService {
     return connection;
   }
 
-  async handleDisconnection(clientId: string): Promise<void> {
-  // Implementation needed
-}
+  async handleDisconnection(): unknown {
     const connection = this.connections.get(clientId);
-    if (connection) {
-  // Implementation needed
-}
+    if(): unknown {
       connection.status = 'disconnected';
       this.connections.set(clientId, connection);
       this.eventEmitter.emit('websocket.disconnected', connection);
@@ -64,9 +52,7 @@ export class WebSocketService {
     }
   }
 
-  async sendMessage(clientId: string, type: string, data: any): Promise<WebSocketMessage> {
-  // Implementation needed
-}
+  async sendMessage(): unknown {
     const message: WebSocketMessage = {
   // Implementation needed
 }
@@ -84,9 +70,7 @@ export class WebSocketService {
     return message;
   }
 
-  async handleMessage(clientId: string, type: string, data: any): Promise<WebSocketMessage> {
-  // Implementation needed
-}
+  async handleMessage(): unknown {
     const message: WebSocketMessage = {
   // Implementation needed
 }
@@ -104,15 +88,11 @@ export class WebSocketService {
     return message;
   }
 
-  async broadcastMessage(type: string, data: any, excludeClient?: string): Promise<WebSocketMessage[]> {
-  // Implementation needed
-}
+  async broadcastMessage(): unknown {
     const messages: WebSocketMessage[] = [];
     const activeConnections = Array.from(this.connections.values())
       .filter(conn => conn.status === 'connected' && conn.clientId !== excludeClient);
-    for (const connection of activeConnections) {
-  // Implementation needed
-}
+    for(): unknown {
       const message = await this.sendMessage(connection.clientId, type, data);
       messages.push(message);
     }
@@ -121,75 +101,53 @@ export class WebSocketService {
     return messages;
   }
 
-  async getConnection(clientId: string): Promise<WebSocketConnection | null> {
-  // Implementation needed
-}
+  async getConnection(): unknown {
     return this.connections.get(clientId) || null;
   }
 
-  async getAllConnections(): Promise<WebSocketConnection[]> {
-  // Implementation needed
-}
+  async getAllConnections(): unknown {
     return Array.from(this.connections.values());
   }
 
-  async getActiveConnections(): Promise<WebSocketConnection[]> {
-  // Implementation needed
-}
+  async getActiveConnections(): unknown {
     return Array.from(this.connections.values())
       .filter(conn => conn.status === 'connected');
   }
 
-  async getMessages(clientId?: string, limit?: number): Promise<WebSocketMessage[]> {
-  // Implementation needed
-}
+  async getMessages(): unknown {
     let messages = Array.from(this.messages.values());
-    if (clientId) {
-  // Implementation needed
-}
+    if(): unknown {
       messages = messages.filter(msg => msg.clientId === clientId);
     }
     
     messages.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
-    if (limit) {
-  // Implementation needed
-}
+    if(): unknown {
       messages = messages.slice(0, limit);
     }
     
     return messages;
   }
 
-  async getConnectionStats(): Promise<any> {
-  // Implementation needed
-}
+  async getConnectionStats(): unknown {
     const connections = Array.from(this.connections.values());
     const activeConnections = connections.filter(conn => conn.status === 'connected');
     return {
-  // Implementation needed
-}
-      total: connections.length,
-      active: activeConnections.length,
+total: connections.length,
+  }      active: activeConnections.length,
       disconnected: connections.length - activeConnections.length,
       messagesCount: this.messages.size
     };
   }
 
   private updateLastActivity(clientId: string): void {
-  // Implementation needed
-}
-    const connection = this.connections.get(clientId);
-    if (connection) {
-  // Implementation needed
-}
+const connection = this.connections.get(clientId);
+  }    if(): unknown {
       connection.lastActivity = new Date();
       this.connections.set(clientId, connection);
     }
   }
 
   private generateId(): string {
-  // Implementation needed
-}
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
+return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }}
 }

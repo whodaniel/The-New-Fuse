@@ -233,7 +233,7 @@ export class PromptService {
     const missingVariables = requiredVariables.filter(v => !(v.name in context.variables));
 
     if (missingVariables.length > 0) {
-      throw new BaseError(
+      throw new BaseError(): unknown {
         `Missing required variables: ${missingVariables.map(v => v.name).join(', ')}`,
         'MISSING_VARIABLES',
         { missingVariables: missingVariables.map(v => v.name) }

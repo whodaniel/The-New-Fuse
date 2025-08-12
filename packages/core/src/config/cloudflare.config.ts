@@ -1,35 +1,33 @@
 export interface CloudflareConfig {
-  // Implementation needed
-}
-  agent: {
+  agent: unknown;
   // Implementation needed
 }
     namespace: string;
     type: string;
     collections: string[];
   };
-  r2: {
+  r2: unknown;
   // Implementation needed
 }
     bucketName: string;
     publicUrl?: string;
   };
-  kv: {
+  kv: unknown;
   // Implementation needed
 }
-    namespaces: {
+    namespaces: unknown;
   // Implementation needed
 }
       cache: string;
       sessions: string;
     };
   };
-  durableObjects: {
+  durableObjects: unknown;
   // Implementation needed
 }
     bindings: string[];
   };
-  workers: {
+  workers: unknown;
   // Implementation needed
 }
     environment: 'production' | 'development' | 'staging';
@@ -40,35 +38,35 @@ export interface CloudflareConfig {
 export const cloudflareConfig: CloudflareConfig = {
   // Implementation needed
 }
-  agent: {
+  agent: unknown;
   // Implementation needed
 }
     namespace: 'newfuse-agents',
     type: 'durable-objects',
     collections: ['agent-memory', 'task-context']
   },
-  r2: {
+  r2: unknown;
   // Implementation needed
 }
     bucketName: process.env.CLOUDFLARE_R2_BUCKET || 'newfuse-storage',
     publicUrl: process.env.CLOUDFLARE_R2_PUBLIC_URL
   },
-  kv: {
+  kv: unknown;
   // Implementation needed
 }
-    namespaces: {
+    namespaces: unknown;
   // Implementation needed
 }
       cache: process.env.CLOUDFLARE_KV_CACHE || 'newfuse-cache',
       sessions: process.env.CLOUDFLARE_KV_SESSIONS || 'newfuse-sessions'
     }
   },
-  durableObjects: {
+  durableObjects: unknown;
   // Implementation needed
 }
     bindings: ['AgentState', 'TaskManager', 'ConversationHistory']
   },
-  workers: {
+  workers: unknown;
   // Implementation needed
 }
     environment(process.env.NODE_ENV as 'production' | 'development' | 'staging') || 'development',

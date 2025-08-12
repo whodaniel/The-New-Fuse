@@ -11,14 +11,9 @@ export class AnalyticsEngine { private metrics: MetricsCollector
      }
 
     private async checkThresholds(): Promise<void> {
-  // Implementation needed
-}
-  metric: Metric): Promise<void> {
-  // Implementation needed
-}
-        if (await this.alerting.shouldAlert(metric)) {
-  // Implementation needed
-}
+metric: Metric): Promise<void> {
+  }}
+        if(): unknown {
             await this.alerting.sendAlert(metric);
          }
     }

@@ -1,16 +1,12 @@
 import { spawn } from 'child_process';
 import { EventEmitter } from 'events';
 export interface ClaudeCodeCLIOptions {
-  // Implementation needed
-}
   command?: string;
   timeout?: number;
   workingDirectory?: string;
 }
 
 export interface ClaudeCodeCLIMessage {
-  // Implementation needed
-}
   prompt: string;
   context?: string;
   temperature?: number;
@@ -18,8 +14,6 @@ export interface ClaudeCodeCLIMessage {
 }
 
 export interface ClaudeCodeCLIResponse {
-  // Implementation needed
-}
   content: string;
   usage?: {
   // Implementation needed
@@ -30,18 +24,11 @@ export interface ClaudeCodeCLIResponse {
   metadata?: Record<string, any>;
 }
 
-export class ClaudeCodeCLIService extends EventEmitter {
-  // Implementation needed
-}
+export class ClaudeCodeCLIService {
   private options: ClaudeCodeCLIOptions;
   private isAvailable: boolean = false;
-  constructor(options: ClaudeCodeCLIOptions = {}) {
-  // Implementation needed
-}
-    super();
-    this.options = {
-  // Implementation needed
-}
+  constructor(): unknown {
+    super(): unknown {
       command: 'claude',
       timeout: 120000, // 2 minutes
       workingDirectory: process.cwd(),
@@ -51,11 +38,8 @@ export class ClaudeCodeCLIService extends EventEmitter {
   }
 
   private async checkAvailability(): Promise<void> {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+try {
+  }}
       const process = spawn('which', ['claude'], {
   // Implementation needed
 }
@@ -63,10 +47,8 @@ export class ClaudeCodeCLIService extends EventEmitter {
         shell: true 
       });
       process.on('exit', (code) => {
-  // Implementation needed
-}
-        this.isAvailable = code === 0;
-        this.emit('availability-checked', this.isAvailable);
+this.isAvailable = code === 0;
+  }        this.emit('availability-checked', this.isAvailable);
       });
       process.on('error', () => {
   // Implementation needed
@@ -75,27 +57,19 @@ export class ClaudeCodeCLIService extends EventEmitter {
         this.emit('availability-checked', false);
       });
     } catch (error) {
-  // Implementation needed
-}
-      this.isAvailable = false;
-      this.emit('availability-checked', false);
+this.isAvailable = false;
+  }      this.emit('availability-checked', false);
     }
   }
 
   public async sendMessage(message: ClaudeCodeCLIMessage): Promise<ClaudeCodeCLIResponse> {
-  // Implementation needed
-}
-    if (!this.isAvailable) {
-  // Implementation needed
-}
-      throw new Error('Claude Code CLI is not available. Please ensure it is installed and accessible.');
+if(): unknown {
+  }      throw new Error('Claude Code CLI is not available. Please ensure it is installed and accessible.');
     }
 
     return new Promise((resolve, reject) => {
-  // Implementation needed
-}
-      let output = '';
-      let errorOutput = '';
+let output = '';
+  }      let errorOutput = '';
       // Construct the claude command with the prompt
       const args = [];
       // Add prompt as stdin input
@@ -111,73 +85,34 @@ export class ClaudeCodeCLIService extends EventEmitter {
       });
       // Set timeout
       const timeout = setTimeout(() => {
-  // Implementation needed
-}
-        claudeProcess.kill('SIGTERM');
-        reject(new Error('Claude Code CLI request timed out'));
-      }, this.options.timeout);
-      // Send prompt to stdin
-      claudeProcess.stdin?.write(prompt);
-      claudeProcess.stdin?.end();
-      // Collect stdout
-      claudeProcess.stdout?.on('data', (data) => {
-  // Implementation needed
-}
+claudeProcess.kill('SIGTERM');
+  }        reject(): unknown {
         output += data.toString();
       });
       // Collect stderr
       claudeProcess.stderr?.on('data', (data) => {
-  // Implementation needed
-}
-        errorOutput += data.toString();
+errorOutput += data.toString();
       });
       // Handle process completion
-      claudeProcess.on('close', (code) => {
+  }      claudeProcess.on('close', (code) => {
   // Implementation needed
 }
-        clearTimeout(timeout);
-        if (code === 0) {
-  // Implementation needed
-}
-          resolve({
-  // Implementation needed
-}
-            content: output.trim(),
-            metadata: {
-  // Implementation needed
-}
+        clearTimeout(): unknown {
+          resolve(): unknown {
               exitCode: code,
               stderr: errorOutput
             }
           });
         } else {
-  // Implementation needed
-}
-          reject(new Error(`Claude Code CLI exited with code ${code}: ${errorOutput}`));
-        }
-      });
-      // Handle process errors
-      claudeProcess.on('error', (error) => {
-  // Implementation needed
-}
-        clearTimeout(timeout);
-        reject(new Error(`Failed to spawn Claude Code CLI: ${error.message}`));
-      });
-    });
-  }
-
-  public async isClaudeCodeAvailable(): Promise<boolean> {
-  // Implementation needed
-}
+reject(): unknown {
+  }        clearTimeout(timeout);
+        reject(): unknown {
     return this.isAvailable;
   }
 
   public async getVersion(): Promise<string> {
-  // Implementation needed
-}
-    return new Promise((resolve, reject) => {
-  // Implementation needed
-}
+return new Promise((resolve, reject) => {
+  }}
       const process = spawn(this.options.command!, ['--version'], {
   // Implementation needed
 }
@@ -186,26 +121,14 @@ export class ClaudeCodeCLIService extends EventEmitter {
       });
       let output = '';
       process.stdout?.on('data', (data) => {
-  // Implementation needed
-}
-        output += data.toString();
+output += data.toString();
       });
-      process.on('close', (code) => {
+  }      process.on('close', (code) => {
   // Implementation needed
 }
-        if (code === 0) {
-  // Implementation needed
-}
-          resolve(output.trim());
-        } else {
-  // Implementation needed
-}
-          reject(new Error('Failed to get Claude Code CLI version'));
-        }
-      });
-      process.on('error', (error) => {
-  // Implementation needed
-}
+        if(): unknown {
+          resolve(): unknown {
+          reject(): unknown {
         reject(error);
       });
     });

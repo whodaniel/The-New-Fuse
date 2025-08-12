@@ -30,7 +30,7 @@ export class EventBusService extends EventEmitter {
     const eventData: EventData = {
       type: eventType,
       payload,
-      metadata: {
+      metadata: unknown;
         correlationId: metadata?.correlationId || this.generateCorrelationId(),
         timestamp: Date.now(),
         source: metadata?.source || 'EventBusService',

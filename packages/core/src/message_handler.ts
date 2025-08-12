@@ -10,8 +10,6 @@ const bridgeConfig = {
   port: 6379
 };
 export enum MessageRole {
-  // Implementation needed
-}
   SYSTEM = 'system',
   USER = 'user',
   ASSISTANT = 'assistant',
@@ -19,8 +17,6 @@ export enum MessageRole {
 }
 
 export enum MessageType {
-  // Implementation needed
-}
   CHAT = 'chat',
   COMMAND = 'command',
   STREAM = 'stream',
@@ -29,15 +25,11 @@ export enum MessageType {
 }
 
 export enum Provider {
-  // Implementation needed
-}
   LITELLM = 'litellm',
   OPENROUTER = 'openrouter'
 }
 
 export interface MessageContent {
-  // Implementation needed
-}
   role: MessageRole;
   content: string;
   timestamp: number;
@@ -45,8 +37,6 @@ export interface MessageContent {
 }
 
 export interface AgentConfig {
-  // Implementation needed
-}
   name: string;
   model: string;
   apiKey: string;
@@ -55,8 +45,6 @@ export interface AgentConfig {
 }
 
 export interface AgentMetadata {
-  // Implementation needed
-}
   description: string;
   capabilities: string[];
   personalityTraits: string[];
@@ -65,48 +53,18 @@ export interface AgentMetadata {
 }
 
 @Injectable()
-export class MessageHandler extends EventEmitter {
-  // Implementation needed
-}
+export class MessageHandler {
   private readonly logger = new Logger(MessageHandler.name);
   private readonly maxMemoryMessages: number;
   private readonly agents: Map<string, AgentConfig>;
   private readonly conversationContexts: Map<string, MessageContent[]>;
-  constructor(private readonly configService: ConfigService) {
-  // Implementation needed
-}
-    super();
-    // Initialize configuration using ConfigService
-    const cascadeApiKey = this.configService.getCascadeApiKey() || '';
-    const clineApiKey = this.configService.getClineApiKey() || '';
-    this.agents = new Map([
-      ['cascade', this.createAgentConfig(
-        'Cascade',
-        this.configService.getCascadeModel(),
-        cascadeApiKey
-      )],
-      ['cline', this.createAgentConfig(
-        'Cline',
-        this.configService.getClineModel(),
-        clineApiKey
-      )]
-    ]);
-    this.maxMemoryMessages = this.configService.getMaxMemoryMessages();
-    this.conversationContexts = new Map();
-    this.subscribeToMessages();
-    this.logger.log('MessageHandler initialized');
-  }
-
-  private createAgentConfig(name: string, model: string, apiKey: string): AgentConfig {
-  // Implementation needed
-}
+  constructor(): unknown {
+    super(): unknown {
     const metadata: AgentMetadata = {
-  // Implementation needed
-}
-      description: name === 'Cascade' 
+description: name === 'Cascade' 
         ? "Cascade is a knowledgeable and analytical AI assistant"
         : 'Cline is a creative and collaborative AI assistant',
-      capabilities: [
+  }      capabilities: [
         'Natural language understanding',
         'Context-aware responses',
         'Knowledge integration',
@@ -134,21 +92,15 @@ export class MessageHandler extends EventEmitter {
   }
 
   private subscribeToMessages(): void {
-  // Implementation needed
-}
-    this.on('message', (message: MessageContent) => {
-  // Implementation needed
-}
+this.on('message', (message: MessageContent) => {
+  }}
       this.handleMessage(message);
     });
   }
 
   private async handleMessage(message: MessageContent): Promise<void> {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+try {
+  }}
       this.logger.debug(`Handling message: ${message.content.substring(0, 100)}...`);
       // Add message to conversation context
       const agentId = this.determineTargetAgent(message);
@@ -156,20 +108,14 @@ export class MessageHandler extends EventEmitter {
       // Process the message
       await this.processMessage(message, agentId);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Error handling message:', error);
-      this.emit('error', error);
+this.logger.error('Error handling message:', error);
+  }      this.emit('error', error);
     }
   }
 
   private determineTargetAgent(message: MessageContent): string {
-  // Implementation needed
-}
-    // Simple routing logic - can be enhanced with more sophisticated routing
-    if (message.metadata?.targetAgent) {
-  // Implementation needed
-}
+// Simple routing logic - can be enhanced with more sophisticated routing
+  }    if(): unknown {
       return message.metadata.targetAgent;
     }
     
@@ -178,40 +124,28 @@ export class MessageHandler extends EventEmitter {
   }
 
   private addToConversationContext(agentId: string, message: MessageContent): void {
-  // Implementation needed
-}
-    if (!this.conversationContexts.has(agentId)) {
-  // Implementation needed
-}
-      this.conversationContexts.set(agentId, []);
+if(): unknown {
+  }      this.conversationContexts.set(agentId, []);
     }
     
     const context = this.conversationContexts.get(agentId)!;
     context.push(message);
     // Maintain memory limit
-    if (context.length > this.maxMemoryMessages) {
-  // Implementation needed
-}
+    if(): unknown {
       context.shift();
     }
   }
 
   private async processMessage(message: MessageContent, agentId: string): Promise<void> {
-  // Implementation needed
-}
-    const agent = this.agents.get(agentId);
-    if (!agent) {
-  // Implementation needed
-}
+const agent = this.agents.get(agentId);
+  }    if(): unknown {
       throw new Error(`Agent not found: ${agentId}`);
     }
 
     try {
-  // Implementation needed
-}
-      const response = await this.callAgent(agent, message);
+const response = await this.callAgent(agent, message);
       // Add response to conversation context
-      const responseMessage: MessageContent = {
+  }      const responseMessage: MessageContent = {
   // Implementation needed
 }
         role: MessageRole.ASSISTANT,
@@ -223,30 +157,22 @@ export class MessageHandler extends EventEmitter {
       // Emit response
       this.emit('response', responseMessage);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Error calling agent ${agentId}:`, error);
-      throw error;
+this.logger.error(`Error calling agent ${agentId}:`, error);
+  }      throw error;
     }
   }
 
   private async callAgent(agent: AgentConfig, message: MessageContent): Promise<string> {
-  // Implementation needed
-}
-    if (!message.content || typeof message.content !== 'string') {
-  // Implementation needed
-}
-      throw new Error('Content must be a non-empty string');
+if(): unknown {
+  }      throw new Error('Content must be a non-empty string');
     }
 
     const context = this.conversationContexts.get(agent.name.toLowerCase()) || [];
     // Build conversation history
     const messages = [
       {
-  // Implementation needed
-}
-        role: 'system',
-        content: this.buildSystemPrompt(agent.metadata)
+role: 'system',
+  }        content: this.buildSystemPrompt(agent.metadata)
       },
       ...context.map(msg => ({
   // Implementation needed
@@ -272,8 +198,6 @@ export class MessageHandler extends EventEmitter {
       'X-Title': 'The New Fuse Framework'
     };
     try {
-  // Implementation needed
-}
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
   // Implementation needed
 }
@@ -281,32 +205,24 @@ export class MessageHandler extends EventEmitter {
         headers,
         body: JSON.stringify(requestBody)
       });
-      if (!response.ok) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error(`API request failed: ${response.status} ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      if (!responseData.choices?.length) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error('Unexpected API response format');
       }
 
       return responseData.choices[0].message.content;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Error calling OpenRouter API:', error);
-      throw error;
+this.logger.error('Error calling OpenRouter API:', error);
+  }      throw error;
     }
   }
 
   private buildSystemPrompt(metadata: AgentMetadata): string {
-  // Implementation needed
-}
-    return [
+return [
       `You are ${metadata.description}.`,
       `- Key traits: ${metadata.personalityTraits.join(', ')}`,
       `- Communication style: ${metadata.communicationStyle}`,
@@ -314,30 +230,22 @@ export class MessageHandler extends EventEmitter {
       `- Capabilities: ${metadata.capabilities.join(', ')}`,
       'Please respond in character with your defined personality and expertise.'
     ].join('\n');
-  }
+  }}
 
-  async sendMessage(content: string, toAgent: string, fromAgent?: string): Promise<void> {
-  // Implementation needed
-}
-    if (!content || typeof content !== 'string') {
-  // Implementation needed
-}
+  async sendMessage(): unknown {
+    if(): unknown {
       throw new Error('Message content must be a non-empty string');
     }
 
-    if (!this.agents.has(toAgent)) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Invalid agent: ${toAgent}`);
     }
 
     const message: MessageContent = {
-  // Implementation needed
-}
-      role: MessageRole.USER,
-      content,
+role: MessageRole.USER,
+  }      content,
       timestamp: Date.now(),
-      metadata: {
+      metadata: unknown;
   // Implementation needed
 }
         targetAgent: toAgent,
@@ -347,35 +255,23 @@ export class MessageHandler extends EventEmitter {
     this.emit('message', message);
   }
 
-  getConversationContext(agentId: string): MessageContent[] {
-  // Implementation needed
-}
+  getConversationContext(): unknown {
     return this.conversationContexts.get(agentId) || [];
   }
 
-  clearConversationContext(agentId?: string): void {
-  // Implementation needed
-}
-    if (agentId) {
-  // Implementation needed
-}
+  clearConversationContext(): unknown {
+    if(): unknown {
       this.conversationContexts.delete(agentId);
     } else {
-  // Implementation needed
-}
-      this.conversationContexts.clear();
-    }
+this.conversationContexts.clear();
+  }}
   }
 
-  getAgents(): string[] {
-  // Implementation needed
-}
+  getAgents(): unknown {
     return Array.from(this.agents.keys());
   }
 
-  getAgentConfig(agentId: string): AgentConfig | undefined {
-  // Implementation needed
-}
+  getAgentConfig(): unknown {
     return this.agents.get(agentId);
   }
 }

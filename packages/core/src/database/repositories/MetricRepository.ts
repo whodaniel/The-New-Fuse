@@ -2,20 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { Repository, DataSource, Between } from 'typeorm';
 @Injectable()
 export class MetricRepository {
-  // Implementation needed
-}
   constructor(private dataSource: DataSource) {}
 
-  async getAverageMetric(name: string): Promise<any> {
-  // Implementation needed
-}
+  async getAverageMetric(): unknown {
     // Mock implementation
     return { average: 0, message: 'Metric repository not implemented' };
   }
 
-  async getMetricStatistics(name: string, since?: Date): Promise<any> {
-  // Implementation needed
-}
+  async getMetricStatistics(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -29,23 +23,17 @@ export class MetricRepository {
     };
   }
 
-  async getHourlyMetrics(name: string, since: Date): Promise<any> {
-  // Implementation needed
-}
+  async getHourlyMetrics(): unknown {
     // Mock implementation
     return { message: 'Hourly metrics not implemented' };
   }
 
-  async createMetric(name: string, value: number, timestamp?: Date): Promise<any> {
-  // Implementation needed
-}
+  async createMetric(): unknown {
     // Mock implementation
     return { message: 'Metric creation not implemented' };
   }
 
-  async findMetricsByName(name: string, limit?: number): Promise<any> {
-  // Implementation needed
-}
+  async findMetricsByName(): unknown {
     // Mock implementation
     return { message: 'Metric search not implemented' };
   }

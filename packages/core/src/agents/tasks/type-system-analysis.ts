@@ -1,6 +1,4 @@
 interface TypeSystemAnalysis {
-  // Implementation needed
-}
   currentIssues: string[];
   proposedSolutions: Solution[];
   implementationPriority: Priority;

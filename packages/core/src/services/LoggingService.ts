@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { createLogger, format, transports, Logger as WinstonLogger } from 'winston';
 import { ConfigService } from '../config/ConfigService';
 export interface LogEntry {
-  // Implementation needed
-}
   id: string;
   level: 'debug' | 'info' | 'warn' | 'error';
   message: string;
@@ -13,21 +11,14 @@ export interface LogEntry {
 
 @Injectable()
 export class LoggingService {
-  // Implementation needed
-}
   private logger!: WinstonLogger;
-  constructor(private readonly configService: ConfigService) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.initializeWinston();
   }
 
   private initializeWinston() {
-  // Implementation needed
-}
-    this.logger = createLogger({
-  // Implementation needed
-}
+this.logger = createLogger({
+  }}
       level: this.configService.getLogLevel(),
       format: format.combine(
         format.timestamp(),
@@ -57,21 +48,13 @@ export class LoggingService {
     });
   }
 
-  async log(
-    level: 'debug' | 'info' | 'warn' | 'error',
-    message: string,
-    metadata?: Record<string, unknown>
-  ): Promise<LogEntry> {
-  // Implementation needed
-}
+  async log(): unknown {
     // Log to Winston
     this.logger.log(level, message, metadata);
     // Create log entry
     const logEntry: LogEntry = {
-  // Implementation needed
-}
-      id: this.generateId(),
-      level,
+id: this.generateId(),
+  }      level,
       message,
       metadata,
       timestamp: new Date()
@@ -79,33 +62,23 @@ export class LoggingService {
     return logEntry;
   }
 
-  async debug(message: string, metadata?: Record<string, unknown>): Promise<LogEntry> {
-  // Implementation needed
-}
+  async debug(): unknown {
     return this.log('debug', message, metadata);
   }
 
-  async info(message: string, metadata?: Record<string, unknown>): Promise<LogEntry> {
-  // Implementation needed
-}
+  async info(): unknown {
     return this.log('info', message, metadata);
   }
 
-  async warn(message: string, metadata?: Record<string, unknown>): Promise<LogEntry> {
-  // Implementation needed
-}
+  async warn(): unknown {
     return this.log('warn', message, metadata);
   }
 
-  async error(message: string, metadata?: Record<string, unknown>): Promise<LogEntry> {
-  // Implementation needed
-}
+  async error(): unknown {
     return this.log('error', message, metadata);
   }
 
   private generateId(): string {
-  // Implementation needed
-}
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }
+return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }}
 }

@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-export interface CacheEntry<T> {
-  // Implementation needed
-}
+export interface CacheEntry {
   value: T;
   expires: number;
   hits: number;
@@ -9,8 +7,6 @@ export interface CacheEntry<T> {
 }
 
 export interface CacheStats {
-  // Implementation needed
-}
   size: number;
   maxSize: number;
   hits: number;
@@ -20,43 +16,32 @@ export interface CacheStats {
 }
 
 @Injectable()
-export class MemoryCache<T = any> {
-  // Implementation needed
-}
+export class MemoryCache {
   private readonly logger = new Logger(MemoryCache.name);
   private readonly cache = new Map<string, CacheEntry<T>>();
   private readonly maxSize: number;
   private readonly defaultTTL: number;
   private stats = {
-  // Implementation needed
-}
-    hits: 0,
-    misses: 0,
+hits: 0
+          },
+          misses: 0,
     evictions: 0,
   };
-  constructor(maxSize = 1000, defaultTTL = 3600000) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.maxSize = maxSize;
     this.defaultTTL = defaultTTL;
   }
 
-  set(key: string, value: T, ttl?: number): void {
-  // Implementation needed
-}
+  set(): unknown {
     const expires = Date.now() + (ttl || this.defaultTTL);
     // Evict if cache is full
-    if (this.cache.size >= this.maxSize && !this.cache.has(key)) {
-  // Implementation needed
-}
+    if(): unknown {
       this.evictLRU();
     }
 
     const entry: CacheEntry<T> = {
-  // Implementation needed
-}
-      value,
-      expires,
+value,
+  }      expires,
       hits: 0,
       created: Date.now(),
     };
@@ -64,20 +49,14 @@ export class MemoryCache<T = any> {
     this.logger.debug(`Cache SET: ${key}`);
   }
 
-  get(key: string): T | null {
-  // Implementation needed
-}
+  get(): unknown {
     const entry = this.cache.get(key);
-    if (!entry) {
-  // Implementation needed
-}
+    if(): unknown {
       this.stats.misses++;
       return null;
     }
 
-    if (Date.now() > entry.expires) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(key);
       this.stats.misses++;
       return null;
@@ -89,34 +68,23 @@ export class MemoryCache<T = any> {
     return entry.value;
   }
 
-  delete(key: string): boolean {
-  // Implementation needed
-}
+  delete(): unknown {
     const deleted = this.cache.delete(key);
-    if (deleted) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.debug(`Cache DELETE: ${key}`);
     }
     return deleted;
   }
 
-  clear(): void {
-  // Implementation needed
-}
+  clear(): unknown {
     this.cache.clear();
     this.stats = { hits: 0, misses: 0, evictions: 0 };
     this.logger.debug('Cache cleared');
   }
 
-  has(key: string): boolean {
-  // Implementation needed
-}
+  has(): unknown {
     const entry = this.cache.get(key);
-    if (!entry) return false;
-    if (Date.now() > entry.expires) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(key);
       return false;
     }
@@ -124,30 +92,22 @@ export class MemoryCache<T = any> {
     return true;
   }
 
-  keys(): string[] {
-  // Implementation needed
-}
+  keys(): unknown {
     this.cleanup();
     return Array.from(this.cache.keys());
   }
 
-  size(): number {
-  // Implementation needed
-}
+  size(): unknown {
     this.cleanup();
     return this.cache.size;
   }
 
-  getStats(): CacheStats {
-  // Implementation needed
-}
+  getStats(): unknown {
     this.cleanup();
     const total = this.stats.hits + this.stats.misses;
     return {
-  // Implementation needed
-}
-      size: this.cache.size,
-      maxSize: this.maxSize,
+size: this.cache.size,
+  }      maxSize: this.maxSize,
       hits: this.stats.hits,
       misses: this.stats.misses,
       evictions: this.stats.evictions,
@@ -156,25 +116,17 @@ export class MemoryCache<T = any> {
   }
 
   private evictLRU(): void {
-  // Implementation needed
-}
-    let oldestKey: string | null = null;
-    let oldestTime = Infinity;
-    for (const [key, entry] of Array.from(this.cache.entries())) {
-  // Implementation needed
-}
+let oldestKey: string | null = null;
+  }    let oldestTime = Infinity;
+    for(): unknown {
       const accessTime = entry.created + (entry.hits * 1000); // Rough LRU calculation
-      if (accessTime < oldestTime) {
-  // Implementation needed
-}
+      if(): unknown {
         oldestTime = accessTime;
         oldestKey = key;
       }
     }
 
-    if (oldestKey) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
       this.logger.debug(`Cache EVICT: ${oldestKey}`);
@@ -182,15 +134,9 @@ export class MemoryCache<T = any> {
   }
 
   private cleanup(): void {
-  // Implementation needed
-}
-    const now = Date.now();
-    for (const [key, entry] of Array.from(this.cache.entries())) {
-  // Implementation needed
-}
-      if (now > entry.expires) {
-  // Implementation needed
-}
+const now = Date.now();
+  }    for(): unknown {
+      if(): unknown {
         this.cache.delete(key);
       }
     }

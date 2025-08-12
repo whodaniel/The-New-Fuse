@@ -1,6 +1,4 @@
 interface AgentMessage {
-  // Implementation needed
-}
   id: string;
   from: string;
   to: string;
@@ -10,18 +8,14 @@ interface AgentMessage {
   priority: number;
 }
 
-interface PriorityQueue<T> {
-  // Implementation needed
-}
+interface PriorityQueue {
   enqueue(item: T, priority: number): void;
   dequeue(): T | undefined;
   size(): number;
 }
 
 interface CollaborationContext {
-  // Implementation needed
-}
-  sharedState: {
+  sharedState: unknown;
   // Implementation needed
 }
     currentPhase: 'analysis' | 'enhancement' | 'implementation' | 'testing';

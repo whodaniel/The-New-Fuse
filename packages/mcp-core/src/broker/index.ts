@@ -10,3 +10,5 @@ export { ServiceRegistry } from './ServiceRegistry';
 export { HealthMonitor } from './HealthMonitor';
 export { LoadBalancer } from './LoadBalancer';
 export { MessageRouter } from './MessageRouter';
+export { MessageQueue } from './MessageQueue';
+export { EventSubscriptionManager } from './EventSubscriptionManager';

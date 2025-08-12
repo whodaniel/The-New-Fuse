@@ -5,16 +5,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 export interface CacheOptions {
-  // Implementation needed
-}
   ttl?: number; // Time to live in seconds
   tags?: string[]; // Cache tags for invalidation
 }
 
 @Injectable()
 export class AgencyHubCacheService {
-  // Implementation needed
-}
   private readonly logger = new Logger(AgencyHubCacheService.name);
   private readonly cache = new Map<string, { value: unknown; expires: number; tags?: string[] }>();
   private readonly defaultTtl = 300; // 5 minutes
@@ -28,16 +24,12 @@ export class AgencyHubCacheService {
   // Implementation needed
 }
     const entry = this.cache.get(key);
-    if (!entry) {
-  // Implementation needed
-}
+    if(): unknown {
       return null;
     }
 
     // Check if expired
-    if (Date.now() > entry.expires) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(key);
       return null;
     }
@@ -67,9 +59,7 @@ export class AgencyHubCacheService {
   /**
    * Delete value from cache
    */
-  async del(key: string): Promise<void> {
-  // Implementation needed
-}
+  async del(): unknown {
     this.cache.delete(key);
     this.logger.debug(`Cache deleted for key: ${key}`);
   }
@@ -77,9 +67,7 @@ export class AgencyHubCacheService {
   /**
    * Clear all cache entries
    */
-  async clear(): Promise<void> {
-  // Implementation needed
-}
+  async clear(): unknown {
     this.cache.clear();
     this.logger.debug('Cache cleared');
   }
@@ -87,16 +75,10 @@ export class AgencyHubCacheService {
   /**
    * Invalidate cache entries by tags
    */
-  async invalidateByTags(tags: string[]): Promise<void> {
-  // Implementation needed
-}
+  async invalidateByTags(): unknown {
     const keysToDelete: string[] = [];
-    for (const [key, entry] of this.cache.entries()) {
-  // Implementation needed
-}
-      if (entry.tags && entry.tags.some(tag => tags.includes(tag))) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         keysToDelete.push(key);
       }
     }

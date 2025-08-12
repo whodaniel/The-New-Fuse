@@ -145,7 +145,7 @@ export class SystemMonitor {
           ...service,
           status: 'unhealthy',
           lastCheck: new Date(),
-          details: {
+          details: unknown;
             ...service.details,
             error: (error as Error).message,
           },
@@ -225,7 +225,7 @@ export class SystemMonitor {
       used: usedMemory,
       total: totalMemory,
       usage: (usedMemory / totalMemory) * 100,
-      heap: {
+      heap: unknown;
         used: memoryUsage.heapUsed,
         total: memoryUsage.heapTotal,
       },

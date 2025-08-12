@@ -14,7 +14,9 @@ import {
   ServiceHealth, 
   BrokerConfig,
   RoutingMetrics,
-  LoadBalancingStrategy
+  LoadBalancingStrategy,
+  ServiceCompatibilityResult,
+  RoutingInfo
 } from '../types';
 import { ServiceStatus, LogLevel } from '../types/common';
 import { MCPErrorClass, MCPErrorCode, JSONRPCErrorCode } from '../types/error';
@@ -397,12 +399,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
   /**
    * Check capability compatibility between two services
    */
-  async checkServiceCompatibility(serviceIdA: string, serviceIdB: string): Promise<{
-    compatible: boolean;
-    commonCapabilities: string[];
-    missingInA: string[];
-    missingInB: string[];
-  }> {
+  async checkServiceCompatibility(serviceIdA: string, serviceIdB: string): Promise<ServiceCompatibilityResult> {
     if (!this.isRunningFlag) {
       throw new MCPErrorClass(
         MCPErrorCode.SERVICE_UNAVAILABLE,
@@ -428,7 +425,15 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
         );
       }
 
-      return this.serviceRegistry.checkCapabilityCompatibility(serviceA, serviceB);
+      const result = this.serviceRegistry.checkCapabilityCompatibility(serviceA, serviceB);
+      // Add compatibility score calculation
+      const compatibilityScore = result.commonCapabilities.length / 
+        Math.max(serviceA.capabilities.length, serviceB.capabilities.length, 1);
+      
+      return {
+        ...result,
+        compatibilityScore
+      };
     } catch (error) {
       if (error instanceof MCPErrorClass) {
         throw error;
@@ -452,7 +457,8 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     }
 
     try {
-      return await this.messageRouter.routeRequest(request, targetService);
+      const routingInfo: RoutingInfo | undefined = targetService ? { targetService } : undefined;
+      return await this.messageRouter.routeRequest(request, routingInfo);
     } catch (error) {
       if (error instanceof MCPErrorClass) {
         throw error;
@@ -617,7 +623,7 @@ export class MCPBroker extends EventEmitter implements IMCPBroker {
     }
 
     try {
-      return await this.messageRouter.subscribeToEvents(
+      return await this.messageRouter.subscribeToEventsAdvanced(
         serviceId,
         pattern,
         patternType,

@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MemoryItem, Vector, SearchResult, MemoryQuery } from '../MemoryTypes';
 export interface SemanticIndexConfig {
-  // Implementation needed
-}
   dimension: number;
   maxElements: number;
   efConstruction: number;
@@ -12,19 +10,13 @@ export interface SemanticIndexConfig {
 
 @Injectable()
 export class SemanticIndex {
-  // Implementation needed
-}
   private readonly logger = new Logger(SemanticIndex.name);
   private readonly config: SemanticIndexConfig;
   private readonly items: Map<string, MemoryItem> = new Map();
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.config = {
-  // Implementation needed
-}
-      dimension: parseInt(process.env.EMBEDDING_DIMENSION || '1536'),
-      maxElements: parseInt(process.env.MAX_INDEX_ELEMENTS || '10000'),
+dimension: parseInt(process.env.EMBEDDING_DIMENSION || '1536'),
+  }      maxElements: parseInt(process.env.MAX_INDEX_ELEMENTS || '10000'),
       efConstruction: parseInt(process.env.EF_CONSTRUCTION || '200'),
       efSearch: parseInt(process.env.EF_SEARCH || '50'),
       M: parseInt(process.env.INDEX_M || '16'),
@@ -32,67 +24,43 @@ export class SemanticIndex {
     this.logger.log('SemanticIndex initialized');
   }
 
-  async addItem(item: MemoryItem): Promise<void> {
-  // Implementation needed
-}
+  async addItem(): unknown {
     try {
-  // Implementation needed
-}
-      if (!item.embedding || item.embedding.length !== this.config.dimension) {
-  // Implementation needed
-}
-        throw new Error(`Invalid embedding dimension. Expected ${this.config.dimension}`);
+if(): unknown {
+  }        throw new Error(`Invalid embedding dimension. Expected ${this.config.dimension}`);
       }
 
       this.items.set(item.id, item);
       this.logger.debug(`Added item to semantic index: ${item.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Failed to add item to semantic index: ${item.id}`, error);
-      throw error;
+this.logger.error(`Failed to add item to semantic index: ${item.id}`, error);
+  }      throw error;
     }
   }
 
-  async removeItem(itemId: string): Promise<boolean> {
-  // Implementation needed
-}
+  async removeItem(): unknown {
     const removed = this.items.delete(itemId);
-    if (removed) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.debug(`Removed item from semantic index: ${itemId}`);
     }
     return removed;
   }
 
-  async search(query: MemoryQuery): Promise<SearchResult[]> {
-  // Implementation needed
-}
+  async search(): unknown {
     try {
-  // Implementation needed
-}
-      if (!query.embedding) {
-  // Implementation needed
-}
-        throw new Error('Query must have an embedding for semantic search');
+if(): unknown {
+  }        throw new Error('Query must have an embedding for semantic search');
       }
 
       const results: SearchResult[] = [];
       const limit = query.limit || 10;
       const minSimilarity = query.minSimilarity || 0.7;
-      for (const [id, item] of this.items.entries()) {
-  // Implementation needed
-}
+      for(): unknown {
         const similarity = this.calculateCosineSimilarity(query.embedding, item.embedding);
-        if (similarity >= minSimilarity && this.matchesFilters(item, query)) {
-  // Implementation needed
-}
+        if(): unknown {
           results.push({
-  // Implementation needed
-}
-            item,
-            similarity,
+item,
+  }            similarity,
             relevanceScore: similarity,
           });
         }
@@ -102,16 +70,12 @@ export class SemanticIndex {
       results.sort((a, b) => b.similarity - a.similarity);
       return results.slice(0, limit);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Semantic search failed:', error);
-      return [];
+this.logger.error('Semantic search failed:', error);
+  }      return [];
     }
   }
 
-  async getStats(): Promise<{
-  // Implementation needed
-}
+  async getStats(): unknown {
     totalItems: number;
     dimension: number;
     memoryUsage: string;
@@ -130,28 +94,20 @@ export class SemanticIndex {
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-  // Implementation needed
-}
-    if (vecA.length !== vecB.length) {
-  // Implementation needed
-}
-      throw new Error('Vector dimensions must match');
+if(): unknown {
+  }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for (let i = 0; i < vecA.length; i++) {
-  // Implementation needed
-}
+    for(): unknown {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if (normA === 0 || normB === 0) {
-  // Implementation needed
-}
+    if(): unknown {
       return 0;
     }
 
@@ -159,51 +115,33 @@ export class SemanticIndex {
   }
 
   private matchesFilters(item: MemoryItem, query: MemoryQuery): boolean {
-  // Implementation needed
-}
-    // Apply metadata filters
-    if (query.filters) {
-  // Implementation needed
-}
-      for (const [key, value] of Object.entries(query.filters)) {
-  // Implementation needed
-}
-        if (item.metadata[key] !== value) {
-  // Implementation needed
-}
+// Apply metadata filters
+  }    if(): unknown {
+      for(): unknown {
+        if(): unknown {
           return false;
         }
       }
     }
 
     // Apply tag filters
-    if (query.tags && query.tags.length > 0) {
-  // Implementation needed
-}
+    if(): unknown {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if (!hasAllTags) {
-  // Implementation needed
-}
+      if(): unknown {
         return false;
       }
     }
 
     // Apply cluster filter
-    if (query.clusterId && item.clusterId !== query.clusterId) {
-  // Implementation needed
-}
+    if(): unknown {
       return false;
     }
 
     // Apply date range filter
-    if (query.dateRange) {
-  // Implementation needed
-}
+    if(): unknown {
       const itemTime = item.timestamp;
-      if (itemTime < query.dateRange.start || itemTime > query.dateRange.end) {
-  // Implementation needed
-}
+      if(): unknown {
         return false;
       }
     }
@@ -212,10 +150,8 @@ export class SemanticIndex {
   }
 
   private formatBytes(bytes: number): string {
-  // Implementation needed
-}
-    if (bytes === 0) return '0 B';
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+if (bytes === 0) return '0 B';
+  }    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   }

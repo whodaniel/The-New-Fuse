@@ -1,8 +1,6 @@
 // packages/core/src/services/rag-service.ts
 
 interface KnowledgeDocument {
-  // Implementation needed
-}
   path: string;
   content?: string; // Content can be loaded on demand
 }

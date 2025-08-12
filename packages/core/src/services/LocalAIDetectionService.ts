@@ -337,7 +337,7 @@ export class LocalAIDetectionService {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
-        headers: {
+        headers: unknown;
           'Content-Type': 'application/json',
           ...options.headers,
         },
@@ -427,12 +427,12 @@ export class LocalAIDetectionService {
           endpoint: provider.endpoint,
           capabilities: this.getCapabilitiesForProvider(provider),
           models: models,
-          metadata: {
+          metadata: unknown;
             localAI: true,
             detectedAt: new Date().toISOString(),
             providerType: provider.type,
           },
-          configuration: {
+          configuration: unknown;
             provider: provider.name,
             endpoint: provider.endpoint,
             localAI: true,
@@ -469,13 +469,13 @@ export class LocalAIDetectionService {
           endpoint: provider.endpoint,
           capabilities: this.getSystemCapabilitiesForProvider(provider),
           models: models,
-          metadata: {
+          metadata: unknown;
             localAI: true,
             system: true,
             detectedAt: new Date().toISOString(),
             providerType: provider.type,
           },
-          configuration: {
+          configuration: unknown;
             provider: provider.name,
             endpoint: provider.endpoint,
             localAI: true,

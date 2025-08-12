@@ -1,6 +1,4 @@
 export enum TaskStatus {
-  // Implementation needed
-}
   PENDING = 'PENDING',
   IN_PROGRESS = 'IN_PROGRESS',
   COMPLETED = 'COMPLETED',
@@ -9,8 +7,6 @@ export enum TaskStatus {
 }
 
 export enum TaskPriority {
-  // Implementation needed
-}
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
@@ -26,8 +22,6 @@ export type TaskStatusType =
   | 'scheduled' 
   | 'in_progress';
 export interface Task {
-  // Implementation needed
-}
   id: string;
   status: TaskStatusType;
   type: string;
@@ -41,8 +35,6 @@ export interface Task {
 }
 
 export interface TaskMetadata {
-  // Implementation needed
-}
   id: string;
   type: string;
   status: TaskStatusType;
@@ -55,8 +47,6 @@ export interface TaskMetadata {
 }
 
 export interface TaskCreationOptions {
-  // Implementation needed
-}
   type: string;
   data: any;
   params?: Record<string, any>;
@@ -68,16 +58,12 @@ export interface TaskCreationOptions {
 }
 
 export interface TaskExecutionOptions {
-  // Implementation needed
-}
   queue?: boolean;
   priority?: number;
   timeout?: number;
 }
 
 export interface TaskQueueOptions {
-  // Implementation needed
-}
   concurrency?: number;
   timeout?: number;
   retryAttempts?: number;
@@ -85,8 +71,6 @@ export interface TaskQueueOptions {
 }
 
 export interface TaskQueueStats {
-  // Implementation needed
-}
   pending: number;
   running: number;
   completed: number;
@@ -94,8 +78,6 @@ export interface TaskQueueStats {
 }
 
 export interface ScheduledTask {
-  // Implementation needed
-}
   id: string;
   name: string;
   cron: string;

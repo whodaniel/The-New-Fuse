@@ -1,6 +1,4 @@
 export interface EvaluationCase {
-  // Implementation needed
-}
   id: string
   input: string
   expectedOutput?: string
@@ -20,8 +18,6 @@ export interface EvaluationDataset { id: string
  }
 
 export interface EvaluationCriteria {
-  // Implementation needed
-}
   name: string
   metric: string
   weight?: number
@@ -29,8 +25,6 @@ export interface EvaluationCriteria {
 }
 
 export interface EvaluationResult {
-  // Implementation needed
-}
   id: string
   modelId: string
   datasetId: string
@@ -53,8 +47,6 @@ export interface EvaluationResult {
 }
 
 export interface EvaluationMetric {
-  // Implementation needed
-}
   name: string
   description: string
   calculate(;

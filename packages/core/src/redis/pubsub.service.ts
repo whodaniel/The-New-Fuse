@@ -1,68 +1,42 @@
 import { Injectable } from '@nestjs/common';
 export interface PubSubCallback {
-  // Implementation needed
-}
   (message: string, channel: string): void;
 }
 
 @Injectable()
 export class PubSubService {
-  // Implementation needed
-}
   private subscriptions: Map<string, Set<PubSubCallback>> = new Map();
-  async subscribe(channel: string, callback: PubSubCallback): Promise<void> {
-  // Implementation needed
-}
-    if (!this.subscriptions.has(channel)) {
-  // Implementation needed
-}
+  async subscribe(): unknown {
+    if(): unknown {
       this.subscriptions.set(channel, new Set());
     }
     this.subscriptions.get(channel)!.add(callback);
   }
 
-  async unsubscribe(channel: string, callback: PubSubCallback): Promise<void> {
-  // Implementation needed
-}
+  async unsubscribe(): unknown {
     const callbacks = this.subscriptions.get(channel);
-    if (callbacks) {
-  // Implementation needed
-}
+    if(): unknown {
       callbacks.delete(callback);
-      if (callbacks.size === 0) {
-  // Implementation needed
-}
+      if(): unknown {
         this.subscriptions.delete(channel);
       }
     }
   }
 
-  async publish(channel: string, message: string): Promise<void> {
-  // Implementation needed
-}
+  async publish(): unknown {
     const callbacks = this.subscriptions.get(channel);
-    if (callbacks) {
-  // Implementation needed
-}
+    if(): unknown {
       callbacks.forEach(callback => {
-  // Implementation needed
-}
-        try {
-  // Implementation needed
-}
-          callback(message, channel);
-        } catch (error) {
-  // Implementation needed
-}
+try {
+  }}
+          callback(): unknown {
           console.error(`Error in pubsub callback for channel ${channel}:`, error);
         }
       });
     }
   }
 
-  async unsubscribeAll(channel: string): Promise<void> {
-  // Implementation needed
-}
+  async unsubscribeAll(): unknown {
     this.subscriptions.delete(channel);
   }
 }

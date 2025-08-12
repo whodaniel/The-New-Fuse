@@ -168,7 +168,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         executionTime,
       });
       
-      throw new DatabaseError(
+      throw new DatabaseError(): unknown {
         'Query execution failed',
         'DATABASE_QUERY_FAILED',
         {
@@ -270,7 +270,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         operationsCount: context.operations.length,
       });
       
-      throw new DatabaseError(
+      throw new DatabaseError(): unknown {
         'Transaction failed',
         'DATABASE_TRANSACTION_FAILED',
         {
@@ -337,15 +337,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       
       return {
         status: 'healthy',
-        details: {
+        details: unknown;
           state: this.state,
           responseTime,
-          connections: {
+          connections: unknown;
             total: stats.totalConnections,
             active: stats.activeConnections,
             idle: stats.idleConnections,
           },
-          queries: {
+          queries: unknown;
             total: stats.totalQueries,
             averageTime: stats.averageQueryTime,
             errorCount: stats.errorCount,
@@ -356,7 +356,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       return {
         status: 'unhealthy',
-        details: {
+        details: unknown;
           state: this.state,
           error: (error as Error).message,
           lastError: new Date().toISOString(),
@@ -368,7 +368,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // Private methods
   private ensureRunning(): void {
     if (this.state !== ServiceState.RUNNING) {
-      throw new DatabaseError(
+      throw new DatabaseError(): unknown {
         'DatabaseService is not running',
         'DATABASE_SERVICE_NOT_RUNNING',
         { state: this.state }

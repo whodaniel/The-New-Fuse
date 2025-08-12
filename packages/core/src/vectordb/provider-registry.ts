@@ -3,15 +3,9 @@ import { PineconeProvider } from './providers/pinecone-provider';
 import { ChromaProvider } from './providers/chroma-provider';
 import { RedisProvider } from './providers/redis-provider';
 export class ProviderRegistry {
-  // Implementation needed
-}
   static createProvider(config: VectorStoreConfig): VectorStoreProvider {
-  // Implementation needed
-}
-    const { provider, endpoint = 'placeholder' } = config;
-    switch (provider) {
-  // Implementation needed
-}
+const { provider, endpoint = 'placeholder' } = config;
+  }    switch(): unknown {
       case 'pinecone':
         return new PineconeProvider({ endpoint, apiKey });
       case 'chroma':

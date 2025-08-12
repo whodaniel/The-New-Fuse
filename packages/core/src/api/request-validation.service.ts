@@ -3,8 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import * as z from 'zod';
 export enum ErrorCategory {
-  // Implementation needed
-}
   VALIDATION = 'validation',
   AUTHENTICATION = 'authentication',
   AUTHORIZATION = 'authorization',
@@ -13,8 +11,6 @@ export enum ErrorCategory {
 }
 
 export enum ErrorSeverity {
-  // Implementation needed
-}
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
@@ -22,8 +18,6 @@ export enum ErrorSeverity {
 }
 
 export interface ValidationError {
-  // Implementation needed
-}
   field: string;
   message: string;
   code: string;
@@ -31,8 +25,6 @@ export interface ValidationError {
 
 @Injectable()
 export class RequestValidationService {
-  // Implementation needed
-}
   private readonly logger = new Logger(RequestValidationService.name);
   constructor(private readonly configService: ConfigService) {}
 
@@ -40,8 +32,6 @@ export class RequestValidationService {
   // Implementation needed
 }
     try {
-  // Implementation needed
-}
       const result = schema.parse(request.body, {
   // Implementation needed
 }
@@ -52,12 +42,8 @@ export class RequestValidationService {
       this.logger.debug('Request validation successful');
       return result;
     } catch (error) {
-  // Implementation needed
-}
-      if (error instanceof z.ZodError) {
-  // Implementation needed
-}
-        this.logger.warn('Request validation failed', error.errors);
+if(): unknown {
+  }        this.logger.warn('Request validation failed', error.errors);
         const validationErrors: ValidationError[] = error.errors.map(err => ({
   // Implementation needed
 }
@@ -80,11 +66,8 @@ export class RequestValidationService {
   }
 
   validateQuery<T>(schema: z.ZodSchema<T>, request: Request): T {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+try {
+  }}
       const result = schema.parse(request.query, {
   // Implementation needed
 }
@@ -93,12 +76,8 @@ export class RequestValidationService {
       });
       return result;
     } catch (error) {
-  // Implementation needed
-}
-      if (error instanceof z.ZodError) {
-  // Implementation needed
-}
-        const validationErrors: ValidationError[] = error.errors.map(err => ({
+if(): unknown {
+  }        const validationErrors: ValidationError[] = error.errors.map(err => ({
   // Implementation needed
 }
           field: err.path.join('.'),

@@ -30,7 +30,7 @@ export class ExternalApiService {
     this.axiosInstance = axios.create({
       baseURL: config.baseURL,
       timeout: config.timeout || 30000,
-      headers: {
+      headers: unknown;
         'Content-Type': 'application/json',
         ...config.headers
       }

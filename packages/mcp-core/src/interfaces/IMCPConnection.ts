@@ -2,6 +2,7 @@
  * MCP Connection interfaces for managing connections in the MCP protocol
  */
 
+import { EventEmitter } from 'events';
 import { MCPMessage } from './IMCPMessage';
 
 /**
@@ -100,7 +101,7 @@ export interface ConnectionMetrics {
 /**
  * MCP Connection interface
  */
-export interface MCPConnection {
+export interface MCPConnection extends EventEmitter {
   /** Unique connection identifier */
   id: string;
   /** Connection endpoint URL */

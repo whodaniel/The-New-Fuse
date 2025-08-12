@@ -29,8 +29,6 @@ import { TenantContext } from '../decorators/tenant-context.decorator';
 @ApiTags('Agency Hub')
 @UseGuards(TenantGuard, AgencyRoleGuard)
 export class AgencyHubController {
-  // Implementation needed
-}
   private readonly logger = new Logger(AgencyHubController.name);
   @Post('agencies')
   @ApiOperation({ summary: 'Create a new agency (Master Admin only)' })
@@ -38,9 +36,7 @@ export class AgencyHubController {
   @ApiResponse({ status: 400, description: 'Invalid input data' })
   @ApiResponse({ status: 409, description: 'Subdomain already exists' })
   @Roles('MASTER_ADMIN')
-  async createAgency(@Body() createAgencyDto: any) {
-  // Implementation needed
-}
+  async createAgency(): unknown {
     this.logger.log('Creating new agency');
     // Logic to create agency
     return { message: 'Agency created successfully' };
@@ -54,14 +50,7 @@ export class AgencyHubController {
   @ApiQuery({ name: 'status', required: false })
   @ApiResponse({ status: 200, description: 'Agencies retrieved successfully' })
   @Roles('MASTER_ADMIN')
-  async getAllAgencies(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-    @Query('tier') tier: string,
-    @Query('status') status: string,
-  ) {
-  // Implementation needed
-}
+  async getAllAgencies(): unknown {
     this.logger.log('Retrieving all agencies for master admin');
     // Logic to retrieve agencies
     return [];
@@ -73,9 +62,7 @@ export class AgencyHubController {
   @ApiResponse({ status: 200, description: 'Agency details retrieved' })
   @ApiResponse({ status: 404, description: 'Agency not found' })
   @Roles('MASTER_ADMIN')
-  async getAgencyById(@Param('agencyId') agencyId: string) {
-  // Implementation needed
-}
+  async getAgencyById(): unknown {
     this.logger.log(`Getting agency details for ID: ${agencyId}`);
     // Logic to get agency by ID
     return {};
@@ -87,12 +74,7 @@ export class AgencyHubController {
   @ApiResponse({ status: 200, description: 'Agency updated successfully' })
   @ApiResponse({ status: 404, description: 'Agency not found' })
   @Roles('MASTER_ADMIN')
-  async updateAgency(
-    @Param('agencyId') agencyId: string,
-    @Body() updateAgencyDto: any,
-  ) {
-  // Implementation needed
-}
+  async updateAgency(): unknown {
     this.logger.log(`Updating agency ID: ${agencyId}`);
     // Logic to update agency
     return { message: 'Agency updated successfully' };
@@ -104,9 +86,7 @@ export class AgencyHubController {
   @ApiResponse({ status: 200, description: 'Agency deleted successfully' })
   @ApiResponse({ status: 404, description: 'Agency not found' })
   @Roles('MASTER_ADMIN')
-  async deleteAgency(@Param('agencyId') agencyId: string) {
-  // Implementation needed
-}
+  async deleteAgency(): unknown {
     this.logger.log(`Deleting agency ID: ${agencyId}`);
     // Logic to delete agency
     return { message: 'Agency deleted successfully' };
@@ -116,9 +96,7 @@ export class AgencyHubController {
   @ApiOperation({ summary: 'Get agency dashboard data' })
   @ApiResponse({ status: 200, description: 'Dashboard data retrieved' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async getDashboardData() {
-  // Implementation needed
-}
+  async getDashboardData(): unknown {
     this.logger.log('Getting dashboard data');
     // Logic to get dashboard data
     return {};
@@ -127,9 +105,7 @@ export class AgencyHubController {
   @Get('status')
   @ApiOperation({ summary: 'Get agency swarm status' })
   @ApiResponse({ status: 200, description: 'Swarm status retrieved' })
-  async getSwarmStatus() {
-  // Implementation needed
-}
+  async getSwarmStatus(): unknown {
     this.logger.log('Getting swarm status');
     // Logic to get swarm status
     return {};
@@ -139,9 +115,7 @@ export class AgencyHubController {
   @ApiOperation({ summary: 'Initialize swarm for agency' })
   @ApiResponse({ status: 200, description: 'Swarm initialized successfully' })
   @Roles('AGENCY_ADMIN')
-  async initializeSwarm(@Body() initializeSwarmDto: any) {
-  // Implementation needed
-}
+  async initializeSwarm(): unknown {
     this.logger.log('Initializing swarm');
     // Logic to initialize swarm
     return { message: 'Swarm initialized successfully' };
@@ -153,12 +127,7 @@ export class AgencyHubController {
   @ApiQuery({ name: 'metric', required: false, description: 'Specific metric to retrieve' })
   @ApiResponse({ status: 200, description: 'Analytics data retrieved' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async getAnalytics(
-    @Query('period') period = '30d',
-    @Query('metric') metric: string,
-  ) {
-  // Implementation needed
-}
+  async getAnalytics(): unknown {
     this.logger.log(`Getting analytics for period: ${period}`);
     // Logic to get analytics
     return {};
@@ -167,9 +136,7 @@ export class AgencyHubController {
   @Post('service-requests')
   @ApiOperation({ summary: 'Submit a service request' })
   @ApiResponse({ status: 201, description: 'Service request created' })
-  async submitServiceRequest(@Body() serviceRequestDto: any) {
-  // Implementation needed
-}
+  async submitServiceRequest(): unknown {
     this.logger.log('Submitting service request');
     // Logic to submit service request
     return { message: 'Service request submitted successfully' };
@@ -182,14 +149,7 @@ export class AgencyHubController {
   @ApiQuery({ name: 'page', required: false })
   @ApiQuery({ name: 'limit', required: false })
   @ApiResponse({ status: 200, description: 'Service requests retrieved' })
-  async getServiceRequests(
-    @Query('status') status: string,
-    @Query('category') category: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-  // Implementation needed
-}
+  async getServiceRequests(): unknown {
     this.logger.log('Getting service requests');
     // Logic to get service requests
     return [];
@@ -198,9 +158,7 @@ export class AgencyHubController {
   @Get('providers')
   @ApiOperation({ summary: 'Get agency service providers' })
   @ApiResponse({ status: 200, description: 'Service providers retrieved' })
-  async getServiceProviders() {
-  // Implementation needed
-}
+  async getServiceProviders(): unknown {
     this.logger.log('Getting service providers');
     // Logic to get service providers
     return [];
@@ -210,9 +168,7 @@ export class AgencyHubController {
   @ApiOperation({ summary: 'Register an agent as a service provider' })
   @ApiResponse({ status: 201, description: 'Provider registered successfully' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async registerProvider(@Body() registerProviderDto: any) {
-  // Implementation needed
-}
+  async registerProvider(): unknown {
     this.logger.log('Registering provider');
     // Logic to register provider
     return { message: 'Provider registered successfully' };

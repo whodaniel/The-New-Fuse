@@ -28,20 +28,13 @@ import { TenantContext } from '../decorators/tenant-context.decorator';
 @ApiTags('Service Routing')
 @UseGuards(TenantGuard, AgencyRoleGuard)
 export class ServiceRoutingController {
-  // Implementation needed
-}
   private readonly logger = new Logger(ServiceRoutingController.name);
   @Get('categories')
   @ApiOperation({ summary: 'Get available service categories' })
   @ApiQuery({ name: 'parentId', required: false, description: 'Filter by parent category' })
   @ApiQuery({ name: 'tier', required: false, description: 'Filter by agency tier' })
   @ApiResponse({ status: 200, description: 'Service categories retrieved' })
-  async getCategories(
-    @Query('parentId') parentId: string,
-    @Query('tier') tier: string,
-  ) {
-  // Implementation needed
-}
+  async getCategories(): unknown {
     this.logger.log('Getting service categories');
     // Logic to get categories
     return [];
@@ -51,9 +44,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Get specific service category details' })
   @ApiParam({ name: 'categoryId', description: 'Category ID' })
   @ApiResponse({ status: 200, description: 'Category details retrieved' })
-  async getCategoryById(@Param('categoryId') categoryId: string) {
-  // Implementation needed
-}
+  async getCategoryById(): unknown {
     this.logger.log(`Getting category details for ID: ${categoryId}`);
     // Logic to get category by ID
     return {};
@@ -63,9 +54,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Create a new service category' })
   @ApiResponse({ status: 201, description: 'Category created successfully' })
   @Roles('MASTER_ADMIN')
-  async createCategory(@Body() createCategoryDto: any) {
-  // Implementation needed
-}
+  async createCategory(): unknown {
     this.logger.log('Creating new service category');
     // Logic to create category
     return { message: 'Category created successfully' };
@@ -76,12 +65,7 @@ export class ServiceRoutingController {
   @ApiParam({ name: 'categoryId', description: 'Category ID' })
   @ApiResponse({ status: 200, description: 'Category updated successfully' })
   @Roles('MASTER_ADMIN')
-  async updateCategory(
-    @Param('categoryId') categoryId: string,
-    @Body() updateCategoryDto: any,
-  ) {
-  // Implementation needed
-}
+  async updateCategory(): unknown {
     this.logger.log(`Updating category ID: ${categoryId}`);
     // Logic to update category
     return { message: 'Category updated successfully' };
@@ -92,9 +76,7 @@ export class ServiceRoutingController {
   @ApiParam({ name: 'categoryId', description: 'Category ID' })
   @ApiResponse({ status: 200, description: 'Category deleted successfully' })
   @Roles('MASTER_ADMIN')
-  async deleteCategory(@Param('categoryId') categoryId: string) {
-  // Implementation needed
-}
+  async deleteCategory(): unknown {
     this.logger.log(`Deleting category ID: ${categoryId}`);
     // Logic to delete category
     return { message: 'Category deleted successfully' };
@@ -105,12 +87,7 @@ export class ServiceRoutingController {
   @ApiQuery({ name: 'categoryId', required: false, description: 'Filter by category' })
   @ApiQuery({ name: 'agencyId', required: false, description: 'Filter by agency' })
   @ApiResponse({ status: 200, description: 'Service providers retrieved' })
-  async getProviders(
-    @Query('categoryId') categoryId: string,
-    @Query('agencyId') agencyId: string,
-  ) {
-  // Implementation needed
-}
+  async getProviders(): unknown {
     this.logger.log('Getting service providers');
     // Logic to get providers
     return [];
@@ -120,9 +97,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Register a new service provider' })
   @ApiResponse({ status: 201, description: 'Provider registered successfully' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async registerProvider(@Body() registerProviderDto: any) {
-  // Implementation needed
-}
+  async registerProvider(): unknown {
     this.logger.log('Registering new service provider');
     // Logic to register provider
     return { message: 'Provider registered successfully' };
@@ -132,9 +107,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Get service provider details' })
   @ApiParam({ name: 'providerId', description: 'Provider ID' })
   @ApiResponse({ status: 200, description: 'Provider details retrieved' })
-  async getProviderById(@Param('providerId') providerId: string) {
-  // Implementation needed
-}
+  async getProviderById(): unknown {
     this.logger.log(`Getting provider details for ID: ${providerId}`);
     // Logic to get provider details
     return {};
@@ -145,12 +118,7 @@ export class ServiceRoutingController {
   @ApiParam({ name: 'providerId', description: 'Provider ID' })
   @ApiResponse({ status: 200, description: 'Provider updated successfully' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async updateProvider(
-    @Param('providerId') providerId: string,
-    @Body() updateProviderDto: any,
-  ) {
-  // Implementation needed
-}
+  async updateProvider(): unknown {
     this.logger.log(`Updating provider ID: ${providerId}`);
     // Logic to update provider
     return { message: 'Provider updated successfully' };
@@ -161,9 +129,7 @@ export class ServiceRoutingController {
   @ApiParam({ name: 'providerId', description: 'Provider ID' })
   @ApiResponse({ status: 200, description: 'Provider removed successfully' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async removeProvider(@Param('providerId') providerId: string) {
-  // Implementation needed
-}
+  async removeProvider(): unknown {
     this.logger.log(`Removing provider ID: ${providerId}`);
     // Logic to remove provider
     return { message: 'Provider removed successfully' };
@@ -172,9 +138,7 @@ export class ServiceRoutingController {
   @Post('requests')
   @ApiOperation({ summary: 'Create a service request' })
   @ApiResponse({ status: 201, description: 'Service request created successfully' })
-  async createServiceRequest(@Body() createRequestDto: any) {
-  // Implementation needed
-}
+  async createServiceRequest(): unknown {
     this.logger.log('Creating new service request');
     // Logic to create service request
     return { message: 'Service request created successfully' };
@@ -187,14 +151,7 @@ export class ServiceRoutingController {
   @ApiQuery({ name: 'page', required: false, description: 'Page number' })
   @ApiQuery({ name: 'limit', required: false, description: 'Items per page' })
   @ApiResponse({ status: 200, description: 'Service requests retrieved' })
-  async getServiceRequests(
-    @Query('status') status: string,
-    @Query('categoryId') categoryId: string,
-    @Query('page') page: number,
-    @Query('limit') limit: number,
-  ) {
-  // Implementation needed
-}
+  async getServiceRequests(): unknown {
     this.logger.log('Getting service requests');
     // Logic to get service requests
     return [];
@@ -204,9 +161,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Get service request details' })
   @ApiParam({ name: 'requestId', description: 'Request ID' })
   @ApiResponse({ status: 200, description: 'Request details retrieved' })
-  async getRequestById(@Param('requestId') requestId: string) {
-  // Implementation needed
-}
+  async getRequestById(): unknown {
     this.logger.log(`Getting request details for ID: ${requestId}`);
     // Logic to get request details
     return {};
@@ -216,12 +171,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Update service request' })
   @ApiParam({ name: 'requestId', description: 'Request ID' })
   @ApiResponse({ status: 200, description: 'Request updated successfully' })
-  async updateServiceRequest(
-    @Param('requestId') requestId: string,
-    @Body() updateRequestDto: any,
-  ) {
-  // Implementation needed
-}
+  async updateServiceRequest(): unknown {
     this.logger.log(`Updating request ID: ${requestId}`);
     // Logic to update request
     return { message: 'Request updated successfully' };
@@ -232,12 +182,7 @@ export class ServiceRoutingController {
   @ApiParam({ name: 'requestId', description: 'Request ID' })
   @ApiResponse({ status: 200, description: 'Request assigned successfully' })
   @Roles('AGENCY_ADMIN', 'AGENCY_MANAGER')
-  async assignRequest(
-    @Param('requestId') requestId: string,
-    @Body() assignRequestDto: any,
-  ) {
-  // Implementation needed
-}
+  async assignRequest(): unknown {
     this.logger.log(`Assigning request ID: ${requestId}`);
     // Logic to assign request
     return { message: 'Request assigned successfully' };
@@ -247,9 +192,7 @@ export class ServiceRoutingController {
   @ApiOperation({ summary: 'Optimize service routing' })
   @ApiResponse({ status: 200, description: 'Routing optimized successfully' })
   @Roles('AGENCY_ADMIN')
-  async optimizeRouting(@Body() optimizeDto: any) {
-  // Implementation needed
-}
+  async optimizeRouting(): unknown {
     this.logger.log('Optimizing service routing');
     // Logic to optimize routing
     return { message: 'Routing optimized successfully' };

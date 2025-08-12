@@ -5,53 +5,37 @@ import { Task } from './task.entity';
 import { TaskStatus } from './types';
 @Injectable()
 export class TaskRepository {
-  // Implementation needed
-}
-  constructor(
+  constructor(): unknown {
     @InjectRepository(Task)
     private readonly taskRepo: Repository<Task>
   ) {}
 
-  async create(data: Partial<Task>): Promise<Task> {
-  // Implementation needed
-}
+  async create(): unknown {
     const task = this.taskRepo.create(data);
     return this.taskRepo.save(task);
   }
 
-  async update(id: string, data: Partial<Task>): Promise<Task> {
-  // Implementation needed
-}
+  async update(): unknown {
     await this.taskRepo.update(id, data);
     const updated = await this.taskRepo.findOne({ where: { id } });
-    if (!updated) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Task with id ${id} not found`);
     }
     return updated;
   }
 
-  async findById(id: string): Promise<Task | null> {
-  // Implementation needed
-}
+  async findById(): unknown {
     return this.taskRepo.findOne({ where: { id } });
   }
 
-  async findByUserId(userId: string): Promise<Task[]> {
-  // Implementation needed
-}
+  async findByUserId(): unknown {
     return this.taskRepo.find({
-  // Implementation needed
-}
-      where: { userId },
-      order: { createdAt: 'DESC' }
+where: { userId },
+  }      order: { createdAt: 'DESC' }
     });
   }
 
-  async findByStatus(status: TaskStatus): Promise<Task[]> {
-  // Implementation needed
-}
+  async findByStatus(): unknown {
     return this.taskRepo.find({
   // Implementation needed
 }
@@ -60,9 +44,7 @@ export class TaskRepository {
     });
   }
 
-  async delete(id: string): Promise<void> {
-  // Implementation needed
-}
+  async delete(): unknown {
     await this.taskRepo.delete(id);
   }
 }

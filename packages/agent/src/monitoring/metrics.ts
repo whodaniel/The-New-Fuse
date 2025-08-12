@@ -212,7 +212,7 @@ export class PerformanceMonitor {
   private redisClient?: Redis;
   private metrics: MetricsRegistry;
   private isRunning: boolean = false;
-  private intervalId?: NodeJS.Timeout;
+  private intervalId?: ReturnType<typeof setInterval>;
 
   constructor(agentId: string, redisClient?: Redis) {
     this.agentId = agentId;
@@ -250,7 +250,7 @@ export class PerformanceMonitor {
     this.isRunning = false;
     
     if (this.intervalId) {
-      clearInterval(this.intervalId);
+      clearInterval(this.intervalId as any);
       this.intervalId = undefined;
     }
 

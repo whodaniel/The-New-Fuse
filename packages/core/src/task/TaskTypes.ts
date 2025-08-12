@@ -18,17 +18,13 @@ export const TaskSchema = z.object({
 });
 export type TaskConfig = z.infer<typeof TaskSchema>;
 export interface TaskExecutionContext {
-  // Implementation needed
-}
   taskId: string;
   userId: string;
   workspaceId?: string;
   metadata?: Record<string, any>;
 }
 
-export interface TaskResult<T = any> {
-  // Implementation needed
-}
+export interface TaskResult {
   success: boolean;
   data?: T;
   error?: string;

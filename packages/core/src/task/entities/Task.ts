@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateCol
 import { TaskActivity } from './TaskActivity';
 import { TaskComment } from './TaskComment';
 export enum TaskStatus {
-  // Implementation needed
-}
   TODO = 'TODO',
   IN_REVIEW = 'IN_REVIEW',
   COMPLETED = 'COMPLETED',
@@ -11,8 +9,6 @@ export enum TaskStatus {
 }
 
 export enum TaskPriority {
-  // Implementation needed
-}
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
@@ -21,8 +17,6 @@ export enum TaskPriority {
 
 @Entity('tasks')
 export class Task {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column()

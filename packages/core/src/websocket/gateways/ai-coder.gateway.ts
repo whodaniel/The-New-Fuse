@@ -15,27 +15,21 @@ import { WebSocketService } from '../websocket.service';
 @WebSocketGateway({
   // Implementation needed
 }
-  cors: {
+  cors: unknown;
   // Implementation needed
 }
     origin: '*',
   },
   namespace: '/ai-coder',
 })
-export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  // Implementation needed
-}
+export class AiCoderGateway {
   @WebSocketServer()
   server: Server;
   private readonly logger = new Logger(AiCoderGateway.name);
   constructor(private readonly webSocketService: WebSocketService) {}
 
-  async handleConnection(client: Socket): Promise<void> {
-  // Implementation needed
-}
+  async handleConnection(): unknown {
     try {
-  // Implementation needed
-}
       await this.webSocketService.handleConnection(client.id, {
   // Implementation needed
 }
@@ -46,45 +40,28 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       this.logger.log(`AI Coder client connected: ${client.id}`);
       client.emit('connection-established', { clientId: client.id });
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Connection error for ${client.id}:`, error);
-      client.disconnect();
+this.logger.error(`Connection error for ${client.id}:`, error);
+  }      client.disconnect();
     }
   }
 
-  async handleDisconnect(client: Socket): Promise<void> {
-  // Implementation needed
-}
+  async handleDisconnect(): unknown {
     try {
-  // Implementation needed
-}
       await this.webSocketService.handleDisconnection(client.id);
       this.logger.log(`AI Coder client disconnected: ${client.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Disconnection error for ${client.id}:`, error);
-    }
+this.logger.error(`Disconnection error for ${client.id}:`, error);
+  }}
   }
 
   @SubscribeMessage('code-generation-request')
-  async handleCodeGenerationRequest(
-    @MessageBody() data: any,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-  // Implementation needed
-}
+  async handleCodeGenerationRequest(): unknown {
     try {
-  // Implementation needed
-}
       await this.webSocketService.handleMessage(client.id, 'code-generation-request', data);
       // Mock code generation response
       const response = {
-  // Implementation needed
-}
-        requestId: data.requestId,
-        code: '// Generated code placeholder',
+requestId: data.requestId,
+  }        code: '// Generated code placeholder',
         language: data.language || 'typescript',
         timestamp: new Date().toISOString()
       };
@@ -92,30 +69,19 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       client.emit('code-generation-response', response);
       this.logger.log(`Code generation completed for client: ${client.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Code generation error for ${client.id}:`, error);
-      client.emit('error', { message: 'Code generation failed' });
+this.logger.error(`Code generation error for ${client.id}:`, error);
+  }      client.emit('error', { message: 'Code generation failed' });
     }
   }
 
   @SubscribeMessage('code-analysis-request')
-  async handleCodeAnalysisRequest(
-    @MessageBody() data: any,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-  // Implementation needed
-}
+  async handleCodeAnalysisRequest(): unknown {
     try {
-  // Implementation needed
-}
       await this.webSocketService.handleMessage(client.id, 'code-analysis-request', data);
       // Mock code analysis response
       const response = {
-  // Implementation needed
-}
-        requestId: data.requestId,
-        analysis: {
+requestId: data.requestId,
+  }        analysis: unknown;
   // Implementation needed
 }
           complexity: 3,
@@ -128,30 +94,19 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       client.emit('code-analysis-response', response);
       this.logger.log(`Code analysis completed for client: ${client.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Code analysis error for ${client.id}:`, error);
-      client.emit('error', { message: 'Code analysis failed' });
+this.logger.error(`Code analysis error for ${client.id}:`, error);
+  }      client.emit('error', { message: 'Code analysis failed' });
     }
   }
 
   @SubscribeMessage('code-completion-request')
-  async handleCodeCompletionRequest(
-    @MessageBody() data: any,
-    @ConnectedSocket() client: Socket,
-  ): Promise<void> {
-  // Implementation needed
-}
+  async handleCodeCompletionRequest(): unknown {
     try {
-  // Implementation needed
-}
       await this.webSocketService.handleMessage(client.id, 'code-completion-request', data);
       // Mock code completion response
       const response = {
-  // Implementation needed
-}
-        requestId: data.requestId,
-        completions: [
+requestId: data.requestId,
+  }        completions: [
           { text: 'console.log(', insertText: 'console.log(' },
           { text: 'const ', insertText: 'const ' }
         ],
@@ -161,54 +116,44 @@ export class AiCoderGateway implements OnGatewayConnection, OnGatewayDisconnect 
       client.emit('code-completion-response', response);
       this.logger.log(`Code completion completed for client: ${client.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Code completion error for ${client.id}:`, error);
-      client.emit('error', { message: 'Code completion failed' });
+this.logger.error(`Code completion error for ${client.id}:`, error);
+  }      client.emit('error', { message: 'Code completion failed' });
     }
   }
 
   @SubscribeMessage('join-room')
-  async handleJoinRoom(
+  async handleJoinRoom(): unknown {
     @MessageBody() data: { room: string },
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
   // Implementation needed
 }
     try {
-  // Implementation needed
-}
       client.join(data.room);
       await this.webSocketService.handleMessage(client.id, 'join-room', data);
       this.logger.log(`Client ${client.id} joined room: ${data.room}`);
       client.emit('room-joined', { room: data.room });
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Join room error for ${client.id}:`, error);
-      client.emit('error', { message: 'Failed to join room' });
+this.logger.error(`Join room error for ${client.id}:`, error);
+  }      client.emit('error', { message: 'Failed to join room' });
     }
   }
 
   @SubscribeMessage('leave-room')
-  async handleLeaveRoom(
+  async handleLeaveRoom(): unknown {
     @MessageBody() data: { room: string },
     @ConnectedSocket() client: Socket,
   ): Promise<void> {
   // Implementation needed
 }
     try {
-  // Implementation needed
-}
       client.leave(data.room);
       await this.webSocketService.handleMessage(client.id, 'leave-room', data);
       this.logger.log(`Client ${client.id} left room: ${data.room}`);
       client.emit('room-left', { room: data.room });
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Leave room error for ${client.id}:`, error);
-      client.emit('error', { message: 'Failed to leave room' });
+this.logger.error(`Leave room error for ${client.id}:`, error);
+  }      client.emit('error', { message: 'Failed to leave room' });
     }
   }
 }

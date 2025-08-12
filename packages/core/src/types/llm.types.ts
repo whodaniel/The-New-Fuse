@@ -1,11 +1,9 @@
 export interface LLMProviderConfig {
-  // Implementation needed
-}
     name: string;
     apiKey?: string;
     model: string;
     baseUrl?: string;
-    parameters: {
+    parameters: unknown;
   // Implementation needed
 }
         temperature: number;
@@ -17,8 +15,6 @@ export interface LLMProviderConfig {
 }
 
 export interface CompletionConfig {
-  // Implementation needed
-}
     provider?: string;
     model?: string;
     temperature?: number;
@@ -32,16 +28,12 @@ export interface CompletionConfig {
 }
 
 export interface TokenUsage {
-  // Implementation needed
-}
     promptTokens: number;
     completionTokens: number;
     totalTokens: number;
 }
 
 export interface CompletionResult {
-  // Implementation needed
-}
     text: string;
     provider: string;
     model: string;
@@ -49,16 +41,12 @@ export interface CompletionResult {
     raw: unknown;
 }
 
-export interface StreamingCompletionResult extends CompletionResult {
-  // Implementation needed
-}
+export interface StreamingCompletionResult {
     isComplete: boolean;
     streamId: string;
 }
 
 export interface LLMMetrics {
-  // Implementation needed
-}
     requestCount: number;
     tokenCount: number;
     averageLatency: number;
@@ -68,12 +56,10 @@ export interface LLMMetrics {
 }
 
 export interface AgentLLMConfig {
-  // Implementation needed
-}
     provider: string;
     model: string;
     systemPrompt?: string;
-    parameters: {
+    parameters: unknown;
   // Implementation needed
 }
         temperature: number;

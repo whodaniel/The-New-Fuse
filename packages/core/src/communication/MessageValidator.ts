@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Message } from './MessageBroker';
 export interface ValidationRule {
-  // Implementation needed
-}
   field: string;
   validator(value: any) => boolean;
   message: string;
@@ -10,12 +8,8 @@ export interface ValidationRule {
 
 @Injectable()
 export class MessageValidator {
-  // Implementation needed
-}
   private rules: Map<string, ValidationRule[]> = new Map();
-  addRules(topic: string, rules: ValidationRule[]): void {
-  // Implementation needed
-}
+  addRules(): unknown {
     this.rules.set(topic, rules);
   }
 
@@ -24,40 +18,28 @@ export class MessageValidator {
 }
     const rules = this.rules.get(message.topic) || [];
     const errors: string[] = [];
-    for (const rule of rules) {
-  // Implementation needed
-}
+    for(): unknown {
       const value = this.getNestedValue(message.payload, rule.field);
-      if (!rule.validator(value)) {
-  // Implementation needed
-}
+      if(): unknown {
         errors.push(rule.message);
       }
     }
 
     return {
-  // Implementation needed
-}
-      valid: errors.length === 0,
-      errors,
+valid: errors.length === 0,
+  }      errors,
     };
   }
 
   private getNestedValue(obj: any, path: string): any {
-  // Implementation needed
-}
-    return path.split('.').reduce((current, key) => current?.[key], obj);
-  }
+return path.split('.').reduce((current, key) => current?.[key], obj);
+  }}
 
-  hasRules(topic: string): boolean {
-  // Implementation needed
-}
+  hasRules(): unknown {
     return this.rules.has(topic);
   }
 
-  getRules(topic: string): ValidationRule[] {
-  // Implementation needed
-}
+  getRules(): unknown {
     return this.rules.get(topic) || [];
   }
 }

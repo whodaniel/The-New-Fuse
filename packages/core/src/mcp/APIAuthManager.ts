@@ -1,8 +1,7 @@
 
   public static getInstance(): APIAuthManager {
-  // Implementation needed
-}
-    if (!APIAuthManager.instance) { }
+if (!APIAuthManager.instance) {
+  }}
       APIAuthManager.instance = new APIAuthManager();
     }
     return APIAuthManager.instance;

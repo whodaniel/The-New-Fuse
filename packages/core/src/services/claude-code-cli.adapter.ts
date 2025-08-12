@@ -1,42 +1,30 @@
 import { ClaudeCodeCLIService, ClaudeCodeCLIMessage, ClaudeCodeCLIResponse } from './claude-code-cli.service';
 export interface LocalLLMAdapter {
-  // Implementation needed
-}
   name: string;
   isAvailable() => Promise<boolean>;
   sendMessage(message: any) => Promise<any>;
 }
 
-export class ClaudeCodeCLIAdapter implements LocalLLMAdapter {
-  // Implementation needed
-}
+export class ClaudeCodeCLIAdapter {
   name = 'Claude Code CLI';
   private service: ClaudeCodeCLIService;
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.service = new ClaudeCodeCLIService();
   }
 
-  async isAvailable(): Promise<boolean> {
-  // Implementation needed
-}
+  async isAvailable(): unknown {
     return await this.service.isClaudeCodeAvailable();
   }
 
-  async sendMessage(message: {
-  // Implementation needed
-}
-    text: string;
-    systemPrompt?: string;
+  async sendMessage(message: unknown;
+text: string;
+  }    systemPrompt?: string;
     temperature?: number;
     maxTokens?: number;
   }): Promise<{ text: string; usage?: any; metadata?: any }> {
   // Implementation needed
 }
     try {
-  // Implementation needed
-}
       const claudeMessage: ClaudeCodeCLIMessage = {
   // Implementation needed
 }
@@ -51,7 +39,7 @@ export class ClaudeCodeCLIAdapter implements LocalLLMAdapter {
 }
         text: response.content,
         usage: response.usage,
-        metadata: {
+        metadata: unknown;
   // Implementation needed
 }
           ...response.metadata,
@@ -60,15 +48,11 @@ export class ClaudeCodeCLIAdapter implements LocalLLMAdapter {
         }
       };
     } catch (error) {
-  // Implementation needed
-}
-      throw new Error(`Claude Code CLI Error: ${error.message}`);
-    }
+throw new Error(`Claude Code CLI Error: ${error.message}`);
+  }}
   }
 
-  async getVersion(): Promise<string> {
-  // Implementation needed
-}
+  async getVersion(): unknown {
     return await this.service.getVersion();
   }
 }

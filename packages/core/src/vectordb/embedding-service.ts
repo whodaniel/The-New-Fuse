@@ -1,34 +1,22 @@
 import { SmartAPIGateway } from '../api-management/SmartAPIGateway';
 import { Logger } from '@nestjs/common';
 export class EmbeddingService {
-  // Implementation needed
-}
   private provider: string;
   private logger = new Logger(EmbeddingService.name);
-  constructor(config: { provider?: string }) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.provider = config.provider || 'openai';
   }
 
-  async generateEmbedding(text: string): Promise<number[]> {
-  // Implementation needed
-}
+  async generateEmbedding(): unknown {
     try {
-  // Implementation needed
-}
-      const response = await this.callEmbeddingAPI(text);
-      if (!response || !response.embedding) {
-  // Implementation needed
-}
+const response = await this.callEmbeddingAPI(text);
+  }      if(): unknown {
         throw new Error('Embedding not returned from API');
       }
       return response.embedding;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to generate embedding', error);
-      throw error;
+this.logger.error('Failed to generate embedding', error);
+  }      throw error;
     }
   }
 

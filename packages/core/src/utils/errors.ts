@@ -13,7 +13,7 @@ export class BaseError extends Error {
   public readonly severity: 'low' | 'medium' | 'high' | 'critical';
   public readonly recoverable: boolean;
 
-  constructor(
+  constructor(): unknown {
     message: string,
     code: string,
     details: Record<string, any> = {},
@@ -193,7 +193,7 @@ export class ErrorHandler {
       baseError = error;
     } else {
       // Convert regular Error to BaseError
-      baseError = new BaseError(
+      baseError = new BaseError(): unknown {
         error.message,
         'UNKNOWN_ERROR',
         { originalError: error.name },

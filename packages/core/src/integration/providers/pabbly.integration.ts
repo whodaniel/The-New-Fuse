@@ -41,7 +41,7 @@ export class PabblyIntegration {
     this.apiService = new ExternalApiService({
       baseURL: config.baseUrl || this.baseUrl,
       timeout: config.timeout || 30000,
-      headers: {
+      headers: unknown;
         'Authorization': `Bearer ${config.apiKey}`,
         'Content-Type': 'application/json'
       }

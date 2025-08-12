@@ -3,9 +3,7 @@ import { /* TODO: specify imports */ } from /@nestjs/common/;
     private readonly securityService: SecurityService,
   ) {}
 
-  async use(): Promise<void> {
-  // Implementation needed
-}
+  async use(): unknown {
   req: Request, res: Response, next: NextFunction): Promise<any> { const key: unknown){ }
      return next();
      }

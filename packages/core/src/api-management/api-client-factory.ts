@@ -1,8 +1,6 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { Logger } from '../utils/logger';
 export interface ApiClientOptions {
-  // Implementation needed
-}
   baseURL: string;
   timeout?: number;
   apiKey?: string;
@@ -12,18 +10,13 @@ export interface ApiClientOptions {
 }
 
 export class ApiClientFactory {
-  // Implementation needed
-}
   private static logger = new Logger('ApiClientFactory');
   static createClient(options: ApiClientOptions): AxiosInstance {
-  // Implementation needed
-}
-    const client = axios.create({
-  // Implementation needed
-}
+const client = axios.create({
+  }}
       baseURL: options.baseURL,
       timeout: options.timeout || 30000,
-      headers: {
+      headers: unknown;
   // Implementation needed
 }
         'Content-Type': 'application/json',
@@ -31,28 +24,20 @@ export class ApiClientFactory {
       }
     });
     // Add API version header if specified
-    if (options.apiVersion) {
-  // Implementation needed
-}
+    if(): unknown {
       client.defaults.headers.common['x-api-version'] = options.apiVersion;
     }
 
     // Add authorization header if API key is provided
-    if (options.apiKey) {
-  // Implementation needed
-}
+    if(): unknown {
       client.defaults.headers.common['Authorization'] = `Bearer ${options.apiKey}`;
     }
 
     // Request interceptor for logging
     client.interceptors.request.use(
       (config) => {
-  // Implementation needed
-}
-        const redactedConfig = { ...config };
-        if (redactedConfig.headers?.Authorization) {
-  // Implementation needed
-}
+const redactedConfig = { ...config };
+  }        if(): unknown {
           redactedConfig.headers.Authorization = 'Bearer [REDACTED]';
         }
         
@@ -65,10 +50,8 @@ export class ApiClientFactory {
         return config;
       },
       (error) => {
-  // Implementation needed
-}
-        this.logger.error('Request interceptor error', error);
-        return Promise.reject(error);
+this.logger.error('Request interceptor error', error);
+  }        return Promise.reject(error);
       }
     );
     // Response interceptor for logging
@@ -92,27 +75,19 @@ export class ApiClientFactory {
   }
 
   static createRetryClient(options: ApiClientOptions): AxiosInstance {
-  // Implementation needed
-}
-    const client = this.createClient(options);
-    const retryAttempts = options.retryAttempts || 3;
+const client = this.createClient(options);
+  }    const retryAttempts = options.retryAttempts || 3;
     const retryDelay = options.retryDelay || 1000;
     // Add retry logic
     client.interceptors.response.use(
       (response) => response,
-      async (error) => {
-  // Implementation needed
-}
+      async(): unknown {
         const config = error.config;
-        if (!config || !config.retry) {
-  // Implementation needed
-}
+        if(): unknown {
           config.retry = 0;
         }
 
-        if (config.retry < retryAttempts && this.shouldRetry(error)) {
-  // Implementation needed
-}
+        if(): unknown {
           config.retry++;
           const delay = retryDelay * Math.pow(2, config.retry - 1); // Exponential backoff
           
@@ -133,12 +108,8 @@ export class ApiClientFactory {
   }
 
   private static shouldRetry(error: any): boolean {
-  // Implementation needed
-}
-    if (!error.response) {
-  // Implementation needed
-}
-      return true; // Network error
+if(): unknown {
+  }      return true; // Network error
     }
 
     const status = error.response.status;
@@ -146,8 +117,6 @@ export class ApiClientFactory {
   }
 
   private static delay(ms: number): Promise<void> {
-  // Implementation needed
-}
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
+return new Promise(resolve => setTimeout(resolve, ms));
+  }}
 }

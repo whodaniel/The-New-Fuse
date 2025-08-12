@@ -1,5 +1,6 @@
 import { Logger } from 'winston';
 import { Injectable } from '@nestjs/common';
+
 export type WorkflowStatus = 
   | 'pending'
   | 'running' 
@@ -7,7 +8,9 @@ export type WorkflowStatus =
   | 'failed'
   | 'paused'
   | 'cancelled';
+
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'retrying';
+
 export type TaskType = 
   | 'data_processing'
   | 'ml_inference'
@@ -16,9 +19,14 @@ export type TaskType =
   | 'validation'
   | 'transformation'
   | 'custom';
-export interface WorkflowMetrics {
-  // Implementation needed
+
+export interface ResourceUtilization {
+  cpu: number;
+  memory: number;
+  network: number;
 }
+
+export interface WorkflowMetrics {
   workflowId: string;
   status: WorkflowStatus;
   startTime: Date;
@@ -27,21 +35,18 @@ export interface WorkflowMetrics {
   totalTasks: number;
   completedTasks: number;
   failedTasks: number;
-  resourceUtilization: {
-  // Implementation needed
-}
-    cpu: number;
-    memory: number;
-    network: number;
-  };
+  resourceUtilization: ResourceUtilization;
   errorCount: number;
   throughput: number;
   lastUpdated: Date;
 }
 
-export interface TaskMetrics {
-  // Implementation needed
+export interface ResourceUsage {
+  cpu: number;
+  memory: number;
 }
+
+export interface TaskMetrics {
   taskId: string;
   workflowId: string;
   taskType: TaskType;
@@ -51,17 +56,10 @@ export interface TaskMetrics {
   duration?: number;
   retryCount: number;
   errorMessage?: string;
-  resourceUsage: {
-  // Implementation needed
-}
-    cpu: number;
-    memory: number;
-  };
+  resourceUsage: ResourceUsage;
 }
 
 export interface MetricsEvent {
-  // Implementation needed
-}
   type: 'workflow_initialized' | 'workflow_status_updated' | 'task_metrics_added' | 
         'resource_utilization_updated' | 'error_recorded' | 'workflow_finalized';
   workflowId: string;
@@ -71,17 +69,12 @@ export interface MetricsEvent {
 
 @Injectable()
 export class WorkflowMetricsCollector {
-  // Implementation needed
-}
   private readonly logger: Logger;
   private workflowMetrics = new Map<string, WorkflowMetrics>();
   private taskMetrics = new Map<string, TaskMetrics[]>();
+
   constructor() {
-  // Implementation needed
-}
     this.logger = new Logger({
-  // Implementation needed
-}
       level: 'info',
       format: Logger.format.json(),
       transports: [
@@ -91,11 +84,7 @@ export class WorkflowMetricsCollector {
   }
 
   async initializeWorkflowMetrics(workflowId: string, totalTasks: number): Promise<void> {
-  // Implementation needed
-}
     const metrics: WorkflowMetrics = {
-  // Implementation needed
-}
       workflowId,
       status: 'pending',
       startTime: new Date(),
@@ -107,227 +96,218 @@ export class WorkflowMetricsCollector {
       throughput: 0,
       lastUpdated: new Date()
     };
+    
     this.workflowMetrics.set(workflowId, metrics);
     await this.processMetricsEvent({
-  // Implementation needed
-}
       type: 'workflow_initialized',
       workflowId,
       timestamp: new Date(),
       data: { totalTasks }
     });
-    this.logger.info('Workflow metrics initialized', { workflowId });
+    
+    this.logger.info('Workflow metrics initialized', { workflowId, totalTasks });
   }
 
   async updateWorkflowStatus(workflowId: string, status: WorkflowStatus): Promise<void> {
-  // Implementation needed
-}
     const metrics = this.workflowMetrics.get(workflowId);
     if (!metrics) {
-  // Implementation needed
-}
       this.logger.warn('Workflow metrics not found', { workflowId });
       return;
     }
 
     metrics.status = status;
     metrics.lastUpdated = new Date();
+
     if (status === 'completed' || status === 'failed' || status === 'cancelled') {
-  // Implementation needed
-}
       metrics.endTime = new Date();
       metrics.duration = metrics.endTime.getTime() - metrics.startTime.getTime();
+      
+      // Calculate throughput (tasks per minute)
+      if (metrics.duration > 0) {
+        metrics.throughput = (metrics.completedTasks / (metrics.duration / 1000 / 60));
+      }
     }
 
     await this.processMetricsEvent({
-  // Implementation needed
-}
       type: 'workflow_status_updated',
       workflowId,
       timestamp: new Date(),
       data: { status, duration: metrics.duration }
     });
+
     this.logger.info('Workflow status updated', { workflowId, status });
   }
 
-  async addTaskMetrics(taskMetrics: TaskMetrics): Promise<void> {
-  // Implementation needed
-}
-    const workflowTasks = this.taskMetrics.get(taskMetrics.workflowId) || [];
-    workflowTasks.push(taskMetrics);
-    this.taskMetrics.set(taskMetrics.workflowId, workflowTasks);
+  async recordTaskMetrics(taskMetrics: TaskMetrics): Promise<void> {
+    const { workflowId, taskId } = taskMetrics;
+    
+    if (!this.taskMetrics.has(workflowId)) {
+      this.taskMetrics.set(workflowId, []);
+    }
+    
+    const workflowTaskMetrics = this.taskMetrics.get(workflowId)!;
+    const existingIndex = workflowTaskMetrics.findIndex(t => t.taskId === taskId);
+    
+    if (existingIndex >= 0) {
+      workflowTaskMetrics[existingIndex] = taskMetrics;
+    } else {
+      workflowTaskMetrics.push(taskMetrics);
+    }
+
+    await this.updateWorkflowMetricsFromTask(taskMetrics);
+    
+    await this.processMetricsEvent({
+      type: 'task_metrics_added',
+      workflowId,
+      timestamp: new Date(),
+      data: taskMetrics
+    });
+
+    this.logger.debug('Task metrics recorded', { workflowId, taskId, status: taskMetrics.status });
+  }
+
+  private async updateWorkflowMetricsFromTask(taskMetrics: TaskMetrics): Promise<void> {
     const workflowMetrics = this.workflowMetrics.get(taskMetrics.workflowId);
     if (!workflowMetrics) {
-  // Implementation needed
-}
-      this.logger.warn('message', context);
-      });
       return;
     }
 
+    // Update task counts based on task status
     if (taskMetrics.status === 'completed') {
-  // Implementation needed
-}
       workflowMetrics.completedTasks++;
     } else if (taskMetrics.status === 'failed') {
-  // Implementation needed
-}
       workflowMetrics.failedTasks++;
     }
 
+    // Update resource utilization
+    workflowMetrics.resourceUtilization.cpu += taskMetrics.resourceUsage.cpu;
+    workflowMetrics.resourceUtilization.memory += taskMetrics.resourceUsage.memory;
+
+    // Record error if task failed
+    if (taskMetrics.status === 'failed' && taskMetrics.errorMessage) {
+      workflowMetrics.errorCount++;
+      await this.processMetricsEvent({
+        type: 'error_recorded',
+        workflowId: taskMetrics.workflowId,
+        timestamp: new Date(),
+        data: { taskId: taskMetrics.taskId, error: taskMetrics.errorMessage }
+      });
+    }
+
     workflowMetrics.lastUpdated = new Date();
-    await this.processMetricsEvent({
-  // Implementation needed
-}
-      type: 'task_metrics_added',
-      workflowId: taskMetrics.workflowId,
-      timestamp: new Date(),
-      data: { taskId: taskMetrics.taskId, status: taskMetrics.status }
-    });
-    this.logger.debug('message', context);
-    });
   }
 
-  async updateResourceUtilization(
-    workflowId: string, 
-    utilization: { cpu: number; memory: number; network: number }
-  ): Promise<void> {
-  // Implementation needed
-}
+  async updateResourceUtilization(workflowId: string, utilization: ResourceUtilization): Promise<void> {
     const metrics = this.workflowMetrics.get(workflowId);
     if (!metrics) {
-  // Implementation needed
-}
       this.logger.warn('Workflow metrics not found for resource update', { workflowId });
       return;
     }
 
     metrics.resourceUtilization = utilization;
     metrics.lastUpdated = new Date();
+
     await this.processMetricsEvent({
-  // Implementation needed
-}
       type: 'resource_utilization_updated',
       workflowId,
       timestamp: new Date(),
       data: utilization
     });
-  }
 
-  async recordError(workflowId: string, error: string): Promise<void> {
-  // Implementation needed
-}
-    const metrics = this.workflowMetrics.get(workflowId);
-    if (!metrics) {
-  // Implementation needed
-}
-      this.logger.warn('Workflow metrics not found for error recording', { workflowId });
-      return;
-    }
-
-    metrics.errorCount++;
-    metrics.lastUpdated = new Date();
-    await this.processMetricsEvent({
-  // Implementation needed
-}
-      type: 'error_recorded',
-      workflowId,
-      timestamp: new Date(),
-      data: { error, errorCount: metrics.errorCount }
-    });
-    this.logger.error('Workflow error recorded', { workflowId, error });
+    this.logger.debug('Resource utilization updated', { workflowId, utilization });
   }
 
   async finalizeWorkflowMetrics(workflowId: string): Promise<WorkflowMetrics | null> {
-  // Implementation needed
-}
     const metrics = this.workflowMetrics.get(workflowId);
     if (!metrics) {
-  // Implementation needed
-}
       this.logger.warn('Workflow metrics not found for finalization', { workflowId });
       return null;
     }
 
     if (!metrics.endTime) {
-  // Implementation needed
-}
       metrics.endTime = new Date();
       metrics.duration = metrics.endTime.getTime() - metrics.startTime.getTime();
     }
 
-    // Calculate throughput (tasks per minute)
-    if (metrics.duration && metrics.duration > 0) {
-  // Implementation needed
-}
-      metrics.throughput = (metrics.completedTasks / (metrics.duration / 60000));
+    // Final throughput calculation
+    if (metrics.duration > 0) {
+      metrics.throughput = (metrics.completedTasks / (metrics.duration / 1000 / 60));
     }
 
     await this.processMetricsEvent({
-  // Implementation needed
-}
       type: 'workflow_finalized',
       workflowId,
       timestamp: new Date(),
-      data: {
-  // Implementation needed
-}
-        duration: metrics.duration,
-        throughput: metrics.throughput,
-        completedTasks: metrics.completedTasks,
-        failedTasks: metrics.failedTasks
-      }
+      data: metrics
     });
-    this.logger.info('Workflow metrics finalized', {
-  // Implementation needed
-}
-      workflowId,
+
+    this.logger.info('Workflow metrics finalized', { 
+      workflowId, 
       duration: metrics.duration,
+      completedTasks: metrics.completedTasks,
+      failedTasks: metrics.failedTasks,
       throughput: metrics.throughput
     });
+
     return metrics;
   }
 
   getWorkflowMetrics(workflowId: string): WorkflowMetrics | undefined {
-  // Implementation needed
-}
     return this.workflowMetrics.get(workflowId);
   }
 
   getTaskMetrics(workflowId: string): TaskMetrics[] {
-  // Implementation needed
-}
     return this.taskMetrics.get(workflowId) || [];
   }
 
   getAllWorkflowMetrics(): WorkflowMetrics[] {
-  // Implementation needed
-}
     return Array.from(this.workflowMetrics.values());
   }
 
+  async generateMetricsReport(workflowId: string): Promise<any> {
+    const workflowMetrics = this.getWorkflowMetrics(workflowId);
+    const taskMetrics = this.getTaskMetrics(workflowId);
+
+    if (!workflowMetrics) {
+      return null;
+    }
+
+    return {
+      workflow: workflowMetrics,
+      tasks: taskMetrics,
+      summary: {
+        successRate: workflowMetrics.totalTasks > 0 
+          ? (workflowMetrics.completedTasks / workflowMetrics.totalTasks) * 100 
+          : 0,
+        avgTaskDuration: taskMetrics.length > 0 
+          ? taskMetrics.reduce((sum, task) => sum + (task.duration || 0), 0) / taskMetrics.length
+          : 0,
+        totalRetries: taskMetrics.reduce((sum, task) => sum + task.retryCount, 0),
+        resourceEfficiency: {
+          avgCpu: taskMetrics.length > 0 
+            ? taskMetrics.reduce((sum, task) => sum + task.resourceUsage.cpu, 0) / taskMetrics.length
+            : 0,
+          avgMemory: taskMetrics.length > 0 
+            ? taskMetrics.reduce((sum, task) => sum + task.resourceUsage.memory, 0) / taskMetrics.length
+            : 0
+        }
+      }
+    };
+  }
+
   private async processMetricsEvent(event: MetricsEvent): Promise<void> {
-  // Implementation needed
-}
-    // This would integrate with a metrics processing system
-    // For now, just log the event
-    this.logger.debug('message', context);
+    // This is where you would send metrics to external systems
+    // like Prometheus, DataDog, CloudWatch, etc.
+    this.logger.debug('Processing metrics event', { 
+      type: event.type, 
+      workflowId: event.workflowId,
+      timestamp: event.timestamp
     });
   }
 
-  clearMetrics(workflowId: string): void {
-  // Implementation needed
-}
+  async cleanup(workflowId: string): Promise<void> {
     this.workflowMetrics.delete(workflowId);
     this.taskMetrics.delete(workflowId);
-    this.logger.info('Metrics cleared for workflow', { workflowId });
-  }
-
-  clearAllMetrics(): void {
-  // Implementation needed
-}
-    this.workflowMetrics.clear();
-    this.taskMetrics.clear();
-    this.logger.info('All workflow metrics cleared');
+    this.logger.info('Workflow metrics cleaned up', { workflowId });
   }
 }

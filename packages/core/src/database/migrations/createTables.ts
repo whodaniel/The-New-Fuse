@@ -1,9 +1,7 @@
 
 export class CreateTables1635000000000 implements MigrationInterface { public async up(queryRunner: QueryRunner): Promise<void> {
-  // Implementation needed
-}
-    // Create Users table
-    await queryRunner.createTable(
+// Create Users table
+  }    await queryRunner.createTable(
       new Table({
   // Implementation needed
 }

@@ -55,7 +55,11 @@ export class AgentCommunicationBridge {
     return channel.asObservable();
   }
 
-  broadcastMessage(message: Omit<AgentMessage, 'recipient'>): Promise<void> {
+  async sendDirectMessage(message: AgentMessage): Promise<void> {
+    return this.sendMessage(message);
+  }
+
+  async broadcastMessage(message: Omit<AgentMessage, 'recipient'>): Promise<void> {
     const broadcastMessage: AgentMessage = {
       ...message,
       recipient: 'all',

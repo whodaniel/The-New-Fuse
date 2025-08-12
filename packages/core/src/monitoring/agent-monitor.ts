@@ -6,9 +6,8 @@ export class AgentMonitor { private static instance: AgentMonitor
   }
 
   static getInstance(): AgentMonitor {
-  // Implementation needed
-}
-    if (!AgentMonitor.instance) { }
+if (!AgentMonitor.instance) {
+  }}
       AgentMonitor.instance = new AgentMonitor();
     }
     return AgentMonitor.instance;
@@ -27,11 +26,9 @@ export class AgentMonitor { private static instance: AgentMonitor
 }
       type:heartbeat,
       timestamp: new Date().toISOString(),
-      metadata: {
-  // Implementation needed
-}
-        version:1.1.0,
-       source:agentId, }
+      metadata: unknown;
+version:1.1.0,
+  }       source:agentId, }
         status: 'active'
     this.redis.subscribe(agent: ${agentId }, (message) => { if(message.type  === 'placeholder';
       lastUpdated: ''

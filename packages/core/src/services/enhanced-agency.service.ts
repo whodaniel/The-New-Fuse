@@ -9,74 +9,54 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ServiceCategoryRouterService } from './service-category-router.service';
 @Injectable()
 export class EnhancedAgencyService {
-  // Implementation needed
-}
   private readonly logger = new Logger(EnhancedAgencyService.name);
-  constructor(
+  constructor(): unknown {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
     private readonly serviceCategoryRouter: ServiceCategoryRouterService
   ) {}
 
-  async createAgency(data: any): Promise<any> {
-  // Implementation needed
-}
+  async createAgency(): unknown {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async getAgencyDetails(id: string): Promise<any> {
-  // Implementation needed
-}
+  async getAgencyDetails(): unknown {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async updateAgency(id: string, data: any): Promise<any> {
-  // Implementation needed
-}
+  async updateAgency(): unknown {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async deleteAgency(id: string): Promise<void> {
-  // Implementation needed
-}
+  async deleteAgency(): unknown {
     // Mock implementation
     this.logger.log('Agency deletion not implemented');
   }
 
-  async getAnalytics(agencyId: string, timeframe: string = '30d'): Promise<any> {
-  // Implementation needed
-}
+  async getAnalytics(): unknown {
     // Mock implementation
     return { message: 'Analytics service not implemented' };
   }
 
-  async initializeSwarm(agencyId: string, config?: any): Promise<any> {
-  // Implementation needed
-}
+  async initializeSwarm(): unknown {
     // Mock implementation
     return { message: 'Swarm initialization not implemented' };
   }
 
-  async getSwarmStatus(agencyId: string): Promise<any> {
-  // Implementation needed
-}
+  async getSwarmStatus(): unknown {
     // Mock implementation
     return { message: 'Swarm status not implemented' };
   }
 
-  async registerProviders(agencyId: string, providers: any[]): Promise<any> {
-  // Implementation needed
-}
+  async registerProviders(): unknown {
     // Mock implementation
     return { message: 'Provider registration not implemented' };
   }
 
-  async getProviders(agencyId: string, filters?: any): Promise<any> {
-  // Implementation needed
-}
+  async getProviders(): unknown {
     // Mock implementation
     return { message: 'Provider retrieval not implemented' };
   }

@@ -31,27 +31,27 @@ export enum AgentStatus {
 export class Agent {
     @Field(() => String)
     @PrimaryColumn()
-    id: string;
+    id!: string;
 
     @Field(() => String)
     @Column({ unique: true, nullable: false })
-    name: string;
+    name!: string;
 
     @Field(() => String)
     @Column({ nullable: false })
-    role: string;
+    role!: string;
 
     @Field(() => String, { nullable: true })
     @Column({ nullable: true })
-    type: AgentType;
+    type!: AgentType;
 
     @Field(() => String)
     @Column()
-    channel: string;
+    channel!: string;
 
     @Field(() => [String])
     @Column('json', { name: 'capabilities' })
-    capabilities: string[];
+    capabilities!: string[];
 
     @Field(() => String)
     @Column({
@@ -59,7 +59,7 @@ export class Agent {
         enum: IntegrationLevel,
         default: IntegrationLevel.BASIC
     })
-    integrationLevel: IntegrationLevel;
+    integrationLevel!: IntegrationLevel;
 
     @Field(() => String)
     @Column({
@@ -67,15 +67,15 @@ export class Agent {
         enum: AgentStatus,
         default: AgentStatus.IDLE
     })
-    status: AgentStatus;
+    status!: AgentStatus;
 
     @Field(() => Boolean)
     @Column({ default: true })
-    isActive: boolean;
+    isActive!: boolean;
 
     @Field(() => String, { nullable: true })
     @Column({ nullable: true })
-    lastSeen: Date;
+    lastSeen!: Date;
     
     // @OneToMany(() => Task, task => task.agent)
     // tasks: Task[];
@@ -98,15 +98,15 @@ export class Agent {
 
     @Field(() => Int)
     @Column({ default: 0 })
-    taskCount: number;
+    taskCount!: number;
 
     @Field(() => Int)
     @Column({ default: 0 })
-    successCount: number;
+    successCount!: number;
 
     @Field(() => Int)
     @Column({ default: 0 })
-    failureCount: number;
+    failureCount!: number;
 
     @Field(() => String, { nullable: true })
     @Column({ nullable: true })
@@ -121,9 +121,9 @@ export class Agent {
 
     @Field(() => Date)
     @Column()
-    createdAt: Date;
+    createdAt!: Date;
 
     @Field(() => Date)
     @Column()
-    updatedAt: Date;
+    updatedAt!: Date;
 }

@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 export interface ErrorMetrics {
-  // Implementation needed
-}
   errorCount: number;
   errorRate: number;
   lastError?: Date;
@@ -11,8 +9,6 @@ export interface ErrorMetrics {
 }
 
 export interface ErrorEvent {
-  // Implementation needed
-}
   type: string;
   timestamp: Date;
   message: string;
@@ -23,19 +19,9 @@ export interface ErrorEvent {
 
 @Injectable()
 export class ErrorAnalytics {
-  // Implementation needed
-}
   private errors: ErrorEvent[] = [];
   private readonly maxStoredErrors = 10000;
-  trackError(
-    type: string, 
-    message: string, 
-    severity: 'low' | 'medium' | 'high' | 'critical' = 'medium',
-    stack?: string,
-    metadata?: Record<string, any>
-  ): void {
-  // Implementation needed
-}
+  trackError(): unknown {
     const errorEvent: ErrorEvent = {
   // Implementation needed
 }
@@ -48,16 +34,12 @@ export class ErrorAnalytics {
     };
     this.errors.push(errorEvent);
     // Keep only the most recent errors to prevent memory issues
-    if (this.errors.length > this.maxStoredErrors) {
-  // Implementation needed
-}
+    if(): unknown {
       this.errors = this.errors.slice(-this.maxStoredErrors);
     }
   }
 
-  getMetrics(timeWindowMinutes: number = 60): ErrorMetrics {
-  // Implementation needed
-}
+  getMetrics(): unknown {
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
     const recentErrors = this.errors.filter(e => e.timestamp > windowStart);
@@ -67,41 +49,26 @@ export class ErrorAnalytics {
   // Implementation needed
 }
       errorTypes[error.type] = (errorTypes[error.type] || 0) + 1;
-      if (error.severity === 'critical') {
-  // Implementation needed
-}
+      if(): unknown {
         criticalErrors++;
       }
     });
     return {
-  // Implementation needed
-}
-      errorCount: recentErrors.length,
-      errorRate: recentErrors.length / timeWindowMinutes, // per minute
+errorCount: recentErrors.length,
+  }      errorRate: recentErrors.length / timeWindowMinutes, // per minute
       lastError: recentErrors.length > 0 ? recentErrors[recentErrors.length - 1].timestamp : undefined,
       errorTypes,
-      averageErrorsPerHour(recentErrors.length / timeWindowMinutes) * 60,
-      criticalErrors
-    };
-  }
-
-  getErrorHistory(hours: number = 24): ErrorEvent[] {
-  // Implementation needed
-}
+      averageErrorsPerHour(): unknown {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.errors.filter(e => e.timestamp > cutoff);
   }
 
-  getErrorsByType(type: string, hours: number = 24): ErrorEvent[] {
-  // Implementation needed
-}
+  getErrorsByType(): unknown {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.errors.filter(e => e.type === type && e.timestamp > cutoff);
   }
 
-  getCriticalErrors(hours: number = 24): ErrorEvent[] {
-  // Implementation needed
-}
+  getCriticalErrors(): unknown {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.errors.filter(e => e.severity === 'critical' && e.timestamp > cutoff);
   }
@@ -111,9 +78,7 @@ export class ErrorAnalytics {
     this.errors = this.errors.filter(e => e.timestamp > cutoff);
   }
 
-  getTotalErrorCount(): number {
-  // Implementation needed
-}
+  getTotalErrorCount(): unknown {
     return this.errors.length;
   }
 }

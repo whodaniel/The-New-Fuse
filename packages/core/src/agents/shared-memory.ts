@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from '../redis/redis.service';
+
 export interface MemoryItem {
-  // Implementation needed
-}
   id: string;
   agentId: string;
   taskId?: string;
@@ -16,8 +15,6 @@ export interface MemoryItem {
 }
 
 export interface MemoryFilter {
-  // Implementation needed
-}
   agentId?: string;
   taskId?: string;
   type?: MemoryItem['type'];
@@ -26,345 +23,338 @@ export interface MemoryFilter {
   toDate?: Date;
 }
 
+export interface MemorySearchOptions {
+  filter?: MemoryFilter;
+  limit?: number;
+  offset?: number;
+  sortBy?: 'timestamp' | 'priority';
+  sortOrder?: 'asc' | 'desc';
+}
+
 @Injectable()
 export class SharedMemory {
-  // Implementation needed
-}
   private readonly logger = new Logger(SharedMemory.name);
   private readonly memoryItems = new Map<string, MemoryItem>();
+
   constructor(private readonly redisService?: RedisService) {
-  // Implementation needed
-}
     this.logger.log('SharedMemory service initialized');
+    this.startCleanupSchedule();
   }
 
   async store(item: Omit<MemoryItem, 'id' | 'timestamp'>): Promise<string> {
-  // Implementation needed
-}
     try {
-  // Implementation needed
-}
       const id = this.generateId();
       const memoryItem: MemoryItem = {
-  // Implementation needed
-}
         ...item,
         id,
         timestamp: new Date()
       };
+
       this.memoryItems.set(id, memoryItem);
+      this.logger.debug(`Stored memory item: ${id} for agent: ${item.agentId}`);
+
       // Store in Redis if available
       if (this.redisService) {
-  // Implementation needed
-}
         const key = `memory:${id}`;
         await this.redisService.set(key, JSON.stringify(memoryItem));
+        
         // Set expiration if specified
         if (memoryItem.expiresAt) {
-  // Implementation needed
-}
           const ttl = Math.floor((memoryItem.expiresAt.getTime() - Date.now()) / 1000);
           if (ttl > 0) {
-  // Implementation needed
-}
             await this.redisService.expire(key, ttl);
           }
         }
       }
 
-      this.logger.debug(`Memory item stored: ${id}`);
       return id;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to store memory item', { error, item });
+      this.logger.error('Failed to store memory item', error);
       throw error;
     }
   }
 
-  async retrieve(filter: MemoryFilter, limit: number = 100): Promise<MemoryItem[]> {
-  // Implementation needed
-}
+  async retrieve(id: string): Promise<MemoryItem | null> {
     try {
-  // Implementation needed
-}
-      let items = Array.from(this.memoryItems.values());
-      // Apply filters
-      if (filter.agentId) {
-  // Implementation needed
-}
-        items = items.filter(item => item.agentId === filter.agentId);
-      }
+      // Try local memory first
+      let memoryItem = this.memoryItems.get(id);
 
-      if (filter.taskId) {
-  // Implementation needed
-}
-        items = items.filter(item => item.taskId === filter.taskId);
-      }
-
-      if (filter.type) {
-  // Implementation needed
-}
-        items = items.filter(item => item.type === filter.type);
-      }
-
-      if (filter.tags && filter.tags.length > 0) {
-  // Implementation needed
-}
-        items = items.filter(item => 
-          filter.tags!.some(tag => item.tags.includes(tag))
-        );
-      }
-
-      if (filter.fromDate) {
-  // Implementation needed
-}
-        items = items.filter(item => item.timestamp >= filter.fromDate!);
-      }
-
-      if (filter.toDate) {
-  // Implementation needed
-}
-        items = items.filter(item => item.timestamp <= filter.toDate!);
-      }
-
-      // Remove expired items
-      const now = new Date();
-      items = items.filter(item => !item.expiresAt || item.expiresAt > now);
-      // Sort by priority and timestamp
-      items.sort((a, b) => {
-  // Implementation needed
-}
-        const priorityOrder = { high: 3, medium: 2, low: 1 };
-        const priorityDiff = priorityOrder[b.priority] - priorityOrder[a.priority];
-        if (priorityDiff !== 0) return priorityDiff;
-        return b.timestamp.getTime() - a.timestamp.getTime();
-      });
-      return items.slice(0, limit);
-    } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to retrieve memory items', { error, filter });
-      throw error;
-    }
-  }
-
-  async update(id: string, updates: Partial<Omit<MemoryItem, 'id' | 'timestamp'>>): Promise<boolean> {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
-      const item = this.memoryItems.get(id);
-      if (!item) {
-  // Implementation needed
-}
-        return false;
-      }
-
-      const updatedItem: MemoryItem = {
-  // Implementation needed
-}
-        ...item,
-        ...updates,
-        timestamp: new Date()
-      };
-      this.memoryItems.set(id, updatedItem);
-      // Update in Redis if available
-      if (this.redisService) {
-  // Implementation needed
-}
+      // If not found locally, try Redis
+      if (!memoryItem && this.redisService) {
         const key = `memory:${id}`;
-        await this.redisService.set(key, JSON.stringify(updatedItem));
+        const cached = await this.redisService.get(key);
+        if (cached) {
+          memoryItem = JSON.parse(cached);
+          if (memoryItem) {
+            // Restore dates
+            memoryItem.timestamp = new Date(memoryItem.timestamp);
+            if (memoryItem.expiresAt) {
+              memoryItem.expiresAt = new Date(memoryItem.expiresAt);
+            }
+            // Cache locally
+            this.memoryItems.set(id, memoryItem);
+          }
+        }
       }
 
-      this.logger.debug(`Memory item updated: ${id}`);
-      return true;
-    } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to update memory item', { error, id, updates });
-      throw error;
-    }
-  }
-
-  async delete(id: string): Promise<boolean> {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
-      const deleted = this.memoryItems.delete(id);
-      // Delete from Redis if available
-      if (this.redisService && deleted) {
-  // Implementation needed
-}
-        await this.redisService.del(`memory:${id}`);
-      }
-
-      if (deleted) {
-  // Implementation needed
-}
-        this.logger.debug(`Memory item deleted: ${id}`);
-      }
-
-      return deleted;
-    } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to delete memory item', { error, id });
-      throw error;
-    }
-  }
-
-  async getById(id: string): Promise<MemoryItem | null> {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
-      const item = this.memoryItems.get(id);
-      // Check if expired
-      if (item && item.expiresAt && item.expiresAt <= new Date()) {
-  // Implementation needed
-}
+      // Check if item has expired
+      if (memoryItem && this.isExpired(memoryItem)) {
         await this.delete(id);
         return null;
       }
 
-      return item || null;
+      return memoryItem || null;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to get memory item by id', { error, id });
-      throw error;
+      this.logger.error(`Failed to retrieve memory item: ${id}`, error);
+      return null;
     }
   }
 
-  async clear(agentId?: string, taskId?: string): Promise<void> {
-  // Implementation needed
-}
+  async search(options: MemorySearchOptions = {}): Promise<MemoryItem[]> {
     try {
-  // Implementation needed
-}
-      const itemsToDelete: string[] = [];
-      for (const [id, item] of this.memoryItems) {
-  // Implementation needed
-}
-        let shouldDelete = true;
-        if (agentId && item.agentId !== agentId) {
-  // Implementation needed
-}
-          shouldDelete = false;
-        }
+      let items = Array.from(this.memoryItems.values());
 
-        if (taskId && item.taskId !== taskId) {
-  // Implementation needed
-}
-          shouldDelete = false;
-        }
-
-        if (shouldDelete) {
-  // Implementation needed
-}
-          itemsToDelete.push(id);
-        }
+      // Apply filters
+      if (options.filter) {
+        items = this.applyFilters(items, options.filter);
       }
 
-      // Delete items
-      for (const id of itemsToDelete) {
-  // Implementation needed
-}
-        await this.delete(id);
+      // Remove expired items
+      items = items.filter(item => !this.isExpired(item));
+
+      // Sort items
+      if (options.sortBy) {
+        items = this.sortItems(items, options.sortBy, options.sortOrder || 'desc');
       }
 
-      const context = agentId ? `agent ${agentId}` : '';
-      const taskContext = taskId ? `task ${taskId}` : '';
-      const fullContext = [context, taskContext].filter(Boolean).join(' ');
-      this.logger.log(`Cleared memory items for ${fullContext || 'all items'}`);
+      // Apply pagination
+      const offset = options.offset || 0;
+      const limit = options.limit || items.length;
+      items = items.slice(offset, offset + limit);
+
+      this.logger.debug(`Found ${items.length} memory items matching criteria`);
+      return items;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to clear memory items', { error, agentId, taskId });
-      throw error;
+      this.logger.error('Failed to search memory items', error);
+      return [];
     }
   }
 
-  async search(query: string, filter: MemoryFilter = {}, limit: number = 50): Promise<MemoryItem[]> {
-  // Implementation needed
-}
+  private applyFilters(items: MemoryItem[], filter: MemoryFilter): MemoryItem[] {
+    return items.filter(item => {
+      if (filter.agentId && item.agentId !== filter.agentId) return false;
+      if (filter.taskId && item.taskId !== filter.taskId) return false;
+      if (filter.type && item.type !== filter.type) return false;
+      if (filter.fromDate && item.timestamp < filter.fromDate) return false;
+      if (filter.toDate && item.timestamp > filter.toDate) return false;
+      if (filter.tags && filter.tags.length > 0) {
+        const hasAllTags = filter.tags.every(tag => item.tags.includes(tag));
+        if (!hasAllTags) return false;
+      }
+      return true;
+    });
+  }
+
+  private sortItems(items: MemoryItem[], sortBy: 'timestamp' | 'priority', order: 'asc' | 'desc'): MemoryItem[] {
+    return items.sort((a, b) => {
+      let comparison = 0;
+
+      if (sortBy === 'timestamp') {
+        comparison = a.timestamp.getTime() - b.timestamp.getTime();
+      } else if (sortBy === 'priority') {
+        const priorityOrder = { high: 3, medium: 2, low: 1 };
+        comparison = priorityOrder[a.priority] - priorityOrder[b.priority];
+      }
+
+      return order === 'desc' ? -comparison : comparison;
+    });
+  }
+
+  async update(id: string, updates: Partial<Omit<MemoryItem, 'id' | 'timestamp'>>): Promise<boolean> {
     try {
-  // Implementation needed
-}
-      const items = await this.retrieve(filter, limit * 2); // Get more items for searching
-      const queryLower = query.toLowerCase();
-      const scored = items.map(item => {
-  // Implementation needed
-}
-        let score = 0;
-        const content = JSON.stringify(item.content).toLowerCase();
-        const metadata = JSON.stringify(item.metadata).toLowerCase();
-        const tags = item.tags.join(' ').toLowerCase();
-        // Score based on matches
-        if (content.includes(queryLower)) score += 3;
-        if (metadata.includes(queryLower)) score += 2;
-        if (tags.includes(queryLower)) score += 1;
-        return { item, score };
-      });
-      return scored
-        .filter(({ score }) => score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, limit)
-        .map(({ item }) => item);
+      const existingItem = await this.retrieve(id);
+      if (!existingItem) {
+        return false;
+      }
+
+      const updatedItem: MemoryItem = {
+        ...existingItem,
+        ...updates,
+        id: existingItem.id, // Ensure ID is not changed
+        timestamp: existingItem.timestamp // Preserve original timestamp
+      };
+
+      this.memoryItems.set(id, updatedItem);
+
+      // Update in Redis if available
+      if (this.redisService) {
+        const key = `memory:${id}`;
+        await this.redisService.set(key, JSON.stringify(updatedItem));
+      }
+
+      this.logger.debug(`Updated memory item: ${id}`);
+      return true;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to search memory items', { error, query, filter });
-      throw error;
+      this.logger.error(`Failed to update memory item: ${id}`, error);
+      return false;
+    }
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      const deleted = this.memoryItems.delete(id);
+
+      // Delete from Redis if available
+      if (this.redisService) {
+        const key = `memory:${id}`;
+        await this.redisService.del(key);
+      }
+
+      if (deleted) {
+        this.logger.debug(`Deleted memory item: ${id}`);
+      }
+
+      return deleted;
+    } catch (error) {
+      this.logger.error(`Failed to delete memory item: ${id}`, error);
+      return false;
+    }
+  }
+
+  async clear(agentId?: string): Promise<number> {
+    try {
+      let deletedCount = 0;
+
+      if (agentId) {
+        // Clear memory for specific agent
+        const itemsToDelete = Array.from(this.memoryItems.entries())
+          .filter(([_, item]) => item.agentId === agentId);
+
+        for (const [id, _] of itemsToDelete) {
+          if (await this.delete(id)) {
+            deletedCount++;
+          }
+        }
+      } else {
+        // Clear all memory
+        const allIds = Array.from(this.memoryItems.keys());
+        
+        for (const id of allIds) {
+          if (await this.delete(id)) {
+            deletedCount++;
+          }
+        }
+      }
+
+      this.logger.log(`Cleared ${deletedCount} memory items${agentId ? ` for agent ${agentId}` : ''}`);
+      return deletedCount;
+    } catch (error) {
+      this.logger.error('Failed to clear memory', error);
+      return 0;
     }
   }
 
   async getStats(agentId?: string): Promise<{
-  // Implementation needed
-}
     totalItems: number;
-    itemsByType: Record<string, number>;
-    itemsByPriority: Record<string, number>;
+    byType: Record<MemoryItem['type'], number>;
+    byPriority: Record<MemoryItem['priority'], number>;
+    expiredItems: number;
   }> {
-  // Implementation needed
-}
     try {
-  // Implementation needed
-}
-      const items = agentId 
-        ? Array.from(this.memoryItems.values()).filter(item => item.agentId === agentId)
-        : Array.from(this.memoryItems.values());
-      const itemsByType: Record<string, number> = {};
-      const itemsByPriority: Record<string, number> = {};
-      items.forEach(item => {
-  // Implementation needed
-}
-        itemsByType[item.type] = (itemsByType[item.type] || 0) + 1;
-        itemsByPriority[item.priority] = (itemsByPriority[item.priority] || 0) + 1;
-      });
-      return {
-  // Implementation needed
-}
+      let items = Array.from(this.memoryItems.values());
+
+      if (agentId) {
+        items = items.filter(item => item.agentId === agentId);
+      }
+
+      const stats = {
         totalItems: items.length,
-        itemsByType,
-        itemsByPriority
+        byType: { fact: 0, procedure: 0, event: 0, context: 0 } as Record<MemoryItem['type'], number>,
+        byPriority: { low: 0, medium: 0, high: 0 } as Record<MemoryItem['priority'], number>,
+        expiredItems: 0
       };
+
+      for (const item of items) {
+        stats.byType[item.type]++;
+        stats.byPriority[item.priority]++;
+        
+        if (this.isExpired(item)) {
+          stats.expiredItems++;
+        }
+      }
+
+      return stats;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to get memory stats', { error, agentId });
-      throw error;
+      this.logger.error('Failed to get memory stats', error);
+      return {
+        totalItems: 0,
+        byType: { fact: 0, procedure: 0, event: 0, context: 0 },
+        byPriority: { low: 0, medium: 0, high: 0 },
+        expiredItems: 0
+      };
+    }
+  }
+
+  async share(fromAgentId: string, toAgentId: string, itemId: string): Promise<boolean> {
+    try {
+      const item = await this.retrieve(itemId);
+      if (!item || item.agentId !== fromAgentId) {
+        return false;
+      }
+
+      // Create a new memory item for the target agent
+      const sharedItem: Omit<MemoryItem, 'id' | 'timestamp'> = {
+        ...item,
+        agentId: toAgentId,
+        metadata: {
+          ...item.metadata,
+          sharedFrom: fromAgentId,
+          sharedAt: new Date()
+        }
+      };
+
+      const newId = await this.store(sharedItem);
+      this.logger.debug(`Shared memory item ${itemId} from ${fromAgentId} to ${toAgentId} as ${newId}`);
+      
+      return true;
+    } catch (error) {
+      this.logger.error('Failed to share memory item', error);
+      return false;
     }
   }
 
   private generateId(): string {
-  // Implementation needed
-}
     return `mem_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
+
+  private isExpired(item: MemoryItem): boolean {
+    return item.expiresAt ? new Date() > item.expiresAt : false;
+  }
+
+  private startCleanupSchedule(): void {
+    // Clean up expired items every 5 minutes
+    setInterval(() => {
+      this.cleanupExpiredItems();
+    }, 5 * 60 * 1000);
+  }
+
+  private async cleanupExpiredItems(): Promise<void> {
+    try {
+      const expiredItems = Array.from(this.memoryItems.entries())
+        .filter(([_, item]) => this.isExpired(item));
+
+      let cleanedCount = 0;
+      for (const [id, _] of expiredItems) {
+        if (await this.delete(id)) {
+          cleanedCount++;
+        }
+      }
+
+      if (cleanedCount > 0) {
+        this.logger.debug(`Cleaned up ${cleanedCount} expired memory items`);
+      }
+    } catch (error) {
+      this.logger.error('Failed to cleanup expired items', error);
+    }
   }
 }

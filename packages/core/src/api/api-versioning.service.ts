@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 export enum VersioningStrategy {
-  // Implementation needed
-}
   URI = 'uri',
   HEADER = 'header',
   MEDIA_TYPE = 'media-type',
@@ -11,8 +9,6 @@ export enum VersioningStrategy {
 }
 
 export interface ApiVersioningConfig {
-  // Implementation needed
-}
   enabled: boolean;
   strategy: VersioningStrategy;
   defaultVersion: string;
@@ -25,18 +21,12 @@ export interface ApiVersioningConfig {
 
 @Injectable()
 export class ApiVersioningService {
-  // Implementation needed
-}
   private readonly logger = new Logger(ApiVersioningService.name);
   private config: ApiVersioningConfig;
-  constructor(private readonly configService: ConfigService) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.config = {
-  // Implementation needed
-}
-      enabled: this.configService.get<boolean>('api.versioning.enabled', true),
-      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.HEADER),
+enabled: this.configService.get<boolean>('api.versioning.enabled', true),
+  }      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.HEADER),
       defaultVersion: this.configService.get<string>('api.versioning.defaultVersion', '1'),
       supportedVersions: this.configService.get<string[]>('api.versioning.supportedVersions', ['1']),
       headerName: this.configService.get<string>('api.versioning.headerName', 'x-api-version'),
@@ -48,19 +38,13 @@ export class ApiVersioningService {
     this.logger.log('API versioning service initialized');
   }
 
-  extractVersion(request: Request): string {
-  // Implementation needed
-}
-    if (!this.config.enabled) {
-  // Implementation needed
-}
+  extractVersion(): unknown {
+    if(): unknown {
       return this.config.defaultVersion;
     }
 
     let version: string | undefined;
-    switch (this.config.strategy) {
-  // Implementation needed
-}
+    switch(): unknown {
       case VersioningStrategy.HEADER:
         version = request.headers[this.config.headerName] as string;
         break;
@@ -75,9 +59,7 @@ export class ApiVersioningService {
       case VersioningStrategy.MEDIA_TYPE:
         // Extract version from Accept header like application/vnd.api+json; version=1
         const acceptHeader = request.headers.accept;
-        if (acceptHeader) {
-  // Implementation needed
-}
+        if(): unknown {
           const mediaTypeMatch = acceptHeader.match(/version=(\d+(?:\.\d+)?)/);
           version = mediaTypeMatch ? mediaTypeMatch[1] : undefined;
         }
@@ -85,117 +67,81 @@ export class ApiVersioningService {
     }
 
     // Validate and return version or default
-    if (version && this.config.supportedVersions.includes(version)) {
-  // Implementation needed
-}
+    if(): unknown {
       return version;
     }
 
     return this.config.defaultVersion;
   }
 
-  addVersionHeaders(response: Response, requestedVersion: string): void {
-  // Implementation needed
-}
+  addVersionHeaders(): unknown {
     response.header('API-Version', requestedVersion);
     response.header('Supported-Versions', this.config.supportedVersions.join(', '));
     // Add deprecation warnings
-    if (this.config.deprecatedVersions.includes(requestedVersion)) {
-  // Implementation needed
-}
+    if(): unknown {
       response.header('Deprecation', 'true');
       response.header('Warning', `Version ${requestedVersion} is deprecated`);
     }
 
     // Add sunset dates
     const sunsetDate = this.config.sunsetVersions[requestedVersion];
-    if (sunsetDate) {
-  // Implementation needed
-}
+    if(): unknown {
       response.header('Sunset', sunsetDate.toISOString());
     }
   }
 
-  isVersionSupported(version: string): boolean {
-  // Implementation needed
-}
+  isVersionSupported(): unknown {
     return this.config.supportedVersions.includes(version);
   }
 
-  isVersionDeprecated(version: string): boolean {
-  // Implementation needed
-}
+  isVersionDeprecated(): unknown {
     return this.config.deprecatedVersions.includes(version);
   }
 
-  getSunsetDate(version: string): Date | undefined {
-  // Implementation needed
-}
+  getSunsetDate(): unknown {
     return this.config.sunsetVersions[version];
   }
 
-  getAllSupportedVersions(): string[] {
-  // Implementation needed
-}
+  getAllSupportedVersions(): unknown {
     return [...this.config.supportedVersions];
   }
 
-  getDefaultVersion(): string {
-  // Implementation needed
-}
+  getDefaultVersion(): unknown {
     return this.config.defaultVersion;
   }
 
   private validateConfiguration(): void {
-  // Implementation needed
-}
-    const errors: string[] = [];
-    if (this.config.supportedVersions.length === 0) {
-  // Implementation needed
-}
+const errors: string[] = [];
+  }    if(): unknown {
       errors.push('At least one supported version must be specified');
     }
 
-    if (!this.config.supportedVersions.includes(this.config.defaultVersion)) {
-  // Implementation needed
-}
+    if(): unknown {
       errors.push('Default version must be included in supported versions');
     }
 
     // Validate deprecated versions are also supported
-    for (const deprecatedVersion of this.config.deprecatedVersions) {
-  // Implementation needed
-}
-      if (!this.config.supportedVersions.includes(deprecatedVersion)) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         errors.push(`Deprecated version ${deprecatedVersion} must be included in supported versions`);
       }
     }
 
     // Validate sunset versions are also supported
-    for (const sunsetVersion of Object.keys(this.config.sunsetVersions)) {
-  // Implementation needed
-}
-      if (!this.config.supportedVersions.includes(sunsetVersion)) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         errors.push(`Sunset version ${sunsetVersion} must be included in supported versions`);
       }
     }
 
-    if (errors.length > 0) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.error('API versioning configuration validation failed:');
       errors.forEach(error => this.logger.error(`- ${error}`));
       throw new Error(`Invalid API versioning configuration: ${errors.join(', ')}`);
     }
   }
 
-  updateConfig(updates: Partial<ApiVersioningConfig>): void {
-  // Implementation needed
-}
+  updateConfig(): unknown {
     this.config = { ...this.config, ...updates };
     this.validateConfiguration();
     this.logger.log('API versioning configuration updated');

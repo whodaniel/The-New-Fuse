@@ -3,23 +3,17 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 export interface JwtPayload {
-  // Implementation needed
-}
   sub: string;
   email: string;
   roles: string[];
 }
 
 export interface AuthTokens {
-  // Implementation needed
-}
   accessToken: string;
   refreshToken: string;
 }
 
 export interface User {
-  // Implementation needed
-}
   id: string;
   email: string;
   password: string;
@@ -30,47 +24,33 @@ export interface User {
 
 @Injectable()
 export class AuthenticationService {
-  // Implementation needed
-}
   private readonly logger = new Logger(AuthenticationService.name);
-  constructor(
+  constructor(): unknown {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService
   ) {}
 
-  async validateUser(email: string, password: string): Promise<User | null> {
-  // Implementation needed
-}
+  async validateUser(): unknown {
     try {
-  // Implementation needed
-}
       // This is a placeholder - in a real app, you'd query your database
       const user = await this.findUserByEmail(email);
-      if (!user) {
-  // Implementation needed
-}
+      if(): unknown {
         this.logger.warn('Authentication attempt with invalid email');
         throw new UnauthorizedException('Invalid credentials');
       }
 
-      if (!user.isActive) {
-  // Implementation needed
-}
+      if(): unknown {
         this.logger.warn('Authentication attempt for inactive user');
         throw new UnauthorizedException('Account is deactivated');
       }
 
-      if (user.lockedUntil && user.lockedUntil > new Date()) {
-  // Implementation needed
-}
+      if(): unknown {
         this.logger.warn('Authentication attempt for locked user');
         throw new UnauthorizedException('Account is temporarily locked');
       }
 
       const isPasswordValid = await bcrypt.compare(password, user.password);
-      if (!isPasswordValid) {
-  // Implementation needed
-}
+      if(): unknown {
         this.logger.warn('Authentication failed - invalid password');
         throw new UnauthorizedException('Invalid credentials');
       }
@@ -78,21 +58,15 @@ export class AuthenticationService {
       this.logger.info('User authenticated successfully', { userId: user.id });
       return user;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Authentication error', error);
-      throw new UnauthorizedException('Authentication failed');
+this.logger.error('Authentication error', error);
+  }      throw new UnauthorizedException('Authentication failed');
     }
   }
 
-  async login(user: User): Promise<AuthTokens> {
-  // Implementation needed
-}
+  async login(): unknown {
     const payload: JwtPayload = {
-  // Implementation needed
-}
-      sub: user.id,
-      email: user.email,
+sub: user.id,
+  }      email: user.email,
       roles: user.roles
     };
     const accessToken = this.jwtService.sign(payload, {
@@ -110,51 +84,37 @@ export class AuthenticationService {
     return { accessToken, refreshToken };
   }
 
-  async refreshTokens(refreshToken: string): Promise<AuthTokens> {
-  // Implementation needed
-}
+  async refreshTokens(): unknown {
     try {
-  // Implementation needed
-}
       const payload = this.jwtService.verify<JwtPayload>(refreshToken, {
   // Implementation needed
 }
         secret: this.configService.get<string>('JWT_REFRESH_SECRET', 'default-refresh-secret')
       });
       const user = await this.findUserById(payload.sub);
-      if (!user || !user.isActive) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new UnauthorizedException('Invalid refresh token');
       }
 
       return this.login(user);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.warn('Refresh token validation failed', error);
-      throw new UnauthorizedException('Invalid refresh token');
+this.logger.warn('Refresh token validation failed', error);
+  }      throw new UnauthorizedException('Invalid refresh token');
     }
   }
 
-  async validateUserPermissions(user: User, requiredRole: string): Promise<boolean> {
-  // Implementation needed
-}
+  async validateUserPermissions(): unknown {
     return user.roles.includes(requiredRole);
   }
 
-  async hashPassword(password: string): Promise<string> {
-  // Implementation needed
-}
+  async hashPassword(): unknown {
     const saltRounds = this.configService.get<number>('BCRYPT_SALT_ROUNDS', 10);
     return bcrypt.hash(password, saltRounds);
   }
 
   private async findUserByEmail(email: string): Promise<User | null> {
-  // Implementation needed
-}
-    // Placeholder implementation - replace with actual database query
-    const mockUsers: User[] = [
+// Placeholder implementation - replace with actual database query
+  }    const mockUsers: User[] = [
       {
   // Implementation needed
 }
@@ -178,10 +138,8 @@ export class AuthenticationService {
   }
 
   private async findUserById(id: string): Promise<User | null> {
-  // Implementation needed
-}
-    // Placeholder implementation - replace with actual database query
-    const mockUsers: User[] = [
+// Placeholder implementation - replace with actual database query
+  }    const mockUsers: User[] = [
       {
   // Implementation needed
 }

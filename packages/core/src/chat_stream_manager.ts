@@ -1,8 +1,6 @@
 // core/chat_stream_manager.ts
 import { MessageHandler } from './message_handler';
 export enum Provider {
-  // Implementation needed
-}
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
   GOOGLE = 'google',
@@ -10,8 +8,6 @@ export enum Provider {
 }
 
 export interface ChatMessage {
-  // Implementation needed
-}
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
@@ -20,8 +16,6 @@ export interface ChatMessage {
 }
 
 export interface StreamOptions {
-  // Implementation needed
-}
   provider: Provider;
   model?: string;
   temperature?: number;
@@ -30,99 +24,56 @@ export interface StreamOptions {
 }
 
 export class ChatStreamManager {
-  // Implementation needed
-}
   private messages: ChatMessage[] = [];
   private handlers: Map<string, MessageHandler> = new Map();
   constructor() {}
 
-  addMessage(message: ChatMessage): void {
-  // Implementation needed
-}
+  addMessage(): unknown {
     this.messages.push(message);
   }
 
-  getMessages(): ChatMessage[] {
-  // Implementation needed
-}
+  getMessages(): unknown {
     return [...this.messages];
   }
 
-  getMessageById(id: string): ChatMessage | undefined {
-  // Implementation needed
-}
+  getMessageById(): unknown {
     return this.messages.find(msg => msg.id === id);
   }
 
-  clearMessages(): void {
-  // Implementation needed
-}
+  clearMessages(): unknown {
     this.messages = [];
   }
 
-  registerHandler(id: string, handler: MessageHandler): void {
-  // Implementation needed
-}
+  registerHandler(): unknown {
     this.handlers.set(id, handler);
   }
 
-  unregisterHandler(id: string): void {
-  // Implementation needed
-}
+  unregisterHandler(): unknown {
     this.handlers.delete(id);
   }
 
-  async processStream(
-    messages: ChatMessage[],
-    options: StreamOptions,
-    onChunk?: (chunk: string) => void,
-  ): Promise<string> {
-  // Implementation needed
-}
+  async processStream(): unknown {
     const handler = this.handlers.get(options.provider);
-    if (!handler) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`No handler registered for provider: ${options.provider}`);
     }
 
     let fullResponse = '';
     try {
-  // Implementation needed
-}
-      const stream = await handler.createStream(messages, options);
-      for await (const chunk of stream) {
-  // Implementation needed
-}
-        fullResponse += chunk;
-        if (onChunk) {
-  // Implementation needed
-}
-          onChunk(chunk);
-        }
-      }
-
-      return fullResponse;
-    } catch (error) {
-  // Implementation needed
-}
+const stream = await handler.createStream(messages, options);
+  }      for await (const chunk of stream) {
+fullResponse += chunk;
+  }        if(): unknown {
+          onChunk(): unknown {
       console.error('Error processing stream:', error);
       throw error;
     }
   }
 
-  async sendMessage(
-    content: string,
-    options: StreamOptions,
-    onChunk?: (chunk: string) => void,
-  ): Promise<string> {
-  // Implementation needed
-}
+  async sendMessage(): unknown {
     const userMessage: ChatMessage = {
-  // Implementation needed
-}
-      id: `msg_${Date.now()}_user`,
-      role: 'user',
+id: `msg_${Date.now()}_user`,
+  }      role: 'user',
       content,
       timestamp: new Date(),
       provider: options.provider,
@@ -134,10 +85,8 @@ export class ChatStreamManager {
       onChunk,
     );
     const assistantMessage: ChatMessage = {
-  // Implementation needed
-}
-      id: `msg_${Date.now()}_assistant`,
-      role: 'assistant',
+id: `msg_${Date.now()}_assistant`,
+  }      role: 'assistant',
       content: response,
       timestamp: new Date(),
       provider: options.provider,

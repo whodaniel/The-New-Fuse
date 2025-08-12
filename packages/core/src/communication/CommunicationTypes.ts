@@ -1,6 +1,4 @@
 export interface Message {
-  // Implementation needed
-}
   id: string;
   type: MessageType;
   content: any;
@@ -11,8 +9,6 @@ export interface Message {
 }
 
 export enum MessageType {
-  // Implementation needed
-}
   TEXT = 'text',
   IMAGE = 'image',
   FILE = 'file',
@@ -22,8 +18,6 @@ export enum MessageType {
 }
 
 export interface ChatRoom {
-  // Implementation needed
-}
   id: string;
   name: string;
   participants: string[];
@@ -33,16 +27,12 @@ export interface ChatRoom {
 }
 
 export interface UserStatus {
-  // Implementation needed
-}
   userId: string;
   status: 'online' | 'offline' | 'away' | 'busy';
   lastSeen: Date;
 }
 
 export interface Notification {
-  // Implementation needed
-}
   id: string;
   userId: string;
   type: NotificationType;
@@ -54,8 +44,6 @@ export interface Notification {
 }
 
 export enum NotificationType {
-  // Implementation needed
-}
   MESSAGE = 'message',
   MENTION = 'mention',
   SYSTEM = 'system',
@@ -63,8 +51,6 @@ export enum NotificationType {
 }
 
 export interface CommunicationEvent {
-  // Implementation needed
-}
   type: string;
   data: any;
   timestamp: Date;

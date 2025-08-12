@@ -1,6 +1,4 @@
 export interface Task {
-  // Implementation needed
-}
   id: string;
   title: string;
   description: string;

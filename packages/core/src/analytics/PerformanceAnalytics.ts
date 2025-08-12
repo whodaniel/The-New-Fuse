@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 export interface PerformanceMetrics {
-  // Implementation needed
-}
   averageResponseTime: number;
   requestCount: number;
   throughput: number;
@@ -13,8 +11,6 @@ export interface PerformanceMetrics {
 }
 
 export interface RequestRecord {
-  // Implementation needed
-}
   timestamp: Date;
   responseTime: number;
   success: boolean;
@@ -25,19 +21,9 @@ export interface RequestRecord {
 
 @Injectable()
 export class PerformanceAnalytics {
-  // Implementation needed
-}
   private metrics: RequestRecord[] = [];
   private readonly maxStoredMetrics = 50000;
-  recordRequest(
-    responseTime: number,
-    success: boolean = true,
-    endpoint?: string,
-    method?: string,
-    statusCode?: number
-  ): void {
-  // Implementation needed
-}
+  recordRequest(): unknown {
     const record: RequestRecord = {
   // Implementation needed
 }
@@ -50,27 +36,20 @@ export class PerformanceAnalytics {
     };
     this.metrics.push(record);
     // Keep only the most recent metrics to prevent memory issues
-    if (this.metrics.length > this.maxStoredMetrics) {
-  // Implementation needed
-}
+    if(): unknown {
       this.metrics = this.metrics.slice(-this.maxStoredMetrics);
     }
   }
 
-  getMetrics(timeWindowMinutes: number = 60): PerformanceMetrics {
-  // Implementation needed
-}
+  getMetrics(): unknown {
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
     const recentMetrics = this.metrics.filter(m => m.timestamp > windowStart);
-    if (recentMetrics.length === 0) {
-  // Implementation needed
-}
+    if(): unknown {
       return {
-  // Implementation needed
-}
-        averageResponseTime: 0,
-        requestCount: 0,
+averageResponseTime: 0
+          },
+          requestCount: 0,
         throughput: 0,
         minResponseTime: 0,
         maxResponseTime: 0,
@@ -99,22 +78,17 @@ export class PerformanceAnalytics {
     };
   }
 
-  getEndpointMetrics(endpoint: string, timeWindowMinutes: number = 60): PerformanceMetrics {
-  // Implementation needed
-}
+  getEndpointMetrics(): unknown {
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
     const filteredMetrics = this.metrics.filter(m => 
       m.timestamp > windowStart && m.endpoint === endpoint
     );
-    if (filteredMetrics.length === 0) {
-  // Implementation needed
-}
+    if(): unknown {
       return {
-  // Implementation needed
-}
-        averageResponseTime: 0,
-        requestCount: 0,
+averageResponseTime: 0
+          },
+          requestCount: 0,
         throughput: 0,
         minResponseTime: 0,
         maxResponseTime: 0,
@@ -143,9 +117,7 @@ export class PerformanceAnalytics {
     };
   }
 
-  getSlowRequests(thresholdMs: number = 1000, hours: number = 24): RequestRecord[] {
-  // Implementation needed
-}
+  getSlowRequests(): unknown {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
     return this.metrics.filter(m => 
       m.timestamp > cutoff && m.responseTime > thresholdMs
@@ -162,9 +134,7 @@ export class PerformanceAnalytics {
     recentMetrics.forEach(m => {
   // Implementation needed
 }
-      if (m.endpoint) {
-  // Implementation needed
-}
+      if(): unknown {
         endpointCounts[m.endpoint] = (endpointCounts[m.endpoint] || 0) + 1;
       }
     });
@@ -179,9 +149,7 @@ export class PerformanceAnalytics {
     this.metrics = this.metrics.filter(m => m.timestamp > cutoff);
   }
 
-  getTotalRequestCount(): number {
-  // Implementation needed
-}
+  getTotalRequestCount(): unknown {
     return this.metrics.length;
   }
 }

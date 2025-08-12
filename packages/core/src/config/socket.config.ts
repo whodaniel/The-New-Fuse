@@ -1,7 +1,5 @@
 import { CorsOptions } from 'cors';
 export interface SocketIoConfig {
-  // Implementation needed
-}
   cors: CorsOptions;
   transports: string[];
   allowEIO3: boolean;
@@ -26,11 +24,8 @@ export interface SocketIoConfig {
 }
 
 export const socketConfig: SocketIoConfig = {
-  // Implementation needed
-}
-  cors: {
-  // Implementation needed
-}
+cors: unknown;
+  }}
     origin: process.env.NODE_ENV === 'production' 
       ? [process.env.FRONTEND_URL || 'https://newfuse.app'] 
       : ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:4200'],
@@ -50,7 +45,7 @@ export const socketConfig: SocketIoConfig = {
   perMessageDeflate: false,
   httpCompression: false,
   wsEngine: 'ws',
-  cookie: {
+  cookie: unknown;
   // Implementation needed
 }
     name: 'io',
@@ -65,8 +60,6 @@ export const socketConfig: SocketIoConfig = {
   closeOnBeforeunload: false
 };
 export interface SocketNamespaceConfig {
-  // Implementation needed
-}
   name: string;
   auth?: (socket: any, next(err?: any) => void) => void;
   adapter?: any;
@@ -77,82 +70,45 @@ export interface SocketNamespaceConfig {
 
 export const defaultNamespaces: SocketNamespaceConfig[] = [
   {
-  // Implementation needed
-}
-    name: '/',
-    connectTimeout: 30000
+name: '/',
+  }    connectTimeout: 30000
   },
   {
   // Implementation needed
 }
     name: '/chat',
     connectTimeout: 45000,
-    auth(socket, next) => {
-  // Implementation needed
-}
+    auth(): unknown {
       // Add authentication logic here
       const token = socket.handshake.auth.token;
-      if (token) {
-  // Implementation needed
-}
+      if(): unknown {
         // Verify token
-        next();
-      } else {
-  // Implementation needed
-}
-        next(new Error('Authentication required'));
-      }
-    }
-  },
-  {
-  // Implementation needed
-}
+        next(): unknown {
+        next(): unknown {
     name: '/agents',
     connectTimeout: 45000,
-    auth(socket, next) => {
-  // Implementation needed
-}
+    auth(): unknown {
       // Add authentication logic here
       const token = socket.handshake.auth.token;
-      if (token) {
-  // Implementation needed
-}
+      if(): unknown {
         // Verify token
-        next();
-      } else {
-  // Implementation needed
-}
-        next(new Error('Authentication required'));
-      }
-    }
-  },
-  {
-  // Implementation needed
-}
+        next(): unknown {
+        next(): unknown {
     name: '/admin',
     connectTimeout: 30000,
-    auth(socket, next) => {
-  // Implementation needed
-}
+    auth(): unknown {
       // Add admin authentication logic here
       const token = socket.handshake.auth.token;
       const role = socket.handshake.auth.role;
-      if (token && role === 'admin') {
-  // Implementation needed
-}
+      if(): unknown {
         // Verify admin token
-        next();
-      } else {
-  // Implementation needed
-}
+        next(): unknown {
         next(new Error('Admin authentication required'));
       }
     }
   }
 ];
 export interface SocketRoomConfig {
-  // Implementation needed
-}
   name: string;
   maxUsers?: number;
   requireAuth?: boolean;

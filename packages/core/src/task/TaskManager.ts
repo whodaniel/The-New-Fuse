@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '@the-new-fuse/database';
 import { TaskExecutor, Task, TaskStatusType } from './TaskExecutor';
 export interface TaskMetadata {
-  // Implementation needed
-}
   id: string;
   type: string;
   status: TaskStatusType;
@@ -17,31 +15,17 @@ export interface TaskMetadata {
 
 @Injectable()
 export class TaskManager {
-  // Implementation needed
-}
   private readonly logger = new Logger(TaskManager.name);
-  constructor(
+  constructor(): unknown {
     private readonly prisma: PrismaService,
     private readonly taskExecutor: TaskExecutor
   ) {}
 
-  async createTask(taskData: {
-  // Implementation needed
-}
-    type: string;
-    data: any;
-    params?: Record<string, any>;
-    config?: Record<string, any>;
-    priority?: number;
-    dependencies?: string[];
-    maxRetries?: number;
-  }): Promise<Task> {
-  // Implementation needed
-}
+  async createTask(): unknown {
     const task = await this.prisma.task.create({
   // Implementation needed
 }
-      data: {
+      data: unknown;
   // Implementation needed
 }
         type: taskData.type,
@@ -59,9 +43,7 @@ export class TaskManager {
     return this.mapPrismaTaskToTask(task);
   }
 
-  async getTask(taskId: string): Promise<Task | null> {
-  // Implementation needed
-}
+  async getTask(): unknown {
     const task = await this.prisma.task.findUnique({
   // Implementation needed
 }
@@ -70,14 +52,10 @@ export class TaskManager {
     return task ? this.mapPrismaTaskToTask(task) : null;
   }
 
-  async updateTaskStatus(taskId: string, status: TaskStatusType): Promise<Task> {
-  // Implementation needed
-}
+  async updateTaskStatus(): unknown {
     const task = await this.prisma.task.update({
-  // Implementation needed
-}
-      where: { id: taskId },
-      data: {
+where: { id: taskId },
+  }      data: unknown;
   // Implementation needed
 }
         status,
@@ -87,54 +65,39 @@ export class TaskManager {
     return this.mapPrismaTaskToTask(task);
   }
 
-  async executeTask(taskId: string): Promise<any> {
-  // Implementation needed
-}
+  async executeTask(): unknown {
     const task = await this.getTask(taskId);
-    if (!task) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Task ${taskId} not found`);
     }
 
-    if (task.status !== 'pending') {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Task ${taskId} is not in pending status`);
     }
 
     // Check dependencies
     const dependenciesMet = await this.checkDependencies(taskId);
-    if (!dependenciesMet) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.log(`Task ${taskId} waiting for dependencies`);
       return null;
     }
 
     try {
-  // Implementation needed
-}
-      await this.updateTaskStatus(taskId, 'running');
-      const result = await this.taskExecutor.executeTask(task);
+await this.updateTaskStatus(taskId, 'running');
+  }      const result = await this.taskExecutor.executeTask(task);
       await this.updateTaskStatus(taskId, 'completed');
       return result;
     } catch (error) {
-  // Implementation needed
-}
-      const taskRecord = await this.prisma.task.findUnique({
-  // Implementation needed
-}
+const taskRecord = await this.prisma.task.findUnique({
+  }}
         where: { id: taskId }
       });
-      if (taskRecord && taskRecord.currentRetry < taskRecord.maxRetries) {
-  // Implementation needed
-}
+      if(): unknown {
         await this.prisma.task.update({
   // Implementation needed
 }
           where: { id: taskId },
-          data: {
+          data: unknown;
   // Implementation needed
 }
             status: 'pending',
@@ -152,19 +115,13 @@ export class TaskManager {
     }
   }
 
-  async cancelTask(taskId: string): Promise<boolean> {
-  // Implementation needed
-}
+  async cancelTask(): unknown {
     const task = await this.getTask(taskId);
-    if (!task) {
-  // Implementation needed
-}
+    if(): unknown {
       return false;
     }
 
-    if (['completed', 'failed', 'cancelled'].includes(task.status)) {
-  // Implementation needed
-}
+    if(): unknown {
       return false;
     }
 
@@ -173,9 +130,7 @@ export class TaskManager {
     return true;
   }
 
-  async getPendingTasks(): Promise<Task[]> {
-  // Implementation needed
-}
+  async getPendingTasks(): unknown {
     const tasks = await this.prisma.task.findMany({
   // Implementation needed
 }
@@ -185,30 +140,21 @@ export class TaskManager {
     return tasks.map(task => this.mapPrismaTaskToTask(task));
   }
 
-  async getTasksByStatus(status: TaskStatusType): Promise<Task[]> {
-  // Implementation needed
-}
+  async getTasksByStatus(): unknown {
     const tasks = await this.prisma.task.findMany({
-  // Implementation needed
-}
-      where: { status },
-      orderBy: { createdAt: 'desc' }
+where: { status },
+  }      orderBy: { createdAt: 'desc' }
     });
     return tasks.map(task => this.mapPrismaTaskToTask(task));
   }
 
-  async getTaskMetadata(taskId: string): Promise<TaskMetadata | null> {
-  // Implementation needed
-}
+  async getTaskMetadata(): unknown {
     const task = await this.prisma.task.findUnique({
   // Implementation needed
 }
       where: { id: taskId }
     });
-    if (!task) return null;
-    return {
-  // Implementation needed
-}
+    if(): unknown {
       id: task.id,
       type: task.type,
       status: task.status as TaskStatusType,
@@ -222,24 +168,19 @@ export class TaskManager {
   }
 
   private async checkDependencies(taskId: string): Promise<boolean> {
-  // Implementation needed
-}
-    const task = await this.prisma.task.findUnique({
-  // Implementation needed
-}
+const task = await this.prisma.task.findUnique({
+  }}
       where: { id: taskId },
       select: { dependencies: true }
     });
-    if (!task || !task.dependencies || task.dependencies.length === 0) {
-  // Implementation needed
-}
+    if(): unknown {
       return true;
     }
 
     const dependencies = await this.prisma.task.findMany({
   // Implementation needed
 }
-      where: {
+      where: unknown;
   // Implementation needed
 }
         id: { in: task.dependencies }
@@ -250,11 +191,8 @@ export class TaskManager {
   }
 
   private mapPrismaTaskToTask(prismaTask: any): Task {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       id: prismaTask.id,
       type: prismaTask.type,
       status: prismaTask.status as TaskStatusType,

@@ -16,36 +16,26 @@ import {
 import { Request } from 'express';
 import { PrismaService } from '@the-new-fuse/database';
 @Injectable()
-export class TenantGuard implements CanActivate {
-  // Implementation needed
-}
+export class TenantGuard {
   private readonly logger = new Logger(TenantGuard.name);
   constructor(private prisma: PrismaService) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-  // Implementation needed
-}
+  async canActivate(): unknown {
     const request = context.switchToHttp().getRequest<Request>();
     const host = request.get('host');
-    if (!host) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new UnauthorizedException('Host header is required');
     }
     
     request['tenantContext'] = {};
     const subdomain = this.extractSubdomain(host);
-    if (subdomain && subdomain !== 'placeholder') {
-  // Implementation needed
-}
+    if(): unknown {
       const agencyId = request.get('x-agency-id');
       const user = request['user'];
       const parts = host.split('.');
       const planFeatures = {
-  // Implementation needed
-}
-        TRIAL: ['basic_agents', 'basic_workspaces'],
-        STARTER: ['basic_agents', 'basic_workspaces', 'swarm_orchestration'],
+TRIAL: ['basic_agents', 'basic_workspaces'],
+  }        STARTER: ['basic_agents', 'basic_workspaces', 'swarm_orchestration'],
         PROFESSIONAL: ['basic_agents', 'basic_workspaces', 'swarm_orchestration', 'service_routing', 'advanced_analytics']
       };
       // Additional tenant validation logic would go here
@@ -56,12 +46,8 @@ export class TenantGuard implements CanActivate {
   }
 
   private extractSubdomain(host: string): string | null {
-  // Implementation needed
-}
-    const parts = host.split('.');
-    if (parts.length > 2) {
-  // Implementation needed
-}
+const parts = host.split('.');
+  }    if(): unknown {
       return parts[0];
     }
     return null;

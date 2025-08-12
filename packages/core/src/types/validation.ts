@@ -1,6 +1,4 @@
 export interface ValidationRule {
-  // Implementation needed
-}
     id: string;
     name: string;
     description?: string;

@@ -2,14 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 @Injectable()
-export class DatabaseConfig implements TypeOrmOptionsFactory {
-  // Implementation needed
-}
+export class DatabaseConfig {
   constructor(private readonly configService: ConfigService) {}
 
-  createTypeOrmOptions(): TypeOrmModuleOptions {
-  // Implementation needed
-}
+  createTypeOrmOptions(): unknown {
     return {
   // Implementation needed
 }
@@ -28,7 +24,7 @@ export class DatabaseConfig implements TypeOrmOptionsFactory {
       retryAttempts: 5,
       retryDelay: 3000,
       maxQueryExecutionTime: 1000,
-      extra: {
+      extra: unknown;
   // Implementation needed
 }
         connectionLimit: 20,

@@ -1,7 +1,5 @@
 // Core Agent Types
 export interface Agent {
-  // Implementation needed
-}
   id: string;
   name: string;
   type: AgentType;
@@ -14,8 +12,6 @@ export interface Agent {
 }
 
 export interface AgentConfiguration {
-  // Implementation needed
-}
   maxConcurrentTasks: number;
   timeout: number;
   retryPolicy: RetryPolicy;
@@ -24,8 +20,6 @@ export interface AgentConfiguration {
 }
 
 export interface AgentMetadata {
-  // Implementation needed
-}
   version: string;
   creator: string;
   createdAt: Date;
@@ -35,8 +29,6 @@ export interface AgentMetadata {
 }
 
 export interface MemorySettings {
-  // Implementation needed
-}
   persistMemory: boolean;
   memoryCapacity: number;
   memoryRetentionDays: number;
@@ -44,8 +36,6 @@ export interface MemorySettings {
 }
 
 export interface CommunicationSettings {
-  // Implementation needed
-}
   enableBroadcast: boolean;
   enableDirectMessage: boolean;
   communicationProtocols: CommunicationProtocol[];
@@ -54,8 +44,6 @@ export interface CommunicationSettings {
 
 // Task and Workflow Types
 export interface Task {
-  // Implementation needed
-}
   id: string;
   type: TaskType;
   name: string;
@@ -76,8 +64,6 @@ export interface Task {
 }
 
 export interface TaskConfiguration {
-  // Implementation needed
-}
   inputs: Record<string, unknown>;
   outputs: Record<string, unknown>;
   requirements: TaskRequirements;
@@ -85,8 +71,6 @@ export interface TaskConfiguration {
 }
 
 export interface TaskRequirements {
-  // Implementation needed
-}
   memoryAccess: boolean;
   networkAccess: boolean;
   fileSystemAccess: boolean;
@@ -95,8 +79,6 @@ export interface TaskRequirements {
 }
 
 export interface TaskConstraints {
-  // Implementation needed
-}
   maxExecutionTime: number;
   maxMemoryUsage: number;
   allowedNetworkDomains?: string[];
@@ -104,8 +86,6 @@ export interface TaskConstraints {
 }
 
 export interface AgentWorkflow {
-  // Implementation needed
-}
   id: string;
   name: string;
   description?: string;
@@ -115,8 +95,6 @@ export interface AgentWorkflow {
 }
 
 export interface WorkflowTask {
-  // Implementation needed
-}
   id: string;
   type: TaskType;
   name: string;
@@ -128,8 +106,6 @@ export interface WorkflowTask {
 }
 
 export interface WorkflowState {
-  // Implementation needed
-}
   workflow: AgentWorkflow;
   status: WorkflowStatus;
   startTime: Date;
@@ -141,8 +117,6 @@ export interface WorkflowState {
 }
 
 export interface WorkflowMetadata {
-  // Implementation needed
-}
   version: string;
   creator: string;
   createdAt: Date;
@@ -152,8 +126,6 @@ export interface WorkflowMetadata {
 }
 
 export interface WorkflowConfiguration {
-  // Implementation needed
-}
   parallelExecution: boolean;
   failureStrategy: FailureStrategy;
   timeoutStrategy: TimeoutStrategy;
@@ -162,8 +134,6 @@ export interface WorkflowConfiguration {
 }
 
 export interface WorkflowError {
-  // Implementation needed
-}
   taskId: string;
   error: string;
   timestamp: Date;
@@ -172,8 +142,6 @@ export interface WorkflowError {
 
 // Communication Types
 export interface AgentMessage {
-  // Implementation needed
-}
   id: string;
   sender: string;
   recipient: string;
@@ -185,8 +153,6 @@ export interface AgentMessage {
 }
 
 export interface CommunicationChannel {
-  // Implementation needed
-}
   id: string;
   name: string;
   channelType: ChannelType;
@@ -199,8 +165,6 @@ export interface CommunicationChannel {
 
 // Memory Types
 export interface MemoryItem {
-  // Implementation needed
-}
   id: string;
   agentId: string;
   taskId?: string;
@@ -214,8 +178,6 @@ export interface MemoryItem {
 }
 
 export interface AgentThought {
-  // Implementation needed
-}
   id: string;
   agentId: string;
   taskId?: string;
@@ -227,8 +189,6 @@ export interface AgentThought {
 }
 
 export interface AgentInteraction {
-  // Implementation needed
-}
   id: string;
   fromAgentId: string;
   toAgentId: string;
@@ -240,8 +200,6 @@ export interface AgentInteraction {
 
 // Retry and Error Handling Types
 export interface RetryPolicy {
-  // Implementation needed
-}
   maxRetries: number;
   initialDelay: number;
   maxDelay: number;
@@ -250,8 +208,6 @@ export interface RetryPolicy {
 }
 
 export interface NotificationSettings {
-  // Implementation needed
-}
   onStart: boolean;
   onComplete: boolean;
   onFailure: boolean;
@@ -262,8 +218,6 @@ export interface NotificationSettings {
 
 // Enums
 export enum AgentType {
-  // Implementation needed
-}
   PLANNER = 'planner',
   EXECUTOR = 'executor',
   RESEARCHER = 'researcher',
@@ -275,8 +229,6 @@ export enum AgentType {
 }
 
 export enum AgentStatus {
-  // Implementation needed
-}
   IDLE = 'idle',
   BUSY = 'busy',
   OFFLINE = 'offline',
@@ -285,8 +237,6 @@ export enum AgentStatus {
 }
 
 export enum TaskStatus {
-  // Implementation needed
-}
   PENDING = 'pending',
   IN_PROGRESS = 'in_progress',
   COMPLETED = 'completed',
@@ -296,8 +246,6 @@ export enum TaskStatus {
 }
 
 export enum TaskType {
-  // Implementation needed
-}
   DATA_PROCESSING = 'data_processing',
   ML_INFERENCE = 'ml_inference',
   API_CALL = 'api_call',
@@ -311,8 +259,6 @@ export enum TaskType {
 }
 
 export enum TaskPriority {
-  // Implementation needed
-}
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
@@ -320,8 +266,6 @@ export enum TaskPriority {
 }
 
 export enum WorkflowStatus {
-  // Implementation needed
-}
   PENDING = 'pending',
   RUNNING = 'running',
   COMPLETED = 'completed',
@@ -331,8 +275,6 @@ export enum WorkflowStatus {
 }
 
 export enum MessageType {
-  // Implementation needed
-}
   DIRECT = 'direct',
   BROADCAST = 'broadcast',
   TASK_REQUEST = 'task_request',
@@ -343,8 +285,6 @@ export enum MessageType {
 }
 
 export enum MessagePriority {
-  // Implementation needed
-}
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
@@ -352,8 +292,6 @@ export enum MessagePriority {
 }
 
 export enum ChannelType {
-  // Implementation needed
-}
   DIRECT = 'direct',
   BROADCAST = 'broadcast',
   GROUP = 'group',
@@ -361,8 +299,6 @@ export enum ChannelType {
 }
 
 export enum MemoryType {
-  // Implementation needed
-}
   FACT = 'fact',
   PROCEDURE = 'procedure',
   EVENT = 'event',
@@ -371,8 +307,6 @@ export enum MemoryType {
 }
 
 export enum ThoughtType {
-  // Implementation needed
-}
   THOUGHT = 'thought',
   ACTION = 'action',
   OBSERVATION = 'observation',
@@ -381,8 +315,6 @@ export enum ThoughtType {
 }
 
 export enum InteractionType {
-  // Implementation needed
-}
   QUESTION = 'question',
   ANSWER = 'answer',
   SUGGESTION = 'suggestion',
@@ -392,8 +324,6 @@ export enum InteractionType {
 }
 
 export enum CommunicationProtocol {
-  // Implementation needed
-}
   A2A_V1 = 'A2A_V1',
   A2A_V2 = 'A2A_V2',
   MCP = 'MCP',
@@ -402,16 +332,12 @@ export enum CommunicationProtocol {
 }
 
 export enum FailureStrategy {
-  // Implementation needed
-}
   STOP_ON_FIRST_FAILURE = 'stop_on_first_failure',
   CONTINUE_ON_FAILURE = 'continue_on_failure',
   RETRY_FAILED_TASKS = 'retry_failed_tasks'
 }
 
 export enum TimeoutStrategy {
-  // Implementation needed
-}
   FAIL_IMMEDIATELY = 'fail_immediately',
   EXTEND_TIMEOUT = 'extend_timeout',
   SKIP_TASK = 'skip_task'
@@ -419,8 +345,6 @@ export enum TimeoutStrategy {
 
 // Result Types
 export interface TaskResult {
-  // Implementation needed
-}
   success: boolean;
   data?: any;
   error?: string;
@@ -429,8 +353,6 @@ export interface TaskResult {
 }
 
 export interface AgentResponse {
-  // Implementation needed
-}
   agentId: string;
   taskId: string;
   result: TaskResult;
@@ -438,8 +360,6 @@ export interface AgentResponse {
 }
 
 export interface WorkflowResult {
-  // Implementation needed
-}
   workflowId: string;
   success: boolean;
   completedTasks: Task[];

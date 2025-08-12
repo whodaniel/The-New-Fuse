@@ -552,6 +552,12 @@ export class ServiceRegistry extends EventEmitter {
     commonCapabilities: string[];
     missingInA: string[];
     missingInB: string[];
+    compatibilityScore: number;
+    analysis?: {
+      resourceCompatibility: boolean;
+      toolCompatibility: boolean;
+      versionCompatibility: boolean;
+    };
   } {
     const capabilitiesA = new Set(serviceA.capabilities);
     const capabilitiesB = new Set(serviceB.capabilities);
@@ -560,12 +566,58 @@ export class ServiceRegistry extends EventEmitter {
     const missingInA = serviceB.capabilities.filter(cap => !capabilitiesA.has(cap));
     const missingInB = serviceA.capabilities.filter(cap => !capabilitiesB.has(cap));
     
+    // Calculate compatibility score
+    const totalCapabilities = new Set([...serviceA.capabilities, ...serviceB.capabilities]).size;
+    const compatibilityScore = totalCapabilities > 0 ? commonCapabilities.length / totalCapabilities : 0;
+    
+    // Analyze resource compatibility
+    const resourcesA = new Set(serviceA.resources.map(r => r.name));
+    const resourcesB = new Set(serviceB.resources.map(r => r.name));
+    const commonResources = serviceA.resources.filter(r => resourcesB.has(r.name));
+    const resourceCompatibility = commonResources.length > 0;
+    
+    // Analyze tool compatibility
+    const toolsA = new Set(serviceA.tools.map(t => t.name));
+    const toolsB = new Set(serviceB.tools.map(t => t.name));
+    const commonTools = serviceA.tools.filter(t => toolsB.has(t.name));
+    const toolCompatibility = commonTools.length > 0;
+    
+    // Analyze version compatibility (simple semantic version check)
+    const versionCompatibility = this.checkVersionCompatibility(serviceA.version, serviceB.version);
+    
     return {
       compatible: commonCapabilities.length > 0,
       commonCapabilities,
       missingInA,
-      missingInB
+      missingInB,
+      compatibilityScore,
+      analysis: {
+        resourceCompatibility,
+        toolCompatibility,
+        versionCompatibility
+      }
     };
+  }
+
+  /**
+   * Check version compatibility between two services
+   */
+  private checkVersionCompatibility(versionA: string, versionB: string): boolean {
+    try {
+      const parseVersion = (version: string) => {
+        const parts = version.split('.').map(Number);
+        return { major: parts[0] || 0, minor: parts[1] || 0, patch: parts[2] || 0 };
+      };
+      
+      const vA = parseVersion(versionA);
+      const vB = parseVersion(versionB);
+      
+      // Compatible if major versions match
+      return vA.major === vB.major;
+    } catch {
+      // If version parsing fails, assume compatible
+      return true;
+    }
   }
 
   /**
@@ -589,17 +641,30 @@ export class ServiceRegistry extends EventEmitter {
    */
   async discoverWithCapabilityMatching(query: ServiceQuery & {
     requiredCapabilities?: string[];
-    compatibleWith?: string; // Service ID to find compatible services
+    compatibleWith?: string;
     minHealthScore?: number;
-    maxAge?: number; // Maximum age in milliseconds
+    maxAge?: number;
+    capabilityMatchMode?: 'all' | 'any' | 'exact';
+    includePartialMatches?: boolean;
   }): Promise<MCPServiceInfo[]> {
     let services = await this.discover(query);
     
-    // Filter by required capabilities
+    // Filter by required capabilities with different matching modes
     if (query.requiredCapabilities && query.requiredCapabilities.length > 0) {
-      services = services.filter(service => 
-        this.hasCapabilities(service, query.requiredCapabilities!)
-      );
+      const matchMode = query.capabilityMatchMode || 'all';
+      
+      services = services.filter(service => {
+        switch (matchMode) {
+          case 'all':
+            return this.hasCapabilities(service, query.requiredCapabilities!);
+          case 'any':
+            return query.requiredCapabilities!.some(cap => service.capabilities.includes(cap));
+          case 'exact':
+            return this.hasExactCapabilities(service, query.requiredCapabilities!);
+          default:
+            return this.hasCapabilities(service, query.requiredCapabilities!);
+        }
+      });
     }
     
     // Filter by compatibility with another service
@@ -608,6 +673,9 @@ export class ServiceRegistry extends EventEmitter {
       if (targetService) {
         services = services.filter(service => {
           const compatibility = this.checkCapabilityCompatibility(service, targetService);
+          if (query.includePartialMatches) {
+            return compatibility.compatibilityScore > 0;
+          }
           return compatibility.compatible;
         });
       }
@@ -633,6 +701,17 @@ export class ServiceRegistry extends EventEmitter {
   }
 
   /**
+   * Check if a service has exact capabilities (no more, no less)
+   */
+  private hasExactCapabilities(service: MCPServiceInfo, requiredCapabilities: string[]): boolean {
+    const serviceCapabilities = new Set(service.capabilities);
+    const requiredCapabilitiesSet = new Set(requiredCapabilities);
+    
+    return serviceCapabilities.size === requiredCapabilitiesSet.size &&
+           [...serviceCapabilities].every(cap => requiredCapabilitiesSet.has(cap));
+  }
+
+  /**
    * Get service recommendations based on usage patterns and compatibility
    */
   async getServiceRecommendations(
@@ -642,13 +721,19 @@ export class ServiceRegistry extends EventEmitter {
       includeCompatible?: boolean;
       includeSimilar?: boolean;
       weightByHealth?: boolean;
+      weightByUsage?: boolean;
+      excludeTags?: string[];
+      includeTags?: string[];
     } = {}
   ): Promise<MCPServiceInfo[]> {
     const {
       maxRecommendations = 5,
       includeCompatible = true,
       includeSimilar = true,
-      weightByHealth = true
+      weightByHealth = true,
+      weightByUsage = false,
+      excludeTags = [],
+      includeTags = []
     } = options;
     
     let recommendations: MCPServiceInfo[] = [];
@@ -662,21 +747,63 @@ export class ServiceRegistry extends EventEmitter {
     // Find similar services (same capabilities)
     if (includeSimilar) {
       const similar = await this.discoverWithCapabilityMatching({
-        requiredCapabilities: currentService.capabilities
+        requiredCapabilities: currentService.capabilities,
+        capabilityMatchMode: 'any'
       });
       recommendations.push(...similar.filter(s => s.id !== currentService.id));
     }
     
     // Remove duplicates
-    const uniqueRecommendations = recommendations.filter((service, index, self) =>
+    let uniqueRecommendations = recommendations.filter((service, index, self) =>
       index === self.findIndex(s => s.id === service.id)
     );
     
-    // Sort by health score if requested
-    if (weightByHealth) {
-      uniqueRecommendations.sort((a, b) => (b.healthScore || 0) - (a.healthScore || 0));
+    // Apply tag filters
+    if (excludeTags.length > 0) {
+      uniqueRecommendations = uniqueRecommendations.filter(service =>
+        !service.tags?.some(tag => excludeTags.includes(tag))
+      );
     }
     
-    return uniqueRecommendations.slice(0, maxRecommendations);
+    if (includeTags.length > 0) {
+      uniqueRecommendations = uniqueRecommendations.filter(service =>
+        service.tags?.some(tag => includeTags.includes(tag))
+      );
+    }
+    
+    // Calculate recommendation scores
+    const scoredRecommendations = uniqueRecommendations.map(service => {
+      let score = 0;
+      
+      // Base compatibility score
+      const compatibility = this.checkCapabilityCompatibility(currentService, service);
+      score += compatibility.compatibilityScore * 0.4;
+      
+      // Health score weight
+      if (weightByHealth) {
+        score += (service.healthScore || 0) * 0.3;
+      }
+      
+      // Usage weight (based on metadata if available)
+      if (weightByUsage && service.metadata.usageCount) {
+        const normalizedUsage = Math.min(service.metadata.usageCount / 1000, 1);
+        score += normalizedUsage * 0.2;
+      }
+      
+      // Recency bonus (newer services get slight preference)
+      const age = Date.now() - service.registeredAt.getTime();
+      const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+      const recencyScore = Math.max(0, 1 - (age / maxAge));
+      score += recencyScore * 0.1;
+      
+      return { service, score };
+    });
+    
+    // Sort by score (descending)
+    scoredRecommendations.sort((a, b) => b.score - a.score);
+    
+    return scoredRecommendations
+      .slice(0, maxRecommendations)
+      .map(item => item.service);
   }
 }

@@ -4,8 +4,6 @@
  */
 import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToOne, OneToMany } from 'typeorm';
 export enum MarketplaceItemType {
-  // Implementation needed
-}
   INTEGRATION = 'integration',
   TEMPLATE = 'template',
   WORKFLOW = 'workflow',
@@ -18,8 +16,6 @@ export enum MarketplaceItemType {
 }
 
 export enum PricingModel {
-  // Implementation needed
-}
   FREE = 'free',
   ONE_TIME = 'one_time',
   MONTHLY = 'monthly',
@@ -29,8 +25,6 @@ export enum PricingModel {
 }
 
 export enum MarketplaceItemStatus {
-  // Implementation needed
-}
   DRAFT = 'draft',
   PENDING_REVIEW = 'pending_review',
   PUBLISHED = 'published',
@@ -41,8 +35,6 @@ export enum MarketplaceItemStatus {
 
 @Entity('marketplace_items')
 export class MarketplaceItem {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column('text')
@@ -125,36 +117,24 @@ export class MarketplaceItem {
   // @OneToMany(() => Review, review => review.item)
   // reviews: Review[];
   // Helper methods
-  isPublished(): boolean {
-  // Implementation needed
-}
+  isPublished(): unknown {
     return this.status === MarketplaceItemStatus.PUBLISHED;
   }
 
-  isPaid(): boolean {
-  // Implementation needed
-}
+  isPaid(): unknown {
     return this.pricingModel !== PricingModel.FREE;
   }
 
-  getDisplayPrice(): string {
-  // Implementation needed
-}
-    if (this.pricingModel === PricingModel.FREE) {
-  // Implementation needed
-}
+  getDisplayPrice(): unknown {
+    if(): unknown {
       return 'Free';
     }
     
-    if (!this.price) {
-  // Implementation needed
-}
+    if(): unknown {
       return 'Contact for pricing';
     }
 
-    switch (this.pricingModel) {
-  // Implementation needed
-}
+    switch(): unknown {
       case PricingModel.ONE_TIME:
         return `$${this.price}`;
       case PricingModel.MONTHLY:
@@ -170,60 +150,42 @@ export class MarketplaceItem {
     }
   }
 
-  canBeDownloaded(): boolean {
-  // Implementation needed
-}
+  canBeDownloaded(): unknown {
     return this.isPublished() && this.isActive;
   }
 
-  incrementDownloadCount(): void {
-  // Implementation needed
-}
+  incrementDownloadCount(): unknown {
     this.downloadCount += 1;
   }
 
-  updateRating(newRating: number, newReviewCount: number): void {
-  // Implementation needed
-}
+  updateRating(): unknown {
     this.rating = newRating;
     this.reviewCount = newReviewCount;
   }
 
-  markAsFeatured(): void {
-  // Implementation needed
-}
+  markAsFeatured(): unknown {
     this.featured = true;
   }
 
-  markAsUnfeatured(): void {
-  // Implementation needed
-}
+  markAsUnfeatured(): unknown {
     this.featured = false;
   }
 
-  approve(): void {
-  // Implementation needed
-}
+  approve(): unknown {
     this.status = MarketplaceItemStatus.PUBLISHED;
     this.rejectionReason = null;
   }
 
-  reject(reason: string): void {
-  // Implementation needed
-}
+  reject(): unknown {
     this.status = MarketplaceItemStatus.REJECTED;
     this.rejectionReason = reason;
   }
 
-  deprecate(): void {
-  // Implementation needed
-}
+  deprecate(): unknown {
     this.status = MarketplaceItemStatus.DEPRECATED;
   }
 
-  remove(): void {
-  // Implementation needed
-}
+  remove(): unknown {
     this.status = MarketplaceItemStatus.REMOVED;
     this.isActive = false;
   }

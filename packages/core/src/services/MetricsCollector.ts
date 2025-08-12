@@ -103,7 +103,7 @@ export class MetricsCollector {
         const newSeries: MetricSeries = {
           name: metric.name,
           dataPoints: [dataPoint],
-          metadata: {
+          metadata: unknown;
             unit: metric.unit,
             type: metric.type,
             description: `Metric collected from ${metric.source}`,

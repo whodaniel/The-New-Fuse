@@ -1,6 +1,4 @@
 export interface RedisConfig {
-  // Implementation needed
-}
     host: string;
     port: number;
     password?: string;
@@ -9,9 +7,7 @@ export interface RedisConfig {
     tls?: boolean;
 }
 export declare class RedisManager {
-  // Implementation needed
-}
-    private readonly client;
+private readonly client;
     private readonly logger;
     RedisConfig: any;
 }

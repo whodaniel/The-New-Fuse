@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 export enum UserType {
-  // Implementation needed
-}
   HUMAN = 'human',
   AI_AGENT = 'ai_agent',
   UNKNOWN = 'unknown'
@@ -11,8 +9,6 @@ export type FrequencyCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_h
 export type VariabilityCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 export type ComplexityCategory = 'very_low' | 'low' | 'medium' | 'high' | 'very_high';
 export interface UserSignals {
-  // Implementation needed
-}
   headers?: Record<string, string>;
   userAgent?: string;
   authMethod?: 'api_key' | 'oauth' | 'password';
@@ -24,96 +20,45 @@ export interface UserSignals {
 
 @Injectable()
 export class UserTypeDetectionService {
-  // Implementation needed
-}
-  detectUserType(signals: UserSignals): UserType {
-  // Implementation needed
-}
+  detectUserType(): unknown {
     // Check for obvious AI agent indicators
-    if (signals.headers?.['x-agent-type'] === 'ai' || 
-        signals.headers?.['user-agent']?.includes('bot')) {
-  // Implementation needed
-}
+    if(): unknown {
       return UserType.AI_AGENT;
     }
 
     // Check auth method patterns
-    if (signals.authMethod === 'api_key') {
-  // Implementation needed
-}
+    if(): unknown {
       return UserType.AI_AGENT;
     }
     
-    if (signals.authMethod === 'oauth' || 
-        signals.authMethod === 'password') {
-  // Implementation needed
-}
-      if (signals.userAgent?.includes('Mozilla')) {
-  // Implementation needed
-}
+    if(): unknown {
+      if(): unknown {
         // Analyze request patterns
         const requestFrequency = signals.requestFrequency;
         const requestVariability = signals.requestVariability;
-        if (requestFrequency === 'high' && requestVariability === 'very_low') {
-  // Implementation needed
-}
+        if(): unknown {
           return UserType.AI_AGENT;
         }
         
-        if (requestFrequency !== 'high' && requestVariability === 'high') {
-  // Implementation needed
-}
+        if(): unknown {
           return UserType.HUMAN;
         }
       }
     }
 
     // Check request complexity
-    if (signals.requestStructure === 'complex') {
-  // Implementation needed
-}
+    if(): unknown {
       return UserType.AI_AGENT;
     } else if (signals.requestStructure === 'medium') {
-  // Implementation needed
-}
-      return UserType.HUMAN;
-    }
+return UserType.HUMAN;
+  }}
 
     return UserType.UNKNOWN;
   }
 
   private calculateRequestFrequency(timestamps: number[]): FrequencyCategory {
-  // Implementation needed
-}
-    if (timestamps.length < 2) return 'very_low';
-    const gaps = timestamps.slice(1).map((ts, i) => ts - timestamps[i]);
-    const avgTimeGapMs = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
-    if (avgTimeGapMs < 1000) return 'very_high';
-    if (avgTimeGapMs < 5000) return 'high';
-    if (avgTimeGapMs < 30000) return 'medium';
-    if (avgTimeGapMs < 300000) return 'low';
-    return 'very_low';
-  }
-
-  private calculateRequestVariability(timestamps: number[]): VariabilityCategory {
-  // Implementation needed
-}
-    if (timestamps.length < 3) return 'very_low';
-    const gaps = timestamps.slice(1).map((ts, i) => ts - timestamps[i]);
-    const mean = gaps.reduce((sum, gap) => sum + gap, 0) / gaps.length;
-    const variance = gaps.reduce((sum, gap) => sum + Math.pow(gap - mean, 2), 0) / gaps.length;
-    const stdDev = Math.sqrt(variance);
-    const coefficientOfVariation = stdDev / mean;
-    if (coefficientOfVariation < 0.1) return 'very_low';
-    if (coefficientOfVariation < 0.3) return 'low';
-    if (coefficientOfVariation < 0.7) return 'medium';
-    if (coefficientOfVariation < 1.0) return 'high';
-    return 'very_high';
-  }
-
-  private calculateComplexity(request: any): ComplexityCategory {
-  // Implementation needed
-}
+if(): unknown {
+  }    if(): unknown {
     let complexityScore = 0;
     // Add complexity based on request structure
     if (request.params) complexityScore += Object.keys(request.params).length;

@@ -1,4 +1,4 @@
-export declare const RedisChannels: {
+export declare const RedisChannels: unknown;
   // Implementation needed
 }
     MESSAGE_PROCESSING: string;
@@ -6,7 +6,7 @@ export declare const RedisChannels: {
     STATE_UPDATES: string;
     SERVICE_HEALTH: string;
 };
-export declare const RedisConfig: {
+export declare const RedisConfig: unknown;
   // Implementation needed
 }
     HOST: string;

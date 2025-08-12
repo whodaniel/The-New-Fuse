@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Agent } from './types/agent';
 export interface TopologyNode {
-  // Implementation needed
-}
   id: string;
   agent: Agent;
   connections: string[];
@@ -10,8 +8,6 @@ export interface TopologyNode {
 }
 
 export interface TopologyEdge {
-  // Implementation needed
-}
   source: string;
   target: string;
   weight: number;
@@ -20,33 +16,23 @@ export interface TopologyEdge {
 
 @Injectable()
 export class TopologyManager {
-  // Implementation needed
-}
   private readonly logger = new Logger(TopologyManager.name);
   private nodes: Map<string, TopologyNode> = new Map();
   private edges: Map<string, TopologyEdge> = new Map();
   private virtualNodeEmbedding: number[] = [];
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.virtualNodeEmbedding = Array.from({ length: 128 }, () => Math.random());
   }
 
-  addNode(agent: Agent): string {
-  // Implementation needed
-}
+  addNode(): unknown {
     const nodeId = agent.id || crypto.randomUUID();
-    if (this.nodes.has(nodeId)) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Agent ${nodeId} already exists in topology`);
     }
 
     const node: TopologyNode = {
-  // Implementation needed
-}
-      id: nodeId,
-      agent,
+id: nodeId,
+  }      agent,
       connections: [],
       embedding: Array.from({ length: 128 }, () => Math.random())
     };
@@ -55,12 +41,8 @@ export class TopologyManager {
     return nodeId;
   }
 
-  removeNode(nodeId: string): boolean {
-  // Implementation needed
-}
-    if (!this.nodes.has(nodeId)) {
-  // Implementation needed
-}
+  removeNode(): unknown {
+    if(): unknown {
       throw new Error(`Agent ${nodeId} not found in topology`);
     }
 
@@ -75,12 +57,8 @@ export class TopologyManager {
     return true;
   }
 
-  addEdge(sourceId: string, targetId: string, weight: number = 1.0): string {
-  // Implementation needed
-}
-    if (!this.nodes.has(sourceId) || !this.nodes.has(targetId)) {
-  // Implementation needed
-}
+  addEdge(): unknown {
+    if(): unknown {
       throw new Error('One or both agents not found in topology');
     }
 
@@ -95,9 +73,7 @@ export class TopologyManager {
     this.edges.set(edgeKey, edge);
     // Update connections
     const sourceNode = this.nodes.get(sourceId)!;
-    if (!sourceNode.connections.includes(targetId)) {
-  // Implementation needed
-}
+    if(): unknown {
       sourceNode.connections.push(targetId);
     }
 
@@ -105,82 +81,54 @@ export class TopologyManager {
     return edgeKey;
   }
 
-  getNode(nodeId: string): TopologyNode | undefined {
-  // Implementation needed
-}
+  getNode(): unknown {
     return this.nodes.get(nodeId);
   }
 
-  getAllNodes(): TopologyNode[] {
-  // Implementation needed
-}
+  getAllNodes(): unknown {
     return Array.from(this.nodes.values());
   }
 
-  getEdges(): TopologyEdge[] {
-  // Implementation needed
-}
+  getEdges(): unknown {
     return Array.from(this.edges.values());
   }
 
-  calculateDistance(nodeId1: string, nodeId2: string): number {
-  // Implementation needed
-}
+  calculateDistance(): unknown {
     const node1 = this.nodes.get(nodeId1);
     const node2 = this.nodes.get(nodeId2);
-    if (!node1 || !node2) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error('One or both agents not found in topology');
     }
 
-    if (!node1.embedding || !node2.embedding) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error('Node embeddings not available');
     }
 
-    if (node1.embedding.length !== node2.embedding.length) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error('Matrices dimensions are incompatible for multiplication');
     }
 
     // Calculate Euclidean distance
     let distance = 0;
-    for (let i = 0; i < node1.embedding.length; i++) {
-  // Implementation needed
-}
+    for(): unknown {
       distance += Math.pow(node1.embedding[i] - node2.embedding[i], 2);
     }
     
     return Math.sqrt(distance);
   }
 
-  getNeighbors(nodeId: string, maxDistance: number = 1.0): string[] {
-  // Implementation needed
-}
+  getNeighbors(): unknown {
     const neighbors: string[] = [];
-    for (const [id, node] of this.nodes) {
-  // Implementation needed
-}
-      if (id !== nodeId) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         try {
-  // Implementation needed
-}
-          const distance = this.calculateDistance(nodeId, id);
-          if (distance <= maxDistance) {
-  // Implementation needed
-}
+const distance = this.calculateDistance(nodeId, id);
+  }          if(): unknown {
             neighbors.push(id);
           }
         } catch (error) {
-  // Implementation needed
-}
-          this.logger.warn(`Could not calculate distance for ${id}: ${error}`);
-        }
+this.logger.warn(`Could not calculate distance for ${id}: ${error}`);
+  }}
       }
     }
     

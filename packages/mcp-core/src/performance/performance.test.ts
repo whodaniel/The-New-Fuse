@@ -12,6 +12,7 @@ import { ResourceManager } from '../handlers/ResourceManager';
 import { ToolExecutionEngine } from '../handlers/ToolExecutionEngine';
 import { MCPServerConfig } from '../types/server';
 import { MCPRequest, MCPResponse } from '../types/message';
+import { LogLevel } from '../types/common';
 import { performance } from 'perf_hooks';
 
 describe('MCP Performance Tests', () => {
@@ -23,13 +24,15 @@ describe('MCP Performance Tests', () => {
     const config: MCPServerConfig = {
       name: 'performance-test-server',
       version: '1.0.0',
+      port: 0, // Use random port for testing
+      host: 'localhost',
       maxConnections: 1000,
-      requestTimeout: 5000,
-      maxRequestSize: 10 * 1024 * 1024, // 10MB
-      rateLimiting: {
-        enabled: true,
-        maxRequestsPerMinute: 1000,
-        burstSize: 50
+      timeout: 5000,
+      enableAuth: false,
+      enableTLS: false,
+      logLevel: LogLevel.ERROR,
+      options: {
+        requestSizeLimit: 10 * 1024 * 1024, // 10MB
       }
     };
 
@@ -179,7 +182,14 @@ describe('MCP Performance Tests', () => {
         await resourceManager.registerResource({
           uri: `file:///test/resource-${i}.txt`,
           name: `Resource ${i}`,
-          permissions: { read: true }
+          description: `Test resource ${i}`,
+          handler: {
+            read: async () => ({
+              uri: `file:///test/resource-${i}.txt`,
+              mimeType: 'text/plain',
+              content: `Test content for resource ${i}`
+            })
+          }
         });
       }
 
@@ -205,7 +215,14 @@ describe('MCP Performance Tests', () => {
           await resourceManager.registerResource({
             uri: `file:///test/${pattern}/resource-${i}.txt`,
             name: `${pattern} Resource ${i}`,
-            permissions: { read: true }
+            description: `${pattern} test resource ${i}`,
+            handler: {
+              read: async () => ({
+                uri: `file:///test/${pattern}/resource-${i}.txt`,
+                mimeType: 'text/plain',
+                content: `${pattern} content for resource ${i}`
+              })
+            }
           });
         }
       }
@@ -229,7 +246,14 @@ describe('MCP Performance Tests', () => {
       const resource = {
         uri: 'file:///test/cached-resource.txt',
         name: 'Cached Resource',
-        permissions: { read: true }
+        description: 'Resource for caching test',
+        handler: {
+          read: async () => ({
+            uri: 'file:///test/cached-resource.txt',
+            mimeType: 'text/plain',
+            content: 'Cached resource content'
+          })
+        }
       };
 
       await resourceManager.registerResource(resource);
@@ -266,10 +290,20 @@ describe('MCP Performance Tests', () => {
         }
       };
 
-      await toolEngine.registerTool(tool, async (params: any) => {
-        const duration = params.duration || 10;
-        await new Promise(resolve => setTimeout(resolve, duration));
-        return { result: `Completed after ${duration}ms` };
+      await server.registerTool({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        handler: {
+          execute: async (params: any) => {
+            const duration = params.duration || 10;
+            await new Promise(resolve => setTimeout(resolve, duration));
+            return { 
+              success: true,
+              result: `Completed after ${duration}ms` 
+            };
+          }
+        }
       });
 
       const concurrentExecutions = 50;
@@ -278,7 +312,7 @@ describe('MCP Performance Tests', () => {
       const startTime = performance.now();
 
       for (let i = 0; i < concurrentExecutions; i++) {
-        const execution = toolEngine.executeTool(tool.name, { duration: 10 });
+        const execution = server.executeTool(tool.name, { duration: 10 });
         executions.push(execution);
       }
 
@@ -306,15 +340,26 @@ describe('MCP Performance Tests', () => {
         }
       };
 
-      await toolEngine.registerTool(tool, async () => {
-        // This will take longer than the timeout
-        await new Promise(resolve => setTimeout(resolve, 200));
-        return { result: 'Should not complete' };
+      await server.registerTool({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        config: tool.config,
+        handler: {
+          execute: async () => {
+            // This will take longer than the timeout
+            await new Promise(resolve => setTimeout(resolve, 200));
+            return { 
+              success: true,
+              result: 'Should not complete' 
+            };
+          }
+        }
       });
 
       const startTime = performance.now();
       
-      await expect(toolEngine.executeTool(tool.name, {})).rejects.toThrow('timeout');
+      await expect(server.executeTool(tool.name, {})).rejects.toThrow('timeout');
       
       const executionTime = performance.now() - startTime;
 
@@ -338,21 +383,32 @@ describe('MCP Performance Tests', () => {
         }
       };
 
-      await toolEngine.registerTool(tool, async (params: any) => {
-        const size = params.arraySize || 1000000;
-        
-        // Create a large array (should be within memory limits)
-        const largeArray = new Array(size).fill(0).map((_, i) => ({ id: i, data: `item-${i}` }));
-        
-        return {
-          result: `Created array with ${largeArray.length} items`,
-          memoryUsage: process.memoryUsage().heapUsed
-        };
+      await server.registerTool({
+        name: tool.name,
+        description: tool.description,
+        inputSchema: tool.inputSchema,
+        config: tool.config,
+        handler: {
+          execute: async (params: any) => {
+            const size = params.arraySize || 1000000;
+            
+            // Create a large array (should be within memory limits)
+            const largeArray = new Array(size).fill(0).map((_, i) => ({ id: i, data: `item-${i}` }));
+            
+            return {
+              success: true,
+              result: `Created array with ${largeArray.length} items`,
+              data: {
+                memoryUsage: process.memoryUsage().heapUsed
+              }
+            };
+          }
+        }
       });
 
       const startMemory = process.memoryUsage().heapUsed;
       
-      const result = await toolEngine.executeTool(tool.name, { arraySize: 100000 });
+      const result = await server.executeTool(tool.name, { arraySize: 100000 });
       
       const endMemory = process.memoryUsage().heapUsed;
       const memoryDelta = endMemory - startMemory;
@@ -499,17 +555,30 @@ describe('MCP Performance Tests', () => {
         await resourceManager.registerResource({
           uri: `file:///scale-test/resource-${i}.txt`,
           name: `Scale Test Resource ${i}`,
-          permissions: { read: true }
+          description: `Scale test resource ${i}`,
+          handler: {
+            read: async () => ({
+              uri: `file:///scale-test/resource-${i}.txt`,
+              mimeType: 'text/plain',
+              content: `Scale test content for resource ${i}`
+            })
+          }
         });
       }
 
       // Register tools
       for (let i = 0; i < toolCount; i++) {
-        await toolEngine.registerTool({
+        await server.registerTool({
           name: `scale-test-tool-${i}`,
           description: `Scale test tool ${i}`,
-          inputSchema: { type: 'object' }
-        }, async () => ({ result: `Tool ${i} executed` }));
+          inputSchema: { type: 'object' },
+          handler: {
+            execute: async () => ({ 
+              success: true,
+              result: `Tool ${i} executed` 
+            })
+          }
+        });
       }
 
       console.log('Registration complete, testing performance...');

@@ -418,7 +418,7 @@ class ParallelStepExecutor implements StepExecutor {
     
     return {
       parallelResults,
-      summary: {
+      summary: unknown;
         total: parallelResults.length,
         succeeded: successCount,
         failed: failureCount,

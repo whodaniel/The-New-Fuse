@@ -54,8 +54,6 @@ export interface PaginatedResponse<T> { /** The list of items for the current pa
  * Common query parameters for fetching lists of entities();
  */
 export interface BaseQueryParameters {
-  // Implementation needed
-}
   /** Number of items to skip (for pagination). */
   skip?: number
   /** Number of items to take (for pagination). */

@@ -1,7 +1,5 @@
 // Multi-Agent Chat Configuration
 export interface LLMProviderConfig {
-  // Implementation needed
-}
   name: string;
   apiKey?: string;
   endpoint?: string;
@@ -9,9 +7,7 @@ export interface LLMProviderConfig {
 }
 
 export interface MultiAgentChatConfig {
-  // Implementation needed
-}
-  providers: {
+  providers: unknown;
   // Implementation needed
 }
     openai: LLMProviderConfig;
@@ -23,7 +19,7 @@ export interface MultiAgentChatConfig {
     openrouter: LLMProviderConfig;
     gemini: LLMProviderConfig;
   };
-  firebase: {
+  firebase: unknown;
   // Implementation needed
 }
     apiKey?: string;
@@ -36,7 +32,7 @@ export interface MultiAgentChatConfig {
   defaultProvider: string;
   maxConversationHistory: number;
   heartbeatInterval: number;
-  imageGeneration: {
+  imageGeneration: unknown;
   // Implementation needed
 }
     enabled: boolean;
@@ -48,10 +44,10 @@ export interface MultiAgentChatConfig {
 export const defaultConfig: MultiAgentChatConfig = {
   // Implementation needed
 }
-  providers: {
+  providers: unknown;
   // Implementation needed
 }
-    openai: {
+    openai: unknown;
   // Implementation needed
 }
       name: 'OpenAI GPT',
@@ -59,7 +55,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'gpt-4',
       apiKey: process.env.OPENAI_API_KEY
     },
-    anthropic: {
+    anthropic: unknown;
   // Implementation needed
 }
       name: 'Anthropic Claude',
@@ -67,7 +63,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'claude-3-sonnet-20240229',
       apiKey: process.env.ANTHROPIC_API_KEY
     },
-    cohere: {
+    cohere: unknown;
   // Implementation needed
 }
       name: 'Cohere',
@@ -75,7 +71,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'command-r-plus',
       apiKey: process.env.COHERE_API_KEY
     },
-    sambanova: {
+    sambanova: unknown;
   // Implementation needed
 }
       name: 'SambaNova',
@@ -83,7 +79,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'Meta-Llama-3.1-405B-Instruct',
       apiKey: process.env.SAMBANOVA_API_KEY
     },
-    deepseek: {
+    deepseek: unknown;
   // Implementation needed
 }
       name: 'DeepSeek',
@@ -91,7 +87,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'deepseek-chat',
       apiKey: process.env.DEEPSEEK_API_KEY
     },
-    mistral: {
+    mistral: unknown;
   // Implementation needed
 }
       name: 'Mistral',
@@ -99,7 +95,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'mistral-large-latest',
       apiKey: process.env.MISTRAL_API_KEY
     },
-    openrouter: {
+    openrouter: unknown;
   // Implementation needed
 }
       name: 'OpenRouter',
@@ -107,7 +103,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       model: 'meta-llama/llama-3.1-405b-instruct',
       apiKey: process.env.OPENROUTER_API_KEY
     },
-    gemini: {
+    gemini: unknown;
   // Implementation needed
 }
       name: 'Google Gemini',
@@ -116,7 +112,7 @@ export const defaultConfig: MultiAgentChatConfig = {
       apiKey: process.env.GEMINI_API_KEY
     }
   },
-  firebase: {
+  firebase: unknown;
   // Implementation needed
 }
     apiKey: process.env.FIREBASE_API_KEY,
@@ -129,7 +125,7 @@ export const defaultConfig: MultiAgentChatConfig = {
   defaultProvider: 'gemini',
   maxConversationHistory: 100,
   heartbeatInterval: 30000,
-  imageGeneration: {
+  imageGeneration: unknown;
   // Implementation needed
 }
     enabled: true,

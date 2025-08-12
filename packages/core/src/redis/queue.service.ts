@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
-export interface QueueTask<T = any> {
-  // Implementation needed
-}
+export interface QueueTask {
   id: string;
   type: string;
   data: T;
@@ -12,21 +10,15 @@ export interface QueueTask<T = any> {
 }
 
 export interface RedisService {
-  // Implementation needed
-}
   zadd(key: string, score: number, member: string): Promise<number>;
   zpopmax(key: string): Promise<string[]>;
 }
 
 @Injectable()
 export class QueueService {
-  // Implementation needed
-}
   constructor(private readonly redis: RedisService) {}
 
-  async enqueue(queueName: string, task: QueueTask, priority: number = 1): Promise<void> {
-  // Implementation needed
-}
+  async enqueue(): unknown {
     const taskStr = JSON.stringify({
   // Implementation needed
 }
@@ -39,22 +31,12 @@ export class QueueService {
   }
 
   async dequeue<T>(queueName: string): Promise<QueueTask<T> | null> {
-  // Implementation needed
-}
-    const result = await this.redis.zpopmax(queueName);
-    if (!result.length) return null;
-    return JSON.parse(result[0]);
-  }
-
-  async retry(queueName: string, task: QueueTask, retryPenalty: number = 0.5): Promise<void> {
-  // Implementation needed
-}
+const result = await this.redis.zpopmax(queueName);
+  }    if(): unknown {
     const newPriority = (task.priority || 1) * Math.pow(retryPenalty, task.retryCount || 0);
     await this.enqueue(queueName, {
-  // Implementation needed
-}
-      ...task,
-      retryCount(task.retryCount || 0) + 1
+...task,
+  }      retryCount(task.retryCount || 0) + 1
     }, newPriority);
   }
 }

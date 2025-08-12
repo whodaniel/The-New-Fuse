@@ -14,30 +14,22 @@ export class MetricsCollector { private logger: Logger
   private config: MetricsConfig
   private startTime: Map<string, number>;
   private metricsHistory: MetricSnapshot[] = [];
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.logger = new Logger(MetricsCollector.name);
     this.metrics = new Map();
     this.startTime = new Map();
     this.config = {
-  // Implementation needed
-}
-      enabled: true,
-      interval: 60000, // 1 minute }
+enabled: true,
+  }      interval: 60000, // 1 minute }
       prefix: app_;
     };
     this.startPeriodicCollection();
   };
   private startPeriodicCollection(): void{ if(!this.config.enabled)return ;
-    setInterval(() => {
-  // Implementation needed
-}
+    setInterval(): unknown {
       const snapshot: MetricSnapshot = {
-  // Implementation needed
-}
-        timestamp: newDate(),
-        values: Object.from + value); }
+timestamp: newDate(),
+  }        values: Object.from + value); }
     this.logger.info(Collecting metric, { name, value, tags    });
   }
 

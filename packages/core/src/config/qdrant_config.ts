@@ -38,10 +38,10 @@ export const defaultQdrantConfig: QdrantConfig = {
   batchSize: 100,
   memorySize: 64,
   payloadIndex: ['text', 'metadata'],
-  quantizationConfig: {
+  quantizationConfig: unknown;
   // Implementation needed
 }
-    scalar: {
+    scalar: unknown;
   // Implementation needed
 }
       type: 'int8',
@@ -51,8 +51,6 @@ export const defaultQdrantConfig: QdrantConfig = {
   }
 };
 export interface QdrantConnectionOptions {
-  // Implementation needed
-}
   host?: string;
   port?: number;
   https?: boolean;
@@ -61,8 +59,6 @@ export interface QdrantConnectionOptions {
 }
 
 export interface QdrantCollectionConfig {
-  // Implementation needed
-}
   name: string;
   vectorSize: number;
   distance: 'Cosine' | 'Euclid' | 'Dot';

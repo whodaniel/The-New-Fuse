@@ -676,6 +676,24 @@ export class MCPSystemFactory {
   }
 
   /**
+   * Create a simple MCP server for testing
+   * @deprecated Use createTestingSystem() instead for full system functionality
+   */
+  static createServer(config: MCPServerConfig): MCPServer {
+    const systemConfig: MCPSystemConfig = {
+      server: config,
+      development: {
+        hotReload: false,
+        debugMode: false,
+        mockServices: true
+      }
+    };
+    
+    const system = new MCPSystemImpl(systemConfig);
+    return system.server;
+  }
+
+  /**
    * Merge configuration objects deeply
    */
   private static mergeConfigs(

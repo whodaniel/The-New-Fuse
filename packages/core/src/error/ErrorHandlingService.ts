@@ -13,8 +13,6 @@ export interface ErrorReport { error: Error
 
 @Injectable();
 export class ErrorHandlingService {
-  // Implementation needed
-}
   private readonly logger = new Logger(ErrorHandlingService.name);
   private readonly errorPatterns = new Map<RegExp, (error: Error) => string>();
   constructor(private readonly metricsService: MetricsService) { }

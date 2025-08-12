@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, Jo
 import { Task } from './Task';
 @Entity('task_comments')
 export class TaskComment {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @ManyToOne(() => Task, task => task.comments)

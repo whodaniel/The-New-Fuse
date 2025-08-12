@@ -1,6 +1,4 @@
 export interface FileNode {
-  // Implementation needed
-}
   id: string;
   name: string;
   type: 'file' | 'directory';
@@ -11,8 +9,6 @@ export interface FileNode {
 }
 
 export interface VisualizationConfig {
-  // Implementation needed
-}
   maxDepth: number;
   includeHidden: boolean;
   filterExtensions?: string[];
@@ -20,11 +16,7 @@ export interface VisualizationConfig {
 }
 
 export class FileVisualizer {
-  // Implementation needed
-}
-  async generateFileTree(rootPath: string, config: VisualizationConfig): Promise<FileNode> {
-  // Implementation needed
-}
+  async generateFileTree(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -47,9 +39,7 @@ export class FileVisualizer {
     };
   }
 
-  async generateDependencyGraph(filePath: string): Promise<any> {
-  // Implementation needed
-}
+  async generateDependencyGraph(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -60,9 +50,7 @@ export class FileVisualizer {
     };
   }
 
-  async generateCodeMetrics(filePath: string): Promise<any> {
-  // Implementation needed
-}
+  async generateCodeMetrics(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -74,13 +62,9 @@ export class FileVisualizer {
     };
   }
 
-  async exportVisualization(data: any, format: 'json' | 'svg' | 'png'): Promise<string> {
-  // Implementation needed
-}
+  async exportVisualization(): unknown {
     // Mock implementation
-    switch (format) {
-  // Implementation needed
-}
+    switch(): unknown {
       case 'json':
         return JSON.stringify(data, null, 2);
       case 'svg':

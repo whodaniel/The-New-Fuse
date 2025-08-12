@@ -1,31 +1,19 @@
-export class StateTransferError extends Error {
-  // Implementation needed
-}
-    constructor(message: string) {
-  // Implementation needed
-}
+export class StateTransferError {
+    constructor(): unknown {
         super(message);
         this.name = 'StateTransferError';
     }
 }
 
-export class TaskExecutionError extends Error {
-  // Implementation needed
-}
-    constructor(message: string) {
-  // Implementation needed
-}
+export class TaskExecutionError {
+    constructor(): unknown {
         super(message);
         this.name = 'TaskExecutionError';
     }
 }
 
-export class ValidationError extends Error {
-  // Implementation needed
-}
-    constructor(message: string) {
-  // Implementation needed
-}
+export class ValidationError {
+    constructor(): unknown {
         super(message);
         this.name = 'ValidationError';
     }

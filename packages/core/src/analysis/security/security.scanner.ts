@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 export interface SecurityVulnerability {
-  // Implementation needed
-}
   type: 'xss' | 'injection' | 'crypto' | 'auth' | 'misc';
   severity: 'low' | 'medium' | 'high' | 'critical';
   title: string;
@@ -13,11 +11,9 @@ export interface SecurityVulnerability {
 }
 
 export interface SecurityScanResult {
-  // Implementation needed
-}
   vulnerabilities: SecurityVulnerability[];
   score: number;
-  summary: {
+  summary: unknown;
   // Implementation needed
 }
     critical: number;
@@ -29,8 +25,6 @@ export interface SecurityScanResult {
 
 @Injectable()
 export class SecurityScanner {
-  // Implementation needed
-}
   private readonly patterns = [
     {
   // Implementation needed
@@ -43,10 +37,8 @@ export class SecurityScanner {
       fix: 'Avoid using eval(). Use JSON.parse() for JSON data or safer alternatives.'
     },
     {
-  // Implementation needed
-}
-      type: 'xss' as const,
-      severity: 'medium' as const,
+type: 'xss' as const,
+  }      severity: 'medium' as const,
       pattern: /innerHTML\s*=/g,
       title: 'Direct innerHTML manipulation',
       description: 'Direct innerHTML manipulation can lead to XSS vulnerabilities',
@@ -83,24 +75,15 @@ export class SecurityScanner {
       fix: 'Use secure HTTP-only cookies or sessionStorage with proper encryption.'
     }
   ];
-  async scanFile(filePath: string, content: string): Promise<SecurityVulnerability[]> {
-  // Implementation needed
-}
+  async scanFile(): unknown {
     const vulnerabilities: SecurityVulnerability[] = [];
     try {
-  // Implementation needed
-}
       const lines = content.split('\n');
       this.patterns.forEach(pattern => {
-  // Implementation needed
-}
-        lines.forEach((line, lineIndex) => {
-  // Implementation needed
-}
+lines.forEach((line, lineIndex) => {
+  }}
           const matches = line.matchAll(pattern.pattern);
-          for (const match of matches) {
-  // Implementation needed
-}
+          for(): unknown {
             vulnerabilities.push({
   // Implementation needed
 }
@@ -117,31 +100,21 @@ export class SecurityScanner {
         });
       });
     } catch (error) {
-  // Implementation needed
-}
-      console.error('Error scanning file:', error);
-    }
+console.error('Error scanning file:', error);
+  }}
 
     return vulnerabilities;
   }
 
-  async scanProject(files: Map<string, string>): Promise<SecurityScanResult> {
-  // Implementation needed
-}
+  async scanProject(): unknown {
     const allVulnerabilities: SecurityVulnerability[] = [];
-    for (const [filePath, content] of files.entries()) {
-  // Implementation needed
-}
+    for(): unknown {
       try {
-  // Implementation needed
-}
-        const vulnerabilities = await this.scanFile(filePath, content);
+      const vulnerabilities = await this.scanFile(filePath, content);
         allVulnerabilities.push(...vulnerabilities);
       } catch (error) {
-  // Implementation needed
-}
-        console.error(`Error scanning ${filePath}:`, error);
-      }
+console.error(`Error scanning ${filePath}:`, error);
+  }}
     }
 
     const summary = this.calculateSummary(allVulnerabilities);
@@ -156,21 +129,16 @@ export class SecurityScanner {
   }
 
   private calculateSummary(vulnerabilities: SecurityVulnerability[]) {
-  // Implementation needed
-}
-    return vulnerabilities.reduce((acc, vuln) => {
-  // Implementation needed
-}
+return vulnerabilities.reduce((acc, vuln) => {
+  }}
       acc[vuln.severity]++;
       return acc;
     }, { critical: 0, high: 0, medium: 0, low: 0 });
   }
 
   private calculateSecurityScore(summary: ReturnType<typeof this.calculateSummary>): number {
-  // Implementation needed
-}
-    const weights = { critical: 20, high: 10, medium: 5, low: 1 };
-    const totalDeductions = summary.critical * weights.critical +
+const weights = { critical: 20, high: 10, medium: 5, low: 1 };
+  }    const totalDeductions = summary.critical * weights.critical +
                           summary.high * weights.high +
                           summary.medium * weights.medium +
                           summary.low * weights.low;

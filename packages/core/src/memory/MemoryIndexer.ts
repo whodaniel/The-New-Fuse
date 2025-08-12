@@ -2,8 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MemoryItem, MemoryQuery, SearchResult } from './MemoryTypes';
 import { createHash } from 'crypto';
 export interface IndexEntry {
-  // Implementation needed
-}
   id: string;
   content: string;
   metadata: Record<string, unknown>;
@@ -14,8 +12,6 @@ export interface IndexEntry {
 }
 
 export interface SearchOptions {
-  // Implementation needed
-}
   limit?: number;
   offset?: number;
   sortBy?: 'relevance' | 'timestamp' | 'importance';
@@ -24,29 +20,21 @@ export interface SearchOptions {
 
 @Injectable()
 export class MemoryIndexer {
-  // Implementation needed
-}
   private readonly logger = new Logger(MemoryIndexer.name);
   private readonly textIndex: Map<string, Set<string>> = new Map();
   private readonly metadataIndex: Map<string, Set<string>> = new Map();
   private readonly tagIndex: Map<string, Set<string>> = new Map();
   private readonly timestampIndex: Map<string, string> = new Map();
   private readonly similarityThreshold: number;
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.logger.log('Initializing MemoryIndexer');
     this.similarityThreshold = parseFloat(process.env.SIMILARITY_THRESHOLD || '0.8');
   }
 
-  async indexMemoryItem(item: MemoryItem): Promise<void> {
-  // Implementation needed
-}
+  async indexMemoryItem(): unknown {
     try {
-  // Implementation needed
-}
-      this.logger.debug(`Indexing memory item: ${item.id}`);
-      const indexEntry: IndexEntry = {
+this.logger.debug(`Indexing memory item: ${item.id}`);
+  }      const indexEntry: IndexEntry = {
   // Implementation needed
 }
         id: item.id,
@@ -67,52 +55,34 @@ export class MemoryIndexer {
       this.timestampIndex.set(indexEntry.id, indexEntry.timestamp.toString());
       this.logger.debug(`Successfully indexed memory item: ${item.id}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Failed to index memory item ${item.id}:`, error);
-      throw error;
+this.logger.error(`Failed to index memory item ${item.id}:`, error);
+  }      throw error;
     }
   }
 
-  async removeFromIndex(itemId: string): Promise<void> {
-  // Implementation needed
-}
+  async removeFromIndex(): unknown {
     try {
-  // Implementation needed
-}
       this.logger.debug(`Removing item from index: ${itemId}`);
       // Remove from text index
-      for (const [term, itemIds] of this.textIndex.entries()) {
-  // Implementation needed
-}
+      for(): unknown {
         itemIds.delete(itemId);
-        if (itemIds.size === 0) {
-  // Implementation needed
-}
+        if(): unknown {
           this.textIndex.delete(term);
         }
       }
 
       // Remove from metadata index
-      for (const [key, itemIds] of this.metadataIndex.entries()) {
-  // Implementation needed
-}
+      for(): unknown {
         itemIds.delete(itemId);
-        if (itemIds.size === 0) {
-  // Implementation needed
-}
+        if(): unknown {
           this.metadataIndex.delete(key);
         }
       }
 
       // Remove from tag index
-      for (const [tag, itemIds] of this.tagIndex.entries()) {
-  // Implementation needed
-}
+      for(): unknown {
         itemIds.delete(itemId);
-        if (itemIds.size === 0) {
-  // Implementation needed
-}
+        if(): unknown {
           this.tagIndex.delete(tag);
         }
       }
@@ -121,62 +91,46 @@ export class MemoryIndexer {
       this.timestampIndex.delete(itemId);
       this.logger.debug(`Successfully removed item from index: ${itemId}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error(`Failed to remove item from index ${itemId}:`, error);
-      throw error;
+this.logger.error(`Failed to remove item from index ${itemId}:`, error);
+  }      throw error;
     }
   }
 
-  async search(query: MemoryQuery, options: SearchOptions = {}): Promise<string[]> {
-  // Implementation needed
-}
+  async search(): unknown {
     try {
-  // Implementation needed
-}
       this.logger.debug('Executing search query');
       let candidateIds = new Set<string>();
       let isFirstConstraint = true;
       // Text search
-      if (query.text) {
-  // Implementation needed
-}
+      if(): unknown {
         const textCandidates = await this.searchText(query.text);
         candidateIds = isFirstConstraint ? textCandidates : this.intersectSets(candidateIds, textCandidates);
         isFirstConstraint = false;
       }
 
       // Tag search
-      if (query.tags && query.tags.length > 0) {
-  // Implementation needed
-}
+      if(): unknown {
         const tagCandidates = await this.searchTags(query.tags);
         candidateIds = isFirstConstraint ? tagCandidates : this.intersectSets(candidateIds, tagCandidates);
         isFirstConstraint = false;
       }
 
       // Metadata filters
-      if (query.filters) {
-  // Implementation needed
-}
+      if(): unknown {
         const metadataCandidates = await this.searchMetadata(query.filters);
         candidateIds = isFirstConstraint ? metadataCandidates : this.intersectSets(candidateIds, metadataCandidates);
         isFirstConstraint = false;
       }
 
       // Cluster filter
-      if (query.clusterId) {
-  // Implementation needed
-}
+      if(): unknown {
         const clusterCandidates = await this.searchByCluster(query.clusterId);
         candidateIds = isFirstConstraint ? clusterCandidates : this.intersectSets(candidateIds, clusterCandidates);
         isFirstConstraint = false;
       }
 
       // Date range filter
-      if (query.dateRange) {
-  // Implementation needed
-}
+      if(): unknown {
         const dateCandidates = await this.searchByDateRange(query.dateRange.start, query.dateRange.end);
         candidateIds = isFirstConstraint ? dateCandidates : this.intersectSets(candidateIds, dateCandidates);
         isFirstConstraint = false;
@@ -189,19 +143,13 @@ export class MemoryIndexer {
       this.logger.debug(`Found ${resultIds.length} candidates, returning ${Math.min(limit, resultIds.length - start)}`);
       return resultIds.slice(start, start + limit);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Search failed:', error);
-      throw error;
+this.logger.error('Search failed:', error);
+  }      throw error;
     }
   }
 
-  async reindex(items: MemoryItem[]): Promise<void> {
-  // Implementation needed
-}
+  async reindex(): unknown {
     try {
-  // Implementation needed
-}
       this.logger.log(`Reindexing ${items.length} memory items`);
       // Clear existing indices
       this.textIndex.clear();
@@ -209,32 +157,22 @@ export class MemoryIndexer {
       this.tagIndex.clear();
       this.timestampIndex.clear();
       // Reindex all items
-      for (const item of items) {
-  // Implementation needed
-}
+      for(): unknown {
         await this.indexMemoryItem(item);
       }
 
       this.logger.log('Reindexing completed successfully');
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Reindexing failed:', error);
-      throw error;
+this.logger.error('Reindexing failed:', error);
+  }      throw error;
     }
   }
 
   private async indexText(entry: IndexEntry): Promise<void> {
-  // Implementation needed
-}
-    const tokens = this.tokenize(entry.content);
-    for (const token of tokens) {
-  // Implementation needed
-}
+const tokens = this.tokenize(entry.content);
+  }    for(): unknown {
       const normalizedToken = token.toLowerCase();
-      if (!this.textIndex.has(normalizedToken)) {
-  // Implementation needed
-}
+      if(): unknown {
         this.textIndex.set(normalizedToken, new Set());
       }
       this.textIndex.get(normalizedToken)!.add(entry.id);
@@ -242,32 +180,18 @@ export class MemoryIndexer {
   }
 
   private async indexMetadata(entry: IndexEntry): Promise<void> {
-  // Implementation needed
-}
-    for (const [key, value] of Object.entries(entry.metadata)) {
-  // Implementation needed
-}
-      if (typeof value === 'string' || typeof value === 'number') {
-  // Implementation needed
-}
+for(): unknown {
+  }      if(): unknown {
         const indexKey = `${key}:${value}`;
-        if (!this.metadataIndex.has(indexKey)) {
-  // Implementation needed
-}
+        if(): unknown {
           this.metadataIndex.set(indexKey, new Set());
         }
         this.metadataIndex.get(indexKey)!.add(entry.id);
       } else if (typeof value === 'object' && value !== null) {
-  // Implementation needed
-}
-        // Handle nested objects
-        const flattenedKeys = this.flattenObject(value, key);
-        for (const flatKey of flattenedKeys) {
-  // Implementation needed
-}
-          if (!this.metadataIndex.has(flatKey)) {
-  // Implementation needed
-}
+// Handle nested objects
+  }        const flattenedKeys = this.flattenObject(value, key);
+        for(): unknown {
+          if(): unknown {
             this.metadataIndex.set(flatKey, new Set());
           }
           this.metadataIndex.get(flatKey)!.add(entry.id);
@@ -277,15 +201,9 @@ export class MemoryIndexer {
   }
 
   private async indexTags(entry: IndexEntry): Promise<void> {
-  // Implementation needed
-}
-    for (const tag of entry.tags) {
-  // Implementation needed
-}
-      const normalizedTag = tag.toLowerCase();
-      if (!this.tagIndex.has(normalizedTag)) {
-  // Implementation needed
-}
+for(): unknown {
+  }      const normalizedTag = tag.toLowerCase();
+      if(): unknown {
         this.tagIndex.set(normalizedTag, new Set());
       }
       this.tagIndex.get(normalizedTag)!.add(entry.id);
@@ -293,18 +211,12 @@ export class MemoryIndexer {
   }
 
   private async searchText(text: string): Promise<Set<string>> {
-  // Implementation needed
-}
-    const tokens = this.tokenize(text);
-    const candidateSets: Set<string>[] = [];
-    for (const token of tokens) {
-  // Implementation needed
-}
+const tokens = this.tokenize(text);
+  }    const candidateSets: Set<string>[] = [];
+    for(): unknown {
       const normalizedToken = token.toLowerCase();
       const itemIds = this.textIndex.get(normalizedToken);
-      if (itemIds) {
-  // Implementation needed
-}
+      if(): unknown {
         candidateSets.push(itemIds);
       }
     }
@@ -313,17 +225,11 @@ export class MemoryIndexer {
   }
 
   private async searchTags(tags: string[]): Promise<Set<string>> {
-  // Implementation needed
-}
-    const candidateSets: Set<string>[] = [];
-    for (const tag of tags) {
-  // Implementation needed
-}
+const candidateSets: Set<string>[] = [];
+  }    for(): unknown {
       const normalizedTag = tag.toLowerCase();
       const itemIds = this.tagIndex.get(normalizedTag);
-      if (itemIds) {
-  // Implementation needed
-}
+      if(): unknown {
         candidateSets.push(itemIds);
       }
     }
@@ -332,17 +238,11 @@ export class MemoryIndexer {
   }
 
   private async searchMetadata(filters: Record<string, unknown>): Promise<Set<string>> {
-  // Implementation needed
-}
-    const candidateSets: Set<string>[] = [];
-    for (const [key, value] of Object.entries(filters)) {
-  // Implementation needed
-}
+const candidateSets: Set<string>[] = [];
+  }    for(): unknown {
       const indexKey = `${key}:${value}`;
       const itemIds = this.metadataIndex.get(indexKey);
-      if (itemIds) {
-  // Implementation needed
-}
+      if(): unknown {
         candidateSets.push(itemIds);
       }
     }
@@ -351,23 +251,15 @@ export class MemoryIndexer {
   }
 
   private async searchByCluster(clusterId: string): Promise<Set<string>> {
-  // Implementation needed
-}
-    const indexKey = `clusterId:${clusterId}`;
-    return this.metadataIndex.get(indexKey) || new Set();
+const indexKey = `clusterId:${clusterId}`;
+  }    return this.metadataIndex.get(indexKey) || new Set();
   }
 
   private async searchByDateRange(start: number, end: number): Promise<Set<string>> {
-  // Implementation needed
-}
-    const candidates = new Set<string>();
-    for (const [itemId, timestamp] of this.timestampIndex.entries()) {
-  // Implementation needed
-}
+const candidates = new Set<string>();
+  }    for(): unknown {
       const ts = parseInt(timestamp, 10);
-      if (ts >= start && ts <= end) {
-  // Implementation needed
-}
+      if(): unknown {
         candidates.add(itemId);
       }
     }
@@ -376,47 +268,31 @@ export class MemoryIndexer {
   }
 
   private tokenize(text: string): string[] {
-  // Implementation needed
-}
-    return text
+return text
       .toLowerCase()
       .replace(/[^\w\s]/g, ' ')
       .split(/\s+/)
       .filter(token => token.length > 2);
-  }
+  }}
 
   private flattenObject(obj: any, prefix: string): string[] {
-  // Implementation needed
-}
-    const flattened: string[] = [];
-    for (const [key, value] of Object.entries(obj)) {
-  // Implementation needed
-}
+const flattened: string[] = [];
+  }    for(): unknown {
       const newKey = `${prefix}.${key}`;
-      if (typeof value === 'string' || typeof value === 'number') {
-  // Implementation needed
-}
+      if(): unknown {
         flattened.push(`${newKey}:${value}`);
       } else if (typeof value === 'object' && value !== null) {
-  // Implementation needed
-}
-        flattened.push(...this.flattenObject(value, newKey));
-      }
+flattened.push(...this.flattenObject(value, newKey));
+  }}
     }
     
     return flattened;
   }
 
   private intersectSets(set1: Set<string>, set2: Set<string>): Set<string> {
-  // Implementation needed
-}
-    const intersection = new Set<string>();
-    for (const item of set1) {
-  // Implementation needed
-}
-      if (set2.has(item)) {
-  // Implementation needed
-}
+const intersection = new Set<string>();
+  }    for(): unknown {
+      if(): unknown {
         intersection.add(item);
       }
     }
@@ -425,17 +301,8 @@ export class MemoryIndexer {
   }
 
   private intersectMultipleSets(sets: Set<string>[]): Set<string> {
-  // Implementation needed
-}
-    if (sets.length === 0) return new Set();
-    if (sets.length === 1) return sets[0];
-    return sets.reduce((acc, set) => this.intersectSets(acc, set));
-  }
-
-  getIndexStats(): {
-  // Implementation needed
-}
-    textTerms: number;
+if(): unknown {
+  }    textTerms: number;
     metadataKeys: number;
     tags: number;
     totalItems: number;

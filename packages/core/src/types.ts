@@ -1,6 +1,4 @@
 export interface Tool {
-  // Implementation needed
-}
   id: string;
   name: string;
   description: string;
@@ -9,8 +7,6 @@ export interface Tool {
 }
 
 export interface ToolParameter {
-  // Implementation needed
-}
   name: string;
   type: 'string' | 'number' | 'boolean' | 'array' | 'object';
   description?: string;
@@ -21,8 +17,6 @@ export interface ToolParameter {
 }
 
 export interface ToolExecutionResult {
-  // Implementation needed
-}
   id: string;
   toolId: string;
   parameters: any;
@@ -33,8 +27,6 @@ export interface ToolExecutionResult {
 }
 
 export interface ToolDefinition {
-  // Implementation needed
-}
   name: string;
   description: string;
   parameters: Record<string, any>;

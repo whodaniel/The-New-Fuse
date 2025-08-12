@@ -11,7 +11,7 @@ export abstract class BaseProcessor {
    * Logger instance for the processor. Should be initialized in the subclass constructor.
    * @protected
    */
-  protected readonly logger: Logger;
+  protected readonly logger!: Logger;
 
   constructor() {
     if (this.constructor === BaseProcessor) {

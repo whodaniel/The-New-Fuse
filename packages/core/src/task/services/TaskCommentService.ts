@@ -6,10 +6,8 @@ import { Task } from '../entities/Task';
 import { User } from '../../auth/entities/User';
 @Injectable()
 export class TaskCommentService {
-  // Implementation needed
-}
   private readonly logger = new Logger(TaskCommentService.name);
-  constructor(
+  constructor(): unknown {
     @InjectRepository(TaskComment)
     private readonly commentRepository: Repository<TaskComment>,
     @InjectRepository(Task)
@@ -18,42 +16,27 @@ export class TaskCommentService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async createComment(
-    taskId: string,
-    userId: string,
-    content: string,
-    parentId?: string,
-  ): Promise<TaskComment> {
-  // Implementation needed
-}
+  async createComment(): unknown {
     const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if (!task) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new NotFoundException(`Task ${taskId} not found`);
     }
 
     const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new NotFoundException(`User ${userId} not found`);
     }
 
     const comment = this.commentRepository.create({
-  // Implementation needed
-}
-      content,
-      task,
+content,
+  }      task,
       author: user,
       parentId,
     });
     return this.commentRepository.save(comment);
   }
 
-  async getCommentsByTask(taskId: string): Promise<TaskComment[]> {
-  // Implementation needed
-}
+  async getCommentsByTask(): unknown {
     return this.commentRepository.find({
   // Implementation needed
 }
@@ -63,28 +46,16 @@ export class TaskCommentService {
     });
   }
 
-  async updateComment(
-    commentId: string,
-    userId: string,
-    content: string,
-  ): Promise<TaskComment> {
-  // Implementation needed
-}
+  async updateComment(): unknown {
     const comment = await this.commentRepository.findOne({
-  // Implementation needed
-}
-      where: { id: commentId },
-      relations: ['author'],
+where: { id: commentId },
+  }      relations: ['author'],
     });
-    if (!comment) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new NotFoundException(`Comment ${commentId} not found`);
     }
 
-    if (comment.author.id !== userId) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('You can only edit your own comments');
     }
 
@@ -93,56 +64,38 @@ export class TaskCommentService {
     return this.commentRepository.save(comment);
   }
 
-  async deleteComment(commentId: string, userId: string): Promise<void> {
-  // Implementation needed
-}
+  async deleteComment(): unknown {
     const comment = await this.commentRepository.findOne({
-  // Implementation needed
-}
-      where: { id: commentId },
-      relations: ['author'],
+where: { id: commentId },
+  }      relations: ['author'],
     });
-    if (!comment) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new NotFoundException(`Comment ${commentId} not found`);
     }
 
-    if (comment.author.id !== userId) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('You can only delete your own comments');
     }
 
     await this.commentRepository.remove(comment);
   }
 
-  async getCommentById(commentId: string): Promise<TaskComment> {
-  // Implementation needed
-}
+  async getCommentById(): unknown {
     const comment = await this.commentRepository.findOne({
-  // Implementation needed
-}
-      where: { id: commentId },
-      relations: ['author', 'task', 'replies'],
+where: { id: commentId },
+  }      relations: ['author', 'task', 'replies'],
     });
-    if (!comment) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new NotFoundException(`Comment ${commentId} not found`);
     }
 
     return comment;
   }
 
-  async getCommentsByUser(userId: string): Promise<TaskComment[]> {
-  // Implementation needed
-}
+  async getCommentsByUser(): unknown {
     return this.commentRepository.find({
-  // Implementation needed
-}
-      where: { author: { id: userId } },
-      relations: ['task', 'author'],
+where: { author: { id: userId } },
+  }      relations: ['task', 'author'],
       order: { createdAt: 'DESC' },
     });
   }

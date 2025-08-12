@@ -1,46 +1,34 @@
 import { registerAs } from '@nestjs/config';
 import * as crypto from 'crypto';
 export default registerAs('security', () => {
-  // Implementation needed
-}
-  const jwtSecret = process.env.JWT_SECRET || generateSecretKey();
-  if (process.env.NODE_ENV === 'production' && !process.env.JWT_SECRET) {
-  // Implementation needed
-}
+const jwtSecret = process.env.JWT_SECRET || generateSecretKey();
+  }  if(): unknown {
     throw new Error('JWT_SECRET must be set in production environment');
   }
 
   return {
-  // Implementation needed
-}
-    jwt: {
-  // Implementation needed
-}
+jwt: unknown;
+  }}
       secret: jwtSecret,
       expiresIn: process.env.JWT_EXPIRES_IN || '1h',
       refreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || '7d'
     },
-    cors: {
+    cors: unknown;
   // Implementation needed
 }
       origin: getCorsOrigins(),
       credentials: true,
       optionsSuccessStatus: 200
     },
-    rateLimit: {
-  // Implementation needed
-}
-      windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-      max: parseInt(process.env.RATE_LIMIT_MAX || '100'), // limit each IP to 100 requests per windowMs
+    rateLimit: unknown;
+windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
+  }      max: parseInt(process.env.RATE_LIMIT_MAX || '100'), // limit each IP to 100 requests per windowMs
       message: 'Too many requests from this IP, please try again later'
     },
-    helmet: {
-  // Implementation needed
-}
-      contentSecurityPolicy: {
-  // Implementation needed
-}
-        directives: {
+    helmet: unknown;
+contentSecurityPolicy: unknown;
+  }}
+        directives: unknown;
   // Implementation needed
 }
           defaultSrc: ["'self'"],
@@ -52,7 +40,7 @@ export default registerAs('security', () => {
       },
       crossOriginEmbedderPolicy: false
     },
-    encryption: {
+    encryption: unknown;
   // Implementation needed
 }
       algorithm: 'aes-256-gcm',
@@ -60,13 +48,13 @@ export default registerAs('security', () => {
       ivLength: 16,
       tagLength: 16
     },
-    session: {
+    session: unknown;
   // Implementation needed
 }
       secret: process.env.SESSION_SECRET || jwtSecret,
       resave: false,
       saveUninitialized: false,
-      cookie: {
+      cookie: unknown;
   // Implementation needed
 }
         secure: process.env.NODE_ENV === 'production',
@@ -74,28 +62,26 @@ export default registerAs('security', () => {
         maxAge: parseInt(process.env.SESSION_MAX_AGE || '86400000') // 24 hours
       }
     },
-    bcrypt: {
-  // Implementation needed
-}
-      saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '12')
+    bcrypt: unknown;
+saltRounds: parseInt(process.env.BCRYPT_SALT_ROUNDS || '12')
     },
-    apiKeys: {
+  }    apiKeys: unknown;
   // Implementation needed
 }
       headerName: 'x-api-key',
       validKeys: process.env.API_KEYS?.split(',') || []
     },
-    oauth: {
+    oauth: unknown;
   // Implementation needed
 }
-      google: {
+      google: unknown;
   // Implementation needed
 }
         clientId: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
         callbackUrl: process.env.GOOGLE_CALLBACK_URL
       },
-      github: {
+      github: unknown;
   // Implementation needed
 }
         clientId: process.env.GITHUB_CLIENT_ID,
@@ -106,24 +92,16 @@ export default registerAs('security', () => {
   };
 });
 function generateSecretKey(): string {
-  // Implementation needed
-}
-  return crypto.randomBytes(32).toString('hex');
-}
+return crypto.randomBytes(32).toString('hex');
+  }}
 
 function getCorsOrigins(): string[] | boolean {
-  // Implementation needed
-}
-  const origins = process.env.CORS_ORIGINS;
-  if (!origins) {
-  // Implementation needed
-}
+const origins = process.env.CORS_ORIGINS;
+  }  if(): unknown {
     return process.env.NODE_ENV === 'development';
   }
   
-  if (origins === '*') {
-  // Implementation needed
-}
+  if(): unknown {
     return true;
   }
   
@@ -131,40 +109,38 @@ function getCorsOrigins(): string[] | boolean {
 }
 
 export interface SecurityConfig {
-  // Implementation needed
-}
-  jwt: {
+  jwt: unknown;
   // Implementation needed
 }
     secret: string;
     expiresIn: string;
     refreshExpiresIn: string;
   };
-  cors: {
+  cors: unknown;
   // Implementation needed
 }
     origin: string[] | boolean;
     credentials: boolean;
     optionsSuccessStatus: number;
   };
-  rateLimit: {
+  rateLimit: unknown;
   // Implementation needed
 }
     windowMs: number;
     max: number;
     message: string;
   };
-  helmet: {
+  helmet: unknown;
   // Implementation needed
 }
-    contentSecurityPolicy: {
+    contentSecurityPolicy: unknown;
   // Implementation needed
 }
       directives: Record<string, string[]>;
     };
     crossOriginEmbedderPolicy: boolean;
   };
-  encryption: {
+  encryption: unknown;
   // Implementation needed
 }
     algorithm: string;
@@ -172,13 +148,13 @@ export interface SecurityConfig {
     ivLength: number;
     tagLength: number;
   };
-  session: {
+  session: unknown;
   // Implementation needed
 }
     secret: string;
     resave: boolean;
     saveUninitialized: boolean;
-    cookie: {
+    cookie: unknown;
   // Implementation needed
 }
       secure: boolean;
@@ -186,28 +162,28 @@ export interface SecurityConfig {
       maxAge: number;
     };
   };
-  bcrypt: {
+  bcrypt: unknown;
   // Implementation needed
 }
     saltRounds: number;
   };
-  apiKeys: {
+  apiKeys: unknown;
   // Implementation needed
 }
     headerName: string;
     validKeys: string[];
   };
-  oauth: {
+  oauth: unknown;
   // Implementation needed
 }
-    google: {
+    google: unknown;
   // Implementation needed
 }
       clientId?: string;
       clientSecret?: string;
       callbackUrl?: string;
     };
-    github: {
+    github: unknown;
   // Implementation needed
 }
       clientId?: string;

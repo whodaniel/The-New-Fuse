@@ -61,7 +61,7 @@ export interface Agent {
 export interface AgentPerformance {
   averageTaskTime: number;
   successRate: number;
-  resourceUtilization: {
+  resourceUtilization: unknown;
     memory: number;
     cpu: number;
     storage: number;

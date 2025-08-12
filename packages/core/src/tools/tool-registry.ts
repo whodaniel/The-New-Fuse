@@ -2,8 +2,6 @@ import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import { Tool, ToolExecutionResult, ToolParameter } from '../types';
 export interface ToolRegistryEvents {
-  // Implementation needed
-}
   'tool:registered': (tool: Tool) => void;
   'tool:executing': (toolId: string, parameters: any) => void;
   'tool:executed': (toolId: string, result: ToolExecutionResult) => void;
@@ -11,17 +9,11 @@ export interface ToolRegistryEvents {
   'tool:unregistered': (toolId: string) => void;
 }
 
-export class ToolRegistry extends EventEmitter {
-  // Implementation needed
-}
+export class ToolRegistry {
   private tools = new Map<string, Tool>();
   private executions = new Map<string, ToolExecutionResult>();
-  register(tool: Tool): void {
-  // Implementation needed
-}
-    if (this.tools.has(tool.id)) {
-  // Implementation needed
-}
+  register(): unknown {
+    if(): unknown {
       throw new Error(`Tool with id ${tool.id} already registered`);
     }
     
@@ -29,12 +21,8 @@ export class ToolRegistry extends EventEmitter {
     this.emit('tool:registered', tool);
   }
 
-  unregister(toolId: string): void {
-  // Implementation needed
-}
-    if (!this.tools.has(toolId)) {
-  // Implementation needed
-}
+  unregister(): unknown {
+    if(): unknown {
       throw new Error(`Tool with id ${toolId} not found`);
     }
     
@@ -42,25 +30,17 @@ export class ToolRegistry extends EventEmitter {
     this.emit('tool:unregistered', toolId);
   }
 
-  get(toolId: string): Tool | undefined {
-  // Implementation needed
-}
+  get(): unknown {
     return this.tools.get(toolId);
   }
 
-  getAll(): Tool[] {
-  // Implementation needed
-}
+  getAll(): unknown {
     return Array.from(this.tools.values());
   }
 
-  async execute(toolId: string, parameters: any): Promise<ToolExecutionResult> {
-  // Implementation needed
-}
+  async execute(): unknown {
     const tool = this.tools.get(toolId);
-    if (!tool) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`Tool with id ${toolId} not found`);
     }
 
@@ -68,10 +48,8 @@ export class ToolRegistry extends EventEmitter {
     const executionId = uuidv4();
     this.emit('tool:executing', toolId, parameters);
     try {
-  // Implementation needed
-}
-      const result = await tool.execute(parameters);
-      const executionResult: ToolExecutionResult = {
+const result = await tool.execute(parameters);
+  }      const executionResult: ToolExecutionResult = {
   // Implementation needed
 }
         id: executionId,
@@ -85,11 +63,8 @@ export class ToolRegistry extends EventEmitter {
       this.emit('tool:executed', toolId, executionResult);
       return executionResult;
     } catch (error) {
-  // Implementation needed
-}
-      const executionResult: ToolExecutionResult = {
-  // Implementation needed
-}
+const executionResult: ToolExecutionResult = {
+  }}
         id: executionId,
         toolId,
         parameters,
@@ -103,82 +78,54 @@ export class ToolRegistry extends EventEmitter {
     }
   }
 
-  getExecution(executionId: string): ToolExecutionResult | undefined {
-  // Implementation needed
-}
+  getExecution(): unknown {
     return this.executions.get(executionId);
   }
 
   private validateParameters(parameters: ToolParameter[], values: any): void {
-  // Implementation needed
-}
-    if (!parameters || parameters.length === 0) {
-  // Implementation needed
-}
-      return;
+if(): unknown {
+  }      return;
     }
 
-    for (const param of parameters) {
-  // Implementation needed
-}
+    for(): unknown {
       const value = values[param.name];
-      if (param.required && (value === undefined || value === null)) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error(`Parameter ${param.name} is required`);
       }
 
-      if (value !== undefined && value !== null) {
-  // Implementation needed
-}
+      if(): unknown {
         this.validateParameterType(param.name, value, param);
       }
     }
   }
 
   private validateParameterType(name: string, value: any, parameter: ToolParameter): void {
-  // Implementation needed
-}
-    switch (parameter.type) {
-  // Implementation needed
-}
-      case 'string':
-        if (typeof value !== 'string') {
-  // Implementation needed
-}
+switch(): unknown {
+  }      case 'string':
+        if(): unknown {
           throw new Error(`Parameter ${name} must be a string`);
         }
-        if (parameter.enum && !parameter.enum.includes(value)) {
-  // Implementation needed
-}
+        if(): unknown {
           throw new Error(`Parameter ${name} must be one of: ${parameter.enum.join(', ')}`);
         }
         break;
       case 'number':
-        if (typeof value !== 'number') {
-  // Implementation needed
-}
+        if(): unknown {
           throw new Error(`Parameter ${name} must be a number`);
         }
         break;
       case 'boolean':
-        if (typeof value !== 'boolean') {
-  // Implementation needed
-}
+        if(): unknown {
           throw new Error(`Parameter ${name} must be a boolean`);
         }
         break;
       case 'array':
-        if (!Array.isArray(value)) {
-  // Implementation needed
-}
+        if(): unknown {
           throw new Error(`Parameter ${name} must be an array`);
         }
         break;
       case 'object':
-        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
-  // Implementation needed
-}
+        if(): unknown {
           throw new Error(`Parameter ${name} must be an object`);
         }
         break;

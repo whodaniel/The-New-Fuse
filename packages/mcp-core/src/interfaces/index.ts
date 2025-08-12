@@ -59,6 +59,24 @@ export type {
   MCPConnection,
   IConnectionManager
 } from './IMCPConnection';
+export type { 
+  IMessageRouter,
+  EventCallback
+} from './IMessageRouter';
+export type {
+  IMCPWorkflowIntegration,
+  WorkflowStep,
+  WorkflowContext,
+  StepResult,
+  Task,
+  TaskResult,
+  ExecutionStatus,
+  MCPCallback,
+  TaskExecutionStatus,
+  AuthContext,
+  ErrorRecoveryConfig,
+  MonitoringConfig
+} from './IMCPWorkflowIntegration';
 
 // Export AccessControlEntry from one source to avoid conflicts
 export type { AccessControlEntry } from './IMCPResource';

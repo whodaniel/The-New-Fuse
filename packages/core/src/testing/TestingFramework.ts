@@ -4,31 +4,21 @@ import { TestRunner } from './TestRunner';
 import { TestConfiguration, TestSuite, TestResult } from './types';
 @Injectable()
 export class TestingFramework {
-  // Implementation needed
-}
   private testRunner: TestRunner;
   private testDataGenerator: TestDataGenerator;
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.testRunner = new TestRunner();
     this.testDataGenerator = new TestDataGenerator();
   }
 
-  async runSuite(suite: TestSuite, config?: TestConfiguration): Promise<Map<string, TestResult[]>> {
-  // Implementation needed
-}
+  async runSuite(): unknown {
     const results = new Map<string, TestResult[]>();
     const suiteResults: TestResult[] = [];
-    for (const test of suite.tests) {
-  // Implementation needed
-}
+    for(): unknown {
       const startTime = Date.now();
       try {
-  // Implementation needed
-}
-        const success = await this.executeTest(test, config);
-        const duration = Date.now() - startTime;
+const success = await this.executeTest(test, config);
+  }        const duration = Date.now() - startTime;
         suiteResults.push({
   // Implementation needed
 }
@@ -37,10 +27,8 @@ export class TestingFramework {
           duration
         });
       } catch (error) {
-  // Implementation needed
-}
-        const duration = Date.now() - startTime;
-        suiteResults.push({
+const duration = Date.now() - startTime;
+  }        suiteResults.push({
   // Implementation needed
 }
           name: test.name || 'Unnamed test',
@@ -55,17 +43,11 @@ export class TestingFramework {
     return results;
   }
 
-  async runSuites(suites: TestSuite[], config?: TestConfiguration): Promise<Map<string, TestResult[]>> {
-  // Implementation needed
-}
+  async runSuites(): unknown {
     const allResults = new Map<string, TestResult[]>();
-    for (const suite of suites) {
-  // Implementation needed
-}
+    for(): unknown {
       const suiteResults = await this.runSuite(suite, config);
-      for (const [suiteName, results] of suiteResults.entries()) {
-  // Implementation needed
-}
+      for(): unknown {
         allResults.set(suiteName, results);
       }
     }
@@ -74,36 +56,24 @@ export class TestingFramework {
   }
 
   private async executeTest(test() => Promise<boolean> | boolean, config?: TestConfiguration): Promise<boolean> {
-  // Implementation needed
-}
-    const timeout = config?.timeout || 5000;
-    const retries = config?.retries || 0;
-    for (let attempt = 0; attempt <= retries; attempt++) {
-  // Implementation needed
-}
+const timeout = config?.timeout || 5000;
+  }    const retries = config?.retries || 0;
+    for(): unknown {
       try {
-  // Implementation needed
-}
-        const result = await Promise.race([
+      const result = await Promise.race([
           test(),
           new Promise<never>((_, reject) => 
             setTimeout(() => reject(new Error(`Test timeout after ${timeout}ms`)), timeout)
           )
         ]);
-        if (typeof result === 'boolean') {
-  // Implementation needed
-}
+        if(): unknown {
           return result;
         }
         
         throw new Error('Test must return a boolean value');
       } catch (error) {
-  // Implementation needed
-}
-        if (attempt === retries) {
-  // Implementation needed
-}
-          throw error;
+if(): unknown {
+  }          throw error;
         }
         
         // Wait before retry
@@ -114,20 +84,14 @@ export class TestingFramework {
     return false;
   }
 
-  generateTestData(schema: any): any {
-  // Implementation needed
-}
+  generateTestData(): unknown {
     return this.testDataGenerator.generate(schema);
   }
 
-  createSuite(name: string, tests: Array<() => Promise<boolean> | boolean>): TestSuite {
-  // Implementation needed
-}
+  createSuite(): unknown {
     return {
-  // Implementation needed
-}
-      name,
-      tests
+name,
+  }      tests
     };
   }
 }

@@ -3,22 +3,16 @@ import { Logger } from '../utils/logger';
 import { MCPMessage, MCPCapability, ProtocolVersion } from './types';
 @Injectable()
 export class MCPAgentServer {
-  // Implementation needed
-}
   private logger = new Logger('MCPAgentServer');
   private capabilities: Set<MCPCapability> = new Set();
   private protocolVersion: ProtocolVersion = '2024-11-05';
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.initializeCapabilities();
   }
 
   private initializeCapabilities(): void {
-  // Implementation needed
-}
-    const features = new Set<string>();
-    features.add('header-body-structure');
+const features = new Set<string>();
+  }    features.add('header-body-structure');
     features.add('streaming');
     features.add('encryption');
     features.add('capability-discovery');
@@ -28,16 +22,10 @@ export class MCPAgentServer {
     this.capabilities = new Set(Array.from(features) as MCPCapability[]);
   }
 
-  async handleMessage(message: MCPMessage): Promise<MCPMessage | void> {
-  // Implementation needed
-}
+  async handleMessage(): unknown {
     try {
-  // Implementation needed
-}
-      switch (message.method) {
-  // Implementation needed
-}
-        case 'initialize':
+switch(): unknown {
+  }        case 'initialize':
           return this.handleInitialize(message);
         case 'ping':
           return this.handlePing(message);
@@ -50,7 +38,7 @@ export class MCPAgentServer {
 }
             jsonrpc: '2.0',
             id: message.id,
-            error: {
+            error: unknown;
   // Implementation needed
 }
               code: -32601,
@@ -59,15 +47,13 @@ export class MCPAgentServer {
           };
       }
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Error handling message:', error);
-      return {
+this.logger.error('Error handling message:', error);
+  }      return {
   // Implementation needed
 }
         jsonrpc: '2.0',
         id: message.id,
-        error: {
+        error: unknown;
   // Implementation needed
 }
           code: -32603,
@@ -78,19 +64,16 @@ export class MCPAgentServer {
   }
 
   private handleInitialize(message: MCPMessage): MCPMessage {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       jsonrpc: '2.0',
       id: message.id,
-      result: {
+      result: unknown;
   // Implementation needed
 }
         protocolVersion: this.protocolVersion,
         capabilities: Array.from(this.capabilities),
-        serverInfo: {
+        serverInfo: unknown;
   // Implementation needed
 }
           name: 'TNF MCP Agent Server',
@@ -101,11 +84,8 @@ export class MCPAgentServer {
   }
 
   private handlePing(message: MCPMessage): MCPMessage {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       jsonrpc: '2.0',
       id: message.id,
       result: { status: 'pong' }
@@ -113,14 +93,11 @@ export class MCPAgentServer {
   }
 
   private handleListCapabilities(message: MCPMessage): MCPMessage {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       jsonrpc: '2.0',
       id: message.id,
-      result: {
+      result: unknown;
   // Implementation needed
 }
         capabilities: Array.from(this.capabilities)
@@ -128,23 +105,17 @@ export class MCPAgentServer {
     };
   }
 
-  addCapability(capability: MCPCapability): void {
-  // Implementation needed
-}
+  addCapability(): unknown {
     this.capabilities.add(capability);
     this.logger.info(`Added capability: ${capability}`);
   }
 
-  removeCapability(capability: MCPCapability): void {
-  // Implementation needed
-}
+  removeCapability(): unknown {
     this.capabilities.delete(capability);
     this.logger.info(`Removed capability: ${capability}`);
   }
 
-  getCapabilities(): MCPCapability[] {
-  // Implementation needed
-}
+  getCapabilities(): unknown {
     return Array.from(this.capabilities);
   }
 }

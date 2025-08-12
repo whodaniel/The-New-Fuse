@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { MemoryItem, MemoryQuery, SearchResult } from './MemoryTypes';
 export interface MemoryStore {
-  // Implementation needed
-}
   store(item: MemoryItem): Promise<void>;
   retrieve(id: string): Promise<MemoryItem | null>;
   query(query: MemoryQuery): Promise<MemoryItem[]>;
@@ -11,47 +9,31 @@ export interface MemoryStore {
 }
 
 @Injectable()
-export class InMemoryStore implements MemoryStore {
-  // Implementation needed
-}
+export class InMemoryStore {
   private readonly logger = new Logger(InMemoryStore.name);
   private readonly items: Map<string, MemoryItem> = new Map();
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.logger.log('InMemoryStore initialized');
   }
 
-  async store(item: MemoryItem): Promise<void> {
-  // Implementation needed
-}
+  async store(): unknown {
     this.items.set(item.id, item);
     this.logger.debug(`Stored memory item: ${item.id}`);
   }
 
-  async retrieve(id: string): Promise<MemoryItem | null> {
-  // Implementation needed
-}
+  async retrieve(): unknown {
     const item = this.items.get(id);
-    if (item) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.debug(`Retrieved memory item: ${id}`);
       return item;
     }
     return null;
   }
 
-  async query(query: MemoryQuery): Promise<MemoryItem[]> {
-  // Implementation needed
-}
+  async query(): unknown {
     const results: MemoryItem[] = [];
-    for (const item of this.items.values()) {
-  // Implementation needed
-}
-      if (this.matchesQuery(item, query)) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         results.push(item);
       }
     }
@@ -59,101 +41,68 @@ export class InMemoryStore implements MemoryStore {
     // Sort by timestamp (most recent first)
     results.sort((a, b) => b.timestamp - a.timestamp);
     // Apply limit if specified
-    if (query.limit) {
-  // Implementation needed
-}
+    if(): unknown {
       return results.slice(0, query.limit);
     }
     
     return results;
   }
 
-  async delete(id: string): Promise<void> {
-  // Implementation needed
-}
-    if (this.items.delete(id)) {
-  // Implementation needed
-}
+  async delete(): unknown {
+    if(): unknown {
       this.logger.debug(`Deleted memory item: ${id}`);
     }
   }
 
-  async clear(): Promise<void> {
-  // Implementation needed
-}
+  async clear(): unknown {
     this.items.clear();
     this.logger.debug('Cleared all memory items');
   }
 
-  async getStats(): Promise<{
-  // Implementation needed
-}
+  async getStats(): unknown {
     totalItems: number;
     memoryUsage: string;
   }> {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       totalItems: this.items.size,
       memoryUsage: this.formatBytes(this.items.size * 1024), // Rough estimate
     };
   }
 
   private matchesQuery(item: MemoryItem, query: MemoryQuery): boolean {
-  // Implementation needed
-}
-    // Text search
-    if (query.text && !item.content.toLowerCase().includes(query.text.toLowerCase())) {
-  // Implementation needed
-}
+// Text search
+  }    if(): unknown {
       return false;
     }
 
     // Metadata filters
-    if (query.filters) {
-  // Implementation needed
-}
-      for (const [key, value] of Object.entries(query.filters)) {
-  // Implementation needed
-}
-        if (item.metadata[key] !== value) {
-  // Implementation needed
-}
+    if(): unknown {
+      for(): unknown {
+        if(): unknown {
           return false;
         }
       }
     }
 
     // Tag filters
-    if (query.tags && query.tags.length > 0) {
-  // Implementation needed
-}
+    if(): unknown {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if (!hasAllTags) {
-  // Implementation needed
-}
+      if(): unknown {
         return false;
       }
     }
 
     // Cluster filter
-    if (query.clusterId && item.clusterId !== query.clusterId) {
-  // Implementation needed
-}
+    if(): unknown {
       return false;
     }
 
     // Date range filter
-    if (query.dateRange) {
-  // Implementation needed
-}
+    if(): unknown {
       const itemTime = item.timestamp;
-      if (itemTime < query.dateRange.start || itemTime > query.dateRange.end) {
-  // Implementation needed
-}
+      if(): unknown {
         return false;
       }
     }
@@ -162,10 +111,8 @@ export class InMemoryStore implements MemoryStore {
   }
 
   private formatBytes(bytes: number): string {
-  // Implementation needed
-}
-    if (bytes === 0) return '0 B';
-    const sizes = ['B', 'KB', 'MB', 'GB'];
+if (bytes === 0) return '0 B';
+  }    const sizes = ['B', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(1024));
     return Math.round(bytes / Math.pow(1024, i) * 100) / 100 + ' ' + sizes[i];
   }

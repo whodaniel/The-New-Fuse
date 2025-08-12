@@ -1,25 +1,17 @@
 import { Injectable } from '@nestjs/common';
 @Injectable()
 export class MetricsService {
-  // Implementation needed
-}
-  async collectMetric(name: string, value: number, tags?: Record<string, string>): Promise<void> {
-  // Implementation needed
-}
+  async collectMetric(): unknown {
     // Mock implementation
     console.log(`Metric collected: ${name} = ${value}`);
   }
 
-  async getMetrics(name: string, timeRange?: { start: Date; end: Date }): Promise<any> {
-  // Implementation needed
-}
+  async getMetrics(): unknown {
     // Mock implementation
     return { message: 'Metrics retrieval not implemented' };
   }
 
-  async getSystemMetrics(): Promise<any> {
-  // Implementation needed
-}
+  async getSystemMetrics(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -31,9 +23,7 @@ export class MetricsService {
     };
   }
 
-  async getApplicationMetrics(): Promise<any> {
-  // Implementation needed
-}
+  async getApplicationMetrics(): unknown {
     // Mock implementation
     return {
   // Implementation needed
@@ -45,9 +35,7 @@ export class MetricsService {
     };
   }
 
-  async generateReport(timeRange: { start: Date; end: Date }): Promise<any> {
-  // Implementation needed
-}
+  async generateReport(): unknown {
     // Mock implementation
     return { message: 'Metrics report not implemented' };
   }

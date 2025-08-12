@@ -1,6 +1,4 @@
 export enum ErrorSeverity {
-  // Implementation needed
-}
   LOW = 'placeholder';
 CRITICAL= 'placeholder';
  VALIDATION= 'placeholder';

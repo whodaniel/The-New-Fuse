@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { CommunicationService } from './CommunicationService';
 import { MessageType } from './CommunicationTypes';
 export interface AgentMessage {
-  // Implementation needed
-}
   id: string;
   agentId: string;
   content: string;
@@ -12,8 +10,6 @@ export interface AgentMessage {
 }
 
 export interface AgentResponse {
-  // Implementation needed
-}
   message: string;
   confidence: number;
   actions?: string[];
@@ -21,13 +17,9 @@ export interface AgentResponse {
 
 @Injectable()
 export class EnhancedAgent {
-  // Implementation needed
-}
   constructor(private communicationService: CommunicationService) {}
 
-  async processMessage(message: AgentMessage): Promise<AgentResponse> {
-  // Implementation needed
-}
+  async processMessage(): unknown {
     // Basic message processing logic
     const response: AgentResponse = {
   // Implementation needed
@@ -46,9 +38,7 @@ export class EnhancedAgent {
     return response;
   }
 
-  async broadcastStatus(agentId: string, status: string): Promise<void> {
-  // Implementation needed
-}
+  async broadcastStatus(): unknown {
     await this.communicationService.broadcastMessage(
       agentId,
       'agent_status',

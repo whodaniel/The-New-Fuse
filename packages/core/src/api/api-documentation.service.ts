@@ -3,8 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
 export interface ApiDocumentationConfig {
-  // Implementation needed
-}
   enabled: boolean;
   title: string;
   description: string;
@@ -17,19 +15,13 @@ export interface ApiDocumentationConfig {
 }
 
 @Injectable()
-export class ApiDocumentationService implements OnModuleInit {
-  // Implementation needed
-}
+export class ApiDocumentationService {
   private readonly logger = new Logger(ApiDocumentationService.name);
   private config: ApiDocumentationConfig;
-  constructor(private readonly configService: ConfigService) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.config = {
-  // Implementation needed
-}
-      enabled: this.configService.get<boolean>('api.documentation.enabled', true),
-      title: this.configService.get<string>('api.documentation.title', 'API Documentation'),
+enabled: this.configService.get<boolean>('api.documentation.enabled', true),
+  }      title: this.configService.get<string>('api.documentation.title', 'API Documentation'),
       description: this.configService.get<string>('api.documentation.description', 'API Documentation'),
       version: this.configService.get<string>('api.documentation.version', '1.0.0'),
       basePath: this.configService.get<string>('api.documentation.basePath', '/api'),
@@ -40,7 +32,7 @@ export class ApiDocumentationService implements OnModuleInit {
       securitySchemes: this.configService.get<Record<string, any>>('api.documentation.securitySchemes', {
   // Implementation needed
 }
-        bearerAuth: {
+        bearerAuth: unknown;
   // Implementation needed
 }
           type: 'http',
@@ -51,12 +43,8 @@ export class ApiDocumentationService implements OnModuleInit {
     };
   }
 
-  async onModuleInit() {
-  // Implementation needed
-}
-    if (!this.config.enabled) {
-  // Implementation needed
-}
+  async onModuleInit(): unknown {
+    if(): unknown {
       this.logger.info('API documentation generation is disabled');
       return;
     }
@@ -65,14 +53,10 @@ export class ApiDocumentationService implements OnModuleInit {
     await this.generateDocumentation();
   }
 
-  async generateDocumentation(): Promise<string> {
-  // Implementation needed
-}
+  async generateDocumentation(): unknown {
     try {
-  // Implementation needed
-}
-      const outputPath = path.join(this.config.outputPath, 'openapi.json');
-      const documentation = this.buildOpenApiSpec();
+const outputPath = path.join(this.config.outputPath, 'openapi.json');
+  }      const documentation = this.buildOpenApiSpec();
       // Ensure output directory exists
       await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
       // Write documentation to file
@@ -80,22 +64,14 @@ export class ApiDocumentationService implements OnModuleInit {
       this.logger.info(`API documentation generated successfully: ${outputPath}`);
       return outputPath;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to generate API documentation', error);
-      throw error;
+this.logger.error('Failed to generate API documentation', error);
+  }      throw error;
     }
   }
 
-  async generateVersionedDocumentation(versions: string[]): Promise<void> {
-  // Implementation needed
-}
+  async generateVersionedDocumentation(): unknown {
     try {
-  // Implementation needed
-}
-      for (const version of versions) {
-  // Implementation needed
-}
+      for(): unknown {
         const outputPath = path.join(this.config.outputPath, `openapi-${version}.json`);
         const documentation = this.buildOpenApiSpec(version);
         await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
@@ -104,34 +80,29 @@ export class ApiDocumentationService implements OnModuleInit {
       
       this.logger.info(`Generated versioned OpenAPI documentation for versions: ${versions.join(', ')}`);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to generate versioned API documentation', error);
-      throw error;
+this.logger.error('Failed to generate versioned API documentation', error);
+  }      throw error;
     }
   }
 
   private buildOpenApiSpec(version?: string): any {
-  // Implementation needed
-}
-    return {
-  // Implementation needed
-}
+return {
+  }}
       openapi: '3.0.0',
-      info: {
+      info: unknown;
   // Implementation needed
 }
         title: this.config.title,
         description: this.config.description,
         version: version || this.config.version,
-        contact: {
+        contact: unknown;
   // Implementation needed
 }
           name: this.configService.get<string>('placeholder'),
           email: this.configService.get<string>('placeholder'),
           url: this.configService.get<string>('placeholder')
         },
-        license: {
+        license: unknown;
   // Implementation needed
 }
           name: this.configService.get<string>('api.documentation.license.name', 'MIT'),
@@ -140,7 +111,7 @@ export class ApiDocumentationService implements OnModuleInit {
       },
       servers: this.config.servers,
       paths: {},
-      components: {
+      components: unknown;
   // Implementation needed
 }
         securitySchemes: this.config.securitySchemes
@@ -149,9 +120,7 @@ export class ApiDocumentationService implements OnModuleInit {
     };
   }
 
-  getConfig(): ApiDocumentationConfig {
-  // Implementation needed
-}
+  getConfig(): unknown {
     return this.config;
   }
 }

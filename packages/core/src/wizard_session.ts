@@ -1,26 +1,18 @@
 import * as path from 'path';
 import * as fs from 'fs';
 export class WizardSession {
-  // Implementation needed
-}
   constructor(private projectPath: string) {}
 
-  async analyzeVideoContent() {
-  // Implementation needed
-}
+  async analyzeVideoContent(): unknown {
     const videoPath = path.join(this.projectPath, 'video_analyses');
-    if (!fs.existsSync(videoPath)) {
-  // Implementation needed
-}
+    if(): unknown {
       fs.mkdirSync(videoPath, { recursive: true });
     }
 
     // Mock analysis for now
     const analysis = {
-  // Implementation needed
-}
-      transcript: 'Video transcript content here...',
-      summary: 'Video summary',
+transcript: 'Video transcript content here...',
+  }      summary: 'Video summary',
       metadata: {}
     };
     return {

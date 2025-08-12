@@ -242,6 +242,204 @@ export class LoadBalancer {
   }
 
   /**
+   * Select multiple services for load distribution
+   */
+  selectMultipleServices(
+    count: number, 
+    sessionId?: string, 
+    strategy?: LoadBalancingStrategy,
+    excludeServices?: string[]
+  ): MCPServiceInfo[] {
+    const availableServices = this.getAvailableServices()
+      .filter(instance => !excludeServices?.includes(instance.service.id));
+    
+    if (availableServices.length === 0) {
+      return [];
+    }
+
+    const selectedServices: MCPServiceInfo[] = [];
+    const selectedStrategy = strategy || this.config.defaultStrategy;
+    const requestedCount = Math.min(count, availableServices.length);
+
+    switch (selectedStrategy) {
+      case LoadBalancingStrategy.ROUND_ROBIN:
+        for (let i = 0; i < requestedCount; i++) {
+          const instance = this.selectRoundRobin(availableServices);
+          selectedServices.push(instance.service);
+        }
+        break;
+      case LoadBalancingStrategy.LEAST_CONNECTIONS:
+        // Sort by connection count and take the least loaded services
+        const sortedByConnections = [...availableServices]
+          .sort((a, b) => a.connectionCount - b.connectionCount);
+        selectedServices.push(...sortedByConnections.slice(0, requestedCount).map(i => i.service));
+        break;
+      case LoadBalancingStrategy.WEIGHTED:
+        // Use weighted selection multiple times
+        for (let i = 0; i < requestedCount; i++) {
+          const instance = this.selectWeighted(availableServices);
+          selectedServices.push(instance.service);
+        }
+        break;
+      case LoadBalancingStrategy.RANDOM:
+        // Randomly select unique services
+        const shuffled = [...availableServices].sort(() => Math.random() - 0.5);
+        selectedServices.push(...shuffled.slice(0, requestedCount).map(i => i.service));
+        break;
+    }
+
+    return selectedServices;
+  }
+
+  /**
+   * Get service selection recommendations based on current load and health
+   */
+  getServiceSelectionRecommendations(
+    requiredCapabilities?: string[],
+    preferredTags?: string[]
+  ): {
+    primary: MCPServiceInfo | null;
+    alternatives: MCPServiceInfo[];
+    loadDistribution: Record<string, number>;
+  } {
+    const availableServices = this.getAvailableServices();
+    
+    // Filter by capabilities if specified
+    let candidateServices = availableServices;
+    if (requiredCapabilities && requiredCapabilities.length > 0) {
+      candidateServices = availableServices.filter(instance =>
+        requiredCapabilities.every(cap => instance.service.capabilities.includes(cap))
+      );
+    }
+
+    // Filter by preferred tags if specified
+    if (preferredTags && preferredTags.length > 0) {
+      const preferredServices = candidateServices.filter(instance =>
+        instance.service.tags?.some(tag => preferredTags.includes(tag))
+      );
+      if (preferredServices.length > 0) {
+        candidateServices = preferredServices;
+      }
+    }
+
+    if (candidateServices.length === 0) {
+      return {
+        primary: null,
+        alternatives: [],
+        loadDistribution: {}
+      };
+    }
+
+    // Calculate load scores for each service
+    const scoredServices = candidateServices.map(instance => {
+      let score = 0;
+      
+      // Health score (higher is better)
+      score += (instance.service.healthScore || 0.5) * 0.4;
+      
+      // Connection load (lower is better)
+      const maxConnections = Math.max(...candidateServices.map(s => s.connectionCount), 1);
+      const connectionScore = 1 - (instance.connectionCount / maxConnections);
+      score += connectionScore * 0.3;
+      
+      // Request load (lower is better)
+      const maxRequests = Math.max(...candidateServices.map(s => s.totalRequests), 1);
+      const requestScore = 1 - (instance.totalRequests / maxRequests);
+      score += requestScore * 0.2;
+      
+      // Recency bonus (more recently used services might be warmed up)
+      const timeSinceLastRequest = Date.now() - instance.lastRequestTime.getTime();
+      const recencyScore = Math.max(0, 1 - (timeSinceLastRequest / (5 * 60 * 1000))); // 5 minutes
+      score += recencyScore * 0.1;
+      
+      return { instance, score };
+    });
+
+    // Sort by score (descending)
+    scoredServices.sort((a, b) => b.score - a.score);
+
+    // Calculate load distribution
+    const loadDistribution = candidateServices.reduce((acc, instance) => {
+      const percentage = candidateServices.length > 0 
+        ? (instance.totalRequests / candidateServices.reduce((sum, s) => sum + s.totalRequests, 1)) * 100
+        : 0;
+      acc[instance.service.id] = Math.round(percentage * 100) / 100;
+      return acc;
+    }, {} as Record<string, number>);
+
+    return {
+      primary: scoredServices[0]?.instance.service || null,
+      alternatives: scoredServices.slice(1, 4).map(item => item.instance.service),
+      loadDistribution
+    };
+  }
+
+  /**
+   * Predict optimal service selection based on historical patterns
+   */
+  predictOptimalSelection(
+    requestType?: string,
+    expectedLoad?: number,
+    timeOfDay?: number
+  ): {
+    recommendedServices: MCPServiceInfo[];
+    confidence: number;
+    reasoning: string[];
+  } {
+    const availableServices = this.getAvailableServices();
+    const reasoning: string[] = [];
+    
+    if (availableServices.length === 0) {
+      return {
+        recommendedServices: [],
+        confidence: 0,
+        reasoning: ['No services available']
+      };
+    }
+
+    // Simple prediction based on current metrics
+    let recommendedServices = [...availableServices];
+    let confidence = 0.7; // Base confidence
+
+    // Sort by health and load
+    recommendedServices.sort((a, b) => {
+      const scoreA = (a.service.healthScore || 0.5) - (a.connectionCount * 0.1);
+      const scoreB = (b.service.healthScore || 0.5) - (b.connectionCount * 0.1);
+      return scoreB - scoreA;
+    });
+
+    reasoning.push(`Sorted ${availableServices.length} services by health and current load`);
+
+    // Consider expected load
+    if (expectedLoad && expectedLoad > 10) {
+      // For high load, prefer services with lower current load
+      recommendedServices = recommendedServices.filter(instance => 
+        instance.connectionCount < expectedLoad * 0.5
+      );
+      reasoning.push(`Filtered services for high expected load (${expectedLoad})`);
+      confidence += 0.1;
+    }
+
+    // Consider time of day patterns (simple heuristic)
+    if (timeOfDay !== undefined) {
+      // During peak hours (9-17), prefer services with higher capacity
+      if (timeOfDay >= 9 && timeOfDay <= 17) {
+        recommendedServices = recommendedServices.filter(instance =>
+          (instance.service.healthScore || 0.5) > 0.7
+        );
+        reasoning.push('Filtered for peak hours - preferring high-capacity services');
+        confidence += 0.05;
+      }
+    }
+
+    return {
+      recommendedServices: recommendedServices.slice(0, 3).map(i => i.service),
+      confidence: Math.min(confidence, 1.0),
+      reasoning
+    };
+  }
+
+  /**
    * Get available (healthy) services for load balancing
    */
   private getAvailableServices(): ServiceInstance[] {

@@ -15,58 +15,42 @@ import {
 import { Reflector } from '@nestjs/core';
 import { PrismaService } from '@the-new-fuse/database';
 @Injectable()
-export class AgencyRoleGuard implements CanActivate {
-  // Implementation needed
-}
+export class AgencyRoleGuard {
   private readonly logger = new Logger(AgencyRoleGuard.name);
-  constructor(
+  constructor(): unknown {
     private reflector: Reflector,
     private prisma: PrismaService,
   ) {}
 
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-  // Implementation needed
-}
+  async canActivate(): unknown {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if (!user) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('User not authenticated');
     }
 
-    if (!user.id) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('Access denied: No user found in request');
     }
 
     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
-    if (!requiredRoles || requiredRoles.length === 0) {
-  // Implementation needed
-}
+    if(): unknown {
       return true;
     }
 
     const userRole = user.role;
-    if (!userRole) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('Access denied: User role not found');
     }
 
-    if (!requiredRoles.includes(userRole)) {
-  // Implementation needed
-}
-      throw new ForbiddenException(
+    if(): unknown {
+      throw new ForbiddenException(): unknown {
         `Access denied. User ${user.id} with role ${userRole} attempted to access resource requiring roles: ${requiredRoles.join(', ')}`
       );
     }
 
     const userPermissions = this.getPermissionsForRole(userRole);
-    if (!userPermissions || typeof userPermissions !== 'object') {
-  // Implementation needed
-}
+    if(): unknown {
       throw new ForbiddenException('Access denied: Invalid permissions configuration');
     }
 
@@ -74,33 +58,30 @@ export class AgencyRoleGuard implements CanActivate {
   }
 
   private getPermissionsForRole(role: string): any {
-  // Implementation needed
-}
-    const rolePermissions = {
-  // Implementation needed
-}
-      agents: {
+const rolePermissions = {
+  }}
+      agents: unknown;
   // Implementation needed
 }
         read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
         write: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
         delete: ['MASTER_ADMIN'],
       },
-      workspaces: {
+      workspaces: unknown;
   // Implementation needed
 }
         read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
         write: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
         delete: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
       },
-      swarms: {
+      swarms: unknown;
   // Implementation needed
 }
         read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
         write: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER'],
         delete: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
       },
-      services: {
+      services: unknown;
   // Implementation needed
 }
         read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
@@ -108,7 +89,7 @@ export class AgencyRoleGuard implements CanActivate {
         execute: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],
         delete: ['MASTER_ADMIN', 'AGENCY_ADMIN'],
       },
-      providers: {
+      providers: unknown;
   // Implementation needed
 }
         read: ['MASTER_ADMIN', 'AGENCY_ADMIN', 'AGENCY_MANAGER', 'AGENCY_USER'],

@@ -1,25 +1,15 @@
 import { faker } from '@faker-js/faker';
 export class TestDataGenerator {
-  // Implementation needed
-}
-  generate(schema: any): any {
-  // Implementation needed
-}
-    if (typeof schema === 'string') {
-  // Implementation needed
-}
+  generate(): unknown {
+    if(): unknown {
       return this.generateFromString(schema);
     }
     
-    if (Array.isArray(schema)) {
-  // Implementation needed
-}
+    if(): unknown {
       return this.generateFromArray(schema);
     }
     
-    if (typeof schema === 'object' && schema !== null) {
-  // Implementation needed
-}
+    if(): unknown {
       return this.generateFromObject(schema);
     }
     
@@ -27,12 +17,8 @@ export class TestDataGenerator {
   }
 
   private generateFromString(type: string): any {
-  // Implementation needed
-}
-    switch (type.toLowerCase()) {
-  // Implementation needed
-}
-      case 'string':
+switch(): unknown {
+  }      case 'string':
         return faker.lorem.word();
       case 'number':
         return faker.number.int({ min: 1, max: 100 });
@@ -58,12 +44,8 @@ export class TestDataGenerator {
   }
 
   private generateFromArray(schema: any[]): any {
-  // Implementation needed
-}
-    if (schema.length === 0) {
-  // Implementation needed
-}
-      return [];
+if(): unknown {
+  }      return [];
     }
     
     const count = faker.number.int({ min: 1, max: 5 });
@@ -71,22 +53,12 @@ export class TestDataGenerator {
   }
 
   private generateFromObject(schema: any): any {
-  // Implementation needed
-}
-    const result: any = {};
-    for (const [key, value] of Object.entries(schema)) {
-  // Implementation needed
-}
-      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
-  // Implementation needed
-}
+const result: any = {};
+  }    for(): unknown {
+      if(): unknown {
         const config = value as any;
-        if (config.type) {
-  // Implementation needed
-}
-          switch (config.type) {
-  // Implementation needed
-}
+        if(): unknown {
+          switch(): unknown {
             case 'string':
               result[key] = config.format 
                 ? this.generateFromString(config.format)
@@ -94,10 +66,8 @@ export class TestDataGenerator {
               break;
             case 'number':
               result[key] = faker.number.int({
-  // Implementation needed
-}
-                min: config.min || 1, 
-                max: config.max || 100 
+min: config.min || 1,
+  }                max: config.max || 100 
               });
               break;
             case 'boolean':
@@ -127,9 +97,7 @@ export class TestDataGenerator {
     return result;
   }
 
-  generateMany(schema: any, count: number): any[] {
-  // Implementation needed
-}
+  generateMany(): unknown {
     return Array.from({ length: count }, () => this.generate(schema));
   }
 }

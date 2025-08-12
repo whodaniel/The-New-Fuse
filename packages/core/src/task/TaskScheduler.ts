@@ -4,8 +4,6 @@ import { TaskManager } from './TaskManager';
 import { TaskService } from './TaskService';
 import { TaskCreationOptions } from './TaskService';
 export interface ScheduledTask {
-  // Implementation needed
-}
   id: string;
   name: string;
   cron: string;
@@ -17,18 +15,14 @@ export interface ScheduledTask {
 
 @Injectable()
 export class TaskScheduler {
-  // Implementation needed
-}
   private readonly logger = new Logger(TaskScheduler.name);
   private readonly scheduledTasks = new Map<string, ScheduledTask>();
-  constructor(
+  constructor(): unknown {
     private readonly taskManager: TaskManager,
     private readonly taskService: TaskService
   ) {}
 
-  async scheduleTask(task: ScheduledTask): Promise<void> {
-  // Implementation needed
-}
+  async scheduleTask(): unknown {
     this.scheduledTasks.set(task.id, {
   // Implementation needed
 }
@@ -38,37 +32,25 @@ export class TaskScheduler {
     this.logger.log(`Scheduled task ${task.name} with cron ${task.cron}`);
   }
 
-  async unscheduleTask(taskId: string): Promise<boolean> {
-  // Implementation needed
-}
+  async unscheduleTask(): unknown {
     const removed = this.scheduledTasks.delete(taskId);
-    if (removed) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.log(`Unscheduled task ${taskId}`);
     }
     return removed;
   }
 
-  async getScheduledTasks(): Promise<ScheduledTask[]> {
-  // Implementation needed
-}
+  async getScheduledTasks(): unknown {
     return Array.from(this.scheduledTasks.values());
   }
 
-  async getScheduledTask(taskId: string): Promise<ScheduledTask | undefined> {
-  // Implementation needed
-}
+  async getScheduledTask(): unknown {
     return this.scheduledTasks.get(taskId);
   }
 
-  async enableTask(taskId: string): Promise<boolean> {
-  // Implementation needed
-}
+  async enableTask(): unknown {
     const task = this.scheduledTasks.get(taskId);
-    if (task) {
-  // Implementation needed
-}
+    if(): unknown {
       task.enabled = true;
       task.nextRun = this.calculateNextRun(task.cron);
       return true;
@@ -76,13 +58,9 @@ export class TaskScheduler {
     return false;
   }
 
-  async disableTask(taskId: string): Promise<boolean> {
-  // Implementation needed
-}
+  async disableTask(): unknown {
     const task = this.scheduledTasks.get(taskId);
-    if (task) {
-  // Implementation needed
-}
+    if(): unknown {
       task.enabled = false;
       return true;
     }
@@ -90,67 +68,44 @@ export class TaskScheduler {
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
-  async handleCronJobs(): Promise<void> {
-  // Implementation needed
-}
+  async handleCronJobs(): unknown {
     const now = new Date();
-    for (const task of this.scheduledTasks.values()) {
-  // Implementation needed
-}
-      if (!task.enabled) continue;
-      if (task.nextRun && task.nextRun <= now) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         try {
-  // Implementation needed
-}
-          this.logger.log(`Executing scheduled task: ${task.name}`);
-          await this.taskService.executeTaskWithQueue(task.taskOptions);
+this.logger.log(`Executing scheduled task: ${task.name}`);
+  }          await this.taskService.executeTaskWithQueue(task.taskOptions);
           task.lastRun = now;
           task.nextRun = this.calculateNextRun(task.cron);
           this.logger.log(`Completed scheduled task: ${task.name}`);
         } catch (error) {
-  // Implementation needed
-}
-          this.logger.error(`Failed to execute scheduled task ${task.name}:`, error);
-        }
+this.logger.error(`Failed to execute scheduled task ${task.name}:`, error);
+  }}
       }
     }
   }
 
   private calculateNextRun(cronExpression: string): Date {
-  // Implementation needed
-}
-    // Simple cron parser for basic expressions
-    const now = new Date();
+// Simple cron parser for basic expressions
+  }    const now = new Date();
     const nextRun = new Date(now);
     // Handle basic cron patterns
-    if (cronExpression === CronExpression.EVERY_MINUTE) {
-  // Implementation needed
-}
+    if(): unknown {
       nextRun.setMinutes(nextRun.getMinutes() + 1);
     } else if (cronExpression === CronExpression.EVERY_5_MINUTES) {
-  // Implementation needed
-}
-      nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 5) * 5);
+nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 5) * 5);
     } else if (cronExpression === CronExpression.EVERY_10_MINUTES) {
-  // Implementation needed
-}
+  }}
       nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 10) * 10);
     } else if (cronExpression === CronExpression.EVERY_30_MINUTES) {
-  // Implementation needed
-}
-      nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 30) * 30);
+nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 30) * 30);
     } else if (cronExpression === CronExpression.EVERY_HOUR) {
-  // Implementation needed
-}
+  }}
       nextRun.setHours(nextRun.getHours() + 1);
       nextRun.setMinutes(0);
     } else if (cronExpression === CronExpression.EVERY_DAY_AT_MIDNIGHT) {
-  // Implementation needed
-}
-      nextRun.setDate(nextRun.getDate() + 1);
-      nextRun.setHours(0, 0, 0, 0);
+nextRun.setDate(nextRun.getDate() + 1);
+  }      nextRun.setHours(0, 0, 0, 0);
     } else {
   // Implementation needed
 }
@@ -161,14 +116,7 @@ export class TaskScheduler {
     return nextRun;
   }
 
-  async createRecurringTask(
-    name: string,
-    cron: string,
-    taskOptions: TaskCreationOptions,
-    enabled: boolean = true
-  ): Promise<ScheduledTask> {
-  // Implementation needed
-}
+  async createRecurringTask(): unknown {
     const task: ScheduledTask = {
   // Implementation needed
 }
@@ -183,42 +131,25 @@ export class TaskScheduler {
     return task;
   }
 
-  async createOneTimeTask(
-    taskOptions: TaskCreationOptions,
-    delay: number
-  ): Promise<string> {
-  // Implementation needed
-}
+  async createOneTimeTask(): unknown {
     const taskId = `delayed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    setTimeout(async () => {
-  // Implementation needed
-}
+    setTimeout(): unknown {
       try {
-  // Implementation needed
-}
-        await this.taskService.executeTaskWithQueue(taskOptions);
+      await this.taskService.executeTaskWithQueue(taskOptions);
         this.logger.log(`Executed delayed task: ${taskId}`);
       } catch (error) {
-  // Implementation needed
-}
-        this.logger.error(`Failed to execute delayed task ${taskId}:`, error);
-      }
+this.logger.error(`Failed to execute delayed task ${taskId}:`, error);
+  }}
     }, delay);
     return taskId;
   }
 
-  async cleanup(): Promise<void> {
-  // Implementation needed
-}
+  async cleanup(): unknown {
     const now = new Date();
     const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
     
-    for (const [taskId, task] of this.scheduledTasks.entries()) {
-  // Implementation needed
-}
-      if (task.lastRun && task.lastRun < cutoff) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         this.scheduledTasks.delete(taskId);
         this.logger.log(`Cleaned up old scheduled task: ${task.name}`);
       }

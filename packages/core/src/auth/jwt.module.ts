@@ -10,17 +10,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   // Implementation needed
 }
       imports: [ConfigModule],
-      async useFactory(configService: ConfigService) => ({
-  // Implementation needed
-}
+      async useFactory(): unknown {
         secret: configService.get<string>('JWT_SECRET') || 'default-secret',
-        signOptions: {
-  // Implementation needed
-}
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '24h',
+        signOptions: unknown;
+expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '24h',
         },
       }),
-      inject: [ConfigService],
+  }      inject: [ConfigService],
     }),
   ],
   exports: [NestJwtModule],

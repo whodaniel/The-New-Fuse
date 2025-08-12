@@ -6,7 +6,7 @@ export const communicationFlowTemplate: WorkflowTemplate = {
   name: 'AI Diplomacy Agentic Flow',
   description: 'Detailed agentic workflow for AI Diplomacy, including context construction, memory, diaries, and phase transitions.',
   version: '1.0.0',
-  config: {
+  config: unknown;
   // Implementation needed
 }
     startStep: 'context-construction'
@@ -33,7 +33,7 @@ export const communicationFlowTemplate: WorkflowTemplate = {
         'build_context_prompt',
         'Recent Context'
       ],
-      config: {
+      config: unknown;
   // Implementation needed
 }
         operation: 'build_context'
@@ -46,7 +46,7 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       id: 'initialization',
       name: 'Initialization',
       type: WorkflowStepType.INITIALIZATION,
-      config: {
+      config: unknown;
   // Implementation needed
 }
         action: 'Set initial goals & relationships'
@@ -60,7 +60,7 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       id: 'negotiation',
       name: 'Negotiation',
       type: WorkflowStepType.COMMUNICATION,
-      config: {
+      config: unknown;
   // Implementation needed
 }
         action: 'Generate messages, update relationships'
@@ -176,7 +176,7 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       id: 'loop',
       name: 'Loop to Next Phase',
       type: WorkflowStepType.CONTROL_FLOW,
-      config: {
+      config: unknown;
   // Implementation needed
 }
         action: 'Return to Negotiation for next phase'

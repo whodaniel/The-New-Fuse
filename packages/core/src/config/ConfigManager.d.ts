@@ -1,9 +1,7 @@
 import { OnModuleInit } from '@nestjs/common';
 import { EventEmitter } from 'events/;';
 export declare class ConfigManager extends EventEmitter implements OnModuleInit {
-  // Implementation needed
-}
-    private logger;
+private logger;
     private redis;
     private db;
     private config;

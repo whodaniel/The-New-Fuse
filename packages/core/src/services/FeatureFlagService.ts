@@ -51,7 +51,7 @@ export class FeatureFlagService {
       const updatedFeature: FeatureFlag = {
         ...existingFeature,
         ...update,
-        metadata: {
+        metadata: unknown;
           ...existingFeature.metadata,
           lastModifiedBy: update.metadata?.lastModifiedBy || 'system',
           updatedAt: new Date()

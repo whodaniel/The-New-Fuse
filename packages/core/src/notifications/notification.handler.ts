@@ -9,11 +9,7 @@ export class NotificationHandler implements OnModuleInit { constructor(private p
   // Implementation needed
 }
     try {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+      try {
       const stream = 'placeholder';
         name: ''
        })): void{ // Handle the notification event'

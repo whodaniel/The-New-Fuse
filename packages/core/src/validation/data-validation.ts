@@ -1,14 +1,10 @@
 // Data Validation Implementation
-export interface ValidationStrategy<T> {
-  // Implementation needed
-}
+export interface ValidationStrategy {
   validate(data: T): Promise<boolean>;
   getErrors(): string[];
 }
 
 export class ValidatorFactory {
-  // Implementation needed
-}
   private static validators = new Map<string, ValidationStrategy<any>>();
   static register<T>(key: string, validator: ValidationStrategy<T>): void {
   // Implementation needed
@@ -20,38 +16,28 @@ export class ValidatorFactory {
   // Implementation needed
 }
     const validator = this.validators.get(key);
-    if (!validator) {
-  // Implementation needed
-}
+    if(): unknown {
       throw new Error(`No validator registered for key: ${key}`);
     }
     return validator as ValidationStrategy<T>;
   }
 }
 
-export class DataValidation<T> {
-  // Implementation needed
-}
+export class DataValidation {
   constructor(private readonly strategy: ValidationStrategy<T>) {}
 
-  async validate(data: T): Promise<boolean> {
-  // Implementation needed
-}
+  async validate(): unknown {
     return this.strategy.validate(data);
   }
 
-  getErrors(): string[] {
-  // Implementation needed
-}
+  getErrors(): unknown {
     return this.strategy.getErrors();
   }
 }
 
 // Export all components
 export default {
-  // Implementation needed
-}
-  ValidationStrategy,
-  ValidatorFactory,
+ValidationStrategy,
+  }  ValidatorFactory,
   DataValidation
 };

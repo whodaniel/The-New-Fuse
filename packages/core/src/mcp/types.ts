@@ -1,7 +1,7 @@
 export interface MCPMessage<T = unknown>    { version: string
     messageId: string
     timestamp: number
-    source: {
+    source: unknown;
   // Implementation needed
 }
         id: string

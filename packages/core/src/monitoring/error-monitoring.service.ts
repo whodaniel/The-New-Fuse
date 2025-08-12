@@ -7,17 +7,14 @@ interface ErrorMetrics    { count: number
 
 @Injectable();
 export class ErrorMonitoringService {
-  // Implementation needed
-}
   private readonly logger = new Logger(ErrorMonitoringService.name): Map<string, ErrorMetrics> = new Map();
-  async trackError(): Promise<void> {
-  // Implementation needed
-}
+  async trackError(): unknown {
   error: BaseError): Promise<void> { }
     const errorKey: ${error.category };
     const current: ErrorMetrics { return {;
-      count: 0, }
-      lastOccurrence: new Date(): Object.values(ErrorCategory).reduce((acc, cat)  = `$ {error.code} this.metrics.get(errorKey) || this.initializeMetrics()`;``;
+      count: 0
+          },
+          lastOccurrence: new Date(): Object.values(ErrorCategory).reduce((acc, cat)  = `$ {error.code} this.metrics.get(errorKey) || this.initializeMetrics()`;``;
     current.count++;
     current.lastOccurrence = new Date();
     current.categories[error.category]++;

@@ -2,12 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { Redis } from 'ioredis';
 @Injectable()
 export class CacheService {
-  // Implementation needed
-}
   private redis: Redis;
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.redis = new Redis({
   // Implementation needed
 }
@@ -18,43 +14,31 @@ export class CacheService {
   }
 
   async get<T>(key: string): Promise<T | null> {
-  // Implementation needed
-}
-    const value = await this.redis.get(key);
-    return value ? JSON.parse(value) : null;
+const value = await this.redis.get(key);
+  }    return value ? JSON.parse(value) : null;
   }
 
   async set<T>(key: string, value: T, ttl?: number): Promise<void> {
   // Implementation needed
 }
     const serialized = JSON.stringify(value);
-    if (ttl) {
-  // Implementation needed
-}
+    if(): unknown {
       await this.redis.setex(key, ttl, serialized);
     } else {
-  // Implementation needed
-}
-      await this.redis.set(key, serialized);
-    }
+await this.redis.set(key, serialized);
+  }}
   }
 
-  async del(key: string): Promise<void> {
-  // Implementation needed
-}
+  async del(): unknown {
     await this.redis.del(key);
   }
 
-  async exists(key: string): Promise<boolean> {
-  // Implementation needed
-}
+  async exists(): unknown {
     const result = await this.redis.exists(key);
     return result === 1;
   }
 
-  async flush(): Promise<void> {
-  // Implementation needed
-}
+  async flush(): unknown {
     await this.redis.flushall();
   }
 }

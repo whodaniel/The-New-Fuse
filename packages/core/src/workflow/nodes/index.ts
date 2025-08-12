@@ -16,8 +16,6 @@ export * from './document-processing-node';
 export * from './storage-node';
 // Node type definitions
 export enum WorkflowNodeType {
-  // Implementation needed
-}
   LLM = 'llm',
   TOOL = 'tool',
   CONDITION = 'condition',
@@ -33,8 +31,6 @@ export enum WorkflowNodeType {
 
 // Node handler registry
 export interface WorkflowNodeHandler {
-  // Implementation needed
-}
   type: WorkflowNodeType;
   execute(config: any, context: any): Promise<any>;
   validate(config: any): boolean;

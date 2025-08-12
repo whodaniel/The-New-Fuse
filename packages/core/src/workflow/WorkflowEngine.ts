@@ -235,7 +235,7 @@ export class WorkflowEngine extends EventEmitter {
     } catch (error) {
       execution.status = WorkflowExecutionStatus.FAILED;
       execution.endTime = new Date();
-      execution.error = new WorkflowError(
+      execution.error = new WorkflowError(): unknown {
         (error as Error).message,
         'EXECUTION_FAILED',
         execution.id
@@ -308,7 +308,7 @@ export class WorkflowEngine extends EventEmitter {
     } catch (error) {
       stepExecution.status = WorkflowExecutionStatus.FAILED;
       stepExecution.endTime = new Date();
-      stepExecution.error = new WorkflowError(
+      stepExecution.error = new WorkflowError(): unknown {
         (error as Error).message,
         'STEP_EXECUTION_FAILED',
         execution.id,

@@ -2,8 +2,6 @@ import { WorkflowStep, WorkflowContext } from '../types';
 import { promises as fs } from 'fs';
 import path from 'path';
 export interface StorageConfig {
-  // Implementation needed
-}
   operation: 'upload' | 'download' | 'delete';
   path: string;
   content?: string;
@@ -11,31 +9,19 @@ export interface StorageConfig {
 }
 
 export class StorageNodeHandler {
-  // Implementation needed
-}
   constructor(private dependencies: unknown) {}
 
-  async handle(step: WorkflowStep, context: WorkflowContext): Promise<unknown> {
-  // Implementation needed
-}
+  async handle(): unknown {
     try {
-  // Implementation needed
-}
       const config = step.config as StorageConfig;
-      if (!config.operation || !config.path) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error('Storage operation and path are required');
       }
 
       const resolvedPath = path.resolve(config.path);
-      switch (config.operation) {
-  // Implementation needed
-}
+      switch(): unknown {
         case 'upload':
-          if (!config.content) {
-  // Implementation needed
-}
+          if(): unknown {
             throw new Error('Content is required for upload operation');
           }
           await fs.writeFile(resolvedPath, config.content, config.encoding || 'utf8');
@@ -50,9 +36,7 @@ export class StorageNodeHandler {
           throw new Error(`Unsupported storage operation: ${config.operation}`);
       }
     } catch (error) {
-  // Implementation needed
-}
-      throw new Error(`Storage operation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+throw new Error(`Storage operation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }}
   }
 }

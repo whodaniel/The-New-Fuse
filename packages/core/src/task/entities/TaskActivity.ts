@@ -1,8 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Task } from './Task';
 export enum TaskActivityType {
-  // Implementation needed
-}
   CREATED = 'created',
   UPDATED = 'updated',
   ASSIGNED = 'assigned',
@@ -14,8 +12,6 @@ export enum TaskActivityType {
 
 @Entity('task_activities')
 export class TaskActivity {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @ManyToOne(() => Task, task => task.activities)

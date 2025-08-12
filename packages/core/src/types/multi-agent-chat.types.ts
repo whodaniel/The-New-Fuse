@@ -1,6 +1,4 @@
 export interface Agent {
-  // Implementation needed
-}
   id: string;
   name: string;
   systemPrompt: string;
@@ -13,8 +11,6 @@ export interface Agent {
 }
 
 export interface Message {
-  // Implementation needed
-}
   id: string;
   text: string;
   sender: string;
@@ -26,8 +22,6 @@ export interface Message {
 }
 
 export interface ConversationRule {
-  // Implementation needed
-}
   id: string;
   name: string;
   description: string;
@@ -39,8 +33,6 @@ export interface ConversationRule {
 }
 
 export interface MultiAgentChatState {
-  // Implementation needed
-}
   agents: Agent[];
   messages: Message[];
   rules: ConversationRule[];
@@ -50,8 +42,6 @@ export interface MultiAgentChatState {
 }
 
 export interface MultiAgentChatActions {
-  // Implementation needed
-}
   createAgent(agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>) => void;
   createRule(rule: Omit<ConversationRule, 'id' | 'createdAt' | 'updatedAt'>) => void;
   setMode(mode: 'manual' | 'auto') => void;

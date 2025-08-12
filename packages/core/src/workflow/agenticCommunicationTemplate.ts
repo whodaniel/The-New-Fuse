@@ -6,7 +6,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
   name: 'Agentic Communication Flow',
   description: 'Template for agentic communication flows based on AI Diplomacy schema',
   version: '1.0.0',
-  config: {
+  config: unknown;
   // Implementation needed
 }
     startStep: 'initialize',
@@ -17,7 +17,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'initialize',
         name: 'Initialize Communication',
         type: WorkflowStepType.INITIALIZATION,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'initialization',
@@ -33,7 +33,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'negotiation',
         name: 'Negotiation Phase',
         type: WorkflowStepType.AGENT_COMMUNICATION,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'negotiation',
@@ -50,7 +50,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'planning',
         name: 'Planning Phase',
         type: WorkflowStepType.PLANNING,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'planning',
@@ -66,7 +66,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'order-generation',
         name: 'Order Generation',
         type: WorkflowStepType.TASK_EXECUTION,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'order-generation',
@@ -82,7 +82,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'state-update',
         name: 'State Update',
         type: WorkflowStepType.STATE_MANAGEMENT,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'state-update',
@@ -98,7 +98,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         id: 'memory-consolidation',
         name: 'Memory Consolidation',
         type: WorkflowStepType.MEMORY_MANAGEMENT,
-        parameters: {
+        parameters: unknown;
   // Implementation needed
 }
           phase: 'memory-consolidation',
@@ -109,7 +109,7 @@ export const agenticCommunicationTemplate: WorkflowTemplate = {
         status: 'pending'
       }
     ],
-    metadata: {
+    metadata: unknown;
   // Implementation needed
 }
       tags: ['agentic', 'communication', 'diplomacy', 'multi-agent'],

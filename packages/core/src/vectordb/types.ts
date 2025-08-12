@@ -1,7 +1,5 @@
 export type EmbeddingFunction = (text: string) => Promise<number[]>;
 export interface VectorDocument {
-  // Implementation needed
-}
   id?: string
   content: string
   embedding?: number[];
@@ -9,8 +7,6 @@ export interface VectorDocument {
 }
 
 export interface VectorQuery {
-  // Implementation needed
-}
   namespace?: string
   filter?: Record<string, any>;
   limit?: number
@@ -22,8 +18,6 @@ export interface VectorQuery {
 }
 
 export interface SearchResult {
-  // Implementation needed
-}
   id: string
   score: number
   content: string
@@ -32,8 +26,6 @@ export interface SearchResult {
 }
 
 export interface VectorStoreProvider {
-  // Implementation needed
-}
   name: string
   storeVectors(documents: VectorDocument[], namespace: string) => Promise<string[]>;
   search(queryEmbedding: number[], options: VectorQuery) => Promise<SearchResult[]>;

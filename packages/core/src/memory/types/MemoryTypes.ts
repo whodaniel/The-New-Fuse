@@ -1,6 +1,4 @@
 export interface VectorMemoryConfig {
-  // Implementation needed
-}
   dimensions: number;
   maxSize: number;
   minSimilarity: number;
@@ -9,9 +7,7 @@ export interface VectorMemoryConfig {
   cacheTTL: number;
 }
 
-export interface VectorMemoryItem<T = any> {
-  // Implementation needed
-}
+export interface VectorMemoryItem {
   id: string;
   content: T;
   embedding: Float32Array;
@@ -20,8 +16,6 @@ export interface VectorMemoryItem<T = any> {
 }
 
 export interface VectorMemoryMetadata {
-  // Implementation needed
-}
   importance: number;
   accessCount: number;
   lastAccess: number;
@@ -30,8 +24,6 @@ export interface VectorMemoryMetadata {
 }
 
 export enum VectorMemoryEventType {
-  // Implementation needed
-}
   ITEM_ADDED = 'ITEM_ADDED',
   ITEM_UPDATED = 'ITEM_UPDATED',
   ITEM_REMOVED = 'ITEM_REMOVED',
@@ -41,16 +33,12 @@ export enum VectorMemoryEventType {
 }
 
 export interface VectorSimilarityOptions {
-  // Implementation needed
-}
   threshold?: number;
   maxResults?: number;
   sortBy?: 'similarity' | 'timestamp' | 'importance';
 }
 
 export interface VectorMemoryEvent {
-  // Implementation needed
-}
   type: VectorMemoryEventType;
   item?: VectorMemoryItem;
   metadata?: Record<string, unknown>;
@@ -58,8 +46,6 @@ export interface VectorMemoryEvent {
 }
 
 export interface VectorMemoryStats {
-  // Implementation needed
-}
   totalItems: number;
   avgImportance: number;
   avgConfidence: number;
@@ -69,17 +55,13 @@ export interface VectorMemoryStats {
   retrievalLatency: number;
 }
 
-export interface VectorSearchResult<T = any> {
-  // Implementation needed
-}
+export interface VectorSearchResult {
   item: VectorMemoryItem<T>;
   similarity: number;
   confidence: number;
 }
 
 export interface VectorMemoryCache {
-  // Implementation needed
-}
   set(id: string, item: VectorMemoryItem, ttl?: number): Promise<void>;
   get(id: string): Promise<VectorMemoryItem | null>;
   delete(id: string): Promise<boolean>;
@@ -89,8 +71,6 @@ export interface VectorMemoryCache {
 }
 
 export interface VectorMemoryOptions {
-  // Implementation needed
-}
   config?: Partial<VectorMemoryConfig>;
   clusterConfig?: Partial<VectorClusterConfig>;
   cache?: VectorMemoryCache;
@@ -98,8 +78,6 @@ export interface VectorMemoryOptions {
 }
 
 export interface VectorClusterConfig {
-  // Implementation needed
-}
   minClusterSize: number;
   maxClusters: number;
   minSimilarity: number;

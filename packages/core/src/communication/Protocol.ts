@@ -44,8 +44,6 @@ export type MessageHeader = z.infer<typeof MessageHeaderSchema>;
 export type MessagePayload = z.infer<typeof MessagePayloadSchema>;
 export type Message = z.infer<typeof MessageSchema>;
 export enum MessagePriority {
-  // Implementation needed
-}
   LOW = 'low',
   MEDIUM = 'medium',
   HIGH = 'high',
@@ -53,8 +51,6 @@ export enum MessagePriority {
 }
 
 export enum MessageType {
-  // Implementation needed
-}
   REQUEST = 'request',
   RESPONSE = 'response',
   EVENT = 'event',
@@ -62,40 +58,20 @@ export enum MessageType {
 }
 
 export interface ProtocolOptions {
-  // Implementation needed
-}
   version: string;
   maxRetries: number;
   retryDelay: number;
   timeout: number;
 }
 
-export class Protocol extends EventEmitter {
-  // Implementation needed
-}
+export class Protocol {
   private version: string;
   private maxRetries: number;
   private retryDelay: number;
   private timeout: number;
   private logger: Logger;
-  constructor(logger: Logger, options: Partial<ProtocolOptions> = {}) {
-  // Implementation needed
-}
-    super();
-    this.version = options.version || '1.0.0';
-    this.maxRetries = options.maxRetries || 3;
-    this.retryDelay = options.retryDelay || 1000;
-    this.timeout = options.timeout || 30000;
-    this.logger = logger;
-  }
-
-  createMessage(
-    type: MessageType,
-    action: string,
-    data?: any,
-    options: {
-  // Implementation needed
-}
+  constructor(): unknown {
+    super(): unknown {
       source?: { id: string; type: string };
       target?: { id: string; type: string };
       priority?: MessagePriority;
@@ -104,15 +80,12 @@ export class Protocol extends EventEmitter {
       metadata?: Record<string, any>;
     } = {}
   ): Message {
-  // Implementation needed
-}
-    try {
-  // Implementation needed
-}
+try {
+  }}
       const message: Message = {
   // Implementation needed
 }
-        header: {
+        header: unknown;
   // Implementation needed
 }
           id: crypto.randomUUID(),
@@ -124,7 +97,7 @@ export class Protocol extends EventEmitter {
           correlationId: options.correlationId,
           ttl: options.ttl,
         },
-        payload: {
+        payload: unknown;
   // Implementation needed
 }
           action,
@@ -136,48 +109,19 @@ export class Protocol extends EventEmitter {
       this.emit('messageCreated', validatedMessage);
       return validatedMessage;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Message validation failed:', error);
-      throw new Error(
+this.logger.error('Message validation failed:', error);
+  }      throw new Error(): unknown {
         `Message validation failed: ${error instanceof z.ZodError ? error.errors.map((e) => e.message).join(', ') : 'error'}`
       );
     }
   }
 
-  createRequest(
-    action: string,
-    data?: any,
-    options: {
-  // Implementation needed
-}
-      source?: { id: string; type: string };
-      target?: { id: string; type: string };
-      priority?: MessagePriority;
-      correlationId?: string;
-      ttl?: number;
-      metadata?: Record<string, any>;
-    } = {}
-  ): Message {
-  // Implementation needed
-}
+  createRequest(): unknown {
     return this.createMessage(MessageType.REQUEST, action, data, options);
   }
 
-  createResponse(
-    originalMessage: Message,
-    data?: any,
-    options: {
-  // Implementation needed
-}
-      metadata?: Record<string, any>;
-    } = {}
-  ): Message {
-  // Implementation needed
-}
-    if (!originalMessage.header.target) {
-  // Implementation needed
-}
+  createResponse(): unknown {
+    if(): unknown {
       throw new Error('Cannot create a response for a message with no source.');
     }
 
@@ -186,47 +130,20 @@ export class Protocol extends EventEmitter {
       originalMessage.payload.action,
       data,
       {
-  // Implementation needed
-}
-        source: originalMessage.header.target,
-        target: originalMessage.header.source,
+source: originalMessage.header.target,
+  }        target: originalMessage.header.source,
         correlationId: originalMessage.header.id,
         metadata: options.metadata,
       }
     );
   }
 
-  createEvent(
-    action: string,
-    data?: any,
-    options: {
-  // Implementation needed
-}
-      source?: { id: string; type: string };
-      target?: { id: string; type: string };
-      priority?: MessagePriority;
-      metadata?: Record<string, any>;
-    } = {}
-  ): Message {
-  // Implementation needed
-}
+  createEvent(): unknown {
     return this.createMessage(MessageType.EVENT, action, data, options);
   }
 
-  createError(
-    originalMessage: Message,
-    error: Error,
-    options: {
-  // Implementation needed
-}
-      metadata?: Record<string, any>;
-    } = {}
-  ): Message {
-  // Implementation needed
-}
-    if (!originalMessage.header.target) {
-  // Implementation needed
-}
+  createError(): unknown {
+    if(): unknown {
       throw new Error('Cannot create an error response for a message with no source.');
     }
 
@@ -234,10 +151,8 @@ export class Protocol extends EventEmitter {
       MessageType.ERROR,
       originalMessage.payload.action,
       {
-  // Implementation needed
-}
-        message: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
+message: error.message,
+  }        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       },
       {
   // Implementation needed
@@ -250,58 +165,35 @@ export class Protocol extends EventEmitter {
     );
   }
 
-  validateMessage(message: unknown): message is Message {
-  // Implementation needed
-}
+  validateMessage(): unknown {
     try {
-  // Implementation needed
-}
       MessageSchema.parse(message);
       return true;
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Message validation failed:', error);
-      return false;
+this.logger.error('Message validation failed:', error);
+  }      return false;
     }
   }
 
-  isExpired(message: Message): boolean {
-  // Implementation needed
-}
-    if (!message.header.ttl) {
-  // Implementation needed
-}
+  isExpired(): unknown {
+    if(): unknown {
       return false;
     }
     const age = Date.now() - message.header.timestamp.getTime();
     return age > message.header.ttl;
   }
 
-  async sendWithRetry(
-    message: Message,
-    sendFn(message: Message) => Promise<void>
-  ): Promise<void> {
-  // Implementation needed
-}
+  async sendWithRetry(): unknown {
     let lastError: Error | null = null;
-    for (let attempt = 0; attempt <= this.maxRetries; attempt++) {
-  // Implementation needed
-}
+    for(): unknown {
       try {
-  // Implementation needed
-}
-        await sendFn(message);
-        this.emit('messageSent', message);
+await sendFn(message);
+  }        this.emit('messageSent', message);
         return;
       } catch (error) {
-  // Implementation needed
-}
-        lastError = error as Error;
-        this.logger.warn(`Send attempt ${attempt + 1} failed:`, error);
-        if (attempt < this.maxRetries) {
-  // Implementation needed
-}
+lastError = error as Error;
+  }        this.logger.warn(`Send attempt ${attempt + 1} failed:`, error);
+        if(): unknown {
           await new Promise((resolve) => setTimeout(resolve, this.retryDelay * (attempt + 1)));
         }
       }
@@ -311,66 +203,43 @@ export class Protocol extends EventEmitter {
     throw lastError;
   }
 
-  async handleMessage(
-    message: Message,
-    handlers: Record<string, (payload: any) => Promise<any>>
-  ): Promise<void> {
-  // Implementation needed
-}
+  async handleMessage(): unknown {
     try {
-  // Implementation needed
-}
-      if (!this.validateMessage(message)) {
-  // Implementation needed
-}
-        throw new Error('Invalid message format');
+if(): unknown {
+  }        throw new Error('Invalid message format');
       }
 
-      if (this.isExpired(message)) {
-  // Implementation needed
-}
+      if(): unknown {
         this.logger.warn('Expired message received:', message.header.id);
         return;
       }
 
       const handler = handlers[message.payload.action];
-      if (!handler) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error(`No handler found for action: ${message.payload.action}`);
       }
 
       const result = await handler(message.payload.data);
-      if (message.header.type === MessageType.REQUEST) {
-  // Implementation needed
-}
+      if(): unknown {
         const response = this.createResponse(message, result);
         this.emit('responseReady', response);
       }
 
       this.emit('messageHandled', message);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Error handling message:', error);
-      this.emit('messageError', message, error);
-      if (message.header.type === MessageType.REQUEST) {
-  // Implementation needed
-}
+this.logger.error('Error handling message:', error);
+  }      this.emit('messageError', message, error);
+      if(): unknown {
         const errorResponse = this.createError(message, error as Error);
         this.emit('responseReady', errorResponse);
       }
     }
   }
 
-  async signMessage(message: Message, privateKey: string): Promise<Message> {
-  // Implementation needed
-}
+  async signMessage(): unknown {
     try {
-  // Implementation needed
-}
-      const messageString = JSON.stringify(message);
-      const signature = crypto
+const messageString = JSON.stringify(message);
+  }      const signature = crypto
         .createSign('RSA-SHA256')
         .update(messageString)
         .sign(privateKey, 'base64');
@@ -381,22 +250,14 @@ export class Protocol extends EventEmitter {
         signature,
       };
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to sign message:', error);
-      throw error;
+this.logger.error('Failed to sign message:', error);
+  }      throw error;
     }
   }
 
-  async verifyMessage(message: Message, publicKey: string): Promise<boolean> {
-  // Implementation needed
-}
+  async verifyMessage(): unknown {
     try {
-  // Implementation needed
-}
-      if (!message.signature) {
-  // Implementation needed
-}
+      if(): unknown {
         return false;
       }
 
@@ -407,22 +268,16 @@ export class Protocol extends EventEmitter {
         .update(messageString)
         .verify(publicKey, signature, 'base64');
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Failed to verify message signature:', error);
-      return false;
+this.logger.error('Failed to verify message signature:', error);
+  }      return false;
     }
   }
 
-  getMessageId(): string {
-  // Implementation needed
-}
+  getMessageId(): unknown {
     return crypto.randomUUID();
   }
 
-  getCorrelationId(): string {
-  // Implementation needed
-}
+  getCorrelationId(): unknown {
     return crypto.randomUUID();
   }
 }

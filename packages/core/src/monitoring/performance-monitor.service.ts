@@ -1,14 +1,10 @@
 import { /* TODO: specify imports */ } from /@nestjs/common/;
 @Injectable();
 export class PerformanceMonitor {
-  // Implementation needed
-}
   private readonly logger = new Logger(PerformanceMonitor.name);
   private timers: Map<string, number> = new Map();
   private metrics: Map<string, number> = new Map();
-  start(label: string): void {
-  // Implementation needed
-}
+  start(): unknown {
     if (this.timers.has(label)) { }
       this.logger.warn(`Timer ${label}` already started)`;``;
       return };

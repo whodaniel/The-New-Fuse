@@ -8,7 +8,7 @@ const logger: Date
     labels: Record<string, string>;
 }
 
-interface SystemHealth    { response_times: {
+interface SystemHealth    { response_times: unknown;
   // Implementation needed
 }
         avg: number
@@ -30,8 +30,6 @@ interface SystemHealth    { response_times: {
 }
 
 export class SystemMonitor {
-  // Implementation needed
-}
   private readonly redis: RedisCore
     private readonly metricPrefixes: Record<string, string>'';
     constructor(redis: 'RedisCore){'

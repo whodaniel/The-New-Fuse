@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { CommunicationProtocol, MessageProtocol } from './CommunicationProtocol';
 export interface UserConnection {
-  // Implementation needed
-}
   userId: string;
   socketId: string;
   connectedAt: Date;
@@ -11,18 +9,14 @@ export interface UserConnection {
 
 @Injectable()
 export class CommunicationService {
-  // Implementation needed
-}
   private connections: Map<string, UserConnection> = new Map();
   private userSockets: Map<string, string> = new Map();
-  constructor(
+  constructor(): unknown {
     private eventEmitter: EventEmitter2,
     private protocol: CommunicationProtocol,
   ) {}
 
-  async connectUser(userId: string, socketId: string): Promise<void> {
-  // Implementation needed
-}
+  async connectUser(): unknown {
     const connection: UserConnection = {
   // Implementation needed
 }
@@ -35,13 +29,9 @@ export class CommunicationService {
     this.eventEmitter.emit('user.connected', { userId, socketId });
   }
 
-  async disconnectUser(socketId: string): Promise<void> {
-  // Implementation needed
-}
+  async disconnectUser(): unknown {
     const connection = this.connections.get(socketId);
-    if (connection) {
-  // Implementation needed
-}
+    if(): unknown {
       this.connections.delete(socketId);
       this.userSockets.delete(connection.userId);
       this.eventEmitter.emit('event', data);
@@ -49,83 +39,44 @@ export class CommunicationService {
     }
   }
 
-  async sendMessage(
-    senderId: string,
-    recipientId: string,
-    type: string,
-    payload: any,
-  ): Promise<void> {
-  // Implementation needed
-}
+  async sendMessage(): unknown {
     const recipientSocketId = this.userSockets.get(recipientId);
-    if (!recipientSocketId) return;
-    const message = this.protocol.createMessage(type, payload, senderId, recipientId);
-    this.eventEmitter.emit('event', data);
-    });
-  }
-
-  async broadcastMessage(
-    senderId: string,
-    type: string,
-    payload: any,
-    excludeUserIds?: string[],
-  ): Promise<void> {
-  // Implementation needed
-}
+    if(): unknown {
     const message = this.protocol.createMessage(type, payload, senderId);
     this.connections.forEach((connection) => {
-  // Implementation needed
-}
-      if (!excludeUserIds?.includes(connection.userId)) {
-  // Implementation needed
-}
-        this.eventEmitter.emit('event', data);
+if(): unknown {
+  }        this.eventEmitter.emit('event', data);
         });
       }
     });
   }
 
-  async processIncomingMessage(socketId: string, data: any): Promise<void> {
-  // Implementation needed
-}
+  async processIncomingMessage(): unknown {
     const connection = this.connections.get(socketId);
-    if (!connection) return;
-    try {
-  // Implementation needed
-}
+    if(): unknown {
       const message: MessageProtocol = {
-  // Implementation needed
-}
-        type: data.type,
-        payload: data.payload,
+type: data.type,
+  }        payload: data.payload,
         timestamp: new Date(),
         senderId: connection.userId,
         recipientId: data.recipientId,
       };
       await this.protocol.processMessage(message);
     } catch (error) {
-  // Implementation needed
-}
-      this.eventEmitter.emit('event', data);
+this.eventEmitter.emit('event', data);
       });
-    }
+  }}
   }
 
-  getUserSocketId(userId: string): string | undefined {
-  // Implementation needed
-}
+  getUserSocketId(): unknown {
     return this.userSockets.get(userId);
   }
 
-  getConnectedUsers(): string[] {
-  // Implementation needed
-}
+  getConnectedUsers(): unknown {
     return Array.from(this.userSockets.keys());
   }
 
-  isUserConnected(userId: string): boolean {
-  // Implementation needed
-}
+  isUserConnected(): unknown {
     return this.userSockets.has(userId);
   }
 }

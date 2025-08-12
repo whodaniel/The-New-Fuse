@@ -1,27 +1,19 @@
 export interface APIManager {
-  // Implementation needed
-}
   validateAPISpec(spec: any): Promise<{ valid: boolean; errors?: string[] }>;
   createIntegration(service: any, spec: any): Promise<any>;
 }
 
 export interface IntegrationRegistry {
-  // Implementation needed
-}
   registerIntegration(integration: any): Promise<any>;
 }
 
 export interface ExternalService {
-  // Implementation needed
-}
   id: string;
   name: string;
   spec: any;
 }
 
 export interface APIRequest {
-  // Implementation needed
-}
   path: string;
   method: string;
   headers: Record<string, string>;
@@ -29,32 +21,22 @@ export interface APIRequest {
 }
 
 export interface APIResponse {
-  // Implementation needed
-}
   status: number;
   headers: Record<string, string>;
   body: any;
 }
 
 export class WorkflowGateway {
-  // Implementation needed
-}
-  constructor(
+  constructor(): unknown {
     private apiManager: APIManager,
     private integrationRegistry: IntegrationRegistry
   ) {}
 
-  async registerExternalService(service: ExternalService): Promise<void> {
-  // Implementation needed
-}
+  async registerExternalService(): unknown {
     try {
-  // Implementation needed
-}
       // Validate the API specification
       const validationResult = await this.apiManager.validateAPISpec(service.spec);
-      if (!validationResult.valid) {
-  // Implementation needed
-}
+      if(): unknown {
         throw new Error(`Invalid API spec: ${validationResult.errors?.join(', ')}`);
       }
 
@@ -63,18 +45,12 @@ export class WorkflowGateway {
       // Register with integration registry
       await this.integrationRegistry.registerIntegration(integration);
     } catch (error) {
-  // Implementation needed
-}
-      throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
+throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }}
   }
 
-  async makeAPICall(serviceId: string, request: APIRequest): Promise<APIResponse> {
-  // Implementation needed
-}
+  async makeAPICall(): unknown {
     try {
-  // Implementation needed
-}
       // Implementation would make actual API call
       return {
   // Implementation needed
@@ -84,14 +60,11 @@ export class WorkflowGateway {
         body: { success: true }
       };
     } catch (error) {
-  // Implementation needed
-}
-      return {
-  // Implementation needed
-}
+return {
+  }}
         status: 500,
         headers: { "Content-Type": "application/json" },
-        body: {
+        body: unknown;
   // Implementation needed
 }
           error: error instanceof Error ? error.message : 'Unknown error'
@@ -100,12 +73,8 @@ export class WorkflowGateway {
     }
   }
 
-  async handleWebhook(serviceId: string, payload: any): Promise<APIResponse> {
-  // Implementation needed
-}
+  async handleWebhook(): unknown {
     try {
-  // Implementation needed
-}
       // Implementation would process webhook
       return {
   // Implementation needed
@@ -115,14 +84,11 @@ export class WorkflowGateway {
         body: { received: true }
       };
     } catch (error) {
-  // Implementation needed
-}
-      return {
-  // Implementation needed
-}
+return {
+  }}
         status: 500,
         headers: { "Content-Type": "application/json" },
-        body: {
+        body: unknown;
   // Implementation needed
 }
           error: error instanceof Error ? error.message : 'Unknown error'

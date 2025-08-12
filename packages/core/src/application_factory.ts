@@ -4,8 +4,6 @@ import { MetricsService } from './metrics/MetricService';
 import Redis from 'ioredis';
 type MetricEvent = 'task_completion' | 'task_failure' | 'task_start';
 export interface SecurityConfig {
-  // Implementation needed
-}
   jwtSecret: string;
   jwtExpiresIn: string;
   bcryptSaltRounds: number;
@@ -13,27 +11,19 @@ export interface SecurityConfig {
 }
 
 export interface RedisConfig {
-  // Implementation needed
-}
   url: string;
 }
 
 @Injectable()
-export class ApplicationFactory implements OnModuleInit, OnModuleDestroy {
-  // Implementation needed
-}
+export class ApplicationFactory {
   private readonly logger = new Logger(ApplicationFactory.name);
   private redis: Redis;
   private metricsService: MetricsService;
   private services: any[] = [];
   constructor(private readonly config: ConfigService) {}
 
-  async onModuleInit() {
-  // Implementation needed
-}
+  async onModuleInit(): unknown {
     try {
-  // Implementation needed
-}
       const securityConfig: SecurityConfig = {
   // Implementation needed
 }
@@ -49,74 +39,36 @@ export class ApplicationFactory implements OnModuleInit, OnModuleDestroy {
       await this.initializeServices();
       this.logger.log('All services started successfully');
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('message', context);
+this.logger.error('message', context);
       });
-      throw error;
+  }      throw error;
     }
   }
 
-  async onModuleDestroy() {
-  // Implementation needed
-}
+  async onModuleDestroy(): unknown {
     try {
-  // Implementation needed
-}
       this.logger.log('Stopping application services...');
       // Cleanup services
       await this.cleanupServices();
-      if (this.redis) {
-  // Implementation needed
-}
+      if(): unknown {
         await this.redis.quit();
       }
       
       this.logger.log('All services stopped successfully');
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('message', context);
+this.logger.error('message', context);
       });
-    }
+  }}
   }
 
   private async initializeServices() {
-  // Implementation needed
-}
-    for (const service of this.services) {
-  // Implementation needed
-}
-      if (typeof service === 'object' && 
-          typeof (service as any).init === 'function') {
-  // Implementation needed
-}
-        await (service as any).init();
-      }
-    }
-  }
-
-  private async cleanupServices() {
-  // Implementation needed
-}
-    for (const service of this.services) {
-  // Implementation needed
-}
-      if (typeof service === 'object' && 
-          typeof (service as any).cleanup === 'function') {
-  // Implementation needed
-}
-        await (service as any).cleanup();
-      }
-    }
-  }
-
-  async recordTaskCompletion(taskId: string, metadata?: any) {
-  // Implementation needed
-}
+for(): unknown {
+  }      if(): unknown {
+        await(): unknown {
+    for(): unknown {
+      if(): unknown {
+        await(): unknown {
     try {
-  // Implementation needed
-}
       await this.metricsService.record<MetricEvent>('task_completion', {
   // Implementation needed
 }
@@ -125,11 +77,9 @@ export class ApplicationFactory implements OnModuleInit, OnModuleDestroy {
         ...metadata
       });
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('message', context);
+this.logger.error('message', context);
       });
-      await this.metricsService.record<MetricEvent>('task_failure', {
+  }      await this.metricsService.record<MetricEvent>('task_failure', {
   // Implementation needed
 }
         taskId,
@@ -139,21 +89,15 @@ export class ApplicationFactory implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  registerService(service: any) {
-  // Implementation needed
-}
+  registerService(): unknown {
     this.services.push(service);
   }
 
-  getRedisClient(): Redis {
-  // Implementation needed
-}
+  getRedisClient(): unknown {
     return this.redis;
   }
 
-  getMetricsService(): MetricsService {
-  // Implementation needed
-}
+  getMetricsService(): unknown {
     return this.metricsService;
   }
 }

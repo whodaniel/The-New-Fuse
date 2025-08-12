@@ -10,8 +10,6 @@ const logger: winston.Logger = winston.createLogger({
   ]
 });
 export enum TaskState {
-  // Implementation needed
-}
   PENDING = 'pending',
   RUNNING = 'running',
   COMPLETED = 'completed',
@@ -21,8 +19,6 @@ export enum TaskState {
 }
 
 export enum TaskPriority {
-  // Implementation needed
-}
   LOW = 1,
   MEDIUM = 2,
   HIGH = 3,
@@ -30,8 +26,6 @@ export enum TaskPriority {
 }
 
 export interface Agent {
-  // Implementation needed
-}
   id: string;
   name: string;
   capabilities: string[];
@@ -41,8 +35,6 @@ export interface Agent {
 }
 
 export interface Task {
-  // Implementation needed
-}
   id: string;
   type: string;
   state: TaskState;
@@ -54,23 +46,16 @@ export interface Task {
 }
 
 export class CoordinationManager {
-  // Implementation needed
-}
   private agents: Map<string, Agent> = new Map();
   private tasks: Map<string, Task> = new Map();
   private logger: winston.Logger;
-  constructor() {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.logger = logger;
   }
 
   public registerAgent(agent: Omit<Agent, 'lastHeartbeat' | 'status' | 'loadFactor'>): void {
-  // Implementation needed
-}
-    const newAgent: Agent = {
-  // Implementation needed
-}
+const newAgent: Agent = {
+  }}
       ...agent,
       status: 'available',
       loadFactor: 0.0,
@@ -81,12 +66,8 @@ export class CoordinationManager {
   }
 
   public async updateHeartbeat(agentId: string): Promise<void> {
-  // Implementation needed
-}
-    const agent = this.agents.get(agentId);
-    if (!agent) {
-  // Implementation needed
-}
+const agent = this.agents.get(agentId);
+  }    if(): unknown {
       throw new Error(`Agent not found: ${agentId}`);
     }
     agent.lastHeartbeat = new Date();
@@ -94,10 +75,8 @@ export class CoordinationManager {
   }
 
   public assignTask(task: Omit<Task, 'id' | 'state' | 'createdAt' | 'updatedAt'>): string {
-  // Implementation needed
-}
-    const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    const newTask: Task = {
+const taskId = `task_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }    const newTask: Task = {
   // Implementation needed
 }
       ...task,
@@ -112,23 +91,17 @@ export class CoordinationManager {
   }
 
   public getTaskState(taskId: string): TaskState | undefined {
-  // Implementation needed
-}
-    const task = this.tasks.get(taskId);
-    return task?.state;
+const task = this.tasks.get(taskId);
+  }    return task?.state;
   }
 
   public getAgentStatus(agentId: string): Agent | undefined {
-  // Implementation needed
-}
-    return this.agents.get(agentId);
-  }
+return this.agents.get(agentId);
+  }}
 
   public getAvailableAgents(): Agent[] {
-  // Implementation needed
-}
-    return Array.from(this.agents.values())
+return Array.from(this.agents.values())
       .filter(agent => agent.status === 'available')
       .sort((a, b) => a.loadFactor - b.loadFactor);
-  }
+  }}
 }

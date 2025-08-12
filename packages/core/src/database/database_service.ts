@@ -3,82 +3,49 @@ import { PrismaService } from '@the-new-fuse/database';
 import { User } from '@the-new-fuse/database/generated/prisma';
 @Injectable()
 export class DatabaseService {
-  // Implementation needed
-}
   constructor(private readonly prisma: PrismaService) {}
 
   get client() {
-  // Implementation needed
-}
-    return this.prisma;
-  }
+return this.prisma;
+  }}
 
   get llmConfigs() {
-  // Implementation needed
-}
-    return this.prisma.lLMConfig;
-  }
+return this.prisma.lLMConfig;
+  }}
 
-  async findUser(where: { email: string }): Promise<User | null> {
-  // Implementation needed
-}
+  async findUser(): unknown {
     return this.prisma.user.findUnique({ where });
   }
 
-  async deleteUserSessions(where: { userId: string }): Promise<void> {
-  // Implementation needed
-}
+  async deleteUserSessions(): unknown {
     await this.prisma.authSession.deleteMany({ where });
   }
 
-  async createUser(data: {
-  // Implementation needed
-}
-    email: string;
-    username: string;
-    firstName?: string;
-    lastName?: string;
-  }): Promise<User> {
-  // Implementation needed
-}
+  async createUser(): unknown {
     return this.prisma.user.create({ data });
   }
 
-  async updateUser(id: string, data: Partial<User>): Promise<User> {
-  // Implementation needed
-}
+  async updateUser(): unknown {
     return this.prisma.user.update({
-  // Implementation needed
-}
-      where: { id },
-      data
+where: { id },
+  }      data
     });
   }
 
-  async deleteUser(id: string): Promise<void> {
-  // Implementation needed
-}
+  async deleteUser(): unknown {
     await this.prisma.user.delete({ where: { id } });
   }
 
-  async findUserById(id: string): Promise<User | null> {
-  // Implementation needed
-}
+  async findUserById(): unknown {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async health(): Promise<boolean> {
-  // Implementation needed
-}
+  async health(): unknown {
     try {
-  // Implementation needed
-}
-      await this.prisma.$queryRaw`SELECT 1`;
-      return true;
+await this.prisma.$queryRaw`SELECT 1`;
+  }      return true;
     } catch (error) {
-  // Implementation needed
-}
-      return false;
-    }
+return false;
+  }}
   }
 }

@@ -54,7 +54,7 @@ export class Logger {
 
   error(message: string, error?: Error, context?: Record<string, any>): void {
     const errorContext = error ? {
-      error: {
+      error: unknown;
         name: error.name,
         message: error.message,
         stack: error.stack,
@@ -67,7 +67,7 @@ export class Logger {
 
   fatal(message: string, error?: Error, context?: Record<string, any>): void {
     const errorContext = error ? {
-      error: {
+      error: unknown;
         name: error.name,
         message: error.message,
         stack: error.stack,

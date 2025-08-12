@@ -2,48 +2,35 @@ import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class MessageProcessor {
-  // Implementation needed
-}
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async processMessage(message: any): Promise<any> {
-  // Implementation needed
-}
+  async processMessage(): unknown {
     // Mock implementation
     this.eventEmitter.emit('message.processed', message);
     return { message: 'Message processing not implemented' };
   }
 
-  async validateMessage(message: any): Promise<boolean> {
-  // Implementation needed
-}
+  async validateMessage(): unknown {
     // Mock implementation
     return true;
   }
 
-  async transformMessage(message: any): Promise<any> {
-  // Implementation needed
-}
+  async transformMessage(): unknown {
     // Mock implementation
     return message;
   }
 
-  async routeMessage(message: any): Promise<void> {
-  // Implementation needed
-}
+  async routeMessage(): unknown {
     // Mock implementation
     console.log('Message routing not implemented');
   }
 
-  async getProcessingStats(): Promise<any> {
-  // Implementation needed
-}
+  async getProcessingStats(): unknown {
     // Mock implementation
     return {
-  // Implementation needed
-}
-      processed: 0,
-      failed: 0,
+processed: 0
+          },
+          failed: 0,
       pending: 0,
       message: 'Processing stats not implemented'
     };

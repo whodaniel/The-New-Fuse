@@ -1,8 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { z } from 'zod';
 export interface ValidationRule {
-  // Implementation needed
-}
   field: string;
   type: 'string' | 'number' | 'boolean' | 'email' | 'url' | 'port';
   required?: boolean;
@@ -15,16 +13,12 @@ export interface ValidationRule {
 }
 
 export interface ValidationResult {
-  // Implementation needed
-}
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationError[];
 }
 
 export interface ValidationError {
-  // Implementation needed
-}
   field: string;
   message: string;
   code: string;
@@ -33,31 +27,19 @@ export interface ValidationError {
 
 @Injectable()
 export class ConfigValidator {
-  // Implementation needed
-}
   private readonly logger = new Logger(ConfigValidator.name);
-  validateConfig(config: Record<string, any>, rules: ValidationRule[]): ValidationResult {
-  // Implementation needed
-}
+  validateConfig(): unknown {
     const errors: ValidationError[] = [];
     const warnings: ValidationError[] = [];
-    for (const rule of rules) {
-  // Implementation needed
-}
+    for(): unknown {
       const value = config[rule.field];
       const validationErrors = this.validateField(rule, value);
-      for (const error of validationErrors) {
-  // Implementation needed
-}
-        if (rule.severity === 'error') {
-  // Implementation needed
-}
+      for(): unknown {
+        if(): unknown {
           errors.push(error);
         } else {
-  // Implementation needed
-}
-          warnings.push(error);
-        }
+warnings.push(error);
+  }}
       }
     }
 
@@ -68,15 +50,11 @@ export class ConfigValidator {
       errors,
       warnings
     };
-    if (errors.length > 0) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.error('Configuration validation failed', { errors });
     }
 
-    if (warnings.length > 0) {
-  // Implementation needed
-}
+    if(): unknown {
       this.logger.warn('Configuration validation warnings', { warnings });
     }
 
@@ -84,13 +62,9 @@ export class ConfigValidator {
   }
 
   private validateField(rule: ValidationRule, value: any): ValidationError[] {
-  // Implementation needed
-}
-    const errors: ValidationError[] = [];
+const errors: ValidationError[] = [];
     // Check if required field is missing
-    if (rule.required && (value === undefined || value === null || value === '')) {
-  // Implementation needed
-}
+  }    if(): unknown {
       errors.push({
   // Implementation needed
 }
@@ -103,21 +77,15 @@ export class ConfigValidator {
     }
 
     // Skip validation if field is optional and empty
-    if (!rule.required && (value === undefined || value === null || value === '')) {
-  // Implementation needed
-}
+    if(): unknown {
       return errors;
     }
 
     // Type validation
-    if (!this.validateType(rule.type, value)) {
-  // Implementation needed
-}
+    if(): unknown {
       errors.push({
-  // Implementation needed
-}
-        field: rule.field,
-        message: rule.message || `Field ${rule.field} must be of type ${rule.type}`,
+field: rule.field,
+  }        message: rule.message || `Field ${rule.field} must be of type ${rule.type}`,
         code: 'invalid_type',
         severity: rule.severity
       });
@@ -125,16 +93,10 @@ export class ConfigValidator {
     }
 
     // Additional validations based on type
-    switch (rule.type) {
-  // Implementation needed
-}
+    switch(): unknown {
       case 'string':
-        if (typeof value === 'string') {
-  // Implementation needed
-}
-          if (rule.min && value.length < rule.min) {
-  // Implementation needed
-}
+        if(): unknown {
+          if(): unknown {
             errors.push({
   // Implementation needed
 }
@@ -144,21 +106,15 @@ export class ConfigValidator {
               severity: rule.severity
             });
           }
-          if (rule.max && value.length > rule.max) {
-  // Implementation needed
-}
+          if(): unknown {
             errors.push({
-  // Implementation needed
-}
-              field: rule.field,
-              message: `Field ${rule.field} must be at most ${rule.max} characters`,
+field: rule.field,
+  }              message: `Field ${rule.field} must be at most ${rule.max} characters`,
               code: 'max_length',
               severity: rule.severity
             });
           }
-          if (rule.pattern && !rule.pattern.test(value)) {
-  // Implementation needed
-}
+          if(): unknown {
             errors.push({
   // Implementation needed
 }
@@ -171,24 +127,16 @@ export class ConfigValidator {
         }
         break;
       case 'number':
-        if (typeof value === 'number') {
-  // Implementation needed
-}
-          if (rule.min !== undefined && value < rule.min) {
-  // Implementation needed
-}
+        if(): unknown {
+          if(): unknown {
             errors.push({
-  // Implementation needed
-}
-              field: rule.field,
-              message: `Field ${rule.field} must be at least ${rule.min}`,
+field: rule.field,
+  }              message: `Field ${rule.field} must be at least ${rule.min}`,
               code: 'min_value',
               severity: rule.severity
             });
           }
-          if (rule.max !== undefined && value > rule.max) {
-  // Implementation needed
-}
+          if(): unknown {
             errors.push({
   // Implementation needed
 }
@@ -201,18 +149,12 @@ export class ConfigValidator {
         }
         break;
       case 'email':
-        if (typeof value === 'string') {
-  // Implementation needed
-}
+        if(): unknown {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if (!emailRegex.test(value)) {
-  // Implementation needed
-}
+          if(): unknown {
             errors.push({
-  // Implementation needed
-}
-              field: rule.field,
-              message: `Field ${rule.field} must be a valid email address`,
+field: rule.field,
+  }              message: `Field ${rule.field} must be a valid email address`,
               code: 'invalid_email',
               severity: rule.severity
             });
@@ -220,19 +162,12 @@ export class ConfigValidator {
         }
         break;
       case 'url':
-        if (typeof value === 'string') {
-  // Implementation needed
-}
+        if(): unknown {
           try {
-  // Implementation needed
-}
-            new URL(value);
+      new URL(value);
           } catch {
-  // Implementation needed
-}
-            errors.push({
-  // Implementation needed
-}
+errors.push({
+  }}
               field: rule.field,
               message: `Field ${rule.field} must be a valid URL`,
               code: 'invalid_url',
@@ -242,12 +177,8 @@ export class ConfigValidator {
         }
         break;
       case 'port':
-        if (typeof value === 'number') {
-  // Implementation needed
-}
-          if (value < 1 || value > 65535) {
-  // Implementation needed
-}
+        if(): unknown {
+          if(): unknown {
             errors.push({
   // Implementation needed
 }
@@ -262,14 +193,10 @@ export class ConfigValidator {
     }
 
     // Custom validation
-    if (rule.custom && !rule.custom(value)) {
-  // Implementation needed
-}
+    if(): unknown {
       errors.push({
-  // Implementation needed
-}
-        field: rule.field,
-        message: rule.message || `Field ${rule.field} failed custom validation`,
+field: rule.field,
+  }        message: rule.message || `Field ${rule.field} failed custom validation`,
         code: 'custom_validation',
         severity: rule.severity
       });
@@ -279,12 +206,8 @@ export class ConfigValidator {
   }
 
   private validateType(type: string, value: any): boolean {
-  // Implementation needed
-}
-    switch (type) {
-  // Implementation needed
-}
-      case 'string':
+switch(): unknown {
+  }      case 'string':
         return typeof value === 'string';
       case 'number':
         return typeof value === 'number' && !isNaN(value);
@@ -299,37 +222,17 @@ export class ConfigValidator {
     }
   }
 
-  createZodSchema(rules: ValidationRule[]): z.ZodObject<any> {
-  // Implementation needed
-}
+  createZodSchema(): unknown {
     const schemaFields: Record<string, z.ZodTypeAny> = {};
     try {
-  // Implementation needed
-}
-      for (const rule of rules) {
-  // Implementation needed
-}
+      for(): unknown {
         let fieldSchema: z.ZodTypeAny;
-        switch (rule.type) {
-  // Implementation needed
-}
+        switch(): unknown {
           case 'string':
           case 'email':
           case 'url':
             fieldSchema = z.string();
-            if (rule.min) fieldSchema = (fieldSchema as z.ZodString).min(rule.min);
-            if (rule.max) fieldSchema = (fieldSchema as z.ZodString).max(rule.max);
-            if (rule.type === 'email') fieldSchema = (fieldSchema as z.ZodString).email();
-            if (rule.type === 'url') fieldSchema = (fieldSchema as z.ZodString).url();
-            break;
-          case 'number':
-          case 'port':
-            fieldSchema = z.number();
-            if (rule.min !== undefined) fieldSchema = (fieldSchema as z.ZodNumber).min(rule.min);
-            if (rule.max !== undefined) fieldSchema = (fieldSchema as z.ZodNumber).max(rule.max);
-            if (rule.type === 'port') {
-  // Implementation needed
-}
+            if(): unknown {
               fieldSchema = (fieldSchema as z.ZodNumber).min(1).max(65535);
             }
             break;
@@ -340,9 +243,7 @@ export class ConfigValidator {
             fieldSchema = z.any();
         }
 
-        if (!rule.required) {
-  // Implementation needed
-}
+        if(): unknown {
           fieldSchema = fieldSchema.optional();
         }
 
@@ -351,21 +252,15 @@ export class ConfigValidator {
 
       return z.object(schemaFields);
     } catch (error) {
-  // Implementation needed
-}
-      this.logger.error('Error creating schema:', error);
-      throw new Error('Failed to create validation schema');
+this.logger.error('Error creating schema:', error);
+  }      throw new Error('Failed to create validation schema');
     }
   }
 
-  validateWithZod(config: Record<string, any>, schema: z.ZodObject<any>): ValidationResult {
-  // Implementation needed
-}
+  validateWithZod(): unknown {
     try {
-  // Implementation needed
-}
-      schema.parse(config);
-      return {
+schema.parse(config);
+  }      return {
   // Implementation needed
 }
         valid: true,
@@ -373,12 +268,8 @@ export class ConfigValidator {
         warnings: []
       };
     } catch (error) {
-  // Implementation needed
-}
-      if (error instanceof z.ZodError) {
-  // Implementation needed
-}
-        const errors = error.errors.map(err => ({
+if(): unknown {
+  }        const errors = error.errors.map(err => ({
   // Implementation needed
 }
           field: err.path.join('.'),

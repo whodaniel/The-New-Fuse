@@ -1,26 +1,24 @@
 export interface WorkflowConfig {
+  audit: unknown;
   // Implementation needed
 }
-  audit: {
-  // Implementation needed
-}
-    retention: {
+    retention: unknown;
   // Implementation needed
 }
       days: number;
       highPriorityDays: number;
     };
-    sampling: {
+    sampling: unknown;
   // Implementation needed
 }
       enabled: boolean;
       rate: number;
     };
   };
-  resources: {
+  resources: unknown;
   // Implementation needed
 }
-    scaling: {
+    scaling: unknown;
   // Implementation needed
 }
       enabled: boolean;
@@ -28,7 +26,7 @@ export interface WorkflowConfig {
       maxInstances: number;
       cooldownPeriod: number;
     };
-    limits: {
+    limits: unknown;
   // Implementation needed
 }
       cpu: number;
@@ -36,33 +34,33 @@ export interface WorkflowConfig {
       storage: number;
     };
   };
-  security: {
+  security: unknown;
   // Implementation needed
 }
-    encryption: {
+    encryption: unknown;
   // Implementation needed
 }
       algorithm: string;
       keyRotationDays: number;
     };
-    authentication: {
+    authentication: unknown;
   // Implementation needed
 }
       sessionTimeout: number;
       maxAttempts: number;
     };
   };
-  recovery: {
+  recovery: unknown;
   // Implementation needed
 }
-    backup: {
+    backup: unknown;
   // Implementation needed
 }
       schedule: string;
       retention: number;
       compressionLevel: number;
     };
-    monitoring: {
+    monitoring: unknown;
   // Implementation needed
 }
       checkInterval: number;

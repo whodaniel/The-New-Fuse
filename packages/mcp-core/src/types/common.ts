@@ -39,12 +39,12 @@ export enum LoadBalancingStrategy {
 export interface RetryPolicy {
   /** Maximum number of retry attempts */
   maxAttempts: number;
-  /** Initial delay in milliseconds */
-  initialDelay: number;
+  /** Base delay in milliseconds */
+  baseDelay: number;
   /** Maximum delay in milliseconds */
   maxDelay: number;
   /** Backoff multiplier */
-  backoffMultiplier: number;
+  backoffMultiplier?: number;
   /** Jitter factor (0-1) */
   jitter?: number;
 }

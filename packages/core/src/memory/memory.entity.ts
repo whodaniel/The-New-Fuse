@@ -1,7 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 export enum MemoryType {
-  // Implementation needed
-}
   CONVERSATION = 'conversation',
   CONTEXT = 'context',
   KNOWLEDGE = 'knowledge',
@@ -12,8 +10,6 @@ export enum MemoryType {
 @Index(['type', 'createdAt'])
 @Index(['importance'])
 export class Memory {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id: string;
   @Column('text')

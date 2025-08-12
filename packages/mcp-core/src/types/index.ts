@@ -7,7 +7,7 @@
 // Export specific types to avoid conflicts
 export type { MCPServerConfig, MCPServerInfo, ServerStatistics } from './server';
 export type { MCPClientConfig, ClientStatistics, ClientStatus } from './client';
-export type { MCPServiceInfo, ServiceQuery, ServiceHealth, RoutingInfo, RoutingMetrics, BrokerConfig, HealthCheckConfig, RegistryConfig } from './broker';
+export type { MCPServiceInfo, ServiceQuery, ServiceHealth, RoutingInfo, RoutingMetrics, BrokerConfig, HealthCheckConfig, RegistryConfig, AdvancedServiceQuery, ServiceCompatibilityResult, ServiceRecommendationOptions } from './broker';
 export type { MessagePriority, MessageType, NotificationType, MessageEnvelope, MessageStatistics, MessageValidationResult } from './message';
 export type { ResourceType, ResourceAccessMode, ResourceStatus, ResourceDiscoveryResult, ResourceMetrics } from './resource';
 export type { ToolType, ToolExecutionStatus, ToolExecutionContext, ToolRegistry, ToolSandboxConfig } from './tool';

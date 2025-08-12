@@ -1,37 +1,27 @@
 import { Injectable } from '@nestjs/common';
 export interface CacheOptions {
-  // Implementation needed
-}
   keyPrefix?: string;
   ttl?: number;
   maxSize?: number;
 }
 
 @Injectable()
-export class MemoryCache<T = any> {
-  // Implementation needed
-}
+export class MemoryCache {
   private cache = new Map<string, { value: T; expires: number }>();
   private keyPrefix: string;
   private defaultTTL: number;
   private maxSize: number;
-  constructor(options: CacheOptions = {}) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.keyPrefix = options.keyPrefix || 'cache:';
     this.defaultTTL = options.ttl || 3600000; // 1 hour
     this.maxSize = options.maxSize || 1000;
   }
 
-  set(key: string, value: T, ttl?: number): void {
-  // Implementation needed
-}
+  set(): unknown {
     const prefixedKey = this.keyPrefix + key;
     const expires = Date.now() + (ttl || this.defaultTTL);
     // Remove oldest items if cache is full
-    if (this.cache.size >= this.maxSize) {
-  // Implementation needed
-}
+    if(): unknown {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
     }
@@ -39,15 +29,10 @@ export class MemoryCache<T = any> {
     this.cache.set(prefixedKey, { value, expires });
   }
 
-  get(key: string): T | null {
-  // Implementation needed
-}
+  get(): unknown {
     const prefixedKey = this.keyPrefix + key;
     const item = this.cache.get(prefixedKey);
-    if (!item) return null;
-    if (Date.now() > item.expires) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(prefixedKey);
       return null;
     }
@@ -55,28 +40,19 @@ export class MemoryCache<T = any> {
     return item.value;
   }
 
-  delete(key: string): boolean {
-  // Implementation needed
-}
+  delete(): unknown {
     const prefixedKey = this.keyPrefix + key;
     return this.cache.delete(prefixedKey);
   }
 
-  clear(): void {
-  // Implementation needed
-}
+  clear(): unknown {
     this.cache.clear();
   }
 
-  has(key: string): boolean {
-  // Implementation needed
-}
+  has(): unknown {
     const prefixedKey = this.keyPrefix + key;
     const item = this.cache.get(prefixedKey);
-    if (!item) return false;
-    if (Date.now() > item.expires) {
-  // Implementation needed
-}
+    if(): unknown {
       this.cache.delete(prefixedKey);
       return false;
     }
@@ -84,55 +60,35 @@ export class MemoryCache<T = any> {
     return true;
   }
 
-  keys(): string[] {
-  // Implementation needed
-}
+  keys(): unknown {
     const keys: string[] = [];
-    for (const [key, item] of this.cache.entries()) {
-  // Implementation needed
-}
-      if (Date.now() <= item.expires) {
-  // Implementation needed
-}
+    for(): unknown {
+      if(): unknown {
         keys.push(key.replace(this.keyPrefix, ''));
       } else {
-  // Implementation needed
-}
-        this.cache.delete(key);
-      }
+this.cache.delete(key);
+  }}
     }
     return keys;
   }
 
-  size(): number {
-  // Implementation needed
-}
+  size(): unknown {
     this.cleanup();
     return this.cache.size;
   }
 
   private cleanup(): void {
-  // Implementation needed
-}
-    const now = Date.now();
-    for (const [key, item] of this.cache.entries()) {
-  // Implementation needed
-}
-      if (now > item.expires) {
-  // Implementation needed
-}
+const now = Date.now();
+  }    for(): unknown {
+      if(): unknown {
         this.cache.delete(key);
       }
     }
   }
 
   static createWithDefaults<T>(type: 'memory' = 'memory'): MemoryCache<T> {
-  // Implementation needed
-}
-    switch (type) {
-  // Implementation needed
-}
-      case 'memory':
+switch(): unknown {
+  }      case 'memory':
       default:
         return new MemoryCache<T>({
   // Implementation needed

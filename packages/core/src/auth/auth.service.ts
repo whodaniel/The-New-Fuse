@@ -2,8 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 export interface UserData {
-  // Implementation needed
-}
   id: string;
   email: string;
   name?: string;
@@ -12,21 +10,15 @@ export interface UserData {
 
 @Injectable()
 export class AuthService {
-  // Implementation needed
-}
-  constructor(
+  constructor(): unknown {
     private jwtService: JwtService,
     private configService: ConfigService
   ) {}
 
-  async validateUser(email: string, password: string): Promise<UserData | null> {
-  // Implementation needed
-}
+  async validateUser(): unknown {
     // This is a placeholder implementation
     // In a real app, you would validate against a database
-    if (email && password) {
-  // Implementation needed
-}
+    if(): unknown {
       return {
   // Implementation needed
 }
@@ -39,9 +31,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: UserData) {
-  // Implementation needed
-}
+  async login(): unknown {
     const payload = {
   // Implementation needed
 }
@@ -53,26 +43,16 @@ export class AuthService {
   // Implementation needed
 }
       access_token: this.jwtService.sign(payload),
-      user: {
-  // Implementation needed
-}
-        id: user.id,
-        email: user.email,
+      user: unknown;
+id: user.id,
+  }        email: user.email,
         name: user.name,
         roles: user.roles,
       },
     };
   }
 
-  async register(userData: {
-  // Implementation needed
-}
-    email: string;
-    password: string;
-    name?: string;
-  }): Promise<UserData> {
-  // Implementation needed
-}
+  async register(): unknown {
     // This is a placeholder implementation
     // In a real app, you would save to a database
     return {
@@ -85,14 +65,10 @@ export class AuthService {
     };
   }
 
-  async validateToken(token: string): Promise<UserData | null> {
-  // Implementation needed
-}
+  async validateToken(): unknown {
     try {
-  // Implementation needed
-}
-      const payload = this.jwtService.verify(token);
-      return {
+const payload = this.jwtService.verify(token);
+  }      return {
   // Implementation needed
 }
         id: payload.sub,

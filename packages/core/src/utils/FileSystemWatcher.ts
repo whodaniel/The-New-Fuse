@@ -2,32 +2,22 @@ import * as chokidar from 'chokidar';
 import * as path from 'path';
 import { Logger } from './logger';
 interface FileSystemWatcherOptions {
-  // Implementation needed
-}
   paths: string[];
   ignored?: string[];
   depth?: number;
 }
 
 export class FileSystemWatcher {
-  // Implementation needed
-}
   private watcher: chokidar.FSWatcher | null = null;
   private logger: Logger;
   private options: FileSystemWatcherOptions;
-  constructor(logger: Logger, options: FileSystemWatcherOptions) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.logger = logger;
     this.options = options;
   }
 
-  start(): void {
-  // Implementation needed
-}
-    if (this.watcher) {
-  // Implementation needed
-}
+  start(): unknown {
+    if(): unknown {
       this.logger.warn('FileSystemWatcher is already running.');
       return;
     }
@@ -70,19 +60,13 @@ export class FileSystemWatcher {
     });
   }
 
-  stop(): void {
-  // Implementation needed
-}
-    if (this.watcher) {
-  // Implementation needed
-}
+  stop(): unknown {
+    if(): unknown {
       this.watcher.close();
       this.watcher = null;
       this.logger.info('FileSystemWatcher stopped.');
     } else {
-  // Implementation needed
-}
-      this.logger.warn('FileSystemWatcher is not running.');
-    }
+this.logger.warn('FileSystemWatcher is not running.');
+  }}
   }
 }

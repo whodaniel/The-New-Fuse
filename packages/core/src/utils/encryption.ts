@@ -10,20 +10,14 @@ const logger = {
 };
 const scryptAsync = promisify(scrypt);
 export class EncryptionService {
-  // Implementation needed
-}
   private algorithm = 'aes-256-gcm';
   private ivLength = 16;
   private saltLength = 64;
   private keyLength = 32;
   constructor() {}
 
-  async encrypt(text: string, secret: string): Promise<string> {
-  // Implementation needed
-}
+  async encrypt(): unknown {
     try {
-  // Implementation needed
-}
       const salt = randomBytes(this.saltLength);
       const key = (await scryptAsync(secret, salt, this.keyLength)) as Buffer;
       const iv = randomBytes(this.ivLength);
@@ -33,23 +27,15 @@ export class EncryptionService {
       const authTag = cipher.getAuthTag();
       return `${salt.toString('hex')}:${iv.toString('hex')}:${authTag.toString('hex')}:${encrypted}`;
     } catch (error) {
-  // Implementation needed
-}
-      logger.error('Encryption error:', error);
-      throw new Error('Encryption failed');
+logger.error('Encryption error:', error);
+  }      throw new Error('Encryption failed');
     }
   }
 
-  async decrypt(encryptedText: string, secret: string): Promise<string> {
-  // Implementation needed
-}
+  async decrypt(): unknown {
     try {
-  // Implementation needed
-}
-      const parts = encryptedText.split(':');
-      if (parts.length !== 4) {
-  // Implementation needed
-}
+const parts = encryptedText.split(':');
+  }      if(): unknown {
         throw new Error('Invalid encrypted message format');
       }
       const salt = Buffer.from(parts[0], 'hex');
@@ -63,22 +49,16 @@ export class EncryptionService {
       decrypted += decipher.final('utf8');
       return decrypted;
     } catch (error) {
-  // Implementation needed
-}
-      logger.error('Decryption error:', error);
-      throw new Error('Decryption failed');
+logger.error('Decryption error:', error);
+  }      throw new Error('Decryption failed');
     }
   }
 
-  async hash(text: string): Promise<string> {
-  // Implementation needed
-}
+  async hash(): unknown {
     return CryptoJS.SHA256(text).toString();
   }
 
-  async compareHash(text: string, hash: string): Promise<boolean> {
-  // Implementation needed
-}
+  async compareHash(): unknown {
     return this.hash(text).then(hashedText => hashedText === hash);
   }
 }

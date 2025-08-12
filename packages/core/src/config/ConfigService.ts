@@ -178,7 +178,7 @@ export class ConfigService {
     // Check required environment variables
     const missing = this.requiredEnvVars.filter(key => !process.env[key]);
     if (missing.length > 0) {
-      throw new ConfigurationError(
+      throw new ConfigurationError(): unknown {
         `Missing required environment variables: ${missing.join(', ')}`,
         { missing }
       );
@@ -187,7 +187,7 @@ export class ConfigService {
     // Validate environment
     const validEnvironments = Object.values(ENVIRONMENTS);
     if (!validEnvironments.includes(this.config.environment as any)) {
-      throw new ConfigurationError(
+      throw new ConfigurationError(): unknown {
         `Invalid environment: ${this.config.environment}. Must be one of: ${validEnvironments.join(', ')}`,
         { environment: this.config.environment, validEnvironments }
       );
@@ -195,7 +195,7 @@ export class ConfigService {
 
     // Validate database URL
     if (!this.isValidUrl(this.config.database.url)) {
-      throw new ConfigurationError(
+      throw new ConfigurationError(): unknown {
         'Invalid database URL format',
         { url: this.config.database.url }
       );
@@ -203,7 +203,7 @@ export class ConfigService {
 
     // Validate Redis configuration
     if (!this.config.redis.host || this.config.redis.port <= 0 || this.config.redis.port > 65535) {
-      throw new ConfigurationError(
+      throw new ConfigurationError(): unknown {
         'Invalid Redis configuration',
         { host: this.config.redis.host, port: this.config.redis.port }
       );
@@ -330,11 +330,11 @@ export class ConfigService {
     return {
       ...this.config,
       // Mask sensitive information
-      database: {
+      database: unknown;
         ...this.config.database,
         url: this.maskSensitiveUrl(this.config.database.url),
       },
-      redis: {
+      redis: unknown;
         ...this.config.redis,
         password: this.config.redis.password ? '***masked***' : undefined,
       },
@@ -371,7 +371,7 @@ export class ConfigService {
     } catch (error) {
       return {
         status: 'unhealthy',
-        details: {
+        details: unknown;
           error: (error as Error).message,
           state: this.state,
         },

@@ -14,8 +14,6 @@ import { TaskStatus, TaskPriority } from './types';
 @Index(['type', 'status'])
 @Index(['userId'])
 export class Task {
-  // Implementation needed
-}
   @PrimaryGeneratedColumn('uuid')
   id!: string;
   @Column({ type: 'varchar', length: 255 })

@@ -1,6 +1,4 @@
 export interface BaseMessage {
-  // Implementation needed
-}
     id: string;
     type: string;
     timestamp: number;
@@ -8,11 +6,9 @@ export interface BaseMessage {
     target?: string;
 }
 
-export interface TaskMessage extends BaseMessage {
-  // Implementation needed
-}
+export interface TaskMessage {
     type: 'TASK';
-    payload: {
+    payload: unknown;
   // Implementation needed
 }
         taskId: string;
@@ -21,11 +17,9 @@ export interface TaskMessage extends BaseMessage {
     };
 }
 
-export interface StateMessage extends BaseMessage {
-  // Implementation needed
-}
+export interface StateMessage {
     type: 'STATE';
-    payload: {
+    payload: unknown;
   // Implementation needed
 }
         stateId: string;

@@ -1,6 +1,4 @@
 export interface AnalysisResult {
-  // Implementation needed
-}
     id: string;
     type: string;
     timestamp: Date;
@@ -12,8 +10,6 @@ export interface AnalysisResult {
 }
 
 export interface ValidationReport {
-  // Implementation needed
-}
     isValid: boolean;
     errors: ValidationError[];
     warnings: ValidationWarning[];
@@ -21,8 +17,6 @@ export interface ValidationReport {
 }
 
 export interface ValidationError {
-  // Implementation needed
-}
     code: string;
     message: string;
     path?: string;
@@ -31,8 +25,6 @@ export interface ValidationError {
 }
 
 export interface ValidationWarning {
-  // Implementation needed
-}
     code: string;
     message: string;
     path?: string;

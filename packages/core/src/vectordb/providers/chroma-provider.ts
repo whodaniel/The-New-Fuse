@@ -1,32 +1,22 @@
 import { ChromaClient } from 'chromadb';
 import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '../types';
-export class ChromaProvider implements VectorStoreProvider {
-  // Implementation needed
-}
+export class ChromaProvider {
   public readonly name = 'chroma';
   private client: ChromaClient;
-  constructor(config: { endpoint: string; apiKey: string }) {
-  // Implementation needed
-}
+  constructor(): unknown {
     this.client = new ChromaClient({ path: config.endpoint });
   }
   
-  async search(query: VectorQuery): Promise<SearchResult[]> {
-  // Implementation needed
-}
+  async search(): unknown {
     // Implementation for searching vectors
     return [];
   }
   
-  async addDocuments(documents: VectorDocument[]): Promise<void> {
-  // Implementation needed
-}
+  async addDocuments(): unknown {
     // Implementation for adding documents
   }
   
-  async deleteDocuments(ids: string[]): Promise<void> {
-  // Implementation needed
-}
+  async deleteDocuments(): unknown {
     // Implementation for deleting documents
   }
 }

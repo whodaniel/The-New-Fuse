@@ -1,23 +1,15 @@
 import { Injectable } from '@nestjs/common';
 @Injectable()
 export class AppService {
-  // Implementation needed
-}
-  getHello(): string {
-  // Implementation needed
-}
+  getHello(): unknown {
     return 'Welcome to Fuse API - Core Package';
   }
 
-  getVersion(): string {
-  // Implementation needed
-}
+  getVersion(): unknown {
     return '1.0.0';
   }
 
-  getStatus(): object {
-  // Implementation needed
-}
+  getStatus(): unknown {
     return {
   // Implementation needed
 }

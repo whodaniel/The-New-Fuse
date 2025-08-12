@@ -9,9 +9,7 @@ import { ConfigModule } from '@nestjs/config';
     HttpModule.registerAsync({
   // Implementation needed
 }
-      useFactory() => ({
-  // Implementation needed
-}
+      useFactory(): unknown {
         timeout: 5000,
         maxRedirects: 5,
       }),

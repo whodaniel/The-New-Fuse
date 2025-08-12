@@ -5,7 +5,10 @@ import {
 import {
   MCPServiceInfo,
   ServiceQuery,
-  ServiceHealth
+  ServiceHealth,
+  AdvancedServiceQuery,
+  ServiceCompatibilityResult,
+  ServiceRecommendationOptions
 } from '../types';
 
 /**
@@ -32,6 +35,36 @@ export interface IMCPBroker {
    * @returns Promise resolving to array of matching services
    */
   discoverServices(query: ServiceQuery): Promise<MCPServiceInfo[]>;
+
+  /**
+   * Advanced service discovery with capability matching and filtering
+   * @param query Advanced query parameters with capability matching
+   * @returns Promise resolving to array of matching services
+   */
+  discoverServicesAdvanced(query: AdvancedServiceQuery): Promise<MCPServiceInfo[]>;
+
+  /**
+   * Find services compatible with a given service
+   * @param serviceId The ID of the service to find compatible services for
+   * @returns Promise resolving to array of compatible services
+   */
+  findCompatibleServices(serviceId: string): Promise<MCPServiceInfo[]>;
+
+  /**
+   * Check capability compatibility between two services
+   * @param serviceIdA The ID of the first service
+   * @param serviceIdB The ID of the second service
+   * @returns Promise resolving to compatibility analysis
+   */
+  checkServiceCompatibility(serviceIdA: string, serviceIdB: string): Promise<ServiceCompatibilityResult>;
+
+  /**
+   * Get service recommendations based on usage patterns and compatibility
+   * @param serviceId The ID of the service to get recommendations for
+   * @param options Recommendation options
+   * @returns Promise resolving to array of recommended services
+   */
+  getServiceRecommendations(serviceId: string, options?: ServiceRecommendationOptions): Promise<MCPServiceInfo[]>;
 
   /**
    * Route a request to an appropriate service
