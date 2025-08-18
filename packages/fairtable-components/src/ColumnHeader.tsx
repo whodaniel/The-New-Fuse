@@ -1,12 +1,11 @@
 
 import React, { useState, useRef, useEffect, DragEvent } from 'react';
-import { Column, DataType, SelectOption as ColumnSelectOption, Table, AppState } from "../../fairtable-core/src";
-import { DATA_TYPE_OPTIONS, SINGLE_SELECT_COLOR_PALETTE, DEFAULT_COLUMN_WIDTH, NEW_COLUMN_DEFAULT_NAME, DATA_TYPE_ICONS } from '../../fairtable-core/src';
+import { Column, DataType, SelectOption as ColumnSelectOption, Table, AppState, DATA_TYPE_OPTIONS, SINGLE_SELECT_COLOR_PALETTE, DEFAULT_COLUMN_WIDTH, NEW_COLUMN_DEFAULT_NAME, DATA_TYPE_ICONS } from '@the-new-fuse/fairtable-core';
 import { PencilIcon, TrashIcon, ChevronDownIcon, PlusIcon, GripVerticalIcon, LinkIcon, FormulaIcon, DateIcon, AttachmentIcon, UrlIcon, EmailIcon, ClockIcon, ArrowUpIcon } from './Icons';
 import Modal from './Modal';
 import EditableText from './EditableText';
 import SelectInput, { SelectOptionItem } from './SelectInput';
-import { generateId } from '../../fairtable-utils/src';
+import { generateId } from '@the-new-fuse/fairtable-utils';
 
 interface ColumnHeaderProps {
   column: Column;

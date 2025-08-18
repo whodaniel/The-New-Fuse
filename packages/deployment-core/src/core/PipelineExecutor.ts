@@ -300,7 +300,7 @@ export class PipelineExecutor extends EventEmitter {
     return true;
   }
 
-  private async evaluateCondition(condition: any, context: any): Promise<boolean> {
+  private async evaluateCondition(condition: any, _context: any): Promise<boolean> {
     switch (condition.type) {
       case 'file_exists':
         const fs = await import('fs/promises');
@@ -385,7 +385,7 @@ export class PipelineExecutor extends EventEmitter {
         });
       });
 
-      shellProcess.on('error', (error) => {
+      shellProcess.on('error', (_error) => {
         const endTime = new Date();
         const duration = endTime.getTime() - startTime.getTime();
 
@@ -402,9 +402,9 @@ export class PipelineExecutor extends EventEmitter {
           startTime,
           endTime,
           duration,
-          logs: [...logs, error.message],
+          logs: [...logs, _error.message],
           artifacts: [],
-          error: error.message
+          error: _error.message
         });
       });
     });

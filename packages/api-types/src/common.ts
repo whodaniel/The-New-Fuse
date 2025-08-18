@@ -45,6 +45,20 @@ export interface HealthCheck {
   };
 }
 
+// Interfaces for health indicators, from api-core
+export interface HealthIndicatorResult {
+  [key: string]: {
+    status: string;
+    message?: string;
+  };
+}
+
+export class HealthCheckError extends Error {
+  constructor(message: string, public causes: HealthIndicatorResult) {
+    super(message);
+  }
+}
+
 export interface BaseResponse<T, E = unknown> {
   success: boolean;
   data?: T;
@@ -59,4 +73,19 @@ export interface ApiResponse<T> extends BaseResponse<T, string> {
     pagination?: Pagination;
     [key: string]: unknown;
   };
+}
+
+// Message Types for AgentProcessor
+export enum MessageType {
+  COMMAND = 'command',
+  TASK_ASSIGNMENT = 'task_assignment',
+  NOTIFICATION = 'notification',
+  // Add other message types as needed
+}
+
+export interface Message {
+  id: UUID;
+  type: MessageType;
+  payload: any;
+  // Add other common message properties as needed
 }

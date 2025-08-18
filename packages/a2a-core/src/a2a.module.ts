@@ -1,5 +1,6 @@
 import { Module, DynamicModule, Global } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { RedisModule, UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { A2AService } from './a2a.service';
 import { A2ARedisAdapter } from './redis-adapter';
 import { A2AWebSocketAdapter } from './websocket-adapter';
@@ -11,7 +12,10 @@ export class A2ACoreModule {
   static forRoot(config?: Partial<A2AConfig>): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule,
+        RedisModule.forRoot({ isGlobal: true })
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',
@@ -47,8 +51,9 @@ export class A2ACoreModule {
         },
         {
           provide: A2ARedisAdapter,
-          useFactory: (config: A2AConfig) => new A2ARedisAdapter(config),
-          inject: ['A2A_CONFIG']
+          useFactory: (config: A2AConfig, unifiedRedis: UnifiedRedisService) => 
+            new A2ARedisAdapter(config, unifiedRedis),
+          inject: ['A2A_CONFIG', UnifiedRedisService]
         },
         {
           provide: A2AWebSocketAdapter,
@@ -59,11 +64,9 @@ export class A2ACoreModule {
         {
           provide: A2AService,
           useFactory: (
-            config: A2AConfig,
-            redisAdapter: A2ARedisAdapter,
-            websocketAdapter: A2AWebSocketAdapter
-          ) => new A2AService(config, redisAdapter, websocketAdapter),
-          inject: ['A2A_CONFIG', A2ARedisAdapter, A2AWebSocketAdapter]
+            configService: ConfigService
+          ) => new A2AService(configService),
+          inject: [ConfigService]
         }
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],
@@ -78,7 +81,11 @@ export class A2ACoreModule {
   }): DynamicModule {
     return {
       module: A2ACoreModule,
-      imports: [ConfigModule, ...(options.imports || [])],
+      imports: [
+        ConfigModule, 
+        RedisModule.forRoot({ isGlobal: true }),
+        ...(options.imports || [])
+      ],
       providers: [
         {
           provide: 'A2A_CONFIG',
@@ -87,8 +94,9 @@ export class A2ACoreModule {
         },
         {
           provide: A2ARedisAdapter,
-          useFactory: (config: A2AConfig) => new A2ARedisAdapter(config),
-          inject: ['A2A_CONFIG']
+          useFactory: (config: A2AConfig, unifiedRedis: UnifiedRedisService) => 
+            new A2ARedisAdapter(config, unifiedRedis),
+          inject: ['A2A_CONFIG', UnifiedRedisService]
         },
         {
           provide: A2AWebSocketAdapter,
@@ -99,11 +107,9 @@ export class A2ACoreModule {
         {
           provide: A2AService,
           useFactory: (
-            config: A2AConfig,
-            redisAdapter: A2ARedisAdapter,
-            websocketAdapter: A2AWebSocketAdapter
-          ) => new A2AService(config, redisAdapter, websocketAdapter),
-          inject: ['A2A_CONFIG', A2ARedisAdapter, A2AWebSocketAdapter]
+            configService: ConfigService
+          ) => new A2AService(configService),
+          inject: [ConfigService]
         }
       ],
       exports: [A2AService, A2ARedisAdapter, A2AWebSocketAdapter, 'A2A_CONFIG'],

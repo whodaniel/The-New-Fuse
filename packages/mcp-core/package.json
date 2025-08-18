@@ -88,7 +88,9 @@
     "winston": "^3.3.3",
     "eventemitter3": "^5.0.1",
     "p-retry": "^6.2.0",
-    "p-timeout": "^6.1.2"
+    "p-timeout": "^6.1.2",
+    "@tnf/core-monitoring": "workspace:*",
+    "@tnf/core-error-handling": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^24.0.13",

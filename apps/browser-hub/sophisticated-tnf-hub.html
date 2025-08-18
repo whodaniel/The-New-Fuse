@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TNF Browser Hub - Comprehensive Chrome-Compatible Browser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1d29;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar {
+            width: 280px;
+            background: #252836;
+            border-right: 1px solid #2d3142;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid #2d3142;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logo i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .nav-section {
+            padding: 20px 0;
+        }
+
+        .nav-section-title {
+            padding: 0 20px 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .nav-item i {
+            width: 16px;
+            text-align: center;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .status-dot.online { background: #10b981; }
+        .status-dot.warning { background: #f59e0b; }
+        .status-dot.offline { background: #ef4444; }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a1d29;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            height: 60px;
+            background: #252836;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+            -webkit-app-region: drag;
+        }
+
+        .top-bar * {
+            -webkit-app-region: no-drag;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .breadcrumb .current {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .top-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 6px;
+            font-size: 12px;
+            color: #10b981;
+        }
+
+        .status-badge.warning {
+            background: rgba(245, 158, 11, 0.1);
+            border-color: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .card {
+            background: #252836;
+            border: 1px solid #2d3142;
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.2s ease;
+        }
+
+        .card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .card-title i {
+            color: #4f46e5;
+        }
+
+        .card-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .stat-label {
+            color: #9ca3af;
+        }
+
+        .stat-value {
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+        .btn-secondary {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-success {
+            background: #10b981;
+            color: #ffffff;
+        }
+
+        .btn-success:hover {
+            background: #059669;
+        }
+
+        /* Service Toolbar */
+        .service-toolbar {
+            background: #252836;
+            border-bottom: 1px solid #2d3142;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .service-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .service-group-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #9ca3af;
+            margin-right: 4px;
+        }
+
+        .service-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 8px;
+            background: #374151;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #ffffff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .service-chip:hover {
+            background: #4b5563;
+        }
+
+        .service-chip.active {
+            background: #10b981;
+        }
+
+        .service-chip.warning {
+            background: #f59e0b;
+        }
+
+        .service-chip.error {
+            background: #ef4444;
+        }
+
+        /* Welcome Message */
+        .welcome-banner {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 12px;
+            padding: 32px;
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .welcome-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 24px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                    TNF Browser Hub
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Analytics</div>
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-chart-bar"></i>
+                    Dashboard
+                    <div class="status-dot online"></div>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">AI Services</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-star"></i>
+                    Claude AI
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-gem"></i>
+                    Gemini
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-comments"></i>
+                    ChatGPT
+                    <div class="status-dot warning"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-search"></i>
+                    Perplexity
+                    <div class="status-dot online"></div>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Development</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-laptop-code"></i>
+                    Theia IDE
+                    <div class="status-dot warning"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-file-code"></i>
+                    VS Code
+                    <div class="status-dot offline"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fab fa-github"></i>
+                    GitHub
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-terminal"></i>
+                    Terminal
+                    <div class="status-dot online"></div>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">TNF Core</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    Dashboard
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-robot"></i>
+                    Agents
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-project-diagram"></i>
+                    Workflows
+                    <div class="status-dot online"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-bar"></i>
+                    Analytics
+                    <div class="status-dot online"></div>
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Automation</div>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-globe"></i>
+                    Browser Use
+                    <div class="status-dot offline"></div>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-camera"></i>
+                    Screenshot
+                    <div class="status-dot offline"></div>
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="breadcrumb">
+                    <i class="fas fa-folder"></i>
+                    <span>file://dashboard</span>
+                </div>
+                <div class="top-controls">
+                    <div class="status-badge">
+                        <div class="status-dot online"></div>
+                        Core
+                    </div>
+                    <div class="status-badge">
+                        <div class="status-dot online"></div>
+                        DB
+                    </div>
+                    <div class="status-badge warning">
+                        <div class="status-dot warning"></div>
+                        Relay
+                    </div>
+                </div>
+            </div>
+
+            <!-- Service Toolbar -->
+            <div class="service-toolbar">
+                <div class="service-group">
+                    <span class="service-group-label">Services:</span>
+                    <div class="service-chip error">● 0/4</div>
+                    <div class="service-chip error">● TNF Frontend</div>
+                    <div class="service-chip error">● TNF API Gateway</div>
+                    <div class="service-chip warning">● TNF Theia IDE</div>
+                    <div class="service-chip error">● TNF ML Service</div>
+                    <button class="btn btn-secondary" style="margin-left: 8px;">
+                        <i class="fas fa-sync"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div class="service-toolbar">
+                <div class="service-group">
+                    <span class="service-group-label">AI CLIs:</span>
+                    <div class="service-chip active">● ●</div>
+                    <div class="service-chip active">Ask Claude</div>
+                    <div class="service-chip active">Ask Gemini</div>
+                    <div class="service-chip active">Analyze Page</div>
+                </div>
+            </div>
+
+            <div class="service-toolbar">
+                <div class="service-group">
+                    <span class="service-group-label">Automation:</span>
+                    <div class="service-chip active">● ●</div>
+                    <div class="service-chip active">Puppeteer</div>
+                    <div class="service-chip active">Playwright</div>
+                    <div class="service-chip active">Screenshot</div>
+                    <div class="service-chip active">PDF</div>
+                    <div class="service-chip active">Record</div>
+                </div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner">
+                    <h1 class="welcome-title">🚀 TNF Browser Hub</h1>
+                    <p class="welcome-subtitle">Comprehensive Chrome-Compatible Browser</p>
+                    <p>Create a new tab or select a service to get started</p>
+                </div>
+
+                <!-- Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- TNF Core Status -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-rocket"></i>
+                                TNF Core Status
+                            </div>
+                        </div>
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Core Services:</span>
+                                <span class="stat-value" style="color: #10b981;">Online</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Agent Orchestrator:</span>
+                                <span class="stat-value" style="color: #10b981;">Running</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Workflow Engine:</span>
+                                <span class="stat-value" style="color: #f59e0b;">Partial</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-sync"></i>
+                                Restart Core
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Agents -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-robot"></i>
+                                AI Agents
+                            </div>
+                        </div>
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Active Agents:</span>
+                                <span class="stat-value">12</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Queue Length:</span>
+                                <span class="stat-value">3</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Success Rate:</span>
+                                <span class="stat-value" style="color: #10b981;">97.5%</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px; display: flex; gap: 8px;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-cog"></i>
+                                Manage
+                            </button>
+                            <button class="btn btn-success">
+                                <i class="fas fa-plus"></i>
+                                Deploy New
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Development Environment -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-laptop-code"></i>
+                                Development Environment
+                            </div>
+                        </div>
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">Theia IDE:</span>
+                                <span class="stat-value" style="color: #10b981;">Running</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Browser Hub:</span>
+                                <span class="stat-value" style="color: #10b981;">Active</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <button class="btn btn-primary">
+                                <i class="fas fa-external-link-alt"></i>
+                                Open IDE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- System Resources -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <i class="fas fa-server"></i>
+                                System Resources
+                            </div>
+                        </div>
+                        <div class="card-stats">
+                            <div class="stat-item">
+                                <span class="stat-label">CPU Usage:</span>
+                                <span class="stat-value">45%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Memory:</span>
+                                <span class="stat-value">2.1GB / 8GB</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Disk:</span>
+                                <span class="stat-value">156GB / 500GB</span>
+                            </div>
+                        </div>
+                        <div style="margin-top: 16px;">
+                            <button class="btn btn-secondary">
+                                <i class="fas fa-chart-line"></i>
+                                View Metrics
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Footer -->
+                <div style="text-align: center; padding: 20px; color: #6b7280; font-size: 14px;">
+                    Connected - TNF Browser Hub ready - All systems operational
+                    <span style="margin-left: 20px;">0 tabs</span>
+                    <span style="margin-left: 20px;">Memory: 0 MB</span>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Initialize the modern hub
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 TNF Browser Hub loaded successfully!');
+            
+            // Show welcome message
+            setTimeout(() => {
+                showMessage('Welcome to The New Fuse Modern Hub! This is the professional UI.');
+            }, 1000);
+        });
+
+        function showMessage(message) {
+            // Create a simple notification
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: rgba(79, 70, 229, 0.9);
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 1000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            // Add animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideIn 0.3s ease reverse';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Add click handlers for nav items
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class from all items
+                document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                
+                // Add active class to clicked item
+                this.classList.add('active');
+                
+                // Show message based on clicked item
+                const text = this.textContent.trim();
+                showMessage(`Navigating to ${text}...`);
+            });
+        });
+
+        // Add click handlers for buttons
+        document.querySelectorAll('.btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const text = this.textContent.trim();
+                showMessage(`${text} clicked - Backend services needed for full functionality`);
+            });
+        });
+
+        // Add click handlers for service chips
+        document.querySelectorAll('.service-chip').forEach(chip => {
+            chip.addEventListener('click', function() {
+                const text = this.textContent.trim();
+                showMessage(`Service: ${text} - Start backend services to enable functionality`);
+            });
+        });
+    </script>
+</body>
+</html>

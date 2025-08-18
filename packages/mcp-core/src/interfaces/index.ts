@@ -77,6 +77,49 @@ export type {
   ErrorRecoveryConfig,
   MonitoringConfig
 } from './IMCPWorkflowIntegration';
+export type {
+  IMCPAgentIntegration,
+  Agent,
+  AgentMCPEndpoint,
+  AgentMessageRouting,
+  AgentCollaboration,
+  AgentCapabilityDiscovery,
+  AgentRegistrationResult,
+  AgentMessageResult
+} from './IMCPAgentIntegration';
+export { AgentStatus } from './IMCPAgentIntegration';
+export type {
+  IMCPServiceMesh,
+  ServiceMeshRegistration,
+  ServiceEndpoint,
+  ServiceMeshHealthCheck,
+  ServiceMeshLoadBalancing,
+  CircuitBreakerConfig,
+  ServiceMeshQuery,
+  ServiceMeshMetrics,
+  ServiceScalingConfig,
+  ScalingPolicy,
+  ServiceMeshIntegrationResult,
+  AutoDiscoveryConfig,
+  ServiceMeshIntegrationStatus,
+  ScalingEvent
+} from './IMCPServiceMesh';
+export type {
+  IMonitoringSystem,
+  IMetricsCollector,
+  IAlertManager,
+  IDashboardManager,
+  IPerformanceMonitor,
+  ILoadTester,
+  ICacheMonitor,
+  IConnectionPoolMonitor,
+  ISystemHealthMonitor,
+  AlertRule,
+  PerformanceReport,
+  SystemHealthStatus,
+  HealthCheck,
+  HealthCheckResult
+} from './IMonitoring';
 
 // Export AccessControlEntry from one source to avoid conflicts
 export type { AccessControlEntry } from './IMCPResource';

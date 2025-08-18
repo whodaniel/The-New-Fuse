@@ -7,9 +7,7 @@ export interface BaseState {
 
 export interface TaskState {
     type: 'TASK';
-    data: unknown;
-  // Implementation needed
-}
+    data: {
         status: 'PENDING' | 'RUNNING' | 'COMPLETED' | 'FAILED';
         progress: number;
         details?: string;
@@ -18,9 +16,7 @@ export interface TaskState {
 
 export interface AgentState {
     type: 'AGENT';
-    data: unknown;
-  // Implementation needed
-}
+    data: {
         status: 'IDLE' | 'BUSY' | 'ERROR';
         currentTask?: string;
         healthMetrics?: Record<string, unknown>;
@@ -29,9 +25,7 @@ export interface AgentState {
 
 export interface SystemState {
     type: 'SYSTEM';
-    data: unknown;
-  // Implementation needed
-}
+    data: {
         status: 'OPERATIONAL' | 'DEGRADED' | 'CRITICAL';
         activeAgents: number;
         pendingTasks: number;

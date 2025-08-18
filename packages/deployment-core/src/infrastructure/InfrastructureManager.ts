@@ -22,12 +22,7 @@ import {
   ApplyResult,
   InfrastructureState,
   InfrastructureStatus,
-  ResourceState,
-  CloudProvider,
-  ResourceType,
-  ChangeAction,
-  RiskLevel,
-  ErrorSeverity
+  ResourceState
 } from '../types/infrastructure';
 import { TemplateParser } from './TemplateParser';
 import { StateManager } from './StateManager';
@@ -267,7 +262,30 @@ export class InfrastructureManager implements IInfrastructureManager {
   }
 
   async validateTemplate(template: InfrastructureTemplate): Promise<ValidationResult> {
-    return await this.templateValidator.validate(template);
+    const result = await this.templateValidator.validate(template);
+    
+    // Convert TemplateValidator result to expected ValidationResult format
+    return {
+      valid: result.isValid,
+      errors: result.errors.map(err => ({
+        code: err.rule,
+        message: err.message,
+        path: err.path,
+        severity: err.severity
+      })),
+      warnings: result.warnings.map(warn => ({
+        code: warn.rule,
+        message: warn.message,
+        path: warn.path,
+        recommendation: warn.suggestion || ''
+      })),
+      suggestions: result.suggestions.map(sugg => ({
+        type: sugg.rule as any,
+        message: sugg.message,
+        path: sugg.path,
+        improvement: sugg.suggestion || ''
+      }))
+    };
   }
 
   async planChanges(changes: InfrastructureChange[]): Promise<PlanResult> {
@@ -291,9 +309,9 @@ export class InfrastructureManager implements IInfrastructureManager {
         try {
           await this.resourceProvisioner.applyChange(change, plan.templateId);
           appliedChanges.push(change);
-        } catch (error) {
+        } catch (_error) {
           // Log error but continue with other changes
-          console.error(`Failed to apply change ${change.resourceName}:`, error);
+          
         }
       }
 

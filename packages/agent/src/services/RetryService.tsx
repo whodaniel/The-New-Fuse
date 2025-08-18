@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService';
-import { Logger } from '../utils/Logger';
+import { Logger } from '@the-new-fuse/core/src/utils/Logger';
 
 /**
  * Options for configuring retry behavior.

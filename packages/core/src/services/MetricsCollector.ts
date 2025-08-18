@@ -17,7 +17,7 @@ export class MetricsCollector {
   private readonly flushIntervalMs = 60000; // Flush every minute
 
   constructor() {
-    logger.setContext({ service: 'MetricsCollector' });
+    logger.setContext('MetricsCollector');
   }
 
   async start(): Promise<void> {
@@ -103,7 +103,7 @@ export class MetricsCollector {
         const newSeries: MetricSeries = {
           name: metric.name,
           dataPoints: [dataPoint],
-          metadata: unknown;
+          metadata: {
             unit: metric.unit,
             type: metric.type,
             description: `Metric collected from ${metric.source}`,

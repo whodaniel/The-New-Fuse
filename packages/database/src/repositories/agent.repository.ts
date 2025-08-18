@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Agent, AgentStatus, AgentType, Prisma } from '../../generated/prisma';
 import { PrismaService } from '../prisma.service';
-import { IRepository } from './base.repository';
+
 import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 
 @Injectable()

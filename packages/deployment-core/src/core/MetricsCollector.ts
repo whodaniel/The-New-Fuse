@@ -1,8 +1,7 @@
 import {
   PipelineResult,
   BuildResult,
-  DeploymentResult,
-  PipelineMetrics
+  DeploymentResult
 } from '../types/pipeline';
 import { InfrastructureMetrics } from '../interfaces/IInfrastructureManager';
 import { Logger } from 'winston';
@@ -678,8 +677,8 @@ export class MetricsCollector {
 
   private generateAlerts(
     recentPipelines: PipelineResult[], 
-    recentBuilds: BuildResult[], 
-    recentDeployments: DeploymentResult[]
+    _recentBuilds: BuildResult[], 
+    _recentDeployments: DeploymentResult[]
   ): any[] {
     const alerts: any[] = [];
     

@@ -47,7 +47,7 @@ export class WorkflowExecutionRepository extends BaseRepository<WorkflowExecutio
   }
 
   async update(id: string, data: Partial<WorkflowExecution>): Promise<WorkflowExecution> {
-        const { id: _, workflowId: __, ...updateData } = data;
+        const { ...updateData } = data;
     
     // Handle null values for JSON fields
     const cleanData: any = { ...updateData };

@@ -102,7 +102,7 @@ export class AgentLLMService {
       content: response,
       provider: config?.provider || 'unknown',
       model: config?.defaultModel,
-      usage: unknown;
+      usage: {
         promptTokens: prompt.length,
         completionTokens: response.length,
         totalTokens: prompt.length + response.length

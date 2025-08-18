@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import { spawn, ChildProcess } from 'child_process';
 import { Logger } from '../utils/logger';
-import { MCPMessage, MCPCapability, ProtocolVersion } from './types';
+import { MCPMessage, MCPCapability, ProtocolVersion } from '../types/types';
 import EventSource from 'eventsource';
 import axios from 'axios';
 export interface MCPClientConfig {

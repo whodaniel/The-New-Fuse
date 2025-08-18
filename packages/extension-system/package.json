@@ -62,6 +62,7 @@
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@prisma/client": "^6.10.1",
+    "@tnf/relay-core": "workspace:*",
     "events": "^3.3.0",
     "fs-extra": "^11.2.0",
     "glob": "^10.3.0",

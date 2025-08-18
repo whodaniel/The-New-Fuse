@@ -16,7 +16,7 @@ export class SystemMonitor {
   private startTime: Date = new Date();
 
   constructor() {
-    logger.setContext({ service: 'SystemMonitor' });
+    logger.setContext('SystemMonitor');
   }
 
   async start(): Promise<void> {
@@ -145,7 +145,7 @@ export class SystemMonitor {
           ...service,
           status: 'unhealthy',
           lastCheck: new Date(),
-          details: unknown;
+          details: {
             ...service.details,
             error: (error as Error).message,
           },
@@ -225,7 +225,7 @@ export class SystemMonitor {
       used: usedMemory,
       total: totalMemory,
       usage: (usedMemory / totalMemory) * 100,
-      heap: unknown;
+      heap: {
         used: memoryUsage.heapUsed,
         total: memoryUsage.heapTotal,
       },

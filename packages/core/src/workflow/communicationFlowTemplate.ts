@@ -1,4 +1,4 @@
-import { WorkflowTemplate, WorkflowStepType, WorkflowStep } from './types';
+import { WorkflowTemplate, WorkflowStepType, WorkflowStep } from '../types/types';
 export const communicationFlowTemplate: WorkflowTemplate = {
   // Implementation needed
 }

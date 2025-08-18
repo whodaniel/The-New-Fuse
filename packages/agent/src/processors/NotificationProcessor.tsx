@@ -1,5 +1,5 @@
 import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
-import { Logger } from '../utils/Logger';
+import { Logger } from '@the-new-fuse/core/src/utils/Logger';
 import { Message, MessageType, Notification, UUID } from '@the-new-fuse/types';
 import { AlertService } from '../services/AlertService'; // Corrected import
 // Import other necessary services or types (e.g., UI update service, logging service)

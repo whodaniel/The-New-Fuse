@@ -44,7 +44,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
 
       const updatedData = {
         ...update,
-        metadata: unknown;
+        metadata: {
           ...existingFeature.metadata,
           lastModifiedBy: update.metadata?.lastModifiedBy || 'system',
           updatedAt: new Date(),
@@ -181,7 +181,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
       enabled: doc.enabled,
       environments: doc.environments,
       targeting: doc.targeting,
-      metadata: unknown;
+      metadata: {
         createdBy: doc.metadata.createdBy,
         lastModifiedBy: doc.metadata.lastModifiedBy,
         createdAt: doc.metadata.createdAt || new Date(),

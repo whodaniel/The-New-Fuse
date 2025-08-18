@@ -1,7 +1,6 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
-import { Table, View, Row, Column, CellValue, AppState, TimelineViewOptions, DataType } from "../../fairtable-core/src";
-import { TIMELINE_DEFAULT_ITEM_DURATION_DAYS } from '../../fairtable-core/src';
+import { Table, View, Row, Column, CellValue, AppState, TimelineViewOptions, DataType, TIMELINE_DEFAULT_ITEM_DURATION_DAYS } from '@the-new-fuse/fairtable-core';
 
 interface TimelineViewProps {
   table: Table;

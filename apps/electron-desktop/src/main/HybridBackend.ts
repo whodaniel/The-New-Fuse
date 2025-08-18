@@ -2,6 +2,31 @@ import { spawn, ChildProcess } from 'child_process';
 import { join } from 'path';
 import { EventEmitter } from 'events';
 
+// Safe logging to prevent EPIPE errors
+const safeLog = (...args: any[]) => {
+  try {
+    console.log(...args)
+  } catch (error) {
+    // Silently ignore EPIPE errors in console output
+  }
+}
+
+const safeError = (...args: any[]) => {
+  try {
+    console.error(...args)
+  } catch (error) {
+    // Silently ignore EPIPE errors in console output
+  }
+}
+
+const safeWarn = (...args: any[]) => {
+  try {
+    console.warn(...args)
+  } catch (error) {
+    // Silently ignore EPIPE errors in console output
+  }
+}
+
 export class HybridBackend extends EventEmitter {
   private nativeHost: ChildProcess | null = null;
   private isConnected = false;
@@ -13,8 +38,8 @@ export class HybridBackend extends EventEmitter {
   async startNativeHost(): Promise<void> {
     try {
       const hostPath = join(__dirname, '../../native/host.py');
-      console.log('Starting native host from:', hostPath);
-      console.log('__dirname is:', __dirname);
+      safeLog('Starting native host from:', hostPath);
+      safeLog('__dirname is:', __dirname);
       this.nativeHost = spawn('python3', [hostPath], {
         stdio: 'pipe'
       });
@@ -24,17 +49,17 @@ export class HybridBackend extends EventEmitter {
           const response = JSON.parse(data.toString());
           this.emit('native-response', response);
         } catch (error) {
-          console.error('Failed to parse native host response:', error);
+          safeError('Failed to parse native host response:', error);
         }
       });
 
       this.nativeHost.stderr?.on('data', (data) => {
-        console.error('Native host error:', data.toString());
+        safeError('Native host error:', data.toString());
         this.emit('native-error', data.toString());
       });
 
       this.nativeHost.on('close', (code) => {
-        console.log(`Native host process exited with code ${code}`);
+        safeLog(`Native host process exited with code ${code}`);
         this.isConnected = false;
         this.emit('native-disconnected');
       });
@@ -42,7 +67,7 @@ export class HybridBackend extends EventEmitter {
       this.isConnected = true;
       this.emit('native-connected');
     } catch (error) {
-      console.error('Failed to start native host:', error);
+      safeError('Failed to start native host:', error);
       throw error;
     }
   }

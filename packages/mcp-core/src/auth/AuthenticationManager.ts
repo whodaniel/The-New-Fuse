@@ -120,7 +120,7 @@ export interface AuthManagerConfig {
  */
 export interface AuthAuditEvent {
   /** Event type */
-  type: 'login' | 'logout' | 'token_refresh' | 'access_denied' | 'policy_violation';
+  type: 'login' | 'logout' | 'token_refresh' | 'access_denied' | 'policy_violation' | 'access_granted' | 'resource_access' | 'tool_execution' | 'security_violation' | 'system_admin';
   /** User ID */
   userId?: string;
   /** Service ID */

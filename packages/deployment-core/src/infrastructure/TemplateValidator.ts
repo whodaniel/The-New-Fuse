@@ -6,15 +6,9 @@
 import {
   InfrastructureTemplate,
   ResourceDefinition,
-  TemplateVariable,
-  ValidationResult,
-  ValidationError,
-  ValidationWarning,
-  ValidationSuggestion,
   ErrorSeverity,
   SuggestionType,
   ResourceType,
-  CloudProvider,
   VariableType
 } from '../types/infrastructure';
 
@@ -31,6 +25,14 @@ export interface ValidationIssue {
   message: string;
   path: string;
   suggestion?: string;
+}
+
+export interface ValidationResult {
+  isValid: boolean;
+  issues: ValidationIssue[];
+  errors: ValidationIssue[];
+  warnings: ValidationIssue[];
+  suggestions: ValidationIssue[];
 }
 
 export class TemplateValidator {
@@ -105,22 +107,46 @@ export class TemplateValidator {
           improvement: i.suggestion!
         }));
 
+      const mappedErrors = errors.map(err => ({
+        ...err,
+        rule: err.code || 'unknown',
+        severity: ErrorSeverity.ERROR
+      }));
+      
+      const mappedWarnings = warnings.map(warn => ({
+        ...warn,
+        rule: warn.code || 'unknown',
+        severity: ErrorSeverity.WARNING
+      }));
+      
+      const mappedSuggestions = suggestions.map(sugg => ({
+        ...sugg,
+        rule: sugg.type || 'unknown',
+        severity: ErrorSeverity.INFO,
+        message: sugg.message,
+        path: sugg.path
+      }));
+
       return {
-        valid: errors.length === 0,
-        errors,
-        warnings,
-        suggestions
+        isValid: errors.length === 0,
+        issues: [...mappedErrors, ...mappedWarnings, ...mappedSuggestions],
+        errors: mappedErrors,
+        warnings: mappedWarnings,
+        suggestions: mappedSuggestions
       };
 
     } catch (error) {
+      const errorIssue = {
+        rule: 'VALIDATION_FAILED',
+        message: `Template validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        path: 'template',
+        severity: ErrorSeverity.ERROR
+      };
+
       return {
-        valid: false,
-        errors: [{
-          code: 'VALIDATION_FAILED',
-          message: `Template validation failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-          path: 'template',
-          severity: ErrorSeverity.ERROR
-        }],
+        isValid: false,
+        issues: [errorIssue],
+        errors: [errorIssue],
         warnings: [],
         suggestions: []
       };

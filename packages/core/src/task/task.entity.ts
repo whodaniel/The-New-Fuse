@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { TaskStatus, TaskPriority } from './types';
+import { TaskStatus, TaskPriority } from '../types/types';
 @Entity('tasks')
 @Index(['status', 'priority'])
 @Index(['type', 'status'])

@@ -1,4 +1,4 @@
-import { WorkflowTemplate } from './types';
+import { WorkflowTemplate } from '../types/types';
 interface BackupResult {
   workflow: WorkflowTemplate;
   timestamp: Date;

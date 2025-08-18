@@ -15,8 +15,7 @@ import {
   CloudProvider,
   ResourceType,
   VariableType,
-  InfrastructureUpdate,
-  ChangeAction
+  InfrastructureUpdate
 } from '../types/infrastructure';
 import { createLogger } from 'winston';
 
@@ -277,7 +276,6 @@ describe('InfrastructureManager', () => {
       const updateResult = await infrastructureManager.updateInfrastructure(update);
 
       if (!updateResult.success) {
-        console.log('Update failed with error:', updateResult.error);
       }
 
       expect(updateResult.success).toBe(true);

@@ -5,8 +5,7 @@
 
 import {
   InfrastructureState,
-  InfrastructureStatus,
-  StateMetadata
+  InfrastructureStatus
 } from '../types/infrastructure';
 import { InfrastructureFilters } from '../interfaces/IInfrastructureManager';
 
@@ -123,12 +122,11 @@ export class StateManager {
         try {
           await this.unlockState(id);
         } catch (error) {
-          console.warn(`Failed to auto-unlock ${id}:`, error);
         }
       }, this.lockTimeout);
 
-    } catch (error) {
-      throw new Error(`Failed to lock state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (_error: any) {
+      throw new Error(`Failed to lock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
@@ -145,16 +143,16 @@ export class StateManager {
         cachedState.metadata.lockedAt = undefined;
       }
 
-    } catch (error) {
-      throw new Error(`Failed to unlock state for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (_error: any) {
+      throw new Error(`Failed to unlock state for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
   async isStateLocked(id: string): Promise<boolean> {
     try {
       return await this.storage.isLocked(id);
-    } catch (error) {
-      throw new Error(`Failed to check lock status for ${id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (_error) {
+      throw new Error(`Failed to check lock status for ${id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
     }
   }
 
@@ -212,10 +210,10 @@ export class StateManager {
         warnings
       };
 
-    } catch (error) {
+    } catch (_error) {
       return {
         valid: false,
-        errors: [`Failed to validate state integrity: ${error instanceof Error ? error.message : 'Unknown error'}`],
+        errors: [`Failed to validate state integrity: ${_error instanceof Error ? _error.message : 'Unknown error'}`],
         warnings: []
       };
     }
@@ -238,8 +236,8 @@ export class StateManager {
             await this.deleteState(state.id);
             staleStates.push(state.id);
           }
-        } catch (error) {
-          errors.push(`Failed to cleanup state ${state.id}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        } catch (_error) {
+          errors.push(`Failed to cleanup state ${state.id}: ${_error instanceof Error ? _error.message : 'Unknown error'}`);
         }
       }
 
@@ -248,10 +246,10 @@ export class StateManager {
         errors
       };
 
-    } catch (error) {
+    } catch (_error) {
       return {
         cleanedStates: [],
-        errors: [`Failed to cleanup stale states: ${error instanceof Error ? error.message : 'Unknown error'}`]
+        errors: [`Failed to cleanup stale states: ${_error instanceof Error ? _error.message : 'Unknown error'}`]
       };
     }
   }
@@ -291,101 +289,4 @@ export interface StateIntegrityResult {
 export interface CleanupResult {
   cleanedStates: string[];
   errors: string[];
-}
-
-// In-memory storage implementation for testing/development
-export class InMemoryStateStorage implements StateStorage {
-  private states: Map<string, InfrastructureState>;
-  private locks: Map<string, StateLock>;
-
-  constructor() {
-    this.states = new Map();
-    this.locks = new Map();
-  }
-
-  async save(state: InfrastructureState): Promise<void> {
-    this.states.set(state.id, { ...state });
-  }
-
-  async get(id: string): Promise<InfrastructureState | null> {
-    const state = this.states.get(id);
-    return state ? { ...state } : null;
-  }
-
-  async list(filters?: InfrastructureFilters): Promise<InfrastructureState[]> {
-    let states = Array.from(this.states.values());
-
-    if (filters) {
-      if (filters.environment) {
-        states = states.filter(s => s.environment === filters.environment);
-      }
-
-      if (filters.status && filters.status.length > 0) {
-        states = states.filter(s => filters.status!.includes(s.status));
-      }
-
-      if (filters.createdAfter) {
-        states = states.filter(s => s.createdAt >= filters.createdAfter!);
-      }
-
-      if (filters.createdBefore) {
-        states = states.filter(s => s.createdAt <= filters.createdBefore!);
-      }
-
-      if (filters.tags) {
-        states = states.filter(s => {
-          for (const [key, value] of Object.entries(filters.tags!)) {
-            const hasTag = s.resources.some(r => r.tags && r.tags[key] === value);
-            if (!hasTag) return false;
-          }
-          return true;
-        });
-      }
-    }
-
-    return states.map(s => ({ ...s }));
-  }
-
-  async delete(id: string): Promise<void> {
-    this.states.delete(id);
-    this.locks.delete(id);
-  }
-
-  async lock(id: string, lockReason: string, lockBy: string): Promise<void> {
-    this.locks.set(id, {
-      reason: lockReason,
-      lockedBy: lockBy,
-      lockedAt: new Date()
-    });
-
-    // Update state metadata
-    const state = this.states.get(id);
-    if (state) {
-      state.metadata.locked = true;
-      state.metadata.lockedBy = lockBy;
-      state.metadata.lockedAt = new Date();
-    }
-  }
-
-  async unlock(id: string): Promise<void> {
-    this.locks.delete(id);
-
-    // Update state metadata
-    const state = this.states.get(id);
-    if (state) {
-      state.metadata.locked = false;
-      state.metadata.lockedBy = undefined;
-      state.metadata.lockedAt = undefined;
-    }
-  }
-
-  async isLocked(id: string): Promise<boolean> {
-    return this.locks.has(id);
-  }
-}
-
-interface StateLock {
-  reason: string;
-  lockedBy: string;
-  lockedAt: Date;
 }

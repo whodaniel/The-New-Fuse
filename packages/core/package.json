@@ -37,7 +37,8 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "uuid": "^9.0.0",
-    "winston": "^3.3.3"
+    "winston": "^3.3.3",
+    "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.1",

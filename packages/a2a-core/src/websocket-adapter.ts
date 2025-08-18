@@ -15,7 +15,7 @@ import {
   A2AMessageSchema, 
   AgentRegistration, 
   AgentHeartbeat,
-  MessageType,
+  A2AMessageType,
   AgentStatus,
   A2AConfig,
   A2AError,
@@ -173,7 +173,7 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       // Send authentication success
       client.emit('authentication:success', { 
         agentId: data.agentId,
-        timestamp: new Date().toISOString()
+        timestamp: Date.now()
       });
 
       this.logger.log(`Agent authenticated: ${data.agentId} (${client.id})`);
@@ -201,12 +201,13 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       // Validate the message
       const validatedMessage = A2AMessageSchema.parse({
         ...data,
+        payload: data.payload ?? {},
         fromAgent: client.agentId, // Ensure fromAgent matches authenticated agent
-        timestamp: new Date().toISOString()
+        timestamp: Date.now()
       });
 
       // Send through Redis adapter
-      await this.redisAdapter.sendMessage(validatedMessage);
+      await this.redisAdapter.sendMessage({ ...validatedMessage, payload: validatedMessage.payload || {} });
 
       // Acknowledge message sent
       client.emit('message:sent', { 
@@ -279,7 +280,7 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       });
 
       client.emit('broadcast:sent', { 
-        timestamp: new Date().toISOString() 
+        timestamp: Date.now() 
       });
 
     } catch (error) {
@@ -306,7 +307,7 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
       client.emit('conversation:joined', { 
         conversationId: data.conversationId,
-        timestamp: new Date().toISOString()
+        timestamp: Date.now()
       });
 
     } catch (error) {
@@ -333,7 +334,7 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
 
       client.emit('conversation:left', { 
         conversationId: data.conversationId,
-        timestamp: new Date().toISOString()
+        timestamp: Date.now()
       });
 
     } catch (error) {
@@ -412,8 +413,8 @@ export class A2AWebSocketAdapter extends EventEmitter implements OnGatewayConnec
       }
     } else {
       // Broadcast to all connected agents (or filtered by routing)
-      if (message.routing?.channel) {
-        this.server.to(message.routing.channel).emit('message:received', message);
+      if (message.metadata?.channel) {
+        this.server.to(message.metadata.channel).emit('message:received', message);
       } else {
         this.server.to('global').emit('message:received', message);
       }

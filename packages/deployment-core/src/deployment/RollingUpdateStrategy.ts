@@ -178,7 +178,7 @@ export class RollingUpdateStrategy extends BaseDeploymentStrategy {
     }
 
     // Validate services have proper configuration for rolling updates
-    config.services.forEach((service, index) => {
+        config.services.forEach((service) => {
       if (!service.replicas || service.replicas < 1) {
         errors.push(`Service ${service.name}: Must have at least 1 replica for rolling update`);
       }

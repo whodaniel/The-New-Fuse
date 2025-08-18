@@ -7,7 +7,48 @@
       "applicationName": "The New Fuse IDE",
       "warnOnPotentiallyInsecureHostPattern": false,
       "preferences": {
-        "workbench.colorTheme": "dark"
+        "workbench.colorTheme": "dark",
+        "workbench.colorCustomizations": {},
+        "editor.stickyScroll.enabled": false,
+        "ai.enable": true,
+        "ai.showInlineCompletions": true,
+        "ai.chat.enableChatView": true,
+        "ai.chat.enableContextVariables": true,
+        "ai.chat.showWelcomeMessage": true,
+        "ai.anthropic.enabled": true,
+        "ai.anthropic.models": ["claude-3-5-sonnet-20241022", "claude-3-5-haiku-20241022"],
+        "ai.openai.enabled": true,
+        "ai.openai.models": ["gpt-4o", "gpt-4o-mini"],
+        "ai.huggingface.enabled": false,
+        "ai.ollama.enabled": false,
+        "ai.defaultProvider": "anthropic",
+        "ai.costWarning": true,
+        "ai.rateLimitWarning": true,
+        "plugin-ext-vscode.enabled": true,
+        "plugin-ext.enableDownloadVSCodeExtensions": true,
+        "plugin-ext.enableRemotePlugins": true,
+        "vsx-registry.url": "https://open-vsx.org/api",
+        "vsx-registry.enableVSCodeCompatibility": true,
+        "editor.suggest.enableAI": true,
+        "workbench.extensions.autoCheckUpdates": true,
+        "workbench.extensions.autoUpdate": false,
+        "workbench.panel.defaultLocation": "bottom",
+        "workbench.editor.enablePreview": false,
+        "workbench.tree.renderIndentGuides": "always",
+        "terminal.integrated.defaultProfile.linux": "bash",
+        "terminal.integrated.defaultProfile.osx": "zsh",
+        "terminal.integrated.defaultProfile.windows": "pwsh",
+        "extensions.autoCheckUpdates": true,
+        "extensions.ignoreRecommendations": false
+      },
+      "startup": {
+        "welcomePage": false,
+        "editors": "none"
+      },
+      "performance": {
+        "maxContributions": 50,
+        "deferContributions": true,
+        "lazyPluginActivation": true
       }
     }
   },
@@ -16,7 +57,16 @@
       "port": 3002,
       "hostname": "0.0.0.0",
       "warnOnPotentiallyInsecureHostPattern": false,
-      "applicationName": "The New Fuse IDE Backend"
+      "applicationName": "The New Fuse IDE Backend",
+      "logging": {
+        "level": "info",
+        "suppressWarnings": ["performance", "duplicate-command"]
+      },
+      "performance": {
+        "enableAsyncInitialization": true,
+        "optimizeStartup": true,
+        "deferNonCriticalServices": true
+      }
     }
   },
   "generator": {

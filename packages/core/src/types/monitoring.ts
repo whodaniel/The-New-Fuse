@@ -23,7 +23,7 @@ export enum MetricType {
 export interface MetricSeries {
   name: string;
   dataPoints: MetricDataPoint[];
-  metadata: unknown;
+  metadata: {
     unit: string;
     type: MetricType;
     description?: string;
@@ -46,27 +46,27 @@ export interface PerformanceMetrics {
 }
 
 export interface SystemMetrics {
-  cpu: unknown;
+  cpu: {
     usage: number; // percentage
     cores: number;
     loadAverage: number[];
   };
-  memory: unknown;
+  memory: {
     used: number; // bytes
     total: number; // bytes
     usage: number; // percentage
-    heap: unknown;
+    heap: {
       used: number;
       total: number;
     };
   };
-  disk: unknown;
+  disk: {
     used: number; // bytes
     total: number; // bytes
     usage: number; // percentage
     iops: number;
   };
-  network: unknown;
+  network: {
     bytesIn: number;
     bytesOut: number;
     packetsIn: number;
@@ -79,14 +79,14 @@ export interface ApplicationMetrics {
   uptime: number; // seconds
   requestCount: number;
   errorCount: number;
-  responseTime: unknown;
+  responseTime: {
     average: number;
     p50: number;
     p95: number;
     p99: number;
   };
   activeConnections: number;
-  databaseConnections: unknown;
+  databaseConnections: {
     active: number;
     idle: number;
     total: number;
@@ -99,7 +99,7 @@ export interface AgentMetrics {
   tasksCompleted: number;
   tasksFailed: number;
   averageTaskTime: number;
-  resourceUtilization: unknown;
+  resourceUtilization: {
     cpu: number;
     memory: number;
   };

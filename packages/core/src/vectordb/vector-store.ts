@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 import { Logger } from '@nestjs/common';
-import { VectorProvider, Document, SearchResult, VectorQuery } from './types';
+import { VectorProvider, Document, SearchResult, VectorQuery } from '../types/types';
 export class VectorStore {
   private logger = new Logger(VectorStore.name);
   private provider: VectorProvider;

@@ -416,7 +416,7 @@ export class TestRunner extends EventEmitter {
 
       const logs: string[] = [];
       let stdout = '';
-      let stderr = '';
+      let _stderr = '';
 
       jestProcess.stdout?.on('data', (data: Buffer) => {
         const output = data.toString();
@@ -426,7 +426,7 @@ export class TestRunner extends EventEmitter {
 
       jestProcess.stderr?.on('data', (data: Buffer) => {
         const output = data.toString();
-        stderr += output;
+        _stderr += output;
         logs.push(output);
       });
 
@@ -476,9 +476,9 @@ export class TestRunner extends EventEmitter {
         }
       });
 
-      jestProcess.on('error', (error: Error) => {
+      jestProcess.on('error', (_error: Error) => {
         this.runningTests.delete(testId);
-        reject(error);
+        reject(_error);
       });
 
       // Set timeout
@@ -586,9 +586,9 @@ export class TestRunner extends EventEmitter {
         }
       });
 
-      childProcess.on('error', (error: Error) => {
+      childProcess.on('error', (_error: Error) => {
         this.runningTests.delete(testId);
-        reject(error);
+        reject(_error);
       });
 
       // Set timeout

@@ -5,7 +5,20 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
-import { HealthIndicator, HealthIndicatorResult, HealthCheckError } from '@nestjs/terminus';
+import { HealthIndicator } from '@nestjs/terminus';
+// Local type definitions to avoid cross-package import issues
+interface HealthIndicatorResult {
+  [key: string]: {
+    status: string;
+    message?: string;
+  };
+}
+
+class HealthCheckError extends Error {
+  constructor(message: string, public causes: HealthIndicatorResult) {
+    super(message);
+  }
+}
 import { toError } from '../utils/error'; // Import the helper
 
 @Injectable()

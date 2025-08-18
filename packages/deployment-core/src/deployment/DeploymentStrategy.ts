@@ -4,9 +4,7 @@ import {
   DeploymentConfig,
   DeploymentResult,
   DeploymentStrategy as StrategyType,
-  ServiceDeploymentResult,
   HealthCheckResult,
-  PipelineStatus
 } from '../types/pipeline';
 
 /**
@@ -264,7 +262,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
 
   protected async executeHealthCheck(
     check: HealthCheckConfig,
-    deploymentId: string
+    _deploymentId: string
   ): Promise<HealthCheckResult> {
     const startTime = new Date();
 

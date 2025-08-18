@@ -254,7 +254,7 @@ export class PerformanceMonitor {
       this.intervalId = undefined;
     }
 
-    console.log(`Performance monitor stopped for agent ${this.agentId}`);
+    
   }
 
   /**

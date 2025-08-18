@@ -4,14 +4,27 @@
 import { UUID, ISODateTime } from './common';
 
 export enum AgentType {
+  HUMAN = 'human',
+  AI = 'ai',
   ASSISTANT = 'assistant',
   WORKER = 'worker',
   SUPERVISOR = 'supervisor',
   SPECIALIST = 'specialist'
 }
 
+export enum IntegrationLevel {
+  STANDALONE = 'standalone',
+  BASIC = 'basic',
+  ADVANCED = 'advanced',
+  FULL = 'full',
+}
+
 export enum AgentStatus {
   ACTIVE = 'active',
+  IDLE = 'idle',
+  BUSY = 'busy',
+  OFFLINE = 'offline',
+  LEARNING = 'learning',
   INACTIVE = 'inactive',
   SUSPENDED = 'suspended',
   TRAINING = 'training'
@@ -30,14 +43,25 @@ export type AgentCapability =
 export interface AgentModel {
   id: UUID;
   name: string;
+  role: string; // Added from agent.ts
   description?: string;
   type: AgentType;
-  status: AgentStatus;
+  channel: string; // Added from agent.ts
   capabilities: AgentCapability[];
-  settings: Record<string, any>;
+  integrationLevel: IntegrationLevel; // Added from agent.ts
+  status: AgentStatus;
+  isActive: boolean; // Added from agent.ts
+  lastSeen?: ISODateTime; // Changed to ISODateTime from Date
+  departmentId?: string; // Added from agent.ts
+  taskCount: number; // Added from agent.ts
+  successCount: number; // Added from agent.ts
+  failureCount: number; // Added from agent.ts
+  apiKey?: string; // Added from agent.ts
+  modelId?: string; // Added from agent.ts
+  settings?: Record<string, any>;
   metadata?: Record<string, any>;
-  createdBy: UUID;
-  userId: UUID;
+  createdBy?: UUID; // Made optional
+  userId?: UUID; // Made optional
   createdAt: ISODateTime;
   updatedAt: ISODateTime;
 }

@@ -12,9 +12,9 @@ export interface Agent {
   provider: string;
   lastActive: Date;
   metadata?: any;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt?: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt?: Date;
 }
 
 export interface AgentCreateData {

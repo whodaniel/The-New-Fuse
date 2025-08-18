@@ -1,1 +1,1 @@
-export { default as Button } from '@the-new-fuse/ui-components/src/core/button';
+export { Button } from './Button/Button';

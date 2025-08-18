@@ -12,8 +12,6 @@ import {
   StageResult,
   TaskResult,
   PipelineMetrics,
-  StageType,
-  TriggerType,
   PipelineStage,
   PipelineTask
 } from '../types/pipeline';
@@ -675,7 +673,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     }
   }
 
-  private async evaluateQualityGates(qualityGates: any[], stageResult: StageResult): Promise<void> {
+  private async evaluateQualityGates(_qualityGates: any[], _stageResult: StageResult): Promise<void> {
     // Implementation for quality gate evaluation
     // This would check various metrics and thresholds
   }

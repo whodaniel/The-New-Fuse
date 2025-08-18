@@ -4,16 +4,22 @@
  */
 
 import { Controller, Get } from '@nestjs/common';
-import { PrismaService } from '../services/prisma.service';
-// Use our local implementation instead of @nestjs/terminus
-import { HealthCheck, HealthCheckService, PrismaHealthIndicator } from '../modules/health/terminus';
+import { HealthCheck } from '@nestjs/terminus';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { HealthService } from '../services/health.service';
+// Local type definition to avoid cross-package import issues
+interface HealthIndicatorResult {
+  [key: string]: {
+    status: string;
+    message?: string;
+  };
+}
 
+@ApiTags('health')
 @Controller('health')
 export class HealthController {
   constructor(
-    private readonly healthService: HealthCheckService,
-    private readonly db: PrismaHealthIndicator,
-    private readonly prisma: PrismaService
+    private readonly healthService: HealthService,
   ) {}
 
   /**
@@ -22,19 +28,8 @@ export class HealthController {
    */
   @Get()
   @HealthCheck()
-  async healthCheck(): Promise<any> {
-    return this.healthService.check([
-      () => this.db.pingCheck('database', { query: async () => this.prisma.$queryRaw`SELECT 1` }),
-    ]);
+  @ApiOperation({ summary: 'Check API health' })
+  async check(): Promise<HealthIndicatorResult> {
+    return this.healthService.isHealthy('database');
   }
-
-  /**
-   * Detailed health check endpoint (can be removed if Terminus provides enough detail)
-   * Or kept for custom detailed checks
-   */
-  // @Get('details')
-  // async detailedHealthCheck(): Promise<HealthCheckResult> {
-  //   const terminusResult = await this.healthCheck();
-  //   return { /* transformed data */ } as HealthCheckResult;
-  // }
 }

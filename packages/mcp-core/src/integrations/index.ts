@@ -38,6 +38,54 @@ export {
   type MCPWorkflowIntegrationConfig
 } from './MCPWorkflowIntegration';
 
+// Agent integration
+export {
+  MCPAgentIntegration,
+  type MCPAgentIntegrationConfig
+} from './MCPAgentIntegration';
+
+// Service mesh integration
+export {
+  MCPServiceMesh,
+  type ServiceMeshProvider,
+  type ServiceMeshConfig
+} from './MCPServiceMesh';
+export {
+  KubernetesServiceMeshProvider,
+  type KubernetesConfig
+} from './providers/KubernetesServiceMeshProvider';
+export {
+  ServiceMeshMonitor,
+  type ServiceMeshMonitorConfig,
+  type ServiceMonitoringData,
+  type Alert,
+  type AlertStatus,
+  type MonitoringStatistics
+} from './ServiceMeshMonitor';
+export {
+  ServiceMeshScaler,
+  type ServiceMeshScalerConfig,
+  type ScalingDecision,
+  type ServiceScalingState,
+  type ScalingStatistics
+} from './ServiceMeshScaler';
+export {
+  WorkflowExecutionMonitor,
+  type ExecutionMetrics,
+  type ExecutionEvent,
+  type ExecutionHistoryEntry,
+  type AlertConfig,
+  type AlertEvent
+} from './WorkflowExecutionMonitor';
+export {
+  MCPCallbackHandler,
+  type CallbackHandlerConfig,
+  type CallbackRegistration,
+  type CallbackQueueEntry,
+  type CallbackProcessingResult,
+  type CallbackStatistics
+} from './MCPCallbackHandler';
+
 // Platform integration manager
 import { PlatformTypesBridge, PlatformUtils } from './platform-types';
 import { RelayIntegration, RelayIntegrationFactory } from './relay-core';

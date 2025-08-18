@@ -19,14 +19,31 @@ import { WorkflowService } from '../services/workflow.service';
 import { BaseController } from './base.controller';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { CurrentUser } from '../decorators/current-user.decorator';
-import { 
-  Workflow, 
-  WorkflowExecution, 
-  ApiResponse 
-} from '@the-new-fuse/types';
+// Local type definitions to avoid cross-package import issues
+interface WorkflowModel {
+  id: string;
+  name: string;
+  description?: string;
+  status: string;
+  [key: string]: any;
+}
+
+interface WorkflowExecutionModel {
+  id?: string;
+  workflowId: string;
+  status: string;
+  [key: string]: any;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  error?: string;
+  meta?: Record<string, unknown>;
+}
 import { CreateWorkflowDto } from './dto/create-workflow.dto';
 import { UpdateWorkflowDto } from './dto/update-workflow.dto';
-import { WorkflowDto, WorkflowExecutionDto } from './dto/swagger-dto';
+import { WorkflowDto, WorkflowExecutionDto } from './dto/workflow.dto'; // Updated import path
 import { 
   ApiTags, 
   ApiOperation, 
@@ -53,7 +70,7 @@ export class WorkflowController extends BaseController {
   @SwaggerResponse({ status: 200, description: 'List of workflows', type: [WorkflowDto] })
   async getWorkflows(
     @CurrentUser() user: any
-  ): Promise<ApiResponse<Workflow[]>> {
+  ): Promise<ApiResponse<WorkflowModel[]>> {
     return this.handleAsync(
       () => this.workflowService.getWorkflows(user.id),
       'Failed to get workflows'
@@ -74,7 +91,7 @@ export class WorkflowController extends BaseController {
   async getWorkflow(
     @Param('id') id: string,
     @CurrentUser() user: any
-  ): Promise<ApiResponse<Workflow>> {
+  ): Promise<ApiResponse<WorkflowModel>> {
     return this.handleAsync(
       () => this.workflowService.getWorkflowById(id, user.id),
       'Failed to get workflow'
@@ -95,7 +112,7 @@ export class WorkflowController extends BaseController {
   async createWorkflow(
     @Body() data: CreateWorkflowDto,
     @CurrentUser() user: any
-  ): Promise<ApiResponse<Workflow>> {
+  ): Promise<ApiResponse<WorkflowModel>> {
     return this.handleAsync(
       () => this.workflowService.createWorkflow(data, user.id),
       'Failed to create workflow'
@@ -119,7 +136,7 @@ export class WorkflowController extends BaseController {
     @Param('id') id: string,
     @Body() updates: UpdateWorkflowDto,
     @CurrentUser() user: any
-  ): Promise<ApiResponse<Workflow>> {
+  ): Promise<ApiResponse<WorkflowModel>> {
     return this.handleAsync(
       () => this.workflowService.updateWorkflow(id, updates, user.id),
       'Failed to update workflow'
@@ -164,7 +181,7 @@ export class WorkflowController extends BaseController {
     @Param('id') id: string,
     @Body() inputs: Record<string, any> = {},
     @CurrentUser() user: any
-  ): Promise<ApiResponse<WorkflowExecution>> {
+  ): Promise<ApiResponse<WorkflowExecutionModel>> {
     return this.handleAsync(
       () => this.workflowService.executeWorkflow(id, user.id, inputs),
       'Failed to execute workflow'
@@ -184,7 +201,7 @@ export class WorkflowController extends BaseController {
   async getWorkflowExecutions(
     @Param('id') id: string,
     @CurrentUser() user: any
-  ): Promise<ApiResponse<WorkflowExecution[]>> {
+  ): Promise<ApiResponse<WorkflowExecutionModel[]>> {
     return this.handleAsync(
       () => this.workflowService.getWorkflowExecutions(id, user.id),
       'Failed to get workflow executions'
@@ -208,7 +225,7 @@ export class WorkflowController extends BaseController {
     @Param('id') id: string,
     @Param('executionId') executionId: string,
     @CurrentUser() user: any
-  ): Promise<ApiResponse<WorkflowExecution>> {
+  ): Promise<ApiResponse<WorkflowExecutionModel>> {
     return this.handleAsync(
       () => this.workflowService.getExecutionById(executionId, user.id),
       'Failed to get workflow execution'

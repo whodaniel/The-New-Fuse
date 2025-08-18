@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
-import { MCPMessage, MCPCapability, ProtocolVersion } from './types';
+import { MCPMessage, MCPCapability, ProtocolVersion } from '../types/types';
 @Injectable()
 export class MCPAgentServer {
   private logger = new Logger('MCPAgentServer');

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TestDataGenerator } from './TestDataGenerator';
 import { TestRunner } from './TestRunner';
-import { TestConfiguration, TestSuite, TestResult } from './types';
+import { TestConfiguration, TestSuite, TestResult } from '../types/types';
 @Injectable()
 export class TestingFramework {
   private testRunner: TestRunner;

@@ -1,5 +1,5 @@
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -12,8 +12,8 @@ import {
   Conversation,
   ConversationSchema,
   AgentStatus,
-  MessageType,
-  Priority,
+  A2AMessageType,
+  A2APriority,
   IA2ACommunicator,
   A2AConfig,
   A2AError,
@@ -26,9 +26,6 @@ import {
 @Injectable()
 export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(A2ARedisAdapter.name);
-  private client: Redis;
-  private pubClient: Redis;
-  private subClient: Redis;
   private readonly keyPrefix: string;
   private readonly requestTimeouts = new Map<string, NodeJS.Timeout>();
   private readonly pendingRequests = new Map<string, {
@@ -36,32 +33,17 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     reject: (reason: any) => void;
   }>();
 
-  constructor(private readonly config: A2AConfig) {
+  constructor(
+    private readonly config: A2AConfig,
+    private readonly redisService: UnifiedRedisService
+  ) {
     super();
     this.keyPrefix = config.redis.keyPrefix || 'a2a:';
-    
-    // Initialize Redis clients
-    const redisConfig = { 
-      ...config.redis,
-      retryDelayOnFailover: 100,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true
-    };
-    
-    this.client = new Redis(redisConfig);
-    this.pubClient = new Redis(redisConfig);
-    this.subClient = new Redis(redisConfig);
   }
 
   async onModuleInit() {
     try {
-      await Promise.all([
-        this.client.connect(),
-        this.pubClient.connect(),
-        this.subClient.connect()
-      ]);
-
-      // Subscribe to global A2A channels
+      // UnifiedRedisService handles connection management
       await this.setupSubscriptions();
       
       this.logger.log('A2A Redis Adapter initialized successfully');
@@ -84,30 +66,26 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     }
     this.pendingRequests.clear();
 
-    // Disconnect Redis clients
-    await Promise.all([
-      this.client.disconnect(),
-      this.pubClient.disconnect(),
-      this.subClient.disconnect()
-    ]);
-    
+    // UnifiedRedisService handles connection cleanup
     this.logger.log('A2A Redis Adapter destroyed');
   }
 
   private async setupSubscriptions() {
-    // Subscribe to global message channels
-    await this.subClient.subscribe(
+    // Subscribe to global message channels using UnifiedRedisService
+    const channels = [
       `${this.keyPrefix}messages:global`,
       `${this.keyPrefix}responses:global`,
       `${this.keyPrefix}heartbeats:global`,
       `${this.keyPrefix}events:global`
-    );
+    ];
 
-    this.subClient.on('message', (channel, message) => {
-      this.handleRedisMessage(channel, message).catch(error => {
-        this.logger.error('Error handling Redis message:', error);
+    for (const channel of channels) {
+      await this.redisService.subscribe(channel, (message) => {
+        this.handleRedisMessage(channel, JSON.stringify(message.message)).catch(error => {
+          this.logger.error('Error handling Redis message:', error);
+        });
       });
-    });
+    }
   }
 
   private async handleRedisMessage(channel: string, message: string) {
@@ -119,8 +97,8 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
         this.emit('message:received', parsedMessage);
         
         // Handle responses to pending requests
-        if (parsedMessage.type === MessageType.RESPONSE && parsedMessage.requestId) {
-          this.handleResponse(parsedMessage);
+        if (parsedMessage.type === A2AMessageType.DATA_RESPONSE && parsedMessage.metadata?.originalMessageId) {
+          this.handleResponse({ ...parsedMessage, payload: parsedMessage.payload || {} });
         }
       } else if (channel.endsWith(':heartbeats:global')) {
         const heartbeat = AgentHeartbeatSchema.parse(data);
@@ -134,15 +112,18 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
   }
 
   private handleResponse(response: A2AMessage) {
-    const pending = this.pendingRequests.get(response.requestId!);
+    const originalMessageId = response.metadata?.originalMessageId;
+    if (!originalMessageId) return;
+    
+    const pending = this.pendingRequests.get(originalMessageId);
     if (pending) {
-      const timeout = this.requestTimeouts.get(response.requestId!);
+      const timeout = this.requestTimeouts.get(originalMessageId);
       if (timeout) {
         clearTimeout(timeout);
-        this.requestTimeouts.delete(response.requestId!);
+        this.requestTimeouts.delete(originalMessageId);
       }
       
-      this.pendingRequests.delete(response.requestId!);
+      this.pendingRequests.delete(originalMessageId);
       pending.resolve(response);
     }
   }
@@ -178,14 +159,14 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       
       // Store agent registration
       const agentKey = `${this.keyPrefix}agents:${validatedRegistration.agentId}`;
-      await this.client.setex(
+      await this.redisService.set(
         agentKey,
-        this.config.redis.ttl || 3600,
-        JSON.stringify(validatedRegistration)
+        JSON.stringify(validatedRegistration),
+        this.config.redis.ttl || 3600
       );
       
       // Add to agents index
-      await this.client.sadd(`${this.keyPrefix}agents:index`, validatedRegistration.agentId);
+      await this.redisService.sadd(`${this.keyPrefix}agents:index`, validatedRegistration.agentId);
       
       // Set initial status
       await this.updateAgentStatus(validatedRegistration.agentId, AgentStatus.ONLINE);
@@ -204,12 +185,12 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
   async unregisterAgent(agentId: string): Promise<void> {
     // Remove agent data
-    await this.client.del(`${this.keyPrefix}agents:${agentId}`);
-    await this.client.del(`${this.keyPrefix}agents:${agentId}:status`);
-    await this.client.del(`${this.keyPrefix}agents:${agentId}:heartbeat`);
+    await this.redisService.del(`${this.keyPrefix}agents:${agentId}`);
+    await this.redisService.del(`${this.keyPrefix}agents:${agentId}:status`);
+    await this.redisService.del(`${this.keyPrefix}agents:${agentId}:heartbeat`);
     
     // Remove from index
-    await this.client.srem(`${this.keyPrefix}agents:index`, agentId);
+    await this.redisService.srem(`${this.keyPrefix}agents:index`, agentId);
     
     // Publish unregistration event
     await this.publishSystemEvent('agent:unregistered', agentId);
@@ -219,7 +200,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
   async updateAgentStatus(agentId: string, status: AgentStatus): Promise<void> {
     const statusKey = `${this.keyPrefix}agents:${agentId}:status`;
-    await this.client.setex(statusKey, this.config.redis.ttl || 3600, status);
+    await this.redisService.set(statusKey, status, this.config.redis.ttl || 3600);
     
     // Publish status change event
     await this.publishSystemEvent('agent:status_changed', { agentId, status });
@@ -227,37 +208,39 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
   async sendMessage(message: A2AMessage): Promise<void> {
     try {
-      // Validate message
-      const validatedMessage = A2AMessageSchema.parse(message);
+      // Ensure payload exists
+      const messageWithPayload = {
+        ...message,
+        payload: message.payload ?? {},
+        timestamp: message.timestamp || Date.now()
+      };
       
-      // Add timestamp if not provided
-      if (!validatedMessage.timestamp) {
-        validatedMessage.timestamp = new Date().toISOString();
-      }
+      // Validate message
+      const validatedMessage = A2AMessageSchema.parse(messageWithPayload);
       
       // Store message for audit/history
-      await this.storeMessage(validatedMessage);
+      await this.storeMessage({ ...validatedMessage, payload: validatedMessage.payload || {} });
       
-      // Publish to appropriate channels
+      // Publish to appropriate channels using UnifiedRedisService
       if (validatedMessage.toAgent) {
         // Direct message
-        await this.pubClient.publish(
+        await this.redisService.publish(
           `${this.keyPrefix}agents:${validatedMessage.toAgent}:messages`,
-          JSON.stringify(validatedMessage)
+          { message: validatedMessage }
         );
       } else {
         // Broadcast
-        await this.pubClient.publish(
+        await this.redisService.publish(
           `${this.keyPrefix}messages:global`,
-          JSON.stringify(validatedMessage)
+          { message: validatedMessage }
         );
       }
       
       // Also publish to conversation channel if part of conversation
       if (validatedMessage.conversationId) {
-        await this.pubClient.publish(
+        await this.redisService.publish(
           `${this.keyPrefix}conversations:${validatedMessage.conversationId}:messages`,
-          JSON.stringify(validatedMessage)
+          { message: validatedMessage }
         );
       }
       
@@ -276,7 +259,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     payload: any,
     options: {
       timeout?: number;
-      priority?: Priority;
+      priority?: A2APriority;
       conversationId?: string;
     } = {}
   ): Promise<A2AMessage> {
@@ -285,15 +268,14 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
     const message: A2AMessage = {
       id: uuidv4(),
-      protocolVersion: '1.0.0',
-      timestamp: new Date().toISOString(),
+      timestamp: Date.now(),
       fromAgent,
       toAgent,
-      type: MessageType.REQUEST,
-      priority: options.priority || Priority.MEDIUM,
+      type: A2AMessageType.DATA_REQUEST,
+      priority: options.priority || A2APriority.MEDIUM,
       conversationId: options.conversationId,
-      requestId,
-      payload
+      payload,
+      metadata: { requestId }
     };
 
     // Set up response handling
@@ -321,18 +303,18 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     options: {
       channel?: string;
       topic?: string;
-      priority?: Priority;
+      priority?: A2APriority;
     } = {}
   ): Promise<void> {
     const message: A2AMessage = {
       id: uuidv4(),
-      protocolVersion: '1.0.0',
-      timestamp: new Date().toISOString(),
+      timestamp: Date.now(),
       fromAgent,
-      type: MessageType.BROADCAST,
-      priority: options.priority || Priority.MEDIUM,
+      toAgent: '*', // Broadcast
+      type: A2AMessageType.DATA_REQUEST,
+      priority: options.priority || A2APriority.MEDIUM,
       payload,
-      routing: {
+      metadata: {
         channel: options.channel,
         topic: options.topic
       }
@@ -357,15 +339,15 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
     // Store conversation
     const conversationKey = `${this.keyPrefix}conversations:${validatedConversation.id}`;
-    await this.client.setex(
+    await this.redisService.set(
       conversationKey,
-      this.config.redis.ttl || 3600,
-      JSON.stringify(validatedConversation)
+      JSON.stringify(validatedConversation),
+      this.config.redis.ttl || 3600
     );
 
     // Add participants to conversation
     for (const participant of validatedConversation.participants) {
-      await this.client.sadd(
+      await this.redisService.sadd(
         `${this.keyPrefix}agents:${participant}:conversations`,
         validatedConversation.id
       );
@@ -380,7 +362,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
 
   async joinConversation(conversationId: string, agentId: string): Promise<void> {
     const conversationKey = `${this.keyPrefix}conversations:${conversationId}`;
-    const conversationData = await this.client.get(conversationKey);
+    const conversationData = await this.redisService.get(conversationKey);
     
     if (!conversationData) {
       throw new A2AError('Conversation not found', 'NOT_FOUND');
@@ -393,16 +375,16 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       conversation.updatedAt = new Date().toISOString();
       
       // Update conversation
-      await this.client.setex(conversationKey, this.config.redis.ttl || 3600, JSON.stringify(conversation));
+      await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis.ttl || 3600);
       
       // Add agent to conversation
-      await this.client.sadd(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
+      await this.redisService.sadd(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
     }
   }
 
   async leaveConversation(conversationId: string, agentId: string): Promise<void> {
     const conversationKey = `${this.keyPrefix}conversations:${conversationId}`;
-    const conversationData = await this.client.get(conversationKey);
+    const conversationData = await this.redisService.get(conversationKey);
     
     if (!conversationData) {
       return; // Conversation doesn't exist, nothing to do
@@ -419,10 +401,10 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     }
     
     // Update conversation
-    await this.client.setex(conversationKey, this.config.redis.ttl || 3600, JSON.stringify(conversation));
+    await this.redisService.set(conversationKey, JSON.stringify(conversation), this.config.redis.ttl || 3600);
     
     // Remove agent from conversation
-    await this.client.srem(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
+    await this.redisService.srem(`${this.keyPrefix}agents:${agentId}:conversations`, conversationId);
   }
 
   async discoverAgents(criteria: {
@@ -430,11 +412,11 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     capabilities?: string[];
     status?: AgentStatus;
   } = {}): Promise<AgentRegistration[]> {
-    const agentIds = await this.client.smembers(`${this.keyPrefix}agents:index`);
+    const agentIds = await this.redisService.smembers(`${this.keyPrefix}agents:index`);
     const agents: AgentRegistration[] = [];
 
     for (const agentId of agentIds) {
-      const agentData = await this.client.get(`${this.keyPrefix}agents:${agentId}`);
+      const agentData = await this.redisService.get(`${this.keyPrefix}agents:${agentId}`);
       if (!agentData) continue;
 
       try {
@@ -444,13 +426,13 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
         if (criteria.type && agent.type !== criteria.type) continue;
         
         if (criteria.status) {
-          const status = await this.client.get(`${this.keyPrefix}agents:${agentId}:status`);
+          const status = await this.redisService.get(`${this.keyPrefix}agents:${agentId}:status`);
           if (status !== criteria.status) continue;
         }
         
         if (criteria.capabilities && criteria.capabilities.length > 0) {
           const hasAllCapabilities = criteria.capabilities.every(cap =>
-            agent.capabilities.some(agentCap => agentCap.name === cap)
+            agent.capabilities.some(agentCap => agentCap === cap)
           );
           if (!hasAllCapabilities) continue;
         }
@@ -470,16 +452,16 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
       
       // Store heartbeat
       const heartbeatKey = `${this.keyPrefix}agents:${validatedHeartbeat.agentId}:heartbeat`;
-      await this.client.setex(
+      await this.redisService.set(
         heartbeatKey,
-        this.config.monitoring?.heartbeatInterval || 60,
-        JSON.stringify(validatedHeartbeat)
+        JSON.stringify(validatedHeartbeat),
+        this.config.redis.ttl || 3600
       );
       
       // Publish heartbeat
-      await this.pubClient.publish(
+      await this.redisService.publish(
         `${this.keyPrefix}heartbeats:global`,
-        JSON.stringify(validatedHeartbeat)
+        { message: JSON.stringify(validatedHeartbeat) }
       );
       
       // Update agent status based on heartbeat
@@ -493,7 +475,7 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
   }
 
   async getAgentHealth(agentId: string): Promise<AgentHeartbeat | null> {
-    const heartbeatData = await this.client.get(`${this.keyPrefix}agents:${agentId}:heartbeat`);
+    const heartbeatData = await this.redisService.get(`${this.keyPrefix}agents:${agentId}:heartbeat`);
     if (!heartbeatData) return null;
 
     try {
@@ -507,20 +489,20 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
   private async storeMessage(message: A2AMessage): Promise<void> {
     // Store message with TTL for audit/history
     const messageKey = `${this.keyPrefix}messages:${message.id}`;
-    await this.client.setex(
+    await this.redisService.set(
       messageKey,
-      this.config.redis.ttl || 3600,
-      JSON.stringify(message)
+      JSON.stringify(message),
+      this.config.redis.ttl || 3600
     );
     
     // Add to conversation history if applicable
     if (message.conversationId) {
-      await this.client.lpush(
+      await this.redisService.lpush(
         `${this.keyPrefix}conversations:${message.conversationId}:history`,
         message.id
       );
       // Keep only recent messages in conversation history
-      await this.client.ltrim(
+      await this.redisService.ltrim(
         `${this.keyPrefix}conversations:${message.conversationId}:history`,
         0,
         999 // Keep last 1000 messages
@@ -529,9 +511,9 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
   }
 
   private async publishSystemEvent(type: string, data: any): Promise<void> {
-    await this.pubClient.publish(
+    await this.redisService.publish(
       `${this.keyPrefix}events:global`,
-      JSON.stringify({ type, data, timestamp: new Date().toISOString() })
+      { message: { type, data, timestamp: Date.now() } }
     );
   }
 }

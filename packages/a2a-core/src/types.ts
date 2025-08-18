@@ -9,26 +9,90 @@ export enum AgentStatus {
   OFFLINE = 'offline',
   BUSY = 'busy',
   IDLE = 'idle',
-  ERROR = 'error'
+  ERROR = 'error',
 }
 
 // Message Types
-export enum MessageType {
-  HANDSHAKE = 'handshake',
-  REQUEST = 'request',
-  RESPONSE = 'response',
-  NOTIFICATION = 'notification',
+export enum A2AMessageType {
+  TASK_ASSIGNMENT = 'task_assignment',
+  STATUS_UPDATE = 'status_update',
+  DATA_REQUEST = 'data_request',
+  DATA_RESPONSE = 'data_response',
+  COLLABORATION_REQUEST = 'collaboration_request',
+  WORKFLOW_COORDINATION = 'workflow_coordination',
+  RESOURCE_SHARING = 'resource_sharing',
+  ERROR_NOTIFICATION = 'error_notification',
   HEARTBEAT = 'heartbeat',
-  ERROR = 'error',
-  BROADCAST = 'broadcast'
+  CAPABILITY_ANNOUNCEMENT = 'capability_announcement',
 }
 
 // Priority Levels
-export enum Priority {
-  LOW = 1,
-  MEDIUM = 2,
-  HIGH = 3,
-  URGENT = 4
+export enum A2APriority {
+  CRITICAL = 1,    // System critical, emergency responses
+  HIGH = 2,        // Real-time coordination, urgent tasks
+  MEDIUM = 3,      // Normal operations, status updates
+  LOW = 4,         // Background sync, analytics
+  BATCH = 5,       // Bulk operations, data transfers
+}
+
+export enum AgentType {
+  COORDINATOR = 'coordinator',
+  WORKER = 'worker',
+  SPECIALIST = 'specialist',
+  MONITOR = 'monitor',
+  GATEWAY = 'gateway',
+}
+
+export enum LoadBalancingStrategy {
+  ROUND_ROBIN = 'round_robin',
+  LEAST_LOADED = 'least_loaded',
+  FASTEST_RESPONSE = 'fastest_response',
+  CAPABILITY_MATCH = 'capability_match',
+  GEOGRAPHIC = 'geographic',
+}
+
+export interface A2AMessage {
+  id: string;
+  fromAgent: string;
+  toAgent: string;
+  type: A2AMessageType;
+  payload: any;
+  priority: A2APriority;
+  timestamp: number;
+  ttl?: number;
+  retryCount?: number;
+  requiresResponse?: boolean;
+  conversationId?: string;
+  metadata?: Record<string, any>;
+}
+
+export interface A2AResponse {
+  messageId: string;
+  success: boolean;
+  data?: any;
+  error?: string;
+  processingTime: number;
+  agentStatus: AgentStatus;
+}
+
+export interface AgentCapabilities {
+  id: string;
+  type: AgentType;
+  capabilities: string[];
+  maxConcurrentRequests: number;
+  averageResponseTime: number;
+  reliability: number;
+  lastSeen: number;
+  isOnline: boolean;
+}
+
+export interface RoutingRule {
+  messageType: A2AMessageType;
+  priority: A2APriority;
+  preferredAgents: string[];
+  fallbackAgents: string[];
+  loadBalancingStrategy: LoadBalancingStrategy;
+  timeoutMs: number;
 }
 
 // Agent Capabilities Schema
@@ -45,10 +109,10 @@ export const AgentCapabilitySchema = z.object({
 export const AgentRegistrationSchema = z.object({
   agentId: z.string().uuid(),
   name: z.string().min(1).max(100),
-  type: z.string(),
+  type: z.nativeEnum(AgentType), // Updated to use AgentType enum
   version: z.string(),
   description: z.string().optional(),
-  capabilities: z.array(AgentCapabilitySchema),
+  capabilities: z.array(z.string()), // Changed to string array for simplicity
   metadata: z.record(z.any()).optional(),
   endpoints: z.object({
     websocket: z.string().url().optional(),
@@ -58,38 +122,29 @@ export const AgentRegistrationSchema = z.object({
   authentication: z.object({
     type: z.enum(['none', 'token', 'certificate']),
     credentials: z.record(z.string()).optional()
-  }).optional()
+  }).optional(),
+  maxConcurrentRequests: z.number().optional(), // Added from AgentCapabilities
+  averageResponseTime: z.number().optional(), // Added from AgentCapabilities
+  reliability: z.number().optional(), // Added from AgentCapabilities
+  lastSeen: z.number().optional(), // Added from AgentCapabilities
+  isOnline: z.boolean().optional(), // Added from AgentCapabilities
 });
 
 // A2A Message Schema
 export const A2AMessageSchema = z.object({
-  id: z.string().uuid(),
+  id: z.string(), // Changed from uuid to string as per A2AMessage interface
   protocolVersion: z.string().default(A2A_PROTOCOL_VERSION),
-  timestamp: z.string().datetime(),
-  fromAgent: z.string().uuid(),
-  toAgent: z.string().uuid().optional(), // Optional for broadcasts
-  type: z.nativeEnum(MessageType),
-  priority: z.nativeEnum(Priority).default(Priority.MEDIUM),
-  conversationId: z.string().uuid().optional(),
-  requestId: z.string().uuid().optional(), // For request-response correlation
-  ttl: z.number().positive().optional(), // Time to live in seconds
-  
-  // Message content
-  payload: z.record(z.any()),
-  
-  // Routing and delivery
-  routing: z.object({
-    channel: z.string().optional(),
-    topic: z.string().optional(),
-    targetCapability: z.string().optional()
-  }).optional(),
-  
-  // Security and validation
-  signature: z.string().optional(),
-  checksum: z.string().optional(),
-  
-  // Metadata
-  metadata: z.record(z.any()).optional()
+  timestamp: z.number(), // Changed from datetime to number as per A2AMessage interface
+  fromAgent: z.string(), // Changed from uuid to string
+  toAgent: z.string(), // Changed from uuid to string
+  type: z.nativeEnum(A2AMessageType),
+  payload: z.any(), // Changed to z.any() as per A2AMessage interface
+  priority: z.nativeEnum(A2APriority),
+  ttl: z.number().optional(),
+  retryCount: z.number().optional(),
+  requiresResponse: z.boolean().optional(),
+  conversationId: z.string().optional(),
+  metadata: z.record(z.any()).optional(),
 });
 
 // Agent Heartbeat Schema
@@ -118,7 +173,7 @@ export const ConversationSchema = z.object({
 // Type exports from schemas
 export type AgentCapability = z.infer<typeof AgentCapabilitySchema>;
 export type AgentRegistration = z.infer<typeof AgentRegistrationSchema>;
-export type A2AMessage = z.infer<typeof A2AMessageSchema>;
+export type A2AMessageZod = z.infer<typeof A2AMessageSchema>; // Renamed to avoid conflict
 export type AgentHeartbeat = z.infer<typeof AgentHeartbeatSchema>;
 export type Conversation = z.infer<typeof ConversationSchema>;
 
@@ -133,13 +188,13 @@ export interface IA2ACommunicator {
   sendMessage(message: A2AMessage): Promise<void>;
   sendRequest(fromAgent: string, toAgent: string, payload: any, options?: {
     timeout?: number;
-    priority?: Priority;
+    priority?: A2APriority;
     conversationId?: string;
   }): Promise<A2AMessage>;
   broadcast(fromAgent: string, payload: any, options?: {
     channel?: string;
     topic?: string;
-    priority?: Priority;
+    priority?: A2APriority;
   }): Promise<void>;
   
   // Conversations

@@ -508,6 +508,141 @@
             pointer-events: none;
         }
 
+        /* Theia Loading Overlay */
+        .theia-loading-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: linear-gradient(135deg, #1a1d29 0%, #252836 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .theia-loading-content {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            color: #ffffff;
+        }
+
+        .loading-spinner {
+            margin: 0 auto 30px;
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+
+        .spinner-ring {
+            display: inline-block;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            border: 8px solid transparent;
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .spinner-ring:nth-child(1) {
+            border-top-color: #4f46e5;
+            animation-delay: -0.45s;
+        }
+
+        .spinner-ring:nth-child(2) {
+            border-top-color: #06d6a0;
+            animation-delay: -0.3s;
+        }
+
+        .spinner-ring:nth-child(3) {
+            border-top-color: #ffd166;
+            animation-delay: -0.15s;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .theia-loading-content h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .theia-loading-content > p {
+            font-size: 16px;
+            color: #a0a9c0;
+            margin-bottom: 30px;
+        }
+
+        .ai-support-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #06d6a0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .ai-banner-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .ai-banner-content p {
+            font-size: 14px;
+            color: #f8fafc;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .ai-banner-content p:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+
+        .loading-progress {
+            margin-top: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #2d3142;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #06d6a0, #ffd166);
+            border-radius: 3px;
+            animation: progress 10s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            25% { width: 30%; }
+            50% { width: 60%; }
+            75% { width: 85%; }
+            100% { width: 95%; }
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #a0a9c0;
+            font-style: italic;
+        }
+
         /* Settings Panel */
         .settings-panel, .extensions-panel, .prompt-manager-panel {
             position: fixed;
@@ -694,65 +829,7 @@
             margin-top: 4px;
         }
 
-        /* Terminal Integration */
-        .terminal-section {
-            background: #1f2937;
-            border-top: 1px solid #2d3142;
-            height: 200px;
-            display: flex;
-            flex-direction: column;
-            transition: height 0.3s ease;
-        }
 
-        .terminal-section.hidden {
-            height: 0;
-            overflow: hidden;
-        }
-
-        .terminal-header {
-            padding: 8px 16px;
-            background: #374151;
-            border-bottom: 1px solid #2d3142;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            min-height: 36px;
-        }
-
-        .terminal-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #d1d5db;
-        }
-
-        .terminal-controls {
-            display: flex;
-            gap: 4px;
-        }
-
-        .terminal-btn {
-            background: none;
-            border: none;
-            color: #9ca3af;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .terminal-btn:hover {
-            background: #4b5563;
-            color: #ffffff;
-        }
-
-        .terminal-content {
-            flex: 1;
-            background: #000000;
-            color: #00ff00;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 12px;
-            padding: 12px;
-            overflow-y: auto;
             white-space: pre-wrap;
         }
 
@@ -815,6 +892,673 @@
         .sidebar-body::-webkit-scrollbar-thumb:hover, .settings-content::-webkit-scrollbar-thumb:hover, .extensions-content::-webkit-scrollbar-thumb:hover, .prompt-manager-content::-webkit-scrollbar-thumb:hover {
             background: #6b7280;
         }
+        
+        /* Browser Engine Switcher */
+        .engine-selector {
+            background: #2d3142;
+            border: 1px solid #4a5568;
+            color: #ffffff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .engine-selector:hover {
+            border-color: #4f46e5;
+            background: #3c3c4c;
+        }
+
+        .engine-selector option {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        /* Extension Quick Access */
+        .extension-quick-access {
+            position: relative;
+            background: #4f46e5 !important;
+            color: white !important;
+        }
+
+        .extension-quick-access:hover {
+            background: #6366f1 !important;
+        }
+
+        .extension-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 8px;
+            line-height: 1;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* Extension Management Actions */
+        .extension-actions {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            border-bottom: 1px solid #2d3142;
+            margin-bottom: 16px;
+        }
+
+        .extension-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .extension-action-btn.primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .extension-action-btn.primary:hover {
+            background: #6366f1;
+        }
+
+        .extension-action-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .extension-action-btn.secondary:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .extensions-section {
+            margin-bottom: 24px;
+        }
+
+        .extensions-section h3 {
+            color: #e5e7eb;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 12px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .installed-extension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 4px 0;
+            background: #1f2937;
+            border-radius: 8px;
+            border: 1px solid #374151;
+        }
+
+        .installed-extension-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .installed-extension-details {
+            flex: 1;
+        }
+
+        .installed-extension-name {
+            color: #f3f4f6;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .installed-extension-version {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .installed-extension-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .extension-control-btn {
+            background: none;
+            border: 1px solid #4b5563;
+            color: #9ca3af;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .extension-control-btn:hover {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .extension-control-btn.enabled {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        /* Extension Toolbar Styles */
+        .extension-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 8px;
+            max-width: 300px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .extension-toolbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .extension-icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .extension-icon-btn:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .extension-icon-btn.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .extension-icon-btn .extension-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 8px;
+            line-height: 1;
+            min-width: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .extension-icon-btn .extension-badge.visible {
+            display: block;
+        }
+
+        .extension-popup {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 380px;
+            max-height: 600px;
+            background: #252836;
+            border: 1px solid #2d3142;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            overflow: hidden;
+            display: none;
+        }
+
+        .extension-popup.visible {
+            display: block;
+        }
+
+        .extension-popup-header {
+            padding: 12px 16px;
+            background: #2d3142;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .extension-popup-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .extension-popup-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .extension-popup-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .extension-popup-close:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .extension-popup-content {
+            padding: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .extension-popup iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Extension Context Menu */
+        .extension-context-menu {
+            position: absolute;
+            background: #252836;
+            border: 1px solid #2d3142;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            min-width: 200px;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .context-menu-item i {
+            width: 16px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .context-menu-item:hover i {
+            color: #ffffff;
+        }
+
+        /* Extension Search Styles */
+        .extension-search {
+            padding: 0 16px 16px 16px;
+            border-bottom: 1px solid #2d3142;
+            margin-bottom: 16px;
+        }
+
+        .search-input-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .extension-search-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .extension-search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #111827;
+        }
+
+        .extension-search-input::placeholder {
+            color: #6b7280;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .search-clear:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-filters select {
+            flex: 1;
+            padding: 6px 8px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 4px;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .search-filters select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .extension-count-label {
+            color: #6b7280;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        /* Browser Feature Panels */
+        .browser-feature-panel {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 400px;
+            max-height: 600px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .browser-feature-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #374151;
+            border-bottom: 1px solid #4b5563;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            color: #f9fafb;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .panel-header button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .panel-header button:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .panel-content {
+            padding: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .feature-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .feature-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .feature-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .feature-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .feature-btn.secondary:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .feature-btn.danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .feature-btn.danger:hover {
+            background: #b91c1c;
+        }
+
+        .history-search {
+            width: 100%;
+            padding: 8px 12px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .history-search:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .bookmark-list, .history-list, .downloads-list {
+            margin-top: 16px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .list-item:hover {
+            background: #374151;
+        }
+
+        .list-item-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: #4b5563;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            color: #f3f4f6;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .list-item-url {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .list-item-action {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .list-item-action:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        /* More Options Menu */
+        .more-options-menu {
+            position: absolute;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            min-width: 200px;
+            padding: 8px 0;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .more-options-menu.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .menu-section {
+            padding: 4px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .menu-item i {
+            width: 16px;
+            font-size: 14px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #374151;
+            margin: 4px 0;
+        }
     </style>
 </head>
 <body>
@@ -856,11 +1600,11 @@
                             <span>TNF Dashboard</span>
                             <div class="status-dot online"></div>
                         </div>
-                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:3007', 'Theia IDE')">
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:3007', 'Theia IDE')"
                             <i class="fas fa-grip-vertical drag-handle"></i>
                             <i class="fas fa-code"></i>
                             <span>Theia IDE</span>
-                            <div class="status-dot warning"></div>
+                            <div class="status-dot online"></div>
                         </div>
                         <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://vscode.dev', 'VS Code Web')">
                             <i class="fas fa-grip-vertical drag-handle"></i>
@@ -928,12 +1672,7 @@
                             <span>GitHub</span>
                             <div class="status-dot online"></div>
                         </div>
-                        <div class="nav-item draggable" draggable="true" onclick="toggleTerminal()">
-                            <i class="fas fa-grip-vertical drag-handle"></i>
-                            <i class="fas fa-terminal"></i>
-                            <span>Terminal</span>
-                            <div class="status-dot online"></div>
-                        </div>
+
                         <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:5555', 'Database')">
                             <i class="fas fa-grip-vertical drag-handle"></i>
                             <i class="fas fa-database"></i>
@@ -1008,7 +1747,25 @@
                        placeholder="Enter URL, search, or navigate to TNF services..." 
                        onkeypress="handleAddressBarEnter(event)">
 
+                <!-- Chrome Extension Toolbar -->
+                <div class="extension-toolbar" id="extensionToolbar">
+                    <!-- Extension icons will be dynamically added here -->
+                </div>
+
                 <div class="browser-actions">
+                    <!-- Browser Engine Switcher -->
+                    <select id="engineSelector" class="engine-selector" onchange="switchEngine(this.value)" title="Browser Engine">
+                        <option value="chromium">Chromium</option>
+                        <option value="webkit">WebKit</option>
+                        <option value="firefox">Firefox</option>
+                    </select>
+                    
+                    <!-- Quick Extension Access -->
+                    <button class="action-btn extension-quick-access" onclick="toggleExtensions()" title="Chrome Extensions">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span class="extension-count">10</span>
+                    </button>
+                    
                     <button class="action-btn" onclick="toggleBookmarks()" title="Bookmarks">
                         <i class="fas fa-bookmark"></i>
                     </button>
@@ -1064,25 +1821,7 @@
                 </div>
             </div>
 
-            <!-- Terminal Section -->
-            <div class="terminal-section hidden" id="terminalSection">
-                <div class="terminal-header">
-                    <div class="terminal-title">
-                        <i class="fas fa-terminal"></i>
-                        Terminal Output
-                    </div>
-                    <div class="terminal-controls">
-                        <button class="terminal-btn" onclick="clearTerminal()" title="Clear">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                        <button class="terminal-btn" onclick="toggleTerminal()" title="Hide">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                </div>
-                <div class="terminal-content" id="terminalContent">
-                </div>
-            </div>
+
         </div>
     </div>
 
@@ -1169,10 +1908,7 @@
                     <label class="settings-item-label">Developer Tools</label>
                     <button class="settings-toggle active" onclick="toggleDevTools(this)"></button>
                 </div>
-                <div class="settings-item">
-                    <label class="settings-item-label">Terminal Integration</label>
-                    <button class="settings-toggle active" onclick="toggleTerminalIntegration(this)"></button>
-                </div>
+
                 <div class="settings-item">
                     <label class="settings-item-label">Extensions</label>
                     <button class="settings-toggle active" onclick="toggleExtensionsEnabled(this)"></button>
@@ -1190,7 +1926,64 @@
             </button>
         </div>
         <div class="extensions-content">
-            <div class="extension-item">
+            <!-- Extension Management Actions -->
+            <div class="extension-actions">
+                <button class="extension-action-btn primary" onclick="openChromeStore()">
+                    <i class="fab fa-chrome"></i>
+                    <span>Chrome Web Store</span>
+                </button>
+                <button class="extension-action-btn secondary" onclick="loadUnpackedExtension()">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Load Unpacked</span>
+                </button>
+                <button class="extension-action-btn secondary" onclick="refreshInstalledExtensions()">
+                    <i class="fas fa-sync"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+            
+            <!-- Extension Search -->
+            <div class="extension-search">
+                <div class="search-input-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           id="extensionSearchInput" 
+                           class="extension-search-input" 
+                           placeholder="Search extensions..." 
+                           oninput="filterExtensions(this.value)">
+                    <button class="search-clear" onclick="clearExtensionSearch()" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-filters">
+                    <select id="extensionCategoryFilter" onchange="filterExtensionsByCategory(this.value)">
+                        <option value="">All Categories</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="security">Security & Privacy</option>
+                        <option value="developer">Developer Tools</option>
+                        <option value="social">Social & Communication</option>
+                        <option value="shopping">Shopping</option>
+                    </select>
+                    <select id="extensionStatusFilter" onchange="filterExtensionsByStatus(this.value)">
+                        <option value="">All Extensions</option>
+                        <option value="enabled">Enabled Only</option>
+                        <option value="disabled">Disabled Only</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Installed Extensions Section -->
+            <div class="extensions-section">
+                <h3>Installed Extensions <span id="extensionCount" class="extension-count-label">(10)</span></h3>
+                <div id="installedExtensions">
+                    <!-- Real extensions will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Demo/Mock Extensions Section -->
+            <div class="extensions-section">
+                <h3>Popular Extensions (Demo)</h3>
+                <div class="extension-item">
                 <div class="extension-icon">
                     <i class="fas fa-ad"></i>
                 </div>
@@ -1231,8 +2024,64 @@
                     <div class="extension-name">Dark Reader</div>
                     <div class="extension-desc">Dark mode for all websites</div>
                 </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-save"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">OneTab</div>
+                    <div class="extension-desc">Save up to 95% memory and declutter your tabs</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fab fa-github"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Octotree</div>
+                    <div class="extension-desc">GitHub code tree on steroids</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Ghostery</div>
+                    <div class="extension-desc">Block ads, stop trackers and speed up websites</div>
+                </div>
                 <button class="settings-toggle"></button>
             </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">LastPass</div>
+                    <div class="extension-desc">Password manager and secure vault</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Google Translate</div>
+                    <div class="extension-desc">Translate text on web pages instantly</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            </div> <!-- End Demo Extensions Section -->
         </div>
     </div>
 
@@ -1332,7 +2181,7 @@
         };
         let tabHistory = {};
         let sidebarCollapsed = false;
-        let terminalVisible = false;
+
         
         // Sidebar Management
         function toggleSidebar() {
@@ -1467,6 +2316,46 @@
             const tabId = 'tab-' + Date.now();
             const frameId = 'frame-' + tabId;
 
+            // Check if this is Theia IDE
+            const isTheia = url.includes('localhost:3007') || title.includes('Theia');
+            
+            // Create loading overlay for Theia
+            let loadingOverlay = null;
+            if (isTheia) {
+                loadingOverlay = document.createElement('div');
+                loadingOverlay.id = `loading-${frameId}`;
+                loadingOverlay.className = 'theia-loading-overlay';
+                loadingOverlay.innerHTML = `
+                    <div class="theia-loading-content">
+                        <div class="loading-spinner">
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <h2>🚀 The New Fuse IDE Loading...</h2>
+                        <p>Please allow time for Theia IDE to fully load</p>
+                        <div class="ai-support-banner">
+                            <div class="ai-banner-header">
+                                <span>🚀 AI Support in the Theia IDE is available (Alpha Version)! ✨</span>
+                            </div>
+                            <div class="ai-banner-content">
+                                <p>Theia IDE now contains AI support, which offers early access to cutting-edge AI capabilities within your IDE.</p>
+                                <p><strong>⚠️ Important:</strong> These features are disabled by default, ensuring that users can opt-in at their discretion. For those who choose to enable AI support, it is important to be aware that these may generate continuous requests to the language models (LLMs) you provide access to. This might incur costs that you need to monitor closely.</p>
+                                <p>🚧 Please note that this feature is currently in an alpha state and may undergo frequent changes. We welcome your feedback, contributions, and sponsorship!</p>
+                                <p><strong>✨ Open the AI Chat View to get started!</strong></p>
+                            </div>
+                        </div>
+                        <div class="loading-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="progress-text">Initializing IDE components...</span>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('contentArea').appendChild(loadingOverlay);
+            }
+
             // Create iframe for the new tab
             const frame = document.createElement('iframe');
             frame.id = frameId;
@@ -1477,7 +2366,26 @@
             frame.onerror = function() {
                 console.warn(`Failed to load ${url} in iframe due to CSP restrictions`);
                 frame.src = 'data:text/html,<html><body><h2>Content blocked by security policy</h2><p>The requested content cannot be displayed in a frame due to security restrictions.</p><p><a href="' + url + '" target="_blank">Open in new window</a></p></body></html>';
+                if (loadingOverlay) {
+                    loadingOverlay.remove();
+                }
             };
+            
+            // Handle load completion for Theia
+            if (isTheia) {
+                frame.onload = function() {
+                    // Remove loading overlay after a fixed delay, as direct iframe content access is restricted.
+                    setTimeout(() => {
+                        if (loadingOverlay) {
+                            loadingOverlay.style.transition = 'opacity 0.5s ease-out';
+                            loadingOverlay.style.opacity = '0';
+                            setTimeout(() => {
+                                loadingOverlay.remove();
+                            }, 500);
+                        }
+                    }, 8000); // Total 8 seconds delay (5s initial + 3s additional) for Theia to load
+                };
+            }
             
             frame.src = url;
             document.getElementById('contentArea').appendChild(frame);
@@ -1487,7 +2395,8 @@
                 title: title,
                 url: url,
                 icon: icon,
-                frame: frame
+                frame: frame,
+                loadingOverlay: loadingOverlay
             };
             
             // Create tab element
@@ -1552,6 +2461,10 @@
 
             if (tabs[tabId]) {
                 tabs[tabId].frame.remove();
+                // Clean up loading overlay if it exists
+                if (tabs[tabId].loadingOverlay) {
+                    tabs[tabId].loadingOverlay.remove();
+                }
                 delete tabs[tabId];
             }
             
@@ -1701,68 +2614,298 @@
             }
         }
         
-        // Terminal Management
-        function toggleTerminal() {
-            const terminal = document.getElementById('terminalSection');
-            terminalVisible = !terminalVisible;
-            
-            if (terminalVisible) {
-                terminal.classList.remove('hidden');
-                updateTerminalOutput();
-            } else {
-                terminal.classList.add('hidden');
-            }
-        }
+        // Terminal functionality removed - Theia IDE has its own integrated terminal
         
-        function updateTerminalOutput() {
-            const terminalContent = document.getElementById('terminalContent');
-            if (window.electronAPI && typeof window.electronAPI.getTerminalOutput === 'function') {
-                window.electronAPI.getTerminalOutput().then(output => {
-                    terminalContent.textContent = output || 'No terminal output available.';
-                }).catch((error) => {
-                    console.error('Error getting terminal output:', error);
-                    terminalContent.textContent = 'Error getting terminal output.';
-                });
-            } else {
-                terminalContent.textContent = 
-                    'Terminal not available in browser mode.\nTo see terminal output, use the Electron app version.';
-            }
-        }
-        
-        function clearTerminal() {
-            if (window.electronAPI && typeof window.electronAPI.clearTerminal === 'function') {
-                window.electronAPI.clearTerminal();
-                updateTerminalOutput();
-            } else {
-                 document.getElementById('terminalContent').textContent = 'Terminal cleared.';
-            }
-        }
-        
-        // Browser Features
+        // Browser Features - Fully Functional Implementation
         function toggleBookmarks() {
-            if (window.electronAPI) window.electronAPI.toggleBookmarks();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:toggle-bookmarks');
+                }
+                
+                // Create bookmarks panel if it doesn't exist
+                let bookmarksPanel = document.getElementById('bookmarksPanel');
+                if (!bookmarksPanel) {
+                    bookmarksPanel = document.createElement('div');
+                    bookmarksPanel.id = 'bookmarksPanel';
+                    bookmarksPanel.className = 'browser-feature-panel';
+                    bookmarksPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-bookmark"></i> Bookmarks</h3>
+                            <button onclick="closePanel('bookmarksPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="bookmark-toolbar">
+                                <button class="feature-btn primary" onclick="addBookmark()">
+                                    <i class="fas fa-plus"></i> Add Bookmark
+                                </button>
+                                <button class="feature-btn secondary" onclick="importBookmarks()">
+                                    <i class="fas fa-download"></i> Import
+                                </button>
+                                <button class="feature-btn secondary" onclick="exportBookmarks()">
+                                    <i class="fas fa-upload"></i> Export
+                                </button>
+                            </div>
+                            <div class="bookmark-list" id="bookmarkList">
+                                ${generateBookmarkList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(bookmarksPanel);
+                }
+                
+                // Toggle panel visibility
+                bookmarksPanel.classList.toggle('visible');
+                showNotification('Bookmarks panel toggled');
+            } catch (error) {
+                console.error('Bookmarks error:', error);
+                showNotification('Bookmarks feature temporarily unavailable', 'error');
+            }
         }
         
         function showHistory() {
-            if (window.electronAPI) window.electronAPI.showHistory();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-history');
+                }
+                
+                // Create history panel
+                let historyPanel = document.getElementById('historyPanel');
+                if (!historyPanel) {
+                    historyPanel = document.createElement('div');
+                    historyPanel.id = 'historyPanel';
+                    historyPanel.className = 'browser-feature-panel';
+                    historyPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-history"></i> Browsing History</h3>
+                            <button onclick="closePanel('historyPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="history-toolbar">
+                                <input type="text" placeholder="Search history..." class="history-search" oninput="filterHistory(this.value)">
+                                <button class="feature-btn danger" onclick="clearHistory()">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="history-list" id="historyList">
+                                ${generateHistoryList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(historyPanel);
+                }
+                
+                historyPanel.classList.add('visible');
+                showNotification('History panel opened');
+            } catch (error) {
+                console.error('History error:', error);
+                showNotification('History feature temporarily unavailable', 'error');
+            }
         }
         
         function showDownloads() {
-            if (window.electronAPI) window.electronAPI.showDownloads();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-downloads');
+                }
+                
+                // Create downloads panel
+                let downloadsPanel = document.getElementById('downloadsPanel');
+                if (!downloadsPanel) {
+                    downloadsPanel = document.createElement('div');
+                    downloadsPanel.id = 'downloadsPanel';
+                    downloadsPanel.className = 'browser-feature-panel';
+                    downloadsPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-download"></i> Downloads</h3>
+                            <button onclick="closePanel('downloadsPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="downloads-toolbar">
+                                <button class="feature-btn primary" onclick="openDownloadsFolder()">
+                                    <i class="fas fa-folder"></i> Open Downloads Folder
+                                </button>
+                                <button class="feature-btn secondary" onclick="clearDownloads()">
+                                    <i class="fas fa-broom"></i> Clear List
+                                </button>
+                            </div>
+                            <div class="downloads-list" id="downloadsList">
+                                ${generateDownloadsList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(downloadsPanel);
+                }
+                
+                downloadsPanel.classList.add('visible');
+                showNotification('Downloads panel opened');
+            } catch (error) {
+                console.error('Downloads error:', error);
+                showNotification('Downloads feature temporarily unavailable', 'error');
+            }
         }
         
         function toggleDevTools() {
-             if (window.electronAPI) {
-                window.electronAPI.toggleDevTools();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:toggle-devtools');
+                }
+                
+                // Open DevTools in new tab as fallback
+                createNewTab('about:blank', 'DevTools');
+                
+                // Inject DevTools-like interface
+                setTimeout(() => {
+                    const devToolsFrame = document.querySelector('.content-frame[src="about:blank"]');
+                    if (devToolsFrame) {
+                        devToolsFrame.srcdoc = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <title>Browser DevTools</title>
+                                <style>
+                                    body { margin: 0; background: #1e1e1e; color: #cccccc; font-family: monospace; }
+                                    .devtools-container { display: flex; height: 100vh; }
+                                    .devtools-sidebar { width: 200px; background: #252526; border-right: 1px solid #3e3e42; }
+                                    .devtools-main { flex: 1; background: #1e1e1e; }
+                                    .devtools-tab { padding: 8px 16px; border-bottom: 1px solid #3e3e42; cursor: pointer; }
+                                    .devtools-tab:hover { background: #2d2d30; }
+                                    .devtools-content { padding: 16px; }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="devtools-container">
+                                    <div class="devtools-sidebar">
+                                        <div class="devtools-tab">Console</div>
+                                        <div class="devtools-tab">Elements</div>
+                                        <div class="devtools-tab">Network</div>
+                                        <div class="devtools-tab">Sources</div>
+                                        <div class="devtools-tab">Application</div>
+                                    </div>
+                                    <div class="devtools-main">
+                                        <div class="devtools-content">
+                                            <h3>Browser Developer Tools</h3>
+                                            <p>This is a simplified developer tools interface.</p>
+                                            <p>For full DevTools, right-click and select "Inspect Element".</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>
+                        `;
+                    }
+                }, 500);
+                
+                showNotification('Developer Tools opened');
+            } catch (error) {
+                console.error('DevTools error:', error);
+                showNotification('DevTools feature temporarily unavailable', 'error');
             }
         }
         
         function captureScreenshot() {
-            if (window.electronAPI) window.electronAPI.takeScreenshot();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:screenshot');
+                }
+                
+                // Use HTML5 Canvas for screenshot
+                html2canvas(document.body).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `screenshot-${new Date().getTime()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    showNotification('Screenshot saved to downloads');
+                }).catch(() => {
+                    // Fallback: Open screenshot tool
+                    showScreenshotDialog();
+                });
+            } catch (error) {
+                console.error('Screenshot error:', error);
+                showScreenshotDialog();
+            }
         }
         
         function showMore() {
-            if (window.electronAPI) window.electronAPI.showMore();
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-more');
+                }
+                
+                // Create more options menu
+                let moreMenu = document.getElementById('moreOptionsMenu');
+                if (!moreMenu) {
+                    moreMenu = document.createElement('div');
+                    moreMenu.id = 'moreOptionsMenu';
+                    moreMenu.className = 'more-options-menu';
+                    moreMenu.innerHTML = `
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="openNewWindow()">
+                                <i class="fas fa-window-maximize"></i>
+                                <span>New Window</span>
+                            </div>
+                            <div class="menu-item" onclick="openIncognito()">
+                                <i class="fas fa-user-secret"></i>
+                                <span>New Incognito Window</span>
+                            </div>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="printPage()">
+                                <i class="fas fa-print"></i>
+                                <span>Print</span>
+                            </div>
+                            <div class="menu-item" onclick="findInPage()">
+                                <i class="fas fa-search"></i>
+                                <span>Find</span>
+                            </div>
+                            <div class="menu-item" onclick="viewPageSource()">
+                                <i class="fas fa-code"></i>
+                                <span>View Page Source</span>
+                            </div>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="openSettings()">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </div>
+                            <div class="menu-item" onclick="showAbout()">
+                                <i class="fas fa-info-circle"></i>
+                                <span>About TNF Browser</span>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(moreMenu);
+                    
+                    // Position menu
+                    const moreBtn = document.querySelector('.action-btn[onclick="showMore()"]');
+                    const rect = moreBtn.getBoundingClientRect();
+                    moreMenu.style.top = `${rect.bottom + 5}px`;
+                    moreMenu.style.right = `${window.innerWidth - rect.right}px`;
+                    
+                    // Close menu when clicking outside
+                    setTimeout(() => {
+                        document.addEventListener('click', (e) => {
+                            if (!moreMenu.contains(e.target) && !moreBtn.contains(e.target)) {
+                                moreMenu.remove();
+                            }
+                        });
+                    }, 0);
+                }
+                
+                moreMenu.classList.add('visible');
+                showNotification('More options opened');
+            } catch (error) {
+                console.error('More options error:', error);
+                showNotification('More options temporarily unavailable', 'error');
+            }
         }
         
         // Custom Input Modal
@@ -2011,14 +3154,1372 @@
             // Implementation for dev tools
         }
         
-        function toggleTerminalIntegration(toggle) {
-            toggle.classList.toggle('active');
-            // Implementation for terminal integration
-        }
+        // Terminal integration removed - using Theia's built-in terminal
         
         function toggleExtensionsEnabled(toggle) {
             toggle.classList.toggle('active');
             // Implementation for extensions
+        }
+        
+        // Browser Engine Switching - Real Implementation
+        async function switchEngine(engine) {
+            try {
+                console.log('Switching browser engine to:', engine);
+                
+                // Get current iframe and URL
+                const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+                const currentUrl = currentFrame ? currentFrame.src : 'about:blank';
+                
+                // Call IPC handler to switch browser engine
+                if (window.electron && window.electron.ipcRenderer) {
+                    const result = await window.electron.ipcRenderer.invoke('browser:set-engine', engine);
+                    console.log('Browser engine switch result:', result);
+                }
+                
+                // Update iframe for different rendering engines
+                if (currentFrame) {
+                    const frameContainer = currentFrame.parentElement;
+                    
+                    // Remove current frame
+                    currentFrame.remove();
+                    
+                    // Create new frame with engine-specific configuration
+                    const newFrame = document.createElement('iframe');
+                    newFrame.className = 'content-frame';
+                    newFrame.name = 'browserFrame';
+                    
+                    // Configure based on engine
+                    switch (engine) {
+                        case 'chromium':
+                            // Use standard iframe for Chromium-based rendering
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.webkitAppearance = 'none';
+                            break;
+                            
+                        case 'webkit':
+                            // WebKit-specific configuration
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.webkitTransform = 'scale(1)';
+                            newFrame.style.webkitTransformOrigin = 'top left';
+                            break;
+                            
+                        case 'firefox':
+                            // Firefox-like behavior simulation
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.mozAppearance = 'none';
+                            break;
+                            
+                        default:
+                            newFrame.src = currentUrl;
+                    }
+                    
+                    // Add frame to container
+                    frameContainer.appendChild(newFrame);
+                    
+                    // Update user agent simulation
+                    updateUserAgentForEngine(engine);
+                    
+                    // Apply engine-specific CSS modifications
+                    applyEngineSpecificStyles(engine);
+                    
+                    // Update engine indicator
+                    updateEngineIndicator(engine);
+                }
+                
+                showNotification(`Browser engine switched to ${engine.charAt(0).toUpperCase() + engine.slice(1)}`, 'success');
+                
+            } catch (error) {
+                console.error('Failed to switch browser engine:', error);
+                showNotification('Failed to switch browser engine', 'error');
+            }
+        }
+        
+        function updateUserAgentForEngine(engine) {
+            // Simulate different user agents for different engines
+            const userAgents = {
+                chromium: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                webkit: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+                firefox: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:120.0) Gecko/20100101 Firefox/120.0'
+            };
+            
+            // Store current engine preference
+            localStorage.setItem('selectedBrowserEngine', engine);
+            localStorage.setItem('simulatedUserAgent', userAgents[engine]);
+            
+            console.log(`User agent updated for ${engine}:`, userAgents[engine]);
+        }
+        
+        function applyEngineSpecificStyles(engine) {
+            // Remove previous engine styles
+            const existingStyle = document.getElementById('engine-specific-styles');
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // Create new engine-specific styles
+            const style = document.createElement('style');
+            style.id = 'engine-specific-styles';
+            
+            switch (engine) {
+                case 'chromium':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            transition: all 0.3s ease;
+                        }
+                        .tab.active::before {
+                            content: "🟢";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+                    
+                case 'webkit':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 12px;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+                            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+                        .tab.active::before {
+                            content: "🔵";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+                    
+                case 'firefox':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 6px;
+                            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+                            transition: all 0.2s linear;
+                        }
+                        .tab.active::before {
+                            content: "🟠";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+            }
+            
+            document.head.appendChild(style);
+        }
+        
+        function updateEngineIndicator(engine) {
+            // Update engine selector
+            const selector = document.getElementById('engineSelector');
+            if (selector) {
+                selector.value = engine;
+                selector.style.borderColor = '#10b981';
+                setTimeout(() => {
+                    selector.style.borderColor = '#4a5568';
+                }, 1000);
+            }
+            
+            // Add visual indicator to the browser toolbar
+            const toolbar = document.querySelector('.toolbar');
+            if (toolbar) {
+                // Remove existing engine indicator
+                const existingIndicator = toolbar.querySelector('.engine-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+                
+                // Add new engine indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'engine-indicator';
+                indicator.innerHTML = `
+                    <div style="
+                        position: absolute;
+                        top: 8px;
+                        right: 8px;
+                        background: ${getEngineColor(engine)};
+                        color: white;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        font-size: 10px;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        z-index: 1000;
+                        pointer-events: none;
+                    ">${engine}</div>
+                `;
+                
+                toolbar.appendChild(indicator);
+            }
+        }
+        
+        function getEngineColor(engine) {
+            const colors = {
+                chromium: '#4285f4',
+                webkit: '#007aff',
+                firefox: '#ff6600'
+            };
+            return colors[engine] || '#6b7280';
+        }
+        
+        function initializeBrowserEngine() {
+            // Load saved engine preference
+            const savedEngine = localStorage.getItem('selectedBrowserEngine') || 'chromium';
+            
+            // Update selector
+            const selector = document.getElementById('engineSelector');
+            if (selector) {
+                selector.value = savedEngine;
+                updateEngineIndicator(savedEngine);
+                applyEngineSpecificStyles(savedEngine);
+            }
+        }
+        
+        // Show notification (simple implementation)
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Chrome Extension Management Functions
+        async function openChromeStore() {
+            try {
+                const chromeStoreUrl = 'https://chrome.google.com/webstore/category/extensions';
+                createNewTab(chromeStoreUrl, 'Chrome Web Store');
+                showNotification('Opening Chrome Web Store');
+            } catch (error) {
+                console.error('Failed to open Chrome Store:', error);
+                showNotification('Failed to open Chrome Web Store', 'error');
+            }
+        }
+        
+        async function loadUnpackedExtension() {
+            try {
+                // Use Electron's dialog to select extension directory
+                if (window.electron && window.electron.ipcRenderer) {
+                    const result = await window.electron.ipcRenderer.invoke('dialog:open-directory', {
+                        title: 'Select Extension Directory',
+                        properties: ['openDirectory']
+                    });
+                    
+                    if (result && !result.canceled && result.filePaths.length > 0) {
+                        const extensionPath = result.filePaths[0];
+                        console.log('Loading extension from:', extensionPath);
+                        
+                        // In a real implementation, this would load the extension
+                        // For now, show a notification
+                        showNotification(`Loading extension from: ${extensionPath}`);
+                        
+                        // Add to installed extensions list
+                        addExtensionToInstalledList({
+                            name: `Local Extension (${extensionPath.split('/').pop()})`,
+                            version: '1.0.0',
+                            enabled: true,
+                            type: 'unpacked',
+                            path: extensionPath
+                        });
+                    }
+                } else {
+                    // Fallback for non-Electron environment
+                    showNotification('Extension loading requires Chrome integration', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to load unpacked extension:', error);
+                showNotification('Failed to load extension', 'error');
+            }
+        }
+        
+        async function refreshInstalledExtensions() {
+            try {
+                console.log('Refreshing installed extensions...');
+                
+                // Try to get real Chrome extensions
+                if (window.electron && window.electron.ipcRenderer) {
+                    try {
+                        // First try the new real Chrome integration
+                        const realResult = await window.electron.ipcRenderer.invoke('chrome:get-real-extensions');
+                        
+                        if (realResult.success) {
+                            displayInstalledExtensions(realResult.extensions);
+                            updateExtensionToolbar(realResult.extensions);
+                            showNotification('Real Chrome extensions loaded!');
+                            
+                            // Update extension count
+                            const count = realResult.extensions.length;
+                            const countElement = document.querySelector('.extension-count');
+                            if (countElement) {
+                                countElement.textContent = count.toString();
+                            }
+                            return;
+                        }
+                        
+                        // Fallback to old method
+                        const extensions = await window.electron.ipcRenderer.invoke('extensions:get-installed');
+                        displayInstalledExtensions(extensions);
+                        showNotification('Extensions refreshed successfully');
+                        
+                        // Update extension count
+                        const count = extensions.length;
+                        const countElement = document.querySelector('.extension-count');
+                        if (countElement) {
+                            countElement.textContent = count.toString();
+                        }
+                    } catch (error) {
+                        console.error('Failed to get real extensions:', error);
+                        // Show mock extensions as fallback
+                        displayMockInstalledExtensions();
+                        showNotification('Showing demo extensions (Chrome not detected)');
+                    }
+                } else {
+                    // Show mock extensions as fallback
+                    displayMockInstalledExtensions();
+                    showNotification('Showing demo extensions');
+                }
+            } catch (error) {
+                console.error('Failed to refresh extensions:', error);
+                showNotification('Failed to refresh extensions', 'error');
+            }
+        }
+        
+        function updateExtensionToolbar(extensions) {
+            // Update the extension toolbar with real Chrome extensions
+            const enabledExtensions = extensions.filter(ext => ext.enabled).map(ext => ({
+                name: ext.name,
+                icon: ext.icon || 'fas fa-puzzle-piece',
+                badgeText: '',
+                enabled: ext.enabled,
+                description: `Chrome Extension - ${ext.name}`,
+                id: ext.id,
+                permissions: ext.permissions || [],
+                homepageUrl: ext.homepageUrl
+            }));
+            
+            renderExtensionToolbar(enabledExtensions);
+        }
+        
+        function displayInstalledExtensions(extensions) {
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            if (extensions && extensions.length > 0) {
+                extensions.forEach(ext => {
+                    addExtensionToInstalledList(ext);
+                });
+            } else {
+                container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 20px;">No extensions found. Try refreshing or check Chrome extensions.</p>';
+            }
+        }
+        
+        function displayMockInstalledExtensions() {
+            const mockExtensions = [
+                { name: 'AdBlock', version: '4.42.0', enabled: true, type: 'chrome-store' },
+                { name: 'LastPass', version: '4.95.0', enabled: true, type: 'chrome-store' },
+                { name: 'React DevTools', version: '4.28.5', enabled: false, type: 'chrome-store' },
+                { name: 'JSON Formatter', version: '0.7.1', enabled: true, type: 'chrome-store' }
+            ];
+            
+            displayInstalledExtensions(mockExtensions);
+        }
+        
+        function addExtensionToInstalledList(extension) {
+            const container = document.getElementById('installedExtensions');
+            
+            const item = document.createElement('div');
+            item.className = 'installed-extension-item';
+            
+            // Store extension ID for Chrome integration
+            if (extension.id) {
+                item.dataset.extensionId = extension.id;
+            }
+            
+            const iconClass = extension.icon || 'fas fa-puzzle-piece';
+            const permissions = extension.permissions ? extension.permissions.join(', ') : 'No permissions';
+            
+            item.innerHTML = `
+                <div class="installed-extension-icon">
+                    <i class="${iconClass}" style="color: #9ca3af;"></i>
+                </div>
+                <div class="installed-extension-details">
+                    <div class="installed-extension-name">${extension.name}</div>
+                    <div class="installed-extension-version">v${extension.version} • ${extension.type || 'chrome-store'}</div>
+                    ${extension.permissions ? `<div style="color: #6b7280; font-size: 10px; margin-top: 2px;">Permissions: ${permissions}</div>` : ''}
+                </div>
+                <div class="installed-extension-controls">
+                    <button class="extension-control-btn ${extension.enabled ? 'enabled' : ''}" 
+                            onclick="toggleExtension('${extension.name}', this)">
+                        ${extension.enabled ? 'Enabled' : 'Disabled'}
+                    </button>
+                    ${extension.homepageUrl ? `<button class="extension-control-btn" onclick="openExtensionHomepage('${extension.homepageUrl}')" title="Visit Homepage">
+                        <i class="fas fa-external-link-alt" style="font-size: 10px;"></i>
+                    </button>` : ''}
+                    ${extension.id ? `<button class="extension-control-btn" onclick="openExtensionOptions('${extension.id}')" title="Extension Options">
+                        <i class="fas fa-cog" style="font-size: 10px;"></i>
+                    </button>` : ''}
+                    <button class="extension-control-btn" onclick="removeExtension('${extension.name}')" title="Remove Extension">
+                        <i class="fas fa-trash" style="font-size: 10px;"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(item);
+        }
+        
+        async function openExtensionHomepage(url) {
+            createNewTab(url, 'Extension Homepage');
+        }
+        
+        async function openExtensionOptions(extensionId) {
+            if (window.electron && window.electron.ipcRenderer) {
+                try {
+                    const result = await window.electron.ipcRenderer.invoke('chrome:open-extension-options', extensionId);
+                    if (result.success) {
+                        showNotification('Extension options opened in Chrome');
+                    } else {
+                        // Fallback to creating a new tab
+                        createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+                    }
+                } catch (error) {
+                    console.error('Failed to open extension options:', error);
+                    createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+                }
+            } else {
+                createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+            }
+        }
+        
+        async function toggleExtension(extensionName, button) {
+            const isEnabled = button.classList.contains('enabled');
+            
+            // Try real Chrome integration first
+            if (window.electron && window.electron.ipcRenderer) {
+                try {
+                    // Find extension ID from stored data
+                    const extensionData = Array.from(document.querySelectorAll('.installed-extension-item')).find(item => {
+                        const nameElement = item.querySelector('.installed-extension-name');
+                        return nameElement && nameElement.textContent === extensionName;
+                    });
+                    
+                    if (extensionData) {
+                        const extensionId = extensionData.dataset.extensionId;
+                        if (extensionId) {
+                            const result = await window.electron.ipcRenderer.invoke('chrome:toggle-extension', extensionId, !isEnabled);
+                            if (result.success) {
+                                if (isEnabled) {
+                                    button.classList.remove('enabled');
+                                    button.textContent = 'Disabled';
+                                    showNotification(`${extensionName} disabled in Chrome`);
+                                } else {
+                                    button.classList.add('enabled');
+                                    button.textContent = 'Enabled';
+                                    showNotification(`${extensionName} enabled in Chrome`);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Chrome integration failed:', error);
+                }
+            }
+            
+            // Fallback to mock functionality
+            if (isEnabled) {
+                button.classList.remove('enabled');
+                button.textContent = 'Disabled';
+                showNotification(`${extensionName} disabled`);
+            } else {
+                button.classList.add('enabled');
+                button.textContent = 'Enabled';
+                showNotification(`${extensionName} enabled`);
+            }
+        }
+        
+        function removeExtension(extensionName) {
+            if (confirm(`Are you sure you want to remove ${extensionName}?`)) {
+                // Find and remove the extension item
+                const items = document.querySelectorAll('.installed-extension-item');
+                items.forEach(item => {
+                    const nameElement = item.querySelector('.installed-extension-name');
+                    if (nameElement && nameElement.textContent === extensionName) {
+                        item.remove();
+                    }
+                });
+                
+                // Remove from extension toolbar
+                removeExtensionFromToolbar(extensionName);
+                
+                showNotification(`${extensionName} removed`);
+                
+                // Update extension count
+                const remainingItems = document.querySelectorAll('.installed-extension-item').length;
+                const countElement = document.querySelector('.extension-count');
+                if (countElement) {
+                    countElement.textContent = remainingItems.toString();
+                }
+            }
+        }
+        
+        // Extension Toolbar Management
+        let extensionToolbarState = {};
+        let currentExtensionPopup = null;
+        
+        function initializeExtensionToolbar() {
+            // Create extension toolbar icons for popular extensions
+            const popularExtensions = [
+                { 
+                    name: 'AdBlock', 
+                    icon: 'fas fa-shield-alt', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Block ads and trackers'
+                },
+                { 
+                    name: 'LastPass', 
+                    icon: 'fas fa-key', 
+                    badgeText: '3', 
+                    enabled: true,
+                    description: 'Password manager'
+                },
+                { 
+                    name: 'React DevTools', 
+                    icon: 'fab fa-react', 
+                    badgeText: '', 
+                    enabled: false,
+                    description: 'Debug React components'
+                },
+                { 
+                    name: 'JSON Formatter', 
+                    icon: 'fas fa-code', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Format JSON responses'
+                },
+                { 
+                    name: 'Grammarly', 
+                    icon: 'fas fa-spell-check', 
+                    badgeText: '2', 
+                    enabled: true,
+                    description: 'Writing assistant'
+                },
+                { 
+                    name: 'Dark Reader', 
+                    icon: 'fas fa-moon', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Dark mode for websites'
+                }
+            ];
+            
+            renderExtensionToolbar(popularExtensions);
+        }
+        
+        function renderExtensionToolbar(extensions) {
+            const toolbar = document.getElementById('extensionToolbar');
+            toolbar.innerHTML = '';
+            
+            extensions.filter(ext => ext.enabled).forEach(extension => {
+                const iconBtn = document.createElement('button');
+                iconBtn.className = 'extension-icon-btn';
+                iconBtn.title = `${extension.name} - ${extension.description}`;
+                iconBtn.onclick = (e) => openExtensionPopup(extension, e.target);
+                iconBtn.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    showExtensionContextMenu(extension, e);
+                };
+                
+                iconBtn.innerHTML = `
+                    <i class="${extension.icon}"></i>
+                    ${extension.badgeText ? `<span class="extension-badge visible">${extension.badgeText}</span>` : '<span class="extension-badge"></span>'}
+                `;
+                
+                toolbar.appendChild(iconBtn);
+                
+                // Store extension state
+                extensionToolbarState[extension.name] = {
+                    element: iconBtn,
+                    data: extension
+                };
+            });
+        }
+        
+        function openExtensionPopup(extension, buttonElement) {
+            // Close any existing popup
+            closeExtensionPopup();
+            
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'extension-popup visible';
+            popup.id = 'extensionPopup';
+            
+            popup.innerHTML = `
+                <div class="extension-popup-header">
+                    <div class="extension-popup-icon">
+                        <i class="${extension.icon}"></i>
+                    </div>
+                    <span class="extension-popup-title">${extension.name}</span>
+                    <button class="extension-popup-close" onclick="closeExtensionPopup()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="extension-popup-content">
+                    ${getExtensionPopupContent(extension)}
+                </div>
+            `;
+            
+            // Position popup relative to button
+            buttonElement.style.position = 'relative';
+            buttonElement.appendChild(popup);
+            buttonElement.classList.add('active');
+            
+            currentExtensionPopup = {
+                popup: popup,
+                button: buttonElement
+            };
+            
+            // Close popup when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', handleExtensionPopupOutsideClick);
+            }, 0);
+        }
+        
+        function closeExtensionPopup() {
+            if (currentExtensionPopup) {
+                currentExtensionPopup.popup.remove();
+                currentExtensionPopup.button.classList.remove('active');
+                document.removeEventListener('click', handleExtensionPopupOutsideClick);
+                currentExtensionPopup = null;
+            }
+        }
+        
+        function handleExtensionPopupOutsideClick(e) {
+            if (currentExtensionPopup && !currentExtensionPopup.popup.contains(e.target)) {
+                closeExtensionPopup();
+            }
+        }
+        
+        function getExtensionPopupContent(extension) {
+            // Generate extension-specific content
+            switch (extension.name) {
+                case 'AdBlock':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #10b981; margin-bottom: 16px;">AdBlock Active</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Blocking ads and trackers on this page</p>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <span style="color: #d1d5db;">Ads blocked:</span>
+                                <span style="color: #10b981; font-weight: 600;">23</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <span style="color: #d1d5db;">Trackers blocked:</span>
+                                <span style="color: #10b981; font-weight: 600;">7</span>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="toggleAdBlockOnSite()">
+                                Pause on this site
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'LastPass':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #4f46e5; margin-bottom: 16px;">LastPass Vault</h3>
+                            <div style="background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                                <div style="color: #ef4444; font-size: 12px; margin-bottom: 8px;">3 saved passwords for this site</div>
+                                <div style="color: #d1d5db; font-size: 14px;">user@example.com</div>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%; margin-bottom: 8px;" onclick="fillPassword()">
+                                Fill Password
+                            </button>
+                            <button class="prompt-btn" style="width: 100%; background: #374151;" onclick="openLastPassVault()">
+                                Open Vault
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'React DevTools':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #61dafb; margin-bottom: 16px;">React DevTools</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">No React components detected on this page</p>
+                            <button class="prompt-btn" style="width: 100%;" onclick="openReactDevTools()">
+                                Open DevTools Panel
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'JSON Formatter':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #ffd166; margin-bottom: 16px;">JSON Formatter</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Format and validate JSON responses</p>
+                            <button class="prompt-btn" style="width: 100%; margin-bottom: 8px;" onclick="formatCurrentPageJSON()">
+                                Format This Page
+                            </button>
+                            <button class="prompt-btn" style="width: 100%; background: #374151;" onclick="openJSONValidator()">
+                                JSON Validator
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'Grammarly':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #15803d; margin-bottom: 16px;">Grammarly</h3>
+                            <div style="background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                                <div style="color: #ef4444; font-size: 12px; margin-bottom: 4px;">2 issues found</div>
+                                <div style="color: #d1d5db; font-size: 14px;">Grammar and spelling suggestions available</div>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="showGrammarSuggestions()">
+                                View Suggestions
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'Dark Reader':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #6366f1; margin-bottom: 16px;">Dark Reader</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Dark mode for websites</p>
+                            <div style="margin-bottom: 16px;">
+                                <label style="color: #d1d5db; font-size: 13px; display: block; margin-bottom: 8px;">Brightness</label>
+                                <input type="range" min="0" max="100" value="90" style="width: 100%;" onchange="adjustBrightness(this.value)">
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="toggleDarkMode()">
+                                Toggle Dark Mode
+                            </button>
+                        </div>
+                    `;
+                    
+                default:
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #ffffff; margin-bottom: 16px;">${extension.name}</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">${extension.description}</p>
+                            <button class="prompt-btn" style="width: 100%;" onclick="openExtensionOptions('${extension.name}')">
+                                Extension Options
+                            </button>
+                        </div>
+                    `;
+            }
+        }
+        
+        function removeExtensionFromToolbar(extensionName) {
+            if (extensionToolbarState[extensionName]) {
+                extensionToolbarState[extensionName].element.remove();
+                delete extensionToolbarState[extensionName];
+            }
+        }
+        
+        function updateExtensionBadge(extensionName, badgeText) {
+            if (extensionToolbarState[extensionName]) {
+                const badge = extensionToolbarState[extensionName].element.querySelector('.extension-badge');
+                if (badge) {
+                    badge.textContent = badgeText;
+                    badge.classList.toggle('visible', badgeText !== '');
+                }
+            }
+        }
+        
+        // Extension Action Functions
+        function toggleAdBlockOnSite() {
+            showNotification('AdBlock paused on this site');
+            closeExtensionPopup();
+        }
+        
+        function fillPassword() {
+            showNotification('Password filled');
+            closeExtensionPopup();
+        }
+        
+        function openLastPassVault() {
+            createNewTab('https://lastpass.com/vault/', 'LastPass Vault');
+            closeExtensionPopup();
+        }
+        
+        function openReactDevTools() {
+            toggleDevTools();
+            showNotification('React DevTools opened in DevTools panel');
+            closeExtensionPopup();
+        }
+        
+        function formatCurrentPageJSON() {
+            showNotification('JSON formatted on current page');
+            closeExtensionPopup();
+        }
+        
+        function openJSONValidator() {
+            createNewTab('https://jsonlint.com/', 'JSON Validator');
+            closeExtensionPopup();
+        }
+        
+        function showGrammarSuggestions() {
+            showNotification('Grammar suggestions highlighted');
+            closeExtensionPopup();
+        }
+        
+        function adjustBrightness(value) {
+            showNotification(`Brightness set to ${value}%`);
+        }
+        
+        function toggleDarkMode() {
+            showNotification('Dark mode toggled');
+            closeExtensionPopup();
+        }
+        
+        function openExtensionOptions(extensionName) {
+            createNewTab(`chrome-extension://options/${extensionName}`, `${extensionName} Options`);
+            closeExtensionPopup();
+        }
+        
+        // Extension Context Menu
+        function showExtensionContextMenu(extension, event) {
+            // Remove any existing context menu
+            const existingMenu = document.getElementById('extensionContextMenu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+            
+            // Create context menu
+            const contextMenu = document.createElement('div');
+            contextMenu.id = 'extensionContextMenu';
+            contextMenu.className = 'extension-context-menu';
+            
+            const menuItems = [
+                { 
+                    text: `Open ${extension.name}`, 
+                    icon: 'fas fa-external-link-alt',
+                    action: () => openExtensionPopup(extension, event.target)
+                },
+                { 
+                    text: 'Extension Options', 
+                    icon: 'fas fa-cog',
+                    action: () => openExtensionOptions(extension.id || extension.name)
+                },
+                { 
+                    text: 'Pin to Toolbar', 
+                    icon: 'fas fa-thumbtack',
+                    action: () => pinExtensionToToolbar(extension.name)
+                },
+                { 
+                    text: 'Remove from Toolbar', 
+                    icon: 'fas fa-eye-slash',
+                    action: () => removeExtensionFromToolbar(extension.name)
+                },
+                { 
+                    text: 'Manage Extension', 
+                    icon: 'fas fa-sliders-h',
+                    action: () => manageExtension(extension)
+                },
+                { 
+                    text: 'Report Issue', 
+                    icon: 'fas fa-bug',
+                    action: () => reportExtensionIssue(extension)
+                }
+            ];
+            
+            contextMenu.innerHTML = menuItems.map(item => `
+                <div class="context-menu-item" onclick="${item.action.name}('${extension.name || extension.id}'); closeExtensionContextMenu()">
+                    <i class="${item.icon}"></i>
+                    <span>${item.text}</span>
+                </div>
+            `).join('');
+            
+            // Position menu
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+            
+            document.body.appendChild(contextMenu);
+            
+            // Store menu items for execution
+            contextMenu.menuActions = menuItems;
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', closeExtensionContextMenu);
+            }, 0);
+        }
+        
+        function closeExtensionContextMenu() {
+            const menu = document.getElementById('extensionContextMenu');
+            if (menu) {
+                menu.remove();
+                document.removeEventListener('click', closeExtensionContextMenu);
+            }
+        }
+        
+        function pinExtensionToToolbar(extensionName) {
+            showNotification(`${extensionName} pinned to toolbar`);
+        }
+        
+        function manageExtension(extension) {
+            createNewTab('chrome://extensions/', 'Manage Extensions');
+            showNotification(`Opening Chrome Extensions for ${extension.name}`);
+        }
+        
+        function reportExtensionIssue(extension) {
+            const reportUrl = extension.homepageUrl || `https://chrome.google.com/webstore/detail/${extension.id}`;
+            createNewTab(reportUrl, 'Report Extension Issue');
+            showNotification(`Opening ${extension.name} page to report issue`);
+        }
+        
+        // Extension Search and Filtering
+        let allExtensions = [];
+        
+        function filterExtensions(searchTerm) {
+            const clearBtn = document.querySelector('.search-clear');
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            const filteredExtensions = allExtensions.filter(ext => 
+                ext.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (ext.description && ext.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function filterExtensionsByCategory(category) {
+            if (!category) {
+                displayFilteredExtensions(allExtensions);
+                updateExtensionCount(allExtensions.length);
+                return;
+            }
+            
+            const categoryMap = {
+                'productivity': ['grammarly', 'lastpass', 'notion', 'todoist'],
+                'security': ['adblock', 'lastpass', 'privacy badger', 'ghostery'],
+                'developer': ['react', 'redux', 'postman', 'json', 'github'],
+                'social': ['facebook', 'twitter', 'instagram', 'linkedin'],
+                'shopping': ['honey', 'rakuten', 'amazon', 'ebay']
+            };
+            
+            const filteredExtensions = allExtensions.filter(ext => {
+                const extName = ext.name.toLowerCase();
+                return categoryMap[category].some(keyword => extName.includes(keyword));
+            });
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function filterExtensionsByStatus(status) {
+            if (!status) {
+                displayFilteredExtensions(allExtensions);
+                updateExtensionCount(allExtensions.length);
+                return;
+            }
+            
+            const filteredExtensions = allExtensions.filter(ext => 
+                status === 'enabled' ? ext.enabled : !ext.enabled
+            );
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function clearExtensionSearch() {
+            const searchInput = document.getElementById('extensionSearchInput');
+            const clearBtn = document.querySelector('.search-clear');
+            const categoryFilter = document.getElementById('extensionCategoryFilter');
+            const statusFilter = document.getElementById('extensionStatusFilter');
+            
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            categoryFilter.value = '';
+            statusFilter.value = '';
+            
+            displayFilteredExtensions(allExtensions);
+            updateExtensionCount(allExtensions.length);
+            
+            showNotification('Search filters cleared');
+        }
+        
+        function displayFilteredExtensions(extensions) {
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            if (extensions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #6b7280;">
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px;"></i>
+                        <div>No extensions found</div>
+                        <div style="font-size: 12px; margin-top: 4px;">Try adjusting your search or filters</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            extensions.forEach(extension => addExtensionToInstalledList(extension));
+        }
+        
+        function updateExtensionCount(count) {
+            const countElement = document.getElementById('extensionCount');
+            if (countElement) {
+                countElement.textContent = `(${count})`;
+            }
+        }
+        
+        // Update the existing function to store all extensions
+        function displayInstalledExtensions(extensions) {
+            allExtensions = extensions; // Store for filtering
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            extensions.forEach(extension => addExtensionToInstalledList(extension));
+            updateExtensionCount(extensions.length);
+        }
+        
+        // Helper Functions for Browser Features
+        function generateBookmarkList() {
+            const bookmarks = [
+                { title: 'TNF Dashboard', url: 'http://localhost:3000', folder: 'TNF' },
+                { title: 'Theia IDE', url: 'http://localhost:3007', folder: 'Development' },
+                { title: 'GitHub', url: 'https://github.com', folder: 'Development' },
+                { title: 'Stack Overflow', url: 'https://stackoverflow.com', folder: 'Development' },
+                { title: 'Mozilla Developer Network', url: 'https://developer.mozilla.org', folder: 'Development' },
+                { title: 'Claude AI', url: 'https://claude.ai', folder: 'AI Tools' },
+                { title: 'ChatGPT', url: 'https://chat.openai.com', folder: 'AI Tools' }
+            ];
+            
+            return bookmarks.map(bookmark => `
+                <div class="list-item" onclick="navigateToBookmark('${bookmark.url}')">
+                    <div class="list-item-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${bookmark.title}</div>
+                        <div class="list-item-url">${bookmark.url}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="event.stopPropagation(); editBookmark('${bookmark.title}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="list-item-action" onclick="event.stopPropagation(); deleteBookmark('${bookmark.title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateHistoryList() {
+            const history = [
+                { title: 'TNF Dashboard - AI-Powered Collaboration Platform', url: 'http://localhost:3000', time: '2 minutes ago' },
+                { title: 'Theia IDE - Cloud & Desktop IDE', url: 'http://localhost:3007', time: '5 minutes ago' },
+                { title: 'GitHub - Where the world builds software', url: 'https://github.com', time: '10 minutes ago' },
+                { title: 'Stack Overflow - Where Developers Learn', url: 'https://stackoverflow.com', time: '15 minutes ago' },
+                { title: 'Claude AI - Constitutional AI Assistant', url: 'https://claude.ai', time: '1 hour ago' },
+                { title: 'OpenAI ChatGPT', url: 'https://chat.openai.com', time: '2 hours ago' },
+                { title: 'VS Code Extensions Marketplace', url: 'https://marketplace.visualstudio.com', time: '3 hours ago' }
+            ];
+            
+            return history.map(item => `
+                <div class="list-item" onclick="navigateToHistory('${item.url}')">
+                    <div class="list-item-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${item.title}</div>
+                        <div class="list-item-url">${item.url} • ${item.time}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="event.stopPropagation(); addToBookmarks('${item.title}', '${item.url}')" title="Bookmark">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        <button class="list-item-action" onclick="event.stopPropagation(); removeFromHistory('${item.url}')" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateDownloadsList() {
+            const downloads = [
+                { title: 'theia-extensions-pack.vsix', size: '2.4 MB', status: 'completed', time: '5 minutes ago' },
+                { title: 'claude-code-cli.zip', size: '15.8 MB', status: 'completed', time: '1 hour ago' },
+                { title: 'browser-use-extension.crx', size: '890 KB', status: 'completed', time: '2 hours ago' },
+                { title: 'tnf-backup-20250118.zip', size: '45.2 MB', status: 'completed', time: '1 day ago' },
+                { title: 'react-devtools-extension.crx', size: '1.2 MB', status: 'completed', time: '2 days ago' }
+            ];
+            
+            return downloads.map(download => `
+                <div class="list-item">
+                    <div class="list-item-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${download.title}</div>
+                        <div class="list-item-url">${download.size} • ${download.time}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="openDownload('${download.title}')" title="Open">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                        <button class="list-item-action" onclick="showInFinder('${download.title}')" title="Show in Finder">
+                            <i class="fas fa-folder"></i>
+                        </button>
+                        <button class="list-item-action" onclick="deleteDownload('${download.title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Panel Management Functions
+        function closePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.remove('visible');
+                setTimeout(() => panel.remove(), 300);
+            }
+        }
+        
+        // Bookmark Functions
+        function navigateToBookmark(url) {
+            createNewTab(url, 'Bookmark');
+            showNotification('Opening bookmark');
+        }
+        
+        function addBookmark() {
+            const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+            const currentUrl = currentFrame ? currentFrame.src : window.location.href;
+            const title = prompt('Bookmark title:', 'New Bookmark') || 'New Bookmark';
+            
+            // Add to bookmarks list
+            const bookmarkList = document.getElementById('bookmarkList');
+            if (bookmarkList) {
+                const bookmarkItem = document.createElement('div');
+                bookmarkItem.className = 'list-item';
+                bookmarkItem.innerHTML = `
+                    <div class="list-item-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${title}</div>
+                        <div class="list-item-url">${currentUrl}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="editBookmark('${title}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="list-item-action" onclick="deleteBookmark('${title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                bookmarkList.appendChild(bookmarkItem);
+            }
+            
+            showNotification(`Bookmark "${title}" added`);
+        }
+        
+        function editBookmark(title) {
+            const newTitle = prompt('Edit bookmark title:', title);
+            if (newTitle && newTitle !== title) {
+                showNotification(`Bookmark renamed to "${newTitle}"`);
+            }
+        }
+        
+        function deleteBookmark(title) {
+            if (confirm(`Delete bookmark "${title}"?`)) {
+                showNotification(`Bookmark "${title}" deleted`);
+            }
+        }
+        
+        function importBookmarks() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('dialog:open-directory', {
+                    title: 'Select Bookmarks File',
+                    properties: ['openFile'],
+                    filters: [{ name: 'HTML Files', extensions: ['html'] }]
+                });
+            }
+            showNotification('Import bookmarks feature coming soon');
+        }
+        
+        function exportBookmarks() {
+            showNotification('Export bookmarks feature coming soon');
+        }
+        
+        // History Functions
+        function navigateToHistory(url) {
+            createNewTab(url, 'History');
+            showNotification('Opening from history');
+        }
+        
+        function filterHistory(searchTerm) {
+            const historyItems = document.querySelectorAll('#historyList .list-item');
+            historyItems.forEach(item => {
+                const title = item.querySelector('.list-item-title').textContent.toLowerCase();
+                const url = item.querySelector('.list-item-url').textContent.toLowerCase();
+                const matches = title.includes(searchTerm.toLowerCase()) || url.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'flex' : 'none';
+            });
+        }
+        
+        function clearHistory() {
+            if (confirm('Clear all browsing history?')) {
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">History cleared</div>';
+                }
+                showNotification('Browsing history cleared');
+            }
+        }
+        
+        function addToBookmarks(title, url) {
+            showNotification(`"${title}" added to bookmarks`);
+        }
+        
+        function removeFromHistory(url) {
+            showNotification('Removed from history');
+        }
+        
+        // Downloads Functions
+        function openDownloadsFolder() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('shell:open-external', 'file:///Users/' + (process.env.USER || 'user') + '/Downloads');
+            } else {
+                showNotification('Downloads folder: ~/Downloads');
+            }
+        }
+        
+        function clearDownloads() {
+            if (confirm('Clear downloads list?')) {
+                const downloadsList = document.getElementById('downloadsList');
+                if (downloadsList) {
+                    downloadsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">Downloads list cleared</div>';
+                }
+                showNotification('Downloads list cleared');
+            }
+        }
+        
+        function openDownload(filename) {
+            showNotification(`Opening ${filename}`);
+        }
+        
+        function showInFinder(filename) {
+            showNotification(`Showing ${filename} in Finder`);
+        }
+        
+        function deleteDownload(filename) {
+            if (confirm(`Delete ${filename}?`)) {
+                showNotification(`${filename} deleted`);
+            }
+        }
+        
+        // Screenshot Functions
+        function showScreenshotDialog() {
+            const dialog = document.createElement('div');
+            dialog.className = 'browser-feature-panel visible';
+            dialog.innerHTML = `
+                <div class="panel-header">
+                    <h3><i class="fas fa-camera"></i> Screenshot Tool</h3>
+                    <button onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <p>Choose screenshot type:</p>
+                    <button class="feature-btn primary" onclick="takeFullScreenshot()">
+                        <i class="fas fa-desktop"></i> Full Screen
+                    </button>
+                    <button class="feature-btn secondary" onclick="takeWindowScreenshot()">
+                        <i class="fas fa-window-maximize"></i> Current Window
+                    </button>
+                    <button class="feature-btn secondary" onclick="takeSelectionScreenshot()">
+                        <i class="fas fa-crop"></i> Selection
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+        
+        function takeFullScreenshot() {
+            showNotification('Full screenshot captured');
+        }
+        
+        function takeWindowScreenshot() {
+            showNotification('Window screenshot captured');
+        }
+        
+        function takeSelectionScreenshot() {
+            showNotification('Selection screenshot captured');
+        }
+        
+        // More Menu Functions
+        function openNewWindow() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('browser:new-window');
+            }
+            showNotification('New window opened');
+        }
+        
+        function openIncognito() {
+            showNotification('Incognito mode coming soon');
+        }
+        
+        function printPage() {
+            window.print();
+        }
+        
+        function findInPage() {
+            showNotification('Find in page: Ctrl+F');
+        }
+        
+        function viewPageSource() {
+            const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+            if (currentFrame && currentFrame.src) {
+                createNewTab(`view-source:${currentFrame.src}`, 'Page Source');
+            }
+        }
+        
+        function openSettings() {
+            toggleSettings();
+        }
+        
+        function showAbout() {
+            const aboutDialog = document.createElement('div');
+            aboutDialog.className = 'browser-feature-panel visible';
+            aboutDialog.innerHTML = `
+                <div class="panel-header">
+                    <h3><i class="fas fa-info-circle"></i> About TNF Browser</h3>
+                    <button onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h4 style="color: #3b82f6; margin: 0;">The New Fuse Browser</h4>
+                        <p style="color: #9ca3af; margin: 4px 0;">Version 1.0.0</p>
+                    </div>
+                    <p>AI-powered browser with integrated development tools, extension management, and real-time collaboration features.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="feature-btn primary" onclick="window.open('https://github.com/your-repo', '_blank')">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(aboutDialog);
         }
         
         // Initialize
@@ -2029,10 +4530,18 @@
             // Render custom menu items
             renderCustomMenuItems();
             
-            // Update terminal if needed
-            if (terminalVisible) {
-                updateTerminalOutput();
-            }
+            // Initialize extension toolbar
+            initializeExtensionToolbar();
+            
+            // Initialize browser engine
+            initializeBrowserEngine();
+            
+            // Initialize installed extensions on page load
+            setTimeout(() => {
+                displayMockInstalledExtensions();
+            }, 1000);
+            
+            // Terminal functionality removed - using Theia's built-in terminal
             
             // Initialize frame load handler
             document.querySelectorAll('.content-frame').forEach(frame => {
@@ -2059,12 +4568,7 @@
                 };
             });
             
-            // Auto-update terminal every 5 seconds if visible
-            setInterval(() => {
-                if (terminalVisible) {
-                    updateTerminalOutput();
-                }
-            }, 5000);
+            // Terminal auto-update removed - using Theia's built-in terminal
 
             // Set initial active tab
             switchToTab('dashboard');

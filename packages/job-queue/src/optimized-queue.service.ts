@@ -4,7 +4,7 @@
 import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Bull, { Queue, Job, JobOptions } from 'bull';
-import { Redis } from 'ioredis';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface JobData {
   id: string;
@@ -60,7 +60,6 @@ export enum JobType {
 export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(OptimizedQueueService.name);
   private queues: Map<string, Queue> = new Map();
-  private redis: Redis;
   private metrics: Map<string, QueueMetrics> = new Map();
 
   // Queue configurations optimized for different job types
@@ -139,8 +138,11 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     },
   };
 
-  constructor(private configService: ConfigService) {
-    this.initializeRedis();
+  constructor(
+    private configService: ConfigService,
+    private readonly unifiedRedis: UnifiedRedisService
+  ) {
+    this.logger.log('Job Queue Service initialized with UnifiedRedisService integration');
   }
 
   async onModuleInit(): Promise<void> {
@@ -149,21 +151,8 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     this.logger.log('Optimized Queue Service initialized');
   }
 
-  private initializeRedis(): void {
-    this.redis = new Redis({
-      host: this.configService.get('REDIS_HOST', 'localhost'),
-      port: this.configService.get('REDIS_PORT', 6379),
-      password: this.configService.get('REDIS_PASSWORD'),
-      db: this.configService.get('REDIS_QUEUE_DB', 1),
-      maxRetriesPerRequest: 3,
-      retryDelayOnFailover: 100,
-      connectTimeout: 10000,
-    });
-
-    this.redis.on('error', (error) => {
-      this.logger.error('Redis connection error for job queue:', error);
-    });
-  }
+  // Bull queues require their own Redis connections
+  // UnifiedRedisService is used for auxiliary Redis operations like caching job metadata
 
   private async initializeQueues(): Promise<void> {
     for (const [jobType, config] of Object.entries(this.queueConfigs)) {
@@ -235,9 +224,10 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     };
 
     // Add job metadata for tracking
+    const jobId = jobData.id || this.generateJobId();
     const enhancedJobData: JobData = {
       ...jobData,
-      id: jobData.id || this.generateJobId(),
+      id: jobId,
       type: jobType,
       context: {
         ...jobData.context,
@@ -247,6 +237,21 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     };
 
     const job = await queue.add(enhancedJobData, jobOptions);
+    
+    // Cache job metadata using UnifiedRedisService for fast lookups
+    try {
+      const jobMetadataKey = `job:metadata:${jobId}`;
+      await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+        id: jobId,
+        type: jobType,
+        status: 'queued',
+        queuedAt: enhancedJobData.context.queuedAt,
+        priority: jobOptions.priority
+      }), 3600); // 1 hour TTL
+    } catch (error) {
+      this.logger.warn(`Failed to cache job metadata for ${jobId}`, error);
+    }
+    
     this.logger.log(`Job added: ${job.id} to queue: ${jobType} with priority: ${jobOptions.priority}`);
 
     return job;
@@ -285,6 +290,20 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
   private async processJob(job: Job<JobData>): Promise<JobResult> {
     const startTime = Date.now();
     const { type, payload, context } = job.data;
+
+    // Update job status in cache
+    try {
+      const jobMetadataKey = `job:metadata:${job.data.id}`;
+      await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+        id: job.data.id,
+        type,
+        status: 'processing',
+        startedAt: new Date().toISOString(),
+        attemptsMade: job.attemptsMade
+      }), 3600);
+    } catch (error) {
+      this.logger.warn(`Failed to update job status for ${job.data.id}`, error);
+    }
 
     try {
       this.logger.debug(`Processing job: ${job.id} of type: ${type}`);
@@ -329,6 +348,21 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
         retryCount: job.attemptsMade,
       };
 
+      // Update completion status in cache
+      try {
+        const jobMetadataKey = `job:metadata:${job.data.id}`;
+        await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+          id: job.data.id,
+          type,
+          status: 'completed',
+          completedAt: new Date().toISOString(),
+          duration,
+          success: true
+        }), 3600);
+      } catch (error) {
+        this.logger.warn(`Failed to update job completion status for ${job.data.id}`, error);
+      }
+
       this.logger.debug(`Job completed: ${job.id} in ${duration}ms`);
       return jobResult;
 
@@ -340,6 +374,22 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
         duration,
         retryCount: job.attemptsMade,
       };
+
+      // Update failure status in cache
+      try {
+        const jobMetadataKey = `job:metadata:${job.data.id}`;
+        await this.unifiedRedis.set(jobMetadataKey, JSON.stringify({
+          id: job.data.id,
+          type,
+          status: 'failed',
+          failedAt: new Date().toISOString(),
+          duration,
+          error: error.message,
+          attemptsMade: job.attemptsMade
+        }), 3600);
+      } catch (error) {
+        this.logger.warn(`Failed to update job failure status for ${job.data.id}`, error);
+      }
 
       this.logger.error(`Job failed: ${job.id} after ${duration}ms`, error);
       throw error; // Re-throw to trigger retry logic
@@ -450,9 +500,48 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
     return totalCleaned;
   }
 
+  // Get job status from cached metadata using UnifiedRedisService
+  async getJobStatus(jobId: string): Promise<any | null> {
+    try {
+      const jobMetadataKey = `job:metadata:${jobId}`;
+      const metadata = await this.unifiedRedis.get(jobMetadataKey);
+      return metadata ? JSON.parse(metadata) : null;
+    } catch (error) {
+      this.logger.error(`Failed to get job status for ${jobId}`, error);
+      return null;
+    }
+  }
+
+  // Get queue metrics from UnifiedRedisService cache
+  async getCachedQueueMetrics(jobType: JobType): Promise<any | null> {
+    try {
+      const metricsKey = `queue:metrics:${jobType}`;
+      const metrics = await this.unifiedRedis.get(metricsKey);
+      return metrics ? JSON.parse(metrics) : null;
+    } catch (error) {
+      this.logger.error(`Failed to get cached metrics for ${jobType}`, error);
+      return null;
+    }
+  }
+
   private updateMetrics(jobType: string, event: string): void {
     // Update internal metrics for monitoring
-    // Implementation would track throughput, processing times, etc.
+    try {
+      const metricsKey = `queue:events:${jobType}:${event}`;
+      const timestamp = Date.now();
+      
+      // Use UnifiedRedisService to increment event counters
+      this.unifiedRedis.incr(metricsKey)
+        .then(() => {
+          // Set expiry for event counters (1 hour)
+          return this.unifiedRedis.expire(metricsKey, 3600);
+        })
+        .catch(error => {
+          this.logger.error(`Failed to update metrics for ${jobType}:${event}`, error);
+        });
+    } catch (error) {
+      this.logger.error(`Error in updateMetrics for ${jobType}:${event}`, error);
+    }
   }
 
   private startMetricsCollection(): void {
@@ -465,8 +554,32 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
   }
 
   private async collectQueueMetrics(jobType: string): Promise<void> {
-    // Collect and store queue metrics for monitoring
-    // Implementation would gather performance data
+    // Collect and store queue metrics using UnifiedRedisService
+    try {
+      const queue = this.queues.get(jobType);
+      if (!queue) return;
+
+      const waiting = await queue.getWaiting();
+      const active = await queue.getActive();
+      const completed = await queue.getCompleted();
+      const failed = await queue.getFailed();
+
+      const metrics = {
+        pending: waiting.length,
+        active: active.length,
+        completed: completed.length,
+        failed: failed.length,
+        timestamp: Date.now(),
+      };
+
+      // Store metrics in Redis using UnifiedRedisService
+      const metricsKey = `queue:metrics:${jobType}`;
+      await this.unifiedRedis.set(metricsKey, JSON.stringify(metrics), 300); // 5 minutes TTL
+      
+      this.logger.debug(`Collected metrics for queue: ${jobType}`);
+    } catch (error) {
+      this.logger.error(`Failed to collect metrics for queue: ${jobType}`, error);
+    }
   }
 
   private generateJobId(): string {
@@ -481,10 +594,7 @@ export class OptimizedQueueService implements OnModuleInit, OnModuleDestroy {
       this.logger.log(`Queue closed: ${jobType}`);
     }
 
-    if (this.redis) {
-      await this.redis.quit();
-    }
-
+    // UnifiedRedisService handles its own cleanup
     this.logger.log('Queue service shutdown complete');
   }
 }

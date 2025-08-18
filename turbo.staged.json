@@ -1,0 +1,68 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "extends": ["./turbo.json"],
+  "concurrency": 1,
+  "tasks": {
+    "build:stage-1": {
+      "dependsOn": ["^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "types/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_STAGE=1", "BUILD_MEMORY_LIMIT"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "cache": true
+    },
+    "build:stage-2": {
+      "dependsOn": ["^build:stage-1"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "build/**",
+        "out/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_STAGE=2", "BUILD_MEMORY_LIMIT"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "cache": true
+    },
+    "build:stage-3": {
+      "dependsOn": ["^build:stage-2"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_STAGE=3", "BUILD_MEMORY_LIMIT"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "cache": true
+    }
+  }
+}

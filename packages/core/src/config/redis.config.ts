@@ -28,7 +28,7 @@ export const redisConfig = registerAs('redis', () => ({
   lazyConnect: true,
   keepAlive: 30000,
   family: 4,
-  cluster: unknown;
+  cluster: {
     enabled: process.env.REDIS_CLUSTER_ENABLED === 'true',
     nodes: process.env.REDIS_CLUSTER_NODES?.split(',').map(node => {
       const [host, port] = node.split(':');
@@ -56,7 +56,7 @@ export interface RedisConfigType {
   lazyConnect: boolean;
   keepAlive: number;
   family: number;
-  cluster: unknown;
+  cluster: {
     enabled: boolean;
     nodes: Array<{ host: string; port: number }>;
   };
@@ -64,7 +64,7 @@ export interface RedisConfigType {
     rejectUnauthorized: boolean;
   };
   connectTimeout: number;
-  commandTimeout: 5000;
+  commandTimeout: number;
   channels: typeof REDIS_CHANNELS;
   queues: typeof REDIS_QUEUES;
 }

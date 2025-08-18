@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService'; // Corrected import path
-import { Logger } from '../utils/Logger';
+import { Logger } from '@the-new-fuse/core/src/utils/Logger';
 import * as client from 'prom-client';
 import { Registry, Counter, Gauge, Histogram, Summary } from 'prom-client';
 

@@ -215,7 +215,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionGKECluster(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionGKECluster(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP GKE Cluster provisioning
     const clusterName = resource.name;
     const nodeCount = resource.properties.nodeCount || 3;
@@ -239,7 +239,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionCloudFunction(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionCloudFunction(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud Function provisioning
     const functionName = resource.name;
     const runtime = resource.properties.runtime || 'nodejs18';

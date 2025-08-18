@@ -993,4 +993,47 @@ function generateDiagnosticReport() {
 5. Enable debug logging
 6. Generate diagnostic report
 
+## Quick Reference
+
+### Common Error Codes and Solutions
+
+| Error Code | Error Name | Quick Fix |
+|------------|------------|-----------|
+| -32700 | Parse Error | Check JSON format, ensure valid UTF-8 |
+| -32600 | Invalid Request | Verify jsonrpc: "2.0" and required fields |
+| -32601 | Method Not Found | Check method name spelling and registration |
+| -32602 | Invalid Params | Validate parameter types and required fields |
+| -32000 | Resource Not Found | Verify resource URI and permissions |
+| -32001 | Resource Access Denied | Check authentication and authorization |
+| -32010 | Tool Not Found | Ensure tool is registered and name is correct |
+| -32011 | Tool Execution Failed | Check tool implementation and parameters |
+| -32030 | Authentication Failed | Verify credentials and token validity |
+
+### Performance Checklist
+
+- [ ] Connection pooling enabled
+- [ ] Appropriate cache TTL settings
+- [ ] Request batching for multiple operations
+- [ ] Resource cleanup in handlers
+- [ ] Memory usage monitoring
+- [ ] Circuit breaker for external services
+
+### Security Checklist
+
+- [ ] Input validation on all parameters
+- [ ] Authentication required for sensitive operations
+- [ ] Authorization checks implemented
+- [ ] TLS/SSL enabled for production
+- [ ] Rate limiting configured
+- [ ] Audit logging enabled
+
+### Deployment Checklist
+
+- [ ] Environment-specific configuration
+- [ ] Health checks implemented
+- [ ] Graceful shutdown handling
+- [ ] Monitoring and alerting setup
+- [ ] Log aggregation configured
+- [ ] Backup and recovery procedures
+
 Remember to never include sensitive information (API keys, passwords, personal data) in issue reports or diagnostic information.

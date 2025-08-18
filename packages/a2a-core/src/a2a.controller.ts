@@ -18,8 +18,8 @@ import {
   A2AMessage,
   AgentHeartbeat,
   AgentStatus,
-  MessageType,
-  Priority
+  A2AMessageType,
+  A2APriority
 } from './types';
 
 @Controller('a2a')
@@ -99,7 +99,7 @@ export class A2AController {
     toAgent: string;
     payload: any;
     timeout?: number;
-    priority?: Priority;
+    priority?: A2APriority;
     conversationId?: string;
   }) {
     const response = await this.a2aService.sendRequest(
@@ -121,7 +121,7 @@ export class A2AController {
     payload: any;
     channel?: string;
     topic?: string;
-    priority?: Priority;
+    priority?: A2APriority;
   }) {
     await this.a2aService.broadcast(body.fromAgent, body.payload, {
       channel: body.channel,
@@ -153,9 +153,8 @@ export class A2AController {
     topic?: string;
   }) {
     const conversationId = await this.a2aService.startConversation(
-      body.initiator,
-      body.participants,
-      body.topic
+      [body.initiator, ...body.participants],
+      { topic: body.topic }
     );
     return { conversationId };
   }
@@ -193,7 +192,7 @@ export class A2AController {
     fromAgent: string;
     targetCapability: string;
     payload: any;
-    priority?: Priority;
+    priority?: A2APriority;
     preferredAgent?: string;
   }) {
     await this.a2aService.routeMessageByCapability(

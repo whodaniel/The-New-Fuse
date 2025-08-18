@@ -1,10 +1,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Column, DataType, CellValue, SelectOption as ColumnSelectOption, AttachmentFile, AppState, Table, Row } from "../../fairtable-core/src";
+import { Column, DataType, CellValue, SelectOption as ColumnSelectOption, AttachmentFile, AppState, Table, Row, evaluateFormula } from '@the-new-fuse/fairtable-core';
 import SelectInput, { SelectOptionItem } from './SelectInput';
 import { PencilIcon, LinkIcon, TrashIcon, PlusIcon, ArrowUpIcon } from './Icons'; 
-import { generateId } from '../../fairtable-utils/src';
-import { evaluateFormula } from '../../fairtable-core/src'; 
+import { generateId } from '@the-new-fuse/fairtable-utils';
+ 
 
 interface TableCellProps {
   value: CellValue;

@@ -9,12 +9,16 @@
     "API_PORT", 
     "FRONTEND_PORT",
     "API_URL",       
-    "BACKEND_URL"    
+    "BACKEND_URL",
+    "BUILD_MEMORY_LIMIT",
+    "BUILD_CONCURRENCY",
+    "BUILD_STAGE",
+    "BUILD_STRATEGY"
   ],
   "remoteCache": {
     "signature": true
   },
-  "concurrency": "100%",
+  "concurrency": "4",
   "tasks": {
     "build": {
       "dependsOn": ["^build", "^db:generate"],
@@ -38,8 +42,61 @@
         "cjs/**",
         "*.tsbuildinfo"
       ],
-      "env": ["NODE_ENV"],
-      "passThroughEnv": ["NODE_ENV"]
+      "env": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
+      "cache": true
+    },
+    "build:memory-optimized": {
+      "dependsOn": ["^build:memory-optimized", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY"],
+      "cache": true
+    },
+    "build:staged": {
+      "dependsOn": ["^build:staged", "^db:generate"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**",
+        "lib/**",
+        "build/**",
+        "out/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "env": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "passThroughEnv": ["NODE_ENV", "BUILD_STAGE", "BUILD_MEMORY_LIMIT"],
+      "cache": true
     },
     "lint": {
       "inputs": [
@@ -84,8 +141,8 @@
       "dependsOn": ["^build:types"],
       "cache": false,
       "persistent": true,
-      "env": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL"],
-      "passThroughEnv": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL"]
+      "env": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_ENABLE_MONITORING"],
+      "passThroughEnv": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_ENABLE_MONITORING"]
     },
     "start": {
       "dependsOn": ["build"],

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'; // Column is not used
-import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions, Column } from "../../fairtable-core/src";
+import { Table, View, ViewType, Filter, Sort, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions, Column } from '@the-new-fuse/fairtable-core';
 import { PlusIcon, FilterIcon, SortAscendingIcon, EyeIcon, PencilIcon, TrashIcon, ChevronDownIcon, TableCellsIcon, KanbanIcon, CalendarIcon, GalleryIcon, TimelineIcon } from './Icons'; // NEW_VIEW_DEFAULT_NAME is not used
 import EditableText from './EditableText';
 import SelectInput, { SelectOptionItem } from './SelectInput';

@@ -15,8 +15,6 @@
     "@emotion/styled": "^11.11.0",
     "@the-new-fuse/core": "*",
     "@the-new-fuse/types": "*",
-    "@the-new-fuse/ui": "*",
-    "@the-new-fuse/ui-components": "*",
     "@the-new-fuse/utils": "*",
     "date-fns": "^2.30.0",
     "framer-motion": "^10.16.4",

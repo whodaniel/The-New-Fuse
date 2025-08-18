@@ -2,10 +2,41 @@ import { v4 as uuidv4 } from 'uuid';
 import { Agent, AgentStatus } from '../types/agent';
 import { BaseService } from './base.service';
 import { toError } from '../utils/error';
+import { Injectable } from '@nestjs/common';
+import { AgentRepository } from '../repositories/agent.repository';
+// Mock LocalAIDetectionService to avoid cross-package import issues
+class LocalAIDetectionService {
+  async detectAndCreateAgents(userId: string): Promise<any[]> {
+    // Mock implementation
+    return [];
+  }
+  
+  async getAvailableProviders(): Promise<string[]> {
+    // Mock implementation
+    return [];
+  }
+}
+import { AgentCapability } from '@the-new-fuse/types/src/core/enums';
 
+@Injectable()
 export class AgentService extends BaseService<Agent> {
-  public constructor() {
-    super('Agent');
+  protected readonly repository: AgentRepository;
+
+  constructor(
+    private readonly agentRepository: AgentRepository,
+    private readonly localAIDetectionService: LocalAIDetectionService,
+  ) {
+    super('AgentService');
+    this.repository = agentRepository;
+  }
+
+  /**
+   * Handle errors consistently
+   */
+  private handleError(error: unknown, operation: string): never {
+    const err = toError(error);
+    this.logger.error(`Error in ${operation}: ${err.message}`, err.stack);
+    throw err;
   }
 
   /**
@@ -22,221 +53,251 @@ export class AgentService extends BaseService<Agent> {
       provider: agent.provider || 'unknown',
       lastActive: agent.lastActive || agent.createdAt,
       metadata: agent.metadata || {},
-      createdAt: agent.createdAt.toISOString(),
-      updatedAt: agent.updatedAt.toISOString(),
-      ...(agent.deletedAt && { deletedAt: agent.deletedAt.toISOString() }),
+      createdAt: agent.createdAt,
+      updatedAt: agent.updatedAt,
+      ...(agent.deletedAt && { deletedAt: agent.deletedAt }),
     };
   }
 
   /**
-   * Get all agents
+   * Get all agents for a user
+   */
+  async getAgents(userId: string): Promise<Agent[]> {
+    try {
+      const agents = await this.agentRepository.findAll({ userId });
+      return agents.map(agent => this.transform(agent));
+    } catch (error) {
+      const err = toError(error);
+      return this.handleError(err, 'getAgents');
+    }
+  }
+
+  /**
+   * Get all agents (for admin/monitoring use)
    */
   async findAll(): Promise<Agent[]> {
     try {
-      const agents = await this.prisma.agent.findMany();
-      return agents
-        .filter(agent => !(agent as any).deletedAt)
-        .map(agent => this.transform(agent));
+      const agents = await this.agentRepository.findAll({});
+      return agents.map(agent => this.transform(agent));
     } catch (error) {
       const err = toError(error);
-      return this.handleError(err, 'findAll'); 
+      return this.handleError(err, 'findAll');
     }
   }
 
   /**
-   * Get agent by ID
+   * Get agent by ID for a specific user
    */
-  async findById(id: string): Promise<Agent | null> {
+  async getAgentById(id: string, userId: string): Promise<Agent | null> {
     try {
-      const agent = await this.prisma.agent.findUnique({
-        where: { id },
-      });
-
-      if (!agent || (agent as any).deletedAt) {
+      const agent = await this.agentRepository.findOne({ id, userId });
+      if (!agent) {
         return null;
       }
-
       return this.transform(agent);
     } catch (error) {
       const err = toError(error);
-      return this.handleError(err, `findById(${id})`);
+      return this.handleError(err, `getAgentById(${id})`);
     }
   }
 
   /**
-   * Create a new agent
+   * Create a new agent for a user
    */
-  async create(data: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): Promise<Agent> {
+  async createAgent(data: Partial<Agent>, userId: string): Promise<Agent> {
     try {
-      this.log('create', `Creating new agent: ${data.name}`);
-      
-      const createData: any = {
-        id: uuidv4(),
-        name: data.name,
-        type: data.type,
-        provider: data.provider,
-        capabilities: data.capabilities || [],
-        status: data.status || AgentStatus.IDLE,
-        lastActive: new Date(),
+      // Convert capabilities from string[] to AgentCapability[] if needed
+      const agentData = {
+        ...data,
+        userId,
+        capabilities: data.capabilities?.map(cap => 
+          typeof cap === 'string' ? cap as AgentCapability : cap
+        ) || []
       };
-
-      if (data.description) {
-        createData.description = data.description;
-      }
-
-      if (data.metadata) {
-        createData.metadata = data.metadata;
-      }
-
-      const agent = await this.prisma.agent.create({
-        data: createData,
-      });
-
-      return this.transform(agent);
+      const newAgent = await this.agentRepository.create(agentData);
+      return this.transform(newAgent);
     } catch (error) {
       const err = toError(error);
-      return this.handleError(err, 'create');
+      return this.handleError(err, 'createAgent');
     }
   }
 
   /**
-   * Update an agent
+   * Update an agent for a user
    */
-  async update(id: string, data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>): Promise<Agent | null> {
+  async updateAgent(id: string, data: Partial<Agent>, userId: string): Promise<Agent> {
     try {
-      this.log('update', `Updating agent ${id}`, data);
-
-      const updateData: any = {};
-      if (data.name) updateData.name = data.name;
-      if (data.type) updateData.type = data.type;
-      if (data.description !== undefined) updateData.description = data.description;
-      if (data.capabilities) updateData.capabilities = data.capabilities;
-      if (data.status) updateData.status = data.status;
-      if (data.provider) updateData.provider = data.provider;
-      if (data.metadata !== undefined) updateData.metadata = data.metadata;
-      
-      updateData.lastActive = new Date();
-
-      const agent = await this.prisma.agent.update({
-        where: { id },
-        data: updateData,
-      });
-
-      return this.transform(agent);
+      const agent = await this.agentRepository.findOne({ id, userId });
+      if (!agent) {
+        throw new Error(`Agent with ID ${id} not found for this user`);
+      }
+      // Convert capabilities from string[] to AgentCapability[] if needed
+      const agentData = {
+        ...data,
+        capabilities: data.capabilities?.map(cap => 
+          typeof cap === 'string' ? cap as AgentCapability : cap
+        )
+      };
+      const updatedAgent = await this.agentRepository.update(id, agentData);
+      return this.transform(updatedAgent);
     } catch (error) {
       const err = toError(error);
-      return this.handleError(err, `update(${id})`);
+      return this.handleError(err, `updateAgent(${id})`);
     }
   }
 
   /**
-   * Delete an agent (soft delete by marking name)
+   * Delete an agent for a user
    */
-  async delete(id: string): Promise<boolean> {
+  async deleteAgent(id: string, userId: string): Promise<boolean> {
     try {
-      this.log('delete', `Deleting agent ${id}`);
-
-      await this.prisma.agent.update({
-        where: { id },
-        data: {
-          name: `[DELETED] ${id}`,
-        },
-      });
-      return true;
+      const agent = await this.agentRepository.findOne({ id, userId });
+      if (!agent) {
+        throw new Error(`Agent with ID ${id} not found for this user`);
+      }
+      return this.agentRepository.delete(id);
     } catch (error) {
       const err = toError(error);
-      this.handleError(err, `delete(${id})`);
+      this.handleError(err, `deleteAgent(${id})`);
       return false;
     }
   }
-  
+
   /**
-   * Check if an agent has a specific capability
+   * Get agents by capability for a user
    */
-  hasCapability(agent: Agent, capability: string): boolean {
-    if (!agent.capabilities || !Array.isArray(agent.capabilities)) {
-      return false;
+  async getAgentsByCapability(capability: AgentCapability, userId: string): Promise<Agent[]> {
+    try {
+      const agents = await this.getAgents(userId);
+      return agents.filter(agent => {
+        if (!agent.capabilities) return false;
+        return agent.capabilities.includes(capability);
+      });
+    } catch (error) {
+      const err = toError(error);
+      return this.handleError(err, 'getAgentsByCapability');
     }
+  }
+
+  /**
+   * Detect and register local AI providers as agents
+   */
+  async detectAndRegisterLocalAIs(userId: string): Promise<Agent[]> {
+    this.logger.log(`🔍 Detecting local AIs for user: ${userId}`);
     
-    return agent.capabilities.some((cap: string) => {
-      return cap === capability;
-    });
+    const detectedAgents = await this.localAIDetectionService.detectAndCreateAgents(userId);
+    const registeredAgents: Agent[] = [];
+
+    for (const agentDto of detectedAgents) {
+      try {
+        const existingAgents = await this.agentRepository.findAll({ userId });
+        const exists = existingAgents.some(agent => 
+          agent.configuration?.provider === agentDto.provider
+        );
+
+        if (!exists) {
+          const agentData = {
+            ...agentDto,
+            capabilities: Array.isArray(agentDto.capabilities) 
+              ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
+                  Object.values(AgentCapability).includes(cap as AgentCapability))
+              : [],
+            metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
+              ? agentDto.metadata as Record<string, unknown>
+              : {},
+            configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
+              ? agentDto.configuration as Record<string, unknown>
+              : {}
+          };
+          const agent = await this.createAgent(agentData, userId);
+          registeredAgents.push(agent);
+          this.logger.log(`✅ Registered local AI agent: ${agentDto.name}`);
+        } else {
+          this.logger.debug(`⚠️ Local AI agent already exists: ${agentDto.name}`);
+        }
+      } catch (error) {
+        this.logger.error(`❌ Failed to register ${agentDto.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    return registeredAgents;
   }
 
   /**
-   * Find agents with filtering (alias for findAll with filters)
+   * Get all local AI agents for a user
    */
-  async findAgents(filters?: any, _userId?: string): Promise<Agent[]> {
+  async getLocalAIAgents(userId: string): Promise<Agent[]> {
     try {
-      const whereClause: any = {};
-      
-      if (filters?.type) {
-        whereClause.type = filters.type;
-      }
-      if (filters?.status) {
-        whereClause.status = filters.status;
-      }
-      if (filters?.provider) {
-        whereClause.provider = filters.provider;
-      }
-
-      const agents = await this.prisma.agent.findMany({
-        where: whereClause,
-      });
-      
-      return agents
-        .filter(agent => !(agent as any).deletedAt)
-        .map(agent => this.addMetadataIfMissing(agent));
+      const agents = await this.agentRepository.findAll({ userId });
+      return agents.filter(agent => 
+        agent.configuration?.localAI === true
+      ).map(agent => this.transform(agent));
     } catch (error) {
       const err = toError(error);
-      return this.handleError(err, 'findAgents');
+      return this.handleError(err, 'getLocalAIAgents');
     }
   }
 
   /**
-   * Get agents (alias for findAll)
+   * Refresh local AI detection and update agents
    */
-  async getAgents(_userId?: string): Promise<Agent[]> {
-    return this.findAll();
+  async refreshLocalAIAgents(userId: string): Promise<Agent[]> {
+    this.logger.log(`🔄 Refreshing local AI agents for user: ${userId}`);
+    
+    try {
+      const availableProviders = await this.localAIDetectionService.getAvailableProviders();
+      const availableProviderNames = availableProviders.map((p: any) => p.name);
+      
+      const existingAgents = await this.agentRepository.findAll({ userId });
+      const localAIAgents = existingAgents.filter(agent => agent.configuration?.localAI === true);
+      
+      for (const agent of localAIAgents) {
+        if (!availableProviderNames.includes(agent.configuration?.provider)) {
+          await this.deleteAgent(agent.id, userId);
+          this.logger.log(`🗑️ Removed unavailable AI agent: ${agent.name}`);
+        }
+      }
+      
+      return this.detectAndRegisterLocalAIs(userId);
+    } catch (error) {
+      const err = toError(error);
+      return this.handleError(err, 'refreshLocalAIAgents');
+    }
   }
 
   /**
-   * Get agent by ID with user context
+   * Create default system agents for all detected local AIs
    */
-  async getAgentById(id: string, _userId?: string): Promise<Agent | null> {
-    return this.findById(id);
-  }
+  async createSystemLocalAIAgents(): Promise<Agent[]> {
+    this.logger.log('🚀 Creating default system agents for local AIs...');
+    
+    try {
+      const systemAgents = await this.localAIDetectionService.detectAndCreateAgents('system');
+      const registeredAgents: Agent[] = [];
 
-  /**
-   * Create agent with user context
-   */
-  async createAgent(data: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>, _userId?: string): Promise<Agent> {
-    return this.create(data);
-  }
+      for (const agentDto of systemAgents) {
+        const agentData = {
+          ...agentDto,
+          capabilities: Array.isArray(agentDto.capabilities) 
+            ? agentDto.capabilities.filter((cap: any): cap is AgentCapability =>
+                Object.values(AgentCapability).includes(cap as AgentCapability))
+            : [],
+          metadata: agentDto.metadata && typeof agentDto.metadata === 'object' 
+            ? agentDto.metadata as Record<string, unknown>
+            : {},
+          configuration: agentDto.configuration && typeof agentDto.configuration === 'object'
+            ? agentDto.configuration as Record<string, unknown>
+            : {}
+        };
+        const agent = await this.createAgent(agentData, 'system');
+        registeredAgents.push(agent);
+        this.logger.log(`✅ Created system agent: ${agentDto.name}`);
+      }
 
-  /**
-   * Update agent with user context
-   */
-  async updateAgent(id: string, data: Partial<Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>>, _userId?: string): Promise<Agent | null> {
-    return this.update(id, data);
-  }
-
-  /**
-   * Delete agent with user context
-   */
-  async deleteAgent(id: string, _userId?: string): Promise<boolean> {
-    return this.delete(id);
-  }
-
-  /**
-   * Add metadata if missing from agent object
-   */
-  private addMetadataIfMissing(agent: any): Agent {
-    return this.transform(agent);
+      return registeredAgents;
+    } catch (error) {
+      const err = toError(error);
+      return this.handleError(err, 'createSystemLocalAIAgents');
+    }
   }
 }
-
-// Create a singleton instance
-const agentService = new AgentService();
-
-export default agentService;

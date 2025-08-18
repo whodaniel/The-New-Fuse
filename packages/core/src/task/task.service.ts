@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TaskRepository } from './task.repository';
 import { Task } from './task.entity';
-import { TaskStatus, TaskPriority } from './types';
+import { TaskStatus, TaskPriority } from '../types/types';
 @Injectable()
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);

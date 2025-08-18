@@ -1,40 +1,144 @@
-import { PrismaClient } from '@prisma/client';
-import prismaService, { PrismaService } from './prisma.service';
+/**
+ * Standardized Base Service
+ * Provides consistent patterns for all services in the application
+ */
+
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 
 /**
- * Base service class that provides common functionality for all services
+ * Generic repository interface to standardize data access
  */
+export interface IBaseRepository<T> {
+  findAll(filter?: Record<string, any>): Promise<T[]>;
+  findById(id: string): Promise<T | null>;
+  findOne(filter: Record<string, any>): Promise<T | null>;
+  create(data: Partial<T>): Promise<T>;
+  update(id: string, data: Partial<T>): Promise<T | null>;
+  delete(id: string): Promise<boolean>;
+  count(filter?: Record<string, any>): Promise<number>;
+}
+
+/**
+ * Base service that can be extended by all domain services
+ * Provides standardized CRUD operations
+ */
+@Injectable()
 export abstract class BaseService<T> {
-  protected prisma: PrismaService;
-  protected modelName: string;
-
-  constructor(modelName: string) {
-    this.prisma = prismaService;
-    this.modelName = modelName;
+  protected readonly logger: Logger;
+  protected abstract readonly repository: IBaseRepository<T>;
+  
+  constructor(serviceName?: string) {
+    this.logger = new Logger(serviceName || this.constructor.name);
   }
 
   /**
-   * Transform database model to API response
+   * Find all entities with optional filtering
    */
-  protected abstract transform(item: any): T;
-
-  /**
-   * Handle errors consistently
-   */
-  protected handleError(error: unknown, operation: string): never {
-    console.error(`Error in ${this.modelName} service during ${operation}:`, error);
-    
-    if (error instanceof Error) {
-      throw new Error(`${this.modelName} service error: ${error.message}`);
+  async findAll(filter?: Record<string, any>): Promise<T[]> {
+    try {
+      return await this.repository.findAll(filter);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding all entities: ${errorMessage}`, errorStack);
+      throw error;
     }
-    
-    throw new Error(`${this.modelName} service error: Unknown error during ${operation}`);
   }
 
   /**
-   * Log operations for debugging and monitoring
+   * Find entity by ID
    */
-  protected log(operation: string, message: string, data?: any): void {
-    console.log(`[${this.modelName}] ${operation}: ${message}`, data ? data : '');
+  async findById(id: string): Promise<T> {
+    try {
+      const entity = await this.repository.findById(id);
+      if (!entity) {
+        throw new NotFoundException(`Entity with ID ${id} not found`);
+      }
+      return entity;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding entity with ID ${id}: ${errorMessage}`, errorStack);
+      throw error;
+    }
+  }
+
+  /**
+   * Find one entity by filter
+   */
+  async findOne(filter: Record<string, any>): Promise<T | null> {
+    try {
+      return await this.repository.findOne(filter);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error finding entity: ${errorMessage}`, errorStack);
+      throw error;
+    }
+  }
+
+  /**
+   * Create a new entity
+   */
+  async create(data: Partial<T>): Promise<T> {
+    try {
+      const entity = await this.repository.create(data);
+      this.logger.log(`Created new entity with ID ${(entity as any).id || 'unknown'}`);
+      return entity;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error creating entity: ${errorMessage}`, errorStack);
+      throw error;
+    }
+  }
+
+  /**
+   * Update an entity
+   */
+  async update(id: string, data: Partial<T>): Promise<T> {
+    try {
+      const entity = await this.repository.update(id, data);
+      if (!entity) {
+        throw new NotFoundException(`Entity with ID ${id} not found`);
+      }
+      this.logger.log(`Updated entity with ID ${id}`);
+      return entity;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error updating entity with ID ${id}: ${errorMessage}`, errorStack);
+      throw error;
+    }
+  }
+
+  /**
+   * Delete an entity
+   */
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.repository.delete(id);
+      this.logger.log(`Deleted entity with ID ${id}`);
+      return result;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error deleting entity with ID ${id}: ${errorMessage}`, errorStack);
+      throw error;
+    }
+  }
+
+  /**
+   * Count entities
+   */
+  async count(filter?: Record<string, any>): Promise<number> {
+    try {
+      return await this.repository.count(filter);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      const errorStack = error instanceof Error ? error.stack : undefined;
+      this.logger.error(`Error counting entities: ${errorMessage}`, errorStack);
+      throw error;
+    }
   }
 }

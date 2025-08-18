@@ -5,7 +5,7 @@
 
 export { InfrastructureManager } from './InfrastructureManager';
 export { TemplateParser, ParsedTemplate } from './TemplateParser';
-export { StateManager, StateStorage, InMemoryStateStorage, StateIntegrityResult, CleanupResult } from './StateManager';
+export { StateManager, StateStorage } from './StateManager';
 export { ResourceProvisioner, ResourceProvider, ResourceImportConfig, ResourceStatus, ResourceHealth } from './ResourceProvisioner';
 export { TemplateValidator, ValidationRule, ValidationIssue } from './TemplateValidator';
 export { ChangeAnalyzer } from './ChangeAnalyzer';

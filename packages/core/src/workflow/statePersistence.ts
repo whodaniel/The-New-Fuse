@@ -1,4 +1,4 @@
-import { WorkflowState } from './types';
+import { WorkflowState } from '../types/types';
 interface StateManager {
   saveState(workflowId: string, state: WorkflowState): Promise<void>;
   getState(workflowId: string): Promise<any>;

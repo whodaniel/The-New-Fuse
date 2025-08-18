@@ -2,8 +2,8 @@
 // Implements intelligent caching strategies with TTL management and cache invalidation
 
 import { Injectable, Logger } from '@nestjs/common';
-import { Redis } from 'ioredis';
 import { ConfigService } from '@nestjs/config';
+import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
 
 export interface CacheOptions {
   ttl?: number; // Time to live in seconds
@@ -23,7 +23,6 @@ export interface CacheStats {
 @Injectable()
 export class RedisCacheService {
   private readonly logger = new Logger(RedisCacheService.name);
-  private redis: Redis;
   private stats: CacheStats = {
     hits: 0,
     misses: 0,
@@ -45,43 +44,17 @@ export class RedisCacheService {
     session: { ttl: 3600, compress: false, tags: ['sessions'] }, // 1 hour
   };
 
-  constructor(private configService: ConfigService) {
-    this.initializeRedis();
-  }
-
-  private initializeRedis(): void {
-    const redisConfig = {
-      host: this.configService.get('REDIS_HOST', 'localhost'),
-      port: this.configService.get('REDIS_PORT', 6379),
-      password: this.configService.get('REDIS_PASSWORD'),
-      db: this.configService.get('REDIS_DB', 0),
-      retryDelayOnFailover: 100,
-      maxRetriesPerRequest: 3,
-      lazyConnect: true,
-      keepAlive: 30000,
-      connectTimeout: 10000,
-      commandTimeout: 5000,
-    };
-
-    this.redis = new Redis(redisConfig);
-
-    this.redis.on('connect', () => {
-      this.logger.log('Connected to Redis');
-    });
-
-    this.redis.on('error', (error) => {
-      this.logger.error('Redis connection error:', error);
-    });
-
-    this.redis.on('ready', () => {
-      this.logger.log('Redis connection ready');
-    });
+  constructor(
+    private configService: ConfigService,
+    private readonly unifiedRedis: UnifiedRedisService
+  ) {
+    this.logger.log('Cache Redis Service initialized with UnifiedRedisService');
   }
 
   // Generic cache methods
   async get<T>(key: string): Promise<T | null> {
     try {
-      const cached = await this.redis.get(key);
+      const cached = await this.unifiedRedis.get(key);
       if (cached) {
         this.stats.hits++;
         return JSON.parse(cached);
@@ -104,13 +77,13 @@ export class RedisCacheService {
       const serialized = JSON.stringify(value);
       const ttl = options.ttl || 300; // Default 5 minutes
       
-      await this.redis.setex(key, ttl, serialized);
+      await this.unifiedRedis.set(key, serialized, ttl);
       
       // Store tags for bulk invalidation
       if (options.tags?.length) {
         for (const tag of options.tags) {
-          await this.redis.sadd(`tag:${tag}`, key);
-          await this.redis.expire(`tag:${tag}`, ttl);
+          await this.unifiedRedis.sadd(`tag:${tag}`, key);
+          await this.unifiedRedis.expire(`tag:${tag}`, ttl);
         }
       }
       
@@ -124,7 +97,7 @@ export class RedisCacheService {
 
   async delete(key: string): Promise<boolean> {
     try {
-      const deleted = await this.redis.del(key);
+      const deleted = await this.unifiedRedis.del(key);
       this.stats.deletes++;
       return deleted > 0;
     } catch (error) {
@@ -135,14 +108,14 @@ export class RedisCacheService {
 
   async invalidateByTag(tag: string): Promise<number> {
     try {
-      const keys = await this.redis.smembers(`tag:${tag}`);
+      const keys = await this.unifiedRedis.smembers(`tag:${tag}`);
       if (keys.length === 0) return 0;
       
-      const pipeline = this.redis.pipeline();
-      keys.forEach(key => pipeline.del(key));
-      pipeline.del(`tag:${tag}`);
+      // Batch delete using Promise.all for better performance
+      const deletePromises = keys.map(key => this.unifiedRedis.del(key));
+      await Promise.all(deletePromises);
+      await this.unifiedRedis.del(`tag:${tag}`);
       
-      await pipeline.exec();
       this.stats.deletes += keys.length;
       
       this.logger.log(`Invalidated ${keys.length} keys for tag: ${tag}`);
@@ -241,16 +214,15 @@ export class RedisCacheService {
   // Batch operations for performance
   async batchGet<T>(keys: string[]): Promise<Array<T | null>> {
     try {
-      const pipeline = this.redis.pipeline();
-      keys.forEach(key => pipeline.get(key));
+      // Use Promise.all for parallel operations
+      const results = await Promise.all(keys.map(key => this.unifiedRedis.get(key)));
       
-      const results = await pipeline.exec();
-      this.stats.hits += results.filter(r => r[1]).length;
-      this.stats.misses += results.filter(r => !r[1]).length;
+      this.stats.hits += results.filter(r => r !== null).length;
+      this.stats.misses += results.filter(r => r === null).length;
       
       return results.map(result => {
-        if (result[1]) {
-          return JSON.parse(result[1] as string);
+        if (result) {
+          return JSON.parse(result);
         }
         return null;
       });
@@ -263,18 +235,22 @@ export class RedisCacheService {
 
   async batchSet<T>(items: Array<{ key: string; value: T; options?: CacheOptions }>): Promise<boolean[]> {
     try {
-      const pipeline = this.redis.pipeline();
-      
-      items.forEach(({ key, value, options = {} }) => {
+      // Use Promise.all for parallel operations
+      const setPromises = items.map(async ({ key, value, options = {} }) => {
         const serialized = JSON.stringify(value);
         const ttl = options.ttl || 300;
-        pipeline.setex(key, ttl, serialized);
+        try {
+          await this.unifiedRedis.set(key, serialized, ttl);
+          return true;
+        } catch {
+          return false;
+        }
       });
       
-      const results = await pipeline.exec();
+      const results = await Promise.all(setPromises);
       this.stats.sets += items.length;
       
-      return results.map(result => result[0] === null);
+      return results;
     } catch (error) {
       this.logger.error('Batch set error:', error);
       return items.map(() => false);
@@ -304,8 +280,9 @@ export class RedisCacheService {
   // Cache statistics and monitoring
   async getStats(): Promise<CacheStats & { hitRate: number; memoryUsage: string }> {
     try {
-      const info = await this.redis.memory('usage');
-      const keyCount = await this.redis.dbsize();
+      // Get metrics from UnifiedRedisService
+      const health = await this.unifiedRedis.getHealth();
+      const metrics = this.unifiedRedis.getMetrics();
       
       const hitRate = this.stats.hits + this.stats.misses > 0 
         ? (this.stats.hits / (this.stats.hits + this.stats.misses)) * 100 
@@ -313,10 +290,10 @@ export class RedisCacheService {
       
       return {
         ...this.stats,
-        memory: info,
-        keys: keyCount,
+        memory: metrics.memory || 0,
+        keys: metrics.operations || 0,
         hitRate: Math.round(hitRate * 100) / 100,
-        memoryUsage: this.formatBytes(info),
+        memoryUsage: this.formatBytes(metrics.memory || 0),
       };
     } catch (error) {
       this.logger.error('Error getting cache stats:', error);
@@ -335,7 +312,7 @@ export class RedisCacheService {
     const startTime = Date.now();
     
     try {
-      await this.redis.ping();
+      await this.unifiedRedis.ping();
       return {
         status: 'healthy',
         latency: Date.now() - startTime,
@@ -371,10 +348,8 @@ export class RedisCacheService {
 
   // Cleanup and shutdown
   async onModuleDestroy(): Promise<void> {
-    if (this.redis) {
-      await this.redis.quit();
-      this.logger.log('Redis connection closed');
-    }
+    // UnifiedRedisService handles connection cleanup
+    this.logger.log('Cache Redis Service destroyed');
   }
 }
 

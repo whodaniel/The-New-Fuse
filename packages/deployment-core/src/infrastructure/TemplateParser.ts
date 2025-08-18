@@ -222,7 +222,7 @@ export class TemplateParser {
     }));
   }
 
-  private generateVariables(resources: ResourceDefinition[]): TemplateVariable[] {
+  private generateVariables(_resources: ResourceDefinition[]): TemplateVariable[] {
     const variables: TemplateVariable[] = [];
     const commonProperties = ['region', 'environment', 'project'];
 

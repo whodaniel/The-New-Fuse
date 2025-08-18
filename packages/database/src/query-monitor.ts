@@ -48,11 +48,7 @@ class QueryPerformanceMonitor {
     // Log slow queries
     (this.prisma as any).$on('query', (e: any) => {
       if (e.duration > this.slowQueryThreshold) {
-        console.warn('Slow query detected', {
-          query: e.query,
-          duration: e.duration,
-          params: e.params,
-        });
+        
       }
     });
   }

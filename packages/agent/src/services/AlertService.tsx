@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService'; // Corrected import path assuming BaseService is in core
-import { Logger } from '../utils/Logger';
+import { Logger } from '@the-new-fuse/core/src/utils/Logger';
 
 // TODO: Define specific alert types/interfaces if needed
 export interface AlertPayload {

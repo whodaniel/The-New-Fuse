@@ -1,4 +1,4 @@
-import { PrismaClient, Prisma } from '../../generated/prisma';
+import { PrismaClient } from '../../generated/prisma';
 
 export interface IRepository<T, CreateInput, UpdateInput, WhereInput> {
   findById(id: string): Promise<T | null>;

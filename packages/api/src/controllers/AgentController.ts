@@ -1,56 +1,48 @@
 import { Request, Response } from 'express';
-// Correct the import path for AgentService and PrismaService
-import { AgentService } from '../modules/services/agent.service';
-import { PrismaService } from '../services/prisma.service'; // Assuming PrismaService is here
-import { toError } from '../utils/error'; // Import the helper
-import { CurrentUser } from '../modules/decorators/current-user.decorator'; // Import CurrentUser decorator
-import { UseGuards, Get, Post, Put, Delete, Param, Body } from '@nestjs/common'; // Import UseGuards and other decorators
-import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard'; // Import JwtAuthGuard
+import { AgentService } from '../services/agent.service';
+import { toError } from '../utils/error';
+import { CurrentUser } from '../modules/decorators/current-user.decorator';
+import { UseGuards, Get, Post, Put, Delete, Param, Body, Controller } from '@nestjs/common';
+import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { AgentDto } from '../modules/controllers/dto/agent.dto'; // Updated import path
 
-// Define User interface if not globally available
 interface User {
   id: string;
   [key: string]: any;
 }
 
-@UseGuards(JwtAuthGuard) // Apply auth guard to the controller
+@ApiTags('agents')
+@Controller('agents')
+@UseGuards(JwtAuthGuard)
 export class AgentController {
-  // Remove private agentService declaration
-
-  // Inject services via constructor
   constructor(
     private readonly agentService: AgentService,
-    // PrismaService might not be directly needed if AgentService handles it
-    // private readonly prisma: PrismaService
   ) {}
 
-  @Get() // Assuming GET '/' maps here
-  async getAllAgents(@CurrentUser() user: User, res: Response) { // Add CurrentUser decorator
+  @Get()
+  @ApiOperation({ summary: 'Get all agents for authenticated user' })
+  @ApiResponse({ status: 200, description: 'List of agents', type: [AgentDto] })
+  async getAllAgents(@CurrentUser() user: User, res: Response) {
     try {
-      // Pass userId to the service method
       const agents = await this.agentService.getAgents(user.id);
       return res.status(200).json(agents);
-    } catch (error) { // Change to unknown
-      const err = toError(error); // Use helper
+    } catch (error) {
+      const err = toError(error);
       return res.status(500).json({ error: err.message });
     }
   }
 
-  @Get('/:id') // Assuming GET '/:id' maps here
-  async getAgentById(@Param('id') id: string, @CurrentUser() user: User, res: Response) { // Add CurrentUser decorator and Param
+  @Get(':id')
+  @ApiOperation({ summary: 'Get agent by ID' })
+  @ApiResponse({ status: 200, description: 'Agent found', type: AgentDto })
+  @ApiResponse({ status: 404, description: 'Agent not found' })
+  async getAgentById(@Param('id') id: string, @CurrentUser() user: User, res: Response) {
     try {
-      // Pass userId to the service method
       const agent = await this.agentService.getAgentById(id, user.id);
-
-      // Service now throws error if not found, so no need to check here
-      // if (!agent) {
-      //   return res.status(404).json({ error: 'Agent not found' });
-      // }
-
       return res.status(200).json(agent);
-    } catch (error) { // Change to unknown
-      const err = toError(error); // Use helper
-      // Handle specific "not found" errors potentially thrown by the service
+    } catch (error) {
+      const err = toError(error);
       if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
       }
@@ -58,36 +50,38 @@ export class AgentController {
     }
   }
 
-  @Post() // Assuming POST '/' maps here
-  async createAgent(@Body() createAgentDto: any, @CurrentUser() user: User, res: Response) { // Add CurrentUser decorator and Body
+  @Post()
+  @ApiOperation({ summary: 'Create a new agent' })
+  @ApiBody({ type: AgentDto })
+  @ApiResponse({ status: 201, description: 'Agent created', type: AgentDto })
+  async createAgent(@Body() createAgentDto: AgentDto, @CurrentUser() user: User, res: Response) {
     try {
-      // Pass userId to the service method
-      const agent = await this.agentService.createAgent(createAgentDto, user.id);
+      // Remove timestamp fields that should be set by the service
+      const { createdAt, updatedAt, ...agentData } = createAgentDto;
+      const agent = await this.agentService.createAgent(agentData, user.id);
       return res.status(201).json(agent);
-    } catch (error) { // Change to unknown
-      const err = toError(error); // Use helper
-      // Handle potential duplicate name errors from the service
+    } catch (error) {
+      const err = toError(error);
       if (err.message?.includes('already exists')) {
-         return res.status(409).json({ error: err.message }); // 409 Conflict
+         return res.status(409).json({ error: err.message });
       }
       return res.status(400).json({ error: err.message });
     }
   }
 
-  @Put('/:id') // Assuming PUT '/:id' maps here
-  async updateAgent(@Param('id') id: string, @Body() updateAgentDto: any, @CurrentUser() user: User, res: Response) { // Add CurrentUser decorator, Param, Body
+  @Put(':id')
+  @ApiOperation({ summary: 'Update an agent' })
+  @ApiBody({ type: AgentDto })
+  @ApiResponse({ status: 200, description: 'Agent updated', type: AgentDto })
+  @ApiResponse({ status: 404, description: 'Agent not found' })
+  async updateAgent(@Param('id') id: string, @Body() updateAgentDto: AgentDto, @CurrentUser() user: User, res: Response) {
     try {
-      // Pass userId to the service method
-      const updatedAgent = await this.agentService.updateAgent(id, updateAgentDto, user.id);
-
-      // Service throws if not found
-      // if (!updatedAgent) {
-      //   return res.status(404).json({ error: 'Agent not found' });
-      // }
-
+      // Remove timestamp fields that should be managed by the service
+      const { createdAt, updatedAt, ...agentData } = updateAgentDto;
+      const updatedAgent = await this.agentService.updateAgent(id, agentData, user.id);
       return res.status(200).json(updatedAgent);
-    } catch (error) { // Change to unknown
-      const err = toError(error); // Use helper
+    } catch (error) {
+      const err = toError(error);
        if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
       }
@@ -95,21 +89,19 @@ export class AgentController {
     }
   }
 
-  @Delete('/:id') // Assuming DELETE '/:id' maps here
-  async deleteAgent(@Param('id') id: string, @CurrentUser() user: User, res: Response) { // Add CurrentUser decorator and Param
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete an agent' })
+  @ApiResponse({ status: 200, description: 'Agent deleted' })
+  @ApiResponse({ status: 404, description: 'Agent not found' })
+  async deleteAgent(@Param('id') id: string, @CurrentUser() user: User, res: Response) {
     try {
-      // Pass userId to the service method
       const deleted = await this.agentService.deleteAgent(id, user.id);
-
-      // Check the boolean result from the service
       if (!deleted) {
-         // This case might not happen if service throws on not found
          return res.status(404).json({ error: 'Agent not found or could not be deleted' });
       }
-
-      return res.status(204).send(); // No Content
-    } catch (error) { // Change to unknown
-      const err = toError(error); // Use helper
+      return res.status(204).send();
+    } catch (error) {
+      const err = toError(error);
        if (err.message?.includes('not found')) {
         return res.status(404).json({ error: err.message });
       }
@@ -117,7 +109,3 @@ export class AgentController {
     }
   }
 }
-// Make sure necessary imports like Get, Post, Put, Delete, Param, Body are added from @nestjs/common
-// If this controller is used with Express directly (not NestJS), decorators like @UseGuards, @CurrentUser, @Param, @Body won't work.
-// The routing logic in `routes/agents.ts` would need to be updated instead to extract user from req and pass it.
-// Based on the presence of NestJS decorators and modules, assuming this is a NestJS controller.

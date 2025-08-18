@@ -1,4 +1,4 @@
-import { WorkflowTemplate } from './types';
+import { WorkflowTemplate } from '../types/types';
 interface User {
   id: string;
   roles: string[];

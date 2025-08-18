@@ -166,7 +166,7 @@ export interface WorkflowStats {
     error: string;
     count: number;
   }>;
-  performanceMetrics: unknown;
+  performanceMetrics: {
     throughput: number; // executions per hour
     errorRate: number; // percentage
     averageStepTime: Record<string, number>;

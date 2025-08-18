@@ -1,6 +1,6 @@
 
 import React, { useMemo } from 'react';
-import { Table, View, ViewType, Row, Column, CellValue, AppState, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from "../../fairtable-core/src";
+import { Table, View, ViewType, Row, Column, CellValue, AppState, FilterOperator, DataType, KanbanViewOptions, TimelineViewOptions } from '@the-new-fuse/fairtable-core';
 import GridView from './GridView'; 
 import KanbanView from './KanbanView'; 
 import TimelineView from './TimelineView';

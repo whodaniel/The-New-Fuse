@@ -15,6 +15,7 @@ export type { CapabilityCategory, CapabilityLifecycleState, CapabilityCompatibil
 export type { ConnectionType, ConnectionEvent, ConnectionPoolConfig, ConnectionFactory } from './connection';
 export type { JSONRPCErrorCode, MCPErrorCode, ErrorSeverity, ErrorCategory, ErrorHandler, ErrorRecoveryStrategy, ErrorStatistics } from './error';
 export type { RetryPolicy, TimeoutConfig, HealthCheckResult, VersionInfo, NotificationCallback, Pagination, SortConfig, FilterConfig } from './common';
+export type { PerformanceMetrics, Alert, AlertSeverity, AlertStatus, TimeSeries, MetricDataPoint, DashboardConfig, DashboardPanel, MonitoringConfig, LoadTestConfig, LoadTestResult, CacheMetrics, ConnectionPoolMetrics } from './monitoring';
 export { LogLevel, ServiceStatus, LoadBalancingStrategy } from './common';
 
 // Export classes

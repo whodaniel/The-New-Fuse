@@ -4,8 +4,6 @@ export interface AgentWorkflow {
   description?: string;
   tasks: WorkflowTask[];
   apis?: {
-  // Implementation needed
-}
     [agentId: string]: APISpec;
   };
   configuration?: Record<string, unknown>;
@@ -30,8 +28,6 @@ export interface APISpec {
   endpoints?: APIEndpoint[];
   // Authentication configuration
   auth?: {
-  // Implementation needed
-}
     type: 'basic' | 'bearer' | 'oauth2' | 'apiKey';
     credentials?: Record<string, string>;
   };
@@ -46,17 +42,11 @@ export interface APIEndpoint {
   description?: string;
   parameters?: APIParameter[];
   requestBody?: {
-  // Implementation needed
-}
     contentType: string;
     schema?: Record<string, unknown>;
   };
   responses?: {
-  // Implementation needed
-}
     [statusCode: string]: {
-  // Implementation needed
-}
       description: string;
       schema?: Record<string, unknown>;
     };

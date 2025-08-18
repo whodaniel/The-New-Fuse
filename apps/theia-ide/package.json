@@ -6,13 +6,15 @@
   "main": "enhanced-server.js",
   "scripts": {
     "build": "node build-theia.js",
+    "build:optimized": "bun install && bunx @theia/cli@1.59.0 build --mode production",
     "start": "node enhanced-server.js",
     "start:basic": "node simple-server.js",
-    "dev": "PORT=3006 node enhanced-server.js",
+    "dev": "PORT=3007 node enhanced-server.js",
     "clean": "rm -rf lib dist node_modules/.cache",
     "rebuild": "bun run clean && bun install && bun run build",
-    "theia:build": "theia build",
-    "theia:start": "theia start"
+    "theia:build": "theia build --mode production",
+    "theia:start": "theia start",
+    "theia": "theia"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.16.0",
@@ -20,7 +22,6 @@
     "@theia/ai-chat": "1.59.0",
     "@theia/ai-core": "1.59.0",
     "@theia/ai-huggingface": "1.59.0",
-    "@theia/ai-mcp": "^1.59.0",
     "@theia/ai-ollama": "1.59.0",
     "@theia/ai-openai": "1.59.0",
     "@theia/core": "1.59.0",

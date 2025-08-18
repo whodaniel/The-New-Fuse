@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
-import { MCPCapability } from './types';
+import { MCPCapability } from '../types/types';
 export interface MCPAgent {
   id: string;
   name: string;

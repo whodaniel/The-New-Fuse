@@ -20,7 +20,7 @@ export class MemorySystem {
       provider: 'local',
       connectionString: 'memory://local',
       maxMemorySize: 100 * 1024 * 1024, // 100MB
-      retentionPolicy: unknown;
+      retentionPolicy: {
         defaultTTL: 24 * 60 * 60, // 24 hours
         maxAge: 7 * 24 * 60 * 60, // 7 days
         maxItems: 10000,

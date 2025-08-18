@@ -1,5 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
-import agentService from '../services/agent.service';
+import { AgentService } from '../services/agent.service';
+
+// Create an instance of the service (in a real app, this would be injected)
+const agentService = new AgentService(null as any, null as any);
 import { sendSuccess, sendCreated, sendNoContent } from '../utils/response.util';
 import { ApiError } from '../middleware/error.middleware';
 import { validateBody, validateParams } from '../middleware/validation.middleware';

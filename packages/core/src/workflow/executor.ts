@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { WorkflowTemplate, WorkflowExecution, WorkflowStatus, WorkflowStep, WorkflowStepType, WorkflowExecutionContext } from './types';
+import { WorkflowTemplate, WorkflowExecution, WorkflowStatus, WorkflowStep, WorkflowStepType, WorkflowExecutionContext } from '../types/types';
 import { WorkflowValidator } from './validator';
 @Injectable()
 export class WorkflowExecutor {

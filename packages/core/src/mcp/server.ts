@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../utils/logger';
-import { MCPMessage, MCPCapability, ProtocolVersion } from './types';
+import { MCPMessage, MCPCapability, ProtocolVersion } from '../types/types';
 import { McpToolRegistry } from './McpToolRegistry';
 import { MCPRegistry } from './MCPRegistry';
 import http from 'http';

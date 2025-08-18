@@ -1,12 +1,16 @@
-/**
- * @fileoverview Production-ready configuration service
- */
 
 import { Injectable } from '@nestjs/common';
-import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types/core';
-import { ServiceState, ENVIRONMENTS } from '../constants/types';
+import { SystemConfig, DatabaseConfig, RedisConfig, MonitoringConfig, AIConfig } from '../types';
+import { ServiceState } from '../types';
 import { logger } from '../utils/logger';
 import { ConfigurationError } from '../utils/errors';
+
+export const ENVIRONMENTS = {
+  DEVELOPMENT: 'development',
+  PRODUCTION: 'production',
+  STAGING: 'staging',
+  TEST: 'test',
+} as const;
 
 @Injectable()
 export class ConfigService {
@@ -20,7 +24,7 @@ export class ConfigService {
   ];
 
   constructor() {
-    logger.setContext({ service: 'ConfigService' });
+    logger.setContext('ConfigService');
     this.config = this.loadConfiguration();
   }
 
@@ -178,7 +182,7 @@ export class ConfigService {
     // Check required environment variables
     const missing = this.requiredEnvVars.filter(key => !process.env[key]);
     if (missing.length > 0) {
-      throw new ConfigurationError(): unknown {
+      throw new ConfigurationError(
         `Missing required environment variables: ${missing.join(', ')}`,
         { missing }
       );
@@ -187,7 +191,7 @@ export class ConfigService {
     // Validate environment
     const validEnvironments = Object.values(ENVIRONMENTS);
     if (!validEnvironments.includes(this.config.environment as any)) {
-      throw new ConfigurationError(): unknown {
+      throw new ConfigurationError(
         `Invalid environment: ${this.config.environment}. Must be one of: ${validEnvironments.join(', ')}`,
         { environment: this.config.environment, validEnvironments }
       );
@@ -195,7 +199,7 @@ export class ConfigService {
 
     // Validate database URL
     if (!this.isValidUrl(this.config.database.url)) {
-      throw new ConfigurationError(): unknown {
+      throw new ConfigurationError(
         'Invalid database URL format',
         { url: this.config.database.url }
       );
@@ -203,7 +207,7 @@ export class ConfigService {
 
     // Validate Redis configuration
     if (!this.config.redis.host || this.config.redis.port <= 0 || this.config.redis.port > 65535) {
-      throw new ConfigurationError(): unknown {
+      throw new ConfigurationError(
         'Invalid Redis configuration',
         { host: this.config.redis.host, port: this.config.redis.port }
       );
@@ -330,11 +334,11 @@ export class ConfigService {
     return {
       ...this.config,
       // Mask sensitive information
-      database: unknown;
+      database: {
         ...this.config.database,
         url: this.maskSensitiveUrl(this.config.database.url),
       },
-      redis: unknown;
+      redis: {
         ...this.config.redis,
         password: this.config.redis.password ? '***masked***' : undefined,
       },
@@ -371,7 +375,7 @@ export class ConfigService {
     } catch (error) {
       return {
         status: 'unhealthy',
-        details: unknown;
+        details: {
           error: (error as Error).message,
           state: this.state,
         },

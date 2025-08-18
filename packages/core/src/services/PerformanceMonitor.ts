@@ -19,11 +19,11 @@ export class PerformanceMonitor {
   private responseTimes: number[] = [];
   private activeConnections: number = 0;
 
-  constructor(): unknown {
+  constructor(
     private readonly metricsCollector: MetricsCollector,
     private readonly systemMonitor: SystemMonitor
   ) {
-    logger.setContext({ service: 'PerformanceMonitor' });
+    logger.setContext('PerformanceMonitor');
   }
 
   async start(): Promise<void> {
@@ -179,7 +179,7 @@ export class PerformanceMonitor {
       errorCount: this.errorCount,
       responseTime,
       activeConnections: this.activeConnections,
-      databaseConnections: unknown;
+      databaseConnections: {
         active: 0, // Will be updated by database service
         idle: 0,   // Will be updated by database service
         total: 0,  // Will be updated by database service

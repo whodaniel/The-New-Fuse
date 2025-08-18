@@ -308,7 +308,7 @@ export class ChangeAnalyzer {
     return resourceNames;
   }
 
-  private determineChangeAction(variableName: string, newValue: any): ChangeAction {
+  private determineChangeAction(variableName: string, _newValue: any): ChangeAction {
     // Determine if variable change requires replacement or just update
     const replacementVariables = ['region', 'availabilityZone', 'instanceType'];
     
@@ -627,7 +627,7 @@ class TimelineCalculator {
 
   private calculateTotalDuration(
     phases: ExecutionPhase[],
-    dependencies: PhaseDependency[]
+    _dependencies: PhaseDependency[]
   ): number {
     // Simple sequential calculation - in production, would consider parallelization
     return phases.reduce((total, phase) => total + phase.duration, 0);

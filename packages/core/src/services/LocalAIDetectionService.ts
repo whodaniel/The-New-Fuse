@@ -20,7 +20,7 @@ export class LocalAIDetectionService {
   private readonly detectionIntervalMs = 60000; // Check every minute
 
   constructor() {
-    logger.setContext({ service: 'LocalAIDetectionService' });
+    logger.setContext('LocalAIDetectionService');
     this.initializeDefaultProviders();
   }
 
@@ -337,7 +337,7 @@ export class LocalAIDetectionService {
       const response = await fetch(url, {
         ...options,
         signal: controller.signal,
-        headers: unknown;
+        headers: {
           'Content-Type': 'application/json',
           ...options.headers,
         },
@@ -352,7 +352,7 @@ export class LocalAIDetectionService {
   }
 
   // Utility methods for external use
-  async testProvider(providerName: string): Promise<{
+  public async testProvider(providerName: string): Promise<{
     available: boolean;
     models: string[];
     responseTime: number;
@@ -391,7 +391,7 @@ export class LocalAIDetectionService {
     }
   }
 
-  getProviderStats(): Record<string, any> {
+  public getProviderStats(): Record<string, any> {
     const providers = Array.from(this.providers.values());
     const available = providers.filter(p => p.isAvailable);
     const byType = providers.reduce((acc, p) => {
@@ -427,12 +427,12 @@ export class LocalAIDetectionService {
           endpoint: provider.endpoint,
           capabilities: this.getCapabilitiesForProvider(provider),
           models: models,
-          metadata: unknown;
+          metadata: {
             localAI: true,
             detectedAt: new Date().toISOString(),
             providerType: provider.type,
           },
-          configuration: unknown;
+          configuration: {
             provider: provider.name,
             endpoint: provider.endpoint,
             localAI: true,
@@ -469,13 +469,13 @@ export class LocalAIDetectionService {
           endpoint: provider.endpoint,
           capabilities: this.getSystemCapabilitiesForProvider(provider),
           models: models,
-          metadata: unknown;
+          metadata: {
             localAI: true,
             system: true,
             detectedAt: new Date().toISOString(),
             providerType: provider.type,
           },
-          configuration: unknown;
+          configuration: {
             provider: provider.name,
             endpoint: provider.endpoint,
             localAI: true,

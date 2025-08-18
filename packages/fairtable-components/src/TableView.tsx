@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect, useCallback, DragEvent } from 'react';
-import { Table, Column, Row, DataType, CellValue, AppState, View } from "../../fairtable-core/src";
-import { DEFAULT_COLUMN_WIDTH, ROW_HEIGHT } from '../../fairtable-core/src';
+import { Table, Column, Row, DataType, CellValue, AppState, View, DEFAULT_COLUMN_WIDTH, ROW_HEIGHT } from '@the-new-fuse/fairtable-core';
 import { PlusIcon, TrashIcon } from './Icons';
 import ColumnHeader from './ColumnHeader';
 import TableCell from './TableCell';

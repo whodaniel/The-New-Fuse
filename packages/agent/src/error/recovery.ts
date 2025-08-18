@@ -156,7 +156,7 @@ export class ErrorRecovery {
       maxRetries: 2,
       backoffMultiplier: 1.5,
       execute: async (error: Error, attempt: number) => {
-        console.log(`Timeout recovery attempt ${attempt}`);
+        
         return false; // Placeholder - should implement timeout handling
       }
     });

@@ -11,3 +11,28 @@ export type {
   AuthManagerConfig,
   AuthAuditEvent
 } from './AuthenticationManager';
+
+export { RBACManager } from './RBACManager';
+export type {
+  Permission,
+  Role,
+  ResourceAccessPolicy,
+  PolicyCondition,
+  AccessControlResult,
+  RBACConfig
+} from './RBACManager';
+
+export { PermissionValidator, MCPOperation, MCPResourceType } from './PermissionValidator';
+export type {
+  PermissionValidationResult,
+  ValidationContext
+} from './PermissionValidator';
+
+export { AuditLogger, FileAuditStorage, AuditSeverity, AuditCategory } from './AuditLogger';
+export type {
+  EnhancedAuditEvent,
+  AuditStorageBackend,
+  AuditQueryFilter,
+  AuditStorageStats,
+  AuditLoggerConfig
+} from './AuditLogger';

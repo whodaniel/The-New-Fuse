@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './task.entity';
-import { TaskStatus } from './types';
+import { TaskStatus } from '../types/types';
 @Injectable()
 export class TaskRepository {
   constructor(): unknown {

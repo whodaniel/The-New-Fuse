@@ -136,7 +136,7 @@ export class MemoryManager {
     const memoryContent: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'> = {
       content,
       type,
-      metadata: unknown;
+      metadata: {
         source: 'agent',
         agentId,
         tags: [`agent:${agentId}`, type],
@@ -180,7 +180,7 @@ export class MemoryManager {
     const memoryContent: Omit<MemoryContent, 'id' | 'createdAt' | 'updatedAt' | 'accessCount' | 'lastAccessed'> = {
       content,
       type: MemoryContentType.KNOWLEDGE,
-      metadata: unknown;
+      metadata: {
         source: 'knowledge_base',
         tags: ['knowledge', ...tags],
         importance: 0.8,

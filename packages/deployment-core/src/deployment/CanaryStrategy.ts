@@ -521,7 +521,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async runCanaryAnalysis(analysis: any[], weight: number, deploymentId: string): Promise<any[]> {
+  private async runCanaryAnalysis(analysis: any[], weight: number, _deploymentId: string): Promise<any[]> {
     this.logger.debug(`Running canary analysis at ${weight}% traffic`);
     
     // Simulate analysis results
@@ -533,13 +533,13 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     }));
   }
 
-  private async waitForManualApproval(deploymentId: string, stepNumber: number): Promise<void> {
+  private async waitForManualApproval(_deploymentId: string, stepNumber: number): Promise<void> {
     this.logger.debug(`Waiting for manual approval for step ${stepNumber}`);
     // This would integrate with approval system
     await new Promise(resolve => setTimeout(resolve, 5000));
   }
 
-  private async promoteCanaryToStable(config: DeploymentConfig, deploymentId: string): Promise<void> {
+  private async promoteCanaryToStable(config: DeploymentConfig, _deploymentId: string): Promise<void> {
     this.logger.debug('Promoting canary to stable');
     
     // Scale up canary to full replicas
@@ -558,12 +558,12 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     }
   }
 
-  private async shiftTrafficToStable(deploymentId: string): Promise<void> {
+  private async shiftTrafficToStable(_deploymentId: string): Promise<void> {
     this.logger.debug('Shifting all traffic back to stable');
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async removeCanaryInstances(serviceNames: string[], deploymentId: string): Promise<void> {
+  private async removeCanaryInstances(serviceNames: string[], _deploymentId: string): Promise<void> {
     this.logger.debug(`Removing canary instances for services: ${serviceNames.join(', ')}`);
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
@@ -573,7 +573,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     await new Promise(resolve => setTimeout(resolve, 1000));
   }
 
-  private async cleanupTrafficSplitting(config: DeploymentConfig): Promise<void> {
+  private async cleanupTrafficSplitting(_config: DeploymentConfig): Promise<void> {
     this.logger.debug('Cleaning up traffic splitting configuration');
     await new Promise(resolve => setTimeout(resolve, 1000));
   }

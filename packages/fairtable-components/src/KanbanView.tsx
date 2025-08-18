@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState, DragEvent } from 'react';
-import { Table, View, Row, Column, CellValue, AppState, KanbanViewOptions, DataType, SelectOption } from "../../fairtable-core/src";
+import { Table, View, Row, Column, CellValue, AppState, KanbanViewOptions, DataType, SelectOption } from '@the-new-fuse/fairtable-core';
 import TableCell from './TableCell'; // For rendering card content, or a simplified card display
 import { PlusIcon } from './Icons'; // For "Add new" in unclassified
 

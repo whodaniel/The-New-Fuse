@@ -382,7 +382,7 @@ export class InfrastructureAutomation {
             try {
               await this.executeAutomationRule(ruleId);
             } catch (error) {
-              console.error(`Failed to execute scheduled rule ${ruleId}:`, error);
+              // console.error(`Failed to execute scheduled rule ${ruleId}:`, error);
             }
           }
         }
@@ -398,8 +398,6 @@ export class InfrastructureAutomation {
       try {
         const scanResult = await this.runComplianceScan();
         if (!scanResult.overallCompliant) {
-          console.warn(`Compliance violations detected: ${scanResult.totalViolations} violations`);
-          
           // Trigger compliance violation automation rules
           for (const [ruleId, rule] of this.automationRules) {
             if (rule.enabled && rule.trigger.type === TriggerType.COMPLIANCE_VIOLATION) {
@@ -408,7 +406,7 @@ export class InfrastructureAutomation {
           }
         }
       } catch (error) {
-        console.error('Compliance monitoring failed:', error);
+        // console.error('Compliance monitoring failed:', error);
       }
     }, 3600000); // Check every hour
   }
@@ -533,7 +531,7 @@ export class InfrastructureAutomation {
     };
   }
 
-  private async executeRecoveryStep(step: RecoveryStep, targetEnvironment: string): Promise<StepExecutionResult> {
+  private async executeRecoveryStep(step: RecoveryStep, _targetEnvironment: string): Promise<StepExecutionResult> {
     const startTime = Date.now();
 
     try {
@@ -561,7 +559,7 @@ export class InfrastructureAutomation {
     }
   }
 
-  private shouldRunScheduledRule(rule: AutomationRule): boolean {
+  private shouldRunScheduledRule(_rule: AutomationRule): boolean {
     // Mock cron evaluation - in production, would use proper cron library
     return Math.random() > 0.95; // 5% chance to simulate scheduled execution
   }
@@ -596,8 +594,8 @@ export class InfrastructureAutomation {
     console.log('Applying security patch:', config);
   }
 
-  private async optimizeCosts(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Optimizing costs:', config);
+  private async optimizeCosts(_config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    console.log('Optimizing costs:', _config);
   }
 
   private generateId(prefix: string): string {

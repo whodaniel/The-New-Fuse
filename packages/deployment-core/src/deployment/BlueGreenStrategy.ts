@@ -230,7 +230,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     }
 
     // Validate services have proper configuration for blue-green
-    config.services.forEach((service, index) => {
+    config.services.forEach((service) => {
       if (!service.replicas || service.replicas < 1) {
         errors.push(`Service ${service.name}: Must have at least 1 replica for blue-green deployment`);
       }
@@ -576,7 +576,7 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     this.logger.debug(`Setting up networking for ${env} environment`);
   }
 
-  private async setupEnvironmentMonitoring(config: DeploymentConfig, env: 'blue' | 'green', deploymentId: string): Promise<void> {
+  private async setupEnvironmentMonitoring(config: DeploymentConfig, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Setting up monitoring for ${env} environment`);
   }
 
@@ -585,12 +585,12 @@ export class BlueGreenStrategy extends BaseDeploymentStrategy {
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
-  private async runAnalysis(analysis: any, env: 'blue' | 'green', deploymentId: string): Promise<void> {
+  private async runAnalysis(analysis: any, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Running analysis ${analysis.name} on ${env} environment`);
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
 
-  private async runSmokeTests(config: DeploymentConfig, env: 'blue' | 'green', deploymentId: string): Promise<void> {
+  private async runSmokeTests(config: DeploymentConfig, env: 'blue' | 'green', _deploymentId: string): Promise<void> {
     this.logger.debug(`Running smoke tests on ${env} environment`);
     await new Promise(resolve => setTimeout(resolve, 5000));
   }

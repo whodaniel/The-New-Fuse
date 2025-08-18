@@ -1,1 +1,1 @@
-import { WorkflowStatus } from './types';
+import { WorkflowStatus } from '../types/types';

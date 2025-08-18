@@ -50,7 +50,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   private connectionPool: any; // In production, this would be a proper connection pool
 
   constructor(private readonly configService: ConfigService) {
-    logger.setContext({ service: 'DatabaseService' });
+    logger.setContext('DatabaseService');
     this.stats = this.initializeStats();
   }
 
@@ -168,7 +168,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         executionTime,
       });
       
-      throw new DatabaseError(): unknown {
+      throw new DatabaseError(
         'Query execution failed',
         'DATABASE_QUERY_FAILED',
         {
@@ -270,7 +270,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         operationsCount: context.operations.length,
       });
       
-      throw new DatabaseError(): unknown {
+      throw new DatabaseError(
         'Transaction failed',
         'DATABASE_TRANSACTION_FAILED',
         {
@@ -337,15 +337,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       
       return {
         status: 'healthy',
-        details: unknown;
+        details: {
           state: this.state,
           responseTime,
-          connections: unknown;
+          connections: {
             total: stats.totalConnections,
             active: stats.activeConnections,
             idle: stats.idleConnections,
           },
-          queries: unknown;
+          queries: {
             total: stats.totalQueries,
             averageTime: stats.averageQueryTime,
             errorCount: stats.errorCount,
@@ -356,7 +356,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
     } catch (error) {
       return {
         status: 'unhealthy',
-        details: unknown;
+        details: {
           state: this.state,
           error: (error as Error).message,
           lastError: new Date().toISOString(),
@@ -368,7 +368,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
   // Private methods
   private ensureRunning(): void {
     if (this.state !== ServiceState.RUNNING) {
-      throw new DatabaseError(): unknown {
+      throw new DatabaseError(
         'DatabaseService is not running',
         'DATABASE_SERVICE_NOT_RUNNING',
         { state: this.state }

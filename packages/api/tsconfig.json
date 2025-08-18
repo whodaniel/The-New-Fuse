@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "./dist",
     "rootDir": "./src",
-    "rootDir": "./src",
     "declaration": true,
     "composite": true,
     "noEmitOnError": false,
@@ -14,10 +13,22 @@
     "target": "ES2022",
     "moduleResolution": "Node",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.ts"],
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules", 
+    "dist", 
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.js",
+    "../core/**/*",
+    "../api-types/**/*.test.ts",
+    "../types/**/*.test.ts"
+  ],
   "references": [
     { "path": "../types" },
     { "path": "../database" }

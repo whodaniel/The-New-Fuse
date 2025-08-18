@@ -82,10 +82,31 @@ export * from './broker';
 export * from './factory';
 
 // Integration bridges
-export * from './integrations';
+export {
+  MCPWorkflowIntegration,
+  MCPAgentIntegration, 
+  MCPServiceMesh,
+  WorkflowExecutionMonitor,
+  ServiceMeshMonitor,
+  ServiceMeshScaler
+} from './integrations';
 
 // Authentication and authorization
 export * from './auth';
+
+// Monitoring and metrics (prefer monitoring over integrations for Alert types)
+export * from './monitoring';
+
+// Performance optimization
+export {
+  LRUCache,
+  MultiLevelCache,
+  CacheFactory,
+  PerformanceValidator,
+  OptimizedConnectionPool,
+  ConnectionPoolFactory,
+  LoadTestRunner
+} from './performance';
 
 // Version information
 export const VERSION = '1.0.0';

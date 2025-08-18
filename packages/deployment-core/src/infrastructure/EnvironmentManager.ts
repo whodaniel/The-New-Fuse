@@ -507,7 +507,7 @@ export class EnvironmentManager {
 
   private async runValidationCheck(
     check: ValidationCheck,
-    environment: Environment
+    _environment: Environment
   ): Promise<{ passed: boolean; message: string }> {
     // Mock validation check implementation
     switch (check.type) {
@@ -526,16 +526,16 @@ export class EnvironmentManager {
 
   private async performBlueGreenPromotion(source: Environment, target: Environment): Promise<void> {
     // Mock blue-green promotion implementation
-    console.log(`Performing blue-green promotion from ${source.name} to ${target.name}`);
+    
   }
 
-  private async performCanaryPromotion(source: Environment, target: Environment): Promise<void> {
+  private async performCanaryPromotion(_source: Environment, _target: Environment): Promise<void> {
     // Mock canary promotion implementation
-    console.log(`Performing canary promotion from ${source.name} to ${target.name}`);
+    
   }
 
-  private async performRollingPromotion(source: Environment, target: Environment): Promise<void> {
+  private async performRollingPromotion(_source: Environment, _target: Environment): Promise<void> {
     // Mock rolling promotion implementation
-    console.log(`Performing rolling promotion from ${source.name} to ${target.name}`);
+    
   }
 }

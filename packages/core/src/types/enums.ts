@@ -1,55 +1,46 @@
-export {}
-exports.LogLevel = exports.VerificationLevel = exports.MessageStatus = exports.MessageType = exports.MessageRole = void 0;
 // Message related enums
-exports.MessageRole = {
-  // Implementation needed
+export enum MessageRole {
+  USER = 'USER',
+  SYSTEM = 'SYSTEM',
+  ASSISTANT = 'ASSISTANT',
+  TOOL = 'TOOL',
+  FUNCTION = 'FUNCTION'
 }
-    USER: USER,
-    SYSTEM: SYSTEM,
-    ASSISTANT: ASSISTANT,
-    TOOL: TOOL,
-    FUNCTION: FUNCTION
-};
-exports.MessageType = {
-  // Implementation needed
+
+export enum MessageType {
+  TEXT = 'TEXT',
+  SYSTEM = 'SYSTEM',
+  IMAGE = 'IMAGE',
+  VIDEO = 'VIDEO',
+  AUDIO = 'AUDIO',
+  FILE = 'FILE',
+  COMMAND = 'COMMAND',
+  STREAM = 'STREAM',
+  CODE = 'CODE',
+  MARKDOWN = 'MARKDOWN'
 }
-    TEXT: TEXT,
-    SYSTEM: SYSTEM,
-    IMAGE: IMAGE,
-    VIDEO: VIDEO,
-    AUDIO: AUDIO,
-    FILE: FILE,
-    COMMAND: COMMAND,
-    STREAM: STREAM,
-    CODE: CODE,
-    MARKDOWN: MARKDOWN
-};
-exports.MessageStatus = {
-  // Implementation needed
+
+export enum MessageStatus {
+  PENDING = 'PENDING',
+  DELIVERED = 'DELIVERED',
+  ERROR = 'ERROR',
+  SENT = 'SENT',
+  READ = 'READ',
+  FAILED = 'FAILED'
 }
-    PENDING: PENDING,
-    DELIVERED: DELIVERED,
-    ERROR: ERROR,
-    SENT: SENT,
-    READ: READ,
-    FAILED: FAILED
-};
+
 // Verification levels
-exports.VerificationLevel = {
-  // Implementation needed
+export enum VerificationLevel {
+  NONE = 'NONE',
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH'
 }
-    NONE: NONE,
-    LOW: LOW,
-    MEDIUM: MEDIUM,
-    HIGH: HIGH
-};
-exports.LogLevel = {
-  // Implementation needed
+
+export enum LogLevel {
+  ERROR = 'ERROR',
+  WARN = 'WARN',
+  INFO = 'INFO',
+  DEBUG = 'DEBUG',
+  TRACE = 'TRACE'
 }
-    ERROR: ERROR,
-    WARN: WARN,
-    INFO: INFO,
-    DEBUG: DEBUG,
-    TRACE: TRACE
-};
-//# sourceMappingURL=enums.js.mapexport {};

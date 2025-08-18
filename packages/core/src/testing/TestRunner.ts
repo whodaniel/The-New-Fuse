@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TestConfiguration, TestResult } from './types';
+import { TestConfiguration, TestResult } from '../types/types';
 @Injectable()
 export class TestRunner {
   async run(): unknown {
