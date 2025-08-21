@@ -1,0 +1,64 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+numReplicas = 1
+sleepApplication = false
+restartPolicyType = "ON_FAILURE"
+
+[[services]]
+name = "api-server"
+source = "."
+build.dockerfilePath = "Dockerfile"
+build.dockerTarget = "api-server"
+
+[[services.variables]]
+name = "NODE_ENV"
+value = "production"
+
+[[services.variables]]
+name = "PORT"
+value = "3001"
+
+[[services]]
+name = "a2a-service"
+source = "."
+build.dockerfilePath = "Dockerfile"
+build.dockerTarget = "a2a-service"
+
+[[services.variables]]
+name = "NODE_ENV"
+value = "production"
+
+[[services.variables]]
+name = "PORT"
+value = "3000"
+
+[[services]]
+name = "sync-core"
+source = "."
+build.dockerfilePath = "Dockerfile"
+build.dockerTarget = "sync-core"
+
+[[services.variables]]
+name = "NODE_ENV"
+value = "production"
+
+[[services.variables]]
+name = "PORT"
+value = "3003"
+
+[[services]]
+name = "mcp-core"
+source = "."
+build.dockerfilePath = "Dockerfile"
+build.dockerTarget = "mcp-core"
+
+[[services.variables]]
+name = "NODE_ENV"
+value = "production"
+
+[[services.variables]]
+name = "PORT"
+value = "3004"

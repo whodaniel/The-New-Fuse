@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: ws: wss: http://localhost:* https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: http://localhost:*; frame-src * data: http://localhost:*; child-src * data:; object-src *; connect-src * ws: wss:;">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: ws: wss: http://localhost:* https:; script-src 'self' 'unsafe-inline' https: http://localhost:*; frame-src * data: http://localhost:*; child-src * data:; object-src 'none'; connect-src * ws: wss:;">
     <title>TNF Browser Hub - Enhanced Chrome-Compatible Browser</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1677,7 +1677,7 @@
                             <i class="fas fa-grip-vertical drag-handle"></i>
                             <i class="fas fa-database"></i>
                             <span>Database</span>
-                            <div class="status-dot warning"></div>
+                            <div class="status-dot online"></div>
                         </div>
                     </div>
                 </div>
@@ -2360,16 +2360,53 @@
             const frame = document.createElement('iframe');
             frame.id = frameId;
             frame.className = 'content-frame hidden';
-            frame.sandbox = 'allow-same-origin allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation';
+            frame.sandbox = 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin';
             
-            // Handle CSP errors gracefully
+            // Handle CSP errors gracefully with enhanced detection
+            let loadTimeout;
+            
             frame.onerror = function() {
                 console.warn(`Failed to load ${url} in iframe due to CSP restrictions`);
-                frame.src = 'data:text/html,<html><body><h2>Content blocked by security policy</h2><p>The requested content cannot be displayed in a frame due to security restrictions.</p><p><a href="' + url + '" target="_blank">Open in new window</a></p></body></html>';
+                showEmbeddingBlockedPage(frame, url, title);
                 if (loadingOverlay) {
                     loadingOverlay.remove();
                 }
             };
+            
+            // Also handle CSP errors that don't trigger onerror
+            frame.onload = function() {
+                clearTimeout(loadTimeout);
+                try {
+                    // Try to access iframe content to detect CSP blocks
+                    frame.contentDocument;
+                    if (loadingOverlay) {
+                        loadingOverlay.style.transition = 'opacity 0.5s ease-out';
+                        loadingOverlay.style.opacity = '0';
+                        setTimeout(() => loadingOverlay.remove(), 500);
+                    }
+                } catch (e) {
+                    // Cross-origin or CSP blocked
+                    if (frame.src.startsWith('data:text/html') || frame.src === 'about:blank') {
+                        return; // Don't show error for our own error pages
+                    }
+                    console.warn(`CSP or cross-origin restriction detected for ${url}`);
+                    showEmbeddingBlockedPage(frame, url, title);
+                    if (loadingOverlay) {
+                        loadingOverlay.remove();
+                    }
+                }
+            };
+            
+            // Set timeout for slow-loading sites
+            loadTimeout = setTimeout(() => {
+                if (frame.src && !frame.src.startsWith('data:text/html') && frame.src !== 'about:blank') {
+                    console.warn(`Timeout loading ${url}, may be blocked`);
+                    showEmbeddingBlockedPage(frame, url, title);
+                    if (loadingOverlay) {
+                        loadingOverlay.remove();
+                    }
+                }
+            }, 15000);
             
             // Handle load completion for Theia
             if (isTheia) {
@@ -2748,64 +2785,7 @@
             }
         }
         
-        function toggleDevTools() {
-            try {
-                // Try Electron API first
-                if (window.electron && window.electron.ipcRenderer) {
-                    window.electron.ipcRenderer.invoke('browser:toggle-devtools');
-                }
-                
-                // Open DevTools in new tab as fallback
-                createNewTab('about:blank', 'DevTools');
-                
-                // Inject DevTools-like interface
-                setTimeout(() => {
-                    const devToolsFrame = document.querySelector('.content-frame[src="about:blank"]');
-                    if (devToolsFrame) {
-                        devToolsFrame.srcdoc = `
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <title>Browser DevTools</title>
-                                <style>
-                                    body { margin: 0; background: #1e1e1e; color: #cccccc; font-family: monospace; }
-                                    .devtools-container { display: flex; height: 100vh; }
-                                    .devtools-sidebar { width: 200px; background: #252526; border-right: 1px solid #3e3e42; }
-                                    .devtools-main { flex: 1; background: #1e1e1e; }
-                                    .devtools-tab { padding: 8px 16px; border-bottom: 1px solid #3e3e42; cursor: pointer; }
-                                    .devtools-tab:hover { background: #2d2d30; }
-                                    .devtools-content { padding: 16px; }
-                                </style>
-                            </head>
-                            <body>
-                                <div class="devtools-container">
-                                    <div class="devtools-sidebar">
-                                        <div class="devtools-tab">Console</div>
-                                        <div class="devtools-tab">Elements</div>
-                                        <div class="devtools-tab">Network</div>
-                                        <div class="devtools-tab">Sources</div>
-                                        <div class="devtools-tab">Application</div>
-                                    </div>
-                                    <div class="devtools-main">
-                                        <div class="devtools-content">
-                                            <h3>Browser Developer Tools</h3>
-                                            <p>This is a simplified developer tools interface.</p>
-                                            <p>For full DevTools, right-click and select "Inspect Element".</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </body>
-                            </html>
-                        `;
-                    }
-                }, 500);
-                
-                showNotification('Developer Tools opened');
-            } catch (error) {
-                console.error('DevTools error:', error);
-                showNotification('DevTools feature temporarily unavailable', 'error');
-            }
-        }
+        // toggleDevTools function moved below - consolidated with settings version
         
         function captureScreenshot() {
             try {
@@ -3029,26 +3009,58 @@
         function loadPromptTemplates() {
             if (window.electronAPI) {
                 window.electronAPI.getPromptTemplates().then(templates => {
-                    promptTemplates = templates;
+                    promptTemplates = Array.isArray(templates) ? templates : [];
+                    renderPromptTemplates();
+                }).catch(error => {
+                    console.warn('Failed to load prompt templates from Electron API:', error);
+                    try {
+                        promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                        if (!Array.isArray(promptTemplates)) {
+                            promptTemplates = [];
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse prompt templates from localStorage:', e);
+                        promptTemplates = [];
+                    }
                     renderPromptTemplates();
                 });
             } else {
                 // Fallback for browser mode
-                promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                try {
+                    promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                    if (!Array.isArray(promptTemplates)) {
+                        promptTemplates = [];
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse prompt templates from localStorage:', e);
+                    promptTemplates = [];
+                }
                 renderPromptTemplates();
             }
         }
 
         function renderPromptTemplates() {
             const list = document.getElementById('prompt-templates-list');
+            if (!list) {
+                console.warn('prompt-templates-list element not found');
+                return;
+            }
+            
             list.innerHTML = '';
+            
+            // Ensure promptTemplates is an array
+            if (!Array.isArray(promptTemplates)) {
+                console.warn('promptTemplates is not an array:', promptTemplates);
+                promptTemplates = [];
+            }
+            
             promptTemplates.forEach(prompt => {
                 const item = document.createElement('div');
                 item.className = 'extension-item'; // Re-use styling
                 item.innerHTML = `
                     <div class="extension-icon"><i class="fas fa-file-alt"></i></div>
                     <div class="extension-info">
-                        <div class="extension-name">${prompt.name}</div>
+                        <div class="extension-name">${prompt.name || 'Unnamed Template'}</div>
                         <div class="extension-desc">${prompt.description || ''}</div>
                     </div>
                 `;
@@ -3150,8 +3162,26 @@
         }
         
         function toggleDevTools(toggle) {
-            toggle.classList.toggle('active');
-            // Implementation for dev tools
+            // If called from settings toggle
+            if (toggle && toggle.classList) {
+                toggle.classList.toggle('active');
+            }
+            
+            // Core dev tools functionality
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:toggle-devtools');
+                }
+                
+                // Open DevTools in new tab as fallback
+                createNewTab('about:blank', 'DevTools');
+                
+                showNotification('Developer Tools toggled');
+            } catch (error) {
+                console.error('DevTools error:', error);
+                showNotification('DevTools feature temporarily unavailable', 'error');
+            }
         }
         
         // Terminal integration removed - using Theia's built-in terminal
@@ -3376,6 +3406,94 @@
             }
         }
         
+        // Show embedding blocked page with enhanced options
+        function showEmbeddingBlockedPage(frame, url, title) {
+            showNotification(`${title} blocked embedding for security. Showing alternatives.`, 'warning');
+            
+            const domain = new URL(url).hostname;
+            const isKnownSite = ['perplexity.ai', 'github.com', 'chatgpt.com', 'claude.ai', 'stackoverflow.com'].includes(domain);
+            
+            frame.src = `data:text/html,<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Content Blocked</title>
+    <style>
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; 
+            background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+            color: white; 
+            margin: 0; 
+            padding: 40px 20px; 
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .container { max-width: 600px; margin: 0 auto; }
+        .icon { font-size: 64px; margin-bottom: 20px; opacity: 0.8; }
+        h1 { font-size: 28px; margin-bottom: 16px; font-weight: 600; }
+        p { font-size: 16px; line-height: 1.6; margin-bottom: 30px; opacity: 0.9; }
+        .buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+        .btn { 
+            background: rgba(255,255,255,0.2); 
+            color: white; 
+            padding: 12px 24px; 
+            text-decoration: none; 
+            border-radius: 8px; 
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .btn:hover { background: rgba(255,255,255,0.3); transform: translateY(-1px); }
+        .btn-primary { background: #10b981; border-color: #10b981; }
+        .btn-primary:hover { background: #059669; }
+        .details { 
+            margin-top: 40px; 
+            padding: 20px; 
+            background: rgba(0,0,0,0.2); 
+            border-radius: 12px;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        .domain { 
+            font-family: Monaco, 'Courier New', monospace; 
+            background: rgba(0,0,0,0.3); 
+            padding: 4px 8px; 
+            border-radius: 4px;
+            font-size: 13px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🛡️</div>
+        <h1>Website Security Policy</h1>
+        <p><strong>${domain}</strong> prevents embedding in iframes as a security measure. This is normal behavior for many modern websites.</p>
+        
+        <div class="buttons">
+            <a href="${url}" target="_blank" class="btn btn-primary">Open in New Window</a>
+            <a href="javascript:history.back()" class="btn">Go Back</a>
+            ${isKnownSite ? '<a href="javascript:parent.suggestAlternatives(\'' + domain + '\')" class="btn">View Alternatives</a>' : ''}
+        </div>
+        
+        <div class="details">
+            <strong>Technical Details:</strong><br>
+            The website <span class="domain">${domain}</span> uses Content Security Policy (CSP) headers that prevent it from being displayed in frames. This protects users from clickjacking and other security vulnerabilities.
+            <br><br>
+            <strong>What you can do:</strong>
+            <ul style="text-align: left; max-width: 400px; margin: 16px auto;">
+                <li>Open the link in a new window/tab</li>
+                <li>Use the website's mobile app if available</li>
+                <li>Look for alternative tools with similar functionality</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>`;
+        }
+
         // Show notification (simple implementation)
         function showNotification(message, type = 'success') {
             const notification = document.createElement('div');
@@ -4562,7 +4680,8 @@
                             }
                         }
                     } catch (e) {
-                        // Cross-origin restrictions
+                        // Cross-origin restrictions - this is expected for external sites
+                        console.log('Frame content access restricted due to cross-origin policy (normal behavior)');
                         console.warn('Could not access frame content due to cross-origin restrictions.');
                     }
                 };

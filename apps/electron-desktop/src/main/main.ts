@@ -155,11 +155,10 @@ class ElectronMain {
         contextIsolation: true,
         preload: join(__dirname, '../preload/preload.js'),
         webviewTag: true,
-        webSecurity: !isDev, // Disable only in development for local services
+        webSecurity: !isDev, // Disable in development for iframe loading, enable in production
         allowRunningInsecureContent: false, // Always disable insecure content
         experimentalFeatures: false, // Disable to remove security warning
-        // Only enable specific Blink features that are actually needed
-        ...(isDev ? { enableBlinkFeatures: 'CSSColorSchemeUARendering' } : {}),
+        // Removed enableBlinkFeatures to eliminate security warnings
         disableBlinkFeatures: 'OutOfBlinkCors',
         partition: 'persist:browser-hub'
       },

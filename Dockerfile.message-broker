@@ -1,49 +1,20 @@
-FROM node:18-alpine AS base
+# Use the official Bun image as a base image
+FROM oven/bun:1.0.18-alpine
 
-# Install dependencies only when needed
-FROM base AS deps
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json files for all workspaces
-COPY package.json bun.lockb* package-lock.json* pnpm-lock.yaml* ./
-COPY apps/message-broker/package.json ./apps/message-broker/
-COPY packages/types/package.json ./packages/types/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/core/package.json ./packages/core/
+# Copy the package.json and bun.lockb files to the working directory
+COPY package.json bun.lockb ./
 
 # Install dependencies
-RUN npm install
+RUN bun install --frozen-lockfile
 
-# Rebuild the source code only when needed
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
+# Copy the rest of the application code to the working directory
 COPY . .
 
-# Build packages in the correct order
-RUN npm run build:types
-RUN npm run build:utils
-RUN npm run build:core
-
-# Build the Message Broker application
-WORKDIR /app/apps/message-broker
-RUN npm run build
-
-# Production image, copy all the files and run next
-FROM base AS runner
-WORKDIR /app
-
-ENV NODE_ENV=production
-
-# Copy built files
-COPY --from=builder /app/apps/message-broker/dist ./dist
-COPY --from=builder /app/apps/message-broker/package.json ./
-
-# Install only production dependencies
-RUN npm install --only=production
-
-# Expose port
+# Expose the port that the application will run on
 EXPOSE 3002
 
 # Start the application
-CMD ["npm", "run", "start"]
+CMD ["bun", "run", "start:message-broker"]

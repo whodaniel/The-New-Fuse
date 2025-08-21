@@ -49,6 +49,7 @@
     "express": "^4.19.2",
     "find-git-repositories": "^0.2.2",
     "http-proxy-middleware": "^3.0.0",
+    "multer": "^2.0.2",
     "ws": "^8.18.3",
     "yargs": "16.2.0"
   },

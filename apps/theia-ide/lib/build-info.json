@@ -2,7 +2,7 @@
   "name": "@the-new-fuse/theia-ide",
   "version": "2.0.0",
   "built": true,
-  "timestamp": "2025-08-18T19:05:58.440Z",
+  "timestamp": "2025-08-21T03:58:16.356Z",
   "buildMethod": "bunx-theia-cli-optimized",
   "buildTime": "optimized",
   "features": [

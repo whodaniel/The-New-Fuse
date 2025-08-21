@@ -1,0 +1,1460 @@
+<!DOCTYPE html>l>>
+</htmdypt>
+</bori/sc
+    <        });
+yes'ble=s,resizarollbars=ye,scight=800200,hewidth=1blank', 'rl, '_pen(uwindow.o        
+    r`;mcp/monitoion.origin}/w.locat`${windourl =  const          ) {
+  tor(openMCPMonifunction   
+             }
+e=yes');
+ bl,resizalbars=yesrolht=600,sc0,heigwidth=100 '_blank', 'w.open(url,  windo       logs`;
+   serverId}/p/servers/${gin}/mcion.ori.locatndow`${wiconst url =          
+   Id) {servers(ewMCPLog function vi        }
+
+  ');
+     esle=yzab=yes,resicrollbars00,s=6=800,heightthwid 'lank',l, '_bopen(urindow.           wnfig`;
+ verId}/cos/${sermcp/serverin}/ation.origow.locwind= `${rl onst u     c     {
+  rId) rvever(sereMCPSergunction confi   fu }
+
+     ;
+       yes')izable=reses,rs=y00,scrollbaht=4,heig=600 'widthl, '_blank',open(urndow.       wit`;
+     tId}/tesagenents/${in}/agn.origioindow.locat url = `${w      const{
+      (agentId) Agentstfunction te       }
+
+      s');
+   able=yeesizes,rars=yollb0,scr0,height=60 'width=80 '_blank',(url,indow.open         wfig`;
+   gentId}/con/agents/${ain}tion.origindow.loca url = `${w const       {
+    t(agentId) eAgenion configur   funct
+
+      }      yes');
+ ,resizable=rollbars=yes600,scight=heh=800,ank', 'widt'_blw.open(url,       windo    
+  w`;}/agents/neinorigation.${window.loconst url = `   c        
+ ) {createAgent(n io   funct   tions
+  uncvice fional serit  // Add    
+
+          }
+');=yesbles=yes,resizarollbarscht=600,00,heig=8', 'widthrl, '_blankdow.open(u    win
+        ;settings`origin}/w.location.do{winst url = `$ con       
+    ttings() {ion openSe      funct    }
+
+       }
+    b);
+       nt(currentTaadTabConte   lo      
+       ') {oardashbb !== 'dtTa(curren      if    );
+   kAPIStatus(        chec    
+rdData();dDashboa       loa() {
+     hServicestion refres        func }
+
+);
+       ble=yes'izayes,reslbars=ht=900,scrolth=1400,heig 'wid'_blank',pen(url, dow.o    win;
+        flowId}`d=${workr?iflows/buildeorigin}/workow.location.{wind= `$nst url        co
+     Id) {low(workflow editWorkftion     func
+        }
+   }
+   
+         ');orkflow executing w('Error   alert         or);
+    low:', errworkfo execute or('Failed tsole.err         con       r) {
+erroch ( } cat         }
+            ;
+       workflow')executeo d t'Faile     alert(             
+  {se       } el
+          Monitor();Execution        open        
+    `);.id} ${executionn started:low executiot(`Workf     aler    
+           .json();t responseution = awainst exec      co       {
+        nse.ok)if (respo                  
+             
+          });
+       kflowId })fy({ worringist JSON.    body:         
+               },     on'
+       /jscation 'appli':tent-Type       'Con            
+     s: { header                 ,
+  : 'POST'      method          e`, {
+    s/executapi/workflowpoint}/h(`${apiEndfetcit  = awanst response  co              try {
+         
+   ) {wIdflokflow(workWor executec functionasyn      
+
+       }
+   ();hboardDataDas     load      s`);
+ } servicevices.length/${sernt}cessCou{sucted $alert(`Star              
+
+                   }   }
+                error);
+ ervice}:`,tart ${sd to serror(`Faile  console.                
+  ) {rror (e } catch           }
+                    
+    sCount++;  succes               {
+       onse.ok)     if (resp                    
+              });
+            
+          d: 'POST'    metho                  
+  `, {ce}/startervi${s/api/int}piEndpoetch(`${ase = await frespon   const                ry {
+            t
+      {es)  servicice ofonst servfor (c          
+           
+   t = 0;Count success  le   '];
+       tst', 'agen'websocke['mcp', s = nst service  co           {
+vices()artAllSerction st fun     async   }
+
+         }
+   
+        );erver'cket Sarting WebSort('Error st     ale          );
+ orer:', errt ServbSocketart WeFailed to sole.error('  cons          
+    error) {  } catch (       
+   }          ;
+      ket Server')art WebSocto std ('Failelert        a            } else {
+                et, 2000);
+lizeWebSocknitia(imeout    setTi     
+           nectioncket conWebSotialize ni// Rei                
+    ly');d successfulrte Server staketebSoclert('W      a             {
+ esponse.ok)      if (r              
+          
+     });              od: 'POST'
+        meth       `, {
+     cket/startapi/webso}/iEndpointap fetch(`${ = awaitst response    con            ry {
+        t{
+    rver() cketSeartWebSounction stync f      as  }
+
+  }
+               ver');
+   Sering MCP rtor sta('Errert         al       ror);
+er:', erMCP Servto start ailed 'F.error(  console             {
+  atch (error) c }           }
+              r');
+   MCP Serveo startt('Failed t      aler       e {
+       ls e      }  );
+        hboardData(oadDas   l                online');
+ status', 'w-lo'workftor(tusIndicateSta    upda            ly');
+     successfulrver startedt('MCP Se   aler                 
+) {.oksef (respon   i                
+  
+                 });
+          od: 'POST'   meth            
+     p/start`, {oint}/api/mc{apiEndptch(`$e = await ferespons   const             {
+         try
+     Server() {artMCPstunction async f     
+
+   
+        }able=yes');s,resizollbars=yeght=800,scr0,heiidth=120 'wl, '_blank',open(ur window.         s`;
+  tionkflows/execuigin}/woron.ortiwindow.locat url = `${    cons
+        nitor() {nMopenExecutiofunction o
+
+               }=yes');
+ izables,resbars=yet=800,scroll,heighwidth=1200nk', 'url, '_blawindow.open(            ates`;
+/templ}/workflowstion.originloca{window.st url = `$     con     es() {
+  owTemplatn openWorkflctio  fun
+
+      ;
+        }=yes')esizables,rcrollbars=ye=600,sht00,heig', 'width=8ankl, '_blen(ur   window.op   ;
+      igin}/chat`n.or.locatio`${windowrl = onst u  c     () {
+     aceterfatIntion openCh        func
+
+     }   e=yes');
+,resizablrollbars=yessc=800,height=1200,ank', 'width'_blurl, n( window.ope   
+        n}/agents`;tion.origiow.loca = `${wind url    const {
+        Hub()ent openAgonfuncti       }
+
+         ');
+sizable=yes,rebars=yes0,scroll=80height00,12idth= 'wk','_blan(url, open     window.s`;
+       /filen.origin}dow.locatioin{w url = `$    const       er() {
+ Managn openFile  functio           }
+
+s');
+   e=yeesizabl,rrs=yes600,scrollbaheight=000,idth=1ank', 'wrl, '_blw.open(uindo          w`;
+  aln}/terminorigion.ndow.locati${wiurl = `  const      () {
+     rminalenTenction op
+        fu   }
+     );
+ble=yes'izaars=yes,resllb=900,scro00,heightdth=14lank', 'wirl, '_bndow.open(u      wi  00';
+    ost:30/localhl = 'http:/onst ur       c
+     {() DEaIon openTheifuncti     
+
+   }        ;
+=yes')s,resizablerollbars=yeght=900,scheiidth=1400,blank', 'wopen(url, '_window.           uilder`;
+ ws/bn}/workflocation.origiw.lo`${windo =    const url         lder() {
+WorkflowBui open    function    
+ Functionsvice Ser   //}
+
+            tring();
+ oLocaleTimeSnt = now.txtContee').tet-tim'currenElementById(nt.get     docume   ;
+    ate()w Dnst now = neco           Time() {
+  updatefunction            }
+
+     }
+        }`;
+   dot ${statuss-`statussName = lement.cla         e       
+element) {       if (d);
+     mentItById(elegetElemenument.docent = emonst el   c        status) {
+ , elementIdicator(teStatusIndupdanction   fu
+      
+        }}
+         `;
+   trics.disk}%{metent = `$.textConlElementetaint) dmeilEle(deta      if       l');
+    sage-detaik-u('disElementByIdnt.getnt = documemelElet detainsco            ed) {
+    undefins.disk !== if (metric              
+             }
+
+         emory}%`;ics.mt = `${metrtConten.texmentailElent) detetailEleme   if (d           ;
+  il')-deta-usagemoryntById('me.getElemecumentlement = doetailEnst dco        ;
+        memory}%`trics.ent = `${mextCont.teusage')memory-entById('ent.getElemum doc         
+      ed) {inndefry !== umemoif (metrics.          
+              }
+          %`;
+  ics.cpu}= `${metrextContent ailElement.tnt) detlemef (detailE       i         tail');
+deage-u-ustById('cptElemenocument.gent = detailEleme d  const            ;
+  ics.cpu}%`metr`${ent = ontsage').textC-ucpuentById('emgetElcument. do     
+          defined) {cpu !== unics.    if (metr      {
+   etrics)etrics(mmMSysteten updanctio     fu
+
+         }       }
+  
+     ', error);trics:m meystead s loed tor('Failsole.errocon                {
+ rror)(e } catch          
+       }           s);
+trics(mericystemMetdateS   up               
+  nse.json();t respoics = awaiconst metr                   .ok) {
+ nsef (respo  i           cs`);
+   metripi/system/dpoint}/aapiEnetch(`${ await fonse = resp    const             try {
+    
+       ics() {stemMetrSyction load funsync      a       }
+
+s();
+   Metricystem       loadS
+     csetri md system     // Loa        
+    
+          `;
+            </div>            </div>
+           
+               </div>                  
+ /div>span><ected</nnatus">Coection-st"connd=tus: <span iion StaConnectdiv>   <                    iv>
+     Endpoint}</dSocket: ${wseb      <div>W              
+        nt}</div>dpoi ${apiEnPI Endpoint:div>A   <                 ">
+        contentass="card-cl<div                        div>
+       </                  tus</h4>
+Network Sta">titled-car"class=<h4                          "></i>
+   etwork-wiredfa-nss="fas      <i cla                 ">
+      "card-header class=     <div                >
+   card"rd-s="dashboa   <div clas           
+                 >
+         /div <                >
+    </div                   </div>
+                           div>
+        </                            .</span>
+ ng..oadiail">Letsk-usage-dspan id="di  <                                 n>
+ spae:</an>Disk Usagsp      <                     
+         etween;"> space-bent:ntfy-costi; julay: flexsp style="di    <div                          div>
+         </                      n>
+   ng...</spadil">Loataidey-usage-memor<span id="                              >
+      age:</spanry Usn>Memo        <spa                    ">
+        between;ace-t: spfy-contenflex; justi: ="display  <div style                            /div>
+      <                      >
+      ..</span">Loading.etailsage-d"cpu-un id=    <spa                            /span>
+    ge:<CPU Usa   <span>                             
+    ;">etweennt: space-bustify-conte flex; jdisplay:iv style="        <d                   ">
+     om: 1rem;ttmargin-bole=" sty      <div                     ontent">
+ ass="card-c <div cl                         </div>
+                  
+    ance</h4>formstem Peritle">Sys="card-t4 clas        <h                "></i>
+    chip-micro="fas fass cla        <i                er">
+    card-head"iv class=        <d              >
+  card"ashboard-="d  <div class                 grid">
+ hboard-"das= classiv      <d          `
+nerHTML =   element.in  
+        (element) {tentnitoringConon loadMoasync functi
+           }
+  }
+            >';
+   /pCP servers<ding M loa = '<p>ErrorMLrHTelement.inne             ;
+   rs:', error)MCP serve load Failed tor('.erroleso      con    
+       {ch (error)      } cat   }
+               
+    </p>';ervers MCP sado lo>Failed t = '<p.innerHTMLnteleme                  
+  lse { e       }        
+           `;             </div>
+                     .join('')}
+     `)                        </div>
+                             div>
+     </                                >
+    </button                                  
+   i> Logs"></file-alta-="fas fasscl  <i                                           d}')">
+${server.iLogs('"viewMCP=nclicktn-sm" oss="btn button cla         <b                           
+     </button>                                re
+       nfiguCo/i> a-cog"><"fas f <i class=                                           ">
+.id}')'${serverMCPServer(figureick="contn-sm" onclbtn bss="on clabutt      <                                 ions">
+ card-actss="    <div cla                               /div>
+         <                         
+   v>  </di                           
+           </div>gth || 0}r.tools?.lenrveools: ${se     <div>T                                  /div>
+     }</span><erver.statusor);">${ss-coluccesr(--solor: va"ce=n styls: <spa>Statuiv    <d                                      
+   1rem;">argin-top: style="m <div                                      >
+ ver.url}</p ${ser   <p>URL:                               t">
+      card-conteniv class="       <d                          
+   /div>        <                      4>
+      me}</h>${server.naitle"-tclass="card     <h4                            i>
+        er"></erva-sss="fas fla        <i c                            >
+    header"rd-ca="<div class                                 d">
+   rd-carshboalass="da<div c                               er => `
+ ers.map(serv     ${serv                       
+grid">dashboard-div class="      <                   </div>
+                  
+       </button>                      rver
+    /i> Start Seay"><pls fa-lass="fa <i c                           >
+    Server()"="startMCP" onclicks="btnclasbutton            <               3>
+  h})</hengtervers.lrs (${srveSe<h3>MCP                              2rem;">
+ottom:gin-b; mar centerlign-items:n; atweeace-betent: spjustify-con; lex"display: fle=tyv s    <di                    = `
+ nnerHTMLlement.i      e           ();
+   sponse.jsonait re = awt servers      cons          
+    nse.ok) {spo   if (re            );
+ s`rverpi/mcp/sepoint}/aiEndap fetch(`${= awaite t respons     cons            try {
+           
+nt) {meontent(eleCPCion loadM async funct          }
+
+              }
+p>';
+   </ding agents>Error loa= '<pL ent.innerHTMem      el        ;
+  r)', errooad agents: to liled.error('Fa  console            ) {
+  ch (error  } cat            }
+              >';
+gents</pd ad to loaFaileHTML = '<p>nt.innerleme  e              else {
+           }     
+           `;         v>
+          </di               ('')}
+    .join     `)                  >
+     </div                          >
+      iv       </d                            n>
+ tto       </bu                      
+           estay"></i> Tfas fa-pl="    <i class                                      }')">
+  {agent.idstAgent('$ck="teli oncsm success""btn btn-ss=ton claut        <b                                 </button>
+                                       e
+ Configur/i>"><a-cog fass="fascl<i                                       
+      nt.id}')">Agent('${age"configurem" onclick=btn-slass="btn on c    <butt                                    ions">
+actlass="card-v c       <di                                </div>
+                              v>
+      </di                               
+      }</div>ngth || 0ies?.lent.capabilit: ${ageiesCapabilitiv><d                                       
+     v>n></distatus}</spant.age);">${uccess-colorr: var(--se="coloylan st<sptus: iv>Sta   <d                                
+         }</div>t.typee: ${agen    <div>Typ                                     m;">
+   in-top: 1restyle="marg<div                                        
+ /p>iption'}<escr || 'No ddescriptionp>${agent.       <                             nt">
+    tecard-conlass=" c       <div                              </div>
+                                  </h4>
+ gent.name}tle">${ard-tiass="cacl   <h4                                  
+    >"></ifa-robots "fai class=           <                         er">
+    adard-he"cclass= <div                                    >
+d"board-carlass="dash  <div c                          `
+    agent => nts.map(   ${age                     rid">
+    d-g"dashboars=v clas         <di           >
+       </div                   /button>
+             <                 New Agent
+lus"></i> "fas fa-plass=i c          <                     
+ eAgent()">lick="creat"btn" oncon class=     <butt                    /h3>
+   th})<ents.lengents (${agI Ag3>A        <h             >
+        2rem;"-bottom:arginter; ms: cenn-item aligce-between;ent: spanty-coustify: flex; j"displatyle=div s      <            `
+       = innerHTML element.            ();
+       sponse.jsons = await regentt a      cons              .ok) {
+sespon    if (re           ts`);
+ /api/agenoint}Endptch(`${apife await nse =poesonst r      c       ry {
+             t
+  ement) {eltsContent(Agenunction load async f     }
+
+   
+                }';
+   rkflows</p>loading worror = '<p>Et.innerHTML       elemen   );
+        errorworkflows:',to load ailed 'Fole.error(    cons           rror) {
+ catch (e       }     }
+                
+ ;rkflows</p>'oad woo lFailed tHTML = '<p>nerelement.in               
+     se {   } el                `;
+         >
+         </div                     in('')}
+       `).jo                   </div>
+                               v>
+     </di                             n>
+          </butto                                     
+/i> Runy"><as fa-placlass="f    <i                                         >
+.id}')"flowrkflow('${woexecuteWorkclick="uccess" onm sn btn-slass="btn cutto <b                                    utton>
+           </b                             Edit
+   "></i> fa-edit"fas  <i class=                                         )">
+  id}'{workflow.ow('$"editWorkfl" onclick=smtn-btn bclass="<button                                       
+  ions">-actclass="card      <div                      
+               </div>                             v>
+  </di                                     /div>
+  tring()}<ateS.toLocaleDt)w.updatedAworkflo${new Date(dated: <div>Last Up                                         </div>
+   length || 0}ow.nodes?.orkfles: ${wiv>Nod   <d                                
+         </div>an>atus}</spstw.rkfloor);">${wos-col-succes: var(-colore="pan stylatus: <sv>St       <di                             >
+        : 1rem;"n-topmargistyle="     <div                                   on'}</p>
+ o descriptiion || 'Nptscrideow.{workfl     <p>$                           >
+        tent"d-conarss="civ cla          <d                 
+          </div>                                  </h4>
+ me}low.nakfitle">${worcard-th4 class="    <                                    m"></i>
+iagraroject-ds="fas fa-p <i clas                                    >
+   eader"s="card-hclas <div                                    d">
+-carboarddashs="iv clas      <d                       => `
+   rkflow  []).map(wo||rkflows .wo ${(data                      ">
+     ard-grid="dashbodiv class  <               iv>
+         </d                on>
+      utt        </b                low
+    kfw Wor Ne"></i>as fa-plus<i class="f                        >
+        wBuilder()"loWorkf"open onclick=""btnss=button cla      <                   /h3>
+   0})<.length || ows?kflwor (${data.Workflows<h3>                           rem;">
+  2bottom:n-gienter; martems: cn; align-ispace-betweetent: ify-con just flex;"display: style=    <div                ML = `
+    erHTelement.inn                 
+   .json(); responsewait= adata const             {
+        onse.ok) f (resp       i       ;
+  s`)rkflowapi/wot}/iniEndpotch(`${apit fewa = a responseonst   c                 try {
+         {
+ement)nt(elwsConteadWorkflo function losync
+        a
+}        }
+            ak;
+        bre          ent);
+  ntElemt(conteContenadMonitoringait lo   aw              
+   g':onitorinse 'm     ca
+           ak;       bre       );
+      Elementtent(contentloadMCPConit     awa         :
+       e 'mcp'         cas
+        break;           
+        ent);Elemtentontent(conAgentsCoadawait l                   
+ s':ase 'agent         c
+       reak;    b              ;
+  nt)ontentElemewsContent(cWorkflot load awai                  :
+  'workflows'      case
+           { (tabName)  switch
+                `);
+      ntName}-conte(`${tabementByIdment.getElement = docutElntennst co        co   abName) {
+ Content(tloadTabfunction async          }
+
+     bName);
+  taTabContent(    load    ontent
+    pecific cad tab-s  // Lo       
+         
+       tabName;rentTab =     cur
+                   Name]}`;
+titles[tab ${/i>}"><me]abNa{icons[tss="$la     `<i c      = 
+     nerHTML in).title't-encontlementById('nt.getEcume      do       
+          };
+           
+  art-line'fas fa-choring: '   monit            r',
+ veer 'fas fa-s   mcp:          bot',
+    'fas fa-ro     agents:     
+      ct-diagram',fas fa-proje: 'ws    workflo         t',
+   altachometer-a- ffasboard: '    dash           icons = {
+ st      con         
+ 
+              };g'
+       nitorinSystem Mo: ' monitoring           ools',
+    CP Tcp: 'M    m       
+     nagement',Agent Magents: '    a           
+ ',nagementlow Markflows: 'Wo   workf            oard',
+ 'Dashboard:  dashb               = {
+onst titles         ctitle
+    date Up        //    
+            ';
+ 'blocksplay = `).style.di}-contentNamed(`${tabyItB.getElemen    document);
+                  }none';
+  splay = 'style.dintent.     co      > {
+     ch(content =.forEatent"]')="-conll('[id$SelectorAeryent.quum  doc         content
+  pdate/ U    /    
+             ;
+   active').add('lassListme}"]`).c"${tabNaab=data-tr(`[ectoelnt.queryS    docume       });
+            ctive');
+ ve('aassList.remocl tab.        {
+       tab => rEach(tab').fotorAll('.uerySeleccument.q     do
+       nsttopdate tab bu       // U
+     abName) {ab(ttchTnction swi    fuons
+    / UI Functi
+        /   }
+    }
+     ;
+        ting...'onnec></span> Cing"ass="loadpan cl '<snnerHTML =ent.ilemsE  statu                 
+ :ault         def  ;
+        break                 Error';
+></i> le"angtion-trilamaa-exc="fas fssML = '<i clat.innerHTlemenusE        stat            error':
+      case '
+              break;         d';
+       Disconnectercle"></i> -cifas fa-timesi class="L = '<TMement.innerH   statusEl         
+        cted':connedis  case '       k;
+        brea          ;
+         ected'</i> Connle">-circheckfa-cas lass="fL = '<i cinnerHTMnt.usEleme       stat            ed':
+ nnect    case 'co             {
+(status)switch                    
+    
+ s}`;{statuws-status $Name = `ment.classle   statusE;
+         us')tatnection-sd('ws-conyIetElementBument.gent = docElemtust sta cons     
+      tatus) {atus(sWSSton update      functi
+  
+
+        }     }      );
+ ypepe:', data.ttyessage nknown m.log('Ule    conso               
+ :efault   d           k;
+     brea        
+         s(data);emMetricystateS    upd         :
+       etrics'em_mst    case 'sy           break;
+               
+      s(data);AgentStatupdate        u          status':
+  'agent_ase           c
+      k;       brea     
+        ;ta)s(dakflowStatu   updateWor            us':
+     _statorkflowse 'w         ca {
+       ata.type)(d    switch        
+         
+    data); message:', Socketle.log('Web  conso     ta) {
+     tMessage(daWebSockedlection han   fun
+
+          }}
+            );
+   ', 'offline'atusor('ws-stdicatteStatusInupda             
+   ');atus('error updateWSSt             r);
+  cket:', erroize WebSoalnitid to iile('Fansole.errorco             
+   or) { catch (err           }};
+               );
+  ne', 'offlis-status'cator('wStatusIndi      update        ;
+      or')'errus(updateWSStat               
+     ', error);or:cket errSoror('Web console.er                  error) {
+  = function(ror.onernection  wsCon                  
+    
+              };      5000);
+    bSocket, nitializeWesetTimeout(i                   econds
+ ct after 5 s reconnempt to// Atte                    
+                 ne');
+   us', 'offlistattor('ws-ndicaateStatusI       upd         );
+    nnected'discoSStatus('ateW       upd            ed');
+ nnectdiscoet ockWebSonsole.log('         c         n() {
+  nctiolose = funnection.onc        wsCo         
+            
+             };   ;
+   data)Message(WebSocket handle                   nt.data);
+parse(evea = JSON. const dat              {
+      on(event)functie = on.onmessagConnecti ws               
+              };
+              ine');
+    atus', 'onlr('ws-stdicatoatusIndateStup                   ');
+ ectedtus('connupdateWSSta                  ted');
+  t connecbSockeog('We console.l              n() {
+     en = functioction.onop    wsConne             
+        
+       int);EndpoebSocket(wsw Won = necti wsConne               try {
+           ket() {
+ WebSocinitialize function ons
+       tiet Funcock    // WebS
+
+           }      }
+ or);
+       erra:',board dato load dashor('Failed t.errle     conso     
+      r) {h (erro  } catc             }
+      ls;
+       talTooContent = toexte-tools').tId('availablElementByget  document.           
+       0);ngth || 0), ools?.le(server.t> sum + , server) =duce((sumta.repDaalTools = mct tot cons                  th || 0;
+ cpData.leng= mtent textCon).rs'ervetive-s'acementById(tElcument.ge     do             son();
+  ponse.jit mcpRes = awa mcpDataonst   c           {
+      k) onse.osp   if (mcpRe            rs`);
+ cp/serve}/api/mapiEndpoint fetch(`${onse = awaitpResp mc      const        rvers
+  MCP se // Load          }
+
+                
+      length || 0;sData.ent = ag.textContentnts')('active-ageIdentBylem.getE  document        
+          .json();Responsetsenit agsData = awaagent const                ok) {
+    e.Responsagents  if (            
+  i/agents`);t}/apdpoin{apiEnetch(`$ait f = awesponse agentsRconst               
+ entsagoad  // L                }
+
+           
+    gth || 0;s?.lenlowa.workflowsDatnt = workfonteows').textCorkfle-wivtById('acten.getElement      docum   
+           ();nse.jsonowsRespo workfl awaita =owsDatworkflnst        co          
+   ) {sResponse.okowrkfl    if (wo            ows`);
+pi/workflndpoint}/apiE{ach(`$ fetse = awaitesponsRst workflow       con
+         kflows Load wor     //      
+          try {{
+       () oardDataon loadDashbnc functi     asy    }
+
+   }
+            ');
+     'offlinetus',api-sta('IndicatorpdateStatus  u        ;
+      rror)', eled:aieck flth chr('API heae.erro    consol          
+  r) {catch (erro  }          s);
+ tatu, s'api-status'usIndicator(Stat    update       ial';
+     ' : 'partne.ok ? 'onlis = responsest statu  con             ealth`);
+ iEndpoint}/h fetch(`${aponse = awaitresp   const            {
+   try       {
+      APIStatus()checkction  funync     as
+   unctions    // API F   }
+
+         seconds
+ very 30000); // EPIStatus, 30ckAerval(chent     setIks
+       status checic p period  // Set u         
+            ta();
+ oardDaoadDashb   l
+         ainitial dat   // Load         
+            
+ ();cketSoizeWeb  initial
+          ionctSocket conneialize WebInit   //                
+
+      );tatus(APIS    check        ivity
+PI connect Check A     //         
+ 
+         0'); v2.e HubFus The New tializinglog('Ininsole.       cop() {
+     eApinitializion   funct           });
+
+00);
+   e, 10al(updateTimsetInterv   
+         teTime();   upda    
+     App();nitialize          ition() {
+  d', funcntLoadeDOMConteListener('Eventent.add    docum
+    applicatione ize th// Initial    
+    
+1';:300/localhost'ws:/Endpoint =     let ws';
+    lhost:3000ttp://loca= 'hpiEndpoint      let aoard';
+    = 'dashbcurrentTabet     l
+    on = null;wsConnecti        let bal state
+ // Glo     pt>
+  
+    <scrier>
+    </foot>
+  </divan>
+      </span></sp:3001localhosts://oint">ws-endpd="wn it: <spakespan>WebSoc        <
+    an></sp <span>•         an>
+  /spspan><t:3000</osocalh/lttp:/endpoint">hd="api-n iI: <span>AP <spa          
+ tion">-secstatuss=" clas        <diviv>
+</d       an>
+ ime"></sp"current-tspan id=           </span>
+ •<     <span>      
+ y</span>  <span>Read
+          n">ectiotus-sss="sta <div cla>
+       s-bar"tatuer class="sfoot>
+    < Bar -- <!-- Status>
+
+       </main </div>
+>
+       </div    
+         </div>      >
+         ta...</pnitoring daading mo   <p>Lo              
+   h3>toring</nim Mo  <h3>Syste              ">
+    : none;"display" style=contentmonitoring-v id="   <di             v>
+
+    </di          
+  ces...</p>serviP ing MCad  <p>Lo                 
+ Tools</h3>h3>MCP   <                  >
+"y: none;"displayle=content" std="mcp-<div i             v>
+
+          </di>
+         ..</pgents.p>Loading a      <              ment</h3>
+age3>Agent Man          <h          ">
+one;"display: nt" style=engents-contv id="a     <di  
+         v>
+    </di     p>
+       .</kflows..ding wor <p>Loa               t</h3>
+    enflow Managem>Work  <h3            ">
+       none;"display:t" style=s-contenflowwork id="       <div         ly -->
+d dynamicall be loadetents wilther tab con <!-- O            
+   iv>
+     </d       
+      </div>           iv>
+       </d               
+         /div>         <                 tton>
+         </bu                        w Details
+ Vie                            
+        /i>hart-bar"><-cfafas  <i class="                                ng')">
+   ('monitori="switchTab" onclick"btn btn-smclass=utton           <b               
+       ">d-actionsss="carcla <div                          iv>
+    </d                 
+              </div>                   
+        div>      </                      n>
+        /spaage">0%<y-usd="memor     <span i                                  
+ n>:</spaMemory Usage    <span>                               
+     en;">twee-bentent: spacustify-co flex; je="display:<div styl                                </div>
+                                       pan>
+ sage">0%</scpu-uan id="         <sp                               </span>
+U Usage:   <span>CP                                   5rem;">
+  om: 0.in-bott margbetween;ace-ontent: spify-cflex; justdisplay: v style="        <di                     
+       1rem;">op: n-tmargityle="v s<di                       >
+         lth.</pnce and hearmaystem perfop>Monitor s    <                            
+nt">conte"card-s=  <div clas                    
+      v>        </di               >
+     us</h3ystem Stat">Sitle-t="card3 class   <h                   
+          e"></i>fa-chart-lins="fas      <i clas                      ">
+     derheas="card-iv clas   <d                         rd-card">
+"dashboass=iv cla      <d                 /div>
+
+     <                   
+  </div>                       
+       </button>                          nfigure
+    Co                                ></i>
+   s fa-cog"ss="fa   <i cla                                 >
+'mcp')"switchTab(lick="m" onc="btn btn-son class   <butt                    
+         >   </button                             rt Server
+Sta                                  >
+  </i">ays fa-pl"fass=     <i cla                            )">
+   Server(k="startMCPonclic btn-sm" ss="btnutton cla  <b                          ns">
+    "card-actio class=  <div                       
+   iv>      </d                    v>
+         </di                            </div>
+                                
+ pan>0</sle-tools">"availabspan id=      <                           >
+       spanTools:</e pan>Availabl<s                                       tween;">
+ pace-bey-content: s; justify: flexisplale="d  <div sty                           
+        </div>                          
+         span>">0</ersactive-serv id="     <span                           
+        span>rs:</tive Serven>Ac     <spa                                   5rem;">
+ 0.bottom:n-; margieenetwt: space-bify-contenustlay: flex; j="dispylev st         <di                         m;">
+  top: 1re"margin-v style=    <di                         
+   ices.</p> serv tools andext Protocolodel Cont     <p>M                 
+          >t"tend-cons="cariv clas       <d              iv>
+               </d              
+      /h3>ices<rvSeitle">MCP s="card-tclas    <h3                           i>
+  </">-server"fas fa  <i class=                      ">
+        rd-header class="ca <div                        ">
+   rdard-cahbodasss="  <div cla                  >
+
+    div         </          div>
+      </                           on>
+/butt    <                      e
+           Manag                            i>
+   fa-list"></lass="fas  <i c                              ">
+     ('agents')"switchTabk=onclicsm" ="btn btn-lass <button c                        on>
+        </butt                          
+     New Agent                                   "></i>
+ plus="fas fa-  <i class                               ()">
+   ntHubck="openAge" onclisms="btn btn- clasonbutt     <                         ions">
+  d-actlass="car  <div c                 >
+            </div                   >
+        </div                        
+      v>di   </                          
+       ">0</span>kstasl-="tota   <span id                                     n>
+ks:</span>Total Tas<spa                                  >
+      etween;"e-b: spacfy-content justilay: flex;"disple= <div sty                              iv>
+           </d                          
+    /span>-agents">0<ive="act  <span id                                   
+   an>ents:</spve Agan>Acti      <sp                           ">
+       m: 0.5rem;argin-bottotween; m: space-beify-contentx; justisplay: fle"dle=  <div sty                                  rem;">
+p: 1="margin-tole sty      <div                    </p>
+      asks.s t for variouI agentsnage Aoy and maepl     <p>D                          t">
+ d-contenar"c<div class=                            iv>
+      </d                  >
+    h3ents</AgI itle">Ard-t="cass3 cla <h                              t"></i>
+  fa-roboss="fascla      <i                    ">
+       aderard-hes="c  <div clas                         d">
+ ashboard-carlass="d      <div c               v>
+
+           </di       
+             </div>                n>
+        /butto     <                  l
+         iew Al    V                          i>
+      </list">a-"fas fclass=<i                                
+     s')">ab('workflowswitchTk="" onclicbtn btn-sm"class=ton ut      <b                     ton>
+     ut       </b                     
+    New Workflow                                 "></i>
+   fa-plus"fas  class=       <i                          
+   ilder()">owBuflWork"openck=m" onclitn-s"btn btton class=         <bu                     >
+  ns"d-actioass="cardiv cl  <                     v>
+     /di         <                 /div>
+     <                            </div>
+                             >
+        0</spanions">xecut"total-e=an id         <sp                         
+      s:</span>al Executionn>Tot    <spa                                
+    een;">ace-betw: sptify-content flex; juse="display:<div styl                                     </div>
+                           >
+        span">0</kflows-worvean id="acti     <sp                                  n>
+ kflows:</span>Active Wor    <spa                                 >
+   5rem;" 0.m:in-bottomargeen; : space-betwy-contentustif; jay: flexyle="displ   <div st                                >
+ rem;"rgin-top: 1 style="ma        <div              
+          ws.</p>d workflor automateexecute youd anage an <p>M                    
+           tent">-conardclass="civ          <d              iv>
+           </d                    3>
+  /h>Workflows<-title"="cardass3 cl <h                       
+        am"></i>diagr-project-ss="fas fa     <i cla                       der">
+    "card-headiv class= <                   >
+        rd"hboard-caass="das    <div cl                 ">
+   rd-gridoaass="dashbv cl    <di             ->
+   rd Cards --- Dashboa       <!           >
+
+      </div          >
+      tton      </bu              >
+        </div                     >
+   unication</ptime comm real- <p>Start                               h3>
+er</rv SeSocket>Web <h3                             
+  on-info">"acticlass=     <div                 /i>
+       n"><tion-icotower accast-fa-broadclass="fas         <i              >
+       rver()"SocketSertWeblick="stan" oncctiok-aclass="quic <button                 
+          </button>                
+     /div>         <               
+    p>ine access</Command l  <p>                          /h3>
+    >Terminal<      <h3                          ">
+on-infoclass="activ    <di                         </i>
+n">co action-i fa-terminalas"f class=    <i                        >
+"al()inrm"openTeick=" onclln terminatio-acquickon class="    <butt                on>
+     </butt                    v>
+    </di                      >
+     onment</pment envirred developll-featu   <p>Fu                             IDE</h3>
+ Theia       <h3>                
+         nfo">s="action-iasiv cl       <d            >
+         "></iction-iconde acotop-a-lap fs="fas clas        <i                 DE()">
+   "openTheiaInclick=de" oick-action i class="qubutton      <                 >
+ ton       </but            
+           </div>                 
+     /p>& drop< with drag kflowse visual wor  <p>Creat                              >
+ilder</h3Bukflow   <h3>Wor                            
+  n-info">"actios=v clas  <di                          con"></i>
+ram action-iproject-diag fa-"fas <i class=                    
+       >er()"lowBuildWorkfick="open oncln workflow"-actio"quicktton class=<bu                    
+    tions">uick-acass="q cl      <div     
+         --> Actions <!-- Quick           
+         ">ard-contenthbov id="das     <di           -->
+ Content  Dashboard  <!--            ">
+  t-bodyid="contennt-body" lass="conte    <div c 
+                   iv>
+ </d          /div>
+      <       ..
+    onnecting.        C         an>
+   ing"></sploadpan class="      <s              tatus">
+connection-s"ws-" id="ws-status class= <div      
+             </h2>           
+ ashboard   D              /i>
+   ><"ter-alta-tachome fs="fas     <i clas          e">
+     ent-titl id="content-title"lass="cont2 c         <h
+       nt-header">"conteass= <div cl       ea">
+    ars="content-   <div clas -->
+     Content Area- !- <     
+  aside>
+   </div>
+         </   v>
+          </di            </div>
+        
+           /button>         <            
+        </div>                   
+    logs</div>er status & esc">Servvice-dss="serla<div c                            div>
+    Monitor</MCP e-name">vic"serass=  <div cl                      >
+        "ce-infoss="serviiv cla         <d            
+       con"></i>-i serviceart-barchss="fas fa- cla          <i              r()">
+    PMonitoick="openMC-item" onclservicelass="tton c       <bu                 </button>
+                      </div>
+                            >
+  ives</dh MCP servicncsc">Laudeervice-s="sclas      <div                           rver</div>
+tart MCP See-name">Sass="servic   <div cl                            -info">
+ ="service class       <div                     "></i>
+ice-iconf serv-of-powers falass="fai c <                          ()">
+ rverartMCPSenclick="stce-item" orviclass="seon    <butt             >
+        ce-list"="servilass    <div c             /div>
+        <               ools
+  MCP T                    i>
+  server"></"fas fa-<i class=               
+         ader">ory-hes="categ clasdiv    <             >
+   category"ce-erviclass="s      <div        -->
+    P Tools   <!-- MC         v>
+
+          </di          </div>
+                    /button>
+        <              /div>
+       <                     v>
+  w runs</diflo">Track workce-descserviclass="    <div                       
+      nitor</div> Moutione">Execnam"service-ss=v cla        <di                >
+        o"rvice-inf class="se      <div                 i>
+     ce-icon"></serviay-circle a-plss="fas f    <i cla                
+        itor()">ecutionMonnExlick="ope" oncice-item="servasson cl  <butt                   
+   ton>  </but                  v>
+       </di                      /div>
+   kflows<-built wore-desc">Preervic class="sdiv   <                        
+     tes</div>">Templaervice-nameiv class="s <d                            nfo">
+   "service-idiv class=    <                        
+"></i>vice-iconp seryer-groulas="fas fa- clas   <i                
+         plates()">flowTemenWorkonclick="opitem" ervice-"sass=tton cl       <bu              on>
+   tt/bu    <           >
+         </div                          iv>
+  ner</drkflow desigisual woice-desc">Vclass="serv   <div                       
+       v>lder</di Buie">Workflowrvice-nam class="se       <div                    
+     e-info">ss="servic<div cla                            /i>
+"><ice-iconpass serv-comtingfa-draflass="fas       <i c             >
+         lder()"flowBuirkick="openWo" onclm activeervice-ite"sutton class=    <b            ">
+        istrvice-lass="se<div cl                    </div>
+              
+        Workflows                /i>
+      diagram"><fa-project-="fas    <i class                   
+  header">"category-<div class=              y">
+      ice-categorrv="sediv class   <        
+     ->Tools -Workflow    <!--            >
+
+  /div   <              </div>
+            >
+       tton      </bu            
+      /div>     <                       tion</div>
+ conversa>AIvice-desc"ass="serv cldi  <                          div>
+    nterface</at ICh">evice-namserss="    <div cla                    
+        -info">ss="service   <div cla                    
+     n"></i>-icoervices smment fa-co="fasi class       <                   ">
+  tInterface()penChanclick="o" oervice-itemn class="s<butto                         </button>
+                     div>
+       </                  
+     iv>nts</dAI age">Manage ice-descrvlass="se c       <div                      v>
+    Hub</dient">Agvice-nameclass="ser <div                               
+ >vice-info"lass="ser     <div c                    "></i>
+   onvice-icert sas fa-robo<i class="f                        >
+    Hub()""openAgent onclick=-item"ceass="servibutton cl    <                
+    t">-lisviceer="sass  <div cl            >
+      iv   </d          
+       vices Ser      AI            /i>
+      a-brain"><as f"flass=i c <                       
+y-header">="categorv class <di               >
+    category"ervice-class="siv         <d        rvices -->
+AI Se!--   <            v>
+
+  </di      
+               </div>       
+          </button>                 >
+        </div               
+          div>t files</e projecowsce-desc">Brs="serviclas     <div                           
+ >/diver<anage M">Filmece-na"servidiv class=       <                     ">
+    ce-infoss="servi<div cla                      
+      </i>e-icon">rvicfa-folder sefas =" <i class                     >
+      ()"leManagerpenFik="oonclic" eme-itervicclass="stton   <bu                    ton>
+         </but                 </div>
+                       div>
+     face</e interin>Command l"escce-dlass="serviiv c         <d             
+          v>di</rminal">Tenames="service-iv clas     <d                          ">
+ inforvice-se class="       <div                /i>
+     -icon"><inal servicefas fa-terms="<i clas                     ">
+       rminal()ck="openTe" oncli-itemss="serviceton cla <but                     >
+  ton     </but                </div>
+                       >
+        ed IDE</div>Full-featurce-desc"lass="serviiv c       <d                     div>
+    >Theia IDE</name"e-ss="serviciv cla   <d                         ">
+    nfo-iss="servicela    <div c                   </i>
+     n">icode service-laptop-co="fas fa-i class    <                   )">
+     nTheiaIDE(pe="oclickone-item" ss="servic cla  <button                   list">
+   rvice-ass="se   <div cl               iv>
+          </d          ment
+       Develop                   >
+ode"></is fa-class="fa   <i c                   ader">
+  gory-hess="cate    <div cla              
+  ">-categoryice="servclass <div          -->
+      ools opment TDevel    <!--             
+tent">on"sidebar-cdiv class=           <>
+ div</         utton>
+        </b      
+     alt"></i>a-sync-"fas fss= <i cla                  
+ ()">eshServicesfronclick="rem" btn-stn lass="b   <button c       h3>
+      ces</">Serviebar-title="sid3 class  <h            ">
+  eridebar-headv class="s       <di  r">
+   deba="si<aside class    
+    Sidebar -->      <!-- ent">
+  "main-contin class=<ma->
+    ontent -- Main C    <!-
+
+</nav>on>
+    tt      </buing
+  Monitor            ></i>
+t-line"fas fa-char <i class="         ring">
+  "monito data-tab=')"nitoringwitchTab('moick="s"tab" oncln class=   <buttoton>
+        </butools
+         MCP T        
+r"></i>veerfas fa-slass="        <i c    b="mcp">
+ data-ta'mcp')""switchTab(nclick= oab"="tn class<butto       </button>
+    gents
+            A  /i>
+   robot"><fas fa- class="   <i         ents">
+"agb=ta-tagents')" da'a"switchTab(ck=linc"tab" otton class=     <bu
+   >button </  flows
+     rk          Wo/i>
+  iagram"><fa-project-dfas lass="   <i c         kflows">
+b="worta-ta)" da('workflows'"switchTablick=oncs="tab"  clas   <buttontton>
+     </bu     oard
+   ashb     D   </i>
+    t">-alometertachas fa-lass="f    <i c       ">
+ ashboarddata-tab="drd')" boaab('dashchT"switlick=ctive" onctab as="utton clas <b       ">
+nav-tabss="av clas
+    <n-> Tabs -igation-- Nav
+
+    <! </header> </div>
+        /button>
+     <        s
+     Setting     /i>
+        fa-cog"><s="fas <i clas      >
+         s()"Setting="opennclick warning" o"btnn class=utto <b        button>
+   </            Builder
+Workflow           >
+      am"></it-diagrec fa-projclass="fasi      <         
+  der()">uilenWorkflowBlick="op"btn" oncss=n cla    <butto     tton>
+   /bu         <All
+    Start             </i>
+   -play">as fa"fss=   <i cla            ices()">
+ tartAllServ="sonclick" ccess"btn sutton class= <bu        ions">
+   -actass="header    <div cl 
+    >
+        </div  /div>
+      <      pan>
+     low</span>Workf  <s             span>
+ s"></rkflow-statu="wos-dot" idtu="sta <span class               r">
+dicatoin"status-v class=   <di  >
+        </div    an>
+       /spet<Sockeb    <span>W            span>
+tatus"></id="ws-s" "status-dotclass=  <span               ">
+orus-indicat"statclass=iv           <d </div>
+             span>
+</n>APIspa    <            </span>
+us">"api-statt" id=="status-dolass<span c             ">
+   catordius-in"statv class=         <ditus">
+   ystem-sta"slass=div c
+        <
+          </div>      /span>
+2.0<ified Hub vuse - Unew FThe N<span>            /i>
+><cket"-ro"fas fai class=  <      go">
+    ass="lo <div cl     >
+  ader"ass="he  <header clader -->
+  
+    <!-- Heody>/head>
+<be>
+<ylst
+    </
+        }olor);or-cerrar(--r: v  colo     );
+      0.2, 68,gba(239, 68round: r backg      ted {
+     necatus.discons-st   .w  }
+
+     r);
+      uccess-colovar(--scolor:             0.2);
+ 185, 129, nd: rgba(16,   backgrou
+         onnected {.c.ws-status
+        
+;
+        }75rem-size: 0.nt  fo          em;
+ 0.5rrder-radius:         bo
+   t-bg);envar(--accground:   back   em;
+       1rng: 0.5rem di    pad
+        : 0.5rem;      gap     : center;
+ items    align-        x;
+play: fle dis    {
+       tatus       .ws-s
+  us */tatConnection S* WebSocket       / }
+
+  
+               }  1fr;
+  mns: mplate-colurid-te         g     
+   {-grid .dashboard         
+                  }
+  ;
+      ing: 1rem       padd        y {
+ t-bodnten     .co 
+                 }
+          1rem;
+    em0.75radding:    p        er {
+       .head            
+ 
+             }  
+      th: 250px;  wid             ar {
+    .sideb       68px) {
+  dth: 7wi(max-edia  @m */
+       sivepon /* Res      
+   }
+      360deg); }
+otate(nsform: r to { tra     in {
+      mes spyfra        @ke
+
+      }e;
+  infinitt e-in-ou1s easion: spin at      anim
+      or);cent-colar(--acop-color: vder-t    bor       : 50%;
+ er-radius bord          
+ er-color);rd(--bolid varsoborder: 2px          x;
+    16p   height:
+         th: 16px;    wid      ck;
+  ine-blolay: inl   disp{
+         g din   .loa  ates */
+   ng St  /* Loadi
+
+           }enter;
+   n-items: c      alig
+      ap: 1rem;           g: flex;
+ isplay      d {
+      ion-sect     .status
+     }
+xt);
+      ted-te var(--mulor:      co       0.75rem;
+e:    font-sizn;
+        eespace-betwtent: cony-justif            s: center;
+ign-item  al      
+    : flex;ay       displ   
+  lor);coar(--border-px solid vtop: 1 border-          
+ m;em 2reng: 0.5rdi         pad  bg);
+ ary--secondound: var(-   backgr         {
+ -baratus    .st   Bar */
+ * Status         /
+       }
+9;
+ 0.y:     opacit     ;
+   : 0.875remt-size    fon
+        {p o -inf  .action
+         }
+5rem;
+     bottom: 0.2in-marg            t: 600;
+ font-weigh       o h3 {
+    .action-inf    }
+
+    
+        1.5rem;e:    font-siz         con {
+action-i  .
+
+              }00%);
+ 1%, #059669 0ccess-color)g, var(--suent(135degradi linear-d:ackgroun       b
+     e {tion.id-ac   .quick
+       }
+       100%);
+%, #d97706color) 0r(--warning-deg, varadient(135 linear-ground: backg          l {
+ terminack-action.      .qui     }
+
+   100%);
+   0%, #7c3aedf6 , #8b5ct(135degr-gradienound: lineackgr     ba{
+       workflow ion.ick-act.qu
+            }
+lg);
+    (--shadow-shadow: var     box-;
+       2px)teY(-translaansform:        trver {
+     ion:ho .quick-act
+
+               } left;
+-align:   text       em;
+  ap: 0.75r   g          center;
+ems: align-it   
+        lex;: f    display  s;
+      : all 0.2ionnsit         traer;
+   rsor: point       cu
+     m;us: 0.75reborder-radi           ng: 1rem;
+ di         pad  e;
+ border: non            white;
+     color: 
+       00%);b82f6 1r) 0%, #3ent-colocc--avar((135deg, gradientar-und: line   backgro    n {
+     ck-actio   .qui
+     
+     }em;
+   bottom: 2rgin-    mar    1rem;
+    gap:        ));
+     0px, 1frt, minmax(20at(auto-fi repe-columns:rid-template  g          id;
+ display: gr       ions {
+    uick-act      .qs */
+  ick Action       /* Qu    }
+
+ 
+     0.75rem;-size:        font75rem;
+    .375rem 0.padding: 0         {
+      .btn-sm    
+  
+       }.5rem;
+   gap: 0
+          play: flex;dis           ;
+ top: 1rem  margin-        {
+  ons ard-acti   .c}
+
+     
+        height: 1.6;line-       
+     ext);ndary-t var(--secoor:       col
+     t {-conten     .card    }
+
+       -color);
+ccentlor: var(--aco            ;
+weight: 600  font-       {
+   tle ard-ti     .c   }
+
+   
+     m: 1rem;rgin-botto       marem;
+     0.75       gap: nter;
+     : cen-items        alig
+    ex;lay: flspdi       r {
+     .card-heade            }
+
+ 
+   -lg);dow(--shadow: var box-sha       x);
+    eY(-2pranslattransform: t         r {
+   card:hoveshboard-.da            }
+
+ .2s;
+   : all 0nsition     tra     
+  -color);ar(--border solid v 1pxborder:      
+       1.5rem;ng: paddi      5rem;
+     us: 0.7r-radi   borde       
+  );bgcondary-d: var(--seckgroun  ba        d-card {
+  oar      .dashb   }
+
+  m;
+     om: 2rein-bott  marg
+          .5rem;gap: 1            
+x, 1fr));x(300pit, minmauto-f repeat(aumns:-colid-template   gr         rid;
+y: gispla d    
+       d-grid {ar .dashbo
+       d Grid *//* Dashboar             }
+
+ry-bg);
+   primavar(--ckground:        ba
+     w-y: auto; overflo         2rem;
+  ing:         paddex: 1;
+    fl         ody {
+   content-b   .
+
+      }     
+  0.75rem;       gap:    enter;
+  tems: cgn-ili     a
+       ex;splay: fl     di      ght: 600;
+ weit-  fon       ;
+   1.25remize:   font-s     {
+     tent-title  .con       }
+
+        e-between;
+actent: spy-con justif          enter;
+ items: c align-      
+     lex;display: f    );
+        -colorvar(--border1px solid bottom:      border-    rem;
+   ding: 1rem 2ad     p    -bg);
+   (--accentound: var   backgr   er {
+      nt-headnte   .co           }
+
+  idden;
+verflow: h       o    column;
+  x-direction:         fle;
+   lay: flex   disp    
+        flex: 1;         nt-area {
+te     .con  }
+
+         25rem;
+-top: 0.      margin   text);
+   ted-ar(--mu   color: v     ;
+    0.75reme: siz  font-         e-desc {
+     .servic   }
+
+        
+ em;: 0.875r font-size      
+     500;nt-weight:        foe {
+     amrvice-n  .se
+         }
+     
+lex: 1;        ffo {
+    service-in       .
+ }
+       er;
+ ign: cent   text-al   px;
+      : 20th  wid  
+        e-icon {.servic
+
+         }      %);
+ 2f6 100#3b8color) 0%, --accent-r(g, vant(135deadienear-grliound:      backgr       {
+ tiveace-item. .servic
+          }
+px);
+     ateX(4ansl trm:for    trans    g);
+    (--hover-bround: var    backg        hover {
+em:-itce .servi
+              }
+
+ %;00h: 1       widt;
+     : leftlignext-a    t       em;
+ .75r  gap: 0  ;
+        ms: centern-ite      alig
+      ;exlay: flsp      di    l 0.2s;
+   alon:ansiti         trointer;
+   cursor: p          
+  ary-text);(--prim  color: var
+          m;0.5reer-radius: ord          b  0.75rem;
+  padding:           one;
+der: n bor      g);
+     -accent-b(-: varkground bac           item {
+e-     .servic
+
+      };
+     5remp: 0.        gamn;
+    ection: colu    flex-dir
+        ;play: flex dis
+           st {ice-li.serv
+
+              }y-text);
+  ondarr(--sec  color: va
+          em;: 0.875rsizeont-         f
+   eight: 600;t-w  fon        0.75rem;
+  ttom: n-bo margi      5rem;
+     p: 0.      gar;
+       centeign-items:     al      lex;
+  fisplay:        dr {
+    y-headetegor.ca       
+
+    }   ;
+  1.5remom: margin-bott         y {
+   -categorervice
+        .s        }
+: 1rem;
+padding            w-y: auto;
+rfloove          ;
+      flex: 1
+        ntent {ar-cosideb       .}
+
+ ;
+        lor)-cocent(--acolor: var           c 600;
+ ont-weight:     f       {
+ar-title       .sideb
+
+         }-between;
+  space-content:stify     ju     
+  ms: center;lign-ite         a: flex;
+   ay  displ
+          -color);dervar(--borx solid ttom: 1pr-bo      borde
+      g: 1rem;ddin  pa        {
+  er ebar-head       .sid
+
+    }  dden;
+   ow: hierfl         ovcolumn;
+   ion: irect flex-d       
+    x;display: fle         ;
+   r-color)var(--borded solix t: 1porder-righ        b-bg);
+    --secondarynd: var(   backgrou
+         0px;dth: 30       wibar {
+        .side   }
+
+         
+ : hidden;low  overf        y: flex;
+    displa          1;
+ ex:       fl  {
+   -content     .main
+    tent */ConMain    /*     
+   }
+);
+      -colorr(--accentr: vaottom-colorder-b  bo       olor);
+   nt-c var(--accer:   colo         ive {
+   .tab.act}
+
+     
+        );255, 0.055, 255, d: rgba(25ckgroun    ba    
+    xt);-primary-tevar(-lor:  co           ab:hover {
+      .t     }
+
+  m;
+   gap: 0.5re  
+          ms: center;lign-ite          ay: flex;
+       displa
+       p;pace: nowrawhite-s       
+     t;transparenpx solid : 3r-bottom     borde2s;
+       l 0.: alansition  tr  
+        : pointer;cursor         xt);
+   uted-te--m color: var(         
+   1.5rem;ng: 1rem       paddi
+     : none;    border      rent;
+   transpand:kgrou      bac       {
+    .tab}
+
+       to;
+     : auflow-xover        
+    em;ng: 0 1r  paddi         er;
+ s: cent  align-item         flex;
+  y:    displa;
+        lor)cor---bordear(px solid ver-bottom: 1 bord           bg);
+ary--secondar(-: vbackground        bs {
+       .nav-ta
+     Tabs */n vigatio   /* Na   
+
+   100%); }%, #dc2626r-color) 0--erroar(135deg, var-gradient(d: linerounbackgger { btn.dan .     }
+   97706 100%);0%, #dr) warning-colo5deg, var(--t(13gradien linear-nd:g { backgroun.warnin    .bt   %); }
+ 100 #059669 olor) 0%,--success-c135deg, var(t(ar-gradienineground: l { backssce.btn.suc
+            }
+  g);
+  -shadow-ladow: var(-   box-sh     px);
+    -1ateY(rm: translsfoan       tr   
+  btn:hover { .           }
+
+.5rem;
+          gap: 0;
+       centers:ign-item al          
+ lay: flex;   disp   
+      0.2s;on: all nsiti      traer;
+      nt poi    cursor:      
+  600;eight: -w    font     875rem;
+   e: 0.t-siz        fon  0.5rem;
+  der-radius:        bor    
+ rem 1rem;0.5   padding:          der: none;
+       borhite;
+        color: w        100%);
+ , #3b82f6 lor) 0%accent-cog, var(--t(135degradiennd: linear-rou     backg{
+       n   .bt
+
+      
+        }0.75rem;    gap:   
+      lay: flex;     disp       -actions {
+er     .head      }
+
+
+      0.6; }{ opacity:    50% }
+        ; pacity: 1100% { o    0%, {
+         pulse @keyframes
+         }
+olor);rning-c--waound: var({ backgrpartial ot..status-d       r); }
+ ss-colo(--succend: varbackgrou{ dot.online .status-
+
+             }  
+ e;nit2s infion: pulse ti anima
+           or);rror-col-er(-: varoundbackg            ius: 50%;
+ad border-r        : 8px;
+    height         : 8px;
+      width       
+ tus-dot {     .sta  
+ 
+        } 0.875rem;
+ font-size:          0.5rem;
+  ap:         g  er;
+ tems: cent align-i    ex;
+       y: flladisp           
+ ndicator {  .status-i }
+
+        
+     5rem;p: 1. ga          nter;
+ -items: celign        a
+    : flex;play       dis     
+us {-stat     .system
+   
+}      
+  color);t-ar(--accenr: vlo co           0;
+ 70ght:-wei font          ;
+ .25reme: 1   font-siz        m;
+  0.75reap:        g    : center;
+n-items  alig      
+    ex;lay: fl  disp       
+   o {.log
+
+               }-shadow);
+ w: var(-x-shado    bo        er-color);
+-bordd var(- 2px solittom:order-bo    b      ;
+  weenbetspace-ent: ntustify-co      j;
+      nterems: cegn-it      ali   flex;
+      display: 
+         1rem 2rem;padding:      ;
+       bg) 100%)-accent-, var(-ary-bg) 0%var(--second135deg, t(near-gradien: ligroundack          b
+    .header {*/
+      eader dern H/* Mo          }
+
+  
+    : hidden;lowverf   o        
+ : column;ionirectflex-d       flex;
+       display: 
+          h; 100v height:    );
+       ary-text: var(--prim color            100%);
+ary-bg)condr(--se va0%,) ary-bg, var(--primdient(135degear-grad: lingroun  back          
+serif;, sans-ter'oto', 'InI', 'RobSegoe U 'Font,ystemacSstem, BlinkMe-syplap-family: -nt      fo   {
+            body }
+
+     x;
+  order-bo bbox-sizing:         
+   dding: 0;          pain: 0;
+  rg ma              * {
+    }
+
+ ;
+         0, 0, 0.1) rgba(0, -3px10px 15px-lg: 0 hadow  --s        
+   0, 0.1);, 0, -1px rgba(0: 0 4px 6pxow     --shad55;
+       r: #3341order-colo         --bf4444;
+   or: #er-colro   --er;
+         9e0bolor: #f5rning-c-wa     -   981;
+     #10bccess-color:-su         -;
+   #60a5faor: ol  --accent-c    8;
+      text: #94a3buted- --m
+           1; #cbd5edary-text:     --secon
+       2e8f0;ry-text: #ema --pri    9;
+        #47556-bg:--hover          5;
+  : #33415-accent-bg     -    293b;
+   ary-bg: #1esecond          --2a;
+  0f17-bg: #mary      --pri{
+           :root yle>
+      <stsheet">
+ style rel="l.min.css"s/al6.4.0/csesome/awibs/font-om/ajax/lflare.cs.cloudttps://cdnjef="hink hr<lle>
+    ub v2.0</titfied HFuse - Uniew tle>The Nti0">
+    <=1.nitial-scalewidth, iidth=device-t="w contenort""viewpe= <meta nam-8">
+   UTFarset=" ch   <metaead>
+ <h">
+en"ang=
+<html l

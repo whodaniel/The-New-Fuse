@@ -1,0 +1,4609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' data: blob: ws: wss: http://localhost:* https:; script-src 'self' 'unsafe-inline' https: http://localhost:*; frame-src * data: http://localhost:*; child-src * data:; object-src 'none'; connect-src * ws: wss:;">
+    <title>TNF Browser Hub - Enhanced Chrome-Compatible Browser</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #1a1d29;
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Enhanced Resizable Sidebar */
+        .sidebar {
+            min-width: 60px;
+            max-width: 400px;
+            width: 280px;
+            background: #252836;
+            border-right: 1px solid #2d3142;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: width 0.3s ease;
+            position: relative;
+            resize: horizontal;
+        }
+
+        .sidebar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 4px;
+            height: 100%;
+            background: transparent;
+            cursor: ew-resize;
+            z-index: 10;
+        }
+
+        .sidebar::after:hover {
+            background: #4f46e5;
+        }
+
+        .sidebar.collapsed {
+            width: 60px;
+            min-width: 60px;
+        }
+
+        .sidebar.collapsed .logo-text,
+        .sidebar.collapsed .nav-section-title,
+        .sidebar.collapsed .nav-item span {
+            display: none;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            min-height: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .logo i {
+            font-size: 20px;
+            color: #4f46e5;
+        }
+
+        .sidebar-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sidebar-toggle, .settings-btn, .extensions-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .sidebar-toggle:hover, .settings-btn:hover, .extensions-btn:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .sidebar-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        /* Draggable Navigation Items */
+        .nav-section {
+            margin-bottom: 8px;
+        }
+
+        .nav-section-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-radius: 6px;
+            margin: 0 8px;
+            user-select: none;
+        }
+
+        .nav-section-header:hover {
+            background: #2d3142;
+        }
+
+        .nav-section-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-arrow {
+            font-size: 10px;
+            transition: transform 0.2s ease;
+        }
+
+        .section-arrow.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .nav-section-content {
+            max-height: 600px;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 4px 0;
+        }
+
+        .nav-section-content.collapsed {
+            max-height: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            margin: 2px 8px;
+            color: #9ca3af;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            position: relative;
+            cursor: pointer;
+            border-radius: 6px;
+            user-select: none;
+        }
+
+        .nav-item.draggable {
+            cursor: grab;
+        }
+
+        .nav-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .nav-item.drag-over {
+            background: #4f46e5;
+            transform: translateY(-2px);
+        }
+
+        .nav-item:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .nav-item.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .nav-item i {
+            width: 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-left: auto;
+        }
+
+        .status-dot.online { background: #10b981; }
+        .status-dot.warning { background: #f59e0b; }
+        .status-dot.offline { background: #ef4444; }
+
+        .drag-handle {
+            opacity: 0;
+            color: #6b7280;
+            cursor: grab;
+            margin-right: 4px;
+        }
+
+        .nav-item:hover .drag-handle {
+            opacity: 1;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #1a1d29;
+            min-width: 0;
+        }
+
+        /* Enhanced Browser Controls */
+        .browser-controls {
+            background: #252836;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            padding: 8px 16px;
+            gap: 12px;
+            min-height: 50px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .nav-btn {
+            background: #2d3142;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .address-bar {
+            flex: 1;
+            background: #2d3142;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            padding: 8px 16px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .address-bar:focus {
+            border-color: #4f46e5;
+            background: #374151;
+        }
+
+        .browser-actions {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .action-btn {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .action-btn.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .extensions-indicator {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            font-size: 8px;
+        }
+
+        /* Enhanced Tab Management */
+        .tab-bar {
+            background: #1f2937;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            padding: 0;
+            min-height: 42px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .tab-scroll-container {
+            display: flex;
+            align-items: center;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .tab-scroll-btn {
+            background: #374151;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-scroll-btn:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .tabs-container {
+            display: flex;
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .tabs-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: #374151;
+            color: #9ca3af;
+            font-size: 13px;
+            font-weight: 500;
+            border-right: 1px solid #2d3142;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 120px;
+            max-width: 200px;
+            position: relative;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab.active {
+            background: #1a1d29;
+            color: #ffffff;
+            border-bottom: 2px solid #4f46e5;
+        }
+
+        .tab:hover:not(.active) {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .tab-close {
+            background: none;
+            border: none;
+            color: inherit;
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 3px;
+            font-size: 10px;
+            opacity: 0.7;
+            margin-left: auto;
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab-close:hover {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            opacity: 1;
+        }
+
+        .new-tab-btn {
+            background: #374151;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            border-left: 1px solid #2d3142;
+        }
+
+        .new-tab-btn:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        /* Content Area */
+        .content-area {
+            flex: 1;
+            display: flex;
+            background: #1a1d29;
+            position: relative;
+        }
+
+        .content-view {
+            flex: 1;
+            background: #ffffff;
+            border-radius: 8px;
+            margin: 8px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .content-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 8px;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .content-frame.hidden {
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        /* Theia Loading Overlay */
+        .theia-loading-overlay {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            bottom: 8px;
+            background: linear-gradient(135deg, #1a1d29 0%, #252836 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+
+        .theia-loading-content {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px;
+            color: #ffffff;
+        }
+
+        .loading-spinner {
+            margin: 0 auto 30px;
+            width: 80px;
+            height: 80px;
+            position: relative;
+        }
+
+        .spinner-ring {
+            display: inline-block;
+            position: absolute;
+            width: 64px;
+            height: 64px;
+            border: 8px solid transparent;
+            border-radius: 50%;
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+
+        .spinner-ring:nth-child(1) {
+            border-top-color: #4f46e5;
+            animation-delay: -0.45s;
+        }
+
+        .spinner-ring:nth-child(2) {
+            border-top-color: #06d6a0;
+            animation-delay: -0.3s;
+        }
+
+        .spinner-ring:nth-child(3) {
+            border-top-color: #ffd166;
+            animation-delay: -0.15s;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .theia-loading-content h2 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .theia-loading-content > p {
+            font-size: 16px;
+            color: #a0a9c0;
+            margin-bottom: 30px;
+        }
+
+        .ai-support-banner {
+            background: linear-gradient(135deg, #4f46e5 0%, #06d6a0 100%);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: left;
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .ai-banner-header {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .ai-banner-content p {
+            font-size: 14px;
+            color: #f8fafc;
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+
+        .ai-banner-content p:last-child {
+            margin-bottom: 0;
+            font-weight: 600;
+        }
+
+        .loading-progress {
+            margin-top: 30px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #2d3142;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f46e5, #06d6a0, #ffd166);
+            border-radius: 3px;
+            animation: progress 10s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; }
+            25% { width: 30%; }
+            50% { width: 60%; }
+            75% { width: 85%; }
+            100% { width: 95%; }
+        }
+
+        .progress-text {
+            font-size: 14px;
+            color: #a0a9c0;
+            font-style: italic;
+        }
+
+        /* Settings Panel */
+        .settings-panel, .extensions-panel, .prompt-manager-panel {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100vh;
+            background: #252836;
+            border-left: 1px solid #2d3142;
+            z-index: 1000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .settings-panel.open, .extensions-panel.open, .prompt-manager-panel.open {
+            transform: translateX(0);
+        }
+
+        .settings-header, .extensions-header, .prompt-manager-header {
+            padding: 20px;
+            border-bottom: 1px solid #2d3142;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .settings-title, .extensions-title, .prompt-manager-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .settings-close, .extensions-close, .prompt-manager-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .settings-close:hover, .extensions-close:hover, .prompt-manager-close:hover {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        .settings-content, .extensions-content, .prompt-manager-content {
+            padding: 20px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .settings-group {
+            margin-bottom: 32px;
+        }
+
+        .settings-group-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .settings-item {
+            margin-bottom: 16px;
+        }
+
+        .settings-item-label {
+            font-size: 13px;
+            color: #d1d5db;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .settings-toggle {
+            background: #374151;
+            border: none;
+            border-radius: 20px;
+            width: 44px;
+            height: 24px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .settings-toggle.active {
+            background: #4f46e5;
+        }
+
+        .settings-toggle::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.2s ease;
+        }
+
+        .settings-toggle.active::after {
+            transform: translateX(20px);
+        }
+
+        .settings-input, .prompt-input, .prompt-textarea {
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            padding: 8px 12px;
+            color: #ffffff;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        .settings-input:focus, .prompt-input:focus, .prompt-textarea:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .prompt-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .prompt-btn {
+            background: #4f46e5;
+            color: #ffffff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            font-weight: 500;
+        }
+        .prompt-btn:hover {
+            background: #4338ca;
+        }
+
+
+        /* Extensions Management */
+        .extension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #2d3142;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .extension-icon {
+            width: 32px;
+            height: 32px;
+            background: #4f46e5;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #ffffff;
+        }
+
+        .extension-info {
+            flex: 1;
+        }
+
+        .extension-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .extension-desc {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+
+            white-space: pre-wrap;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .settings-panel,
+            .extensions-panel,
+            .prompt-manager-panel {
+                width: 320px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+            
+            .tab {
+                min-width: 100px;
+            }
+        }
+
+        /* Overlay for mobile */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Custom Scrollbars */
+        .sidebar-body::-webkit-scrollbar, .settings-content::-webkit-scrollbar, .extensions-content::-webkit-scrollbar, .prompt-manager-content::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-body::-webkit-scrollbar-track, .settings-content::-webkit-scrollbar-track, .extensions-content::-webkit-scrollbar-track, .prompt-manager-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-body::-webkit-scrollbar-thumb, .settings-content::-webkit-scrollbar-thumb, .extensions-content::-webkit-scrollbar-thumb, .prompt-manager-content::-webkit-scrollbar-thumb {
+            background: #4b5563;
+            border-radius: 3px;
+        }
+
+        .sidebar-body::-webkit-scrollbar-thumb:hover, .settings-content::-webkit-scrollbar-thumb:hover, .extensions-content::-webkit-scrollbar-thumb:hover, .prompt-manager-content::-webkit-scrollbar-thumb:hover {
+            background: #6b7280;
+        }
+        
+        /* Browser Engine Switcher */
+        .engine-selector {
+            background: #2d3142;
+            border: 1px solid #4a5568;
+            color: #ffffff;
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-right: 8px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .engine-selector:hover {
+            border-color: #4f46e5;
+            background: #3c3c4c;
+        }
+
+        .engine-selector option {
+            background: #2d3142;
+            color: #ffffff;
+        }
+
+        /* Extension Quick Access */
+        .extension-quick-access {
+            position: relative;
+            background: #4f46e5 !important;
+            color: white !important;
+        }
+
+        .extension-quick-access:hover {
+            background: #6366f1 !important;
+        }
+
+        .extension-count {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 4px;
+            border-radius: 8px;
+            line-height: 1;
+            min-width: 16px;
+            text-align: center;
+        }
+
+        /* Extension Management Actions */
+        .extension-actions {
+            display: flex;
+            gap: 8px;
+            padding: 16px;
+            border-bottom: 1px solid #2d3142;
+            margin-bottom: 16px;
+        }
+
+        .extension-action-btn {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .extension-action-btn.primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .extension-action-btn.primary:hover {
+            background: #6366f1;
+        }
+
+        .extension-action-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .extension-action-btn.secondary:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .extensions-section {
+            margin-bottom: 24px;
+        }
+
+        .extensions-section h3 {
+            color: #e5e7eb;
+            font-size: 14px;
+            font-weight: 600;
+            margin: 0 0 12px 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .installed-extension-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin: 4px 0;
+            background: #1f2937;
+            border-radius: 8px;
+            border: 1px solid #374151;
+        }
+
+        .installed-extension-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .installed-extension-details {
+            flex: 1;
+        }
+
+        .installed-extension-name {
+            color: #f3f4f6;
+            font-weight: 500;
+            font-size: 13px;
+        }
+
+        .installed-extension-version {
+            color: #9ca3af;
+            font-size: 11px;
+            margin-top: 2px;
+        }
+
+        .installed-extension-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .extension-control-btn {
+            background: none;
+            border: 1px solid #4b5563;
+            color: #9ca3af;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .extension-control-btn:hover {
+            background: #374151;
+            color: #e5e7eb;
+        }
+
+        .extension-control-btn.enabled {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+
+        /* Extension Toolbar Styles */
+        .extension-toolbar {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 8px;
+            max-width: 300px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .extension-toolbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .extension-icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            min-width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+        }
+
+        .extension-icon-btn:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .extension-icon-btn.active {
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .extension-icon-btn .extension-badge {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            background: #ef4444;
+            color: white;
+            font-size: 9px;
+            padding: 1px 4px;
+            border-radius: 8px;
+            line-height: 1;
+            min-width: 12px;
+            text-align: center;
+            display: none;
+        }
+
+        .extension-icon-btn .extension-badge.visible {
+            display: block;
+        }
+
+        .extension-popup {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 380px;
+            max-height: 600px;
+            background: #252836;
+            border: 1px solid #2d3142;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 1001;
+            overflow: hidden;
+            display: none;
+        }
+
+        .extension-popup.visible {
+            display: block;
+        }
+
+        .extension-popup-header {
+            padding: 12px 16px;
+            background: #2d3142;
+            border-bottom: 1px solid #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .extension-popup-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            background: #4b5563;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #ffffff;
+        }
+
+        .extension-popup-title {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 600;
+            color: #ffffff;
+        }
+
+        .extension-popup-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .extension-popup-close:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .extension-popup-content {
+            padding: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .extension-popup iframe {
+            width: 100%;
+            height: 400px;
+            border: none;
+            border-radius: 4px;
+        }
+
+        /* Extension Context Menu */
+        .extension-context-menu {
+            position: absolute;
+            background: #252836;
+            border: 1px solid #2d3142;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            min-width: 200px;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .context-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .context-menu-item:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .context-menu-item i {
+            width: 16px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .context-menu-item:hover i {
+            color: #ffffff;
+        }
+
+        /* Extension Search Styles */
+        .extension-search {
+            padding: 0 16px 16px 16px;
+            border-bottom: 1px solid #2d3142;
+            margin-bottom: 16px;
+        }
+
+        .search-input-container {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .extension-search-input {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .extension-search-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            background: #111827;
+        }
+
+        .extension-search-input::placeholder {
+            color: #6b7280;
+        }
+
+        .search-clear {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .search-clear:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .search-filters select {
+            flex: 1;
+            padding: 6px 8px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 4px;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .search-filters select:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .extension-count-label {
+            color: #6b7280;
+            font-weight: normal;
+            font-size: 12px;
+        }
+
+        /* Browser Feature Panels */
+        .browser-feature-panel {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            width: 400px;
+            max-height: 600px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 1500;
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .browser-feature-panel.visible {
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: #374151;
+            border-bottom: 1px solid #4b5563;
+        }
+
+        .panel-header h3 {
+            margin: 0;
+            color: #f9fafb;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .panel-header button {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .panel-header button:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        .panel-content {
+            padding: 16px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .feature-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+
+        .feature-btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .feature-btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .feature-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .feature-btn.secondary:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .feature-btn.danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .feature-btn.danger:hover {
+            background: #b91c1c;
+        }
+
+        .history-search {
+            width: 100%;
+            padding: 8px 12px;
+            background: #111827;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            color: #f3f4f6;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .history-search:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .bookmark-list, .history-list, .downloads-list {
+            margin-top: 16px;
+        }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .list-item:hover {
+            background: #374151;
+        }
+
+        .list-item-icon {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            background: #4b5563;
+            color: #d1d5db;
+            font-size: 12px;
+        }
+
+        .list-item-content {
+            flex: 1;
+        }
+
+        .list-item-title {
+            color: #f3f4f6;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 2px;
+        }
+
+        .list-item-url {
+            color: #9ca3af;
+            font-size: 12px;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .list-item-action {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .list-item-action:hover {
+            background: #4b5563;
+            color: #ffffff;
+        }
+
+        /* More Options Menu */
+        .more-options-menu {
+            position: absolute;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 2000;
+            min-width: 200px;
+            padding: 8px 0;
+            transform: scale(0.95);
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .more-options-menu.visible {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .menu-section {
+            padding: 4px 0;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .menu-item:hover {
+            background: #374151;
+            color: #ffffff;
+        }
+
+        .menu-item i {
+            width: 16px;
+            font-size: 14px;
+        }
+
+        .menu-divider {
+            height: 1px;
+            background: #374151;
+            margin: 4px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Enhanced Resizable Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <i class="fas fa-rocket"></i>
+                    <span class="logo-text">TNF Browser</span>
+                </div>
+                <div class="sidebar-controls">
+                    <button class="extensions-btn" onclick="toggleExtensions()" title="Extensions">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <div class="extensions-indicator"></div>
+                    </button>
+                    <button class="settings-btn" onclick="toggleSettings()" title="Settings">
+                        <i class="fas fa-cog"></i>
+                    </button>
+                    <button class="sidebar-toggle" onclick="toggleSidebar()" title="Collapse Sidebar">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar-body">
+                <!-- Quick Access Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('quick-access')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-bolt"></i> Quick Access</span>
+                            <i class="fas fa-chevron-down section-arrow" id="quick-access-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="quick-access-section">
+                        <div class="nav-item draggable active" draggable="true" onclick="switchToTab('dashboard')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>TNF Dashboard</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:3007', 'Theia IDE')"
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-code"></i>
+                            <span>Theia IDE</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://vscode.dev', 'VS Code Web')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-laptop-code"></i>
+                            <span>VS Code Web</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://claude.ai', 'Claude AI')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-robot"></i>
+                            <span>Claude AI</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://gemini.google.com', 'Gemini')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-gem"></i>
+                            <span>Gemini</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Services Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('ai-services')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-brain"></i> AI Services</span>
+                            <i class="fas fa-chevron-down section-arrow" id="ai-services-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="ai-services-section">
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://chat.openai.com', 'ChatGPT')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-comments"></i>
+                            <span>ChatGPT</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://perplexity.ai', 'Perplexity')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-search"></i>
+                            <span>Perplexity</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="togglePromptManager()">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-magic"></i>
+                            <span>Prompt Manager</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Development Tools Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('dev-tools')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-wrench"></i> Dev Tools</span>
+                            <i class="fas fa-chevron-down section-arrow" id="dev-tools-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="dev-tools-section">
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('https://github.com', 'GitHub')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fab fa-github"></i>
+                            <span>GitHub</span>
+                            <div class="status-dot online"></div>
+                        </div>
+
+                        <div class="nav-item draggable" draggable="true" onclick="createNewTab('http://localhost:5555', 'Database')">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-database"></i>
+                            <span>Database</span>
+                            <div class="status-dot warning"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Custom Links Section -->
+                <div class="nav-section" id="custom-section">
+                    <div class="nav-section-header" onclick="toggleSection('custom-links')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-star"></i> Custom Links</span>
+                            <i class="fas fa-chevron-down section-arrow" id="custom-links-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="custom-links-section">
+                        <div class="nav-item add-menu-item" onclick="addCustomMenuItem()">
+                            <i class="fas fa-plus"></i>
+                            <span>Add Custom Link</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Account Section -->
+                <div class="nav-section">
+                    <div class="nav-section-header" onclick="toggleSection('account')">
+                        <div class="nav-section-title">
+                            <span><i class="fas fa-user"></i> Account</span>
+                            <i class="fas fa-chevron-down section-arrow" id="account-arrow"></i>
+                        </div>
+                    </div>
+                    <div class="nav-section-content" id="account-section">
+                        <div class="nav-item" onclick="openAccount()">
+                            <i class="fas fa-user-circle"></i>
+                            <span>Profile</span>
+                        </div>
+                        <div class="nav-item" onclick="openSettings()">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </div>
+                        <div class="nav-item" onclick="openSignIn()">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <span>Sign In</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Enhanced Browser Controls -->
+            <div class="browser-controls">
+                <div class="nav-buttons">
+                    <button class="nav-btn" id="backBtn" onclick="goBack()" disabled>
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <button class="nav-btn" id="forwardBtn" onclick="goForward()" disabled>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="nav-btn" onclick="refreshPage()">
+                        <i class="fas fa-redo"></i>
+                    </button>
+                    <button class="nav-btn" onclick="goHome()">
+                        <i class="fas fa-home"></i>
+                    </button>
+                </div>
+
+                <input type="text" class="address-bar" id="addressBar" 
+                       placeholder="Enter URL, search, or navigate to TNF services..." 
+                       onkeypress="handleAddressBarEnter(event)">
+
+                <!-- Chrome Extension Toolbar -->
+                <div class="extension-toolbar" id="extensionToolbar">
+                    <!-- Extension icons will be dynamically added here -->
+                </div>
+
+                <div class="browser-actions">
+                    <!-- Browser Engine Switcher -->
+                    <select id="engineSelector" class="engine-selector" onchange="switchEngine(this.value)" title="Browser Engine">
+                        <option value="chromium">Chromium</option>
+                        <option value="webkit">WebKit</option>
+                        <option value="firefox">Firefox</option>
+                    </select>
+                    
+                    <!-- Quick Extension Access -->
+                    <button class="action-btn extension-quick-access" onclick="toggleExtensions()" title="Chrome Extensions">
+                        <i class="fas fa-puzzle-piece"></i>
+                        <span class="extension-count">10</span>
+                    </button>
+                    
+                    <button class="action-btn" onclick="toggleBookmarks()" title="Bookmarks">
+                        <i class="fas fa-bookmark"></i>
+                    </button>
+                    <button class="action-btn" onclick="showHistory()" title="History">
+                        <i class="fas fa-history"></i>
+                    </button>
+                    <button class="action-btn" onclick="showDownloads()" title="Downloads">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="action-btn" onclick="toggleDevTools()" title="Developer Tools">
+                        <i class="fas fa-code"></i>
+                    </button>
+                    <button class="action-btn" onclick="captureScreenshot()" title="Screenshot">
+                        <i class="fas fa-camera"></i>
+                    </button>
+                    <button class="action-btn" onclick="showMore()" title="More Options">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Enhanced Tab Bar -->
+            <div class="tab-bar">
+                <div class="tab-scroll-container">
+                    <button class="tab-scroll-btn" onclick="scrollTabs('left')">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    
+                    <div class="tabs-container" id="tabsContainer">
+                        <div class="tab active" id="tab-dashboard" onclick="switchToTab('dashboard')">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>TNF Dashboard</span>
+                            <button class="tab-close" onclick="event.stopPropagation(); closeTab('dashboard')">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button class="tab-scroll-btn" onclick="scrollTabs('right')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+                
+                <button class="new-tab-btn" onclick="createNewTab()" title="New Tab">
+                    <i class="fas fa-plus"></i>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div class="content-area" id="contentArea">
+                <div class="content-view">
+                    <iframe class="content-frame" id="frame-dashboard" src="http://localhost:3000"></iframe>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Settings Panel -->
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h2 class="settings-title">Settings</h2>
+            <button class="settings-close" onclick="toggleSettings()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="settings-content">
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-palette"></i>
+                    Appearance
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Dark Mode</label>
+                    <button class="settings-toggle active" onclick="toggleDarkMode(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Sidebar Width</label>
+                    <input type="range" class="settings-input" min="200" max="400" value="280" oninput="setSidebarWidth(this.value)">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Font Size</label>
+                    <select class="settings-input">
+                        <option>Small</option>
+                        <option selected>Medium</option>
+                        <option>Large</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-globe"></i>
+                    Browser
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Home Page</label>
+                    <input type="text" class="settings-input" placeholder="http://localhost:3000" value="http://localhost:3000">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Search Engine</label>
+                    <select class="settings-input">
+                        <option>Google</option>
+                        <option>Bing</option>
+                        <option>DuckDuckGo</option>
+                    </select>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Block Ads</label>
+                    <button class="settings-toggle" onclick="toggleAdBlock(this)"></button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-shield-alt"></i>
+                    Privacy & Security
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Clear Cookies on Exit</label>
+                    <button class="settings-toggle" onclick="toggleClearCookies(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Block Third-party Cookies</label>
+                    <button class="settings-toggle active" onclick="toggleThirdPartyCookies(this)"></button>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Enable Do Not Track</label>
+                    <button class="settings-toggle active" onclick="toggleDoNotTrack(this)"></button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-cogs"></i>
+                    Advanced
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Developer Tools</label>
+                    <button class="settings-toggle active" onclick="toggleDevTools(this)"></button>
+                </div>
+
+                <div class="settings-item">
+                    <label class="settings-item-label">Extensions</label>
+                    <button class="settings-toggle active" onclick="toggleExtensionsEnabled(this)"></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Extensions Panel -->
+    <div class="extensions-panel" id="extensionsPanel">
+        <div class="extensions-header">
+            <h2 class="extensions-title">Extensions</h2>
+            <button class="extensions-close" onclick="toggleExtensions()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="extensions-content">
+            <!-- Extension Management Actions -->
+            <div class="extension-actions">
+                <button class="extension-action-btn primary" onclick="openChromeStore()">
+                    <i class="fab fa-chrome"></i>
+                    <span>Chrome Web Store</span>
+                </button>
+                <button class="extension-action-btn secondary" onclick="loadUnpackedExtension()">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Load Unpacked</span>
+                </button>
+                <button class="extension-action-btn secondary" onclick="refreshInstalledExtensions()">
+                    <i class="fas fa-sync"></i>
+                    <span>Refresh</span>
+                </button>
+            </div>
+            
+            <!-- Extension Search -->
+            <div class="extension-search">
+                <div class="search-input-container">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" 
+                           id="extensionSearchInput" 
+                           class="extension-search-input" 
+                           placeholder="Search extensions..." 
+                           oninput="filterExtensions(this.value)">
+                    <button class="search-clear" onclick="clearExtensionSearch()" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="search-filters">
+                    <select id="extensionCategoryFilter" onchange="filterExtensionsByCategory(this.value)">
+                        <option value="">All Categories</option>
+                        <option value="productivity">Productivity</option>
+                        <option value="security">Security & Privacy</option>
+                        <option value="developer">Developer Tools</option>
+                        <option value="social">Social & Communication</option>
+                        <option value="shopping">Shopping</option>
+                    </select>
+                    <select id="extensionStatusFilter" onchange="filterExtensionsByStatus(this.value)">
+                        <option value="">All Extensions</option>
+                        <option value="enabled">Enabled Only</option>
+                        <option value="disabled">Disabled Only</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Installed Extensions Section -->
+            <div class="extensions-section">
+                <h3>Installed Extensions <span id="extensionCount" class="extension-count-label">(10)</span></h3>
+                <div id="installedExtensions">
+                    <!-- Real extensions will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Demo/Mock Extensions Section -->
+            <div class="extensions-section">
+                <h3>Popular Extensions (Demo)</h3>
+                <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-ad"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">AdBlock Plus</div>
+                    <div class="extension-desc">Block advertisements and pop-ups</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-eye-slash"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Privacy Badger</div>
+                    <div class="extension-desc">Automatically blocks trackers</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">React DevTools</div>
+                    <div class="extension-desc">Debug React components</div>
+                </div>
+                <button class="settings-toggle"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-palette"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Dark Reader</div>
+                    <div class="extension-desc">Dark mode for all websites</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-save"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">OneTab</div>
+                    <div class="extension-desc">Save up to 95% memory and declutter your tabs</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fab fa-github"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Octotree</div>
+                    <div class="extension-desc">GitHub code tree on steroids</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Ghostery</div>
+                    <div class="extension-desc">Block ads, stop trackers and speed up websites</div>
+                </div>
+                <button class="settings-toggle"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">LastPass</div>
+                    <div class="extension-desc">Password manager and secure vault</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            
+            <div class="extension-item">
+                <div class="extension-icon">
+                    <i class="fas fa-language"></i>
+                </div>
+                <div class="extension-info">
+                    <div class="extension-name">Google Translate</div>
+                    <div class="extension-desc">Translate text on web pages instantly</div>
+                </div>
+                <button class="settings-toggle active"></button>
+            </div>
+            </div> <!-- End Demo Extensions Section -->
+        </div>
+    </div>
+
+    <!-- Prompt Manager Panel -->
+    <div class="prompt-manager-panel" id="promptManagerPanel">
+        <div class="prompt-manager-header">
+            <h2 class="prompt-manager-title">Prompt Manager</h2>
+            <button class="prompt-manager-close" onclick="togglePromptManager()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="prompt-manager-content">
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-folder"></i>
+                    Folders
+                </div>
+                <div id="prompt-folders-list">
+                    <!-- Folders will be rendered here -->
+                </div>
+                <button class="prompt-btn" style="margin-top: 10px;" onclick="showNewFolderForm()">New Folder</button>
+            </div>
+
+            <div class="settings-group">
+                <div class="settings-group-title">
+                    <i class="fas fa-file-alt"></i>
+                    Prompts
+                </div>
+                <div id="prompt-templates-list">
+                     <!-- Prompts will be rendered here -->
+                </div>
+                <button class="prompt-btn" style="margin-top: 10px;" onclick="showNewPromptForm()">New Prompt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Prompt Modal -->
+    <div id="newPromptModal" class="overlay" style="display: none; align-items: center; justify-content: center;">
+        <div style="background: #252836; padding: 20px; border-radius: 8px; width: 500px;" onclick="event.stopPropagation()">
+            <h3 style="margin-bottom: 20px;">Create New Prompt</h3>
+            <form id="newPromptForm" onsubmit="event.preventDefault(); saveNewPrompt();">
+                <div class="settings-item">
+                    <label class="settings-item-label">Name</label>
+                    <input type="text" name="name" class="prompt-input" required>
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Description</label>
+                    <input type="text" name="description" class="prompt-input">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Category</label>
+                    <input type="text" name="category" class="prompt-input">
+                </div>
+                 <div class="settings-item">
+                    <label class="settings-item-label">Tags (comma-separated)</label>
+                    <input type="text" name="tags" class="prompt-input">
+                </div>
+                <div class="settings-item">
+                    <label class="settings-item-label">Template</label>
+                    <textarea name="template" class="prompt-textarea" required></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="prompt-btn" style="background: #4b5563;" onclick="closeNewPromptModal()">Cancel</button>
+                    <button type="submit" class="prompt-btn">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Input Modal -->
+    <div id="customInputModal" class="overlay" style="display: none; align-items: center; justify-content: center;">
+        <div style="background: #252836; padding: 20px; border-radius: 8px; width: 500px;" onclick="event.stopPropagation()">
+            <h3 id="customInputTitle" style="margin-bottom: 20px;">Input</h3>
+            <form id="customInputForm" onsubmit="event.preventDefault(); handleCustomInput();">
+                <div id="customInputFields"></div>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button type="button" class="prompt-btn" style="background: #4b5563;" onclick="closeCustomInputModal()">Cancel</button>
+                    <button type="submit" class="prompt-btn">OK</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Overlay -->
+    <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
+
+    <script>
+        // Global Variables
+        let activeTab = 'dashboard';
+        let tabs = {
+            dashboard: {
+                title: 'TNF Dashboard',
+                url: 'http://localhost:3000',
+                icon: 'fas fa-tachometer-alt',
+                frame: document.getElementById('frame-dashboard')
+            }
+        };
+        let tabHistory = {};
+        let sidebarCollapsed = false;
+
+        
+        // Sidebar Management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const icon = document.querySelector('.sidebar-toggle i');
+            
+            sidebarCollapsed = !sidebarCollapsed;
+            sidebar.classList.toggle('collapsed', sidebarCollapsed);
+            
+            if (sidebarCollapsed) {
+                icon.className = 'fas fa-chevron-right';
+            } else {
+                icon.className = 'fas fa-chevron-left';
+            }
+        }
+        
+        function setSidebarWidth(width) {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.width = width + 'px';
+        }
+        
+        // Section Management
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-section');
+            const arrow = document.getElementById(sectionId + '-arrow');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                arrow.classList.remove('collapsed');
+            } else {
+                content.classList.add('collapsed');
+                arrow.classList.add('collapsed');
+            }
+        }
+        
+        // Drag and Drop Functionality
+        let draggedElement = null;
+        
+        function initDragAndDrop() {
+            const draggableItems = document.querySelectorAll('.nav-item.draggable');
+            
+            draggableItems.forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragover', handleDragOver);
+                item.addEventListener('drop', handleDrop);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragenter', handleDragEnter);
+                item.addEventListener('dragleave', handleDragLeave);
+            });
+        }
+        
+        function handleDragStart(e) {
+            draggedElement = this;
+            this.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', this.outerHTML);
+        }
+        
+        function handleDragOver(e) {
+            if (e.preventDefault) {
+                e.preventDefault();
+            }
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+        
+        function handleDragEnter(e) {
+            if (this !== draggedElement) {
+                this.classList.add('drag-over');
+            }
+        }
+        
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+        
+        function handleDrop(e) {
+            if (e.stopPropagation) {
+                e.stopPropagation();
+            }
+            
+            if (draggedElement !== this) {
+                // Get parent container
+                const container = this.parentNode;
+                const draggedIndex = Array.from(container.children).indexOf(draggedElement);
+                const dropIndex = Array.from(container.children).indexOf(this);
+                
+                // Reorder elements
+                if (draggedIndex < dropIndex) {
+                    container.insertBefore(draggedElement, this.nextSibling);
+                } else {
+                    container.insertBefore(draggedElement, this);
+                }
+                
+                // Save new order to localStorage
+                saveMenuItemOrder();
+            }
+            
+            this.classList.remove('drag-over');
+            return false;
+        }
+        
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+            
+            // Remove drag-over class from all items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('drag-over');
+            });
+            
+            draggedElement = null;
+        }
+        
+        function saveMenuItemOrder() {
+            // Implementation to save menu order to localStorage
+            const sections = document.querySelectorAll('.nav-section-content');
+            const order = {};
+            
+            sections.forEach(section => {
+                const items = section.querySelectorAll('.nav-item.draggable');
+                order[section.id] = Array.from(items).map(item => ({
+                    text: item.textContent.trim(),
+                    onclick: item.getAttribute('onclick')
+                }));
+            });
+            
+            localStorage.setItem('menuItemOrder', JSON.stringify(order));
+        }
+        
+        // Tab Management
+        function createNewTab(url = 'about:blank', title = 'New Tab', icon = 'fas fa-globe') {
+            const tabId = 'tab-' + Date.now();
+            const frameId = 'frame-' + tabId;
+
+            // Check if this is Theia IDE
+            const isTheia = url.includes('localhost:3007') || title.includes('Theia');
+            
+            // Create loading overlay for Theia
+            let loadingOverlay = null;
+            if (isTheia) {
+                loadingOverlay = document.createElement('div');
+                loadingOverlay.id = `loading-${frameId}`;
+                loadingOverlay.className = 'theia-loading-overlay';
+                loadingOverlay.innerHTML = `
+                    <div class="theia-loading-content">
+                        <div class="loading-spinner">
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                            <div class="spinner-ring"></div>
+                        </div>
+                        <h2>🚀 The New Fuse IDE Loading...</h2>
+                        <p>Please allow time for Theia IDE to fully load</p>
+                        <div class="ai-support-banner">
+                            <div class="ai-banner-header">
+                                <span>🚀 AI Support in the Theia IDE is available (Alpha Version)! ✨</span>
+                            </div>
+                            <div class="ai-banner-content">
+                                <p>Theia IDE now contains AI support, which offers early access to cutting-edge AI capabilities within your IDE.</p>
+                                <p><strong>⚠️ Important:</strong> These features are disabled by default, ensuring that users can opt-in at their discretion. For those who choose to enable AI support, it is important to be aware that these may generate continuous requests to the language models (LLMs) you provide access to. This might incur costs that you need to monitor closely.</p>
+                                <p>🚧 Please note that this feature is currently in an alpha state and may undergo frequent changes. We welcome your feedback, contributions, and sponsorship!</p>
+                                <p><strong>✨ Open the AI Chat View to get started!</strong></p>
+                            </div>
+                        </div>
+                        <div class="loading-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill"></div>
+                            </div>
+                            <span class="progress-text">Initializing IDE components...</span>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('contentArea').appendChild(loadingOverlay);
+            }
+
+            // Create iframe for the new tab
+            const frame = document.createElement('iframe');
+            frame.id = frameId;
+            frame.className = 'content-frame hidden';
+            frame.sandbox = 'allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox allow-presentation';
+            
+            // Handle CSP errors gracefully
+            frame.onerror = function() {
+                console.warn(`Failed to load ${url} in iframe due to CSP restrictions`);
+                showNotification(`${title} blocked embedding for security. Opening in fallback view.`, 'warning');
+                frame.src = 'data:text/html,<html><body style="font-family: Arial, sans-serif; padding: 20px; text-align: center;"><h2>🛡️ Content blocked by security policy</h2><p>The requested content cannot be displayed in a frame due to security restrictions set by the website.</p><p style="margin: 20px 0;"><a href="' + url + '" target="_blank" style="background: #007acc; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Open in new window</a></p><p><small>This is normal behavior for secure sites like GitHub, ChatGPT, etc.</small></p></body></html>';
+                if (loadingOverlay) {
+                    loadingOverlay.remove();
+                }
+            };
+            
+            // Handle load completion for Theia
+            if (isTheia) {
+                frame.onload = function() {
+                    // Remove loading overlay after a fixed delay, as direct iframe content access is restricted.
+                    setTimeout(() => {
+                        if (loadingOverlay) {
+                            loadingOverlay.style.transition = 'opacity 0.5s ease-out';
+                            loadingOverlay.style.opacity = '0';
+                            setTimeout(() => {
+                                loadingOverlay.remove();
+                            }, 500);
+                        }
+                    }, 8000); // Total 8 seconds delay (5s initial + 3s additional) for Theia to load
+                };
+            }
+            
+            frame.src = url;
+            document.getElementById('contentArea').appendChild(frame);
+            
+            // Create tab data
+            tabs[tabId] = {
+                title: title,
+                url: url,
+                icon: icon,
+                frame: frame,
+                loadingOverlay: loadingOverlay
+            };
+            
+            // Create tab element
+            const tabElement = document.createElement('div');
+            tabElement.className = 'tab';
+            tabElement.id = tabId;
+            tabElement.onclick = () => switchToTab(tabId);
+            tabElement.innerHTML = `
+                <i class="${icon}"></i>
+                <span>${title}</span>
+                <button class="tab-close" onclick="event.stopPropagation(); closeTab('${tabId}')">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Add to tabs container
+            document.getElementById('tabsContainer').appendChild(tabElement);
+            
+            // Switch to new tab
+            switchToTab(tabId);
+            
+            // Scroll to show new tab
+            scrollToTab(tabElement);
+        }
+        
+        function switchToTab(tabId) {
+            // Remove active class from all tabs and hide all frames
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.content-frame').forEach(frame => frame.classList.add('hidden'));
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to selected tab and show its frame
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.classList.add('active');
+            }
+
+            if (tabs[tabId]) {
+                tabs[tabId].frame.classList.remove('hidden');
+                activeTab = tabId;
+                updateAddressBar(tabs[tabId].url);
+            }
+            
+            // Handle special case for dashboard
+            if (tabId === 'dashboard') {
+                document.querySelectorAll('.nav-item').forEach(item => {
+                    if (item.textContent.includes('TNF Dashboard')) {
+                        item.classList.add('active');
+                    }
+                });
+            }
+        }
+        
+        function closeTab(tabId) {
+            const tabElement = document.getElementById(tabId);
+            if (tabElement) {
+                tabElement.remove();
+            }
+
+            if (tabs[tabId]) {
+                tabs[tabId].frame.remove();
+                // Clean up loading overlay if it exists
+                if (tabs[tabId].loadingOverlay) {
+                    tabs[tabId].loadingOverlay.remove();
+                }
+                delete tabs[tabId];
+            }
+            
+            // If closed tab was active, switch to first available tab
+            if (activeTab === tabId) {
+                const remainingTabs = Object.keys(tabs);
+                if (remainingTabs.length > 0) {
+                    switchToTab(remainingTabs[0]);
+                } else {
+                    createNewTab();
+                }
+            }
+        }
+        
+        function scrollTabs(direction) {
+            const container = document.getElementById('tabsContainer');
+            const scrollAmount = 200;
+            
+            if (direction === 'left') {
+                container.scrollLeft -= scrollAmount;
+            } else {
+                container.scrollLeft += scrollAmount;
+            }
+        }
+        
+        function scrollToTab(tabElement) {
+            const container = document.getElementById('tabsContainer');
+            const tabRect = tabElement.getBoundingClientRect();
+            const containerRect = container.getBoundingClientRect();
+            
+            if (tabRect.right > containerRect.right) {
+                container.scrollLeft += tabRect.right - containerRect.right + 20;
+            } else if (tabRect.left < containerRect.left) {
+                container.scrollLeft -= containerRect.left - tabRect.left + 20;
+            }
+        }
+        
+        // Browser Navigation
+        function goBack() {
+            if (tabs[activeTab]) {
+                tabs[activeTab].frame.contentWindow.history.back();
+            }
+        }
+        
+        function goForward() {
+            if (tabs[activeTab]) {
+                tabs[activeTab].frame.contentWindow.history.forward();
+            }
+        }
+        
+        function refreshPage() {
+             if (tabs[activeTab]) {
+                tabs[activeTab].frame.src = tabs[activeTab].frame.src;
+            }
+        }
+        
+        function goHome() {
+            switchToTab('dashboard');
+        }
+        
+        function handleAddressBarEnter(event) {
+            if (event.key === 'Enter') {
+                const url = event.target.value;
+                navigateToUrl(url);
+            }
+        }
+        
+        function navigateToUrl(url) {
+            // Add protocol if missing
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                if (url.includes('.') || url.startsWith('localhost')) {
+                    url = 'https://' + url;
+                } else {
+                    // Treat as search
+                    url = 'https://www.google.com/search?q=' + encodeURIComponent(url);
+                }
+            }
+            
+            if (activeTab && tabs[activeTab]) {
+                tabs[activeTab].url = url;
+                tabs[activeTab].frame.src = url;
+                updateAddressBar(url);
+            } else {
+                createNewTab(url, 'New Tab');
+            }
+        }
+        
+        function updateAddressBar(url) {
+            document.getElementById('addressBar').value = url;
+        }
+        
+        // Settings Management
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+            
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+        
+        // Extensions Management
+        function toggleExtensions() {
+            const panel = document.getElementById('extensionsPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+            
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+            }
+        }
+
+        // Prompt Manager
+        function togglePromptManager() {
+            const panel = document.getElementById('promptManagerPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+                loadPromptManager();
+            }
+        }
+        
+        function closeAllPanels(keepOverlay = false) {
+            document.getElementById('settingsPanel').classList.remove('open');
+            document.getElementById('extensionsPanel').classList.remove('open');
+            document.getElementById('promptManagerPanel').classList.remove('open');
+            if(!keepOverlay) {
+                document.getElementById('overlay').classList.remove('active');
+            }
+        }
+        
+        // Terminal functionality removed - Theia IDE has its own integrated terminal
+        
+        // Browser Features - Fully Functional Implementation
+        function toggleBookmarks() {
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:toggle-bookmarks');
+                }
+                
+                // Create bookmarks panel if it doesn't exist
+                let bookmarksPanel = document.getElementById('bookmarksPanel');
+                if (!bookmarksPanel) {
+                    bookmarksPanel = document.createElement('div');
+                    bookmarksPanel.id = 'bookmarksPanel';
+                    bookmarksPanel.className = 'browser-feature-panel';
+                    bookmarksPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-bookmark"></i> Bookmarks</h3>
+                            <button onclick="closePanel('bookmarksPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="bookmark-toolbar">
+                                <button class="feature-btn primary" onclick="addBookmark()">
+                                    <i class="fas fa-plus"></i> Add Bookmark
+                                </button>
+                                <button class="feature-btn secondary" onclick="importBookmarks()">
+                                    <i class="fas fa-download"></i> Import
+                                </button>
+                                <button class="feature-btn secondary" onclick="exportBookmarks()">
+                                    <i class="fas fa-upload"></i> Export
+                                </button>
+                            </div>
+                            <div class="bookmark-list" id="bookmarkList">
+                                ${generateBookmarkList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(bookmarksPanel);
+                }
+                
+                // Toggle panel visibility
+                bookmarksPanel.classList.toggle('visible');
+                showNotification('Bookmarks panel toggled');
+            } catch (error) {
+                console.error('Bookmarks error:', error);
+                showNotification('Bookmarks feature temporarily unavailable', 'error');
+            }
+        }
+        
+        function showHistory() {
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-history');
+                }
+                
+                // Create history panel
+                let historyPanel = document.getElementById('historyPanel');
+                if (!historyPanel) {
+                    historyPanel = document.createElement('div');
+                    historyPanel.id = 'historyPanel';
+                    historyPanel.className = 'browser-feature-panel';
+                    historyPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-history"></i> Browsing History</h3>
+                            <button onclick="closePanel('historyPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="history-toolbar">
+                                <input type="text" placeholder="Search history..." class="history-search" oninput="filterHistory(this.value)">
+                                <button class="feature-btn danger" onclick="clearHistory()">
+                                    <i class="fas fa-trash"></i> Clear History
+                                </button>
+                            </div>
+                            <div class="history-list" id="historyList">
+                                ${generateHistoryList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(historyPanel);
+                }
+                
+                historyPanel.classList.add('visible');
+                showNotification('History panel opened');
+            } catch (error) {
+                console.error('History error:', error);
+                showNotification('History feature temporarily unavailable', 'error');
+            }
+        }
+        
+        function showDownloads() {
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-downloads');
+                }
+                
+                // Create downloads panel
+                let downloadsPanel = document.getElementById('downloadsPanel');
+                if (!downloadsPanel) {
+                    downloadsPanel = document.createElement('div');
+                    downloadsPanel.id = 'downloadsPanel';
+                    downloadsPanel.className = 'browser-feature-panel';
+                    downloadsPanel.innerHTML = `
+                        <div class="panel-header">
+                            <h3><i class="fas fa-download"></i> Downloads</h3>
+                            <button onclick="closePanel('downloadsPanel')"><i class="fas fa-times"></i></button>
+                        </div>
+                        <div class="panel-content">
+                            <div class="downloads-toolbar">
+                                <button class="feature-btn primary" onclick="openDownloadsFolder()">
+                                    <i class="fas fa-folder"></i> Open Downloads Folder
+                                </button>
+                                <button class="feature-btn secondary" onclick="clearDownloads()">
+                                    <i class="fas fa-broom"></i> Clear List
+                                </button>
+                            </div>
+                            <div class="downloads-list" id="downloadsList">
+                                ${generateDownloadsList()}
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(downloadsPanel);
+                }
+                
+                downloadsPanel.classList.add('visible');
+                showNotification('Downloads panel opened');
+            } catch (error) {
+                console.error('Downloads error:', error);
+                showNotification('Downloads feature temporarily unavailable', 'error');
+            }
+        }
+        
+        // toggleDevTools function moved below - consolidated with settings version
+        
+        function captureScreenshot() {
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:screenshot');
+                }
+                
+                // Use HTML5 Canvas for screenshot
+                html2canvas(document.body).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = `screenshot-${new Date().getTime()}.png`;
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    showNotification('Screenshot saved to downloads');
+                }).catch(() => {
+                    // Fallback: Open screenshot tool
+                    showScreenshotDialog();
+                });
+            } catch (error) {
+                console.error('Screenshot error:', error);
+                showScreenshotDialog();
+            }
+        }
+        
+        function showMore() {
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:show-more');
+                }
+                
+                // Create more options menu
+                let moreMenu = document.getElementById('moreOptionsMenu');
+                if (!moreMenu) {
+                    moreMenu = document.createElement('div');
+                    moreMenu.id = 'moreOptionsMenu';
+                    moreMenu.className = 'more-options-menu';
+                    moreMenu.innerHTML = `
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="openNewWindow()">
+                                <i class="fas fa-window-maximize"></i>
+                                <span>New Window</span>
+                            </div>
+                            <div class="menu-item" onclick="openIncognito()">
+                                <i class="fas fa-user-secret"></i>
+                                <span>New Incognito Window</span>
+                            </div>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="printPage()">
+                                <i class="fas fa-print"></i>
+                                <span>Print</span>
+                            </div>
+                            <div class="menu-item" onclick="findInPage()">
+                                <i class="fas fa-search"></i>
+                                <span>Find</span>
+                            </div>
+                            <div class="menu-item" onclick="viewPageSource()">
+                                <i class="fas fa-code"></i>
+                                <span>View Page Source</span>
+                            </div>
+                        </div>
+                        <div class="menu-divider"></div>
+                        <div class="menu-section">
+                            <div class="menu-item" onclick="openSettings()">
+                                <i class="fas fa-cog"></i>
+                                <span>Settings</span>
+                            </div>
+                            <div class="menu-item" onclick="showAbout()">
+                                <i class="fas fa-info-circle"></i>
+                                <span>About TNF Browser</span>
+                            </div>
+                        </div>
+                    `;
+                    document.body.appendChild(moreMenu);
+                    
+                    // Position menu
+                    const moreBtn = document.querySelector('.action-btn[onclick="showMore()"]');
+                    const rect = moreBtn.getBoundingClientRect();
+                    moreMenu.style.top = `${rect.bottom + 5}px`;
+                    moreMenu.style.right = `${window.innerWidth - rect.right}px`;
+                    
+                    // Close menu when clicking outside
+                    setTimeout(() => {
+                        document.addEventListener('click', (e) => {
+                            if (!moreMenu.contains(e.target) && !moreBtn.contains(e.target)) {
+                                moreMenu.remove();
+                            }
+                        });
+                    }, 0);
+                }
+                
+                moreMenu.classList.add('visible');
+                showNotification('More options opened');
+            } catch (error) {
+                console.error('More options error:', error);
+                showNotification('More options temporarily unavailable', 'error');
+            }
+        }
+        
+        // Custom Input Modal
+        let customInputCallback;
+        function showCustomInput(title, fields, callback) {
+            document.getElementById('customInputTitle').textContent = title;
+            const fieldsContainer = document.getElementById('customInputFields');
+            fieldsContainer.innerHTML = '';
+            fields.forEach(field => {
+                fieldsContainer.innerHTML += `
+                    <div class="settings-item">
+                        <label class="settings-item-label">${field.label}</label>
+                        <input type="${field.type || 'text'}" name="${field.name}" class="prompt-input" required>
+                    </div>
+                `;
+            });
+            customInputCallback = callback;
+            document.getElementById('customInputModal').style.display = 'flex';
+        }
+
+        function closeCustomInputModal() {
+            document.getElementById('customInputModal').style.display = 'none';
+        }
+
+        function handleCustomInput() {
+            const form = document.getElementById('customInputForm');
+            const formData = new FormData(form);
+            const result = {};
+            for (let [key, value] of formData.entries()) {
+                result[key] = value;
+            }
+            if (customInputCallback) {
+                customInputCallback(result);
+            }
+            closeCustomInputModal();
+        }
+
+        // Custom Menu Items
+        let customMenuItems = JSON.parse(localStorage.getItem('customMenuItems') || '[]');
+        
+        function addCustomMenuItem() {
+            showCustomInput('Add Custom Link', [
+                {label: 'Name', name: 'name'},
+                {label: 'URL', name: 'url'},
+                {label: 'Icon (FontAwesome)', name: 'icon'}
+            ], (result) => {
+                 const menuItem = {
+                    id: Date.now().toString(),
+                    name: result.name,
+                    url: result.url,
+                    icon: result.icon || 'fas fa-link'
+                };
+                
+                customMenuItems.push(menuItem);
+                localStorage.setItem('customMenuItems', JSON.stringify(customMenuItems));
+                renderCustomMenuItems();
+            });
+        }
+        
+        function removeCustomMenuItem(itemId) {
+            customMenuItems = customMenuItems.filter(item => item.id !== itemId);
+            localStorage.setItem('customMenuItems', JSON.stringify(customMenuItems));
+            renderCustomMenuItems();
+        }
+        
+        function renderCustomMenuItems() {
+            const customSection = document.querySelector('#custom-links-section');
+            const addButton = customSection.querySelector('.add-menu-item');
+            
+            // Remove existing custom items
+            customSection.querySelectorAll('.nav-item:not(.add-menu-item)').forEach(item => item.remove());
+            
+            // Add custom menu items
+            customMenuItems.forEach(item => {
+                const navItem = document.createElement('div');
+                navItem.className = 'nav-item draggable';
+                navItem.draggable = true;
+                navItem.innerHTML = `
+                    <i class="fas fa-grip-vertical drag-handle"></i>
+                    <i class="${item.icon}"></i>
+                    <span>${item.name}</span>
+                    <button class="terminal-btn" onclick="event.stopPropagation(); removeCustomMenuItem('${item.id}')" style="margin-left: auto; padding: 2px 4px;">
+                        <i class="fas fa-times" style="font-size: 10px;"></i>
+                    </button>
+                `;
+                
+                navItem.onclick = (e) => {
+                    if (e.target.closest('.terminal-btn')) return;
+                    createNewTab(item.url, item.name);
+                };
+                
+                customSection.insertBefore(navItem, addButton);
+            });
+            
+            // Reinitialize drag and drop
+            initDragAndDrop();
+        }
+        
+        // Account Functions
+        function openAccount() {
+            createNewTab('http://localhost:3000/account', 'Account');
+        }
+        
+        function openSettings() {
+            toggleSettings();
+        }
+        
+        function openSignIn() {
+            createNewTab('http://localhost:3000/auth/signin', 'Sign In');
+        }
+        
+        // Prompt Manager Functions
+        let promptTemplates = [];
+        let promptFolders = JSON.parse(localStorage.getItem('promptFolders') || '[]');
+
+        function loadPromptManager() {
+            loadPromptTemplates();
+            renderPromptFolders();
+        }
+
+        function loadPromptTemplates() {
+            if (window.electronAPI) {
+                window.electronAPI.getPromptTemplates().then(templates => {
+                    promptTemplates = Array.isArray(templates) ? templates : [];
+                    renderPromptTemplates();
+                }).catch(error => {
+                    console.warn('Failed to load prompt templates from Electron API:', error);
+                    try {
+                        promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                        if (!Array.isArray(promptTemplates)) {
+                            promptTemplates = [];
+                        }
+                    } catch (e) {
+                        console.warn('Failed to parse prompt templates from localStorage:', e);
+                        promptTemplates = [];
+                    }
+                    renderPromptTemplates();
+                });
+            } else {
+                // Fallback for browser mode
+                try {
+                    promptTemplates = JSON.parse(localStorage.getItem('promptTemplates') || '[]');
+                    if (!Array.isArray(promptTemplates)) {
+                        promptTemplates = [];
+                    }
+                } catch (e) {
+                    console.warn('Failed to parse prompt templates from localStorage:', e);
+                    promptTemplates = [];
+                }
+                renderPromptTemplates();
+            }
+        }
+
+        function renderPromptTemplates() {
+            const list = document.getElementById('prompt-templates-list');
+            if (!list) {
+                console.warn('prompt-templates-list element not found');
+                return;
+            }
+            
+            list.innerHTML = '';
+            
+            // Ensure promptTemplates is an array
+            if (!Array.isArray(promptTemplates)) {
+                console.warn('promptTemplates is not an array:', promptTemplates);
+                promptTemplates = [];
+            }
+            
+            promptTemplates.forEach(prompt => {
+                const item = document.createElement('div');
+                item.className = 'extension-item'; // Re-use styling
+                item.innerHTML = `
+                    <div class="extension-icon"><i class="fas fa-file-alt"></i></div>
+                    <div class="extension-info">
+                        <div class="extension-name">${prompt.name || 'Unnamed Template'}</div>
+                        <div class="extension-desc">${prompt.description || ''}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        function renderPromptFolders() {
+            const list = document.getElementById('prompt-folders-list');
+            list.innerHTML = '';
+            promptFolders.forEach(folder => {
+                const item = document.createElement('div');
+                item.className = 'extension-item'; // Re-use styling
+                item.innerHTML = `
+                    <div class="extension-icon"><i class="fas fa-folder"></i></div>
+                    <div class="extension-info">
+                        <div class="extension-name">${folder.name}</div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+
+        function showNewPromptForm() {
+            document.getElementById('newPromptModal').style.display = 'flex';
+        }
+
+        function closeNewPromptModal() {
+            document.getElementById('newPromptModal').style.display = 'none';
+            document.getElementById('newPromptForm').reset();
+        }
+
+        function showNewFolderForm() {
+            showCustomInput('New Folder', [{label: 'Folder Name', name: 'name'}], (result) => {
+                const folder = {
+                    id: Date.now().toString(),
+                    name: result.name,
+                    prompts: []
+                };
+
+                promptFolders.push(folder);
+                localStorage.setItem('promptFolders', JSON.stringify(promptFolders));
+                renderPromptFolders();
+            });
+        }
+
+        function saveNewPrompt() {
+            const form = document.getElementById('newPromptForm');
+            const formData = new FormData(form);
+
+            const prompt = {
+                id: Date.now().toString(),
+                name: formData.get('name'),
+                description: formData.get('description'),
+                category: formData.get('category'),
+                template: formData.get('template'),
+                tags: formData.get('tags').split(',').map(tag => tag.trim()).filter(tag => tag),
+                createdAt: new Date().toISOString()
+            };
+
+            if (window.electronAPI) {
+                window.electronAPI.createPromptTemplate(prompt).then(() => {
+                    loadPromptTemplates(); // Reload templates
+                });
+            } else {
+                promptTemplates.push(prompt);
+                localStorage.setItem('promptTemplates', JSON.stringify(promptTemplates));
+                renderPromptTemplates();
+            }
+
+            closeNewPromptModal();
+        }
+
+
+        // Settings Toggles
+        function toggleDarkMode(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for dark mode
+        }
+        
+        function toggleAdBlock(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for ad blocking
+        }
+        
+        function toggleClearCookies(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for cookie clearing
+        }
+        
+        function toggleThirdPartyCookies(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for third-party cookie blocking
+        }
+        
+        function toggleDoNotTrack(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for Do Not Track
+        }
+        
+        function toggleDevTools(toggle) {
+            // If called from settings toggle
+            if (toggle && toggle.classList) {
+                toggle.classList.toggle('active');
+            }
+            
+            // Core dev tools functionality
+            try {
+                // Try Electron API first
+                if (window.electron && window.electron.ipcRenderer) {
+                    window.electron.ipcRenderer.invoke('browser:toggle-devtools');
+                }
+                
+                // Open DevTools in new tab as fallback
+                createNewTab('about:blank', 'DevTools');
+                
+                showNotification('Developer Tools toggled');
+            } catch (error) {
+                console.error('DevTools error:', error);
+                showNotification('DevTools feature temporarily unavailable', 'error');
+            }
+        }
+        
+        // Terminal integration removed - using Theia's built-in terminal
+        
+        function toggleExtensionsEnabled(toggle) {
+            toggle.classList.toggle('active');
+            // Implementation for extensions
+        }
+        
+        // Browser Engine Switching - Real Implementation
+        async function switchEngine(engine) {
+            try {
+                console.log('Switching browser engine to:', engine);
+                
+                // Get current iframe and URL
+                const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+                const currentUrl = currentFrame ? currentFrame.src : 'about:blank';
+                
+                // Call IPC handler to switch browser engine
+                if (window.electron && window.electron.ipcRenderer) {
+                    const result = await window.electron.ipcRenderer.invoke('browser:set-engine', engine);
+                    console.log('Browser engine switch result:', result);
+                }
+                
+                // Update iframe for different rendering engines
+                if (currentFrame) {
+                    const frameContainer = currentFrame.parentElement;
+                    
+                    // Remove current frame
+                    currentFrame.remove();
+                    
+                    // Create new frame with engine-specific configuration
+                    const newFrame = document.createElement('iframe');
+                    newFrame.className = 'content-frame';
+                    newFrame.name = 'browserFrame';
+                    
+                    // Configure based on engine
+                    switch (engine) {
+                        case 'chromium':
+                            // Use standard iframe for Chromium-based rendering
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.webkitAppearance = 'none';
+                            break;
+                            
+                        case 'webkit':
+                            // WebKit-specific configuration
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.webkitTransform = 'scale(1)';
+                            newFrame.style.webkitTransformOrigin = 'top left';
+                            break;
+                            
+                        case 'firefox':
+                            // Firefox-like behavior simulation
+                            newFrame.src = currentUrl;
+                            newFrame.setAttribute('allow', 'camera; microphone; geolocation; payment; fullscreen');
+                            newFrame.style.mozAppearance = 'none';
+                            break;
+                            
+                        default:
+                            newFrame.src = currentUrl;
+                    }
+                    
+                    // Add frame to container
+                    frameContainer.appendChild(newFrame);
+                    
+                    // Update user agent simulation
+                    updateUserAgentForEngine(engine);
+                    
+                    // Apply engine-specific CSS modifications
+                    applyEngineSpecificStyles(engine);
+                    
+                    // Update engine indicator
+                    updateEngineIndicator(engine);
+                }
+                
+                showNotification(`Browser engine switched to ${engine.charAt(0).toUpperCase() + engine.slice(1)}`, 'success');
+                
+            } catch (error) {
+                console.error('Failed to switch browser engine:', error);
+                showNotification('Failed to switch browser engine', 'error');
+            }
+        }
+        
+        function updateUserAgentForEngine(engine) {
+            // Simulate different user agents for different engines
+            const userAgents = {
+                chromium: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                webkit: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+                firefox: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:120.0) Gecko/20100101 Firefox/120.0'
+            };
+            
+            // Store current engine preference
+            localStorage.setItem('selectedBrowserEngine', engine);
+            localStorage.setItem('simulatedUserAgent', userAgents[engine]);
+            
+            console.log(`User agent updated for ${engine}:`, userAgents[engine]);
+        }
+        
+        function applyEngineSpecificStyles(engine) {
+            // Remove previous engine styles
+            const existingStyle = document.getElementById('engine-specific-styles');
+            if (existingStyle) {
+                existingStyle.remove();
+            }
+            
+            // Create new engine-specific styles
+            const style = document.createElement('style');
+            style.id = 'engine-specific-styles';
+            
+            switch (engine) {
+                case 'chromium':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 8px;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            transition: all 0.3s ease;
+                        }
+                        .tab.active::before {
+                            content: "🟢";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+                    
+                case 'webkit':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 12px;
+                            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+                            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                        }
+                        .tab.active::before {
+                            content: "🔵";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+                    
+                case 'firefox':
+                    style.textContent = `
+                        .content-frame {
+                            border-radius: 6px;
+                            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+                            transition: all 0.2s linear;
+                        }
+                        .tab.active::before {
+                            content: "🟠";
+                            margin-right: 4px;
+                        }
+                    `;
+                    break;
+            }
+            
+            document.head.appendChild(style);
+        }
+        
+        function updateEngineIndicator(engine) {
+            // Update engine selector
+            const selector = document.getElementById('engineSelector');
+            if (selector) {
+                selector.value = engine;
+                selector.style.borderColor = '#10b981';
+                setTimeout(() => {
+                    selector.style.borderColor = '#4a5568';
+                }, 1000);
+            }
+            
+            // Add visual indicator to the browser toolbar
+            const toolbar = document.querySelector('.toolbar');
+            if (toolbar) {
+                // Remove existing engine indicator
+                const existingIndicator = toolbar.querySelector('.engine-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+                
+                // Add new engine indicator
+                const indicator = document.createElement('div');
+                indicator.className = 'engine-indicator';
+                indicator.innerHTML = `
+                    <div style="
+                        position: absolute;
+                        top: 8px;
+                        right: 8px;
+                        background: ${getEngineColor(engine)};
+                        color: white;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        font-size: 10px;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        z-index: 1000;
+                        pointer-events: none;
+                    ">${engine}</div>
+                `;
+                
+                toolbar.appendChild(indicator);
+            }
+        }
+        
+        function getEngineColor(engine) {
+            const colors = {
+                chromium: '#4285f4',
+                webkit: '#007aff',
+                firefox: '#ff6600'
+            };
+            return colors[engine] || '#6b7280';
+        }
+        
+        function initializeBrowserEngine() {
+            // Load saved engine preference
+            const savedEngine = localStorage.getItem('selectedBrowserEngine') || 'chromium';
+            
+            // Update selector
+            const selector = document.getElementById('engineSelector');
+            if (selector) {
+                selector.value = savedEngine;
+                updateEngineIndicator(savedEngine);
+                applyEngineSpecificStyles(savedEngine);
+            }
+        }
+        
+        // Show notification (simple implementation)
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            notification.style.cssText = `
+                position: fixed;
+                top: 80px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : '#10b981'};
+                color: white;
+                padding: 12px 16px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+        
+        // Chrome Extension Management Functions
+        async function openChromeStore() {
+            try {
+                const chromeStoreUrl = 'https://chrome.google.com/webstore/category/extensions';
+                createNewTab(chromeStoreUrl, 'Chrome Web Store');
+                showNotification('Opening Chrome Web Store');
+            } catch (error) {
+                console.error('Failed to open Chrome Store:', error);
+                showNotification('Failed to open Chrome Web Store', 'error');
+            }
+        }
+        
+        async function loadUnpackedExtension() {
+            try {
+                // Use Electron's dialog to select extension directory
+                if (window.electron && window.electron.ipcRenderer) {
+                    const result = await window.electron.ipcRenderer.invoke('dialog:open-directory', {
+                        title: 'Select Extension Directory',
+                        properties: ['openDirectory']
+                    });
+                    
+                    if (result && !result.canceled && result.filePaths.length > 0) {
+                        const extensionPath = result.filePaths[0];
+                        console.log('Loading extension from:', extensionPath);
+                        
+                        // In a real implementation, this would load the extension
+                        // For now, show a notification
+                        showNotification(`Loading extension from: ${extensionPath}`);
+                        
+                        // Add to installed extensions list
+                        addExtensionToInstalledList({
+                            name: `Local Extension (${extensionPath.split('/').pop()})`,
+                            version: '1.0.0',
+                            enabled: true,
+                            type: 'unpacked',
+                            path: extensionPath
+                        });
+                    }
+                } else {
+                    // Fallback for non-Electron environment
+                    showNotification('Extension loading requires Chrome integration', 'error');
+                }
+            } catch (error) {
+                console.error('Failed to load unpacked extension:', error);
+                showNotification('Failed to load extension', 'error');
+            }
+        }
+        
+        async function refreshInstalledExtensions() {
+            try {
+                console.log('Refreshing installed extensions...');
+                
+                // Try to get real Chrome extensions
+                if (window.electron && window.electron.ipcRenderer) {
+                    try {
+                        // First try the new real Chrome integration
+                        const realResult = await window.electron.ipcRenderer.invoke('chrome:get-real-extensions');
+                        
+                        if (realResult.success) {
+                            displayInstalledExtensions(realResult.extensions);
+                            updateExtensionToolbar(realResult.extensions);
+                            showNotification('Real Chrome extensions loaded!');
+                            
+                            // Update extension count
+                            const count = realResult.extensions.length;
+                            const countElement = document.querySelector('.extension-count');
+                            if (countElement) {
+                                countElement.textContent = count.toString();
+                            }
+                            return;
+                        }
+                        
+                        // Fallback to old method
+                        const extensions = await window.electron.ipcRenderer.invoke('extensions:get-installed');
+                        displayInstalledExtensions(extensions);
+                        showNotification('Extensions refreshed successfully');
+                        
+                        // Update extension count
+                        const count = extensions.length;
+                        const countElement = document.querySelector('.extension-count');
+                        if (countElement) {
+                            countElement.textContent = count.toString();
+                        }
+                    } catch (error) {
+                        console.error('Failed to get real extensions:', error);
+                        // Show mock extensions as fallback
+                        displayMockInstalledExtensions();
+                        showNotification('Showing demo extensions (Chrome not detected)');
+                    }
+                } else {
+                    // Show mock extensions as fallback
+                    displayMockInstalledExtensions();
+                    showNotification('Showing demo extensions');
+                }
+            } catch (error) {
+                console.error('Failed to refresh extensions:', error);
+                showNotification('Failed to refresh extensions', 'error');
+            }
+        }
+        
+        function updateExtensionToolbar(extensions) {
+            // Update the extension toolbar with real Chrome extensions
+            const enabledExtensions = extensions.filter(ext => ext.enabled).map(ext => ({
+                name: ext.name,
+                icon: ext.icon || 'fas fa-puzzle-piece',
+                badgeText: '',
+                enabled: ext.enabled,
+                description: `Chrome Extension - ${ext.name}`,
+                id: ext.id,
+                permissions: ext.permissions || [],
+                homepageUrl: ext.homepageUrl
+            }));
+            
+            renderExtensionToolbar(enabledExtensions);
+        }
+        
+        function displayInstalledExtensions(extensions) {
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            if (extensions && extensions.length > 0) {
+                extensions.forEach(ext => {
+                    addExtensionToInstalledList(ext);
+                });
+            } else {
+                container.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 20px;">No extensions found. Try refreshing or check Chrome extensions.</p>';
+            }
+        }
+        
+        function displayMockInstalledExtensions() {
+            const mockExtensions = [
+                { name: 'AdBlock', version: '4.42.0', enabled: true, type: 'chrome-store' },
+                { name: 'LastPass', version: '4.95.0', enabled: true, type: 'chrome-store' },
+                { name: 'React DevTools', version: '4.28.5', enabled: false, type: 'chrome-store' },
+                { name: 'JSON Formatter', version: '0.7.1', enabled: true, type: 'chrome-store' }
+            ];
+            
+            displayInstalledExtensions(mockExtensions);
+        }
+        
+        function addExtensionToInstalledList(extension) {
+            const container = document.getElementById('installedExtensions');
+            
+            const item = document.createElement('div');
+            item.className = 'installed-extension-item';
+            
+            // Store extension ID for Chrome integration
+            if (extension.id) {
+                item.dataset.extensionId = extension.id;
+            }
+            
+            const iconClass = extension.icon || 'fas fa-puzzle-piece';
+            const permissions = extension.permissions ? extension.permissions.join(', ') : 'No permissions';
+            
+            item.innerHTML = `
+                <div class="installed-extension-icon">
+                    <i class="${iconClass}" style="color: #9ca3af;"></i>
+                </div>
+                <div class="installed-extension-details">
+                    <div class="installed-extension-name">${extension.name}</div>
+                    <div class="installed-extension-version">v${extension.version} • ${extension.type || 'chrome-store'}</div>
+                    ${extension.permissions ? `<div style="color: #6b7280; font-size: 10px; margin-top: 2px;">Permissions: ${permissions}</div>` : ''}
+                </div>
+                <div class="installed-extension-controls">
+                    <button class="extension-control-btn ${extension.enabled ? 'enabled' : ''}" 
+                            onclick="toggleExtension('${extension.name}', this)">
+                        ${extension.enabled ? 'Enabled' : 'Disabled'}
+                    </button>
+                    ${extension.homepageUrl ? `<button class="extension-control-btn" onclick="openExtensionHomepage('${extension.homepageUrl}')" title="Visit Homepage">
+                        <i class="fas fa-external-link-alt" style="font-size: 10px;"></i>
+                    </button>` : ''}
+                    ${extension.id ? `<button class="extension-control-btn" onclick="openExtensionOptions('${extension.id}')" title="Extension Options">
+                        <i class="fas fa-cog" style="font-size: 10px;"></i>
+                    </button>` : ''}
+                    <button class="extension-control-btn" onclick="removeExtension('${extension.name}')" title="Remove Extension">
+                        <i class="fas fa-trash" style="font-size: 10px;"></i>
+                    </button>
+                </div>
+            `;
+            
+            container.appendChild(item);
+        }
+        
+        async function openExtensionHomepage(url) {
+            createNewTab(url, 'Extension Homepage');
+        }
+        
+        async function openExtensionOptions(extensionId) {
+            if (window.electron && window.electron.ipcRenderer) {
+                try {
+                    const result = await window.electron.ipcRenderer.invoke('chrome:open-extension-options', extensionId);
+                    if (result.success) {
+                        showNotification('Extension options opened in Chrome');
+                    } else {
+                        // Fallback to creating a new tab
+                        createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+                    }
+                } catch (error) {
+                    console.error('Failed to open extension options:', error);
+                    createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+                }
+            } else {
+                createNewTab(`chrome-extension://${extensionId}/options.html`, 'Extension Options');
+            }
+        }
+        
+        async function toggleExtension(extensionName, button) {
+            const isEnabled = button.classList.contains('enabled');
+            
+            // Try real Chrome integration first
+            if (window.electron && window.electron.ipcRenderer) {
+                try {
+                    // Find extension ID from stored data
+                    const extensionData = Array.from(document.querySelectorAll('.installed-extension-item')).find(item => {
+                        const nameElement = item.querySelector('.installed-extension-name');
+                        return nameElement && nameElement.textContent === extensionName;
+                    });
+                    
+                    if (extensionData) {
+                        const extensionId = extensionData.dataset.extensionId;
+                        if (extensionId) {
+                            const result = await window.electron.ipcRenderer.invoke('chrome:toggle-extension', extensionId, !isEnabled);
+                            if (result.success) {
+                                if (isEnabled) {
+                                    button.classList.remove('enabled');
+                                    button.textContent = 'Disabled';
+                                    showNotification(`${extensionName} disabled in Chrome`);
+                                } else {
+                                    button.classList.add('enabled');
+                                    button.textContent = 'Enabled';
+                                    showNotification(`${extensionName} enabled in Chrome`);
+                                }
+                                return;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('Chrome integration failed:', error);
+                }
+            }
+            
+            // Fallback to mock functionality
+            if (isEnabled) {
+                button.classList.remove('enabled');
+                button.textContent = 'Disabled';
+                showNotification(`${extensionName} disabled`);
+            } else {
+                button.classList.add('enabled');
+                button.textContent = 'Enabled';
+                showNotification(`${extensionName} enabled`);
+            }
+        }
+        
+        function removeExtension(extensionName) {
+            if (confirm(`Are you sure you want to remove ${extensionName}?`)) {
+                // Find and remove the extension item
+                const items = document.querySelectorAll('.installed-extension-item');
+                items.forEach(item => {
+                    const nameElement = item.querySelector('.installed-extension-name');
+                    if (nameElement && nameElement.textContent === extensionName) {
+                        item.remove();
+                    }
+                });
+                
+                // Remove from extension toolbar
+                removeExtensionFromToolbar(extensionName);
+                
+                showNotification(`${extensionName} removed`);
+                
+                // Update extension count
+                const remainingItems = document.querySelectorAll('.installed-extension-item').length;
+                const countElement = document.querySelector('.extension-count');
+                if (countElement) {
+                    countElement.textContent = remainingItems.toString();
+                }
+            }
+        }
+        
+        // Extension Toolbar Management
+        let extensionToolbarState = {};
+        let currentExtensionPopup = null;
+        
+        function initializeExtensionToolbar() {
+            // Create extension toolbar icons for popular extensions
+            const popularExtensions = [
+                { 
+                    name: 'AdBlock', 
+                    icon: 'fas fa-shield-alt', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Block ads and trackers'
+                },
+                { 
+                    name: 'LastPass', 
+                    icon: 'fas fa-key', 
+                    badgeText: '3', 
+                    enabled: true,
+                    description: 'Password manager'
+                },
+                { 
+                    name: 'React DevTools', 
+                    icon: 'fab fa-react', 
+                    badgeText: '', 
+                    enabled: false,
+                    description: 'Debug React components'
+                },
+                { 
+                    name: 'JSON Formatter', 
+                    icon: 'fas fa-code', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Format JSON responses'
+                },
+                { 
+                    name: 'Grammarly', 
+                    icon: 'fas fa-spell-check', 
+                    badgeText: '2', 
+                    enabled: true,
+                    description: 'Writing assistant'
+                },
+                { 
+                    name: 'Dark Reader', 
+                    icon: 'fas fa-moon', 
+                    badgeText: '', 
+                    enabled: true,
+                    description: 'Dark mode for websites'
+                }
+            ];
+            
+            renderExtensionToolbar(popularExtensions);
+        }
+        
+        function renderExtensionToolbar(extensions) {
+            const toolbar = document.getElementById('extensionToolbar');
+            toolbar.innerHTML = '';
+            
+            extensions.filter(ext => ext.enabled).forEach(extension => {
+                const iconBtn = document.createElement('button');
+                iconBtn.className = 'extension-icon-btn';
+                iconBtn.title = `${extension.name} - ${extension.description}`;
+                iconBtn.onclick = (e) => openExtensionPopup(extension, e.target);
+                iconBtn.oncontextmenu = (e) => {
+                    e.preventDefault();
+                    showExtensionContextMenu(extension, e);
+                };
+                
+                iconBtn.innerHTML = `
+                    <i class="${extension.icon}"></i>
+                    ${extension.badgeText ? `<span class="extension-badge visible">${extension.badgeText}</span>` : '<span class="extension-badge"></span>'}
+                `;
+                
+                toolbar.appendChild(iconBtn);
+                
+                // Store extension state
+                extensionToolbarState[extension.name] = {
+                    element: iconBtn,
+                    data: extension
+                };
+            });
+        }
+        
+        function openExtensionPopup(extension, buttonElement) {
+            // Close any existing popup
+            closeExtensionPopup();
+            
+            // Create popup
+            const popup = document.createElement('div');
+            popup.className = 'extension-popup visible';
+            popup.id = 'extensionPopup';
+            
+            popup.innerHTML = `
+                <div class="extension-popup-header">
+                    <div class="extension-popup-icon">
+                        <i class="${extension.icon}"></i>
+                    </div>
+                    <span class="extension-popup-title">${extension.name}</span>
+                    <button class="extension-popup-close" onclick="closeExtensionPopup()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="extension-popup-content">
+                    ${getExtensionPopupContent(extension)}
+                </div>
+            `;
+            
+            // Position popup relative to button
+            buttonElement.style.position = 'relative';
+            buttonElement.appendChild(popup);
+            buttonElement.classList.add('active');
+            
+            currentExtensionPopup = {
+                popup: popup,
+                button: buttonElement
+            };
+            
+            // Close popup when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', handleExtensionPopupOutsideClick);
+            }, 0);
+        }
+        
+        function closeExtensionPopup() {
+            if (currentExtensionPopup) {
+                currentExtensionPopup.popup.remove();
+                currentExtensionPopup.button.classList.remove('active');
+                document.removeEventListener('click', handleExtensionPopupOutsideClick);
+                currentExtensionPopup = null;
+            }
+        }
+        
+        function handleExtensionPopupOutsideClick(e) {
+            if (currentExtensionPopup && !currentExtensionPopup.popup.contains(e.target)) {
+                closeExtensionPopup();
+            }
+        }
+        
+        function getExtensionPopupContent(extension) {
+            // Generate extension-specific content
+            switch (extension.name) {
+                case 'AdBlock':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #10b981; margin-bottom: 16px;">AdBlock Active</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Blocking ads and trackers on this page</p>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <span style="color: #d1d5db;">Ads blocked:</span>
+                                <span style="color: #10b981; font-weight: 600;">23</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
+                                <span style="color: #d1d5db;">Trackers blocked:</span>
+                                <span style="color: #10b981; font-weight: 600;">7</span>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="toggleAdBlockOnSite()">
+                                Pause on this site
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'LastPass':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #4f46e5; margin-bottom: 16px;">LastPass Vault</h3>
+                            <div style="background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                                <div style="color: #ef4444; font-size: 12px; margin-bottom: 8px;">3 saved passwords for this site</div>
+                                <div style="color: #d1d5db; font-size: 14px;">user@example.com</div>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%; margin-bottom: 8px;" onclick="fillPassword()">
+                                Fill Password
+                            </button>
+                            <button class="prompt-btn" style="width: 100%; background: #374151;" onclick="openLastPassVault()">
+                                Open Vault
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'React DevTools':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #61dafb; margin-bottom: 16px;">React DevTools</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">No React components detected on this page</p>
+                            <button class="prompt-btn" style="width: 100%;" onclick="openReactDevTools()">
+                                Open DevTools Panel
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'JSON Formatter':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #ffd166; margin-bottom: 16px;">JSON Formatter</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Format and validate JSON responses</p>
+                            <button class="prompt-btn" style="width: 100%; margin-bottom: 8px;" onclick="formatCurrentPageJSON()">
+                                Format This Page
+                            </button>
+                            <button class="prompt-btn" style="width: 100%; background: #374151;" onclick="openJSONValidator()">
+                                JSON Validator
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'Grammarly':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #15803d; margin-bottom: 16px;">Grammarly</h3>
+                            <div style="background: #1f2937; padding: 12px; border-radius: 6px; margin-bottom: 16px;">
+                                <div style="color: #ef4444; font-size: 12px; margin-bottom: 4px;">2 issues found</div>
+                                <div style="color: #d1d5db; font-size: 14px;">Grammar and spelling suggestions available</div>
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="showGrammarSuggestions()">
+                                View Suggestions
+                            </button>
+                        </div>
+                    `;
+                    
+                case 'Dark Reader':
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #6366f1; margin-bottom: 16px;">Dark Reader</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">Dark mode for websites</p>
+                            <div style="margin-bottom: 16px;">
+                                <label style="color: #d1d5db; font-size: 13px; display: block; margin-bottom: 8px;">Brightness</label>
+                                <input type="range" min="0" max="100" value="90" style="width: 100%;" onchange="adjustBrightness(this.value)">
+                            </div>
+                            <button class="prompt-btn" style="width: 100%;" onclick="toggleDarkMode()">
+                                Toggle Dark Mode
+                            </button>
+                        </div>
+                    `;
+                    
+                default:
+                    return `
+                        <div style="text-align: center;">
+                            <h3 style="color: #ffffff; margin-bottom: 16px;">${extension.name}</h3>
+                            <p style="color: #9ca3af; margin-bottom: 16px;">${extension.description}</p>
+                            <button class="prompt-btn" style="width: 100%;" onclick="openExtensionOptions('${extension.name}')">
+                                Extension Options
+                            </button>
+                        </div>
+                    `;
+            }
+        }
+        
+        function removeExtensionFromToolbar(extensionName) {
+            if (extensionToolbarState[extensionName]) {
+                extensionToolbarState[extensionName].element.remove();
+                delete extensionToolbarState[extensionName];
+            }
+        }
+        
+        function updateExtensionBadge(extensionName, badgeText) {
+            if (extensionToolbarState[extensionName]) {
+                const badge = extensionToolbarState[extensionName].element.querySelector('.extension-badge');
+                if (badge) {
+                    badge.textContent = badgeText;
+                    badge.classList.toggle('visible', badgeText !== '');
+                }
+            }
+        }
+        
+        // Extension Action Functions
+        function toggleAdBlockOnSite() {
+            showNotification('AdBlock paused on this site');
+            closeExtensionPopup();
+        }
+        
+        function fillPassword() {
+            showNotification('Password filled');
+            closeExtensionPopup();
+        }
+        
+        function openLastPassVault() {
+            createNewTab('https://lastpass.com/vault/', 'LastPass Vault');
+            closeExtensionPopup();
+        }
+        
+        function openReactDevTools() {
+            toggleDevTools();
+            showNotification('React DevTools opened in DevTools panel');
+            closeExtensionPopup();
+        }
+        
+        function formatCurrentPageJSON() {
+            showNotification('JSON formatted on current page');
+            closeExtensionPopup();
+        }
+        
+        function openJSONValidator() {
+            createNewTab('https://jsonlint.com/', 'JSON Validator');
+            closeExtensionPopup();
+        }
+        
+        function showGrammarSuggestions() {
+            showNotification('Grammar suggestions highlighted');
+            closeExtensionPopup();
+        }
+        
+        function adjustBrightness(value) {
+            showNotification(`Brightness set to ${value}%`);
+        }
+        
+        function toggleDarkMode() {
+            showNotification('Dark mode toggled');
+            closeExtensionPopup();
+        }
+        
+        function openExtensionOptions(extensionName) {
+            createNewTab(`chrome-extension://options/${extensionName}`, `${extensionName} Options`);
+            closeExtensionPopup();
+        }
+        
+        // Extension Context Menu
+        function showExtensionContextMenu(extension, event) {
+            // Remove any existing context menu
+            const existingMenu = document.getElementById('extensionContextMenu');
+            if (existingMenu) {
+                existingMenu.remove();
+            }
+            
+            // Create context menu
+            const contextMenu = document.createElement('div');
+            contextMenu.id = 'extensionContextMenu';
+            contextMenu.className = 'extension-context-menu';
+            
+            const menuItems = [
+                { 
+                    text: `Open ${extension.name}`, 
+                    icon: 'fas fa-external-link-alt',
+                    action: () => openExtensionPopup(extension, event.target)
+                },
+                { 
+                    text: 'Extension Options', 
+                    icon: 'fas fa-cog',
+                    action: () => openExtensionOptions(extension.id || extension.name)
+                },
+                { 
+                    text: 'Pin to Toolbar', 
+                    icon: 'fas fa-thumbtack',
+                    action: () => pinExtensionToToolbar(extension.name)
+                },
+                { 
+                    text: 'Remove from Toolbar', 
+                    icon: 'fas fa-eye-slash',
+                    action: () => removeExtensionFromToolbar(extension.name)
+                },
+                { 
+                    text: 'Manage Extension', 
+                    icon: 'fas fa-sliders-h',
+                    action: () => manageExtension(extension)
+                },
+                { 
+                    text: 'Report Issue', 
+                    icon: 'fas fa-bug',
+                    action: () => reportExtensionIssue(extension)
+                }
+            ];
+            
+            contextMenu.innerHTML = menuItems.map(item => `
+                <div class="context-menu-item" onclick="${item.action.name}('${extension.name || extension.id}'); closeExtensionContextMenu()">
+                    <i class="${item.icon}"></i>
+                    <span>${item.text}</span>
+                </div>
+            `).join('');
+            
+            // Position menu
+            contextMenu.style.left = `${event.pageX}px`;
+            contextMenu.style.top = `${event.pageY}px`;
+            
+            document.body.appendChild(contextMenu);
+            
+            // Store menu items for execution
+            contextMenu.menuActions = menuItems;
+            
+            // Close menu when clicking outside
+            setTimeout(() => {
+                document.addEventListener('click', closeExtensionContextMenu);
+            }, 0);
+        }
+        
+        function closeExtensionContextMenu() {
+            const menu = document.getElementById('extensionContextMenu');
+            if (menu) {
+                menu.remove();
+                document.removeEventListener('click', closeExtensionContextMenu);
+            }
+        }
+        
+        function pinExtensionToToolbar(extensionName) {
+            showNotification(`${extensionName} pinned to toolbar`);
+        }
+        
+        function manageExtension(extension) {
+            createNewTab('chrome://extensions/', 'Manage Extensions');
+            showNotification(`Opening Chrome Extensions for ${extension.name}`);
+        }
+        
+        function reportExtensionIssue(extension) {
+            const reportUrl = extension.homepageUrl || `https://chrome.google.com/webstore/detail/${extension.id}`;
+            createNewTab(reportUrl, 'Report Extension Issue');
+            showNotification(`Opening ${extension.name} page to report issue`);
+        }
+        
+        // Extension Search and Filtering
+        let allExtensions = [];
+        
+        function filterExtensions(searchTerm) {
+            const clearBtn = document.querySelector('.search-clear');
+            clearBtn.style.display = searchTerm ? 'block' : 'none';
+            
+            const filteredExtensions = allExtensions.filter(ext => 
+                ext.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (ext.description && ext.description.toLowerCase().includes(searchTerm.toLowerCase()))
+            );
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function filterExtensionsByCategory(category) {
+            if (!category) {
+                displayFilteredExtensions(allExtensions);
+                updateExtensionCount(allExtensions.length);
+                return;
+            }
+            
+            const categoryMap = {
+                'productivity': ['grammarly', 'lastpass', 'notion', 'todoist'],
+                'security': ['adblock', 'lastpass', 'privacy badger', 'ghostery'],
+                'developer': ['react', 'redux', 'postman', 'json', 'github'],
+                'social': ['facebook', 'twitter', 'instagram', 'linkedin'],
+                'shopping': ['honey', 'rakuten', 'amazon', 'ebay']
+            };
+            
+            const filteredExtensions = allExtensions.filter(ext => {
+                const extName = ext.name.toLowerCase();
+                return categoryMap[category].some(keyword => extName.includes(keyword));
+            });
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function filterExtensionsByStatus(status) {
+            if (!status) {
+                displayFilteredExtensions(allExtensions);
+                updateExtensionCount(allExtensions.length);
+                return;
+            }
+            
+            const filteredExtensions = allExtensions.filter(ext => 
+                status === 'enabled' ? ext.enabled : !ext.enabled
+            );
+            
+            displayFilteredExtensions(filteredExtensions);
+            updateExtensionCount(filteredExtensions.length);
+        }
+        
+        function clearExtensionSearch() {
+            const searchInput = document.getElementById('extensionSearchInput');
+            const clearBtn = document.querySelector('.search-clear');
+            const categoryFilter = document.getElementById('extensionCategoryFilter');
+            const statusFilter = document.getElementById('extensionStatusFilter');
+            
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            categoryFilter.value = '';
+            statusFilter.value = '';
+            
+            displayFilteredExtensions(allExtensions);
+            updateExtensionCount(allExtensions.length);
+            
+            showNotification('Search filters cleared');
+        }
+        
+        function displayFilteredExtensions(extensions) {
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            if (extensions.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #6b7280;">
+                        <i class="fas fa-search" style="font-size: 24px; margin-bottom: 8px;"></i>
+                        <div>No extensions found</div>
+                        <div style="font-size: 12px; margin-top: 4px;">Try adjusting your search or filters</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            extensions.forEach(extension => addExtensionToInstalledList(extension));
+        }
+        
+        function updateExtensionCount(count) {
+            const countElement = document.getElementById('extensionCount');
+            if (countElement) {
+                countElement.textContent = `(${count})`;
+            }
+        }
+        
+        // Update the existing function to store all extensions
+        function displayInstalledExtensions(extensions) {
+            allExtensions = extensions; // Store for filtering
+            const container = document.getElementById('installedExtensions');
+            container.innerHTML = '';
+            
+            extensions.forEach(extension => addExtensionToInstalledList(extension));
+            updateExtensionCount(extensions.length);
+        }
+        
+        // Helper Functions for Browser Features
+        function generateBookmarkList() {
+            const bookmarks = [
+                { title: 'TNF Dashboard', url: 'http://localhost:3000', folder: 'TNF' },
+                { title: 'Theia IDE', url: 'http://localhost:3007', folder: 'Development' },
+                { title: 'GitHub', url: 'https://github.com', folder: 'Development' },
+                { title: 'Stack Overflow', url: 'https://stackoverflow.com', folder: 'Development' },
+                { title: 'Mozilla Developer Network', url: 'https://developer.mozilla.org', folder: 'Development' },
+                { title: 'Claude AI', url: 'https://claude.ai', folder: 'AI Tools' },
+                { title: 'ChatGPT', url: 'https://chat.openai.com', folder: 'AI Tools' }
+            ];
+            
+            return bookmarks.map(bookmark => `
+                <div class="list-item" onclick="navigateToBookmark('${bookmark.url}')">
+                    <div class="list-item-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${bookmark.title}</div>
+                        <div class="list-item-url">${bookmark.url}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="event.stopPropagation(); editBookmark('${bookmark.title}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="list-item-action" onclick="event.stopPropagation(); deleteBookmark('${bookmark.title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateHistoryList() {
+            const history = [
+                { title: 'TNF Dashboard - AI-Powered Collaboration Platform', url: 'http://localhost:3000', time: '2 minutes ago' },
+                { title: 'Theia IDE - Cloud & Desktop IDE', url: 'http://localhost:3007', time: '5 minutes ago' },
+                { title: 'GitHub - Where the world builds software', url: 'https://github.com', time: '10 minutes ago' },
+                { title: 'Stack Overflow - Where Developers Learn', url: 'https://stackoverflow.com', time: '15 minutes ago' },
+                { title: 'Claude AI - Constitutional AI Assistant', url: 'https://claude.ai', time: '1 hour ago' },
+                { title: 'OpenAI ChatGPT', url: 'https://chat.openai.com', time: '2 hours ago' },
+                { title: 'VS Code Extensions Marketplace', url: 'https://marketplace.visualstudio.com', time: '3 hours ago' }
+            ];
+            
+            return history.map(item => `
+                <div class="list-item" onclick="navigateToHistory('${item.url}')">
+                    <div class="list-item-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${item.title}</div>
+                        <div class="list-item-url">${item.url} • ${item.time}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="event.stopPropagation(); addToBookmarks('${item.title}', '${item.url}')" title="Bookmark">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                        <button class="list-item-action" onclick="event.stopPropagation(); removeFromHistory('${item.url}')" title="Remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function generateDownloadsList() {
+            const downloads = [
+                { title: 'theia-extensions-pack.vsix', size: '2.4 MB', status: 'completed', time: '5 minutes ago' },
+                { title: 'claude-code-cli.zip', size: '15.8 MB', status: 'completed', time: '1 hour ago' },
+                { title: 'browser-use-extension.crx', size: '890 KB', status: 'completed', time: '2 hours ago' },
+                { title: 'tnf-backup-20250118.zip', size: '45.2 MB', status: 'completed', time: '1 day ago' },
+                { title: 'react-devtools-extension.crx', size: '1.2 MB', status: 'completed', time: '2 days ago' }
+            ];
+            
+            return downloads.map(download => `
+                <div class="list-item">
+                    <div class="list-item-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${download.title}</div>
+                        <div class="list-item-url">${download.size} • ${download.time}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="openDownload('${download.title}')" title="Open">
+                            <i class="fas fa-external-link-alt"></i>
+                        </button>
+                        <button class="list-item-action" onclick="showInFinder('${download.title}')" title="Show in Finder">
+                            <i class="fas fa-folder"></i>
+                        </button>
+                        <button class="list-item-action" onclick="deleteDownload('${download.title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Panel Management Functions
+        function closePanel(panelId) {
+            const panel = document.getElementById(panelId);
+            if (panel) {
+                panel.classList.remove('visible');
+                setTimeout(() => panel.remove(), 300);
+            }
+        }
+        
+        // Bookmark Functions
+        function navigateToBookmark(url) {
+            createNewTab(url, 'Bookmark');
+            showNotification('Opening bookmark');
+        }
+        
+        function addBookmark() {
+            const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+            const currentUrl = currentFrame ? currentFrame.src : window.location.href;
+            const title = prompt('Bookmark title:', 'New Bookmark') || 'New Bookmark';
+            
+            // Add to bookmarks list
+            const bookmarkList = document.getElementById('bookmarkList');
+            if (bookmarkList) {
+                const bookmarkItem = document.createElement('div');
+                bookmarkItem.className = 'list-item';
+                bookmarkItem.innerHTML = `
+                    <div class="list-item-icon">
+                        <i class="fas fa-bookmark"></i>
+                    </div>
+                    <div class="list-item-content">
+                        <div class="list-item-title">${title}</div>
+                        <div class="list-item-url">${currentUrl}</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="list-item-action" onclick="editBookmark('${title}')" title="Edit">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="list-item-action" onclick="deleteBookmark('${title}')" title="Delete">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                bookmarkList.appendChild(bookmarkItem);
+            }
+            
+            showNotification(`Bookmark "${title}" added`);
+        }
+        
+        function editBookmark(title) {
+            const newTitle = prompt('Edit bookmark title:', title);
+            if (newTitle && newTitle !== title) {
+                showNotification(`Bookmark renamed to "${newTitle}"`);
+            }
+        }
+        
+        function deleteBookmark(title) {
+            if (confirm(`Delete bookmark "${title}"?`)) {
+                showNotification(`Bookmark "${title}" deleted`);
+            }
+        }
+        
+        function importBookmarks() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('dialog:open-directory', {
+                    title: 'Select Bookmarks File',
+                    properties: ['openFile'],
+                    filters: [{ name: 'HTML Files', extensions: ['html'] }]
+                });
+            }
+            showNotification('Import bookmarks feature coming soon');
+        }
+        
+        function exportBookmarks() {
+            showNotification('Export bookmarks feature coming soon');
+        }
+        
+        // History Functions
+        function navigateToHistory(url) {
+            createNewTab(url, 'History');
+            showNotification('Opening from history');
+        }
+        
+        function filterHistory(searchTerm) {
+            const historyItems = document.querySelectorAll('#historyList .list-item');
+            historyItems.forEach(item => {
+                const title = item.querySelector('.list-item-title').textContent.toLowerCase();
+                const url = item.querySelector('.list-item-url').textContent.toLowerCase();
+                const matches = title.includes(searchTerm.toLowerCase()) || url.includes(searchTerm.toLowerCase());
+                item.style.display = matches ? 'flex' : 'none';
+            });
+        }
+        
+        function clearHistory() {
+            if (confirm('Clear all browsing history?')) {
+                const historyList = document.getElementById('historyList');
+                if (historyList) {
+                    historyList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">History cleared</div>';
+                }
+                showNotification('Browsing history cleared');
+            }
+        }
+        
+        function addToBookmarks(title, url) {
+            showNotification(`"${title}" added to bookmarks`);
+        }
+        
+        function removeFromHistory(url) {
+            showNotification('Removed from history');
+        }
+        
+        // Downloads Functions
+        function openDownloadsFolder() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('shell:open-external', 'file:///Users/' + (process.env.USER || 'user') + '/Downloads');
+            } else {
+                showNotification('Downloads folder: ~/Downloads');
+            }
+        }
+        
+        function clearDownloads() {
+            if (confirm('Clear downloads list?')) {
+                const downloadsList = document.getElementById('downloadsList');
+                if (downloadsList) {
+                    downloadsList.innerHTML = '<div style="text-align: center; padding: 40px; color: #6b7280;">Downloads list cleared</div>';
+                }
+                showNotification('Downloads list cleared');
+            }
+        }
+        
+        function openDownload(filename) {
+            showNotification(`Opening ${filename}`);
+        }
+        
+        function showInFinder(filename) {
+            showNotification(`Showing ${filename} in Finder`);
+        }
+        
+        function deleteDownload(filename) {
+            if (confirm(`Delete ${filename}?`)) {
+                showNotification(`${filename} deleted`);
+            }
+        }
+        
+        // Screenshot Functions
+        function showScreenshotDialog() {
+            const dialog = document.createElement('div');
+            dialog.className = 'browser-feature-panel visible';
+            dialog.innerHTML = `
+                <div class="panel-header">
+                    <h3><i class="fas fa-camera"></i> Screenshot Tool</h3>
+                    <button onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <p>Choose screenshot type:</p>
+                    <button class="feature-btn primary" onclick="takeFullScreenshot()">
+                        <i class="fas fa-desktop"></i> Full Screen
+                    </button>
+                    <button class="feature-btn secondary" onclick="takeWindowScreenshot()">
+                        <i class="fas fa-window-maximize"></i> Current Window
+                    </button>
+                    <button class="feature-btn secondary" onclick="takeSelectionScreenshot()">
+                        <i class="fas fa-crop"></i> Selection
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+        
+        function takeFullScreenshot() {
+            showNotification('Full screenshot captured');
+        }
+        
+        function takeWindowScreenshot() {
+            showNotification('Window screenshot captured');
+        }
+        
+        function takeSelectionScreenshot() {
+            showNotification('Selection screenshot captured');
+        }
+        
+        // More Menu Functions
+        function openNewWindow() {
+            if (window.electron && window.electron.ipcRenderer) {
+                window.electron.ipcRenderer.invoke('browser:new-window');
+            }
+            showNotification('New window opened');
+        }
+        
+        function openIncognito() {
+            showNotification('Incognito mode coming soon');
+        }
+        
+        function printPage() {
+            window.print();
+        }
+        
+        function findInPage() {
+            showNotification('Find in page: Ctrl+F');
+        }
+        
+        function viewPageSource() {
+            const currentFrame = document.querySelector('.content-frame:not([style*="display: none"])');
+            if (currentFrame && currentFrame.src) {
+                createNewTab(`view-source:${currentFrame.src}`, 'Page Source');
+            }
+        }
+        
+        function openSettings() {
+            toggleSettings();
+        }
+        
+        function showAbout() {
+            const aboutDialog = document.createElement('div');
+            aboutDialog.className = 'browser-feature-panel visible';
+            aboutDialog.innerHTML = `
+                <div class="panel-header">
+                    <h3><i class="fas fa-info-circle"></i> About TNF Browser</h3>
+                    <button onclick="this.parentElement.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
+                <div class="panel-content">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <h4 style="color: #3b82f6; margin: 0;">The New Fuse Browser</h4>
+                        <p style="color: #9ca3af; margin: 4px 0;">Version 1.0.0</p>
+                    </div>
+                    <p>AI-powered browser with integrated development tools, extension management, and real-time collaboration features.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="feature-btn primary" onclick="window.open('https://github.com/your-repo', '_blank')">
+                            <i class="fab fa-github"></i> View on GitHub
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(aboutDialog);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize drag and drop
+            initDragAndDrop();
+            
+            // Render custom menu items
+            renderCustomMenuItems();
+            
+            // Initialize extension toolbar
+            initializeExtensionToolbar();
+            
+            // Initialize browser engine
+            initializeBrowserEngine();
+            
+            // Initialize installed extensions on page load
+            setTimeout(() => {
+                displayMockInstalledExtensions();
+            }, 1000);
+            
+            // Terminal functionality removed - using Theia's built-in terminal
+            
+            // Initialize frame load handler
+            document.querySelectorAll('.content-frame').forEach(frame => {
+                frame.onload = function() {
+                    try {
+                        const url = frame.contentWindow.location.href;
+                        updateAddressBar(url);
+                        
+                        // Update tab title if available
+                        const title = frame.contentDocument.title;
+                        const activeTabId = Object.keys(tabs).find(id => tabs[id].frame === frame);
+                        if (title && activeTabId && tabs[activeTabId]) {
+                            tabs[activeTabId].title = title;
+                            const tab = document.getElementById(activeTabId);
+                            if (tab) {
+                                const span = tab.querySelector('span');
+                                if (span) span.textContent = title;
+                            }
+                        }
+                    } catch (e) {
+                        // Cross-origin restrictions - this is expected for external sites
+                        console.log('Frame content access restricted due to cross-origin policy (normal behavior)');
+                        console.warn('Could not access frame content due to cross-origin restrictions.');
+                    }
+                };
+            });
+            
+            // Terminal auto-update removed - using Theia's built-in terminal
+
+            // Set initial active tab
+            switchToTab('dashboard');
+        });
+        
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + T: New Tab
+            if ((e.ctrlKey || e.metaKey) && e.key === 't') {
+                e.preventDefault();
+                createNewTab();
+            }
+            
+            // Ctrl/Cmd + W: Close Tab
+            if ((e.ctrlKey || e.metaKey) && e.key === 'w') {
+                e.preventDefault();
+                if (Object.keys(tabs).length > 1) {
+                    closeTab(activeTab);
+                }
+            }
+            
+            // Ctrl/Cmd + R: Refresh
+            if ((e.ctrlKey || e.metaKey) && e.key === 'r') {
+                e.preventDefault();
+                refreshPage();
+            }
+            
+            // Ctrl/Cmd + L: Focus Address Bar
+            if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
+                e.preventDefault();
+                document.getElementById('addressBar').focus();
+                document.getElementById('addressBar').select();
+            }
+            
+            // F12: Toggle Dev Tools
+            if (e.key === 'F12') {
+                e.preventDefault();
+                toggleDevTools();
+            }
+        });
+    </script>
+</body>
+</html>

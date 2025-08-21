@@ -731,3 +731,45 @@ model LLMConfig {
   
   @@map("llm_configs")
 }
+
+// =============================================================================
+// MULTI-TENANT SYNCHRONIZATION SYSTEM
+// =============================================================================
+
+model SyncState {
+  id          String   @id @default(uuid())
+  resourceType String  // 'agent', 'template', 'config', etc.
+  resourceId   String
+  tenantId     String?
+  version      Int      @default(1)
+  checksum     String
+  lastSync     DateTime @default(now())
+  syncedBy     String   // instance ID
+  metadata     Json?
+  
+  @@index([resourceType])
+  @@index([tenantId])
+  @@index([lastSync])
+  @@index([resourceType, resourceId, tenantId])
+  @@map("sync_states")
+}
+
+model SyncConflict {
+  id           String   @id @default(uuid())
+  resourceType String
+  resourceId   String
+  tenantId     String?
+  conflictType String   // 'version', 'checksum', 'concurrent'
+  localVersion Json
+  remoteVersion Json
+  resolvedAt   DateTime?
+  resolvedBy   String?
+  resolution   Json?
+  createdAt    DateTime @default(now())
+  
+  @@index([resourceType])
+  @@index([tenantId])
+  @@index([createdAt])
+  @@index([resolvedAt])
+  @@map("sync_conflicts")
+}

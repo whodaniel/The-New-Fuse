@@ -1,125 +1,198 @@
-name: The New Fuse CI/CD Pipeline
+name: Comprehensive CI/CD Pipeline
 
 on:
   push:
-    branches: [main, dev, staging]
+    branches: [ main, develop ]
   pull_request:
-    branches: [main, dev, staging]
-  workflow_dispatch:
-    inputs:
-      deploy_env:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'staging'
-        type: choice
-        options:
-          - staging
-          - production
+    branches: [ main, develop ]
+
+env:
+  GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  GAR_LOCATION: us-central1
+  GKE_CLUSTER: the-new-fuse-cluster
+  GKE_ZONE: us-central1-c
 
 jobs:
-  test:
-    name: Test
+  lint-and-test:
     runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        service: [api, frontend, a2a-service, message-broker]
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Setup Bun
-      uses: oven-sh/setup-bun@v1
-      with:
-        bun-version: 'latest'
-        
-    - name: Install dependencies
-      run: bun install --frozen-lockfile
-    
-    - name: Check port availability
-      run: bun run kill-ports
-        
-    - name: Run tests
-      run: bun run test
-        
-    - name: Upload coverage
-      uses: codecov/codecov-action@v3
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        
-  build:
-    needs: test
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: ${{ runner.os }}-bun-${{ matrix.service }}-${{ hashFiles('**/bun.lockb') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-${{ matrix.service }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Run linter
+        run: bun run lint:${{ matrix.service }}
+
+      - name: Run tests
+        run: bun run test:${{ matrix.service }}
+
+  gemini-review:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    
+    if: github.event_name == 'pull_request'
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
-      
-    - name: Login to Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Build and push API image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: docker/Dockerfile.api
-        push: true
-        tags: ghcr.io/${{ github.repository }}/api:${{ github.sha }}
-        
-    - name: Build and push Frontend image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        file: docker/Dockerfile.frontend
-        push: true
-        tags: ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
-        
-  deploy:
-    needs: build
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Run Gemini CLI
+        uses: google-github-actions/run-gemini-cli@v1
+        with:
+          command: "review pr"
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+  build-docker:
+    needs: lint-and-test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/staging')
-    
+    if: github.ref == 'refs/heads/main'
+    strategy:
+      matrix:
+        service: [api, frontend, a2a-service, message-broker]
     steps:
-    - uses: actions/checkout@v3
-    
-    - name: Set up Cloud SDK
-      uses: google-github-actions/setup-gcloud@v1
-      with:
-        project_id: ${{ secrets.GCP_PROJECT_ID }}
-        service_account_key: ${{ secrets.GCP_SA_KEY }}
-        
-    - name: Deploy to Cloud Run
-      run: |
-        if [[ "${GITHUB_REF}" == "refs/heads/staging" ]]; then
-          SERVICE="api-staging"
-        else
-          SERVICE="api"
-        fi
-        gcloud run deploy $SERVICE \
-          --image ghcr.io/${{ github.repository }}/api:${{ github.sha }} \
-          --platform managed \
-          --region us-central1 \
-          --allow-unauthenticated
-      env:
-        GITHUB_REF: ${{ github.ref }}
-          
-  notify:
-    needs: [deploy]
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure Docker to use Google Cloud credentials
+        run: gcloud auth configure-docker ${{ env.GAR_LOCATION }}-docker.pkg.dev
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/the-new-fuse/${{ matrix.service }}:${{ github.sha }}
+          dockerfile: ./Dockerfile.${{ matrix.service }}
+
+  build-bun:
+    needs: lint-and-test
     runs-on: ubuntu-latest
-    if: always()
-    
+    if: github.ref == 'refs/heads/main'
     steps:
-    - name: Notify Slack
-      uses: slackapi/slack-github-action@v1.24.0
-      with:
-        channel-id: 'deployments'
-        slack-message: |
-          Deployment Status: ${{ job.status }}
-          Commit: ${{ github.sha }}
-          Author: ${{ github.actor }}
-          Message: ${{ github.event.head_commit.message }}
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+  deploy-gke:
+    needs: build-docker
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Get GKE credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER }}
+          location: ${{ env.GKE_ZONE }}
+
+      - name: Deploy to GKE
+        run: |
+          kubectl apply -f k8s/
+          kubectl set image deployment/api api=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/the-new-fuse/api:${{ github.sha }}
+          kubectl set image deployment/frontend frontend=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/the-new-fuse/frontend:${{ github.sha }}
+          kubectl set image deployment/a2a-service a2a-service=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/the-new-fuse/a2a-service:${{ github.sha }}
+          kubectl set image deployment/message-broker message-broker=${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.GCP_PROJECT_ID }}/the-new-fuse/message-broker:${{ github.sha }}
+
+  deploy-firebase:
+    needs: build-bun
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build frontend
+        run: bun run build:frontend
+
+      - name: Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          channelId: live
+          projectId: ${{ secrets.FIREBASE_PROJECT_ID }}
+
+  deploy-railway:
+    needs: build-bun
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Railway CLI
+        run: npm install -g @railway/cli
+
+      - name: Deploy to Railway
+        run: railway up
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+
+  trigger-new-fuse-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger New Fuse Workflow
+        run: |
+          curl -X POST \
+            -H "Accept: application/vnd.github.v3+json" \
+            -H "Authorization: token ${{ secrets.GH_TOKEN_FOR_DISPATCH }}" \
+            --data '{"event_type": "run-new-fuse-workflow", "client_payload": {"workflow_id": "12345"}}' \
+            https://api.github.com/repos/your-username/your-repo/dispatches
+
+  new-fuse-triggered-workflow:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'repository_dispatch' && github.event.action == 'run-new-fuse-workflow'
+    steps:
+      - name: Print event payload
+        run: echo "${{ toJSON(github.event.client_payload) }}"

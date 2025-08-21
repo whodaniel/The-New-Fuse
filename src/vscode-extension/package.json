@@ -10,7 +10,7 @@
   },
   "publisher": "the-new-fuse",
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.103.0"
   },
   "categories": [
     "Machine Learning",
@@ -38,11 +38,12 @@
   "devDependencies": {
     "@types/node": "^20.11.20",
     "@types/uuid": "^9.0.8",
-    "@types/vscode": "1.90.0",
+    "@types/vscode": "^1.103.0",
     "@types/ws": "^8.5.10",
     "@vscode/vsce": "^3.5.0",
     "esbuild": "^0.19.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vsce": "^2.15.0"
   },
   "contributes": {
     "configuration": {
