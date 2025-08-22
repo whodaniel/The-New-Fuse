@@ -23,6 +23,7 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/__tests__/**/*.(spec|test).(ts|tsx|js|jsx)'],
+  testPathIgnorePatterns: ['/node_modules/', '/backup/'],
   transformIgnorePatterns: [
     'node_modules/(?!(@nestjs)/)',
   ],

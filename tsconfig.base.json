@@ -15,13 +15,7 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/*"],
-      "@the-new-fuse/*": ["packages/*"],
-      "@apps/*": ["apps/*"]
-    }
+    "sourceMap": true
   },
   "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
 }

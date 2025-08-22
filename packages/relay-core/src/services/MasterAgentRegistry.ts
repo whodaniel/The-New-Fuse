@@ -9,7 +9,7 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
 import { AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { ethers } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
 import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
@@ -397,7 +397,7 @@ export class MasterAgentRegistry extends EventEmitter {
       };
 
       // 1. Store in Prisma database (single source of truth)
-      const dbAgent = await this.prisma.agent.create({
+      await this.prisma.agent.create({
         data: {
           id: agentId,
           name: completeProfile.name,
@@ -405,13 +405,13 @@ export class MasterAgentRegistry extends EventEmitter {
           status: completeProfile.status,
           description: completeProfile.description,
           systemPrompt: completeProfile.systemPrompt,
-          configuration: completeProfile.configuration,
+          config: completeProfile.configuration,
           userId: completeProfile.userId,
+          capabilities: this.extractLegacyCapabilities(completeProfile.capabilities) as any,
           metadata: {
             create: {
               version: completeProfile.metadata.version,
               lastActive: new Date(),
-              capabilities: completeProfile.capabilities,
               personalityTraits: completeProfile.metadata.personalityTraits,
               communicationStyle: completeProfile.metadata.communicationStyle,
               expertiseAreas: completeProfile.metadata.expertiseAreas,
@@ -425,6 +425,15 @@ export class MasterAgentRegistry extends EventEmitter {
         },
         include: { metadata: true }
       });
+
+      const dbAgent = await this.prisma.agent.findUnique({
+        where: { id: agentId },
+        include: { metadata: true },
+      });
+
+      if (!dbAgent) {
+        throw new Error(`Failed to retrieve agent ${agentId} after creation.`);
+      }
 
       // 2. Register with legacy system for backward compatibility
       const legacyAgent: LegacyAgent = {
@@ -474,8 +483,11 @@ export class MasterAgentRegistry extends EventEmitter {
                 metadata: {
                   update: {
                     config: {
-                      ...dbAgent.metadata?.config,
-                      onChainData: onChainData
+                    ...((dbAgent.metadata?.config && typeof dbAgent.metadata.config === 'object') ? dbAgent.metadata.config : {}),
+                    onChainData: {
+                        ...onChainData,
+                        lastOnChainUpdate: onChainData.lastOnChainUpdate?.toISOString(),
+                    }
                     }
                   }
                 }
@@ -728,9 +740,10 @@ export class MasterAgentRegistry extends EventEmitter {
         data: {
           title: todo.content,
           description: `Agent todo: ${todo.content}`,
+            type: todo.category,
           status: this.convertTodoStatusToTaskStatus(todo.status),
           priority: this.convertTodoPriorityToTaskPriority(todo.priority),
-          agentId,
+          assignedToId: agentId,
           userId: agent.userId,
           metadata: {
             masterRegistryTodoId: todoId,

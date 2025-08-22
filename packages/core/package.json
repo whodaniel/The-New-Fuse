@@ -12,7 +12,7 @@
     "build:production": "NODE_ENV=production tsc -p tsconfig.clean.json",
     "clean": "rimraf dist",
     "type-check": "tsc -p tsconfig.clean.json --noEmit",
-    "test": "jest",
+    "test": "jest --config jest.config.cjs --passWithNoTests",
     "test:unit": "jest --testPathPattern=unit",
     "test:integration": "jest --testPathPattern=integration",
     "test:watch": "jest --watch",

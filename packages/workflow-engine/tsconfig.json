@@ -17,21 +17,11 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "exactOptionalPropertyTypes": false,
-    "composite": true,
     "incremental": true,
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true,
-    "paths": {
-      "@/*": ["./src/*"],
-      "@the-new-fuse/database": ["../database/src"],
-      "@the-new-fuse/database/*": ["../database/src/*"],
-      "@the-new-fuse/security": ["../security/src"],
-      "@the-new-fuse/security/*": ["../security/src/*"],
-      "@tnf/relay-core": ["../relay-core/src"],
-      "@tnf/relay-core/*": ["../relay-core/src/*"]
-    }
+    "resolveJsonModule": true
   },
   "include": ["src"],
   "references": [
