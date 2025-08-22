@@ -349,6 +349,62 @@ class ElectronMain {
     ipcMain.handle('app:open-theia-debugger', async () => ({ success: true }))
     ipcMain.handle('app:refresh-services', async () => ({ success: true }))
 
+    // Workflow Builder integration
+    ipcMain.handle('workflow:create', async (_: any, workflow: any) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('create_workflow', [JSON.stringify(workflow)])
+        }
+        return { success: false, error: 'Backend not available' }
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
+    ipcMain.handle('workflow:save', async (_: any, workflow: any) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('save_workflow', [JSON.stringify(workflow)])
+        }
+        return { success: false, error: 'Backend not available' }
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
+    ipcMain.handle('workflow:load', async (_: any, workflowId: string) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('load_workflow', [workflowId])
+        }
+        return { success: false, error: 'Backend not available' }
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
+    ipcMain.handle('workflow:execute', async (_: any, workflow: any) => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('execute_workflow', [JSON.stringify(workflow)])
+        }
+        return { success: false, error: 'Backend not available' }
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
+    ipcMain.handle('workflow:list', async () => {
+      try {
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('list_workflows', [])
+        }
+        return { success: false, error: 'Backend not available' }
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
 
     // Prompt management integration
     ipcMain.handle('prompt:get-templates', async () => {

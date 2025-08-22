@@ -644,7 +644,7 @@
         }
 
         /* Settings Panel */
-        .settings-panel, .extensions-panel, .prompt-manager-panel {
+        .settings-panel, .extensions-panel, .prompt-manager-panel, .workflow-builder-panel {
             position: fixed;
             top: 0;
             right: 0;
@@ -660,11 +660,11 @@
             flex-direction: column;
         }
 
-        .settings-panel.open, .extensions-panel.open, .prompt-manager-panel.open {
+        .settings-panel.open, .extensions-panel.open, .prompt-manager-panel.open, .workflow-builder-panel.open {
             transform: translateX(0);
         }
 
-        .settings-header, .extensions-header, .prompt-manager-header {
+        .settings-header, .extensions-header, .prompt-manager-header, .workflow-builder-header {
             padding: 20px;
             border-bottom: 1px solid #2d3142;
             display: flex;
@@ -672,13 +672,13 @@
             justify-content: space-between;
         }
 
-        .settings-title, .extensions-title, .prompt-manager-title {
+        .settings-title, .extensions-title, .prompt-manager-title, .workflow-builder-title {
             font-size: 18px;
             font-weight: 600;
             color: #ffffff;
         }
 
-        .settings-close, .extensions-close, .prompt-manager-close {
+        .settings-close, .extensions-close, .prompt-manager-close, .workflow-builder-close {
             background: none;
             border: none;
             color: #9ca3af;
@@ -688,12 +688,12 @@
             font-size: 16px;
         }
 
-        .settings-close:hover, .extensions-close:hover, .prompt-manager-close:hover {
+        .settings-close:hover, .extensions-close:hover, .prompt-manager-close:hover, .workflow-builder-close:hover {
             background: #2d3142;
             color: #ffffff;
         }
 
-        .settings-content, .extensions-content, .prompt-manager-content {
+        .settings-content, .extensions-content, .prompt-manager-content, .workflow-builder-content {
             padding: 20px;
             flex: 1;
             overflow-y: auto;
@@ -841,7 +841,8 @@
             
             .settings-panel,
             .extensions-panel,
-            .prompt-manager-panel {
+            .prompt-manager-panel,
+            .workflow-builder-panel {
                 width: 320px;
             }
         }
@@ -876,20 +877,20 @@
         }
 
         /* Custom Scrollbars */
-        .sidebar-body::-webkit-scrollbar, .settings-content::-webkit-scrollbar, .extensions-content::-webkit-scrollbar, .prompt-manager-content::-webkit-scrollbar {
+        .sidebar-body::-webkit-scrollbar, .settings-content::-webkit-scrollbar, .extensions-content::-webkit-scrollbar, .prompt-manager-content::-webkit-scrollbar, .workflow-builder-content::-webkit-scrollbar {
             width: 6px;
         }
 
-        .sidebar-body::-webkit-scrollbar-track, .settings-content::-webkit-scrollbar-track, .extensions-content::-webkit-scrollbar-track, .prompt-manager-content::-webkit-scrollbar-track {
+        .sidebar-body::-webkit-scrollbar-track, .settings-content::-webkit-scrollbar-track, .extensions-content::-webkit-scrollbar-track, .prompt-manager-content::-webkit-scrollbar-track, .workflow-builder-content::-webkit-scrollbar-track {
             background: transparent;
         }
 
-        .sidebar-body::-webkit-scrollbar-thumb, .settings-content::-webkit-scrollbar-thumb, .extensions-content::-webkit-scrollbar-thumb, .prompt-manager-content::-webkit-scrollbar-thumb {
+        .sidebar-body::-webkit-scrollbar-thumb, .settings-content::-webkit-scrollbar-thumb, .extensions-content::-webkit-scrollbar-thumb, .prompt-manager-content::-webkit-scrollbar-thumb, .workflow-builder-content::-webkit-scrollbar-thumb {
             background: #4b5563;
             border-radius: 3px;
         }
 
-        .sidebar-body::-webkit-scrollbar-thumb:hover, .settings-content::-webkit-scrollbar-thumb:hover, .extensions-content::-webkit-scrollbar-thumb:hover, .prompt-manager-content::-webkit-scrollbar-thumb:hover {
+        .sidebar-body::-webkit-scrollbar-thumb:hover, .settings-content::-webkit-scrollbar-thumb:hover, .extensions-content::-webkit-scrollbar-thumb:hover, .prompt-manager-content::-webkit-scrollbar-thumb:hover, .workflow-builder-content::-webkit-scrollbar-thumb:hover {
             background: #6b7280;
         }
         
@@ -1559,6 +1560,304 @@
             background: #374151;
             margin: 4px 0;
         }
+
+        /* Workflow Builder Specific Styles */
+        .workflow-builder-panel {
+            width: 800px;
+        }
+
+        .workflow-canvas-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 80px);
+        }
+
+        .workflow-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #2d3142;
+            border-bottom: 1px solid #374151;
+        }
+
+        .workflow-toolbar-left,
+        .workflow-toolbar-right {
+            display: flex;
+            gap: 8px;
+        }
+
+        .workflow-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .workflow-btn.primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+        .workflow-btn.primary:hover {
+            background: #6366f1;
+        }
+
+        .workflow-btn.secondary {
+            background: #374151;
+            color: #d1d5db;
+            border: 1px solid #4b5563;
+        }
+
+        .workflow-btn.secondary:hover {
+            background: #4b5563;
+            color: white;
+        }
+
+        .workflow-btn.success {
+            background: #10b981;
+            color: white;
+        }
+
+        .workflow-btn.success:hover {
+            background: #059669;
+        }
+
+        .workflow-canvas-container {
+            display: grid;
+            grid-template-columns: 200px 1fr 250px;
+            grid-template-rows: auto 1fr;
+            grid-template-areas: 
+                "toolbar toolbar toolbar"
+                "palette canvas properties";
+            height: calc(100vh - 80px);
+        }
+
+        .workflow-toolbar {
+            grid-area: toolbar;
+        }
+
+        .node-palette {
+            grid-area: palette;
+            background: #1f2937;
+            border-right: 1px solid #374151;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .node-palette h4 {
+            color: #e5e7eb;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .node-category {
+            margin-bottom: 20px;
+        }
+
+        .node-category h5 {
+            color: #9ca3af;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .node-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            margin: 2px 0;
+            background: #374151;
+            border-radius: 6px;
+            cursor: grab;
+            transition: all 0.2s ease;
+            font-size: 12px;
+            color: #d1d5db;
+        }
+
+        .node-item:hover {
+            background: #4b5563;
+            color: white;
+            transform: translateX(2px);
+        }
+
+        .node-item:active {
+            cursor: grabbing;
+        }
+
+        .node-item i {
+            width: 16px;
+            text-align: center;
+            color: #4f46e5;
+        }
+
+        .workflow-canvas {
+            grid-area: canvas;
+            position: relative;
+            background: #1a1d29;
+            overflow: hidden;
+        }
+
+        .canvas-grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle, #374151 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0.3;
+        }
+
+        .canvas-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .workflow-node {
+            position: absolute;
+            background: #252836;
+            border: 2px solid #4b5563;
+            border-radius: 8px;
+            padding: 12px;
+            min-width: 120px;
+            cursor: move;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .workflow-node:hover {
+            border-color: #4f46e5;
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .workflow-node.selected {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.3);
+        }
+
+        .workflow-node-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .workflow-node-icon {
+            width: 20px;
+            height: 20px;
+            background: #4f46e5;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .workflow-node-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #e5e7eb;
+        }
+
+        .workflow-node-content {
+            font-size: 11px;
+            color: #9ca3af;
+            line-height: 1.4;
+        }
+
+        .workflow-node-ports {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .workflow-node-port {
+            width: 8px;
+            height: 8px;
+            background: #4f46e5;
+            border-radius: 50%;
+            cursor: crosshair;
+        }
+
+        .workflow-node-port.input {
+            left: -4px;
+        }
+
+        .workflow-node-port.output {
+            right: -4px;
+        }
+
+        .node-properties {
+            grid-area: properties;
+            background: #1f2937;
+            border-left: 1px solid #374151;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .node-properties h4 {
+            color: #e5e7eb;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .property-group {
+            margin-bottom: 16px;
+        }
+
+        .property-label {
+            display: block;
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .property-input {
+            width: 100%;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 4px;
+            padding: 6px 8px;
+            color: #e5e7eb;
+            font-size: 12px;
+        }
+
+        .property-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+        }
+
+        .property-textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .text-muted {
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
     </style>
 </head>
 <body>
@@ -1652,6 +1951,12 @@
                             <i class="fas fa-grip-vertical drag-handle"></i>
                             <i class="fas fa-magic"></i>
                             <span>Prompt Manager</span>
+                            <div class="status-dot online"></div>
+                        </div>
+                        <div class="nav-item draggable" draggable="true" onclick="openWorkflowBuilder()">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <i class="fas fa-project-diagram"></i>
+                            <span>Workflow Builder</span>
                             <div class="status-dot online"></div>
                         </div>
                     </div>
@@ -2165,6 +2470,138 @@
         </div>
     </div>
 
+    <!-- Workflow Builder Panel -->
+    <div class="workflow-builder-panel" id="workflowBuilderPanel">
+        <div class="workflow-builder-header">
+            <h2 class="workflow-builder-title">Workflow Builder</h2>
+            <button class="workflow-builder-close" onclick="toggleWorkflowBuilder()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="workflow-builder-content">
+            <!-- Workflow Canvas Container -->
+            <div class="workflow-canvas-container">
+                <div class="workflow-toolbar">
+                    <div class="workflow-toolbar-left">
+                        <button class="workflow-btn primary" onclick="createNewWorkflow()">
+                            <i class="fas fa-plus"></i>
+                            New Workflow
+                        </button>
+                        <button class="workflow-btn secondary" onclick="loadWorkflow()">
+                            <i class="fas fa-folder-open"></i>
+                            Load
+                        </button>
+                        <button class="workflow-btn secondary" onclick="saveWorkflow()">
+                            <i class="fas fa-save"></i>
+                            Save
+                        </button>
+                    </div>
+                    <div class="workflow-toolbar-right">
+                        <button class="workflow-btn secondary" onclick="undoWorkflow()">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button class="workflow-btn secondary" onclick="redoWorkflow()">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="workflow-btn success" onclick="executeWorkflow()">
+                            <i class="fas fa-play"></i>
+                            Execute
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Node Palette -->
+                <div class="node-palette">
+                    <h4>Drag & Drop Nodes</h4>
+                    <div class="node-categories">
+                        <div class="node-category">
+                            <h5>Input/Output</h5>
+                            <div class="node-item" draggable="true" data-node-type="input" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-sign-in-alt"></i>
+                                <span>Input</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="output" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-sign-out-alt"></i>
+                                <span>Output</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="webhook" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-link"></i>
+                                <span>Webhook</span>
+                            </div>
+                        </div>
+                        
+                        <div class="node-category">
+                            <h5>AI Processing</h5>
+                            <div class="node-item" draggable="true" data-node-type="ai-chat" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-robot"></i>
+                                <span>AI Chat</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="ai-completion" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-brain"></i>
+                                <span>AI Completion</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="ai-image" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-image"></i>
+                                <span>AI Image</span>
+                            </div>
+                        </div>
+                        
+                        <div class="node-category">
+                            <h5>Logic & Control</h5>
+                            <div class="node-item" draggable="true" data-node-type="condition" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-code-branch"></i>
+                                <span>Condition</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="loop" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-sync"></i>
+                                <span>Loop</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="delay" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-clock"></i>
+                                <span>Delay</span>
+                            </div>
+                        </div>
+                        
+                        <div class="node-category">
+                            <h5>Data Processing</h5>
+                            <div class="node-item" draggable="true" data-node-type="transform" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-exchange-alt"></i>
+                                <span>Transform</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="filter" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-filter"></i>
+                                <span>Filter</span>
+                            </div>
+                            <div class="node-item" draggable="true" data-node-type="merge" ondragstart="handleNodeDragStart(event)">
+                                <i class="fas fa-compress-arrows-alt"></i>
+                                <span>Merge</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Workflow Canvas -->
+                <div class="workflow-canvas" id="workflowCanvas" 
+                     ondrop="handleCanvasDrop(event)" 
+                     ondragover="handleCanvasDragOver(event)"
+                     onclick="handleCanvasClick(event)">
+                    <div class="canvas-grid"></div>
+                    <div class="canvas-content" id="canvasContent">
+                        <!-- Workflow nodes will be rendered here -->
+                    </div>
+                </div>
+                
+                <!-- Node Properties Panel -->
+                <div class="node-properties" id="nodeProperties">
+                    <h4>Node Properties</h4>
+                    <div id="nodePropertiesContent">
+                        <p class="text-muted">Select a node to edit its properties</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Overlay -->
     <div class="overlay" id="overlay" onclick="closeAllPanels()"></div>
 
@@ -2646,9 +3083,413 @@
             document.getElementById('settingsPanel').classList.remove('open');
             document.getElementById('extensionsPanel').classList.remove('open');
             document.getElementById('promptManagerPanel').classList.remove('open');
+            document.getElementById('workflowBuilderPanel').classList.remove('open');
             if(!keepOverlay) {
                 document.getElementById('overlay').classList.remove('active');
             }
+        }
+
+        // Workflow Builder Functions
+        function toggleWorkflowBuilder() {
+            const panel = document.getElementById('workflowBuilderPanel');
+            const overlay = document.getElementById('overlay');
+            const isOpen = panel.classList.contains('open');
+
+            if (isOpen) {
+                panel.classList.remove('open');
+                overlay.classList.remove('active');
+            } else {
+                closeAllPanels(true);
+                panel.classList.add('open');
+                overlay.classList.add('active');
+                initializeWorkflowBuilder();
+            }
+        }
+
+        function openWorkflowBuilder() {
+            // Option 1: Open in panel
+            toggleWorkflowBuilder();
+            
+            // Option 2: Open in new tab (alternative)
+            // createNewTab('http://localhost:3000/workflows/builder', 'Workflow Builder');
+        }
+
+        // Workflow Builder State
+        let workflowBuilder = {
+            nodes: [],
+            connections: [],
+            selectedNode: null,
+            draggedNodeType: null,
+            nodeIdCounter: 0,
+            isConnecting: false,
+            connectionStart: null
+        };
+
+        function initializeWorkflowBuilder() {
+            const canvas = document.getElementById('workflowCanvas');
+            if (!canvas) return;
+
+            // Clear existing content
+            const canvasContent = document.getElementById('canvasContent');
+            canvasContent.innerHTML = '';
+            
+            // Reset state
+            workflowBuilder.nodes = [];
+            workflowBuilder.connections = [];
+            workflowBuilder.selectedNode = null;
+            workflowBuilder.nodeIdCounter = 0;
+
+            // Add sample workflow
+            createSampleWorkflow();
+        }
+
+        function createSampleWorkflow() {
+            // Create a simple sample workflow
+            const inputNode = createWorkflowNode('input', 100, 100, 'Input', 'Receives data input');
+            const aiNode = createWorkflowNode('ai-chat', 300, 100, 'AI Processing', 'Process with AI');
+            const outputNode = createWorkflowNode('output', 500, 100, 'Output', 'Send results');
+
+            workflowBuilder.nodes.push(inputNode, aiNode, outputNode);
+            renderWorkflowNodes();
+        }
+
+        function createWorkflowNode(type, x, y, title, description) {
+            const nodeId = `node-${++workflowBuilder.nodeIdCounter}`;
+            return {
+                id: nodeId,
+                type: type,
+                x: x,
+                y: y,
+                title: title,
+                description: description,
+                properties: getDefaultNodeProperties(type)
+            };
+        }
+
+        function getDefaultNodeProperties(type) {
+            const defaults = {
+                'input': { inputType: 'text', placeholder: 'Enter input...' },
+                'output': { outputFormat: 'json', destination: 'console' },
+                'ai-chat': { model: 'gpt-4', temperature: 0.7, maxTokens: 1000 },
+                'ai-completion': { model: 'gpt-4', temperature: 0.5, maxTokens: 500 },
+                'condition': { expression: 'input > 0', trueAction: 'continue', falseAction: 'stop' },
+                'transform': { operation: 'map', expression: 'x => x.toUpperCase()' },
+                'webhook': { url: 'https://api.example.com', method: 'POST' }
+            };
+            return defaults[type] || {};
+        }
+
+        function renderWorkflowNodes() {
+            const canvasContent = document.getElementById('canvasContent');
+            canvasContent.innerHTML = '';
+
+            workflowBuilder.nodes.forEach(node => {
+                const nodeElement = createNodeElement(node);
+                canvasContent.appendChild(nodeElement);
+            });
+        }
+
+        function createNodeElement(node) {
+            const nodeDiv = document.createElement('div');
+            nodeDiv.className = 'workflow-node';
+            nodeDiv.id = node.id;
+            nodeDiv.style.left = node.x + 'px';
+            nodeDiv.style.top = node.y + 'px';
+            
+            const icon = getNodeIcon(node.type);
+            
+            nodeDiv.innerHTML = `
+                <div class="workflow-node-header">
+                    <div class="workflow-node-icon">
+                        <i class="${icon}"></i>
+                    </div>
+                    <div class="workflow-node-title">${node.title}</div>
+                </div>
+                <div class="workflow-node-content">${node.description}</div>
+                <div class="workflow-node-ports">
+                    <div class="workflow-node-port input" data-port="input"></div>
+                    <div class="workflow-node-port output" data-port="output"></div>
+                </div>
+            `;
+
+            // Add event listeners
+            nodeDiv.addEventListener('click', () => selectNode(node));
+            nodeDiv.addEventListener('mousedown', (e) => startNodeDrag(e, node));
+
+            return nodeDiv;
+        }
+
+        function getNodeIcon(type) {
+            const icons = {
+                'input': 'fas fa-sign-in-alt',
+                'output': 'fas fa-sign-out-alt',
+                'ai-chat': 'fas fa-robot',
+                'ai-completion': 'fas fa-brain',
+                'ai-image': 'fas fa-image',
+                'condition': 'fas fa-code-branch',
+                'loop': 'fas fa-sync',
+                'delay': 'fas fa-clock',
+                'transform': 'fas fa-exchange-alt',
+                'filter': 'fas fa-filter',
+                'merge': 'fas fa-compress-arrows-alt',
+                'webhook': 'fas fa-link'
+            };
+            return icons[type] || 'fas fa-cube';
+        }
+
+        function selectNode(node) {
+            // Remove previous selection
+            document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+            
+            // Select current node
+            document.getElementById(node.id).classList.add('selected');
+            workflowBuilder.selectedNode = node;
+            
+            // Update properties panel
+            updateNodePropertiesPanel(node);
+        }
+
+        function updateNodePropertiesPanel(node) {
+            const propertiesContent = document.getElementById('nodePropertiesContent');
+            if (!propertiesContent) return;
+
+            let html = `
+                <div class="property-group">
+                    <label class="property-label">Node ID</label>
+                    <input type="text" class="property-input" value="${node.id}" readonly>
+                </div>
+                <div class="property-group">
+                    <label class="property-label">Title</label>
+                    <input type="text" class="property-input" value="${node.title}" 
+                           onchange="updateNodeProperty('${node.id}', 'title', this.value)">
+                </div>
+                <div class="property-group">
+                    <label class="property-label">Description</label>
+                    <textarea class="property-input property-textarea" 
+                              onchange="updateNodeProperty('${node.id}', 'description', this.value)">${node.description}</textarea>
+                </div>
+            `;
+
+            // Add type-specific properties
+            Object.entries(node.properties).forEach(([key, value]) => {
+                html += `
+                    <div class="property-group">
+                        <label class="property-label">${key.charAt(0).toUpperCase() + key.slice(1)}</label>
+                        <input type="text" class="property-input" value="${value}" 
+                               onchange="updateNodeProperty('${node.id}', 'properties.${key}', this.value)">
+                    </div>
+                `;
+            });
+
+            propertiesContent.innerHTML = html;
+        }
+
+        function updateNodeProperty(nodeId, property, value) {
+            const node = workflowBuilder.nodes.find(n => n.id === nodeId);
+            if (!node) return;
+
+            if (property.startsWith('properties.')) {
+                const propKey = property.replace('properties.', '');
+                node.properties[propKey] = value;
+            } else {
+                node[property] = value;
+            }
+
+            // Re-render the node
+            renderWorkflowNodes();
+            if (workflowBuilder.selectedNode && workflowBuilder.selectedNode.id === nodeId) {
+                selectNode(node);
+            }
+        }
+
+        // Drag and Drop Functions
+        function handleNodeDragStart(event) {
+            workflowBuilder.draggedNodeType = event.target.dataset.nodeType;
+            event.dataTransfer.effectAllowed = 'copy';
+        }
+
+        function handleCanvasDragOver(event) {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'copy';
+        }
+
+        function handleCanvasDrop(event) {
+            event.preventDefault();
+            
+            if (!workflowBuilder.draggedNodeType) return;
+
+            const canvas = document.getElementById('workflowCanvas');
+            const rect = canvas.getBoundingClientRect();
+            const x = event.clientX - rect.left - 60; // Center the node
+            const y = event.clientY - rect.top - 30;
+
+            const nodeType = workflowBuilder.draggedNodeType;
+            const title = nodeType.charAt(0).toUpperCase() + nodeType.slice(1).replace('-', ' ');
+            const description = `${title} node`;
+
+            const newNode = createWorkflowNode(nodeType, x, y, title, description);
+            workflowBuilder.nodes.push(newNode);
+            renderWorkflowNodes();
+
+            workflowBuilder.draggedNodeType = null;
+        }
+
+        function handleCanvasClick(event) {
+            if (event.target.id === 'workflowCanvas' || event.target.classList.contains('canvas-grid')) {
+                // Deselect all nodes
+                document.querySelectorAll('.workflow-node').forEach(n => n.classList.remove('selected'));
+                workflowBuilder.selectedNode = null;
+                
+                // Clear properties panel
+                const propertiesContent = document.getElementById('nodePropertiesContent');
+                if (propertiesContent) {
+                    propertiesContent.innerHTML = '<p class="text-muted">Select a node to edit its properties</p>';
+                }
+            }
+        }
+
+        // Node dragging
+        let dragState = {
+            isDragging: false,
+            dragNode: null,
+            startX: 0,
+            startY: 0,
+            offsetX: 0,
+            offsetY: 0
+        };
+
+        function startNodeDrag(event, node) {
+            if (event.target.classList.contains('workflow-node-port')) return;
+            
+            dragState.isDragging = true;
+            dragState.dragNode = node;
+            dragState.startX = event.clientX;
+            dragState.startY = event.clientY;
+            dragState.offsetX = event.clientX - node.x;
+            dragState.offsetY = event.clientY - node.y;
+
+            document.addEventListener('mousemove', handleNodeDrag);
+            document.addEventListener('mouseup', endNodeDrag);
+            event.preventDefault();
+        }
+
+        function handleNodeDrag(event) {
+            if (!dragState.isDragging || !dragState.dragNode) return;
+
+            const newX = event.clientX - dragState.offsetX;
+            const newY = event.clientY - dragState.offsetY;
+
+            dragState.dragNode.x = Math.max(0, newX);
+            dragState.dragNode.y = Math.max(0, newY);
+
+            const nodeElement = document.getElementById(dragState.dragNode.id);
+            if (nodeElement) {
+                nodeElement.style.left = dragState.dragNode.x + 'px';
+                nodeElement.style.top = dragState.dragNode.y + 'px';
+            }
+        }
+
+        function endNodeDrag() {
+            dragState.isDragging = false;
+            dragState.dragNode = null;
+            document.removeEventListener('mousemove', handleNodeDrag);
+            document.removeEventListener('mouseup', endNodeDrag);
+        }
+
+        // Workflow Actions
+        function createNewWorkflow() {
+            if (confirm('Create a new workflow? This will clear the current workflow.')) {
+                workflowBuilder.nodes = [];
+                workflowBuilder.connections = [];
+                workflowBuilder.selectedNode = null;
+                workflowBuilder.nodeIdCounter = 0;
+                
+                const canvasContent = document.getElementById('canvasContent');
+                canvasContent.innerHTML = '';
+                
+                const propertiesContent = document.getElementById('nodePropertiesContent');
+                if (propertiesContent) {
+                    propertiesContent.innerHTML = '<p class="text-muted">Select a node to edit its properties</p>';
+                }
+                
+                showNotification('New workflow created');
+            }
+        }
+
+        function saveWorkflow() {
+            const workflow = {
+                nodes: workflowBuilder.nodes,
+                connections: workflowBuilder.connections,
+                metadata: {
+                    name: 'Untitled Workflow',
+                    description: 'Created in TNF Browser Hub',
+                    created: new Date().toISOString()
+                }
+            };
+
+            // Save to localStorage for now
+            const workflowJson = JSON.stringify(workflow, null, 2);
+            localStorage.setItem('tnf-workflow-' + Date.now(), workflowJson);
+            
+            // Also trigger download
+            const blob = new Blob([workflowJson], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'workflow.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showNotification('Workflow saved successfully');
+        }
+
+        function loadWorkflow() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const workflow = JSON.parse(e.target.result);
+                        workflowBuilder.nodes = workflow.nodes || [];
+                        workflowBuilder.connections = workflow.connections || [];
+                        workflowBuilder.nodeIdCounter = Math.max(...workflowBuilder.nodes.map(n => parseInt(n.id.split('-')[1]) || 0), 0);
+                        
+                        renderWorkflowNodes();
+                        showNotification('Workflow loaded successfully');
+                    } catch (error) {
+                        showNotification('Error loading workflow: ' + error.message, 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        function executeWorkflow() {
+            if (workflowBuilder.nodes.length === 0) {
+                showNotification('No nodes to execute', 'warning');
+                return;
+            }
+
+            showNotification('Executing workflow...', 'info');
+            
+            // Simulate workflow execution
+            setTimeout(() => {
+                showNotification(`Workflow executed successfully! Processed ${workflowBuilder.nodes.length} nodes.`, 'success');
+            }, 2000);
+        }
+
+        function undoWorkflow() {
+            showNotification('Undo functionality coming soon', 'info');
+        }
+
+        function redoWorkflow() {
+            showNotification('Redo functionality coming soon', 'info');
         }
         
         // Terminal functionality removed - Theia IDE has its own integrated terminal

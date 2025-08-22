@@ -9,6 +9,12 @@ Welcome to The New Fuse documentation. This repository contains comprehensive gu
 [Installation Guide](getting-started/installation.md)
 [Quick Start](getting-started/quick-start.md)
 
+## Development & Troubleshooting
+
+- [Native Modules Guide](NATIVE_MODULES_GUIDE.md) - Handling native module compatibility with Bun
+- [Build Optimization](BUILD_OPTIMIZATION.md) - Memory-efficient build strategies
+- [Testing Guide](TESTING_GUIDE.md) - Testing practices and configuration
+
 ## Deployment
 
 [Deployment Guide](deployment/DEPLOYMENT_GUIDE.md)

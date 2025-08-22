@@ -85,7 +85,13 @@ const electronAPI = {
   // Prompt management
   getPromptTemplates: () => ipcRenderer.invoke('prompt:get-templates'),
   createPromptTemplate: (template: any) => ipcRenderer.invoke('prompt:create-template', template),
-  generatePrompt: (templateId: string, variables: any) => ipcRenderer.invoke('prompt:generate', templateId, variables)
+  generatePrompt: (templateId: string, variables: any) => ipcRenderer.invoke('prompt:generate', templateId, variables),
+  // Workflow Builder
+  createWorkflow: (workflow: any) => ipcRenderer.invoke('workflow:create', workflow),
+  saveWorkflow: (workflow: any) => ipcRenderer.invoke('workflow:save', workflow),
+  loadWorkflow: (workflowId: string) => ipcRenderer.invoke('workflow:load', workflowId),
+  executeWorkflow: (workflow: any) => ipcRenderer.invoke('workflow:execute', workflow),
+  listWorkflows: () => ipcRenderer.invoke('workflow:list')
 }
 
 contextBridge.exposeInMainWorld('electronAPI', electronAPI)
