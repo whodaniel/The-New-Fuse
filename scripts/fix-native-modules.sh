@@ -8,6 +8,10 @@ set -e
 echo "🔧 Native Modules Fix Script"
 echo "=============================="
 
+# Ensure nvm is sourced
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # Check if we're in the right directory
 if [ ! -f "package.json" ]; then
     echo "❌ Error: package.json not found. Please run this script from the project root."
@@ -25,7 +29,9 @@ if [[ ! "$NODE_VERSION" =~ ^v18\. ]]; then
     
     # Check if nvm is available
     if command -v nvm &> /dev/null; then
-        echo "💡 You can switch to Node.js 18 with: nvm use 18"
+        echo "💡 Switching to Node.js 18 with nvm..."
+        nvm use 18
+    else
         read -p "   Would you like to continue anyway? (y/N): " -n 1 -r
         echo
         if [[ ! $REPLY =~ ^[Yy]$ ]]; then

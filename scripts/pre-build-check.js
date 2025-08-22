@@ -8,7 +8,11 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🔍 Pre-build: Checking native modules...');
+function log(message) {
+  console.log(`[pre-build-check.js] ${message}`);
+}
+
+log('Verifying native modules before build/test...');
 
 function checkCanvas() {
   const canvasPath = path.join(process.cwd(), 'node_modules', 'canvas');
@@ -37,32 +41,34 @@ function main() {
                      packageJson.optionalDependencies?.canvas;
     
     if (!hasCanvas) {
-      console.log('✅ Canvas not required - proceeding with build');
+      log('✅ Canvas not required - proceeding with build');
       return;
     }
   }
   
   // Check if canvas is working
   if (checkCanvas() && testCanvas()) {
-    console.log('✅ Native modules ready for build');
+    log('✅ Native modules ready for build');
     return;
   }
   
-  console.log('❌ Canvas native module not working - build may fail');
-  console.log('');
-  console.log('🛠️  To fix this issue, run:');
-  console.log('   bun run fix:native-modules');
-  console.log('');
-  console.log('   Or for a complete reinstall:');
-  console.log('   bun run install:smart');
-  console.log('');
+  log('ERROR: Critical native module "canvas.node" is missing or not working.');
+  log('This likely means the postinstall script failed or was skipped.');
+  log('');
+  log('🛠️  To fix this issue, run:');
+  log('   bun run fix:native-modules');
+  log('');
+  log('   Or for a complete reinstall:');
+  log('   bun install');
+  log('');
   
-  // Don't fail the build, just warn
-  console.log('⚠️  Continuing with build (some tests may fail)...');
+  // Exit with error to prevent broken builds
+  process.exit(1);
 }
 
 try {
   main();
 } catch (error) {
-  console.log('⚠️  Pre-build check failed:', error.message);
+  log('⚠️  Pre-build check failed:', error.message);
+  process.exit(1);
 }

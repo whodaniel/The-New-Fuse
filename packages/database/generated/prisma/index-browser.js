@@ -181,7 +181,13 @@ exports.Prisma.AgentScalarFieldEnum = {
 exports.Prisma.AgentMetadataScalarFieldEnum = {
   id: 'id',
   agentId: 'agentId',
-  metadata: 'metadata'
+  metadata: 'metadata',
+  version: 'version',
+  config: 'config',
+  lastActive: 'lastActive',
+  personalityTraits: 'personalityTraits',
+  communicationStyle: 'communicationStyle',
+  expertiseAreas: 'expertiseAreas'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {
@@ -303,6 +309,8 @@ exports.Prisma.PipelineScalarFieldEnum = {
 
 exports.Prisma.TaskScalarFieldEnum = {
   id: 'id',
+  title: 'title',
+  description: 'description',
   type: 'type',
   status: 'status',
   priority: 'priority',
@@ -312,11 +320,12 @@ exports.Prisma.TaskScalarFieldEnum = {
   startTime: 'startTime',
   endTime: 'endTime',
   pipelineId: 'pipelineId',
-  agentId: 'agentId',
+  assignedToId: 'assignedToId',
   userId: 'userId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  metadata: 'metadata'
 };
 
 exports.Prisma.TaskExecutionScalarFieldEnum = {
@@ -573,7 +582,10 @@ exports.Prisma.AgentOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
   id: 'id',
-  agentId: 'agentId'
+  agentId: 'agentId',
+  version: 'version',
+  communicationStyle: 'communicationStyle',
+  expertiseAreas: 'expertiseAreas'
 };
 
 exports.Prisma.ChatOrderByRelevanceFieldEnum = {
@@ -641,10 +653,12 @@ exports.Prisma.PipelineOrderByRelevanceFieldEnum = {
 
 exports.Prisma.TaskOrderByRelevanceFieldEnum = {
   id: 'id',
+  title: 'title',
+  description: 'description',
   type: 'type',
   error: 'error',
   pipelineId: 'pipelineId',
-  agentId: 'agentId',
+  assignedToId: 'assignedToId',
   userId: 'userId'
 };
 

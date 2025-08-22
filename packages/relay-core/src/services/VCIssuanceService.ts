@@ -9,7 +9,7 @@
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
 import { Agent, AgentType } from '@the-new-fuse/database';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@the-new-fuse/database';
 import { ethers } from 'ethers';
 import { BigNumberish, BigNumber } from '@ethersproject/bignumber';
 import { BlockchainService } from './shared/BlockchainService.js';
@@ -469,7 +469,7 @@ export class VCIssuanceService extends EventEmitter {
     // Query task history for capability-related tasks
     const tasks = await this.prisma.task.findMany({
       where: {
-        assignedTo: agentId,
+        assignedTo: { id: agentId },
         status: 'COMPLETED',
         title: {
           contains: capability,
@@ -555,7 +555,7 @@ export class VCIssuanceService extends EventEmitter {
    */
   private async generatePerformanceMetrics(agentId: string): Promise<PerformanceMetrics> {
     const tasks = await this.prisma.task.findMany({
-      where: { assignedTo: agentId },
+      where: { assignedTo: { id: agentId } },
       orderBy: { createdAt: 'desc' },
       take: 1000 // Last 1000 tasks for comprehensive analysis
     });
@@ -624,7 +624,7 @@ export class VCIssuanceService extends EventEmitter {
     const achievements: AgentAchievement[] = [];
     
     const taskCount = await this.prisma.task.count({
-      where: { assignedTo: agentId, status: 'COMPLETED' }
+      where: { assignedTo: { id: agentId }, status: 'COMPLETED' }
     });
 
     if (taskCount >= 100) {
@@ -663,7 +663,7 @@ export class VCIssuanceService extends EventEmitter {
     
     const agent = await this.prisma.agent.findUnique({
       where: { id: agentId },
-      include: { metadata: true }
+      select: { capabilities: true, metadata: true }
     });
 
     if (!agent?.metadata) {
@@ -673,7 +673,7 @@ export class VCIssuanceService extends EventEmitter {
     const skills: VerifiedSkill[] = [];
     
     // Extract skills from agent capabilities
-    const capabilities = agent.metadata.capabilities as any;
+    const capabilities = agent.capabilities as any;
     if (capabilities) {
       Object.entries(capabilities).forEach(([skill, enabled]) => {
         if (enabled) {

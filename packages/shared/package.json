@@ -8,7 +8,7 @@
     "build": "tsc --build",
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo",
     "dev": "tsc --build --watch",
-    "test": "jest",
+    "test": "jest --config jest.config.cjs",
     "lint": "eslint --config eslint.config.js src",
     "test:redis": "NODE_OPTIONS='--experimental-specifier-resolution=node --loader ts-node/esm' ts-node src/utils/redis.test.ts"
   },
