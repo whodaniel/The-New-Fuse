@@ -1,0 +1,37 @@
+{
+  "name": "@the-new-fuse/web-scraping",
+  "version": "1.0.0",
+  "description": "Web scraping and proxy tools for AI agents",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "lint": "eslint src/**/*.ts",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "node-fetch": "^3.3.2",
+    "puppeteer": "^22.0.0",
+    "cheerio": "^1.0.0-rc.12",
+    "url-parse": "^1.5.10",
+    "mime-types": "^2.1.35",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/websockets": "^11.0.0",
+    "socket.io": "^4.7.5",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.13",
+    "@types/url-parse": "^1.4.11",
+    "@types/mime-types": "^2.1.4",
+    "typescript": "^5.8.3",
+    "vitest": "^1.6.0",
+    "eslint": "^8.57.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
