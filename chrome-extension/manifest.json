@@ -1,55 +1,46 @@
 {
   "manifest_version": 3,
-  "name": "TNF AI Bridge",
+  "name": "Tab Connections",
   "version": "1.0.0",
-  "description": "Bridge for AI-to-AI communication between local agents and web-based AI chats",
-  
+  "description": "Find logical connections and summarize information from your open tabs",
   "permissions": [
+    "tabs",
     "activeTab",
-    "scripting",
-    "storage",
-    "alarms"
+    "storage"
   ],
-  
   "host_permissions": [
-    "https://chatgpt.com/*",
-    "https://claude.ai/*",
-    "https://gemini.google.com/*",
-    "https://www.perplexity.ai/*",
-    "https://poe.com/*",
-    "https://character.ai/*",
-    "http://localhost:*/*",
-    "http://127.0.0.1:*/*"
+    "http://*/*",
+    "https://*/*"
   ],
-  
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Tab Connections",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "background": {
     "service_worker": "background.js"
   },
-  
-  "action": {
-    "default_popup": "popup.html",
-    "default_title": "TNF AI Bridge"
-  },
-
   "content_scripts": [
     {
-      "matches": [
-        "https://chatgpt.com/*",
-        "https://claude.ai/*", 
-        "https://gemini.google.com/*",
-        "https://www.perplexity.ai/*",
-        "https://poe.com/*",
-        "https://character.ai/*"
-      ],
-      "js": ["content.js", "injectable-ui.js"],
-      "css": ["injectable-ui.css"],
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
       "run_at": "document_end"
     }
   ],
-  
   "web_accessible_resources": [
     {
-      "resources": ["injected.js"],
+      "resources": ["icons/*"],
       "matches": ["<all_urls>"]
     }
   ]

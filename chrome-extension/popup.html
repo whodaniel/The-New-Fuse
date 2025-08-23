@@ -1,820 +1,145 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <style>
-    body {
-      width: 450px;
-      min-height: 500px;
-      margin: 0;
-      padding: 16px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f8f9fa;
-    }
-    
-    .header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid #e9ecef;
-    }
-    
-    .logo {
-      width: 24px;
-      height: 24px;
-      background: linear-gradient(45deg, #667eea 0%, #764ba2 100%);
-      border-radius: 6px;
-      margin-right: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      font-size: 12px;
-    }
-    
-    .title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #212529;
-    }
-    
-    .status-section {
-      background: white;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .status-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    
-    .status-item:last-child {
-      margin-bottom: 0;
-    }
-    
-    .status-label {
-      font-size: 14px;
-      color: #6c757d;
-    }
-    
-    .status-value {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    
-    .status-connected {
-      color: #28a745;
-    }
-    
-    .status-disconnected {
-      color: #dc3545;
-    }
-    
-    .status-unknown {
-      color: #6c757d;
-    }
-    
-    .conversation-section {
-      background: white;
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #495057;
-      margin-bottom: 8px;
-    }
-    
-    .message-input {
-      width: 100%;
-      min-height: 60px;
-      padding: 8px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-size: 14px;
-      font-family: inherit;
-      resize: vertical;
-      box-sizing: border-box;
-    }
-    
-    .message-input:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-    }
-    
-    .button-group {
-      display: flex;
-      gap: 8px;
-      margin-top: 8px;
-    }
-    
-    .button {
-      flex: 1;
-      padding: 8px 16px;
-      border: none;
-      border-radius: 4px;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    
-    .button-primary {
-      background: #667eea;
-      color: white;
-    }
-    
-    .button-primary:hover {
-      background: #5a6fd8;
-    }
-    
-    .button-secondary {
-      background: #6c757d;
-      color: white;
-    }
-    
-    .button-secondary:hover {
-      background: #5a6268;
-    }
-    
-    .button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
-    
-    .ai-select {
-      width: 100%;
-      padding: 8px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-size: 14px;
-      margin-bottom: 8px;
-      background: white;
-    }
-    
-    .ai-select:focus {
-      outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
-    }
-    
-    .footer {
-      font-size: 12px;
-      color: #6c757d;
-      text-align: center;
-      padding-top: 8px;
-    }
-    
-    .indicator {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 6px;
-    }
-    
-    .indicator.connected {
-      background: #28a745;
-    }
-    
-    .indicator.disconnected {
-      background: #dc3545;
-    }
-    
-    .indicator.unknown {
-      background: #6c757d;
-    }
-    
-    .chat-log {
-      height: 200px;
-      overflow-y: auto;
-      border: 1px solid #e9ecef;
-      border-radius: 4px;
-      padding: 8px;
-      background: #ffffff;
-      margin-bottom: 8px;
-    }
-    
-    .message {
-      margin-bottom: 12px;
-      padding: 8px;
-      border-radius: 8px;
-      border-left: 3px solid;
-    }
-    
-    .message:last-child {
-      margin-bottom: 0;
-    }
-    
-    .message.user {
-      background: #e3f2fd;
-      border-left-color: #2196f3;
-    }
-    
-    .message.ai {
-      background: #f3e5f5;
-      border-left-color: #9c27b0;
-    }
-    
-    .message.system {
-      background: #fff3e0;
-      border-left-color: #ff9800;
-    }
-    
-    .message-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 4px;
-    }
-    
-    .message-sender {
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-    }
-    
-    .message-sender.user {
-      color: #1976d2;
-    }
-    
-    .message-sender.ai {
-      color: #7b1fa2;
-    }
-    
-    .message-sender.system {
-      color: #f57c00;
-    }
-    
-    .message-time {
-      font-size: 10px;
-      color: #6c757d;
-    }
-    
-    .message-content {
-      font-size: 13px;
-      line-height: 1.4;
-      word-wrap: break-word;
-    }
-    
-    .no-messages {
-      text-align: center;
-      color: #6c757d;
-      font-style: italic;
-      padding: 20px;
-      font-size: 13px;
-    }
-
-    .tabs {
-      display: flex;
-      border-bottom: 1px solid #e9ecef;
-      margin-bottom: 12px;
-    }
-
-    .tab-button {
-      flex: 1;
-      padding: 8px 12px;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-size: 14px;
-      color: #6c757d;
-      border-bottom: 2px solid transparent;
-      transition: all 0.2s;
-    }
-
-    .tab-button.active {
-      color: #667eea;
-      border-bottom-color: #667eea;
-    }
-
-    .tab-button:hover {
-      color: #495057;
-    }
-
-    .tab-content {
-      display: none;
-    }
-
-    .tab-content.active {
-      display: block;
-    }
-
-    .server-status {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .server-port {
-      font-size: 12px;
-      color: #6c757d;
-    }
-
-    .port-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
-    }
-
-    .port-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      background: #f8f9fa;
-      border-radius: 4px;
-      font-size: 12px;
-    }
-
-    .port-status {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #dc3545;
-    }
-
-    .port-status.online {
-      background: #28a745;
-    }
-
-    .config-section {
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .config-input {
-      width: 100%;
-      padding: 6px 8px;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      font-size: 12px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
-
-    .config-input:focus {
-      outline: none;
-      border-color: #667eea;
-    }
-
-    .advanced-status-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .status-card {
-      background: #f8f9fa;
-      border-radius: 6px;
-      padding: 10px;
-      border-left: 3px solid #667eea;
-    }
-
-    .status-card h4 {
-      margin: 0 0 8px 0;
-      font-size: 12px;
-      font-weight: 600;
-      color: #495057;
-      text-transform: uppercase;
-    }
-
-    .status-indicator.online {
-      color: #28a745;
-      font-weight: 500;
-    }
-
-    .status-indicator.offline {
-      color: #dc3545;
-      font-weight: 500;
-    }
-
-    .metric-item, .feature-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      margin-bottom: 4px;
-    }
-
-    .feature-status.enabled {
-      color: #28a745;
-      font-weight: 500;
-    }
-
-    .feature-status.disabled {
-      color: #6c757d;
-      font-weight: 500;
-    }
-
-    .sync-status {
-      font-size: 10px;
-      color: #6c757d;
-      text-align: center;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid #e9ecef;
-    }
-
-    .connection-quality {
-      display: inline-block;
-      padding: 2px 6px;
-      border-radius: 10px;
-      font-size: 9px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .connection-quality.good {
-      background: #d4edda;
-      color: #155724;
-    }
-
-    .connection-quality.fair {
-      background: #fff3cd;
-      color: #856404;
-    }
-
-    .connection-quality.poor {
-      background: #f8d7da;
-      color: #721c24;
-    }
-
-    .feature-toggle {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 6px 8px;
-      background: #f8f9fa;
-      border-radius: 4px;
-      margin-bottom: 4px;
-      font-size: 12px;
-    }
-
-    .toggle-switch {
-      position: relative;
-      width: 32px;
-      height: 18px;
-      background: #ccc;
-      border-radius: 9px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .toggle-switch.active {
-      background: #667eea;
-    }
-
-    .toggle-switch::before {
-      content: '';
-      position: absolute;
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: white;
-      top: 2px;
-      left: 2px;
-      transition: transform 0.3s;
-    }
-
-    .toggle-switch.active::before {
-      transform: translateX(14px);
-    }
-  </style>
+    <meta charset="utf-8">
+    <style>
+        body {
+            width: 400px;
+            min-height: 500px;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .header {
+            padding: 20px;
+            text-align: center;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .header h1 {
+            margin: 0 0 10px 0;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        
+        .content {
+            padding: 20px;
+        }
+        
+        .btn {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin: 10px 0;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 3px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top: 3px solid white;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .results {
+            background: rgba(255,255,255,0.95);
+            color: #333;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .tab-item {
+            background: #f8f9ff;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 3px solid #667eea;
+        }
+        
+        .tab-title {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+        
+        .tab-summary {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .connections {
+            background: #fff3cd;
+            border-left: 3px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .connections h4 {
+            margin: 0 0 10px 0;
+            color: #856404;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+    </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">T</div>
-    <div class="title">TNF AI Bridge</div>
-  </div>
-  
-  <div class="status-section">
-    <div class="status-item">
-      <span class="status-label">TNF Integration</span>
-      <span class="status-value" id="relay-status">
-        <span class="indicator unknown"></span>
-        Initializing...
-      </span>
-    </div>
-    <div class="status-item">
-      <span class="status-label">Current AI</span>
-      <span class="status-value" id="current-ai">
-        <span class="indicator unknown"></span>
-        Unknown
-      </span>
-    </div>
-    <div class="status-item">
-      <span class="status-label">Page Ready</span>
-      <span class="status-value" id="page-ready">
-        <span class="indicator unknown"></span>
-        Checking...
-      </span>
-    </div>
-  </div>
-
-  <div class="tabs">
-    <button class="tab-button active" data-tab="chat">Chat</button>
-    <button class="tab-button" data-tab="agents">Agents</button>
-    <button class="tab-button" data-tab="tnf">TNF</button>
-    <button class="tab-button" data-tab="server">Server</button>
-    <button class="tab-button" data-tab="ports">Ports</button>
-  </div>
-  
-  <!-- Chat Tab -->
-  <div class="tab-content active" id="chat-tab">
-    <div class="conversation-section">
-      <div class="section-title">Conversation History</div>
-      <div class="chat-log" id="chat-log">
-        <div class="no-messages">No conversation yet. Messages will appear here as AI agents communicate.</div>
-      </div>
-      <div class="button-group">
-        <button class="button button-secondary" id="clear-history-btn">Clear History</button>
-        <button class="button button-secondary" id="refresh-btn">Refresh</button>
-      </div>
+    <div class="header">
+        <h1>🔗 Tab Connections</h1>
+        <p>Find connections across your tabs</p>
     </div>
     
-    <div class="conversation-section">
-      <div class="section-title">Send Message to AI</div>
-      <select class="ai-select" id="target-ai">
-        <option value="">Select AI...</option>
-        <option value="chatgpt">ChatGPT</option>
-        <option value="claude">Claude</option>
-        <option value="gemini">Gemini</option>
-        <option value="perplexity">Perplexity</option>
-        <option value="poe">Poe</option>
-        <option value="character">Character.AI</option>
-      </select>
-      <textarea 
-        class="message-input" 
-        id="message-input" 
-        placeholder="Type your message here..."
-      ></textarea>
-      <div class="button-group">
-        <button class="button button-secondary" id="clear-btn">Clear</button>
-        <button class="button button-primary" id="send-btn">Send</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Agents Tab -->
-  <div class="tab-content" id="agents-tab">
-    <div class="conversation-section">
-      <div class="section-title">🤖 Master Agent Registration</div>
-      <input 
-        type="text" 
-        class="config-input" 
-        id="master-agent-name" 
-        placeholder="Master Agent Name"
-        value="TNF Master Agent"
-      >
-      <select class="ai-select" id="agent-group">
-        <option value="">Select Agent Group...</option>
-        <option value="a">Group A (Red) 🔴</option>
-        <option value="b">Group B (Teal) 🔵</option>
-        <option value="c">Group C (Blue) 🟢</option>
-        <option value="d">Group D (Yellow) 🟡</option>
-        <option value="e">Group E (Purple) 🟣</option>
-      </select>
-      <div class="button-group">
-        <button class="button button-primary" id="register-master-btn">Register as Master</button>
-        <button class="button button-secondary" id="unregister-master-btn">Unregister</button>
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">👥 Agent Groups</div>
-      <div class="agent-groups" id="agent-groups">
-        <!-- Groups will be populated dynamically -->
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">🎯 Sub-Agent Assignment</div>
-      <select class="ai-select" id="sub-agent-group">
-        <option value="">No Group Assignment</option>
-        <option value="a">Assign to Group A (Red) 🔴</option>
-        <option value="b">Assign to Group B (Teal) 🔵</option>
-        <option value="c">Assign to Group C (Blue) 🟢</option>
-        <option value="d">Assign to Group D (Yellow) 🟡</option>
-        <option value="e">Assign to Group E (Purple) 🟣</option>
-      </select>
-      <div class="button-group">
-        <button class="button button-primary" id="assign-sub-agents-btn">Assign Injectable UIs</button>
-        <button class="button button-secondary" id="broadcast-to-group-btn">Broadcast to Group</button>
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">📊 Group Status</div>
-      <div class="status-item">
-        <span class="status-label">Current Master Group</span>
-        <span class="status-value" id="current-master-group">Not Set</span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Injectable UIs Connected</span>
-        <span class="status-value" id="injectable-uis-count">0</span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Active Routing</span>
-        <span class="status-value" id="routing-status">None</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- TNF Integration Tab -->
-  <div class="tab-content" id="tnf-tab">
-    <div class="conversation-section">
-      <div class="section-title">🔗 The New Fuse Integration Status</div>
-      <div class="status-item">
-        <span class="status-label">Relay Connection</span>
-        <span class="status-value" id="tnf-relay-connection">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Agent Registration</span>
-        <span class="status-value" id="tnf-agent-registration">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">MCP Configuration</span>
-        <span class="status-value" id="tnf-mcp-config">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Database Connection</span>
-        <span class="status-value" id="tnf-database-connection">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">⚙️ TNF System Actions</div>
-      <div class="button-group">
-        <button class="button button-primary" id="tnf-register-btn">Register with TNF</button>
-        <button class="button button-secondary" id="tnf-reload-config-btn">Reload Config</button>
-      </div>
-      <div class="button-group" style="margin-top: 8px;">
-        <button class="button button-secondary" id="tnf-start-comprehensive-btn">Start TNF Relay</button>
-        <button class="button button-secondary" id="tnf-health-check-btn">Health Check</button>
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">📊 TNF Infrastructure</div>
-      <div class="status-item">
-        <span class="status-label">Main Relay (8765)</span>
-        <span class="status-value" id="tnf-port-8765">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">WebSocket (3001)</span>
-        <span class="status-value" id="tnf-port-3001">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">HTTP API (3000)</span>
-        <span class="status-value" id="tnf-port-3000">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-      <div class="status-item">
-        <span class="status-label">Dashboard (3002)</span>
-        <span class="status-value" id="tnf-port-3002">
-          <span class="indicator unknown"></span>
-          Checking...
-        </span>
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">🔬 Advanced TNF Status</div>
-      <div id="tnf-advanced-status">
-        <!-- Advanced status will be populated by JavaScript -->
-      </div>
-    </div>
-
-    <div class="conversation-section">
-      <div class="section-title">⚡ Feature Management</div>
-      <div class="feature-toggle">
-        <span>Agent Swarm Orchestration</span>
-        <div class="toggle-switch" id="toggle-agent-swarm"></div>
-      </div>
-      <div class="feature-toggle">
-        <span>Workflow Automation</span>
-        <div class="toggle-switch" id="toggle-workflow-automation"></div>
-      </div>
-      <div class="feature-toggle">
-        <span>Real-time Monitoring</span>
-        <div class="toggle-switch" id="toggle-real-time-monitoring"></div>
-      </div>
-      <div class="feature-toggle">
-        <span>Advanced Analytics</span>
-        <div class="toggle-switch" id="toggle-advanced-analytics"></div>
-      </div>
-      <div class="button-group" style="margin-top: 8px;">
-        <button class="button button-primary" id="sync-with-tnf-core-btn">Sync with TNF Core</button>
-        <button class="button button-secondary" id="connect-orchestrator-btn">Connect Orchestrator</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Server Tab -->
-  <div class="tab-content" id="server-tab">
-    <div class="conversation-section">
-      <div class="section-title">TNF Relay Server</div>
-      <div class="server-status">
-        <span class="indicator" id="server-indicator"></span>
-        <span id="server-status-text">Checking...</span>
-        <span class="server-port" id="server-port"></span>
-      </div>
-      <div class="button-group">
-        <button class="button button-primary" id="start-server-btn">Start Server</button>
-        <button class="button button-secondary" id="stop-server-btn" disabled>Stop Server</button>
-      </div>
-      
-      <div class="config-section">
-        <div class="section-title">Configuration</div>
-        <input 
-          type="text" 
-          class="config-input" 
-          id="relay-url-input" 
-          placeholder="ws://localhost:3001"
-          value="ws://localhost:3001"
-        >
-        <input 
-          type="number" 
-          class="config-input" 
-          id="server-port-input" 
-          placeholder="Server Port (3001)"
-          value="3001"
-        >
-        <div class="button-group">
-          <button class="button button-secondary" id="update-config-btn">Update Config</button>
-          <button class="button button-secondary" id="restart-vite-btn">Restart Vite</button>
+    <div class="content">
+        <button id="analyzeBtn" class="btn">🧠 Analyze Open Tabs</button>
+        <button id="summaryBtn" class="btn">📝 Get Summaries</button>
+        
+        <div id="loading" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>Analyzing tabs...</p>
         </div>
-      </div>
+        
+        <div id="results"></div>
     </div>
-  </div>
-
-  <!-- Ports Tab -->
-  <div class="tab-content" id="ports-tab">
-    <div class="conversation-section">
-      <div class="section-title">Port Monitor</div>
-      <div class="port-grid" id="port-grid">
-        <!-- Ports will be populated here -->
-      </div>
-      <div class="config-section">
-        <input 
-          type="number" 
-          class="config-input" 
-          id="new-port-input" 
-          placeholder="Add port to monitor..."
-        >
-        <div class="button-group">
-          <button class="button button-secondary" id="add-port-btn">Add Port</button>
-          <button class="button button-secondary" id="refresh-ports-btn">Refresh</button>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  <div class="footer">
-    Connected to The New Fuse relay system
-    <div class="sync-status" id="sync-status">
-      Last sync: <span id="last-sync-time">Never</span>
-      | Quality: <span class="connection-quality" id="connection-quality">Unknown</span>
-    </div>
-  </div>
-  
-  <script src="popup.js"></script>
+    
+    <script src="popup.js"></script>
 </body>
 </html>

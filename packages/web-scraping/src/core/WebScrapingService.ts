@@ -17,8 +17,22 @@ import {
   BrowserSession,
   SecurityPolicy 
 } from '../types';
-import { BaseErrorHandler } from '@the-new-fuse/core-error-handling';
-import { BaseMonitoringSystem } from '@the-new-fuse/core-monitoring';
+// Simple error and monitoring implementations for web scraping
+class BaseErrorHandler {
+  async handleError(error: Error, context?: any): Promise<void> {
+    console.error('[WebScraping Error]', error.message, context);
+  }
+}
+
+class BaseMonitoringSystem {
+  recordMetric(name: string, value: number, tags?: any): void {
+    console.log(`[WebScraping Metric] ${name}: ${value}`, tags);
+  }
+  
+  getMetrics(): any {
+    return { totalRequests: 0, successRate: 1.0, averageResponseTime: 0 };
+  }
+}
 
 export class WebScrapingService {
   private readonly errorHandler: BaseErrorHandler;
