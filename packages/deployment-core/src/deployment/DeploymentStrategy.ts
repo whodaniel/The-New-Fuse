@@ -446,7 +446,7 @@ export abstract class BaseDeploymentStrategy extends EventEmitter implements IDe
     return false;
   }
 
-  private async getServiceReadyReplicas(serviceName: string): Promise<number> {
+  private async getServiceReadyReplicas(_serviceName: string): Promise<number> {
     // This would integrate with the actual orchestration platform
     // For now, simulate a gradually increasing ready count
     return Math.floor(Math.random() * 3) + 1;

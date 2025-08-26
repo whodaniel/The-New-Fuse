@@ -447,7 +447,7 @@ module.exports = ErrorExtension;
       const results = await Promise.all(concurrentExecutions);
 
       // Verify all executions succeeded
-      results.forEach((result, index) => {
+      results.forEach((result) => {
         expect(result.success).toBe(true);
         expect(result.result).toBeDefined();
       });

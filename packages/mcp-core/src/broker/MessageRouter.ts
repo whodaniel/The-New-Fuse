@@ -599,23 +599,7 @@ export class MessageRouter extends EventEmitter implements IMessageRouter {
    */
   private isRetryableError(error: any): boolean {
     if (error instanceof MCPErrorClass) {
-      // Use the comprehensive non-retryable error list from MCPErrorClass's inferRetryable logic
-      const nonRetryableCodes = [
-        JSONRPCErrorCode.PARSE_ERROR,
-        JSONRPCErrorCode.INVALID_REQUEST,
-        JSONRPCErrorCode.METHOD_NOT_FOUND,
-        JSONRPCErrorCode.INVALID_PARAMS,
-        MCPErrorCode.RESOURCE_NOT_FOUND,
-        MCPErrorCode.AUTHENTICATION_FAILED,
-        MCPErrorCode.AUTHORIZATION_FAILED,
-        MCPErrorCode.INSUFFICIENT_PERMISSIONS,
-        MCPErrorCode.PROTOCOL_VERSION_MISMATCH,
-        MCPErrorCode.PROTOCOL_VIOLATION,
-        MCPErrorCode.TOOL_NOT_FOUND,
-        MCPErrorCode.MESSAGE_INVALID_FORMAT,
-      ];
-      
-      return !nonRetryableCodes.includes(error.code) && error.code !== JSONRPCErrorCode.INTERNAL_ERROR;
+      return error.retryable;
     }
     
     // All other errors (including generic ones not instances of MCPErrorClass) are retryable by default

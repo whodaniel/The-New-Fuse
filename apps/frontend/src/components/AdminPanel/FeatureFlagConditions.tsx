@@ -6,7 +6,7 @@ import { Switch } from '@/components/ui/switch';
 // Temporarily using local components instead of ui-consolidated
 // import { Card, Input, Switch, Button, DatePicker, Select } from '@the-new-fuse/ui-consolidated';
 import { FeatureFlagConditions } from '@the-new-fuse/types/featureFlags';
-// import { MonacoEditor } from '@the-new-fuse/ui-components/monaco-editor';
+// import { MonacoEditor } from '@the-new-fuse/ui-consolidated';
 
 // Temporary placeholder components
 const DatePicker = ({ value, onChange }: { value: Date | null, onChange: (date: Date | null) => void }) => (

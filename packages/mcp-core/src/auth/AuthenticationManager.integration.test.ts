@@ -194,7 +194,7 @@ describe('AuthenticationManager Integration Tests', () => {
 
       await expect(
         connectionManager.createConnection('ws://localhost:8080/auth-required', options)
-      ).rejects.toThrow('Authentication failed');
+      ).rejects.toThrow('Invalid bearer token');
     });
 
     it('should handle basic authentication in connection headers', async () => {
@@ -380,7 +380,7 @@ describe('AuthenticationManager Integration Tests', () => {
 
       await expect(
         connectionManager.createConnection('ws://localhost:8080/auth-required', options)
-      ).rejects.toThrow('Authentication failed');
+      ).rejects.toThrow('Invalid bearer token');
     });
   });
 

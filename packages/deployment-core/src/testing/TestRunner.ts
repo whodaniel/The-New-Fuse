@@ -415,18 +415,14 @@ export class TestRunner extends EventEmitter {
       this.runningTests.set(testId, jestProcess);
 
       const logs: string[] = [];
-      let stdout = '';
-      let _stderr = '';
 
       jestProcess.stdout?.on('data', (data: Buffer) => {
         const output = data.toString();
-        stdout += output;
         logs.push(output);
       });
 
       jestProcess.stderr?.on('data', (data: Buffer) => {
         const output = data.toString();
-        _stderr += output;
         logs.push(output);
       });
 

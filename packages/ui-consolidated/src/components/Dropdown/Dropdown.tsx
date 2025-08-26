@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '@the-new-fuse/utils';
 import { Icon } from '../Icon';
 
 export interface DropdownOption {

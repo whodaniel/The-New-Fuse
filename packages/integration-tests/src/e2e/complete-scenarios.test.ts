@@ -7,7 +7,6 @@
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types';
-import { ExtensionType } from '@the-new-fuse/extension-system/types';
 import * as path from 'path';
 
 describe('End-to-End Complete Scenarios', () => {
@@ -805,3 +804,5 @@ module.exports = UnreliableProcessor;
 
       console.log(`High-load test completed: ${successRate}% success rate in ${totalExecutionTime}ms`);
     }, 240000); // Maximum timeout for performance testing
+  });
+});

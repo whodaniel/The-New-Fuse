@@ -3,13 +3,8 @@
  * Handles automated infrastructure operations, compliance, and disaster recovery
  */
 
-import {
-  InfrastructureState,
-  InfrastructureTemplate,
-  ValidationResult
-} from '../types/infrastructure';
 import { InfrastructureManager } from './InfrastructureManager';
-import { EnvironmentManager, Environment } from './EnvironmentManager';
+import { EnvironmentManager } from './EnvironmentManager';
 
 export interface AutomationRule {
   id: string;
@@ -194,7 +189,7 @@ export class InfrastructureAutomation {
     }
 
     this.isRunning = true;
-    console.log('Infrastructure automation started');
+    // Infrastructure automation started
 
     // Start automation loops
     this.startScheduledAutomation();
@@ -204,7 +199,7 @@ export class InfrastructureAutomation {
 
   async stop(): Promise<void> {
     this.isRunning = false;
-    console.log('Infrastructure automation stopped');
+    // Infrastructure automation stopped
   }
 
   async addAutomationRule(rule: Omit<AutomationRule, 'id' | 'createdAt' | 'updatedAt'>): Promise<AutomationRule> {
@@ -416,10 +411,10 @@ export class InfrastructureAutomation {
     setInterval(async () => {
       if (!this.isRunning) return;
 
-      for (const [planId, plan] of this.disasterRecoveryPlans) {
+      for (const [, plan] of this.disasterRecoveryPlans) {
         const shouldTest = this.shouldRunDRTest(plan);
         if (shouldTest) {
-          console.log(`Running DR test for plan ${planId}`);
+          // Running DR test for plan
           // In production, would run actual DR test in isolated environment
         }
       }
@@ -537,7 +532,7 @@ export class InfrastructureAutomation {
     try {
       if (step.automated && step.script) {
         // Mock step execution - in production, would run actual recovery scripts
-        console.log(`Executing recovery step: ${step.name}`);
+        // Executing recovery step
         await new Promise(resolve => setTimeout(resolve, step.estimatedDuration));
       }
 
@@ -574,28 +569,34 @@ export class InfrastructureAutomation {
     return daysSinceLastTest > 30; // Test monthly
   }
 
-  private async scaleInfrastructure(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Scaling infrastructure:', config);
+  private async scaleInfrastructure(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    // Scale infrastructure implementation
+    void config;
   }
 
-  private async updateConfiguration(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Updating configuration:', config);
+  private async updateConfiguration(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    // Update configuration implementation
+    void config;
   }
 
-  private async createBackup(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Creating backup:', config);
+  private async createBackup(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    // Create backup implementation
+    void config;
   }
 
-  private async sendNotification(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Sending notification:', config);
+  private async sendNotification(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    // Send notification implementation
+    void config;
   }
 
-  private async applySecurityPatch(config: Record<string, any>, context: Record<string, any>): Promise<void> {
-    console.log('Applying security patch:', config);
+  private async applySecurityPatch(config: Record<string, any>, _context: Record<string, any>): Promise<void> {
+    // Apply security patch implementation
+    void config;
   }
 
   private async optimizeCosts(_config: Record<string, any>, _context: Record<string, any>): Promise<void> {
-    console.log('Optimizing costs:', _config);
+    // Optimizing costs implementation
+    void _config;
   }
 
   private generateId(prefix: string): string {

@@ -1,0 +1,37 @@
+services:
+  # PostgreSQL service is commented out as we're using Prisma Accelerate
+  # postgres:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_USER: ${POSTGRES_USER:-fusedeveloper}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-fusepassword}
+  #     POSTGRES_DB: ${POSTGRES_DB:-fusedb}
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #   networks:
+  #     - fuse-network
+  #   healthcheck:
+  #     test: ["CMD-SHELL", "pg_isready -U fusedeveloper"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis-data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    networks:
+      - fuse-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+
+volumes:
+  # postgres-data:  # Commented out as it's no longer needed
+  redis-data:
+
+networks:
+  fuse-network:
+    driver: bridge

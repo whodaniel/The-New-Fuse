@@ -59,7 +59,7 @@ Object.defineProperty(Element.prototype, 'getBoundingClientRect', {
 });
 
 describe('Canvas Interactions and Visual Feedback', () => {
-  let env: any;
+  let env: any; // Used for test environment
   let builder: WorkflowBuilder;
 
   beforeAll(async () => {
@@ -295,7 +295,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
     test('should provide connection preview during handle drag', async () => {
       const sourceNode = builder.addNode(WorkflowNodeType.START, 'Start', { x: 100, y: 100 });
-      const targetNode = builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
+      void builder.addNode(WorkflowNodeType.END, 'End', { x: 300, y: 100 });
 
       // Start connection drag from source handle
       const connectionDragEvent = {
@@ -944,7 +944,7 @@ describe('Canvas Interactions and Visual Feedback', () => {
 
       // Create connection
       const targetNode = builder.addNode(WorkflowNodeType.END, 'End Node', { x: 300, y: 100 });
-      const connection = builder.addConnection(node.id, 'output', targetNode.id, 'input');
+      void builder.addConnection(node.id, 'output', targetNode.id, 'input');
 
       expect(announcements).toContain('Connection created from "Start Node" to "End Node"');
 

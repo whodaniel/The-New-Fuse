@@ -60,9 +60,9 @@ async function buildTheiaWithMemoryOptimization() {
     // Use multiple build strategies, prioritizing the working approach
     const buildStrategies = [
       {
-        name: 'bunx-theia-cli-optimized',
-        command: 'bunx',
-        args: ['@theia/cli@1.59.0', 'build', '--mode', 'production'],
+        name: 'direct-theia-build',
+        command: 'theia',
+        args: ['build', '--mode', 'production'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=6144',
           NODE_ENV: 'production'
@@ -74,6 +74,15 @@ async function buildTheiaWithMemoryOptimization() {
         args: ['run', 'theia:build'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=4096',
+          NODE_ENV: 'production'
+        }
+      },
+      {
+        name: 'bunx-theia-cli-optimized',
+        command: 'bunx',
+        args: ['@theia/cli@1.59.0', 'build', '--mode', 'production'],
+        env: { 
+          NODE_OPTIONS: '--max-old-space-size=6144',
           NODE_ENV: 'production'
         }
       }

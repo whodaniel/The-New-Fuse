@@ -50,7 +50,7 @@ describe('Performance Benchmarks', () => {
       for (let i = 0; i < iterations; i++) {
         const startTime = performance.now();
         
-        const agent = await TestHelpers.createTestAgent(`PerfTestAgent${i}`, 'PERF_TEST');
+        void await TestHelpers.createTestAgent(`PerfTestAgent${i}`, 'PERF_TEST');
         
         const endTime = performance.now();
         times.push(endTime - startTime);
@@ -565,7 +565,7 @@ describe('Performance Benchmarks', () => {
       const initialMemory = process.memoryUsage();
       
       // Perform memory-intensive operations
-      const agents = await Promise.all(
+      void await Promise.all(
         Array.from({ length: 50 }, (_, i) => 
           TestHelpers.createTestAgent(`MemoryTestAgent${i}`, 'MEMORY_TEST')
         )
@@ -581,7 +581,7 @@ describe('Performance Benchmarks', () => {
         extensions.map(ext => env.extensionManager.loadExtension(ext.extensionDir))
       );
 
-      const workflows = await Promise.all(
+      void await Promise.all(
         Array.from({ length: 20 }, async (_, i) => {
           const { workflow } = await TestHelpers.createTestWorkflow(`MemoryWorkflow${i}`);
           return await env.workflowEngine.repository.createWorkflow(workflow);

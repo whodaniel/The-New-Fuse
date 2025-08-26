@@ -797,7 +797,7 @@ export class CICDPipeline extends EventEmitter implements ICICDPipeline {
     };
   }
 
-  private async waitForApprovals(deployment: DeploymentConfig): Promise<void> {
+  private async waitForApprovals(_deployment: DeploymentConfig): Promise<void> {
     // Implementation for approval workflow
     // This would integrate with approval systems
   }

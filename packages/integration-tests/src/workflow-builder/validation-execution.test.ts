@@ -12,7 +12,7 @@
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 import { WorkflowBuilder } from '@the-new-fuse/workflow-engine/builder';
-import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types';
+import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
 
 describe('Workflow Validation and Execution Tests', () => {
   let env: any;

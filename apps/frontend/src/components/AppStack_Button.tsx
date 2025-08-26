@@ -1,7 +1,7 @@
 // This file is kept for backward compatibility
 // It re-exports the consolidated Button component with a wrapper for AppStack_Button
 import React from 'react';
-import { Button } from '@the-new-fuse/ui-components/src/core/button';
+import { Button } from '@the-new-fuse/ui-consolidated';
 
 interface AppStackButtonProps {
   onClick?: () => void;

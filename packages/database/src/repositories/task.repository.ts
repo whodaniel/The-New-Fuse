@@ -1,31 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { Task, TaskStatus, TaskPriority } from '../../generated/prisma';
+import { Task, TaskStatus, TaskPriority, PrismaClient } from '@prisma/client';
 import { PrismaService } from '../prisma.service';
-import { Prisma } from '../../generated/prisma';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TaskRepository {
   constructor(private prisma: PrismaService) {}
 
-  private mapDatabaseTaskToTask(dbTask: Task): Task {
-    return {
-      id: dbTask.id,
-      type: dbTask.type,
-      status: dbTask.status,
-      priority: dbTask.priority,
-      data: dbTask.data,
-      result: dbTask.result,
-      error: dbTask.error,
-      startTime: dbTask.startTime,
-      endTime: dbTask.endTime,
-      pipelineId: dbTask.pipelineId,
-      agentId: dbTask.agentId,
-      userId: dbTask.userId,
-      createdAt: dbTask.createdAt,
-      updatedAt: dbTask.updatedAt,
-      deletedAt: dbTask.deletedAt,
-    };
-  }
+  
 
   private getTaskSelect() {
     return {
@@ -54,7 +36,7 @@ export class TaskRepository {
     });
 
     if (!task) return null;
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async findMany(filters?: Prisma.TaskWhereInput): Promise<Task[]> {
@@ -67,7 +49,7 @@ export class TaskRepository {
       ]
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async create(data: Prisma.TaskCreateInput): Promise<Task> {
@@ -75,7 +57,7 @@ export class TaskRepository {
       data,
       select: this.getTaskSelect()
     });
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async update(id: string, data: Prisma.TaskUpdateInput): Promise<Task> {
@@ -87,7 +69,7 @@ export class TaskRepository {
       },
       select: this.getTaskSelect()
     });
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async delete(id: string): Promise<Task> {
@@ -96,7 +78,7 @@ export class TaskRepository {
       select: this.getTaskSelect()
     });
     
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async findByUserId(userId: string): Promise<Task[]> {
@@ -109,7 +91,7 @@ export class TaskRepository {
       ]
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async findByAgentId(agentId: string): Promise<Task[]> {
@@ -122,7 +104,7 @@ export class TaskRepository {
       ]
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async findByStatus(status: TaskStatus): Promise<Task[]> {
@@ -135,7 +117,7 @@ export class TaskRepository {
       ]
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async findByPriority(priority: TaskPriority): Promise<Task[]> {
@@ -147,7 +129,7 @@ export class TaskRepository {
       }
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async updateStatus(id: string, status: TaskStatus): Promise<Task> {
@@ -166,7 +148,7 @@ export class TaskRepository {
       select: this.getTaskSelect()
     });
     
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async assignToAgent(id: string, agentId: string): Promise<Task> {
@@ -181,7 +163,7 @@ export class TaskRepository {
       select: this.getTaskSelect()
     });
     
-    return this.mapDatabaseTaskToTask(task);
+    return task;
   }
 
   async getTaskStats(userId?: string): Promise<{ total: number; completed: number; overdue: number; completionRate: number; byStatus: Record<string, number>; byPriority: Record<string, number> }> {
@@ -240,7 +222,7 @@ export class TaskRepository {
       take: limit
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 
   async searchTasks(userId: string, query: string): Promise<Task[]> {
@@ -263,6 +245,6 @@ export class TaskRepository {
       ]
     });
     
-    return tasks.map(task => this.mapDatabaseTaskToTask(task));
+    return tasks;
   }
 }

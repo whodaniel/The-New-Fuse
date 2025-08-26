@@ -1,7 +1,7 @@
 // This file is kept for backward compatibility
 // It re-exports the consolidated Modal component with a wrapper for ModalWrapper
 import React, { ReactNode } from "react";
-import { Modal } from '@the-new-fuse/ui-components';
+import { Modal } from '@the-new-fuse/ui-consolidated';
 
 interface ModalWrapperProps {
   /**

@@ -1,0 +1,138 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.production
+      args:
+        - API_URL=https://api.newfuse.app
+    image: the-new-fuse/frontend:${TAG:-latest}
+    container_name: the-new-fuse-frontend
+    restart: unless-stopped
+    init: true
+    environment:
+      - NODE_ENV=production
+    ports:
+      - "3000:3000"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fuse-network
+
+  api:
+    build:
+      context: ./apps/api
+      dockerfile: Dockerfile.production
+    image: the-new-fuse/api:${TAG:-latest}
+    container_name: the-new-fuse-api
+    restart: unless-stopped
+    init: true
+    environment:
+      - NODE_ENV=production
+      - PORT=3003
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://fuse:fusepassword@postgres:5432/fuse
+    ports:
+      - "3003:3003"
+    depends_on:
+      - redis
+      - postgres
+    healthcheck:
+      test: ["CMD", "/app/scripts/docker-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fuse-network
+
+  backend:
+    build:
+      context: ./apps/backend
+      dockerfile: Dockerfile.production
+    image: the-new-fuse/backend:${TAG:-latest}
+    container_name: the-new-fuse-backend
+    restart: unless-stopped
+    init: true
+    environment:
+      - NODE_ENV=production
+      - PORT=3004
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgresql://fuse:fusepassword@postgres:5432/fuse
+    ports:
+      - "3004:3004"
+    depends_on:
+      - redis
+      - postgres
+    healthcheck:
+      test: ["CMD", "/app/scripts/docker-healthcheck.sh"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fuse-network
+
+  redis:
+    image: redis:7-alpine
+    container_name: the-new-fuse-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fuse-network
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: the-new-fuse-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fuse
+      POSTGRES_PASSWORD: fusepassword
+      POSTGRES_DB: fuse
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fuse"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - fuse-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: the-new-fuse-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/www:/usr/share/nginx/html
+    depends_on:
+      - frontend
+      - api
+      - backend
+    networks:
+      - fuse-network
+
+networks:
+  fuse-network:
+    driver: bridge
+
+volumes:
+  redis-data:
+  postgres-data:

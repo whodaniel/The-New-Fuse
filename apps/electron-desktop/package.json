@@ -6,9 +6,10 @@
   "homepage": "./",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"bun run sync:watch\" \"bun run dev:vite\" \"bun run dev:electron\"",
+    "dev": "bun run build:main && concurrently \"bun run sync:watch\" \"bun run dev:vite\" \"node ../browser-hub/serve-hub.js\" \"bun run dev:electron\"",
     "dev:vite": "vite --port ${PORT:-5174}",
     "dev:electron": "wait-on tcp:${PORT:-5174} && bunx electron dist/main/main.js",
+    "build:main": "tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
     "build": "vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json && node ./scripts/sync-browser-hub.js --once",
     "build:with-theia": "cd ../theia-ide && bun run build && cd ../electron-desktop && vite build && tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json && node ./scripts/sync-browser-hub.js --once",
     "start": "node ./scripts/sync-browser-hub.js --once && bunx electron dist/main/main.js",
@@ -42,11 +43,11 @@
     "@types/ws": "^8.5.10",
     "@vitejs/plugin-react": "^4.2.1",
     "chokidar": "^4.0.3",
-    "concurrently": "^8.2.2",
+    "concurrently": "^9.2.0",
     "electron-builder": "^24.9.1",
     "typescript": "^5.3.3",
     "vite": "^6.2.1",
-    "wait-on": "^7.2.0"
+    "wait-on": "^8.0.4"
   },
   "build": {
     "appId": "com.thenewfuse.desktop",

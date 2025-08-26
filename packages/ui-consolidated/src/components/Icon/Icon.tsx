@@ -1,5 +1,5 @@
 import React from 'react';
-import { cn } from '../../lib/utils';
+import { cn } from '@the-new-fuse/utils';
 
 // Icon names that are supported by the component
 export type IconName = 

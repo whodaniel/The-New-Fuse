@@ -220,7 +220,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     }
 
     // Validate services have proper configuration for canary
-    config.services.forEach((service, index) => {
+    config.services.forEach((service) => {
       if (!service.replicas || service.replicas < 2) {
         errors.push(`Service ${service.name}: Must have at least 2 replicas for canary deployment`);
       }
@@ -499,15 +499,15 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
   }
 
   // Placeholder methods for integration with actual infrastructure
-  private async validateStableDeployment(config: DeploymentConfig): Promise<void> {
+  private async validateStableDeployment(_config: DeploymentConfig): Promise<void> {
     this.logger.debug('Validating stable deployment exists');
   }
 
-  private async setupTrafficSplitting(config: DeploymentConfig): Promise<void> {
+  private async setupTrafficSplitting(_config: DeploymentConfig): Promise<void> {
     this.logger.debug('Setting up traffic splitting infrastructure');
   }
 
-  private async setupCanaryMonitoring(config: DeploymentConfig, deploymentId: string): Promise<void> {
+  private async setupCanaryMonitoring(_config: DeploymentConfig, _deploymentId: string): Promise<void> {
     this.logger.debug('Setting up canary monitoring and analysis');
   }
 
@@ -516,7 +516,7 @@ export class CanaryStrategy extends BaseDeploymentStrategy {
     await new Promise(resolve => setTimeout(resolve, 3000));
   }
 
-  private async shiftTrafficToCanary(weight: number, deploymentId: string): Promise<void> {
+  private async shiftTrafficToCanary(weight: number, _deploymentId: string): Promise<void> {
     this.logger.debug(`Shifting ${weight}% traffic to canary`);
     await new Promise(resolve => setTimeout(resolve, 2000));
   }

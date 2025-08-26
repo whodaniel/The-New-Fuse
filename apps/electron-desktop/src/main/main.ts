@@ -169,9 +169,15 @@ class ElectronMain {
       icon: join(__dirname, '../../assets/icon.png')
     })
 
-    // Load the Enhanced Browser Hub
-    const enhancedHubPath = join(__dirname, '../../dist/browser-hub/enhanced-browser-hub.html')
-    this.mainWindow?.loadFile(enhancedHubPath)
+    // Load the Enhanced Browser Hub - the main Browser Hub interface
+    if (isDev) {
+      // In development, use HTTP server for consistency with Chrome extension
+      this.mainWindow?.loadURL('http://localhost:8080')
+    } else {
+      // In production, use local file for better performance
+      const enhancedHubPath = join(__dirname, '../../dist/browser-hub/enhanced-browser-hub.html')
+      this.mainWindow?.loadFile(enhancedHubPath)
+    }
     if (isDev) {
       this.mainWindow?.webContents.openDevTools()
     }
@@ -440,20 +446,226 @@ class ElectronMain {
       }
     })
 
-    // Extension management handlers
+    // Extension management handlers with Chrome integration
     ipcMain.handle('extensions:get-installed', async () => {
       try {
-        // In a real implementation, this would query Chrome for installed extensions
-        // For now, return mock data
-        const mockExtensions = [
-          { name: 'AdBlock Plus', version: '3.14.2', enabled: true, type: 'chrome-store', id: 'cfhdojbkjhnklbpkdaibdccddilifddb' },
-          { name: 'LastPass', version: '4.95.0', enabled: true, type: 'chrome-store', id: 'hdokiejnpimakedhajhdlcegeplioahd' },
-          { name: 'React Developer Tools', version: '4.28.5', enabled: false, type: 'chrome-store', id: 'fmkadmapgofadopljbjfkapdkoienihi' },
-          { name: 'JSON Formatter', version: '0.7.1', enabled: true, type: 'chrome-store', id: 'bcjindcccaagfpapjjmafapmmgkkhgoa' },
-          { name: 'Grammarly', version: '14.1097.0', enabled: true, type: 'chrome-store', id: 'kbfnbcaeplbcioakkpcpgfkobkghlhen' }
-        ];
+        const fs = require('fs');
+        const path = require('path');
+        const os = require('os');
         
-        return { success: true, extensions: mockExtensions };
+        // Real Chrome extension detection
+        const extensions: any[] = [];
+        
+        // Check local unpacked extensions first
+        const localExtensionsPath = path.join(__dirname, '../../extensions');
+        if (fs.existsSync(localExtensionsPath)) {
+          const extensionDirs = fs.readdirSync(localExtensionsPath, { withFileTypes: true })
+            .filter((dirent: any) => dirent.isDirectory())
+            .map((dirent: any) => dirent.name);
+          
+          for (const dir of extensionDirs) {
+            const manifestPath = path.join(localExtensionsPath, dir, 'manifest.json');
+            if (fs.existsSync(manifestPath)) {
+              try {
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                extensions.push({
+                  name: manifest.name || dir,
+                  version: manifest.version || '1.0.0',
+                  enabled: true,
+                  type: 'local',
+                  path: path.join(localExtensionsPath, dir),
+                  id: `local-${dir}`
+                });
+              } catch (err) {
+                safeWarn(`Failed to read manifest for ${dir}:`, err);
+              }
+            }
+          }
+        }
+        
+        // Try to read Chrome's extension directory
+        let chromeExtensionsPath = '';
+        if (process.platform === 'darwin') {
+          chromeExtensionsPath = path.join(os.homedir(), 'Library/Application Support/Google/Chrome/Default/Extensions');
+        } else if (process.platform === 'win32') {
+          chromeExtensionsPath = path.join(os.homedir(), 'AppData/Local/Google/Chrome/User Data/Default/Extensions');
+        } else {
+          chromeExtensionsPath = path.join(os.homedir(), '.config/google-chrome/Default/Extensions');
+        }
+        
+        if (fs.existsSync(chromeExtensionsPath)) {
+          try {
+            const chromeExtensions = fs.readdirSync(chromeExtensionsPath);
+            for (const extId of chromeExtensions.slice(0, 10)) { // Limit to first 10 for performance
+              const extPath = path.join(chromeExtensionsPath, extId);
+              if (fs.statSync(extPath).isDirectory()) {
+                // Look for the latest version
+                const versions = fs.readdirSync(extPath);
+                if (versions.length > 0) {
+                  const latestVersion = versions[versions.length - 1];
+                  const manifestPath = path.join(extPath, latestVersion, 'manifest.json');
+                  if (fs.existsSync(manifestPath)) {
+                    try {
+                      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                      extensions.push({
+                        name: manifest.name || 'Unknown Extension',
+                        version: manifest.version || latestVersion,
+                        enabled: true,
+                        type: 'chrome-installed',
+                        id: extId,
+                        path: path.join(extPath, latestVersion)
+                      });
+                    } catch (err) {
+                      // Skip invalid manifests
+                    }
+                  }
+                }
+              }
+            }
+          } catch (err) {
+            safeWarn('Failed to read Chrome extensions:', err);
+          }
+        }
+        
+        return { success: true, extensions };
+      } catch (error) {
+        return { success: false, error: (error as Error).message }
+      }
+    })
+
+    // Auto-load local extensions into Chrome
+    ipcMain.handle('extensions:auto-load-local', async () => {
+      try {
+        const fs = require('fs');
+        const path = require('path');
+        const { execSync } = require('child_process');
+        
+        const localExtensionsPath = path.join(__dirname, '../../extensions');
+        const results: any[] = [];
+        
+        if (fs.existsSync(localExtensionsPath)) {
+          const extensionDirs = fs.readdirSync(localExtensionsPath, { withFileTypes: true })
+            .filter((dirent: any) => dirent.isDirectory())
+            .map((dirent: any) => dirent.name);
+          
+          for (const dir of extensionDirs) {
+            const manifestPath = path.join(localExtensionsPath, dir, 'manifest.json');
+            if (fs.existsSync(manifestPath)) {
+              try {
+                const extensionPath = path.join(localExtensionsPath, dir);
+                const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+                
+                // Try to load extension in Chrome
+                if (process.platform === 'darwin') {
+                  try {
+                    // Check if Chrome is running
+                    try {
+                      execSync('pgrep -f "Google Chrome"', { stdio: 'pipe' });
+                    } catch {
+                      // Start Chrome if not running
+                      execSync('open -a "Google Chrome"', { stdio: 'pipe' });
+                      await new Promise(resolve => setTimeout(resolve, 3000));
+                    }
+
+                    const script = `
+                      tell application "Google Chrome"
+                        set foundTab to false
+                        repeat with w in windows
+                          repeat with t in tabs of w
+                            if URL of t contains "chrome://extensions" then
+                              set active tab index of w to index of t
+                              set foundTab to true
+                              exit repeat
+                            end if
+                          end repeat
+                          if foundTab then exit repeat
+                        end repeat
+                        
+                        if not foundTab then
+                          tell window 1 to make new tab with properties {URL:"chrome://extensions/"}
+                        end if
+                        
+                        activate
+                        delay 2
+                      end tell
+                      
+                      tell application "System Events"
+                        tell process "Google Chrome"
+                          -- Enable Developer mode if not already enabled
+                          try
+                            click button "Developer mode" of group 1 of group 1 of tab group 1 of splitter group 1 of window 1
+                            delay 1
+                          on error
+                            -- Developer mode might already be enabled
+                          end try
+                          
+                          -- Click Load unpacked
+                          click button "Load unpacked" of group 1 of group 1 of tab group 1 of splitter group 1 of window 1
+                          delay 2
+                          
+                          -- Use the file dialog
+                          keystroke "g" using {command down, shift down}
+                          delay 1
+                          keystroke "${extensionPath}"
+                          delay 1
+                          keystroke return
+                          delay 1
+                          click button "Choose" of sheet 1 of window 1
+                        end tell
+                      end tell
+                    `;
+                    
+                    execSync(`osascript -e '${script}'`, { stdio: 'pipe' });
+                    
+                    results.push({
+                      success: true,
+                      extension: {
+                        name: manifest.name || dir,
+                        version: manifest.version || '1.0.0',
+                        type: 'local-loaded',
+                        path: extensionPath,
+                        id: `local-${dir}`
+                      }
+                    });
+                    
+                    // Wait between extensions to avoid overwhelming the system
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    
+                  } catch (scriptError) {
+                    results.push({
+                      success: false,
+                      extension: {
+                        name: manifest.name || dir,
+                        path: extensionPath,
+                        id: `local-${dir}`
+                      },
+                      error: 'AppleScript failed: ' + (scriptError as Error).message
+                    });
+                  }
+                } else {
+                  // For non-macOS platforms, provide manual instructions
+                  results.push({
+                    success: false,
+                    extension: {
+                      name: manifest.name || dir,
+                      path: extensionPath,
+                      id: `local-${dir}`
+                    },
+                    error: 'Automatic loading only supported on macOS. Please manually load from: ' + extensionPath
+                  });
+                }
+              } catch (err) {
+                results.push({
+                  success: false,
+                  extension: { name: dir, path: path.join(localExtensionsPath, dir) },
+                  error: 'Invalid manifest: ' + (err as Error).message
+                });
+              }
+            }
+          }
+        }
+        
+        return { success: true, results, message: `Processed ${results.length} local extensions` };
       } catch (error) {
         return { success: false, error: (error as Error).message }
       }
@@ -566,95 +778,10 @@ class ElectronMain {
     // Real Chrome Extension Management
     ipcMain.handle('chrome:get-real-extensions', async () => {
       try {
-        if (process.platform === 'darwin') {
-          const { execSync } = require('child_process');
-          
-          // AppleScript to get real Chrome extensions
-          const script = `
-            tell application "Google Chrome"
-              if it is not running then
-                launch
-                delay 2
-              end if
-              
-              open location "chrome://extensions/"
-              delay 3
-              
-              -- Return basic success
-              return "Extensions page opened"
-            end tell
-          `;
-          
-          const result = execSync(`osascript -e '${script}'`).toString();
-          
-          // For now, return enhanced mock data that simulates real extensions
-          const realExtensions = [
-            { 
-              name: 'AdBlock Plus', 
-              version: '3.14.2', 
-              enabled: true, 
-              type: 'chrome-store', 
-              id: 'cfhdojbkjhnklbpkdaibdccddilifddb',
-              icon: 'fas fa-shield-alt',
-              permissions: ['tabs', 'activeTab', 'storage', 'webRequest'],
-              homepageUrl: 'https://adblockplus.org'
-            },
-            { 
-              name: 'LastPass Password Manager', 
-              version: '4.95.0', 
-              enabled: true, 
-              type: 'chrome-store', 
-              id: 'hdokiejnpimakedhajhdlcegeplioahd',
-              icon: 'fas fa-key',
-              permissions: ['tabs', 'activeTab', 'storage', 'contextMenus'],
-              homepageUrl: 'https://lastpass.com'
-            },
-            { 
-              name: 'React Developer Tools', 
-              version: '4.28.5', 
-              enabled: false, 
-              type: 'chrome-store', 
-              id: 'fmkadmapgofadopljbjfkapdkoienihi',
-              icon: 'fab fa-react',
-              permissions: ['tabs', 'debugger'],
-              homepageUrl: 'https://react.dev'
-            },
-            { 
-              name: 'JSON Formatter', 
-              version: '0.7.1', 
-              enabled: true, 
-              type: 'chrome-store', 
-              id: 'bcjindcccaagfpapjjmafapmmgkkhgoa',
-              icon: 'fas fa-code',
-              permissions: ['tabs', 'activeTab'],
-              homepageUrl: 'https://github.com/callumlocke/json-formatter'
-            },
-            { 
-              name: 'Grammarly', 
-              version: '14.1097.0', 
-              enabled: true, 
-              type: 'chrome-store', 
-              id: 'kbfnbcaeplbcioakkpcpgfkobkghlhen',
-              icon: 'fas fa-spell-check',
-              permissions: ['tabs', 'activeTab', 'storage', 'contextMenus'],
-              homepageUrl: 'https://grammarly.com'
-            },
-            { 
-              name: 'Dark Reader', 
-              version: '4.9.58', 
-              enabled: true, 
-              type: 'chrome-store', 
-              id: 'eimadpbcbfnmbkopoojfekhnkhdbieeh',
-              icon: 'fas fa-moon',
-              permissions: ['tabs', 'activeTab', 'storage'],
-              homepageUrl: 'https://darkreader.org'
-            }
-          ];
-          
-          return { success: true, extensions: realExtensions };
+        if (this.hybridBackend) {
+          return await this.hybridBackend.executeNativeCommand('get_real_extensions', []);
         }
-        
-        return { success: false, error: 'Chrome integration only available on macOS' };
+        return { success: false, error: 'Backend not available' };
       } catch (error) {
         return { success: false, error: (error as Error).message };
       }
@@ -751,6 +878,145 @@ class ElectronMain {
         return { success: false, error: (error as Error).message };
       }
     })
+
+    // Terminal integration handlers
+    ipcMain.handle('app:open-terminal', async () => {
+      try {
+        if (process.platform === 'darwin') {
+          const { execSync } = require('child_process');
+          execSync('open -a Terminal');
+          return { success: true };
+        } else if (process.platform === 'win32') {
+          const { execSync } = require('child_process');
+          execSync('start cmd');
+          return { success: true };
+        } else {
+          const { execSync } = require('child_process');
+          execSync('gnome-terminal &');
+          return { success: true };
+        }
+      } catch (error) {
+        return { success: false, error: (error as Error).message };
+      }
+    })
+
+    ipcMain.handle('terminal:get-output', async () => {
+      // Return mock terminal output for now
+      return { 
+        success: true, 
+        output: 'TNF Terminal Ready\n$ ' 
+      };
+    })
+
+    ipcMain.handle('terminal:clear', async () => {
+      // Clear terminal command
+      return { success: true };
+    })
+
+    // Real service status from backend
+    ipcMain.handle('services:list', async () => {
+      try {
+        const axios = require('axios');
+        const response = await axios.get('http://localhost:3004/api/services/status');
+        return { success: true, services: response.data };
+      } catch (error) {
+        // Fallback to local service detection
+        const services = await this.detectLocalServices();
+        return { success: true, services };
+      }
+    })
+
+    ipcMain.handle('system:metrics', async () => {
+      try {
+        const axios = require('axios');
+        const response = await axios.get('http://localhost:3004/api/system/metrics');
+        return { success: true, metrics: response.data };
+      } catch (error) {
+        // Fallback to local metrics
+        return {
+          success: true,
+          metrics: {
+            uptime: process.uptime() * 1000,
+            memory: process.memoryUsage(),
+            cpu: process.cpuUsage(),
+            platform: process.platform,
+            version: process.version
+          }
+        };
+      }
+    })
+
+    ipcMain.handle('system:resources', async () => {
+      return {
+        success: true,
+        resources: {
+          memory: {
+            used: process.memoryUsage().heapUsed,
+            total: process.memoryUsage().heapTotal
+          },
+          cpu: process.cpuUsage(),
+          uptime: process.uptime()
+        }
+      };
+    })
+
+    ipcMain.handle('system:tools', async () => {
+      try {
+        const axios = require('axios');
+        const response = await axios.get('http://localhost:3004/api/system/tools');
+        return { success: true, tools: response.data };
+      } catch (error) {
+        // Detect real local tools
+        const tools = await this.detectSystemTools();
+        return { success: true, tools };
+      }
+    })
+  }
+
+  // Helper method for detecting local services
+  private async detectLocalServices(): Promise<any[]> {
+    const axios = require('axios');
+    const services = [
+      { name: 'Frontend App', port: 3000, type: 'web' },
+      { name: 'API Gateway', port: 3005, type: 'api' },
+      { name: 'Backend App', port: 3004, type: 'backend' },
+      { name: 'Theia IDE', port: 3007, type: 'ide' }
+    ];
+
+    const results = await Promise.all(
+      services.map(async (service) => {
+        try {
+          await axios.get(`http://localhost:${service.port}`, { timeout: 1000 });
+          return { ...service, status: 'running', health: 'healthy' };
+        } catch {
+          return { ...service, status: 'stopped', health: 'error' };
+        }
+      })
+    );
+
+    return results;
+  }
+
+  // Helper method for detecting system tools
+  private async detectSystemTools(): Promise<any[]> {
+    const tools = [];
+    
+    // Check Chrome installation
+    try {
+      const { execSync } = require('child_process');
+      if (process.platform === 'darwin') {
+        execSync('open -Ra "Google Chrome"');
+        tools.push({ name: 'Chrome Browser', type: 'browser', status: 'active' });
+      }
+    } catch {}
+
+    // Check terminal availability
+    tools.push({ name: 'Terminal Integration', type: 'shell', status: 'active' });
+    
+    // Check workflow capabilities
+    tools.push({ name: 'Workflow Builder', type: 'automation', status: 'active' });
+
+    return tools;
   }
 
 }

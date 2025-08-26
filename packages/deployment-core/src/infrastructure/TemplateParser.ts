@@ -256,7 +256,7 @@ export class TemplateParser {
     return outputs;
   }
 
-  private detectProvider(resources: ResourceDefinition[]): CloudProvider {
+  private detectProvider(_resources: ResourceDefinition[]): CloudProvider {
     // Since we only support GCP, always return GCP
     return CloudProvider.GCP;
   }
@@ -352,12 +352,12 @@ interface ResourceParser {
 }
 
 class ComputeResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     // Parse compute-specific properties
     const parsedResource = { ...resource };
     
     // Substitute variables in properties
-    parsedResource.properties = this.substituteVariables(resource.properties, variables);
+    parsedResource.properties = this.substituteVariables(resource.properties, _variables);
     
     return parsedResource;
   }
@@ -379,25 +379,25 @@ class ComputeResourceParser implements ResourceParser {
 }
 
 class StorageResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class NetworkResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class DatabaseResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }
 
 class LoadBalancerResourceParser implements ResourceParser {
-  async parse(resource: ResourceDefinition, variables: Map<string, any>): Promise<ResourceDefinition> {
+  async parse(resource: ResourceDefinition, _variables: Map<string, any>): Promise<ResourceDefinition> {
     return { ...resource };
   }
 }

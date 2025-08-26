@@ -16,7 +16,7 @@ import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
 import { performance } from 'perf_hooks';
 
 describe('Drag and Drop Workflow Builder Tests', () => {
-  let env: any;
+  let env: any; // Used for test environment
   let builder: WorkflowBuilder;
 
   beforeAll(async () => {

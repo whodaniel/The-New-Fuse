@@ -5,7 +5,6 @@
 
 import {
   InfrastructureTemplate,
-  InfrastructureState,
   CloudProvider,
   EnvironmentType
 } from '../types/infrastructure';
@@ -524,7 +523,7 @@ export class EnvironmentManager {
     }
   }
 
-  private async performBlueGreenPromotion(source: Environment, target: Environment): Promise<void> {
+  private async performBlueGreenPromotion(_source: Environment, _target: Environment): Promise<void> {
     // Mock blue-green promotion implementation
     
   }

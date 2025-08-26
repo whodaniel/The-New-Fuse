@@ -825,7 +825,7 @@ module.exports = ProgressTracker;
     // Save workflow
     const savedWorkflow = await this.workflowEngine.repository.createWorkflow(workflow);
     
-    this.logger.info(\`Feature development workflow created with ID: \${savedWorkflow.id}\`);
+    this.logger.info(`Feature development workflow created with ID: ${savedWorkflow.id}`);
     return savedWorkflow.id;
   }
 
@@ -892,7 +892,7 @@ module.exports = ProgressTracker;
       }
     );
 
-    this.logger.info(\`Collaborative project execution started with ID: \${executionId}\`);
+    this.logger.info(`Collaborative project execution started with ID: ${executionId}`);
 
     // Monitor collaboration progress
     await this.monitorCollaboration(executionId);

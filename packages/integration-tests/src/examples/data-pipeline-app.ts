@@ -695,7 +695,7 @@ module.exports = ReportGenerator;
     // Save workflow
     const savedWorkflow = await this.workflowEngine.repository.createWorkflow(workflow);
     
-    this.logger.info(\`Data processing workflow created with ID: \${savedWorkflow.id}\`);
+    this.logger.info(`Data processing workflow created with ID: ${savedWorkflow.id}`);
     return savedWorkflow.id;
   }
 
@@ -706,7 +706,7 @@ module.exports = ReportGenerator;
     this.logger.info('Processing sample data through the pipeline...');
 
     // Create sample CSV data
-    const sampleCSV = \`name,age,email,salary,department
+    const sampleCSV = `name,age,email,salary,department
 John Doe,30,john.doe@company.com,50000,Engineering
 Jane Smith,25,jane.smith@company.com,55000,Marketing
 Bob Johnson,35,bob.johnson@company.com,60000,Engineering

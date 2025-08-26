@@ -13,8 +13,7 @@ import {
   ResourceDefinition,
   ResourceProvisionResult,
   InfrastructureChange,
-  ResourceType,
-  CloudProvider
+  ResourceType
 } from '../../types/infrastructure';
 
 export class GCPProvider implements ResourceProvider {
@@ -58,7 +57,7 @@ export class GCPProvider implements ResourceProvider {
     }
   }
 
-  async update(resource: ResourceDefinition, change: InfrastructureChange, infrastructureId: string): Promise<ResourceProvisionResult> {
+  async update(resource: ResourceDefinition, _change: InfrastructureChange, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock implementation - in production, this would call GCP APIs
     return {
       resourceName: resource.name,
@@ -68,7 +67,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  async destroy(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  async destroy(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock implementation - in production, this would call GCP APIs
     return {
       resourceName: resource.name,
@@ -104,11 +103,11 @@ export class GCPProvider implements ResourceProvider {
     return resource;
   }
 
-  private async provisionComputeEngine(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionComputeEngine(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Compute Engine provisioning
     const instanceName = resource.name;
     const machineType = resource.properties.machineType || 'e2-medium';
-    const diskSize = resource.properties.diskSize || 20;
+    void machineType;
     
     // In production, this would use the GCP Compute Engine API
     const resourceId = `projects/${this.projectId}/zones/${this.zone}/instances/${instanceName}`;
@@ -128,7 +127,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionCloudStorage(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionCloudStorage(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud Storage provisioning
     const bucketName = resource.name;
     const location = resource.properties.location || this.region;
@@ -150,7 +149,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionVPCNetwork(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionVPCNetwork(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP VPC Network provisioning
     const networkName = resource.name;
     const autoCreateSubnetworks = resource.properties.autoCreateSubnetworks || false;
@@ -171,7 +170,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionCloudSQL(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionCloudSQL(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Cloud SQL provisioning
     const instanceName = resource.name;
     const databaseVersion = resource.properties.databaseVersion || 'POSTGRES_13';
@@ -194,7 +193,7 @@ export class GCPProvider implements ResourceProvider {
     };
   }
 
-  private async provisionLoadBalancer(resource: ResourceDefinition, infrastructureId: string): Promise<ResourceProvisionResult> {
+  private async provisionLoadBalancer(resource: ResourceDefinition, _infrastructureId: string): Promise<ResourceProvisionResult> {
     // Mock GCP Load Balancer provisioning
     const lbName = resource.name;
     const loadBalancingScheme = resource.properties.loadBalancingScheme || 'EXTERNAL';

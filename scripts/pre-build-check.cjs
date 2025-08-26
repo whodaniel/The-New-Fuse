@@ -46,16 +46,73 @@ function main() {
     }
   }
   
-  // Check if canvas is working
-  if (checkCanvas() && testCanvas()) {
-    log('✅ Native modules ready for build');
+  // Check if all required native modules are working
+  const nativeModuleChecks = [
+    { name: 'canvas', check: () => checkCanvas() && testCanvas() },
+    { name: 'drivelist', check: () => checkNativeModule('drivelist') },
+    { name: 'node-pty', check: () => checkNativeModule('node-pty') },
+    { name: '@vscode/ripgrep', check: () => checkNativeModule('@vscode/ripgrep') }
+  ];
+  
+  let allPassed = true;
+  const failedModules = [];
+  
+  for (const moduleCheck of nativeModuleChecks) {
+    try {
+      if (!moduleCheck.check()) {
+        allPassed = false;
+        failedModules.push(moduleCheck.name);
+      }
+    } catch (error) {
+      allPassed = false;
+      failedModules.push(moduleCheck.name);
+    }
+  }
+  
+  if (allPassed) {
+    log('✅ All native modules ready for build');
     return;
   }
   
-  log('ERROR: Critical native module "canvas.node" is missing or not working.');
-  log('This likely means the postinstall script failed or was skipped.');
+  log(`ERROR: Native modules are missing or not working: ${failedModules.join(', ')}`);
+  log('This likely means the postinstall script failed or native modules need setup.');
   log('');
-  log('🛠️  To fix this issue, run:');
+  log('🛠️  Attempting automatic fix...');
+  
+  // Try to fix automatically
+  try {
+    const setupScript = path.join(process.cwd(), 'scripts', 'setup-native-modules.cjs');
+    if (fs.existsSync(setupScript)) {
+      execSync('node scripts/setup-native-modules.cjs', { stdio: 'inherit' });
+      log('✅ Automatic fix completed - retrying build checks...');
+      
+      // Re-check after fix
+      let fixWorked = true;
+      for (const moduleCheck of nativeModuleChecks) {
+        try {
+          if (!moduleCheck.check()) {
+            fixWorked = false;
+            break;
+          }
+        } catch (error) {
+          fixWorked = false;
+          break;
+        }
+      }
+      
+      if (fixWorked) {
+        log('✅ All native modules now ready for build');
+        return;
+      }
+    }
+  } catch (error) {
+    log(`Automatic fix failed: ${error.message}`);
+  }
+  
+  log('❌ Native modules still not working after automatic fix.');
+  log('');
+  log('🛠️  Manual fix options:');
+  log('   bun run setup:native-modules');
   log('   bun run fix:native-modules');
   log('');
   log('   Or for a complete reinstall:');
@@ -64,6 +121,11 @@ function main() {
   
   // Exit with error to prevent broken builds
   process.exit(1);
+}
+
+function checkNativeModule(moduleName) {
+  const modulePath = path.join(process.cwd(), 'node_modules', moduleName);
+  return fs.existsSync(modulePath);
 }
 
 try {

@@ -19,6 +19,8 @@ import { ConnectionTab } from './tabs/ConnectionTab'
 import { ElementsTab } from './tabs/ElementsTab'
 import { ChatTab } from './tabs/ChatTab'
 import { LocalServicesTab } from './tabs/LocalServicesTab'
+import DataManagementTab from './tabs/DataManagementTab';
+import Web3Tab from './tabs/Web3Tab'
 
 export const CommandCenter: React.FC = () => {
   const dispatch = useDispatch()
@@ -194,6 +196,24 @@ export const CommandCenter: React.FC = () => {
             >
               Services
             </Tab>
+            <Tab 
+              _selected={{ 
+                bg: 'brand.500', 
+                color: 'white',
+                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
+              }}
+            >
+              Data
+            </Tab>
+            <Tab 
+              _selected={{ 
+                bg: 'brand.500', 
+                color: 'white',
+                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
+              }}
+            >
+              Web3
+            </Tab>
           </TabList>
 
           <TabPanels>
@@ -208,6 +228,12 @@ export const CommandCenter: React.FC = () => {
             </TabPanel>
             <TabPanel>
               <LocalServicesTab />
+            </TabPanel>
+            <TabPanel>
+              <DataManagementTab />
+            </TabPanel>
+            <TabPanel>
+              <Web3Tab />
             </TabPanel>
           </TabPanels>
         </Tabs>

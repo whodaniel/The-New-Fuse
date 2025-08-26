@@ -10,7 +10,8 @@
   ],
   "host_permissions": [
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "http://localhost:*/*"
   ],
   "action": {
     "default_popup": "popup.html",

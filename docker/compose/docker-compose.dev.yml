@@ -1,0 +1,134 @@
+version: '3.8'
+
+services:
+  # The New Fuse MCP Server
+  mcp-server:
+    build:
+      context: ./src/mcp
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/fuse?schema=public
+      - JWT_SECRET=dev-jwt-secret-key-replace-in-production
+      - LOG_LEVEL=info
+      - ENABLE_SWAGGER=true
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_TLS=false
+    volumes:
+      - ./src/mcp:/app
+      - /app/node_modules # Don't override node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - thefuse-network
+    command: >
+      sh -c "
+        echo 'Waiting for PostgreSQL to start...' &&
+        sleep 5 &&
+        npx prisma migrate deploy &&
+        npx prisma generate &&
+        npm run dev
+      "
+
+  # PostgreSQL Database for MCP Server
+  postgres:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=fuse
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - thefuse-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # PgAdmin for database management (optional, for development)
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@thefuse.ai
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - thefuse-network
+
+  # Frontend UI
+  frontend:
+    build:
+      context: ./packages/ui
+      dockerfile: Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - MCP_SERVER_URL=http://mcp-server:3000
+    volumes:
+      - ./packages/ui:/app
+      - /app/node_modules
+    depends_on:
+      - mcp-server
+    networks:
+      - thefuse-network
+
+  # VS Code Extension Service (optional)
+  vscode-extension:
+    build:
+      context: ./src/vscode-extension
+      dockerfile: Dockerfile.dev
+    ports:
+      - "3002:3002"
+    environment:
+      - NODE_ENV=development
+      - MCP_SERVER_URL=http://mcp-server:3000
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_TLS=false
+    volumes:
+      - ./src/vscode-extension:/app
+      - /app/node_modules
+    depends_on:
+      - mcp-server
+      - redis
+    networks:
+      - thefuse-network
+
+  # Redis for development
+  redis:
+    image: redis:7-alpine
+    container_name: the-new-fuse-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    restart: unless-stopped
+    networks:
+      - thefuse-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+networks:
+  thefuse-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
+  redis-data:

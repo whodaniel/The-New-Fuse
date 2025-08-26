@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database for development
+  postgres-dev:
+    image: postgres:14-alpine
+    container_name: tnf-postgres-dev
+    environment:
+      - POSTGRES_USER=newfuse
+      - POSTGRES_PASSWORD=secretpass123
+      - POSTGRES_DB=the_new_fuse_dev
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_dev_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U newfuse -d the_new_fuse_dev"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - tnf-dev
+
+  # Redis Cache for development (using standard image instead of alpine)
+  redis-dev:
+    image: redis:6
+    container_name: tnf-redis-dev
+    ports:
+      - "6380:6379"
+    volumes:
+      - redis_dev_data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    networks:
+      - tnf-dev
+
+volumes:
+  postgres_dev_data:
+    driver: local
+  redis_dev_data:
+    driver: local
+
+networks:
+  tnf-dev:
+    name: tnf-dev-network
+    driver: bridge

@@ -30,6 +30,7 @@ const safeWarn = (...args: any[]) => {
 export class HybridBackend extends EventEmitter {
   private nativeHost: ChildProcess | null = null;
   private isConnected = false;
+  private buffer = '';
 
   constructor() {
     super();
@@ -46,10 +47,24 @@ export class HybridBackend extends EventEmitter {
 
       this.nativeHost.stdout?.on('data', (data) => {
         try {
-          const response = JSON.parse(data.toString());
-          this.emit('native-response', response);
+          this.buffer += data.toString();
+          const lines = this.buffer.split('\n');
+          this.buffer = lines.pop() || ''; // Keep incomplete line in buffer
+          
+          for (const line of lines) {
+            const trimmedLine = line.trim();
+            if (trimmedLine) {
+              try {
+                const response = JSON.parse(trimmedLine);
+                this.emit('native-response', response);
+              } catch (parseError) {
+                safeError('Failed to parse JSON line:', trimmedLine);
+                safeError('Parse error:', parseError);
+              }
+            }
+          }
         } catch (error) {
-          safeError('Failed to parse native host response:', error);
+          safeError('Failed to process native host data:', error);
         }
       });
 

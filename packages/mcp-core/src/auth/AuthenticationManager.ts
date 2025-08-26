@@ -175,8 +175,9 @@ export class AuthenticationManager extends EventEmitter {
    */
   async authenticateConnection(credentials: AuthConfig): Promise<AuthResult> {
     try {
+      const initialIdentifier = credentials.username || credentials.clientId || 'unknown';
       // Check for account lockout
-      if (this.isAccountLocked(credentials.username || credentials.clientId || 'unknown')) {
+      if (this.isAccountLocked(initialIdentifier)) {
         const error = 'Account is locked due to too many failed attempts';
         this.auditEvent({
           type: 'access_denied',
@@ -213,7 +214,8 @@ export class AuthenticationManager extends EventEmitter {
 
       if (authResult.success) {
         // Reset failed attempts on successful authentication
-        this.resetFailedAttempts(credentials.username || credentials.clientId || 'unknown');
+        const authIdentifier = authResult.userId || initialIdentifier;
+        this.resetFailedAttempts(authIdentifier);
         
         this.auditEvent({
           type: 'login',
@@ -222,8 +224,10 @@ export class AuthenticationManager extends EventEmitter {
           timestamp: new Date()
         });
       } else {
-        // Track failed attempt
-        this.trackFailedAttempt(credentials.username || credentials.clientId || 'unknown');
+        // Track failed attempt only for non-bearer auth where user is known
+        if (credentials.type !== 'bearer') {
+          this.trackFailedAttempt(initialIdentifier);
+        }
         
         this.auditEvent({
           type: 'access_denied',
