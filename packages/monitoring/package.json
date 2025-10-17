@@ -1,7 +1,6 @@
 {
   "name": "monitoring",
   "version": "1.0.0",
-  "packageManager": "bun@1.0.0",
   "type": "module",
   "scripts": {
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"

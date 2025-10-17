@@ -1,7 +1,6 @@
 {
   "name": "layout",
   "version": "1.0.0",
-  "packageManager": "bun@1.0.0",
   "scripts": {
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },

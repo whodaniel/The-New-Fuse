@@ -20,9 +20,9 @@
     "lint:fix": "eslint src/**/*.ts --fix"
   },
   "dependencies": {
-    "@tnf/relay-core": "^1.0.0",
-    "@the-new-fuse/workflow-engine": "^1.0.0",
-    "@the-new-fuse/extension-system": "^1.0.0",
+    "@tnf/relay-core": "workspace:*",
+    "@the-new-fuse/workflow-engine": "workspace:*",
+    "@the-new-fuse/extension-system": "workspace:*",
     "@prisma/client": "^6.10.1",
     "redis": "^4.6.0"
   },

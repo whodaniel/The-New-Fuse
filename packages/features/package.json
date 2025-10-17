@@ -3,7 +3,6 @@
     "@the-new-fuse/types": "workspace:*"
   },
   "name": "features",
-  "packageManager": "bun@1.0.0",
   "scripts": {
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   }
