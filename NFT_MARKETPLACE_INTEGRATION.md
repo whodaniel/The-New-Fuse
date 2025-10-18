@@ -160,7 +160,7 @@ The marketplace is fully responsive with:
 ```bash
 # Start the development server
 cd apps/frontend
-npm run dev
+pnpm run dev
 
 # Navigate to:
 http://localhost:3000/agents/nft-marketplace

@@ -90,7 +90,7 @@ The sandbox environment implements several security measures:
 Both components come with comprehensive test suites. Run tests using:
 
 ```bash
-npm test packages/testing
+pnpm test packages/testing
 ```
 
 ## Integration

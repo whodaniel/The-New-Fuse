@@ -40,7 +40,7 @@ if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
     bun install
 else
     echo -e "${YELLOW}Using npm to install dependencies...${NC}"
-    npm install
+    pnpm install
 fi
 
 if [ $? -ne 0 ]; then
@@ -55,7 +55,7 @@ echo -e "${YELLOW}Step 2: Compiling TypeScript...${NC}"
 if [ "$HAS_BUN_LOCK" = true ] || [ "$HAS_BUN" = true ]; then
     bun run compile || bun run tsc || npx tsc
 else
-    npm run compile || npx tsc
+    pnpm run compile || npx tsc
 fi
 
 if [ $? -ne 0 ]; then

@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Box, Container } from '@chakra-ui/react';
 import { UserTypeDetection } from '../../components/onboarding/UserTypeDetection';
 import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
 import { WizardProvider } from '../../components/wizard/WizardProvider';
@@ -25,11 +24,11 @@ export const OnboardingFlow: React.FC = () => {
   };
 
   return (
-    <Container maxW="container.xl" py={8}>
+    <div className="max-w-7xl mx-auto py-8">
       {userType === null ? (
-        <Box bg="white" borderRadius="lg" boxShadow="md" p={6}>
+        <div className="bg-white rounded-lg shadow-md p-6">
           <UserTypeDetection onDetectionComplete={handleDetectionComplete} />
-        </Box>
+        </div>
       ) : (
         <WizardProvider>
           <OnboardingWizard
@@ -38,6 +37,8 @@ export const OnboardingFlow: React.FC = () => {
           />
         </WizardProvider>
       )}
-    </Container>
+    </div>
   );
 };
+
+export default OnboardingFlow;

@@ -19,7 +19,7 @@ const AgentDetail = lazy(() => import('./pages/Agents/Detail'));
 const Workflows = lazy(() => import('./pages/Workflows'));
 const WorkflowBuilder = lazy(() => import('./pages/Workflows/Builder'));
 const WorkflowEditorWrapper = lazy(() => import('./components/WorkflowEditor'));
-const Analytics = lazy(() => import('./pages/dashboard/analytics'));
+const Analytics = lazy(() => import('./pages/dashboard/Analytics'));
 const Dashboard = lazy(() => import('./pages/dashboard/index'));
 const Settings = lazy(() => import('./pages/Settings'));
 const SettingsAppearance = lazy(() => import('./pages/settings/Appearance'));
@@ -120,7 +120,7 @@ const WorkflowTemplatesPage = lazy(() => import('./pages/Workflows/Templates'));
 const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPreview'));
 
 // Remaining specialized settings routes
-const WorkspaceLLMSelectionPage = lazy(() => import('./pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection/ChatModelSelection'));
+const WorkspaceLLMSelectionPage = lazy(() => import('./pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection'));
 const AgentModelSelectionPage = lazy(() => import('./pages/WorkspaceSettings/AgentConfig/AgentModelSelection'));
 
 // Agent-specific routes

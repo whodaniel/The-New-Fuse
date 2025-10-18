@@ -946,7 +946,7 @@ class UnifiedRedisService {
 
 **Installation**:
 ```bash
-npm install @the-new-fuse/infrastructure
+pnpm install @the-new-fuse/infrastructure
 ```
 
 **Basic Usage**:

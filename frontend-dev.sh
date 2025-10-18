@@ -14,7 +14,7 @@ rm -rf .turbo
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Start the development server
 echo "🚀 Starting the development server..."

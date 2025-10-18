@@ -1,35 +1,20 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import {
-  VStack,
-  HStack,
-  Box,
-  Text,
   Button,
   Input,
   Card,
-  CardBody,
+  CardContent,
   Badge,
-  Divider,
-  useToast,
   Alert,
-  AlertIcon,
-  Grid,
-  GridItem,
-  IconButton,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  FormControl,
-  FormLabel
-} from '@chakra-ui/react'
+  Select,
+  Container
+} from '@the-new-fuse/ui-consolidated'
 import { FiPlus, FiTrash2, FiRefreshCw, FiPlay, FiServer, FiActivity, FiExternalLink, FiMonitor } from 'react-icons/fi'
+import { toast } from 'react-hot-toast'
 import type { RootState } from '../../store/store'
 
 export const LocalServicesTab: React.FC = () => {
-  const toast = useToast()
   
   const { monitored, statuses } = useSelector((state: RootState) => state.ports)
   const { tnfRelay, systemStatus } = useSelector((state: RootState) => state.connections)
@@ -118,13 +103,7 @@ export const LocalServicesTab: React.FC = () => {
 
   const handleAddPort = async () => {
     if (monitored.includes(newPort)) {
-      toast({
-        title: 'Port Already Monitored',
-        description: `Port ${newPort} is already being monitored`,
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error(`Port ${newPort} is already being monitored`)
       return
     }
 
@@ -132,24 +111,12 @@ export const LocalServicesTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.portsAdd(newPort)
         if (response.success) {
-          toast({
-            title: 'Port Added',
-            description: `Port ${newPort} is now being monitored`,
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success(`Port ${newPort} is now being monitored`)
           setNewPort(3000)
         }
       }
     } catch {
-      toast({
-        title: 'Failed to Add Port',
-        description: 'An error occurred while adding the port',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while adding the port')
     }
   }
 
@@ -158,23 +125,11 @@ export const LocalServicesTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.portsRemove(port)
         if (response.success) {
-          toast({
-            title: 'Port Removed',
-            description: `Port ${port} is no longer being monitored`,
-            status: 'info',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success(`Port ${port} is no longer being monitored`)
         }
       }
     } catch {
-      toast({
-        title: 'Failed to Remove Port',
-        description: 'An error occurred while removing the port',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while removing the port')
     }
   }
 
@@ -183,35 +138,17 @@ export const LocalServicesTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.portsStatus()
         if (response.success) {
-          toast({
-            title: 'Statuses Refreshed',
-            description: 'Port statuses have been updated',
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-          })
+          toast.success('Port statuses have been updated')
         }
       }
     } catch {
-      toast({
-        title: 'Refresh Failed',
-        description: 'Failed to refresh port statuses',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('Failed to refresh port statuses')
     }
   }
 
   const handleExecuteCommand = async () => {
     if (!systemStatus.nativeHost) {
-      toast({
-        title: 'Native Host Not Available',
-        description: 'Native host is required for command execution',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('Native host is required for command execution')
       return
     }
 
@@ -269,357 +206,329 @@ export const LocalServicesTab: React.FC = () => {
   const getStatusText = (isOpen: boolean) => isOpen ? 'Open' : 'Closed'
 
   return (
-    <VStack spacing={6} align="stretch">
+    <Container className="space-y-6">
       {/* TNF Services Quick Access */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">TNF Services</Text>
-              <Badge colorScheme="blue" variant="solid">
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold">TNF Services</h3>
+              <Badge variant="info">
                 Quick Access
               </Badge>
-            </HStack>
+            </div>
             
-            <Text fontSize="sm" color="gray.400">
+            <p className="text-sm text-gray-400">
               Direct access to running TNF services - Browser Hub is now the central interface
-            </Text>
+            </p>
 
-            <Grid templateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap={4}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {defaultServices.map(service => {
                 const isRunning = getServiceStatus(service.port)
                 return (
-                  <GridItem key={service.port}>
+                  <div key={service.port}>
                     <Card 
-                      size="sm" 
-                      bg={isRunning ? "green.900" : "red.900"} 
-                      borderColor={isRunning ? "green.400" : "red.400"}
-                      borderWidth="2px"
+                      className={`${isRunning ? "bg-green-900/50 border-green-400" : "bg-red-900/50 border-red-400"} border-2`}
                     >
-                      <CardBody>
-                        <VStack spacing={3}>
-                          <HStack justify="space-between" w="100%">
-                            <VStack align="start" spacing={0}>
-                              <Text fontWeight="bold" fontSize="md">{service.name}</Text>
-                              <Text fontSize="xs" color="gray.400">:{service.port}</Text>
-                            </VStack>
+                      <CardContent className="p-4">
+                        <div className="space-y-3">
+                          <div className="flex justify-between items-start w-full">
+                            <div className="space-y-0">
+                              <h4 className="font-bold text-md">{service.name}</h4>
+                              <p className="text-xs text-gray-400">:{service.port}</p>
+                            </div>
                             <Badge 
-                              colorScheme={isRunning ? 'green' : 'red'} 
-                              variant="solid"
+                              variant={isRunning ? 'success' : 'destructive'}
                             >
                               {isRunning ? 'Running' : 'Offline'}
                             </Badge>
-                          </HStack>
+                          </div>
                           
-                          <Text fontSize="xs" color="gray.300" textAlign="center">
+                          <p className="text-xs text-gray-300 text-center">
                             {service.description}
-                          </Text>
+                          </p>
                           
-                          <HStack w="100%" justify="center">
+                          <div className="flex gap-2">
                             <Button
-                              size="xs"
-                              colorScheme={isRunning ? "blue" : "gray"}
-                              leftIcon={<FiExternalLink />}
+                              size="sm"
+                              variant={isRunning ? "default" : "secondary"}
                               onClick={() => handleOpenService(service.url)}
-                              isDisabled={!isRunning}
-                              flex={1}
+                              className="flex-1"
+                              disabled={!isRunning}
                             >
-                              {isRunning ? 'Open' : 'Unavailable'}
+                              <FiExternalLink className="w-3 h-3 mr-1" />
+                              Open
                             </Button>
-                          </HStack>
-                        </VStack>
-                      </CardBody>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={handleRefreshStatuses}
+                            >
+                              <FiRefreshCw className="w-3 h-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </CardContent>
                     </Card>
-                  </GridItem>
+                  </div>
                 )
               })}
-            </Grid>
-          </VStack>
-        </CardBody>
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
-      <Divider />
+      <div className="border-t border-slate-700" />
 
       {/* Native Host Status */}
       {!systemStatus.nativeHost && (
-        <Alert status="warning" borderRadius="lg">
-          <AlertIcon />
-          <Box>
-            <Text fontSize="sm">
+        <Alert variant="warning" className="rounded-lg">
+          <div>
+            <p className="text-sm">
               Native host is not available. Command execution and some system operations will not work.
               Ensure Python 3 is installed and the native host script is accessible.
-            </Text>
-          </Box>
+            </p>
+          </div>
         </Alert>
       )}
 
       {/* Port Monitoring */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">Port Monitoring</Text>
-              <HStack>
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold">Port Monitoring</h3>
+              <div className="flex gap-2">
                 <Button
                   onClick={handleRefreshStatuses}
                   size="sm"
                   variant="ghost"
-                  leftIcon={<FiRefreshCw />}
                 >
+                  <FiRefreshCw className="w-4 h-4 mr-1" />
                   Refresh
                 </Button>
-              </HStack>
-            </HStack>
+              </div>
+            </div>
             
-            <Text fontSize="sm" color="gray.400">
+            <p className="text-sm text-gray-400">
               Monitor local development servers and services
-            </Text>
+            </p>
 
             {/* Add New Port */}
-            <HStack>
-              <NumberInput
+            <div className="flex gap-2">
+              <Input
+                type="number"
                 value={newPort}
-                onChange={(_, value) => setNewPort(value || 3000)}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPort(parseInt(e.target.value) || 3000)}
                 min={1000}
                 max={65535}
-                size="sm"
-                w="120px"
-              >
-                <NumberInputField placeholder="Port" />
-                <NumberInputStepper>
-                  <NumberIncrementStepper />
-                  <NumberDecrementStepper />
-                </NumberInputStepper>
-              </NumberInput>
+                placeholder="Port"
+                className="w-32"
+              />
               
               <Button
                 onClick={handleAddPort}
-                colorScheme="blue"
                 size="sm"
-                leftIcon={<FiPlus />}
               >
+                <FiPlus className="w-4 h-4 mr-1" />
                 Add Port
               </Button>
-            </HStack>
+            </div>
 
             {/* Monitored Ports List */}
-            <Grid templateColumns="repeat(auto-fill, minmax(200px, 1fr))" gap={3}>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
               {monitored.map(port => {
                 const status = getPortStatus(port)
                 const service = getServiceByPort(port)
                 return (
-                  <GridItem key={port}>
+                  <div key={port}>
                     <Card 
-                      size="sm" 
-                      bg="whiteAlpha.50" 
-                      borderColor={status ? getStatusColor(status.isOpen) + '.400' : 'whiteAlpha.200'}
-                      borderWidth={status?.isOpen ? '2px' : '1px'}
+                      className={`bg-slate-800/30 ${
+                        status ? 
+                          (status.isOpen ? 'border-green-400 border-2' : 'border-red-400 border-2') : 
+                          'border-slate-600'
+                      }`}
                     >
-                      <CardBody>
-                        <VStack spacing={2}>
-                          <HStack justify="space-between" w="100%">
-                            <VStack align="start" spacing={0}>
-                              <Text fontWeight="bold" fontSize="md">:{port}</Text>
+                      <CardContent className="p-4">
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-start w-full">
+                            <div className="space-y-0">
+                              <h4 className="font-bold text-md">:{port}</h4>
                               {service && (
-                                <Text fontSize="xs" color="blue.300">{service.name}</Text>
+                                <p className="text-xs text-blue-300">{service.name}</p>
                               )}
-                            </VStack>
-                            <IconButton
-                              aria-label="Remove port"
-                              icon={<FiTrash2 />}
-                              size="xs"
+                            </div>
+                            <Button
+                              size="sm"
                               variant="ghost"
-                              colorScheme="red"
                               onClick={() => handleRemovePort(port)}
-                            />
-                          </HStack>
+                              className="text-red-400 hover:text-red-300"
+                            >
+                              <FiTrash2 className="w-3 h-3" />
+                            </Button>
+                          </div>
                           
                           {status && (
                             <>
                               <Badge 
-                                colorScheme={getStatusColor(status.isOpen)} 
-                                variant="solid"
-                                w="100%"
-                                textAlign="center"
+                                variant={status.isOpen ? 'success' : 'destructive'}
+                                className="w-full text-center"
                               >
                                 {getStatusText(status.isOpen)}
                               </Badge>
                               
                               {service && status.isOpen && (
                                 <Button
-                                  size="xs"
-                                  colorScheme="blue"
-                                  leftIcon={<FiExternalLink />}
+                                  size="sm"
                                   onClick={() => handleOpenService(service.url)}
-                                  w="100%"
+                                  className="w-full"
                                 >
+                                  <FiExternalLink className="w-3 h-3 mr-1" />
                                   Open
                                 </Button>
                               )}
                               
                               {status.service && !service && (
-                                <Text fontSize="xs" color="gray.400" textAlign="center">
+                                <p className="text-xs text-gray-400 text-center">
                                   {status.service}
-                                </Text>
+                                </p>
                               )}
                               
-                              <Text fontSize="xs" color="gray.500" textAlign="center">
+                              <p className="text-xs text-gray-500 text-center">
                                 Last checked: {new Date(status.lastChecked).toLocaleTimeString()}
-                              </Text>
+                              </p>
                             </>
                           )}
-                        </VStack>
-                      </CardBody>
+                        </div>
+                      </CardContent>
                     </Card>
-                  </GridItem>
+                  </div>
                 )
               })}
-            </Grid>
+            </div>
 
             {monitored.length === 0 && (
-              <Box textAlign="center" py={6}>
-                <Text color="gray.500" mb={2}>No ports being monitored</Text>
-                <Text fontSize="sm" color="gray.600">
+              <div className="text-center py-6">
+                <p className="text-gray-500 mb-2">No ports being monitored</p>
+                <p className="text-sm text-gray-600">
                   Add a port above to start monitoring
-                </Text>
-              </Box>
+                </p>
+              </div>
             )}
-          </VStack>
-        </CardBody>
+          </div>
+        </CardContent>
       </Card>
 
-      <Divider />
+      <div className="border-t border-slate-700" />
 
       {/* Native Commands */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">Native Commands</Text>
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold">Native Commands</h3>
               <Badge 
-                colorScheme={systemStatus.nativeHost ? 'green' : 'red'} 
-                variant="solid"
+                variant={systemStatus.nativeHost ? 'success' : 'destructive'}
               >
                 {systemStatus.nativeHost ? 'Available' : 'Unavailable'}
               </Badge>
-            </HStack>
+            </div>
             
-            <Text fontSize="sm" color="gray.400">
+            <p className="text-sm text-gray-400">
               Execute system-level commands through the native host
-            </Text>
+            </p>
 
-            <Grid templateColumns="1fr 2fr" gap={4}>
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontSize="sm" htmlFor="command-type-select">Command Type</FormLabel>
-                  <select
-                    id="command-type-select"
-                    value={selectedCommand}
-                    onChange={(e) => setSelectedCommand(e.target.value)}
-                    title="Command Type"
-                    aria-label="Command Type"
-                    style={{ fontSize: '0.875rem', padding: '0.5rem', borderRadius: '0.375rem', border: '1px solid #CBD5E0', width: '100%' }}
-                  >
-                    {predefinedCommands.map(cmd => (
-                      <option key={cmd.value} value={cmd.value}>
-                        {cmd.label}
-                      </option>
-                    ))}
-                  </select>
-                </FormControl>
-              </GridItem>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Command Type</label>
+                <Select
+                   value={selectedCommand}
+                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setSelectedCommand(e.target.value)}
+                   options={predefinedCommands.map(cmd => ({ value: cmd.value, label: cmd.label }))}
+                 />
+              </div>
 
-              <GridItem>
-                <FormControl>
-                  <FormLabel fontSize="sm">
-                    {selectedCommand === 'custom' ? 'Custom Command' : 'Arguments'}
-                  </FormLabel>
-                  {selectedCommand === 'custom' ? (
-                    <Input
-                      value={customCommand}
-                      onChange={(e) => setCustomCommand(e.target.value)}
-                      placeholder="Enter command to execute"
-                      size="sm"
-                    />
-                  ) : (
-                    <Input
-                      value={commandArgs}
-                      onChange={(e) => setCommandArgs(e.target.value)}
-                      placeholder="Enter command arguments"
-                      size="sm"
-                    />
-                  )}
-                </FormControl>
-              </GridItem>
-            </Grid>
+              <div className="md:col-span-2">
+                <label className="text-sm font-medium mb-2 block">
+                  {selectedCommand === 'custom' ? 'Custom Command' : 'Arguments'}
+                </label>
+                {selectedCommand === 'custom' ? (
+                  <Input
+                     value={customCommand}
+                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCustomCommand(e.target.value)}
+                     placeholder="Enter command to execute"
+                   />
+                 ) : (
+                   <Input
+                     value={commandArgs}
+                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCommandArgs(e.target.value)}
+                     placeholder="Enter command arguments"
+                   />
+                 )}
+              </div>
+            </div>
 
             {/* Command Description */}
-            <Box bg="whiteAlpha.50" p={3} borderRadius="md">
-              <Text fontSize="sm" color="gray.300">
+            <div className="bg-slate-800/30 p-3 rounded-md">
+              <p className="text-sm text-gray-300">
                 <strong>Description:</strong> {predefinedCommands.find(cmd => cmd.value === selectedCommand)?.description}
-              </Text>
-            </Box>
+              </p>
+            </div>
 
-            <HStack justify="flex-end">
+            <div className="flex justify-end">
               <Button
                 onClick={handleExecuteCommand}
-                colorScheme="green"
-                leftIcon={<FiPlay />}
-                isDisabled={!systemStatus.nativeHost}
+                variant="default"
+                disabled={!systemStatus.nativeHost}
               >
+                <FiPlay className="w-4 h-4 mr-1" />
                 Execute Command
               </Button>
-            </HStack>
-          </VStack>
-        </CardBody>
+            </div>
+          </div>
+        </CardContent>
       </Card>
 
       {/* Service Status Overview */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <Text fontSize="lg" fontWeight="bold">Service Overview</Text>
+      <Card className="bg-slate-800/50 border-slate-700">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <h3 className="text-lg font-bold">Service Overview</h3>
             
-            <Grid templateColumns="repeat(auto-fit, minmax(150px, 1fr))" gap={4}>
-              <GridItem>
-                <VStack>
-                  <Box p={3} bg={tnfRelay.connected ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiServer color={tnfRelay.connected ? 'lightgreen' : 'lightcoral'} size="24" />
-                  </Box>
-                  <Text fontSize="sm" textAlign="center">TNF Relay</Text>
-                  <Badge colorScheme={tnfRelay.connected ? 'green' : 'red'} variant="subtle">
-                    {tnfRelay.connected ? 'Connected' : 'Disconnected'}
-                  </Badge>
-                </VStack>
-              </GridItem>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex flex-col items-center space-y-2">
+                <div className={`p-3 rounded-full ${tnfRelay.connected ? 'bg-green-900' : 'bg-red-900'}`}>
+                  <FiServer color={tnfRelay.connected ? 'lightgreen' : 'lightcoral'} size="24" />
+                </div>
+                <p className="text-sm text-center">TNF Relay</p>
+                <Badge variant={tnfRelay.connected ? 'success' : 'destructive'}>
+                  {tnfRelay.connected ? 'Connected' : 'Disconnected'}
+                </Badge>
+              </div>
 
-              <GridItem>
-                <VStack>
-                  <Box p={3} bg={systemStatus.nativeHost ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiActivity color={systemStatus.nativeHost ? 'lightgreen' : 'lightcoral'} size="24" />
-                  </Box>
-                  <Text fontSize="sm" textAlign="center">Native Host</Text>
-                  <Badge colorScheme={systemStatus.nativeHost ? 'green' : 'red'} variant="subtle">
-                    {systemStatus.nativeHost ? 'Running' : 'Stopped'}
-                  </Badge>
-                </VStack>
-              </GridItem>
+              <div className="flex flex-col items-center space-y-2">
+                <div className={`p-3 rounded-full ${systemStatus.nativeHost ? 'bg-green-900' : 'bg-red-900'}`}>
+                  <FiActivity color={systemStatus.nativeHost ? 'lightgreen' : 'lightcoral'} size="24" />
+                </div>
+                <p className="text-sm text-center">Native Host</p>
+                <Badge variant={systemStatus.nativeHost ? 'success' : 'destructive'}>
+                  {systemStatus.nativeHost ? 'Running' : 'Stopped'}
+                </Badge>
+              </div>
 
-              <GridItem>
-                <VStack>
-                  <Box p={3} bg={statuses.some(s => s.isOpen) ? 'green.900' : 'red.900'} borderRadius="full">
-                    <FiServer color={statuses.some(s => s.isOpen) ? 'lightgreen' : 'lightcoral'} size="24" />
-                  </Box>
-                  <Text fontSize="sm" textAlign="center">Local Services</Text>
-                  <Badge colorScheme={statuses.some(s => s.isOpen) ? 'green' : 'red'} variant="subtle">
-                    {statuses.filter(s => s.isOpen).length} Active
-                  </Badge>
-                </VStack>
-              </GridItem>
-            </Grid>
-          </VStack>
-        </CardBody>
+              <div className="flex flex-col items-center space-y-2">
+                <div className={`p-3 rounded-full ${statuses.some(s => s.isOpen) ? 'bg-green-900' : 'bg-red-900'}`}>
+                  <FiServer color={statuses.some(s => s.isOpen) ? 'lightgreen' : 'lightcoral'} size="24" />
+                </div>
+                <p className="text-sm text-center">Local Services</p>
+                <Badge variant={statuses.some(s => s.isOpen) ? 'success' : 'destructive'}>
+                  {statuses.filter(s => s.isOpen).length} Active
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </CardContent>
       </Card>
-    </VStack>
+    </Container>
   )
 }

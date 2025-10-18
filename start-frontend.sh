@@ -9,7 +9,7 @@ if command -v yarn &> /dev/null; then
     yarn dev
 elif command -v npm &> /dev/null; then
     echo "Using NPM..."
-    npm run dev
+    pnpm run dev
 else
     echo "Neither yarn nor npm found. Please install Node.js and npm/yarn."
     exit 1

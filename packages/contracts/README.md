@@ -249,7 +249,7 @@ RentalMarketplace (Service Monetization)
 
 ### Prerequisites
 ```bash
-npm install
+pnpm install
 npx hardhat compile
 ```
 

@@ -24,17 +24,17 @@ mkdir my-first-extension
 cd my-first-extension
 
 # Initialize the extension
-npm init -y
+pnpm init -y
 ```
 
 ### 2. Install Extension Dependencies
 
 ```bash
 # Install The New Fuse extension types
-npm install --save-dev @the-new-fuse/extension-system
+pnpm install --save-dev @the-new-fuse/extension-system
 
 # Install other common dependencies
-npm install --save-dev typescript @types/node
+pnpm install --save-dev typescript @types/node
 ```
 
 ### 3. Create Extension Structure
@@ -264,7 +264,7 @@ Add build scripts to your `package.json`:
 Build your extension:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 ## Loading and Testing Your Extension

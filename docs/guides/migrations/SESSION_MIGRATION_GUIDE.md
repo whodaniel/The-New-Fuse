@@ -14,7 +14,7 @@ This guide details the process of migrating from the old session management syst
 
 ### 1. Update Dependencies
 ```bash
-npm install @your-org/security@latest
+pnpm install @your-org/security@latest
 ```
 
 ### 2. Replace Direct Session Management

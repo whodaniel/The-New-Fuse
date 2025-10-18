@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Stepper, Step, Button, Container, Grid, CircularProgress, Heading, Text, StepIndicator, StepStatus, StepTitle, StepDescription, StepIcon, StepNumber, useSteps } from '@chakra-ui/react';
-import { ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
-import { Card } from '@/components/ui/card';
+import { Button, Card } from '@the-new-fuse/ui-consolidated';
+import { FiChevronLeft, FiChevronRight, FiCheck } from 'react-icons/fi';
 import { useWizard } from './WizardProvider';
 import { WelcomeStep } from './steps/WelcomeStep';
 import { UserProfileStep } from './steps/UserProfileStep';
@@ -19,6 +18,7 @@ export interface OnboardingWizardProps {
 export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, onComplete }) => {
   const { state, dispatch } = useWizard();
   const [loading, setLoading] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
 
   // Define steps based on user type
   const humanSteps = [
@@ -41,14 +41,10 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
 
   // Select steps based on user type
   const steps = userType === 'ai_agent' ? aiAgentSteps : humanSteps;
-  const { activeStep, setActiveStep } = useSteps({
-    index: state.currentStep,
-    count: steps.length,
-  });
 
   useEffect(() => {
     setActiveStep(state.currentStep);
-  }, [state.currentStep, setActiveStep]);
+  }, [state.currentStep]);
 
   useEffect(() => {
     // Initialize wizard session
@@ -101,9 +97,9 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="400px">
-        <CircularProgress />
-      </Box>
+      <div className="flex justify-center items-center min-h-96">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+      </div>
     );
   }
 
@@ -112,73 +108,86 @@ export const OnboardingWizard: React.FC<OnboardingWizardProps> = ({ userType, on
   const isLastStep = activeStep === steps.length - 1;
 
   return (
-    <Container maxW="container.lg" py={8}>
-      <Card borderRadius="lg" boxShadow="md" p={6}>
-        <Heading as="h4" size="lg" mb={6} textAlign="center" fontWeight="bold">
+    <div className="max-w-4xl mx-auto py-8">
+      <Card className="rounded-lg shadow-md p-6">
+        <h4 className="text-2xl font-bold mb-6 text-center">
           {userType === 'ai_agent' ? 'AI Agent Onboarding' : 'Welcome to The New Fuse'}
-        </Heading>
+        </h4>
 
-        <Stepper index={activeStep} mb={8}>
-          {steps.map((step, index) => (
-            <Step key={step.label}>
-              <StepIndicator>
-                <StepStatus
-                  complete={<StepIcon />}
-                  incomplete={<StepNumber />}
-                  active={<StepNumber />}
-                />
-              </StepIndicator>
-              <Box flexShrink="0">
-                <StepTitle>{step.label}</StepTitle>
-                {/* You can add StepDescription here if needed */}
-              </Box>
-            </Step>
-          ))}
-        </Stepper>
+        {/* Custom Stepper */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            {steps.map((step, index) => (
+              <div key={step.label} className="flex items-center">
+                <div className="flex flex-col items-center">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                    index < activeStep 
+                      ? 'bg-blue-500 text-white' 
+                      : index === activeStep 
+                        ? 'bg-blue-100 text-blue-600 border-2 border-blue-500' 
+                        : 'bg-gray-200 text-gray-500'
+                  }`}>
+                    {index < activeStep ? (
+                      <FiCheck className="w-4 h-4" />
+                    ) : (
+                      <span>{index + 1}</span>
+                    )}
+                  </div>
+                  <span className="text-xs mt-1 text-center max-w-20">{step.label}</span>
+                </div>
+                {index < steps.length - 1 && (
+                  <div className={`flex-1 h-0.5 mx-2 ${
+                    index < activeStep ? 'bg-blue-500' : 'bg-gray-200'
+                  }`} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <Box mb={6}>
+        <div className="mb-6">
           <CurrentStepComponent />
-        </Box>
+        </div>
 
-        <Grid templateColumns="repeat(3, 1fr)" gap={4}>
-          <Box>
+        <div className="grid grid-cols-3 gap-4">
+          <div>
             {!isFirstStep && (
               <Button 
-                leftIcon={<ChevronLeftIcon />} 
                 onClick={handleBack}
                 variant="outline"
+                className="flex items-center space-x-2"
               >
-                Back
+                <FiChevronLeft className="w-4 h-4" />
+                <span>Back</span>
               </Button>
             )}
-          </Box>
+          </div>
           
-          <Box textAlign="center">
-            <Text fontSize="sm" color="gray.500">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">
               Step {activeStep + 1} of {steps.length}
-            </Text>
-          </Box>
+            </p>
+          </div>
           
-          <Box textAlign="right">
+          <div className="text-right">
             {isLastStep ? (
               <Button 
-                colorScheme="blue" 
                 onClick={handleComplete}
               >
                 Complete
               </Button>
             ) : (
               <Button 
-                rightIcon={<ChevronRightIcon />} 
                 onClick={handleNext}
-                colorScheme="blue"
+                className="flex items-center space-x-2"
               >
-                Next
+                <span>Next</span>
+                <FiChevronRight className="w-4 h-4" />
               </Button>
             )}
-          </Box>
-        </Grid>
+          </div>
+        </div>
       </Card>
-    </Container>
+    </div>
   );
 };

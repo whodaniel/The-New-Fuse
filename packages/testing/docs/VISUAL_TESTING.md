@@ -62,10 +62,10 @@ test.describe('Component Visual Tests', () => {
 
 ```bash
 # Update baselines
-npm run test:e2e:update-snapshots
+pnpm run test:e2e:update-snapshots
 
 # Review specific baseline
-npm run test:e2e:review component-name
+pnpm run test:e2e:review component-name
 ```
 
 ### 2. Selector Strategy

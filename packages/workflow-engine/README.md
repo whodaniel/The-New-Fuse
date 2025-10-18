@@ -24,7 +24,7 @@ The Unified Workflow Engine consolidates all workflow execution capabilities fro
 ## Installation
 
 ```bash
-npm install @the-new-fuse/workflow-engine
+pnpm install @the-new-fuse/workflow-engine
 ```
 
 ## Quick Start
@@ -289,9 +289,9 @@ const workflowData = builder.exportWorkflow();
 ## Testing
 
 ```bash
-npm test                # Run tests
-npm run test:watch      # Watch mode
-npm run test:coverage   # Coverage report
+pnpm test                # Run tests
+pnpm run test:watch      # Watch mode
+pnpm run test:coverage   # Coverage report
 ```
 
 ## TypeScript Support

@@ -1,4 +1,7 @@
-FROM oven/bun:1
+FROM node:18-alpine
+
+# Install pnpm
+RUN npm install -g pnpm
 
 # ensure we can run dev server on 0.0.0.0
 ENV HOST=0.0.0.0
@@ -7,7 +10,7 @@ WORKDIR /project
 
 # Copy root package manifests and lockfile
 COPY package.json ./
-COPY bun.lockb* ./
+COPY pnpm-lock.yaml* ./
 # Copy frontend package manifest
 COPY apps/frontend/package.json apps/frontend/
 # Copy all workspace package.json files for Bun workspaces compatibility
@@ -41,7 +44,7 @@ COPY apps/chrome-extension/package.json apps/chrome-extension/
 COPY apps/frontend/package.json apps/frontend/
 
 # Install all dependencies to support workspaces
-RUN bun install
+RUN pnpm install
 # Copy the rest of the workspace source
 COPY packages/api packages/api
 COPY packages/api-client packages/api-client

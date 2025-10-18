@@ -40,8 +40,8 @@ The New Fuse implements a hub-and-spoke architecture where the central system (t
 
 ## Getting Started Guide
 1. Clone the repository
-2. Install dependencies with `npm install`
-3. Start the development server with `npm run dev`
+2. Install dependencies with `pnpm install`
+3. Start the development server with `pnpm run dev`
 4. Access the application at `http://localhost:3000`
 
 ## Contribution Guidelines

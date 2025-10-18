@@ -9,7 +9,7 @@ import {
   Button,
   Chip
 } from '@mui/material';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Feature, FeatureStatus } from '@the-new-fuse/types';
 
 interface KanbanBoardProps {

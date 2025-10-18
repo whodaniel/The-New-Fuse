@@ -37,7 +37,7 @@ fi
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
 if ! command -v vsce &> /dev/null; then
     print_warning "vsce not found. Installing globally via npm (requires npm to be functional)..."
-    npm install -g @vscode/vsce
+    pnpm install -g @vscode/vsce
     if [ $? -ne 0 ]; then
         print_error "Failed to install vsce. Please ensure npm is working or install vsce manually."
         exit 1

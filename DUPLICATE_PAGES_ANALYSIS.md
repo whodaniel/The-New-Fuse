@@ -141,7 +141,7 @@ apps/frontend/src/pages/
 
 ## 🔧 Implementation Steps
 
-1. **Run the route audit script**: `npm run audit:routes`
+1. **Run the route audit script**: `pnpm run audit:routes`
 2. **Review current routing**: Ensure all routes point to intended implementations
 3. **Create migration plan**: Document which files to keep/remove
 4. **Update imports**: Search and replace import paths

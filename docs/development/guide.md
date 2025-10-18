@@ -263,13 +263,13 @@ For manual deployment:
 1. Build the project for production:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 2. Start the services:
 
 ```bash
-npm run start
+pnpm run start
 ```
 
 ## Troubleshooting
@@ -310,11 +310,11 @@ node fix-declarations.mjs
 If you encounter build errors, try building the packages in the correct order:
 
 ```bash
-npm run build:types
-npm run build:utils
-npm run build:core
-npm run build:ui
-npm run build:feature-tracker
-npm run build:feature-suggestions
-npm run build
+pnpm run build:types
+pnpm run build:utils
+pnpm run build:core
+pnpm run build:ui
+pnpm run build:feature-tracker
+pnpm run build:feature-suggestions
+pnpm run build
 ```

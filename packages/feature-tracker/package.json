@@ -10,7 +10,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@chakra-ui/react": "^2.8.0",
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
     "@the-new-fuse/core": "workspace:*",

@@ -1,11 +1,12 @@
-import { defineStyle, defineStyleConfig, theme as baseTheme } from '@chakra-ui/react';
+// Migrated from Chakra UI theme to plain TypeScript configuration
+// Use this with Tailwind CSS or your preferred styling solution
 
-const config = {
-  initialColorMode: 'light',
+export const themeConfig = {
+  initialColorMode: 'light' as const,
   useSystemColorMode: false,
 };
 
-const colors = {
+export const colors = {
   brand: {
     50: '#E5F2FF',
     100: '#B8D9FF',
@@ -20,24 +21,22 @@ const colors = {
   },
 };
 
-const Button = defineStyleConfig({
-  variants: {
-    solid: defineStyle({
-      bg: 'brand.500',
-      color: 'white',
-      _hover: {
-        bg: 'brand.600',
-      },
-    }),
+// Button styles - can be used with className or CSS-in-JS
+export const buttonStyles = {
+  solid: {
+    background: colors.brand[500],
+    color: 'white',
+    hover: {
+      background: colors.brand[600],
+    },
   },
-});
+};
 
 const theme = {
-  ...baseTheme,
-  config,
+  config: themeConfig,
   colors,
   components: {
-    Button,
+    button: buttonStyles,
   },
 };
 

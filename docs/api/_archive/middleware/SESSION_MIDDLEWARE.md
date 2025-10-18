@@ -14,7 +14,7 @@ The session middleware provides secure session management for Express applicatio
 ## Installation
 
 ```bash
-npm install @your-org/security
+pnpm install @your-org/security
 ```
 
 ## Basic Usage

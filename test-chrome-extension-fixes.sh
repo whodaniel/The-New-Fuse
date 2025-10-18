@@ -35,7 +35,7 @@ if node -e "require('ws')" 2>/dev/null; then
     echo "✅ WebSocket package (ws) - AVAILABLE"
 else
     echo "❌ WebSocket package (ws) - MISSING"
-    echo "💡 Run: npm install ws"
+    echo "💡 Run: pnpm install ws"
     exit 1
 fi
 

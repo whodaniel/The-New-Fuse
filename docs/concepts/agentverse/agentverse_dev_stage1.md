@@ -565,7 +565,7 @@ Here's the plan for the initial Socket.IO implementation:
 
 First, ensure that the socket.io-client library is installed as a project dependency:
 
-npm install socket.io-client
+pnpm install socket.io-client
 
 yarn add socket.io-client
 
@@ -892,8 +892,8 @@ We have successfully achieved the initial development stage, establishing a func
 **Steps:**
 
 1.  **Locate Backend Project:** Navigate to the `agentverse-backend` directory (or your backend project directory).
-2.  **Verify Dependencies:** Ensure `package.json` includes the necessary Socket.IO dependencies: `socket.io`, `socket.io-client`, `@nestjs/platform-socket.io`. If not, install them using `npm install` or `yarn install`.
-3.  **Start Backend Server:** Run the backend using `npm run start:dev`.
+2.  **Verify Dependencies:** Ensure `package.json` includes the necessary Socket.IO dependencies: `socket.io`, `socket.io-client`, `@nestjs/platform-socket.io`. If not, install them using `pnpm install` or `yarn install`.
+3.  **Start Backend Server:** Run the backend using `pnpm run start:dev`.
 4.  **Check for Startup Logs:** In the console, verify that the NestJS server starts without errors and is running on `http://localhost:3000` (or the configured port).
 
 **Actionable Chunk 2: 2.2 Review `agentverse.gateway.ts` for Event Simulation**

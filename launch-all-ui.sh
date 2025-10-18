@@ -6,7 +6,7 @@ chmod +x launch-all-pages.js
 # Check if the server is running on port 3000
 if ! nc -z localhost 3000 &>/dev/null; then
     echo "Starting development server..."
-    npm run dev &
+    pnpm run dev &
     # Wait for server to start (adjust time if needed)
     sleep 10
 fi

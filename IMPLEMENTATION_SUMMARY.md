@@ -209,14 +209,14 @@ This document summarizes the successful implementation of **The New Fuse Framewo
 
 2. **Off-Chain Service Initialization**:
    ```bash
-   npm run build
-   npm run deploy:registry
+   pnpm run build
+   pnpm run deploy:registry
    # MasterAgentRegistry with blockchain and VC integration
    ```
 
 3. **Integration Testing**:
    ```bash
-   npm run test:integration
+   pnpm run test:integration
    # End-to-end registration and economic flow testing
    ```
 

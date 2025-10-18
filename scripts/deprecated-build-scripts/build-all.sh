@@ -9,32 +9,32 @@ node fix-declarations.mjs
 
 # Step 2: Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Step 3: Build packages in the correct order
 echo "🔨 Building essential packages..."
-npm run build:types
-npm run build:utils
-npm run build:core
-npm run build:ui
+pnpm run build:types
+pnpm run build:utils
+pnpm run build:core
+pnpm run build:ui
 
 # Step 4: Build applications
 echo "🏗️ Building applications..."
-npm run build
+pnpm run build
 
 # Step 5: Build VS Code extension
 echo "🧩 Building VS Code extension..."
 cd packages/vscode-extension
-npm install
-npm run build
-npm run package
+pnpm install
+pnpm run build
+pnpm run package
 cd ../..
 
 # Step 6: Build Chrome extension
 echo "🌐 Building Chrome extension..."
 cd packages/chrome-extension
-npm install
-npm run build
+pnpm install
+pnpm run build
 cd ../..
 
 # Step 7: Build Docker images

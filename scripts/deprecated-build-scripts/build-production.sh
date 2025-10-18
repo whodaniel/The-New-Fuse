@@ -11,20 +11,20 @@ find . -name ".turbo" -type d -exec rm -rf {} +
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Build packages in the correct order
 echo "🔨 Building packages..."
-npm run build:types
-npm run build:utils
-npm run build:core
-npm run build:ui
-npm run build:feature-tracker
-npm run build:feature-suggestions
+pnpm run build:types
+pnpm run build:utils
+pnpm run build:core
+pnpm run build:ui
+pnpm run build:feature-tracker
+pnpm run build:feature-suggestions
 
 # Build all applications
 echo "🏗️ Building applications..."
-npm run build
+pnpm run build
 
 echo "✅ Production build complete!"
 echo ""

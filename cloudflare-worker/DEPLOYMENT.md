@@ -5,7 +5,7 @@ This guide explains how to deploy the Code Execution Worker to Cloudflare Worker
 ## Prerequisites
 
 - Cloudflare account
-- Wrangler CLI installed (`npm install -g wrangler`)
+- Wrangler CLI installed (`pnpm install -g wrangler`)
 - Cloudflare API token with Workers permissions
 
 ## Setup

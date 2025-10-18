@@ -13,7 +13,7 @@ Install Bun from the official website:
 curl -fsSL https://bun.sh/install | bash
 
 # Or via npm
-npm install -g bun
+pnpm install -g bun
 ```
 
 ## Key Features

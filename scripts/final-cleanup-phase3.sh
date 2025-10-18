@@ -89,7 +89,7 @@ find . -name "Dockerfile*" -not -path "*/node_modules/*" -not -path "*/.git/*" -
         sed -i.bak \
             -e 's/ARG YARN_VERSION=.*/ARG BUN_VERSION=1.1.38/g' \
             -e 's/YARN_VERSION/BUN_VERSION/g' \
-            -e 's/corepack enable.*yarn.*/RUN npm install -g bun@1.1.38/g' \
+            -e 's/corepack enable.*yarn.*/RUN pnpm install -g bun@1.1.38/g' \
             -e 's/corepack prepare yarn.*/# Bun installed globally/g' \
             -e 's/COPY.*yarn.lock.*/COPY package.json bun.lockb bunfig.toml ./g' \
             -e 's/COPY.*\.yarnrc\.yml.*/# Yarn config removed/g' \

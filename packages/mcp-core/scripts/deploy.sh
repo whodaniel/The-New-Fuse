@@ -65,36 +65,36 @@ fi
 
 # 2. Clean previous builds
 log_info "Cleaning previous builds..."
-npm run clean
+pnpm run clean
 
 # 3. Install dependencies
 log_info "Installing dependencies..."
 if command -v bun > /dev/null 2>&1; then
     bun install
 else
-    npm install
+    pnpm install
 fi
 
 # 4. Type checking
 log_info "Running type checks..."
-npm run type-check
+pnpm run type-check
 
 # 5. Linting
 log_info "Running linter..."
-npm run lint
+pnpm run lint
 
 # 6. Testing
 log_info "Running tests..."
-npm run test:unit
-npm run test:integration
-npm run test:performance
+pnpm run test:unit
+pnpm run test:integration
+pnpm run test:performance
 
 if [[ "${ENVIRONMENT}" == "production" ]]; then
     log_info "Running compliance tests for production..."
-    npm run test:compliance
+    pnpm run test:compliance
     
     log_info "Generating coverage report..."
-    npm run test:coverage
+    pnpm run test:coverage
     
     # Check coverage thresholds
     if [[ -f "${COVERAGE_DIR}/coverage-summary.json" ]]; then
@@ -109,7 +109,7 @@ fi
 
 # 7. Build
 log_info "Building package..."
-npm run build
+pnpm run build
 
 # Verify build output
 if [[ ! -f "${BUILD_DIR}/index.js" ]] || [[ ! -f "${BUILD_DIR}/index.d.ts" ]]; then
@@ -122,7 +122,7 @@ log_success "Build completed successfully"
 # 8. Generate documentation
 log_info "Generating documentation..."
 if command -v typedoc > /dev/null 2>&1; then
-    npm run docs:generate
+    pnpm run docs:generate
     log_success "API documentation generated"
 else
     log_warning "TypeDoc not available, skipping API documentation generation"

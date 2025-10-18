@@ -80,7 +80,7 @@ The NFT Agent System transforms AI agents into tradable NFTs with fractional own
 ### 1. Deploy Smart Contracts
 ```bash
 cd contracts
-npm install
+pnpm install
 npx hardhat compile
 npx hardhat run scripts/deploy.ts --network your-network
 ```
@@ -104,15 +104,15 @@ npx prisma generate
 ### 4. Start Backend Services
 ```bash
 cd apps/backend
-npm install
-npm run start:dev
+pnpm install
+pnpm run start:dev
 ```
 
 ### 5. Launch Frontend
 ```bash
 cd apps/frontend
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 ### 6. Run Integration Tests

@@ -30,7 +30,6 @@
     "@theia/electron": "1.59.0",
     "@theia/filesystem": "1.59.0",
     "@theia/getting-started": "1.59.0",
-    "@theia/git": "1.59.0",
     "@theia/markers": "1.59.0",
     "@theia/messages": "1.59.0",
     "@theia/monaco": "1.59.0",

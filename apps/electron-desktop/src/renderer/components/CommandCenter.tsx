@@ -1,19 +1,7 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  Box,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Container,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  useToast
-} from '@chakra-ui/react'
+import { Container } from '@the-new-fuse/ui-consolidated'
+import toast from 'react-hot-toast'
 import type { RootState } from '../store/store'
 import { ConnectionTab } from './tabs/ConnectionTab'
 import { ElementsTab } from './tabs/ElementsTab'
@@ -22,7 +10,7 @@ import { LocalServicesTab } from './tabs/LocalServicesTab'
 
 export const CommandCenter: React.FC = () => {
   const dispatch = useDispatch()
-  const toast = useToast()
+  const [activeTab, setActiveTab] = useState<'connections' | 'elements' | 'chat' | 'services'>('connections')
   
   const { tnfRelay, mcp, systemStatus } = useSelector((state: RootState) => state.connections)
   const { statuses: portStatuses } = useSelector((state: RootState) => state.ports)
@@ -34,31 +22,13 @@ export const CommandCenter: React.FC = () => {
       window.api.onSystemEvent((event: string, data: any) => {
         switch (event) {
           case 'tnf-relay-connected':
-            toast({
-              title: 'TNF Relay Connected',
-              description: 'Successfully connected to TNF Relay',
-              status: 'success',
-              duration: 3000,
-              isClosable: true,
-            })
+            toast.success('TNF Relay Connected - Successfully connected to TNF Relay')
             break
           case 'tnf-relay-disconnected':
-            toast({
-              title: 'TNF Relay Disconnected',
-              description: 'Lost connection to TNF Relay',
-              status: 'warning',
-              duration: 3000,
-              isClosable: true,
-            })
+            toast.error('TNF Relay Disconnected - Lost connection to TNF Relay')
             break
           case 'element-detected':
-            toast({
-              title: 'Element Detected',
-              description: `${data.elementType} element detected with ${data.confidence}% confidence`,
-              status: 'info',
-              duration: 2000,
-              isClosable: true,
-            })
+            toast.success(`Element Detected - ${data.elementType} element detected with ${data.confidence}% confidence`)
             break
           case 'port-statuses-updated':
             // Update port statuses in store
@@ -79,7 +49,7 @@ export const CommandCenter: React.FC = () => {
         window.api.offSystemEvent(() => {})
       }
     }
-  }, [dispatch, toast])
+  }, [dispatch])
 
   const fetchSystemStatus = async () => {
     try {
@@ -114,104 +84,79 @@ export const CommandCenter: React.FC = () => {
   const portSummary = getPortSummary()
 
   return (
-    <Container maxW="100%" p={4} bg="transparent">
-      <VStack spacing={6} align="stretch">
+    <Container className="max-w-full p-4 bg-transparent">
+      <div className="space-y-6 flex flex-col items-stretch">
         {/* Header */}
-        <Box textAlign="center">
-          <Heading 
-            size="lg" 
-            bgGradient="linear(to-r, brand.300, brand.500)"
-            bgClip="text"
-            fontWeight="bold"
-          >
+        <div className="text-center">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-300 to-blue-500 bg-clip-text text-transparent">
             TNF Browser Hub
-          </Heading>
-          <Text color="gray.300" mt={2}>
+          </h1>
+          <p className="text-gray-300 mt-2">
             Hybrid AI-Powered Browser Automation System
-          </Text>
-        </Box>
+          </p>
+        </div>
 
         {/* Status Overview */}
-        <HStack justify="space-around" p={4} bg="whiteAlpha.100" borderRadius="lg" border="1px solid" borderColor="whiteAlpha.200">
-          <VStack>
-            <Text fontSize="2xl" fontWeight="bold" color={connectionSummary.connected === connectionSummary.total ? 'green.400' : 'yellow.400'}>
+        <div className="flex justify-around p-4 bg-white/10 rounded-lg border border-white/20">
+          <div className="flex flex-col items-center">
+            <span className={`text-2xl font-bold ${connectionSummary.connected === connectionSummary.total ? 'text-green-400' : 'text-yellow-400'}`}>
               {connectionSummary.connected}/{connectionSummary.total}
-            </Text>
-            <Text fontSize="sm" color="gray.400">Connections</Text>
-          </VStack>
+            </span>
+            <span className="text-sm text-gray-400">Connections</span>
+          </div>
           
-          <VStack>
-            <Text fontSize="2xl" fontWeight="bold" color={portSummary.open > 0 ? 'green.400' : 'red.400'}>
+          <div className="flex flex-col items-center">
+            <span className={`text-2xl font-bold ${portSummary.open > 0 ? 'text-green-400' : 'text-red-400'}`}>
               {portSummary.open}/{portSummary.total}
-            </Text>
-            <Text fontSize="sm" color="gray.400">Services</Text>
-          </VStack>
+            </span>
+            <span className="text-sm text-gray-400">Services</span>
+          </div>
           
-          <VStack>
-            <Text fontSize="2xl" fontWeight="bold" color={systemStatus.initialized ? 'green.400' : 'gray.400'}>
+          <div className="flex flex-col items-center">
+            <span className={`text-2xl font-bold ${systemStatus.initialized ? 'text-green-400' : 'text-gray-400'}`}>
               {systemStatus.initialized ? '✓' : '○'}
-            </Text>
-            <Text fontSize="sm" color="gray.400">System</Text>
-          </VStack>
-        </HStack>
+            </span>
+            <span className="text-sm text-gray-400">System</span>
+          </div>
+        </div>
 
         {/* Main Tabs */}
-        <Tabs variant="soft-rounded" colorScheme="brand">
-          <TabList justifyContent="center" gap={2}>
-            <Tab 
-              _selected={{ 
-                bg: 'brand.500', 
-                color: 'white',
-                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
-              }}
+        <div className="w-full">
+          <div className="flex justify-center gap-2 mb-4">
+            <button 
+              className={`px-4 py-2 rounded-full transition-all ${activeTab === 'connections' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+              onClick={() => setActiveTab('connections')}
             >
               Connections
-            </Tab>
-            <Tab 
-              _selected={{ 
-                bg: 'brand.500', 
-                color: 'white',
-                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
-              }}
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-full transition-all ${activeTab === 'elements' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+              onClick={() => setActiveTab('elements')}
             >
               Elements
-            </Tab>
-            <Tab 
-              _selected={{ 
-                bg: 'brand.500', 
-                color: 'white',
-                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
-              }}
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-full transition-all ${activeTab === 'chat' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+              onClick={() => setActiveTab('chat')}
             >
               Chat
-            </Tab>
-            <Tab 
-              _selected={{ 
-                bg: 'brand.500', 
-                color: 'white',
-                boxShadow: '0 0 20px rgba(0, 135, 255, 0.3)'
-              }}
+            </button>
+            <button 
+              className={`px-4 py-2 rounded-full transition-all ${activeTab === 'services' ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/30' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`}
+              onClick={() => setActiveTab('services')}
             >
               Services
-            </Tab>
-          </TabList>
+            </button>
+          </div>
 
-          <TabPanels>
-            <TabPanel>
-              <ConnectionTab />
-            </TabPanel>
-            <TabPanel>
-              <ElementsTab />
-            </TabPanel>
-            <TabPanel>
-              <ChatTab />
-            </TabPanel>
-            <TabPanel>
-              <LocalServicesTab />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      </VStack>
+          <div className="tab-content">
+            {activeTab === 'connections' && <ConnectionTab />}
+            {activeTab === 'elements' && <ElementsTab />}
+            {activeTab === 'chat' && <ChatTab />}
+            {activeTab === 'services' && <LocalServicesTab />}
+          </div>
+        </div>
+      </div>
     </Container>
   )
 }

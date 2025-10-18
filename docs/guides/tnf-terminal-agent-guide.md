@@ -318,7 +318,7 @@ For Node.js-based terminal agents:
 ```javascript
 const fs = require('fs');
 const path = require('path');
-const chokidar = require('chokidar'); // npm install chokidar
+const chokidar = require('chokidar'); // pnpm install chokidar
 
 class TNFRelayAgent {
   constructor(agentId = 'terminal_node_agent', agentName = 'Node.js Terminal Agent') {

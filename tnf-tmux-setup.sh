@@ -45,7 +45,7 @@ start_tnf_session() {
     tmux send-keys -t $SESSION_NAME:chrome-ext.0 "cd 'The New Fuse Chrome extension June-4-25Archive/chrome-extension'" C-m
     tmux send-keys -t $SESSION_NAME:chrome-ext.0 "echo 'Chrome Extension Development Environment Ready'" C-m
     tmux send-keys -t $SESSION_NAME:chrome-ext.1 "cd 'The New Fuse Chrome extension June-4-25Archive/chrome-extension'" C-m
-    tmux send-keys -t $SESSION_NAME:chrome-ext.1 "echo 'Run: npm run build && npm run dev'" C-m
+    tmux send-keys -t $SESSION_NAME:chrome-ext.1 "echo 'Run: pnpm run build && pnpm run dev'" C-m
     
     # Window 4: API Testing
     tmux new-window -t $SESSION_NAME -n 'api-test' -c "$PROJECT_DIR"

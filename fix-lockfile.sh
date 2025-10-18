@@ -59,9 +59,9 @@ if ! grep -q '"ts-node":' package.json | grep -q "resolutions"; then
   sed -i '' '/"typescript": "\^[0-9].[0-9].[0-9]"/a\\    "ts-node": "10.9.1",' package.json
 fi
 
-# Step 4: Try npm install first to get the basic dependencies
+# Step 4: Try pnpm install first to get the basic dependencies
 echo -e "${YELLOW}Step 4: Installing basic dependencies with npm...${NC}"
-npm install --no-package-lock ts-node@10.9.1 typescript@4.9.5
+pnpm install --no-package-lock ts-node@10.9.1 typescript@4.9.5
 
 # Step 5: Try yarn install with increased network timeout
 echo -e "${YELLOW}Step 5: Running yarn install with increased network timeout...${NC}"

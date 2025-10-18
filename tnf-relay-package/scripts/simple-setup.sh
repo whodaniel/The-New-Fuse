@@ -5,7 +5,7 @@ set -e
 echo "Setting up The New Fuse project (simple mode)..."
 
 # Make sure node_modules exists
-npm install --no-package-lock typescript@4.9.5
+pnpm install --no-package-lock typescript@4.9.5
 
 # Create package directories
 mkdir -p packages/types/src packages/types/dist

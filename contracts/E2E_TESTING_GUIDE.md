@@ -34,10 +34,10 @@ Additional validation tests include:
 ```bash
 # Install dependencies
 cd contracts
-npm install
+pnpm install
 
 # Install Hardhat if not already installed
-npm install --save-dev hardhat @nomiclabs/hardhat-ethers ethers chai
+pnpm install --save-dev hardhat @nomiclabs/hardhat-ethers ethers chai
 ```
 
 ### 2. Network Configuration

@@ -737,16 +737,16 @@ async execute(input: ValidationInput, context: any): Promise<ValidationOutput> {
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Build the extension
-npm run build
+pnpm run build
 
 # Run tests
-npm test
+pnpm test
 
 # Test with different data
-npm run test:integration
+pnpm run test:integration
 ```
 
 ### 2. Integration Testing

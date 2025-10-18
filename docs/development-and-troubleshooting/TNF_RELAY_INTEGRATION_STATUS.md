@@ -106,8 +106,8 @@ The TNF Relay integration has been successfully implemented and integrated into 
 cd "The New Fuse Chrome extension June-4-25Archive/chrome-extension"
 
 # Install dependencies and build
-npm install
-npm run build
+pnpm install
+pnpm run build
 
 # Load in Chrome:
 # 1. Go to chrome://extensions/

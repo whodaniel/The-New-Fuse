@@ -48,9 +48,9 @@ rm -rf .tmp tmp temp 2>/dev/null || true
 echo "🗑️  Cleaning Bun cache..."
 bun pm cache rm 2>/dev/null || true
 
-# Clean npm cache if it exists
-echo "🗑️  Cleaning npm cache..."
-npm cache clean --force 2>/dev/null || true
+# Clean pnpm store if it exists
+echo "🗑️  Cleaning pnpm store..."
+pnpm store clean --force 2>/dev/null || true
 
 # Clean Turbo cache
 echo "🗑️  Cleaning Turbo cache..."

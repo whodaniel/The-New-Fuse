@@ -58,7 +58,7 @@ packages/debugging/
 ## Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Configuration

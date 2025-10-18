@@ -92,9 +92,9 @@ if [ ${#missing_deps[@]} -ne 0 ]; then
     if [ -f "yarn.lock" ]; then
         PKG_MANAGER="yarn add"
     elif [ -f "package-lock.json" ]; then
-        PKG_MANAGER="npm install"
+        PKG_MANAGER="pnpm install"
     else
-        PKG_MANAGER="npm install"
+        PKG_MANAGER="pnpm install"
     fi
     
     for dep in "${missing_deps[@]}"; do
@@ -106,7 +106,7 @@ if [ ${#missing_deps[@]} -ne 0 ]; then
     if [ -f "yarn.lock" ]; then
         yarn add -D @types/inquirer @types/node
     else
-        npm install -D @types/inquirer @types/node
+        pnpm install -D @types/inquirer @types/node
     fi
 fi
 
@@ -138,7 +138,7 @@ echo "Building TypeScript files..."
 if [ -f "yarn.lock" ]; then
     yarn build
 else
-    npm run build
+    pnpm run build
 fi
 
 if [ $? -eq 0 ]; then

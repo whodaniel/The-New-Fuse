@@ -13,7 +13,7 @@ fi
 # Start backend
 echo "Starting Backend..."
 cd "$(dirname "$0")/../apps/backend" || exit
-npm run start &
+pnpm run start &
 
 # Wait for backend to initialize
 sleep 5
@@ -23,7 +23,7 @@ NOTIFICATION_SERVICE="$(dirname "$0")/../apps/services/notification-service"
 if [ -d "$NOTIFICATION_SERVICE" ]; then
   echo "Starting additional services..."
   cd "$NOTIFICATION_SERVICE" || exit
-  npm run start &
+  pnpm run start &
 else
   echo "Notification service directory not found, skipping..."
 fi

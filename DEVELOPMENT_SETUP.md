@@ -16,7 +16,7 @@ cp .env.example .env
 
 ```bash
 # Install all dependencies
-npm install
+pnpm install
 
 # Generate Prisma types
 bun run db:generate

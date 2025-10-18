@@ -8,11 +8,11 @@ cd packages/chrome-extension
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Build the extension
 echo "🏗️ Building extension..."
-npm run build
+pnpm run build
 
 echo "✅ Chrome extension built successfully!"
 echo "The extension package is available in the packages/chrome-extension/dist directory."

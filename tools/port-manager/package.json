@@ -9,7 +9,7 @@
   "scripts": {
     "build": "echo 'No build needed'",
     "dev": "node ./cli.js dev",
-    "install-global": "npm install -g ."
+    "install-global": "pnpm install -g ."
   },
   "dependencies": {
     "@the-new-fuse/port-management": "workspace:*",

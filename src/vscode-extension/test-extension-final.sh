@@ -13,7 +13,7 @@ else
 fi
 
 echo "2️⃣ Compiling extension..."
-npm run compile > /dev/null 2>&1
+pnpm run compile > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "✅ Extension compiles successfully"
 else

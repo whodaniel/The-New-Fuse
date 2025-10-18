@@ -82,8 +82,8 @@ VSCode Extension Hub
 ├── tsconfig.json                   # TypeScript configuration
 ├── src/
 │   └── extension.ts                # Main extension with TNF integration
-├── out/                            # Compiled JavaScript (after npm run compile)
-├── node_modules/                   # Dependencies (after npm install)
+├── out/                            # Compiled JavaScript (after pnpm run compile)
+├── node_modules/                   # Dependencies (after pnpm install)
 └── TNF-Agent-Relay-Integration.md  # This documentation
 ```
 
@@ -118,12 +118,12 @@ VSCode Extension Hub
 
 2. **Install Dependencies:**
    ```bash
-   npm install
+   pnpm install
    ```
 
 3. **Compile Extension:**
    ```bash
-   npm run compile
+   pnpm run compile
    ```
 
 4. **Test Extension:**
@@ -803,8 +803,8 @@ tail -f "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/messages.log"
 # Clean and rebuild
 cd vscode-extension
 rm -rf out/ node_modules/
-npm install
-npm run compile
+pnpm install
+pnpm run compile
 
 # Check TypeScript errors
 npx tsc --noEmit

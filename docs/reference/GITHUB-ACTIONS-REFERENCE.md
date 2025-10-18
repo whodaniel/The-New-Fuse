@@ -37,9 +37,9 @@ jobs:
         with:
           node-version: '18'
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
       - name: Run tests
-        run: npm test
+        run: pnpm test
 ```
 
 ---

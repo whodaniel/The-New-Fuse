@@ -70,7 +70,7 @@ For complete development access:
    cp .env.example .env
    # Edit .env with your configuration
    ```
-   You can validate your environment variable setup by running `yarn validate:env` (or `npm run validate:env`) from the project root. This script checks for required `.env.example` files and critical variables.
+   You can validate your environment variable setup by running `yarn validate:env` (or `pnpm run validate:env`) from the project root. This script checks for required `.env.example` files and critical variables.
 
 4. **Initialize the database:**
    ```bash

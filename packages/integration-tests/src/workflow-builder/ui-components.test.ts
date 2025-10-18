@@ -14,7 +14,7 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { ChakraProvider } from '@chakra-ui/react';
+
 import { getTestEnvironment } from '../setup/test-setup';
 
 // Mock ReactFlow components for testing
@@ -101,11 +101,11 @@ const MockDynamicNode = ({ data, id, type }: any) => {
 
 // Test wrapper component
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <ChakraProvider>
+  
     <DndProvider backend={HTML5Backend}>
       {children}
     </DndProvider>
-  </ChakraProvider>
+  
 );
 
 describe('Workflow Builder UI Components', () => {

@@ -387,8 +387,8 @@ chmod +x scripts/*.js
 # Update to latest Node.js
 brew install node
 
-# Clear npm cache if needed
-npm cache clean --force
+# Clear pnpm store if needed
+pnpm store prune
 ```
 
 #### **Project Board Not Updating**

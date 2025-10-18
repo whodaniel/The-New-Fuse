@@ -21,7 +21,7 @@ The New Fuse Component Library is a comprehensive set of React components design
 
 ```bash
 # Using npm
-npm install @the-new-fuse/ui-consolidated
+pnpm install @the-new-fuse/ui-consolidated
 
 # Using yarn
 yarn add @the-new-fuse/ui-consolidated

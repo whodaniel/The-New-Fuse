@@ -30,12 +30,12 @@ node scripts/clear-ports.js
 # Build the Electron app
 echo "🔨 Building Electron app..."
 cd apps/electron-desktop
-npm run build
+pnpm run build
 cd ../..
 
 # Launch the Electron app with the functional browser hub
 echo "🌟 Starting TNF Functional Browser Hub..."
 cd apps/electron-desktop
-npm run start
+pnpm run start
 
 echo "✅ TNF Functional Browser Hub launched!"

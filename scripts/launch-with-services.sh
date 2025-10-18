@@ -74,7 +74,7 @@ echo "📊 Services status: $SERVICE_COUNT/3 online"
 # Build and launch Electron app
 echo "🔨 Building Electron app..."
 cd apps/electron-desktop
-if ! npm run build; then
+if ! pnpm run build; then
     echo "❌ Electron build failed"
     cleanup
     exit 1
@@ -91,7 +91,7 @@ echo "Press Ctrl+C to stop all services and close the browser."
 echo ""
 
 # Start Electron app (this will block)
-npm run start
+pnpm run start
 
 # Cleanup when Electron closes
 cleanup

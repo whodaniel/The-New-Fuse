@@ -42,7 +42,6 @@
     "react-dom": "^18.2.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
-    "@chakra-ui/react": "^2.8.0",
     "framer-motion": "^10.16.0",
     "rimraf": "^5.0.5",
     "ts-jest": "^29.1.1",

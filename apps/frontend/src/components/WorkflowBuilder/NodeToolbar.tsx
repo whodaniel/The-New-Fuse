@@ -14,8 +14,7 @@ import {
   Icon,
   SimpleGrid
 } from '@chakra-ui/react';
-import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
-import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory } from 'react-icons/fa';
+import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory, FaChevronDown, FaPlus } from 'react-icons/fa';
 import { FileText } from 'lucide-react';
 
 interface NodeToolbarProps {
@@ -84,7 +83,7 @@ export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
       <HStack spacing={2}>
         <Tooltip label="Add a node" hasArrow>
           <Button 
-            leftIcon={<AddIcon />} 
+            leftIcon={<FaPlus />} 
             size="sm" 
             colorScheme="blue" 
             variant="solid"
@@ -97,7 +96,7 @@ export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
           <Menu key={category.name}>
             <MenuButton 
               as={Button} 
-              rightIcon={<ChevronDownIcon />} 
+              rightIcon={<FaChevronDown />} 
               size="sm" 
               variant="outline"
             >

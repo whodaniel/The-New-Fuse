@@ -78,15 +78,15 @@ git clone https://github.com/the-new-fuse/mcp-core.git
 cd mcp-core
 
 # Install dependencies
-npm install
+pnpm install
 # or
 bun install
 
 # Build the project
-npm run build
+pnpm run build
 
 # Run tests to verify setup
-npm test
+pnpm test
 ```
 
 ### 2. IDE Configuration
@@ -337,7 +337,7 @@ createCalculatorClient().catch(console.error);
 
 ```bash
 # Terminal 1: Start the server
-npm run build
+pnpm run build
 node dist/server.js
 
 # Terminal 2: Run the client
@@ -815,7 +815,7 @@ describe('Server-Client Integration', () => {
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Write tests for your changes
-4. Ensure all tests pass: `npm test`
+4. Ensure all tests pass: `pnpm test`
 5. Update documentation if needed
 6. Submit a pull request with clear description
 

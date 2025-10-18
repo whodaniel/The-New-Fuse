@@ -15,7 +15,7 @@ This document describes the end-to-end testing framework for The New Fuse platfo
 ### Installation
 
 ```bash
-npm install
+pnpm install
 npx playwright install --with-deps
 ```
 
@@ -23,16 +23,16 @@ npx playwright install --with-deps
 
 ```bash
 # Run all E2E tests
-npm run test:e2e
+pnpm run test:e2e
 
 # Run specific test file
-npm run test:e2e tests/workflow/workflow-editor.test.ts
+pnpm run test:e2e tests/workflow/workflow-editor.test.ts
 
 # Run tests in UI mode
-npm run test:e2e:ui
+pnpm run test:e2e:ui
 
 # Run performance tests
-npm run test:e2e:perf
+pnpm run test:e2e:perf
 ```
 
 ## Framework Structure

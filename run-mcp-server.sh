@@ -9,6 +9,6 @@ cd "$(dirname "$0")/packages/mcp"
 
 # Run the MCP server
 echo "Starting MCP server..."
-npm run start
+pnpm run start
 
 echo "MCP server stopped"

@@ -33,7 +33,7 @@ A comprehensive framework for measuring, analyzing, and tracking performance met
 The framework is included in the testing package. If you need to install additional dependencies:
 
 ```bash
-npm install chart.js   # Required for HTML reports with charts
+pnpm install chart.js   # Required for HTML reports with charts
 ```
 
 ## Usage

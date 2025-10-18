@@ -35,7 +35,7 @@ The Unified Extension System consolidates and standardizes all extension, plugin
 ## Installation
 
 ```bash
-npm install @the-new-fuse/extension-system
+pnpm install @the-new-fuse/extension-system
 ```
 
 ## Quick Start

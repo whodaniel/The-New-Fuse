@@ -174,13 +174,13 @@ build_application() {
     
     # Build packages
     print_status "Building packages..."
-    npm run build:packages
+    pnpm run build:packages
     
     # Build API
     if [ "$DEPLOY_BACKEND" = true ]; then
         print_status "Building API..."
         cd "$PROJECT_ROOT/apps/api"
-        npm run build
+        pnpm run build
         cd "$PROJECT_ROOT"
     fi
     
@@ -188,7 +188,7 @@ build_application() {
     if [ "$DEPLOY_FRONTEND" = true ]; then
         print_status "Building frontend..."
         cd "$PROJECT_ROOT/apps/frontend"
-        npm run build
+        pnpm run build
         cd "$PROJECT_ROOT"
     fi
     
@@ -196,7 +196,7 @@ build_application() {
     if [ "$DEPLOY_CLOUDFLARE" = true ]; then
         print_status "Building Cloudflare Worker..."
         cd "$PROJECT_ROOT/cloudflare-worker"
-        npm run build
+        pnpm run build
         cd "$PROJECT_ROOT"
     fi
     
@@ -216,15 +216,15 @@ run_tests() {
     
     # Unit tests
     print_status "Running unit tests..."
-    npm run test:unit
+    pnpm run test:unit
     
     # Integration tests
     print_status "Running integration tests..."
-    npm run test:integration
+    pnpm run test:integration
     
     # E2E tests for critical paths
     print_status "Running critical path tests..."
-    npm run test:e2e:critical
+    pnpm run test:e2e:critical
     
     print_success "All tests passed"
 }
@@ -242,15 +242,15 @@ run_database_migrations() {
     
     # Backup database
     print_status "Creating database backup..."
-    npm run db:backup
+    pnpm run db:backup
     
     # Run migrations
     print_status "Running migrations..."
-    npm run db:migrate
+    pnpm run db:migrate
     
     # Verify migrations
     print_status "Verifying migrations..."
-    npm run db:verify
+    pnpm run db:verify
     
     print_success "Database migrations complete"
 }

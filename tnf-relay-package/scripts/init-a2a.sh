@@ -14,5 +14,5 @@ echo "Starting A2A services..."
 if [ "$NODE_ENV" = "production" ]; then
     node dist/main
 else
-    npm run start:dev
+    pnpm run start:dev
 fi

@@ -1,34 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  VStack,
-  HStack,
-  Box,
-  Text,
-  Button,
-  Card,
-  CardBody,
-  Badge,
-  Divider,
-  useToast,
-  Alert,
-  AlertIcon,
-  Textarea,
-  IconButton,
-  Flex,
-  Avatar
-} from '@chakra-ui/react'
+import { Button, Card, CardContent, Badge, Alert, Container } from '@the-new-fuse/ui-consolidated'
+import toast from 'react-hot-toast'
 import { FiSend, FiTrash2, FiDownload } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
 import type { ChatMessage } from '../../shared/types'
 
 export const ChatTab: React.FC = () => {
-  const toast = useToast()
   const messagesEndRef = useRef<HTMLDivElement>(null)
   
   const { messages } = useSelector((state: RootState) => state.chat)
   const { tnfRelay } = useSelector((state: RootState) => state.connections)
-  const { mapping } = useSelector((state: RootState) => state.elements)
+  const { elements } = useSelector((state: RootState) => state.elements)
   
   const [inputMessage, setInputMessage] = useState('')
   const [isSending, setIsSending] = useState(false)
@@ -42,389 +25,203 @@ export const ChatTab: React.FC = () => {
     if (!inputMessage.trim()) return
     
     if (!tnfRelay.connected) {
-      toast({
-        title: 'Not Connected',
-        description: 'Please connect to TNF Relay first',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('Not Connected - Please connect to TNF Relay first')
       return
     }
 
     setIsSending(true)
     try {
       if (window.api) {
-        const response = await window.api.chatSend(inputMessage.trim())
-        if (response.success) {
-          setInputMessage('')
-          toast({
-            title: 'Message Sent',
-            description: 'Your message has been processed',
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-          })
-        } else {
-          toast({
-            title: 'Send Failed',
-            description: response.error || 'Failed to send message',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-          })
-        }
+        await window.api.sendChatMessage(inputMessage)
+        setInputMessage('')
       }
-    } catch {
-      toast({
-        title: 'Send Error',
-        description: 'An error occurred while sending the message',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
+    } catch (error) {
+      console.error('Failed to send message:', error)
+      toast.error('Failed to send message')
     } finally {
       setIsSending(false)
     }
   }
 
-  const handleSendToChrome = async () => {
-    if (!inputMessage.trim()) return
+  const handleClearChat = async () => {
+    try {
+      if (window.api) {
+        await window.api.clearChatHistory()
+        toast.success('Chat history cleared')
+      }
+    } catch (error) {
+      console.error('Failed to clear chat:', error)
+      toast.error('Failed to clear chat history')
+    }
+  }
+
+  const handleExportChat = async () => {
+    try {
+      if (window.api) {
+        await window.api.exportChatHistory()
+        toast.success('Chat history exported')
+      }
+    } catch (error) {
+      console.error('Failed to export chat:', error)
+      toast.error('Failed to export chat history')
+    }
+  }
+
+  const formatTimestamp = (timestamp: string) => {
+    return new Date(timestamp).toLocaleTimeString()
+  }
+
+  const renderMessage = (message: ChatMessage, index: number) => {
+    const isUser = message.role === 'user'
     
-    if (!mapping?.chatInput || !mapping?.sendButton) {
-      toast({
-        title: 'Elements Not Detected',
-        description: 'Please detect chat elements first in the Elements tab',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      })
-      return
-    }
-
-    setIsSending(true)
-    try {
-      if (window.api) {
-        const response = await window.api.chromeSendMessage({
-          type: 'SEND_CHAT_MESSAGE',
-          message: inputMessage.trim(),
-          mapping: mapping
-        })
-        
-        if (response.success) {
-          setInputMessage('')
-          toast({
-            title: 'Message Sent to Browser',
-            description: 'Message sent directly to the chat interface',
-            status: 'success',
-            duration: 2000,
-            isClosable: true,
-          })
-        } else {
-          toast({
-            title: 'Browser Send Failed',
-            description: response.error || 'Failed to send message to browser',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
-          })
-        }
-      }
-    } catch {
-      toast({
-        title: 'Browser Send Error',
-        description: 'An error occurred while sending to browser',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-    } finally {
-      setIsSending(false)
-    }
-  }
-
-  const handleClearHistory = async () => {
-    try {
-      // Clear local history
-      // dispatch(clearMessages())
-      toast({
-        title: 'History Cleared',
-        description: 'Chat history has been cleared',
-        status: 'info',
-        duration: 2000,
-        isClosable: true,
-      })
-    } catch {
-      toast({
-        title: 'Clear Failed',
-        description: 'Failed to clear chat history',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-    }
-  }
-
-  const handleExportHistory = () => {
-    try {
-      const exportData = {
-        timestamp: new Date().toISOString(),
-        messages: messages,
-        totalMessages: messages.length
-      }
-      
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' })
-      const url = URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `chat-history-${new Date().toISOString().split('T')[0]}.json`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-      
-      toast({
-        title: 'History Exported',
-        description: 'Chat history has been exported to file',
-        status: 'success',
-        duration: 2000,
-        isClosable: true,
-      })
-    } catch {
-      toast({
-        title: 'Export Failed',
-        description: 'Failed to export chat history',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      })
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      handleSendMessage()
-    }
-  }
-
-  const getSenderColor = (sender: ChatMessage['sender']) => {
-    switch (sender) {
-      case 'user': return 'blue'
-      case 'ai': return 'green'
-      case 'system': return 'purple'
-      case 'chrome': return 'orange'
-      default: return 'gray'
-    }
-  }
-
-  const getSenderIcon = (sender: ChatMessage['sender']) => {
-    switch (sender) {
-      case 'user': return '👤'
-      case 'ai': return '🤖'
-      case 'system': return '⚙️'
-      case 'chrome': return '🌐'
-      default: return '❓'
-    }
-  }
-
-  const renderMessage = (message: ChatMessage) => (
-    <Box key={message.id} mb={4}>
-      <HStack align="start" spacing={3}>
-        <Avatar
-          size="sm"
-          name={message.sender}
-          bg={`${getSenderColor(message.sender)}.500`}
-          color="white"
-          icon={<Text>{getSenderIcon(message.sender)}</Text>}
-        />
-        
-        <Box flex={1}>
-          <HStack mb={1}>
-            <Text fontSize="sm" fontWeight="bold" color={`${getSenderColor(message.sender)}.400`}>
-              {message.sender.charAt(0).toUpperCase() + message.sender.slice(1)}
-            </Text>
-            <Text fontSize="xs" color="gray.500">
-              {new Date(message.timestamp).toLocaleTimeString()}
-            </Text>
-            {message.metadata?.platform && (
-              <Badge size="sm" colorScheme="gray" variant="subtle">
-                {message.metadata.platform}
-              </Badge>
-            )}
-          </HStack>
+    return (
+      <div key={index} className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
+        <div className={`flex ${isUser ? 'flex-row-reverse' : 'flex-row'} items-start space-x-3 max-w-[80%]`}>
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+            isUser ? 'bg-blue-500 text-white ml-3' : 'bg-gray-300 text-gray-700 mr-3'
+          }`}>
+            {isUser ? 'U' : 'A'}
+          </div>
           
-          <Box
-            bg={message.sender === 'user' ? 'blue.900' : 'whiteAlpha.100'}
-            p={3}
-            borderRadius="lg"
-            borderLeftWidth="3px"
-            borderLeftColor={`${getSenderColor(message.sender)}.400`}
-          >
-            <Text fontSize="sm" whiteSpace="pre-wrap">
-              {message.content}
-            </Text>
-          </Box>
-          
-          {message.metadata?.confidence && (
-            <Text fontSize="xs" color="gray.500" mt={1}>
-              Confidence: {message.metadata.confidence}%
-            </Text>
-          )}
-        </Box>
-      </HStack>
-    </Box>
-  )
+          <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'}`}>
+            <div className={`px-4 py-2 rounded-lg ${
+              isUser 
+                ? 'bg-blue-500 text-white' 
+                : 'bg-gray-100 text-gray-900 border'
+            }`}>
+              <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+            </div>
+            
+            <div className="flex items-center mt-1 space-x-2">
+              <span className="text-xs text-gray-500">
+                {formatTimestamp(message.timestamp)}
+              </span>
+              {message.elementContext && (
+                <Badge variant="secondary" className="text-xs">
+                  Element Context
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
-    <VStack spacing={6} align="stretch" h="600px">
-      {/* Connection Status */}
+    <Container className="h-full flex flex-col">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 border-b">
+        <div>
+          <h2 className="text-lg font-semibold">Chat Interface</h2>
+          <p className="text-sm text-gray-600">
+            Communicate with connected systems through TNF Relay
+          </p>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <Badge variant={tnfRelay.connected ? 'default' : 'destructive'}>
+            {tnfRelay.connected ? 'Connected' : 'Disconnected'}
+          </Badge>
+          
+          <button
+            onClick={handleExportChat}
+            className="p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-md"
+            title="Export Chat"
+          >
+            <FiDownload size={16} />
+          </button>
+          
+          <button
+            onClick={handleClearChat}
+            className="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-md"
+            title="Clear Chat"
+          >
+            <FiTrash2 size={16} />
+          </button>
+        </div>
+      </div>
+
+      {/* Connection Status Alert */}
       {!tnfRelay.connected && (
-        <Alert status="warning" borderRadius="lg">
-          <AlertIcon />
-          <Box>
-            <Text fontSize="sm">
-              TNF Relay connection required for chat functionality. 
-              Please connect in the Connections tab first.
-            </Text>
-          </Box>
+        <Alert variant="destructive" className="m-4">
+          <div className="flex items-center">
+            <span className="mr-2">⚠️</span>
+            <div>
+              <h4 className="font-medium">Not Connected</h4>
+              <p className="text-sm">Connect to TNF Relay to start chatting</p>
+            </div>
+          </div>
         </Alert>
       )}
 
-      {/* Chat History Controls */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody py={3}>
-          <HStack justify="space-between">
-            <HStack>
-              <Text fontSize="md" fontWeight="bold">Chat History</Text>
-              <Badge colorScheme="blue" variant="subtle">
-                {messages.length} messages
-              </Badge>
-            </HStack>
-            
-            <HStack>
-              <IconButton
-                aria-label="Export history"
-                icon={<FiDownload />}
-                size="sm"
-                variant="ghost"
-                onClick={handleExportHistory}
-                isDisabled={messages.length === 0}
-              />
-              <IconButton
-                aria-label="Clear history"
-                icon={<FiTrash2 />}
-                size="sm"
-                variant="ghost"
-                colorScheme="red"
-                onClick={handleClearHistory}
-                isDisabled={messages.length === 0}
-              />
-            </HStack>
-          </HStack>
-        </CardBody>
-      </Card>
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {messages.length === 0 ? (
+          <div className="flex items-center justify-center h-full">
+            <div className="text-center text-gray-500">
+              <p className="text-lg font-medium">No messages yet</p>
+              <p className="text-sm">Start a conversation by typing a message below</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {messages.map((message, index) => renderMessage(message, index))}
+            <div ref={messagesEndRef} />
+          </>
+        )}
+      </div>
 
-      {/* Messages Display */}
-      <Card bg="whiteAlpha.50" borderColor="whiteAlpha.200" flex={1}>
-        <CardBody>
-          <Box 
-            h="300px" 
-            overflowY="auto" 
-            pr={2}
-            css={{
-              '&::-webkit-scrollbar': {
-                width: '4px',
-              },
-              '&::-webkit-scrollbar-track': {
-                width: '6px',
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'gray.600',
-                borderRadius: '24px',
-              },
+      {/* Input Area */}
+      <div className="border-t p-4">
+        <div className="flex space-x-3">
+          <textarea
+            value={inputMessage}
+            onChange={(e) => setInputMessage(e.target.value)}
+            placeholder="Type your message..."
+            className="flex-1 min-h-[60px] max-h-32 p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                handleSendMessage()
+              }
             }}
+            disabled={isSending || !tnfRelay.connected}
+          />
+          
+          <Button
+            onClick={handleSendMessage}
+            disabled={!inputMessage.trim() || isSending || !tnfRelay.connected}
+            className="px-4 py-2 h-fit"
           >
-            {messages.length === 0 ? (
-              <Flex align="center" justify="center" h="100%" direction="column">
-                <Text color="gray.500" mb={2}>No messages yet</Text>
-                <Text fontSize="sm" color="gray.600">
-                  Send a message to start the conversation
-                </Text>
-              </Flex>
+            {isSending ? (
+              <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
-              <>
-                {messages.map(renderMessage)}
-                <div ref={messagesEndRef} />
-              </>
+              <FiSend size={16} />
             )}
-          </Box>
-        </CardBody>
-      </Card>
-
-      <Divider />
-
-      {/* Message Input */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={3}>
-            <Textarea
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your message here... (Press Enter to send, Shift+Enter for new line)"
-              rows={3}
-              resize="none"
-              bg="whiteAlpha.50"
-              border="1px solid"
-              borderColor="whiteAlpha.300"
-              _focus={{
-                borderColor: 'blue.400',
-                boxShadow: '0 0 0 1px blue.400'
-              }}
-            />
-            
-            <HStack justify="space-between" w="100%">
-              <HStack>
-                <Text fontSize="xs" color="gray.500">
-                  {inputMessage.length} characters
-                </Text>
-                {mapping?.chatInput && mapping?.sendButton && (
-                  <Badge colorScheme="green" variant="subtle" fontSize="xs">
-                    Browser elements detected
-                  </Badge>
-                )}
-              </HStack>
-              
-              <HStack>
-                {mapping?.chatInput && mapping?.sendButton && (
-                  <Button
-                    onClick={handleSendToChrome}
-                    colorScheme="orange"
-                    size="sm"
-                    leftIcon={<FiSend />}
-                    isLoading={isSending}
-                    isDisabled={!inputMessage.trim() || !tnfRelay.connected}
-                  >
-                    Send to Browser
-                  </Button>
-                )}
-                
-                <Button
-                  onClick={handleSendMessage}
-                  colorScheme="blue"
-                  size="sm"
-                  leftIcon={<FiSend />}
-                  isLoading={isSending}
-                  isDisabled={!inputMessage.trim() || !tnfRelay.connected}
-                >
-                  Send
-                </Button>
-              </HStack>
-            </HStack>
-          </VStack>
-        </CardBody>
-      </Card>
-    </VStack>
+          </Button>
+        </div>
+        
+        {elements.length > 0 && (
+          <div className="mt-3 p-3 bg-gray-50 rounded-md">
+            <p className="text-sm font-medium text-gray-700 mb-2">
+              Available Elements ({elements.length})
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {elements.slice(0, 5).map((element, index) => (
+                <Badge key={index} variant="outline" className="text-xs">
+                  {element.type}: {element.selector.slice(0, 20)}...
+                </Badge>
+              ))}
+              {elements.length > 5 && (
+                <Badge variant="outline" className="text-xs">
+                  +{elements.length - 5} more
+                </Badge>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </Container>
   )
 }

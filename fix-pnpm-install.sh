@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "Fixing bun installation issues..."
+echo "Fixing ppnpm installation issues..."
 
 # Remove any existing yarn.lock file (if still present)
 if [ -f yarn.lock ]; then
@@ -20,16 +20,16 @@ if [ -d node_modules ]; then
   rm -rf node_modules
 fi
 
-# Clear bun cache
-echo "Clearing bun cache..."
-bun pm cache clear
+# Clear ppnpm store
+echo "Clearing ppnpm store..."
+pnpm store prune
 
-# Install ts-node globally with bun
-echo "Installing ts-node globally with bun..."
-bun install -g ts-node@10.9.3
+# Install ts-node globally with pnpm
+echo "Installing ts-node globally with pnpm..."
+ppnpm install -g ts-node@10.9.3
 
-# Try bun install again
-echo "Running bun install..."
-bun install
+# Try ppnpm install again
+echo "Running ppnpm install..."
+ppnpm install
 
 echo "Process completed."

@@ -87,10 +87,10 @@ class ComponentAnalyzer {
 ./scripts/run-component-cleanup.sh
 
 # Generate analysis reports
-npm run analyze:components
+pnpm run analyze:components
 
 # Create backups before consolidation
-npm run backup:components
+pnpm run backup:components
 ```
 
 Generated reports include:
@@ -1023,13 +1023,13 @@ Use the migration script for large codebases:
 
 ```bash
 # Dry run to see what would change
-npm run migrate:components --dry-run
+pnpm run migrate:components --dry-run
 
 # Apply migrations
-npm run migrate:components
+pnpm run migrate:components
 
 # Verify migrations
-npm run test:migration
+pnpm run test:migration
 ```
 ```
 

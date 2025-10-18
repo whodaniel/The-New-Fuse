@@ -13,7 +13,7 @@ This guide provides solutions for common issues you might encounter when running
 
 **Solutions:**
 - Try using `--force` flag: `yarn install --force`
-- Use npm instead of yarn: `npm install`
+- Use npm instead of yarn: `pnpm install`
 - Install specific versions of problematic packages: `yarn add package@version`
 - Check for circular dependencies in workspace packages
 

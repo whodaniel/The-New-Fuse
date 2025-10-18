@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ChakraProvider } from '@chakra-ui/react';
+
 import { OnboardingStepsConfig } from '../OnboardingStepsConfig';
 import { OnboardingAdminService } from '../../../../services/onboarding-admin.service';
 
@@ -51,13 +51,13 @@ describe('OnboardingStepsConfig', () => {
 
   it('renders loading state initially', () => {
     render(
-      <ChakraProvider>
+      
         <OnboardingStepsConfig 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     expect(screen.getByText('Loading onboarding steps...')).toBeInTheDocument();
@@ -65,13 +65,13 @@ describe('OnboardingStepsConfig', () => {
 
   it('renders steps after loading', async () => {
     render(
-      <ChakraProvider>
+      
         <OnboardingStepsConfig 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -88,13 +88,13 @@ describe('OnboardingStepsConfig', () => {
     const handleChange = jest.fn();
     
     render(
-      <ChakraProvider>
+      
         <OnboardingStepsConfig 
           onSave={jest.fn()} 
           onChange={handleChange} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -122,13 +122,13 @@ describe('OnboardingStepsConfig', () => {
     const handleSave = jest.fn();
     
     render(
-      <ChakraProvider>
+      
         <OnboardingStepsConfig 
           onSave={handleSave} 
           onChange={jest.fn()} 
           hasUnsavedChanges={true} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -153,13 +153,13 @@ describe('OnboardingStepsConfig', () => {
     (OnboardingAdminService.getSteps as jest.Mock).mockRejectedValue(new Error('API Error'));
     
     render(
-      <ChakraProvider>
+      
         <OnboardingStepsConfig 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for error to be displayed

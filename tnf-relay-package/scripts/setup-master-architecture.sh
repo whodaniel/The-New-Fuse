@@ -30,7 +30,7 @@ fi
 
 # Install dependencies
 echo "Installing dependencies..."
-npm install
+pnpm install
 
 # Set up monitoring configuration
 echo "Setting up monitoring configuration..."

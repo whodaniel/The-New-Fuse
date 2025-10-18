@@ -1,32 +1,12 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  VStack,
-  HStack,
-  Box,
-  Text,
-  Button,
-  Card,
-  CardBody,
-  Badge,
-  Divider,
-  useToast,
-  Alert,
-  AlertIcon,
-  Grid,
-  GridItem,
-  Progress,
-  Textarea,
-  IconButton,
-  Tooltip
-} from '@chakra-ui/react'
+import { Button, Card, CardContent, Badge, Alert, Container } from '@the-new-fuse/ui-consolidated'
+import toast from 'react-hot-toast'
 import { FiTarget, FiRefreshCw, FiEye } from 'react-icons/fi'
 import type { RootState } from '../../store/store'
 
 export const ElementsTab: React.FC = () => {
-  const toast = useToast()
-  
-  const { mapping, selectedElement } = useSelector((state: RootState) => state.elements)
+  const { elements } = useSelector((state: RootState) => state.elements)
   const { tnfRelay } = useSelector((state: RootState) => state.connections)
   
   const [autoDetecting, setAutoDetecting] = useState(false)
@@ -34,13 +14,7 @@ export const ElementsTab: React.FC = () => {
 
   const handleAutoDetect = async () => {
     if (!tnfRelay.connected) {
-      toast({
-        title: 'Not Connected',
-        description: 'Please connect to TNF Relay first',
-        status: 'warning',
-        duration: 3000,
-        isClosable: true,
-      })
+      toast.error('Not Connected - Please connect to TNF Relay first')
       return
     }
 

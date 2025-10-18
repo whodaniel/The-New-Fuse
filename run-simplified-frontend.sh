@@ -21,7 +21,7 @@ cp ../src/styles.css ./src/styles.css
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Start the development server
 echo "🚀 Starting the development server..."

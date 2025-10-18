@@ -193,22 +193,22 @@ src/workflow-builder/
 
 ```bash
 # Run all workflow builder tests
-npm run test:workflow-builder
+pnpm run test:workflow-builder
 
 # Run workflow builder tests in watch mode
-npm run test:workflow-builder:watch
+pnpm run test:workflow-builder:watch
 
 # Run workflow builder tests with coverage
-npm run test:workflow-builder:coverage
+pnpm run test:workflow-builder:coverage
 
 # Run specific test files
-npm run test workflow-builder/workflow-builder.test.ts
-npm run test workflow-builder/ui-components.test.ts
-npm run test workflow-builder/canvas-interactions.test.ts
-npm run test workflow-builder/validation-execution.test.ts
+pnpm run test workflow-builder/workflow-builder.test.ts
+pnpm run test workflow-builder/ui-components.test.ts
+pnpm run test workflow-builder/canvas-interactions.test.ts
+pnpm run test workflow-builder/validation-execution.test.ts
 
 # Run all tests including workflow builder
-npm run test:all
+pnpm run test:all
 ```
 
 ## 📊 Test Metrics

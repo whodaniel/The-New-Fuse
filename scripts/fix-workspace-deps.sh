@@ -36,4 +36,4 @@ yarn add --dev @types/passport @faker-js/faker
 echo -e "${GREEN}Installation complete!${NC}"
 echo -e "${YELLOW}Note: If you're using a monorepo, make sure to restore workspace links after package installation by running:${NC}"
 echo -e "    mv package.json.backup package.json"
-echo -e "    npm install"
+echo -e "    pnpm install"

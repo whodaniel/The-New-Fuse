@@ -82,8 +82,8 @@ Add contract tests to your CI/CD pipeline:
 ```yaml
 test:
   script:
-    - npm install
-    - npm run test:contracts
+    - pnpm install
+    - pnpm run test:contracts
 ```
 
 ## Example Implementation

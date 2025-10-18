@@ -1,33 +1,20 @@
 // apps/frontend/src/shared/theme/themes.ts
+// Migrated from Chakra UI to Tailwind CSS theme configuration
 
-import { extendTheme, ThemeConfig } from "@chakra-ui/react";
-
-const config: ThemeConfig = {
-  initialColorMode: "light",
-  useSystemColorMode: false,
-};
-
-export const baseTheme = extendTheme({
-  config,
-  colors: {
-    brand: {
-      50: "#e3f2fd",
-      100: "#bbdefb",
-      200: "#90caf9",
-      300: "#64b5f6",
-      400: "#42a5f5",
-      500: "#2196f3",
-      600: "#1e88e5",
-      700: "#1976d2",
-      800: "#1565c0",
-      900: "#0d47a1",
-    },
+export const themeColors = {
+  brand: {
+    50: "#e3f2fd",
+    100: "#bbdefb",
+    200: "#90caf9",
+    300: "#64b5f6",
+    400: "#42a5f5",
+    500: "#2196f3",
+    600: "#1e88e5",
+    700: "#1976d2",
+    800: "#1565c0",
+    900: "#0d47a1",
   },
-});
-
-export const darkTheme = extendTheme({
-  config: { ...config, initialColorMode: "dark" },
-  colors: {
+  dark: {
     brand: {
       50: "#ececec",
       100: "#cfcfcf",
@@ -42,4 +29,20 @@ export const darkTheme = extendTheme({
     },
     background: "#181818",
   },
-});
+};
+
+export const themeConfig = {
+  initialColorMode: "light" as const,
+  useSystemColorMode: false,
+};
+
+// Export for Tailwind config if needed
+export const baseTheme = {
+  colors: themeColors,
+  config: themeConfig,
+};
+
+export const darkTheme = {
+  colors: themeColors.dark,
+  config: { ...themeConfig, initialColorMode: "dark" as const },
+};
