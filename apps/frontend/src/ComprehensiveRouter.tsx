@@ -31,7 +31,7 @@ const WorkspaceMembers = lazy(() => import('./pages/workspace/Members'));
 const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
-const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator').then(module => ({ default: module.UnifiedAgentCreator })));
+const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
 
 // Performance loading component
 const LoadingFallback = ({ name }: { name: string }) => (
@@ -123,16 +123,28 @@ const OnboardingPreviewPage = lazy(() => import('./pages/preview/OnboardingPrevi
 const WorkspaceLLMSelectionPage = lazy(() => import('./pages/WorkspaceSettings/ChatSettings/WorkspaceLLMSelection'));
 const AgentModelSelectionPage = lazy(() => import('./pages/WorkspaceSettings/AgentConfig/AgentModelSelection'));
 
-// Agent-specific routes
-const UnifiedAgentCreatorPage = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
-
 // Admin tools routes
 const AdminAgentSkillsPage = lazy(() => import('./pages/Admin/Agents/skills'));
+
+// Web Search Selection component
+const WebSearchSelection = lazy(() => import('./pages/Admin/Agents/WebSearchSelection'));
 
 // Additional missing routes from audit
 const TasksPageComponent = lazy(() => import('./pages/Tasks/TasksPage'));
 const GeneralSettingsPage = lazy(() => import('./pages/GeneralSettings'));
 const GeneralSettingsEmbeddingPage = lazy(() => import('./pages/GeneralSettings/EmbeddingPreference'));
+const WorkflowTemplates = lazy(() => import('./pages/WorkflowTemplates'));
+const GeneralSettings = lazy(() => import('./pages/GeneralSettings'));
+const AdminSettings = lazy(() => import('./pages/Admin/AdminSettings'));
+const WorkspaceManagement = lazy(() => import('./pages/Admin/WorkspaceManagement'));
+const AgentDashboard = lazy(() => import('./pages/Dashboard/AgentDashboard'));
+const CreateAgent = lazy(() => import('./pages/Dashboard/CreateAgent'));
+const DashboardSettings = lazy(() => import('./pages/Dashboard/DashboardSettings'));
+const CommunityHub = lazy(() => import('./pages/Community/CommunityHub'));
+const LayoutExamples = lazy(() => import('./pages/Layout/LayoutExamples'));
+const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+const UserProfilePage = lazy(() => import('./components/profile/UserProfilePage'));
 
 // Main workspace page
 const MainPage = lazy(() => import('./pages/Main'));
@@ -165,10 +177,17 @@ export default function ComprehensiveRouter() {
         
         {/* All routes using LazyPage for now to avoid import issues */}
         <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
-        <Route path="/ai-portal" element={<LazyPage name="AI Agent Portal" path="/ai-portal" />} />
-        <Route path="/chat" element={<LazyPage name="Chat" path="/chat" />} />
+        <Route path="/ai-portal" element={<AIAgentPortal />} />
+        <Route path="/chat" element={<ChatPage />} />
+        <Route path="/ai-agents" element={<AIAgentPortalPage />} />
+        <Route path="/agent-builder" element={<UnifiedAgentCreator />} />
+        <Route path="/agent-management" element={<AgentsPage />} />
         <Route path="/agents" element={<AgentsPage />} />
-        <Route path="/agents/new" element={<UnifiedAgentCreator />} />
+        <Route path="/agents/new" element={
+          <Suspense fallback={<LoadingFallback name="Agent Creator" />}>
+            <UnifiedAgentCreator />
+          </Suspense>
+        } />
         <Route path="/agents/:id" element={<AgentDetail />} />
         <Route path="/agents/nft-marketplace" element={<NFTMarketplacePage />} />
         <Route path="/agents/revenue-dashboard" element={<RevenueDashboardPage />} />
@@ -180,18 +199,18 @@ export default function ComprehensiveRouter() {
         <Route path="/workflows" element={<Workflows />} />
         <Route path="/workflows/builder" element={<WorkflowBuilder />} />
         <Route path="/workflows/advanced-builder" element={<WorkflowEditorWrapper />} />
-        <Route path="/workflows/templates" element={<LazyPage name="Workflow Templates" path="/workflows/templates" />} />
+        <Route path="/workflows/templates" element={<WorkflowTemplates />} />
         <Route path="/admin" element={<AdminPanel />} />
         <Route path="/admin/users" element={<AdminUserManagement />} />
         <Route path="/admin/system-health" element={<AdminSystemHealth />} />
         <Route path="/settings" element={<Settings />} />
-        <Route path="/settings/general" element={<LazyPage name="General Settings" path="/settings/general" />} />
+        <Route path="/settings/general" element={<GeneralSettings />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/components" element={<ComponentsShowcase />} />
         <Route path="/timeline-demo" element={<TimelineDemo />} />
         <Route path="/graph-demo" element={<GraphDemo />} />
-        <Route path="/frontend-showcase" element={<LazyPage name="Frontend Showcase" path="/frontend-showcase" />} />
+        <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
         <Route path="/debug" element={<DebugPageComponent />} />
         <Route path="/build-info" element={<BuildInfoPage />} />
         <Route path="/debug-routing" element={<DebugRoutingComponent />} />
@@ -206,8 +225,8 @@ export default function ComprehensiveRouter() {
         {/* Enhanced Admin Routes - Additional admin features */}
         <Route path="/admin/feature-flags" element={<AdminFeatureFlags />} />
         <Route path="/admin/port-management" element={<AdminPortManagement />} />
-        <Route path="/admin/workspaces" element={<LazyPage name="Workspace Management" path="/admin/workspaces" />} />
-        <Route path="/admin/settings" element={<LazyPage name="Admin Settings" path="/admin/settings" />} />
+        <Route path="/admin/workspaces" element={<WorkspaceManagement />} />
+        <Route path="/admin/settings" element={<AdminSettings />} />
         
         {/* Enhanced Auth Routes */}
         <Route path="/auth" element={<AuthIndexPage />} />
@@ -232,36 +251,36 @@ export default function ComprehensiveRouter() {
         <Route path="/tasks/:id/edit" element={<TaskEditPage />} />
         
         {/* Enhanced Dashboard Routes */}
-        <Route path="/dashboard/agents" element={<LazyPage name="Agent Dashboard" path="/dashboard/agents" />} />
-        <Route path="/dashboard/agents/new" element={<LazyPage name="Create Agent" path="/dashboard/agents/new" />} />
-        <Route path="/dashboard/agents/:id" element={<LazyPage name="Agent Detail Dashboard" path="/dashboard/agents/:id" />} />
+        <Route path="/dashboard/agents" element={<AgentDashboard />} />
+        <Route path="/dashboard/agents/new" element={<CreateAgent />} />
+        <Route path="/dashboard/agents/:id" element={<AgentDetail />} />
         
         {/* Enhanced Settings Routes */}
         <Route path="/settings/appearance" element={<SettingsAppearance />} />
         <Route path="/settings/notifications" element={<SettingsNotifications />} />
         <Route path="/settings/security" element={<SettingsSecurity />} />
         <Route path="/settings/api" element={<SettingsAPI />} />
-        <Route path="/general-settings" element={<LazyPage name="General Settings" path="/general-settings" />} />
-        <Route path="/general-settings/embedding" element={<LazyPage name="Embedding Preferences" path="/general-settings/embedding" />} />
+        <Route path="/general-settings" element={<GeneralSettings />} />
+        <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
         
         {/* Enhanced Component Routes */}
         <Route path="/frontend-showcase" element={<FrontendShowcasePage />} />
-        <Route path="/layout-example" element={<LazyPage name="Layout Example" path="/layout-example" />} />
+        <Route path="/layout-example" element={<LayoutExamples />} />
         <Route path="/simple-test" element={<SimpleTestPage />} />
         
         {/* Additional Routes */}
         <Route path="/test" element={<TestPage />} />
-        <Route path="/workflows/executions" element={<LazyPage name="Workflow Executions" path="/workflows/executions" />} />
-        <Route path="/workflows/:id" element={<LazyPage name="Workflow Detail" path="/workflows/:id" />} />
-        <Route path="/workflows/:id/execution" element={<LazyPage name="Workflow Execution" path="/workflows/:id/execution" />} />
+        <Route path="/workflows/executions" element={<WorkflowExecutionPage />} />
+        <Route path="/workflows/:id" element={<WorkflowDetailPage />} />
+        <Route path="/workflows/:id/execution" element={<WorkflowExecutionPage />} />
         <Route path="/unauthorized" element={<UnauthorizedPage />} />
         <Route path="/ai-agent-portal" element={<AIAgentPortalPage />} />
         
         {/* Critical Missing Routes */}
         <Route path="/dashboard/analytics" element={<Analytics />} />
-        <Route path="/dashboard/settings" element={<LazyPage name="Dashboard Settings" path="/dashboard/settings" />} />
+        <Route path="/dashboard/settings" element={<DashboardSettings />} />
         <Route path="/components-showcase" element={<ComponentsShowcase />} />
-        <Route path="/not-found" element={<LazyPage name="Not Found Alt" path="/not-found" />} />
+        <Route path="/not-found" element={<NotFound />} />
         
         {/* High Priority Missing Routes - Using Actual Components */}
         <Route path="/chat-page" element={<ChatPage />} />
@@ -302,17 +321,17 @@ export default function ComprehensiveRouter() {
         <Route path="/workspace-settings/agent-model" element={<AgentModelSelectionPage />} />
         
         {/* Agent-Specific Routes */}
-        <Route path="/agents/unified-creator" element={<UnifiedAgentCreatorPage />} />
+        <Route path="/agents/unified-creator" element={<UnifiedAgentCreator />} />
         
         {/* Admin Tools Routes */}
         <Route path="/admin/agents/skills" element={<AdminAgentSkillsPage />} />
-        <Route path="/admin/agents/web-search" element={<LazyPage name="Web Search Selection" path="/admin/agents/web-search" />} />
+        <Route path="/admin/agents/web-search" element={<Suspense fallback={<LoadingFallback name="Web Search Selection" />}><WebSearchSelection /></Suspense>} />
         
         {/* Additional Missing Routes from Audit */}
         <Route path="/tasks-page" element={<TasksPageComponent />} />
         <Route path="/general-settings" element={<GeneralSettingsPage />} />
         <Route path="/general-settings/embedding" element={<GeneralSettingsEmbeddingPage />} />
-        <Route path="/general-settings/community-hub" element={<LazyPage name="Community Hub" path="/general-settings/community-hub" />} />
+        <Route path="/general-settings/community-hub" element={<CommunityHub />} />
         
         {/* Main workspace page */}
         <Route path="/main" element={<MainPage />} />
@@ -326,7 +345,7 @@ export default function ComprehensiveRouter() {
         <Route path="/package/login" element={<LazyPage name="Package Login" path="/package/login" />} />
         <Route path="/package/agents" element={<LazyPage name="Package Agents" path="/package/agents" />} />
         <Route path="/package/workflows" element={<LazyPage name="Package Workflows" path="/package/workflows" />} />
-        <Route path="/user/profile" element={<LazyPage name="User Profile" path="/user/profile" />} />
+        <Route path="/user/profile" element={<Suspense fallback={<LoadingFallback name="User Profile" />}><UserProfilePage /></Suspense>} />
         
         {/* HTML prototype routes (for reference) */}
         <Route path="/html/dashboard" element={<LazyPage name="HTML Dashboard Prototype" path="/html/dashboard" />} />
@@ -337,7 +356,7 @@ export default function ComprehensiveRouter() {
         <Route path="/html/workflows" element={<LazyPage name="HTML Workflows Prototype" path="/html/workflows" />} />
         
         {/* Error Handling */}
-        <Route path="/404" element={<LazyPage name="Page Not Found" path="/404" />} />
+        <Route path="/404" element={<Suspense fallback={<LoadingFallback name="Page Not Found" />}><NotFound /></Suspense>} />
         <Route path="*" element={
           <div className="p-8 text-center">
             <h1 className="text-3xl font-bold text-red-600 mb-4">404 - Page Not Found</h1>

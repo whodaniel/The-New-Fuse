@@ -24,7 +24,7 @@ const UserProfilePage: React.FC = () => {
     const [theme, setTheme] = useState<'light' | 'dark' | 'system'>('system');
     const [notifications, setNotifications] = useState<boolean>(false);
 
-    const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:3003'; // Ensure this is configured
+    const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3003'; // Using Vite environment variables
 
     useEffect(() => {
         const fetchProfile = async () => {

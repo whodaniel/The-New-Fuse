@@ -184,27 +184,9 @@ export const UnifiedAgentCreator: React.FC = () => {
   const generateAgentSuggestions = async () => {
     setIsGenerating(true);
     try {
-      const prompt = `Based on the conversation goal: "${conversationGoal.description}" 
-      Context: "${conversationGoal.context}"
-      Complexity: ${conversationGoal.complexity}
-      
-      Generate ${conversationGoal.agentCount} unique AI agents that would work well together to achieve this goal. 
-      
-      Return a JSON array of agents with this structure:
-      [
-        {
-          "name": "Agent Name",
-          "type": "assistant|specialist|admin",
-          "description": "What this agent does",
-          "systemPrompt": "Detailed system prompt for the agent",
-          "capabilities": ["capability1", "capability2"],
-          "personalityTraits": ["trait1", "trait2"],
-          "role": "Their specific role in the conversation"
-        }
-      ]`;
-
-      const response = await chatApiService.callTextApi(prompt, "You are an expert agent designer.");
-      const suggestions = JSON.parse(response);
+      // Since the chatApiService is currently a mock, we'll generate contextual suggestions
+      // based on the user's goal and context
+      const suggestions = generateContextualSuggestions(conversationGoal);
       setAgentSuggestions(suggestions);
       setStep(2);
     } catch (error) {
@@ -243,6 +225,117 @@ export const UnifiedAgentCreator: React.FC = () => {
     } finally {
       setIsGenerating(false);
     }
+  };
+
+  // Generate contextual suggestions based on user input
+  const generateContextualSuggestions = (goal: ConversationGoal): AgentSuggestion[] => {
+    const { description, context, agentCount } = goal;
+    const isMarketingGoal = description.toLowerCase().includes('marketing') || description.toLowerCase().includes('campaign');
+    const isProductGoal = description.toLowerCase().includes('product') || description.toLowerCase().includes('launch');
+    
+    let suggestions: AgentSuggestion[] = [];
+
+    if (isMarketingGoal && isProductGoal) {
+      suggestions = [
+        {
+          name: "Marketing Strategist",
+          type: "specialist",
+          description: "Develops comprehensive marketing strategies and campaign plans",
+          systemPrompt: "You are a marketing strategy expert specializing in product launches and campaign development. Focus on data-driven strategies and ROI optimization.",
+          capabilities: ["Strategy Development", "Market Analysis", "Campaign Planning", "ROI Optimization"],
+          personalityTraits: ["Strategic", "Data-driven", "Results-oriented"],
+          role: "Lead marketing strategy and campaign oversight"
+        },
+        {
+          name: "Content Creator",
+          type: "assistant",
+          description: "Creates engaging content across digital channels",
+          systemPrompt: "You are a creative content specialist who develops compelling marketing materials, copy, and digital content that resonates with target audiences.",
+          capabilities: ["Content Creation", "Copywriting", "Digital Marketing", "Brand Messaging"],
+          personalityTraits: ["Creative", "Persuasive", "Brand-focused"],
+          role: "Content development and creative execution"
+        },
+        {
+          name: "Market Research Analyst",
+          type: "specialist",
+          description: "Conducts market research and competitive analysis",
+          systemPrompt: "You are a market research expert who analyzes market trends, competitor strategies, and customer insights to inform marketing decisions.",
+          capabilities: ["Market Research", "Competitive Analysis", "Data Analysis", "Customer Insights"],
+          personalityTraits: ["Analytical", "Detail-oriented", "Insightful"],
+          role: "Market intelligence and research support"
+        },
+        {
+          name: "Digital Marketing Specialist",
+          type: "assistant",
+          description: "Manages digital channels and online campaigns",
+          systemPrompt: "You are a digital marketing expert specializing in online channels, social media, and digital advertising campaigns.",
+          capabilities: ["Digital Advertising", "Social Media", "SEO/SEM", "Analytics"],
+          personalityTraits: ["Tech-savvy", "Adaptive", "Performance-focused"],
+          role: "Digital channel management and optimization"
+        },
+        {
+          name: "Campaign Manager",
+          type: "specialist",
+          description: "Coordinates campaign execution and timeline management",
+          systemPrompt: "You are a project management expert who ensures marketing campaigns are executed on time, within budget, and meet quality standards.",
+          capabilities: ["Project Management", "Timeline Coordination", "Budget Management", "Quality Assurance"],
+          personalityTraits: ["Organized", "Reliable", "Communicative"],
+          role: "Campaign coordination and project management"
+        }
+      ];
+    } else {
+      // Default suggestions for other types of goals
+      suggestions = [
+        {
+          name: "Strategic Planner",
+          type: "specialist",
+          description: "Helps plan and organize complex tasks",
+          systemPrompt: "You are a strategic planning expert who helps break down complex goals into actionable steps.",
+          capabilities: ["Planning", "Analysis", "Organization"],
+          personalityTraits: ["Methodical", "Detail-oriented"],
+          role: "Planning and coordination"
+        },
+        {
+          name: "Creative Thinker", 
+          type: "assistant",
+          description: "Generates innovative ideas and solutions",
+          systemPrompt: "You are a creative problem-solver who thinks outside the box and generates innovative solutions.",
+          capabilities: ["Ideation", "Problem-solving", "Innovation"],
+          personalityTraits: ["Creative", "Optimistic"],
+          role: "Idea generation and creative solutions"
+        },
+        {
+          name: "Research Analyst",
+          type: "specialist", 
+          description: "Conducts thorough research and analysis",
+          systemPrompt: "You are a research expert who gathers information, analyzes data, and provides insights.",
+          capabilities: ["Research", "Analysis", "Data interpretation"],
+          personalityTraits: ["Analytical", "Thorough"],
+          role: "Information gathering and analysis"
+        },
+        {
+          name: "Implementation Specialist",
+          type: "assistant",
+          description: "Focuses on executing plans and managing tasks",
+          systemPrompt: "You are an implementation expert who excels at turning plans into action and managing execution details.",
+          capabilities: ["Task Management", "Execution", "Quality Control"],
+          personalityTraits: ["Practical", "Reliable", "Action-oriented"],
+          role: "Plan execution and task management"
+        },
+        {
+          name: "Communication Coordinator",
+          type: "assistant",
+          description: "Manages communication and stakeholder coordination",
+          systemPrompt: "You are a communication expert who ensures clear information flow and effective stakeholder coordination.",
+          capabilities: ["Communication", "Coordination", "Stakeholder Management"],
+          personalityTraits: ["Diplomatic", "Clear", "Collaborative"],
+          role: "Communication and coordination"
+        }
+      ];
+    }
+
+    // Return the requested number of agents
+    return suggestions.slice(0, agentCount);
   };
 
   const handleCreateSelectedAgents = async () => {

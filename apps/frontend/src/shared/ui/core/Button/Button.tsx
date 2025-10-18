@@ -35,8 +35,8 @@ const buttonVariants = cva("inline-flex items-center justify-center whitespace-n
         size: "default",
     },
 });
-const Button = React.forwardRef((_a, ref) => {
-    var { className, variant, size, asChild = false, isLoading = false, icon, iconPosition = 'start', children } = _a, props = __rest(_a, ["className", "variant", "size", "asChild", "isLoading", "icon", "iconPosition", "children"]);
+const Button = React.forwardRef((props, ref) => {
+    var { className, variant, size, asChild = false, isLoading = false, icon, iconPosition = 'start', children } = props, restProps = __rest(props, ["className", "variant", "size", "asChild", "isLoading", "icon", "iconPosition", "children"]);
     const Comp = asChild ? Slot : "button";
     const content = (<>
         {isLoading && (<svg className="animate-spin -ml-1 mr-3 h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@ const Button = React.forwardRef((_a, ref) => {
         {children}
         {icon && iconPosition === 'end' && <span className="ml-2">{icon}</span>}
       </>);
-    return (<Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} disabled={isLoading || props.disabled} {...props}>
+    return (<Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} disabled={isLoading || restProps.disabled} {...restProps}>>
         {content}
       </Comp>);
 });

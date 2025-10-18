@@ -14,24 +14,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.TabsContent = exports.TabsTrigger = exports.TabsList = exports.Tabs = void 0;
 import React from 'react';
 import TabsPrimitive from '@radix-ui/react-tabs';
-import utils_1 from '../../lib/utils';
+import { cn } from '../../lib/utils';
 const Tabs = TabsPrimitive.Root;
 exports.Tabs = Tabs;
-const TabsList = React.forwardRef((_a, ref) => {
-    var { className } = _a, props = __rest(_a, ["className"]);
-    return (<TabsPrimitive.List ref={ref} className={(0, utils_1.cn)("inline-flex h-9 items-center justify-center rounded-lg bg-neutral-100 p-1 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400", className)} {...props}/>);
+const TabsList = React.forwardRef((props, ref) => {
+    var { className } = props, restProps = __rest(props, ["className"]);
+    return (<TabsPrimitive.List ref={ref} className={(0, utils_1.cn)("inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground", className)} {...restProps}/>);
 });
 exports.TabsList = TabsList;
 TabsList.displayName = TabsPrimitive.List.displayName;
-const TabsTrigger = React.forwardRef((_a, ref) => {
-    var { className } = _a, props = __rest(_a, ["className"]);
-    return (<TabsPrimitive.Trigger ref={ref} className={(0, utils_1.cn)("inline-flex items-center justify-center whitespace-nowrap rounded-md px-3 py-1 text-sm font-medium ring-offset-white transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-white data-[state=active]:text-neutral-950 data-[state=active]:shadow dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300 dark:data-[state=active]:bg-neutral-950 dark:data-[state=active]:text-neutral-50", className)} {...props}/>);
+const TabsTrigger = React.forwardRef((props, ref) => {
+    var { className } = props, restProps = __rest(props, ["className"]);
+    return (<TabsPrimitive.Trigger ref={ref} className={(0, utils_1.cn)("inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm", className)} {...restProps}/>);
 });
 exports.TabsTrigger = TabsTrigger;
 TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
-const TabsContent = React.forwardRef((_a, ref) => {
-    var { className } = _a, props = __rest(_a, ["className"]);
-    return (<TabsPrimitive.Content ref={ref} className={(0, utils_1.cn)("mt-2 ring-offset-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-950 focus-visible:ring-offset-2 dark:ring-offset-neutral-950 dark:focus-visible:ring-neutral-300", className)} {...props}/>);
+const TabsContent = React.forwardRef((props, ref) => {
+    var { className } = props, restProps = __rest(props, ["className"]);
+    return (<TabsPrimitive.Content ref={ref} className={(0, utils_1.cn)("mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2", className)} {...restProps}/>);
 });
 exports.TabsContent = TabsContent;
 TabsContent.displayName = TabsPrimitive.Content.displayName;
