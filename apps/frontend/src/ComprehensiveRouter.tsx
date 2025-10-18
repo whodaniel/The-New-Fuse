@@ -32,6 +32,7 @@ const WorkspaceChatPage = lazy(() => import('./pages/WorkspaceChat'));
 const NFTMarketplacePage = lazy(() => import('./pages/Agents/NFTMarketplacePage'));
 const RevenueDashboardPage = lazy(() => import('./pages/Agents/RevenueDashboardPage'));
 const UnifiedAgentCreator = lazy(() => import('./pages/Agents/UnifiedAgentCreator'));
+const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
 
 // Performance loading component
 const LoadingFallback = ({ name }: { name: string }) => (
@@ -174,6 +175,7 @@ export default function ComprehensiveRouter() {
         <Route path="/" element={<HomePage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/sophisticated-hub" element={<SophisticatedTNFHub />} />
         
         {/* All routes using LazyPage for now to avoid import issues */}
         <Route path="/multi-agent-chat" element={<MultiAgentChat />} />
