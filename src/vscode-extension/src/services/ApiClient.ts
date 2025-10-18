@@ -105,4 +105,19 @@ export class ApiClient {
             throw new Error(`Code execution failed: ${error}`);
         }
     }
+
+    // Expose axios instance for advanced usage
+    get axiosInstance(): AxiosInstance {
+        return this.client;
+    }
+
+    async post(endpoint: string, data: any): Promise<any> {
+        const response = await this.client.post(endpoint, data);
+        return response.data;
+    }
+
+    async get(endpoint: string): Promise<any> {
+        const response = await this.client.get(endpoint);
+        return response.data;
+    }
 }

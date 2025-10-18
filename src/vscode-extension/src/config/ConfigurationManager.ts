@@ -40,4 +40,14 @@ export class ConfigurationManager {
         const config = vscode.workspace.getConfiguration('theNewFuse');
         await config.update(key, value, vscode.ConfigurationTarget.Global);
     }
+
+    getCustomModes(): any[] {
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        return config.get('customModes') || [];
+    }
+
+    async updateCustomModes(modes: any[]): Promise<void> {
+        const config = vscode.workspace.getConfiguration('theNewFuse');
+        await config.update('customModes', modes, vscode.ConfigurationTarget.Global);
+    }
 }
