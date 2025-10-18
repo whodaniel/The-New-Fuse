@@ -6,10 +6,15 @@
  * Designed to simulate millions of concurrent users with realistic scenarios
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { spawn, exec } = require('child_process');
-const { promisify } = require('util');
+import fs from 'fs';
+import path from 'path';
+import { spawn, exec } from 'child_process';
+import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+import os from 'os';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const execAsync = promisify(exec);
 
 class MillionUserLoadTester {
@@ -47,7 +52,7 @@ class MillionUserLoadTester {
     async loadConfiguration() {
         try {
             const configPath = path.join(__dirname, 'enhanced-load-test-config.json');
-            const configData = await fs.readFile(configPath, 'utf8');
+            const configData = await fs.promises.readFile(configPath, 'utf8');
             this.config = JSON.parse(configData);
             console.log('📋 Configuration loaded successfully');
         } catch (error) {
@@ -88,7 +93,6 @@ class MillionUserLoadTester {
     }
 
     async checkSystemResources() {
-        const os = require('os');
         const totalMemory = os.totalmem();
         const freeMemory = os.freemem();
         const cpuCount = os.cpus().length;
@@ -145,7 +149,7 @@ class MillionUserLoadTester {
         console.log('📊 Setting up monitoring...');
         
         // Ensure output directory exists
-        await fs.mkdir(this.outputDir, { recursive: true });
+        await fs.promises.mkdir(this.outputDir, { recursive: true });
         
         // Initialize monitoring metrics
         this.monitoring.startTime = new Date();
@@ -164,7 +168,6 @@ class MillionUserLoadTester {
     startSystemMonitoring() {
         // Monitor system resources every 10 seconds
         this.systemMonitorInterval = setInterval(async () => {
-            const os = require('os');
             const metrics = {
                 timestamp: new Date(),
                 memory: {
@@ -295,7 +298,7 @@ class MillionUserLoadTester {
         const scriptPath = path.join(this.outputDir, `${suiteName}-${test.name.replace(/\s+/g, '-').toLowerCase()}.js`);
         
         // Write k6 script
-        await fs.writeFile(scriptPath, testScript);
+        await fs.promises.writeFile(scriptPath, testScript);
         
         // Run k6 test
         const startTime = new Date();
@@ -553,7 +556,7 @@ export function handleSummary(data) {
         
         // Save detailed report
         const reportPath = path.join(this.outputDir, 'million-user-test-report.json');
-        await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
+        await fs.promises.writeFile(reportPath, JSON.stringify(report, null, 2));
         
         // Generate HTML report
         await this.generateHTMLReport(report);
@@ -808,7 +811,7 @@ export function handleSummary(data) {
 </html>`;
         
         const htmlPath = path.join(this.outputDir, 'million-user-test-report.html');
-        await fs.writeFile(htmlPath, htmlContent);
+        await fs.promises.writeFile(htmlPath, htmlContent);
         console.log(`📊 HTML report generated: ${htmlPath}`);
     }
 
@@ -880,7 +883,7 @@ export function handleSummary(data) {
 }
 
 // CLI execution
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const tester = new MillionUserLoadTester();
     
     tester.run()
@@ -893,4 +896,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = MillionUserLoadTester;
+export default MillionUserLoadTester;

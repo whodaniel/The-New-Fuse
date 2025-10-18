@@ -16,9 +16,13 @@
  * - Comprehensive reporting and recommendations
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { execSync, spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync, spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class DatabasePerformanceOptimizer {
     constructor(options = {}) {
@@ -48,7 +52,7 @@ class DatabasePerformanceOptimizer {
         console.log('🔧 Initializing Database Performance Optimizer...');
         
         // Create output directory
-        await fs.mkdir(this.config.outputDir, { recursive: true });
+        await fs.promises.mkdir(this.config.outputDir, { recursive: true });
         
         // Load database configurations
         await this.loadDatabaseConfigurations();
@@ -138,16 +142,16 @@ class DatabasePerformanceOptimizer {
         for (const configPath of configPaths) {
             try {
                 const fullPath = path.resolve(configPath);
-                const stats = await fs.stat(fullPath);
+                const stats = await fs.promises.stat(fullPath);
                 
                 if (stats.isFile()) {
                     console.log(`📄 Loading database config from: ${configPath}`);
                     
                     if (configPath.endsWith('.json')) {
-                        const config = JSON.parse(await fs.readFile(fullPath, 'utf8'));
+                        const config = JSON.parse(await fs.promises.readFile(fullPath, 'utf8'));
                         this.mergeDatabaseConfig(config);
                     } else if (configPath.endsWith('.env')) {
-                        const envContent = await fs.readFile(fullPath, 'utf8');
+                        const envContent = await fs.promises.readFile(fullPath, 'utf8');
                         this.parseEnvConfig(envContent);
                     }
                 }
@@ -1101,7 +1105,7 @@ class DatabasePerformanceOptimizer {
         
         // Save JSON report
         const jsonPath = path.join(this.config.outputDir, 'database-performance-report.json');
-        await fs.writeFile(jsonPath, JSON.stringify(report, null, 2));
+        await fs.promises.writeFile(jsonPath, JSON.stringify(report, null, 2));
         
         // Generate HTML report
         await this.generateDatabaseHTMLReport(report);
@@ -1299,7 +1303,7 @@ class DatabasePerformanceOptimizer {
 </html>`;
         
         const htmlPath = path.join(this.config.outputDir, 'database-performance-report.html');
-        await fs.writeFile(htmlPath, htmlContent);
+        await fs.promises.writeFile(htmlPath, htmlContent);
         
         console.log(`📊 HTML database report generated: ${htmlPath}`);
     }
@@ -1373,8 +1377,8 @@ class DatabasePerformanceOptimizer {
     }
 }
 
-// CLI execution
-if (require.main === module) {
+// CLI execution check for ES modules
+if (import.meta.url === `file://${process.argv[1]}`) {
     const dbOptimizer = new DatabasePerformanceOptimizer();
     
     dbOptimizer.run()
@@ -1388,4 +1392,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = DatabasePerformanceOptimizer;
+export default DatabasePerformanceOptimizer;

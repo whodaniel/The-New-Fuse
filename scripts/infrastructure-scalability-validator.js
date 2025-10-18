@@ -6,10 +6,14 @@
  * Designed to ensure platform can handle millions of concurrent users
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { spawn, exec } = require('child_process');
-const { promisify } = require('util');
+import fs from 'fs';
+import path from 'path';
+import { spawn, exec } from 'child_process';
+import { promisify } from 'util';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const execAsync = promisify(exec);
 
 class InfrastructureScalabilityValidator {
@@ -83,7 +87,7 @@ class InfrastructureScalabilityValidator {
     }
 
     async setupValidationEnvironment() {
-        await fs.mkdir(this.outputDir, { recursive: true });
+        await fs.promises.mkdir(this.outputDir, { recursive: true });
         console.log(`📁 Validation environment setup at ${this.outputDir}`);
     }
 
@@ -970,7 +974,7 @@ class InfrastructureScalabilityValidator {
         
         // Save detailed report
         const reportPath = path.join(this.outputDir, 'infrastructure-scalability-report.json');
-        await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
+        await fs.promises.writeFile(reportPath, JSON.stringify(report, null, 2));
         
         // Generate HTML report
         await this.generateHTMLReport(report);
@@ -1196,7 +1200,7 @@ class InfrastructureScalabilityValidator {
 </html>`;
         
         const htmlPath = path.join(this.outputDir, 'infrastructure-scalability-report.html');
-        await fs.writeFile(htmlPath, htmlContent);
+        await fs.promises.writeFile(htmlPath, htmlContent);
         console.log(`📊 HTML report generated: ${htmlPath}`);
     }
 
@@ -1256,7 +1260,7 @@ class InfrastructureScalabilityValidator {
 }
 
 // CLI execution
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const validator = new InfrastructureScalabilityValidator();
     
     validator.run()
@@ -1269,4 +1273,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = InfrastructureScalabilityValidator;
+export default InfrastructureScalabilityValidator;

@@ -17,9 +17,13 @@
  * - SLA monitoring and reporting
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { execSync, spawn } = require('child_process');
+import fs from 'fs';
+import path from 'path';
+import { execSync, spawn } from 'child_process';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 class MonitoringAlertingSystem {
     constructor(options = {}) {
@@ -65,7 +69,7 @@ class MonitoringAlertingSystem {
         console.log('📊 Initializing Monitoring and Alerting System...');
         
         // Create output directory
-        await fs.mkdir(this.config.outputDir, { recursive: true });
+        await fs.promises.mkdir(this.config.outputDir, { recursive: true });
         
         // Detect existing monitoring infrastructure
         await this.detectExistingMonitoring();
@@ -552,7 +556,7 @@ class MonitoringAlertingSystem {
         const yamlContent = this.objectToYaml(prometheusConfig);
         
         const configPath = path.join(this.config.outputDir, 'prometheus.yml');
-        await fs.writeFile(configPath, yamlContent);
+        await fs.promises.writeFile(configPath, yamlContent);
         
         // Generate alert rules
         await this.generateAlertRules();
@@ -584,7 +588,7 @@ class MonitoringAlertingSystem {
         
         const yamlContent = this.objectToYaml(alertRules);
         const rulesPath = path.join(this.config.outputDir, 'alert_rules.yml');
-        await fs.writeFile(rulesPath, yamlContent);
+        await fs.promises.writeFile(rulesPath, yamlContent);
         
         console.log(`📄 Alert rules saved: ${rulesPath}`);
     }
@@ -593,7 +597,7 @@ class MonitoringAlertingSystem {
         console.log('📈 Generating Grafana dashboards...');
         
         const dashboardsDir = path.join(this.config.outputDir, 'grafana-dashboards');
-        await fs.mkdir(dashboardsDir, { recursive: true });
+        await fs.promises.mkdir(dashboardsDir, { recursive: true });
         
         for (const [dashboardId, dashboard] of Object.entries(this.dashboards)) {
             const grafanaDashboard = {
@@ -628,7 +632,7 @@ class MonitoringAlertingSystem {
             };
             
             const dashboardPath = path.join(dashboardsDir, `${dashboardId}.json`);
-            await fs.writeFile(dashboardPath, JSON.stringify(grafanaDashboard, null, 2));
+            await fs.promises.writeFile(dashboardPath, JSON.stringify(grafanaDashboard, null, 2));
             
             console.log(`📊 Dashboard saved: ${dashboardPath}`);
         }
@@ -673,7 +677,7 @@ class MonitoringAlertingSystem {
         
         const yamlContent = this.objectToYaml(alertmanagerConfig);
         const configPath = path.join(this.config.outputDir, 'alertmanager.yml');
-        await fs.writeFile(configPath, yamlContent);
+        await fs.promises.writeFile(configPath, yamlContent);
         
         console.log(`📄 Alertmanager config saved: ${configPath}`);
     }
@@ -780,7 +784,7 @@ class MonitoringAlertingSystem {
         
         const yamlContent = this.objectToYaml(dockerCompose);
         const composePath = path.join(this.config.outputDir, 'docker-compose.monitoring.yml');
-        await fs.writeFile(composePath, yamlContent);
+        await fs.promises.writeFile(composePath, yamlContent);
         
         console.log(`🐳 Docker Compose saved: ${composePath}`);
     }
@@ -789,7 +793,7 @@ class MonitoringAlertingSystem {
         console.log('☸️ Generating Kubernetes monitoring manifests...');
         
         const k8sDir = path.join(this.config.outputDir, 'kubernetes');
-        await fs.mkdir(k8sDir, { recursive: true });
+        await fs.promises.mkdir(k8sDir, { recursive: true });
         
         // Prometheus deployment
         const prometheusManifest = {
@@ -828,7 +832,7 @@ class MonitoringAlertingSystem {
         };
         
         const prometheusPath = path.join(k8sDir, 'prometheus-deployment.yaml');
-        await fs.writeFile(prometheusPath, this.objectToYaml(prometheusManifest));
+        await fs.promises.writeFile(prometheusPath, this.objectToYaml(prometheusManifest));
         
         // Grafana deployment
         const grafanaManifest = {
@@ -862,7 +866,7 @@ class MonitoringAlertingSystem {
         };
         
         const grafanaPath = path.join(k8sDir, 'grafana-deployment.yaml');
-        await fs.writeFile(grafanaPath, this.objectToYaml(grafanaManifest));
+        await fs.promises.writeFile(grafanaPath, this.objectToYaml(grafanaManifest));
         
         console.log(`☸️ Kubernetes manifests saved to: ${k8sDir}`);
     }
@@ -1224,7 +1228,7 @@ class MonitoringAlertingSystem {
         
         // Save JSON report
         const jsonPath = path.join(this.config.outputDir, 'monitoring-system-report.json');
-        await fs.writeFile(jsonPath, JSON.stringify(report, null, 2));
+        await fs.promises.writeFile(jsonPath, JSON.stringify(report, null, 2));
         
         // Generate HTML report
         await this.generateMonitoringHTMLReport(report);
@@ -1447,7 +1451,7 @@ class MonitoringAlertingSystem {
 </html>`;
         
         const htmlPath = path.join(this.config.outputDir, 'monitoring-system-report.html');
-        await fs.writeFile(htmlPath, htmlContent);
+        await fs.promises.writeFile(htmlPath, htmlContent);
         
         console.log(`📊 HTML monitoring report generated: ${htmlPath}`);
     }
@@ -1540,8 +1544,8 @@ class MonitoringAlertingSystem {
     }
 }
 
-// CLI execution
-if (require.main === module) {
+// CLI execution check for ES modules
+if (import.meta.url === `file://${process.argv[1]}`) {
     const options = {
         outputDir: process.argv[2] || './reports/monitoring-system',
         monitoringStack: process.argv[3] || 'prometheus-grafana'
@@ -1561,4 +1565,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = MonitoringAlertingSystem;
+export default MonitoringAlertingSystem;

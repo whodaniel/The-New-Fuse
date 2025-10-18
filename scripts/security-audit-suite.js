@@ -6,11 +6,15 @@
  * Designed to ensure platform security for millions of users
  */
 
-const fs = require('fs').promises;
-const path = require('path');
-const { spawn, exec } = require('child_process');
-const { promisify } = require('util');
-const crypto = require('crypto');
+import fs from 'fs';
+import path from 'path';
+import { spawn, exec } from 'child_process';
+import { promisify } from 'util';
+import crypto from 'crypto';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const execAsync = promisify(exec);
 
 class SecurityAuditSuite {
@@ -84,7 +88,7 @@ class SecurityAuditSuite {
     }
 
     async setupAuditEnvironment() {
-        await fs.mkdir(this.outputDir, { recursive: true });
+        await fs.promises.mkdir(this.outputDir, { recursive: true });
         console.log(`📁 Security audit environment setup at ${this.outputDir}`);
     }
 
@@ -1638,7 +1642,7 @@ class SecurityAuditSuite {
         
         // Save detailed report
         const reportPath = path.join(this.outputDir, 'security-audit-report.json');
-        await fs.writeFile(reportPath, JSON.stringify(report, null, 2));
+        await fs.promises.writeFile(reportPath, JSON.stringify(report, null, 2));
         
         // Generate HTML report
         await this.generateSecurityHTMLReport(report);
@@ -1863,7 +1867,7 @@ class SecurityAuditSuite {
 </html>`;
         
         const htmlPath = path.join(this.outputDir, 'security-audit-report.html');
-        await fs.writeFile(htmlPath, htmlContent);
+        await fs.promises.writeFile(htmlPath, htmlContent);
         
         console.log(`📊 HTML security report generated: ${htmlPath}`);
     }
@@ -1926,7 +1930,7 @@ class SecurityAuditSuite {
 }
 
 // CLI execution
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
     const securityAudit = new SecurityAuditSuite();
     
     securityAudit.run()
@@ -1940,4 +1944,4 @@ if (require.main === module) {
         });
 }
 
-module.exports = SecurityAuditSuite;
+export default SecurityAuditSuite;
