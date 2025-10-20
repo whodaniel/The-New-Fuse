@@ -9,8 +9,9 @@
  */
 
 import { Injectable, OnModuleInit, OnModuleDestroy, Logger } from '@nestjs/common';
-import { PrismaClient } from '../generated/prisma';
-import { softDeleteMiddleware, withDeleted, hardDelete, restoreRecord } from './middleware/soft-delete.middleware';
+import { PrismaClient, Prisma } from '../generated/prisma';
+import { ConfigService } from '@nestjs/config';
+import { withDeleted, hardDelete, restoreRecord } from './middleware/soft-delete.middleware';
 
 @Injectable()
 export class PrismaServiceEnhanced extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -32,37 +33,9 @@ export class PrismaServiceEnhanced extends PrismaClient implements OnModuleInit,
     await this.$connect();
     this.logger.log('Database connected successfully');
 
-    // Register soft delete middleware
-    this.$use(softDeleteMiddleware);
-    this.logger.log('Soft delete middleware registered');
-
-    // Register query logging middleware (development only)
-    if (process.env.NODE_ENV === 'development') {
-      this.$use(async (params, next) => {
-        const before = Date.now();
-        const result = await next(params);
-        const after = Date.now();
-
-        this.logger.debug(
-          `Query ${params.model}.${params.action} took ${after - before}ms`
-        );
-
-        return result;
-      });
-    }
-
-    // Register error handling middleware
-    this.$use(async (params, next) => {
-      try {
-        return await next(params);
-      } catch (error) {
-        this.logger.error(
-          `Database error in ${params.model}.${params.action}:`,
-          error
-        );
-        throw error;
-      }
-    });
+    // Note: Prisma middleware ($use) is not available in this version
+    // Soft delete functionality will need to be implemented at the service level
+    this.logger.warn('Prisma middleware not available - soft delete will be handled manually');
 
     // Setup event listeners for logging
     this.$on('query' as never, (e: any) => {

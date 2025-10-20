@@ -7,7 +7,7 @@
  */
 
 import { EventEmitter } from 'events';
-import chokidar from 'chokidar';
+import * as chokidar from 'chokidar';
 import fs from 'fs/promises';
 import path from 'path';
 import { Transport, RelayMessage } from '../types/index.js';

@@ -130,6 +130,8 @@ model AgentMetadata {
   id       String @id @default(uuid())
   agentId  String @unique
   metadata Json   @default("{}")
+  version  String @default("1.0.0")
+  config   Json?
 
   // Relationships
   agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
@@ -252,6 +254,8 @@ model Message {
   updatedAt       DateTime    @updatedAt
   isEdited        Boolean     @default(false)
   isDeleted       Boolean     @default(false)
+  isEphemeral     Boolean     @default(false)
+  expiresAt       DateTime?
   reactions       Json?
 
   @@map("messages")

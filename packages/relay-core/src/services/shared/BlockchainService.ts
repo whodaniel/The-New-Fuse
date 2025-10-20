@@ -214,25 +214,38 @@ export class BlockchainService extends EventEmitter {
 
       // Execute the call
       let result;
-      if (method.estimateGas) {
-        // This is a state-changing transaction
+      try {
+        // Try to execute as a transaction first
         const tx = await method(...args, txOptions);
-        const receipt = await tx.wait();
-        
-        result = {
-          success: true,
-          data: receipt as T,
-          transactionHash: receipt.hash,
-          blockNumber: receipt.blockNumber,
-          gasUsed: receipt.gasUsed.toNumber()
-        };
-      } else {
-        // This is a view/pure function call
-        const data = await method(...args);
-        result = {
-          success: true,
-          data: data as T
-        };
+        if (tx && typeof tx.wait === 'function') {
+          // This is a state-changing transaction
+          const receipt = await tx.wait();
+          
+          result = {
+            success: true,
+            data: receipt as T,
+            transactionHash: receipt.hash,
+            blockNumber: receipt.blockNumber,
+            gasUsed: receipt.gasUsed.toNumber()
+          };
+        } else {
+          // This is a view/pure function call result
+          result = {
+            success: true,
+            data: tx as T
+          };
+        }
+      } catch (error: any) {
+        // If transaction fails, try as a view call
+        if (error.code === 'CALL_EXCEPTION' || error.message?.includes('call revert')) {
+          const data = await method(...args);
+          result = {
+            success: true,
+            data: data as T
+          };
+        } else {
+          throw error;
+        }
       }
 
       this.emit('contractCall', {
@@ -293,18 +306,19 @@ export class BlockchainService extends EventEmitter {
         return this.config.gasLimit;
       }
 
-      const method = contract.estimateGas[methodName];
-      if (!method) {
+      // Check if the method exists on the contract
+      if (!(methodName in contract)) {
         return this.config.gasLimit;
       }
 
       const txOptions: any = {};
       if (options.value) txOptions.value = parseEther(options.value);
 
-      const estimatedGas = await method(...args, txOptions);
+      // Use the contract's estimateGas method
+      const estimatedGas = await contract[methodName].estimateGas(...args, txOptions);
       
       // Add 20% buffer for safety
-      return Math.floor(estimatedGas.toNumber() * 1.2);
+      return Math.floor(Number(estimatedGas) * 1.2);
       
     } catch (error) {
       this.logger.warn(`Gas estimation failed, using default: ${error}`);

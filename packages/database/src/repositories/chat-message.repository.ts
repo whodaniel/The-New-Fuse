@@ -24,6 +24,8 @@ export class ChatMessageRepository {
       updatedAt: dbMessage.updatedAt,
       isEdited: dbMessage.isEdited,
       isDeleted: dbMessage.isDeleted,
+      isEphemeral: dbMessage.isEphemeral,
+      expiresAt: dbMessage.expiresAt,
       reactions: dbMessage.reactions,
     };
   }
@@ -45,6 +47,8 @@ export class ChatMessageRepository {
       updatedAt: true,
       isEdited: true,
       isDeleted: true,
+      isEphemeral: true,
+      expiresAt: true,
       reactions: true,
     };
   }

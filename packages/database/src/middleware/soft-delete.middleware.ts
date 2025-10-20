@@ -1,13 +1,10 @@
 /**
- * Soft Delete Middleware for Prisma
- *
- * Automatically handles soft deletes for models with deletedAt field:
- * - Filters out deleted records from queries
- * - Converts delete operations to updates
- * - Maintains audit trail
+ * Soft delete middleware for Prisma
+ * 
+ * This middleware intercepts delete operations and converts them to updates
+ * that set the deletedAt field instead of actually deleting the record.
+ * It also filters out soft-deleted records from find operations.
  */
-
-import { Prisma } from '../generated/prisma';
 
 // Models that support soft delete
 const SOFT_DELETE_MODELS = [
@@ -54,7 +51,7 @@ function isSoftDeleteModel(model: string | undefined): model is SoftDeleteModel 
 /**
  * Adds deletedAt: null filter to query parameters
  */
-function addSoftDeleteFilter(params: Prisma.MiddlewareParams): void {
+function addSoftDeleteFilter(params: any): void {
   if (params.args.where) {
     // Only add filter if deletedAt is not explicitly set
     if (params.args.where.deletedAt === undefined) {
@@ -68,7 +65,7 @@ function addSoftDeleteFilter(params: Prisma.MiddlewareParams): void {
 /**
  * Adds updatedAt timestamp to update operations
  */
-function addUpdatedAtTimestamp(params: Prisma.MiddlewareParams): void {
+function addUpdatedAtTimestamp(params: any): void {
   if (params.args.data && !params.args.data.updatedAt) {
     params.args.data.updatedAt = new Date();
   }
@@ -77,7 +74,7 @@ function addUpdatedAtTimestamp(params: Prisma.MiddlewareParams): void {
 /**
  * Converts delete to soft delete (update with deletedAt)
  */
-function convertDeleteToSoftDelete(params: Prisma.MiddlewareParams): void {
+function convertDeleteToSoftDelete(params: any): void {
   if (params.action === 'delete') {
     params.action = 'update';
     params.args.data = {
@@ -104,28 +101,33 @@ function convertDeleteToSoftDelete(params: Prisma.MiddlewareParams): void {
  * }
  * ```
  */
-export const softDeleteMiddleware: Prisma.Middleware = async (params, next) => {
-  // Only apply to soft delete models
-  if (!isSoftDeleteModel(params.model)) {
+export const softDeleteMiddleware = async (
+  params: any,
+  next: any
+): Promise<any> => {
+  const model = params.model?.toLowerCase();
+
+  if (!isSoftDeleteModel(model)) {
     return next(params);
   }
 
-  // Handle query actions - filter out deleted records
+  // Handle different action types
   if (QUERY_ACTIONS.includes(params.action as any)) {
     addSoftDeleteFilter(params);
-  }
-
-  // Handle update actions - add updatedAt timestamp
-  if (UPDATE_ACTIONS.includes(params.action as any)) {
+  } else if (UPDATE_ACTIONS.includes(params.action as any)) {
     addUpdatedAtTimestamp(params);
-  }
-
-  // Handle delete actions - convert to soft delete
-  if (DELETE_ACTIONS.includes(params.action as any)) {
+  } else if (DELETE_ACTIONS.includes(params.action as any)) {
     convertDeleteToSoftDelete(params);
   }
 
-  return next(params);
+  const result = await next(params);
+
+  // Log soft delete operations for audit
+  if (DELETE_ACTIONS.includes(params.action as any)) {
+    console.log(`Soft deleted ${model} with params:`, params.args);
+  }
+
+  return result;
 };
 
 /**
@@ -148,8 +150,8 @@ export interface SoftDeleteContext {
  */
 export function createSoftDeleteMiddleware(
   defaultContext: SoftDeleteContext = {}
-): Prisma.Middleware {
-  return async (params, next) => {
+): any {
+  return async (params: any, next: any) => {
     // Check for context in params
     const context: SoftDeleteContext = (params as any).__context || defaultContext;
 

@@ -50,7 +50,7 @@ async function buildTheiaWithMemoryOptimization() {
   console.log('🔧 Building Theia IDE with memory optimization...');
   
   try {
-    // Install dependencies first with pnpm (following project convention)
+    // Install dependencies first with pnpm (using system path)
     console.log('📦 Installing Theia dependencies with pnpm...');
     await runCommand('pnpm', ['install'], { 
       cwd: path.resolve(__dirname, '..', 'apps', 'theia-ide'),
@@ -257,9 +257,9 @@ async function main() {
       // Analyze failure and provide recommendations
       if (error.message.includes('out of memory') || error.message.includes('heap') || error.message.includes('timed out')) {
         console.log('💡 Memory/timeout-related failure detected. Recommendations:');
-        console.log('   - Try: pnpm run build:low-memory');
-        console.log('   - Try: pnpm run build:staged');
-        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" pnpm run build');
+        console.log('   - Try: /Users/<owner>/Library/pnpm/pnpm run build:low-memory');
+        console.log('   - Try: /Users/<owner>/Library/pnpm/pnpm run build:staged');
+        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" /Users/<owner>/Library/pnpm/pnpm run build');
         console.log('   - Consider increasing system memory or closing other applications');
         console.log('   - Check if any processes are hanging: ps aux | grep theia');
       }

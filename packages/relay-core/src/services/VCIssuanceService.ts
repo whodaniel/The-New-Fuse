@@ -467,9 +467,9 @@ export class VCIssuanceService extends EventEmitter {
     // Query task history for capability-related tasks
     const tasks = await this.prisma.task.findMany({
       where: {
-        assignedTo: agentId,
+        agentId: agentId,
         status: 'COMPLETED',
-        title: {
+        type: {
           contains: capability,
           mode: 'insensitive'
         }
@@ -553,7 +553,7 @@ export class VCIssuanceService extends EventEmitter {
    */
   private async generatePerformanceMetrics(agentId: string): Promise<PerformanceMetrics> {
     const tasks = await this.prisma.task.findMany({
-      where: { assignedTo: agentId },
+      where: { agentId: agentId },
       orderBy: { createdAt: 'desc' },
       take: 1000 // Last 1000 tasks for comprehensive analysis
     });
@@ -622,7 +622,7 @@ export class VCIssuanceService extends EventEmitter {
     const achievements: AgentAchievement[] = [];
     
     const taskCount = await this.prisma.task.count({
-      where: { assignedTo: agentId, status: 'COMPLETED' }
+      where: { agentId: agentId, status: 'COMPLETED' }
     });
 
     if (taskCount >= 100) {
@@ -671,7 +671,7 @@ export class VCIssuanceService extends EventEmitter {
     const skills: VerifiedSkill[] = [];
     
     // Extract skills from agent capabilities
-    const capabilities = agent.metadata.capabilities as any;
+    const capabilities = agent.capabilities as any;
     if (capabilities) {
       Object.entries(capabilities).forEach(([skill, enabled]) => {
         if (enabled) {

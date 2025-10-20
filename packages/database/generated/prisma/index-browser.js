@@ -181,7 +181,9 @@ exports.Prisma.AgentScalarFieldEnum = {
 exports.Prisma.AgentMetadataScalarFieldEnum = {
   id: 'id',
   agentId: 'agentId',
-  metadata: 'metadata'
+  metadata: 'metadata',
+  version: 'version',
+  config: 'config'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {
@@ -225,6 +227,8 @@ exports.Prisma.MessageScalarFieldEnum = {
   updatedAt: 'updatedAt',
   isEdited: 'isEdited',
   isDeleted: 'isDeleted',
+  isEphemeral: 'isEphemeral',
+  expiresAt: 'expiresAt',
   reactions: 'reactions'
 };
 
@@ -573,7 +577,8 @@ exports.Prisma.AgentOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
   id: 'id',
-  agentId: 'agentId'
+  agentId: 'agentId',
+  version: 'version'
 };
 
 exports.Prisma.ChatOrderByRelevanceFieldEnum = {

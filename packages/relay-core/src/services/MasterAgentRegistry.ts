@@ -404,16 +404,18 @@ export class MasterAgentRegistry extends EventEmitter {
           status: completeProfile.status,
           description: completeProfile.description,
           systemPrompt: completeProfile.systemPrompt,
-          configuration: completeProfile.configuration,
+          config: completeProfile.configuration,
           userId: completeProfile.userId,
           metadata: {
             create: {
               version: completeProfile.metadata.version,
-              lastActive: new Date(),
-              capabilities: completeProfile.capabilities,
-              personalityTraits: completeProfile.metadata.personalityTraits,
-              communicationStyle: completeProfile.metadata.communicationStyle,
-              expertiseAreas: completeProfile.metadata.expertiseAreas,
+              metadata: {
+                lastActive: new Date(),
+                capabilities: completeProfile.capabilities,
+                personalityTraits: completeProfile.metadata.personalityTraits,
+                communicationStyle: completeProfile.metadata.communicationStyle,
+                expertiseAreas: completeProfile.metadata.expertiseAreas
+              },
               config: {
                 platform: completeProfile.platform,
                 location: completeProfile.location,
@@ -473,8 +475,8 @@ export class MasterAgentRegistry extends EventEmitter {
                 metadata: {
                   update: {
                     config: {
-                      ...dbAgent.metadata?.config,
-                      onChainData: onChainData
+                      ...(typeof dbAgent.metadata?.config === 'object' && dbAgent.metadata?.config !== null ? dbAgent.metadata.config : {}),
+                      onChainData: JSON.parse(JSON.stringify(onChainData))
                     }
                   }
                 }
@@ -723,19 +725,37 @@ export class MasterAgentRegistry extends EventEmitter {
 
     // Also create a Prisma Task for persistence and integration
     if (todoData.category !== 'onboarding') { // Don't clutter Task table with onboarding todos
+      // First ensure we have a default pipeline for this agent
+      let defaultPipeline = await this.prisma.pipeline.findFirst({
+        where: { agentId, name: 'Default Agent Pipeline' }
+      });
+      
+      if (!defaultPipeline) {
+        defaultPipeline = await this.prisma.pipeline.create({
+          data: {
+            name: 'Default Agent Pipeline',
+            description: 'Default pipeline for agent tasks',
+            agentId,
+            userId: agent.userId
+          }
+        });
+      }
+
       const prismaTask = await this.prisma.task.create({
         data: {
-          title: todo.content,
-          description: `Agent todo: ${todo.content}`,
-          status: this.convertTodoStatusToTaskStatus(todo.status),
-          priority: this.convertTodoPriorityToTaskPriority(todo.priority),
-          agentId,
-          userId: agent.userId,
-          metadata: {
+          type: todo.content,
+          data: {
+            title: todo.content,
+            description: `Agent todo: ${todo.content}`,
             masterRegistryTodoId: todoId,
             category: todo.category,
             context: todo.context
-          }
+          },
+          status: this.convertTodoStatusToTaskStatus(todo.status),
+          priority: this.convertTodoPriorityToTaskPriority(todo.priority),
+          pipelineId: defaultPipeline.id,
+          agentId,
+          userId: agent.userId
         }
       });
       todo.integrationId = prismaTask.id;
