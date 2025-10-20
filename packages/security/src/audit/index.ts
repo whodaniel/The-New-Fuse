@@ -8,7 +8,7 @@ export const AuditLogEntry = z.object({
     userId: z.string().optional(),
     resourceId: z.string().optional(),
     resourceType: z.string().optional(),
-    details: z.record(z.any()).optional()
+    details: z.record(z.string(), z.any()).optional()
 });
 
 export type AuditLogEntryType = z.infer<typeof AuditLogEntry>;

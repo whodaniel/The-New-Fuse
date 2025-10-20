@@ -16,5 +16,6 @@
     }
   ],
   "json.validate.enable": true,
-  "json.schemaDownload.enable": true
+  "json.schemaDownload.enable": true,
+  "jest.rootPath": "./src/vscode-extension"
 }

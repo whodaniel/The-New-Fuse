@@ -5,7 +5,9 @@
     "rootDir": "./src",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "module": "CommonJS"
   },
   "include": [
     "src/**/*"

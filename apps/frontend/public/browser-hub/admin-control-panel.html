@@ -427,7 +427,7 @@
                         <div class="card-content">
                             <div class="status-indicator">
                                 <span class="status-dot connected"></span>
-                                <span>Theia IDE: Running</span>
+                                <span>Browser Hub IDE: Running</span>
                             </div>
                             <div class="status-indicator">
                                 <span class="status-dot connected"></span>
@@ -435,7 +435,7 @@
                             </div>
                         </div>
                         <div class="card-actions">
-                            <button class="admin-btn" onclick="openTheia()">
+                            <button class="admin-btn" onclick="openBrowserHub()">
                                 <span>💻</span>
                                 <span>Open IDE</span>
                             </button>
@@ -572,10 +572,10 @@
             }
         }
 
-        function openTheia() {
-            console.log('Opening Theia IDE...');
+        function openBrowserHub() {
+            console.log('Opening Browser Hub IDE...');
             if (window.electronAPI) {
-                window.electronAPI.openTheia();
+                window.electronAPI.openBrowserHub();
             }
         }
 

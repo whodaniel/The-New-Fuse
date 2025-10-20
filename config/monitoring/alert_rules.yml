@@ -1,0 +1,232 @@
+groups:
+  - name: infrastructure_alerts
+    rules:
+      # High CPU usage alert
+      - alert: HighCPUUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High CPU usage detected on {{ $labels.instance }}"
+          description: "CPU usage is above 80% for more than 5 minutes on {{ $labels.instance }}"
+
+      # High memory usage alert
+      - alert: HighMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "High memory usage detected on {{ $labels.instance }}"
+          description: "Memory usage is above 85% for more than 5 minutes on {{ $labels.instance }}"
+
+      # Critical memory usage alert
+      - alert: CriticalMemoryUsage
+        expr: (node_memory_MemTotal_bytes - node_memory_MemAvailable_bytes) / node_memory_MemTotal_bytes * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Critical memory usage detected on {{ $labels.instance }}"
+          description: "Memory usage is above 95% for more than 2 minutes on {{ $labels.instance }}"
+
+      # Disk space alert
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: warning
+          category: infrastructure
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is below 10% on {{ $labels.instance }} ({{ $labels.mountpoint }})"
+
+      # Critical disk space alert
+      - alert: CriticalDiskSpace
+        expr: (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100 < 5
+        for: 2m
+        labels:
+          severity: critical
+          category: infrastructure
+        annotations:
+          summary: "Critical disk space on {{ $labels.instance }}"
+          description: "Disk space is below 5% on {{ $labels.instance }} ({{ $labels.mountpoint }})"
+
+  - name: application_alerts
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is above 5% for more than 5 minutes"
+
+      # Critical error rate alert
+      - alert: CriticalErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 10
+        for: 2m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: "Critical error rate detected"
+          description: "Error rate is above 10% for more than 2 minutes"
+
+      # High response time alert
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: application
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is above 2 seconds for more than 5 minutes"
+
+      # Service down alert
+      - alert: ServiceDown
+        expr: up == 0
+        for: 1m
+        labels:
+          severity: critical
+          category: application
+        annotations:
+          summary: "Service {{ $labels.job }} is down"
+          description: "Service {{ $labels.job }} on {{ $labels.instance }} has been down for more than 1 minute"
+
+  - name: database_alerts
+    rules:
+      # High database connections
+      - alert: HighDatabaseConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "High database connection usage"
+          description: "Database connection usage is above 80% for more than 5 minutes"
+
+      # Critical database connections
+      - alert: CriticalDatabaseConnections
+        expr: pg_stat_database_numbackends / pg_settings_max_connections * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          category: database
+        annotations:
+          summary: "Critical database connection usage"
+          description: "Database connection usage is above 95% for more than 2 minutes"
+
+      # Slow queries
+      - alert: SlowQueries
+        expr: rate(pg_stat_database_tup_returned[5m]) / rate(pg_stat_database_tup_fetched[5m]) < 0.1
+        for: 10m
+        labels:
+          severity: warning
+          category: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Database query efficiency is below 10% for more than 10 minutes"
+
+  - name: redis_alerts
+    rules:
+      # High Redis memory usage
+      - alert: HighRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage is above 80% for more than 5 minutes"
+
+      # Critical Redis memory usage
+      - alert: CriticalRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 95
+        for: 2m
+        labels:
+          severity: critical
+          category: cache
+        annotations:
+          summary: "Critical Redis memory usage"
+          description: "Redis memory usage is above 95% for more than 2 minutes"
+
+      # Low Redis hit rate
+      - alert: LowRedisHitRate
+        expr: rate(redis_keyspace_hits_total[5m]) / (rate(redis_keyspace_hits_total[5m]) + rate(redis_keyspace_misses_total[5m])) * 100 < 80
+        for: 10m
+        labels:
+          severity: warning
+          category: cache
+        annotations:
+          summary: "Low Redis cache hit rate"
+          description: "Redis cache hit rate is below 80% for more than 10 minutes"
+
+  - name: container_alerts
+    rules:
+      # Container high CPU
+      - alert: ContainerHighCPU
+        expr: rate(container_cpu_usage_seconds_total[5m]) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: container
+        annotations:
+          summary: "Container {{ $labels.name }} high CPU usage"
+          description: "Container {{ $labels.name }} CPU usage is above 80% for more than 5 minutes"
+
+      # Container high memory
+      - alert: ContainerHighMemory
+        expr: container_memory_usage_bytes / container_spec_memory_limit_bytes * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          category: container
+        annotations:
+          summary: "Container {{ $labels.name }} high memory usage"
+          description: "Container {{ $labels.name }} memory usage is above 80% for more than 5 minutes"
+
+      # Container restart
+      - alert: ContainerRestart
+        expr: increase(container_start_time_seconds[1h]) > 5
+        for: 0m
+        labels:
+          severity: warning
+          category: container
+        annotations:
+          summary: "Container {{ $labels.name }} restarting frequently"
+          description: "Container {{ $labels.name }} has restarted more than 5 times in the last hour"
+
+  - name: load_balancer_alerts
+    rules:
+      # High Nginx error rate
+      - alert: HighNginxErrorRate
+        expr: rate(nginx_http_requests_total{status=~"5.."}[5m]) / rate(nginx_http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: warning
+          category: loadbalancer
+        annotations:
+          summary: "High Nginx error rate"
+          description: "Nginx error rate is above 5% for more than 5 minutes"
+
+      # High upstream response time
+      - alert: HighUpstreamResponseTime
+        expr: nginx_upstream_response_time > 2
+        for: 5m
+        labels:
+          severity: warning
+          category: loadbalancer
+        annotations:
+          summary: "High upstream response time"
+          description: "Nginx upstream response time is above 2 seconds for more than 5 minutes"

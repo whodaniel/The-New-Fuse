@@ -122,8 +122,8 @@ node-v*-*/
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+pnpm-error.log*
 
 # Database
 *.sqlite

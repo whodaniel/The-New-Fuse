@@ -107,8 +107,8 @@ function main() {
   
   if (updatedCount > 0) {
     console.log('\n📋 Next steps:');
-    console.log('1. Run "bun install" to install any new rimraf dependencies');
-    console.log('2. Test the clean scripts with "bun run clean"');
+    console.log('1. Run "pnpm install" to install any new rimraf dependencies');
+    console.log('2. Test the clean scripts with "pnpm run clean"');
     console.log('3. Commit the updated package.json files');
   }
 }

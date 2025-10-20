@@ -5,6 +5,6 @@
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "devDependencies": {
-    "rimraf": "^5.0.5"
+    "rimraf": "^6.0.1"
   }
 }

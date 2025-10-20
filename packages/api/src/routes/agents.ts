@@ -1,28 +1,41 @@
-import express, { Request, Response, NextFunction } from 'express';
+import { Router, Request, Response, NextFunction } from 'express';
 import { AgentService } from '../services/agent.service';
-
-// Create an instance of the service (in a real app, this would be injected)
-const agentService = new AgentService(null as any, null as any);
-import { sendSuccess, sendCreated, sendNoContent } from '../utils/response.util';
+import { PrismaService } from '../services/prisma.service';
+import { AgentRepository } from '../repositories/agent.repository';
 import { ApiError } from '../middleware/error.middleware';
-import { validateBody, validateParams } from '../middleware/validation.middleware';
-import { createAgentSchema, updateAgentSchema, agentIdSchema } from '../schemas/agent.schema';
 import { authenticate } from '../middleware/auth';
+import { sendNoContent, sendSuccess, sendCreated } from '../utils/response.util';
+import { validateParams, validateBody } from '../middleware/validation.middleware';
+import { agentIdSchema, createAgentSchema, updateAgentSchema } from '../schemas/agent.schema';
 
-const router = express.Router();
-
-// Define User interface if not globally available (matching controller)
+// User interface for type safety
 interface User {
   id: string;
+  email?: string;
+  name?: string;
+  role?: string;
   [key: string]: any;
 }
 
-// Extend Express Request type (matching controller)
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: User;
+// Extend Express Request interface
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
   }
 }
+
+const router: Router = Router();
+const prismaService = new PrismaService();
+const agentRepository = new AgentRepository(prismaService);
+const agentService = new AgentService(
+  agentRepository,
+  new (class {
+    async detectAndCreateAgents(): Promise<any[]> { return []; }
+    async getAvailableProviders(): Promise<string[]> { return []; }
+  })()
+);
 
 // Get all agents - Add authentication and pass userId
 router.get('/', authenticate, async (req: Request, res: Response, next: NextFunction) => {
@@ -30,12 +43,9 @@ router.get('/', authenticate, async (req: Request, res: Response, next: NextFunc
         if (!req.user) {
             return next(new ApiError('Authentication required', 401));
         }
-        // Use getAgents(userId) instead of findAll()
-        const agents = await agentService.getAgents(req.user.id);
+        const agents = await agentService.getAgents((req.user as User).id);
         sendSuccess(res, agents);
-    } catch (error) {
-        // Use toError helper if available, otherwise keep existing error handling
-        const err = error instanceof Error ? error : new Error('Failed to fetch agents');
+    } catch (err: any) {
         next(new ApiError(err.message || 'Failed to fetch agents', 500));
     }
 });
@@ -46,18 +56,12 @@ router.get('/:id', authenticate, validateParams(agentIdSchema), async (req: Requ
          if (!req.user) {
             return next(new ApiError('Authentication required', 401));
         }
-        // Use getAgentById(id, userId) instead of findById(id)
-        const agent = await agentService.getAgentById(req.params.id, req.user.id);
-        // Service now throws if not found
-        // if (!agent) {
-        //     return next(new ApiError('Agent not found', 404));
-        // }
-        sendSuccess(res, agent);
-    } catch (error) {
-        const err = error instanceof Error ? error : new Error('Failed to fetch agent');
-        if (err.message?.includes('not found')) {
-             return next(new ApiError('Agent not found', 404));
+        const agent = await agentService.getAgentById(req.params.id, (req.user as User).id);
+        if (!agent) {
+            return next(new ApiError('Agent not found', 404));
         }
+        sendSuccess(res, agent);
+    } catch (err: any) {
         next(new ApiError(err.message || `Failed to fetch agent ${req.params.id}`, 500));
     }
 });
@@ -68,15 +72,9 @@ router.post('/', authenticate, validateBody(createAgentSchema), async (req: Requ
          if (!req.user) {
             return next(new ApiError('Authentication required', 401));
         }
-        // Pass userId to createAgent
-        // Ensure req.body matches CreateAgentDto expected by the service
-        const newAgent = await agentService.createAgent(req.body, req.user.id);
+        const newAgent = await agentService.createAgent(req.body, (req.user as User).id);
         sendCreated(res, newAgent);
-    } catch (error) {
-        const err = error instanceof Error ? error : new Error('Failed to create agent');
-         if (err.message?.includes('already exists')) {
-             return next(new ApiError(err.message, 409)); // Conflict
-        }
+    } catch (err: any) {
         next(new ApiError(err.message || 'Failed to create agent', 500));
     }
 });
@@ -87,19 +85,12 @@ router.put('/:id', authenticate, validateParams(agentIdSchema), validateBody(upd
          if (!req.user) {
             return next(new ApiError('Authentication required', 401));
         }
-        // Pass userId to updateAgent
-        // Ensure req.body matches UpdateAgentDto expected by the service
-        const updatedAgent = await agentService.updateAgent(req.params.id, req.body, req.user.id);
-        // Service throws if not found
-        // if (!updatedAgent) {
-        //     return next(new ApiError('Agent not found', 404));
-        // }
-        sendSuccess(res, updatedAgent);
-    } catch (error) {
-         const err = error instanceof Error ? error : new Error('Failed to update agent');
-         if (err.message?.includes('not found')) {
-             return next(new ApiError('Agent not found', 404));
+        const updatedAgent = await agentService.updateAgent(req.params.id, req.body, (req.user as User).id);
+        if (!updatedAgent) {
+            return next(new ApiError('Agent not found', 404));
         }
+        sendSuccess(res, updatedAgent);
+    } catch (err: any) {
         next(new ApiError(err.message || `Failed to update agent ${req.params.id}`, 500));
     }
 });
@@ -110,20 +101,14 @@ router.delete('/:id', authenticate, validateParams(agentIdSchema), async (req: R
          if (!req.user) {
             return next(new ApiError('Authentication required', 401));
         }
-        // Pass userId to deleteAgent
-        const success = await agentService.deleteAgent(req.params.id, req.user.id);
+        const success = await agentService.deleteAgent(req.params.id, (req.user as User).id);
 
         if (!success) {
-             // This might indicate not found or other deletion failure based on service logic
             return next(new ApiError('Agent not found or could not be deleted', 404));
         }
 
         sendNoContent(res);
-    } catch (error) {
-        const err = error instanceof Error ? error : new Error('Failed to delete agent');
-         if (err.message?.includes('not found')) {
-             return next(new ApiError('Agent not found', 404));
-        }
+    } catch (err: any) {
         next(new ApiError(err.message || `Failed to delete agent ${req.params.id}`, 500));
     }
 });

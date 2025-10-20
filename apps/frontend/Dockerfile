@@ -6,15 +6,14 @@ WORKDIR /app
 # Install build dependencies
 RUN apk add --no-cache python3 make g++
 
-# Enable corepack for yarn version management
-RUN corepack enable && corepack prepare yarn@4.9.1 --activate
+# Install pnpm
+RUN npm install -g pnpm
 
 # Note: The build context is set to the project root in compose.yaml
 # So we don't need to use ../../ path prefixes
 
 # Copy root package files for better caching
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy all workspace package.json files
 COPY packages/types/package.json ./packages/types/
@@ -27,7 +26,7 @@ COPY packages/shared/package.json ./packages/shared/
 COPY apps/frontend/package.json ./apps/frontend/
 
 # Install dependencies
-RUN yarn install --immutable
+RUN pnpm install --frozen-lockfile
 
 # Copy source files for all packages
 COPY packages/types ./packages/types
@@ -43,29 +42,28 @@ COPY packages/feature-tracker ./packages/feature-tracker
 COPY apps/frontend ./apps/frontend
 
 # Build packages in order
-RUN yarn workspace @the-new-fuse/types build && \
-    yarn workspace @the-new-fuse/api-types build && \
-    yarn workspace @the-new-fuse/utils build && \
-    yarn workspace @the-new-fuse/core build && \
-    yarn workspace @the-new-fuse/database build && \
-    yarn workspace @the-new-fuse/api build && \
-    yarn workspace @the-new-fuse/shared build && \
-    yarn workspace @the-new-fuse/features build && \
-    yarn workspace @the-new-fuse/feature-tracker build && \
-    yarn workspace @the-new-fuse/feature-suggestions build && \
-    yarn workspace @the-new-fuse/frontend build
+RUN pnpm --filter @the-new-fuse/types build && \
+    pnpm --filter @the-new-fuse/api-types build && \
+    pnpm --filter @the-new-fuse/utils build && \
+    pnpm --filter @the-new-fuse/core build && \
+    pnpm --filter @the-new-fuse/database build && \
+    pnpm --filter @the-new-fuse/api build && \
+    pnpm --filter @the-new-fuse/shared build && \
+    pnpm --filter @the-new-fuse/features build && \
+    pnpm --filter @the-new-fuse/feature-tracker build && \
+    pnpm --filter @the-new-fuse/feature-suggestions build && \
+    pnpm --filter @the-new-fuse/frontend build
 
 # Stage 2: Production
 FROM node:18-alpine
 
 WORKDIR /app
 
-# Enable corepack for yarn version management
-RUN corepack enable && corepack prepare yarn@4.9.1 --activate
+# Install pnpm
+RUN npm install -g pnpm
 
 # Install production dependencies only
-COPY --from=builder /app/package.json /app/yarn.lock /app/.yarnrc.yml ./
-COPY --from=builder /app/.yarn ./.yarn
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml /app/pnpm-workspace.yaml ./
 COPY --from=builder /app/packages/types/package.json ./packages/types/
 COPY --from=builder /app/packages/api-types/package.json ./packages/api-types/
 COPY --from=builder /app/packages/utils/package.json ./packages/utils/
@@ -92,7 +90,7 @@ COPY --from=builder /app/packages/feature-tracker/dist ./packages/feature-tracke
 COPY --from=builder /app/apps/frontend/dist ./apps/frontend/dist
 
 # Install production dependencies
-RUN YARN_ENABLE_GLOBAL_CACHE=false yarn workspaces focus @the-new-fuse/frontend --production
+RUN pnpm --filter @the-new-fuse/frontend install --prod
 
 # Expose port
 EXPOSE 3000

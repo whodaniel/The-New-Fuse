@@ -46,7 +46,7 @@ describe('User Workflow E2E Tests', () => {
     }
 
     // Start the dev server
-    devServer = spawn('yarn', ['dev'], {
+    devServer = spawn('pnpm', ['dev'], {
       stdio: 'inherit',
       shell: true,
       cwd: process.cwd(),

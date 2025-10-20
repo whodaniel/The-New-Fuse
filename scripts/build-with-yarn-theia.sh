@@ -4,33 +4,33 @@
 
 set -e
 
-echo "🚀 Building The New Fuse with yarn-based Theia build..."
+echo "🚀 Building The New Fuse with pnpm-based Browser Hub build..."
 
-# Step 1: Build Theia IDE with yarn
-echo "📦 Step 1: Building Theia IDE with yarn..."
+# Step 1: Build Browser Hub IDE with pnpm
+echo "📦 Step 1: Building Browser Hub IDE with pnpm..."
 cd apps/theia-ide
 
-# Install dependencies with bun (following project convention)
-echo "Installing Theia dependencies with bun..."
-bun install
+# Install dependencies with pnpm (following project convention)
+echo "Installing Browser Hub dependencies with pnpm..."
+pnpm install
 
-# Build Theia with bunx (which provides yarn-like functionality for Theia)
-echo "Building Theia with bunx @theia/cli..."
-bunx @theia/cli@1.59.0 build --mode production
+# Build Browser Hub with pnpm (which provides modern package management)
+echo "Building Browser Hub with pnpm @theia/cli..."
+pnpm exec @theia/cli@1.59.0 build --mode production
 
 # Verify build success
 if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
-    echo "✅ Theia IDE build completed successfully!"
+    echo "✅ Browser Hub IDE build completed successfully!"
     
     # Create build info
     mkdir -p lib
     cat > lib/build-info.json << EOF
 {
-  "name": "@the-new-fuse/theia-ide",
+  "name": "@the-new-fuse/browser-hub-ide",
   "version": "2.0.0",
   "built": true,
   "timestamp": "$(date -u +"%Y-%m-%dT%H:%M:%S.000Z")",
-  "buildMethod": "bunx @theia/cli build",
+  "buildMethod": "pnpm exec @theia/cli build",
   "buildTime": "optimized",
   "features": [
     "ai-powered",
@@ -46,7 +46,7 @@ if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then
 }
 EOF
 else
-    echo "❌ Theia build failed - required files missing"
+    echo "❌ Browser Hub build failed - required files missing"
     exit 1
 fi
 
@@ -57,4 +57,4 @@ echo "📦 Step 2: Building other packages..."
 bun run build:packages
 
 echo "✅ Build completed successfully!"
-echo "🎯 Theia IDE is now fully functional and ready for Browser Hub integration"
+echo "🎯 Browser Hub IDE is now fully functional and ready for Browser Hub integration"

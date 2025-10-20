@@ -2,7 +2,7 @@
   "name": "@the-new-fuse/types",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -15,10 +15,10 @@
     "test": "echo 'No tests specified for types package'"
   },
   "devDependencies": {
-    "@types/react": "^18.2.0",
-    "react": "^18.2.0",
-    "rimraf": "^5.0.0",
-    "typescript": "^5.4.2"
+    "@types/react": "^19.2.2",
+    "react": "^19.2.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@the-new-fuse/prompt-templating": "workspace:*"

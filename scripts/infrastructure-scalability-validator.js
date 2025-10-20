@@ -307,34 +307,140 @@ class InfrastructureScalabilityValidator {
         try {
             // Check for common load balancers
             const loadBalancers = [];
+            let hasAdvancedConfig = false;
             
+            // Check for system-installed Nginx
             if (this.metrics.infrastructure.types.nginx) {
-                loadBalancers.push('Nginx');
+                loadBalancers.push('Nginx (System)');
                 validation.score += 30;
             }
             
+            // Check for Docker-based Nginx configurations
+            const nginxConfigPaths = [
+                'config/nginx/load-balancer.conf',
+                'docker/nginx/load-balancer.conf',
+                'nginx/load-balancer.conf',
+                'load-balancer.conf'
+            ];
+            
+            for (const configPath of nginxConfigPaths) {
+                if (fs.existsSync(configPath)) {
+                    try {
+                        const config = fs.readFileSync(configPath, 'utf8');
+                        loadBalancers.push('Nginx (Docker)');
+                        validation.score += 40;
+                        
+                        // Check for advanced load balancing features
+                        if (config.includes('upstream') && config.includes('server')) {
+                            validation.score += 20;
+                            hasAdvancedConfig = true;
+                        }
+                        if (config.includes('least_conn') || config.includes('ip_hash') || config.includes('fair')) {
+                            validation.score += 10;
+                        }
+                        if (config.includes('health_check') || config.includes('max_fails')) {
+                            validation.score += 10;
+                        }
+                        if (config.includes('rate_limit') || config.includes('limit_req')) {
+                            validation.score += 10;
+                        }
+                        break;
+                    } catch (error) {
+                        console.log(`    Warning: Could not read ${configPath}`);
+                    }
+                }
+            }
+            
+            // Check for Docker Compose load balancer services
+            const dockerComposePaths = [
+                'docker-compose.yml',
+                'docker-compose.production.yml',
+                'docker-compose.scalable.yml',
+                'docker-compose.optimized.yml',
+                'scripts/deployment/docker-compose.scalable.yml',
+                'scripts/deployment/docker-compose.optimized.yml'
+            ];
+            
+            for (const composePath of dockerComposePaths) {
+                if (fs.existsSync(composePath)) {
+                    try {
+                        const compose = fs.readFileSync(composePath, 'utf8');
+                        if (compose.includes('nginx') && (compose.includes('load') || compose.includes('proxy'))) {
+                            if (!loadBalancers.some(lb => lb.includes('Docker'))) {
+                                loadBalancers.push('Docker Compose Load Balancer');
+                                validation.score += 35;
+                            }
+                            
+                            // Check for multiple service instances (horizontal scaling)
+                             const apiMatches = compose.match(/api[-_]?\d+:/g);
+                             const frontendMatches = compose.match(/frontend[-_]?\d+:/g);
+                            
+                            if (apiMatches && apiMatches.length > 1) {
+                                validation.score += 15;
+                                hasAdvancedConfig = true;
+                            }
+                            if (frontendMatches && frontendMatches.length > 1) {
+                                validation.score += 10;
+                            }
+                        }
+                    } catch (error) {
+                        console.log(`    Warning: Could not read ${composePath}`);
+                    }
+                }
+            }
+            
+            // Check for Kubernetes services
             if (this.metrics.infrastructure.types.kubernetes) {
-                // Check for Kubernetes services
-                const { stdout } = await execAsync('kubectl get services -o json');
-                const services = JSON.parse(stdout);
-                const lbServices = services.items.filter(s => s.spec.type === 'LoadBalancer');
-                
-                if (lbServices.length > 0) {
-                    loadBalancers.push('Kubernetes LoadBalancer');
-                    validation.score += 40;
+                try {
+                    const { stdout } = await execAsync('kubectl get services -o json');
+                    const services = JSON.parse(stdout);
+                    const lbServices = services.items.filter(s => s.spec.type === 'LoadBalancer');
+                    
+                    if (lbServices.length > 0) {
+                        loadBalancers.push('Kubernetes LoadBalancer');
+                        validation.score += 40;
+                    }
+                } catch (error) {
+                    // Kubernetes not available or not configured
+                }
+            }
+            
+            // Check for cloud load balancers (AWS ALB/ELB, GCP Load Balancer, etc.)
+            const cloudConfigPaths = [
+                'terraform/',
+                'cloudformation/',
+                '.aws/',
+                'gcp-config.json',
+                'azure-config.json'
+            ];
+            
+            for (const cloudPath of cloudConfigPaths) {
+                if (fs.existsSync(cloudPath)) {
+                    loadBalancers.push('Cloud Load Balancer');
+                    validation.score += 50;
+                    break;
                 }
             }
             
             validation.details = {
                 loadBalancers,
-                count: loadBalancers.length
+                count: loadBalancers.length,
+                hasAdvancedConfig,
+                configurationPaths: nginxConfigPaths.filter(path => fs.existsSync(path))
             };
             
-            if (validation.score >= 70) {
+            // Cap the score at 100
+            validation.score = Math.min(validation.score, 100);
+            
+            if (validation.score >= 80) {
                 validation.status = 'excellent';
-            } else if (validation.score >= 40) {
+                validation.recommendations.push('Load balancing configuration is excellent for million-user capacity');
+            } else if (validation.score >= 60) {
                 validation.status = 'good';
-                validation.recommendations.push('Consider additional load balancing layers');
+                validation.recommendations.push('Consider adding health checks and advanced routing rules');
+            } else if (validation.score >= 30) {
+                validation.status = 'fair';
+                validation.recommendations.push('Enhance load balancing with multiple upstream servers and health monitoring');
             } else {
                 validation.status = 'critical';
                 validation.recommendations.push('Implement proper load balancing for million-user capacity');

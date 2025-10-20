@@ -6,13 +6,15 @@ All AI enhancements and capabilities have been successfully implemented and are 
 
 ### **🎯 What's Ready Now**
 
-#### 1. ✅ **Theia IDE with Full AI Capabilities**
+#### 1. ✅ **Browser Hub with Full AI Capabilities**
+
 - **Status**: ✅ ACTIVE AND RUNNING
-- **URL**: http://localhost:3003  
-- **Features**: VSCode-compatible IDE with 39+ extensions
+- **URL**: <http://localhost:3003>  
+- **Features**: Web-based development environment with integrated tools
 - **AI Integration**: Built-in AI chat, inline completions, context awareness
 
 #### 2. ✅ **Multi-Provider AI Support**
+
 - **Anthropic Claude**: claude-3-5-sonnet-20241022, claude-3-5-haiku-20241022, claude-4-sonnet, claude-4-opus
 - **OpenAI GPT**: gpt-4o, gpt-4o-mini, o1-preview, o1-mini  
 - **HuggingFace**: Custom model support available
@@ -20,29 +22,34 @@ All AI enhancements and capabilities have been successfully implemented and are 
 - **Default Provider**: Anthropic (recommended)
 
 #### 3. ✅ **Browser Hub Enhancements**
+
 - **Status**: ✅ FULLY FUNCTIONAL
 - **Location**: `/apps/browser-hub/enhanced-browser-hub.html`
 - **Features**: Key icon button working, ABC check button functional, all mock content replaced
 
 #### 4. ✅ **Enhanced Terminal Controls**  
+
 - **VSCode Terminal Service**: Shell Integration API for reliable control
 - **Secure Subprocess Service**: Safe command execution patterns
 - **Git Transaction Service**: Automatic commit creation for AI changes
 - **Enhanced Gemini Coordinator**: Multi-instance task delegation
 
 #### 5. ✅ **Claude Code CLI Integration**  
+
 - **Status**: ✅ ACTIVE AND RUNNING
 - **Location**: `/Users/<owner>/.bun/bin/claude`
 - **MCP Integration**: Fully configured and operational
 - **Features**: Code assistance, file operations, terminal integration
 
 #### 6. ✅ **Gemini CLI Integration**  
+
 - **Status**: ✅ ACTIVE AND RUNNING
 - **Location**: `/Users/<owner>/.bun/bin/gemini`
 - **MCP Integration**: Fully configured and operational
 - **Features**: Multimodal analysis, code generation, image understanding
 
 #### 7. ⚠️ **Browser Use Chrome Extension**
+
 - **Status**: Ready for manual installation from Chrome Web Store
 - **MCP Bridge**: Configured and running
 - **Integration**: Full automation bridge prepared
@@ -50,48 +57,54 @@ All AI enhancements and capabilities have been successfully implemented and are 
 ## 🚀 **Quick Launch**
 
 ### **Start Everything**
+
 ```bash
 # From the project root - launches all services
-bun run start
+pnpm run start
 # or
-bun run launch
+pnpm run launch
 ```
 
 ### **Individual Services**
+
 ```bash
-# Start Theia IDE only
-cd apps/theia-ide && bun run start
+# Start Browser Hub only
+cd apps/browser-hub && pnpm run start
 
 # Open Browser Hub
 open apps/browser-hub/enhanced-browser-hub.html
 
 # Start enhanced server
-cd apps/backend && bun run simple-main
+cd apps/backend && pnpm run simple-main
 ```
 
 ## 🤖 **AI Features Usage**
 
-### **In Theia IDE (http://localhost:3003)**
+### **In Theia IDE (<http://localhost:3003>)**
 
 #### **AI Chat View**
+
 - Press `Ctrl+Shift+P` → "AI: Open Chat View"
 - Use `@` to access different AI agents
 - Use `#selectedText` to reference selected code
 - Drag files into chat for context
 
 #### **Inline AI Completions**
+
 - AI suggestions appear automatically while typing
 - Tab to accept suggestions
 - Configurable via preferences
 
 #### **Context Integration**
+
 - File context: `#filename.js`
-- Selected text: `#selectedText` 
+- Selected text: `#selectedText`
 - Workspace awareness: AI understands project structure
 
 ### **Terminal AI Assistants**
 
 #### **Claude Code CLI**
+
 ```bash
 # Available anywhere in terminal
 claude "help me debug this function"
@@ -99,6 +112,7 @@ claude "refactor this code to be more efficient"
 ```
 
 #### **Gemini CLI**  
+
 ```bash
 # Multimodal capabilities
 gemini "analyze this image and generate code"
@@ -108,7 +122,9 @@ gemini "explain this complex algorithm"
 ## ⚙️ **Configuration**
 
 ### **API Keys Required**
+
 Set these environment variables for full functionality:
+
 ```bash
 export ANTHROPIC_API_KEY="your-key-here"
 export OPENAI_API_KEY="your-key-here"
@@ -116,15 +132,16 @@ export GEMINI_API_KEY="your-key-here"  # Optional
 ```
 
 ### **Configuration Files**
-- **AI Settings**: `apps/theia-ide/theia.json` 
+
+- **AI Settings**: `apps/theia-ide/theia.json`
 - **MCP Config**: `apps/theia-ide/mcp-config.json`
 - **Launch Script**: `apps/browser-hub/launch-with-theia.js`
 
 ## 🎯 **Service Endpoints**
 
-- **Theia IDE**: http://localhost:3003
+- **Theia IDE**: <http://localhost:3003>
 - **Browser Hub**: `/apps/browser-hub/enhanced-browser-hub.html`
-- **Enhanced Server**: http://localhost:3002  
+- **Enhanced Server**: <http://localhost:3002>  
 - **WebSocket**: ws://localhost:3004
 - **MCP Servers**: Filesystem, Git, SQLite, Package Version
 
@@ -133,31 +150,37 @@ export GEMINI_API_KEY="your-key-here"  # Optional
 ### ✅ **Terminal Integration Patterns (CRITICAL)**
 
 #### **Reliable VSCode Terminal Control**
+
 When delegating tasks to Gemini CLI instances, ALWAYS use this exact sequence:
 
 1. **Create Terminal with Focus**:
+
 ```bash
 osascript -e 'tell application "Visual Studio Code" to activate' -e 'delay 1' -e 'tell application "System Events" to tell process "Code" to keystroke "p" using {command down, shift down}'
 osascript -e 'delay 1' -e 'tell application "System Events" to keystroke "Terminal: Create New Terminal"' -e 'delay 0.5' -e 'tell application "System Events" to keystroke return'
 ```
 
 2. **Launch Gemini CLI**:
+
 ```bash
 osascript -e 'delay 2' -e 'tell application "System Events" to keystroke "gemini"' -e 'delay 0.5' -e 'tell application "System Events" to keystroke return'
 ```
 
 3. **Wait for Gemini to Load** (critical timing):
+
 ```bash
 osascript -e 'delay 5'  # Wait for full Gemini startup
 ```
 
 ### ✅ **Security Patterns**
+
 - Always use shell=false with subprocess calls
 - Pass arguments as arrays, never string concatenation
 - Validate all user inputs before command execution
 - Use Git transaction logging for all AI changes
 
 ### ✅ **Framework Components Available**
+
 - `VSCodeTerminalService` - Shell Integration API for reliable terminal control
 - `SecureSubprocessService` - Safe command execution patterns  
 - `GitTransactionService` - Automatic commit creation for AI changes
@@ -166,12 +189,14 @@ osascript -e 'delay 5'  # Wait for full Gemini startup
 ## ⚠️ **Important Notes**
 
 ### **Cost Monitoring**
+
 - AI features generate continuous API requests
 - Monitor usage dashboards regularly
 - Consider setting spending limits
 - Start with free tier models for testing
 
 ### **Alpha Status**
+
 - Features are in alpha/beta state
 - May have unexpected behavior
 - Token usage not yet optimized
@@ -227,12 +252,14 @@ The-New-Fuse/
 ### **GitHub Integration Features**
 
 #### **Automated Issue Management**
+
 - 🏷️ **Smart Labeling**: Issues automatically tagged with phase labels
 - 📋 **Project Integration**: New issues auto-added to project board
 - 🔄 **Status Sync**: Issue status syncs with project board
 - 📈 **Progress Tracking**: Completion updates roadmap document
 
 #### **Project Board Features**
+
 - **Custom Fields**:
   - 🔥 **Priority**: High/Medium/Low with color coding
   - 1️⃣ **Phase**: Foundation/Deduplication/Architecture/Optimization  
@@ -246,6 +273,7 @@ The-New-Fuse/
   - 🎯 **Priority View**: Board organized by priority level
 
 #### **Milestone Tracking**
+
 - 📅 **Phase 1**: Foundation (4 weeks)
 - 📅 **Phase 2**: Deduplication (8 weeks)  
 - 📅 **Phase 3**: Architecture (14 weeks)
@@ -258,6 +286,7 @@ The-New-Fuse/
 ### **Daily Workflow**
 
 1. **Check Progress**:
+
    ```bash
    node scripts/check-progress.js
    ```
@@ -287,6 +316,7 @@ The-New-Fuse/
 ### **Progress Reports**
 
 The system automatically generates:
+
 - 📄 **JSON Reports**: `progress-reports/progress-YYYY-MM-DD.json`
 - 📊 **Dashboard Output**: Color-coded terminal display
 - 📈 **GitHub Integration**: Real-time project board updates
@@ -366,6 +396,7 @@ open CODEBASE_IMPROVEMENT_ROADMAP.md
 ### **Common Issues**
 
 #### **GitHub CLI Not Working**
+
 ```bash
 # Check installation
 gh --version
@@ -376,6 +407,7 @@ gh auth login
 ```
 
 #### **Permission Issues**
+
 ```bash
 # Make scripts executable
 chmod +x scripts/*.sh
@@ -383,6 +415,7 @@ chmod +x scripts/*.js
 ```
 
 #### **Node.js Module Issues**
+
 ```bash
 # Update to latest Node.js
 brew install node
@@ -392,6 +425,7 @@ pnpm store prune
 ```
 
 #### **Project Board Not Updating**
+
 1. Check GitHub Actions are enabled
 2. Verify webhook permissions
 3. Check workflow files for syntax errors
@@ -408,18 +442,21 @@ pnpm store prune
 ## 🔄 **Maintenance**
 
 ### **Weekly Maintenance**
+
 - [ ] Review and update progress percentages
 - [ ] Check for stalled tasks (no activity > 1 week)
 - [ ] Update milestone dates if needed
 - [ ] Archive completed tasks
 
 ### **Monthly Maintenance**
+
 - [ ] Review overall progress vs timeline
 - [ ] Adjust team assignments
 - [ ] Update priority levels based on learnings
 - [ ] Generate stakeholder reports
 
 ### **Phase Completion**
+
 - [ ] Validate all tasks completed
 - [ ] Update overall progress
 - [ ] Archive phase documentation
@@ -430,12 +467,14 @@ pnpm store prune
 ## 📈 **Success Metrics**
 
 ### **Tracking KPIs**
+
 - **Task Completion Rate**: % of tasks completed on time
 - **Progress Velocity**: Tasks completed per week
 - **Quality Metrics**: Issues requiring rework
 - **Team Engagement**: Active contributors per phase
 
 ### **Reporting Schedule**
+
 - **Daily**: Automated progress updates
 - **Weekly**: Team progress review
 - **Monthly**: Stakeholder progress report

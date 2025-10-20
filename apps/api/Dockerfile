@@ -1,7 +1,6 @@
 # syntax=docker/dockerfile:1
 
 ARG NODE_VERSION=18.20.2
-ARG YARN_VERSION=3.6.0
 
 # ----------- Base image -----------
 FROM node:${NODE_VERSION}-alpine AS base
@@ -13,12 +12,11 @@ FROM base AS builder
 # Install build dependencies
 RUN apk add --no-cache python3 make g++
 
-# Enable and prepare Yarn
-RUN corepack enable && corepack prepare yarn@${YARN_VERSION} --activate
+# Enable pnpm
+RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # Copy only the files needed for dependency installation and build (for better cache usage)
-COPY --link package.json yarn.lock .yarnrc.yml ./
-COPY --link .yarn ./
+COPY --link package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY --link tsconfig.base.json ./
 COPY --link apps/api/package.json ./apps/api/
 COPY --link apps/api/tsconfig.json ./apps/api/
@@ -28,16 +26,17 @@ COPY --link packages/*/package.json ./packages/
 COPY --link apps/*/package.json ./apps/
 
 # Install dependencies (including workspaces)
-ENV YARN_CACHE_FOLDER=/usr/local/share/.cache/yarn
-RUN --mount=type=cache,target=${YARN_CACHE_FOLDER} \
-    yarn install --frozen-lockfile --immutable
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store \
+    pnpm install --frozen-lockfile
 
 # Copy the rest of the source code (for build)
 COPY --link packages ./packages
 COPY --link apps ./apps
 
 # Build the API (and its dependencies)
-RUN yarn workspace @the-new-fuse/api build
+RUN pnpm --filter @the-new-fuse/api-server build
 
 # ----------- Production image -----------
 FROM node:${NODE_VERSION}-alpine AS final

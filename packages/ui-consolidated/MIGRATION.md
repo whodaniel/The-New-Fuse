@@ -186,10 +186,10 @@ import { cn } from '@the-new-fuse/ui-consolidated';
 }
 ```
 
-2. Run yarn to install the new package:
+2. Run pnpm to install the new package:
 
 ```bash
-yarn
+pnpm install
 ```
 
 3. Find and replace all imports of the old components with the new consolidated components.

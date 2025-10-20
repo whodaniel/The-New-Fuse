@@ -48,7 +48,7 @@ async function main() {
     } else {
       const port = await choosePort(DEFAULT_PORT);
       rl.close();
-      spawn('yarn', ['dev', '--port', port], { stdio: 'inherit' });
+      spawn('pnpm', ['dev', '--port', port], { stdio: 'inherit' });
     }
   });
 }

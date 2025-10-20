@@ -16,14 +16,14 @@ echo "Starting development servers..."
 
 # Start API server
 echo "Starting API server..."
-yarn dev:api &
+pnpm dev:api &
 API_PID=$!
 
 sleep 3
 
 # Start frontend
 echo "Starting frontend..."
-yarn dev &
+pnpm dev &
 FRONTEND_PID=$!
 
 echo ""

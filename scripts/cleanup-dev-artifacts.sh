@@ -70,6 +70,6 @@ show_disk_usage
 echo "✅ Cleanup completed!"
 echo ""
 echo "💡 If you need more space, you can also run:"
-echo "   - rm -rf node_modules && bun install (to clean and reinstall dependencies)"
+echo "   - rm -rf node_modules && pnpm install (to clean and reinstall dependencies)"
 echo "   - docker system prune -a (if you use Docker)"
 echo "   - brew cleanup (if you use Homebrew)"

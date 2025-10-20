@@ -5,7 +5,7 @@ import { validateBody } from '../middleware/validation.middleware';
 import { exportSchema } from '../schemas/export.schema';
 
 type ExportFormat = 'pdf' | 'md' | 'txt';
-const router = Router();
+const router: Router = Router();
 
 /**
  * POST /api/export/conversation

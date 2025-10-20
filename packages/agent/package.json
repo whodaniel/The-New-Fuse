@@ -11,24 +11,24 @@
     "test": "jest"
   },
   "dependencies": {
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/core": "^11.0.0",
-    "@nestjs/graphql": "12.0.0",
+    "@nestjs/common": "^11.1.6",
+    "@nestjs/core": "^11.1.6",
+    "@nestjs/graphql": "13.2.0",
     "@the-new-fuse/core": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
-    "graphql": "^16.9.0",
-    "ioredis": "^5.3.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "graphql": "^16.11.0",
+    "ioredis": "^5.8.1",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17",
+    "rxjs": "^7.8.2",
+    "typeorm": "^0.3.27",
     "@the-new-fuse/infrastructure": "workspace:*"
   },
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
-    "typescript": "^5.8.3"
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "typescript": "^5.9.3"
   }
 }

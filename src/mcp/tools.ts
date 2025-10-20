@@ -176,7 +176,7 @@ export const buildTools = {
       }
 
       // Execute the script with a timeout
-      const command = `cd "${workspaceRoot}" && yarn ${script}`;
+      const command = `cd "${workspaceRoot}" && pnpm ${script}`;
       logger.info(`[runBuild] Executing command: ${command}`);
       
       const { stdout, stderr } = await Promise.race([

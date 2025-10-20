@@ -43,13 +43,15 @@ import { RequestLoggerMiddleware } from './middleware/request-logger.middleware'
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET', 'dev-secret-key'),
-        signOptions: {
-          expiresIn: configService.get<string>('JWT_EXPIRES_IN', '7d')
-        }
-      })
-    }) as any,
+      useFactory: (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('JWT_SECRET', 'dev-secret-key'),
+          signOptions: {
+            expiresIn: 604800 // 7 days in seconds
+          }
+        };
+      }
+    }),
     
     // Feature modules
     AgentModule,

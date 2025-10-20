@@ -1,21 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaService as BasePrismaService } from '@the-new-fuse/database';
 
-export class PrismaService extends PrismaClient {
+export class PrismaService extends BasePrismaService {
   constructor() {
-    super({
-      datasources: {
-        db: {
-          url: process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/the_new_fuse_db'
-        }
-      }
-    });
-  }
-
-  async onModuleInit() {
-    await this.$connect();
-  }
-
-  async onModuleDestroy() {
-    await this.$disconnect();
+    super();
   }
 }

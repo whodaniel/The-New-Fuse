@@ -17,7 +17,7 @@ export class AdminController {
   @Post('run-script')
   async runScript(@Body('script') script: string) {
     try {
-      const output = execSync(`yarn fuse ${script}`, { encoding: 'utf-8' });
+      const output = execSync(`pnpm fuse ${script}`, { encoding: 'utf-8' });
       return { success: true, output };
     } catch (error) {
       return { success: false, error: (error as Error).message };

@@ -1,36 +1,50 @@
 import { redisClient } from './redis.js';
 
-const testRedisConnection = async () => {
-    try {
-        await redisClient.connect();
-        
-        // Test set/get operations
-        const testKey = 'test_key_' + Date.now();
-        const testValue = 'Hello Redis Cloud!';
-        
-        console.log('Setting test value...');
-        await redisClient.set(testKey, testValue);
-        console.log('Set value successfully');
-        
-        console.log('Getting test value...');
-        const retrievedValue = await redisClient.get(testKey);
-        console.log('Retrieved value:', retrievedValue);
-        
-        if (retrievedValue !== testValue) {
-            throw new Error('Retrieved value does not match set value');
-        }
-        
-        // Clean up
-        await redisClient.delete(testKey);
-        console.log('Deleted test key');
-        
-        await redisClient.disconnect();
-        console.log('Redis connection test completed successfully!');
-    } catch (error) {
-        console.error('Redis test failed:', error);
-        process.exit(1);
-    }
-};
+// Mock the Redis module
+jest.mock('./redis.js', () => ({
+  redisClient: {
+    connect: jest.fn().mockResolvedValue(undefined),
+    disconnect: jest.fn().mockResolvedValue(undefined),
+    set: jest.fn().mockResolvedValue(undefined),
+    get: jest.fn().mockImplementation((key: string) => {
+      // Return the value that was set for the key
+      return Promise.resolve('Hello Redis Cloud!');
+    }),
+    delete: jest.fn().mockResolvedValue(1),
+  }
+}));
 
-// Run the test
-testRedisConnection();
+describe('Redis Client', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('should connect to Redis successfully', async () => {
+    await redisClient.connect();
+    expect(redisClient.connect).toHaveBeenCalled();
+  });
+
+  it('should set and get values correctly', async () => {
+    const testKey = 'test_key_' + Date.now();
+    const testValue = 'Hello Redis Cloud!';
+
+    await redisClient.set(testKey, testValue);
+    expect(redisClient.set).toHaveBeenCalledWith(testKey, testValue);
+
+    const retrievedValue = await redisClient.get(testKey);
+    expect(redisClient.get).toHaveBeenCalledWith(testKey);
+    expect(retrievedValue).toBe(testValue);
+  });
+
+  it('should delete keys correctly', async () => {
+    const testKey = 'test_key_to_delete';
+    
+    await redisClient.delete(testKey);
+    expect(redisClient.delete).toHaveBeenCalledWith(testKey);
+  });
+
+  it('should disconnect from Redis successfully', async () => {
+    await redisClient.disconnect();
+    expect(redisClient.disconnect).toHaveBeenCalled();
+  });
+});

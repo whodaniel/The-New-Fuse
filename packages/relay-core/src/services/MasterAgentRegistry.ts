@@ -8,9 +8,8 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import { AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
-import { PrismaClient } from '@prisma/client';
-import { ethers } from 'ethers';
+import { AgentType, AgentStatus, TaskStatus, TaskPriority, PrismaClient } from '@the-new-fuse/database';
+import { ethers, Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
 import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
@@ -253,9 +252,9 @@ export class MasterAgentRegistry extends EventEmitter {
   private blockchainService: BlockchainService | null = null;
   private vcIssuanceService: VCIssuanceService | null = null;
   private blockchainConfig: BlockchainConfig | null = null;
-  private agentNFTContract: ethers.Contract | null = null;
-  private web3Provider: ethers.providers.JsonRpcProvider | null = null;
-  private wallet: ethers.Wallet | null = null;
+  private agentNFTContract: Contract | null = null;
+  private web3Provider: JsonRpcProvider | null = null;
+  private wallet: Wallet | null = null;
 
   constructor(
     prisma: PrismaClient, 
@@ -1432,7 +1431,7 @@ export class MasterAgentRegistry extends EventEmitter {
       const legalContractURI = `ipfs://QmAgent${profile.id}Constitution`;
 
       // Set gas configuration
-      const gasPrice = ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei');
+      const gasPrice = parseUnits(blockchainConfig.maxGasPrice, 'gwei');
       
       // Mint the Agent NFT
       const tx = await agentNFTContract.mintAgent(
@@ -1505,7 +1504,7 @@ export class MasterAgentRegistry extends EventEmitter {
         newMetadataURI,
         {
           gasLimit: blockchainConfig.gasLimit,
-          gasPrice: ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei')
+          gasPrice: parseUnits(blockchainConfig.maxGasPrice, 'gwei')
         }
       );
 

@@ -4,9 +4,11 @@ FROM node:20-alpine as builder
 # Set working directory
 WORKDIR /app
 
+# Install pnpm
+RUN npm install -g pnpm
+
 # Copy root package files for dependency install
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Copy all workspace package.json files
 COPY packages/types/package.json ./packages/types/
@@ -19,8 +21,7 @@ COPY packages/shared/package.json ./packages/shared/
 COPY apps/backend/package.json ./apps/backend/
 
 # Install dependencies
-RUN corepack enable
-RUN yarn install --immutable
+RUN pnpm install --frozen-lockfile
 
 # Copy source files for all required packages
 COPY ../../packages/types ./packages/types
@@ -35,7 +36,7 @@ COPY ../../apps/backend/tsconfig.json ./apps/backend/tsconfig.json
 
 # Build the backend app (outputs to dist/)
 WORKDIR /app/apps/backend
-RUN yarn build
+RUN pnpm build
 
 # --- Production image ---
 FROM node:20-alpine

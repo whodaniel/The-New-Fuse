@@ -50,9 +50,9 @@ async function buildTheiaWithMemoryOptimization() {
   console.log('🔧 Building Theia IDE with memory optimization...');
   
   try {
-    // Install dependencies first with bun (following project convention)
-    console.log('📦 Installing Theia dependencies with bun...');
-    await runCommand('bun', ['install'], { 
+    // Install dependencies first with pnpm (following project convention)
+    console.log('📦 Installing Theia dependencies with pnpm...');
+    await runCommand('pnpm', ['install'], { 
       cwd: path.resolve(__dirname, '..', 'apps', 'theia-ide'),
       env: { NODE_ENV: 'production' }
     });
@@ -60,8 +60,8 @@ async function buildTheiaWithMemoryOptimization() {
     // Use multiple build strategies, prioritizing the working approach
     const buildStrategies = [
       {
-        name: 'bunx-theia-cli-optimized',
-        command: 'bunx',
+        name: 'pnpx-theia-cli-optimized',
+        command: 'pnpx',
         args: ['@theia/cli@1.59.0', 'build', '--mode', 'production'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=6144',
@@ -69,8 +69,8 @@ async function buildTheiaWithMemoryOptimization() {
         }
       },
       {
-        name: 'bun-theia-build-script',
-        command: 'bun',
+        name: 'pnpm-theia-build-script',
+        command: 'pnpm',
         args: ['run', 'theia:build'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=4096',
@@ -257,9 +257,9 @@ async function main() {
       // Analyze failure and provide recommendations
       if (error.message.includes('out of memory') || error.message.includes('heap') || error.message.includes('timed out')) {
         console.log('💡 Memory/timeout-related failure detected. Recommendations:');
-        console.log('   - Try: bun run build:low-memory');
-        console.log('   - Try: bun run build:staged');
-        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" bun run build');
+        console.log('   - Try: pnpm run build:low-memory');
+        console.log('   - Try: pnpm run build:staged');
+        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" pnpm run build');
         console.log('   - Consider increasing system memory or closing other applications');
         console.log('   - Check if any processes are hanging: ps aux | grep theia');
       }

@@ -13,15 +13,15 @@
     "@the-new-fuse/database": "workspace:*",
     "@the-new-fuse/types": "workspace:*",
     "@the-new-fuse/utils": "workspace:*",
-    "react": "^18.2.0",
+    "react": "^19.2.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
-    "@types/node": "^20.1.0",
-    "nodemon": "^3.1.1",
-    "rimraf": "^5.0.5",
+    "@types/node": "^24.8.1",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.5"
+    "typescript": "^5.9.3"
   }
 }

@@ -508,8 +508,8 @@
             pointer-events: none;
         }
 
-        /* Theia Loading Overlay */
-        .theia-loading-overlay {
+        /* Browser Hub Loading Overlay */
+        .browser-hub-loading-overlay {
             position: absolute;
             top: 8px;
             left: 8px;
@@ -524,7 +524,7 @@
             backdrop-filter: blur(10px);
         }
 
-        .theia-loading-content {
+        .browser-hub-loading-content {
             text-align: center;
             max-width: 600px;
             padding: 40px;
@@ -568,14 +568,14 @@
             100% { transform: rotate(360deg); }
         }
 
-        .theia-loading-content h2 {
+        .browser-hub-loading-content h2 {
             font-size: 28px;
             margin-bottom: 16px;
             color: #ffffff;
             font-weight: 600;
         }
 
-        .theia-loading-content > p {
+        .browser-hub-loading-content > p {
             font-size: 16px;
             color: #a0a9c0;
             margin-bottom: 30px;
@@ -2456,32 +2456,32 @@
             const tabId = 'tab-' + Date.now();
             const frameId = 'frame-' + tabId;
 
-            // Check if this is Theia IDE
-            const isTheia = url.includes('localhost:3007') || title.includes('Theia');
+            // Check if this is Browser Hub
+            const isBrowserHub = url.includes('enhanced-hub.html') || title.includes('Browser Hub');
             
-            // Create loading overlay for Theia
+            // Create loading overlay for Browser Hub
             let loadingOverlay = null;
-            if (isTheia) {
+            if (isBrowserHub) {
                 loadingOverlay = document.createElement('div');
                 loadingOverlay.id = `loading-${frameId}`;
-                loadingOverlay.className = 'theia-loading-overlay';
+                loadingOverlay.className = 'browser-hub-loading-overlay';
                 loadingOverlay.innerHTML = `
-                    <div class="theia-loading-content">
+                    <div class="browser-hub-loading-content">
                         <div class="loading-spinner">
                             <div class="spinner-ring"></div>
                             <div class="spinner-ring"></div>
                             <div class="spinner-ring"></div>
                         </div>
-                        <h2>🚀 The New Fuse IDE Loading...</h2>
-                        <p>Please allow time for Theia IDE to fully load</p>
+                        <h2>🌐 The New Fuse Browser Hub Loading...</h2>
+                        <p>Please allow time for Browser Hub to fully load</p>
                         <div class="ai-support-banner">
                             <div class="ai-banner-header">
-                                <span>🚀 AI Support in the Theia IDE is available (Alpha Version)! ✨</span>
+                                <span>🚀 AI Support in the Browser Hub is available! ✨</span>
                             </div>
                             <div class="ai-banner-content">
-                                <p>Theia IDE now contains AI support, which offers early access to cutting-edge AI capabilities within your IDE.</p>
+                                <p>Browser Hub now contains AI support, which offers access to cutting-edge AI capabilities within your browser.</p>
                                 <p><strong>⚠️ Important:</strong> These features are disabled by default, ensuring that users can opt-in at their discretion. For those who choose to enable AI support, it is important to be aware that these may generate continuous requests to the language models (LLMs) you provide access to. This might incur costs that you need to monitor closely.</p>
-                                <p>🚧 Please note that this feature is currently in an alpha state and may undergo frequent changes. We welcome your feedback, contributions, and sponsorship!</p>
+                                <p>🚧 Please note that this feature is currently in development and may undergo frequent changes. We welcome your feedback, contributions, and sponsorship!</p>
                                 <p><strong>✨ Open the AI Chat View to get started!</strong></p>
                             </div>
                         </div>

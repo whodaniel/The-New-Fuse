@@ -2,10 +2,17 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
+  extensionsToTreatAsEsm: ['.ts'],
+  globals: {
+    'ts-jest': {
+      useESM: true
+    }
+  },
   transform: {
     '^.+\\.(ts|tsx)$': ['ts-jest', {
       tsconfig: 'tsconfig.json',
       isolatedModules: true,
+      useESM: true,
       diagnostics: {
         ignoreCodes: [151001]
       }
@@ -23,8 +30,9 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/__tests__/**/*.(spec|test).(ts|tsx|js|jsx)'],
+  testPathIgnorePatterns: ['/node_modules/', '/backup/'],
   transformIgnorePatterns: [
-    'node_modules/(?!(@nestjs)/)',
+    'node_modules/(?!(@nestjs|uuid)/)',
   ],
   moduleNameMapper: {
     '^@the-new-fuse/(.*)$': '<rootDir>/../$1/src'

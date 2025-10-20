@@ -39,7 +39,7 @@ async function startServer(): Promise<void> {
     // Ignore errors when killing process
   }
 
-  const server = spawn('yarn', ['dev'], {
+  const server = spawn('pnpm', ['dev'], {
     stdio: 'inherit',
     shell: true,
     env: {

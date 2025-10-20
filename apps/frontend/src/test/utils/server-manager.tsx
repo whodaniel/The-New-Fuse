@@ -44,7 +44,7 @@ export class ServerManager {
   }
 
   private async startServer(): Promise<void> {
-    this.server = spawn('yarn', ['dev'], {
+    this.server = spawn('pnpm', ['dev'], {
       stdio: 'inherit',
       shell: true,
       env: { ...process.env, PORT: this.port.toString() }

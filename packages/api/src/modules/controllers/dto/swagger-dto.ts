@@ -30,13 +30,13 @@ export class WorkflowDto {
   })
   triggerType!: 'manual' | 'event' | 'schedule';
 
-  @ApiProperty({ description: 'Trigger configuration', required: false, type: 'object' })
+  @ApiProperty({ description: 'Trigger configuration', required: false })
   triggerConfig?: Record<string, any>;
 
   @ApiProperty({ description: 'Workflow steps', type: 'array', items: { type: 'object' } })
   steps!: any[];
 
-  @ApiProperty({ description: 'Initial context', required: false, type: 'object' })
+  @ApiProperty({ description: 'Initial context', required: false })
   initialContext?: Record<string, any>;
 
   @ApiProperty({ description: 'Tags', required: false, type: 'array', items: { type: 'string' } })
@@ -75,7 +75,7 @@ export class WorkflowExecutionDto {
   @ApiProperty({ description: 'Current step ID', required: false })
   currentStepId?: string | null;
 
-  @ApiProperty({ description: 'Runtime context data', type: 'object' })
+  @ApiProperty({ description: 'Runtime context data' })
   context!: Record<string, any>;
 
   @ApiProperty({ description: 'Start timestamp', required: false })
@@ -116,7 +116,7 @@ export class AgentDto {
   @ApiProperty({ description: 'Agent capabilities', type: 'array', items: { type: 'string' } })
   capabilities!: string[];
 
-  @ApiProperty({ description: 'Agent metadata', required: false, type: 'object' })
+  @ApiProperty({ description: 'Agent metadata', required: false })
   metadata?: Record<string, any>;
 
   @ApiProperty({

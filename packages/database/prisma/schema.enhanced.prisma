@@ -1,0 +1,1132 @@
+// Enhanced The New Fuse Database Schema
+// This schema resolves all identified design issues while preserving unique features
+// Migration-ready version with backwards compatibility
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+  previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// =============================================================================
+// MULTI-TENANCY & ORGANIZATIONS
+// =============================================================================
+
+enum OrganizationType {
+  INDIVIDUAL
+  TEAM
+  ENTERPRISE
+  AGENCY
+}
+
+enum MemberRole {
+  OWNER
+  ADMIN
+  MANAGER
+  DEVELOPER
+  VIEWER
+}
+
+model Organization {
+  id                String              @id @default(uuid())
+  name              String
+  slug              String              @unique
+  type              OrganizationType    @default(TEAM)
+
+  // Subscription & billing
+  plan              String              @default("free")
+  billingEmail      String?
+  stripeCustomerId  String?             @unique
+
+  // Settings
+  settings          Json?
+  metadata          Json?
+
+  // Limits & quotas
+  agentLimit        Int                 @default(5)
+  storageLimit      BigInt              @default(10737418240)
+  computeUnitsLimit Int                 @default(10000)
+
+  isActive          Boolean             @default(true)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  // Relationships
+  members           OrganizationMember[]
+  agents            Agent[]
+  workflows         Workflow[]
+  llmConfigs        LLMConfig[]
+  registeredEntities RegisteredEntity[]
+  invitations       OrganizationInvitation[]
+
+  @@index([slug])
+  @@index([deletedAt])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id              String          @id @default(uuid())
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+
+  role            MemberRole      @default(DEVELOPER)
+  permissions     String[]        @default([])
+
+  joinedAt        DateTime        @default(now())
+  invitedBy       String?
+
+  @@unique([organizationId, userId])
+  @@index([userId])
+  @@map("organization_members")
+}
+
+model OrganizationInvitation {
+  id              String          @id @default(uuid())
+
+  organization    Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  organizationId  String
+
+  email           String
+  role            MemberRole
+
+  invitedBy       User            @relation("SentInvitations", fields: [invitedById], references: [id])
+  invitedById     String
+
+  token           String          @unique
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+
+  createdAt       DateTime        @default(now())
+
+  @@index([email])
+  @@index([token])
+  @@index([expiresAt])
+  @@map("organization_invitations")
+}
+
+// =============================================================================
+// USER MANAGEMENT
+// =============================================================================
+
+model User {
+  id             String     @id @default(uuid())
+  email          String     @unique
+  username       String?    @unique
+  name           String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  hashedPassword String
+  role           UserRole   @default(USER)
+  roles          UserRole[] @default([USER])
+  isActive       Boolean    @default(true)
+  lastLogin      DateTime?
+  preferences    Json?
+  refreshToken   String?
+  deletedAt      DateTime?
+  emailVerified  Boolean    @default(false)
+
+  // Relationships
+  createdAgents       Agent[]                 @relation("CreatedAgents")
+  ownedAgents         Agent[]                 @relation("OwnedAgents")
+  pipelines           Pipeline[]
+  tasks               Task[]
+  workflows           Workflow[]
+  chatRooms           ChatRoom[]
+  messages            Message[]               @relation("UserMessages")
+  authSessions        AuthSession[]
+  loginAttempts       LoginAttempt[]
+  authEvents          AuthEvent[]
+  organizationMemberships OrganizationMember[]
+  sentInvitations     OrganizationInvitation[] @relation("SentInvitations")
+  ownedCodeSessions   CodeExecutionSession[]  @relation("OwnedCodeSessions")
+  collaboratorCodeSessions CodeExecutionSession[] @relation("CodeSessionCollaborators")
+  mintedNFTs          AgentNFT[]              @relation("MintedNFTs")
+  credentials         VerifiableCredential[]  @relation(map: "user_credentials_subject")
+  issuedCredentials   VerifiableCredential[]  @relation("UserIssuedCredentials")
+
+  @@index([email])
+  @@index([username])
+  @@index([deletedAt])
+  @@map("users")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  SUPER_ADMIN
+  AGENCY_OWNER
+  AGENCY_ADMIN
+  AGENCY_MANAGER
+  AGENT_OPERATOR
+}
+
+// =============================================================================
+// AUTHENTICATION
+// =============================================================================
+
+model AuthSession {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+model LoginAttempt {
+  id         String   @id @default(uuid())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  ipAddress  String
+  successful Boolean
+  createdAt  DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([ipAddress, createdAt])
+  @@map("login_attempts")
+}
+
+model AuthEvent {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    String
+  type      String
+  details   Json?
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type, createdAt])
+  @@map("auth_events")
+}
+
+// =============================================================================
+// AGENT SYSTEM
+// =============================================================================
+
+model Agent {
+  id                String               @id @default(uuid())
+  name              String
+  type              AgentType
+  status            AgentStatus          @default(INACTIVE)
+  description       String?
+  systemPrompt      String?              @db.Text
+  config            Json?
+  capabilities      AgentCapability[]    @default([])
+  provider          String               @default("default")
+
+  // Dual ownership model
+  creator           User                 @relation("CreatedAgents", fields: [creatorId], references: [id], onDelete: Restrict)
+  creatorId         String
+  owner             User?                @relation("OwnedAgents", fields: [ownerId], references: [id], onDelete: SetNull)
+  ownerId           String?
+
+  // Organization support
+  organization      Organization?        @relation(fields: [organizationId], references: [id])
+  organizationId    String?
+
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  deletedAt         DateTime?
+
+  // Relationships
+  metadata          AgentMetadata?
+  nft               AgentNFT?
+  wallet            Wallet?
+  chats             Chat[]
+  messages          Message[]            @relation("AgentMessages")
+  codeExecutions    CodeExecutionUsage[]
+  pipelines         Pipeline[]
+  tasks             Task[]
+  workflows         Workflow[]
+  workflowSteps     WorkflowStep[]
+  credentials       VerifiableCredential[] @relation(map: "agent_credentials_subject")
+  issuedCredentials VerifiableCredential[] @relation("AgentIssuedCredentials")
+
+  @@index([creatorId])
+  @@index([ownerId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([type])
+  @@index([deletedAt])
+  @@map("agents")
+}
+
+model AgentMetadata {
+  id       String @id @default(uuid())
+  agentId  String @unique
+  metadata Json   @default("{}")
+
+  agent    Agent  @relation(fields: [agentId], references: [id], onDelete: Cascade)
+
+  @@map("agent_metadata")
+}
+
+enum AgentType {
+  BASIC
+  CHAT
+  WORKFLOW
+  TASK
+  ASSISTANT
+  ANALYSIS
+  CONVERSATIONAL
+  IDE_EXTENSION
+  API
+}
+
+enum AgentStatus {
+  ACTIVE
+  INACTIVE
+  IDLE
+  BUSY
+  ERROR
+  OFFLINE
+  INITIALIZING
+  READY
+  TERMINATED
+}
+
+enum AgentCapability {
+  CODE_GENERATION
+  CODE_REVIEW
+  CODE_REFACTORING
+  CODE_EXECUTION
+  DEBUGGING
+  TESTING
+  DOCUMENTATION
+  ARCHITECTURE_DESIGN
+  OPTIMIZATION
+  SECURITY_AUDIT
+  PROJECT_MANAGEMENT
+  TOOL_USAGE
+  TASK_EXECUTION
+  FILE_MANAGEMENT
+  CODE_COMPLETION
+  CODE_SUGGESTIONS
+  SYNTAX_HIGHLIGHTING
+  ERROR_DETECTION
+  CODE_FORMATTING
+  INTELLISENSE
+  CHAT
+  WORKFLOW
+  RESEARCH
+  ANALYSIS
+  INTEGRATION
+}
+
+// =============================================================================
+// CHAT SYSTEM
+// =============================================================================
+
+model Chat {
+  id        String    @id @default(uuid())
+  title     String?
+  agentId   String
+  userId    String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  agent     Agent     @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  messages  Message[]
+
+  @@index([agentId])
+  @@index([userId])
+  @@index([deletedAt])
+  @@map("chats")
+}
+
+model ChatRoom {
+  id            String    @id @default(uuid())
+  name          String
+  description   String?
+  isPrivate     Boolean   @default(false)
+  owner         User      @relation(fields: [ownerId], references: [id])
+  ownerId       String
+  settings      Json?
+  metadata      Json?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  lastMessageAt DateTime?
+  isActive      Boolean   @default(true)
+  deletedAt     DateTime?
+
+  messages      Message[]
+
+  @@index([ownerId])
+  @@index([isPrivate])
+  @@index([deletedAt])
+  @@map("chat_rooms")
+}
+
+model Message {
+  id              String      @id @default(uuid())
+  content         String      @db.Text
+  role            MessageRole @default(USER)
+
+  // Sender (User XOR Agent)
+  sender          User?       @relation("UserMessages", fields: [senderId], references: [id], onDelete: SetNull)
+  senderId        String?
+  senderAgent     Agent?      @relation("AgentMessages", fields: [senderAgentId], references: [id], onDelete: SetNull)
+  senderAgentId   String?
+
+  // Context (Chat XOR ChatRoom)
+  chat            Chat?       @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  chatId          String?
+  room            ChatRoom?   @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  roomId          String?
+
+  // Threading
+  parentMessage   Message?    @relation("MessageReplies", fields: [parentMessageId], references: [id], onDelete: SetNull)
+  parentMessageId String?
+  replies         Message[]   @relation("MessageReplies")
+
+  // Rich content
+  metadata        Json?
+  attachments     String[]    @default([])
+  timestamp       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  isEdited        Boolean     @default(false)
+  isDeleted       Boolean     @default(false)
+  reactions       Json?
+
+  // Ephemeral message support (replaces ChatMessage)
+  isEphemeral     Boolean     @default(false)
+  expiresAt       DateTime?
+
+  @@index([chatId, timestamp])
+  @@index([roomId, timestamp])
+  @@index([senderId, timestamp])
+  @@index([senderAgentId, timestamp])
+  @@index([parentMessageId])
+  @@index([isDeleted, timestamp])
+  @@index([expiresAt])
+  @@map("messages")
+}
+
+enum MessageRole {
+  USER
+  AGENT
+  SYSTEM
+  ASSISTANT
+  TOOL
+}
+
+// =============================================================================
+// WORKFLOW SYSTEM
+// =============================================================================
+
+model Workflow {
+  id              String              @id @default(uuid())
+  name            String
+  description     String?
+  definition      Json?
+  status          WorkflowStatus      @default(DRAFT)
+  creator         User?               @relation(fields: [creatorId], references: [id])
+  creatorId       String?
+  agent           Agent?              @relation(fields: [agentId], references: [id])
+  agentId         String?
+  organization    Organization?       @relation(fields: [organizationId], references: [id])
+  organizationId  String?
+  metadata        Json?
+  isActive        Boolean             @default(true)
+  variables       Json?
+  triggers        Json?               @db.Json
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  lastExecutedAt  DateTime?
+  executionCount  Int                 @default(0)
+  statistics      Json?
+  deletedAt       DateTime?
+
+  steps           WorkflowStep[]      @relation("WorkflowSteps")
+  executions      WorkflowExecution[]
+
+  @@index([creatorId])
+  @@index([agentId])
+  @@index([organizationId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("workflows")
+}
+
+model WorkflowStep {
+  id              String              @id @default(uuid())
+  name            String
+  type            String
+  config          Json?
+  order           Int                 @default(0)
+
+  workflow        Workflow?           @relation("WorkflowSteps", fields: [workflowId], references: [id], onDelete: Cascade)
+  workflowId      String?
+  agent           Agent?              @relation(fields: [agentId], references: [id], onDelete: SetNull)
+  agentId         String?
+
+  // Graph edges
+  nextStepEdges   WorkflowStepEdge[]  @relation("FromStep")
+  previousStepEdges WorkflowStepEdge[] @relation("ToStep")
+
+  conditions      Json?
+  transformations Json?
+  metadata        Json?
+  isActive        Boolean             @default(true)
+  createdAt       DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+  lastExecutedAt  DateTime?
+  statistics      Json?
+
+  @@index([workflowId, order])
+  @@index([agentId])
+  @@map("workflow_steps")
+}
+
+model WorkflowStepEdge {
+  id              String        @id @default(uuid())
+
+  fromStep        WorkflowStep  @relation("FromStep", fields: [fromStepId], references: [id], onDelete: Cascade)
+  fromStepId      String
+
+  toStep          WorkflowStep  @relation("ToStep", fields: [toStepId], references: [id], onDelete: Cascade)
+  toStepId        String
+
+  condition       Json?
+  priority        Int           @default(0)
+  isActive        Boolean       @default(true)
+
+  createdAt       DateTime      @default(now())
+
+  @@unique([fromStepId, toStepId])
+  @@index([fromStepId])
+  @@index([toStepId])
+  @@map("workflow_step_edges")
+}
+
+model WorkflowExecution {
+  id          String                  @id @default(uuid())
+  workflow    Workflow                @relation(fields: [workflowId], references: [id])
+  workflowId  String
+  status      WorkflowExecutionStatus @default(PENDING)
+  input       Json?
+  output      Json?
+  error       String?
+  startedAt   DateTime                @default(now())
+  completedAt DateTime?
+
+  @@index([workflowId, status, startedAt])
+  @@index([status, startedAt])
+  @@map("workflow_executions")
+}
+
+enum WorkflowStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+enum WorkflowExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// =============================================================================
+// PIPELINE SYSTEM
+// =============================================================================
+
+model Pipeline {
+  id            String         @id @default(uuid())
+  name          String
+  description   String?
+  configuration Json?
+  status        PipelineStatus @default(DRAFT)
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String
+  agent         Agent          @relation(fields: [agentId], references: [id])
+  agentId       String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+
+  tasks         Task[]
+
+  @@index([userId])
+  @@index([agentId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("pipelines")
+}
+
+enum PipelineStatus {
+  DRAFT
+  ACTIVE
+  PAUSED
+  COMPLETED
+  FAILED
+}
+
+// =============================================================================
+// TASK SYSTEM
+// =============================================================================
+
+model Task {
+  id            String         @id @default(uuid())
+  type          String
+  status        TaskStatus     @default(PENDING)
+  priority      TaskPriority   @default(MEDIUM)
+  data          Json?
+  result        Json?
+  error         String?
+  startTime     DateTime?
+  endTime       DateTime?
+  pipeline      Pipeline       @relation(fields: [pipelineId], references: [id])
+  pipelineId    String
+  agent         Agent?         @relation(fields: [agentId], references: [id])
+  agentId       String?
+  user          User           @relation(fields: [userId], references: [id])
+  userId        String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  deletedAt     DateTime?
+
+  taskExecutions TaskExecution[]
+
+  @@index([pipelineId])
+  @@index([agentId])
+  @@index([userId])
+  @@index([status])
+  @@index([deletedAt])
+  @@map("tasks")
+}
+
+model TaskExecution {
+  id          String   @id @default(uuid())
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  taskId      String
+  status      String
+  output      Json?
+  error       String?
+  startedAt   DateTime @default(now())
+  completedAt DateTime?
+
+  @@index([taskId, startedAt])
+  @@map("task_executions")
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+// =============================================================================
+// CODE EXECUTION SYSTEM
+// =============================================================================
+
+model CodeExecutionUsage {
+  id              String                @id @default(uuid())
+  agentId         String
+  clientId        String
+  executionId     String                @unique
+  language        CodeExecutionLanguage
+  code            String                @db.Text
+  result          Json?
+  output          Json?
+  error           Json?
+  executionTime   Int
+  memoryUsage     Int
+  computeUnits    Float
+  cost            Float
+  tier            CodeExecutionTier
+  environment     String
+  status          CodeExecutionStatus
+  createdAt       DateTime              @default(now())
+  completedAt     DateTime?
+
+  agent           Agent                 @relation(fields: [agentId], references: [id])
+
+  @@index([agentId, createdAt])
+  @@index([clientId, status])
+  @@index([tier, cost])
+  @@index([language, status])
+  @@index([status])
+  @@map("code_execution_usage")
+}
+
+model CodeExecutionSession {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+
+  owner           User      @relation("OwnedCodeSessions", fields: [ownerId], references: [id], onDelete: Cascade)
+  ownerId         String
+
+  collaboratorUsers User[]  @relation("CodeSessionCollaborators")
+
+  isPublic        Boolean   @default(false)
+  files           Json
+  environment     Json
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  expiresAt       DateTime?
+  storageUsage    Int       @default(0)
+
+  @@index([ownerId])
+  @@index([expiresAt])
+  @@map("code_execution_sessions")
+}
+
+enum CodeExecutionLanguage {
+  JAVASCRIPT
+  TYPESCRIPT
+  PYTHON
+  RUBY
+  SHELL
+  HTML
+  CSS
+}
+
+enum CodeExecutionTier {
+  BASIC
+  STANDARD
+  PREMIUM
+  ENTERPRISE
+}
+
+enum CodeExecutionStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+  TIMEOUT
+  CANCELLED
+}
+
+// =============================================================================
+// NFT AND MARKETPLACE MODELS
+// =============================================================================
+
+model AgentNFT {
+  id                  String                @id @default(uuid())
+  agentId             String                @unique
+  tokenId             Int                   @unique
+  contractAddress     String
+  smartAccountAddress String?
+
+  minter              User                  @relation("MintedNFTs", fields: [minterId], references: [id])
+  minterId            String
+
+  isFractionalized    Boolean               @default(false)
+  totalShares         Int                   @default(0)
+  metadataUri         String?
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+
+  agent               Agent                 @relation(fields: [agentId], references: [id], onDelete: Restrict)
+  fractionalShares    FractionalShare[]
+  revenueStreams      RevenueStream[]
+  marketplaceListings MarketplaceListing[]
+
+  @@index([minterId])
+  @@index([contractAddress])
+  @@map("agent_nfts")
+}
+
+model FractionalShare {
+  id          String   @id @default(uuid())
+  agentNFTId  String
+  ownerAddress String
+  shareAmount Decimal  @db.Decimal(65, 18)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  agentNFT    AgentNFT @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+
+  @@index([agentNFTId])
+  @@index([ownerAddress])
+  @@map("fractional_shares")
+}
+
+model RevenueStream {
+  id                    String              @id @default(uuid())
+  agentNFTId            String
+  streamName            String
+  description           String?
+  tokenAddress          String
+  totalRevenue          Decimal             @db.Decimal(65, 18)
+  distributedRevenue    Decimal             @db.Decimal(65, 18)
+  distributionThreshold Decimal             @db.Decimal(65, 18)
+  isActive              Boolean             @default(true)
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+
+  agentNFT              AgentNFT            @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  distributions         RevenueDistribution[]
+
+  @@index([agentNFTId])
+  @@index([isActive])
+  @@map("revenue_streams")
+}
+
+model RevenueDistribution {
+  id              String        @id @default(uuid())
+  revenueStreamId String
+  txHash          String        @unique
+  totalAmount     Decimal       @db.Decimal(65, 18)
+  distributedTo   Json
+  blockNumber     Int
+  createdAt       DateTime      @default(now())
+
+  revenueStream   RevenueStream @relation(fields: [revenueStreamId], references: [id], onDelete: Cascade)
+
+  @@index([revenueStreamId])
+  @@index([txHash])
+  @@map("revenue_distributions")
+}
+
+model MarketplaceListing {
+  id           String            @id @default(uuid())
+  agentNFTId   String
+  listingId    Int               @unique
+  seller       String
+  shareAmount  Decimal           @db.Decimal(65, 18)
+  pricePerShare Decimal          @db.Decimal(65, 18)
+  totalPrice   Decimal           @db.Decimal(65, 18)
+  status       MarketplaceStatus @default(ACTIVE)
+  expiresAt    DateTime?
+  createdAt    DateTime          @default(now())
+  updatedAt    DateTime          @updatedAt
+
+  agentNFT     AgentNFT          @relation(fields: [agentNFTId], references: [id], onDelete: Cascade)
+  offers       MarketplaceOffer[]
+
+  @@index([agentNFTId, status])
+  @@index([seller, status])
+  @@index([status, createdAt])
+  @@map("marketplace_listings")
+}
+
+model MarketplaceOffer {
+  id          String           @id @default(uuid())
+  listingId   String
+  buyer       String
+  shareAmount Decimal          @db.Decimal(65, 18)
+  offerPrice  Decimal          @db.Decimal(65, 18)
+  status      OfferStatus      @default(PENDING)
+  expiresAt   DateTime?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+
+  listing     MarketplaceListing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId, status])
+  @@index([buyer, status])
+  @@map("marketplace_offers")
+}
+
+enum MarketplaceStatus {
+  ACTIVE
+  SOLD
+  CANCELLED
+  EXPIRED
+}
+
+enum OfferStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+  CANCELLED
+  EXPIRED
+}
+
+// =============================================================================
+// WALLET AND TRANSACTION MODELS
+// =============================================================================
+
+model Wallet {
+  id             String        @id @default(uuid())
+  address        String        @unique
+  agentId        String?       @unique
+  type           WalletType    @default(SMART_ACCOUNT)
+  balance        Decimal       @db.Decimal(65, 18) @default(0)
+  nonce          Int           @default(0)
+  isActive       Boolean       @default(true)
+  lastActivity   DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  agent          Agent?        @relation(fields: [agentId], references: [id])
+  transactions   Transaction[]
+
+  @@index([address])
+  @@index([agentId])
+  @@map("wallets")
+}
+
+model Transaction {
+  id           String            @id @default(uuid())
+  hash         String            @unique
+  walletId     String
+  fromAddress  String
+  toAddress    String
+  value        Decimal           @db.Decimal(65, 18)
+  gasPrice     Decimal           @db.Decimal(65, 18)
+  gasUsed      Int
+  gasLimit     Int
+  status       TransactionStatus @default(PENDING)
+  blockNumber  Int?
+  blockHash    String?
+  type         TransactionType   @default(TRANSFER)
+  data         Json?
+  createdAt    DateTime          @default(now())
+  confirmedAt  DateTime?
+
+  wallet       Wallet            @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([walletId, status, createdAt])
+  @@index([hash])
+  @@index([fromAddress, toAddress])
+  @@index([blockNumber, status])
+  @@map("transactions")
+}
+
+enum WalletType {
+  SMART_ACCOUNT
+  EOA
+  MULTI_SIG
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+  CANCELLED
+}
+
+enum TransactionType {
+  TRANSFER
+  CONTRACT_CALL
+  CONTRACT_DEPLOYMENT
+  NFT_MINT
+  NFT_TRANSFER
+}
+
+// =============================================================================
+// VERIFIABLE CREDENTIALS
+// =============================================================================
+
+enum CredentialType {
+  PERFORMANCE_METRIC
+  AUDIT_COMPLETION
+  CERTIFICATION
+  REPUTATION_SCORE
+  SKILL_ENDORSEMENT
+  REVENUE_MILESTONE
+  COLLABORATION_PROOF
+  SECURITY_AUDIT
+  COMPLIANCE_CERT
+}
+
+enum CredentialStatus {
+  ACTIVE
+  REVOKED
+  EXPIRED
+  PENDING
+}
+
+model VerifiableCredential {
+  id              String            @id @default(uuid())
+
+  subjectType     String
+  subjectId       String
+
+  type            CredentialType
+  credentialData  Json
+
+  issuer          String
+  issuerAgent     Agent?            @relation("AgentIssuedCredentials", fields: [issuerAgentId], references: [id])
+  issuerAgentId   String?
+  issuerUser      User?             @relation("UserIssuedCredentials", fields: [issuerUserId], references: [id])
+  issuerUserId    String?
+
+  proofType       String
+  proof           Json
+  blockchainTxHash String?          @unique
+  contractAddress String?
+
+  issuedAt        DateTime          @default(now())
+  expiresAt       DateTime?
+  status          CredentialStatus  @default(ACTIVE)
+  revokedAt       DateTime?
+  revokedReason   String?
+
+  metadata        Json?
+  tags            String[]          @default([])
+
+  @@index([subjectType, subjectId, status])
+  @@index([issuerAgentId])
+  @@index([issuerUserId])
+  @@index([type, status])
+  @@index([expiresAt])
+  @@index([blockchainTxHash])
+  @@map("verifiable_credentials")
+}
+
+// =============================================================================
+// ENTITY REGISTRY
+// =============================================================================
+
+model RegisteredEntity {
+  id            String                @id @default(uuid())
+  name          String
+  type          RegisteredEntityType
+  description   String?
+  metadata      Json?
+  config        Json?
+  status        EntityStatus          @default(ACTIVE)
+  version       String                @default("1.0.0")
+  namespace     String?
+  tags          String[]              @default([])
+  capabilities  String[]              @default([])
+  dependencies  String[]              @default([])
+  isPublic      Boolean               @default(false)
+  ownerId       String?
+  organization  Organization?         @relation(fields: [organizationId], references: [id])
+  organizationId String?
+  createdAt     DateTime              @default(now())
+  updatedAt     DateTime              @updatedAt
+  deletedAt     DateTime?
+
+  @@index([type, status])
+  @@index([organizationId])
+  @@index([ownerId])
+  @@index([deletedAt])
+  @@map("registered_entities")
+}
+
+enum RegisteredEntityType {
+  AGENT
+  WORKFLOW
+  TOOL
+  SERVICE
+  INTEGRATION
+  TEMPLATE
+  COMPONENT
+  MODULE
+}
+
+enum EntityStatus {
+  ACTIVE
+  INACTIVE
+  DEPRECATED
+  PENDING
+  FAILED
+}
+
+// =============================================================================
+// LLM CONFIGURATION (ENHANCED SECURITY)
+// =============================================================================
+
+model LLMConfig {
+  id                String        @id @default(uuid())
+  name              String
+  provider          String
+  modelName         String
+
+  // ENHANCED: Encrypted API key storage
+  apiKeyEncrypted   String        @db.Text
+  apiKeyHash        String?
+  encryptionKeyId   String?
+
+  apiEndpoint       String?
+  isCustom          Boolean       @default(false)
+  enabled           Boolean       @default(true)
+  priority          Int           @default(10)
+  retryConfig       Json?
+
+  // Organization scoping
+  organization      Organization? @relation(fields: [organizationId], references: [id])
+  organizationId    String?
+  scope             String        @default("organization")
+
+  // Key management
+  lastKeyRotation   DateTime?
+  keyExpiresAt      DateTime?
+
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  deletedAt         DateTime?
+
+  @@index([organizationId])
+  @@index([provider, enabled])
+  @@index([deletedAt])
+  @@map("llm_configs")
+}
+
+// =============================================================================
+// MONITORING & OBSERVABILITY
+// =============================================================================
+
+model SystemEvent {
+  id            String      @id @default(uuid())
+  eventType     String
+  severity      String
+  source        String
+  userId        String?
+  agentId       String?
+  resourceType  String?
+  resourceId    String?
+
+  message       String
+  metadata      Json?
+  stackTrace    String?     @db.Text
+
+  timestamp     DateTime    @default(now())
+
+  @@index([eventType, timestamp])
+  @@index([severity, timestamp])
+  @@index([userId, timestamp])
+  @@index([agentId, timestamp])
+  @@map("system_events")
+}
+
+model PerformanceMetric {
+  id            String      @id @default(uuid())
+  metricName    String
+  value         Float
+  unit          String
+
+  tags          Json?
+
+  timestamp     DateTime    @default(now())
+
+  @@index([metricName, timestamp])
+  @@map("performance_metrics")
+}

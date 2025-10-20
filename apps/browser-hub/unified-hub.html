@@ -571,7 +571,7 @@
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
         }
 
-        .quick-action-btn.theia {
+        .quick-action-btn.browser-hub {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         }
 
@@ -681,8 +681,8 @@
         
         <div class="service-status">
             <div class="service-indicator">
-                <span class="status-dot connected" id="theia-status-dot"></span>
-                <span>Theia</span>
+                <span class="status-dot connected" id="browser-hub-status-dot"></span>
+                <span>Browser Hub</span>
             </div>
             <div class="service-indicator">
                 <span class="status-dot partial" id="mcp-status-dot"></span>
@@ -783,9 +783,9 @@
                     </div>
                 </div>
                 <div class="service-buttons">
-                    <button class="service-btn" onclick="openTheiaIDE()">
-                        <span class="icon">💻</span>
-                        <span class="text">Theia IDE</span>
+                    <button class="service-btn" onclick="openBrowserHub()">
+                        <span class="icon">🌐</span>
+                        <span class="text">Browser Hub</span>
                     </button>
                     <button class="service-btn" onclick="openVSCode()">
                         <span class="icon">⚡</span>
@@ -1005,7 +1005,7 @@
         ];
         let tabCounter = 1;
         let services = {
-            theia: { status: 'disconnected' },
+            browserHub: { status: 'connected' },
             mcp: { status: 'disconnected' },
             ai: { status: 'disconnected' },
             api: { status: 'disconnected' }, // Added API service
@@ -1271,23 +1271,19 @@
         }
 
         // Service Functions (mapped to about: URLs or Electron APIs)
-        async function openTheiaIDE() {
-            console.log('Opening Theia IDE');
-            if (window.electronAPI) {
+        async function openBrowserHub() {
+            console.log('Opening Browser Hub');
+            if (window.electronAPI && window.electronAPI.openBrowserHub) {
                 try {
-                    // Check Theia status from native host
-                    const theiaStatusResponse = await window.electronAPI.invoke('native:execute', 'get_service_status', ['theia']);
-                    if (theiaStatusResponse.success && theiaStatusResponse.status === 'running') {
-                        console.log('Theia is already running.');
-                    } else {
-                        console.log('Starting Theia server...');
-                        await window.electronAPI.invoke('native:execute', 'start_service', ['theia']);
-                        await new Promise(resolve => setTimeout(resolve, 3000)); // Give it time to start
-                    }
-                    createNewTab('http://localhost:3000', 'Theia IDE', '💻');
+                    await window.electronAPI.openBrowserHub();
                 } catch (error) {
-                    console.error('Error opening Theia IDE:', error);
+                    console.error('Error opening Browser Hub via Electron:', error);
+                    // Fallback to web version
+                    createNewTab('enhanced-hub.html', 'Browser Hub', '🌐');
                 }
+            } else {
+                // Fallback for web version
+                createNewTab('enhanced-hub.html', 'Browser Hub', '🌐');
             }
         }
 
@@ -1414,7 +1410,7 @@
         function orchestrate() { console.log('Orchestrating services'); }
         function deployments() { console.log('Managing deployments'); }
 
-        function openWorkspace() { openTheiaIDE(); } // Alias for opening Theia IDE
+        function openWorkspace() { openBrowserHub(); } // Alias for opening Browser Hub
 
         // System Controls
         async function startAllServices() {
@@ -1498,14 +1494,14 @@
             }
 
             // Update status dots in the title bar
-            const theiaDot = document.getElementById('theia-status-dot');
+            const browserHubDot = document.getElementById('browser-hub-status-dot');
             const mcpDot = document.getElementById('mcp-status-dot');
             const aiDot = document.getElementById('ai-status-dot');
             // Assuming we will add API and Backend status dots to the title bar later
             // const apiDot = document.getElementById('api-status-dot');
             // const backendDot = document.getElementById('backend-status-dot');
 
-            if (theiaDot) theiaDot.className = `status-dot ${services.theia.status}`;
+            if (browserHubDot) browserHubDot.className = `status-dot ${services.browserHub.status}`;
             if (mcpDot) mcpDot.className = `status-dot ${services.mcp.status}`;
             if (aiDot) aiDot.className = `status-dot ${services.ai.status}`;
             // if (apiDot) apiDot.className = `status-dot ${services.api.status}`;
@@ -1517,7 +1513,7 @@
                 if (categoryHeaderDot) {
                     // Determine the service name based on category class
                     let serviceName = '';
-                    if (category.classList.contains('ide')) serviceName = 'theia'; // Assuming 'ide' category maps to 'theia' service
+                    if (category.classList.contains('ide')) serviceName = 'browserHub'; // Assuming 'ide' category maps to 'browserHub' service
                     else if (category.classList.contains('ai-clis')) serviceName = 'ai'; // Assuming 'ai-clis' maps to 'ai'
                     else if (category.classList.contains('mcp-server')) serviceName = 'mcp'; // Assuming 'mcp-server' maps to 'mcp'
                     // Add more mappings if needed for other categories to specific services
@@ -1541,14 +1537,14 @@
                     <h2>Advanced Multi-Service Development Platform</h2>
                     <p>
                         Seamlessly integrate development, automation, AI services, and web browsing 
-                        in one unified platform. Start coding with Theia IDE, automate tasks with 
+                        in one unified platform. Start coding with Browser Hub, automate tasks with 
                         AI agents, or browse the web with advanced developer tools.
                     </p>
                     
                     <div class="quick-actions">
-                        <button class="quick-action-btn theia" onclick="openTheiaIDE()">
-                            <span>💻</span>
-                            <span>Launch Theia IDE</span>
+                        <button class="quick-action-btn browser-hub" onclick="openBrowserHub()">
+                            <span>🌐</span>
+                            <span>Launch Browser Hub</span>
                         </button>
                         <button class="quick-action-btn" onclick="createNewTab()">
                             <span>🌐</span>

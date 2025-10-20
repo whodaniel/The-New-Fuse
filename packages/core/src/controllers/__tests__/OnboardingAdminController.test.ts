@@ -1,72 +1,30 @@
+
 import { Test, TestingModule } from '@nestjs/testing';
-import { OnboardingAdminController } from /../OnboardingAdminController'';
-    email:test@example.'com'
-    role: ''
-  logoUrl: /assets/images/logo.'png'
-  primaryColor:#3182'CE'
-  secondaryColor:#4'FD1C5'
-  welcomeTitle: Welcome to The New 'Fuse'
-  redirectAfterCompletion: /'dashboard'
-    id: 'human'
-    name: Human 'User'
-    description:Regular human users of the platform'
-    detectionMethod: 'behavior'
-      behaviorPattern: human-like interaction 'patterns'
-    id: 'ai_agent'
-    name: AI 'Agent'
-    description:AI agents that integrate with the platform'
-    detectionMethod: 'header'
-      headerValue: 'ai_agent'
-    id:1'
-    type: 'welcome'
-    description: Introduction to The New Fuse 'platform'
-    userTypes: ['human', ai_agent'
-      heading:Welcome to The New Fuse'
-      imageUrl: /assets/images/welcome.'png'
-      buttonText:Get Started'
-    id:2'
-    type: 'completion'
-    description: Onboarding 'completion'
-    userTypes: ['human', ai_agent'
-      heading:All Set!'
-      subheading: You\'re ready to start using The New Fuse.'
-      buttonText:Get Started'
-  vectorDatabaseType: 'pinecone'
-  defaultLLMProvider: 'openai'
-  defaultLLMModel: gpt-4'
-  greeterAgentAvatar:/assets/images/greeter-avatar.'png'
-  greeterAgentPrompt:You are Fuse Assistant, a helpful AI assistant.'
-      id: kb-1'
-      name:Platform Overview'
-      description:General information about The New Fuse platform'
-  supportedModalities: ['text', image'
-  status: 'success'
-  message: Configuration is 'valid'
-    { step: 'profile'
-    { step: 'ai_preferences'
-    { step: 'workspace'
-    { type: 'human'
-    { type: 'ai_agent'
-describe('OnboardingAdminController'
-              if (key === 'placeholder';
-  it('should be defined'
-  describe('getGeneralSettings'
-    it('should return general settings'
-  describe('updateGeneralSettings'
-    it('should update general settings'
-  describe('getUserTypes'
-    it('should return user types'
-  describe('updateUserTypes'
-    it('should update user types'
-  describe('getSteps'
-    it('should return steps'
-  describe('updateSteps'
-    it('should update steps'
-  describe('getAISettings'
-    it('should return AI settings'
-  describe('updateAISettings'
-    it('should update AI settings'
-  describe('validateConfiguration'
-    it('should validate configuration'
-  describe('getAnalytics'
-    it('')
+import { OnboardingAdminController } from '../OnboardingAdminController';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { Reflector } from '@nestjs/core';
+
+describe('OnboardingAdminController', () => {
+  let controller: OnboardingAdminController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [OnboardingAdminController],
+      providers: [
+        {
+          provide: RolesGuard,
+          useValue: {
+            canActivate: jest.fn(() => true),
+          },
+        },
+        Reflector,
+      ],
+    }).compile();
+
+    controller = module.get<OnboardingAdminController>(OnboardingAdminController);
+  });
+
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
+});

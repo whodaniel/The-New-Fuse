@@ -1,54 +1,46 @@
 #!/bin/bash
 
-# Set color codes
-RED='\033[0;31m'
-GREEN='\033[0;32m'
-NC='\033[0m' # No Color
+# Cleanup script for The New Fuse
+# Removes build artifacts and temporary files
 
-echo -e "${GREEN}Starting cleanup process...${NC}"
+set -e
 
-# Clean Bun cache
-echo -e "\n${GREEN}Cleaning Bun cache...${NC}"
-bun pm cache rm
-rm -rf .yarn/cache
-rm -rf .yarn/build-state.yml
-rm -rf .yarn/install-state.gz
+echo "🧹 Starting cleanup..."
 
-# Clean node_modules
-echo -e "\n${GREEN}Removing node_modules...${NC}"
-find . -name "node_modules" -type d -prune -exec rm -rf '{}' +
+# Remove node_modules
+echo "📦 Removing node_modules..."
+rm -rf node_modules
+rm -rf apps/*/node_modules
+rm -rf packages/*/node_modules
 
-# Clean TypeScript cache
-echo -e "\n${GREEN}Cleaning TypeScript cache...${NC}"
-find . -name ".tsbuildinfo" -type f -delete
-find . -name "tsconfig.tsbuildinfo" -type f -delete
+# Remove build artifacts
+echo "🏗️ Removing build artifacts..."
+rm -rf dist
+rm -rf build
+rm -rf apps/*/dist
+rm -rf apps/*/build
+rm -rf packages/*/dist
+rm -rf packages/*/build
 
-# Clean build artifacts
-echo -e "\n${GREEN}Cleaning build artifacts...${NC}"
-find . -name "dist" -type d -prune -exec rm -rf '{}' +
-find . -name "build" -type d -prune -exec rm -rf '{}' +
-find . -name ".next" -type d -prune -exec rm -rf '{}' +
+# Remove lock files
+echo "🔒 Removing lock files..."
+rm -f pnpm-lock.yaml
+rm -f package-lock.json
 
-# Clean Docker
-echo -e "\n${GREEN}Cleaning Docker...${NC}"
-if command -v docker &> /dev/null; then
-    echo "Stopping all containers..."
-    docker stop $(docker ps -aq) 2>/dev/null || true
-    
-    echo "Removing all containers..."
-    docker rm $(docker ps -aq) 2>/dev/null || true
-    
-    echo "Removing all images..."
-    docker rmi $(docker images -q) 2>/dev/null || true
-    
-    echo "Removing all volumes..."
-    docker volume rm $(docker volume ls -q) 2>/dev/null || true
-    
-    echo "Pruning system..."
-    docker system prune -af --volumes
-else
-    echo -e "${RED}Docker is not installed${NC}"
-fi
+# Remove cache directories
+echo "🗑️ Removing cache..."
+rm -rf .cache
+rm -rf .turbo
+rm -rf .next
 
-echo -e "\n${GREEN}Cleanup complete!${NC}"
-echo -e "${GREEN}Run 'bun install' to reinstall dependencies${NC}"
+# Remove logs
+echo "📝 Removing logs..."
+rm -f *.log
+rm -f apps/*/*.log
+rm -f packages/*/*.log
+
+# Reinstall dependencies
+echo "📦 Reinstalling dependencies..."
+pnpm install
+
+echo "✅ Cleanup completed!"

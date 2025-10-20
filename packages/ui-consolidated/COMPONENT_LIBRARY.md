@@ -23,9 +23,6 @@ The New Fuse Component Library is a comprehensive set of React components design
 # Using npm
 pnpm install @the-new-fuse/ui-consolidated
 
-# Using yarn
-yarn add @the-new-fuse/ui-consolidated
-
 # Using pnpm
 pnpm add @the-new-fuse/ui-consolidated
 ```
@@ -212,19 +209,19 @@ function Header() {
 
 ```bash
 # Install dependencies
-yarn install
+pnpm install
 
 # Start development server
-yarn dev
+pnpm dev
 
 # Run tests
-yarn test
+pnpm test
 
 # Build the library
-yarn build
+pnpm build
 
 # Run Storybook
-yarn storybook
+pnpm storybook
 ```
 
 ### Adding New Components
@@ -241,11 +238,11 @@ All components should have unit tests. Run the tests with:
 
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run tests in watch mode
-yarn test:watch
+pnpm test:watch
 
 # Generate test coverage
-yarn test:coverage
+pnpm test:coverage
 ```

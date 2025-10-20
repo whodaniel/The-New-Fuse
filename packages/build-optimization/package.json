@@ -14,14 +14,14 @@
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {
-    "@types/node": "^20.0.0",
-    "glob": "^10.0.0",
+    "@types/node": "^24.8.1",
+    "glob": "^11.0.3",
     "@tnf/core-monitoring": "workspace:*",
     "@tnf/core-error-handling": "workspace:*"
   },
   "devDependencies": {
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   },
   "exports": {
     ".": {

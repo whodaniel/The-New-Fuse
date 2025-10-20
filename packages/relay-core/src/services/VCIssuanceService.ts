@@ -8,10 +8,8 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
-import { Agent, AgentType } from '@the-new-fuse/database';
-import { PrismaClient } from '@prisma/client';
-import { ethers } from 'ethers';
-import { BigNumberish, BigNumber } from '@ethersproject/bignumber';
+import { Agent, AgentType, PrismaClient } from '@the-new-fuse/database';
+import { ethers, BigNumberish } from 'ethers';
 import { BlockchainService } from './shared/BlockchainService.js';
 
 // W3C Verifiable Credentials data model interfaces
