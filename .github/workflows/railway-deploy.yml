@@ -1,74 +1,59 @@
-name: Deploy to Railway
+name: Railway Deployment
 
 on:
   push:
-    branches: [ main, project-reconstruction ]
+    branches: [main, project-reconstruction]
   workflow_dispatch:
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production
-
+    
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Install Railway CLI
-      run: |
-        curl -fsSL https://railway.app/install.sh | sh
-        echo "$HOME/.railway/bin" >> $GITHUB_PATH
-
-    - name: Deploy API to Railway
-      env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      run: |
-        railway login --token $RAILWAY_TOKEN
-        railway link ${{ secrets.RAILWAY_PROJECT_ID }}
-        railway up --service api --detach
-
-    - name: Deploy Frontend to Railway
-      env:
-        RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-      run: |
-        railway up --service frontend --detach
-
-    - name: Wait for deployment
-      run: |
-        echo "Waiting for deployment to complete..."
-        sleep 60
-
-    - name: Health Check API
-      run: |
-        API_URL="${{ secrets.RAILWAY_API_URL }}"
-        for i in {1..10}; do
-          if curl -f "$API_URL/health"; then
-            echo "API health check passed"
-            break
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install Railway CLI
+        run: |
+          curl -fsSL https://railway.app/install.sh | sh
+          echo "$HOME/.railway/bin" >> $GITHUB_PATH
+          
+      - name: Deploy API Service
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway login --token $RAILWAY_TOKEN
+          railway link ${{ secrets.RAILWAY_PROJECT_ID }}
+          railway up --service api --detach
+          
+      - name: Deploy Frontend Service  
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          railway up --service frontend --detach
+          
+      - name: Wait for deployment
+        run: sleep 60
+        
+      - name: Health check API
+        run: |
+          curl -f ${{ secrets.RAILWAY_API_URL }}/api/health || exit 1
+          
+      - name: Health check Frontend
+        run: |
+          curl -f ${{ secrets.RAILWAY_FRONTEND_URL }} || exit 1
+          
+      - name: Notify deployment status
+        if: always()
+        run: |
+          if [ "${{ job.status }}" = "success" ]; then
+            echo "✅ Railway deployment successful"
+            echo "Branch: ${{ github.ref_name }}"
+            echo "Commit: ${{ github.sha }}"
+            echo "API: ${{ secrets.RAILWAY_API_URL }}"
+            echo "Frontend: ${{ secrets.RAILWAY_FRONTEND_URL }}"
+          else
+            echo "❌ Railway deployment failed"
+            echo "Branch: ${{ github.ref_name }}"
+            echo "Commit: ${{ github.sha }}"
           fi
-          echo "API health check failed, retrying in 30s..."
-          sleep 30
-        done
-
-    - name: Health Check Frontend
-      run: |
-        FRONTEND_URL="${{ secrets.RAILWAY_FRONTEND_URL }}"
-        for i in {1..10}; do
-          if curl -f "$FRONTEND_URL"; then
-            echo "Frontend health check passed"
-            break
-          fi
-          echo "Frontend health check failed, retrying in 30s..."
-          sleep 30
-        done
-
-    - name: Notify deployment status
-      if: always()
-      uses: 8398a7/action-slack@v3
-      with:
-        status: ${{ job.status }}
-        channel: '#deployments'
-        webhook_url: ${{ secrets.SLACK_WEBHOOK }}
-        fields: repo,message,commit,author,action,eventName,ref,workflow
-      env:
-        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
