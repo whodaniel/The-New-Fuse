@@ -30,10 +30,8 @@ RUN pnpm install --no-frozen-lockfile --no-optional
 # Copy source code for frontend
 COPY apps/frontend ./apps/frontend
 
-# Build packages first (only the ones needed for frontend)
-RUN pnpm --filter @the-new-fuse/common run build
-RUN pnpm --filter @the-new-fuse/utils run build
-RUN pnpm --filter @the-new-fuse/security run build
+# Build all packages first
+RUN pnpm run build:packages
 
 # Build the frontend application
 RUN cd apps/frontend && pnpm run build

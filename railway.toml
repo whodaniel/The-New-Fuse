@@ -16,8 +16,8 @@ healthcheckTimeout = 300
 [[services]]
 name = "api"
 dockerfile = "apps/api/Dockerfile.production"
-port = 3000
-healthcheck = "/api/health"
+port = 3001
+healthcheck = "/health"
 
 [[services.env]]
 DATABASE_URL = "${{POSTGRES.DATABASE_URL}}"
@@ -26,13 +26,38 @@ NODE_ENV = "production"
 PORT = "3000"
 
 [[services]]
+name = "api-gateway"
+dockerfile = "apps/api-gateway/Dockerfile.production"
+port = 3002
+healthcheck = "/health"
+
+[[services.env]]
+DATABASE_URL = "${{POSTGRES.DATABASE_URL}}"
+REDIS_URL = "${{REDIS.REDIS_URL}}"
+NODE_ENV = "production"
+PORT = "3002"
+API_URL = "${{API.RAILWAY_PRIVATE_DOMAIN}}"
+
+[[services]]
+name = "backend"
+dockerfile = "apps/backend/Dockerfile.production"
+port = 3004
+healthcheck = "/health"
+
+[[services.env]]
+DATABASE_URL = "${{POSTGRES.DATABASE_URL}}"
+REDIS_URL = "${{REDIS.REDIS_URL}}"
+NODE_ENV = "production"
+PORT = "3004"
+
+[[services]]
 name = "frontend"
 dockerfile = "apps/frontend/Dockerfile.production"
 port = 80
-healthcheck = "/"
+healthcheck = "/health"
 
 [[services.env]]
-VITE_API_URL = "${{API.RAILWAY_PUBLIC_DOMAIN}}"
+VITE_API_URL = "${{API_GATEWAY.RAILWAY_PUBLIC_DOMAIN}}"
 NODE_ENV = "production"
 
 [[services]]
