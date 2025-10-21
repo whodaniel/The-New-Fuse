@@ -44,9 +44,10 @@ out
 # Docker
 .docker
 docker-compose.override.yml
-Dockerfile
-.dockerignore
-Dockerfile*
+# Note: Don't ignore Dockerfiles - Railway needs them!
+# Dockerfile
+# .dockerignore
+# Dockerfile*
 docker-compose*
 
 **/node_modules
