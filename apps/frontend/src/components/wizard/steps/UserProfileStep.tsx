@@ -1,18 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  VStack, 
-  FormControl, 
-  FormLabel, 
-  Input, 
-  Select, 
-  Textarea, 
-  Heading, 
-  Text,
-  FormHelperText,
-  FormErrorMessage,
-  Divider
-} from '@chakra-ui/react';
 import { useWizard } from '../WizardProvider';
 
 export const UserProfileStep: React.FC = () => {
@@ -106,102 +92,123 @@ export const UserProfileStep: React.FC = () => {
   };
 
   return (
-    <Box>
-      <Heading as="h2" size="md" mb={4}>
+    <div>
+      <h2 className="text-xl font-semibold mb-4">
         {isAIAgent ? 'Agent Profile' : 'Your Profile'}
-      </Heading>
+      </h2>
       
-      <Text mb={6}>
+      <p className="mb-6 text-gray-600">
         {isAIAgent 
           ? 'Please provide information about your AI agent to help us integrate it with The New Fuse platform.'
           : 'Please provide some information about yourself to personalize your experience.'}
-      </Text>
+      </p>
       
-      <VStack spacing={4} align="stretch">
-        <FormControl isRequired isInvalid={!!errors.name}>
-          <FormLabel>{isAIAgent ? 'Agent Name' : 'Full Name'}</FormLabel>
-          <Input 
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {isAIAgent ? 'Agent Name' : 'Full Name'} <span className="text-red-500">*</span>
+          </label>
+          <input 
             name="name"
             value={formData.name}
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder={isAIAgent ? 'e.g., Research Assistant Agent' : 'e.g., John Doe'}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.name ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
-          {errors.name && <FormErrorMessage>{errors.name}</FormErrorMessage>}
-        </FormControl>
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
         
-        <FormControl isRequired isInvalid={!!errors.email}>
-          <FormLabel>{isAIAgent ? 'Contact Email' : 'Email Address'}</FormLabel>
-          <Input 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {isAIAgent ? 'Contact Email' : 'Email Address'} <span className="text-red-500">*</span>
+          </label>
+          <input 
             name="email"
             type="email"
             value={formData.email}
             onChange={handleChange}
             onBlur={handleBlur}
             placeholder="e.g., user@example.com"
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+              errors.email ? 'border-red-500' : 'border-gray-300'
+            }`}
           />
-          {errors.email && <FormErrorMessage>{errors.email}</FormErrorMessage>}
-          <FormHelperText>
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+          <p className="text-gray-500 text-sm mt-1">
             {isAIAgent 
               ? 'Email address for the maintainer of this agent'
               : 'We\'ll never share your email with anyone else'}
-          </FormHelperText>
-        </FormControl>
+          </p>
+        </div>
         
         {isAIAgent ? (
           // AI Agent specific fields
           <>
-            <FormControl isRequired isInvalid={!!errors.agentType}>
-              <FormLabel>Agent Type</FormLabel>
-              <Select 
-                name="agentType"
-                value={formData.agentType}
-                onChange={handleChange}
-                onBlur={handleBlur}
-              >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Agent Type <span className="text-red-500">*</span>
+              </label>
+              <select 
+                 name="agentType"
+                 value={formData.agentType}
+                 onChange={handleChange}
+                 onBlur={handleBlur}
+                 aria-label="Agent Type"
+                 className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                   errors.agentType ? 'border-red-500' : 'border-gray-300'
+                 }`}
+               >
                 <option value="general">General Purpose</option>
                 <option value="research">Research Assistant</option>
                 <option value="coding">Code Assistant</option>
                 <option value="creative">Creative Assistant</option>
                 <option value="data">Data Analysis</option>
                 <option value="custom">Custom</option>
-              </Select>
-              {errors.agentType && <FormErrorMessage>{errors.agentType}</FormErrorMessage>}
-            </FormControl>
+              </select>
+              {errors.agentType && <p className="text-red-500 text-sm mt-1">{errors.agentType}</p>}
+            </div>
             
-            <FormControl>
-              <FormLabel>API Version</FormLabel>
-              <Select 
-                name="apiVersion"
-                value={formData.apiVersion}
-                onChange={handleChange}
-              >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">API Version</label>
+              <select 
+                 name="apiVersion"
+                 value={formData.apiVersion}
+                 onChange={handleChange}
+                 aria-label="API Version"
+                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               >
                 <option value="1.0">1.0</option>
                 <option value="1.1">1.1</option>
                 <option value="2.0">2.0</option>
-              </Select>
-            </FormControl>
+              </select>
+            </div>
             
-            <FormControl>
-              <FormLabel>Maintainer</FormLabel>
-              <Input 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Maintainer</label>
+              <input 
                 name="maintainer"
                 value={formData.maintainer}
                 onChange={handleChange}
                 placeholder="e.g., OpenAI, Anthropic, or Individual Developer"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </FormControl>
+            </div>
           </>
         ) : (
           // Human user specific fields
           <>
-            <FormControl>
-              <FormLabel>Role</FormLabel>
-              <Select 
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-              >
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+              <select 
+                 name="role"
+                 value={formData.role}
+                 onChange={handleChange}
+                 aria-label="Role"
+                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+               >
                 <option value="">Select your role</option>
                 <option value="developer">Developer</option>
                 <option value="data_scientist">Data Scientist</option>
@@ -210,26 +217,29 @@ export const UserProfileStep: React.FC = () => {
                 <option value="researcher">Researcher</option>
                 <option value="executive">Executive</option>
                 <option value="other">Other</option>
-              </Select>
-            </FormControl>
+              </select>
+            </div>
             
-            <FormControl>
-              <FormLabel>Organization</FormLabel>
-              <Input 
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Organization</label>
+              <input 
                 name="organization"
                 value={formData.organization}
                 onChange={handleChange}
                 placeholder="e.g., Acme Inc."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-            </FormControl>
+            </div>
           </>
         )}
         
-        <Divider my={2} />
+        <hr className="my-4 border-gray-200" />
         
-        <FormControl>
-          <FormLabel>{isAIAgent ? 'Agent Description' : 'About You'}</FormLabel>
-          <Textarea 
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            {isAIAgent ? 'Agent Description' : 'About You'}
+          </label>
+          <textarea 
             name="description"
             value={formData.description}
             onChange={handleChange}
@@ -237,9 +247,10 @@ export const UserProfileStep: React.FC = () => {
               ? 'Briefly describe your agent\'s purpose and capabilities...'
               : 'Tell us a bit about yourself and how you plan to use The New Fuse...'}
             rows={4}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-        </FormControl>
-      </VStack>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };

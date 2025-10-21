@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Button, HStack, Input, Text } from '@chakra-ui/react';
 
 interface WorkflowToolbarProps {
   workflowName: string;
@@ -19,51 +18,42 @@ export const WorkflowToolbar: React.FC<WorkflowToolbarProps> = ({
   isExecuting
 }) => {
   return (
-    <Box 
-      position="absolute" 
-      top="10px" 
-      left="10px" 
-      right="10px" 
-      zIndex="10" 
-      bg="white" 
-      p={3} 
-      borderRadius="md" 
-      boxShadow="md"
-      borderWidth="1px"
-    >
-      <HStack spacing={4} justify="space-between">
-        <HStack spacing={2}>
-          <Text fontSize="sm" fontWeight="medium">Workflow:</Text>
-          <Input
+    <div className="absolute top-2.5 left-2.5 right-2.5 z-10 bg-white p-3 rounded-md shadow-md border border-gray-200">
+      <div className="flex items-center justify-between space-x-4">
+        <div className="flex items-center space-x-2">
+          <span className="text-sm font-medium">Workflow:</span>
+          <input
+            type="text"
             value={workflowName}
             onChange={(e) => onNameChange(e.target.value)}
-            size="sm"
-            width="200px"
+            className="px-2 py-1 text-sm border border-gray-300 rounded w-48 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             placeholder="Enter workflow name"
           />
-        </HStack>
+        </div>
         
-        <HStack spacing={2}>
-          <Button
-            size="sm"
-            colorScheme="blue"
+        <div className="flex items-center space-x-2">
+          <button
             onClick={onSave}
-            isLoading={isSaving}
-            loadingText="Saving..."
+            disabled={isSaving}
+            className="px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
           >
-            Save
-          </Button>
-          <Button
-            size="sm"
-            colorScheme="green"
+            {isSaving && (
+              <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+            )}
+            <span>{isSaving ? 'Saving...' : 'Save'}</span>
+          </button>
+          <button
             onClick={onExecute}
-            isLoading={isExecuting}
-            loadingText="Executing..."
+            disabled={isExecuting}
+            className="px-3 py-1 text-sm bg-green-500 text-white rounded hover:bg-green-600 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-1"
           >
-            Execute
-          </Button>
-        </HStack>
-      </HStack>
-    </Box>
+            {isExecuting && (
+              <div className="w-3 h-3 border border-white border-t-transparent rounded-full animate-spin"></div>
+            )}
+            <span>{isExecuting ? 'Executing...' : 'Execute'}</span>
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

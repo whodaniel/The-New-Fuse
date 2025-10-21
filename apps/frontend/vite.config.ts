@@ -74,7 +74,7 @@ export default defineConfig(({ mode }) => {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             
             // UI Libraries (multiple in use - preserve all)
-            ui: ['@chakra-ui/react', '@mui/material', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+            ui: ['@mui/material', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
             
             // Utilities
             utils: ['lodash', 'date-fns', 'axios'],

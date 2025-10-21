@@ -45,10 +45,19 @@ import {
 interface OnboardingWizardPreviewProps {}
 
 export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = () => {
-  const toast = useToast();
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
+  // Custom notification state to replace useToast
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error' | 'info';
+    message: string;
+  } | null>(null);
 
+  // Helper function to show notifications
+  const showNotification = (type: 'success' | 'error' | 'info', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const [activeTab, setActiveTab] = useState<'preview' | 'validation' | 'analytics'>('preview');
   const [userType, setUserType] = useState<'human' | 'ai_agent'>('human');
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -102,23 +111,14 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
       const validationResult = await OnboardingAdminService.validateConfiguration();
       setValidationResults(validationResult);
 
-      toast({
-        title: `Validation ${validationResult.status === 'success' ? 'Passed' : 'Completed'}`,
-        description: validationResult.message,
-        status: validationResult.status,
-        duration: 5000,
-        isClosable: true,
-      });
+      showNotification(
+        validationResult.status === 'success' ? 'success' : 'info',
+        `Validation ${validationResult.status === 'success' ? 'Passed' : 'Completed'}: ${validationResult.message}`
+      );
     } catch (err) {
       console.error('Error validating configuration:', err);
 
-      toast({
-        title: 'Validation Error',
-        description: 'An error occurred while validating the configuration.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
+      showNotification('error', 'An error occurred while validating the configuration.');
 
       setValidationResults(null);
     } finally {
@@ -127,269 +127,341 @@ export const OnboardingWizardPreview: React.FC<OnboardingWizardPreviewProps> = (
   };
 
   return (
-    <Box>
-      <HStack justifyContent="space-between" mb={6}>
-        <Heading size="md">Onboarding Wizard Preview</Heading>
-        <HStack>
-          <FormControl maxW="200px">
-            <Select
+    <div>
+      {/* Custom notification display */}
+      {notification && (
+        <div className={`mb-4 p-4 rounded-md border ${
+          notification.type === 'success' 
+            ? 'bg-green-50 border-green-200 text-green-800 dark:bg-green-900/20 dark:border-green-800 dark:text-green-200'
+            : notification.type === 'error'
+            ? 'bg-red-50 border-red-200 text-red-800 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+            : 'bg-blue-50 border-blue-200 text-blue-800 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              {notification.type === 'success' && <FiCheckCircle className="w-5 h-5 mr-2" />}
+              {notification.type === 'error' && <FiAlertCircle className="w-5 h-5 mr-2" />}
+              {notification.type === 'info' && <FiInfo className="w-5 h-5 mr-2" />}
+              <span>{notification.message}</span>
+            </div>
+            <button
+              onClick={() => setNotification(null)}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              ×
+            </button>
+          </div>
+        </div>
+      )}
+
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Onboarding Wizard Preview</h2>
+        <div className="flex items-center space-x-3">
+          <div className="max-w-48">
+            <select
               value={userType}
               onChange={handleChangeUserType}
-              size="sm"
+              className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               aria-label="Select user type"
+              title="Select user type for preview"
             >
               <option value="human">Human User</option>
               <option value="ai_agent">AI Agent</option>
-            </Select>
-          </FormControl>
+            </select>
+          </div>
 
-          <Tooltip label="Refresh Preview">
-            <IconButton
-              aria-label="Refresh preview"
-              icon={<FiRefreshCw />}
-              size="sm"
-              onClick={handleRefreshPreview}
-              isLoading={isLoading}
-            />
-          </Tooltip>
+          <button
+            onClick={handleRefreshPreview}
+            disabled={isLoading}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-50"
+            aria-label="Refresh preview"
+            title="Refresh Preview"
+          >
+            <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+          </button>
 
-          <Tooltip label={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}>
-            <IconButton
-              aria-label="Toggle fullscreen"
-              icon={isFullscreen ? <FiMinimize2 /> : <FiMaximize2 />}
-              size="sm"
-              onClick={handleToggleFullscreen}
-            />
-          </Tooltip>
-        </HStack>
-      </HStack>
+          <button
+            onClick={handleToggleFullscreen}
+            className="p-2 text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
+            aria-label="Toggle fullscreen"
+            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+          >
+            {isFullscreen ? <FiMinimize2 className="w-4 h-4" /> : <FiMaximize2 className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
 
-      <Text mb={4}>
+      <p className="mb-4 text-gray-600 dark:text-gray-400">
         Preview how the onboarding wizard will appear to users. You can switch between user types to see different onboarding flows.
-      </Text>
+      </p>
 
       {previewError && (
-        <Alert status="error" mb={4}>
-          <AlertIcon />
-          <AlertTitle mr={2}>Preview Error!</AlertTitle>
-          <AlertDescription>{previewError}</AlertDescription>
-          <CloseButton
-            position="absolute"
-            right="8px"
-            top="8px"
-            onClick={() => setPreviewError(null)}
-          />
-        </Alert>
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md dark:bg-red-900/20 dark:border-red-800">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start">
+              <FiAlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 mr-2 mt-0.5" />
+              <div>
+                <h4 className="font-semibold text-red-800 dark:text-red-200">Preview Error!</h4>
+                <p className="text-red-700 dark:text-red-300">{previewError}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => setPreviewError(null)}
+              className="text-red-400 hover:text-red-600 dark:hover:text-red-300"
+            >
+              ×
+            </button>
+          </div>
+        </div>
       )}
 
-      <Tabs colorScheme="blue" variant="enclosed" mb={6}>
-        <TabList>
-          <Tab>Preview</Tab>
-          <Tab>Validation</Tab>
-          <Tab>Analytics</Tab>
-        </TabList>
-
-        <TabPanels>
-          {/* Preview Tab */}
-          <TabPanel p={0} pt={4}>
-            <Card
-              borderWidth="1px"
-              borderColor={borderColor}
-              bg={bgColor}
-              boxShadow="sm"
-              height={isFullscreen ? "calc(100vh - 300px)" : "600px"}
-              overflow="hidden"
+      <div className="mb-6">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200 dark:border-gray-700">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'preview'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+              onClick={() => setActiveTab('preview')}
             >
-              <CardBody p={0}>
+              Preview
+            </button>
+            <button
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'validation'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+              onClick={() => setActiveTab('validation')}
+            >
+              Validation
+            </button>
+            <button
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === 'analytics'
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+              onClick={() => setActiveTab('analytics')}
+            >
+              Analytics
+            </button>
+          </nav>
+        </div>
+
+        {/* Tab Content */}
+        <div className="pt-4">
+          {/* Preview Tab */}
+          {activeTab === 'preview' && (
+            <div>
+              <div
+                className={`border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden ${
+                  isFullscreen ? 'h-[calc(100vh-300px)]' : 'h-96'
+                }`}
+              >
                 {isLoading ? (
-                  <Flex justify="center" align="center" height="100%">
-                    <VStack>
-                      <Spinner size="xl" />
-                      <Text>Loading preview...</Text>
-                    </VStack>
-                  </Flex>
+                  <div className="flex justify-center items-center h-full">
+                    <div className="text-center">
+                      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                      <p className="text-gray-600 dark:text-gray-400">Loading preview...</p>
+                    </div>
+                  </div>
                 ) : previewError ? (
-                  <Flex justify="center" align="center" height="100%" p={8}>
-                    <VStack>
-                      <FiAlertCircle size={48} color="red" />
-                      <Text color="red.500" fontWeight="bold">
-                        Failed to load preview
-                      </Text>
-                      <Text textAlign="center">
+                  <div className="flex justify-center items-center h-full p-8">
+                    <div className="text-center">
+                      <FiAlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                      <p className="text-red-500 font-semibold mb-2">Failed to load preview</p>
+                      <p className="text-gray-600 dark:text-gray-400 mb-4">
                         Please fix the configuration errors and try again.
-                      </Text>
-                      <Button
-                        mt={4}
-                        colorScheme="blue"
+                      </p>
+                      <button
                         onClick={handleRefreshPreview}
+                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
                       >
                         Try Again
-                      </Button>
-                    </VStack>
-                  </Flex>
+                      </button>
+                    </div>
+                  </div>
                 ) : (
-                  <Box
-                    as="iframe"
+                  <iframe
                     src={`/preview/onboarding?userType=${userType}`}
-                    width="100%"
-                    height="100%"
-                    border="none"
-                    borderRadius="md"
+                    className="w-full h-full border-none rounded-md"
+                    title="Onboarding Preview"
                   />
                 )}
-              </CardBody>
-            </Card>
+              </div>
 
-            <HStack mt={4} spacing={4}>
-              <Button
-                leftIcon={<FiRefreshCw />}
-                onClick={handleRefreshPreview}
-                isLoading={isLoading}
-              >
-                Refresh Preview
-              </Button>
+              <div className="flex items-center space-x-4 mt-4">
+                <button
+                  onClick={handleRefreshPreview}
+                  disabled={isLoading}
+                  className="flex items-center px-4 py-2 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+                >
+                  <FiRefreshCw className="w-4 h-4 mr-2" />
+                  Refresh Preview
+                </button>
 
-              <Button
-                colorScheme="blue"
-                onClick={() => {
-                  window.open(`/preview/onboarding?userType=${userType}`, '_blank');
-                }}
-              >
-                Open in New Tab
-              </Button>
-            </HStack>
-          </TabPanel>
+                <button
+                  onClick={() => {
+                    window.open(`/preview/onboarding?userType=${userType}`, '_blank');
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                >
+                  Open in New Tab
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* Validation Tab */}
-          <TabPanel>
-            <Card borderWidth="1px" borderColor={borderColor} bg={bgColor} boxShadow="sm" mb={4}>
-              <CardHeader pb={2}>
-                <Heading size="sm">Configuration Validation</Heading>
-              </CardHeader>
-              <CardBody pt={0}>
-                <Text mb={4}>
-                  Validate your onboarding configuration to ensure it meets best practices and will work correctly.
-                </Text>
-
-                <Button
-                  colorScheme="blue"
-                  onClick={handleRunValidation}
-                  isLoading={isLoading}
-                  mb={4}
-                >
-                  Run Validation
-                </Button>
-
-                {validationResults && (
-                  <Alert
-                    status={validationResults.status}
-                    variant="subtle"
-                    flexDirection="column"
-                    alignItems="flex-start"
-                    p={4}
-                    borderRadius="md"
+          {activeTab === 'validation' && (
+            <div className="space-y-6">
+              <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Validation Results</h3>
+                </div>
+                <div className="p-6">
+                  <button
+                    onClick={handleRunValidation}
+                    disabled={isLoading}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors mb-4"
                   >
-                    <Flex w="100%">
-                      <AlertIcon boxSize="24px" mr={2} />
-                      <AlertTitle fontSize="lg">
-                        {validationResults.message}
-                      </AlertTitle>
-                    </Flex>
+                    {isLoading ? 'Running...' : 'Run Validation'}
+                  </button>
 
-                    {validationResults.details && validationResults.details.length > 0 && (
-                      <Box mt={4} ml={8}>
-                        <Text fontWeight="bold" mb={2}>Details:</Text>
-                        <VStack align="start" spacing={1}>
-                          {validationResults.details.map((detail, index) => (
-                            <HStack key={index} align="start">
-                              <Text>•</Text>
-                              <Text>{detail}</Text>
-                            </HStack>
-                          ))}
-                        </VStack>
-                      </Box>
-                    )}
-                  </Alert>
-                )}
-              </CardBody>
-            </Card>
+                  {validationResults && (
+                    <div
+                      className={`p-4 rounded-md border ${
+                        validationResults.status === 'success'
+                          ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800'
+                          : validationResults.status === 'warning'
+                          ? 'bg-yellow-50 border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800'
+                          : 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
+                      }`}
+                    >
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0 mr-3">
+                          {validationResults.status === 'success' ? (
+                            <FiCheckCircle className="w-6 h-6 text-green-500" />
+                          ) : validationResults.status === 'warning' ? (
+                            <FiInfo className="w-6 h-6 text-yellow-500" />
+                          ) : (
+                            <FiAlertCircle className="w-6 h-6 text-red-500" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <h4
+                            className={`text-lg font-semibold ${
+                              validationResults.status === 'success'
+                                ? 'text-green-800 dark:text-green-200'
+                                : validationResults.status === 'warning'
+                                ? 'text-yellow-800 dark:text-yellow-200'
+                                : 'text-red-800 dark:text-red-200'
+                            }`}
+                          >
+                            {validationResults.message}
+                          </h4>
 
-            <Card borderWidth="1px" borderColor={borderColor} bg={bgColor} boxShadow="sm">
-              <CardHeader pb={2}>
-                <Heading size="sm">Best Practices</Heading>
-              </CardHeader>
-              <CardBody pt={0}>
-                <VStack align="start" spacing={3}>
-                  <HStack align="start">
-                    <Box color="green.500" mt={1}>
-                      <FiCheckCircle />
-                    </Box>
-                    <Box>
-                      <Text fontWeight="medium">Keep it simple</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Limit the number of steps to 5-7 for human users and 3-4 for AI agents.
-                      </Text>
-                    </Box>
-                  </HStack>
+                          {validationResults.details && validationResults.details.length > 0 && (
+                            <div className="mt-4 ml-2">
+                              <p className="font-semibold text-gray-900 dark:text-white mb-2">Details:</p>
+                              <div className="space-y-1">
+                                {validationResults.details.map((detail, index) => (
+                                  <div key={index} className="flex items-start">
+                                    <span className="text-gray-500 mr-2">•</span>
+                                    <span className="text-gray-700 dark:text-gray-300">{detail}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
 
-                  <HStack align="start">
-                    <Box color="green.500" mt={1}>
-                      <FiCheckCircle />
-                    </Box>
-                    <Box>
-                      <Text fontWeight="medium">Clear instructions</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Each step should have clear instructions and purpose.
-                      </Text>
-                    </Box>
-                  </HStack>
+              <div className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Best Practices</h3>
+                </div>
+                <div className="p-6">
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1 mr-3">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Keep it simple</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Limit the number of steps to 5-7 for human users and 3-4 for AI agents.
+                        </p>
+                      </div>
+                    </div>
 
-                  <HStack align="start">
-                    <Box color="green.500" mt={1}>
-                      <FiCheckCircle />
-                    </Box>
-                    <Box>
-                      <Text fontWeight="medium">Visual cues</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Use images and icons to guide users through the process.
-                      </Text>
-                    </Box>
-                  </HStack>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1 mr-3">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Clear instructions</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Each step should have clear instructions and purpose.
+                        </p>
+                      </div>
+                    </div>
 
-                  <HStack align="start">
-                    <Box color="green.500" mt={1}>
-                      <FiCheckCircle />
-                    </Box>
-                    <Box>
-                      <Text fontWeight="medium">Progress indicators</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Show users how far they've come and how much is left.
-                      </Text>
-                    </Box>
-                  </HStack>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1 mr-3">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Visual cues</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Use images and icons to guide users through the process.
+                        </p>
+                      </div>
+                    </div>
 
-                  <HStack align="start">
-                    <Box color="green.500" mt={1}>
-                      <FiCheckCircle />
-                    </Box>
-                    <Box>
-                      <Text fontWeight="medium">Skip options</Text>
-                      <Text fontSize="sm" color="gray.600">
-                        Allow users to skip non-essential steps.
-                      </Text>
-                    </Box>
-                  </HStack>
-                </VStack>
-              </CardBody>
-            </Card>
-          </TabPanel>
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1 mr-3">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Progress indicators</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Show users how far they've come and how much is left.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0 mt-1 mr-3">
+                        <FiCheckCircle className="w-5 h-5 text-green-500" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 dark:text-white">Skip options</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Allow users to skip non-essential steps.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Analytics Tab */}
-          <TabPanel>
+          {activeTab === 'analytics' && (
             <OnboardingAnalytics />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </Box>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };

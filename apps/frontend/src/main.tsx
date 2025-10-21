@@ -35,3 +35,5 @@ try {
 } catch (error) {
     console.error('Error rendering React app:', error);
 }
+// Railway deployment trigger
+// Updated deployment trigger

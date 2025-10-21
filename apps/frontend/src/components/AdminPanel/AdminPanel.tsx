@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { ScriptRunner } from './ScriptRunner';
 import { UserManagement } from './UserManagement';
 import { SystemMetrics } from './SystemMetrics';
@@ -23,52 +22,42 @@ import { McpMonitor } from './McpMonitor'; // Import the new component
  * ```
  */
 export const AdminPanel: React.FC = () => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const tabs = [
+    { label: 'Dashboard', component: <SystemMetrics /> },
+    { label: 'Users & Roles', component: <><UserManagement /><RoleManager /></> },
+    { label: 'Services', component: <ServiceMonitor /> },
+    { label: 'Monitoring', component: <><ApiMonitor /><FeatureFlags /></> },
+    { label: 'Configuration', component: <SystemConfig /> },
+    { label: 'Scripts', component: <ScriptRunner /> },
+    { label: 'Database', component: <DatabaseAdmin /> },
+    { label: 'Audit', component: <AuditLogs /> },
+    { label: 'MCP', component: <McpMonitor /> }
+  ];
+
   return (
-    <Box p={4}>
-      <Tabs>
-        <TabList>
-          <Tab>Dashboard</Tab>
-          <Tab>Users & Roles</Tab>
-          <Tab>Services</Tab>
-          <Tab>Monitoring</Tab>
-          <Tab>Configuration</Tab>
-          <Tab>Scripts</Tab>
-          <Tab>Database</Tab>
-          <Tab>Audit</Tab>
-          <Tab>MCP</Tab> {/* Add new tab */}
-        </TabList>
-        <TabPanels>
-          <TabPanel>
-            <SystemMetrics />
-          </TabPanel>
-          <TabPanel>
-            <UserManagement />
-            <RoleManager />
-          </TabPanel>
-          <TabPanel>
-            <ServiceMonitor />
-          </TabPanel>
-          <TabPanel>
-            <ApiMonitor />
-          </TabPanel>
-          <TabPanel>
-            <SystemConfig />
-            <FeatureFlags />
-          </TabPanel>
-          <TabPanel>
-            <ScriptRunner />
-          </TabPanel>
-          <TabPanel>
-            <DatabaseAdmin />
-          </TabPanel>
-          <TabPanel>
-            <AuditLogs />
-          </TabPanel>
-          <TabPanel>
-            <McpMonitor /> {/* Add new panel */}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
-    </Box>
+    <div className="p-4">
+      <div className="border-b border-gray-200 dark:border-gray-700">
+        <nav className="-mb-px flex space-x-8">
+          {tabs.map((tab, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveTab(index)}
+              className={`py-2 px-1 border-b-2 font-medium text-sm ${
+                activeTab === index
+                  ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </div>
+      <div className="mt-4">
+        {tabs[activeTab].component}
+      </div>
+    </div>
   );
 };

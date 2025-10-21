@@ -1,6 +1,5 @@
 import React from 'react';
 import { OnboardingAdmin } from '../../components/admin/onboarding/OnboardingAdmin';
-import { Box, Heading } from '@chakra-ui/react';
 
 /**
  * Onboarding Admin Page
@@ -10,9 +9,9 @@ import { Box, Heading } from '@chakra-ui/react';
  */
 const Onboarding: React.FC = () => {
   return (
-    <Box>
+    <div>
       <OnboardingAdmin />
-    </Box>
+    </div>
   );
 };
 

@@ -16,7 +16,11 @@
     "clean": "rimraf dist lib build coverage test-results playwright-report .tsbuildinfo tsconfig.tsbuildinfo"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.27.1",
+    "@chakra-ui/avatar": "^2.3.0",
+    "@chakra-ui/icons": "^2.2.4",
+    "@chakra-ui/layout": "^2.3.1",
+    "@chakra-ui/progress": "^2.2.0",
+    "@chakra-ui/react": "^3.28.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@firebase/app": "^0.14.4",
