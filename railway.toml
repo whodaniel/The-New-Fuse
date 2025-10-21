@@ -1,8 +1,10 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "apps/frontend/Dockerfile"
+builder = "nixpacks"
+buildCommand = "pnpm install && pnpm --filter=@the-new-fuse/frontend-app build"
+watchPatterns = ["apps/frontend/**", "packages/**"]
 
 [deploy]
+startCommand = "cd apps/frontend && npx serve -s dist -l 3000"
 healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
