@@ -245,7 +245,6 @@
 		}
 	],
 	"settings": {
-		"typescript.tsdk": ".yarn/sdks/typescript/lib",
 		"typescript.enablePromptUseWorkspaceTsdk": true,
 		"augment.nextEdit.enableGlobalBackgroundSuggestions": true,
 		"augment.nextEdit.highlightSuggestionsInTheEditor": true,

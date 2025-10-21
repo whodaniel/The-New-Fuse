@@ -8,7 +8,13 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import { AgentType, AgentStatus, TaskStatus, TaskPriority, PrismaClient } from '@the-new-fuse/database';
+import {
+  AgentType,
+  AgentStatus,
+  TaskStatus,
+  TaskPriority,
+  PrismaClient
+} from '@the-new-fuse/database';
 import { ethers, Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
 import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
@@ -75,8 +81,8 @@ export interface MasterAgentProfile {
   // Core Identity (from Prisma Agent model)
   id: string;
   name: string;
-  type: AgentType;
-  status: AgentStatus;
+  type: string;
+  status: string;
   description?: string;
   systemPrompt?: string;
   configuration?: any;
@@ -228,7 +234,7 @@ export interface SpreadsheetIntegration {
 
 export class MasterAgentRegistry extends EventEmitter {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private prisma: any;
   private legacyRegistry: AgentRegistry;
   private metadataManager: AgentMetadataManager;
   
@@ -257,7 +263,7 @@ export class MasterAgentRegistry extends EventEmitter {
   private wallet: Wallet | null = null;
 
   constructor(
-    prisma: PrismaClient, 
+    prisma: any, 
     logger: Logger, 
     blockchainConfig?: BlockchainConfig,
     vcPrivateKey?: string
@@ -431,8 +437,8 @@ export class MasterAgentRegistry extends EventEmitter {
       const legacyAgent: LegacyAgent = {
         id: agentId,
         name: completeProfile.name,
-        type: this.convertToLegacyType(completeProfile.type),
-        status: this.convertToLegacyStatus(completeProfile.status),
+        type: this.convertToLegacyType(completeProfile.type as AgentType),
+        status: this.convertToLegacyStatus(completeProfile.status as AgentStatus),
         capabilities: this.extractLegacyCapabilities(completeProfile.capabilities),
         registeredAt: completeProfile.registeredAt.toISOString(),
         lastSeen: completeProfile.lastSeen.toISOString(),
@@ -1233,8 +1239,8 @@ export class MasterAgentRegistry extends EventEmitter {
   }
 
   // Type conversion utilities for legacy compatibility
-  private convertToLegacyType(type: AgentType): any {
-    const mapping = {
+  private convertToLegacyType(type: AgentType): string {
+    const mapping: Record<string, string> = {
       'BASIC': 'LLM',
       'CHAT': 'LLM',
       'WORKFLOW': 'ORCHESTRATOR',
@@ -1245,11 +1251,11 @@ export class MasterAgentRegistry extends EventEmitter {
       'IDE_EXTENSION': 'HYBRID',
       'API': 'TOOL'
     };
-    return mapping[type] || 'HYBRID';
+    return mapping[type as string] || 'HYBRID';
   }
 
-  private convertToLegacyStatus(status: AgentStatus): any {
-    const mapping = {
+  private convertToLegacyStatus(status: AgentStatus): string {
+    const mapping: Record<string, string> = {
       'ACTIVE': 'ACTIVE',
       'INACTIVE': 'INACTIVE',
       'IDLE': 'INACTIVE',
@@ -1260,7 +1266,7 @@ export class MasterAgentRegistry extends EventEmitter {
       'READY': 'ACTIVE',
       'TERMINATED': 'INACTIVE'
     };
-    return mapping[status] || 'INACTIVE';
+    return mapping[status as string] || 'INACTIVE';
   }
 
   private extractLegacyCapabilities(capabilities: MasterAgentProfile['capabilities']): string[] {
@@ -1318,7 +1324,7 @@ export class MasterAgentRegistry extends EventEmitter {
     return { ...this.spreadsheetIntegration };
   }
 
-  async updateAgentStatus(agentId: string, status: AgentStatus): Promise<boolean> {
+  async updateAgentStatus(agentId: string, status: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
     if (!agent) return false;
     
@@ -1562,9 +1568,9 @@ export class MasterAgentRegistry extends EventEmitter {
     systemHealth: SystemWideMetrics;
     agentSummary: {
       totalAgents: number;
-      byStatus: Record<AgentStatus, number>;
+      byStatus: Record<string, number>;
       byPlatform: Record<string, number>;
-      recentActivity: { agentId: string; lastSeen: Date; status: AgentStatus }[];
+      recentActivity: { agentId: string; lastSeen: Date; status: string }[];
     };
     todoSummary: {
       totalTodos: number;
@@ -1612,8 +1618,8 @@ export class MasterAgentRegistry extends EventEmitter {
     };
   }
 
-  private groupAgentsByStatus(agents: MasterAgentProfile[]): Record<AgentStatus, number> {
-    const groups: Record<AgentStatus, number> = {
+  private groupAgentsByStatus(agents: MasterAgentProfile[]): Record<string, number> {
+    const groups: Record<string, number> = {
       'ACTIVE': 0,
       'INACTIVE': 0,
       'IDLE': 0,

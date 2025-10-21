@@ -1,5 +1,9 @@
 {
   "typescript.preferences.quoteStyle": "single",
+  "typescript.preferences.useAliases": "auto",
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.suggest.autoImports": true,
+  "typescript.preferences.preferTypeOnlyAutoImports": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },

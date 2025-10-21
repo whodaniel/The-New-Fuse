@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  output          = "../generated/prisma"
+  output          = "../packages/database/generated/prisma"
   previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
 }
 
@@ -28,7 +28,6 @@ model User {
   preferences    Json?
   refreshToken   String?
   deletedAt      DateTime?
-  emailVerified  Boolean    @default(false)
 
   // Relationships
   agents        Agent[]
@@ -130,8 +129,6 @@ model AgentMetadata {
   id       String @id @default(uuid())
   agentId  String @unique
   metadata Json   @default("{}")
-  version  String @default("1.0.0")
-  config   Json?
 
   // Relationships
   agent Agent @relation(fields: [agentId], references: [id], onDelete: Cascade)
@@ -254,23 +251,9 @@ model Message {
   updatedAt       DateTime    @updatedAt
   isEdited        Boolean     @default(false)
   isDeleted       Boolean     @default(false)
-  isEphemeral     Boolean     @default(false)
-  expiresAt       DateTime?
   reactions       Json?
 
   @@map("messages")
-}
-
-model ChatMessage {
-  id        String      @id @default(uuid())
-  userId    String
-  role      MessageRole
-  content   String      @db.Text
-  expiresAt DateTime    @default(dbgenerated("NOW() + INTERVAL '7 days'"))
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-
-  @@map("chat_messages")
 }
 
 enum MessageRole {
@@ -725,51 +708,6 @@ enum TransactionType {
   CONTRACT_DEPLOYMENT
   NFT_MINT
   NFT_TRANSFER
-}
-
-// =============================================================================
-// ENTITY REGISTRY
-// =============================================================================
-
-model RegisteredEntity {
-  id           String               @id @default(uuid())
-  name         String
-  type         RegisteredEntityType
-  description  String?
-  metadata     Json?
-  config       Json?
-  status       EntityStatus         @default(ACTIVE)
-  version      String               @default("1.0.0")
-  namespace    String?
-  tags         String[]             @default([])
-  capabilities String[]             @default([])
-  dependencies String[]             @default([])
-  isPublic     Boolean              @default(false)
-  ownerId      String?
-  createdAt    DateTime             @default(now())
-  updatedAt    DateTime             @updatedAt
-  deletedAt    DateTime?
-
-  @@map("registered_entities")
-}
-
-enum RegisteredEntityType {
-  AGENT
-  WORKFLOW
-  TOOL
-  SERVICE
-  INTEGRATION
-  TEMPLATE
-  COMPONENT
-  MODULE
-}
-
-enum EntityStatus {
-  ACTIVE
-  INACTIVE
-  DEPRECATED
-  PENDING
-  FAILED
 }
 
 // =============================================================================

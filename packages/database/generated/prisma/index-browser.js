@@ -134,8 +134,7 @@ exports.Prisma.UserScalarFieldEnum = {
   lastLogin: 'lastLogin',
   preferences: 'preferences',
   refreshToken: 'refreshToken',
-  deletedAt: 'deletedAt',
-  emailVerified: 'emailVerified'
+  deletedAt: 'deletedAt'
 };
 
 exports.Prisma.AuthSessionScalarFieldEnum = {
@@ -181,9 +180,7 @@ exports.Prisma.AgentScalarFieldEnum = {
 exports.Prisma.AgentMetadataScalarFieldEnum = {
   id: 'id',
   agentId: 'agentId',
-  metadata: 'metadata',
-  version: 'version',
-  config: 'config'
+  metadata: 'metadata'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {
@@ -227,19 +224,7 @@ exports.Prisma.MessageScalarFieldEnum = {
   updatedAt: 'updatedAt',
   isEdited: 'isEdited',
   isDeleted: 'isDeleted',
-  isEphemeral: 'isEphemeral',
-  expiresAt: 'expiresAt',
   reactions: 'reactions'
-};
-
-exports.Prisma.ChatMessageScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  role: 'role',
-  content: 'content',
-  expiresAt: 'expiresAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.WorkflowScalarFieldEnum = {
@@ -473,26 +458,6 @@ exports.Prisma.TransactionScalarFieldEnum = {
   confirmedAt: 'confirmedAt'
 };
 
-exports.Prisma.RegisteredEntityScalarFieldEnum = {
-  id: 'id',
-  name: 'name',
-  type: 'type',
-  description: 'description',
-  metadata: 'metadata',
-  config: 'config',
-  status: 'status',
-  version: 'version',
-  namespace: 'namespace',
-  tags: 'tags',
-  capabilities: 'capabilities',
-  dependencies: 'dependencies',
-  isPublic: 'isPublic',
-  ownerId: 'ownerId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-};
-
 exports.Prisma.LLMConfigScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -577,8 +542,7 @@ exports.Prisma.AgentOrderByRelevanceFieldEnum = {
 
 exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
   id: 'id',
-  agentId: 'agentId',
-  version: 'version'
+  agentId: 'agentId'
 };
 
 exports.Prisma.ChatOrderByRelevanceFieldEnum = {
@@ -605,12 +569,6 @@ exports.Prisma.MessageOrderByRelevanceFieldEnum = {
   roomId: 'roomId',
   parentMessageId: 'parentMessageId',
   attachments: 'attachments'
-};
-
-exports.Prisma.ChatMessageOrderByRelevanceFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  content: 'content'
 };
 
 exports.Prisma.WorkflowOrderByRelevanceFieldEnum = {
@@ -730,18 +688,6 @@ exports.Prisma.TransactionOrderByRelevanceFieldEnum = {
   fromAddress: 'fromAddress',
   toAddress: 'toAddress',
   blockHash: 'blockHash'
-};
-
-exports.Prisma.RegisteredEntityOrderByRelevanceFieldEnum = {
-  id: 'id',
-  name: 'name',
-  description: 'description',
-  version: 'version',
-  namespace: 'namespace',
-  tags: 'tags',
-  capabilities: 'capabilities',
-  dependencies: 'dependencies',
-  ownerId: 'ownerId'
 };
 
 exports.Prisma.LLMConfigOrderByRelevanceFieldEnum = {
@@ -925,25 +871,6 @@ exports.TransactionType = exports.$Enums.TransactionType = {
   NFT_TRANSFER: 'NFT_TRANSFER'
 };
 
-exports.RegisteredEntityType = exports.$Enums.RegisteredEntityType = {
-  AGENT: 'AGENT',
-  WORKFLOW: 'WORKFLOW',
-  TOOL: 'TOOL',
-  SERVICE: 'SERVICE',
-  INTEGRATION: 'INTEGRATION',
-  TEMPLATE: 'TEMPLATE',
-  COMPONENT: 'COMPONENT',
-  MODULE: 'MODULE'
-};
-
-exports.EntityStatus = exports.$Enums.EntityStatus = {
-  ACTIVE: 'ACTIVE',
-  INACTIVE: 'INACTIVE',
-  DEPRECATED: 'DEPRECATED',
-  PENDING: 'PENDING',
-  FAILED: 'FAILED'
-};
-
 exports.Prisma.ModelName = {
   User: 'User',
   AuthSession: 'AuthSession',
@@ -954,7 +881,6 @@ exports.Prisma.ModelName = {
   Chat: 'Chat',
   ChatRoom: 'ChatRoom',
   Message: 'Message',
-  ChatMessage: 'ChatMessage',
   Workflow: 'Workflow',
   WorkflowStep: 'WorkflowStep',
   WorkflowExecution: 'WorkflowExecution',
@@ -971,7 +897,6 @@ exports.Prisma.ModelName = {
   MarketplaceOffer: 'MarketplaceOffer',
   Wallet: 'Wallet',
   Transaction: 'Transaction',
-  RegisteredEntity: 'RegisteredEntity',
   LLMConfig: 'LLMConfig'
 };
 

@@ -34,13 +34,15 @@
     "ws": "^8.18.3"
   },
   "devDependencies": {
-    "@types/node": "^24.8.1",
+    "@types/node": "^24.9.1",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.0.4",
     "concurrently": "^9.2.1",
+    "dmg-builder": "^26.0.12",
     "electron-builder": "^26.0.12",
+    "electron-builder-squirrel-windows": "^26.0.12",
     "typescript": "^5.9.3",
     "vite": "^7.1.10",
     "wait-on": "^9.0.1"

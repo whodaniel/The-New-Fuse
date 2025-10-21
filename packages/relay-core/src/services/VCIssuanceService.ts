@@ -35,7 +35,7 @@ export interface CredentialIssuer {
 export interface CredentialSubject {
   id: string;
   agentId: string;
-  agentType: AgentType;
+  agentType: string;
   capabilities: AgentCapability[];
   achievements: AgentAchievement[];
   verifiedSkills: VerifiedSkill[];
@@ -183,7 +183,7 @@ export interface TrustedIssuer {
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
 export class VCIssuanceService extends EventEmitter {
-  private prisma: PrismaClient;
+  private prisma: any;
   private logger: Logger;
   private blockchainService: BlockchainService | null = null;
   private trustedIssuers: Map<string, TrustedIssuer> = new Map();
@@ -204,7 +204,7 @@ export class VCIssuanceService extends EventEmitter {
   };
 
   constructor(
-    prisma: PrismaClient,
+    prisma: any,
     logger: Logger,
     privateKey?: string
   ) {

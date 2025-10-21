@@ -16,9 +16,11 @@ function runCommand(command, args, options = {}) {
     const child = spawn(command, args, {
       stdio: 'inherit',
       cwd: options.cwd || path.resolve(__dirname, '..'),
+      shell: true, // Add shell option to resolve PATH issues
       env: { 
         ...process.env,
         NODE_OPTIONS: '--max-old-space-size=4096',
+        PATH: process.env.PATH, // Ensure PATH is preserved
         ...options.env
       }
     });

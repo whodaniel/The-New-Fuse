@@ -19,40 +19,35 @@ async function testCoordinator(): Promise<void> {
             
             // Simulate a message from Trae
             const message = {
+                id: 'test-message-1',
                 type: 'code_review',
-                timestamp: new Date().toISOString(),
+                content: 'function example(): any { return true; }',
+                sender: 'trae',
+                timestamp: new Date(),
                 metadata: {
                     version: '1.0.0',
-                    priority: 'high',
-                    source: 'trae'
-                },
-                details: {
-                    code: 'function example(): any { return true; }',
-                    context: 'Testing coordinator functionality'
+                    priority: 'high' as const,
                 }
             };
             
-            await coordinator['agent'].publish('agent:trae', message);
+            await coordinator.handleMessage(message);
 
             // Simulate response from Roo Coder after 1 second
             setTimeout(async () => {
                 
                 const response = {
+                    id: 'test-message-2',
                     type: 'code_review_response',
-                    timestamp: new Date().toISOString(),
+                    content: 'Code looks good, but consider adding type annotations',
+                    sender: 'roo-coder',
+                    timestamp: new Date(),
                     metadata: {
                         version: '1.0.0',
-                        priority: 'high',
-                        source: 'roo-coder'
-                    },
-                    details: {
-                        feedback: 'Code looks good, but consider adding type annotations',
-                        suggestions: ['Add return type annotation', 'Add function documentation'],
-                        approved: true
+                        priority: 'high' as const,
                     }
                 };
                 
-                await coordinator['agent'].publish('agent:roo-coder', response);
+                await coordinator.handleMessage(response);
             }, 1000);
         }, 2000);
         

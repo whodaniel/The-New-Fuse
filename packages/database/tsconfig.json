@@ -6,7 +6,9 @@
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "commonjs"
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],

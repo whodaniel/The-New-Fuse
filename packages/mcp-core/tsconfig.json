@@ -21,7 +21,11 @@
     "node_modules",
     "dist",
     "**/*.test.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.test.js",
+    "**/*.spec.js",
+    "**/*.integration.test.js",
+    "**/*.js"
   ],
   "references": []
 }
