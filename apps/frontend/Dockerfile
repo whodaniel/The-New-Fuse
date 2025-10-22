@@ -58,13 +58,13 @@ COPY packages/types/package.json ./packages/types/
 COPY packages/ui-consolidated/package.json ./packages/ui-consolidated/
 COPY packages/utils/package.json ./packages/utils/
 
-# Copy source code for packages that frontend depends on BEFORE installing dependencies
+# Install all dependencies from root without frozen lockfile
+RUN pnpm install --no-frozen-lockfile
+
+# Copy source code for packages that frontend depends on AFTER installing dependencies
 COPY packages/port-management/ ./packages/port-management/
 COPY packages/prompt-templating/ ./packages/prompt-templating/
 COPY packages/ui-consolidated/ ./packages/ui-consolidated/
-
-# Install all dependencies from root without frozen lockfile
-RUN pnpm install --no-frozen-lockfile
 
 # Build stage
 FROM dependencies AS builder
