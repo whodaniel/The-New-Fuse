@@ -38,6 +38,7 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/core': path.resolve(__dirname, '../../packages/core/src'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/utils': path.resolve(__dirname, '../../packages/utils/src'),
+        '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
         '@the-new-fuse/feature-suggestions': path.resolve(__dirname, '../../packages/feature-suggestions/src'),
         '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
         '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
