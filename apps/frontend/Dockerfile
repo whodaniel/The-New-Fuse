@@ -67,7 +67,7 @@ COPY . .
 # Build workspace packages first (dependencies of frontend)
 RUN pnpm --filter=!@the-new-fuse/frontend-app build
 
-# Build the frontend application using pnpm workspace - CACHE BUST v5
+# Build the frontend application using pnpm workspace - CACHE BUST v6
 RUN pnpm --filter=@the-new-fuse/frontend-app build
 
 # Production stage
