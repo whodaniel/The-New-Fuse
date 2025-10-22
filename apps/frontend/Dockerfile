@@ -67,6 +67,11 @@ FROM dependencies AS builder
 # Copy all source files
 COPY . .
 
+# Ensure all workspace packages are properly available
+COPY packages/port-management/ ./packages/port-management/
+COPY packages/prompt-templating/ ./packages/prompt-templating/
+COPY packages/ui-consolidated/ ./packages/ui-consolidated/
+
 # Build workspace packages first (dependencies of frontend)
 RUN pnpm --filter=!@the-new-fuse/frontend-app build
 
