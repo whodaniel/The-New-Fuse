@@ -50,8 +50,15 @@ COPY packages/layout/package.json ./packages/layout/
 COPY packages/mcp-core/package.json ./packages/mcp-core/
 COPY packages/monitoring/package.json ./packages/monitoring/
 COPY packages/port-management/package.json ./packages/port-management/
+COPY packages/prompt-templating/package.json ./packages/prompt-templating/
+COPY packages/proto-definitions/package.json ./packages/proto-definitions/
+COPY packages/relay-core/package.json ./packages/relay-core/
+COPY packages/security/package.json ./packages/security/
+COPY packages/shared/package.json ./packages/shared/
 COPY packages/testing/package.json ./packages/testing/
+COPY packages/test-utils/package.json ./packages/test-utils/
 COPY packages/types/package.json ./packages/types/
+COPY packages/ui-consolidated/package.json ./packages/ui-consolidated/
 COPY packages/utils/package.json ./packages/utils/
 
 # Install dependencies without frozen lockfile
@@ -61,10 +68,30 @@ RUN pnpm install --no-frozen-lockfile
 FROM dependencies AS build
 COPY . .
 
-# Build port-management package first (required by frontend)
+# Build all package dependencies required by frontend (in correct order)
+# Base packages first
+RUN pnpm --filter=@the-new-fuse/types build
+RUN pnpm --filter=@the-new-fuse/utils build
+RUN pnpm --filter=@the-new-fuse/shared build
+RUN pnpm --filter=@the-new-fuse/security build
+
+# Core packages
+RUN pnpm --filter=@the-new-fuse/core build
+RUN pnpm --filter=@the-new-fuse/database build
+
+# UI and templating packages
+RUN pnpm --filter=@the-new-fuse/prompt-templating build
+RUN pnpm --filter=@the-new-fuse/ui-consolidated build
+
+# A2A packages
+RUN pnpm --filter=@the-new-fuse/a2a-core build
+RUN pnpm --filter=@the-new-fuse/a2a-react build
+
+# Feature packages
+RUN pnpm --filter=@the-new-fuse/feature-suggestions build
 RUN pnpm --filter=@the-new-fuse/port-management build
 
-# Build frontend
+# Build frontend (last)
 RUN pnpm --filter=@the-new-fuse/frontend-app build
 
 # Production stage
