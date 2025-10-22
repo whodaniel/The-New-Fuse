@@ -5,12 +5,13 @@ node_modules/
 
 # Build outputs
 build/
-dist/
 *.tsbuildinfo
 
 # Compiled output directories
 apps/*/dist/
 packages/*/dist/
+# Temporarily allow port-management dist for Railway deployment
+!packages/port-management/dist/
 
 # Generated files within source directories
 apps/**/*.js
