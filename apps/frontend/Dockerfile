@@ -1,4 +1,4 @@
-# Multi-stage build for React frontend
+# Multi-stage build for React frontend - Force rebuild with workspace packages
 FROM node:20-alpine AS base
 
 # Install pnpm
