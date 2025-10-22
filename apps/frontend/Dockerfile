@@ -51,8 +51,11 @@ COPY packages/integration-tests/package.json ./packages/integration-tests/
 COPY packages/layout/package.json ./packages/layout/
 COPY packages/mcp-core/package.json ./packages/mcp-core/
 COPY packages/monitoring/package.json ./packages/monitoring/
+COPY packages/port-management/package.json ./packages/port-management/
+COPY packages/prompt-templating/package.json ./packages/prompt-templating/
 COPY packages/testing/package.json ./packages/testing/
 COPY packages/types/package.json ./packages/types/
+COPY packages/ui-consolidated/package.json ./packages/ui-consolidated/
 COPY packages/utils/package.json ./packages/utils/
 
 # Install all dependencies from root without frozen lockfile
