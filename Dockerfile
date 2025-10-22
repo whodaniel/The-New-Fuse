@@ -1,7 +1,5 @@
-# Multi-stage Dockerfile for The New Fuse Backend Services
-# Optimized for monorepo with Bun runtime
-
-FROM oven/bun:1.2.16-alpine AS base
+# Multi-stage Dockerfile for The New Fuse - Backend + Frontend
+FROM node:20-alpine AS base
 
 # Install system dependencies
 RUN apk add --no-cache \
@@ -15,119 +13,79 @@ RUN apk add --no-cache \
 
 WORKDIR /app
 
-# Copy root package files first for better layer caching
-COPY package.json bun.lockb ./
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Copy package files for dependency installation
+COPY package.json pnpm-lock.yaml* ./
+COPY apps/frontend/package.json ./apps/frontend/
+COPY apps/backend/package.json ./apps/backend/
+
+# Frontend build stage
+FROM base AS frontend-build
+WORKDIR /app
+
+# Copy frontend source
+COPY apps/frontend ./apps/frontend
+COPY tsconfig.json ./
 COPY tsconfig.base.json ./
-COPY turbo.json ./
 
-# Copy package.json files for all dependencies
-COPY packages/types/package.json ./packages/types/
-COPY packages/core/package.json ./packages/core/
-COPY packages/database/package.json ./packages/database/
-COPY packages/utils/package.json ./packages/utils/
-COPY packages/core-monitoring/package.json ./packages/core-monitoring/
-COPY packages/core-error-handling/package.json ./packages/core-error-handling/
-COPY packages/mcp-core/package.json ./packages/mcp-core/
-COPY packages/sync-core/package.json ./packages/sync-core/
+# Install frontend dependencies and build
+WORKDIR /app/apps/frontend
+RUN pnpm install
+RUN pnpm run build
 
-# Dependencies stage
-FROM base AS deps
-RUN bun install --frozen-lockfile --production
+# Backend build stage  
+FROM base AS backend-build
+WORKDIR /app
 
-# Build stage
-FROM base AS build
-COPY . .
-RUN bun install --frozen-lockfile
-RUN bun run build
+# Copy backend source
+COPY apps/backend ./apps/backend
+COPY src ./src
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
 
-# API Server Production Image
-FROM base AS api-server
-ARG SERVICE=api
+# Install backend dependencies and build
+WORKDIR /app/apps/backend
+RUN pnpm install
+RUN pnpm run build
 
-# Copy dependencies and built code
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/apps/api/dist ./apps/api/dist
-COPY --from=build /app/packages/*/dist ./packages/
-COPY --from=build /app/prisma ./prisma
+# Production stage
+FROM node:20-alpine AS production
 
-# Copy service-specific files
-COPY apps/api/package.json ./apps/api/
-COPY apps/api/src ./apps/api/src
+# Install system dependencies
+RUN apk add --no-cache \
+    curl \
+    dumb-init \
+    && rm -rf /var/cache/apk/*
+
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy built frontend
+COPY --from=frontend-build /app/apps/frontend/dist ./apps/frontend/dist
+
+# Copy backend source and dependencies
+COPY --from=backend-build /app/apps/backend/dist ./apps/backend/dist
+COPY --from=backend-build /app/apps/backend/node_modules ./apps/backend/node_modules
+COPY --from=backend-build /app/apps/backend/package.json ./apps/backend/package.json
+COPY --from=backend-build /app/src ./src
+COPY package.json ./
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
-    adduser -S api-user -u 1001
-RUN chown -R api-user:nodejs /app
-USER api-user
+    adduser -S app-user -u 1001
+RUN chown -R app-user:nodejs /app
+USER app-user
 
-EXPOSE 3001
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3001/health || exit 1
-
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "apps/api/src/index.ts"]
-
-# A2A Service Production Image
-FROM base AS a2a-service
-ARG SERVICE=a2a
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/packages/a2a-core/dist ./packages/a2a-core/dist
-COPY --from=build /app/packages/*/dist ./packages/
-
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S a2a-user -u 1001
-RUN chown -R a2a-user:nodejs /app
-USER a2a-user
-
-EXPOSE 3000
+EXPOSE 8080
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
+    CMD curl -f http://localhost:8080/health || exit 1
 
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "packages/a2a-core/src/server.ts"]
-
-# Sync Core Service Production Image
-FROM base AS sync-core
-ARG SERVICE=sync
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/packages/sync-core/dist ./packages/sync-core/dist
-COPY --from=build /app/packages/*/dist ./packages/
-COPY --from=build /app/prisma ./prisma
-
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S sync-user -u 1001
-RUN chown -R sync-user:nodejs /app
-USER sync-user
-
-EXPOSE 3003
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3003/health || exit 1
-
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "packages/sync-core/src/server.ts"]
-
-# MCP Core Service Production Image
-FROM base AS mcp-core
-ARG SERVICE=mcp
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=build /app/packages/mcp-core/dist ./packages/mcp-core/dist
-COPY --from=build /app/packages/*/dist ./packages/
-
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S mcp-user -u 1001
-RUN chown -R mcp-user:nodejs /app
-USER mcp-user
-
-EXPOSE 3004
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:3004/health || exit 1
-
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["bun", "run", "packages/mcp-core/src/server.ts"]
+CMD ["node", "apps/backend/dist/main.js"]
