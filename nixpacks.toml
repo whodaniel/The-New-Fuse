@@ -1,0 +1,17 @@
+# Force Railway to use Dockerfile instead of auto-detection
+# This overrides Railway's default Nixpacks behavior
+
+[variables]
+NIXPACKS_NO_DEFAULT_CACHE_DIRS = "1"
+
+[phases.setup]
+nixPkgs = []
+
+[phases.install]
+cmds = []
+
+[phases.build]
+cmds = []
+
+[start]
+cmd = "echo 'Use Dockerfile instead'"

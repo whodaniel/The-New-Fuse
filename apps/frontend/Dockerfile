@@ -55,8 +55,8 @@ COPY packages/testing/package.json ./packages/testing/
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/
 
-# Install all dependencies from root with frozen lockfile
-RUN pnpm install --frozen-lockfile
+# Install all dependencies from root without frozen lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build stage
 FROM dependencies AS builder
