@@ -1,5 +1,5 @@
 # Multi-stage build for The New Fuse application - Optimized
-# Force Railway to use Dockerfile - CACHE BUST v5
+# Force Railway to use Dockerfile - CACHE BUST v6 - Added 7 missing packages
 FROM node:20-alpine AS base
 
 # Install system dependencies and pnpm in one layer
