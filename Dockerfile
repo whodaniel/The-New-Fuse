@@ -1,4 +1,5 @@
 # Multi-stage build for The New Fuse application
+# Force Railway to use Dockerfile - CACHE BUST v4
 FROM node:20-alpine AS base
 
 # Install pnpm
