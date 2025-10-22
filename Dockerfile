@@ -49,6 +49,7 @@ COPY packages/integration-tests/package.json ./packages/integration-tests/
 COPY packages/layout/package.json ./packages/layout/
 COPY packages/mcp-core/package.json ./packages/mcp-core/
 COPY packages/monitoring/package.json ./packages/monitoring/
+COPY packages/port-management/package.json ./packages/port-management/
 COPY packages/testing/package.json ./packages/testing/
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/
