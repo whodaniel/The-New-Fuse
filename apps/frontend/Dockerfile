@@ -1,32 +1,32 @@
 # Multi-stage build for React frontend
 FROM node:20-alpine AS base
 
-# Install pnpm
-RUN npm install -g pnpm@8.15.6
-
 # Set working directory
 WORKDIR /app
 
-# Copy root package.json and pnpm files
-COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* ./
+# Copy root-level TypeScript configuration files first
+COPY tsconfig.json ./
+COPY tsconfig.base.json ./
 
-# Copy TypeScript configuration files
-COPY tsconfig.json tsconfig.base.json ./
+# Set working directory for frontend
+WORKDIR /app/apps/frontend
 
-# Copy workspace packages
-COPY packages/ ./packages/
-COPY apps/frontend/ ./apps/frontend/
+# Copy frontend package.json and package-lock.json
+COPY apps/frontend/package*.json ./
 
-# Install dependencies with force flag to handle lockfile issues
-RUN pnpm install --force
+# Install dependencies
+RUN npm install
+
+# Copy frontend source code
+COPY apps/frontend/ ./
 
 # Build stage
 FROM base AS builder
 
-WORKDIR /app
+WORKDIR /app/apps/frontend
 
 # Build the frontend application
-RUN pnpm --filter=@the-new-fuse/frontend-app build
+RUN npm run build
 
 # Production stage
 FROM nginx:alpine AS production
@@ -34,11 +34,17 @@ FROM nginx:alpine AS production
 # Copy built assets from builder stage
 COPY --from=builder /app/apps/frontend/dist /usr/share/nginx/html
 
-# Copy nginx configuration
-COPY apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy nginx configuration if it exists, otherwise use default
+RUN if [ -f /app/apps/frontend/nginx.conf ]; then \
+    cp /app/apps/frontend/nginx.conf /etc/nginx/conf.d/default.conf; \
+    else \
+    echo "No nginx.conf found, using default"; \
+    fi
 
 # Expose port 80
 EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
+
+# Force rebuild Wed Oct 22 00:07:30 EDT 2025
