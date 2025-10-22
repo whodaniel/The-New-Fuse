@@ -1,0 +1,15 @@
+[build]
+builder = "nixpacks"
+nixpacksConfigPath = "nixpacks.toml"
+buildCommand = "cd apps/api-gateway && pnpm install --frozen-lockfile && pnpm run build"
+
+[deploy]
+startCommand = "cd apps/api-gateway && pnpm start"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 10
+
+[variables]
+NODE_ENV = "production"
+PORT = "3002"

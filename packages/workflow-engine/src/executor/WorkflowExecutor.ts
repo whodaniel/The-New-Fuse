@@ -270,7 +270,7 @@ export class WorkflowExecutor extends EventEmitter {
     this.logger.info(`🎭 Agent coordination: ${config.coordinationType}`);
     
     const agents = config.agentIds || [];
-    const coordinationTasks = [];
+    const coordinationTasks: Array<{ agentId: any; taskId: string }> = [];
 
     for (const agentId of agents) {
       const task = await this.agentRegistry.addAgentTodo(agentId, {
@@ -321,7 +321,7 @@ export class WorkflowExecutor extends EventEmitter {
       throw new Error(`Loop variable ${config.iterableVariable} is not iterable`);
     }
 
-    const results = [];
+    const results: Array<{ iteration: number; item: any; result: string }> = [];
     const maxIterations = config.maxIterations || iterable.length;
     
     for (let i = 0; i < Math.min(iterable.length, maxIterations); i++) {

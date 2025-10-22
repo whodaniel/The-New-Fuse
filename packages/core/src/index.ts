@@ -10,7 +10,7 @@ export { PerformanceMonitor } from './services/PerformanceMonitor';
 export { UnifiedMonitoringService } from './services/UnifiedMonitoringService';
 export { LocalAIDetectionService } from './services/LocalAIDetectionService';
 export { AgentLLMService, LLMResponse } from './services/AgentLLMService';
-export { PromptService, PromptTemplate, PromptContext, GeneratedPrompt } from './services/PromptService';
+export { PromptService, PromptTemplate, PromptContext } from './services/PromptService';
 export { FeatureFlagService } from './services/FeatureFlagService';
 export { MongoFeatureFlagService } from './services/MongoFeatureFlagService';
 

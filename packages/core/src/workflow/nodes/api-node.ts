@@ -7,30 +7,28 @@ export interface APIConfig {
 }
 
 export class APINode {
-  async execute(): unknown {
-    if(): unknown {
+  async execute(config: APIConfig): Promise<any> {
+    if (!config.url || !config.method) {
       throw new Error('API URL and method are required');
     }
 
     try {
-const response = await fetch(config.url, {
-  }}
+      const response = await fetch(config.url, {
         method: config.method,
-        headers: unknown;
-  // Implementation needed
-}
+        headers: {
           'Content-Type': 'application/json',
           ...config.headers
         },
         body: config.body ? JSON.stringify(config.body) : undefined,
       });
-      if(): unknown {
+
+      if (!response.ok) {
         throw new Error(`API call failed: ${response.status} ${response.statusText}`);
       }
 
       return await response.json();
     } catch (error) {
-throw new Error(`API node execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }}
+      throw new Error(`API node execution failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 }

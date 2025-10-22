@@ -5,7 +5,8 @@
     "declaration": true,
     "declarationMap": true,
     "jsx": "react-jsx",
-    "rootDir": "../../"
+    "rootDir": "../../",
+    "types": ["node"]
   },
   "include": [
     "src/**/*",

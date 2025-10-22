@@ -10,7 +10,7 @@
     "moduleResolution": "node",
     "module": "commonjs"
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "generated/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
     { "path": "../types" }

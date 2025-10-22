@@ -1,11 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "pnpm install && pnpm --filter=@the-new-fuse/frontend-app build"
-watchPatterns = ["apps/frontend/**", "packages/**"]
 
 [deploy]
-startCommand = "cd apps/frontend && npx serve -s dist -l 3000"
-healthcheckPath = "/"
+startCommand = "npm start"
+healthcheckPath = "/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10

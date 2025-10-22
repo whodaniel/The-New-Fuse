@@ -619,15 +619,15 @@ export class ExtensionLoader extends EventEmitter {
         };
       },
       validate(manifest) {
-        const errors = [];
-        const warnings: Array<{code: string; message: string; field: string; severity: 'warning'}> = [];
+        const errors: Array<{code: string; message: string; field?: string; severity: 'error' | 'warning'}> = [];
+        const warnings: Array<{code: string; message: string; suggestion?: string}> = [];
         
         if (!manifest.main) {
           errors.push({
             code: 'MISSING_MAIN',
             message: 'Main file is required',
             field: 'main',
-            severity: 'error' as const
+            severity: 'error'
           });
         }
         

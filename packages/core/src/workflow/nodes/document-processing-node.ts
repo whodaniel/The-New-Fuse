@@ -1,5 +1,6 @@
 import { WorkflowNode } from '../types';
 import { NodeExecutionContext } from '../executor';
+
 export interface DocumentProcessingConfig {
   operation: 'extract' | 'parse' | 'chunk';
   inputPath: string;
@@ -16,12 +17,13 @@ export interface DocumentChunk {
 export class DocumentProcessingNode {
   type = 'document-processing';
   name = 'Document Processing Node';
-  async execute(): unknown {
-    if(): unknown {
+
+  async execute(config: DocumentProcessingConfig, context: NodeExecutionContext): Promise<any> {
+    if (!config.operation || !config.inputPath) {
       throw new Error('Document processing operation and inputPath are required');
     }
 
-    switch(): unknown {
+    switch (config.operation) {
       case 'extract':
         return await this.extractText(config.inputPath, config.format);
       case 'parse':
@@ -34,18 +36,18 @@ export class DocumentProcessingNode {
   }
 
   private async extractText(inputPath: string, format?: string): Promise<any> {
-// Implementation for extracting text
-  }    return { text: `Extracted text from ${inputPath}`, format };
+    // Implementation for extracting text
+    return { text: `Extracted text from ${inputPath}`, format };
   }
 
   private async parseDocument(inputPath: string, format?: string): Promise<any> {
-// Implementation for parsing document
-  }    return { parsed: true, format };
+    // Implementation for parsing document
+    return { parsed: true, format };
   }
 
   private async chunkDocument(inputPath: string, chunkSize: number): Promise<DocumentChunk[]> {
-// Implementation for chunking document
-  }    return [
+    // Implementation for chunking document
+    return [
       { text: 'Chunk 1', metadata: { position: 0 } },
       { text: 'Chunk 2', metadata: { position: 1 } }
     ];

@@ -62,7 +62,7 @@ export class AgentProcessor {
     this.logger.log('Executing agent tasks', { agentId: agent.config.id });
     
     // Process pending tasks
-    const results = [];
+    const results: Array<{ taskId: string; status: string }> = [];
     for (const task of agent.tasks) {
       if (task.status === 'pending') {
         // Execute task logic here

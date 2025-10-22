@@ -18,10 +18,10 @@ export interface ApiDocumentationConfig {
 export class ApiDocumentationService {
   private readonly logger = new Logger(ApiDocumentationService.name);
   private config: ApiDocumentationConfig;
-  constructor(): unknown {
+  constructor(private readonly configService: ConfigService) {
     this.config = {
-enabled: this.configService.get<boolean>('api.documentation.enabled', true),
-  }      title: this.configService.get<string>('api.documentation.title', 'API Documentation'),
+      enabled: this.configService.get<boolean>('api.documentation.enabled', true),
+      title: this.configService.get<string>('api.documentation.title', 'API Documentation'),
       description: this.configService.get<string>('api.documentation.description', 'API Documentation'),
       version: this.configService.get<string>('api.documentation.version', '1.0.0'),
       basePath: this.configService.get<string>('api.documentation.basePath', '/api'),
@@ -30,11 +30,7 @@ enabled: this.configService.get<boolean>('api.documentation.enabled', true),
         { url: 'http://localhost:3000', description: 'Development server' }
       ]),
       securitySchemes: this.configService.get<Record<string, any>>('api.documentation.securitySchemes', {
-  // Implementation needed
-}
-        bearerAuth: unknown;
-  // Implementation needed
-}
+        bearerAuth: {
           type: 'http',
           scheme: 'bearer'
         }
@@ -43,8 +39,8 @@ enabled: this.configService.get<boolean>('api.documentation.enabled', true),
     };
   }
 
-  async onModuleInit(): unknown {
-    if(): unknown {
+  async onModuleInit(): Promise<void> {
+    if (!this.config.enabled) {
       this.logger.info('API documentation generation is disabled');
       return;
     }
@@ -53,10 +49,10 @@ enabled: this.configService.get<boolean>('api.documentation.enabled', true),
     await this.generateDocumentation();
   }
 
-  async generateDocumentation(): unknown {
+  async generateDocumentation(): Promise<string> {
     try {
-const outputPath = path.join(this.config.outputPath, 'openapi.json');
-  }      const documentation = this.buildOpenApiSpec();
+      const outputPath = path.join(this.config.outputPath, 'openapi.json');
+      const documentation = this.buildOpenApiSpec();
       // Ensure output directory exists
       await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
       // Write documentation to file
@@ -64,63 +60,54 @@ const outputPath = path.join(this.config.outputPath, 'openapi.json');
       this.logger.info(`API documentation generated successfully: ${outputPath}`);
       return outputPath;
     } catch (error) {
-this.logger.error('Failed to generate API documentation', error);
-  }      throw error;
+      this.logger.error('Failed to generate API documentation', error);
+      throw error;
     }
   }
 
-  async generateVersionedDocumentation(): unknown {
+  async generateVersionedDocumentation(versions: string[]): Promise<void> {
     try {
-      for(): unknown {
+      for (const version of versions) {
         const outputPath = path.join(this.config.outputPath, `openapi-${version}.json`);
         const documentation = this.buildOpenApiSpec(version);
         await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
         await fs.promises.writeFile(outputPath, JSON.stringify(documentation, null, 2));
       }
-      
+
       this.logger.info(`Generated versioned OpenAPI documentation for versions: ${versions.join(', ')}`);
     } catch (error) {
-this.logger.error('Failed to generate versioned API documentation', error);
-  }      throw error;
+      this.logger.error('Failed to generate versioned API documentation', error);
+      throw error;
     }
   }
 
   private buildOpenApiSpec(version?: string): any {
-return {
-  }}
+    return {
       openapi: '3.0.0',
-      info: unknown;
-  // Implementation needed
-}
+      info: {
         title: this.config.title,
         description: this.config.description,
         version: version || this.config.version,
-        contact: unknown;
-  // Implementation needed
-}
-          name: this.configService.get<string>('placeholder'),
-          email: this.configService.get<string>('placeholder'),
-          url: this.configService.get<string>('placeholder')
+        contact: {
+          name: this.configService.get<string>('api.documentation.contact.name', 'API Support'),
+          email: this.configService.get<string>('api.documentation.contact.email', 'support@example.com'),
+          url: this.configService.get<string>('api.documentation.contact.url', 'https://example.com')
         },
-        license: unknown;
-  // Implementation needed
-}
+        license: {
           name: this.configService.get<string>('api.documentation.license.name', 'MIT'),
-          url: this.configService.get<string>('placeholder')
+          url: this.configService.get<string>('api.documentation.license.url', 'https://opensource.org/licenses/MIT')
         }
       },
       servers: this.config.servers,
       paths: {},
-      components: unknown;
-  // Implementation needed
-}
+      components: {
         securitySchemes: this.config.securitySchemes
       },
       tags: this.config.tags
     };
   }
 
-  getConfig(): unknown {
+  getConfig(): ApiDocumentationConfig {
     return this.config;
   }
 }

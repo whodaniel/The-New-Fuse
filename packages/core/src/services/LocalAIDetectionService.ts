@@ -414,7 +414,7 @@ export class LocalAIDetectionService {
     logger.info('Detecting and creating agents for user', { userId });
     
     const availableProviders = this.detectAvailableAIs();
-    const agents = [];
+    const agents: any[] = [];
 
     for (const provider of availableProviders) {
       try {
@@ -442,7 +442,7 @@ export class LocalAIDetectionService {
 
         agents.push(agentDto);
       } catch (error) {
-        logger.error('Failed to create agent DTO for provider', error as Error, { provider: provider.name });
+        logger.error('Failed to create agent DTO for provider', error as Error, { providerName: provider.name });
       }
     }
 
@@ -456,7 +456,7 @@ export class LocalAIDetectionService {
     logger.info('Creating default system agents for all detected local AIs');
     
     const availableProviders = this.detectAvailableAIs();
-    const systemAgents = [];
+    const systemAgents: any[] = [];
 
     for (const provider of availableProviders) {
       try {
@@ -486,7 +486,7 @@ export class LocalAIDetectionService {
 
         systemAgents.push(systemAgentDto);
       } catch (error) {
-        logger.error('Failed to create system agent DTO for provider', error as Error, { provider: provider.name });
+        logger.error('Failed to create system agent DTO for provider', error as Error, { providerName: provider.name });
       }
     }
 

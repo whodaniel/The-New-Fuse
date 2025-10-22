@@ -1,27 +1,17 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '../config/ConfigService';
-import { spawn } from 'child_process';
+import { Injectable } from '@nestjs/common';
 
-interface LocalAIConfiguration {
-  localAI?: boolean;
-  provider?: string;
-  command?: string;
-  defaultModel?: string;
-  autoDetected?: boolean;
-  systemAgent?: boolean;
-}
-
-interface Agent {
-  id: string;
-  name: string;
-  configuration: LocalAIConfiguration;
+export interface LLMRequest {
+  prompt: string;
+  model?: string;
+  temperature?: number;
+  maxTokens?: number;
+  stream?: boolean;
 }
 
 export interface LLMResponse {
   content: string;
-  provider: string;
-  model?: string;
-  usage?: {
+  model: string;
+  usage: {
     promptTokens: number;
     completionTokens: number;
     totalTokens: number;
@@ -30,257 +20,72 @@ export interface LLMResponse {
 
 @Injectable()
 export class AgentLLMService {
-  private readonly logger = new Logger(AgentLLMService.name);
-  
-  constructor(private readonly configService: ConfigService) {}
+  private readonly defaultModel = 'gpt-3.5-turbo';
 
-  async processMessage(message: string, agent?: Agent): Promise<string> {
-    if (!message || message.trim() === '') {
-      throw new Error('Message cannot be empty');
-    }
-    
-    const config = agent?.configuration as LocalAIConfiguration;
-    if (config?.localAI && agent) {
-      return this.processLocalAIMessage(message, agent);
-    }
-    
-    // Fallback to default processing
-    return `Processed: ${message}`;
-  }
-
-  async getAgentResponse(prompt: string, agent?: Agent): Promise<LLMResponse> {
-    if (!prompt || prompt.trim() === '') {
-      throw new Error('Prompt cannot be empty');
-    }
-    
-    const config = agent?.configuration as LocalAIConfiguration;
-    if (config?.localAI && agent) {
-      return this.getLocalAIResponse(prompt, agent);
-    }
-    
-    // Fallback response
-    return {
-      content: `Agent response to: ${prompt}`,
-      provider: 'default'
-    };
-  }
-
-  private async processLocalAIMessage(message: string, agent: Agent): Promise<string> {
-    const config = agent.configuration as LocalAIConfiguration;
-    const provider = config?.provider;
-    const command = config?.command;
-    
-    if (!command) {
-      throw new Error(`No command configured for local AI provider: ${provider}`);
-    }
-
-    this.logger.log(`🤖 Processing message with ${provider}`);
-    
+  async generateResponse(request: LLMRequest): Promise<LLMResponse> {
     try {
-      // Handle different local AI providers
-      switch (provider) {
-        case 'Claude Code CLI':
-          return this.executeClaudeCodeCLI(message, agent);
-        case 'Gemini CLI':
-          return this.executeGeminiCLI(message, agent);
-        case 'Ollama':
-          return this.executeOllama(message, agent);
-        default:
-          return this.executeGenericCommand(message, agent);
-      }
-    } catch (error) {
-      this.logger.error(`❌ Error processing with ${provider}: ${(error as Error).message}`);
-      throw new Error(`Failed to process message with ${provider}: ${(error as Error).message}`);
+      // Simulate LLM API call
+      const response = await this.callLLMAPI(request);
+      return response;
+    } catch (error: any) {
+      throw new Error(`LLM generation failed: ${error.message}`);
     }
   }
 
-  private async getLocalAIResponse(prompt: string, agent: Agent): Promise<LLMResponse> {
-    const response = await this.processLocalAIMessage(prompt, agent);
-    const config = agent.configuration as LocalAIConfiguration;
+  async streamResponse(request: LLMRequest): Promise<AsyncIterable<string>> {
+    if (!request.stream) {
+      throw new Error('Stream mode not enabled in request');
+    }
+
+    return this.createStreamResponse(request);
+  }
+
+  private async callLLMAPI(request: LLMRequest): Promise<LLMResponse> {
+    // Mock implementation - replace with actual LLM API call
+    const model = request.model || this.defaultModel;
+    const content = `Response to: ${request.prompt}`;
     
     return {
-      content: response,
-      provider: config?.provider || 'unknown',
-      model: config?.defaultModel,
+      content,
+      model,
       usage: {
-        promptTokens: prompt.length,
-        completionTokens: response.length,
-        totalTokens: prompt.length + response.length
+        promptTokens: request.prompt.length / 4,
+        completionTokens: content.length / 4,
+        totalTokens: (request.prompt.length + content.length) / 4
       }
     };
   }
 
-  private async executeClaudeCodeCLI(message: string, agent: Agent): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const process = spawn('claude', ['--model', 'claude-3-5-sonnet-20241022'], {
-        stdio: 'pipe'
-      });
-      
-      let output = '';
-      let error = '';
-      
-      process.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-      
-      process.stderr.on('data', (data) => {
-        error += data.toString();
-      });
-      
-      process.on('close', (code) => {
-        if (code === 0) {
-          resolve(output.trim());
-        } else {
-          reject(new Error(`Claude Code CLI exited with code ${code}: ${error}`));
-        }
-      });
-      
-      process.on('error', (err) => {
-        reject(new Error(`Failed to start Claude Code CLI: ${err.message}`));
-      });
-      
-      // Send the message to Claude
-      process.stdin.write(message);
-      process.stdin.end();
-    });
-  }
-
-  private async executeGeminiCLI(message: string, agent: Agent): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const process = spawn('gemini', ['chat'], {
-        stdio: 'pipe'
-      });
-      
-      let output = '';
-      let error = '';
-      
-      process.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-      
-      process.stderr.on('data', (data) => {
-        error += data.toString();
-      });
-      
-      process.on('close', (code) => {
-        if (code === 0) {
-          resolve(output.trim());
-        } else {
-          reject(new Error(`Gemini CLI exited with code ${code}: ${error}`));
-        }
-      });
-      
-      process.on('error', (err) => {
-        reject(new Error(`Failed to start Gemini CLI: ${err.message}`));
-      });
-      
-      // Send the message to Gemini
-      process.stdin.write(message);
-      process.stdin.end();
-    });
-  }
-
-  private async executeOllama(message: string, agent: Agent): Promise<string> {
-    const config = agent.configuration as LocalAIConfiguration;
-    const model = config?.defaultModel || 'llama2';
+  private async* createStreamResponse(request: LLMRequest): AsyncIterable<string> {
+    const words = `Response to: ${request.prompt}`.split(' ');
     
-    return new Promise((resolve, reject) => {
-      const process = spawn('ollama', ['run', model], {
-        stdio: 'pipe'
-      });
-      
-      let output = '';
-      let error = '';
-      
-      process.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-      
-      process.stderr.on('data', (data) => {
-        error += data.toString();
-      });
-      
-      process.on('close', (code) => {
-        if (code === 0) {
-          resolve(output.trim());
-        } else {
-          reject(new Error(`Ollama exited with code ${code}: ${error}`));
-        }
-      });
-      
-      process.on('error', (err) => {
-        reject(new Error(`Failed to start Ollama: ${err.message}`));
-      });
-      
-      // Send the message to Ollama
-      process.stdin.write(message + '\n');
-      process.stdin.end();
-    });
-  }
-
-  private async executeGenericCommand(message: string, agent: Agent): Promise<string> {
-    const config = agent.configuration as LocalAIConfiguration;
-    const command = config?.command;
-    
-    if (!command) {
-      throw new Error('No command specified for generic AI provider');
+    for (const word of words) {
+      yield word + ' ';
+      await new Promise(resolve => setTimeout(resolve, 100));
     }
+  }
+
+  async validateModel(model: string): Promise<boolean> {
+    const supportedModels = [
+      'gpt-3.5-turbo',
+      'gpt-4',
+      'claude-3-sonnet',
+      'claude-3-haiku'
+    ];
     
-    return new Promise((resolve, reject) => {
-      const process = spawn(command, [], {
-        stdio: 'pipe'
-      });
-      
-      let output = '';
-      let error = '';
-      
-      process.stdout.on('data', (data) => {
-        output += data.toString();
-      });
-      
-      process.stderr.on('data', (data) => {
-        error += data.toString();
-      });
-      
-      process.on('close', (code) => {
-        if (code === 0) {
-          resolve(output.trim() || 'No response from AI provider');
-        } else {
-          reject(new Error(`${command} exited with code ${code}: ${error}`));
-        }
-      });
-      
-      process.on('error', (err) => {
-        reject(new Error(`Failed to start ${command}: ${err.message}`));
-      });
-      
-      // Send the message
-      process.stdin.write(message);
-      process.stdin.end();
-    });
+    return supportedModels.includes(model);
   }
 
-  /**
-   * Get available local AI agents for a user
-   */
-  async getAvailableLocalAIAgents(userId: string): Promise<Agent[]> {
-    // This would integrate with AgentService to get local AI agents
-    // For now, return empty array as placeholder
-    this.logger.debug(`Getting available local AI agents for user: ${userId}`);
-    return [];
+  getDefaultModel(): string {
+    return this.defaultModel;
   }
 
-  /**
-   * Test connectivity to a local AI agent
-   */
-  async testLocalAIAgent(agent: Agent): Promise<boolean> {
-    try {
-      const testMessage = "Hello, this is a connectivity test.";
-      const response = await this.processLocalAIMessage(testMessage, agent);
-      return response.length > 0;
-    } catch (error) {
-      this.logger.error(`❌ Local AI agent test failed: ${(error as Error).message}`);
-      return false;
-    }
+  getSupportedModels(): string[] {
+    return [
+      'gpt-3.5-turbo',
+      'gpt-4',
+      'claude-3-sonnet',
+      'claude-3-haiku'
+    ];
   }
 }

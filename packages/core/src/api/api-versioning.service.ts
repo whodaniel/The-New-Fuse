@@ -23,10 +23,10 @@ export interface ApiVersioningConfig {
 export class ApiVersioningService {
   private readonly logger = new Logger(ApiVersioningService.name);
   private config: ApiVersioningConfig;
-  constructor(): unknown {
+  constructor(private readonly configService: ConfigService) {
     this.config = {
-enabled: this.configService.get<boolean>('api.versioning.enabled', true),
-  }      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.HEADER),
+      enabled: this.configService.get<boolean>('api.versioning.enabled', true),
+      strategy: this.configService.get<VersioningStrategy>('api.versioning.strategy', VersioningStrategy.HEADER),
       defaultVersion: this.configService.get<string>('api.versioning.defaultVersion', '1'),
       supportedVersions: this.configService.get<string[]>('api.versioning.supportedVersions', ['1']),
       headerName: this.configService.get<string>('api.versioning.headerName', 'x-api-version'),
@@ -38,13 +38,13 @@ enabled: this.configService.get<boolean>('api.versioning.enabled', true),
     this.logger.log('API versioning service initialized');
   }
 
-  extractVersion(): unknown {
-    if(): unknown {
+  extractVersion(request: Request): string {
+    if (!this.config.enabled) {
       return this.config.defaultVersion;
     }
 
     let version: string | undefined;
-    switch(): unknown {
+    switch (this.config.strategy) {
       case VersioningStrategy.HEADER:
         version = request.headers[this.config.headerName] as string;
         break;
@@ -59,7 +59,7 @@ enabled: this.configService.get<boolean>('api.versioning.enabled', true),
       case VersioningStrategy.MEDIA_TYPE:
         // Extract version from Accept header like application/vnd.api+json; version=1
         const acceptHeader = request.headers.accept;
-        if(): unknown {
+        if (acceptHeader) {
           const mediaTypeMatch = acceptHeader.match(/version=(\d+(?:\.\d+)?)/);
           version = mediaTypeMatch ? mediaTypeMatch[1] : undefined;
         }
@@ -67,81 +67,81 @@ enabled: this.configService.get<boolean>('api.versioning.enabled', true),
     }
 
     // Validate and return version or default
-    if(): unknown {
+    if (version && this.isVersionSupported(version)) {
       return version;
     }
 
     return this.config.defaultVersion;
   }
 
-  addVersionHeaders(): unknown {
+  addVersionHeaders(response: Response, requestedVersion: string): void {
     response.header('API-Version', requestedVersion);
     response.header('Supported-Versions', this.config.supportedVersions.join(', '));
     // Add deprecation warnings
-    if(): unknown {
+    if (this.isVersionDeprecated(requestedVersion)) {
       response.header('Deprecation', 'true');
       response.header('Warning', `Version ${requestedVersion} is deprecated`);
     }
 
     // Add sunset dates
     const sunsetDate = this.config.sunsetVersions[requestedVersion];
-    if(): unknown {
+    if (sunsetDate) {
       response.header('Sunset', sunsetDate.toISOString());
     }
   }
 
-  isVersionSupported(): unknown {
+  isVersionSupported(version: string): boolean {
     return this.config.supportedVersions.includes(version);
   }
 
-  isVersionDeprecated(): unknown {
+  isVersionDeprecated(version: string): boolean {
     return this.config.deprecatedVersions.includes(version);
   }
 
-  getSunsetDate(): unknown {
+  getSunsetDate(version: string): Date | undefined {
     return this.config.sunsetVersions[version];
   }
 
-  getAllSupportedVersions(): unknown {
+  getAllSupportedVersions(): string[] {
     return [...this.config.supportedVersions];
   }
 
-  getDefaultVersion(): unknown {
+  getDefaultVersion(): string {
     return this.config.defaultVersion;
   }
 
   private validateConfiguration(): void {
-const errors: string[] = [];
-  }    if(): unknown {
+    const errors: string[] = [];
+    if (this.config.supportedVersions.length === 0) {
       errors.push('At least one supported version must be specified');
     }
 
-    if(): unknown {
+    if (!this.config.supportedVersions.includes(this.config.defaultVersion)) {
       errors.push('Default version must be included in supported versions');
     }
 
     // Validate deprecated versions are also supported
-    for(): unknown {
-      if(): unknown {
+    for (const deprecatedVersion of this.config.deprecatedVersions) {
+      if (!this.config.supportedVersions.includes(deprecatedVersion)) {
         errors.push(`Deprecated version ${deprecatedVersion} must be included in supported versions`);
       }
     }
 
     // Validate sunset versions are also supported
-    for(): unknown {
-      if(): unknown {
+    for (const sunsetVersion of Object.keys(this.config.sunsetVersions)) {
+      if (!this.config.supportedVersions.includes(sunsetVersion)) {
         errors.push(`Sunset version ${sunsetVersion} must be included in supported versions`);
       }
     }
 
-    if(): unknown {
+    if (errors.length > 0) {
       this.logger.error('API versioning configuration validation failed:');
       errors.forEach(error => this.logger.error(`- ${error}`));
       throw new Error(`Invalid API versioning configuration: ${errors.join(', ')}`);
     }
   }
 
-  updateConfig(): unknown {
+  updateConfig(updates: Partial<ApiVersioningConfig>): void {
     this.config = { ...this.config, ...updates };
     this.validateConfiguration();
     this.logger.log('API versioning configuration updated');

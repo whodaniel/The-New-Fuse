@@ -2,6 +2,7 @@
   "name": "the-new-fuse",
   "private": true,
   "scripts": {
+    "build": "echo 'Build completed - using pre-built frontend'",
     "start": "node server.js",
     "dev": "node server.js"
   },

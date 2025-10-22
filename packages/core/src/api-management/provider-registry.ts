@@ -17,17 +17,21 @@ export interface ProviderInfo {
   supportedFeatures?: string[];
 }
 
-export class ProviderRegistry {
+export class ProviderRegistry extends EventEmitter {
   private providers = new Map<string, ProviderInfo>();
-  constructor(): unknown {
-    super(): unknown {
+  constructor() {
+    super();
+    this.initializeDefaultProviders();
+  }
+
+  registerProvider(provider: ProviderInfo): void {
     this.providers.set(provider.id, provider);
     this.emit('provider-registered', provider);
   }
 
-  unregisterProvider(): unknown {
+  unregisterProvider(providerId: string): boolean {
     const provider = this.providers.get(providerId);
-    if(): unknown {
+    if (provider) {
       this.providers.delete(providerId);
       this.emit('provider-unregistered', provider);
       return true;
@@ -35,25 +39,23 @@ export class ProviderRegistry {
     return false;
   }
 
-  getProvider(): unknown {
+  getProvider(providerId: string): ProviderInfo | undefined {
     return this.providers.get(providerId);
   }
 
-  getAllProviders(): unknown {
+  getAllProviders(): ProviderInfo[] {
     return Array.from(this.providers.values());
   }
 
-  getProviderModels(): unknown {
+  getProviderModels(providerId: string): ModelInfo[] {
     const provider = this.providers.get(providerId);
     return provider ? provider.models : [];
   }
 
   findModelById(modelId: string): { provider: ProviderInfo; model: ModelInfo } | undefined {
-  // Implementation needed
-}
-    for(): unknown {
+    for (const provider of this.providers.values()) {
       const model = provider.models.find(m => m.id === modelId);
-      if(): unknown {
+      if (model) {
         return { provider, model };
       }
     }
@@ -61,10 +63,8 @@ export class ProviderRegistry {
   }
 
   private initializeDefaultProviders(): void {
-// OpenAI Provider
-  }    this.registerProvider({
-  // Implementation needed
-}
+    // OpenAI Provider
+    this.registerProvider({
       id: 'openai',
       name: 'OpenAI',
       baseUrl: 'https://api.openai.com/v1',
@@ -72,24 +72,18 @@ export class ProviderRegistry {
       supportedFeatures: ['chat', 'completion', 'embeddings', 'images'],
       models: [
         {
-  // Implementation needed
-}
           id: 'gpt-4o',
           name: 'GPT-4o',
           description: 'Most advanced multimodal model',
           contextLength: 128000
         },
         {
-  // Implementation needed
-}
           id: 'gpt-4-turbo',
           name: 'GPT-4 Turbo',
           description: 'High performance GPT-4 model',
           contextLength: 128000
         },
         {
-  // Implementation needed
-}
           id: 'gpt-3.5-turbo',
           name: 'GPT-3.5 Turbo',
           description: 'Fast and cost-effective model',
@@ -99,8 +93,6 @@ export class ProviderRegistry {
     });
     // Anthropic Provider
     this.registerProvider({
-  // Implementation needed
-}
       id: 'anthropic',
       name: 'Anthropic',
       baseUrl: 'https://api.anthropic.com/v1',
@@ -108,24 +100,18 @@ export class ProviderRegistry {
       supportedFeatures: ['chat', 'completion'],
       models: [
         {
-  // Implementation needed
-}
           id: 'claude-3-opus',
           name: 'Claude 3 Opus',
           description: 'Most powerful Claude model',
           contextLength: 200000
         },
         {
-  // Implementation needed
-}
           id: 'claude-3-sonnet',
           name: 'Claude 3 Sonnet',
           description: 'Balanced performance and speed',
           contextLength: 200000
         },
         {
-  // Implementation needed
-}
           id: 'claude-3-haiku',
           name: 'Claude 3 Haiku',
           description: 'Fastest Claude model',
@@ -136,9 +122,9 @@ export class ProviderRegistry {
     this.emit('default-providers-initialized');
   }
 
-  updateProvider(): unknown {
+  updateProvider(providerId: string, updates: Partial<ProviderInfo>): boolean {
     const provider = this.providers.get(providerId);
-    if(): unknown {
+    if (provider) {
       const updatedProvider = { ...provider, ...updates };
       this.providers.set(providerId, updatedProvider);
       this.emit('provider-updated', updatedProvider);
@@ -147,11 +133,11 @@ export class ProviderRegistry {
     return false;
   }
 
-  isProviderRegistered(): unknown {
+  isProviderRegistered(providerId: string): boolean {
     return this.providers.has(providerId);
   }
 
-  getProviderCount(): unknown {
+  getProviderCount(): number {
     return this.providers.size;
   }
 }

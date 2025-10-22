@@ -11,7 +11,7 @@
     }
   },
   "scripts": {
-    "build": "npx tsc",
+    "build": "tsc",
     "test": "npm test",
     "clean": "npx rimraf dist"
   },

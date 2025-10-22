@@ -1,5 +1,5 @@
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { Table, View, Row, Column, CellValue, AppState, TimelineViewOptions, DataType, TIMELINE_DEFAULT_ITEM_DURATION_DAYS } from '@the-new-fuse/fairtable-core';
 
 interface TimelineViewProps {
@@ -107,7 +107,7 @@ const TimelineView: React.FC<TimelineViewProps> = ({
   }, [timelineItems]);
 
   const dateHeaders = useMemo(() => {
-    const headers = [];
+    const headers: { date: Date; label: string; dayIndex: number }[] = [];
     for (let i = 0; i < totalDays; i++) {
       const date = addDays(overallMinDate, i);
       headers.push({ date, label: formatDate(date), dayIndex: i });

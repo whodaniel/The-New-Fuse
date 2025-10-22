@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[variables]
+NODE_VERSION = "20"
+
+[phases.install]
+cmds = ["cd apps/api && pnpm install --frozen-lockfile"]
+
+[phases.build]
+cmds = ["cd apps/api && pnpm run build"]
+
+[start]
+cmd = "cd apps/api && pnpm start"

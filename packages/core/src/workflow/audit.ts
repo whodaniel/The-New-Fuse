@@ -24,18 +24,18 @@ interface ComplianceReport {
 }
 
 class AuditLogger {
-  async log(): unknown {
+  async log(event: WorkflowAuditEvent): Promise<void> {
     // Implementation would persist audit event to secure storage
-    console.log('Audit event logged:', _event);
+    console.log('Audit event logged:', event);
   }
 
-  async getEvents(): unknown {
+  async getEvents(workflowId: string, timeRange: DateRange): Promise<WorkflowAuditEvent[]> {
     // Implementation would retrieve audit events from storage
     return [
       {
-id: 'audit-1',
-  }        type: 'workflow_started',
-        workflowId: _workflowId,
+        id: 'audit-1',
+        type: 'workflow_started',
+        workflowId: workflowId,
         timestamp: new Date(),
         actor: 'system',
         context: { initiator: 'user_123' }
@@ -45,12 +45,10 @@ id: 'audit-1',
 }
 
 class ComplianceRuleEngine {
-  async analyzeEvents(): unknown {
+  async analyzeEvents(events: WorkflowAuditEvent[]): Promise<any[]> {
     // Implementation would check events against compliance rules
     return [
       {
-  // Implementation needed
-}
         rule: 'data_retention_policy',
         violation: false,
         severity: 'low',
@@ -63,45 +61,44 @@ class ComplianceRuleEngine {
 export class WorkflowAuditSystem {
   private readonly auditLogger: AuditLogger;
   private readonly complianceRules: ComplianceRuleEngine;
-  constructor(): unknown {
+
+  constructor() {
     this.auditLogger = new AuditLogger();
     this.complianceRules = new ComplianceRuleEngine();
   }
 
-  async recordAuditEvent(): unknown {
+  async recordAuditEvent(event: WorkflowAuditEvent): Promise<void> {
     const enrichedEvent: WorkflowAuditEvent = {
-...event,
-  }      timestamp: new Date(),
+      ...event,
+      timestamp: new Date(),
       actor: await this.getCurrentActor(),
       context: await this.getAuditContext(),
-      signatures: await this.generateEventSignatures(event),
+      signatures: await this.generateEventSignatures(event)
     };
     await this.auditLogger.log(enrichedEvent);
     await this.checkComplianceViolations(enrichedEvent);
   }
 
-  async generateComplianceReport(): unknown {
+  async generateComplianceReport(workflowId: string, timeRange: DateRange): Promise<ComplianceReport> {
     const events = await this.auditLogger.getEvents(workflowId, timeRange);
     const violations = await this.complianceRules.analyzeEvents(events);
     return {
-workflowId,
-  }      timeRange,
+      workflowId,
+      timeRange,
       events,
       violations,
-      recommendations: this.generateRecommendations(violations),
+      recommendations: this.generateRecommendations(violations)
     };
   }
 
   private async getCurrentActor(): Promise<string> {
-// Implementation would get current user/system actor
-  }    return 'system';
+    // Implementation would get current user/system actor
+    return 'system';
   }
 
   private async getAuditContext(): Promise<Record<string, unknown>> {
-// Implementation would gather relevant context for audit
-  }    return {
-  // Implementation needed
-}
+    // Implementation would gather relevant context for audit
+    return {
       environment: 'production',
       version: '1.0.0',
       requestId: `req_${Date.now()}`
@@ -109,18 +106,18 @@ workflowId,
   }
 
   private async generateEventSignatures(event: WorkflowAuditEvent): Promise<string[]> {
-// Implementation would generate cryptographic signatures for event integrity
-  }    return [`sha256:${Buffer.from(JSON.stringify(event)).toString('base64')}`];
+    // Implementation would generate cryptographic signatures for event integrity
+    return [`sha256:${Buffer.from(JSON.stringify(event)).toString('base64')}`];
   }
 
   private async checkComplianceViolations(event: WorkflowAuditEvent): Promise<void> {
-// Implementation would check event against real-time compliance rules
-  }    console.log('Checking compliance for event:', event.id);
+    // Implementation would check event against real-time compliance rules
+    console.log('Checking compliance for event:', event.id);
   }
 
   private generateRecommendations(violations: any[]): string[] {
-if(): unknown {
-  }      return ['No violations detected. Continue current practices.'];
+    if (violations.length === 0) {
+      return ['No violations detected. Continue current practices.'];
     }
 
     return [
@@ -130,14 +127,13 @@ if(): unknown {
     ];
   }
 
-  async exportAuditTrail(): unknown {
+  async exportAuditTrail(workflowId: string, format: string): Promise<string> {
     const events = await this.auditLogger.getEvents(workflowId, {
-  // Implementation needed
-}
       startDate: new Date(0),
       endDate: new Date()
     });
-    switch(): unknown {
+
+    switch (format) {
       case 'json':
         return JSON.stringify(events, null, 2);
       case 'csv':
@@ -150,8 +146,8 @@ if(): unknown {
   }
 
   private convertToCsv(events: WorkflowAuditEvent[]): string {
-const headers = ['id', 'type', 'workflowId', 'stepId', 'timestamp', 'actor'];
-  }    const rows = events.map(event => [
+    const headers = ['id', 'type', 'workflowId', 'stepId', 'timestamp', 'actor'];
+    const rows = events.map(event => [
       event.id,
       event.type,
       event.workflowId,
@@ -163,7 +159,7 @@ const headers = ['id', 'type', 'workflowId', 'stepId', 'timestamp', 'actor'];
   }
 
   private generatePdfReport(events: WorkflowAuditEvent[]): string {
-// Implementation would generate actual PDF
-  }    return `PDF Report for ${events.length} audit events`;
+    // Implementation would generate actual PDF
+    return `PDF Report for ${events.length} audit events`;
   }
 }

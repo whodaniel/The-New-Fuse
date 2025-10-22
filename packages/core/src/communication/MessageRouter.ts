@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MessageBroker, Message } from './MessageBroker';
+
 export interface RouteRule {
   topic: string;
   target: string;
@@ -9,28 +10,30 @@ export interface RouteRule {
 @Injectable()
 export class MessageRouter {
   private rules: RouteRule[] = [];
+
   constructor(private messageBroker: MessageBroker) {}
 
-  addRule(): unknown {
+  addRule(rule: RouteRule): void {
     this.rules.push(rule);
   }
 
-  removeRule(): unknown {
+  removeRule(topic: string, target: string): void {
     this.rules = this.rules.filter(
       rule => rule.topic !== topic || rule.target !== target
     );
   }
 
-  async routeMessage(): unknown {
+  async routeMessage(message: Message): Promise<void> {
     const applicableRules = this.rules.filter(
       rule => rule.topic === message.topic && (!rule.condition || rule.condition(message))
     );
-    for(): unknown {
+
+    for (const rule of applicableRules) {
       await this.messageBroker.publish(rule.target, message.payload);
     }
   }
 
-  getRules(): unknown {
+  getRules(): RouteRule[] {
     return [...this.rules];
   }
 }

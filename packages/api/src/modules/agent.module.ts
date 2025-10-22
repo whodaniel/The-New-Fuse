@@ -4,7 +4,7 @@
  */
 
 import { Module } from '@nestjs/common';
-import { AgentController } from './controllers/agent.controller';
+import { AgentController } from '../controllers/AgentController';
 import { AgentService } from './services/agent.service';
 import { PrismaService } from '../services/prisma.service';
 import { AuthModule } from './auth/auth.module'; // Import AuthModule

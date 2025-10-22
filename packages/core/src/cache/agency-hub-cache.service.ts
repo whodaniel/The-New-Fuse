@@ -21,15 +21,13 @@ export class AgencyHubCacheService {
    * Get value from cache
    */
   async get<T>(key: string): Promise<T | null> {
-  // Implementation needed
-}
     const entry = this.cache.get(key);
-    if(): unknown {
+    if (!entry) {
       return null;
     }
 
     // Check if expired
-    if(): unknown {
+    if (Date.now() > entry.expires) {
       this.cache.delete(key);
       return null;
     }
@@ -42,13 +40,9 @@ export class AgencyHubCacheService {
    * Set value in cache
    */
   async set<T>(key: string, value: T, options: CacheOptions = {}): Promise<void> {
-  // Implementation needed
-}
     const ttl = options.ttl || this.defaultTtl;
     const expires = Date.now() + ttl * 1000;
     this.cache.set(key, {
-  // Implementation needed
-}
       value,
       expires,
       tags: options.tags,
@@ -59,7 +53,7 @@ export class AgencyHubCacheService {
   /**
    * Delete value from cache
    */
-  async del(): unknown {
+  async del(key: string): Promise<void> {
     this.cache.delete(key);
     this.logger.debug(`Cache deleted for key: ${key}`);
   }
@@ -67,7 +61,7 @@ export class AgencyHubCacheService {
   /**
    * Clear all cache entries
    */
-  async clear(): unknown {
+  async clear(): Promise<void> {
     this.cache.clear();
     this.logger.debug('Cache cleared');
   }
@@ -75,14 +69,14 @@ export class AgencyHubCacheService {
   /**
    * Invalidate cache entries by tags
    */
-  async invalidateByTags(): unknown {
+  async invalidateByTags(tags: string[]): Promise<void> {
     const keysToDelete: string[] = [];
-    for(): unknown {
-      if(): unknown {
+    for (const [key, entry] of this.cache.entries()) {
+      if (entry.tags && entry.tags.some(tag => tags.includes(tag))) {
         keysToDelete.push(key);
       }
     }
-    
+
     keysToDelete.forEach(key => this.cache.delete(key));
     this.logger.debug(`Cache invalidated for tags: ${tags.join(', ')}`);
   }
