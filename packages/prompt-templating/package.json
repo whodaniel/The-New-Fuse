@@ -2,7 +2,7 @@
   "name": "@the-new-fuse/prompt-templating",
   "version": "1.0.0",
   "description": "Modular prompt templating system for The New Fuse",
-  "type": "module",
+  "private": true,
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
