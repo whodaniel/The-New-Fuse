@@ -72,9 +72,6 @@ FROM dependencies AS builder
 # Copy all source files
 COPY . .
 
-# Ensure prompt-templating package is properly recognized in workspace
-RUN pnpm install --no-frozen-lockfile
-
 # Build workspace packages first (dependencies of frontend)
 RUN pnpm --filter=!@the-new-fuse/frontend-app build
 
