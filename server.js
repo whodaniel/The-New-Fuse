@@ -36,4 +36,4 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(`📁 Serving frontend from: ${frontendBuildPath}`);
   // eslint-disable-next-line no-console
   console.log(`🌐 Access at: http://localhost:${PORT}`);
-});
+});// Force deployment Wed Oct 22 04:01:18 EDT 2025
