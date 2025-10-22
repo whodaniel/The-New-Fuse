@@ -58,6 +58,11 @@ COPY packages/types/package.json ./packages/types/
 COPY packages/ui-consolidated/package.json ./packages/ui-consolidated/
 COPY packages/utils/package.json ./packages/utils/
 
+# Copy source code for packages that frontend depends on BEFORE installing dependencies
+COPY packages/port-management/ ./packages/port-management/
+COPY packages/prompt-templating/ ./packages/prompt-templating/
+COPY packages/ui-consolidated/ ./packages/ui-consolidated/
+
 # Install all dependencies from root without frozen lockfile
 RUN pnpm install --no-frozen-lockfile
 
@@ -66,11 +71,6 @@ FROM dependencies AS builder
 
 # Copy all source files
 COPY . .
-
-# Ensure all workspace packages are properly available
-COPY packages/port-management/ ./packages/port-management/
-COPY packages/prompt-templating/ ./packages/prompt-templating/
-COPY packages/ui-consolidated/ ./packages/ui-consolidated/
 
 # Build workspace packages first (dependencies of frontend)
 RUN pnpm --filter=!@the-new-fuse/frontend-app build
