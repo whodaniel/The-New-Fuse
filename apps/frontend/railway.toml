@@ -2,6 +2,8 @@
 builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 watchPatterns = ["apps/frontend/**"]
+# Explicitly disable Nixpacks to force Docker build
+nixpacksConfigPath = ""
 
 [deploy]
 healthcheckPath = "/"

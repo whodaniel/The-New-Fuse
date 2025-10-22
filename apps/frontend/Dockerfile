@@ -25,8 +25,9 @@ FROM base AS builder
 
 WORKDIR /app
 
-# Build the frontend application using pnpm workspace - CACHE BUST v2
-RUN --mount=type=cache,id=pnpm-build-v2,target=/app/node_modules/.cache \
+# Build the frontend application using pnpm workspace - CACHE BUST v3
+# Force Railway to use Dockerfile instead of Nixpacks
+RUN --mount=type=cache,id=pnpm-build-v3,target=/app/node_modules/.cache \
     pnpm --filter=@the-new-fuse/frontend-app build
 
 # Production stage
