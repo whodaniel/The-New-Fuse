@@ -53,8 +53,8 @@ COPY packages/testing/package.json ./packages/testing/
 COPY packages/types/package.json ./packages/types/
 COPY packages/utils/package.json ./packages/utils/
 
-# Install dependencies with frozen lockfile
-RUN pnpm install --frozen-lockfile
+# Install dependencies without frozen lockfile
+RUN pnpm install --no-frozen-lockfile
 
 # Build stage
 FROM dependencies AS build
