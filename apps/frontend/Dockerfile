@@ -25,8 +25,8 @@ FROM base AS builder
 
 WORKDIR /app
 
-# Build the frontend application using pnpm workspace (not bun)
-RUN --mount=type=cache,id=pnpm-build,target=/app/node_modules/.cache \
+# Build the frontend application using pnpm workspace - CACHE BUST v2
+RUN --mount=type=cache,id=pnpm-build-v2,target=/app/node_modules/.cache \
     pnpm --filter=@the-new-fuse/frontend-app build
 
 # Production stage
@@ -44,4 +44,4 @@ EXPOSE 80
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
 
-# Force rebuild - Updated for pnpm workspace build
+# Force rebuild - Updated for pnpm workspace build - CACHE BUST v2
