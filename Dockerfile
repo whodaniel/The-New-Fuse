@@ -61,6 +61,9 @@ RUN pnpm install --no-frozen-lockfile
 FROM dependencies AS build
 COPY . .
 
+# Build port-management package first (required by frontend)
+RUN pnpm --filter=@the-new-fuse/port-management build
+
 # Build frontend
 RUN pnpm --filter=@the-new-fuse/frontend-app build
 
