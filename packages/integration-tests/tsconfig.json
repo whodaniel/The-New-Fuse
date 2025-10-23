@@ -39,7 +39,6 @@
     "src/examples/**/*"
   ],
   "references": [
-    { "path": "../workflow-engine" },
     { "path": "../extension-system" },
     { "path": "../core" },
     { "path": "../utils" },

@@ -2142,9 +2142,6 @@ importers:
       '@the-new-fuse/extension-system':
         specifier: workspace:*
         version: link:../extension-system
-      '@the-new-fuse/workflow-engine':
-        specifier: workspace:*
-        version: link:../workflow-engine
       '@tnf/relay-core':
         specifier: workspace:*
         version: link:../relay-core
