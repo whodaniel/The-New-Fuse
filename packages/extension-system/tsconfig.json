@@ -26,9 +26,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@tnf/relay-core": ["../relay-core/src/index"],
-      "@tnf/relay-core/*": ["../relay-core/src/*"],
-      "@the-new-fuse/workflow-engine": ["../workflow-engine/src/index"],
-      "@the-new-fuse/workflow-engine/*": ["../workflow-engine/src/*"]
+      "@tnf/relay-core/*": ["../relay-core/src/*"]
     }
   },
   "include": [
@@ -43,9 +41,6 @@
   "references": [
     {
       "path": "../relay-core"
-    },
-    {
-      "path": "../workflow-engine"
     }
   ]
 }

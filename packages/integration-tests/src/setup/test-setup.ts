@@ -5,7 +5,7 @@
  */
 
 import { Logger, HeartbeatMonitoringService, MasterAgentRegistry } from '@tnf/relay-core';
-import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
+// import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
@@ -77,12 +77,13 @@ export async function setupTestEnvironment(): Promise<TestEnvironment> {
   // Create adapters for workflow engine compatibility
 
   // Setup Workflow Engine - uses local HeartbeatMonitoringService interface
-  const workflowSystem = WorkflowEngineFactory.createDefault(
-    prisma,
-    masterRegistry,
-    heartbeatService,
-    logger
-  );
+  // const workflowSystem = WorkflowEngineFactory.createDefault(
+  //   prisma,
+  //   masterRegistry,
+  //   heartbeatService,
+  //   logger
+  // ); // Removed workflow-engine dependency
+  const workflowSystem = null; // Placeholder for removed workflow engine
 
   // Setup Extension System - ExtensionSystemFactory expects AgentRegistry interface
   // Create adapter for extension system compatibility

@@ -6,7 +6,7 @@
  */
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
-import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { ExtensionType } from '@the-new-fuse/extension-system/types';
 import * as path from 'path';
 

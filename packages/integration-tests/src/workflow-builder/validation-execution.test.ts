@@ -11,8 +11,8 @@
  */
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
-import { WorkflowBuilder } from '@the-new-fuse/workflow-engine/builder';
-import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowBuilder } from '@the-new-fuse/workflow-engine/builder'; // Removed workflow-engine dependency
+// import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 
 describe('Workflow Validation and Execution Tests', () => {
   let env: any;

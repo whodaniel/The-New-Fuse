@@ -6,7 +6,7 @@
  */
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 
 describe('Master Agent Registry + Workflow Engine Integration', () => {
   let env: any;

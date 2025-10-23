@@ -8,9 +8,9 @@
  */
 
 import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
-import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
+// import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';

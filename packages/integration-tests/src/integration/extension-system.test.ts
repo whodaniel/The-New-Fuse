@@ -7,7 +7,7 @@
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 import { ExtensionStatus } from '@the-new-fuse/extension-system/types';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import * as path from 'path';
 
 describe('Extension System Integration', () => {
