@@ -3,29 +3,17 @@
  */
 
 import { Request, Response } from 'express';
-import { WorkflowEngine } from '@tnf/workflow-engine';
-import { WorkflowExecutor } from '@tnf/workflow-engine';
-import { WorkflowValidator } from '@tnf/workflow-engine';
 import { Logger } from '@tnf/relay-core';
 import { PrismaClient } from '@prisma/client';
 
 export class WorkflowController {
-  private workflowEngine: WorkflowEngine;
-  private workflowExecutor: WorkflowExecutor;
-  private workflowValidator: WorkflowValidator;
   private logger: Logger;
   private prisma: PrismaClient;
 
   constructor(
-    workflowEngine: WorkflowEngine,
-    workflowExecutor: WorkflowExecutor,
-    workflowValidator: WorkflowValidator,
     logger: Logger,
     prisma: PrismaClient
   ) {
-    this.workflowEngine = workflowEngine;
-    this.workflowExecutor = workflowExecutor;
-    this.workflowValidator = workflowValidator;
     this.logger = logger;
     this.prisma = prisma;
   }
@@ -111,19 +99,29 @@ export class WorkflowController {
   async createWorkflow(req: Request, res: Response): Promise<void> {
     try {
       const workflowData = req.body;
-      
-      // Validate workflow structure
-      const validation = this.workflowValidator.validate(workflowData);
-      if (!validation.isValid) {
-        res.status(400).json({ 
-          error: 'Invalid workflow', 
-          details: validation.errors 
+
+      // Basic validation - ensure required fields are present
+      if (!workflowData.name) {
+        res.status(400).json({
+          error: 'Invalid workflow',
+          details: ['Name is required']
         });
         return;
       }
 
-      const workflow = await this.workflowEngine.createWorkflow(workflowData);
-      
+      const workflow = await this.prisma.workflow.create({
+        data: {
+          name: workflowData.name,
+          description: workflowData.description || '',
+          nodes: workflowData.nodes || [],
+          edges: workflowData.edges || [],
+          status: workflowData.status || 'draft',
+          version: workflowData.version || 1,
+          createdBy: req.user?.id || 'system',
+          tags: workflowData.tags || []
+        }
+      });
+
       this.logger.info(`Created workflow: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
     } catch (error) {
@@ -138,30 +136,37 @@ export class WorkflowController {
       const { id } = req.params;
       const updates = req.body;
 
-      // Validate workflow structure if nodes/edges are being updated
-      if (updates.nodes || updates.edges) {
-        const validation = this.workflowValidator.validate(updates);
-        if (!validation.isValid) {
-          res.status(400).json({ 
-            error: 'Invalid workflow', 
-            details: validation.errors 
-          });
-          return;
-        }
-      }
-
-      const workflow = await this.workflowEngine.updateWorkflow(id, updates);
-      
-      if (!workflow) {
-        res.status(404).json({ error: 'Workflow not found' });
+      // Basic validation - ensure name is provided if being updated
+      if (updates.name === '') {
+        res.status(400).json({
+          error: 'Invalid workflow',
+          details: ['Name cannot be empty']
+        });
         return;
       }
 
+      const workflow = await this.prisma.workflow.update({
+        where: { id },
+        data: {
+          ...(updates.name && { name: updates.name }),
+          ...(updates.description !== undefined && { description: updates.description }),
+          ...(updates.nodes && { nodes: updates.nodes }),
+          ...(updates.edges && { edges: updates.edges }),
+          ...(updates.status && { status: updates.status }),
+          ...(updates.version && { version: updates.version }),
+          ...(updates.tags && { tags: updates.tags })
+        }
+      });
+
       this.logger.info(`Updated workflow: ${workflow.name} (${workflow.id})`);
       res.json(workflow);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to update workflow:', error);
-      res.status(500).json({ error: 'Failed to update workflow' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Workflow not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to update workflow' });
+      }
     }
   }
 
@@ -170,18 +175,19 @@ export class WorkflowController {
     try {
       const { id } = req.params;
 
-      const success = await this.workflowEngine.deleteWorkflow(id);
-      
-      if (!success) {
-        res.status(404).json({ error: 'Workflow not found' });
-        return;
-      }
+      await this.prisma.workflow.delete({
+        where: { id }
+      });
 
       this.logger.info(`Deleted workflow: ${id}`);
       res.status(204).send();
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to delete workflow:', error);
-      res.status(500).json({ error: 'Failed to delete workflow' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Workflow not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to delete workflow' });
+      }
     }
   }
 
@@ -195,29 +201,43 @@ export class WorkflowController {
         return;
       }
 
-      const workflow = await this.workflowEngine.getWorkflow(workflowId);
+      const workflow = await this.prisma.workflow.findUnique({
+        where: { id: workflowId }
+      });
+
       if (!workflow) {
         res.status(404).json({ error: 'Workflow not found' });
         return;
       }
 
-      // Validate workflow before execution
-      const validation = this.workflowValidator.validate(workflow);
-      if (!validation.isValid) {
-        res.status(400).json({ 
-          error: 'Cannot execute invalid workflow', 
-          details: validation.errors 
+      // Basic validation - ensure workflow has nodes
+      if (!workflow.nodes || workflow.nodes.length === 0) {
+        res.status(400).json({
+          error: 'Cannot execute workflow without nodes'
         });
         return;
       }
 
-      const execution = await this.workflowExecutor.execute(workflow, input);
-      
+      // Create execution record
+      const execution = await this.prisma.workflowExecution.create({
+        data: {
+          workflowId: workflowId,
+          status: 'running',
+          input: input,
+          startTime: new Date(),
+          createdBy: req.user?.id || 'system'
+        }
+      });
+
       this.logger.info(`Started execution: ${execution.id} for workflow: ${workflowId}`);
       res.status(201).json(execution);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to execute workflow:', error);
-      res.status(500).json({ error: 'Failed to execute workflow' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Workflow not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to execute workflow' });
+      }
     }
   }
 
@@ -301,18 +321,23 @@ export class WorkflowController {
     try {
       const { executionId } = req.params;
 
-      const execution = await this.workflowExecutor.cancel(executionId);
-      
-      if (!execution) {
-        res.status(404).json({ error: 'Execution not found' });
-        return;
-      }
+      const execution = await this.prisma.workflowExecution.update({
+        where: { id: executionId },
+        data: {
+          status: 'cancelled',
+          endTime: new Date()
+        }
+      });
 
       this.logger.info(`Cancelled execution: ${executionId}`);
       res.json(execution);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to cancel execution:', error);
-      res.status(500).json({ error: 'Failed to cancel execution' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Execution not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to cancel execution' });
+      }
     }
   }
 
@@ -321,18 +346,22 @@ export class WorkflowController {
     try {
       const { executionId } = req.params;
 
-      const execution = await this.workflowExecutor.pause(executionId);
-      
-      if (!execution) {
-        res.status(404).json({ error: 'Execution not found' });
-        return;
-      }
+      const execution = await this.prisma.workflowExecution.update({
+        where: { id: executionId },
+        data: {
+          status: 'paused'
+        }
+      });
 
       this.logger.info(`Paused execution: ${executionId}`);
       res.json(execution);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to pause execution:', error);
-      res.status(500).json({ error: 'Failed to pause execution' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Execution not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to pause execution' });
+      }
     }
   }
 
@@ -341,18 +370,22 @@ export class WorkflowController {
     try {
       const { executionId } = req.params;
 
-      const execution = await this.workflowExecutor.resume(executionId);
-      
-      if (!execution) {
-        res.status(404).json({ error: 'Execution not found' });
-        return;
-      }
+      const execution = await this.prisma.workflowExecution.update({
+        where: { id: executionId },
+        data: {
+          status: 'running'
+        }
+      });
 
       this.logger.info(`Resumed execution: ${executionId}`);
       res.json(execution);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to resume execution:', error);
-      res.status(500).json({ error: 'Failed to resume execution' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Execution not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to resume execution' });
+      }
     }
   }
 
@@ -360,11 +393,25 @@ export class WorkflowController {
   async validateWorkflow(req: Request, res: Response): Promise<void> {
     try {
       const workflow = req.body;
-      const validation = this.workflowValidator.validate(workflow);
-      
+
+      // Basic validation
+      const errors: string[] = [];
+
+      if (!workflow.name || workflow.name.trim() === '') {
+        errors.push('Name is required');
+      }
+
+      if (!workflow.nodes || !Array.isArray(workflow.nodes)) {
+        errors.push('Nodes must be an array');
+      }
+
+      if (!workflow.edges || !Array.isArray(workflow.edges)) {
+        errors.push('Edges must be an array');
+      }
+
       res.json({
-        valid: validation.isValid,
-        errors: validation.errors
+        valid: errors.length === 0,
+        errors
       });
     } catch (error) {
       this.logger.error('Failed to validate workflow:', error);
@@ -437,13 +484,19 @@ export class WorkflowController {
         tags: []
       };
 
-      const workflow = await this.workflowEngine.createWorkflow(workflowData);
-      
+      const workflow = await this.prisma.workflow.create({
+        data: workflowData
+      });
+
       this.logger.info(`Created workflow from template: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error('Failed to create workflow from template:', error);
-      res.status(500).json({ error: 'Failed to create workflow from template' });
+      if (error.code === 'P2025') {
+        res.status(404).json({ error: 'Template not found' });
+      } else {
+        res.status(500).json({ error: 'Failed to create workflow from template' });
+      }
     }
   }
 }

@@ -2738,6 +2738,9 @@ importers:
       '@the-new-fuse/prompt-templating':
         specifier: workspace:*
         version: link:../prompt-templating
+      zod:
+        specifier: ^3.22.4
+        version: 3.25.76
     devDependencies:
       '@types/react':
         specifier: ^19.2.2
