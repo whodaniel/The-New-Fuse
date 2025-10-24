@@ -19,8 +19,7 @@ import {
   A2AError,
   A2AValidationError,
   A2ATimeoutError,
-  A2AConnectionError,
-  A2AEvents
+  A2AConnectionError
 } from './types';
 
 @Injectable()
@@ -80,8 +79,8 @@ export class A2ARedisAdapter extends EventEmitter implements IA2ACommunicator, O
     ];
 
     for (const channel of channels) {
-      await this.redisService.subscribe(channel, (message) => {
-        this.handleRedisMessage(channel, JSON.stringify(message.message)).catch(error => {
+      await this.redisService.subscribe(channel, (message: any) => {
+        this.handleRedisMessage(channel, JSON.stringify(message?.message ?? message)).catch(error => {
           this.logger.error('Error handling Redis message:', error);
         });
       });

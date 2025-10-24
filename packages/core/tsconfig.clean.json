@@ -54,7 +54,6 @@
     "src/config/ConfigService.ts",
     "src/config/redis.config.ts",
     "src/database/DatabaseService.ts",
-    "src/redis/redis.service.ts",
     "src/models/FeatureFlag.ts"
   ],
   "exclude": [

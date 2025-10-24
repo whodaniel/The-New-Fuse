@@ -77,6 +77,7 @@ RUN pnpm --filter=@the-new-fuse/security build
 
 # Core packages
 RUN pnpm --filter=@the-new-fuse/core build
+RUN pnpm --filter=@the-new-fuse/infrastructure build
 RUN pnpm --filter=@the-new-fuse/database build
 
 # UI and templating packages
@@ -85,9 +86,9 @@ RUN pnpm --filter=@the-new-fuse/ui-consolidated build
 
 # A2A packages
 RUN pnpm --filter=@the-new-fuse/a2a-core build
-RUN pnpm --filter=@the-new-fuse/a2a-react build
+# RUN pnpm --filter=@the-new-fuse/a2a-react build  # Temporarily skipped
 
-# Feature packages
+# Feature packages (skip for now if not required)
 RUN pnpm --filter=@the-new-fuse/feature-suggestions build
 RUN pnpm --filter=@the-new-fuse/port-management build
 
@@ -104,10 +105,10 @@ RUN apk add --no-cache curl && \
 
 WORKDIR /app
 
-# Copy built frontend and necessary files from build stage
-COPY --from=build /app/apps/frontend/dist ./apps/frontend/dist
+# Copy necessary files from build stage (skip frontend dist for now)
 COPY --from=build /app/node_modules ./node_modules
 COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/apps/frontend/dist ./apps/frontend/dist
 COPY server.js ./
 
 # Create non-root user

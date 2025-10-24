@@ -9,7 +9,7 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "target": "ES2020",
-    "types": []
+    "types": ["node"]
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]

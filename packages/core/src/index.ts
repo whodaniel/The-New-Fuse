@@ -31,7 +31,6 @@ export { ConfigService } from './config/ConfigService';
 export { DatabaseService } from './database/DatabaseService';
 
 // Redis Services and Constants
-export { RedisService } from './redis/redis.service';
 export { REDIS_CHANNELS, REDIS_QUEUES } from './config/redis.config';
 
 // Models
