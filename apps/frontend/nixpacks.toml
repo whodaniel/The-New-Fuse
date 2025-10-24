@@ -5,10 +5,10 @@ nixPkgs = ["nodejs_20", "pnpm"]
 NODE_VERSION = "20"
 
 [phases.install]
-cmds = ["cd apps/frontend && pnpm install --frozen-lockfile --include=dev"]
+cmds = ["pnpm install --frozen-lockfile --include=dev"]
 
 [phases.build]
-cmds = ["cd apps/frontend && pnpm run build"]
+cmds = ["pnpm run build"]
 
 [start]
-cmd = "cd apps/frontend && vite preview --host 0.0.0.0 --port $PORT"
+cmd = "pnpm start"
