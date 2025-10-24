@@ -321,13 +321,23 @@ export class MasterAgentRegistry extends EventEmitter {
     verificationHash: string;
     spreadsheetRowId?: string;
   }> {
+    console.log('🚨 REGISTERAGENT METHOD CALLED - VERY FIRST LINE');
     try {
+      console.error('🔥 REGISTERAGENT METHOD CALLED - ENTRY POINT');
+      console.error('🔥 Profile received:', JSON.stringify(profile, null, 2));
+      console.error('🔥 Logger exists:', !!this.logger);
+      console.error('🔥 Prisma exists:', !!this.prisma);
+      console.error('🔥 ENTERING TRY BLOCK');
+      console.error('🔍 DEBUG: registerAgent called with profile:', JSON.stringify(profile, null, 2));
       this.logger.info(`🚀 MASTER REGISTRATION INITIATED: ${profile.name || 'Unknown Agent'}`);
 
       // Generate unique ID if not provided
       const agentId = profile.id || this.generateAgentId(profile.type || 'BASIC', profile.platform || 'unknown');
+      console.error('🔥 Generated agentId:', agentId);
+      console.error('🔍 DEBUG: Generated agentId:', agentId);
       
       // Create complete profile with defaults
+      console.log('🔍 DEBUG: Creating complete profile...');
       const completeProfile: MasterAgentProfile = {
         id: agentId,
         name: profile.name || `${profile.type || 'Unknown'} Agent`,
@@ -402,6 +412,12 @@ export class MasterAgentRegistry extends EventEmitter {
       };
 
       // 1. Store in Prisma database (single source of truth)
+      console.log('🔍 DEBUG: About to call prisma.agent.create with data:', JSON.stringify({
+        id: agentId,
+        name: completeProfile.name,
+        type: completeProfile.type,
+        status: completeProfile.status
+      }, null, 2));
       const dbAgent = await this.prisma.agent.create({
         data: {
           id: agentId,
@@ -432,6 +448,7 @@ export class MasterAgentRegistry extends EventEmitter {
         },
         include: { metadata: true }
       });
+      console.log('🔍 DEBUG: Prisma agent.create successful, dbAgent:', JSON.stringify(dbAgent, null, 2));
 
       // 2. Register with legacy system for backward compatibility
       const legacyAgent: LegacyAgent = {
@@ -449,11 +466,11 @@ export class MasterAgentRegistry extends EventEmitter {
       // 3. Generate verification hash
       completeProfile.verificationHash = this.generateVerificationHash(completeProfile);
 
-      // 4. Initialize agent todo list
-      await this.initializeAgentTodoList(agentId);
-
-      // 5. Store in memory cache
+      // 4. Store in memory cache FIRST (required for todo list initialization)
       this.agentProfiles.set(agentId, completeProfile);
+
+      // 5. Initialize agent todo list (now that agent is in memory)
+      await this.initializeAgentTodoList(agentId);
 
       // 6. Update system metrics
       this.updateSystemMetrics();
@@ -510,6 +527,8 @@ export class MasterAgentRegistry extends EventEmitter {
         spreadsheetRowId
       };
     } catch (error) {
+      console.log('🔍 DEBUG: Error in registerAgent:', error);
+      console.log('🔍 DEBUG: Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       this.logger.error(`❌ MASTER REGISTRATION FAILED: ${error instanceof Error ? error.message : String(error)}`);
       return {
         success: false,
@@ -1326,34 +1345,97 @@ export class MasterAgentRegistry extends EventEmitter {
 
   async updateAgentStatus(agentId: string, status: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
-    if (!agent) return false;
-    
+    if (!agent) {
+      this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
+      return false;
+    }
+
     agent.status = status;
     agent.lastSeen = new Date();
-    
+
     // Update in database
-    await this.prisma.agent.update({
-      where: { id: agentId },
-      data: { status, updatedAt: new Date() }
-    });
-    
-    this.emit('agent_status_updated', { agentId, status });
-    return true;
+    try {
+      await this.prisma.agent.update({
+        where: { id: agentId },
+        data: { status, updatedAt: new Date() }
+      });
+      this.logger.debug(`Agent status updated: ${agentId} -> ${status}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to update agent status in database: ${error}`);
+      return false;
+    }
+  }
+
+  /**
+   * Update agent capabilities
+   */
+  async updateAgentCapabilities(agentId: string, capabilities: Partial<MasterAgentProfile['capabilities']>): Promise<boolean> {
+    const agent = this.agentProfiles.get(agentId);
+    if (!agent) {
+      this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
+      return false;
+    }
+
+    // Update capabilities in memory
+    agent.capabilities = { ...agent.capabilities, ...capabilities };
+    agent.lastSeen = new Date();
+
+    // Update in database
+    try {
+      await this.prisma.agent.update({
+        where: { id: agentId },
+        data: { 
+          configuration: {
+            ...agent.configuration,
+            capabilities: agent.capabilities
+          },
+          updatedAt: new Date() 
+        }
+      });
+      
+      this.logger.debug(`Agent capabilities updated: ${agentId} - ${JSON.stringify(capabilities)}`);
+      
+      // Emit event for capability update
+      this.emit('agentCapabilitiesUpdated', { agentId, capabilities });
+      
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to update agent capabilities in database: ${error}`);
+      return false;
+    }
   }
 
   async recordAgentHeartbeat(agentId: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
     if (!agent) return false;
-    
+
     agent.lastHeartbeat = new Date();
     agent.lastSeen = new Date();
-    
+
     if (agent.status === 'INACTIVE') {
       agent.status = 'ACTIVE';
       await this.updateAgentStatus(agentId, 'ACTIVE');
     }
-    
+
     return true;
+  }
+
+  /**
+   * Add task to agent - missing method for tests
+   */
+  async addTaskToAgent(agentId: string, taskData: {
+    content: string;
+    priority?: 'low' | 'medium' | 'high';
+    category?: string;
+    estimatedDuration?: number;
+  }): Promise<string> {
+    return this.addAgentTodo(agentId, {
+      content: taskData.content,
+      priority: taskData.priority || 'medium',
+      category: (taskData.category as any) || 'task',
+      estimatedDuration: taskData.estimatedDuration
+    });
   }
 
   /**

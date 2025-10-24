@@ -26,7 +26,7 @@
 ### 3. Build Verification System
 
 ```bash
-pnpm run verify:browser-hub  # Verifies Browser Hub build status
+ppnpm run verify:browser-hu  # Verifies Browser Hub build status
 ```
 
 Checks for:
@@ -43,15 +43,15 @@ Checks for:
 
 ```bash
 pnpm run build                    # Main build (includes optimized Browser Hub)
-pnpm run build:with-optimized-browser-hub  # Direct Browser Hub build
-pnpm run verify:browser-hub       # Verify Browser Hub build status
+ppnpm run build:with-optimized-browser-hu  # Direct Browser Hub build
+ppnpm run verify:browser-hu       # Verify Browser Hub build status
 ```
 
 ### Development Commands
 
 ```bash
 pnpm run dev                     # Main dev (staged startup)
-pnpm run dev:functional-browser-hub    # Alternative with explicit checks
+ppnpm run dev:functional-browser-hu    # Alternative with explicit checks
 ```
 
 ## Test Results ✅
@@ -68,7 +68,7 @@ $ pnpm run build
 ### Verification Test
 
 ```bash
-$ pnpm run verify:browser-hub
+$ ppnpm run verify:browser-hu
 ✅ Browser Hub build verification PASSED
 🎯 Browser Hub is ready for integration
 📋 Build Details:
@@ -139,7 +139,7 @@ When you run:
 To confirm the solution works:
 
 1. **Build Browser Hub**: `pnpm run build`
-2. **Verify Build**: `pnpm run verify:browser-hub` 
+2. **Verify Build**: `ppnpm run verify:browser-hu` 
 3. **Start Development**: `pnpm run dev`
 4. **Check Browser Hub**: Browser Hub should be fully functional when launched
 

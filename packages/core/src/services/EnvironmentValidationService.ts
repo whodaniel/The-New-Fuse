@@ -28,7 +28,7 @@ export class EnvironmentValidationService {
       // Validate Node.js version
       await this.validateNodeVersion(config.nodeVersion, result);
       
-      // Validate npm version
+      // Validate pnpm version
       await this.validateNpmVersion(config.npmVersion, result);
       
       // Validate required ports
@@ -56,10 +56,17 @@ export class EnvironmentValidationService {
   }
 
   private async validateNpmVersion(requiredVersion: string, result: ValidationResult): Promise<void> {
-    // Simulate npm version check
-    const currentVersion = '8.0.0'; // Mock version
-    if (currentVersion !== requiredVersion) {
-      result.warnings.push(`npm version mismatch. Required: ${requiredVersion}, Current: ${currentVersion}`);
+    try {
+      const { stdout } = await execAsync('pnpm --version');
+      const currentVersion = stdout.trim();
+      
+      if (!this.isVersionCompatible(currentVersion, requiredVersion)) {
+        result.addError(`pnpm version ${currentVersion} does not meet requirement ${requiredVersion}`);
+      } else {
+        result.addSuccess(`pnpm version ${currentVersion} is compatible`);
+      }
+    } catch (error) {
+      result.addError(`Failed to check pnpm version: ${error}`);
     }
   }
 

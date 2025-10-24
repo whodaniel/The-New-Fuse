@@ -58,29 +58,29 @@ project/
 
 ```bash
 # Run all tests in the monorepo
-yarn test
+pnpm test
 
 # Run tests for a specific package (e.g., 'shared')
-yarn test:shared
+pnpm test:shared
 
 # Run tests and generate a coverage report
-yarn test:coverage
+pnpm test:coverage
 
 # Run a specific test file
 npx jest path/to/your.test.ts --no-watchman
 
 # Run tests in watch mode for TDD
-yarn test --watch
+pnpm test --watch
 ```
 
 ### E2E Tests
 
 ```bash
 # Run all E2E tests
-yarn test:e2e
+pnpm test:e2e
 
 # Run E2E tests in a specific browser
-yarn test:e2e --project=Chrome
+pnpm test:e2e --project=Chrome
 ```
 
 ## 5. Types of Testing

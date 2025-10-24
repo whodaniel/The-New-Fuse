@@ -48,7 +48,7 @@ pnpm run dev:functional
 ### Check Build Status
 
 ```bash
-pnpm run verify:build
+ppnpm run verify:uild
 ```
 
 This will verify:
@@ -81,7 +81,7 @@ This will verify:
 
 ### If Browser Hub is not functional
 
-1. Run `pnpm run verify:build` to check build status
+1. Run `ppnpm run verify:uild` to check build status
 2. If verification fails, run `pnpm run build:optimized`
 3. Ensure all services are responding before launching Browser Hub
 

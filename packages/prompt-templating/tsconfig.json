@@ -18,7 +18,8 @@
     "resolveJsonModule": true,
     "jsx": "react-jsx",
     "sourceMap": true,
-    "lib": ["DOM", "DOM.Iterable", "ES2022"]
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "types": []
   },
   "include": [
     "src/**/*"

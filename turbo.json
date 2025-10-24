@@ -46,6 +46,45 @@
       "passThroughEnv": ["NODE_ENV", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_STRATEGY"],
       "cache": true
     },
+    "build:foundation": {
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "cache": true
+    },
+    "build:core": {
+      "dependsOn": ["^build:foundation"],
+      "inputs": [
+        "src/**/*.{ts,tsx,js,jsx}",
+        "package.json",
+        "tsconfig.json",
+        "*.config.{ts,js,mjs}",
+        "!**/*.test.{ts,tsx,js,jsx}",
+        "!**/*.spec.{ts,tsx,js,jsx}"
+      ],
+      "outputs": [
+        "dist/**",
+        "lib/**",
+        "types/**",
+        "esm/**",
+        "cjs/**",
+        "*.tsbuildinfo"
+      ],
+      "cache": true
+    },
     "build:memory-optimized": {
       "dependsOn": ["^build:memory-optimized", "^db:generate"],
       "inputs": [
@@ -138,7 +177,7 @@
       "cache": true
     },
     "dev": {
-      "dependsOn": ["^build:types"],
+      "dependsOn": ["^build:types", "^build"],
       "cache": false,
       "persistent": true,
       "env": ["NODE_ENV", "PORT", "API_PORT", "FRONTEND_PORT", "API_URL", "BACKEND_URL", "BUILD_MEMORY_LIMIT", "BUILD_CONCURRENCY", "BUILD_ENABLE_MONITORING"],

@@ -31,7 +31,7 @@ fi
 # Start frontend
 echo "Starting Frontend..."
 cd "$(dirname "$0")/../apps/frontend" || exit
-yarn dev &
+pnpm run dev &
 
 # Open in Chrome
 sleep 5

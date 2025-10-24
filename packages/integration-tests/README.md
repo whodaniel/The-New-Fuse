@@ -38,7 +38,7 @@ src/
 pnpm install
 
 # Setup test database
-pnpm run setup-db
+ppnpm run setup-d
 ```
 
 ### Test Commands

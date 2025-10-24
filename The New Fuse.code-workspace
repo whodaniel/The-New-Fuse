@@ -267,6 +267,7 @@
 			}
 		],
 		"kiroAgent.configureMCP": "Enabled",
-		"html.autoClosingTags": false
+		"html.autoClosingTags": false,
+		"gitlens.ai.largePromptWarningThreshold": 1000000
 	}
 }

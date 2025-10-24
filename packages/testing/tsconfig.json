@@ -21,10 +21,11 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "paths": {
-      "@/*": ["src/*"] // Keep package-specific paths if needed
+      "@/*": ["src/*"]
     },
     "lib": ["dom", "es2020"],
-    "jsx": "react-jsx" // Add JSX support
+    "jsx": "react-jsx",
+    "types": ["jest", "@jest/globals", "node"]
   },
   "include": ["src/**/*"],
   "exclude": [

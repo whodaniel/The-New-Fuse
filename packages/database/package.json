@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "build": "prisma generate && tsc",
+    "build:foundation": "prisma generate && tsc",
     "db:generate": "prisma generate",
     "lint": "eslint src",
     "clean": "rimraf dist"

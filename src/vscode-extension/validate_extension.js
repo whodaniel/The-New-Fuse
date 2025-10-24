@@ -131,7 +131,7 @@ async function validateExtension() {
         console.log('1. Extension Development Host should be running');
         console.log('2. Look for "The New Fuse" robot icon in Activity Bar');
         console.log('3. Test chat functionality and commands');
-        console.log('4. Run: npm run package (if all tests pass)');
+        console.log('4. Run: pnpm run package (if all tests pass)');
         
         return true;
 

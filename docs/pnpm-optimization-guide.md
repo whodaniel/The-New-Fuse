@@ -29,7 +29,7 @@ npm run orchestrate:ci           # CI-optimized testing
 
 # Targeted development
 npm run dev:frontend             # Frontend development only
-npm run dev:backend              # Backend development only
+pnpm run dev:ackend              # Backend development only
 npm run dev:full                 # Full development environment
 
 # Optimized building
@@ -121,7 +121,7 @@ npm run test:affected all
 ```bash
 # Start development environment
 npm run dev:frontend              # Frontend only
-npm run dev:backend               # Backend only
+pnpm run dev:ackend               # Backend only
 npm run dev:full                  # Full stack
 
 # Run tests during development
@@ -152,10 +152,10 @@ npm run workspace:optimize
 npm run orchestrate:ci all
 
 # Performance testing
-npm run test:turbo:memory
+pnpm run test:turo:memory
 
 # Coverage reporting
-npm run test:turbo:coverage
+pnpm run test:turo:coverage
 ```
 
 ## Advanced Features
@@ -261,7 +261,7 @@ module.exports = {
 1. **Memory Issues**
    ```bash
    # Use memory-optimized configuration
-   npm run test:turbo:memory
+   pnpm run test:turo:memory
    
    # Clean caches
    npm run clean:cache
@@ -295,7 +295,7 @@ npm run orchestrate:smart unit -- --verbose
 DEBUG=pnpm* npm run workspace:analyze
 
 # Debug Turbo execution
-npm run test:turbo:debug
+pnpm run test:turbo:deug
 ```
 
 ## Best Practices
@@ -303,11 +303,11 @@ npm run test:turbo:debug
 ### 1. Development
 - Use `npm run orchestrate:smart` for regular testing
 - Use `npm run test:changed` during active development
-- Use `npm run dev:frontend` or `npm run dev:backend` for focused development
+- Use `npm run dev:frontend` or `pnpm run dev:ackend` for focused development
 
 ### 2. CI/CD
 - Use `npm run orchestrate:ci` for comprehensive CI testing
-- Use `npm run test:turbo:coverage` for coverage reporting
+- Use `pnpm run test:turo:coverage` for coverage reporting
 - Use `npm run workspace:health` for environment validation
 
 ### 3. Maintenance

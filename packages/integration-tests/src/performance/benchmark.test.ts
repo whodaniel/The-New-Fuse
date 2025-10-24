@@ -9,6 +9,23 @@ import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
 // import { WorkflowNodeType, WorkflowExecutionStatus } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { performance } from 'perf_hooks';
 
+// Define types locally since workflow-engine dependency was removed
+enum WorkflowNodeType {
+  AGENT_TASK = 'AGENT_TASK',
+  CONDITION = 'CONDITION',
+  PARALLEL = 'PARALLEL',
+  SEQUENTIAL = 'SEQUENTIAL',
+  CUSTOM = 'CUSTOM'
+}
+
+enum WorkflowExecutionStatus {
+  PENDING = 'PENDING',
+  RUNNING = 'RUNNING',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
+}
+
 interface BenchmarkResult {
   name: string;
   iterations: number;
@@ -36,6 +53,7 @@ describe('Performance Benchmarks', () => {
 
   beforeAll(async () => {
     env = getTestEnvironment();
+    // Test environment validation
   });
 
   afterAll(async () => {
@@ -67,7 +85,7 @@ describe('Performance Benchmarks', () => {
     test('agent capability update performance', async () => {
       // Create agents for testing
       const testAgents = await Promise.all(
-        Array.from({ length: 50 }, (_, i) => 
+        Array.from({ length: 50 }, (_, i) =>
           TestHelpers.createTestAgent(`CapabilityTestAgent${i}`, 'CAPABILITY_TEST')
         )
       );
@@ -86,6 +104,7 @@ describe('Performance Benchmarks', () => {
 
         const startTime = performance.now();
         
+        // Attempting to update capabilities for agent
         await env.agentRegistry.updateAgentCapabilities(agent.agentId, capabilities);
         
         const endTime = performance.now();
@@ -613,10 +632,7 @@ describe('Performance Benchmarks', () => {
       // Memory assertions (adjust based on actual requirements)
       expect(memoryIncrease.heapUsed).toBeLessThan(100 * 1024 * 1024); // Under 100MB increase
       
-      console.log('Memory Usage Analysis:');
-      console.log(`  Heap Used: ${(memoryIncrease.heapUsed / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`  Heap Total: ${(memoryIncrease.heapTotal / 1024 / 1024).toFixed(2)} MB`);
-      console.log(`  RSS: ${(memoryIncrease.rss / 1024 / 1024).toFixed(2)} MB`);
+      // Memory Usage Analysis
     });
   });
 

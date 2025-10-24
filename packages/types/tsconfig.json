@@ -8,7 +8,8 @@
     "declarationMap": true,
     "module": "CommonJS",
     "moduleResolution": "node",
-    "target": "ES2020"
+    "target": "ES2020",
+    "types": []
   },
   "include": ["src/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"]

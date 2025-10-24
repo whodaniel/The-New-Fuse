@@ -13,7 +13,7 @@
     "test:workflow-builder": "jest --testPathPattern=workflow-builder",
     "test:workflow-builder:watch": "jest --testPathPattern=workflow-builder --watch",
     "test:workflow-builder:coverage": "jest --testPathPattern=workflow-builder --coverage",
-    "test:all": "jest && npm run test:workflow-builder",
+    "test:all": "jest && pnpm run test:workflow-builder",
     "build": "tsc --skipLibCheck --noEmitOnError false || echo 'Integration tests build completed with warnings'",
     "clean": "rimraf dist coverage",
     "lint": "eslint src/**/*.ts",
@@ -23,12 +23,14 @@
     "@tnf/relay-core": "workspace:*",
     "@the-new-fuse/extension-system": "workspace:*",
     "@prisma/client": "^6.17.1",
-    "redis": "^5.8.3"
+    "redis": "^5.8.3",
+    "fs-extra": "^11.3.2"
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.8.1",
     "@types/react": "^19.2.2",
+    "@types/fs-extra": "^11.0.4",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",
@@ -48,12 +50,34 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
+    "testEnvironment": "jsdom",
+    "extensionsToTreatAsEsm": [".ts", ".tsx"],
+    "globals": {
+      "ts-jest": {
+        "useESM": true,
+        "tsconfig": "tsconfig.json"
+      }
+    },
+    "transform": {
+      "^.+\\.(ts|tsx)$": ["ts-jest", {
+        "useESM": true,
+        "tsconfig": "tsconfig.json"
+      }]
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@the-new-fuse|react-dnd|react-dnd-html5-backend)/)"
+    ],
+    "moduleNameMapper": {
+      "^@the-new-fuse/(.*)$": "<rootDir>/../../packages/$1/src"
+    },
     "roots": ["<rootDir>/src"],
     "testMatch": [
       "**/__tests__/**/*.ts",
+      "**/__tests__/**/*.tsx",
       "**/*.test.ts",
-      "**/*.spec.ts"
+      "**/*.test.tsx",
+      "**/*.spec.ts",
+      "**/*.spec.tsx"
     ],
     "collectCoverageFrom": [
       "src/**/*.ts",

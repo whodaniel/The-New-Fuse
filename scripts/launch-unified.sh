@@ -17,7 +17,7 @@ echo "🧹 Preparing fresh environment..."
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-yarn install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Build core packages in correct order
 echo "🔨 Building core packages..."

@@ -15,7 +15,8 @@
     "@the-new-fuse/utils": "workspace:*",
     "react": "^19.2.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.2"
+    "rxjs": "^7.8.2",
+    "uuid": "^13.0.0"
   },
   "devDependencies": {
     "@types/node": "^24.8.1",

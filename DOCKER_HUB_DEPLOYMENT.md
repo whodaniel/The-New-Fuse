@@ -525,7 +525,7 @@ railway logs --service api --tail 100
 railway variables --service api
 
 # Verify database connection
-railway run --service api npm run db:check
+railway run --service api pnpm run d:check
 ```
 
 ### Database Migration Issues

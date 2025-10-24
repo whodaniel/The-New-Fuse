@@ -321,7 +321,7 @@ cat > $FRONTEND_DIR/package.json << 'EOF'
   "scripts": {
     "dev": "vite --host 0.0.0.0 --port 3000",
     "build": "tsc && vite build",
-    "build:frontend": "yarn build",
+    "build:frontend": "pnpm build",
     "build:force": "vite build --force",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview --host 0.0.0.0 --port 3000",

@@ -9,7 +9,7 @@ import ComprehensiveRouter from './ComprehensiveRouter';
 const queryClient = new QueryClient();
 
 export function App() {
-  // Updated to force Railway deployment with new Dockerfile using npm
+  // Updated to force Railway deployment with new Dockerfile using pnpm
   console.log('The New Fuse App starting with npm build system');
   
   return (

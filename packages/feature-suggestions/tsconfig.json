@@ -13,7 +13,8 @@
     "baseUrl": ".",
     "paths": {
       "@the-new-fuse/feature-tracker": ["../feature-tracker/src"],
-      "@the-new-fuse/types/*": ["../types/*"]
+      "@the-new-fuse/types/*": ["../types/*"],
+      "types": []
     }
   },
   "include": ["src/**/*", "../types/src/**/*"],

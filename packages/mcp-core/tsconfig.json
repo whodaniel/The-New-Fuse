@@ -11,7 +11,7 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["*"]
     }
   },
   "include": [

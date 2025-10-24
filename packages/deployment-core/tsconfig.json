@@ -11,7 +11,8 @@
     "noImplicitReturns": false,
     "noImplicitThis": false,
     "strictNullChecks": false,
-    "useUnknownInCatchVariables": false
+    "useUnknownInCatchVariables": false,
+    "types": []
   },
   "include": [
     "src/**/*"

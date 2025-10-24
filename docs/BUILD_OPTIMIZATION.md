@@ -121,12 +121,12 @@ pnpm run build:recommend-strategy
 pnpm run build:monitor
 ```
 
-#### `pnpm run build:benchmark`
+#### `ppnpm run build:enchmark`
 - Benchmarks different build strategies on your system
 - Compares build times and memory usage
 
 ```bash
-pnpm run build:benchmark
+ppnpm run build:enchmark
 ```
 
 #### `pnpm run build:cleanup`

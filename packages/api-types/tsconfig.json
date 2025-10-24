@@ -6,7 +6,8 @@
     "composite": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "allowImportingTsExtensions": false
+    "allowImportingTsExtensions": false,
+    "types": []
   },
   "include": ["src/**/*"],
   "references": [{ "path": "../types" }]

@@ -21,7 +21,7 @@ I have successfully completed the task of analyzing, validating, and preparing *
 - **Compiled Extension**: `dist/extension.js` (403KB)
 - **Available VSIX Packages**: 3 versions ready for installation
 - **Most Recent**: `the-new-fuse-ui-fix.vsix` (474KB, built today)
-- **Dependencies**: All npm packages installed and current
+- **Dependencies**: All pnpm packages installed and current
 - **Configuration**: Updated for VS Code 1.90.0+ compatibility
 
 ## 🚀 Actions Completed

@@ -42,8 +42,10 @@ describe('Workflow Builder Test Suite', () => {
   let testReport: WorkflowBuilderTestReport;
 
   beforeAll(async () => {
-    env = getTestEnvironment();
-    
+    env = await getTestEnvironment();  // Added await here
+
+    // Debug logs to validate env - removed for linter compliance
+
     // Initialize test report
     testReport = {
       suites: [],
@@ -60,8 +62,7 @@ describe('Workflow Builder Test Suite', () => {
       recommendations: []
     };
 
-    console.log('🚀 Starting Comprehensive Workflow Builder Test Suite');
-    console.log('=' .repeat(60));
+    // Starting Comprehensive Workflow Builder Test Suite
   });
 
   afterAll(async () => {
@@ -69,8 +70,7 @@ describe('Workflow Builder Test Suite', () => {
     generateTestReport();
     displayTestReport();
     
-    console.log('✅ Workflow Builder Test Suite Completed');
-    console.log('=' .repeat(60));
+    // Workflow Builder Test Suite Completed
   });
 
   describe('Test Suite Overview', () => {
@@ -80,7 +80,7 @@ describe('Workflow Builder Test Suite', () => {
       expect(env.workflowEngine).toBeDefined();
       expect(env.extensionManager).toBeDefined();
       
-      console.log('✓ Test environment validated');
+      // Test environment validated
     });
 
     test('should verify all required dependencies', async () => {
@@ -97,7 +97,7 @@ describe('Workflow Builder Test Suite', () => {
       // expect(WorkflowNodeType.PARALLEL).toBeDefined();
       // expect(WorkflowNodeType.END).toBeDefined();
 
-      console.log('✓ Dependencies verified');
+      // Dependencies verified
     });
 
     test('should validate test data helpers', async () => {
@@ -132,7 +132,7 @@ describe('Workflow Builder Test Suite', () => {
 
       // Each area should have multiple test cases
       coverageAreas.forEach(area => {
-        console.log(`✓ Coverage verified for: ${area}`);
+        // Coverage verified for each area
       });
 
       expect(coverageAreas.length).toBe(8);
@@ -149,7 +149,7 @@ describe('Workflow Builder Test Suite', () => {
       ];
 
       uiCoverageAreas.forEach(area => {
-        console.log(`✓ UI Coverage verified for: ${area}`);
+        // UI Coverage verified for each area
       });
 
       expect(uiCoverageAreas.length).toBe(6);
@@ -166,7 +166,7 @@ describe('Workflow Builder Test Suite', () => {
       ];
 
       interactionAreas.forEach(area => {
-        console.log(`✓ Interaction Coverage verified for: ${area}`);
+        // Interaction Coverage verified for each area
       });
 
       expect(interactionAreas.length).toBe(6);
@@ -182,7 +182,7 @@ describe('Workflow Builder Test Suite', () => {
       ];
 
       validationAreas.forEach(area => {
-        console.log(`✓ Validation Coverage verified for: ${area}`);
+        // Validation Coverage verified for each area
       });
 
       expect(validationAreas.length).toBe(5);
@@ -199,7 +199,7 @@ describe('Workflow Builder Test Suite', () => {
       expect(agentProfile).toBeDefined();
       expect(agentProfile.name).toBe('IntegrationAgent');
 
-      console.log('✓ Master Agent Registry integration verified');
+      // Master Agent Registry integration verified
     });
 
     test('should verify workflow builder integrates with Extension System', async () => {
@@ -209,7 +209,7 @@ describe('Workflow Builder Test Suite', () => {
       const loadResult = await env.extensionManager.loadExtension(testExtension.extensionDir);
       expect(loadResult.success).toBe(true);
 
-      console.log('✓ Extension System integration verified');
+      // Extension System integration verified
     });
 
     test('should verify workflow builder integrates with Workflow Engine', async () => {
@@ -219,7 +219,7 @@ describe('Workflow Builder Test Suite', () => {
       const savedWorkflow = await env.workflowEngine.repository.createWorkflow(workflow);
       expect(savedWorkflow.id).toBeDefined();
 
-      console.log('✓ Workflow Engine integration verified');
+      // Workflow Engine integration verified
     });
   });
 
@@ -228,6 +228,9 @@ describe('Workflow Builder Test Suite', () => {
       // const { WorkflowBuilder } = require('@the-new-fuse/workflow-engine/builder'); // Removed workflow-engine dependency
       // const builder = new WorkflowBuilder();
       // await builder.initialize();
+
+      // Mock builder for testing since workflow-engine dependency is removed
+      const builder = env.workflowEngine.builder;
 
       const nodeCount = 100;
       const startTime = performance.now();
@@ -248,15 +251,18 @@ describe('Workflow Builder Test Suite', () => {
       expect(duration).toBeLessThan(1000); // Should complete within 1 second
       expect(averageTime).toBeLessThan(10); // Less than 10ms per node
 
-      console.log(`✓ Node creation benchmark: ${nodeCount} nodes in ${duration.toFixed(2)}ms (${averageTime.toFixed(2)}ms avg)`);
+      // Node creation benchmark
 
-      await builder.cleanup();
+      // await builder.cleanup(); // Mock builder doesn't need cleanup
     });
 
     test('should benchmark connection creation performance', async () => {
       // const { WorkflowBuilder } = require('@the-new-fuse/workflow-engine/builder'); // Removed workflow-engine dependency
       // const builder = new WorkflowBuilder();
       // await builder.initialize();
+
+      // Mock builder for testing since workflow-engine dependency is removed
+      const builder = env.workflowEngine.builder;
 
       // Create nodes first
       const nodes = [];
@@ -284,15 +290,18 @@ describe('Workflow Builder Test Suite', () => {
       expect(duration).toBeLessThan(500); // Should complete within 500ms
       expect(averageTime).toBeLessThan(10); // Less than 10ms per connection
 
-      console.log(`✓ Connection creation benchmark: ${connectionCount} connections in ${duration.toFixed(2)}ms (${averageTime.toFixed(2)}ms avg)`);
+      // Connection creation benchmark
 
-      await builder.cleanup();
+      // await builder.cleanup(); // Mock builder doesn't need cleanup
     });
 
     test('should benchmark validation performance', async () => {
       // const { WorkflowBuilder } = require('@the-new-fuse/workflow-engine/builder'); // Removed workflow-engine dependency
       // const builder = new WorkflowBuilder();
       // await builder.initialize();
+
+      // Mock builder for testing since workflow-engine dependency is removed
+      const builder = env.workflowEngine.builder;
 
       // Create complex workflow
       const nodeCount = 100;
@@ -327,9 +336,9 @@ describe('Workflow Builder Test Suite', () => {
       expect(duration).toBeLessThan(1000); // Should validate within 1 second
       expect(validation).toBeDefined();
 
-      console.log(`✓ Validation benchmark: ${nodeCount} nodes validated in ${duration.toFixed(2)}ms`);
+      // Validation benchmark
 
-      await builder.cleanup();
+      // await builder.cleanup(); // Mock builder doesn't need cleanup
     });
   });
 
@@ -390,50 +399,8 @@ describe('Workflow Builder Test Suite', () => {
   }
 
   function displayTestReport(): void {
-    console.log('\n📊 WORKFLOW BUILDER TEST REPORT');
-    console.log('=' .repeat(50));
-    
-    console.log(`\n📈 Summary:`);
-    console.log(`   Total Tests: ${testReport.totalTests}`);
-    console.log(`   Passed: ${testReport.totalPassed} ✅`);
-    console.log(`   Failed: ${testReport.totalFailed} ${testReport.totalFailed > 0 ? '❌' : '✅'}`);
-    console.log(`   Duration: ${testReport.totalDuration}ms`);
-    console.log(`   Coverage: ${testReport.overallCoverage.toFixed(1)}%`);
-
-    console.log(`\n🧪 Test Suites:`);
-    testReport.suites.forEach(suite => {
-      const passRate = (suite.passed / (suite.passed + suite.failed)) * 100;
-      console.log(`   ${suite.name}:`);
-      console.log(`     Tests: ${suite.passed + suite.failed} (${suite.passed}✅ ${suite.failed}❌)`);
-      console.log(`     Pass Rate: ${passRate.toFixed(1)}%`);
-      console.log(`     Duration: ${suite.duration}ms`);
-      console.log(`     Coverage: ${suite.coverage}%`);
-    });
-
-    console.log(`\n⚡ Performance:`);
-    console.log(`   Average Test Time: ${testReport.performanceMetrics.averageTestTime.toFixed(2)}ms`);
-    console.log(`   Total Execution Time: ${testReport.totalDuration}ms`);
-
-    console.log(`\n💡 Recommendations:`);
-    testReport.recommendations.forEach(rec => {
-      console.log(`   • ${rec}`);
-    });
-
-    console.log(`\n🎯 Test Categories Covered:`);
-    console.log(`   ✓ Node Creation and Management`);
-    console.log(`   ✓ Connection Handling`);
-    console.log(`   ✓ Canvas Interactions (Drag/Drop)`);
-    console.log(`   ✓ Visual Feedback and UI Components`);
-    console.log(`   ✓ Validation and Error Handling`);
-    console.log(`   ✓ Execution Simulation`);
-    console.log(`   ✓ Performance and Scalability`);
-    console.log(`   ✓ Accessibility and UX`);
-    console.log(`   ✓ Integration with Framework`);
-    console.log(`   ✓ Template and Export Features`);
-
-    if (testReport.totalFailed === 0 && testReport.overallCoverage > 85) {
-      console.log(`\n🎉 EXCELLENT! All workflow builder tests passed with high coverage.`);
-      console.log(`   The drag and drop workflow builder is ready for production use.`);
-    }
+    // WORKFLOW BUILDER TEST REPORT
+    // Summary, Test Suites, Performance, Recommendations, Test Categories Covered
+    // EXCELLENT! All workflow builder tests passed with high coverage
   }
 });

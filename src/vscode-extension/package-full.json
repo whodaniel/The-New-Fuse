@@ -203,9 +203,9 @@
     "compile": "tsc -p ./",
     "watch:tsc": "tsc -watch -p ./",
     "watch:esbuild": "node esbuild.js --watch",
-    "build": "npm run compile && node esbuild.js",
+    "build": "pnpm run compile && node esbuild.js",
     "package": "vsce package",
-    "vscode:prepublish": "npm run build"
+    "vscode:prepublish": "pnpm run build"
   },
   "dependencies": {
     "node-fetch": "^2.6.7",

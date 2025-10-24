@@ -19,7 +19,7 @@ bun install
 
 ### 2. Build the MCP Server
 ```bash
-pnpm run mcp:build
+ppnpm run mcp:uild
 ```
 
 ### 3. Start Development Mode

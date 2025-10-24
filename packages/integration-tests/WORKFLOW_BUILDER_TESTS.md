@@ -193,13 +193,13 @@ src/workflow-builder/
 
 ```bash
 # Run all workflow builder tests
-pnpm run test:workflow-builder
+ppnpm run test:workflow-uilder
 
 # Run workflow builder tests in watch mode
-pnpm run test:workflow-builder:watch
+ppnpm run test:workflow-uilder:watch
 
 # Run workflow builder tests with coverage
-pnpm run test:workflow-builder:coverage
+ppnpm run test:workflow-uilder:coverage
 
 # Run specific test files
 pnpm run test workflow-builder/workflow-builder.test.ts

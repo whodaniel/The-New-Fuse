@@ -150,7 +150,7 @@ class TaskCoordinator {
 
   async coordinateTask(task, teamMembers = []) {
     const coordination = {
-      taskId: \`task_\${Date.now()}\`,
+      taskId: `task_${Date.now()}`,
       task,
       assignedTo: null,
       status: 'pending',
@@ -170,7 +170,7 @@ class TaskCoordinator {
       coordination.updates.push({
         timestamp: new Date(),
         type: 'assignment',
-        message: \`Task assigned to \${bestAgent.name}\`
+        message: `Task assigned to ${bestAgent.name}`
       });
     }
 
@@ -179,7 +179,7 @@ class TaskCoordinator {
     return {
       success: true,
       coordination,
-      message: \`Task coordinated and assigned to \${bestAgent?.name || 'queue'}\`
+      message: `Task coordinated and assigned to ${bestAgent?.name || 'queue'}`
     };
   }
 
@@ -206,7 +206,7 @@ class TaskCoordinator {
     return {
       success: true,
       task,
-      message: \`Task \${taskId} updated to \${status}\`
+      message: `Task ${taskId} updated to ${status}`
     };
   }
 
@@ -244,7 +244,7 @@ class TaskCoordinator {
           bestMatch = { agentId: member.agentId, name: profile.name, score };
         }
       } catch (error) {
-        this.logger.warn(\`Error evaluating agent \${member.agentId}: \${error.message}\`);
+        this.logger.warn(`Error evaluating agent ${member.agentId}: ${error.message}`);
       }
     }
 
@@ -301,7 +301,7 @@ class CommunicationHub {
         case 'get_messages':
           return await this.getMessages(data);
         default:
-          throw new Error(\`Unknown action: \${action}\`);
+          throw new Error(`Unknown action: ${action}`);
       }
     } catch (error) {
       return {
@@ -315,7 +315,7 @@ class CommunicationHub {
     const { from, to, channel, message, priority = 'normal' } = data;
     
     const messageObj = {
-      id: \`msg_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`,
+      id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       from,
       to,
       channel,
@@ -344,7 +344,7 @@ class CommunicationHub {
     const { name, description, members = [], type = 'team' } = data;
     
     const channel = {
-      id: \`channel_\${Date.now()}\`,
+      id: `channel_${Date.now()}`,
       name,
       description,
       type,
@@ -366,7 +366,7 @@ class CommunicationHub {
   async broadcast(data) {
     const { from, message, priority = 'normal', excludeAgents = [] } = data;
     
-    const broadcastId = \`broadcast_\${Date.now()}\`;
+    const broadcastId = `broadcast_${Date.now()}`;
     const recipients = data.recipients || 'all';
 
     const broadcastMessage = {
@@ -439,7 +439,7 @@ class ProgressTracker {
     if (!this.projects.has(projectId)) {
       this.projects.set(projectId, {
         id: projectId,
-        name: \`Project \${projectId}\`,
+        name: `Project ${projectId}`,
         tasks: new Map(),
         overallProgress: 0,
         startDate: new Date(),
@@ -450,7 +450,7 @@ class ProgressTracker {
     const project = this.projects.get(projectId);
     
     const taskProgress = {
-      taskId: task.id || \`task_\${Date.now()}\`,
+      taskId: task.id || `task_${Date.now()}`,
       name: task.name,
       assignedTo: task.assignedTo,
       progress: progress.percentage || 0,
@@ -825,7 +825,7 @@ module.exports = ProgressTracker;
     // Save workflow
     const savedWorkflow = await this.workflowEngine.repository.createWorkflow(workflow);
     
-    this.logger.info(\`Feature development workflow created with ID: \${savedWorkflow.id}\`);
+    this.logger.info(`Feature development workflow created with ID: ${savedWorkflow.id}`);
     return savedWorkflow.id;
   }
 
@@ -892,7 +892,7 @@ module.exports = ProgressTracker;
       }
     );
 
-    this.logger.info(\`Collaborative project execution started with ID: \${executionId}\`);
+    this.logger.info(`Collaborative project execution started with ID: ${executionId}`);
 
     // Monitor collaboration progress
     await this.monitorCollaboration(executionId);
@@ -913,7 +913,7 @@ module.exports = ProgressTracker;
 
         // Log status changes
         if (execution?.status !== lastStatus) {
-          this.logger.info(\`Collaboration status: \${lastStatus} -> \${execution?.status}\`);
+          this.logger.info(`Collaboration status: ${lastStatus} -> ${execution?.status}`);
           lastStatus = execution?.status;
         }
 
@@ -930,12 +930,12 @@ module.exports = ProgressTracker;
             this.logger.info('Collaborative project completed successfully!');
             await this.generateCollaborationReport(executionId);
           } else {
-            this.logger.error(\`Collaborative project failed: \${execution?.error}\`);
+            this.logger.error(`Collaborative project failed: ${execution?.error}`);
           }
         }
 
       } catch (error) {
-        this.logger.error(\`Error monitoring collaboration: \${error.message}\`);
+        this.logger.error(`Error monitoring collaboration: ${error.message}`);
       }
     }, 3000); // Check every 3 seconds
 
@@ -958,9 +958,9 @@ module.exports = ProgressTracker;
         const activeTasks = profile.todoList?.filter(task => task.status === 'in_progress').length || 0;
         const completedTasks = profile.completedTasks || 0;
         
-        this.logger.info(\`\${role}: \${completedTasks} completed, \${activeTasks} active tasks\`);
+        this.logger.info(`${role}: ${completedTasks} completed, ${activeTasks} active tasks`);
       } catch (error) {
-        this.logger.warn(\`Error getting progress for \${role}: \${error.message}\`);
+        this.logger.warn(`Error getting progress for ${role}: ${error.message}`);
       }
     }
 
@@ -1009,7 +1009,7 @@ module.exports = ProgressTracker;
 
         report.collaboration.handoffs += profile.handoffsInitiated || 0;
       } catch (error) {
-        this.logger.warn(\`Error collecting data for \${role}: \${error.message}\`);
+        this.logger.warn(`Error collecting data for ${role}: ${error.message}`);
       }
     }
 
@@ -1033,19 +1033,19 @@ module.exports = ProgressTracker;
 
     // Agent status
     const agents = await this.agentRegistry.getAllAgents();
-    this.logger.info(\`Active Agents: \${agents.length}\`);
+    this.logger.info(`Active Agents: ${agents.length}`);
     
     agents.forEach(agent => {
-      this.logger.info(\`  - \${agent.name} (\${agent.type}): \${agent.status}\`);
+      this.logger.info(`  - ${agent.name} (${agent.type}): ${agent.status}`);
     });
 
     // Extension status
     const extensionStats = this.extensionManager.getExtensionStats();
-    this.logger.info(\`Active Extensions: \${extensionStats.activeExtensions}\`);
+    this.logger.info(`Active Extensions: ${extensionStats.activeExtensions}`);
 
     // System health
     const systemHealth = await this.agentRegistry.getSystemHealth();
-    this.logger.info(\`System Health: \${systemHealth.status}\`);
+    this.logger.info(`System Health: ${systemHealth.status}`);
 
     this.logger.info('=== END SYSTEM STATUS ===');
   }
@@ -1083,9 +1083,9 @@ module.exports = ProgressTracker;
     await fs.ensureDir(extensionDir);
 
     const manifest = {
-      name: \`@collaboration/\${name}\`,
+      name: `@collaboration/${name}`,
       version: '1.0.0',
-      description: \`Collaboration extension: \${name}\`,
+      description: `Collaboration extension: ${name}`,
       type,
       category: 'collaboration',
       main: 'index.js',

@@ -6,6 +6,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "build:foundation": "tsc",
     "test": "vitest",
     "lint": "eslint src/**/*.ts"
   },
@@ -14,9 +15,9 @@
   },
   "devDependencies": {
     "@types/node": "^24.8.1",
+    "eslint": "^9.38.0",
     "typescript": "^5.9.3",
-    "vitest": "^3.2.4",
-    "eslint": "^9.38.0"
+    "vitest": "^3.2.4"
   },
   "exports": {
     ".": {

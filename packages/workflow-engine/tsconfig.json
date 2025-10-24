@@ -31,7 +31,8 @@
       "@the-new-fuse/security/*": ["../security/src/*"],
       "@tnf/relay-core": ["../relay-core/src"],
       "@tnf/relay-core/*": ["../relay-core/src/*"]
-    }
+    },
+    "types": []
   },
   "include": ["src"],
   "references": [

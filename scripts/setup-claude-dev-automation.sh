@@ -98,10 +98,10 @@ install_dependencies() {
     )
     
     print_status "Installing production dependencies..."
-    yarn add ${dependencies[@]}
+    pnpm add ${dependencies[@]}
     
     print_status "Installing development dependencies..."
-    yarn add -D ${dev_dependencies[@]}
+    pnpm add -D ${dev_dependencies[@]}
     
     cd "${PROJECT_ROOT}"
     print_success "Dependencies installed!"
@@ -418,7 +418,7 @@ main() {
     echo "Next steps:"
     echo "1. Set your CLAUDE_DEV_API_KEY in apps/api/.env"
     echo "2. Ensure Redis is running"
-    echo "3. Start your API server: cd apps/api && yarn start"
+    echo "3. Start your API server: cd apps/api && pnpm start"
     echo "4. Test with: cd apps/api && yarn claude-dev templates"
     echo ""
     echo "Documentation: apps/api/docs/CLAUDE_DEV_AUTOMATION_README.md"

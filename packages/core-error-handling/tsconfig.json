@@ -7,7 +7,8 @@
     "declarationMap": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "types": ["node"]
   },
   "include": [
     "src/**/*"

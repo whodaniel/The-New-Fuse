@@ -8,7 +8,8 @@
     "declarationMap": true,
     "skipLibCheck": true,
     "moduleResolution": "node",
-    "module": "commonjs"
+    "module": "commonjs",
+    "types": []
   },
   "include": ["src/**/*", "generated/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],

@@ -362,7 +362,7 @@ export const customTool = {
 1. **Start WebSocket server:**
    ```bash
    # Using npm script
-   pnpm run start:websocket
+   ppnpm run start:wesocket
 
    # Direct node execution
    node test-websocket-server-3711.cjs
@@ -656,7 +656,7 @@ lsof -i :3711
 kill -9 $(lsof -t -i:3711)
 
 # Restart WebSocket server
-pnpm run start:websocket
+ppnpm run start:wesocket
 ```
 
 #### Extension Not Loading

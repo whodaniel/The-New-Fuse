@@ -4,15 +4,14 @@
 
 import { Request, Response } from 'express';
 import { Logger } from '@tnf/relay-core';
-import { PrismaClient } from '@prisma/client';
 
 export class WorkflowController {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private prisma: any;
 
   constructor(
     logger: Logger,
-    prisma: PrismaClient
+    prisma: any
   ) {
     this.logger = logger;
     this.prisma = prisma;
@@ -63,7 +62,7 @@ export class WorkflowController {
         }
       });
     } catch (error) {
-      this.logger.error('Failed to get workflows:', error);
+      this.logger.error(`Failed to get workflows: ${error}`);
       res.status(500).json({ error: 'Failed to get workflows' });
     }
   }
@@ -90,7 +89,7 @@ export class WorkflowController {
 
       res.json(workflow);
     } catch (error) {
-      this.logger.error('Failed to get workflow:', error);
+      this.logger.error(`Failed to get workflow: ${error}`);
       res.status(500).json({ error: 'Failed to get workflow' });
     }
   }
@@ -125,7 +124,7 @@ export class WorkflowController {
       this.logger.info(`Created workflow: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
     } catch (error) {
-      this.logger.error('Failed to create workflow:', error);
+      this.logger.error(`Failed to create workflow: ${error}`);
       res.status(500).json({ error: 'Failed to create workflow' });
     }
   }
@@ -161,7 +160,7 @@ export class WorkflowController {
       this.logger.info(`Updated workflow: ${workflow.name} (${workflow.id})`);
       res.json(workflow);
     } catch (error: any) {
-      this.logger.error('Failed to update workflow:', error);
+      this.logger.error(`Failed to update workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
       } else {
@@ -182,7 +181,7 @@ export class WorkflowController {
       this.logger.info(`Deleted workflow: ${id}`);
       res.status(204).send();
     } catch (error: any) {
-      this.logger.error('Failed to delete workflow:', error);
+      this.logger.error(`Failed to delete workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
       } else {
@@ -232,7 +231,7 @@ export class WorkflowController {
       this.logger.info(`Started execution: ${execution.id} for workflow: ${workflowId}`);
       res.status(201).json(execution);
     } catch (error: any) {
-      this.logger.error('Failed to execute workflow:', error);
+      this.logger.error(`Failed to execute workflow: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Workflow not found' });
       } else {
@@ -264,7 +263,7 @@ export class WorkflowController {
 
       res.json(execution);
     } catch (error) {
-      this.logger.error('Failed to get execution:', error);
+      this.logger.error(`Failed to get execution: ${error}`);
       res.status(500).json({ error: 'Failed to get execution' });
     }
   }
@@ -311,7 +310,7 @@ export class WorkflowController {
         }
       });
     } catch (error) {
-      this.logger.error('Failed to get executions:', error);
+      this.logger.error(`Failed to get executions: ${error}`);
       res.status(500).json({ error: 'Failed to get executions' });
     }
   }
@@ -332,7 +331,7 @@ export class WorkflowController {
       this.logger.info(`Cancelled execution: ${executionId}`);
       res.json(execution);
     } catch (error: any) {
-      this.logger.error('Failed to cancel execution:', error);
+      this.logger.error(`Failed to cancel execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
       } else {
@@ -356,7 +355,7 @@ export class WorkflowController {
       this.logger.info(`Paused execution: ${executionId}`);
       res.json(execution);
     } catch (error: any) {
-      this.logger.error('Failed to pause execution:', error);
+      this.logger.error(`Failed to pause execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
       } else {
@@ -380,7 +379,7 @@ export class WorkflowController {
       this.logger.info(`Resumed execution: ${executionId}`);
       res.json(execution);
     } catch (error: any) {
-      this.logger.error('Failed to resume execution:', error);
+      this.logger.error(`Failed to resume execution: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Execution not found' });
       } else {
@@ -414,7 +413,7 @@ export class WorkflowController {
         errors
       });
     } catch (error) {
-      this.logger.error('Failed to validate workflow:', error);
+      this.logger.error(`Failed to validate workflow: ${error}`);
       res.status(500).json({ error: 'Failed to validate workflow' });
     }
   }
@@ -428,7 +427,7 @@ export class WorkflowController {
 
       res.json(templates);
     } catch (error) {
-      this.logger.error('Failed to get templates:', error);
+      this.logger.error(`Failed to get workflow templates: ${error}`);
       res.status(500).json({ error: 'Failed to get templates' });
     }
   }
@@ -449,7 +448,7 @@ export class WorkflowController {
 
       res.json(template);
     } catch (error) {
-      this.logger.error('Failed to get template:', error);
+      this.logger.error(`Failed to get template: ${error}`);
       res.status(500).json({ error: 'Failed to get template' });
     }
   }
@@ -491,7 +490,7 @@ export class WorkflowController {
       this.logger.info(`Created workflow from template: ${workflow.name} (${workflow.id})`);
       res.status(201).json(workflow);
     } catch (error: any) {
-      this.logger.error('Failed to create workflow from template:', error);
+      this.logger.error(`Failed to create workflow from template: ${error}`);
       if (error.code === 'P2025') {
         res.status(404).json({ error: 'Template not found' });
       } else {
