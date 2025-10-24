@@ -10,32 +10,24 @@ interface PromptTemplate {
   description?: string;
 }
 
-class PromptTemplateServiceImpl {
-  // Placeholder implementation
-}
-
 export const WorkflowsPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(0);
-  const [promptTemplateService] = useState(() => new PromptTemplateServiceImpl());
   const [selectedTemplate, setSelectedTemplate] = useState<PromptTemplate | null>(null);
-
-  // Handle exporting template to workflow
-  const handleExportToWorkflow = useCallback((template: PromptTemplate) => {
-    setSelectedTemplate(template);
-    setActiveTab(0); // Switch to workflow tab
-    setIsOpen(false);
-    
-    showNotification({
-      title: 'Template ready for workflow',
-      message: `"${template.name}" is ready to be added to your workflow`,
-      type: 'success'
-    });
-  }, []);
 
   // Handle opening prompt template editor
   const handleOpenTemplateEditor = useCallback(() => {
     setIsOpen(true);
+  }, []);
+
+  // Handle template selection (placeholder for future use)
+  const handleTemplateSelect = useCallback((template: PromptTemplate) => {
+    setSelectedTemplate(template);
+    showNotification({
+      title: 'Template selected',
+      message: `"${template.name}" has been selected`,
+      type: 'success'
+    });
   }, []);
 
   return (
@@ -122,10 +114,7 @@ export const WorkflowsPage: React.FC = () => {
 
                   {/* Workflow Canvas */}
                   <div className="flex-1">
-                    <WorkflowCanvas 
-                      selectedTemplate={selectedTemplate}
-                      promptTemplateService={promptTemplateService}
-                    />
+                    <WorkflowCanvas />
                   </div>
                 </div>
               )}
@@ -133,10 +122,15 @@ export const WorkflowsPage: React.FC = () => {
               {/* Prompt Templates Tab */}
               {activeTab === 1 && (
                 <div className="h-full">
-                  <ModularPromptTemplatingSystem
-                    templateService={promptTemplateService}
-                    onExportToWorkflow={handleExportToWorkflow}
-                  />
+                  <div className="p-6 text-gray-500">
+                    <p>Prompt template system will be integrated once the @the-new-fuse/prompt-templating package is available.</p>
+                    <button
+                      onClick={() => handleTemplateSelect({ id: '1', name: 'Sample Template', description: 'A sample template' })}
+                      className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                    >
+                      Test Template Selection
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -216,8 +210,8 @@ export const WorkflowsPage: React.FC = () => {
                           <select 
                             className="w-full px-3 py-2 border border-gray-300 rounded-md"
                             title="Select default LLM model"
-                            placeholder="Choose a model"
                           >
+                            <option value="">Choose a model</option>
                             <option>GPT-4</option>
                             <option>GPT-3.5 Turbo</option>
                             <option>Claude-3 Sonnet</option>
@@ -253,32 +247,34 @@ export const WorkflowsPage: React.FC = () => {
 
                     <div className="p-6 border border-gray-200 rounded-lg">
                       <h3 className="text-md font-medium mb-4">Prompt Template Settings</h3>
-                      <div className="flex items-center justify-between">
-                        <span>Enable version tracking</span>
-                        <input 
-                          type="checkbox" 
-                          defaultChecked 
-                          className="form-checkbox"
-                          title="Enable or disable version tracking for templates"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Auto-save templates</span>
-                        <input 
-                          type="checkbox" 
-                          defaultChecked 
-                          className="form-checkbox"
-                          title="Enable or disable auto-saving of templates"
-                        />
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Show usage analytics</span>
-                        <input 
-                          type="checkbox" 
-                          defaultChecked 
-                          className="form-checkbox"
-                          title="Enable or disable usage analytics for templates"
-                        />
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <span>Enable version tracking</span>
+                          <input 
+                            type="checkbox" 
+                            defaultChecked 
+                            className="form-checkbox"
+                            title="Enable or disable version tracking for templates"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Auto-save templates</span>
+                          <input 
+                            type="checkbox" 
+                            defaultChecked 
+                            className="form-checkbox"
+                            title="Enable or disable auto-saving of templates"
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span>Show usage analytics</span>
+                          <input 
+                            type="checkbox" 
+                            defaultChecked 
+                            className="form-checkbox"
+                            title="Enable or disable usage analytics for templates"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -292,12 +288,12 @@ export const WorkflowsPage: React.FC = () => {
       {/* Prompt Template Editor Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
+          <div className="fixed inset-0 bg-black bg-opacity-50" onClick={() => setIsOpen(false)}></div>
           <div className="relative bg-white rounded-lg shadow-xl max-w-[90vw] max-h-[90vh] w-full mx-4">
             <div className="flex items-center justify-between p-6 border-b">
               <h2 className="text-xl font-semibold">Prompt Template Editor</h2>
               <button
-                onClick={onClose}
+                onClick={() => setIsOpen(false)}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
                 title="Close modal"
                 aria-label="Close modal"
@@ -309,10 +305,9 @@ export const WorkflowsPage: React.FC = () => {
             </div>
             <div className="p-0 overflow-hidden">
               <div className="h-[70vh]">
-                <ModularPromptTemplatingSystem
-                  templateService={promptTemplateService}
-                  onExportToWorkflow={handleExportToWorkflow}
-                />
+                <div className="p-6 text-gray-500">
+                  <p>Prompt template editor UI will be integrated once the @the-new-fuse/prompt-templating package is available.</p>
+                </div>
               </div>
             </div>
           </div>
