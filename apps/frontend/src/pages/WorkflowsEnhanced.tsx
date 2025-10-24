@@ -1,7 +1,18 @@
 import React, { useState, useCallback } from 'react';
 import { WorkflowCanvas } from '../components/WorkflowBuilder/WorkflowCanvas';
-import { ModularPromptTemplatingSystem, PromptTemplateServiceImpl, PromptTemplate } from '@the-new-fuse/prompt-templating';
+// import { ModularPromptTemplatingSystem, PromptTemplateServiceImpl, PromptTemplate } from '@the-new-fuse/prompt-templating';
 import { showNotification } from '../utils/notifications';
+
+// Temporary types until prompt-templating package is properly built
+interface PromptTemplate {
+  id: string;
+  name: string;
+  description?: string;
+}
+
+class PromptTemplateServiceImpl {
+  // Placeholder implementation
+}
 
 export const WorkflowsPage: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
