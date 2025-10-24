@@ -5,10 +5,10 @@ nixPkgs = ["nodejs_20", "pnpm"]
 NODE_VERSION = "20"
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = ["cd apps/api-gateway && pnpm install --frozen-lockfile"]
 
 [phases.build]
-cmds = ["pnpm run build"]
+cmds = ["cd apps/api-gateway && pnpm run build"]
 
 [start]
-cmd = "pnpm start"
+cmd = "cd apps/api-gateway && pnpm run start:prod"

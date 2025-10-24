@@ -5,6 +5,9 @@ const app = express();
 
 // Get port from environment or default to 3000
 const PORT = process.env.PORT || 3000;
+// Prefer Railway-provided public domain for logs/access hints
+const PUBLIC_DOMAIN = process.env.RAILWAY_PUBLIC_DOMAIN || process.env.RAILWAY_STATIC_URL || process.env.RAILWAY_SERVICE__THE_NEW_FUSE_PROMPT_TEMPLATING_URL;
+const ACCESS_URL = PUBLIC_DOMAIN ? `https://${PUBLIC_DOMAIN}` : `http://localhost:${PORT}`;
 
 // Serve static files from the frontend build directory
 const frontendBuildPath = path.join(__dirname, 'apps/frontend/dist');
@@ -20,7 +23,8 @@ app.get('/api/status', (req, res) => {
   res.json({ 
     status: 'running',
     environment: process.env.NODE_ENV || 'development',
-    port: PORT
+    port: PORT,
+    publicDomain: PUBLIC_DOMAIN || null
   });
 });
 
@@ -31,10 +35,10 @@ app.get('*', (req, res) => {
     res.sendFile(indexFilePath);
   } else {
     res.status(200).send(`<!doctype html>
-<html lang="en">
+<html lang=\"en\">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset=\"utf-8\" />
+  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\" />
   <title>The New Fuse</title>
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 2rem; background: #0f172a; color: #e2e8f0; }
@@ -47,12 +51,13 @@ app.get('*', (req, res) => {
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="card">
+  <div class=\"wrap\">
+    <div class=\"card\">
       <h1>Prompt Templating Service</h1>
       <p>No frontend build detected. Serving API and health only.</p>
-      <p>Health: <a href="/health">/health</a></p>
-      <p>API Status: <a href="/api/status">/api/status</a></p>
+      <p>Health: <a href=\"/health\">/health</a></p>
+      <p>API Status: <a href=\"/api/status\">/api/status</a></p>
+      <p>Public Domain: ${PUBLIC_DOMAIN ? `<code>${PUBLIC_DOMAIN}</code>` : 'N/A'}</p>
       <p>To enable UI, reintroduce frontend build and copy <code>apps/frontend/dist</code> in Dockerfile.</p>
     </div>
   </div>
@@ -64,7 +69,7 @@ app.get('*', (req, res) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 The New Fuse server is running on port ${PORT}`);
   console.log(`📁 Serving frontend from: ${frontendBuildPath}`);
-  console.log(`🌐 Access at: http://localhost:${PORT}`);
+  console.log(`🌐 Access at: ${ACCESS_URL}`);
   // Proactive health check log to verify deployment
   setTimeout(async () => {
     try {
