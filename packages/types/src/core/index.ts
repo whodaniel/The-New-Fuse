@@ -7,6 +7,8 @@
 export * from './base-types';
 export * from './enums';
 export * from './interfaces';
+export { AgentRole as AgentRoleInterface } from './interfaces';
+
 export * from './dtos';
 export * from './services';
 
