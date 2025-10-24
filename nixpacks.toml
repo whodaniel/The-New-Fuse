@@ -1,17 +1,18 @@
-# Force Railway to use Dockerfile instead of auto-detection
-# This overrides Railway's default Nixpacks behavior
-
-[variables]
-NIXPACKS_NO_DEFAULT_CACHE_DIRS = "1"
+# Root Nixpacks config for The New Fuse
+# Builds minimal runtime and starts the Express server
 
 [phases.setup]
-nixPkgs = []
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[variables]
+NODE_VERSION = "20"
 
 [phases.install]
-cmds = []
+cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
+# Optional: build workspaces if needed (leave empty for API-only)
 cmds = []
 
 [start]
-cmd = "echo 'Use Dockerfile instead'"
+cmd = "node server.js"

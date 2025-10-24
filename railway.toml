@@ -1,6 +1,6 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+builder = "NIXPACKS"
+nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
 startCommand = "node server.js"
