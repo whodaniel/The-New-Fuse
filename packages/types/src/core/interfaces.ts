@@ -4,7 +4,7 @@
 
 // Import enums to avoid duplication
 import { TaskStatus } from './enums';
-import { AgentCapability, AgentRole, AgentStatus } from '../agent-types.d';
+import { AgentCapability, AgentRole, AgentStatus } from '../agent-types';
 
 // Re-export required enums to maintain backward compatibility
 export { TaskStatus, AgentCapability, AgentRole, AgentStatus };
