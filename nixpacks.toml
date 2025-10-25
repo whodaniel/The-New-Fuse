@@ -1,18 +1,18 @@
 # Root Nixpacks config for The New Fuse
-# Builds minimal runtime and starts the Express server
+# Uses Node.js 20.19+ to meet Vite 7.x requirements
 
 [phases.setup]
-nixPkgs = ["nodejs_20", "pnpm"]
+nixPkgs = ["nodejs-20_x", "pnpm"]
 
 [variables]
-NODE_VERSION = "20"
+NODE_VERSION = "20.19.0"
 
 [phases.install]
 cmds = ["pnpm install --frozen-lockfile"]
 
 [phases.build]
-# Optional: build workspaces if needed (leave empty for API-only)
-cmds = []
+# Build the frontend app using pnpm
+cmds = ["cd apps/frontend && pnpm run build"]
 
 [start]
-cmd = "node server.js"
+cmd = "cd apps/frontend && pnpm start"

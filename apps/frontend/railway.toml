@@ -1,9 +1,9 @@
 [build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+builder = "NIXPACKS"
+nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
-healthcheckPath = "/health"
+healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyMaxRetries = 10
 restartPolicyType = "ON_FAILURE"

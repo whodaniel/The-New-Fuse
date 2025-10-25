@@ -1,19 +1,22 @@
 [phases.setup]
-nixPkgs = ["nodejs_20", "pnpm"]
+nixPkgs = ["nodejs-20_x", "pnpm"]
 
 [variables]
-NODE_VERSION = "20"
+NODE_VERSION = "20.19.0"
 
 [phases.install]
 cmds = [
   "cp ../../pnpm-workspace.yaml .",
   "cp ../../pnpm-lock.yaml .",
   "cp ../../package.json .",
-  "pnpm install --frozen-lockfile"
+  "pnpm install --frozen-lockfile --include=dev"
 ]
 
 [phases.build]
-cmds = ["cd apps/frontend && pnpm run build"]
+cmds = [
+  "pnpm run --filter=@the-new-fuse/ui-consolidated build",
+  "pnpm run --filter=@the-new-fuse/frontend-app build"
+]
 
 [start]
-cmd = "cd apps/frontend && pnpm start"
+cmd = "pnpm start"
