@@ -5,10 +5,15 @@ nixPkgs = ["nodejs_20", "pnpm"]
 NODE_VERSION = "20"
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile --include=dev"]
+cmds = [
+  "cp ../../pnpm-workspace.yaml .",
+  "cp ../../pnpm-lock.yaml .",
+  "cp ../../package.json .",
+  "pnpm install --frozen-lockfile"
+]
 
 [phases.build]
-cmds = ["pnpm run build"]
+cmds = ["cd apps/frontend && pnpm run build"]
 
 [start]
-cmd = "pnpm start"
+cmd = "cd apps/frontend && pnpm start"

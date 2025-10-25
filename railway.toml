@@ -1,10 +1,9 @@
 [build]
-builder = "NIXPACKS"
-nixpacksConfigPath = "nixpacks.toml"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
 
 [deploy]
-startCommand = "node server.js"
-healthcheckPath = "/health"
+healthcheckPath = "/"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10

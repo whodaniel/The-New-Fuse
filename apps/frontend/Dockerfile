@@ -3,13 +3,16 @@ RUN npm install -g pnpm
 WORKDIR /app
 
 FROM base AS deps
+# Copy workspace files from project root (when deploying from frontend directory)
 COPY ../../package.json ../../pnpm-lock.yaml ../../pnpm-workspace.yaml ./
+# Copy frontend package.json
 COPY package.json ./apps/frontend/
 RUN pnpm install --frozen-lockfile --include=dev
 
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/frontend/node_modules ./apps/frontend/node_modules
+# Copy all source files
 COPY . .
 RUN cd apps/frontend && pnpm run build
 
