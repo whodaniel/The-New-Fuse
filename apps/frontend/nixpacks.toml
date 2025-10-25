@@ -19,4 +19,4 @@ cmds = [
 ]
 
 [start]
-cmd = "pnpm start"
+cmd = "pnpm run start"
