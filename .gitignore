@@ -42,7 +42,7 @@ temp-theia-app/
 # Documentation/Planning files
 REAL_USER_JOURNEYS.md
 USER_JOURNEY_MAP.md
-README.md
+# README.md - Re-enabled for SaaS launch
 *_RESULTS.md
 *_USAGE.md
 *_REFERENCE.md

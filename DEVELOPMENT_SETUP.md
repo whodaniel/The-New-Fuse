@@ -19,17 +19,17 @@ cp .env.example .env
 pnpm install
 
 # Generate Prisma types
-bun run db:generate
+pnpm run db:generate
 ```
 
 ### 3. Database Setup
 
 ```bash
 # Run database migrations
-bun run db:migrate
+pnpm run db:migrate
 
 # Optional: Reset database with seed data
-bun run db:reset
+pnpm run db:reset
 ```
 
 ### 4. Start Development
@@ -39,7 +39,7 @@ Choose your development scenario:
 #### Option A: Gateway + Frontend (Default)
 
 ```bash
-bun run dev
+pnpm run dev
 # Runs: API Gateway + Frontend
 # Ports: 3000 (frontend), 3002 (gateway)
 ```
@@ -47,7 +47,7 @@ bun run dev
 #### Option B: API Server + Frontend
 
 ```bash
-bun run dev:full
+pnpm run dev:full
 # Runs: API Server + Frontend
 # Ports: 3000 (frontend), 3001 (api server)
 ```
@@ -55,7 +55,7 @@ bun run dev:full
 #### Option C: All Services
 
 ```bash
-bun run dev:all
+pnpm run dev:all
 # Runs: All services concurrently
 # Warning: May be resource intensive
 ```
@@ -63,9 +63,9 @@ bun run dev:all
 #### Option D: Individual Services
 
 ```bash
-bun run dev:api      # API Server only (port 3001)
-bun run dev:gateway  # API Gateway only (port 3002)
-bun run dev:frontend # Frontend only (port 3000)
+pnpm run dev:api      # API Server only (port 3001)
+pnpm run dev:gateway  # API Gateway only (port 3002)
+pnpm run dev:frontend # Frontend only (port 3000)
 ```
 
 ## Service Architecture
@@ -73,7 +73,7 @@ bun run dev:frontend # Frontend only (port 3000)
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │  API Gateway    │    │   API Server    │
-│   (Vite)        │◄──►│  (NestJS)       │◄──►│   (Bun)         │
+│   (Vite)        │◄──►│  (NestJS)       │◄──►│   (NestJS)      │
 │   Port: 3000    │    │   Port: 3002    │    │   Port: 3001    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
@@ -83,7 +83,7 @@ bun run dev:frontend # Frontend only (port 3000)
 - **Frontend**: <http://localhost:3000>
 - **API Gateway**: <http://localhost:3002>
 - **API Server**: <http://localhost:3001>
-- **Database Studio**: <http://localhost:5555> (after `bun run db:studio`)
+- **Database Studio**: <http://localhost:5555> (after `pnpm run db:studio`)
 
 ## Environment Variables Guide
 
@@ -118,42 +118,42 @@ lsof -i :3001
 lsof -i :3002
 
 # Clear ports script (runs automatically with dev commands)
-bun run clean:ports
+pnpm run clean:ports
 ```
 
 ### Database Issues
 
 ```bash
 # Reset everything
-bun run clean:all
-bun install
-bun run db:generate
-bun run db:migrate
+pnpm run clean:all
+pnpm install
+pnpm run db:generate
+pnpm run db:migrate
 ```
 
 ### Cache Issues
 
 ```bash
 # Clear all caches
-bun run clean:cache
-bun run clean:deps
+pnpm run clean:cache
+pnpm run clean:deps
 ```
 
 ### Type Issues
 
 ```bash
 # Rebuild types
-bun run build:types
-bun run type-check
+pnpm run build:types
+pnpm run type-check
 ```
 
 ## Performance Tips
 
 ### Development Mode
 
-- Use `bun run dev:frontend` for frontend-only development
-- Use `bun run dev:api` for backend-only development
-- Use `bun run dev:full` for full-stack development
+- Use `pnpm run dev:frontend` for frontend-only development
+- Use `pnpm run dev:api` for backend-only development
+- Use `pnpm run dev:full` for full-stack development
 
 ### Resource Management
 
@@ -166,16 +166,16 @@ bun run type-check
 ### Run Tests
 
 ```bash
-bun run test              # All tests
-bun run test:unit         # Unit tests only
-bun run test:integration  # Integration tests
-bun run test:e2e         # End-to-end tests
+pnpm run test              # All tests
+pnpm run test:unit         # Unit tests only
+pnpm run test:integration  # Integration tests
+pnpm run test:e2e         # End-to-end tests
 ```
 
 ### Coverage
 
 ```bash
-bun run test:coverage
+pnpm run test:coverage
 ```
 
 ## Advanced Configuration
@@ -206,4 +206,4 @@ FEATURE_REAL_TIME_COLLABORATION=true
 2. Verify all required environment variables are set
 3. Ensure database is running and accessible
 4. Check service-specific logs in their respective directories
-5. Run `bun run health-check` for comprehensive verification
+5. Run `pnpm run health-check` for comprehensive verification
