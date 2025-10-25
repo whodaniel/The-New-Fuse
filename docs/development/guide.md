@@ -105,22 +105,22 @@ To build specific packages:
 
 ```bash
 # Build types package
-bun run build:types
+pnpm run build:types
 
 # Build utils package
-bun run build:utils
+pnpm run build:utils
 
 # Build core package
-bun run build:core
+pnpm run build:core
 
 # Build UI package
-bun run build:ui
+pnpm run build:ui
 
 # Build feature-tracker package
-bun run build:feature-tracker
+pnpm run build:feature-tracker
 
 # Build feature-suggestions package
-bun run build:feature-suggestions
+pnpm run build:feature-suggestions
 ```
 
 ### Running in Development Mode
@@ -128,7 +128,7 @@ bun run build:feature-suggestions
 To run the project in development mode:
 
 ```bash
-bun dev
+pnpm dev
 ```
 
 This will start all services in parallel using Turbo.

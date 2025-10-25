@@ -8,7 +8,7 @@ pkill -f "memory-optimized-build" 2>/dev/null || true
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-bun install
+pnpm install --frozen-lockfile
 
 # Create necessary directories
 mkdir -p apps/theia-ide/lib

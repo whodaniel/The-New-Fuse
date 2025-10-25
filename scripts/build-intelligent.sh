@@ -39,8 +39,8 @@ build_group() {
     local pids=()
     for package in $packages; do
         echo "  📦 Building @the-new-fuse/$package..."
-        (bun run --filter="@the-new-fuse/$package" build 2>/dev/null || 
-         bun run --filter="*/$package" build 2>/dev/null || 
+        (pnpm run --filter="@the-new-fuse/$package" build 2>/dev/null || 
+         pnpm run --filter="*/$package" build 2>/dev/null || 
          echo "    ⚠️  Package $package not found or already built") &
         pids+=($!)
     done

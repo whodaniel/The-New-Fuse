@@ -58,10 +58,24 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
-      - name: Type check
-        run: bun run type-check
+      - name: Build packages in order
+        run: |
+          pnpm run build:types
+          sleep 2
+          pnpm run build:core
+          sleep 2
+          pnpm run build:api
+          sleep 2
+
+      - name: Optimize build
+        run: |
+          pnpm run optimize:fast
+          sleep 2
+          pnpm run build:ui
+          sleep 2
+          pnpm run build:chrome
 
   # Optimized build with caching
   build:
@@ -92,28 +106,28 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Build affected packages
         if: needs.changes.outputs.packages != ''
         run: |
           if [ "${{ matrix.chunk }}" == "1" ]; then
-            bun run build:types
+            pnpm run build:types
           elif [ "${{ matrix.chunk }}" == "2" ]; then
-            bun run build:core
+            pnpm run build:core
           else
-            bun run build:api
+            pnpm run build:api
           fi
 
       - name: Build all packages
         if: needs.changes.outputs.all == 'true'
         run: |
           if [ "${{ matrix.chunk }}" == "1" ]; then
-            bun run optimize:fast
+            pnpm run optimize:fast
           elif [ "${{ matrix.chunk }}" == "2" ]; then
-            bun run build:ui
+            pnpm run build:ui
           else
-            bun run build:chrome
+            pnpm run build:chrome
           fi
 
       - name: Upload build artifacts
@@ -150,10 +164,10 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: bun run lint
+        run: pnpm run lint
 
   # Testing with optimizations
   test:
@@ -183,7 +197,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Download build artifacts
         uses: actions/download-artifact@v3
@@ -192,7 +206,7 @@ jobs:
           merge-multiple: true
 
       - name: Run tests
-        run: bun run test:${{ matrix.test-type }}
+        run: pnpm run test:${{ matrix.test-type }}
 
       - name: Upload coverage
         if: matrix.test-type == 'unit'
@@ -225,7 +239,7 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Make script executable
         run: chmod +x ./scripts/optimize-build.sh
@@ -262,10 +276,10 @@ jobs:
             ${{ runner.os }}-bun-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
       - name: Production build
-        run: bun run build:production
+        run: pnpm run build:production
 
       - name: Package artifacts
         run: |

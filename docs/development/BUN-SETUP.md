@@ -1,136 +1,103 @@
-# Bun Setup Documentation
+# PNPM Setup Guide
 
-## Overview
+This guide covers setting up PNPM for The New Fuse development environment.
 
-This project uses Bun for dependency management and as a JavaScript runtime. Bun is a fast all-in-one JavaScript runtime that includes a package manager, bundler, and test runner.
+## Prerequisites
+
+- Node.js 18+ installed
+- PNPM package manager
 
 ## Installation
 
-Install Bun from the official website:
+### Install PNPM
 
 ```bash
-# Install Bun (macOS/Linux)
-curl -fsSL https://bun.sh/install | bash
-
-# Or via npm
-pnpm install -g bun
+npm install -g pnpm
 ```
 
-## Key Features
-
-Bun provides built-in support for:
-- Fast package installation (faster than npm/yarn)
-- TypeScript compilation (no additional setup required)
-- Workspace management for monorepos
-- Built-in bundler
-- Test runner
-- Hot reloading
-
-## Getting Started
-
-If you're new to the project:
+### Verify Installation
 
 ```bash
-# Install all dependencies
-bun install
-
-# Run the setup script
-bun run scripts/setup-bun.js
+pnpm --version
 ```
 
-## Daily Usage
+## Project Setup
 
-### Running Bun Commands
-
-Bun commands are straightforward:
+### Install Dependencies
 
 ```bash
-# Install dependencies
-bun install
-
-# Build the project
-bun run build
-
-# Run development server
-bun run dev
-
-# Run tests
-bun test
-
-# Run a specific workspace
-bun run --filter @the-new-fuse/core build
+pnpm install
 ```
 
-### Adding Dependencies
-
-Adding dependencies is simple with Bun:
+### Run Setup Script
 
 ```bash
-# Add a regular dependency
-bun add react
-
-# Add a dev dependency
-bun add -d typescript
-
-# Add to a specific workspace
-bun add express --cwd packages/core
+pnpm run scripts/setup-pnpm.js
 ```
 
-## Working with Monorepo Workspaces
+## Development Workflow
 
-This project uses Bun workspaces for monorepo management. To work with specific workspaces:
+### Install Dependencies
 
 ```bash
-# Run a script in a specific workspace
-bun run --filter @the-new-fuse/core build
-
-# Install dependencies for a specific workspace
-bun install --cwd packages/core
-
-# Add a dependency to a specific workspace
-bun add express --cwd packages/api
+pnpm install
 ```
 
-## Environment Variables
+### Build Project
 
-Bun automatically loads environment variables from `.env` files. No additional configuration needed.
+```bash
+pnpm run build
+```
 
-## TypeScript Support
+### Start Development
 
-Bun has built-in TypeScript support:
-- No need for ts-node
-- No need for separate TypeScript compilation
-- Runs TypeScript files directly
-- Fast compilation
+```bash
+pnpm run dev
+```
 
-## Performance Benefits
+## Workspace Commands
 
-Bun is significantly faster than npm/yarn:
-- Package installation is 2-3x faster
-- Script execution is faster due to built-in runtime
-- Built-in bundling eliminates need for webpack/rollup
+### Build Specific Package
+
+```bash
+pnpm run --filter @the-new-fuse/core build
+```
 
 ## Troubleshooting
 
-If you encounter Bun-related issues:
+### Common Issues
 
-1. Check Bun version: `bun --version`
-2. Clear cache: `bun pm cache clear`
-3. Reinstall dependencies: `rm -rf node_modules && bun install`
-4. Check for conflicting package managers (remove yarn.lock if present)
+1. **Lock file conflicts**: Delete `pnpm-lock.yaml` and run `pnpm install`
+2. **Build failures**: Run `pnpm run clean` then `pnpm run build`
+3. **Dependency issues**: Run `pnpm install --force`
 
-## Migration from Yarn
+### Package-specific Commands
 
-If migrating from Yarn:
-1. Remove yarn.lock and .yarn directory
-2. Remove .yarnrc.yml file
-3. Run `bun install` to create bun.lockb
-4. Update scripts to use `bun` instead of `yarn`
+```bash
+# Install in specific package
+pnpm install --cwd packages/core
+```
 
-## Why Bun?
+## Best Practices
 
-- **Speed**: Much faster than npm/yarn for installation and execution
-- **Simplicity**: All-in-one tool eliminates need for multiple tools
-- **Modern**: Built with modern JavaScript features in mind
-- **TypeScript**: Native TypeScript support without configuration
-- **Compatibility**: Drop-in replacement for npm/yarn in most cases
+1. Always use `pnpm install --frozen-lockfile` in CI
+2. Use workspace commands for monorepo operations
+3. Keep dependencies up to date with `pnpm update`
+
+## Migration Notes
+
+If migrating from Bun:
+
+1. Remove `bun.lockb` file
+2. Remove any Bun-specific configurations
+3. Reinstall dependencies: `rm -rf node_modules && pnpm install`
+4. Update scripts to use `pnpm` instead of `bun`
+5. Verify builds work correctly
+
+## Verification
+
+After setup, verify everything works:
+
+1. Check installation: `pnpm --version`
+2. Install dependencies: `pnpm install`
+3. Run `pnpm install` to create pnpm-lock.yaml

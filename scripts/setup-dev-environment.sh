@@ -10,7 +10,7 @@ command -v docker >/dev/null 2>&1 || { echo "❌ Docker is required but not inst
 
 # Clean existing artifacts
 echo "🧹 Cleaning previous builds..."
-bun run clean
+pnpm run clean
 
 # Setup environment files
 echo "⚙️ Setting up environment configuration..."
@@ -20,15 +20,15 @@ cp apps/frontend/.env.example apps/frontend/.env
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-bun install --frozen-lockfile
+pnpm install --frozen-lockfile
 
 # Build core packages in correct order
 echo "🔨 Building core packages..."
-cd packages/types && bun run build && cd ../..
-cd packages/utils && bun run build && cd ../..
-cd packages/core && bun run build && cd ../..
-cd packages/database && bun run build && cd ../..
-cd packages/feature-tracker && bun run build && cd ../..
+cd packages/types && pnpm run build && cd ../..
+cd packages/utils && pnpm run build && cd ../..
+cd packages/core && pnpm run build && cd ../..
+cd packages/database && pnpm run build && cd ../..
+cd packages/feature-tracker && pnpm run build && cd ../..
 yarn workspace @the-new-fuse/feature-suggestions build
 
 # Setup database

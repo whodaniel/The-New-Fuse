@@ -8,12 +8,12 @@ if [ ! -f "package.json" ]; then
 fi
 echo "✅ Found package.json in current directory."
 
-echo "Ensuring Bun is available..."
-if ! command -v bun &> /dev/null; then
-    echo "⚠️  Bun not found. Installing Bun..."
-    curl -fsSL https://bun.sh/install | bash
-    source ~/.bashrc 2>/dev/null || true
-    export PATH="$HOME/.bun/bin:$PATH"
+echo "Ensuring pnpm is available..."
+if ! command -v pnpm &> /dev/null; then
+    echo "⚠️  pnpm not found. Installing pnpm..."
+    npm install -g pnpm
+    # Reload shell to ensure pnpm is in PATH
+    export PATH="$HOME/.local/share/pnpm:$PATH"
 fi
 
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
@@ -28,29 +28,29 @@ else
     echo "✅ vsce is already installed."
 fi
 
-echo "2️⃣ Installing dependencies using Bun..."
-if ! bun install; then
-    echo "❌ Failed to install dependencies using Bun. Check Bun setup and project dependencies."
-    # Attempt to clean and reinstall as a fallback
-    echo "   Attempting 'bun install --force' as a fallback..."
-    bun install --force
-    if [ \$? -ne 0 ]; then
-        echo "❌ Fallback 'bun install --force' also failed."
+echo "2️⃣ Installing dependencies using pnpm..."
+if ! pnpm install; then
+    echo "❌ Failed to install dependencies using pnpm. Check pnpm setup and project dependencies."
+    echo ""
+    echo "   Attempting 'pnpm install --force' as a fallback..."
+    pnpm install --force
+    if [ $? -ne 0 ]; then
+        echo "❌ Fallback 'pnpm install --force' also failed."
         exit 1
     fi
 fi
-echo "✅ Dependencies installed successfully using Bun."
+echo "✅ Dependencies installed successfully using pnpm."
 
 echo "3️⃣ Building extension..."
 BUILD_SUCCESSFUL=false
 # Check if 'compile' script exists in package.json
 if grep -q '"compile":' package.json; then
-    echo "   Found 'compile' script. Attempting 'bun run compile'..."
-    if bun run compile; then
-        echo "✅ Build successful with 'bun run compile'."
-        BUILD_SUCCESSFUL=true
+    echo "   Found 'compile' script. Attempting 'pnpm run compile'..."
+    if pnpm run compile; then
+        echo "✅ Build successful with 'pnpm run compile'."
+        BUILD_SUCCESS=true
     else
-        echo "⚠️  'bun run compile' failed."
+        echo "⚠️  'pnpm run compile' failed."
     fi
 else
     echo "⚠️  'compile' script not found in package.json."

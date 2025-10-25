@@ -27,9 +27,13 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
-# Check if Bun is available
-if ! command -v bun &> /dev/null; then
-    print_error "Bun is not installed. Please install Bun first."
+# Check if pnpm is available
+if ! command -v pnpm &> /dev/null; then
+    print_error "pnpm is not installed. Please install pnpm first."
+    echo "To install pnpm, run:"
+    echo "  npm install -g pnpm"
+    echo "  or"
+    echo "  curl -fsSL https://get.pnpm.io/install.sh | sh -"
     exit 1
 fi
 
@@ -47,20 +51,20 @@ else
     print_status "vsce is already installed"
 fi
 
-# Install dependencies using Bun
-echo "2️⃣ Installing dependencies using Bun..."
-bun install --frozen-lockfile
+# Install dependencies using pnpm
+echo "2️⃣ Installing dependencies using pnpm..."
+pnpm install --frozen-lockfile
 if [ $? -ne 0 ]; then
-    print_error "Failed to install dependencies using Bun. Check for Bun installation or workspace errors."
+    print_error "Failed to install dependencies using pnpm. Check for pnpm installation or workspace errors."
     exit 1
 fi
-print_status "Dependencies installed using Bun"
+print_status "Dependencies installed using pnpm"
 
-# Build the extension using Bun
-echo "3️⃣ Building extension using Bun..."
-bun run compile # Assuming 'compile' is the correct build script in package.json
+# Build the extension using pnpm
+echo "3️⃣ Building extension using pnpm..."
+pnpm run compile # Assuming 'compile' is the correct build script in package.json
 if [ $? -ne 0 ]; then
-    print_warning "Build failed with errors (bun run compile), but attempting to package anyway..."
+    print_warning "Build failed with errors (pnpm run compile), but attempting to package anyway..."
     echo "   Attempting fallback build with esbuild..."
     npx esbuild ./src/extension.ts --bundle --outfile=./dist/extension.js --format=cjs --platform=node --external:vscode --allow-overwrite
     if [ $? -ne 0 ]; then
@@ -74,22 +78,16 @@ if [ $? -ne 0 ]; then
         print_status "Updated main entry point to ./dist/extension.js"
     fi
 else
-    print_status "Build completed successfully (bun run compile)"
+    print_status "Build completed successfully (pnpm run compile)"
 fi
 
 # Package the extension
-echo "5️⃣ Creating .vsix package..."
-vsce package --allow-star-activation --no-dependencies
-if [ $? -ne 0 ]; then
-    print_error "Failed to create .vsix package"
-    
-    print_warning "Trying with relaxed validation (skip license)..."
-    vsce package --allow-star-activation --no-dependencies --skip-license
-    if [ $? -ne 0 ]; then
-        print_error "Package creation failed even with relaxed validation"
-        exit 1
-    fi
+echo "4️⃣ Creating .vsix package..."
+if ! pnpm dlx vsce package; then
+    print_error "Failed to create .vsix package using pnpm dlx vsce"
+    exit 1
 fi
+print_status "Extension packaged successfully using pnpm dlx vsce"
 
 # Find the created .vsix file
 VSIX_FILE=$(ls -t *.vsix 2>/dev/null | head -n1)

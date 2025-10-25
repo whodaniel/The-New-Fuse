@@ -31,7 +31,7 @@ fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2));
 "
 
 echo "Regenerating Bun lockfile..."
-bun install
+pnpm install
 
 echo "✓ Lockfile regenerated"
 

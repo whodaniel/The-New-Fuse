@@ -18,11 +18,11 @@ jobs:
         with:
           bun-version: 'latest'
           
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
-        
-      - name: Build Packages
-        run: bun run build
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      
+      - name: Build project
+        run: pnpm run build
         
       - name: Build Docker Images
-        run: docker compose build 
+        run: docker compose build

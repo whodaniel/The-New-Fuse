@@ -39,8 +39,8 @@ jobs:
           restore-keys: |
             deps-
 
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
 
   type-check:
     needs: setup
@@ -61,8 +61,8 @@ jobs:
             **/node_modules
           key: ${{ needs.setup.outputs.cache-key }}
 
-      - name: Type Check
-        run: bun run type-check
+      - name: Type check
+        run: pnpm run type-check
 
   lint:
     needs: setup
@@ -84,7 +84,7 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Run Linting
-        run: bun run lint
+        run: pnpm run lint
 
   test:
     needs: [setup, type-check]
@@ -109,10 +109,10 @@ jobs:
           key: ${{ needs.setup.outputs.cache-key }}
 
       - name: Generate Database Client
-        run: bun run db:generate
+        run: pnpm run db:generate
 
       - name: Run ${{ matrix.test-type }} Tests
-        run: bun run test:${{ matrix.test-type }}
+        run: pnpm run test:${{ matrix.test-type }}
 
       - name: Upload Coverage
         if: matrix.test-type == 'unit'
@@ -150,10 +150,10 @@ jobs:
             turbo-
 
       - name: Generate Database Client
-        run: bun run db:generate
+        run: pnpm run db:generate
 
       - name: Build All Packages (Dependency Order)
-        run: bun run build:ci
+        run: pnpm run build:ci
 
       - name: Cache build artifacts
         uses: actions/cache@v4
@@ -252,8 +252,8 @@ jobs:
         with:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
-      - name: Run Database Migrations
-        run: bun run db:migrate
+      - name: Run database migrations
+        run: pnpm run db:migrate
         env:
           DATABASE_URL: ${{ secrets.STAGING_DATABASE_URL }}
 
@@ -305,7 +305,7 @@ jobs:
           kubeconfig: ${{ secrets.KUBE_CONFIG }}
 
       - name: Run Database Migrations
-        run: bun run db:migrate
+        run: pnpm run db:migrate
         env:
           DATABASE_URL: ${{ secrets.PRODUCTION_DATABASE_URL }}
 

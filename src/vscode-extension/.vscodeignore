@@ -9,7 +9,7 @@ node_modules/**
 # Build configuration
 build-extension.js
 tsconfig.json
-bun.lockb
+pnpm-lock.yaml
 .eslintrc.json
 .prettierrc
 jest.config.js

@@ -17,17 +17,17 @@ jobs:
         with:
           bun-version: 'latest'
       
-      - name: Install Dependencies
-        run: bun install --frozen-lockfile
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
       
-      - name: Run Unit Tests
-        run: bun run test:unit
-        
-      - name: Run Integration Tests
-        run: bun run test:integration
+      - name: Run unit tests
+        run: pnpm run test:unit
       
-      - name: Run E2E Tests
-        run: bun run test:e2e
+      - name: Run integration tests
+        run: pnpm run test:integration
+      
+      - name: Run E2E tests
+        run: pnpm run test:e2e
 
       - name: Security Scan
         uses: snyk/actions/node@master

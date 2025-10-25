@@ -22,13 +22,13 @@ jobs:
           bun-version: 'latest'
       
       - name: Install dependencies
-        run: bun install --frozen-lockfile
-      
-      - name: Build packages
-        run: bun run build
-      
+        run: pnpm install --frozen-lockfile
+
+      - name: Build project
+        run: pnpm run build
+
       - name: Run performance tests
-        run: bun run test:perf
+        run: pnpm run test:perf
       
       - name: Upload performance reports
         uses: actions/upload-artifact@v3

@@ -114,8 +114,8 @@ jobs:
           export PATH="$HOME/.bun/bin:$PATH"
           
           # Install dependencies and run migrations
-          bun install --frozen-lockfile
-          bun run db:migrate
+          pnpm install --frozen-lockfile
+          pnpm run db:migrate
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
 

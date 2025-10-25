@@ -102,11 +102,11 @@ jobs:
 
       - name: Generate Prisma client
         if: inputs.test-type != 'unit'
-        run: bun run db:generate
+        run: pnpm run db:generate
 
       - name: Run database migrations
         if: inputs.test-type != 'unit'
-        run: bun run db:migrate
+        run: pnpm run db:migrate
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
@@ -130,7 +130,7 @@ jobs:
         if: inputs.test-type == 'e2e'
         run: |
           # Start API server in background for E2E tests
-          bun run dev:api &
+          pnpm run dev:api &
           API_PID=$!
           echo "API_PID=$API_PID" >> $GITHUB_ENV
           
@@ -138,7 +138,7 @@ jobs:
           timeout 60 bash -c 'until curl -f http://localhost:3001/health; do sleep 2; done'
           
           # Start frontend in background
-          bun run dev:frontend &
+          pnpm run dev:frontend &
           FRONTEND_PID=$!
           echo "FRONTEND_PID=$FRONTEND_PID" >> $GITHUB_ENV
           
@@ -148,7 +148,7 @@ jobs:
       - name: Run unit tests
         if: inputs.test-type == 'unit'
         run: |
-          bun run test:unit \
+          pnpm run test:unit \
             --shard=${{ inputs.shard }} \
             --reporter=junit \
             --outputFile=test-results/unit-results.xml \
@@ -157,7 +157,7 @@ jobs:
       - name: Run integration tests
         if: inputs.test-type == 'integration'
         run: |
-          bun run test:integration \
+          pnpm run test:integration \
             --shard=${{ inputs.shard }} \
             --reporter=junit \
             --outputFile=test-results/integration-results.xml \

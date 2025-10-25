@@ -216,7 +216,7 @@ const FrontendShowcase: React.FC = () => {
           </h1>
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Explore all the frontend pages and components built with React, TypeScript, and Tailwind CSS.
-            Powered by Bun runtime for blazing fast performance.
+            Powered by PNPM package manager for efficient dependency management.
           </p>
         </div>
 
@@ -229,7 +229,7 @@ const FrontendShowcase: React.FC = () => {
             </div>
             <div className="flex items-center space-x-2">
               <Terminal className="h-4 w-4" />
-              <span>Bun Runtime</span>
+              <span>PNPM Package Manager</span>
             </div>
             <div className="flex items-center space-x-2">
               <Chrome className="h-4 w-4" />
@@ -293,7 +293,7 @@ const FrontendShowcase: React.FC = () => {
         {/* Footer */}
         <footer className="text-center py-8 border-t border-gray-200">
           <p className="text-gray-600">
-            Built with ❤️ using React, TypeScript, Tailwind CSS, and Bun Runtime
+            Built with ❤️ using React, TypeScript, Tailwind CSS, and PNPM Package Manager
           </p>
         </footer>
       </div>

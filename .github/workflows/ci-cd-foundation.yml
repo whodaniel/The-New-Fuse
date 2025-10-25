@@ -135,12 +135,12 @@ jobs:
             deps-
 
       - name: Install dependencies
-        run: bun install --frozen-lockfile
+        run: pnpm install --frozen-lockfile
 
-      - name: Validate package integrity
+      - name: Security audit
         run: |
-          bun run audit
-          bun run type-check
+          pnpm run audit
+          pnpm run type-check
 
   # Code Quality and Linting
   quality-checks:
@@ -170,17 +170,17 @@ jobs:
 
       - name: Run linting
         if: matrix.check == 'lint'
-        run: bun run lint
+        run: pnpm run lint
 
       - name: Check formatting
         if: matrix.check == 'format'
         run: |
-          bun run format
+          pnpm run format
           git diff --exit-code || (echo "Code is not properly formatted" && exit 1)
 
       - name: Type checking
         if: matrix.check == 'type-check'
-        run: bun run type-check
+        run: pnpm run type-check
 
       - name: Security scanning
         if: matrix.check == 'security-scan'
@@ -229,27 +229,27 @@ jobs:
             postgres:15-alpine
 
       - name: Generate Prisma client
-        run: bun run db:generate
+        run: pnpm run db:generate
 
       - name: Run database migrations
         if: matrix.test-type != 'unit'
-        run: bun run db:migrate
+        run: pnpm run db:migrate
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
       - name: Run unit tests
         if: matrix.test-type == 'unit'
-        run: bun run test:unit --shard=${{ matrix.shard }}/4
+        run: pnpm run test:unit --shard=${{ matrix.shard }}/4
 
       - name: Run integration tests
         if: matrix.test-type == 'integration'
-        run: bun run test:integration --shard=${{ matrix.shard }}/4
+        run: pnpm run test:integration --shard=${{ matrix.shard }}/4
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
       - name: Run E2E tests
         if: matrix.test-type == 'e2e'
-        run: bun run test:e2e --shard=${{ matrix.shard }}/4
+        run: pnpm run test:e2e --shard=${{ matrix.shard }}/4
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
@@ -304,10 +304,10 @@ jobs:
             turbo-
 
       - name: Generate Prisma client
-        run: bun run db:generate
+        run: pnpm run db:generate
 
-      - name: Build all packages
-        run: bun run build
+      - name: Build project
+        run: pnpm run build
 
       - name: Cache build artifacts
         uses: actions/cache@v4

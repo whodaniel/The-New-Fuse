@@ -30,13 +30,13 @@ jobs:
         bun-version: 'latest'
         
     - name: Install dependencies
-      run: bun install --frozen-lockfile
+      run: pnpm install --frozen-lockfile
     
     - name: Check port availability
-      run: bun run kill-ports
+      run: pnpm run kill-ports
         
     - name: Run tests
-      run: bun run test
+      run: pnpm run test
         
     - name: Upload coverage
       uses: codecov/codecov-action@v3

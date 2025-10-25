@@ -6,17 +6,17 @@ echo "🏗️ Building VSCode Extension with Bun..."
 
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/src/vscode-extension"
 
-# Install dependencies with bun
+# Install dependencies with pnpm
 echo "Installing dependencies..."
-bun install
+pnpm install --frozen-lockfile
 
 # Build extension
 echo "Building extension..."
-bun run build
+pnpm run build
 
 # Package extension
 echo "Packaging extension..."
-bun run package
+pnpm run package
 
 echo "✅ VSCode extension built successfully!"
 ls -la *.vsix
