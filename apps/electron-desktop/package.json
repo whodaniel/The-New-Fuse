@@ -14,7 +14,7 @@
     "start": "node ./scripts/copy-browser-hub.js && pnpm exec electron dist/main/main.js",
     "package": "electron-builder",
     "dist": "pnpm build && electron-builder",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps || echo 'electron-builder not found, skipping app deps installation'"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
