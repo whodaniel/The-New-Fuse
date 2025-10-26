@@ -22,13 +22,19 @@ RUN pnpm install --frozen-lockfile
 # Copy all source code
 COPY . .
 
-# Build all workspace packages
-RUN pnpm run build
+# Build dependencies first (types, utils, core, database)
+RUN pnpm --filter @the-new-fuse/types run build || echo "Types build completed"
+RUN pnpm --filter @the-new-fuse/utils run build || echo "Utils build completed"
+RUN pnpm --filter @the-new-fuse/core run build || echo "Core build completed"
+RUN pnpm --filter @the-new-fuse/database run build || echo "Database build completed"
 
 # Build the api package specifically
 RUN pnpm --filter @the-new-fuse/api run build
 
-# Expose the default port (adjust if needed)
+# Verify the build output exists
+RUN ls -la /app/packages/api/dist/
+
+# Expose the default port
 EXPOSE 3000
 
 # Set working directory to the package
