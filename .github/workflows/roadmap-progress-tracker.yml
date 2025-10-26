@@ -32,7 +32,9 @@ jobs:
         with:
           version: 8
 
-      - name: Install Dependencies
+      - name: Update Roadmap Progress
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Create a temporary directory for global packages to avoid workspace conflicts
           mkdir -p /tmp/pnpm-global
@@ -40,11 +42,6 @@ jobs:
           export PATH=/tmp/pnpm-global:$PATH
           pnpm add -g @octokit/rest
           pnpm add -g js-yaml
-
-      - name: Update Roadmap Progress
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
           cat > update_progress.js << 'EOF'
           const { Octokit } = require('@octokit/rest');
           const fs = require('fs');
