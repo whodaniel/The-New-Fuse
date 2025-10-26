@@ -56,6 +56,14 @@ export class ProxyService {
       retries: 3,
     });
 
+    this.registerService({
+      name: 'theia-ide',
+      baseUrl: this.configService.get('THEIA_IDE_URL', 'http://localhost:3007'),
+      healthPath: '/health',
+      timeout: 60000,
+      retries: 3,
+    });
+
     this.logger.log(`Registered ${this.services.size} backend services`);
   }
 
