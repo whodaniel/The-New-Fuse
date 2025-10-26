@@ -31,7 +31,7 @@ env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
   NODE_VERSION: '20'
-  BUN_VERSION: '1.2.16'
+  PNPM_VERSION: '8'
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
 
@@ -55,7 +55,7 @@ jobs:
       - name: Generate cache key
         id: cache-key
         run: |
-          echo "key=deps-${{ hashFiles('**/bun.lockb', '**/package.json', 'turbo.json') }}" >> $GITHUB_OUTPUT
+          echo "key=deps-${{ hashFiles('**/pnpm-lock.yaml', '**/package.json', 'turbo.json') }}" >> $GITHUB_OUTPUT
 
       - name: Generate build matrix
         id: build-matrix
@@ -118,10 +118,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: ${{ env.BUN_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Cache dependencies
         uses: actions/cache@v4
@@ -154,10 +159,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: ${{ env.BUN_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Restore dependencies cache
         uses: actions/cache@v4
@@ -203,10 +213,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: ${{ env.BUN_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Restore dependencies cache
         uses: actions/cache@v4
@@ -281,10 +296,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: ${{ env.BUN_VERSION }}
+          node-version: ${{ env.NODE_VERSION }}
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
 
       - name: Restore dependencies cache
         uses: actions/cache@v4

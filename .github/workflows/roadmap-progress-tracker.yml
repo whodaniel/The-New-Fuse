@@ -27,10 +27,19 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
       - name: Install Dependencies
         run: |
-          npm install -g @octokit/rest
-          npm install js-yaml
+          # Create a temporary directory for global packages to avoid workspace conflicts
+          mkdir -p /tmp/pnpm-global
+          export PNPM_HOME=/tmp/pnpm-global
+          export PATH=/tmp/pnpm-global:$PATH
+          pnpm add -g @octokit/rest
+          pnpm add -g js-yaml
 
       - name: Update Roadmap Progress
         env:

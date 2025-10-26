@@ -1,0 +1,482 @@
+==================================================================
+COMPLETE THEIA IDE BUILD PROCESS LOG
+Started at: 2025-09-24 13:23:20
+==================================================================
+
+==================== SYSTEM INFORMATION ====================
+Date: Wed Sep 24 13:23:20 EDT 2025
+OS: Darwin Daniels-MacBook-Pro 21.6.0 Darwin Kernel Version 21.6.0: Mon Jun 24 00:56:10 PDT 2024; root:xnu-8020.240.18.709.2~1/RELEASE_X86_64 x86_64
+Node Version: v22.16.0
+Npm Version: 11.4.2
+Bun Version: 1.2.21
+Current Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+User: danielgoldberg
+
+==================== DIRECTORY STRUCTURE ====================
+
+==================== COMMAND: ls -la ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ls -la
+========== OUTPUT START ==========
+total 400
+drwxr-xr-x  33 danielgoldberg  staff   1056 Sep 24 13:23 .
+drwxr-xr-x  14 danielgoldberg  staff    448 Sep  7 06:45 ..
+drwxr-xr-x   3 danielgoldberg  staff     96 Sep 21 02:49 .turbo
+-rw-r--r--   1 danielgoldberg  staff    925 Sep 24 13:23 COMPLETE_BUILD_LOG.txt
+-rwxr-xr-x   1 danielgoldberg  staff   5059 Aug 14 02:47 build-theia-robust.js
+-rwxr-xr-x   1 danielgoldberg  staff   3433 Aug 18 05:47 build-theia.js
+-rwxr-xr-x   1 danielgoldberg  staff   4996 Sep 24 08:34 build-theia.sh
+-rw-r--r--   1 danielgoldberg  staff   1991 Sep 22 17:20 check-cli-dependencies.js
+-rw-r--r--   1 danielgoldberg  staff  19429 Sep 24 05:34 enhanced-server.js
+-rw-r--r--   1 danielgoldberg  staff  19429 Aug 18 15:51 enhanced-server.js.backup
+drwx------   3 danielgoldberg  staff     96 Sep 23 19:42 fallbacks
+-rwxr-xr-x   1 danielgoldberg  staff   5085 Sep 24 13:22 full-build-log.sh
+-rw-r--r--   1 danielgoldberg  staff   7882 Sep 24 13:05 gen-webpack.config.js
+-rw-r--r--   1 danielgoldberg  staff   5624 Sep 24 13:05 gen-webpack.node.config.js
+-rwxr-xr-x   1 danielgoldberg  staff  14755 Sep 22 17:45 install-extensions.js
+drwxr-xr-x   5 danielgoldberg  staff    160 Sep 24 02:04 lib
+-rw-r--r--   1 danielgoldberg  staff   5944 Sep 22 15:54 mcp-config.json
+drwxr-xr-x   6 danielgoldberg  staff    192 Sep 24 12:38 node_modules
+-rw-r--r--   1 danielgoldberg  staff   2040 Sep 24 12:42 package.json
+-rw-r--r--   1 danielgoldberg  staff   1999 Sep 24 05:35 package.working.json
+drwxr-xr-x   2 danielgoldberg  staff     64 Aug 24 03:07 plugins
+-rw-r--r--   1 danielgoldberg  staff  19764 Aug 31 06:07 response.html
+-rw-r--r--   1 danielgoldberg  staff    545 Sep 24 13:18 simple-theia-server.js
+drwxr-xr-x   4 danielgoldberg  staff    128 Aug 18 15:51 src
+drwxr-xr-x   4 danielgoldberg  staff    128 Sep 21 04:38 src-gen
+-rw-r--r--   1 danielgoldberg  staff   2944 Sep 24 01:40 start-theia-direct.js
+drwxr-xr-x   2 danielgoldberg  staff     64 Sep  3 00:08 static
+drwxr-xr-x   2 danielgoldberg  staff     64 Aug 24 03:07 temp-uploads
+-rw-r--r--   1 danielgoldberg  staff  10720 Aug  8 12:05 theia-app.js
+-rw-r--r--   1 danielgoldberg  staff   7184 Aug  8 09:57 theia.config.js
+-rw-r--r--   1 danielgoldberg  staff    670 Sep 24 05:36 theia.json
+-rwxr-xr-x   1 danielgoldberg  staff   1194 Sep 24 07:59 use-node-20.sh
+-rw-r--r--   1 danielgoldberg  staff  16606 Sep 24 01:54 webpack.config.js
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== PACKAGE.JSON CONTENT ====================
+
+==================== COMMAND: cat package.json ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: cat package.json
+========== OUTPUT START ==========
+{
+  "name": "@the-new-fuse/theia-ide",
+  "version": "2.0.0",
+  "description": "Modern Theia IDE with full bells and whistles for The New Fuse platform",
+  "private": true,
+  "main": "enhanced-server.js",
+  "scripts": {
+    "build": "node build-theia.js",
+    "dev": "PORT=3006 node enhanced-server.js",
+    "start": "node enhanced-server.js",
+    "clean": "rm -rf lib dist node_modules/.cache",
+    "rebuild": "yarn run clean && yarn install && yarn run build",
+    "theia:build": "theia build --mode production",
+    "theia:start": "theia start",
+    "build:unified": "./build-theia.sh --prod",
+    "dev:unified": "./build-theia.sh --dev",
+    "install-extensions": "node install-extensions.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.16.0",
+    "@theia/ai-anthropic": "^1.59.0",
+    "@theia/ai-chat": "^1.59.0",
+    "@theia/ai-core": "^1.59.0",
+    "@theia/ai-huggingface": "^1.59.0",
+    "@theia/ai-mcp": "^1.59.0",
+    "@theia/ai-ollama": "^1.59.0",
+    "@theia/ai-openai": "^1.59.0",
+    "@theia/core": "^1.59.0",
+    "@theia/debug": "^1.59.0",
+    "@theia/editor": "^1.59.0",
+    "@theia/electron": "^1.59.0",
+    "@theia/filesystem": "^1.59.0",
+    "@theia/getting-started": "^1.59.0",
+    "@theia/git": "^1.59.0",
+    "@theia/markers": "^1.59.0",
+    "@theia/messages": "^1.59.0",
+    "@theia/monaco": "^1.59.0",
+    "@theia/navigator": "^1.59.0",
+    "@theia/outline-view": "^1.59.0",
+    "@theia/output": "^1.59.0",
+    "@theia/plugin-ext": "^1.59.0",
+    "@theia/plugin-ext-vscode": "^1.59.0",
+    "@theia/preferences": "^1.59.0",
+    "@theia/scm": "^1.59.0",
+    "@theia/search-in-workspace": "^1.59.0",
+    "@theia/terminal": "^1.59.0",
+    "@theia/toolbar": "^1.59.0",
+    "@theia/vsx-registry": "^1.59.0",
+    "@theia/workspace": "^1.59.0",
+    "express": "^4.19.2",
+    "find-git-repositories": "^0.2.2",
+    "http-proxy-middleware": "^3.0.0",
+    "ws": "^8.18.3",
+    "yargs": "16.2.0"
+  },
+  "devDependencies": {
+    "@theia/cli": "^1.59.0",
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5"
+  }
+}========== OUTPUT END ==========
+Exit Code: 0
+
+==================== NODE_MODULES STATUS ====================
+
+==================== COMMAND: ls -la node_modules | head -20 ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ls -la node_modules | head -20
+========== OUTPUT START ==========
+total 0
+drwxr-xr-x   6 danielgoldberg  staff   192 Sep 24 12:38 .
+drwxr-xr-x  33 danielgoldberg  staff  1056 Sep 24 13:23 ..
+drwxr-xr-x   3 danielgoldberg  staff    96 Sep 24 12:43 .bin
+drwxr-xr-x  12 danielgoldberg  staff   384 Sep 24 12:38 node-pty
+drwxr-xr-x   6 danielgoldberg  staff   192 Sep 24 12:38 rimraf
+drwxr-xr-x  15 danielgoldberg  staff   480 Sep 24 12:38 yargs
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== THEIA LIB DIRECTORY ====================
+
+==================== COMMAND: ls -la lib/ || echo 'lib directory does not exist' ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ls -la lib/ || echo 'lib directory does not exist'
+========== OUTPUT START ==========
+total 0
+drwxr-xr-x     5 danielgoldberg  staff    160 Sep 24 02:04 .
+drwxr-xr-x    33 danielgoldberg  staff   1056 Sep 24 13:23 ..
+drwxr-xr-x     3 danielgoldberg  staff     96 Sep 24 02:01 backend
+drwxr-xr-x  1297 danielgoldberg  staff  41504 Sep 24 13:05 frontend
+drwxr-xr-x     3 danielgoldberg  staff     96 Sep 24 02:04 webview
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== CLEAN INSTALL PROCESS ====================
+
+==================== COMMAND: rm -rf node_modules ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: rm -rf node_modules
+========== OUTPUT START ==========
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: rm -rf lib ====================
+Timestamp: 2025-09-24 13:23:21
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: rm -rf lib
+========== OUTPUT START ==========
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: bun install ====================
+Timestamp: 2025-09-24 13:23:24
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: bun install
+========== OUTPUT START ==========
+[0.79ms] ".env.production", ".env"
+bun install v1.2.21 (7c45ed97)
+Resolving dependencies
+Resolved, downloaded and extracted [141]
+Saved lockfile
+
+$ cp .env.example .env
+
++ rimraf@5.0.10 (v6.0.1 available)
++ yargs@16.2.0 (v18.0.0 available)
+
+6 packages installed [8.87s]
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== NODE VERSION SWITCHING ====================
+
+==================== COMMAND: source use-node-20.sh ====================
+Timestamp: 2025-09-24 13:23:33
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: source use-node-20.sh
+========== OUTPUT START ==========
+[0;34m🔧 Node.js Version Manager for Theia[0m
+[0;31m❌ nvm not found. Please install nvm first.[0m
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: node --version ====================
+Timestamp: 2025-09-24 13:23:33
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: node --version
+========== OUTPUT START ==========
+v22.16.0
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== BUILD ATTEMPTS ====================
+
+==================== COMMAND: bun run theia:build ====================
+Timestamp: 2025-09-24 13:23:33
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: bun run theia:build
+========== OUTPUT START ==========
+$ theia build --mode production
+[webpack-cli] Failed to load '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/webpack.config.js' config
+
+[webpack-cli] Error: Cannot find module 'node-pty/lib/worker/conoutSocketWorker'
+Require stack:
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/gen-webpack.node.config.js
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/webpack.config.js
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/lib/webpack-cli.js
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/lib/bootstrap.js
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/bin/cli.js
+- /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack/bin/webpack.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Function.resolve (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/v8-compile-cache/v8-compile-cache.js:164:23)
+    at Object.<anonymous> (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/gen-webpack.node.config.js:88:46)
+    at Module._compile (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/v8-compile-cache/v8-compile-cache.js:192:30)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12) {
+  code: 'MODULE_NOT_FOUND',
+  requireStack: [
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/gen-webpack.node.config.js',
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/webpack.config.js',
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/lib/webpack-cli.js',
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/lib/bootstrap.js',
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack-cli/bin/cli.js',
+    '/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/webpack/bin/webpack.js'
+  ]
+}
+
+Error: webpack exited with an unexpected code: 2.
+    at ChildProcess.<anonymous> (/Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/@theia/application-manager/lib/application-process.js:86:28)
+    at ChildProcess.emit (node:events:518:28)
+    at maybeClose (node:internal/child_process:1101:16)
+    at ChildProcess._handle.onexit (node:internal/child_process:304:5)
+error: script "theia:build" exited with code 1
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: ./build-theia.sh --prod ====================
+Timestamp: 2025-09-24 13:23:43
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ./build-theia.sh --prod
+========== OUTPUT START ==========
+[0;34m🏗️  Theia IDE Build System[0m
+[0;34m═══════════════════════════[0m
+[0;34m🔧 Checking Node.js version for Theia compatibility...[0m
+[0;34m✅ Switching to Node.js v20 for Theia build...[0m
+Now using node v20.19.5 (npm v10.8.2)
+[0;34m📊 Using Node.js version: v20.19.5[0m
+[0;32m✅ Node.js version is compatible with Theia v1.59.0[0m
+[0;34m📦 Build Mode: production[0m
+[0;34m🏗️  Starting Theia build...[0m
+[0;34m⚡ Building for production...[0m
+[0;34m🔧 Using npx to run Theia...[0m
+npm error could not determine executable to run
+npm error A complete log of this run can be found in: /Users/<owner>/.npm/_logs/2025-09-24T17_23_50_283Z-debug-0.log
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: ls -la node_modules/.bin/webpack || echo 'webpack not found' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ls -la node_modules/.bin/webpack || echo 'webpack not found'
+========== OUTPUT START ==========
+ls: node_modules/.bin/webpack: No such file or directory
+webpack not found
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== POST-BUILD DIRECTORY STATUS ====================
+
+==================== COMMAND: ls -la lib/ || echo 'lib directory still does not exist' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ls -la lib/ || echo 'lib directory still does not exist'
+========== OUTPUT START ==========
+total 0
+drwxr-xr-x   3 danielgoldberg  staff    96 Sep 24 13:23 .
+drwxr-xr-x  33 danielgoldberg  staff  1056 Sep 24 13:23 ..
+drwxr-xr-x   3 danielgoldberg  staff    96 Sep 24 13:23 frontend
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: find . -name '*.js' -path './lib/*' | head -10 || echo 'no built js files found' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: find . -name '*.js' -path './lib/*' | head -10 || echo 'no built js files found'
+========== OUTPUT START ==========
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== SERVER START ATTEMPTS ====================
+
+==================== COMMAND: timeout 10s bun run start || echo 'start command failed or timed out' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: timeout 10s bun run start || echo 'start command failed or timed out'
+========== OUTPUT START ==========
+./full-build-log.sh: line 26: timeout: command not found
+start command failed or timed out
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: timeout 10s bun run theia:start || echo 'theia:start command failed or timed out' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: timeout 10s bun run theia:start || echo 'theia:start command failed or timed out'
+========== OUTPUT START ==========
+./full-build-log.sh: line 26: timeout: command not found
+theia:start command failed or timed out
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== PORT STATUS ====================
+
+==================== COMMAND: lsof -i :3000 || echo 'port 3000 not in use' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: lsof -i :3000 || echo 'port 3000 not in use'
+========== OUTPUT START ==========
+port 3000 not in use
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: lsof -i :3001 || echo 'port 3001 not in use' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: lsof -i :3001 || echo 'port 3001 not in use'
+========== OUTPUT START ==========
+port 3001 not in use
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: lsof -i :3002 || echo 'port 3002 not in use' ====================
+Timestamp: 2025-09-24 13:24:34
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: lsof -i :3002 || echo 'port 3002 not in use'
+========== OUTPUT START ==========
+port 3002 not in use
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: lsof -i :3006 || echo 'port 3006 not in use' ====================
+Timestamp: 2025-09-24 13:24:35
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: lsof -i :3006 || echo 'port 3006 not in use'
+========== OUTPUT START ==========
+port 3006 not in use
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: lsof -i :3007 || echo 'port 3007 not in use' ====================
+Timestamp: 2025-09-24 13:24:35
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: lsof -i :3007 || echo 'port 3007 not in use'
+========== OUTPUT START ==========
+port 3007 not in use
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== RUNNING PROCESSES ====================
+
+==================== COMMAND: ps aux | grep -i theia || echo 'no theia processes found' ====================
+Timestamp: 2025-09-24 13:24:35
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ps aux | grep -i theia || echo 'no theia processes found'
+========== OUTPUT START ==========
+danielgoldberg   10099   0.0  0.0 33598508    772   ??  R     1:24PM   0:00.00 grep -i theia
+danielgoldberg   10097   0.0  0.0 33598352    644   ??  S     1:24PM   0:00.00 tee -a /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/COMPLETE_BUILD_LOG.txt
+danielgoldberg    5929   0.0  0.0 33627128   1728   ??  Ss    1:23PM   0:00.03 /bin/zsh -c -l source /Users/<owner>/.claude/shell-snapshots/snapshot-zsh-1758697692583-e7psbq.sh && eval 'cd /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide && chmod +x full-build-log.sh && ./full-build-log.sh' \< /dev/null && pwd -P >| /var/folders/tr/dm8vp49j06x047vp19yt_91w0000gn/T/claude-fda3-cwd
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: ps aux | grep -i node | head -10 || echo 'no node processes found' ====================
+Timestamp: 2025-09-24 13:24:35
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: ps aux | grep -i node | head -10 || echo 'no node processes found'
+========== OUTPUT START ==========
+danielgoldberg   44175  26.4  2.2 66160568 364272 s028  R+   12:06PM  31:57.91 node /Users/<owner>/.bun/bin/gemini
+danielgoldberg    1015  14.6  0.6 1490739528 104540   ??  S     2:52AM   5:34.15 /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper.app/Contents/MacOS/Code Helper --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --user-data-dir=/Users/<owner>/Library/Application Support/Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files --field-trial-handle=1718379636,r,18020135127784951802,8542498271926020043,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,MacWebContentsOcclusion,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version
+danielgoldberg    4716   2.9  8.6 1509573060 1450924   ??  S     2:57AM  32:12.43 /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper (Plugin).app/Contents/MacOS/Code Helper (Plugin) --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --dns-result-order=ipv4first --experimental-network-inspection --inspect-port=0 --user-data-dir=/Users/<owner>/Library/Application Support/Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files --field-trial-handle=1718379636,r,18020135127784951802,8542498271926020043,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,MacWebContentsOcclusion,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version
+danielgoldberg   24934   0.9  0.1 33721788  15700   ??  Ss   11:14AM   0:18.87 /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/node_modules/turbo-darwin-64/bin/turbo --skip-infer daemon
+danielgoldberg    1017   0.2  0.3 1490754764  42820   ??  S     2:52AM   2:53.55 /Applications/Visual Studio Code.app/Contents/Frameworks/Code Helper.app/Contents/MacOS/Code Helper --type=utility --utility-sub-type=node.mojom.NodeService --lang=en-US --service-sandbox-type=none --user-data-dir=/Users/<owner>/Library/Application Support/Code --standard-schemes=vscode-webview,vscode-file --enable-sandbox --secure-schemes=vscode-webview,vscode-file --cors-schemes=vscode-webview,vscode-file --fetch-schemes=vscode-webview,vscode-file --service-worker-schemes=vscode-webview --code-cache-schemes=vscode-webview,vscode-file --shared-files --field-trial-handle=1718379636,r,18020135127784951802,8542498271926020043,262144 --enable-features=DocumentPolicyIncludeJSCallStacksInCrashReports,EarlyEstablishGpuChannel,EstablishGpuChannelAsync --disable-features=CalculateNativeWinOcclusion,FontationsLinuxSystemFonts,MacWebContentsOcclusion,ScreenAIOCREnabled,SpareRendererForSitePerProcess --variations-seed-version
+danielgoldberg   60771   0.0  0.2 34869176  30692   ??  S    12:25PM   0:00.16 node /Users/<owner>/.npm/_npx/de2bd410102f5eda/node_modules/.bin/mcp-server-sequential-thinking
+danielgoldberg   60285   0.0  0.2 34871608  31528   ??  S    12:24PM   0:00.26 node /Users/<owner>/.npm/_npx/a3241bba59c344f5/node_modules/.bin/mcp-server-filesystem /Users/<owner>
+danielgoldberg   59513   0.0  0.2 55849004  40976   ??  S    12:24PM   0:00.52 node /Users/<owner>/.npm/_npx/eea2bd7412d4593b/node_modules/.bin/context7-mcp
+danielgoldberg   24802   0.0  0.1 34342540  21844 s015  S    11:14AM   0:00.07 node scripts/unified-build.js --prod
+danielgoldberg   24780   0.0  0.1 34342540  21844 s015  S    11:14AM   0:00.08 node scripts/unified-build.js --prod
+========== OUTPUT END ==========
+Exit Code: 0
+
+==================== NETWORK CONNECTIVITY ====================
+
+==================== COMMAND: curl -I http://localhost:3000 || echo 'port 3000 not responding' ====================
+Timestamp: 2025-09-24 13:24:36
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: curl -I http://localhost:3000 || echo 'port 3000 not responding'
+========== OUTPUT START ==========
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 3000 after 7 ms: Couldn't connect to server
+port 3000 not responding
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: curl -I http://localhost:3001 || echo 'port 3001 not responding' ====================
+Timestamp: 2025-09-24 13:24:36
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: curl -I http://localhost:3001 || echo 'port 3001 not responding'
+========== OUTPUT START ==========
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 3001 after 0 ms: Couldn't connect to server
+port 3001 not responding
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================== COMMAND: curl -I http://localhost:3002 || echo 'port 3002 not responding' ====================
+Timestamp: 2025-09-24 13:24:36
+Working Directory: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide
+Command: curl -I http://localhost:3002 || echo 'port 3002 not responding'
+========== OUTPUT START ==========
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+curl: (7) Failed to connect to localhost port 3002 after 1 ms: Couldn't connect to server
+port 3002 not responding
+========== OUTPUT END ==========
+Exit Code: 0
+
+
+==================================================================
+BUILD PROCESS COMPLETED
+Completed at: 2025-09-24 13:24:36
+Log file: /Users/<owner>/Desktop/A1-Inter-LLM-Com/The-New-Fuse/apps/theia-ide/COMPLETE_BUILD_LOG.txt
+==================================================================

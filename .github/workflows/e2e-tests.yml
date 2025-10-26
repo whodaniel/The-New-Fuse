@@ -40,28 +40,32 @@ jobs:
     - uses: actions/checkout@v3
 
     - name: Setup Node.js
-      uses: oven-sh/setup-bun@v1
+      uses: actions/setup-node@v4
       with:
-        bun-version: '18'
-        cache: 'npm'
+        node-version: '18'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
 
     - name: Install dependencies
       run: |
-        npm ci
+        pnpm install --frozen-lockfile
         npx playwright install --with-deps chromium firefox webkit
 
     - name: Build application
-      run: npm run build
+      run: pnpm run build
 
     - name: Start services
       run: |
-        npm run start:api &
-        npm run start:backend &
-        npm run start &
+        pnpm run start:api &
+        pnpm run start:backend &
+        pnpm run start &
         npx wait-on http://localhost:3000 http://localhost:3001
 
     - name: Run E2E tests
-      run: npm run test:e2e
+      run: pnpm run test:e2e
       env:
         BASE_URL: http://localhost:3000
         API_URL: http://localhost:3001
@@ -72,7 +76,7 @@ jobs:
         CI: true
 
     - name: Run performance tests
-      run: npm run test:e2e:perf
+      run: pnpm run test:e2e:perf
       env:
         PLAYWRIGHT_JSON_OUTPUT_NAME: test-results/performance.json
         CI: true

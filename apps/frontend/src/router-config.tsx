@@ -80,6 +80,9 @@ const FAQ = lazy(() => import('./pages/Help/FAQ.js'));
 const SupportTickets = lazy(() => import('./pages/Help/Support.js'));
 const CommunityForum = lazy(() => import('./pages/Help/Community.js'));
 
+// IDE pages
+const TheiaIDE = lazy(() => import('./pages/IDE/TheiaIDE'));
+
 // Error pages
 const NotFound = lazy(() => import('./pages/Error/NotFound.js'));
 const Forbidden = lazy(() => import('./pages/Error/Forbidden.js'));
@@ -273,6 +276,12 @@ const routeConfig = [
       {
         path: 'integration/api-explorer',
         element: withSuspense(APIExplorer),
+      },
+
+      // IDE route
+      {
+        path: 'ide',
+        element: withSuspense(TheiaIDE),
       },
     ],
   },
