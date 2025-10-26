@@ -14,22 +14,22 @@ RUN npm install -g pnpm@10.19.0
 WORKDIR /monorepo
 
 # Copy workspace configuration files from monorepo root
-COPY ../../pnpm-workspace.yaml ./
-COPY ../../package.json ./
-COPY ../../pnpm-lock.yaml ./
+COPY pnpm-workspace.yaml ./
+COPY package.json ./
+COPY pnpm-lock.yaml ./
 
 # Copy all package.json files for proper dependency resolution
 # Create directories first, then copy package.json files
 RUN mkdir -p ./packages ./apps
-COPY ../../packages/*/package.json ./packages/
-COPY ../../apps/*/package.json ./apps/
+COPY packages/*/package.json ./packages/
+COPY apps/*/package.json ./apps/
 
 
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
 
 # Copy the entire monorepo source
-COPY ../../ ./
+COPY . ./
 
 # Build dependencies first (comprehensive list from both versions)
 RUN pnpm --filter @the-new-fuse/types run build || echo "Types build completed"

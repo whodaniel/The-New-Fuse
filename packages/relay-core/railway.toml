@@ -1,6 +1,7 @@
 [build]
 builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile"
+dockerfilePath = "packages/relay-core/Dockerfile"
+watchPaths = ["packages/relay-core/**", "packages/types/**", "packages/core/**"]
 
 [deploy]
 healthcheckPath = "/health"

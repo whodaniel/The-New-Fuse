@@ -10,11 +10,7 @@ PNPM_VERSION = "10.19.0"
 
 [phases.install]
 cmds = [
-  # Copy workspace configuration from root
-  "cp ../../pnpm-workspace.yaml .",
-  "cp ../../pnpm-lock.yaml .",
-  "cp ../../package.json .",
-  # Install all workspace dependencies including dev dependencies for build
+  # Install all workspace dependencies from root
   "pnpm install --frozen-lockfile"
 ]
 
