@@ -1,9 +1,10 @@
+# Railway monorepo configuration  
+# This file defines default settings for the monorepo
+
 [build]
 builder = "NIXPACKS"
-nixpacksConfigPath = "nixpacks.toml"
 
 [deploy]
-healthcheckPath = "/"
 healthcheckTimeout = 300
-restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
+restartPolicyType = "ON_FAILURE"
