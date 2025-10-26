@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>Eclipse Theia</title>
+</head>
+
+<body>
+    <div class="theia-preload"></div>
+    <script type="text/javascript" src="./bundle.js" charset="utf-8"></script>
+    <script type="text/javascript">
+        // Execute the Theia entry point after webpack loads
+        (function() {
+            // Wait for webpack to load
+            function tryExecuteTheia() {
+                try {
+                    // Check if webpack chunks are available
+                    if (window.webpackChunktheia_ide_standalone && window.webpackChunktheia_ide_standalone.length > 0) {
+                        // Try to get the webpack require function and execute the entry point
+                        window.webpackChunktheia_ide_standalone.push([
+                            ['theia-startup'], // chunk id
+                            {}, // no additional modules
+                            function(__webpack_require__) {
+                                try {
+                                    // Execute the entry point module
+                                    const entryModule = __webpack_require__('./src-gen/frontend/index.js');
+                                    console.log('Theia entry point executed successfully');
+
+                                    // If the entry point returns a promise, handle it
+                                    if (entryModule && typeof entryModule.then === 'function') {
+                                        entryModule.catch(error => {
+                                            console.error('Theia startup failed:', error);
+                                        });
+                                    }
+                                } catch (error) {
+                                    console.error('Failed to execute Theia entry point:', error);
+                                }
+                            }
+                        ]);
+                        return true;
+                    }
+                } catch (error) {
+                    console.error('Error in tryExecuteTheia:', error);
+                }
+                return false;
+            }
+
+            // Try immediately, then with delays
+            if (!tryExecuteTheia()) {
+                setTimeout(() => {
+                    if (!tryExecuteTheia()) {
+                        setTimeout(tryExecuteTheia, 1000);
+                    }
+                }, 100);
+            }
+        })();
+    </script>
+</body>
+
+</html>
