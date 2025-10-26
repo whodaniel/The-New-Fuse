@@ -1,44 +1,70 @@
-# Use Node.js 20 Alpine as base image
-FROM node:20-alpine
+# Dockerfile for core-vector-db package in Railway monorepo deployment
+# Railway Root Directory: /packages/core-vector-db
+
+# Stage 1: Build stage with full monorepo context
+FROM node:20-alpine AS builder
 
 # Install pnpm globally
-RUN npm install -g pnpm
+RUN npm install -g pnpm@10.19.0
 
-# Set working directory
-WORKDIR /app
+# Set working directory to monorepo root
+WORKDIR /monorepo
 
-# Copy workspace configuration files
-COPY pnpm-workspace.yaml ./
-COPY package.json ./
-COPY pnpm-lock.yaml ./
+# Copy workspace configuration files from monorepo root
+COPY ../../pnpm-workspace.yaml ./
+COPY ../../package.json ./
+COPY ../../pnpm-lock.yaml ./
 
-# Copy all package.json files for dependency resolution
-COPY packages/*/package.json ./packages/*/
-COPY apps/*/package.json ./apps/*/
+# Copy all package.json files for proper dependency resolution
+COPY ../../packages/*/package.json ./packages/
+COPY ../../apps/*/package.json ./apps/ || true
 
-# Install dependencies
+# Install all dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy all source code
-COPY . .
+# Copy the entire monorepo source
+COPY ../../ ./
 
-# Build dependencies first (types, utils, core, database)
+# Build dependencies first (comprehensive list from both versions)
 RUN pnpm --filter @the-new-fuse/types run build || echo "Types build completed"
 RUN pnpm --filter @the-new-fuse/utils run build || echo "Utils build completed"
 RUN pnpm --filter @the-new-fuse/core run build || echo "Core build completed"
 RUN pnpm --filter @the-new-fuse/database run build || echo "Database build completed"
+RUN pnpm --filter @the-new-fuse/proto-definitions run build || echo "Proto-definitions build completed"
 
-# Build the core-vector-db package specifically
-RUN pnpm --filter @the-new-fuse/core-vector-db run build
+# Build core-vector-db
+RUN pnpm --filter @the-new-fuse/core-vector-db build
 
 # Verify the build output exists
-RUN ls -la /app/packages/core-vector-db/dist/
+RUN ls -la /monorepo/packages/core-vector-db/dist/
 
-# Expose the default port
+# Stage 2: Production image
+FROM node:20-alpine AS production
+
+# Install pnpm
+RUN npm install -g pnpm@10.19.0
+
+WORKDIR /app
+
+# Copy only necessary files from builder
+COPY --from=builder /monorepo/package.json ./
+COPY --from=builder /monorepo/pnpm-lock.yaml ./
+COPY --from=builder /monorepo/pnpm-workspace.yaml ./
+COPY --from=builder /monorepo/packages/core-vector-db ./packages/core-vector-db
+COPY --from=builder /monorepo/node_modules ./node_modules
+
+# Install only production dependencies
+RUN pnpm install --frozen-lockfile --prod
+
+# Expose gRPC port
 EXPOSE 50051
 
-# Set working directory to the package
+# Set working directory to the service
 WORKDIR /app/packages/core-vector-db
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:50051/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
 # Start the service
 CMD ["node", "dist/main.js"]

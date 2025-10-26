@@ -1,14 +1,32 @@
+# Nixpacks configuration for api service in monorepo
+# This handles pnpm workspace dependencies correctly
+
 [phases.setup]
 nixPkgs = ["nodejs_20", "pnpm"]
 
 [variables]
 NODE_VERSION = "20"
+PNPM_VERSION = "10.19.0"
 
 [phases.install]
-cmds = ["pnpm install --frozen-lockfile"]
+cmds = [
+  # Copy workspace configuration from root
+  "cp ../../pnpm-workspace.yaml .",
+  "cp ../../pnpm-lock.yaml .",
+  "cp ../../package.json .",
+  # Install all workspace dependencies
+  "pnpm install --frozen-lockfile"
+]
 
 [phases.build]
-cmds = ["pnpm run build"]
+cmds = [
+  # Build dependencies first (types, core, etc)
+  "pnpm --filter @the-new-fuse/types build || true",
+  "pnpm --filter @the-new-fuse/core build || true",
+  "pnpm --filter @the-new-fuse/database build || true",
+  # Build api
+  "pnpm --filter @the-new-fuse/api build"
+]
 
 [start]
-cmd = "pnpm start"
+cmd = "pnpm --filter @the-new-fuse/api start"
