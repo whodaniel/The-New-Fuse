@@ -1,4 +1,8 @@
-FROM node:20-alpine
+FROM node:20-alpine3.19
+
+# Update Alpine packages for security patches
+RUN apk update && apk upgrade --no-cache
+
 RUN npm install -g pnpm
 WORKDIR /app
 

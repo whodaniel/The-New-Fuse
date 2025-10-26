@@ -2,7 +2,10 @@
 # Railway Root Directory: /packages/core-vector-db
 
 # Stage 1: Build stage with full monorepo context
-FROM node:20-alpine AS builder
+FROM node:20-alpine3.19 AS builder
+
+# Update Alpine packages for security patches
+RUN apk update && apk upgrade --no-cache
 
 # Install pnpm globally
 RUN npm install -g pnpm@10.19.0
@@ -16,8 +19,11 @@ COPY ../../package.json ./
 COPY ../../pnpm-lock.yaml ./
 
 # Copy all package.json files for proper dependency resolution
+# Create directories first, then copy package.json files
+RUN mkdir -p ./packages ./apps
 COPY ../../packages/*/package.json ./packages/
-COPY ../../apps/*/package.json ./apps/ || true
+COPY ../../apps/*/package.json ./apps/
+
 
 # Install all dependencies
 RUN pnpm install --frozen-lockfile
@@ -39,7 +45,10 @@ RUN pnpm --filter @the-new-fuse/core-vector-db build
 RUN ls -la /monorepo/packages/core-vector-db/dist/
 
 # Stage 2: Production image
-FROM node:20-alpine AS production
+FROM node:20-alpine3.19 AS production
+
+# Update Alpine packages for security patches
+RUN apk update && apk upgrade --no-cache
 
 # Install pnpm
 RUN npm install -g pnpm@10.19.0

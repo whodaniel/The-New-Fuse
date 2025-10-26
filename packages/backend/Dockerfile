@@ -1,5 +1,8 @@
 # Use Node.js 20 Alpine as base image
-FROM node:20-alpine
+FROM node:20-alpine3.19
+
+# Update Alpine packages for security patches
+RUN apk update && apk upgrade --no-cache
 
 # Install pnpm globally
 RUN npm install -g pnpm
