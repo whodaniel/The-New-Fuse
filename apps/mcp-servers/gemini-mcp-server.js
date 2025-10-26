@@ -1,5 +1,6 @@
 
 const WebSocket = require('ws');
+const http = require('http');
 const { ToolboxClient } = require('@toolbox-sdk/core');
 
 const TOOLBOX_SERVICE_URL = process.env.TOOLBOX_SERVICE_URL || 'http://127.0.0.1:5000'; // Replace with your Toolbox service URL
@@ -36,3 +37,19 @@ wss.on('connection', ws => {
 });
 
 console.log('Gemini MCP Server listening on port 3713');
+
+// Health check server
+const healthPort = process.env.PORT || 3004;
+const healthServer = http.createServer((req, res) => {
+  if (req.url === '/health') {
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ status: 'ok' }));
+  } else {
+    res.writeHead(404);
+    res.end();
+  }
+});
+
+healthServer.listen(healthPort, () => {
+  console.log(`Health check server listening on port ${healthPort}`);
+});
