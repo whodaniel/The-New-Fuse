@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client-js"
-  output   = "../packages/database/generated/prisma"
+  output   = "./generated/prisma"
   previewFeatures = ["driverAdapters", "metrics", "fullTextSearchPostgres"]
 }
 

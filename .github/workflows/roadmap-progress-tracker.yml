@@ -32,14 +32,17 @@ jobs:
         with:
           version: 8
 
-      - name: Install Dependencies
+      - name: Install Script Dependencies
         run: |
-          # Create a temporary directory for global packages to avoid workspace conflicts
-          mkdir -p /tmp/pnpm-global
-          export PNPM_HOME=/tmp/pnpm-global
-          export PATH=/tmp/pnpm-global:$PATH
-          pnpm add -g @octokit/rest
-          pnpm add -g js-yaml
+          cat > package.json << 'EOF'
+          {
+            "dependencies": {
+              "@octokit/rest": "22.0.0",
+              "js-yaml": "4.1.0"
+            }
+          }
+          EOF
+          pnpm install --shamefully-hoist
 
       - name: Update Roadmap Progress
         env:
