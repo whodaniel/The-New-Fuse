@@ -13,21 +13,25 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       
-      - name: Use Node.js
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '18.x'
-          cache: 'npm'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
           
       - name: Install dependencies
         run: |
           cd src/vscode-extension
-          npm ci
+          pnpm install --frozen-lockfile
           
       - name: Run performance tests
         run: |
           cd src/vscode-extension
-          npm run benchmark
+          pnpm run benchmark
           
       - name: Process results
         id: process

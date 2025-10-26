@@ -20,14 +20,19 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Generate cache key
         id: cache-key
-        run: echo "key=deps-${{ hashFiles('**/bun.lockb', '**/package.json') }}" >> $GITHUB_OUTPUT
+        run: echo "key=deps-${{ hashFiles('**/pnpm-lock.yaml', '**/package.json') }}" >> $GITHUB_OUTPUT
 
       - name: Cache node_modules
         uses: actions/cache@v4
@@ -48,10 +53,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -70,10 +80,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -95,10 +110,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -128,10 +148,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -176,10 +201,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore build cache
         uses: actions/cache@v4
@@ -234,10 +264,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -245,7 +280,7 @@ jobs:
           path: |
             node_modules
             **/node_modules
-          key: deps-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          key: deps-${{ hashFiles('**/pnpm-lock.yaml', '**/package.json') }}
 
       - name: Configure kubectl
         uses: azure/k8s-set-context@v3
@@ -286,10 +321,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          bun-version: '1.1.38'
+          node-version: '18'
+          
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
 
       - name: Restore cache
         uses: actions/cache@v4
@@ -297,7 +337,7 @@ jobs:
           path: |
             node_modules
             **/node_modules
-          key: deps-${{ hashFiles('**/bun.lockb', '**/package.json') }}
+          key: deps-${{ hashFiles('**/pnpm-lock.yaml', '**/package.json') }}
 
       - name: Configure kubectl
         uses: azure/k8s-set-context@v3
