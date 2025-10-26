@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Railway Deployment Script for The New Fuse SAAS Services
-# Updated to exclude desktop/browser-only applications
+# Updated to exclude desktop/browser-only applications and handle service creation
 
 set -e
 
@@ -45,6 +45,47 @@ total_services=${#services[@]}
 echo "📋 Services to deploy: ${total_services}"
 echo ""
 
+# Function to create service if it doesn't exist
+create_service_if_needed() {
+    local service_path="$1"
+    local service_desc="$2"
+    
+    echo "🔍 Checking if service exists for ${service_desc}..."
+    
+    # Try to link to the service first to see if it exists
+    if ! railway link --project TNF --environment production 2>/dev/null; then
+        echo "⚠️  Service not found, creating new service..."
+        
+        # Create the service using Railway CLI
+        echo "📝 Creating service: ${service_desc}"
+        
+        # Use expect to handle interactive prompts
+        expect << EOF
+spawn railway add
+expect "What do you need?"
+send "GitHub Repo\r"
+expect "Enter a repo"
+send "whodaniel/fuse\r"
+expect "Enter a variable"
+send "\r"
+expect "Enter a service name"
+send "${service_desc}\r"
+expect eof
+EOF
+        
+        if [ $? -eq 0 ]; then
+            echo "✅ Service created successfully: ${service_desc}"
+        else
+            echo "❌ Failed to create service: ${service_desc}"
+            return 1
+        fi
+    else
+        echo "✅ Service already exists: ${service_desc}"
+    fi
+    
+    return 0
+}
+
 # Deploy each service
 for service_entry in "${services[@]}"; do
     # Split path and description
@@ -73,6 +114,15 @@ for service_entry in "${services[@]}"; do
 
     # Navigate to service directory
     cd "$service_path"
+
+    # Create service if needed
+    if ! create_service_if_needed "$service_path" "$service_desc"; then
+        echo "❌ Failed to create/verify service: ${service_desc}"
+        ((failed_count++))
+        cd - > /dev/null
+        echo ""
+        continue
+    fi
 
     # Check if Railway configuration exists
     if [ ! -f "railway.toml" ] && [ ! -f "nixpacks.toml" ] && [ ! -f "Dockerfile" ]; then
