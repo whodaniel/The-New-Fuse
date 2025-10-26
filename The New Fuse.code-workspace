@@ -224,11 +224,7 @@
 			"path": "packages/database"
 		},
 		{
-			"name": "prisma",
-			"path": "packages/database/packages/database/generated/prisma"
-		},
-		{
-			"name": "prisma",
+			"name": "prisma-generated",
 			"path": "packages/database/generated/prisma"
 		},
 		{
