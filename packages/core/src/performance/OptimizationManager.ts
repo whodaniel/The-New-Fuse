@@ -4,7 +4,7 @@ export class OptimizationManager { private metrics: MetricsCollector
     public async optimizeResponse(): Promise<void> {request: AIRequest): Promise<AIResponse> {
   // Implementation needed
 }
-        if(): unknown {
+        if(): any {
             return this.cache.get(request);
          }
 

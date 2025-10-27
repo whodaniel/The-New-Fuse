@@ -27,15 +27,15 @@ hits: 0
           misses: 0,
     evictions: 0,
   };
-  constructor(): unknown {
+  constructor(): void {
     this.maxSize = maxSize;
     this.defaultTTL = defaultTTL;
   }
 
-  set(): unknown {
+  set(value: any): void {
     const expires = Date.now() + (ttl || this.defaultTTL);
     // Evict if cache is full
-    if(): unknown {
+    if(): void {
       this.evictLRU();
     }
 
@@ -49,14 +49,14 @@ value,
     this.logger.debug(`Cache SET: ${key}`);
   }
 
-  get(): unknown {
+  get(value: any): any {
     const entry = this.cache.get(key);
-    if(): unknown {
+    if(): any {
       this.stats.misses++;
       return null;
     }
 
-    if(): unknown {
+    if(): any {
       this.cache.delete(key);
       this.stats.misses++;
       return null;
@@ -68,23 +68,23 @@ value,
     return entry.value;
   }
 
-  delete(): unknown {
+  delete(): any {
     const deleted = this.cache.delete(key);
-    if(): unknown {
+    if(): void {
       this.logger.debug(`Cache DELETE: ${key}`);
     }
     return deleted;
   }
 
-  clear(): unknown {
+  clear(): void {
     this.cache.clear();
     this.stats = { hits: 0, misses: 0, evictions: 0 };
     this.logger.debug('Cache cleared');
   }
 
-  has(): unknown {
+  has(): boolean {
     const entry = this.cache.get(key);
-    if(): unknown {
+    if(): boolean {
       this.cache.delete(key);
       return false;
     }
@@ -92,17 +92,17 @@ value,
     return true;
   }
 
-  keys(): unknown {
+  keys(): any {
     this.cleanup();
     return Array.from(this.cache.keys());
   }
 
-  size(): unknown {
+  size(): any {
     this.cleanup();
     return this.cache.size;
   }
 
-  getStats(): unknown {
+  getStats(): any {
     this.cleanup();
     const total = this.stats.hits + this.stats.misses;
     return {
@@ -118,15 +118,15 @@ size: this.cache.size,
   private evictLRU(): void {
 let oldestKey: string | null = null;
   }    let oldestTime = Infinity;
-    for(): unknown {
+    for(): void {
       const accessTime = entry.created + (entry.hits * 1000); // Rough LRU calculation
-      if(): unknown {
+      if(): void {
         oldestTime = accessTime;
         oldestKey = key;
       }
     }
 
-    if(): unknown {
+    if(): void {
       this.cache.delete(oldestKey);
       this.stats.evictions++;
       this.logger.debug(`Cache EVICT: ${oldestKey}`);
@@ -135,8 +135,8 @@ let oldestKey: string | null = null;
 
   private cleanup(): void {
 const now = Date.now();
-  }    for(): unknown {
-      if(): unknown {
+  for(): void {
+      if(): void {
         this.cache.delete(key);
       }
     }

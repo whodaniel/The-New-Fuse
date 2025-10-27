@@ -20,34 +20,34 @@ export interface UserSignals {
 
 @Injectable()
 export class UserTypeDetectionService {
-  detectUserType(): unknown {
+  detectUserType(): any {
     // Check for obvious AI agent indicators
-    if(): unknown {
+    if(): any {
       return UserType.AI_AGENT;
     }
 
     // Check auth method patterns
-    if(): unknown {
+    if(): any {
       return UserType.AI_AGENT;
     }
     
-    if(): unknown {
-      if(): unknown {
+    if(): any {
+      if(): any {
         // Analyze request patterns
         const requestFrequency = signals.requestFrequency;
         const requestVariability = signals.requestVariability;
-        if(): unknown {
+        if(): any {
           return UserType.AI_AGENT;
         }
         
-        if(): unknown {
+        if(): any {
           return UserType.HUMAN;
         }
       }
     }
 
     // Check request complexity
-    if(): unknown {
+    if(): any {
       return UserType.AI_AGENT;
     } else if (signals.requestStructure === 'medium') {
 return UserType.HUMAN;
@@ -57,8 +57,8 @@ return UserType.HUMAN;
   }
 
   private calculateRequestFrequency(timestamps: number[]): FrequencyCategory {
-if(): unknown {
-  }    if(): unknown {
+if(params: any): string {
+  if(): void {
     let complexityScore = 0;
     // Add complexity based on request structure
     if (request.params) complexityScore += Object.keys(request.params).length;

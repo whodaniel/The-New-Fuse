@@ -58,8 +58,8 @@ export class MessageHandler {
   private readonly maxMemoryMessages: number;
   private readonly agents: Map<string, AgentConfig>;
   private readonly conversationContexts: Map<string, MessageContent[]>;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(): any {
+    super(): void {
     const metadata: AgentMetadata = {
 description: name === 'Cascade' 
         ? "Cascade is a knowledgeable and analytical AI assistant"
@@ -115,7 +115,7 @@ this.logger.error('Error handling message:', error);
 
   private determineTargetAgent(message: MessageContent): string {
 // Simple routing logic - can be enhanced with more sophisticated routing
-  }    if(): unknown {
+  if(): void {
       return message.metadata.targetAgent;
     }
     
@@ -124,21 +124,21 @@ this.logger.error('Error handling message:', error);
   }
 
   private addToConversationContext(agentId: string, message: MessageContent): void {
-if(): unknown {
+if(): void {
   }      this.conversationContexts.set(agentId, []);
     }
     
     const context = this.conversationContexts.get(agentId)!;
     context.push(message);
     // Maintain memory limit
-    if(): unknown {
+    if(): void {
       context.shift();
     }
   }
 
   private async processMessage(message: MessageContent, agentId: string): Promise<void> {
 const agent = this.agents.get(agentId);
-  }    if(): unknown {
+  if(): void {
       throw new Error(`Agent not found: ${agentId}`);
     }
 
@@ -163,7 +163,7 @@ this.logger.error(`Error calling agent ${agentId}:`, error);
   }
 
   private async callAgent(agent: AgentConfig, message: MessageContent): Promise<string> {
-if(): unknown {
+if(): void {
   }      throw new Error('Content must be a non-empty string');
     }
 
@@ -205,12 +205,12 @@ role: 'system',
         headers,
         body: JSON.stringify(requestBody)
       });
-      if(): unknown {
+      if(): void {
         throw new Error(`API request failed: ${response.status} ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      if(): unknown {
+      if(): void {
         throw new Error('Unexpected API response format');
       }
 
@@ -232,12 +232,12 @@ return [
     ].join('\n');
   }}
 
-  async sendMessage(): unknown {
-    if(): unknown {
+  async sendMessage(): void {
+    if(): void {
       throw new Error('Message content must be a non-empty string');
     }
 
-    if(): unknown {
+    if(): void {
       throw new Error(`Invalid agent: ${toAgent}`);
     }
 
@@ -255,23 +255,23 @@ role: MessageRole.USER,
     this.emit('message', message);
   }
 
-  getConversationContext(): unknown {
+  getConversationContext(): any {
     return this.conversationContexts.get(agentId) || [];
   }
 
-  clearConversationContext(): unknown {
-    if(): unknown {
+  clearConversationContext(): void {
+    if(): any {
       this.conversationContexts.delete(agentId);
     } else {
 this.conversationContexts.clear();
   }}
   }
 
-  getAgents(): unknown {
+  getAgents(): any {
     return Array.from(this.agents.keys());
   }
 
-  getAgentConfig(): unknown {
+  getAgentConfig(): any {
     return this.agents.get(agentId);
   }
 }

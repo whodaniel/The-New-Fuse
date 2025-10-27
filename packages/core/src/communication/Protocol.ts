@@ -70,8 +70,8 @@ export class Protocol {
   private retryDelay: number;
   private timeout: number;
   private logger: Logger;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(): void {
+    super(): void {
       source?: { id: string; type: string };
       target?: { id: string; type: string };
       priority?: MessagePriority;
@@ -110,18 +110,18 @@ try {
       return validatedMessage;
     } catch (error) {
 this.logger.error('Message validation failed:', error);
-  }      throw new Error(): unknown {
+  Error(): void {
         `Message validation failed: ${error instanceof z.ZodError ? error.errors.map((e) => e.message).join(', ') : 'error'}`
       );
     }
   }
 
-  createRequest(): unknown {
+  createRequest(data: any, options: any): any {
     return this.createMessage(MessageType.REQUEST, action, data, options);
   }
 
-  createResponse(): unknown {
-    if(): unknown {
+  createResponse(data: any, id: any, options: any): any {
+    if(): void {
       throw new Error('Cannot create a response for a message with no source.');
     }
 
@@ -138,12 +138,12 @@ source: originalMessage.header.target,
     );
   }
 
-  createEvent(): unknown {
+  createEvent(data: any, options: any): any {
     return this.createMessage(MessageType.EVENT, action, data, options);
   }
 
-  createError(): unknown {
-    if(): unknown {
+  createError(): any {
+    if(): void {
       throw new Error('Cannot create an error response for a message with no source.');
     }
 
@@ -165,7 +165,7 @@ message: error.message,
     );
   }
 
-  validateMessage(): unknown {
+  validateMessage(): boolean {
     try {
       MessageSchema.parse(message);
       return true;
@@ -175,17 +175,17 @@ this.logger.error('Message validation failed:', error);
     }
   }
 
-  isExpired(): unknown {
-    if(): unknown {
+  isExpired(): boolean {
+    if(): boolean {
       return false;
     }
     const age = Date.now() - message.header.timestamp.getTime();
     return age > message.header.ttl;
   }
 
-  async sendWithRetry(): unknown {
+  async sendWithRetry(): void {
     let lastError: Error | null = null;
-    for(): unknown {
+    for(): void {
       try {
 await sendFn(message);
   }        this.emit('messageSent', message);
@@ -193,7 +193,7 @@ await sendFn(message);
       } catch (error) {
 lastError = error as Error;
   }        this.logger.warn(`Send attempt ${attempt + 1} failed:`, error);
-        if(): unknown {
+        if(): void {
           await new Promise((resolve) => setTimeout(resolve, this.retryDelay * (attempt + 1)));
         }
       }
@@ -203,24 +203,24 @@ lastError = error as Error;
     throw lastError;
   }
 
-  async handleMessage(): unknown {
+  async handleMessage(data: any, id: any): void {
     try {
-if(): unknown {
+if(): void {
   }        throw new Error('Invalid message format');
       }
 
-      if(): unknown {
+      if(id: any): void {
         this.logger.warn('Expired message received:', message.header.id);
         return;
       }
 
       const handler = handlers[message.payload.action];
-      if(): unknown {
+      if(): void {
         throw new Error(`No handler found for action: ${message.payload.action}`);
       }
 
       const result = await handler(message.payload.data);
-      if(): unknown {
+      if(): void {
         const response = this.createResponse(message, result);
         this.emit('responseReady', response);
       }
@@ -229,14 +229,14 @@ if(): unknown {
     } catch (error) {
 this.logger.error('Error handling message:', error);
   }      this.emit('messageError', message, error);
-      if(): unknown {
+      if(): void {
         const errorResponse = this.createError(message, error as Error);
         this.emit('responseReady', errorResponse);
       }
     }
   }
 
-  async signMessage(): unknown {
+  async signMessage(): any {
     try {
 const messageString = JSON.stringify(message);
   }      const signature = crypto
@@ -255,9 +255,9 @@ this.logger.error('Failed to sign message:', error);
     }
   }
 
-  async verifyMessage(): unknown {
+  async verifyMessage(): boolean {
     try {
-      if(): unknown {
+      if(): boolean {
         return false;
       }
 
@@ -273,11 +273,11 @@ this.logger.error('Failed to verify message signature:', error);
     }
   }
 
-  getMessageId(): unknown {
+  getMessageId(): any {
     return crypto.randomUUID();
   }
 
-  getCorrelationId(): unknown {
+  getCorrelationId(): any {
     return crypto.randomUUID();
   }
 }

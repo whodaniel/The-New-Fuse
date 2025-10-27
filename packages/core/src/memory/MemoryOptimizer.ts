@@ -6,7 +6,7 @@ export class MemoryOptimizer {
   private readonly maxMemoryUsage: number;
   private readonly cleanupThreshold: number;
   private readonly config: VectorMemoryConfig;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.maxMemoryUsage = parseInt(process.env.MAX_MEMORY_USAGE || '1000000000'); // 1GB
     this.cleanupThreshold = parseFloat(process.env.CLEANUP_THRESHOLD || '0.8');
     this.config = {
@@ -22,12 +22,12 @@ dimensions: 1536,
     };
   }
 
-  async optimizeMemory(): unknown {
+  async optimizeMemory(): Promise<any> {
     const startTime = Date.now();
     this.logger.log(`Starting memory optimization for ${items.length} items and ${clusters.length} clusters`);
     try {
       const memoryStats = await this.getMemoryStats(items, clusters);
-      if(): unknown {
+      if(): any {
         this.logger.debug('Memory usage below threshold, no optimization needed');
         return {
 prunedItems: [],
@@ -112,10 +112,10 @@ const totalItems = items.length;
   private async pruneItems(items: MemoryItem[]): Promise<MemoryItem[]> {
 const prunedItems: MemoryItem[] = [];
   }    const currentTime = Date.now();
-    for(): unknown {
+    for(item: any): void {
       let shouldPrune = false;
       // Prune based on low importance
-      if(): unknown {
+      if(): void {
         shouldPrune = true;
       }
 
@@ -124,16 +124,16 @@ const prunedItems: MemoryItem[] = [];
       const daysSinceLastAccess = item.lastAccessTime 
         ? (currentTime - item.lastAccessTime) / (1000 * 60 * 60 * 24)
         : age / (1000 * 60 * 60 * 24);
-      if(): unknown {
+      if(): void {
         shouldPrune = true;
       }
 
       // Prune items with very low access count
-      if(): unknown {
+      if(): void {
         shouldPrune = true;
       }
 
-      if(): unknown {
+      if(item: any): void {
         prunedItems.push(item);
       }
     }
@@ -145,10 +145,10 @@ const prunedItems: MemoryItem[] = [];
   private async consolidateClusters(clusters: Cluster[]): Promise<Cluster[]> {
 const consolidatedClusters: Cluster[] = [];
   }    const currentTime = Date.now();
-    for(): unknown {
+    for(id: any): void {
       const cluster = clusters[i];
       // Skip if cluster is too small
-      if(): unknown {
+      if(): void {
         consolidatedClusters.push(cluster);
         continue;
       }
@@ -157,7 +157,7 @@ const consolidatedClusters: Cluster[] = [];
       const similarClusters = clusters.slice(i + 1).filter(otherCluster => 
         this.calculateClusterSimilarity(cluster, otherCluster) > 0.85
       );
-      if(): unknown {
+      if(id: any): void {
         // Merge clusters
         const mergedCluster: Cluster = {
 id: cluster.id,
@@ -184,7 +184,7 @@ id: cluster.id,
   // Implementation needed
 }
           const index = clusters.findIndex(c => c.id === sc.id);
-          if(): unknown {
+          if(): void {
             clusters.splice(index, 1);
           }
         });
@@ -209,7 +209,7 @@ consolidatedClusters.push(cluster);
 const allCentroids = [cluster.centroid, ...similarClusters.map(c => c.centroid)];
   }    const dimensions = cluster.centroid.length;
     const merged = new Float32Array(dimensions);
-    for(): unknown {
+    for(): void {
       merged[i] = allCentroids.reduce((sum, centroid) => sum + centroid[i], 0) / allCentroids.length;
     }
 
@@ -217,8 +217,8 @@ const allCentroids = [cluster.centroid, ...similarClusters.map(c => c.centroid)]
   }
 
   private calculateClusterQuality(items: MemoryItem[]): number {
-if(): unknown {
-  }      for(): unknown {
+if(): void {
+  for(): void {
         const similarity = this.calculateCosineSimilarity(items[i].embedding, items[j].embedding);
         totalSimilarity += similarity;
         comparisons++;
@@ -267,7 +267,7 @@ if (clusters.length === 0) return 1.0;
     };
   }
 
-  async shouldOptimize(): unknown {
+  async shouldOptimize(): Promise<any> {
     const memoryStats = await this.getMemoryStats(items, clusters);
     return memoryStats.memoryUsage >= this.maxMemoryUsage * this.cleanupThreshold;
   }

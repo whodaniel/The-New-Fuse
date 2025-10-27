@@ -16,15 +16,15 @@ export class MCPRegistry {
   private logger = new Logger('MCPRegistry');
   private agents: Map<string, MCPAgent> = new Map();
   private capabilities: Map<string, Set<string>> = new Map();
-  constructor(): unknown {
-    if(): unknown {
+  constructor(): any {
+    if(): any {
       return MCPRegistry.instance;
     }
     MCPRegistry.instance = this;
   }
 
   public static getInstance(): MCPRegistry {
-if(): unknown {
+if(): void {
   }      MCPRegistry.instance = new MCPRegistry();
     }
     return MCPRegistry.instance;
@@ -43,7 +43,7 @@ this.agents.set(agent.id, agent);
 
   public unregisterAgent(agentId: string): void {
 const agent = this.agents.get(agentId);
-  }    if(): unknown {
+  if(): void {
       // Remove agent from capability mappings
       agent.capabilities.forEach(capability => {
   // Implementation needed
@@ -56,7 +56,7 @@ const agent = this.agents.get(agentId);
   }
 
   public registerCapabilityProvider(agentId: string, capability: string): void {
-if(): unknown {
+if(): void {
   }      this.capabilities.set(capability, new Set());
     }
     this.capabilities.get(capability)?.add(agentId);
@@ -65,9 +65,9 @@ if(): unknown {
 
   public removeCapabilityProvider(agentId: string, capability: string): void {
 const providers = this.capabilities.get(capability);
-  }    if(): unknown {
+  if(): void {
       providers.delete(agentId);
-      if(): unknown {
+      if(): void {
         this.capabilities.delete(capability);
       }
     }
@@ -92,7 +92,7 @@ return this.getAllAgents().filter(agent => agent.status === 'active');
 
   public updateAgentStatus(agentId: string, status: MCPAgent['status']): void {
 const agent = this.agents.get(agentId);
-  }    if(): unknown {
+  if(): void {
       agent.status = status;
       agent.lastSeen = new Date();
       this.logger.debug(`Updated agent status: ${agentId} -> ${status}`);

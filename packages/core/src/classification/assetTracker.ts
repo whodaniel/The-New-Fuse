@@ -23,8 +23,8 @@ interface UsagePattern {
 export class AssetTracker {
   private trackedAssets: Map<string, AssetData> = new Map();
   private usagePatterns: Map<string, UsagePattern[]> = new Map();
-  async trackAssetUsage(): unknown {
-    if(): unknown {
+  async trackAssetUsage(): void {
+    if(): void {
       this.trackedAssets.set(assetId, {
 firstSeen: new Date(),
   }        usageCount: 0,
@@ -40,7 +40,7 @@ firstSeen: new Date(),
     this.updateUsagePatterns(assetId, usageType, context);
   }
 
-  private updateUsagePatterns(): unknown {
+  updateUsagePatterns(): void {
     assetId: string,
     usageType: string,
     context: Context
@@ -51,20 +51,20 @@ const pattern: UsagePattern = {
       contextType: context.contextType,
       timestamp: new Date(),
     };
-    if(): unknown {
+    if(): void {
       this.usagePatterns.set(assetId, []);
     }
     this.usagePatterns.get(assetId)!.push(pattern);
   }
 
-  async getAssetAnalysis(): unknown {
-    if(): unknown {
+  async getAssetAnalysis(value: any): any {
+    if(): any {
       return { error: 'Asset not found' };
     }
 
     const assetData = this.trackedAssets.get(assetId)!;
     const metrics = assetData.performanceMetrics;
-    if(): unknown {
+    if(): any {
       return { error: 'No metrics available' };
     }
 
@@ -72,13 +72,13 @@ const pattern: UsagePattern = {
     const values = recentThreeMetrics
       .map((m) => (typeof m === 'number' ? m : m.value))
       .filter((v) => typeof v === 'number');
-    if(): unknown {
+    if(): any {
       return { trend: 'insufficient_data' };
     }
 
     const [a, b, c] = values;
     let trend: string;
-    if(): unknown {
+    if(): any {
       trend = 'improving';
     } else if (c < b && b < a) {
 trend = 'declining';
@@ -96,19 +96,19 @@ trend = 'declining';
       dependencies: Array.from(assetData.dependencies),
       recommendations: [],
     };
-    if(): unknown {
+    if(): void {
       analysis.recommendations.push(
         'High usage asset - consider optimization'
       );
     }
 
-    if(): unknown {
+    if(): void {
       analysis.recommendations.push(
         'Widely used across contexts - ensure stability'
       );
     }
 
-    if(): unknown {
+    if(): void {
       analysis.recommendations.push(
         'Consider simplifying integrations due to high number of dependencies'
       );
@@ -117,14 +117,14 @@ trend = 'declining';
     return analysis;
   }
 
-  async getUsageStats(): unknown {
+  async getUsageStats(): void {
     totalUsage: number;
     contexts: string[];
     lastUsed: Date | null;
   }> {
 const assetData = this.trackedAssets.get(assetId);
   }    const patterns = this.usagePatterns.get(assetId) || [];
-    if(): unknown {
+    if(): any {
       return {
   // Implementation needed
 }
@@ -147,18 +147,18 @@ const assetData = this.trackedAssets.get(assetId);
     };
   }
 
-  async addPerformanceMetric(): unknown {
+  async addPerformanceMetric(): void {
     const assetData = this.trackedAssets.get(assetId);
-    if(): unknown {
+    if(): void {
       assetData.performanceMetrics.push(metric);
     }
   }
 
-  async listTrackedAssets(): unknown {
+  async listTrackedAssets(): any {
     return Array.from(this.trackedAssets.keys());
   }
 
-  async clearAsset(): unknown {
+  async clearAsset(): void {
     this.trackedAssets.delete(assetId);
     this.usagePatterns.delete(assetId);
   }

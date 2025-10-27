@@ -37,18 +37,18 @@ export interface Task {
 export class TaskExecutor {
   }  private readonly logger = new Logger(TaskExecutor.name);
   private readonly redis: Redis;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(): void {
+    super(): void {
       host: this.configService.get('REDIS_HOST', 'localhost'),
       port: this.configService.get('REDIS_PORT', 6379),
     });
   }
 
-  async executeTask(): unknown {
+  async executeTask(data: any, id: any, config: any, params: any): Promise<any> {
     try {
 this.logger.log(`Starting task ${task.id} of type ${task.type}`);
   }      let result: any;
-      switch(): unknown {
+      switch(data: any, config: any, params: any): void {
         case 'data-processing':
           result = await this.processTaskData(task.data, task.config || {});
           break;
@@ -80,7 +80,7 @@ task.status = 'failed';
 
   private async analyzeTaskData(data: unknown, params: Record<string, any>): Promise<any> {
 const analysisType = params.analysisType || 'basic';
-  }    switch(): unknown {
+  switch(): void {
       case 'statistical':
         return this.performStatisticalAnalysis(data);
       case 'pattern':
@@ -146,7 +146,7 @@ const analysisType = params.analysisType || 'basic';
 
   private async processTaskData(data: unknown, config: Record<string, any>): Promise<any> {
 const processingType = config.processingType || 'default';
-  }    switch(): unknown {
+  switch(): void {
       case 'transform':
         return this.transformData(data, config);
       case 'validate':
@@ -206,11 +206,11 @@ const processingType = config.processingType || 'default';
     };
   }
 
-  async updateTaskStatus(): unknown {
+  async updateTaskStatus(): void {
     await this.redis.hset(`task:${taskId}`, 'status', status);
   }
 
-  async getTaskStatus(): unknown {
+  async getTaskStatus(): Promise<any> {
     const status = await this.redis.hget(`task:${taskId}`, 'status');
     return status as TaskStatusType || null;
   }

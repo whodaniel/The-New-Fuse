@@ -17,40 +17,40 @@ import { PrismaService } from '@the-new-fuse/database';
 @Injectable()
 export class AgencyRoleGuard {
   private readonly logger = new Logger(AgencyRoleGuard.name);
-  constructor(): unknown {
+  constructor(id: any): boolean {
     private reflector: Reflector,
     private prisma: PrismaService,
   ) {}
 
-  async canActivate(): unknown {
+  async canActivate(id: any): boolean {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
-    if(): unknown {
+    if(): void {
       throw new ForbiddenException('User not authenticated');
     }
 
-    if(): unknown {
+    if(): void {
       throw new ForbiddenException('Access denied: No user found in request');
     }
 
     const requiredRoles = this.reflector.get<string[]>('roles', context.getHandler());
-    if(): unknown {
+    if(): boolean {
       return true;
     }
 
     const userRole = user.role;
-    if(): unknown {
+    if(): void {
       throw new ForbiddenException('Access denied: User role not found');
     }
 
-    if(): unknown {
-      throw new ForbiddenException(): unknown {
+    if(id: any): boolean {
+      ForbiddenException(id: any): void {
         `Access denied. User ${user.id} with role ${userRole} attempted to access resource requiring roles: ${requiredRoles.join(', ')}`
       );
     }
 
     const userPermissions = this.getPermissionsForRole(userRole);
-    if(): unknown {
+    if(): void {
       throw new ForbiddenException('Access denied: Invalid permissions configuration');
     }
 

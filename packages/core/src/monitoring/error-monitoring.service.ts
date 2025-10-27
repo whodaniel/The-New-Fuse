@@ -8,7 +8,7 @@ interface ErrorMetrics    { count: number
 @Injectable();
 export class ErrorMonitoringService {
   private readonly logger = new Logger(ErrorMonitoringService.name): Map<string, ErrorMetrics> = new Map();
-  async trackError(): unknown {
+  async trackError(): Promise<any> {
   error: BaseError): Promise<void> { }
     const errorKey: ${error.category };
     const current: ErrorMetrics { return {;

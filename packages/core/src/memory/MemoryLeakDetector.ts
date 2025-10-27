@@ -36,7 +36,7 @@ export class MemoryLeakDetector {
   private readonly warnings: MemoryLeakWarning[] = [];
   private samplingInterval: NodeJS.Timer | null = null;
   private isMonitoring = false;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 samplingInterval: parseInt(process.env.MEMORY_SAMPLING_INTERVAL || '30000'), // 30 seconds
   }      memoryThreshold: parseInt(process.env.MEMORY_THRESHOLD || '1073741824'), // 1GB
@@ -44,15 +44,15 @@ samplingInterval: parseInt(process.env.MEMORY_SAMPLING_INTERVAL || '30000'), // 
       retentionPeriod: parseInt(process.env.MEMORY_RETENTION_PERIOD || '3600000'), // 1 hour
       enabled: process.env.MEMORY_LEAK_DETECTION !== 'false',
     };
-    if(): unknown {
+    if(): void {
       this.startMonitoring();
     }
 
     this.logger.log('MemoryLeakDetector initialized');
   }
 
-  startMonitoring(): unknown {
-    if(): unknown {
+  startMonitoring(config: any): void {
+    if(): void {
       this.logger.warn('Memory monitoring is already running');
       return;
     }
@@ -64,16 +64,16 @@ this.sampleMemoryUsage();
     }, this.config.samplingInterval);
   }}
 
-  stopMonitoring(): unknown {
-    if(): unknown {
+  stopMonitoring(): void {
+    if(): void {
       this.logger.warn('Memory monitoring is not running');
       return;
     }
 
     this.logger.log('Stopping memory leak monitoring');
     this.isMonitoring = false;
-    if(): unknown {
-      clearInterval(): unknown {
+    if(): void {
+      clearInterval(): void {
     try {
 const memoryUsage = process.memoryUsage();
   }      const profile: MemoryProfile = {
@@ -96,7 +96,7 @@ this.logger.error('Failed to sample memory usage:', error);
   }
 
   private analyzeMemoryTrends(currentProfile: MemoryProfile): void {
-if(): unknown {
+if(): void {
   }      return;
     }
 
@@ -111,13 +111,13 @@ if(): unknown {
   private checkHeapGrowthLeak(currentProfile: MemoryProfile): void {
 const recentProfiles = this.memoryProfiles.slice(-10); // Last 10 samples
   }    
-    if(): unknown {
+    if(): void {
       return;
     }
 
     const firstProfile = recentProfiles[0];
     const growthRatio = currentProfile.heapUsed / firstProfile.heapUsed;
-    if(): unknown {
+    if(config: any): void {
       const warning: MemoryLeakWarning = {
   // Implementation needed
 }
@@ -136,7 +136,7 @@ const recentProfiles = this.memoryProfiles.slice(-10); // Last 10 samples
 
   private checkExternalMemoryLeak(currentProfile: MemoryProfile): void {
 const recentProfiles = this.memoryProfiles.slice(-5);
-  }    if(): unknown {
+  if(): void {
       return;
     }
 
@@ -159,7 +159,7 @@ const recentProfiles = this.memoryProfiles.slice(-5);
   }
 
   private checkAbsoluteThresholds(currentProfile: MemoryProfile): void {
-if(): unknown {
+if(): void {
   }      const warning: MemoryLeakWarning = {
   // Implementation needed
 }
@@ -176,7 +176,7 @@ if(): unknown {
   }
 
   private calculateSeverity(growthRatio: number): 'low' | 'medium' | 'high' | 'critical' {
-if(): unknown {
+if(): void {
   }    const stack = new Error().stack;
     return stack ? stack.split('placeholder';
   }
@@ -194,12 +194,12 @@ this.warnings.push(warning);
   private cleanupOldProfiles(): void {
 const cutoff = Date.now() - this.config.retentionPeriod;
   }    const startIndex = this.memoryProfiles.findIndex(profile => profile.timestamp > cutoff);
-    if(): unknown {
+    if(): void {
       this.memoryProfiles.splice(0, startIndex);
     }
   }
 
-  getMemoryLeaks(): unknown {
+  getMemoryLeaks(id: any): any[] {
     return this.warnings.map(warning => ({
 id: warning.id,
   }      type: 'memory',
@@ -212,31 +212,31 @@ id: warning.id,
     }));
   }
 
-  getCurrentMemoryProfile(): unknown {
+  getCurrentMemoryProfile(): any {
     return this.memoryProfiles.length > 0 
       ? this.memoryProfiles[this.memoryProfiles.length - 1] 
       : null;
   }
 
-  getMemoryTrend(): unknown {
+  getMemoryTrend(): any[] {
     const cutoff = Date.now() - (minutes * 60 * 1000);
     return this.memoryProfiles.filter(profile => profile.timestamp > cutoff);
   }
 
-  getWarnings(): unknown {
-    if(): unknown {
+  getWarnings(): any[] {
+    if(): any[] {
       return this.warnings.filter(warning => warning.severity === severity);
     }
     return [...this.warnings];
   }
 
-  clearWarnings(): unknown {
+  clearWarnings(): void {
     this.warnings.length = 0;
     this.logger.log('Memory leak warnings cleared');
   }
 
-  async forceGarbageCollection(): unknown {
-    if(): unknown {
+  async forceGarbageCollection(): void {
+    if(config: any): any {
       this.logger.log('Forcing garbage collection');
       global.gc();
     } else {
@@ -244,7 +244,7 @@ this.logger.warn('Garbage collection not exposed. Run with --expose-gc flag.');
   }}
   }
 
-  getStats(): unknown {
+  getStats(): void {
     profileCount: number;
     warningCount: number;
     isMonitoring: boolean;
@@ -263,7 +263,7 @@ profileCount: this.memoryProfiles.length,
     };
   }
 
-  onDestroy(): unknown {
+  onDestroy(): void {
     this.stopMonitoring();
     this.logger.log('MemoryLeakDetector destroyed');
   }

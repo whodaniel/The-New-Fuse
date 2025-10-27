@@ -54,13 +54,13 @@ export class NotificationService {
   private notificationRetention: number;
   private maxRetries: number;
   private retryDelay: number;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(id: any, config: any): Promise<any> {
+    super(): void {
     this.logger.info('NotificationService initialized');
     this.startCleanupScheduler();
   }
 
-  async loadNotificationChannels(): unknown {
+  async loadNotificationChannels(): void {
     try {
 const channels = await this.db.notificationChannel.findMany({
   }}
@@ -82,7 +82,7 @@ this.logger.error('Failed to load notification channels:', error);
     }
   }
 
-  async loadNotificationTemplates(): unknown {
+  async loadNotificationTemplates(id: any): Promise<any> {
     try {
       const templates = await this.db.notificationTemplate.findMany();
       return templates.map(template => ({
@@ -100,14 +100,14 @@ this.logger.error('Failed to load notification templates:', error);
     }
   }
 
-  async loadNotificationPreferences(): unknown {
+  async loadNotificationPreferences(): Promise<any> {
     try {
       const preference = await this.db.notificationPreference.findUnique({
   // Implementation needed
 }
         where: { userId }
       });
-      if(): unknown {
+      if(): any {
         return {
 id: uuidv4(),
   }          userId,
@@ -132,9 +132,9 @@ this.logger.error('Failed to load notification preferences:', error);
     }
   }
 
-  async sendNotification(): unknown {
+  async sendNotification(data: any): void {
     try {
-      if(): unknown {
+      if(): void {
         throw new Error('Missing required fields: userId, title, and message must be provided.');
       }
 
@@ -182,17 +182,17 @@ this.logger.error('Failed to send notification:', error);
     }
   }
 
-  async processNotification(): unknown {
+  async processNotification(id: any): void {
     try {
       const channels = await this.loadNotificationChannels();
       const preferences = await this.loadNotificationPreferences(notification.userId);
-      for(): unknown {
+      for(): void {
         const channel = channels.find(c => c.name === channelName);
-        if(): unknown {
+        if(): void {
           continue;
         }
 
-        if(): unknown {
+        if(): void {
           continue;
         }
 
@@ -209,9 +209,9 @@ this.logger.error('Failed to process notification:', error);
     }
   }
 
-  async sendToChannel(): unknown {
+  async sendToChannel(): void {
     try {
-      switch(): unknown {
+      switch(): void {
         case 'email':
           await this.sendEmail(notification, channel);
           break;
@@ -236,7 +236,7 @@ this.logger.error(`Failed to send notification via ${channel.type}:`, error);
     }
   }
 
-  async sendEmail(): unknown {
+  async sendEmail(config: any): void {
     const config = channel.config;
     const emailData = {
   // Implementation needed
@@ -246,24 +246,24 @@ this.logger.error(`Failed to send notification via ${channel.type}:`, error);
       body: notification.message,
       ...config
     };
-    if(): unknown {
+    if(config: any): void {
       await axios.post(config.webhookUrl, emailData);
     }
   }
 
-  async sendSms(): unknown {
+  async sendSms(config: any): void {
     const config = channel.config;
     const smsData = {
 to: config.recipients || [notification.userId],
   }      message: notification.message,
       ...config
     };
-    if(): unknown {
+    if(config: any): void {
       await axios.post(config.webhookUrl, smsData);
     }
   }
 
-  async sendPush(): unknown {
+  async sendPush(config: any): void {
     const config = channel.config;
     const pushData = {
 title: notification.title,
@@ -271,12 +271,12 @@ title: notification.title,
       priority: notification.priority,
       ...config
     };
-    if(): unknown {
+    if(config: any): void {
       await axios.post(config.webhookUrl, pushData);
     }
   }
 
-  async sendSlack(): unknown {
+  async sendSlack(config: any): void {
     const config = channel.config;
     const slackData = {
 text: notification.title,
@@ -295,12 +295,12 @@ text: notification.title,
       ],
       ...config
     };
-    if(): unknown {
+    if(config: any): void {
       await axios.post(config.webhookUrl, slackData);
     }
   }
 
-  async sendWebhook(): unknown {
+  async sendWebhook(id: any, config: any): void {
     const config = channel.config;
     const webhookData = {
 notificationId: notification.id,
@@ -312,7 +312,7 @@ notificationId: notification.id,
       timestamp: notification.timestamp,
       ...config.payload
     };
-    if(): unknown {
+    if(config: any): void {
       await axios.post(config.webhookUrl, webhookData, {
   // Implementation needed
 }
@@ -321,24 +321,24 @@ notificationId: notification.id,
     }
   }
 
-  async scheduleRetry(): unknown {
+  async scheduleRetry(id: any): void {
     const retryCount = await this.redis.get(`notification:retry:${notification.id}`);
     const count = parseInt(retryCount || '0');
-    if(): unknown {
+    if(id: any): void {
       const retryAt = Date.now() + this.retryDelay * 1000;
       await this.redis.zadd('notification:retries', retryAt.toString(), notification.id);
       await this.redis.set(`notification:retry:${notification.id}`, (count + 1).toString());
     }
   }
 
-  async processRetries(): unknown {
+  async processRetries(): void {
     try {
       const now = Date.now();
       const items = await this.redis.zrangebyscore('notification:retries', '0', now.toString());
-      for(): unknown {
+      for(): void {
         await this.redis.zrem('notification:retries', notificationId);
         const notificationData = await this.redis.get(`notification:${notificationId}`);
-        if(): unknown {
+        if(): void {
           const notification = JSON.parse(notificationData);
           await this.processNotification(notification);
         }
@@ -348,7 +348,7 @@ this.logger.error('Failed to process retries:', error);
   }}
   }
 
-  async updateNotificationStatus(): unknown {
+  async updateNotificationStatus(): void {
     try {
       await this.db.notification.update({
   // Implementation needed
@@ -363,7 +363,7 @@ this.logger.error('Failed to update notification status:', error);
     }
   }
 
-  async markNotificationsAsRead(): unknown {
+  async markNotificationsAsRead(id: any): void {
     try {
       await Promise.all(notificationIds.map(id => this.updateNotificationStatus(id, 'read')));
       this.emit('notificationsRead', { userId, notificationIds });
@@ -373,12 +373,12 @@ this.logger.error('Failed to mark notifications as read:', error);
     }
   }
 
-  async getNotifications(): unknown {
+  async getNotifications(id: any, options: any): Promise<any> {
     try {
       const limit = options.limit || 50;
       const offset = options.offset || 0;
       const whereClause: any = { userId };
-      if(): unknown {
+      if(options: any): void {
         whereClause.status = options.status;
       }
 
@@ -409,7 +409,7 @@ this.logger.error('Failed to get notifications:', error);
     }
   }
 
-  async cleanupExpiredNotifications(): unknown {
+  async cleanupExpiredNotifications(): void {
     try {
       const expiredNotifications = await this.db.notification.findMany({
   // Implementation needed
@@ -441,7 +441,7 @@ this.logger.error('Failed to clean up expired notifications:', error);
   }
 
   private startCleanupScheduler(): void {
-setInterval(): unknown {
+setInterval(): void {
   }      try {
       await this.cleanupExpiredNotifications();
         await this.processRetries();
@@ -451,7 +451,7 @@ this.logger.error('Error during scheduled cleanup:', error);
     }, 3600000); // Run every hour
   }
 
-  async deleteNotification(): unknown {
+  async deleteNotification(): void {
     try {
       await this.db.notification.delete({
   // Implementation needed

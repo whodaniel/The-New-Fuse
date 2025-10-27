@@ -10,47 +10,47 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class ServiceCategoryRouterService {
   private readonly logger = new Logger(ServiceCategoryRouterService.name);
-  constructor(): unknown {
+  constructor(): any {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2
   ) {}
 
-  async routeServiceRequest(): unknown {
+  async routeServiceRequest(): any {
     // Mock implementation
     return { message: 'Service routing not implemented' };
   }
 
-  async findBestProvider(): unknown {
+  async findBestProvider(): any {
     // Mock implementation
     return { message: 'Provider matching not implemented' };
   }
 
-  async getServiceCategories(): unknown {
+  async getServiceCategories(): any {
     // Mock implementation
     return { message: 'Service categories not implemented' };
   }
 
-  async getCategoryMetrics(): unknown {
+  async getCategoryMetrics(): any {
     // Mock implementation
     return { message: 'Category metrics not implemented' };
   }
 
-  async getProvidersByCategory(): unknown {
+  async getProvidersByCategory(): any {
     // Mock implementation
     return { message: 'Provider search not implemented' };
   }
 
-  async analyzeServiceQuality(): unknown {
+  async analyzeServiceQuality(): any {
     // Mock implementation
     return { message: 'Quality analysis not implemented' };
   }
 
-  async getRecommendedProviders(): unknown {
+  async getRecommendedProviders(): any {
     // Mock implementation
     return { message: 'Provider recommendations not implemented' };
   }
 
-  async getRequestsByCategory(): unknown {
+  async getRequestsByCategory(): any {
     // Mock implementation
     return { message: 'Category requests not implemented' };
   }

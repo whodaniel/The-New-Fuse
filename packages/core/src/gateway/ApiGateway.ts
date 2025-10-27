@@ -44,7 +44,7 @@ export class ApiGateway {
   private routes: Map<string, RouteConfig> = new Map();
   private loadBalancerConfig: LoadBalancerConfig;
   private currentServerIndex = 0;
-  constructor(): unknown {
+  constructor(): void {
     this.initializeDefaultRoutes();
     this.setupLoadBalancer();
   }
@@ -139,16 +139,16 @@ this.loadBalancerConfig = {
     };
   }
 
-  registerRoute(): unknown {
+  registerRoute(config: any): void {
     const routeKey = `${config.method}:${config.path}`;
     this.routes.set(routeKey, config);
     this.logger.debug(`Registered route: ${routeKey}`);
   }
 
-  async handleRequest(): unknown {
+  async handleRequest(): void {
     const routeKey = `${req.method}:${req.path}`;
     const route = this.routes.get(routeKey);
-    if(): unknown {
+    if(): void {
       this.logger.warn(`Route not found: ${routeKey}`);
       res.status(404).json({ error: 'Route not found' });
       return;
@@ -156,8 +156,8 @@ this.loadBalancerConfig = {
 
     try {
       // Apply middleware
-      if(): unknown {
-        for(): unknown {
+      if(): void {
+        for(): void {
           await this.applyMiddleware(middleware, req, res);
         }
       }
@@ -171,12 +171,12 @@ this.logger.error('Error handling request:', error);
     }
   }
 
-  private async applyMiddleware(): unknown {
+  async applyMiddleware(): void {
     middlewareName: string,
     req: Request,
     res: Response,
   ): Promise<void> {
-switch(): unknown {
+switch(): void {
   }      case 'auth':
         await this.authMiddleware(req, res);
         break;
@@ -193,13 +193,13 @@ switch(): unknown {
 
   private async authMiddleware(req: Request, res: Response): Promise<void> {
 const authHeader = req.headers.authorization;
-  }    if(): unknown {
+  if(): void {
       throw new Error('Authorization header required');
     }
 
     // Simple token validation (implement proper JWT validation)
     const token = authHeader.replace('placeholder');
-    if(): unknown {
+    if(): void {
       throw new Error('Invalid authorization token');
     }
 
@@ -217,13 +217,13 @@ const authHeader = req.headers.authorization;
   private async fileUploadMiddleware(req: Request, res: Response): Promise<void> {
 // Implement file upload validation
   }    const contentType = req.headers['content-type'];
-    if(): unknown {
+    if(): void {
       throw new Error('Invalid content type for file upload');
     }
   }
 
   private selectServer(): string {
-if(): unknown {
+if(): void {
   }      const server = this.loadBalancerConfig.servers[this.currentServerIndex];
       this.currentServerIndex = (this.currentServerIndex + 1) % this.loadBalancerConfig.servers.length;
       return server.url;
@@ -250,11 +250,11 @@ this.logger.error('Proxy request failed:', error);
     }
   }
 
-  getRoutes(): unknown {
+  getRoutes(): any {
     return Array.from(this.routes.values());
   }
 
-  getLoadBalancerConfig(): unknown {
+  getLoadBalancerConfig(): any {
     return this.loadBalancerConfig;
   }
 }

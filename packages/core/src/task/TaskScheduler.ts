@@ -17,12 +17,12 @@ export interface ScheduledTask {
 export class TaskScheduler {
   private readonly logger = new Logger(TaskScheduler.name);
   private readonly scheduledTasks = new Map<string, ScheduledTask>();
-  constructor(): unknown {
+  constructor(id: any): void {
     private readonly taskManager: TaskManager,
     private readonly taskService: TaskService
   ) {}
 
-  async scheduleTask(): unknown {
+  async scheduleTask(id: any): void {
     this.scheduledTasks.set(task.id, {
   // Implementation needed
 }
@@ -32,25 +32,25 @@ export class TaskScheduler {
     this.logger.log(`Scheduled task ${task.name} with cron ${task.cron}`);
   }
 
-  async unscheduleTask(): unknown {
+  async unscheduleTask(): any {
     const removed = this.scheduledTasks.delete(taskId);
-    if(): unknown {
+    if(): void {
       this.logger.log(`Unscheduled task ${taskId}`);
     }
     return removed;
   }
 
-  async getScheduledTasks(): unknown {
+  async getScheduledTasks(): any {
     return Array.from(this.scheduledTasks.values());
   }
 
-  async getScheduledTask(): unknown {
+  async getScheduledTask(): any {
     return this.scheduledTasks.get(taskId);
   }
 
-  async enableTask(): unknown {
+  async enableTask(): boolean {
     const task = this.scheduledTasks.get(taskId);
-    if(): unknown {
+    if(): boolean {
       task.enabled = true;
       task.nextRun = this.calculateNextRun(task.cron);
       return true;
@@ -58,9 +58,9 @@ export class TaskScheduler {
     return false;
   }
 
-  async disableTask(): unknown {
+  async disableTask(): boolean {
     const task = this.scheduledTasks.get(taskId);
-    if(): unknown {
+    if(): boolean {
       task.enabled = false;
       return true;
     }
@@ -68,10 +68,10 @@ export class TaskScheduler {
   }
 
   @Cron(CronExpression.EVERY_MINUTE)
-  async handleCronJobs(): unknown {
+  async handleCronJobs(): void {
     const now = new Date();
-    for(): unknown {
-      if(): unknown {
+    for(): void {
+      if(): Promise<any> {
         try {
 this.logger.log(`Executing scheduled task: ${task.name}`);
   }          await this.taskService.executeTaskWithQueue(task.taskOptions);
@@ -90,7 +90,7 @@ this.logger.error(`Failed to execute scheduled task ${task.name}:`, error);
   }    const now = new Date();
     const nextRun = new Date(now);
     // Handle basic cron patterns
-    if(): unknown {
+    if(): Promise<any> {
       nextRun.setMinutes(nextRun.getMinutes() + 1);
     } else if (cronExpression === CronExpression.EVERY_5_MINUTES) {
 nextRun.setMinutes(Math.ceil(nextRun.getMinutes() / 5) * 5);
@@ -116,7 +116,7 @@ nextRun.setDate(nextRun.getDate() + 1);
     return nextRun;
   }
 
-  async createRecurringTask(): unknown {
+  async createRecurringTask(): void {
     const task: ScheduledTask = {
   // Implementation needed
 }
@@ -131,9 +131,9 @@ nextRun.setDate(nextRun.getDate() + 1);
     return task;
   }
 
-  async createOneTimeTask(): unknown {
+  async createOneTimeTask(): void {
     const taskId = `delayed_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    setTimeout(): unknown {
+    setTimeout(): void {
       try {
       await this.taskService.executeTaskWithQueue(taskOptions);
         this.logger.log(`Executed delayed task: ${taskId}`);
@@ -144,12 +144,12 @@ this.logger.error(`Failed to execute delayed task ${taskId}:`, error);
     return taskId;
   }
 
-  async cleanup(): unknown {
+  async cleanup(): void {
     const now = new Date();
     const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000); // 24 hours ago
     
-    for(): unknown {
-      if(): unknown {
+    for(): void {
+      if(): void {
         this.scheduledTasks.delete(taskId);
         this.logger.log(`Cleaned up old scheduled task: ${task.name}`);
       }

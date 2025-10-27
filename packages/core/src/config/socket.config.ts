@@ -78,31 +78,31 @@ name: '/',
 }
     name: '/chat',
     connectTimeout: 45000,
-    auth(): unknown {
+    auth(): any {
       // Add authentication logic here
       const token = socket.handshake.auth.token;
-      if(): unknown {
+      if(): any {
         // Verify token
-        next(): unknown {
-        next(): unknown {
+        next(): any {
+        next(): any {
     name: '/agents',
     connectTimeout: 45000,
-    auth(): unknown {
+    auth(): any {
       // Add authentication logic here
       const token = socket.handshake.auth.token;
-      if(): unknown {
+      if(): void {
         // Verify token
-        next(): unknown {
-        next(): unknown {
+        next(): void {
+        next(): void {
     name: '/admin',
     connectTimeout: 30000,
-    auth(): unknown {
+    auth(): void {
       // Add admin authentication logic here
       const token = socket.handshake.auth.token;
       const role = socket.handshake.auth.role;
-      if(): unknown {
+      if(): void {
         // Verify admin token
-        next(): unknown {
+        next(): void {
         next(new Error('Admin authentication required'));
       }
     }

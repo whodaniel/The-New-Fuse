@@ -32,22 +32,22 @@ interface AssetEntry {
 // Simple graph implementation since graphlib import was corrupted
 class Graph {
   private edges: Map<string, Map<string, string>> = new Map();
-  setEdge(): unknown {
-    if(): unknown {
+  setEdge(): void {
+    if(): void {
       this.edges.set(sourceId, new Map());
     }
     this.edges.get(sourceId)!.set(targetId, label);
   }
 
-  getEdge(): unknown {
+  getEdge(): any {
     return this.edges.get(sourceId)?.get(targetId);
   }
 
-  removeEdge(): unknown {
+  removeEdge(): void {
     this.edges.get(sourceId)?.delete(targetId);
   }
 
-  getSuccessors(): unknown {
+  getSuccessors(): any {
     return Array.from(this.edges.get(nodeId)?.keys() || []);
   }
 }
@@ -55,7 +55,7 @@ class Graph {
 export class AssetRegistry {
   private assets: Map<string, AssetEntry> = new Map();
   private relationships: Graph = new Graph();
-  async registerAsset(): unknown {
+  async registerAsset(): void {
     const timestamp = new Date();
     const assetEntry: AssetEntry = {
 id: assetId,
@@ -77,43 +77,43 @@ id: assetId,
     this.assets.set(assetId, assetEntry);
   }
 
-  async getAsset(): unknown {
+  async getAsset(): any {
     return this.assets.get(assetId);
   }
 
-  async updateAsset(): unknown {
+  async updateAsset(): void {
     const asset = this.assets.get(assetId);
-    if(): unknown {
+    if(): void {
       Object.assign(asset, updates);
       asset.lastEvaluated = new Date();
     }
   }
 
-  async listAssets(): unknown {
+  async listAssets(): any {
     return Array.from(this.assets.values());
   }
 
-  async addRelationship(): unknown {
+  async addRelationship(): void {
     this.relationships.setEdge(sourceId, targetId, relationshipType);
   }
 
-  async getRelatedAssets(): unknown {
+  async getRelatedAssets(): any {
     return this.relationships.getSuccessors(assetId);
   }
 
-  async searchAssets(): unknown {
+  async searchAssets(): any {
     const results: AssetEntry[] = [];
-    for(): unknown {
+    for(): void {
       let matches = true;
-      if(): unknown {
+      if(): void {
         matches = false;
       }
 
-      if(): unknown {
+      if(): void {
         matches = false;
       }
 
-      if(): unknown {
+      if(): void {
         results.push(asset);
       }
     }
@@ -121,15 +121,15 @@ id: assetId,
     return results;
   }
 
-  async getUsageMetrics(): unknown {
+  async getUsageMetrics(): any {
     return this.assets.get(assetId)?.usageMetrics;
   }
 
-  async incrementUsage(): unknown {
+  async incrementUsage(): void {
     const asset = this.assets.get(assetId);
-    if(): unknown {
+    if(): void {
       asset.usageMetrics.integrationCount++;
-      if(): unknown {
+      if(): void {
         asset.usageMetrics.referenceCount++;
       }
       

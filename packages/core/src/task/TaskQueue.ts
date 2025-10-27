@@ -36,8 +36,8 @@ export class TaskQueue {
   private queue: Task<T>[] = [];
   private activeTasks = new Map<string, Task<T>>();
   private timers = new Map<string, NodeJS.Timeout>();
-  constructor(): unknown {
-    super(): unknown {
+  constructor(options: any): void {
+    super(options: any): void {
       concurrency: 1,
       timeout: 30000,
       retryAttempts: 3,
@@ -103,7 +103,7 @@ this.on('task:added', (task: Task<T>) => {
     });
   }
 
-  async addTask(): unknown {
+  async addTask(): Promise<any> {
     try {
       const newTask: Task<T> = {
   // Implementation needed
@@ -123,9 +123,9 @@ this.logger.error(`Failed to enqueue task:`, error);
     }
   }
 
-  async processQueue(): unknown {
-    if(): unknown {
-      if(): unknown {
+  async processQueue(): void {
+    if(): void {
+      if(): void {
         this.emit('queue:empty');
       }
       return;
@@ -133,7 +133,7 @@ this.logger.error(`Failed to enqueue task:`, error);
 
     try {
 const taskData = await this.redis.rpop(this.queueKey);
-  }      if(): unknown {
+  if(): void {
         this.queue.splice(queueIndex, 1);
       }
 
@@ -152,7 +152,7 @@ try {
       this.activeTasks.set(task.id, task);
       await this.redis.hset(this.processingKey, task.id, JSON.stringify(task));
       this.emit('task:started', task);
-      if(): unknown {
+      if(): void {
         this.setTaskTimeout(task);
       }
     } catch (error) {
@@ -162,10 +162,10 @@ this.logger.error(`Failed to start task ${task.id}:`, error);
     }
   }
 
-  async completeTask(): unknown {
+  async completeTask(): void {
     try {
       const task = this.activeTasks.get(taskId);
-      if(): unknown {
+      if(): void {
         throw new Error(`Task ${taskId} not found in active tasks`);
       }
 
@@ -181,10 +181,10 @@ this.logger.error(`Failed to complete task ${taskId}:`, error);
     }
   }
 
-  async failTask(): unknown {
+  async failTask(): void {
     try {
       const task = this.activeTasks.get(taskId);
-      if(): unknown {
+      if(): void {
         throw new Error(`Task ${taskId} not found in active tasks`);
       }
 
@@ -200,11 +200,11 @@ this.logger.error(`Failed to mark task ${taskId} as failed:`, error);
     }
   }
 
-  async cancelTask(): unknown {
+  async cancelTask(id: any): Promise<any> {
     const taskIndex = this.queue.findIndex(task => task.id === id);
-    if(): unknown {
+    if(): Promise<any> {
       const task = this.queue[taskIndex];
-      if(): unknown {
+      if(): Promise<any> {
         task.status = 'cancelled';
         this.queue.splice(taskIndex, 1);
         await this.redis.lrem(this.queueKey, 1, JSON.stringify(task));
@@ -214,7 +214,7 @@ this.logger.error(`Failed to mark task ${taskId} as failed:`, error);
     }
 
     const activeTask = this.activeTasks.get(id);
-    if(): unknown {
+    if(): boolean {
       activeTask.status = 'cancelled';
       this.emit('task:cancelled', activeTask);
       return true;
@@ -223,19 +223,19 @@ this.logger.error(`Failed to mark task ${taskId} as failed:`, error);
     return false;
   }
 
-  getTask(): unknown {
+  getTask(id: any): any {
     return this.queue.find(task => task.id === id) || this.activeTasks.get(id);
   }
 
-  getQueueLength(): unknown {
+  getQueueLength(): any {
     return this.queue.length;
   }
 
-  getActiveTasksCount(): unknown {
+  getActiveTasksCount(): any {
     return this.runningTasks;
   }
 
-  async getQueueStats(): unknown {
+  async getQueueStats(): void {
     pending: number;
     running: number;
     completed: number;
@@ -250,7 +250,7 @@ const [pending, running, completed, failed] = await Promise.all([
     return { pending, running, completed, failed };
   }
 
-  async clear(): unknown {
+  async clear(): void {
     await Promise.all([
       this.redis.del(this.queueKey),
       this.redis.del(this.processingKey),
@@ -274,8 +274,8 @@ this.emit('task:timedout', task);
 
   private clearTimer(taskId: string): void {
 const timer = this.timers.get(taskId);
-  }    if(): unknown {
-      clearTimeout(): unknown {
+  if(): void {
+      clearTimeout(id: any): void {
     task.status = 'timedout';
     task.error = 'Task execution timed out';
     task.completedAt = new Date();

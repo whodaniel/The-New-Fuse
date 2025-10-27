@@ -36,7 +36,7 @@ export class SimpleWebSocketClient {
   private redisClient: RedisClientType;
   private logger: Logger;
   private config: ClientConfig;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = config;
     this.logger = logger;
     this.redisClient = createClient({
@@ -46,7 +46,7 @@ export class SimpleWebSocketClient {
     });
   }
 
-  async initialize(): unknown {
+  async initialize(): void {
     try {
 await this.redisClient.connect();
   }      this.state = ClientState.LISTENING;
@@ -62,8 +62,8 @@ const uniqueData = `${Date.now()}-${Math.random()}-${process.pid}`;
   }    return createHash('sha256').update(uniqueData).digest('hex');
   }
 
-  async sendMessage(): unknown {
-    if(): unknown {
+  async sendMessage(): void {
+    if(): void {
       this.logger.error('Redis client not connected');
       throw new Error('Redis client not connected');
     }
@@ -77,7 +77,7 @@ this.logger.error('Failed to send message', { error, channel });
     }
   }
 
-  async subscribe(): unknown {
+  async subscribe(): void {
     try {
       const subscriber = this.redisClient.duplicate();
       await subscriber.connect();
@@ -85,7 +85,7 @@ this.logger.error('Failed to send message', { error, channel });
 try {
   }}
           const parsedMessage = JSON.parse(message);
-          callback(): unknown {
+          callback(): void {
           this.logger.error('Failed to parse message', { error, message });
         }
       });
@@ -96,9 +96,9 @@ this.logger.error('Failed to subscribe to channel', { error, channel });
     }
   }
 
-  async disconnect(): unknown {
+  async disconnect(): void {
     try {
-      if(): unknown {
+      if(): void {
         await this.redisClient.quit();
       }
       this.logger.info('WebSocket client disconnected');

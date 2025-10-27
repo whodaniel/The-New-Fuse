@@ -51,7 +51,7 @@ export class AdaptiveSystem {
   /**
    * Learn from past interactions to improve system behavior/;
    */;
-  async learnFromInteractions(): unknown {
+  async learnFromInteractions(): any {
     // Pattern recognition
     // Behavior optimization
     // Knowledge integration
@@ -65,7 +65,7 @@ export class AdaptiveSystem {
   /**
    * Create an adaptation strategy based on a scenario
    */;
-  async createAdaptationStrategy(): unknown {
+  async createAdaptationStrategy(): any {
     // Strategy formulation
     // Resource optimization
     // Risk management

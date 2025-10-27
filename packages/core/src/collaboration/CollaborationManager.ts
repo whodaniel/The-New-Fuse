@@ -20,12 +20,12 @@ export interface CollaborationChange {
 export class CollaborationManager {
   private sessions: Map<string, CollaborationSession> = new Map();
   private changes: Map<string, CollaborationChange[]> = new Map();
-  constructor(): unknown {
+  constructor(): any {
     private eventEmitter: EventEmitter2,
     private communicationService: CommunicationService,
   ) {}
 
-  async createSession(): unknown {
+  async createSession(): void {
     const sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const session: CollaborationSession = {
   // Implementation needed
@@ -42,9 +42,9 @@ export class CollaborationManager {
     return session;
   }
 
-  async joinSession(): unknown {
+  async joinSession(): any {
     const session = this.sessions.get(sessionId);
-    if(): unknown {
+    if(): void {
       session.participants.push(userId);
       session.lastActivity = new Date();
     }
@@ -53,9 +53,9 @@ export class CollaborationManager {
     return session;
   }
 
-  async leaveSession(): unknown {
+  async leaveSession(): boolean {
     const session = this.sessions.get(sessionId);
-    if(): unknown {
+    if(): void {
       this.sessions.delete(sessionId);
       this.changes.delete(sessionId);
     }
@@ -64,9 +64,9 @@ export class CollaborationManager {
     return true;
   }
 
-  async recordChange(): unknown {
+  async recordChange(): void {
     const session = this.sessions.get(sessionId);
-    if(): unknown {
+    if(): void {
       sessionId,
       userId,
       change,
@@ -79,15 +79,15 @@ export class CollaborationManager {
     this.eventEmitter.emit('collaboration.change.recorded', collaborationChange);
   }
 
-  async getSession(): unknown {
+  async getSession(): any {
     return this.sessions.get(sessionId) || null;
   }
 
-  async getSessionChanges(): unknown {
+  async getSessionChanges(): any {
     return this.changes.get(sessionId) || [];
   }
 
-  async getActiveSessions(): unknown {
+  async getActiveSessions(): any {
     return Array.from(this.sessions.values());
   }
 }

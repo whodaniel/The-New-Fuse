@@ -23,23 +23,23 @@ export interface TaskExecutionOptions {
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
   private readonly taskQueues = new Map<string, TaskQueue>();
-  constructor(): unknown {
+  constructor(data: any, id: any, options: any): Promise<any> {
     private readonly taskManager: TaskManager,
     private readonly taskExecutor: TaskExecutor,
     private readonly defaultQueue: TaskQueue
   ) {}
 
-  async createTask(): unknown {
+  async createTask(options: any): any {
     return this.taskManager.createTask(options);
   }
 
-  async executeTask(): unknown {
+  async executeTask(): any {
     return this.taskManager.executeTask(taskId);
   }
 
-  async executeTaskWithQueue(): unknown {
+  async executeTaskWithQueue(data: any): void {
     const task = await this.createTask(taskOptions);
-    if(): unknown {
+    if(data: any): void {
       await this.defaultQueue.addTask({
 type: task.type,
   }        data: task.data,
@@ -55,32 +55,32 @@ type: task.type,
     return task;
   }
 
-  async getTask(): unknown {
+  async getTask(): any {
     return this.taskManager.getTask(taskId);
   }
 
-  async getTaskStatus(): unknown {
+  async getTaskStatus(): any {
     return this.taskExecutor.getTaskStatus(taskId);
   }
 
-  async cancelTask(): unknown {
+  async cancelTask(): any {
     return this.taskManager.cancelTask(taskId);
   }
 
-  async getPendingTasks(): unknown {
+  async getPendingTasks(): any {
     return this.taskManager.getPendingTasks();
   }
 
-  async getTasksByStatus(): unknown {
+  async getTasksByStatus(): any {
     return this.taskManager.getTasksByStatus(status);
   }
 
-  async getTaskMetadata(): unknown {
+  async getTaskMetadata(): any {
     return this.taskManager.getTaskMetadata(taskId);
   }
 
-  async createQueue(): unknown {
-    if(): unknown {
+  async createQueue(options: any): any {
+    if(): any {
       return this.taskQueues.get(name)!;
     }
 
@@ -89,22 +89,22 @@ type: task.type,
     return queue;
   }
 
-  async getQueue(): unknown {
+  async getQueue(): any {
     return this.taskQueues.get(name);
   }
 
-  async getQueueStats(): unknown {
+  async getQueueStats(): any {
     return this.defaultQueue.getQueueStats();
   }
 
-  async clearQueue(): unknown {
+  async clearQueue(): any {
     return this.defaultQueue.clear();
   }
 
-  async scheduleTask(): unknown {
+  async scheduleTask(id: any): void {
     const task = await this.createTask(taskOptions);
-    if(): unknown {
-      setTimeout(): unknown {
+    if(id: any): any {
+      setTimeout(id: any): void {
         this.executeTask(task.id).catch(error => {
 this.logger.error(`Failed to execute scheduled task ${task.id}:`, error);
         });
@@ -114,12 +114,12 @@ this.logger.error(`Failed to execute scheduled task ${task.id}:`, error);
     return task;
   }
 
-  async batchExecute(): unknown {
+  async batchExecute(id: any, options: any): void {
     const createdTasks: Task[] = [];
-    if(): unknown {
+    if(id: any, options: any): void {
       const concurrency = options.maxConcurrency || 5;
       const chunks = this.chunkArray(tasks, concurrency);
-      for(): unknown {
+      for(id: any): void {
         const chunkTasks = await Promise.all(
           chunk.map(task => this.createTask(task))
         );
@@ -135,7 +135,7 @@ this.logger.error(`Failed to execute task ${task.id}:`, error);
     } else {
   // Implementation needed
 }
-      for(): unknown {
+      for(id: any): void {
         const task = await this.createTask(taskOptions);
         createdTasks.push(task);
         try {
@@ -154,7 +154,7 @@ await this.executeTask(task.id);
   // Implementation needed
 }
     const chunks: T[][] = [];
-    for(): unknown {
+    for(): void {
       chunks.push(array.slice(i, i + size));
     }
     return chunks;

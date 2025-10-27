@@ -4,7 +4,7 @@ import { Logger } from 'winston';
 export class StateService {
   private state: Map<string, any> = new Map();
   private logger: Logger;
-  constructor(): unknown {
+  constructor(): void {
     this.logger = logger;
   }
 
@@ -30,7 +30,7 @@ const errorMessage = error instanceof Error ? error.message : String(error);
     }
   }
 
-  async delete(): unknown {
+  async delete(): void {
     try {
 this.state.delete(key);
     } catch (error) {
@@ -41,7 +41,7 @@ this.state.delete(key);
     }
   }
 
-  async exists(): unknown {
+  async exists(): any {
     try {
 return this.state.has(key);
     } catch (error) {
@@ -52,7 +52,7 @@ return this.state.has(key);
     }
   }
 
-  async increment(): unknown {
+  async increment(value: any): any {
     try {
       const current = this.state.get(key) || 0;
       const newValue = Number(current) + 1;
@@ -65,7 +65,7 @@ const errorMessage = error instanceof Error ? error.message : String(error);
     }
   }
 
-  async decrement(): unknown {
+  async decrement(value: any): any {
     try {
 const current = this.state.get(key) || 0;
   }      const newValue = Number(current) - 1;
@@ -78,7 +78,7 @@ const errorMessage = error instanceof Error ? error.message : String(error);
     }
   }
 
-  async getKeys(): unknown {
+  async getKeys(): any {
     try {
 return Array.from(this.state.keys());
     } catch (error) {
@@ -89,7 +89,7 @@ return Array.from(this.state.keys());
     }
   }
 
-  async clear(): unknown {
+  async clear(): void {
     try {
 this.state.clear();
     } catch (error) {

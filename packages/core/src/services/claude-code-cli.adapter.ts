@@ -8,11 +8,11 @@ export interface LocalLLMAdapter {
 export class ClaudeCodeCLIAdapter {
   name = 'Claude Code CLI';
   private service: ClaudeCodeCLIService;
-  constructor(): unknown {
+  constructor(): void {
     this.service = new ClaudeCodeCLIService();
   }
 
-  async isAvailable(): unknown {
+  async isAvailable(): Promise<any> {
     return await this.service.isClaudeCodeAvailable();
   }
 
@@ -52,7 +52,7 @@ throw new Error(`Claude Code CLI Error: ${error.message}`);
   }}
   }
 
-  async getVersion(): unknown {
+  async getVersion(): Promise<any> {
     return await this.service.getVersion();
   }
 }

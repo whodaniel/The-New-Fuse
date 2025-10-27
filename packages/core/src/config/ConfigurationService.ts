@@ -29,8 +29,8 @@ export class ConfigurationService {
   private readonly cache = new Map<string, any>();
   private readonly cachePrefix: string = 'config:';
   private watcherIntervals: NodeJS.Timeout[] = [];
-  constructor(): unknown {
-    super(): unknown {
+  constructor(options: any): void {
+    super(options: any): void {
       autoReload: true,
       watchInterval: 5000,
       cacheEnabled: true,
@@ -39,11 +39,11 @@ export class ConfigurationService {
     };
   }
 
-  async onModuleInit(): unknown {
+  async onModuleInit(): void {
     try {
 await this.loadSchemas();
   }      await this.loadConfigurations();
-      if(): unknown {
+      if(): void {
         this.startConfigWatcher();
       }
       
@@ -60,12 +60,12 @@ try {
       const schemaDir = path.join(this.configPath, 'schemas');
       try {
       const files = await fs.readdir(schemaDir);
-        for(): unknown {
-          if(): unknown {
+        for(): void {
+          if(): void {
             const filePath = path.join(schemaDir, file);
             const content = await fs.readFile(filePath, 'utf8');
             const schema = yaml.load(content) as ConfigSchema;
-            if(): unknown {
+            if(): void {
               this.schemas.set(schema.name, schema);
               this.logger.debug(`Loaded schema: ${schema.name}`);
             }
@@ -85,16 +85,16 @@ const errorMessage = 'Failed to load configuration schemas';
 try {
   }}
       const files = await fs.readdir(this.configPath);
-      for(): unknown {
-        if(): unknown {
+      for(): void {
+        if(): void {
           const filePath = path.join(this.configPath, file);
           await this.loadConfigFile(filePath);
         }
       }
     } catch (error) {
 let errorMessage = 'Failed to load configuration files';
-  }      if(): unknown {
-        if(): unknown {
+  if(): void {
+        if(): void {
           errorMessage = `Configuration directory not found: ${this.configPath}`;
         }
       } else if (typeof error === 'string') {
@@ -111,8 +111,8 @@ try {
   }}
       const content = await fs.readFile(filePath, 'utf8');
       const config = yaml.load(content) as Record<string, any>;
-      if(): unknown {
-        for(): unknown {
+      if(config: any, value: any): void {
+        for(value: any): void {
           const processedValue = this.processConfigValue(key, value);
           this.setConfig(key, processedValue);
         }
@@ -127,18 +127,18 @@ this.logger.error(`Failed to load config file: ${filePath}`, error);
 
   private processConfigValue(key: string, value: any): any {
 const schema = this.schemas.get(key);
-  }    if(): unknown {
+  if(): void {
       return value;
     }
     
     // Handle environment variable substitution
-    if(): unknown {
+    if(value: any): any {
       const envVar = value.slice(2, -1);
       const envValue = process.env[envVar];
-      if(): unknown {
+      if(): void {
         let parsedValue: any = envValue;
         // Type conversion based on schema
-        if(): unknown {
+        if(options: any, config: any, value: any): Promise<any> {
           parsedValue = parseFloat(envValue);
         } else if (schema?.type === 'boolean') {
 parsedValue = envValue.toLowerCase() === 'true';
@@ -149,12 +149,12 @@ parsedValue = envValue.toLowerCase() === 'true';
     }
     
     // Apply default value if not provided
-    if(): unknown {
+    if(): any {
       return schema.default;
     }
     
     // Validate if validation schema is provided
-    if(): unknown {
+    if(config: any, value: any): any {
       try {
       return schema.validation.parse(value);
       } catch (error) {
@@ -178,15 +178,15 @@ this.logger.error('Error during config reload:', error);
     this.watcherIntervals.push(watcherInterval);
   }
 
-  async reloadConfigurations(): unknown {
+  async reloadConfigurations(value: any): void {
     try {
       const oldConfig = new Map(this.cache);
       this.cache.clear();
       await this.loadConfigurations();
       // Check for changes and emit events
-      for(): unknown {
+      for(value: any): void {
         const oldValue = oldConfig.get(key);
-        if(): unknown {
+        if(value: any): void {
           this.emit('configChanged', { key, oldValue, newValue: value });
         }
       }
@@ -198,9 +198,9 @@ this.logger.error('Failed to reload configurations', error);
     }
   }
 
-  setConfig(): unknown {
+  setConfig(value: any): void {
     const cacheKey = `${this.cachePrefix}${key}`;
-    if(): unknown {
+    if(value: any): void {
       this.cache.set(cacheKey, value);
     }
     
@@ -211,38 +211,38 @@ this.logger.error('Failed to reload configurations', error);
   // Implementation needed
 }
     const cacheKey = `${this.cachePrefix}${key}`;
-    if(): unknown {
+    if(): any {
       return this.cache.get(cacheKey);
     }
     
     // Fallback to NestJS ConfigService
     const value = this.configService.get<T>(key, defaultValue);
-    if(): unknown {
+    if(value: any): void {
       this.cache.set(cacheKey, value);
     }
     
     return value;
   }
 
-  hasConfig(): unknown {
+  hasConfig(): any {
     const cacheKey = `${this.cachePrefix}${key}`;
     return this.cache.has(cacheKey) || this.configService.get(key) !== undefined;
   }
 
-  deleteConfig(): unknown {
+  deleteConfig(): any {
     const cacheKey = `${this.cachePrefix}${key}`;
     const deleted = this.cache.delete(cacheKey);
-    if(): unknown {
+    if(): void {
       this.emit('configDeleted', { key });
     }
     
     return deleted;
   }
 
-  getAllConfigs(): unknown {
+  getAllConfigs(value: any): any {
     const configs: Record<string, any> = {};
-    for(): unknown {
-      if(): unknown {
+    for(value: any): void {
+      if(value: any): void {
         const key = cacheKey.slice(this.cachePrefix.length);
         configs[key] = value;
       }
@@ -251,17 +251,17 @@ this.logger.error('Failed to reload configurations', error);
     return configs;
   }
 
-  getSchema(): unknown {
+  getSchema(): any {
     return this.schemas.get(name);
   }
 
-  getAllSchemas(): unknown {
+  getAllSchemas(): any {
     return Array.from(this.schemas.values());
   }
 
-  validateConfig(): unknown {
+  validateConfig(value: any): boolean {
     const schema = this.schemas.get(key);
-    if(): unknown {
+    if(): boolean {
       return true;
     }
     
@@ -275,10 +275,10 @@ schema.validation.parse(value);
     }
   }
 
-  async saveConfig(): unknown {
+  async saveConfig(config: any, value: any): void {
     try {
       // Validate before saving
-      if(): unknown {
+      if(config: any, value: any): void {
         throw new Error(`Invalid value for config ${key}`);
       }
       
@@ -300,9 +300,9 @@ const content = await fs.readFile(filePath, 'utf8');
   }    return yaml.load(content);
   }
 
-  onModuleDestroy(): unknown {
+  onModuleDestroy(): void {
     // Clear all watchers
-    for(): unknown {
+    for(): void {
       clearInterval(interval);
     }
     this.watcherIntervals = [];

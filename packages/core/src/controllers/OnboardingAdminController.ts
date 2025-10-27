@@ -12,7 +12,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Get general onboarding settings' })
   @ApiResponse({ status: 200, description: 'Returns general onboarding settings' })
-  async getGeneralSettings(): unknown {
+  async getGeneralSettings(): any {
     this.logger.log('Getting general onboarding settings');
     return { message: 'General settings endpoint' };
   }
@@ -21,7 +21,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Update general onboarding settings' })
   @ApiResponse({ status: 200, description: 'General onboarding settings updated successfully' })
-  async updateGeneralSettings(): unknown {
+  async updateGeneralSettings(): any {
     this.logger.log('Updating general onboarding settings');
     return { message: 'Settings updated' };
   }
@@ -30,7 +30,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Get user types configuration' })
   @ApiResponse({ status: 200, description: 'Returns user types configuration' })
-  async getUserTypes(): unknown {
+  async getUserTypes(): any {
     this.logger.log('Getting user types configuration');
     return { message: 'User types endpoint' };
   }
@@ -39,7 +39,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Update user types configuration' })
   @ApiResponse({ status: 200, description: 'User types configuration updated successfully' })
-  async updateUserTypes(): unknown {
+  async updateUserTypes(): any {
     this.logger.log('Updating user types configuration');
     return { message: 'User types updated' };
   }
@@ -48,7 +48,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Get onboarding steps configuration' })
   @ApiResponse({ status: 200, description: 'Returns onboarding steps configuration' })
-  async getSteps(): unknown {
+  async getSteps(): any {
     this.logger.log('Getting onboarding steps configuration');
     return { message: 'Steps endpoint' };
   }
@@ -57,7 +57,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Update onboarding steps configuration' })
   @ApiResponse({ status: 200, description: 'Onboarding steps configuration updated successfully' })
-  async updateSteps(): unknown {
+  async updateSteps(): any {
     this.logger.log('Updating onboarding steps configuration');
     return { message: 'Steps updated' };
   }
@@ -66,7 +66,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Get AI settings for onboarding' })
   @ApiResponse({ status: 200, description: 'Returns AI settings for onboarding' })
-  async getAISettings(): unknown {
+  async getAISettings(): any {
     this.logger.log('Getting AI settings for onboarding');
     return { message: 'AI settings endpoint' };
   }
@@ -75,7 +75,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Update AI settings for onboarding' })
   @ApiResponse({ status: 200, description: 'AI settings for onboarding updated successfully' })
-  async updateAISettings(): unknown {
+  async updateAISettings(): any {
     this.logger.log('Updating AI settings for onboarding');
     return { message: 'AI settings updated' };
   }
@@ -84,7 +84,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Validate onboarding configuration' })
   @ApiResponse({ status: 200, description: 'Validation results' })
-  async validateConfiguration(): unknown {
+  async validateConfiguration(): any {
     this.logger.log('Validating onboarding configuration');
     return { valid: true, message: 'Configuration validated' };
   }
@@ -93,7 +93,7 @@ export class OnboardingAdminController {
   @Roles('admin')
   @ApiOperation({ summary: 'Get onboarding analytics' })
   @ApiResponse({ status: 200, description: 'Returns onboarding analytics' })
-  async getAnalytics(): unknown {
+  async getAnalytics(): any {
     this.logger.log('Getting onboarding analytics');
     return { message: 'Analytics endpoint' };
   }

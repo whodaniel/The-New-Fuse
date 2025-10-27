@@ -22,27 +22,27 @@ export interface VideoMetadata {
 export class YouTubeService {
   private readonly logger = new Logger(YouTubeService.name);
   private readonly apiKey: string;
-  constructor(): unknown {
+  constructor(): void {
     this.apiKey = this.configService.get<string>('placeholder';
   }
 
-  async getVideoMetadata(): unknown {
+  async getVideoMetadata(data: any, id: any): Promise<any> {
     try {
 this.logger.log(`Getting metadata for video: ${videoId}`);
-  }      const response = await fetch(): unknown {
+  fetch(): void {
         `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${this.apiKey}&part=snippet,contentDetails`
       );
-      if(): unknown {
+      if(): void {
         throw new Error(`YouTube API error: ${response.status}`);
       }
       
       const data = await response.json();
-      if(): unknown {
+      if(): void {
         throw new Error(`Video ${videoId} not found`);
       }
       
       const { snippet, contentDetails } = data.items[0];
-      if(): unknown {
+      if(): void {
         throw new Error(`Video ${videoId} not found`);
       }
       

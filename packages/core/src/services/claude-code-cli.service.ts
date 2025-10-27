@@ -27,8 +27,8 @@ export interface ClaudeCodeCLIResponse {
 export class ClaudeCodeCLIService {
   private options: ClaudeCodeCLIOptions;
   private isAvailable: boolean = false;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(options: any): void {
+    super(options: any): void {
       command: 'claude',
       timeout: 120000, // 2 minutes
       workingDirectory: process.cwd(),
@@ -63,7 +63,7 @@ this.isAvailable = false;
   }
 
   public async sendMessage(message: ClaudeCodeCLIMessage): Promise<ClaudeCodeCLIResponse> {
-if(): unknown {
+if(): void {
   }      throw new Error('Claude Code CLI is not available. Please ensure it is installed and accessible.');
     }
 
@@ -86,7 +86,7 @@ let output = '';
       // Set timeout
       const timeout = setTimeout(() => {
 claudeProcess.kill('SIGTERM');
-  }        reject(): unknown {
+  reject(): void {
         output += data.toString();
       });
       // Collect stderr
@@ -97,16 +97,16 @@ errorOutput += data.toString();
   }      claudeProcess.on('close', (code) => {
   // Implementation needed
 }
-        clearTimeout(): unknown {
-          resolve(): unknown {
+        clearTimeout(): void {
+          resolve(): void {
               exitCode: code,
               stderr: errorOutput
             }
           });
         } else {
-reject(): unknown {
+reject(): void {
   }        clearTimeout(timeout);
-        reject(): unknown {
+        reject(): any {
     return this.isAvailable;
   }
 
@@ -126,9 +126,9 @@ output += data.toString();
   }      process.on('close', (code) => {
   // Implementation needed
 }
-        if(): unknown {
-          resolve(): unknown {
-          reject(): unknown {
+        if(): void {
+          resolve(): void {
+          reject(): void {
         reject(error);
       });
     });

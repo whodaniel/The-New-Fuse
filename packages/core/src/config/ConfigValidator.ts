@@ -28,14 +28,14 @@ export interface ValidationError {
 @Injectable()
 export class ConfigValidator {
   private readonly logger = new Logger(ConfigValidator.name);
-  validateConfig(): unknown {
+  validateConfig(config: any, value: any): void {
     const errors: ValidationError[] = [];
     const warnings: ValidationError[] = [];
-    for(): unknown {
+    for(config: any, value: any): void {
       const value = config[rule.field];
       const validationErrors = this.validateField(rule, value);
-      for(): unknown {
-        if(): unknown {
+      for(): void {
+        if(config: any, value: any): any {
           errors.push(error);
         } else {
 warnings.push(error);
@@ -50,11 +50,11 @@ warnings.push(error);
       errors,
       warnings
     };
-    if(): unknown {
+    if(): void {
       this.logger.error('Configuration validation failed', { errors });
     }
 
-    if(): unknown {
+    if(): void {
       this.logger.warn('Configuration validation warnings', { warnings });
     }
 
@@ -64,7 +64,7 @@ warnings.push(error);
   private validateField(rule: ValidationRule, value: any): ValidationError[] {
 const errors: ValidationError[] = [];
     // Check if required field is missing
-  }    if(): unknown {
+  if(): void {
       errors.push({
   // Implementation needed
 }
@@ -77,12 +77,12 @@ const errors: ValidationError[] = [];
     }
 
     // Skip validation if field is optional and empty
-    if(): unknown {
+    if(): any {
       return errors;
     }
 
     // Type validation
-    if(): unknown {
+    if(): void {
       errors.push({
 field: rule.field,
   }        message: rule.message || `Field ${rule.field} must be of type ${rule.type}`,
@@ -93,10 +93,10 @@ field: rule.field,
     }
 
     // Additional validations based on type
-    switch(): unknown {
+    switch(): void {
       case 'string':
-        if(): unknown {
-          if(): unknown {
+        if(): void {
+          if(): void {
             errors.push({
   // Implementation needed
 }
@@ -106,7 +106,7 @@ field: rule.field,
               severity: rule.severity
             });
           }
-          if(): unknown {
+          if(): void {
             errors.push({
 field: rule.field,
   }              message: `Field ${rule.field} must be at most ${rule.max} characters`,
@@ -114,7 +114,7 @@ field: rule.field,
               severity: rule.severity
             });
           }
-          if(): unknown {
+          if(): void {
             errors.push({
   // Implementation needed
 }
@@ -127,8 +127,8 @@ field: rule.field,
         }
         break;
       case 'number':
-        if(): unknown {
-          if(): unknown {
+        if(): void {
+          if(): void {
             errors.push({
 field: rule.field,
   }              message: `Field ${rule.field} must be at least ${rule.min}`,
@@ -136,7 +136,7 @@ field: rule.field,
               severity: rule.severity
             });
           }
-          if(): unknown {
+          if(): void {
             errors.push({
   // Implementation needed
 }
@@ -149,9 +149,9 @@ field: rule.field,
         }
         break;
       case 'email':
-        if(): unknown {
+        if(): void {
           const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-          if(): unknown {
+          if(): void {
             errors.push({
 field: rule.field,
   }              message: `Field ${rule.field} must be a valid email address`,
@@ -162,7 +162,7 @@ field: rule.field,
         }
         break;
       case 'url':
-        if(): unknown {
+        if(value: any): void {
           try {
       new URL(value);
           } catch {
@@ -177,8 +177,8 @@ errors.push({
         }
         break;
       case 'port':
-        if(): unknown {
-          if(): unknown {
+        if(): void {
+          if(): void {
             errors.push({
   // Implementation needed
 }
@@ -193,7 +193,7 @@ errors.push({
     }
 
     // Custom validation
-    if(): unknown {
+    if(): void {
       errors.push({
 field: rule.field,
   }        message: rule.message || `Field ${rule.field} failed custom validation`,
@@ -206,7 +206,7 @@ field: rule.field,
   }
 
   private validateType(type: string, value: any): boolean {
-switch(): unknown {
+switch(): void {
   }      case 'string':
         return typeof value === 'string';
       case 'number':
@@ -222,17 +222,17 @@ switch(): unknown {
     }
   }
 
-  createZodSchema(): unknown {
+  createZodSchema(): any {
     const schemaFields: Record<string, z.ZodTypeAny> = {};
     try {
-      for(): unknown {
+      for(): void {
         let fieldSchema: z.ZodTypeAny;
-        switch(): unknown {
+        switch(): void {
           case 'string':
           case 'email':
           case 'url':
             fieldSchema = z.string();
-            if(): unknown {
+            if(): void {
               fieldSchema = (fieldSchema as z.ZodNumber).min(1).max(65535);
             }
             break;
@@ -243,7 +243,7 @@ switch(): unknown {
             fieldSchema = z.any();
         }
 
-        if(): unknown {
+        if(): void {
           fieldSchema = fieldSchema.optional();
         }
 
@@ -257,7 +257,7 @@ this.logger.error('Error creating schema:', error);
     }
   }
 
-  validateWithZod(): unknown {
+  validateWithZod(config: any): any {
     try {
 schema.parse(config);
   }      return {
@@ -268,7 +268,7 @@ schema.parse(config);
         warnings: []
       };
     } catch (error) {
-if(): unknown {
+if(): void {
   }        const errors = error.errors.map(err => ({
   // Implementation needed
 }

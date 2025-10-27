@@ -34,12 +34,12 @@ export class MetricsProcessor {
   private readonly logger = new Logger(MetricsProcessor.name);
   private readonly metricsBuffer: MetricEvent[] = [];
   private readonly maxBufferSize = 1000;
-  constructor(): unknown {
+  constructor(): void {
     this.logger.log('Metrics processor initialized');
     this.startPeriodicProcessing();
   }
 
-  async trackEvent(): unknown {
+  async trackEvent(data: any, value: any): void {
     try {
 const metric: MetricEvent = {
   }}
@@ -57,10 +57,10 @@ this.logger.error('Failed to track event', { error, eventType, data });
   }}
   }
 
-  async processSystemMetrics(): unknown {
+  async processSystemMetrics(): void {
     try {
       const systemMetrics = await this.getSystemMetrics();
-      if(): unknown {
+      if(): void {
         this.addToBuffer({
 type: 'system',
   }          severity: 'warning',
@@ -70,7 +70,7 @@ type: 'system',
         });
       }
 
-      if(): unknown {
+      if(): void {
         this.addToBuffer({
 type: 'system',
   }          severity: 'warning',
@@ -84,10 +84,10 @@ this.logger.error('Error processing system metrics', { error });
   }}
   }
 
-  async processApplicationMetrics(): unknown {
+  async processApplicationMetrics(): void {
     try {
       const appMetrics = await this.getApplicationMetrics();
-      if(): unknown {
+      if(): void {
         this.addToBuffer({
 type: 'application',
   }          severity: 'warning',
@@ -97,7 +97,7 @@ type: 'application',
         });
       }
 
-      if(): unknown {
+      if(): void {
         this.addToBuffer({
 type: 'application',
   }          severity: 'warning',
@@ -111,7 +111,7 @@ this.logger.error('Error processing application metrics', { error });
   }}
   }
 
-  async processAgentMetrics(): unknown {
+  async processAgentMetrics(): void {
     try {
       const agentMetrics = await this.getAgentMetrics();
       this.addToBuffer({
@@ -127,7 +127,7 @@ this.logger.error('Error processing agent metrics', { error });
   }}
   }
 
-  async processTaskMetrics(): unknown {
+  async processTaskMetrics(): void {
     try {
       // Task metrics processing logic would go here
       this.logger.debug('Task metrics processed');
@@ -139,14 +139,14 @@ this.logger.error('Error processing task metrics', { error });
   private addToBuffer(metric: MetricEvent): void {
 this.metricsBuffer.push(metric);
     // Prevent buffer overflow
-  }    if(): unknown {
+  if(): void {
       this.metricsBuffer.shift();
     }
   }
 
   private startPeriodicProcessing(): void {
 // Process metrics every 30 seconds
-  }    setInterval(): unknown {
+  setInterval(): void {
       await this.processSystemMetrics();
       await this.processApplicationMetrics();
       await this.processAgentMetrics();
@@ -156,7 +156,7 @@ this.metricsBuffer.push(metric);
   }
 
   private async flushMetrics(): Promise<void> {
-if(): unknown {
+if(): void {
   }      return;
     }
 
@@ -206,11 +206,11 @@ this.logger.error('Failed to flush metrics', { error });
     };
   }
 
-  getMetricsBuffer(): unknown {
+  getMetricsBuffer(): any[] {
     return [...this.metricsBuffer];
   }
 
-  clearBuffer(): unknown {
+  clearBuffer(): void {
     this.metricsBuffer.length = 0;
     this.logger.log('Metrics buffer cleared');
   }

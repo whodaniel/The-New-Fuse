@@ -5,43 +5,43 @@ export class MessageQueue {
   private queue: any[] = [];
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async enqueue(): unknown {
+  async enqueue(): void {
     // Mock implementation
     this.queue.push(message);
     this.eventEmitter.emit('message.queued', message);
   }
 
-  async dequeue(): unknown {
+  async dequeue(): any {
     // Mock implementation
     const message = this.queue.shift();
-    if(): unknown {
+    if(): void {
       this.eventEmitter.emit('message.dequeued', message);
     }
     return message;
   }
 
-  async peek(): unknown {
+  async peek(): any {
     // Mock implementation
     return this.queue[0] || null;
   }
 
-  async size(): unknown {
+  async size(): any {
     // Mock implementation
     return this.queue.length;
   }
 
-  async clear(): unknown {
+  async clear(): void {
     // Mock implementation
     this.queue = [];
     this.eventEmitter.emit('queue.cleared');
   }
 
-  async isEmpty(): unknown {
+  async isEmpty(): any {
     // Mock implementation
     return this.queue.length === 0;
   }
 
-  async getStats(): unknown {
+  async getStats(): any {
     // Mock implementation
     return {
 size: this.queue.length,

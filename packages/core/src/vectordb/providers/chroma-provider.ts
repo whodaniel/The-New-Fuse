@@ -3,20 +3,20 @@ import { VectorStoreProvider, VectorDocument, VectorQuery, SearchResult } from '
 export class ChromaProvider {
   public readonly name = 'chroma';
   private client: ChromaClient;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.client = new ChromaClient({ path: config.endpoint });
   }
   
-  async search(): unknown {
+  async search(): any[] {
     // Implementation for searching vectors
     return [];
   }
   
-  async addDocuments(): unknown {
+  async addDocuments(): void {
     // Implementation for adding documents
   }
   
-  async deleteDocuments(): unknown {
+  async deleteDocuments(): void {
     // Implementation for deleting documents
   }
 }

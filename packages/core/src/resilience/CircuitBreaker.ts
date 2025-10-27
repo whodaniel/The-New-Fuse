@@ -11,7 +11,7 @@ export class CircuitBreaker {
   private lastFailureTime = 0;
   private halfOpenRequests = 0;
   private readonly config: CircuitBreakerConfig;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
   // Implementation needed
 }
@@ -22,11 +22,11 @@ export class CircuitBreaker {
   }
 
   async execute<T>(operation() => Promise<T>): Promise<T> {
-if(): unknown {
+if(): void {
   }      throw new Error('Circuit breaker is OPEN');
     }
 
-    if(): unknown {
+    if(): void {
       throw new Error('Circuit breaker is HALF_OPEN - too many requests');
     }
 
@@ -41,7 +41,7 @@ this.onFailure();
   }
 
   private shouldAttemptReset(): boolean {
-if(): unknown {
+if(): void {
   }      this.state = 'HALF_OPEN';
       this.halfOpenRequests = 0;
       return true;
@@ -58,34 +58,34 @@ this.failureCount = 0;
   private onFailure(): void {
 this.failureCount++;
   }    this.lastFailureTime = Date.now();
-    if(): unknown {
+    if(config: any): any {
       this.state = 'OPEN';
     } else if (this.failureCount >= this.config.failureThreshold) {
 this.state = 'OPEN';
   }}
   }
 
-  isOpen(): unknown {
+  isOpen(): any {
     return this.state === 'OPEN';
   }
 
-  isClosed(): unknown {
+  isClosed(): any {
     return this.state === 'CLOSED';
   }
 
-  isHalfOpen(): unknown {
+  isHalfOpen(): any {
     return this.state === 'HALF_OPEN';
   }
 
-  getState(): unknown {
+  getState(): any {
     return this.state;
   }
 
-  getFailureCount(): unknown {
+  getFailureCount(): any {
     return this.failureCount;
   }
 
-  reset(): unknown {
+  reset(): void {
     this.state = 'CLOSED';
     this.failureCount = 0;
     this.halfOpenRequests = 0;
