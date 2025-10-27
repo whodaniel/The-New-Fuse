@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TestDataGenerator } from './TestDataGenerator';
+// Import 'Test' from Current, but 'Schema' is no longer needed
+import { TestDataGenerator } from './TestDataGenerator'; 
 import { TestRunner } from './TestRunner';
-import { TestConfiguration, TestSuite, TestResult } from '../types/types';
+// Merged Import (Conflict 1)
+import { TestConfiguration, TestSuite, TestResult, Test } from '../types/types';
 
 @Injectable()
 export class TestingFramework {
@@ -13,36 +15,29 @@ export class TestingFramework {
     this.testDataGenerator = new TestDataGenerator();
   }
 
-  async runSuite(suite: TestSuite, config: TestConfiguration): Promise<Map<string, TestResult[]>> {
+  // Use 'Current' signature (Conflict 2) but with new 'Incoming' logic
+  async runSuite(
+    suite: TestSuite,
+    config?: TestConfiguration,
+  ): Promise<Map<string, TestResult[]>> {
     const results = new Map<string, TestResult[]>();
     const suiteResults: TestResult[] = [];
 
+    // Merged Logic: Use the TestRunner directly
     for (const test of suite.tests) {
-      const startTime = Date.now();
-      try {
-        const success = await this.executeTest(test, config);
-        const duration = Date.now() - startTime;
-        suiteResults.push({
-          name: test.name || 'Unnamed test',
-          success,
-          duration
-        });
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        suiteResults.push({
-          name: test.name || 'Unnamed test',
-          success: false,
-          duration,
-          error: error instanceof Error ? error.message : String(error)
-        });
-      }
+      const result = await this.testRunner.run(test, config);
+      suiteResults.push(result);
     }
 
     results.set(suite.name, suiteResults);
     return results;
   }
 
-  async runSuites(suites: TestSuite[], config: TestConfiguration): Promise<Map<string, TestResult[]>> {
+  // Use 'Current' signature (Conflict 3)
+  async runSuites(
+    suites: TestSuite[],
+    config?: TestConfiguration,
+  ): Promise<Map<string, TestResult[]>> {
     const allResults = new Map<string, TestResult[]>();
 
     for (const suite of suites) {
@@ -51,15 +46,22 @@ export class TestingFramework {
         allResults.set(suiteName, results);
       }
     }
-
     return allResults;
   }
 
-  private async executeTest(test: any, config: TestConfiguration): Promise<boolean> {
-    return this.testRunner.execute(test, config);
-  }
+  // Conflict 4 Resolution:
+  // - 'executeTest' is removed.
+  // - 'generateTestData' is from 'Incoming'.
+  // - 'createSuite' is from 'Current'.
 
   generateTestData(schema: any): any {
     return this.testDataGenerator.generate(schema);
+  }
+
+  createSuite(name: string, tests: Test[]): TestSuite {
+    return {
+      name,
+      tests,
+    };
   }
 }

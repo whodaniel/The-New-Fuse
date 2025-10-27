@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common'; // Added Logger
 import { EventEmitter } from 'events';
-import { compare, hash } from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 
+// All from Incoming change
 enum AuthEventType {
   LOGIN = 'LOGIN',
   LOGOUT = 'LOGOUT',
@@ -34,19 +34,26 @@ interface LoginAttempt {
 
 @Injectable()
 export class AuthenticationService extends EventEmitter {
-  private sessions = new Map<string, AuthSession>();
-  private loginAttempts: LoginAttempt[] = [];
+  private readonly logger = new Logger(AuthenticationService.name); // From Current
+  private sessions = new Map<string, AuthSession>(); // From Incoming
+  private loginAttempts: LoginAttempt[] = []; // From Incoming
 
-  async login(username: string, password: string, deviceInfo: any): Promise<AuthSession | null> {
-    // Stub implementation
+  async login(
+    username: string,
+    password: string,
+    deviceInfo: any,
+  ): Promise<AuthSession | null> {
+    this.logger.log(`Login attempt for ${username}`); // From Current
+
+    // Stub implementation from Incoming
     const userId = uuidv4();
     const session: AuthSession = {
       id: uuidv4(),
       userId,
       token: uuidv4(),
       refreshToken: uuidv4(),
-      expiresAt: new Date(Date.now() + 3600000),
-      deviceInfo
+      expiresAt: new Date(Date.now() + 3600000), // 1 hour
+      deviceInfo,
     };
 
     this.sessions.set(session.id, session);
@@ -55,6 +62,9 @@ export class AuthenticationService extends EventEmitter {
   }
 
   async logout(sessionId: string): Promise<boolean> {
+    this.logger.log(`Logout for session ${sessionId}`); // From Current
+
+    // Logic from Incoming
     const session = this.sessions.get(sessionId);
     if (session) {
       this.sessions.delete(sessionId);
@@ -64,30 +74,11 @@ export class AuthenticationService extends EventEmitter {
     return false;
   }
 
+  // NOTE: 'refreshToken' from 'Current' is omitted as it
+  // doesn't fit the new 'Incoming' structure.
+
   async validateSession(sessionId: string): Promise<AuthSession | null> {
+    // From Incoming
     return this.sessions.get(sessionId) || null;
-  }
-
-  async refreshToken(refreshToken: string): Promise<AuthSession | null> {
-    // Stub implementation
-    for (const session of this.sessions.values()) {
-      if (session.refreshToken === refreshToken) {
-        session.token = uuidv4();
-        session.expiresAt = new Date(Date.now() + 3600000);
-        this.emit(AuthEventType.TOKEN_REFRESH, session);
-        return session;
-      }
-    }
-    return null;
-  }
-
-  async changePassword(userId: string, oldPassword: string, newPassword: string): Promise<boolean> {
-    // Stub implementation
-    this.emit(AuthEventType.PASSWORD_CHANGE, { userId });
-    return true;
-  }
-
-  getLoginAttempts(userId: string): LoginAttempt[] {
-    return this.loginAttempts.filter(attempt => attempt.userId === userId);
   }
 }

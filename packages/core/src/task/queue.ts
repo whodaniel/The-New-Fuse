@@ -1,3 +1,7 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { RedisService } from 'nestjs-redis';
+
+// Interface from Incoming change
 export interface QueueItem<T> {
   id: string;
   data: T;
@@ -7,110 +11,44 @@ export interface QueueItem<T> {
   maxRetries: number;
 }
 
+// Merged Class:
+// - Injectable Redis implementation from Current change
+// - Generic <T> and QueueItem<T> from Incoming change
+@Injectable()
 export class TaskQueue<T> {
-  private queue: QueueItem<T>[] = [];
-  private processing = false;
-  private maxConcurrent = 5;
-  private activeCount = 0;
+  private readonly logger = new Logger(TaskQueue.name);
+  private readonly prefix = 'task:queue';
 
-  enqueue(data: T, priority: number = 0, maxRetries: number = 3): string {
-    const id = `task-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    const item: QueueItem<T> = {
-      id,
-      data,
-      priority,
-      timestamp: new Date(),
-      retries: 0,
-      maxRetries
-    };
+  constructor(private readonly redisService: RedisService) {}
 
-    this.queue.push(item);
-    this.queue.sort((a, b) => b.priority - a.priority || a.timestamp.getTime() - b.timestamp.getTime());
-
-    this.processQueue();
-
-    return id;
+  private getQueueKey(type: string): string {
+    return `${this.prefix}:${type}`;
   }
 
-  dequeue(): QueueItem<T> | undefined {
-    return this.queue.shift();
+  // Merged 'add' method:
+  // Now takes a 'type' string and a generic 'item'
+  async add(type: string, item: QueueItem<T>): Promise<void> {
+    this.logger.log(`Adding task ${item.id} to queue ${type}`);
+    const client = this.redisService.getClient();
+    await client.zadd(
+      this.getQueueKey(type || 'default'),
+      item.priority.toString(), // Use priority from QueueItem
+      JSON.stringify(item), // Store the whole QueueItem
+    );
   }
 
-  peek(): QueueItem<T> | undefined {
-    return this.queue[0];
-  }
-
-  remove(id: string): boolean {
-    const index = this.queue.findIndex(item => item.id === id);
-    if (index !== -1) {
-      this.queue.splice(index, 1);
-      return true;
+  // Merged 'getNext' method:
+  // Now returns a generic QueueItem<T>
+  async getNext(type = 'default'): Promise<QueueItem<T> | null> {
+    this.logger.log(`Getting next task from queue ${type}`);
+    const client = this.redisService.getClient();
+    const result = await client.zpopmax(this.getQueueKey(type));
+    
+    if (result) {
+      // result[0] is the stringified item
+      return JSON.parse(result[0]) as QueueItem<T>;
     }
-    return false;
-  }
-
-  size(): number {
-    return this.queue.length;
-  }
-
-  isEmpty(): boolean {
-    return this.queue.length === 0;
-  }
-
-  clear(): void {
-    this.queue = [];
-  }
-
-  getAll(): QueueItem<T>[] {
-    return [...this.queue];
-  }
-
-  private async processQueue(): Promise<void> {
-    if (this.processing || this.activeCount >= this.maxConcurrent) {
-      return;
-    }
-
-    this.processing = true;
-
-    while (!this.isEmpty() && this.activeCount < this.maxConcurrent) {
-      const item = this.dequeue();
-      if (item) {
-        this.activeCount++;
-        this.processItem(item).finally(() => {
-          this.activeCount--;
-          this.processQueue();
-        });
-      }
-    }
-
-    this.processing = false;
-  }
-
-  private async processItem(item: QueueItem<T>): Promise<void> {
-    try {
-      // Stub implementation - override this in subclass
-      await this.handleItem(item.data);
-    } catch (error) {
-      if (item.retries < item.maxRetries) {
-        item.retries++;
-        this.queue.unshift(item);
-      } else {
-        await this.handleError(item, error);
-      }
-    }
-  }
-
-  protected async handleItem(data: T): Promise<void> {
-    // Override this method in subclass
-    console.log('Processing item:', data);
-  }
-
-  protected async handleError(item: QueueItem<T>, error: unknown): Promise<void> {
-    // Override this method in subclass
-    console.error('Item failed after max retries:', item, error);
-  }
-
-  setMaxConcurrent(max: number): void {
-    this.maxConcurrent = max;
+    
+    return null;
   }
 }

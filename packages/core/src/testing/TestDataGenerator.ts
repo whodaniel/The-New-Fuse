@@ -1,8 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
 export class TestDataGenerator {
+  /**
+   * Generates test data based on a schema.
+   * The schema can be a simple string (e.g., 'email'),
+   * an array (e.g., ['string']), or a schema object
+   * (e.g., { type: 'object', properties: { ... } })
+   */
   generate(schema: any): any {
+    // Handle flexible inputs from 'Current' branch
+    if (typeof schema === 'string') {
+      return this.generateString({ type: 'string', format: schema });
+    }
+    if (Array.isArray(schema)) {
+      return this.generateArray({ type: 'array', items: schema[0] || {} });
+    }
+    if (typeof schema === 'object' && schema !== null && !schema.type) {
+      return this.generateObject({ type: 'object', properties: schema });
+    }
+
+    // Handle schema object from 'Incoming' branch
     if (!schema || !schema.type) {
       return null;
     }
@@ -19,39 +38,64 @@ export class TestDataGenerator {
       case 'object':
         return this.generateObject(schema);
       default:
-        return null;
+        // Attempt to generate based on format string
+        return this.generateString({ format: schema.type });
     }
   }
 
+  /**
+   * Generates multiple instances of data from a schema.
+   */
+  generateMany(schema: any, count: number): any[] {
+    return Array.from({ length: count }, () => this.generate(schema));
+  }
+
+  // --- Private Helper Methods (Merged) ---
+
   private generateString(schema: any): string {
+    // From 'Incoming'
     if (schema.enum && schema.enum.length > 0) {
-      return schema.enum[Math.floor(Math.random() * schema.enum.length)];
+      return faker.helpers.arrayElement(schema.enum);
     }
-    return 'test-string-' + Math.random().toString(36).substring(7);
+    // From 'Current' (faker-based)
+    if (schema.format) {
+      switch (schema.format) {
+        case 'email': return faker.internet.email();
+        case 'uuid': return faker.string.uuid();
+        case 'firstName': return faker.person.firstName();
+        case 'lastName': return faker.person.lastName();
+        case 'fullName': return faker.person.fullName();
+        case 'url': return faker.internet.url();
+        case 'paragraph': return faker.lorem.paragraph();
+        case 'sentence': return faker.lorem.sentence();
+        case 'word': return faker.lorem.word();
+      }
+    }
+    return faker.lorem.word();
   }
 
   private generateNumber(schema: any): number {
-    const min = schema.minimum || 0;
-    const max = schema.maximum || 100;
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    // From 'Current' (faker-based)
+    return faker.number.int({
+      min: schema.minimum || schema.min || 0,
+      max: schema.maximum || schema.max || 100,
+    });
   }
 
   private generateBoolean(): boolean {
-    return Math.random() < 0.5;
+    // From 'Current' (faker-based)
+    return faker.datatype.boolean();
   }
 
   private generateArray(schema: any): any[] {
-    const length = schema.minItems || 3;
-    const items: any[] = [];
-    for (let i = 0; i < length; i++) {
-      if (schema.items) {
-        items.push(this.generate(schema.items));
-      }
-    }
-    return items;
+    // From 'Current' (faker-based)
+    const count = faker.number.int({ min: schema.minItems || 1, max: schema.maxItems || 5 });
+    const itemsSchema = schema.items || {}; // Get item schema
+    return Array.from({ length: count }, () => this.generate(itemsSchema));
   }
 
   private generateObject(schema: any): any {
+    // From 'Incoming' (structure is good)
     const obj: any = {};
     if (schema.properties) {
       for (const [key, propSchema] of Object.entries(schema.properties)) {

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+// Conflict 1: Use 'Incoming' imports
 import { Logger } from '../utils/logger';
 
 export interface ToolDefinition {
@@ -11,6 +12,7 @@ export interface ToolDefinition {
 export class AnthropicXmlTools {
   private readonly logger = new Logger(AnthropicXmlTools.name);
 
+  // Conflict 2: Use 'Incoming' implementation
   convertToolToXmlFormat(tool: ToolDefinition): string {
     let xmlString = '<function>\n';
     xmlString += `  <name>${tool.name}</name>\n`;
@@ -19,7 +21,9 @@ export class AnthropicXmlTools {
     if (tool.parameters && Object.keys(tool.parameters).length > 0) {
       xmlString += '  <parameters>\n';
 
-      for (const [paramName, paramSchema] of Object.entries(tool.parameters)) {
+      for (const [paramName, paramSchema] of Object.entries(
+        tool.parameters,
+      )) {
         xmlString += `    <parameter>\n`;
         xmlString += `      <name>${paramName}</name>\n`;
         xmlString += `      <type>${paramSchema.type || 'string'}</type>\n`;
@@ -54,6 +58,7 @@ export class AnthropicXmlTools {
   }
 
   parseXmlResponse(xml: string): any {
+    // Conflict 3: Logic is identical, just clean up
     try {
       // Remove XML tags and extract JSON
       const jsonMatch = xml.match(/\{.*\}/s);

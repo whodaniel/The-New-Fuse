@@ -1,9 +1,13 @@
-import { Tool } from '../tools/base';
+import { Tool } from '../tools/types';
+
+interface ToolManager {
+  getTool(name: string): any;
+}
 
 export class ProjectWizard {
-  constructor(private toolManager: any) {}
+  constructor(private toolManager: ToolManager) {}
 
-  async analyzeProject(): Promise<any> {
+  async analyzeProject(): Promise<{ analysis: any; visualization: any }> {
     const analyzer = this.toolManager.getTool('Project Analyzer');
     const visualizer = this.toolManager.getTool('ComfyUI Visualizer');
 

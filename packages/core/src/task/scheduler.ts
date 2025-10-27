@@ -1,102 +1,105 @@
-import { EventEmitter } from 'events';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { TaskQueue, QueueItem } from './queue';
+import { TaskExecutor, TaskExecutionContext, TaskExecutionResult } from './executor';
 
-export interface ScheduledTask {
-  id: string;
-  name: string;
-  schedule: string; // cron format
-  handler: () => Promise<void>;
-  enabled: boolean;
-  lastRun?: Date;
-  nextRun?: Date;
-}
+// Define the shape of the data we'll put in the queue
+export type TaskPayload = {
+  taskType: string;
+  context: TaskExecutionContext;
+};
 
-export class TaskScheduler extends EventEmitter {
-  private tasks: Map<string, ScheduledTask> = new Map();
-  private intervals: Map<string, NodeJS.Timeout> = new Map();
+@Injectable()
+export class TaskScheduler {
+  // This class is the Queue Worker
+  private readonly logger = new Logger(TaskScheduler.name);
+  private readonly maxConcurrentTasks = 10;
+  private runningTasks = 0;
 
-  registerTask(task: ScheduledTask): void {
-    this.tasks.set(task.id, task);
-    if (task.enabled) {
-      this.scheduleTask(task);
-    }
-    this.emit('task:registered', task);
+  constructor(
+    // Our queue will store items of type TaskPayload
+    private readonly taskQueue: TaskQueue<TaskPayload>,
+    private readonly taskExecutor: TaskExecutor,
+    private readonly eventEmitter: EventEmitter2,
+  ) {
+    this.logger.log('TaskScheduler (Worker) initialized.');
+    // Start processing the queue
+    this.startProcessing();
   }
 
-  unregisterTask(taskId: string): void {
-    const task = this.tasks.get(taskId);
-    if (task) {
-      this.cancelTask(taskId);
-      this.tasks.delete(taskId);
-      this.emit('task:unregistered', task);
+  // The 'schedule' method from 'Current' is removed.
+  // Other services (like a TaskService) will be responsible for
+  // formatting a TaskPayload and adding it to the TaskQueue.
+
+  private startProcessing(): void {
+    this.logger.log(
+      `Starting worker pool with ${this.maxConcurrentTasks} concurrent tasks.`,
+    );
+    // Start a worker for each concurrent task slot
+    for (let i = 0; i < this.maxConcurrentTasks; i++) {
+      this.tryProcessNext(i); // Pass worker ID for logging
     }
   }
 
-  private scheduleTask(task: ScheduledTask): void {
-    // Simple interval-based scheduling (simplified from cron)
-    const intervalMs = this.parseSchedule(task.schedule);
+  private async tryProcessNext(workerId: number): Promise<void> {
+    this.logger.debug(`[Worker ${workerId}] Polling for next task...`);
 
-    const interval = setInterval(async () => {
+    // We assume a single 'default' queue for all task types
+    const item = await this.taskQueue.getNext('default');
+
+    if (item) {
+      this.runningTasks++;
+
+      // The 'data' from the queue item is our TaskPayload
+      const { taskType, context } = item.data;
+
+      this.logger.log(
+        `[Worker ${workerId}] Starting task ${context.taskId} (type: ${taskType})`,
+      );
+      this.eventEmitter.emit('task.started', { task: context });
+
+      let result: TaskExecutionResult;
       try {
-        task.lastRun = new Date();
-        this.emit('task:started', task);
-        await task.handler();
-        task.nextRun = new Date(Date.now() + intervalMs);
-        this.emit('task:completed', task);
+        // Use the TaskExecutor to run the task
+        result = await this.taskExecutor.execute(taskType, context);
+
+        if (result.success) {
+          this.logger.log(
+            `[Worker ${workerId}] Task ${context.taskId} completed successfully.`,
+          );
+          this.eventEmitter.emit('task.completed', {
+            task: context,
+            result: result.result,
+          });
+        } else {
+          this.logger.warn(
+            `[Worker ${workerId}] Task ${context.taskId} failed: ${result.error}`,
+          );
+          this.eventEmitter.emit('task.failed', {
+            task: context,
+            error: result.error,
+          });
+        }
       } catch (error) {
-        this.emit('task:failed', task, error);
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        this.logger.error(
+          `[Worker ${workerId}] Unhandled exception during task ${context.taskId}: ${errorMsg}`,
+          error.stack,
+        );
+        this.eventEmitter.emit('task.failed', {
+          task: context,
+          error: errorMsg,
+        });
+      } finally {
+        this.runningTasks--;
+
+        // After finishing, this worker immediately tries to get another task
+        this.tryProcessNext(workerId);
       }
-    }, intervalMs);
-
-    this.intervals.set(task.id, interval);
-  }
-
-  private cancelTask(taskId: string): void {
-    const interval = this.intervals.get(taskId);
-    if (interval) {
-      clearInterval(interval);
-      this.intervals.delete(taskId);
+    } else {
+      // Queue was empty. This worker will wait a bit before polling again.
+      this.logger.debug(`[Worker ${workerId}] Queue empty. Sleeping for 1s.`);
+      setTimeout(() => this.tryProcessNext(workerId), 1000); // Poll every 1 second
     }
-  }
-
-  private parseSchedule(schedule: string): number {
-    // Simplified schedule parser - returns milliseconds
-    // In production, use a proper cron parser
-    const match = schedule.match(/(\d+)([smhd])/);
-    if (!match) return 60000; // default 1 minute
-
-    const value = parseInt(match[1]);
-    const unit = match[2];
-
-    switch (unit) {
-      case 's': return value * 1000;
-      case 'm': return value * 60 * 1000;
-      case 'h': return value * 60 * 60 * 1000;
-      case 'd': return value * 24 * 60 * 60 * 1000;
-      default: return 60000;
-    }
-  }
-
-  enableTask(taskId: string): void {
-    const task = this.tasks.get(taskId);
-    if (task) {
-      task.enabled = true;
-      this.scheduleTask(task);
-    }
-  }
-
-  disableTask(taskId: string): void {
-    const task = this.tasks.get(taskId);
-    if (task) {
-      task.enabled = false;
-      this.cancelTask(taskId);
-    }
-  }
-
-  getTasks(): ScheduledTask[] {
-    return Array.from(this.tasks.values());
-  }
-
-  getTask(taskId: string): ScheduledTask | undefined {
-    return this.tasks.get(taskId);
   }
 }
