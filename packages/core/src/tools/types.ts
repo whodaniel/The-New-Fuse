@@ -13,10 +13,12 @@ export interface Tool {
   id: string;
   name: string;
   description: string;
-  parameters?: ToolParameter[];
-  execute(parameters: any): Promise<any>;
+  // Conflict Resolution:
+  parameters: Record<string, ToolParameter>; // From 'Incoming'
+  execute(parameters: any): Promise<any>; // From 'Current'
 }
 
+// Keep 'ToolExecutionResult' from 'Current'
 export interface ToolExecutionResult {
   id: string;
   toolId: string;
@@ -27,6 +29,7 @@ export interface ToolExecutionResult {
   success: boolean;
 }
 
+// Keep all testing types (from both)
 export interface Test {
   name: string;
   test: () => Promise<boolean> | boolean;

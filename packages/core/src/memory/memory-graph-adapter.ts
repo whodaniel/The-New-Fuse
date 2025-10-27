@@ -9,12 +9,12 @@ export class MemoryGraphAdapter {
   private nodeCache: Map<string, Node> = new Map();
   private edgeCache: Map<string, CachedEdge> = new Map();
   private eventSystem: EventSystem;
-  constructor(): unknown {
+  constructor(): void {
     this.eventSystem = eventSystem;
   }
 
   // Adapt memory data to graph structure
-  async adapt(): unknown {
+  async adapt(data: any, id: any): void {
     const node: Node = {
 id: data.id || `node_${Date.now()}`,
   }      label: data.label || 'Memory Node',
@@ -34,12 +34,12 @@ nodeId: node.id,
   }
 
   // Add multiple nodes efficiently
-  async addNodes(): unknown {
+  async addNodes(): void {
     await Promise.all(nodes.map(node => this.adapt(node)));
   }
 
   // Get recent nodes
-  async getRecentNodes(): unknown {
+  async getRecentNodes(): any {
     // For now, return nodes from cache sorted by timestamp
     const nodes = Array.from(this.nodeCache.values());
     return nodes
@@ -52,7 +52,7 @@ const timeA = a.timestamp?.getTime() || 0;
   }
 
   // Get suggested connections based on memory
-  async getSuggestedConnections(): unknown {
+  async getSuggestedConnections(id: any): Promise<any> {
     const relatedNodes = await this.findRelatedNodes(node);
     return relatedNodes.map(relatedNode => ({
 id: `${node.id}-${relatedNode.id}`,
@@ -72,18 +72,18 @@ id: `${node.id}-${relatedNode.id}`,
   }
 
   // Optimize memory usage
-  async optimizeMemory(): unknown {
+  async optimizeMemory(id: any): void {
     const now = new Date();
     const cacheTimeout = 30 * 60 * 1000; // 30 minutes
 
-    for(): unknown {
-      if(): unknown {
+    for(id: any): void {
+      if(id: any): void {
         this.nodeCache.delete(id);
       }
     }
 
-    for(): unknown {
-      if(): unknown {
+    for(id: any): void {
+      if(id: any): void {
         this.edgeCache.delete(id);
       }
     }
@@ -96,7 +96,7 @@ timestamp: now.toISOString(),
   }
 
   // Get memory statistics
-  getMemoryStats(): unknown {
+  getMemoryStats(): any {
     return {
   // Implementation needed
 }

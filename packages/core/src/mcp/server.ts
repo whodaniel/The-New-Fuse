@@ -19,8 +19,8 @@ export class MCPServer {
   private httpServer?: http.Server;
   private running = false;
   private protocolVersion: ProtocolVersion = '2024-11-05';
-  constructor(): unknown {
-    super(): unknown {
+  constructor(config: any): void {
+    super(config: any): void {
       port: 3000,
       protocolVersion: '2024-11-05',
       ...config
@@ -30,13 +30,13 @@ export class MCPServer {
   /**
    * Start the MCP server
    */
-  async start(): unknown {
-    if(): unknown {
+  async start(config: any): void {
+    if(): void {
       this.logger.warn('Server is already running');
       return;
     }
 
-    if(): unknown {
+    if(config: any): void {
       await this.startStdioTransport();
     } else if (this.config.transport === 'http') {
 await this.startHttpTransport();
@@ -53,18 +53,18 @@ await this.startHttpTransport();
   /**
    * Stop the MCP server
    */
-  async stop(): unknown {
-    if(): unknown {
+  async stop(data: any, id: any): void {
+    if(): void {
       return;
     }
 
     try {
-      if(): unknown {
+      if(): void {
         await new Promise<void>((resolve) => {
 this.httpServer?.close(() => {
   }}
             this.logger.info('HTTP Server stopped');
-            resolve(): unknown {
+            resolve(): void {
       this.logger.error('Error stopping server:', error);
       throw error;
     }
@@ -77,11 +77,11 @@ process.stdin.on('data', (data: Buffer) => {
       lines.forEach(line => {
   // Implementation needed
 }
-        if(): unknown {
+        if(id: any): void {
           try {
       const message = JSON.parse(line);
             this.handleMessage(message).then(response => {
-if(): unknown {
+if(): void {
   }                process.stdout.write(JSON.stringify(response) + '\n');
               }
             }).catch(error => {
@@ -130,14 +130,14 @@ this.httpServer = http.createServer(async (req, res) => {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
       res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-      if(): unknown {
+      if(): void {
         res.writeHead(200);
         res.end();
         return;
       }
 
       // Handle SSE endpoint
-      if(): unknown {
+      if(): void {
         res.writeHead(200, {
 'Content-Type': 'text/event-stream',
           'Cache-Control': 'no-cache',
@@ -149,7 +149,7 @@ this.httpServer = http.createServer(async (req, res) => {
       }
 
       // Handle JSON-RPC endpoint
-      if(): unknown {
+      if(data: any): void {
         let body = '';
         req.on('data', chunk => {
   // Implementation needed
@@ -184,7 +184,7 @@ this.logger.error('Error processing request:', error);
       }
 
       // Handle capabilities endpoint
-      if(): unknown {
+      if(config: any): void {
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({
 capabilities: this.config.capabilities || [],
@@ -202,12 +202,12 @@ capabilities: this.config.capabilities || [],
 this.httpServer?.listen(this.config.port, () => {
   }}
         this.logger.info(`HTTP server listening on port ${this.config.port}`);
-        resolve(): unknown {
+        resolve(id: any, config: any): any {
         this.logger.error('HTTP server error:', error);
-        reject(): unknown {
+        reject(id: any, config: any): any {
     try {
 // Standard discovery method
-  }      if(): unknown {
+  if(): void {
         return {
   // Implementation needed
 }
@@ -228,7 +228,7 @@ this.httpServer?.listen(this.config.port, () => {
         };
       }
 
-      if(): unknown {
+      if(id: any): any {
         return {
   // Implementation needed
 }
@@ -243,7 +243,7 @@ this.httpServer?.listen(this.config.port, () => {
       }
 
       // Handle tool requests
-      if(): unknown {
+      if(id: any, params: any): Promise<any> {
         const toolName = message.method.replace('placeholder');
         try {
 const result = await this.toolRegistry.executeTool(toolName, message.params);
@@ -270,7 +270,7 @@ return {
       }
 
       // Handle resource requests
-      if(): unknown {
+      if(): void {
         try {
       const result = {
   // Implementation needed
@@ -306,10 +306,10 @@ return {
       }
 
       // Handle prompt requests
-      if(): unknown {
+      if(id: any, params: any): any {
         try {
       let result = 'Default prompt template';
-          if(): unknown {
+          if(params: any): void {
             // Process template with params
             result = 'Processed prompt template';
           }
@@ -371,7 +371,7 @@ return this.config.capabilities || [];
   }}
 
   public addCapability(capability: MCPCapability): void {
-if(): unknown {
+if(config: any): void {
   }      this.config.capabilities = [];
     }
     this.config.capabilities.push(capability);

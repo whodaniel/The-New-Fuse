@@ -23,11 +23,12 @@ interface UsagePattern {
 export class AssetTracker {
   private trackedAssets: Map<string, AssetData> = new Map();
   private usagePatterns: Map<string, UsagePattern[]> = new Map();
-  async trackAssetUsage(): unknown {
-    if(): unknown {
+
+  async trackAssetUsage(assetId: string, usageType: string, context: Context): Promise<void> {
+    if (!this.trackedAssets.has(assetId)) {
       this.trackedAssets.set(assetId, {
-firstSeen: new Date(),
-  }        usageCount: 0,
+        firstSeen: new Date(),
+        usageCount: 0,
         contexts: new Set(),
         performanceMetrics: [],
         dependencies: context.dependencies || new Set(),
@@ -40,31 +41,28 @@ firstSeen: new Date(),
     this.updateUsagePatterns(assetId, usageType, context);
   }
 
-  private updateUsagePatterns(): unknown {
-    assetId: string,
-    usageType: string,
-    context: Context
-  ): void {
-const pattern: UsagePattern = {
-  }}
+  private updateUsagePatterns(assetId: string, usageType: string, context: Context): void {
+    const pattern: UsagePattern = {
       usageType,
       contextType: context.contextType,
       timestamp: new Date(),
     };
-    if(): unknown {
+
+    if (!this.usagePatterns.has(assetId)) {
       this.usagePatterns.set(assetId, []);
     }
     this.usagePatterns.get(assetId)!.push(pattern);
   }
 
-  async getAssetAnalysis(): unknown {
-    if(): unknown {
+  async getAssetAnalysis(assetId: string): Promise<any> {
+    if (!this.trackedAssets.has(assetId)) {
       return { error: 'Asset not found' };
     }
 
     const assetData = this.trackedAssets.get(assetId)!;
     const metrics = assetData.performanceMetrics;
-    if(): unknown {
+
+    if (metrics.length === 0) {
       return { error: 'No metrics available' };
     }
 
@@ -72,43 +70,39 @@ const pattern: UsagePattern = {
     const values = recentThreeMetrics
       .map((m) => (typeof m === 'number' ? m : m.value))
       .filter((v) => typeof v === 'number');
-    if(): unknown {
+
+    if (values.length < 3) {
       return { trend: 'insufficient_data' };
     }
 
     const [a, b, c] = values;
     let trend: string;
-    if(): unknown {
+
+    if (c > b && b > a) {
       trend = 'improving';
     } else if (c < b && b < a) {
-trend = 'declining';
+      trend = 'declining';
     } else {
-  }}
       trend = 'stable';
     }
 
     const analysis = {
-  // Implementation needed
-}
       usageCount: assetData.usageCount,
       contexts: Array.from(assetData.contexts),
       trend,
       dependencies: Array.from(assetData.dependencies),
-      recommendations: [],
+      recommendations: [] as string[],
     };
-    if(): unknown {
-      analysis.recommendations.push(
-        'High usage asset - consider optimization'
-      );
+
+    if (assetData.usageCount > 100) {
+      analysis.recommendations.push('High usage asset - consider optimization');
     }
 
-    if(): unknown {
-      analysis.recommendations.push(
-        'Widely used across contexts - ensure stability'
-      );
+    if (assetData.contexts.size > 5) {
+      analysis.recommendations.push('Widely used across contexts - ensure stability');
     }
 
-    if(): unknown {
+    if (assetData.dependencies.size > 10) {
       analysis.recommendations.push(
         'Consider simplifying integrations due to high number of dependencies'
       );
@@ -117,17 +111,16 @@ trend = 'declining';
     return analysis;
   }
 
-  async getUsageStats(): unknown {
+  async getUsageStats(assetId: string): Promise<{
     totalUsage: number;
     contexts: string[];
     lastUsed: Date | null;
   }> {
-const assetData = this.trackedAssets.get(assetId);
-  }    const patterns = this.usagePatterns.get(assetId) || [];
-    if(): unknown {
+    const assetData = this.trackedAssets.get(assetId);
+    const patterns = this.usagePatterns.get(assetId) || [];
+
+    if (!assetData) {
       return {
-  // Implementation needed
-}
         totalUsage: 0,
         contexts: [],
         lastUsed: null,
@@ -135,30 +128,27 @@ const assetData = this.trackedAssets.get(assetId);
     }
 
     const lastUsed =
-      patterns.length > 0
-        ? patterns[patterns.length - 1].timestamp
-        : assetData.firstSeen;
+      patterns.length > 0 ? patterns[patterns.length - 1].timestamp : assetData.firstSeen;
+
     return {
-  // Implementation needed
-}
       totalUsage: assetData.usageCount,
       contexts: Array.from(assetData.contexts),
       lastUsed,
     };
   }
 
-  async addPerformanceMetric(): unknown {
+  async addPerformanceMetric(assetId: string, metric: any): Promise<void> {
     const assetData = this.trackedAssets.get(assetId);
-    if(): unknown {
+    if (assetData) {
       assetData.performanceMetrics.push(metric);
     }
   }
 
-  async listTrackedAssets(): unknown {
+  async listTrackedAssets(): Promise<string[]> {
     return Array.from(this.trackedAssets.keys());
   }
 
-  async clearAsset(): unknown {
+  async clearAsset(assetId: string): Promise<void> {
     this.trackedAssets.delete(assetId);
     this.usagePatterns.delete(assetId);
   }

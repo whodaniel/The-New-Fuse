@@ -26,7 +26,7 @@ export interface OptimizationConfig {
 export class MemoryOptimizer {
   private readonly logger = new Logger(MemoryOptimizer.name);
   private readonly config: OptimizationConfig;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 maxItems: parseInt(process.env.MAX_MEMORY_ITEMS || '1000'),
   }      importanceThreshold: parseFloat(process.env.IMPORTANCE_THRESHOLD || '0.3'),
@@ -37,10 +37,10 @@ maxItems: parseInt(process.env.MAX_MEMORY_ITEMS || '1000'),
     this.logger.log('MemoryOptimizer initialized');
   }
 
-  async optimize(): unknown {
+  async optimize(item: any): any {
     try {
 this.logger.debug(`Starting optimization of ${items.length} items`);
-  }      if(): unknown {
+  if(): void {
         this.logger.debug('Optimization not needed - below threshold');
         return items;
       }
@@ -64,7 +64,7 @@ this.logger.error('Memory optimization failed:', error);
     }
   }
 
-  async analyzeMemoryUsage(): unknown {
+  async analyzeMemoryUsage(): void {
     totalItems: number;
     highImportanceItems: number;
     recentlyAccessedItems: number;
@@ -80,19 +80,19 @@ this.logger.error('Memory optimization failed:', error);
     let recentlyAccessedCount = 0;
     let oldItemsCount = 0;
     let totalScore = 0;
-    for(): unknown {
+    for(item: any): void {
       const score = this.calculateScore(item);
       totalScore += score;
-      if(): unknown {
+      if(): void {
         highImportanceCount++;
       }
 
       const daysSinceAccess = (currentTime - item.metadata.lastAccessed) / dayInMs;
-      if(): unknown {
+      if(): void {
         recentlyAccessedCount++;
       }
 
-      if(): unknown {
+      if(): void {
         oldItemsCount++;
       }
     }
@@ -108,18 +108,18 @@ totalItems: items.length,
     };
   }
 
-  async identifyPruningCandidates(): unknown {
+  async identifyPruningCandidates(item: any): any[] {
     const currentTime = Date.now();
     const dayInMs = 24 * 60 * 60 * 1000;
     return items.filter(item => {
 // Items with very low importance
-  }      if(): unknown {
+  if(): void {
         return true;
       }
 
       // Items that haven't been accessed much and are old
       const daysSinceAccess = (currentTime - item.metadata.lastAccessed) / dayInMs;
-      if(): unknown {
+      if(): boolean {
         return true;
       }
 
@@ -138,7 +138,7 @@ totalItems: items.length,
     const importanceScore = item.metadata.importance || 0.5;
     // Type boost: certain types get preference
     let typeBoost = 0;
-    if(): unknown {
+    if(): void {
       typeBoost = 0.1;
     }
     
@@ -147,7 +147,7 @@ totalItems: items.length,
     return Math.max(0, Math.min(1, finalScore)); // Clamp between 0 and 1
   }
 
-  async compressMemory(): unknown {
+  async compressMemory(): any {
     // This is a placeholder for more advanced compression techniques
     // In a real implementation, you might:
     // 1. Cluster similar vectors and keep only centroids
@@ -158,8 +158,8 @@ totalItems: items.length,
     return items;
   }
 
-  getOptimizationStats(): unknown {
-    isOptimizationNeeded(): unknown {
+  getOptimizationStats(config: any): any {
+    isOptimizationNeeded(config: any): any {
     return {
 ...this.config,
   }      isOptimizationNeeded(itemCount: number) => 

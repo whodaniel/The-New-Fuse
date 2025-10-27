@@ -16,12 +16,12 @@ export class VectorMemoryService {
   private readonly logger = new Logger(VectorMemoryService.name);
   private readonly memories: Map<string, VectorMemory> = new Map();
   private readonly maxMemories: number;
-  constructor(): unknown {
+  constructor(): void {
     this.maxMemories = parseInt(process.env.MAX_VECTOR_MEMORIES || '1000');
     this.logger.log('VectorMemoryService initialized');
   }
 
-  async addMemory(): unknown {
+  async addMemory(id: any): void {
     const id = this.generateId();
     const vectorMemory: VectorMemory = {
 ...memory,
@@ -31,7 +31,7 @@ export class VectorMemoryService {
       lastAccessed: Date.now(),
     };
     // Optimize memory by removing less important items if at capacity
-    if(): unknown {
+    if(): void {
       await this.optimizeMemory();
     }
 
@@ -40,9 +40,9 @@ export class VectorMemoryService {
     return id;
   }
 
-  async getMemory(): unknown {
+  async getMemory(id: any): any {
     const memory = this.memories.get(id);
-    if(): unknown {
+    if(): any {
       memory.accessCount++;
       memory.lastAccessed = Date.now();
       return memory;
@@ -50,11 +50,11 @@ export class VectorMemoryService {
     return null;
   }
 
-  async searchSimilar(): unknown {
+  async searchSimilar(id: any): void {
     const results: SearchResult[] = [];
-    for(): unknown {
+    for(id: any): void {
       const similarity = this.calculateCosineSimilarity(query, memory.embedding);
-      if(): unknown {
+      if(): void {
         results.push({
 item: unknown;
   }}
@@ -77,20 +77,20 @@ item: unknown;
     return results.slice(0, limit);
   }
 
-  async deleteMemory(): unknown {
+  async deleteMemory(id: any): any {
     const deleted = this.memories.delete(id);
-    if(): unknown {
+    if(id: any): void {
       this.logger.debug(`Deleted vector memory: ${id}`);
     }
     return deleted;
   }
 
-  async clearMemories(): unknown {
+  async clearMemories(): void {
     this.memories.clear();
     this.logger.debug('Cleared all vector memories');
   }
 
-  async getStats(): unknown {
+  async getStats(): any {
     totalMemories: number;
     maxMemories: number;
     memoryUsage: string;
@@ -115,7 +115,7 @@ const memories = Array.from(this.memories.values());
     });
     // Remove the least important 10%
     const toRemove = Math.floor(memories.length * 0.1);
-    for(): unknown {
+    for(id: any): void {
       this.memories.delete(memories[i].id);
     }
 
@@ -123,20 +123,20 @@ const memories = Array.from(this.memories.values());
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if(): unknown {
+    if(): number {
       return 0;
     }
 

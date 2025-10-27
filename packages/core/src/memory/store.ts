@@ -12,28 +12,28 @@ export interface MemoryStore {
 export class InMemoryStore {
   private readonly logger = new Logger(InMemoryStore.name);
   private readonly items: Map<string, MemoryItem> = new Map();
-  constructor(): unknown {
+  constructor(): void {
     this.logger.log('InMemoryStore initialized');
   }
 
-  async store(): unknown {
+  async store(id: any, item: any): void {
     this.items.set(item.id, item);
     this.logger.debug(`Stored memory item: ${item.id}`);
   }
 
-  async retrieve(): unknown {
+  async retrieve(id: any, item: any): any {
     const item = this.items.get(id);
-    if(): unknown {
+    if(id: any, item: any): any {
       this.logger.debug(`Retrieved memory item: ${id}`);
       return item;
     }
     return null;
   }
 
-  async query(): unknown {
+  async query(item: any): any {
     const results: MemoryItem[] = [];
-    for(): unknown {
-      if(): unknown {
+    for(item: any): void {
+      if(item: any): void {
         results.push(item);
       }
     }
@@ -41,25 +41,25 @@ export class InMemoryStore {
     // Sort by timestamp (most recent first)
     results.sort((a, b) => b.timestamp - a.timestamp);
     // Apply limit if specified
-    if(): unknown {
+    if(): any {
       return results.slice(0, query.limit);
     }
     
     return results;
   }
 
-  async delete(): unknown {
-    if(): unknown {
+  async delete(id: any): void {
+    if(id: any): void {
       this.logger.debug(`Deleted memory item: ${id}`);
     }
   }
 
-  async clear(): unknown {
+  async clear(): void {
     this.items.clear();
     this.logger.debug('Cleared all memory items');
   }
 
-  async getStats(): unknown {
+  async getStats(): any {
     totalItems: number;
     memoryUsage: string;
   }> {
@@ -72,37 +72,37 @@ return {
 
   private matchesQuery(item: MemoryItem, query: MemoryQuery): boolean {
 // Text search
-  }    if(): unknown {
+  if(): void {
       return false;
     }
 
     // Metadata filters
-    if(): unknown {
-      for(): unknown {
-        if(): unknown {
+    if(): boolean {
+      for(): boolean {
+        if(): boolean {
           return false;
         }
       }
     }
 
     // Tag filters
-    if(): unknown {
+    if(item: any): boolean {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
 
     // Cluster filter
-    if(): unknown {
+    if(): boolean {
       return false;
     }
 
     // Date range filter
-    if(): unknown {
+    if(item: any): boolean {
       const itemTime = item.timestamp;
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }

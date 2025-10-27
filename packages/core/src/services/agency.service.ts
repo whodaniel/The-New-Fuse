@@ -5,32 +5,32 @@ export class AgencyService {
   private readonly logger = new Logger(AgencyService.name);
   constructor(private readonly prisma: PrismaService) {}
 
-  async createAgency(): unknown {
+  async createAgency(): any {
     // Mock implementation
     return { message: 'Agency service not implemented' };
   }
 
-  async getAgency(): unknown {
+  async getAgency(): any {
     // Mock implementation
     return { message: 'Agency retrieval not implemented' };
   }
 
-  async updateAgency(): unknown {
+  async updateAgency(): any {
     // Mock implementation
     return { message: 'Agency update not implemented' };
   }
 
-  async deleteAgency(): unknown {
+  async deleteAgency(): void {
     // Mock implementation
     this.logger.log('Agency deletion not implemented');
   }
 
-  async getAllAgencies(): unknown {
+  async getAllAgencies(): any {
     // Mock implementation
     return { message: 'Agency listing not implemented' };
   }
 
-  async getAgencyStats(): unknown {
+  async getAgencyStats(): any {
     // Mock implementation
     return { message: 'Agency statistics not implemented' };
   }

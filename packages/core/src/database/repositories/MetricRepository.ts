@@ -4,12 +4,12 @@ import { Repository, DataSource, Between } from 'typeorm';
 export class MetricRepository {
   constructor(private dataSource: DataSource) {}
 
-  async getAverageMetric(): unknown {
+  async getAverageMetric(): any {
     // Mock implementation
     return { average: 0, message: 'Metric repository not implemented' };
   }
 
-  async getMetricStatistics(): unknown {
+  async getMetricStatistics(): any {
     // Mock implementation
     return {
   // Implementation needed
@@ -23,17 +23,17 @@ export class MetricRepository {
     };
   }
 
-  async getHourlyMetrics(): unknown {
+  async getHourlyMetrics(): any {
     // Mock implementation
     return { message: 'Hourly metrics not implemented' };
   }
 
-  async createMetric(): unknown {
+  async createMetric(): any {
     // Mock implementation
     return { message: 'Metric creation not implemented' };
   }
 
-  async findMetricsByName(): unknown {
+  async findMetricsByName(): any {
     // Mock implementation
     return { message: 'Metric search not implemented' };
   }

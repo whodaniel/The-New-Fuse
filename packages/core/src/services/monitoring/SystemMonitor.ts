@@ -12,7 +12,7 @@ export interface SecurityAlert {
 export class SystemMonitor {
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async getSystemHealth(): unknown {
+  async getSystemHealth(): any {
     // Mock implementation
     return {
   // Implementation needed
@@ -26,12 +26,12 @@ export class SystemMonitor {
     };
   }
 
-  async getSecurityAlerts(): unknown {
+  async getSecurityAlerts(): any[] {
     // Mock implementation
     return [];
   }
 
-  async createAlert(): unknown {
+  async createAlert(): void {
     // Mock implementation
     const newAlert: SecurityAlert = {
   // Implementation needed
@@ -44,17 +44,17 @@ export class SystemMonitor {
     return newAlert;
   }
 
-  async startMonitoring(): unknown {
+  async startMonitoring(): void {
     // Mock implementation
     console.log('System monitoring started');
   }
 
-  async stopMonitoring(): unknown {
+  async stopMonitoring(): void {
     // Mock implementation
     console.log('System monitoring stopped');
   }
 
-  async getMetrics(): unknown {
+  async getMetrics(): any {
     // Mock implementation
     return {
 requests: 0

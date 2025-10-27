@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Task } from './Task';
+
 export enum TaskActivityType {
   CREATED = 'created',
   UPDATED = 'updated',
@@ -13,25 +14,30 @@ export enum TaskActivityType {
 @Entity('task_activities')
 export class TaskActivity {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
+
   @ManyToOne(() => Task, task => task.activities)
   @JoinColumn({ name: 'taskId' })
-  task: Task;
+  task!: Task;
+
   @Column()
-  taskId: string;
+  taskId!: string;
+
   @Column({
-  // Implementation needed
-}
     type: 'enum',
     enum: TaskActivityType,
   })
-  type: TaskActivityType;
+  type!: TaskActivityType;
+
   @Column({ type: 'jsonb', nullable: true })
-  data: Record<string, any>;
+  data?: Record<string, any>;
+
   @Column({ type: 'uuid', nullable: true })
-  userId: string;
+  userId?: string;
+
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
+
   @Column({ type: 'text', nullable: true })
-  description: string;
+  description?: string;
 }

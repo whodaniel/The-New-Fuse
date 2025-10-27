@@ -5,12 +5,12 @@ export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  getHello(): unknown {
+  getHello(): any {
     return this.appService.getHello();
   }
 
   @Get('health')
-  getHealth(): unknown {
+  getHealth(): any {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),

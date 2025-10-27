@@ -10,42 +10,42 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 @Injectable()
 export class AgentSwarmOrchestrationService {
   private readonly logger = new Logger(AgentSwarmOrchestrationService.name);
-  constructor(): unknown {
+  constructor(): any {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2
   ) {}
 
-  async initializeSwarm(): unknown {
+  async initializeSwarm(): any {
     // Mock implementation
     return { message: 'Swarm orchestration not implemented' };
   }
 
-  async executeSwarmTask(): unknown {
+  async executeSwarmTask(): any {
     // Mock implementation
     return { message: 'Swarm task execution not implemented' };
   }
 
-  async getSwarmStatus(): unknown {
+  async getSwarmStatus(): any {
     // Mock implementation
     return { message: 'Swarm status not implemented' };
   }
 
-  async getSwarmMetrics(): unknown {
+  async getSwarmMetrics(): any {
     // Mock implementation
     return { message: 'Swarm metrics not implemented' };
   }
 
-  async manageAgentCommunication(): unknown {
+  async manageAgentCommunication(): any {
     // Mock implementation
     return { message: 'Agent communication not implemented' };
   }
 
-  async orchestrateServiceRequest(): unknown {
+  async orchestrateServiceRequest(): any {
     // Mock implementation
     return { message: 'Service request orchestration not implemented' };
   }
 
-  async getExecutionMetrics(): unknown {
+  async getExecutionMetrics(): any {
     // Mock implementation
     return {
   // Implementation needed
@@ -58,53 +58,53 @@ export class AgentSwarmOrchestrationService {
     };
   }
 
-  async createExecution(): unknown {
+  async createExecution(): any {
     // Mock implementation
     return { message: 'Execution creation not implemented' };
   }
 
-  async getExecutions(): unknown {
+  async getExecutions(): any {
     // Mock implementation
     return { message: 'Executions retrieval not implemented' };
   }
 
-  async getExecutionDetails(): unknown {
+  async getExecutionDetails(): any {
     // Mock implementation
     return { message: 'Execution details not implemented' };
   }
 
-  async updateExecutionStatus(): unknown {
+  async updateExecutionStatus(): any {
     // Mock implementation
     return { message: 'Status update not implemented' };
   }
 
-  async updateExecutionStep(): unknown {
+  async updateExecutionStep(): any {
     // Mock implementation
     return { message: 'Step update not implemented' };
   }
 
-  async sendMessage(): unknown {
+  async sendMessage(): any {
     // Mock implementation
     return { message: 'Message sending not implemented' };
   }
 
-  async getMessages(): unknown {
+  async getMessages(): any {
     // Mock implementation
     return { message: 'Messages retrieval not implemented' };
   }
 
-  streamExecutionProgress(): unknown {
+  streamExecutionProgress(): any {
     // Mock implementation
     const { of } = require('rxjs');
     return of({ message: 'Progress streaming not implemented' });
   }
 
-  async performHealthCheck(): unknown {
+  async performHealthCheck(): any {
     // Mock implementation
     return { message: 'Health check not implemented' };
   }
 
-  async getPerformanceMetrics(): unknown {
+  async getPerformanceMetrics(): any {
     // Mock implementation
     return { message: 'Performance metrics not implemented' };
   }

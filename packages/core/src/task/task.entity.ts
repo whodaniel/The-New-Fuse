@@ -7,18 +7,8 @@ import {
   Index,
 } from 'typeorm';
 
-export enum TaskStatus {
-  PENDING = 'PENDING',
-  IN_PROGRESS = 'IN_PROGRESS',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-}
-
-export enum TaskPriority {
-  LOW = 'LOW',
-  MEDIUM = 'MEDIUM',
-  HIGH = 'HIGH',
-}
+// Conflict 1 Resolution: Use the import from 'Incoming'
+import { TaskStatus, TaskPriority } from '@the-new-fuse/types';
 
 @Entity('tasks')
 @Index(['status', 'priority'])
@@ -45,9 +35,17 @@ export class Task {
   })
   priority!: TaskPriority;
 
+  // Conflict 2 Resolution: Merged fields from both branches
+
+  // Keep 'userId' as optional (from 'Incoming')
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  userId?: string;
+
+  // Kept 'data' (from both)
   @Column('jsonb', { nullable: true })
   data?: any;
 
+  // Keep detailed fields (from 'Current')
   @Column('jsonb', { nullable: true })
   result?: any;
 
@@ -62,9 +60,6 @@ export class Task {
 
   @Column({ type: 'timestamp', nullable: true })
   endTime?: Date;
-
-  @Column({ type: 'uuid' })
-  userId!: string;
 
   @CreateDateColumn()
   createdAt!: Date;

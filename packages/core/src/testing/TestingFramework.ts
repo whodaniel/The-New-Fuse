@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { TestDataGenerator, Schema } from './TestDataGenerator';
+// Import 'Test' from Current, but 'Schema' is no longer needed
+import { TestDataGenerator } from './TestDataGenerator'; 
 import { TestRunner } from './TestRunner';
-import { TestConfiguration, TestSuite, TestResult, Test } from '../tools/types';
+// Merged Import (Conflict 1)
+import { TestConfiguration, TestSuite, TestResult, Test } from '../types/types';
 
 @Injectable()
 export class TestingFramework {
@@ -13,35 +15,31 @@ export class TestingFramework {
     this.testDataGenerator = new TestDataGenerator();
   }
 
-  async runSuite(suite: TestSuite, config?: TestConfiguration): Promise<Map<string, TestResult[]>> {
+  // Use 'Current' signature (Conflict 2) but with new 'Incoming' logic
+  async runSuite(
+    suite: TestSuite,
+    config?: TestConfiguration,
+  ): Promise<Map<string, TestResult[]>> {
     const results = new Map<string, TestResult[]>();
     const suiteResults: TestResult[] = [];
+
+    // Merged Logic: Use the TestRunner directly
     for (const test of suite.tests) {
-      const startTime = Date.now();
-      try {
-        const success = await this.executeTest(test, config);
-        const duration = Date.now() - startTime;
-        suiteResults.push({
-          name: test.name || 'Unnamed test',
-          success,
-          duration,
-        });
-      } catch (error) {
-        const duration = Date.now() - startTime;
-        suiteResults.push({
-          name: test.name || 'Unnamed test',
-          success: false,
-          duration,
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+      const result = await this.testRunner.run(test, config);
+      suiteResults.push(result);
     }
+
     results.set(suite.name, suiteResults);
     return results;
   }
 
-  async runSuites(suites: TestSuite[], config?: TestConfiguration): Promise<Map<string, TestResult[]>> {
+  // Use 'Current' signature (Conflict 3)
+  async runSuites(
+    suites: TestSuite[],
+    config?: TestConfiguration,
+  ): Promise<Map<string, TestResult[]>> {
     const allResults = new Map<string, TestResult[]>();
+
     for (const suite of suites) {
       const suiteResults = await this.runSuite(suite, config);
       for (const [suiteName, results] of suiteResults.entries()) {
@@ -51,33 +49,12 @@ export class TestingFramework {
     return allResults;
   }
 
-  private async executeTest(test: Test, config?: TestConfiguration): Promise<boolean> {
-    const timeout = config?.timeout || 5000;
-    const retries = config?.retries || 0;
-    for (let attempt = 0; attempt <= retries; attempt++) {
-      try {
-        const result = await Promise.race([
-          test.test(),
-          new Promise<never>((_, reject) =>
-            setTimeout(() => reject(new Error(`Test timeout after ${timeout}ms`)), timeout)
-          ),
-        ]);
-        if (typeof result === 'boolean') {
-          return result;
-        }
-        throw new Error('Test must return a boolean value');
-      } catch (error) {
-        if (attempt === retries) {
-          throw error;
-        }
-        // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
-      }
-    }
-    return false;
-  }
+  // Conflict 4 Resolution:
+  // - 'executeTest' is removed.
+  // - 'generateTestData' is from 'Incoming'.
+  // - 'createSuite' is from 'Current'.
 
-  generateTestData(schema: Schema): any {
+  generateTestData(schema: any): any {
     return this.testDataGenerator.generate(schema);
   }
 

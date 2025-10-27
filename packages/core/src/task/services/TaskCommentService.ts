@@ -1,60 +1,73 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Task } from '../task.entity';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
 
-// This is a temporary service. Replace with a real one.
+// Interface from Incoming change
+export interface NotificationPayload {
+  componentId: string;
+  analysisType: string;
+  status: 'started' | 'completed' | 'failed';
+  result?: any;
+  error?: string;
+  timestamp: Date;
+}
 
 @Injectable()
-export class TaskCommentService {
-  private readonly logger = new Logger(TaskCommentService.name);
-  private comments = new Map<string, any>();
+export class ComponentAnalysisNotifier {
+  private readonly logger = new Logger(ComponentAnalysisNotifier.name); // From Current
+  private webhooks: string[] = []; // From Incoming
 
-  constructor() {}
+  constructor(
+    private readonly eventEmitter: EventEmitter2, // From Current
+    private readonly httpService: HttpService, // Added to make webhooks work
+  ) {}
 
-  async createComment(taskId: string, userId: string, content: string, parentId?: string): Promise<any> {
-    this.logger.log(`Create comment for task ${taskId} by user ${userId}`);
-    const comment = {
-      id: this.comments.size + 1,
-      taskId,
-      userId,
-      content,
-      parentId,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    this.comments.set(comment.id.toString(), comment);
-    return comment;
+  // From Incoming
+  registerWebhook(url: string): void {
+    if (!this.webhooks.includes(url)) {
+      this.webhooks.push(url);
+      this.logger.log(`Registered new webhook: ${url}`);
+    }
   }
 
-  async getCommentsByTask(taskId: string): Promise<any[]> {
-    this.logger.log(`Get comments for task ${taskId}`);
-    return Array.from(this.comments.values()).filter(c => c.taskId === taskId);
+  // Merged notify method
+  async notify(payload: NotificationPayload): Promise<void> {
+    this.logger.log(
+      `Notifying component analysis ${payload.status} for ${payload.componentId}`,
+    );
+
+    // 1. Emit internal event (from Current change)
+    this.eventEmitter.emit('component.analysis', payload);
+
+    // 2. Send external webhooks (from Incoming change)
+    if (this.webhooks.length > 0) {
+      this.logger.log(`Sending ${this.webhooks.length} webhook(s)...`);
+      const promises = this.webhooks.map((url) =>
+        this.sendWebhook(url, payload),
+      );
+      await Promise.allSettled(promises);
+    }
   }
 
-  async updateComment(commentId: string, userId: string, content: string): Promise<any> {
-    this.logger.log(`Update comment ${commentId} by user ${userId}`);
-    const comment = this.comments.get(commentId);
-    if (!comment) {
-      throw new NotFoundException(`Comment ${commentId} not found`);
+  private async sendWebhook(
+    url: string,
+    payload: NotificationPayload,
+  ): Promise<void> {
+    try {
+      // Use HttpService to POST the payload
+      await firstValueFrom(
+        this.httpService.post(url, payload, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 5000, // 5 second timeout
+        }),
+      );
+      this.logger.log(`Successfully sent webhook to ${url}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send webhook to ${url}: ${error.message}`,
+        error.stack,
+      );
     }
-    if (comment.userId !== userId) {
-      throw new ForbiddenException('You can only edit your own comments');
-    }
-    comment.content = content;
-    comment.updatedAt = new Date();
-    return comment;
-  }
-
-  async deleteComment(commentId: string, userId: string): Promise<void> {
-    this.logger.log(`Delete comment ${commentId} by user ${userId}`);
-    const comment = this.comments.get(commentId);
-    if (!comment) {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
-    if (comment.userId !== userId) {
-      throw new ForbiddenException('You can only delete your own comments');
-    }
-    this.comments.delete(commentId);
   }
 }

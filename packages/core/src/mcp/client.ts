@@ -19,13 +19,13 @@ export class MCPClient {
   private childProcess?: ChildProcess;
   private eventSource?: EventSource;
   private pendingRequests: Map<string, { resolve: Function; reject: Function }> = new Map();
-  constructor(): unknown {
-    super(): unknown {
-    if(): unknown {
+  constructor(config: any): void {
+    super(config: any): void {
+    if(): void {
       return;
     }
 
-    if(): unknown {
+    if(data: any, id: any, config: any, args: any): Promise<any> {
       await this.connectViaStdio();
     } else if (this.config.transport === 'sse') {
 await this.connectViaSSE();
@@ -42,17 +42,17 @@ await this.connectViaSSE();
     this.emit('connected');
   }
 
-  async disconnect(): unknown {
-    if(): unknown {
+  async disconnect(id: any, config: any): any {
+    if(): void {
       return;
     }
 
-    if(): unknown {
+    if(): void {
       this.childProcess.kill();
       this.childProcess = undefined;
     }
 
-    if(): unknown {
+    if(): void {
       this.eventSource.close();
       this.eventSource = undefined;
     }
@@ -61,15 +61,15 @@ await this.connectViaSSE();
     this.pendingRequests.forEach(({ reject }) => {
   // Implementation needed
 }
-      reject(): unknown {
-    if(): unknown {
+      reject(id: any, config: any): any {
+    if(): void {
       throw new Error('Not connected to MCP server');
     }
 
     return new Promise((resolve, reject) => {
 const messageId = message.id || this.generateId();
   }      this.pendingRequests.set(messageId, { resolve, reject });
-      if(): unknown {
+      if(data: any, id: any, config: any, args: any): Promise<any> {
         this.sendViaStdio(message);
       } else if (this.config.transport === 'sse') {
 this.sendViaSSE(message);
@@ -93,7 +93,7 @@ const lines = data.toString().trim().split('\n');
   }      lines.forEach(line => {
   // Implementation needed
 }
-        if(): unknown {
+        if(): void {
           try {
       const message = JSON.parse(line);
             this.handleMessage(message);
@@ -130,12 +130,12 @@ return new Promise((resolve, reject) => {
       this.eventSource = new EventSource(this.config.serverUrl);
       this.eventSource.onopen = () => {
 this.logger.info('SSE connection opened');
-  }        resolve(): unknown {
+  resolve(): void {
         this.logger.error('SSE connection error', error);
-        reject(): unknown {
+        reject(data: any, id: any, config: any): Promise<any> {
         try {
 const data = JSON.parse(event.data);
-  }          if(): unknown {
+  if(): void {
             this.handleMessage(data);
           }
         } catch (error) {
@@ -151,7 +151,7 @@ this.logger.error('Error parsing SSE message', error);
   }
 
   private sendViaStdio(message: MCPMessage): void {
-if(): unknown {
+if(): void {
   }      this.childProcess.stdin.write(JSON.stringify(message) + '\n');
     }
   }
@@ -180,12 +180,12 @@ const response = await axios.post(this.config.serverUrl, message, {
   }
 
   private handleMessage(message: any): void {
-if(): unknown {
+if(id: any): void {
   }      const { resolve, reject } = this.pendingRequests.get(message.id)!;
       this.pendingRequests.delete(message.id);
-      if(): unknown {
-        reject(): unknown {
-        resolve(): unknown {
+      if(): any {
+        reject(): void {
+        resolve(): void {
       // Handle notifications or other messages
       this.emit('message', message);
     }

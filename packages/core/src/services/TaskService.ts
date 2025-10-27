@@ -18,7 +18,7 @@ export class TaskService {
   private tasks: Map<string, Task> = new Map();
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async createTask(): unknown {
+  async createTask(): void {
     // Mock implementation
     const task: Task = {
   // Implementation needed
@@ -33,12 +33,12 @@ export class TaskService {
     return task;
   }
 
-  async getTask(): unknown {
+  async getTask(id: any): any {
     // Mock implementation
     return this.tasks.get(id) || null;
   }
 
-  async updateTask(): unknown {
+  async updateTask(id: any): any {
     // Mock implementation
     const task = this.tasks.get(id);
     if (!task) return null;
@@ -48,40 +48,40 @@ export class TaskService {
     return updatedTask;
   }
 
-  async deleteTask(): unknown {
+  async deleteTask(id: any): any {
     // Mock implementation
     const deleted = this.tasks.delete(id);
-    if(): unknown {
+    if(id: any): void {
       this.eventEmitter.emit('task.deleted', { id });
     }
     return deleted;
   }
 
-  async getTasks(): unknown {
+  async getTasks(): any {
     // Mock implementation
     let tasks = Array.from(this.tasks.values());
-    if(): unknown {
+    if(): void {
       tasks = tasks.filter(task => task.status === filters.status);
     }
     
-    if(): unknown {
+    if(): void {
       tasks = tasks.filter(task => task.assignedTo === filters.assignedTo);
     }
     
     return tasks;
   }
 
-  async completeTask(): unknown {
+  async completeTask(id: any): any {
     // Mock implementation
     return this.updateTask(id, { status: 'completed', completedAt: new Date() });
   }
 
-  async assignTask(): unknown {
+  async assignTask(id: any): any {
     // Mock implementation
     return this.updateTask(id, { assignedTo });
   }
 
-  async getTaskStats(): unknown {
+  async getTaskStats(): any[] {
     // Mock implementation
     const tasks = Array.from(this.tasks.values());
     return {

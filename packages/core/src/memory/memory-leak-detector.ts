@@ -6,18 +6,18 @@ export class MemoryLeakDetector {
   private readonly logger = new Logger(MemoryLeakDetector.name);
   constructor(private readonly eventEmitter: EventEmitter2) {}
 
-  async startDetection(): unknown {
+  async startDetection(): void {
     this.logger.log('Memory leak detection started');
   }
 
-  async checkMemoryUsage(): unknown {
+  async checkMemoryUsage(data: any): void {
     const stats = v8.getHeapStatistics();
     this.logger.log(`Memory usage: ${stats.used_heap_size} bytes`);
     this.eventEmitter.emit('event', data);
     });
   }
 
-  async cleanup(): unknown {
+  async cleanup(): void {
     this.logger.debug('Memory leak detector cleanup completed');
   }
 }

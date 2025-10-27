@@ -4,28 +4,28 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 export class MessageProcessor {
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async processMessage(): unknown {
+  async processMessage(): any {
     // Mock implementation
     this.eventEmitter.emit('message.processed', message);
     return { message: 'Message processing not implemented' };
   }
 
-  async validateMessage(): unknown {
+  async validateMessage(): boolean {
     // Mock implementation
     return true;
   }
 
-  async transformMessage(): unknown {
+  async transformMessage(): any {
     // Mock implementation
     return message;
   }
 
-  async routeMessage(): unknown {
+  async routeMessage(): void {
     // Mock implementation
     console.log('Message routing not implemented');
   }
 
-  async getProcessingStats(): unknown {
+  async getProcessingStats(): any {
     // Mock implementation
     return {
 processed: 0

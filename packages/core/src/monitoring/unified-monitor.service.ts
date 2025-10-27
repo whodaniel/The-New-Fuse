@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 export class UnifiedMonitorService {
   private metrics = new Map<string, any>();
   private readonly logger = new Logger(UnifiedMonitorService.name);
-  constructor(): unknown {
+  constructor(): void {
     this.initializeMetrics();
   }
 
@@ -15,29 +15,29 @@ this.metrics.set('connections', 0);
     this.metrics.set('events', []);
   }
 
-  incrementMetric(): unknown {
+  incrementMetric(value: any): void {
     const current = this.metrics.get(name) || 0;
     this.metrics.set(name, current + value);
   }
 
-  recordLatency(): unknown {
+  recordLatency(): void {
     const latencies = this.metrics.get('latency') || [];
     latencies.push({ operation, timeMs, timestamp: new Date() });
     this.metrics.set('latency', latencies);
   }
 
-  logEvent(): unknown {
+  logEvent(data: any): void {
     const events = this.metrics.get('events') || [];
     events.push({ eventType, data, timestamp: new Date() });
     this.metrics.set('events', events);
     this.logger.log(`Event: ${eventType}`, data);
   }
 
-  recordMetric(): unknown {
+  recordMetric(value: any): void {
     this.metrics.set(name, { value, tags, timestamp: new Date() });
   }
 
-  captureError(): unknown {
+  captureError(): void {
     this.incrementMetric('errors');
     this.logEvent('error', {
 error: typeof error === 'string' ? error : error.message,
@@ -46,19 +46,19 @@ error: typeof error === 'string' ? error : error.message,
     });
   }
 
-  getMetrics(): unknown {
+  getMetrics(value: any): any {
     const result: Record<string, any> = {};
-    for(): unknown {
+    for(value: any): void {
       result[key] = value;
     }
     return result;
   }
 
-  getMetric(): unknown {
+  getMetric(): any {
     return this.metrics.get(name);
   }
 
-  resetMetrics(): unknown {
+  resetMetrics(): void {
     this.metrics.clear();
     this.initializeMetrics();
   }

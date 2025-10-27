@@ -26,7 +26,8 @@ export interface ComponentAnalysisResult {
 export class ComponentAnalysisTask {
   constructor() {}
 
-  async execute(data: ComponentAnalysisData): Promise<ComponentAnalysisResult> {
+  // Renamed 'execute' to 'analyze' and kept 'Current' implementation
+  async analyze(data: ComponentAnalysisData): Promise<ComponentAnalysisResult> {
     const { componentId, sourceCode } = data;
     const complexity = await this.analyzeComplexity(sourceCode);
     const maintainability = await this.analyzeMaintainability(sourceCode);
@@ -49,19 +50,35 @@ export class ComponentAnalysisTask {
     };
   }
 
+  // Added 'analyzeMultiple' from 'Incoming'
+  async analyzeMultiple(
+    components: ComponentAnalysisData[],
+  ): Promise<ComponentAnalysisResult[]> {
+    const results: ComponentAnalysisResult[] = [];
+    for (const component of components) {
+      // Make sure it calls the 'analyze' method
+      results.push(await this.analyze(component));
+    }
+    return results;
+  }
+
+  // All helper methods from 'Current'
   async analyzeComplexity(sourceCode: string | undefined): Promise<number> {
     if (!sourceCode) return 0;
     const lines = sourceCode.split('\n').length;
     const nesting = (sourceCode.match(/[{}]/g) || []).length / 2;
-    const conditions = (sourceCode.match(/\b(if|else|switch|case)\b/g) || []).length;
+    const conditions = (sourceCode.match(/\b(if|else|switch|case)\b/g) || [])
+      .length;
     return Math.min(100, lines * 0.1 + nesting * 5 + conditions * 3);
   }
 
-  async analyzeMaintainability(sourceCode: string | undefined): Promise<number> {
+  async analyzeMaintainability(
+    sourceCode: string | undefined,
+  ): Promise<number> {
     if (!sourceCode) return 0;
     let score = 100;
     const patterns = [/eval\(/, /innerHTML/];
-    patterns.forEach(pattern => {
+    patterns.forEach((pattern) => {
       const matches = sourceCode.match(pattern);
       if (matches) {
         score -= matches.length * 10;
@@ -77,7 +94,7 @@ export class ComponentAnalysisTask {
       /while\s*\([^)]*\)\s*{[^}]*while\s*\(/gi, // Nested while loops
     ];
     let score = 100;
-    inefficientPatterns.forEach(pattern => {
+    inefficientPatterns.forEach((pattern) => {
       const matches = sourceCode.match(pattern);
       if (matches) {
         score -= matches.length * 5;
@@ -98,7 +115,9 @@ export class ComponentAnalysisTask {
     return issues;
   }
 
-  async generateRecommendations(sourceCode: string | undefined): Promise<string[]> {
+  async generateRecommendations(
+    sourceCode: string | undefined,
+  ): Promise<string[]> {
     const recommendations: string[] = [];
     if (!sourceCode) return recommendations;
     recommendations.push('Consider adding unit tests for this component');

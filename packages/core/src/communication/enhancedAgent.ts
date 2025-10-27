@@ -19,7 +19,7 @@ export interface AgentResponse {
 export class EnhancedAgent {
   constructor(private communicationService: CommunicationService) {}
 
-  async processMessage(): unknown {
+  async processMessage(): void {
     // Basic message processing logic
     const response: AgentResponse = {
   // Implementation needed
@@ -38,7 +38,7 @@ export class EnhancedAgent {
     return response;
   }
 
-  async broadcastStatus(): unknown {
+  async broadcastStatus(): void {
     await this.communicationService.broadcastMessage(
       agentId,
       'agent_status',

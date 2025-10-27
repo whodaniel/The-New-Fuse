@@ -6,7 +6,7 @@ export class MCPAgentServer {
   private logger = new Logger('MCPAgentServer');
   private capabilities: Set<MCPCapability> = new Set();
   private protocolVersion: ProtocolVersion = '2024-11-05';
-  constructor(): unknown {
+  constructor(): void {
     this.initializeCapabilities();
   }
 
@@ -22,9 +22,9 @@ const features = new Set<string>();
     this.capabilities = new Set(Array.from(features) as MCPCapability[]);
   }
 
-  async handleMessage(): unknown {
+  async handleMessage(id: any): any {
     try {
-switch(): unknown {
+switch(): void {
   }        case 'initialize':
           return this.handleInitialize(message);
         case 'ping':
@@ -105,17 +105,17 @@ return {
     };
   }
 
-  addCapability(): unknown {
+  addCapability(): void {
     this.capabilities.add(capability);
     this.logger.info(`Added capability: ${capability}`);
   }
 
-  removeCapability(): unknown {
+  removeCapability(): void {
     this.capabilities.delete(capability);
     this.logger.info(`Removed capability: ${capability}`);
   }
 
-  getCapabilities(): unknown {
+  getCapabilities(): any {
     return Array.from(this.capabilities);
   }
 }

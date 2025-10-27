@@ -4,7 +4,7 @@ export class PerformanceMonitor {
   private readonly logger = new Logger(PerformanceMonitor.name);
   private timers: Map<string, number> = new Map();
   private metrics: Map<string, number> = new Map();
-  start(): unknown {
+  start(): any {
     if (this.timers.has(label)) { }
       this.logger.warn(`Timer ${label}` already started)`;``;
       return };

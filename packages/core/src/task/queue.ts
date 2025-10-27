@@ -1,9 +1,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { RedisService } from 'nestjs-redis';
-import { Task } from './task.entity';
 
+// Interface from Incoming change
+export interface QueueItem<T> {
+  id: string;
+  data: T;
+  priority: number;
+  timestamp: Date;
+  retries: number;
+  maxRetries: number;
+}
+
+// Merged Class:
+// - Injectable Redis implementation from Current change
+// - Generic <T> and QueueItem<T> from Incoming change
 @Injectable()
-export class TaskQueue {
+export class TaskQueue<T> {
   private readonly logger = new Logger(TaskQueue.name);
   private readonly prefix = 'task:queue';
 
@@ -13,23 +25,30 @@ export class TaskQueue {
     return `${this.prefix}:${type}`;
   }
 
-  async add(task: Task): Promise<void> {
-    this.logger.log(`Adding task ${task.id} to queue ${task.type}`);
+  // Merged 'add' method:
+  // Now takes a 'type' string and a generic 'item'
+  async add(type: string, item: QueueItem<T>): Promise<void> {
+    this.logger.log(`Adding task ${item.id} to queue ${type}`);
     const client = this.redisService.getClient();
     await client.zadd(
-      this.getQueueKey(task.type || 'default'),
-      task.priority.toString(),
-      JSON.stringify(task)
+      this.getQueueKey(type || 'default'),
+      item.priority.toString(), // Use priority from QueueItem
+      JSON.stringify(item), // Store the whole QueueItem
     );
   }
 
-  async getNext(type = 'default'): Promise<Task | null> {
+  // Merged 'getNext' method:
+  // Now returns a generic QueueItem<T>
+  async getNext(type = 'default'): Promise<QueueItem<T> | null> {
     this.logger.log(`Getting next task from queue ${type}`);
     const client = this.redisService.getClient();
     const result = await client.zpopmax(this.getQueueKey(type));
+    
     if (result) {
-      return JSON.parse(result[0]);
+      // result[0] is the stringified item
+      return JSON.parse(result[0]) as QueueItem<T>;
     }
+    
     return null;
   }
 }

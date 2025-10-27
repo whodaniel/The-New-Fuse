@@ -20,7 +20,7 @@ interface AuditConfig {
 export class AuditLoggingService {
   private readonly logger = new Logger(AuditLoggingService.name);
   private config: AuditConfig;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 enabled: this.configService.get<boolean>('security.auditLogging.enabled', true),
   }      logToConsole: this.configService.get<boolean>('security.auditLogging.logToConsole', true),
@@ -28,15 +28,15 @@ enabled: this.configService.get<boolean>('security.auditLogging.enabled', true),
     };
   }
 
-  async logEvent(): unknown {
-    if(): unknown {
+  async logEvent(data: any): void {
+    if(): void {
       ...entry,
       timestamp: new Date(),
       correlationId: entry.correlationId || this.generateCorrelationId()
     };
     // Clean sensitive data
     const cleanedEntry = this.cleanSensitiveData(fullEntry);
-    if(): unknown {
+    if(): void {
       const logLevel = fullEntry.success ? 'log' : 'error';
       this.logger[logLevel]('Audit Log', {
 action: cleanedEntry.action,
@@ -51,27 +51,27 @@ action: cleanedEntry.action,
     // await this.storeInDatabase(cleanedEntry);
   }
 
-  async getAuditLogs(): unknown {
+  async getAuditLogs(data: any): any[] {
     try {
 // Implement database query logic here
   }      const whereClause: any = {};
-      if(): unknown {
+      if(): void {
         whereClause.userId = filters.userId;
       }
       
-      if(): unknown {
+      if(): void {
         whereClause.timestamp = { gte: filters.startDate };
       }
       
-      if(): unknown {
+      if(): void {
         whereClause.timestamp = { ...whereClause.timestamp, lte: filters.endDate };
       }
 
-      if(): unknown {
+      if(): void {
         whereClause.action = { in: filters.actions };
       }
 
-      if(): unknown {
+      if(): void {
         whereClause.resource = { in: filters.resources };
       }
 
@@ -83,7 +83,7 @@ this.logger.error('Failed to retrieve audit logs', error);
     }
   }
 
-  async cleanupOldLogs(): unknown {
+  async cleanupOldLogs(): void {
     try {
       const cutoffDate = new Date();
       cutoffDate.setDate(cutoffDate.getDate() - olderThanDays);
@@ -97,7 +97,7 @@ this.logger.error('Failed to clean up old audit logs', error);
 
   private cleanSensitiveData(entry: AuditEntry): AuditEntry {
 const cleaned = { ...entry };
-  }    if(): unknown {
+  if(): void {
       cleaned.details = this.recursiveClean(cleaned.details);
     }
 
@@ -105,13 +105,13 @@ const cleaned = { ...entry };
   }
 
   private recursiveClean(obj: any): any {
-if(): unknown {
+if(): any {
   }      return obj;
     }
 
     const cleaned: any = {};
-    for(): unknown {
-      if(): unknown {
+    for(value: any): void {
+      if(value: any): any {
         cleaned[key] = '[REDACTED]';
       } else if (typeof value === 'object') {
 cleaned[key] = this.recursiveClean(value);

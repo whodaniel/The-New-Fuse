@@ -19,7 +19,7 @@ export class UserService {
   private users: Map<string, User> = new Map();
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async createUser(): unknown {
+  async createUser(): void {
     // Mock implementation
     const user: User = {
   // Implementation needed
@@ -34,22 +34,22 @@ export class UserService {
     return user;
   }
 
-  async getUserById(): unknown {
+  async getUserById(id: any): any {
     // Mock implementation
     return this.users.get(id) || null;
   }
 
-  async getUserByEmail(): unknown {
+  async getUserByEmail(): any {
     // Mock implementation
     return Array.from(this.users.values()).find(user => user.email === email) || null;
   }
 
-  async getUserByUsername(): unknown {
+  async getUserByUsername(): any {
     // Mock implementation
     return Array.from(this.users.values()).find(user => user.username === username) || null;
   }
 
-  async updateUser(): unknown {
+  async updateUser(id: any): any {
     // Mock implementation
     const user = this.users.get(id);
     if (!user) return null;
@@ -59,45 +59,45 @@ export class UserService {
     return updatedUser;
   }
 
-  async deleteUser(): unknown {
+  async deleteUser(id: any): any {
     // Mock implementation
     const deleted = this.users.delete(id);
-    if(): unknown {
+    if(id: any): void {
       this.eventEmitter.emit('user.deleted', { id });
     }
     return deleted;
   }
 
-  async getUsers(): unknown {
+  async getUsers(): any {
     // Mock implementation
     let users = Array.from(this.users.values());
-    if(): unknown {
+    if(): void {
       users = users.filter(user => user.role === filters.role);
     }
     
-    if(): unknown {
+    if(): void {
       users = users.filter(user => user.isActive === filters.isActive);
     }
     
     return users;
   }
 
-  async deactivateUser(): unknown {
+  async deactivateUser(id: any): any {
     // Mock implementation
     return this.updateUser(id, { isActive: false });
   }
 
-  async activateUser(): unknown {
+  async activateUser(id: any): any {
     // Mock implementation
     return this.updateUser(id, { isActive: true });
   }
 
-  async updateLastLogin(): unknown {
+  async updateLastLogin(id: any): any {
     // Mock implementation
     return this.updateUser(id, { lastLoginAt: new Date() });
   }
 
-  async getUserStats(): unknown {
+  async getUserStats(): any[] {
     // Mock implementation
     const users = Array.from(this.users.values());
     return {

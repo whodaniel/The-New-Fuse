@@ -10,53 +10,53 @@ import { ServiceCategoryRouterService } from './service-category-router.service'
 @Injectable()
 export class EnhancedAgencyService {
   private readonly logger = new Logger(EnhancedAgencyService.name);
-  constructor(): unknown {
+  constructor(): any {
     private readonly prisma: PrismaService,
     private readonly eventEmitter: EventEmitter2,
     private readonly serviceCategoryRouter: ServiceCategoryRouterService
   ) {}
 
-  async createAgency(): unknown {
+  async createAgency(): any {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async getAgencyDetails(): unknown {
+  async getAgencyDetails(): any {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async updateAgency(): unknown {
+  async updateAgency(): any {
     // Mock implementation
     return { message: 'Enhanced agency service not implemented' };
   }
 
-  async deleteAgency(): unknown {
+  async deleteAgency(): void {
     // Mock implementation
     this.logger.log('Agency deletion not implemented');
   }
 
-  async getAnalytics(): unknown {
+  async getAnalytics(): any {
     // Mock implementation
     return { message: 'Analytics service not implemented' };
   }
 
-  async initializeSwarm(): unknown {
+  async initializeSwarm(): any {
     // Mock implementation
     return { message: 'Swarm initialization not implemented' };
   }
 
-  async getSwarmStatus(): unknown {
+  async getSwarmStatus(): any {
     // Mock implementation
     return { message: 'Swarm status not implemented' };
   }
 
-  async registerProviders(): unknown {
+  async registerProviders(): any {
     // Mock implementation
     return { message: 'Provider registration not implemented' };
   }
 
-  async getProviders(): unknown {
+  async getProviders(): any {
     // Mock implementation
     return { message: 'Provider retrieval not implemented' };
   }
