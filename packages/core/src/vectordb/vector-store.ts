@@ -1,41 +1,49 @@
 import { EventEmitter } from 'events';
 import { Logger } from '@nestjs/common';
-import { VectorProvider, Document, SearchResult, VectorQuery } from '../types/types';
-export class VectorStore {
+import { VectorStoreProvider, VectorDocument, SearchResult, VectorQuery } from './types';
+
+export class VectorStore extends EventEmitter {
   private logger = new Logger(VectorStore.name);
-  private provider: VectorProvider;
+  private provider: VectorStoreProvider;
   private namespace = 'default';
-  constructor(): unknown {
-    super(): unknown {
+  
+  constructor(provider: VectorStoreProvider) {
+    super();
+    this.provider = provider;
+  }
+  
+  async search(query: VectorQuery): Promise<SearchResult[]> {
     try {
-const results = await this.provider.search(query);
-  }      this.emit('search_completed', { query, results });
+      const results = await this.provider.search([], query);
+      this.emit('search_completed', { query, results });
       return results;
     } catch (error) {
-this.logger.error('Search failed', error);
-  }      this.emit('search_failed', { query, error });
+      this.logger.error('Search failed', error);
+      this.emit('search_failed', { query, error });
       throw error;
     }
   }
   
-  async addDocuments(): unknown {
+  async addDocuments(documents: VectorDocument[]): Promise<string[]> {
     try {
-      await this.provider.addDocuments(documents);
+      const ids = await this.provider.storeVectors(documents, this.namespace);
       this.emit('documents_added', { documents });
+      return ids;
     } catch (error) {
-this.logger.error('Failed to add documents', error);
-  }      this.emit('documents_add_failed', { documents, error });
+      this.logger.error('Failed to add documents', error);
+      this.emit('documents_add_failed', { documents, error });
       throw error;
     }
   }
   
-  async deleteDocuments(): unknown {
+  async deleteDocuments(ids: string[]): Promise<boolean> {
     try {
-      await this.provider.deleteDocuments(ids);
+      const result = await this.provider.deleteVectors(ids, this.namespace);
       this.emit('documents_deleted', { ids });
+      return result;
     } catch (error) {
-this.logger.error('Failed to delete documents', error);
-  }      this.emit('documents_delete_failed', { ids, error });
+      this.logger.error('Failed to delete documents', error);
+      this.emit('documents_delete_failed', { ids, error });
       throw error;
     }
   }

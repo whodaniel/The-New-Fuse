@@ -3,7 +3,7 @@ export interface Tool {
   name: string;
   description: string;
   parameters: ToolParameter[];
-  execute(parameters: any) => Promise<any>;
+  execute(parameters: any): Promise<any>;
 }
 
 export interface ToolParameter {

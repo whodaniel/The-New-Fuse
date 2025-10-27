@@ -6,22 +6,18 @@ export interface BaseMessage {
     target?: string;
 }
 
-export interface TaskMessage {
+export interface TaskMessage extends BaseMessage {
     type: 'TASK';
-    payload: unknown;
-  // Implementation needed
-}
+    payload: {
         taskId: string;
         action: string;
         data: unknown;
     };
 }
 
-export interface StateMessage {
+export interface StateMessage extends BaseMessage {
     type: 'STATE';
-    payload: unknown;
-  // Implementation needed
-}
+    payload: {
         stateId: string;
         action: 'UPDATE' | 'DELETE';
         data: unknown;

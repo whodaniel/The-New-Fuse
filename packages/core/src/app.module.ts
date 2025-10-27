@@ -7,11 +7,9 @@ import { PromptService } from './services/PromptService';
 import { MemoryManager } from './memory/MemoryManager';
 import { LoggingService } from './services/LoggingService';
 import { MessageHandler } from './communication/message_handler';
-import { RedisService } from './redis/redis.service';
+import { PubSubService } from './redis/pubsub.service';
 import { SharedMemory } from './agents/shared-memory';
 @Module({
-  // Implementation needed
-}
   imports: [ConfigModule],
   controllers: [AppController],
   providers: [
@@ -21,7 +19,7 @@ import { SharedMemory } from './agents/shared-memory';
     MemoryManager,
     LoggingService,
     MessageHandler,
-    RedisService,
+    PubSubService,
     SharedMemory
   ],
   exports: [
@@ -30,7 +28,7 @@ import { SharedMemory } from './agents/shared-memory';
     MemoryManager,
     LoggingService,
     MessageHandler,
-    RedisService,
+    PubSubService,
     SharedMemory
   ]
 })

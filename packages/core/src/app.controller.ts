@@ -12,8 +12,8 @@ export class AppController {
   @Get('health')
   getHealth(): unknown {
     return {
-status: 'ok',
-  }      timestamp: new Date().toISOString(),
+      status: 'ok',
+      timestamp: new Date().toISOString(),
       service: 'Fuse Core API'
     };
   }

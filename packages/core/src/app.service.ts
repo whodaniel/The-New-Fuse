@@ -11,8 +11,6 @@ export class AppService {
 
   getStatus(): unknown {
     return {
-  // Implementation needed
-}
       service: 'Fuse Core',
       status: 'running',
       version: this.getVersion(),
