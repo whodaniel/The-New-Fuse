@@ -1,16 +1,35 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-import { /* TODO: specify imports */ } from /@nestjs/config'';
-  ) { this.prefix = 'task: 'queue: '; }';
-   await this.redisService.zadd(';'
-     this.getQueueKey('task.type||default),'
-  async peek(type?: string): Promise<Task |null> { const queueKey= 'this.getQueueKey('type||*);';
-  async remove(taskId: 'string): Promise<void> { '
-  awaitPromise.all('[';'
-   this.redisService.zrem('placeholder')
-      if (taskData &&taskData.status'placeholder';
-        const dependencies= 'placeholder';
-        if (dependencies.some((dep: any) =>dep.taskId'placeholder';
-      type: 'task.type||default,'
-      completedAt: 'task.completedAt ? task.completedAt.toISOString() : '};'
-    metadata:JSON.parse('data.metadata||{}), ')'
-      payload:JSON.parse(/data.input||{}), ')'
+import { Injectable, Logger } from '@nestjs/common';
+import { RedisService } from 'nestjs-redis';
+import { Task } from './task.entity';
+
+@Injectable()
+export class TaskQueue {
+  private readonly logger = new Logger(TaskQueue.name);
+  private readonly prefix = 'task:queue';
+
+  constructor(private readonly redisService: RedisService) {}
+
+  private getQueueKey(type: string): string {
+    return `${this.prefix}:${type}`;
+  }
+
+  async add(task: Task): Promise<void> {
+    this.logger.log(`Adding task ${task.id} to queue ${task.type}`);
+    const client = this.redisService.getClient();
+    await client.zadd(
+      this.getQueueKey(task.type || 'default'),
+      task.priority.toString(),
+      JSON.stringify(task)
+    );
+  }
+
+  async getNext(type = 'default'): Promise<Task | null> {
+    this.logger.log(`Getting next task from queue ${type}`);
+    const client = this.redisService.getClient();
+    const result = await client.zpopmax(this.getQueueKey(type));
+    if (result) {
+      return JSON.parse(result[0]);
+    }
+    return null;
+  }
+}

@@ -1,29 +1,48 @@
-import { /* TODO: specify imports */ } from /@nestjs/common'';
-   typeof metadata = '=='object' &&';
-    typeof ('metadata asTaskMetadata).createdBy  = '== 'string ' &&';
-    (typeof (metadata asTaskMetadata).startTime  = '== 'undefined' || (metadata as TaskMetadata).startTime instanceofDate)' &&';
-    (typeof (metadata as TaskMetadata).endTime === 'placeholder';
-    this.name = 'placeholder';
-  this.name= 'placeholder';
-   this.name= 'placeholder';
-    try{ task.status = 'placeholder';
-    } catch (error) { const errorMessage = '';
-      throw error'
-        thrownewTaskValidationError('Task must have anidandtype);'
-        throw newTaskValidationError('')
-      // Check if all dependencies are met'
-         if(dep.type  === 'placeholder';
-      // Check if we have available slots'
-    } catch (error) { const errorMessage = '';
-     console.error('');
-        // Then by creation time'
-    } catch (error){ const errorMessage = '';
-        if (currentTask&&currentTask.status'placeholder';
-    } catch (error){ const errorMessage = 'placeholder';
-   this.emit('task: 'cancelled, task);'
-    } catch (error){ const errorMessage = '';
-  private async optimizeExecution(task: ''
-      if (remainingSlots <= 'placeholder';
-     if(pendingTasks.length'placeholder';
-    for (const dep oftask.dependencies){ if(dep.type  === 'placeholder';
-    } catch (error) { const errorMessage = 'placeholder';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Task, TaskStatus } from './task.entity';
+import { TaskQueue } from './queue';
+
+@Injectable()
+export class TaskScheduler {
+  private readonly logger = new Logger(TaskScheduler.name);
+  private readonly maxConcurrentTasks = 10;
+  private runningTasks = 0;
+
+  constructor(
+    private readonly taskQueue: TaskQueue,
+    private readonly eventEmitter: EventEmitter2
+  ) {}
+
+  async schedule(task: Task): Promise<void> {
+    this.logger.log(`Scheduling task ${task.id}`);
+    await this.taskQueue.add(task);
+    this.eventEmitter.emit('task.scheduled', task);
+    this.tryProcessNext();
+  }
+
+  private async tryProcessNext(): Promise<void> {
+    this.logger.log('Trying to process next task');
+    if (this.runningTasks >= this.maxConcurrentTasks) {
+      this.logger.log('Max concurrent tasks reached');
+      return;
+    }
+
+    const task = await this.taskQueue.getNext();
+    if (task) {
+      this.runningTasks++;
+      this.eventEmitter.emit('task.started', task);
+      try {
+        // In a real implementation, you would execute the task here
+        this.logger.log(`Executing task ${task.id}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
+        this.eventEmitter.emit('task.completed', { task, result: 'Success' });
+      } catch (error) {
+        this.eventEmitter.emit('task.failed', { task, error });
+      } finally {
+        this.runningTasks--;
+        this.tryProcessNext();
+      }
+    }
+  }
+}

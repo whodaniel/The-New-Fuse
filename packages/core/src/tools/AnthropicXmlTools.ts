@@ -1,65 +1,56 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from '../utils/logger';
-export interface ToolDefinition {
-  name: string;
-  description: string;
-  parameters: Record<string, any>;
-}
+import { Logger } from '../utils/LoggingUtils_clean';
+import { Tool } from './types';
 
 @Injectable()
 export class AnthropicXmlTools {
   private readonly logger = new Logger(AnthropicXmlTools.name);
-  convertToolToXmlFormat(): unknown {
-    let xmlString = '<function>\n';
-    xmlString += `  <name>${tool.name}</name>\n`;
+
+  convertToolToXmlFormat(tool: Tool): string {
+    let xmlString = '<function_description>\n';
+    xmlString += `  <function_name>${tool.name}</function_name>\n`;
     xmlString += `  <description>${tool.description}</description>\n`;
-    if(): unknown {
+    if (tool.parameters) {
       xmlString += '  <parameters>\n';
-      for(): unknown {
+      for (const param of tool.parameters) {
         xmlString += `    <parameter>\n`;
-        xmlString += `      <name>${paramName}</name>\n`;
-        xmlString += `      <type>${paramSchema.type || 'string'}</type>\n`;
-        if(): unknown {
-          xmlString += `      <description>${paramSchema.description}</description>\n`;
+        xmlString += `      <name>${param.name}</name>\n`;
+        xmlString += `      <type>${param.type || 'string'}</type>\n`;
+        if (param.description) {
+          xmlString += `      <description>${param.description}</description>\n`;
         }
-        
-        if(): unknown {
+        if (param.required) {
           xmlString += `      <required>true</required>\n`;
         }
-        
         xmlString += `    </parameter>\n`;
       }
-      
       xmlString += '  </parameters>\n';
     }
-    
-    xmlString += '</function>';
+    xmlString += '</function_description>';
     return xmlString;
   }
 
-  convertToolsToXmlFormat(): unknown {
-    let xmlString = '<functions>\n';
-    for(): unknown {
+  convertToolsToXmlFormat(tools: Tool[]): string {
+    let xmlString = '<tools>\n';
+    for (const tool of tools) {
       xmlString += this.convertToolToXmlFormat(tool) + '\n';
     }
-    
-    xmlString += '</functions>';
+    xmlString += '</tools>';
     return xmlString;
   }
 
-  parseXmlResponse(): unknown {
+  parseXmlResponse(xml: string): any {
     // Basic XML parsing for Anthropic responses
     try {
-// Remove XML tags and extract JSON
-  }      const jsonMatch = xml.match(/\{.*\}/s);
-      if(): unknown {
+      // Remove XML tags and extract JSON
+      const jsonMatch = xml.match(/\{.*\}/s);
+      if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
       return null;
     } catch (error) {
-this.logger.error('Failed to parse XML response', { error, xml });
-  }      return null;
+      this.logger.error('Failed to parse XML response', { error, xml });
+      return null;
     }
   }
 }

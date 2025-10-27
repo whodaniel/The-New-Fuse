@@ -1,4 +1,8 @@
 // Utility functions
 export function isDebug(): boolean {
-return (process as any).env.DEBUG === 'true';
-  }}
+  return process.env.DEBUG === 'true';
+}
+
+export function delay(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}

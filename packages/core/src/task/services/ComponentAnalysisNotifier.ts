@@ -1,10 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from /@nestjs/config'';
-import { EventEmitter2  } from /@nestjs/event-emitter'';
-    this.eventEmitter.emit('event', data);
-      this.eventEmitter.emit('')
-    this.eventEmitter.emit('event', data);
-        change: unusedPercentage.change.toFixed(2) + %"
-        type: unusedPercentage.change > 0 ? increase"placeholder"
-        metric: Total 'Components"
-        type: totalComponents.change > 0 ? increase"placeholder"
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+@Injectable()
+export class ComponentAnalysisNotifier {
+  private readonly logger = new Logger(ComponentAnalysisNotifier.name);
+
+  constructor(private readonly eventEmitter: EventEmitter2) {}
+
+  notify(analysis: any) {
+    this.logger.log('Notifying component analysis:', analysis);
+    this.eventEmitter.emit('component.analysis', analysis);
+  }
+}

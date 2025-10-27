@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import { v4 as uuidv4 } from 'uuid';
-import { Tool, ToolExecutionResult, ToolParameter } from '../types';
+import { Tool, ToolExecutionResult, ToolParameter } from './types';
+
 export interface ToolRegistryEvents {
   'tool:registered': (tool: Tool) => void;
   'tool:executing': (toolId: string, parameters: any) => void;
@@ -9,68 +10,65 @@ export interface ToolRegistryEvents {
   'tool:unregistered': (toolId: string) => void;
 }
 
-export class ToolRegistry {
+export class ToolRegistry extends EventEmitter {
   private tools = new Map<string, Tool>();
   private executions = new Map<string, ToolExecutionResult>();
-  register(): unknown {
-    if(): unknown {
+
+  register(tool: Tool): void {
+    if (this.tools.has(tool.id)) {
       throw new Error(`Tool with id ${tool.id} already registered`);
     }
-    
     this.tools.set(tool.id, tool);
     this.emit('tool:registered', tool);
   }
 
-  unregister(): unknown {
-    if(): unknown {
+  unregister(toolId: string): void {
+    if (!this.tools.has(toolId)) {
       throw new Error(`Tool with id ${toolId} not found`);
     }
-    
     this.tools.delete(toolId);
     this.emit('tool:unregistered', toolId);
   }
 
-  get(): unknown {
+  get(toolId: string): Tool | undefined {
     return this.tools.get(toolId);
   }
 
-  getAll(): unknown {
+  getAll(): Tool[] {
     return Array.from(this.tools.values());
   }
 
-  async execute(): unknown {
+  async execute(toolId: string, parameters: any): Promise<ToolExecutionResult> {
     const tool = this.tools.get(toolId);
-    if(): unknown {
+    if (!tool) {
       throw new Error(`Tool with id ${toolId} not found`);
     }
 
     this.validateParameters(tool.parameters, parameters);
     const executionId = uuidv4();
     this.emit('tool:executing', toolId, parameters);
+
     try {
-const result = await tool.execute(parameters);
-  }      const executionResult: ToolExecutionResult = {
-  // Implementation needed
-}
+      const result = await tool.execute(parameters);
+      const executionResult: ToolExecutionResult = {
         id: executionId,
         toolId,
         parameters,
         result,
         timestamp: new Date(),
-        success: true
+        success: true,
       };
       this.executions.set(executionId, executionResult);
       this.emit('tool:executed', toolId, executionResult);
       return executionResult;
     } catch (error) {
-const executionResult: ToolExecutionResult = {
-  }}
+      const executionResult: ToolExecutionResult = {
         id: executionId,
         toolId,
         parameters,
         error: error instanceof Error ? error : new Error(String(error)),
         timestamp: new Date(),
-        success: false
+        success: false,
       };
       this.executions.set(executionId, executionResult);
       this.emit('tool:failed', toolId, error instanceof Error ? error : new Error(String(error)));
@@ -78,54 +76,54 @@ const executionResult: ToolExecutionResult = {
     }
   }
 
-  getExecution(): unknown {
+  getExecution(executionId: string): ToolExecutionResult | undefined {
     return this.executions.get(executionId);
   }
 
-  private validateParameters(parameters: ToolParameter[], values: any): void {
-if(): unknown {
-  }      return;
+  private validateParameters(parameters: ToolParameter[] | undefined, values: any): void {
+    if (!parameters) {
+      return;
     }
 
-    for(): unknown {
+    for (const param of parameters) {
       const value = values[param.name];
-      if(): unknown {
+      if (param.required && value === undefined) {
         throw new Error(`Parameter ${param.name} is required`);
       }
 
-      if(): unknown {
+      if (value !== undefined) {
         this.validateParameterType(param.name, value, param);
       }
     }
   }
 
   private validateParameterType(name: string, value: any, parameter: ToolParameter): void {
-switch(): unknown {
-  }      case 'string':
-        if(): unknown {
+    switch (parameter.type) {
+      case 'string':
+        if (typeof value !== 'string') {
           throw new Error(`Parameter ${name} must be a string`);
         }
-        if(): unknown {
+        if (parameter.enum && !parameter.enum.includes(value)) {
           throw new Error(`Parameter ${name} must be one of: ${parameter.enum.join(', ')}`);
         }
         break;
       case 'number':
-        if(): unknown {
+        if (typeof value !== 'number') {
           throw new Error(`Parameter ${name} must be a number`);
         }
         break;
       case 'boolean':
-        if(): unknown {
+        if (typeof value !== 'boolean') {
           throw new Error(`Parameter ${name} must be a boolean`);
         }
         break;
       case 'array':
-        if(): unknown {
+        if (!Array.isArray(value)) {
           throw new Error(`Parameter ${name} must be an array`);
         }
         break;
       case 'object':
-        if(): unknown {
+        if (typeof value !== 'object' || value === null || Array.isArray(value)) {
           throw new Error(`Parameter ${name} must be an object`);
         }
         break;
