@@ -18,8 +18,9 @@ export interface VerificationResult {
 export class VerificationService {
   private sensitivePatterns: string[] = ['password', 'secret', 'token', 'key', 'credential'];
   private harmfulPatterns: string[] = ['malware', 'exploit', 'attack', 'vulnerability'];
-  async verifyOutput(): unknown {
-    switch(): unknown {
+
+  async verifyOutput(type: VerificationType, output: any): Promise<VerificationResult> {
+    switch (type) {
       case VerificationType.SCHEMA:
         return this.verifySchema(output);
       case VerificationType.CONTENT:
@@ -34,17 +35,20 @@ export class VerificationService {
   }
 
   private async verifySchema(output: any): Promise<VerificationResult> {
-// Mock implementation
-  }    if(): unknown {
+    // Mock implementation
+    if (!output) {
       return { success: false, message: 'Invalid output format' };
     }
     return { success: true, message: 'Schema verification passed' };
   }
 
   private async verifyContent(output: any): Promise<VerificationResult> {
-// Mock implementation
-  }    const requiredMetadata = new Set(['timestamp', 'source_id']);
-    if(): unknown {
+    // Mock implementation
+    const requiredMetadata = new Set(['timestamp', 'source_id']);
+    const hasMetadata = output && output.metadata &&
+        [...requiredMetadata].every(key => key in output.metadata);
+
+    if (!hasMetadata) {
       return { success: false, message: 'Missing required metadata fields' };
     }
     
@@ -52,9 +56,9 @@ export class VerificationService {
   }
 
   private async verifySecurity(output: any): Promise<VerificationResult> {
-// Mock implementation
-  }    const contentStr = String(output.content ?? '');
-    if(): unknown {
+    // Mock implementation
+    const contentStr = String(output.content ?? '');
+    if (this.sensitivePatterns.some(p => contentStr.includes(p))) {
       return { success: false, message: 'Found potentially sensitive data' };
     }
     
@@ -62,9 +66,9 @@ export class VerificationService {
   }
 
   private async verifyHarmlessness(output: any): Promise<VerificationResult> {
-// Mock implementation
-  }    const contentStr = String(output.content ?? '');
-    if(): unknown {
+    // Mock implementation
+    const contentStr = String(output.content ?? '');
+    if (this.harmfulPatterns.some(p => contentStr.includes(p))) {
       return { success: false, message: 'Found potentially harmful content' };
     }
     
