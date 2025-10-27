@@ -1,6 +1,7 @@
 import { BaseService } from '../core/BaseService';
-import { Logger } from '@the-new-fuse/core/src/utils/Logger';
+import { Logger } from '@the-new-fuse/core';
 import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
+import { QueueTask } from '@the-new-fuse/infrastructure/redis/types';
 import { ConfigService } from './ConfigService';
 
 /**
@@ -190,7 +191,7 @@ export class RedisService extends BaseService {
     await this.unifiedRedis.enqueue(queueName, task, priority);
   }
 
-  async dequeue<T>(queueName: string): Promise<T | null> {
+  async dequeue<T>(queueName: string): Promise<QueueTask<T> | null> {
     return this.unifiedRedis.dequeue<T>(queueName);
   }
 
