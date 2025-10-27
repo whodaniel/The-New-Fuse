@@ -29,6 +29,9 @@ jobs:
         with:
           version: 8
 
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxkbfile-dev
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       
@@ -91,6 +94,9 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 8
+
+      - name: Install system dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev libxkbfile-dev
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
