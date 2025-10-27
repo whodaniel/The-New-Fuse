@@ -20,5 +20,7 @@ export {
   FilterOptions,
   QueryOptions,
   HealthCheck,
-  ApiResponse
+  ApiResponse,
+  Message,
+  MessageType
 } from './common';

@@ -1,7 +1,6 @@
 import { BaseService } from '../core/BaseService';
 import { Logger } from '@the-new-fuse/core';
-import { UnifiedRedisService } from '@the-new-fuse/infrastructure';
-import { QueueTask } from '@the-new-fuse/infrastructure/redis/types';
+import { UnifiedRedisService, QueueTask } from '@the-new-fuse/infrastructure';
 import { ConfigService } from './ConfigService';
 
 /**
