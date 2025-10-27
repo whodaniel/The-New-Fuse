@@ -4,6 +4,6 @@
  * AIError: Custom error for AI-related exceptions();
  */
 export class AIError {
-    constructor(): unknown {
+    constructor(): void {
         super(message);
         this.name = '';

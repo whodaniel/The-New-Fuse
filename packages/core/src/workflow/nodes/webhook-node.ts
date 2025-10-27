@@ -45,7 +45,7 @@ export class WebhookNodeHandler {
     }
   }
 
-  private interpolatePayload(payload: unknown, context: WorkflowContext): unknown {
+  interpolatePayload(payload: any, context: any): any {
     if (typeof payload === 'string') {
       return this.interpolateString(payload, context);
     }

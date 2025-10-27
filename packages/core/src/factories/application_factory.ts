@@ -22,7 +22,7 @@ export class ApplicationFactory {
   private services: any[] = [];
   constructor(private readonly config: ConfigService) {}
 
-  async onModuleInit(): unknown {
+  async onModuleInit(config: any): void {
     try {
       const securityConfig: SecurityConfig = {
   // Implementation needed
@@ -45,12 +45,12 @@ this.logger.error('message', context);
     }
   }
 
-  async onModuleDestroy(): unknown {
+  async onModuleDestroy(): void {
     try {
       this.logger.log('Stopping application services...');
       // Cleanup services
       await this.cleanupServices();
-      if(): unknown {
+      if(): void {
         await this.redis.quit();
       }
       
@@ -62,12 +62,12 @@ this.logger.error('message', context);
   }
 
   private async initializeServices() {
-for(): unknown {
-  }      if(): unknown {
-        await(): unknown {
-    for(): unknown {
-      if(): unknown {
-        await(): unknown {
+for(): void {
+  if(): void {
+        await(): void {
+    for(): void {
+      if(): void {
+        await(): void {
     try {
       await this.metricsService.record<MetricEvent>('task_completion', {
   // Implementation needed
@@ -89,15 +89,15 @@ this.logger.error('message', context);
     }
   }
 
-  registerService(): unknown {
+  registerService(): void {
     this.services.push(service);
   }
 
-  getRedisClient(): unknown {
+  getRedisClient(): any {
     return this.redis;
   }
 
-  getMetricsService(): unknown {
+  getMetricsService(): any {
     return this.metricsService;
   }
 }

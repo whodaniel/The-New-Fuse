@@ -45,7 +45,7 @@ export interface HierarchicalNode {
 export class AdvancedClustering {
   private readonly logger = new Logger(AdvancedClustering.name);
   private readonly defaultConfig: ClusteringConfig;
-  constructor(): unknown {
+  constructor(): void {
     this.defaultConfig = {
 algorithm: 'kmeans',
   }      numClusters: 5,
@@ -57,13 +57,13 @@ algorithm: 'kmeans',
     };
   }
 
-  async clusterVectors(): unknown {
+  async clusterVectors(config: any): Promise<any> {
     const startTime = Date.now();
     const finalConfig = { ...this.defaultConfig, ...config };
     try {
       this.logger.debug(`Clustering ${vectors.length} vectors using ${finalConfig.algorithm}`);
       let clusters: Cluster[];
-      switch(): unknown {
+      switch(): void {
         case 'kmeans':
           clusters = await this.kMeansClustering(vectors, finalConfig);
           break;
@@ -97,14 +97,14 @@ this.logger.error('Clustering failed:', error);
     }
   }
 
-  private async kMeansClustering(): unknown {
+  async kMeansClustering(config: any): any {
     vectors: MemoryItem[],
     config: ClusteringConfig
   ): Promise<Cluster[]> {
 const k = config.numClusters!;
   }    const maxIterations = config.maxIterations!;
     const tolerance = config.tolerance!;
-    if(): unknown {
+    if(): void {
       throw new Error(`Cannot create ${k} clusters with only ${vectors.length} vectors`);
     }
     
@@ -113,19 +113,19 @@ const k = config.numClusters!;
     let assignments = new Array(vectors.length).fill(-1);
     let converged = false;
     let iteration = 0;
-    while(): unknown {
+    while(config: any): void {
       const newAssignments = new Array(vectors.length);
       // Assign each vector to the nearest centroid
-      for(): unknown {
+      for(config: any): void {
         let minDistance = Infinity;
         let bestCluster = 0;
-        for(): unknown {
+        for(config: any): void {
           const distance = this.calculateDistance(
             vectors[i].embedding,
             centroids[j],
             config.distanceMetric!
           );
-          if(): unknown {
+          if(): void {
             minDistance = distance;
             bestCluster = j;
           }
@@ -147,7 +147,7 @@ const k = config.numClusters!;
     return this.createClusters(vectors, assignments, centroids, 'kmeans');
   }
 
-  private async hierarchicalClustering(): unknown {
+  async hierarchicalClustering(): void {
     vectors: MemoryItem[],
     config: ClusteringConfig
   ): Promise<Cluster[]> {
@@ -162,18 +162,18 @@ const k = config.numClusters!;
       cohesion: 0
     }));
     let currentLevel = 1;
-    while(): unknown {
+    while(config: any): void {
       let minDistance = Infinity;
       let mergeIndices = [-1, -1];
       // Find the two closest clusters
-      for(): unknown {
-        for(): unknown {
+      for(config: any): void {
+        for(config: any): void {
           const distance = this.calculateDistance(
             nodes[i].centroid,
             nodes[j].centroid,
             config.distanceMetric!
           );
-          if(): unknown {
+          if(): void {
             minDistance = distance;
             mergeIndices = [i, j];
           }
@@ -220,7 +220,7 @@ id: `merged_${currentLevel}_${i}_${j}`,
     }));
   }
 
-  private async dbscanClustering(): unknown {
+  async dbscanClustering(config: any): void {
     vectors: MemoryItem[],
     config: ClusteringConfig
   ): Promise<Cluster[]> {
@@ -229,8 +229,8 @@ const epsilon = config.epsilon!;
     const visited = new Set<number>();
     const clusters: Cluster[] = [];
     const noise: MemoryItem[] = [];
-    for(): unknown {
-      if(): unknown {
+    for(config: any): void {
+      if(): void {
         noise.push(vectors[i]);
       } else {
 const cluster = this.expandCluster(
@@ -262,7 +262,7 @@ const cluster = this.expandCluster(
     }
     
     // Add noise cluster if there are noise points
-    if(): unknown {
+    if(): void {
       clusters.push({
   // Implementation needed
 }
@@ -283,12 +283,12 @@ algorithm: 'dbscan',
     return clusters;
   }
 
-  private calculateDistance(): unknown {
+  calculateDistance(): any {
     vector1: number[],
     vector2: number[],
     metric: string
   ): number {
-switch(): unknown {
+switch(): void {
   }      case 'cosine':
         return this.cosineDistance(vector1, vector2);
       case 'euclidean':
@@ -304,7 +304,7 @@ switch(): unknown {
 const dotProduct = vector1.reduce((sum, val, i) => sum + val * vector2[i], 0);
   }    const magnitude1 = Math.sqrt(vector1.reduce((sum, val) => sum + val * val, 0));
     const magnitude2 = Math.sqrt(vector2.reduce((sum, val) => sum + val * val, 0));
-    if(): unknown {
+    if(): any {
     return Math.sqrt(
       vector1.reduce((sum, val, i) => sum + Math.pow(val - vector2[i], 2), 0)
     );
@@ -323,17 +323,17 @@ const centroids: number[][] = [];
     centroids.push([...vectors[firstIndex].embedding]);
     used.add(firstIndex);
     // Choose remaining centroids based on distance from existing centroids
-    for(): unknown {
+    for(): void {
       const distances: number[] = [];
       let totalDistance = 0;
-      for(): unknown {
-        if(): unknown {
+      for(): void {
+        if(): void {
           distances[j] = 0;
           continue;
         }
         
         let minDistance = Infinity;
-        for(): unknown {
+        for(): void {
           const distance = this.euclideanDistance(vectors[j].embedding, centroid);
           minDistance = Math.min(minDistance, distance);
         }
@@ -345,9 +345,9 @@ const centroids: number[][] = [];
       // Choose next centroid with probability proportional to squared distance
       const threshold = Math.random() * totalDistance;
       let cumulative = 0;
-      for(): unknown {
+      for(): void {
         cumulative += distances[j];
-        if(): unknown {
+        if(): void {
           centroids.push([...vectors[j].embedding]);
           used.add(j);
           break;
@@ -358,29 +358,29 @@ const centroids: number[][] = [];
     return centroids;
   }
 
-  private updateCentroids(): unknown {
+  updateCentroids(): any {
     vectors: MemoryItem[],
     assignments: number[],
     k: number
   ): number[][] {
 const centroids: number[][] = [];
   }    const dimensions = vectors[0].embedding.length;
-    for(): unknown {
+    for(): void {
       const clusterVectors = vectors.filter((_, index) => assignments[index] === i);
-      if(): unknown {
+      if(): void {
         // If cluster is empty, keep the previous centroid or reinitialize
         centroids.push(new Array(dimensions).fill(0));
         continue;
       }
       
       const newCentroid = new Array(dimensions).fill(0);
-      for(): unknown {
-        for(): unknown {
+      for(): void {
+        for(): void {
           newCentroid[j] += vector.embedding[j];
         }
       }
       
-      for(): unknown {
+      for(): void {
         newCentroid[j] /= clusterVectors.length;
       }
       
@@ -390,28 +390,28 @@ const centroids: number[][] = [];
     return centroids;
   }
 
-  private checkConvergence(): unknown {
+  checkConvergence(): boolean {
     oldCentroids: number[][],
     newCentroids: number[][],
     tolerance: number
   ): boolean {
-for(): unknown {
+for(): void {
   }      const distance = this.euclideanDistance(oldCentroids[i], newCentroids[i]);
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
     return true;
   }
 
-  private createClusters(): unknown {
+  createClusters(): void {
     vectors: MemoryItem[],
     assignments: number[],
     centroids: number[][],
     algorithm: string
   ): Cluster[] {
 const clusters: Cluster[] = [];
-  }    for(): unknown {
+  for(): void {
       const members = vectors.filter((_, index) => assignments[index] === i);
       clusters.push({
 id: `${algorithm}_cluster_${i}`,
@@ -434,28 +434,28 @@ id: `${algorithm}_cluster_${i}`,
   }
 
   private calculateCentroid(vectors: MemoryItem[]): number[] {
-if(): unknown {
-  }      for(): unknown {
+if(): void {
+  for(): void {
         centroid[i] += vector.embedding[i];
       }
     }
     
-    for(): unknown {
+    for(): void {
       centroid[i] /= vectors.length;
     }
     
     return centroid;
   }
 
-  private getNeighbors(): unknown {
+  getNeighbors(): any {
     vectors: MemoryItem[],
     pointIndex: number,
     epsilon: number,
     metric: string
   ): number[] {
 const neighbors: number[] = [];
-  }    for(): unknown {
-      if(): unknown {
+  for(): void {
+      if(): void {
         neighbors.push(i);
       }
     }
@@ -463,7 +463,7 @@ const neighbors: number[] = [];
     return neighbors;
   }
 
-  private expandCluster(): unknown {
+  expandCluster(): any {
     vectors: MemoryItem[],
     pointIndex: number,
     neighbors: number[],
@@ -474,13 +474,13 @@ const neighbors: number[] = [];
   ): MemoryItem[] {
 const cluster = [vectors[pointIndex]];
   }    const queue = [...neighbors];
-    while(): unknown {
+    while(): void {
       const currentIndex = queue.shift()!;
-      if(): unknown {
+      if(): void {
         visited.add(currentIndex);
         cluster.push(vectors[currentIndex]);
         const currentNeighbors = this.getNeighbors(vectors, currentIndex, epsilon, metric);
-        if(): unknown {
+        if(): void {
           queue.push(...currentNeighbors);
         }
       }
@@ -490,20 +490,20 @@ const cluster = [vectors[pointIndex]];
   }
 
   private calculateClusterMetrics(clusters: Cluster[], metric: string): void {
-for(): unknown {
+for(): void {
   }      const cluster = clusters[i];
       // Calculate cohesion (average distance from centroid)
       const cohesion = this.calculateCohesion(cluster.members, cluster.centroid, metric);
       cluster.cohesion = cohesion;
       // Calculate separation (minimum distance to other cluster centroids)
       let minDistance = Infinity;
-      for(): unknown {
-        if(): unknown {
-    if(): unknown {
+      for(id: any, config: any): any {
+        if(id: any, config: any): any {
+    if(): any {
     let totalScore = 0;
     let totalPoints = 0;
-    for(): unknown {
-      for(): unknown {
+    for(): void {
+      for(): void {
         const a = this.calculateIntraClusterDistance(member, cluster, metric);
         const b = this.calculateNearestClusterDistance(member, clusters, cluster, metric);
         const silhouette = b === 0 ? 0(b - a) / Math.max(a, b);
@@ -515,14 +515,14 @@ for(): unknown {
     return totalPoints === 0 ? 0 : totalScore / totalPoints;
   }
 
-  private calculateIntraClusterDistance(): unknown {
+  calculateIntraClusterDistance(id: any, config: any): any {
     point: MemoryItem,
     cluster: Cluster,
     metric: string
   ): number {
-if(): unknown {
+if(): void {
   }    let minAvgDistance = Infinity;
-    for(): unknown {
+    for(id: any): void {
       if (cluster.id === currentCluster.id || cluster.members.length === 0) continue;
       const avgDistance = cluster.members.reduce(
         (sum, member) => sum + this.calculateDistance(point.embedding, member.embedding, metric),
@@ -534,23 +534,23 @@ if(): unknown {
     return minAvgDistance === Infinity ? 0 : minAvgDistance;
   }
 
-  async optimizeClusters(): unknown {
+  async optimizeClusters(id: any, config: any): void {
     // Remove empty clusters
     let optimizedClusters = clusters.filter(cluster => cluster.members.length > 0);
     // Merge clusters that are too close together
     const mergeThreshold = config.epsilon || 0.1;
     const distanceMetric = config.distanceMetric || 'cosine';
     let merged = true;
-    while(): unknown {
+    while(id: any): void {
       merged = false;
-      for(): unknown {
-        for(): unknown {
+      for(id: any): void {
+        for(id: any): void {
           const distance = this.calculateDistance(
             optimizedClusters[i].centroid,
             optimizedClusters[j].centroid,
             distanceMetric
           );
-          if(): unknown {
+          if(): void {
             // Merge clusters j into i
             const mergedMembers = [...optimizedClusters[i].members, ...optimizedClusters[j].members];
             const mergedCentroid = this.calculateCentroid(mergedMembers);

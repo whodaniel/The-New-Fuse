@@ -12,7 +12,7 @@ export interface ToolDefinition {
   name: string;
   description: string;
   parameters: Record<string, ToolParameter>;
-  handler(...args: any[]) => Promise<any>;
+  handler: (...args: any[]) => Promise<any>;
 }
 
 export interface ToolExecutionContext {

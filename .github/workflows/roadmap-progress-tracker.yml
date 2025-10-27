@@ -13,7 +13,8 @@ on:
 jobs:
   update-roadmap-progress:
     runs-on: ubuntu-latest
-    if: github.repository == 'whodaniel/fuse'
+    if: false # Temporarily disabled - missing CODEBASE_IMPROVEMENT_ROADMAP.md
+    # if: github.repository == 'whodaniel/fuse'
     
     steps:
       - name: Checkout Repository

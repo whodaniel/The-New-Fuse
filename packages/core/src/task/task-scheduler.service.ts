@@ -3,78 +3,73 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from './entities/Task';
 import { TaskStatusType } from '@the-new-fuse/types';
+
 @Injectable()
 export class TaskSchedulerService {
   private readonly logger = new Logger(TaskSchedulerService.name);
   private maxConcurrentTasks: number = 10;
-  constructor(): unknown {
+
+  constructor(
     @InjectRepository(Task)
     private readonly taskRepository: Repository<Task>,
   ) {}
 
-  async scheduleTask(): unknown {
+  async scheduleTask(task: Task): Promise<Task> {
     // Check if dependencies are resolved
-    if(): unknown {
+    if (task.dependencies && task.dependencies.length > 0) {
       throw new Error('Cannot schedule task with pending dependencies');
     }
 
     // Check concurrent task limit
     const runningTasks = await this.taskRepository.find({
-where: { status: TaskStatusType.RUNNING },
+      where: { status: TaskStatusType.RUNNING },
     });
-  }    if(): unknown {
+
+    if (runningTasks.length >= this.maxConcurrentTasks) {
       throw new Error('Maximum concurrent tasks limit reached');
     }
 
     // Schedule the task
     task.status = TaskStatusType.PENDING;
-    task.scheduledAt = new Date();
-    await this.taskRepository.save(task);
-    this.logger.log(`Task ${task.id} scheduled successfully`);
+    return this.taskRepository.save(task);
   }
 
-  async rescheduleTask(): unknown {
+  async executeTask(taskId: string): Promise<void> {
     const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if(): unknown {
+    if (!task) {
       throw new Error(`Task ${taskId} not found`);
     }
 
-    task.scheduledAt = newScheduledTime;
+    task.status = TaskStatusType.RUNNING;
     await this.taskRepository.save(task);
-    this.logger.log(`Task ${taskId} rescheduled to ${newScheduledTime}`);
+
+    try {
+      // Execute task logic here
+      this.logger.log(`Executing task ${task.id}`);
+
+      task.status = TaskStatusType.COMPLETED;
+      await this.taskRepository.save(task);
+    } catch (error) {
+      this.logger.error(`Task ${task.id} failed:`, error);
+      task.status = TaskStatusType.FAILED;
+      await this.taskRepository.save(task);
+      throw error;
+    }
   }
 
-  async cancelTask(): unknown {
+  async cancelTask(taskId: string): Promise<void> {
     const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if(): unknown {
+    if (!task) {
       throw new Error(`Task ${taskId} not found`);
-    }
-
-    if(): unknown {
-      throw new Error('Cannot cancel running task');
     }
 
     task.status = TaskStatusType.CANCELLED;
     await this.taskRepository.save(task);
-    this.logger.log(`Task ${taskId} cancelled`);
   }
 
-  async getScheduledTasks(): unknown {
+  async getScheduledTasks(): Promise<Task[]> {
     return this.taskRepository.find({
-  // Implementation needed
-}
       where: { status: TaskStatusType.PENDING },
-      order: { scheduledAt: 'ASC' },
-    });
-  }
-
-  async getTaskQueue(): unknown {
-    return this.taskRepository.find({
-where: [
-        { status: TaskStatusType.PENDING },
-        { status: TaskStatusType.RUNNING },
-      ],
-  }      order: { priority: 'DESC', createdAt: 'ASC' },
     });
   }
 }

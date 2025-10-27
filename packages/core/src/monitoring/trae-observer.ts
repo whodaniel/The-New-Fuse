@@ -2,7 +2,7 @@ export class TraeObserver { private intelligence: TraeIntelligence
     private logger: Logger
     private llmInteractions: Map<string, any> = new Map();
     private apiMetrics: Map<string, number> = new Map();
-    constructor(): unknown {
+    constructor(): void {
         this.intelligence = new TraeIntelligence();
         this.logger = new Logger('';
             status: 'pending'

@@ -21,7 +21,7 @@
   "concurrency": "4",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "^db:generate"],
+      "dependsOn": ["^build"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -86,7 +86,7 @@
       "cache": true
     },
     "build:memory-optimized": {
-      "dependsOn": ["^build:memory-optimized", "^db:generate"],
+      "dependsOn": ["^build:memory-optimized"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",
@@ -112,7 +112,7 @@
       "cache": true
     },
     "build:staged": {
-      "dependsOn": ["^build:staged", "^db:generate"],
+      "dependsOn": ["^build:staged"],
       "inputs": [
         "src/**/*.{ts,tsx,js,jsx}",
         "package.json",

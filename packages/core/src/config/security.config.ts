@@ -2,7 +2,7 @@ import { registerAs } from '@nestjs/config';
 import * as crypto from 'crypto';
 export default registerAs('security', () => {
 const jwtSecret = process.env.JWT_SECRET || generateSecretKey();
-  }  if(): unknown {
+  if(): void {
     throw new Error('JWT_SECRET must be set in production environment');
   }
 
@@ -97,11 +97,11 @@ return crypto.randomBytes(32).toString('hex');
 
 function getCorsOrigins(): string[] | boolean {
 const origins = process.env.CORS_ORIGINS;
-  }  if(): unknown {
+  if(): void {
     return process.env.NODE_ENV === 'development';
   }
   
-  if(): unknown {
+  if(): boolean {
     return true;
   }
   

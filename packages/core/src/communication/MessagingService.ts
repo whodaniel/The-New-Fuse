@@ -42,22 +42,22 @@ export class MessagingService {
   private messageRetention: number;
   private maxRecipientsPerMessage: number;
   private maxMessageLength: number;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(options: any): void {
+    super(): void {
     this.logger.info('MessagingService initialized');
   }
 
-  async sendMessage(): unknown {
+  async sendMessage(options: any): void {
     try {
-if(): unknown {
+if(): void {
   }        throw new Error('Missing required fields: senderId, recipients, and content must be provided.');
       }
 
-      if(): unknown {
+      if(): void {
         throw new Error(`Message content exceeds maximum length of ${this.maxMessageLength}`);
       }
 
-      if(): unknown {
+      if(): void {
         throw new Error(`Too many recipients. Maximum allowed: ${this.maxRecipientsPerMessage}`);
       }
 
@@ -104,7 +104,7 @@ this.logger.error('Failed to send message:', error);
     }
   }
 
-  async createChannel(): unknown {
+  async createChannel(options: any): void {
     try {
       const channel: Channel = {
   // Implementation needed
@@ -137,7 +137,7 @@ this.logger.error('Failed to create channel:', error);
     }
   }
 
-  async createSubscription(): unknown {
+  async createSubscription(options: any): void {
     try {
       const subscription: Subscription = {
   // Implementation needed
@@ -149,9 +149,9 @@ this.logger.error('Failed to create channel:', error);
         createdAt: new Date()
       };
       const channel = await this.db.channel.findUnique({ where: { id: channelId } });
-      if(): unknown {
+      if(): void {
         const members = JSON.parse((channel.members as string) || '[]');
-        if(): unknown {
+        if(): void {
           members.push(userId);
           await this.db.channel.update({
 where: { id: channelId },
@@ -181,10 +181,10 @@ this.logger.error('Failed to create subscription:', error);
     }
   }
 
-  async deleteSubscription(): unknown {
+  async deleteSubscription(id: any): void {
     try {
       const channel = await this.db.channel.findUnique({ where: { id: channelId } });
-      if(): unknown {
+      if(id: any): void {
         const members = JSON.parse((channel.members as string) || '[]');
         const updatedMembers = members.filter((id: string) => id !== userId);
         await this.db.channel.update({
@@ -205,7 +205,7 @@ this.logger.error('Failed to delete subscription:', error);
     }
   }
 
-  async getMessages(): unknown {
+  async getMessages(options: any): void {
     try {
       const limit = options.limit || 50;
       const offset = options.offset || 0;
@@ -214,7 +214,7 @@ this.logger.error('Failed to delete subscription:', error);
 }
         recipients: { contains: ``${placeholder}`` }
       };
-      if(): unknown {
+      if(options: any): void {
         whereClause.status = options.status;
       }
 
@@ -242,16 +242,16 @@ this.logger.error('Failed to get messages:', error);
     }
   }
 
-  async getChannels(): unknown {
+  async getChannels(id: any, options: any): Promise<any> {
     try {
       const limit = options.limit || 50;
       const offset = options.offset || 0;
       const whereClause: any = {};
-      if(): unknown {
+      if(options: any): void {
         whereClause.type = options.type;
       }
 
-      if(): unknown {
+      if(): void {
         whereClause.members = { contains: ``${placeholder}`` };
       }
 
@@ -279,7 +279,7 @@ this.logger.error('Failed to get channels:', error);
     }
   }
 
-  async updateMessageStatus(): unknown {
+  async updateMessageStatus(): void {
     try {
       await this.db.message.update({
   // Implementation needed
@@ -294,7 +294,7 @@ this.logger.error('Failed to update message status:', error);
     }
   }
 
-  async markMessagesAsRead(): unknown {
+  async markMessagesAsRead(id: any): void {
     try {
       await Promise.all(messageIds.map(id => this.updateMessageStatus(id, 'read')));
       this.emit('messagesRead', { userId, messageIds });
@@ -304,7 +304,7 @@ this.logger.error('Failed to mark messages as read:', error);
     }
   }
 
-  async cleanupExpiredMessages(): unknown {
+  async cleanupExpiredMessages(): void {
     try {
       const expiredMessages = await this.db.message.findMany({
   // Implementation needed
@@ -335,7 +335,7 @@ this.logger.error('Failed to clean up expired messages:', error);
   }}
   }
 
-  async deleteMessage(): unknown {
+  async deleteMessage(): void {
     try {
       await this.db.message.delete({
   // Implementation needed

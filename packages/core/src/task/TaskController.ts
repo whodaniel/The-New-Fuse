@@ -10,14 +10,14 @@ export class TaskController {
   @Get()
   @ApiOperation({ summary: 'Get all tasks' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Tasks retrieved successfully', type: [Task] })
-  async findAll(): unknown {
+  async findAll(): any {
     return this.taskService.findAll();
   }
 
   @Get('statistics')
   @ApiOperation({ summary: 'Get task statistics' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Task statistics retrieved successfully' })
-  async getStatistics(): unknown {
+  async getStatistics(): any {
     return this.taskService.getStatistics();
   }
 
@@ -25,7 +25,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Get a task by ID' })
   @ApiParam({ name: 'id', description: 'The ID of the task to retrieve' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Task retrieved successfully', type: Task })
-  async findOne(): unknown {
+  async findOne(id: any): any {
     return this.taskService.findOne(id);
   }
 
@@ -33,7 +33,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Create a new task' })
   @ApiBody({ type: CreateTaskDto })
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Task created successfully', type: Task })
-  async create(): unknown {
+  async create(): any {
     return this.taskService.create(createTaskDto);
   }
 
@@ -42,7 +42,7 @@ export class TaskController {
   @ApiParam({ name: 'id', description: 'The ID of the task to update' })
   @ApiBody({ type: UpdateTaskDto })
   @ApiResponse({ status: HttpStatus.OK, description: 'Task updated successfully', type: Task })
-  async update(): unknown {
+  async update(id: any): any {
     return this.taskService.update(id, updateTaskDto);
   }
 
@@ -50,7 +50,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Assign a task to a user' })
   @ApiParam({ name: 'id', description: 'The ID of the task to assign' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Task assigned successfully', type: Task })
-  async assign(): unknown {
+  async assign(id: any): any {
     return this.taskService.assign(id, userId);
   }
 
@@ -58,7 +58,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Update task status' })
   @ApiParam({ name: 'id', description: 'The ID of the task to update status' })
   @ApiResponse({ status: HttpStatus.OK, description: 'Task status updated successfully', type: Task })
-  async updateStatus(): unknown {
+  async updateStatus(id: any): any {
     return this.taskService.updateStatus(id, status);
   }
 
@@ -66,7 +66,7 @@ export class TaskController {
   @ApiOperation({ summary: 'Delete a task' })
   @ApiParam({ name: 'id', description: 'The ID of the task to delete' })
   @ApiResponse({ status: HttpStatus.NO_CONTENT, description: 'Task successfully deleted' })
-  async remove(): unknown {
+  async remove(id: any): any {
     return this.taskService.remove(id);
   }
 }

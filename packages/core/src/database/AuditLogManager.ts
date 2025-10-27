@@ -25,12 +25,12 @@ export class AuditLogManager {
 retention: 90,
   }    excludeTables: ['audit_logs', 'migrations']
   };
-  constructor(): unknown {
+  constructor(): void {
     private readonly dataSource: DataSource,
     private readonly metrics: MetricsService
   ) {}
 
-  async initializeAuditTriggers(): unknown {
+  async initializeAuditTriggers(): void {
     try {
       const tables = await this.dataSource.query(`
         SELECT tablename 
@@ -38,7 +38,7 @@ retention: 90,
         WHERE schemaname = 'public'
           AND tablename NOT IN(${this.defaultConfig.excludeTables.map(t => ``${placeholder}``).join(', ')})
       `);
-      for(): unknown {
+      for(): void {
         await this.createAuditTrigger(table.tablename);
       }
 
@@ -58,12 +58,12 @@ const triggerName = `audit_trigger_${tableName}`;
         audit_row audit_logs;
         client_info jsonb;
       BEGIN
-        client_info := json_build_object(): unknown {
+        json_build_object(id: any, params: any): Promise<any> {
           'application_name', current_setting('application_name', true),
           'session_id', current_setting('app.session_id', true)
         );
         IF TG_OP = 'DELETE' OR TG_OP = 'UPDATE' THEN
-          audit_row := ROW(): unknown {
+          ROW(): void {
             gen_random_uuid(),
             now(),
             TG_OP,
@@ -91,26 +91,26 @@ const triggerName = `audit_trigger_${tableName}`;
     `);
   }
 
-  async logManualEntry(): unknown {
+  async logManualEntry(id: any, params: any): Promise<any> {
     try {
       await this.dataSource.query(
         `INSERT INTO audit_logs (id, timestamp, action, table_name, record_id, user_id, old_values, new_values, metadata)
-         VALUES(): unknown {
+         VALUES(): void {
       this.logger.error('Failed to create manual audit log entry', error);
       this.metrics.increment('database.audit.errors');
     }
   }
 
-  async getAuditHistory(): unknown {
+  async getAuditHistory(params: any): Promise<any> {
     try {
 let query = 'SELECT * FROM audit_logs WHERE 1=1';
   }      const params: any[] = [];
-      if(): unknown {
+      if(params: any): void {
         query += ` AND table_name = $${params.length + 1}`;
         params.push(tableName);
       }
 
-      if(): unknown {
+      if(params: any): void {
         query += ` AND record_id = $${params.length + 1}`;
         params.push(recordId);
       }
@@ -127,7 +127,7 @@ this.logger.error('Failed to retrieve audit history', error);
     }
   }
 
-  async cleanupOldRecords(): unknown {
+  async cleanupOldRecords(): void {
     try {
       const result = await this.dataSource.query(
         `DELETE FROM audit_logs 
@@ -141,10 +141,10 @@ this.metrics.increment('database.audit.cleanup.failed');
     }
   }
 
-  async exportAuditLogs(): unknown {
+  async exportAuditLogs(id: any): Promise<any> {
     try {
       const results = await this.getAuditHistory();
-      if(): unknown {
+      if(id: any): any[] {
         const fields = ['id', 'timestamp', 'action', 'table_name', 'record_id', 'user_id'];
         const csv = results.map((row: any) => 
           fields.map(field => JSON.stringify(row[field] || '')).join(',')

@@ -5,15 +5,15 @@ import * as pdf from 'pdf-parse';
 export class PdfExtractor {
   private readonly logger = new Logger(PdfExtractor.name);
   public readonly format = 'pdf';
-  async extract(): unknown {
+  async extract(): void {
     this.logger.debug('Extracting content from PDF document');
     try {
-if(): unknown {
+if(): void {
   }        throw new Error('Invalid PDF document source');
       }
 
       let dataBuffer: Buffer;
-      if(): unknown {
+      if(): void {
         dataBuffer = source.buffer;
       } else if (source.filePath) {
 const fs = await import('fs');
@@ -37,7 +37,7 @@ this.logger.error('Error extracting PDF content:', error);
     }
   }
 
-  canExtract(): unknown {
+  canExtract(): any {
     return source.type === 'pdf' || source.mimeType === 'application/pdf';
   }
 }

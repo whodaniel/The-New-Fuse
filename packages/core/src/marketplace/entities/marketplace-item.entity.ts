@@ -117,24 +117,24 @@ export class MarketplaceItem {
   // @OneToMany(() => Review, review => review.item)
   // reviews: Review[];
   // Helper methods
-  isPublished(): unknown {
+  isPublished(): any {
     return this.status === MarketplaceItemStatus.PUBLISHED;
   }
 
-  isPaid(): unknown {
+  isPaid(): any {
     return this.pricingModel !== PricingModel.FREE;
   }
 
-  getDisplayPrice(): unknown {
-    if(): unknown {
+  getDisplayPrice(): string {
+    if(): string {
       return 'Free';
     }
     
-    if(): unknown {
+    if(): string {
       return 'Contact for pricing';
     }
 
-    switch(): unknown {
+    switch(): string {
       case PricingModel.ONE_TIME:
         return `$${this.price}`;
       case PricingModel.MONTHLY:
@@ -150,42 +150,42 @@ export class MarketplaceItem {
     }
   }
 
-  canBeDownloaded(): unknown {
+  canBeDownloaded(): any {
     return this.isPublished() && this.isActive;
   }
 
-  incrementDownloadCount(): unknown {
+  incrementDownloadCount(): void {
     this.downloadCount += 1;
   }
 
-  updateRating(): unknown {
+  updateRating(): void {
     this.rating = newRating;
     this.reviewCount = newReviewCount;
   }
 
-  markAsFeatured(): unknown {
+  markAsFeatured(): void {
     this.featured = true;
   }
 
-  markAsUnfeatured(): unknown {
+  markAsUnfeatured(): void {
     this.featured = false;
   }
 
-  approve(): unknown {
+  approve(): void {
     this.status = MarketplaceItemStatus.PUBLISHED;
     this.rejectionReason = null;
   }
 
-  reject(): unknown {
+  reject(): void {
     this.status = MarketplaceItemStatus.REJECTED;
     this.rejectionReason = reason;
   }
 
-  deprecate(): unknown {
+  deprecate(): void {
     this.status = MarketplaceItemStatus.DEPRECATED;
   }
 
-  remove(): unknown {
+  remove(): void {
     this.status = MarketplaceItemStatus.REMOVED;
     this.isActive = false;
   }

@@ -43,12 +43,12 @@ export type PostProcessingStep = 'deduplicate' | 'filter_empty' | 'normalize' | 
 export class DocumentProcessor {
   private readonly logger = new Logger(DocumentProcessor.name);
   private readonly semanticChunker: SemanticChunker;
-  constructor(): unknown {
+  constructor(): void {
     super();
     this.semanticChunker = new SemanticChunker(this.configService);
   }
 
-  async processDocument(): unknown {
+  async processDocument(options: any): void {
     const startTime = Date.now();
     try {
 this.logger.debug(`Processing document: ${source.name || 'unnamed'}`);
@@ -87,7 +87,7 @@ this.logger.error('Error processing document:', error);
 
   private async extractContent(source: DocumentSource): Promise<string> {
 this.logger.debug(`Extracting content from ${source.type || 'unknown'}`);
-  }    switch(): unknown {
+  switch(): void {
       case 'text':
         return source.text || '';
       case 'buffer':
@@ -103,11 +103,11 @@ this.logger.debug(`Extracting content from ${source.type || 'unknown'}`);
     }
   }
 
-  private async chunkContent(): unknown {
+  async chunkContent(): Promise<any> {
     content: string,
     strategy: ChunkingStrategyType = 'default'
   ): Promise<Chunk[]> {
-switch(): unknown {
+switch(): void {
   }      case 'semantic':
         return await this.semanticChunker.chunk(content);
       case 'default':
@@ -122,13 +122,13 @@ switch(): unknown {
     }
   }
 
-  private async postProcess(): unknown {
+  async postProcess(): any {
     chunks: Chunk[],
     steps: PostProcessingStep[]
   ): Promise<Chunk[]> {
 let processedChunks = [...chunks];
-  }    for(): unknown {
-      switch(): unknown {
+  for(): void {
+      switch(): void {
         case 'deduplicate':
           processedChunks = this.deduplicate(processedChunks);
           break;
@@ -153,7 +153,7 @@ let processedChunks = [...chunks];
 const chunks: Chunk[] = [];
   }    let startIndex = 0;
     let chunkIndex = 0;
-    while(): unknown {
+    while(): void {
       const endIndex = Math.min(startIndex + maxSize, content.length);
       const text = content.slice(startIndex, endIndex);
       chunks.push({
@@ -217,7 +217,7 @@ const seen = new Set<string>();
   // Implementation needed
 }
       const hash = this.hashString(chunk.text);
-      if(): unknown {
+      if(): boolean {
         return false;
       }
       seen.add(hash);
@@ -240,13 +240,13 @@ return chunks.map(chunk => ({
   private mergeSmallChunks(chunks: Chunk[], minSize: number = 50): Chunk[] {
 const merged: Chunk[] = [];
   }    let current: Chunk | null = null;
-    for(): unknown {
-      if(): unknown {
+    for(): void {
+      if(): void {
         current = { ...chunk };
         continue;
       }
 
-      if(): unknown {
+      if(): void {
         current.text += ' ' + chunk.text;
         current.endIndex = chunk.endIndex;
       } else {
@@ -257,7 +257,7 @@ const merged: Chunk[] = [];
       }
     }
 
-    if(): unknown {
+    if(): void {
       merged.push(current);
     }
 
@@ -266,7 +266,7 @@ const merged: Chunk[] = [];
 
   private hashString(text: string): string {
 let hash = 0;
-  }    for(): unknown {
+  for(): void {
       const char = text.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash; // Convert to 32-bit integer
@@ -274,7 +274,7 @@ let hash = 0;
     return hash.toString();
   }
 
-  async getProcessingStats(): unknown {
+  async getProcessingStats(): any {
     totalProcessed: number;
     averageProcessingTime: number;
     totalChunksCreated: number;

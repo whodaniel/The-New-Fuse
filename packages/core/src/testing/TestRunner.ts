@@ -1,65 +1,27 @@
 import { Injectable } from '@nestjs/common';
-import { TestConfiguration, TestResult } from '../types/types';
+import { TestConfiguration } from '../types/types';
+
 @Injectable()
 export class TestRunner {
-  async run(): unknown {
-    const startTime = Date.now();
+  async execute(test: any, config: TestConfiguration): Promise<boolean> {
     try {
-const success = await this.executeWithTimeout(test, config?.timeout || 5000);
-  }      const duration = Date.now() - startTime;
-      return {
-  // Implementation needed
-}
-        name: test.name || 'Unnamed test',
-        success,
-        duration
-      };
+      if (typeof test.fn === 'function') {
+        await test.fn();
+        return true;
+      }
+      return false;
     } catch (error) {
-const duration = Date.now() - startTime;
-  }      return {
-  // Implementation needed
-}
-        name: test.name || 'Unnamed test',
-        success: false,
-        duration,
-        error: error instanceof Error ? error.message : String(error)
-      };
+      console.error('Test execution failed:', error);
+      return false;
     }
   }
 
-  async runMany(): unknown {
-    const results: TestResult[] = [];
-    if(): unknown {
-      const promises = tests.map(test => this.run(test, config));
-      const parallelResults = await Promise.allSettled(promises);
-      for(): unknown {
-        if(): unknown {
-          results.push(result.value);
-        } else {
-results.push({
-  }}
-            name: 'Parallel test',
-            success: false,
-            error: result.reason instanceof Error ? result.reason.message : String(result.reason)
-          });
-        }
-      }
-    } else {
-for(): unknown {
-  }        const result = await this.run(test, config);
-        results.push(result);
-      }
+  async runTests(tests: any[], config: TestConfiguration): Promise<any[]> {
+    const results: any[] = [];
+    for (const test of tests) {
+      const success = await this.execute(test, config);
+      results.push({ test: test.name || 'unnamed', success });
     }
-    
     return results;
-  }
-
-  private async executeWithTimeout(test() => Promise<boolean> | boolean, timeout: number): Promise<boolean> {
-return Promise.race([
-  }      test(),
-      new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error(`Test timeout after ${timeout}ms`)), timeout)
-      )
-    ]);
   }
 }

@@ -1,103 +1,63 @@
-import { faker } from '@faker-js/faker';
+import { Injectable } from '@nestjs/common';
+
+@Injectable()
 export class TestDataGenerator {
-  generate(): unknown {
-    if(): unknown {
-      return this.generateFromString(schema);
+  generate(schema: any): any {
+    if (!schema || !schema.type) {
+      return null;
     }
-    
-    if(): unknown {
-      return this.generateFromArray(schema);
-    }
-    
-    if(): unknown {
-      return this.generateFromObject(schema);
-    }
-    
-    return schema;
-  }
 
-  private generateFromString(type: string): any {
-switch(): unknown {
-  }      case 'string':
-        return faker.lorem.word();
+    switch (schema.type) {
+      case 'string':
+        return this.generateString(schema);
       case 'number':
-        return faker.number.int({ min: 1, max: 100 });
+        return this.generateNumber(schema);
       case 'boolean':
-        return faker.datatype.boolean();
-      case 'email':
-        return faker.internet.email();
-      case 'url':
-        return faker.internet.url();
-      case 'date':
-        return faker.date.recent();
-      case 'uuid':
-        return faker.string.uuid();
-      case 'name':
-        return faker.person.fullName();
-      case 'address':
-        return faker.location.streetAddress();
-      case 'phone':
-        return faker.phone.number();
+        return this.generateBoolean();
+      case 'array':
+        return this.generateArray(schema);
+      case 'object':
+        return this.generateObject(schema);
       default:
-        return faker.lorem.word();
+        return null;
     }
   }
 
-  private generateFromArray(schema: any[]): any {
-if(): unknown {
-  }      return [];
+  private generateString(schema: any): string {
+    if (schema.enum && schema.enum.length > 0) {
+      return schema.enum[Math.floor(Math.random() * schema.enum.length)];
     }
-    
-    const count = faker.number.int({ min: 1, max: 5 });
-    return Array.from({ length: count }, () => this.generate(schema[0]));
+    return 'test-string-' + Math.random().toString(36).substring(7);
   }
 
-  private generateFromObject(schema: any): any {
-const result: any = {};
-  }    for(): unknown {
-      if(): unknown {
-        const config = value as any;
-        if(): unknown {
-          switch(): unknown {
-            case 'string':
-              result[key] = config.format 
-                ? this.generateFromString(config.format)
-                : faker.lorem.word();
-              break;
-            case 'number':
-              result[key] = faker.number.int({
-min: config.min || 1,
-  }                max: config.max || 100 
-              });
-              break;
-            case 'boolean':
-              result[key] = faker.datatype.boolean();
-              break;
-            case 'array':
-              result[key] = this.generateFromArray(config.items || [{}]);
-              break;
-            case 'object':
-              result[key] = this.generateFromObject(config.properties || {});
-              break;
-            default:
-              result[key] = this.generateFromString(config.type);
-          }
-        } else {
-  // Implementation needed
-}
-          result[key] = this.generate(value);
-        }
-      } else {
-  // Implementation needed
-}
-        result[key] = this.generate(value);
+  private generateNumber(schema: any): number {
+    const min = schema.minimum || 0;
+    const max = schema.maximum || 100;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  private generateBoolean(): boolean {
+    return Math.random() < 0.5;
+  }
+
+  private generateArray(schema: any): any[] {
+    const length = schema.minItems || 3;
+    const items: any[] = [];
+    for (let i = 0; i < length; i++) {
+      if (schema.items) {
+        items.push(this.generate(schema.items));
       }
     }
-    
-    return result;
+    return items;
   }
 
-  generateMany(): unknown {
-    return Array.from({ length: count }, () => this.generate(schema));
+  private generateObject(schema: any): any {
+    const obj: any = {};
+    if (schema.properties) {
+      for (const [key, propSchema] of Object.entries(schema.properties)) {
+        obj[key] = this.generate(propSchema);
+      }
+    }
+    return obj;
   }
 }

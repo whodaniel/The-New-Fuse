@@ -25,7 +25,7 @@ interface UsagePattern    { frequency: number
   capabilities: string[];
  }
 
-export class ExtensibilitySystem { async registerExtensionPoint(): unknown {
+async registerExtensionPoint(): void {
     point: ExtensionPoint, }
     capabilities: Capability[];
   ): Promise<void> {
@@ -34,7 +34,7 @@ export class ExtensibilitySystem { async registerExtensionPoint(): unknown {
     // Integration validation
   }}
 
-  async createDynamicExtension(): unknown {
+  async createDynamicExtension(): any {
     requirement: Requirement,
     context: ExtensionContext
   ): Promise<Extension> { // Dynamic extension creation

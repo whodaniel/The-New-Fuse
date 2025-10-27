@@ -10,7 +10,7 @@ export class WebSocketManager {
   private wss: Server;
   private logger: Logger;
   private clients: Map<string, WebSocket> = new Map();
-  constructor(): unknown {
+  constructor(config: any): void {
     this.logger = config.logger;
     this.wss = new Server({
 port: config.port,
@@ -21,12 +21,12 @@ port: config.port,
 
   private verifyClient(info: { origin: string; secure: boolean; req: IncomingMessage }): boolean {
 const token = this.extractToken(info.req);
-  }    if(): unknown {
+  if(): void {
       this.logger.warn('Missing authentication token');
       return false;
     }
 
-    if(): unknown {
+    if(): boolean {
       this.logger.warn('Invalid authentication token');
       return false;
     }
@@ -36,7 +36,7 @@ const token = this.extractToken(info.req);
 
   private extractToken(req: IncomingMessage): string | null {
 const authHeader = req.headers.authorization;
-  }    if(): unknown {
+  if(): void {
       return authHeader.substring(7);
     }
     
@@ -93,7 +93,7 @@ return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   private handleMessage(clientId: string, message: any): void {
 this.logger.debug('Received message', { clientId, message });
     // Handle different message types
-  }    switch(): unknown {
+  switch(): void {
       case 'ping':
         this.sendToClient(clientId, { type: 'pong', timestamp: Date.now() });
         break;
@@ -107,7 +107,7 @@ this.logger.debug('Received message', { clientId, message });
 
   public sendToClient(clientId: string, message: any): boolean {
 const client = this.clients.get(clientId);
-  }    if(): unknown {
+  if(): void {
       this.logger.warn('Client not available for sending', { clientId });
       return false;
     }
@@ -126,7 +126,7 @@ const payload = JSON.stringify(message);
   }    this.clients.forEach((client, clientId) => {
   // Implementation needed
 }
-      if(): unknown {
+      if(): void {
         try {
       client.send(payload);
         } catch (error) {

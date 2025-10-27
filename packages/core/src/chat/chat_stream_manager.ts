@@ -1,5 +1,6 @@
 // core/chat_stream_manager.ts
 import { MessageHandler } from '../communication/message_handler';
+
 export enum Provider {
   OPENAI = 'openai',
   ANTHROPIC = 'anthropic',
@@ -26,72 +27,44 @@ export interface StreamOptions {
 export class ChatStreamManager {
   private messages: ChatMessage[] = [];
   private handlers: Map<string, MessageHandler> = new Map();
+
   constructor() {}
 
-  addMessage(): unknown {
+  addMessage(message: ChatMessage): void {
     this.messages.push(message);
   }
 
-  getMessages(): unknown {
+  getMessages(): ChatMessage[] {
     return [...this.messages];
   }
 
-  getMessageById(): unknown {
+  getMessageById(id: string): ChatMessage | undefined {
     return this.messages.find(msg => msg.id === id);
   }
 
-  clearMessages(): unknown {
+  clearMessages(): void {
     this.messages = [];
   }
 
-  registerHandler(): unknown {
+  registerHandler(id: string, handler: MessageHandler): void {
     this.handlers.set(id, handler);
   }
 
-  unregisterHandler(): unknown {
-    this.handlers.delete(id);
+  unregisterHandler(id: string): boolean {
+    return this.handlers.delete(id);
   }
 
-  async processStream(): unknown {
-    const handler = this.handlers.get(options.provider);
-    if(): unknown {
-      throw new Error(`No handler registered for provider: ${options.provider}`);
-    }
+  async streamChat(message: ChatMessage, options: StreamOptions): Promise<void> {
+    // Stub implementation for streaming chat
+    this.addMessage(message);
 
-    let fullResponse = '';
-    try {
-const stream = await handler.createStream(messages, options);
-  }      for await (const chunk of stream) {
-fullResponse += chunk;
-  }        if(): unknown {
-          onChunk(): unknown {
-      console.error('Error processing stream:', error);
-      throw error;
+    // Emit to handlers
+    for (const handler of this.handlers.values()) {
+      await handler.handle(message);
     }
   }
 
-  async sendMessage(): unknown {
-    const userMessage: ChatMessage = {
-id: `msg_${Date.now()}_user`,
-  }      role: 'user',
-      content,
-      timestamp: new Date(),
-      provider: options.provider,
-    };
-    this.addMessage(userMessage);
-    const response = await this.processStream(
-      this.getMessages(),
-      options,
-      onChunk,
-    );
-    const assistantMessage: ChatMessage = {
-id: `msg_${Date.now()}_assistant`,
-  }      role: 'assistant',
-      content: response,
-      timestamp: new Date(),
-      provider: options.provider,
-    };
-    this.addMessage(assistantMessage);
-    return response;
+  getHandler(id: string): MessageHandler | undefined {
+    return this.handlers.get(id);
   }
 }

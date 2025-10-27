@@ -44,7 +44,7 @@ interface AdaptationResult {
 }
 
 export class IntegrationScenarios {
-  async handleMultiAgentCollaboration(): unknown {
+  async handleMultiAgentCollaboration(): any {
     // Agent coordination
     // Resource sharing
     // Knowledge synthesis
@@ -56,7 +56,7 @@ export class IntegrationScenarios {
     };
   }
 
-  async manageEvolutionaryProcess(): unknown {
+  async manageEvolutionaryProcess(): any {
     // Process evolution
     // Goal alignment
     // Outcome optimization
@@ -68,7 +68,7 @@ export class IntegrationScenarios {
     };
   }
 
-  async orchestrateSystemAdaptation(): unknown {
+  async orchestrateSystemAdaptation(): any {
     // System adaptation
     // Resource optimization
     // Performance monitoring

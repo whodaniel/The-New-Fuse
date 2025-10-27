@@ -13,7 +13,7 @@ export class AnalyticsEngine { private metrics: MetricsCollector
     private async checkThresholds(): Promise<void> {
 metric: Metric): Promise<void> {
   }}
-        if(): unknown {
+        if(): void {
             await this.alerting.sendAlert(metric);
          }
     }

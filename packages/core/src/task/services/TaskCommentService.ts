@@ -1,102 +1,60 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TaskComment } from '../entities/TaskComment';
-import { Task } from '../entities/Task';
-import { User } from '../../auth/entities/User';
+import { Injectable, Logger } from '@nestjs/common';
+
+export interface TaskComment {
+  id: string;
+  taskId: string;
+  userId: string;
+  content: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 @Injectable()
 export class TaskCommentService {
   private readonly logger = new Logger(TaskCommentService.name);
-  constructor(): unknown {
-    @InjectRepository(TaskComment)
-    private readonly commentRepository: Repository<TaskComment>,
-    @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-  ) {}
+  private comments: Map<string, TaskComment[]> = new Map();
 
-  async createComment(): unknown {
-    const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if(): unknown {
-      throw new NotFoundException(`Task ${taskId} not found`);
-    }
+  async createComment(taskId: string, userId: string, content: string): Promise<TaskComment> {
+    const comment: TaskComment = {
+      id: `comment-${Date.now()}`,
+      taskId,
+      userId,
+      content,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
 
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if(): unknown {
-      throw new NotFoundException(`User ${userId} not found`);
-    }
-
-    const comment = this.commentRepository.create({
-content,
-  }      task,
-      author: user,
-      parentId,
-    });
-    return this.commentRepository.save(comment);
-  }
-
-  async getCommentsByTask(): unknown {
-    return this.commentRepository.find({
-  // Implementation needed
-}
-      where: { task: { id: taskId } },
-      relations: ['author', 'replies'],
-      order: { createdAt: 'ASC' },
-    });
-  }
-
-  async updateComment(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
-
-    if(): unknown {
-      throw new ForbiddenException('You can only edit your own comments');
-    }
-
-    comment.content = content;
-    comment.updatedAt = new Date();
-    return this.commentRepository.save(comment);
-  }
-
-  async deleteComment(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
-
-    if(): unknown {
-      throw new ForbiddenException('You can only delete your own comments');
-    }
-
-    await this.commentRepository.remove(comment);
-  }
-
-  async getCommentById(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author', 'task', 'replies'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
+    const taskComments = this.comments.get(taskId) || [];
+    taskComments.push(comment);
+    this.comments.set(taskId, taskComments);
 
     return comment;
   }
 
-  async getCommentsByUser(): unknown {
-    return this.commentRepository.find({
-where: { author: { id: userId } },
-  }      relations: ['task', 'author'],
-      order: { createdAt: 'DESC' },
-    });
+  async getCommentsByTaskId(taskId: string): Promise<TaskComment[]> {
+    return this.comments.get(taskId) || [];
+  }
+
+  async updateComment(commentId: string, content: string): Promise<TaskComment | null> {
+    for (const [taskId, comments] of this.comments.entries()) {
+      const comment = comments.find(c => c.id === commentId);
+      if (comment) {
+        comment.content = content;
+        comment.updatedAt = new Date();
+        return comment;
+      }
+    }
+    return null;
+  }
+
+  async deleteComment(commentId: string): Promise<boolean> {
+    for (const [taskId, comments] of this.comments.entries()) {
+      const index = comments.findIndex(c => c.id === commentId);
+      if (index !== -1) {
+        comments.splice(index, 1);
+        return true;
+      }
+    }
+    return false;
   }
 }

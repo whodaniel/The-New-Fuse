@@ -6,15 +6,15 @@ export interface AdaptiveEndpoint { path: string
  }
 
 export class AdaptiveEndpointSystem {
-  async registerEndpoint(): unknown {
+  async registerEndpoint(): void {
     // Dynamic endpoint registration with self-evolving capabilities
   }
 
-  async evolveEndpoint(): unknown {
+  async evolveEndpoint(): void {
     // Automatic endpoint evolution based on usage patterns
   }
 
-  async negotiateCapabilities(): unknown {
+  async negotiateCapabilities(): any {
     // Dynamic capability negotiation between agents and endpoints
     return {} as CapabilitySet;
   }

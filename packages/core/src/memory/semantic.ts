@@ -15,7 +15,7 @@ export class SemanticSearch {
   private readonly logger = new Logger(SemanticSearch.name);
   private readonly config: SemanticSearchConfig;
   private readonly items: Map<string, MemoryItem> = new Map();
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 dimension: this.configService.get<number>('EMBEDDING_DIMENSION', 1536),
   }      metric: this.configService.get<'l2' | 'ip' | 'cosine'>('EMBEDDING_METRIC', 'cosine'),
@@ -27,9 +27,9 @@ dimension: this.configService.get<number>('EMBEDDING_DIMENSION', 1536),
     this.logger.log('SemanticSearch initialized with config:', this.config);
   }
 
-  async addItem(): unknown {
+  async addItem(id: any, config: any, item: any): void {
     try {
-      if(): unknown {
+      if(config: any, item: any): void {
         throw new Error(`Invalid embedding dimension. Expected ${this.config.dimension}, got ${item.embedding?.length}`);
       }
 
@@ -41,26 +41,26 @@ this.logger.error(`Failed to add item to semantic search: ${item.id}`, error);
     }
   }
 
-  async removeItem(): unknown {
+  async removeItem(item: any): any {
     const removed = this.items.delete(itemId);
-    if(): unknown {
+    if(item: any): void {
       this.logger.debug(`Removed item from semantic search: ${itemId}`);
     }
     return removed;
   }
 
-  async search(): unknown {
+  async search(item: any): void {
     try {
-if(): unknown {
+if(): void {
   }        throw new Error('Query must have an embedding for semantic search');
       }
 
       const results: SearchResult[] = [];
       const limit = query.limit || 10;
       const minSimilarity = query.minSimilarity || 0.7;
-      for(): unknown {
+      for(item: any): void {
         const similarity = this.calculateSimilarity(query.embedding, item.embedding);
-        if(): unknown {
+        if(item: any): void {
           results.push({
 item,
   }            similarity,
@@ -78,9 +78,9 @@ this.logger.error('Semantic search failed:', error);
     }
   }
 
-  async getSimilarItems(): unknown {
+  async getSimilarItems(item: any): any {
     const item = this.items.get(itemId);
-    if(): unknown {
+    if(): void {
       throw new Error(`Item not found: ${itemId}`);
     }
 
@@ -91,7 +91,7 @@ embedding: item.embedding,
     });
   }
 
-  async getStats(): unknown {
+  async getStats(): void {
     totalItems: number;
     dimension: number;
     metric: string;
@@ -111,13 +111,13 @@ embedding: item.embedding,
     };
   }
 
-  async clear(): unknown {
+  async clear(): void {
     this.items.clear();
     this.logger.debug('Cleared semantic search index');
   }
 
   private calculateSimilarity(vecA: Vector, vecB: Vector): number {
-switch(): unknown {
+switch(): void {
   }      case 'cosine':
         return this.calculateCosineSimilarity(vecA, vecB);
       case 'l2':
@@ -130,20 +130,20 @@ switch(): unknown {
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if(): unknown {
+    if(): number {
       return 0;
     }
 
@@ -151,12 +151,12 @@ if(): unknown {
   }
 
   private calculateL2Distance(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let sumSquaredDiffs = 0;
-    for(): unknown {
+    for(): void {
       const diff = vecA[i] - vecB[i];
       sumSquaredDiffs += diff * diff;
     }
@@ -165,12 +165,12 @@ if(): unknown {
   }
 
   private calculateInnerProduct(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
     }
 
@@ -179,32 +179,32 @@ if(): unknown {
 
   private matchesFilters(item: MemoryItem, query: MemoryQuery): boolean {
 // Apply metadata filters
-  }    if(): unknown {
-      for(): unknown {
-        if(): unknown {
+  if(): void {
+      for(): boolean {
+        if(): boolean {
           return false;
         }
       }
     }
 
     // Apply tag filters
-    if(): unknown {
+    if(item: any): boolean {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
 
     // Apply cluster filter
-    if(): unknown {
+    if(): boolean {
       return false;
     }
 
     // Apply date range filter
-    if(): unknown {
+    if(item: any): boolean {
       const itemTime = item.timestamp;
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }

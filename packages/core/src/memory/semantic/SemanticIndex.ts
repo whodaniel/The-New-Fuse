@@ -13,7 +13,7 @@ export class SemanticIndex {
   private readonly logger = new Logger(SemanticIndex.name);
   private readonly config: SemanticIndexConfig;
   private readonly items: Map<string, MemoryItem> = new Map();
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 dimension: parseInt(process.env.EMBEDDING_DIMENSION || '1536'),
   }      maxElements: parseInt(process.env.MAX_INDEX_ELEMENTS || '10000'),
@@ -24,9 +24,9 @@ dimension: parseInt(process.env.EMBEDDING_DIMENSION || '1536'),
     this.logger.log('SemanticIndex initialized');
   }
 
-  async addItem(): unknown {
+  async addItem(id: any, config: any, item: any): void {
     try {
-if(): unknown {
+if(config: any): void {
   }        throw new Error(`Invalid embedding dimension. Expected ${this.config.dimension}`);
       }
 
@@ -38,26 +38,26 @@ this.logger.error(`Failed to add item to semantic index: ${item.id}`, error);
     }
   }
 
-  async removeItem(): unknown {
+  async removeItem(item: any): any {
     const removed = this.items.delete(itemId);
-    if(): unknown {
+    if(item: any): void {
       this.logger.debug(`Removed item from semantic index: ${itemId}`);
     }
     return removed;
   }
 
-  async search(): unknown {
+  async search(item: any): void {
     try {
-if(): unknown {
+if(): void {
   }        throw new Error('Query must have an embedding for semantic search');
       }
 
       const results: SearchResult[] = [];
       const limit = query.limit || 10;
       const minSimilarity = query.minSimilarity || 0.7;
-      for(): unknown {
+      for(item: any): void {
         const similarity = this.calculateCosineSimilarity(query.embedding, item.embedding);
-        if(): unknown {
+        if(item: any): void {
           results.push({
 item,
   }            similarity,
@@ -75,7 +75,7 @@ this.logger.error('Semantic search failed:', error);
     }
   }
 
-  async getStats(): unknown {
+  async getStats(): void {
     totalItems: number;
     dimension: number;
     memoryUsage: string;
@@ -94,20 +94,20 @@ this.logger.error('Semantic search failed:', error);
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if(): unknown {
+    if(): number {
       return 0;
     }
 
@@ -116,32 +116,32 @@ if(): unknown {
 
   private matchesFilters(item: MemoryItem, query: MemoryQuery): boolean {
 // Apply metadata filters
-  }    if(): unknown {
-      for(): unknown {
-        if(): unknown {
+  if(): void {
+      for(): boolean {
+        if(): boolean {
           return false;
         }
       }
     }
 
     // Apply tag filters
-    if(): unknown {
+    if(item: any): boolean {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
 
     // Apply cluster filter
-    if(): unknown {
+    if(): boolean {
       return false;
     }
 
     // Apply date range filter
-    if(): unknown {
+    if(item: any): boolean {
       const itemTime = item.timestamp;
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }

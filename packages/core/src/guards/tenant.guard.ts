@@ -20,16 +20,16 @@ export class TenantGuard {
   private readonly logger = new Logger(TenantGuard.name);
   constructor(private prisma: PrismaService) {}
 
-  async canActivate(): unknown {
+  async canActivate(id: any): boolean {
     const request = context.switchToHttp().getRequest<Request>();
     const host = request.get('host');
-    if(): unknown {
+    if(): void {
       throw new UnauthorizedException('Host header is required');
     }
     
     request['tenantContext'] = {};
     const subdomain = this.extractSubdomain(host);
-    if(): unknown {
+    if(id: any): void {
       const agencyId = request.get('x-agency-id');
       const user = request['user'];
       const parts = host.split('.');
@@ -47,7 +47,7 @@ TRIAL: ['basic_agents', 'basic_workspaces'],
 
   private extractSubdomain(host: string): string | null {
 const parts = host.split('.');
-  }    if(): unknown {
+  if(): void {
       return parts[0];
     }
     return null;

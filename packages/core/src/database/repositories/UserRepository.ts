@@ -4,37 +4,37 @@ import { Repository, DataSource } from 'typeorm';
 export class UserRepository {
   constructor(private dataSource: DataSource) {}
 
-  async createUser(): unknown {
+  async createUser(): any {
     // Mock implementation
     return { message: 'User creation not implemented' };
   }
 
-  async findUserById(): unknown {
+  async findUserById(): any {
     // Mock implementation
     return { message: 'User retrieval not implemented' };
   }
 
-  async findUserByEmail(): unknown {
+  async findUserByEmail(): any {
     // Mock implementation
     return { message: 'User search not implemented' };
   }
 
-  async updateUser(): unknown {
+  async updateUser(): any {
     // Mock implementation
     return { message: 'User update not implemented' };
   }
 
-  async changePassword(): unknown {
+  async changePassword(): boolean {
     // Mock implementation
     return false;
   }
 
-  async deleteUser(): unknown {
+  async deleteUser(): boolean {
     // Mock implementation
     return false;
   }
 
-  async findUsersByRole(): unknown {
+  async findUsersByRole(): any {
     // Mock implementation
     return { message: 'User role search not implemented' };
   }

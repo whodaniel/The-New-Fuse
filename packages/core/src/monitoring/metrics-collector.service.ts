@@ -14,7 +14,7 @@ export class MetricsCollector { private logger: Logger
   private config: MetricsConfig
   private startTime: Map<string, number>;
   private metricsHistory: MetricSnapshot[] = [];
-  constructor(): unknown {
+  constructor(config: any): void {
     this.logger = new Logger(MetricsCollector.name);
     this.metrics = new Map();
     this.startTime = new Map();
@@ -26,7 +26,7 @@ enabled: true,
     this.startPeriodicCollection();
   };
   private startPeriodicCollection(): void{ if(!this.config.enabled)return ;
-    setInterval(): unknown {
+    setInterval(value: any): void {
       const snapshot: MetricSnapshot = {
 timestamp: newDate(),
   }        values: Object.from + value); }

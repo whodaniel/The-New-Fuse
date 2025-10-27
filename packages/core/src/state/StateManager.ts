@@ -49,8 +49,8 @@ export class StateManager {
   private readonly transactions: Map<string, StateTransaction[]> = new Map();
   private readonly maxRetries = 3;
   private readonly retryDelay = 1000;
-  constructor(): unknown {
-    super(): unknown {
+  constructor(options: any): void {
+    super(options: any): void {
       enableSnapshots: false,
       enableTransactionLog: false,
       maxSnapshots: 10,
@@ -59,9 +59,9 @@ export class StateManager {
     };
   }
 
-  async onModuleInit(): unknown {
+  async onModuleInit(): void {
     this.logger.log('StateManager initialized');
-    if(): unknown {
+    if(): void {
       await this.loadPersistedStates();
     }
   }
@@ -80,12 +80,12 @@ const errorMessage = error instanceof Error ? error.message : String(error);
     }
   }
 
-  async createState(): unknown {
-    if(): unknown {
+  async createState(data: any, id: any): void {
+    if(id: any): void {
       throw new Error(`State with id `${placeholder}` already exists`);
     }
 
-    if(): unknown {
+    if(data: any, id: any): void {
       this.validateStateData(data, schema);
       this.schemas.set(id, schema);
     }
@@ -98,7 +98,7 @@ id,
       metadata: {}
     };
     this.states.set(id, state);
-    if(): unknown {
+    if(data: any, id: any): void {
       await this.logTransaction(id, 'CREATE', undefined, data);
     }
 
@@ -107,18 +107,18 @@ id,
     return state;
   }
 
-  async updateState(): unknown {
+  async updateState(data: any, id: any): void {
     const existingState = this.states.get(id);
-    if(): unknown {
+    if(id: any): void {
       throw new Error(`State with id `${placeholder}` not found`);
     }
 
     const schema = this.schemas.get(id);
-    if(): unknown {
+    if(data: any): void {
       this.validateStateData(data, schema);
     }
 
-    if(): unknown {
+    if(data: any, id: any): void {
       await this.createSnapshot(id, existingState.data);
     }
 
@@ -130,7 +130,7 @@ id,
       timestamp: new Date()
     };
     this.states.set(id, updatedState);
-    if(): unknown {
+    if(data: any, id: any): void {
       await this.logTransaction(id, 'UPDATE', oldData, data);
     }
 
@@ -139,13 +139,13 @@ id,
     return updatedState;
   }
 
-  async deleteState(): unknown {
+  async deleteState(data: any, id: any): void {
     const existingState = this.states.get(id);
-    if(): unknown {
+    if(id: any): void {
       throw new Error(`State with id `${placeholder}` not found`);
     }
 
-    if(): unknown {
+    if(data: any, id: any): void {
       await this.logTransaction(id, 'DELETE', existingState.data, undefined);
     }
 
@@ -157,15 +157,15 @@ id,
     this.emit('stateDeleted', { id });
   }
 
-  getState(): unknown {
+  getState(id: any): any {
     return this.states.get(id);
   }
 
-  getAllStates(): unknown {
+  getAllStates(): any {
     return Array.from(this.states.values());
   }
 
-  async createSnapshot(): unknown {
+  async createSnapshot(data: any): void {
     const snapshot: StateSnapshot = {
 id: `${stateId}_snapshot_${Date.now()}`,
   }      stateId,
@@ -173,7 +173,7 @@ id: `${stateId}_snapshot_${Date.now()}`,
       timestamp: new Date(),
       description
     };
-    if(): unknown {
+    if(): void {
       this.snapshots.set(stateId, []);
     }
 
@@ -181,29 +181,29 @@ id: `${stateId}_snapshot_${Date.now()}`,
     snapshots.push(snapshot);
     // Limit number of snapshots
     const maxSnapshots = this.options.maxSnapshots || 10;
-    if(): unknown {
+    if(): void {
       snapshots.splice(0, snapshots.length - maxSnapshots);
     }
 
     return snapshot;
   }
 
-  getSnapshots(): unknown {
+  getSnapshots(): any {
     return this.snapshots.get(stateId) || [];
   }
 
-  subscribe(): unknown {
-    if(): unknown {
+  subscribe(): void {
+    if(): void {
       this.subscribers.set(stateId, new Set());
     }
 
     this.subscribers.get(stateId)!.add(callback);
     // Return unsubscribe function
-    return(): unknown {
+    return(): void {
       const subscribers = this.subscribers.get(stateId);
-      if(): unknown {
+      if(): void {
         subscribers.delete(callback);
-        if(): unknown {
+        if(): void {
           this.subscribers.delete(stateId);
         }
       }
@@ -212,12 +212,12 @@ id: `${stateId}_snapshot_${Date.now()}`,
 
   private notifySubscribers(stateId: string, state: StateValue): void {
 const subscribers = this.subscribers.get(stateId);
-  }    if(): unknown {
+  if(): void {
       subscribers.forEach(callback => {
   // Implementation needed
 }
         try {
-      callback(): unknown {
+      callback(): void {
           this.logger.error('Error notifying subscriber', { error, stateId });
         }
       });
@@ -226,16 +226,16 @@ const subscribers = this.subscribers.get(stateId);
 
   private validateStateData(data: any, schema: StateSchema): void {
 // Basic validation - implement more sophisticated validation as needed
-  }    if(): unknown {
-      for(): unknown {
-        if(): unknown {
+  if(): void {
+      for(): void {
+        if(): void {
           throw new Error(`Required field `${placeholder}` is missing`);
         }
       }
     }
   }
 
-  private async logTransaction(): unknown {
+  async logTransaction(): void {
     stateId: string,
     action: 'CREATE' | 'UPDATE' | 'DELETE',
     oldValue?: any,
@@ -250,14 +250,14 @@ const transaction: StateTransaction = {
       newValue,
       timestamp: new Date()
     };
-    if(): unknown {
+    if(): void {
       this.transactions.set(stateId, []);
     }
 
     this.transactions.get(stateId)!.push(transaction);
   }
 
-  getTransactions(): unknown {
+  getTransactions(): any {
     return this.transactions.get(stateId) || [];
   }
 }

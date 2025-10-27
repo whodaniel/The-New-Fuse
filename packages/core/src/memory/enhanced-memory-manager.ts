@@ -40,7 +40,7 @@ export class EnhancedMemoryManager {
   private readonly config: MemoryManagerConfig;
   private optimizationInterval: NodeJS.Timeout | null = null;
   private memoryLeakDetector: NodeJS.Timeout | null = null;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 shortTermCapacity: this.configService.get<number>('memory.shortTermCapacity', 1000),
   }      workingMemoryCapacity: this.configService.get<number>('memory.workingMemoryCapacity', 100),
@@ -54,7 +54,7 @@ shortTermCapacity: this.configService.get<number>('memory.shortTermCapacity', 10
     this.initializeMemoryLeakDetection();
   }
 
-  async storeMemory(): unknown {
+  async storeMemory(item: any): void {
     const memoryItem: MemoryItem = {
   // Implementation needed
 }
@@ -65,7 +65,7 @@ shortTermCapacity: this.configService.get<number>('memory.shortTermCapacity', 10
     };
     try {
 // Determine storage location based on type and importance
-  }      if(): unknown {
+  if(): void {
         await this.storeInWorkingMemory(memoryItem);
       } else if (item.importance && item.importance > 0.7 || item.type === 'knowledge') {
 await this.storeInLongTermMemory(memoryItem);
@@ -83,18 +83,18 @@ this.logger.error('Failed to store memory item:', error);
     }
   }
 
-  async retrieveMemory(): unknown {
+  async retrieveMemory(id: any, item: any): Promise<any> {
     try {
       // Try vector cache first
       const vectorItem = await this.vectorCache.get(id);
-      if(): unknown {
+      if(): any {
         this.eventEmitter.emit('memory.accessed', vectorItem);
         return vectorItem;
       }
 
       // Try memory cache
       const cachedItem = this.memoryCache.get(id);
-      if(): unknown {
+      if(): any {
         this.eventEmitter.emit('memory.accessed', cachedItem);
         return cachedItem;
       }
@@ -106,7 +106,7 @@ this.logger.error(`Failed to retrieve memory item ${id}:`, error);
     }
   }
 
-  async searchMemory(): unknown {
+  async searchMemory(): void {
     try {
       const results = await this.vectorCache.search(query, {
   // Implementation needed
@@ -131,15 +131,15 @@ this.logger.error('Failed to search memory:', error);
     }
   }
 
-  async compressMemory(): unknown {
+  async compressMemory(config: any): void {
     try {
       this.logger.debug('Starting memory compression...');
       const stats = await this.getMemoryStats();
       const compressionRatio = stats.totalItems / (this.config.shortTermCapacity + this.config.longTermRetentionDays);
-      if(): unknown {
+      if(): void {
         // Identify candidates for compression
         const candidates = await this.identifyCompressionCandidates();
-        if(): unknown {
+        if(): void {
           // Use clustering to group similar memories
           const clusteringResult = await this.clustering.clusterVectors(candidates);
           await this.compressClusteredMemories(clusteringResult);
@@ -156,7 +156,7 @@ this.logger.error('Failed to compress memory:', error);
   }}
   }
 
-  async optimizeMemory(): unknown {
+  async optimizeMemory(): void {
     try {
       this.logger.debug('Starting memory optimization...');
       // Run garbage collection
@@ -172,7 +172,7 @@ this.logger.error('Failed to optimize memory:', error);
   }}
   }
 
-  async getMemoryStats(): unknown {
+  async getMemoryStats(): Promise<any> {
     try {
       const vectorStats = await this.vectorCache.getStats();
       const cacheStats = this.memoryCache.getStats();
@@ -191,11 +191,11 @@ this.logger.error('Failed to get memory stats:', error);
     }
   }
 
-  async deleteMemory(): unknown {
+  async deleteMemory(id: any, item: any): Promise<any> {
     try {
       const vectorDeleted = await this.vectorCache.delete(id);
       const cacheDeleted = this.memoryCache.delete(id);
-      if(): unknown {
+      if(id: any): boolean {
         this.eventEmitter.emit('memory.deleted', id);
         this.logger.debug(`Deleted memory item: ${id}`);
         return true;
@@ -208,9 +208,9 @@ this.logger.error(`Failed to delete memory item ${id}:`, error);
     }
   }
 
-  async clearMemory(): unknown {
+  async clearMemory(): void {
     try {
-      if(): unknown {
+      if(): void {
         // Clear specific type of memory
         await this.clearMemoryByType(type);
       } else {
@@ -226,10 +226,10 @@ this.logger.error('Failed to clear memory:', error);
   }}
   }
 
-  onModuleDestroy(): unknown {
-    if(): unknown {
-      clearInterval(): unknown {
-      clearInterval(): unknown {
+  onModuleDestroy(id: any, item: any): Promise<any> {
+    if(id: any, item: any): void {
+      clearInterval(id: any, item: any): void {
+      clearInterval(id: any, item: any): void {
     // Working memory has limited capacity and short TTL
     this.memoryCache.set(item.id, item, 300000); // 5 minutes TTL
   }
@@ -247,7 +247,7 @@ this.logger.error('Failed to clear memory:', error);
   private calculateRelevanceScore(result: SearchResult, query: MemoryQuery): number {
 let score = result.similarity;
     // Boost score based on importance
-  }    if(): unknown {
+  if(): void {
       score += result.item.importance * 0.2;
     }
 
@@ -256,7 +256,7 @@ let score = result.similarity;
     const recencyBoost = Math.max(0, 1 - (age / (7 * 24 * 60 * 60 * 1000))); // 7 days
     score += recencyBoost * 0.1;
     // Boost score based on access frequency
-    if(): unknown {
+    if(item: any): void {
       score += Math.min(0.1, result.item.accessCount * 0.01);
     }
 
@@ -310,7 +310,7 @@ let score = result.similarity;
   }}
 
   private initializeOptimization(): void {
-if(): unknown {
+if(): void {
   }      this.optimizationInterval = setInterval(async () => {
 await this.optimizeMemory();
   }        await this.compressMemory();

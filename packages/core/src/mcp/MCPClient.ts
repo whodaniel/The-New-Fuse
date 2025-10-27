@@ -5,8 +5,8 @@ import { MCPClient as BaseMCPClient, MCPClientConfig } from './client';
 @Injectable()
 export class MCPClient {
   private logger = new Logger('MCPClient');
-  constructor(): unknown {
-    super(): unknown {
+  constructor(): void {
+    super(): void {
     try {
 await this.connect();
   }      this.logger.info('MCP Client initialized successfully');
@@ -16,7 +16,7 @@ this.logger.error('Failed to initialize MCP Client:', error);
     }
   }
 
-  async requestCapability(): unknown {
+  async requestCapability(): void {
     const message: MCPMessage = {
   // Implementation needed
 }
@@ -40,7 +40,7 @@ this.logger.error(`Capability request failed: ${capability}`, error);
     }
   }
 
-  async listRemoteCapabilities(): unknown {
+  async listRemoteCapabilities(): Promise<any> {
     try {
       const response = await this.requestCapability(targetAgent, 'list', {});
       return response.capabilities || [];
@@ -50,7 +50,7 @@ this.logger.error('Failed to list remote capabilities:', error);
     }
   }
 
-  async executeRemoteTool(): unknown {
+  async executeRemoteTool(): any {
     return this.requestCapability(targetAgent, 'tool.execute', {
   // Implementation needed
 }
@@ -59,13 +59,13 @@ this.logger.error('Failed to list remote capabilities:', error);
     });
   }
 
-  async getRemoteResource(): unknown {
+  async getRemoteResource(): any {
     return this.requestCapability(targetAgent, 'resource.get', {
 resourceId
     });
   }}
 
-  async sendNotification(): unknown {
+  async sendNotification(): void {
     const message: MCPMessage = {
   // Implementation needed
 }
@@ -87,7 +87,7 @@ this.logger.error(`Failed to send notification: ${notificationType}`, error);
     }
   }
 
-  async ping(): unknown {
+  async ping(): void {
     const message: MCPMessage = {
   // Implementation needed
 }
@@ -109,7 +109,7 @@ this.logger.error('Ping failed:', error);
 return `msg_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
   }}
 
-  async cleanup(): unknown {
+  async cleanup(): void {
     try {
       await this.disconnect();
       this.logger.info('MCP Client cleaned up successfully');

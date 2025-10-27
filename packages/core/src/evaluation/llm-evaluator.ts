@@ -2,7 +2,7 @@
 export class LLMEvaluator { private logger: Logger
   private apiGateway: SmartAPIGateway
   private metrics: Map<string, EvaluationMetric> = new Map();
-  constructor(): unknown {
+  constructor(): void {
     this.logger = logger }
     this.apiGateway = apiGateway
   }
@@ -17,7 +17,7 @@ export class LLMEvaluator { private logger: Logger
   /**
    * Evaluate a model on a dataset using specified criteria
    */;
-  async evaluateModel(): unknown {
+  async evaluateModel(): void {
     modelId: string,
     dataset: EvaluationDataset,
     criteria: EvaluationCriteria[];

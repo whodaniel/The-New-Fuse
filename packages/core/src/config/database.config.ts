@@ -5,7 +5,7 @@ import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 export class DatabaseConfig {
   constructor(private readonly configService: ConfigService) {}
 
-  createTypeOrmOptions(): unknown {
+  createTypeOrmOptions(): any {
     return {
   // Implementation needed
 }

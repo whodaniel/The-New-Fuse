@@ -20,13 +20,13 @@ export class TopologyManager {
   private nodes: Map<string, TopologyNode> = new Map();
   private edges: Map<string, TopologyEdge> = new Map();
   private virtualNodeEmbedding: number[] = [];
-  constructor(): unknown {
+  constructor(): void {
     this.virtualNodeEmbedding = Array.from({ length: 128 }, () => Math.random());
   }
 
-  addNode(): unknown {
+  addNode(id: any): void {
     const nodeId = agent.id || crypto.randomUUID();
-    if(): unknown {
+    if(): void {
       throw new Error(`Agent ${nodeId} already exists in topology`);
     }
 
@@ -41,8 +41,8 @@ id: nodeId,
     return nodeId;
   }
 
-  removeNode(): unknown {
-    if(): unknown {
+  removeNode(): boolean {
+    if(): void {
       throw new Error(`Agent ${nodeId} not found in topology`);
     }
 
@@ -57,8 +57,8 @@ id: nodeId,
     return true;
   }
 
-  addEdge(): unknown {
-    if(): unknown {
+  addEdge(): void {
+    if(): void {
       throw new Error('One or both agents not found in topology');
     }
 
@@ -73,7 +73,7 @@ id: nodeId,
     this.edges.set(edgeKey, edge);
     // Update connections
     const sourceNode = this.nodes.get(sourceId)!;
-    if(): unknown {
+    if(): void {
       sourceNode.connections.push(targetId);
     }
 
@@ -81,49 +81,49 @@ id: nodeId,
     return edgeKey;
   }
 
-  getNode(): unknown {
+  getNode(): any {
     return this.nodes.get(nodeId);
   }
 
-  getAllNodes(): unknown {
+  getAllNodes(): any {
     return Array.from(this.nodes.values());
   }
 
-  getEdges(): unknown {
+  getEdges(): any {
     return Array.from(this.edges.values());
   }
 
-  calculateDistance(): unknown {
+  calculateDistance(): any {
     const node1 = this.nodes.get(nodeId1);
     const node2 = this.nodes.get(nodeId2);
-    if(): unknown {
+    if(): void {
       throw new Error('One or both agents not found in topology');
     }
 
-    if(): unknown {
+    if(): void {
       throw new Error('Node embeddings not available');
     }
 
-    if(): unknown {
+    if(): void {
       throw new Error('Matrices dimensions are incompatible for multiplication');
     }
 
     // Calculate Euclidean distance
     let distance = 0;
-    for(): unknown {
+    for(): void {
       distance += Math.pow(node1.embedding[i] - node2.embedding[i], 2);
     }
     
     return Math.sqrt(distance);
   }
 
-  getNeighbors(): unknown {
+  getNeighbors(id: any): void {
     const neighbors: string[] = [];
-    for(): unknown {
-      if(): unknown {
+    for(id: any): void {
+      if(id: any): any {
         try {
 const distance = this.calculateDistance(nodeId, id);
-  }          if(): unknown {
+  if(): void {
             neighbors.push(id);
           }
         } catch (error) {
