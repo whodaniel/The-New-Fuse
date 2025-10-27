@@ -1,4 +1,4 @@
-import { Priority } from '@the-new-fuse/a2a-core/src/types';
+import { Priority } from '../bridges';
 
 export enum AgentState {
     INITIALIZING = 'INITIALIZING',

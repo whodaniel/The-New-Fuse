@@ -1,5 +1,5 @@
 import { BaseService } from '../core/BaseService'; // Corrected import path
-import { Logger } from '@the-new-fuse/core/src/utils/Logger';
+import { Logger } from '@the-new-fuse/core';
 import { UUID, Message } from '@the-new-fuse/types'; // Assuming types are available
 
 // Define specific message structures for inter-agent chat if needed

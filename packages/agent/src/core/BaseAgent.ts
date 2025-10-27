@@ -1,12 +1,12 @@
 import { Redis } from 'ioredis';
 import { EventEmitter } from 'events';
-import { Logger } from '@the-new-fuse/core/src/utils/Logger';
+import { Logger } from '@the-new-fuse/core';
 
-import { BaseBridge, MessageType, Priority } from './bridges';
+import { BaseBridge, MessageType, Priority } from '../bridges';
 import { ContextManager, ContextType } from '../context/manager';
-import { ErrorRecovery, ErrorCategory, ErrorSeverity } from './error/recovery';
-import { MetricsRegistry, PerformanceMonitor } from './monitoring/metrics';
-import { AgentState, AgentConfig, Task } from './interfaces/agent.interface';
+import { ErrorRecovery, ErrorCategory, ErrorSeverity } from '../error/recovery';
+import { MetricsRegistry, PerformanceMonitor } from '../monitoring/metrics';
+import { AgentState, AgentConfig, Task } from '../interfaces/agent.interface';
 
 
 // Create logger
