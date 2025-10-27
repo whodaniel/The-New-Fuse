@@ -2,6 +2,7 @@ import { Injectable, Logger, OnModuleInit, OnModuleDestroy } from '@nestjs/commo
 import { Server, Socket } from 'socket.io';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter } from 'events';
+
 export interface WebSocketClient {
   id: string;
   socket: Socket;
@@ -18,96 +19,92 @@ export interface BroadcastMessage {
 }
 
 @Injectable()
-export class WebSocketManager {
+export class WebSocketManager extends EventEmitter implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(WebSocketManager.name);
-  private server: Server;
+  private server!: Server;
   private readonly clients = new Map<string, WebSocketClient>();
-  constructor(): unknown {
-    super(): unknown {
+
+  constructor(private readonly configService: ConfigService) {
+    super();
+  }
+
+  async onModuleInit() {
     const port = this.configService.get<number>('WS_PORT', 8080);
     this.server = new Server(port, {
-cors: unknown;
-  }}
+      cors: {
         origin: this.configService.get('CORS_ORIGINS', '*'),
         methods: ['GET', 'POST'],
         credentials: true
       },
       transports: ['websocket', 'polling']
     });
+
     this.server.on('connection', (socket: Socket) => {
-  // Implementation needed
-}
       this.handleConnection(socket);
     });
+
     this.logger.log(`WebSocket server started on port ${port}`);
   }
 
-  async onModuleDestroy(): unknown {
-    if(): unknown {
+  async onModuleDestroy() {
+    if (this.server) {
       this.server.close(() => {
-this.logger.log('WebSocket server closed');
+        this.logger.log('WebSocket server closed');
       });
-  }}
+    }
   }
 
   private handleConnection(socket: Socket) {
-const clientId = this.generateClientId();
-  }    const client: WebSocketClient = {
-  // Implementation needed
-}
+    const clientId = this.generateClientId();
+    const client: WebSocketClient = {
       id: clientId,
       socket,
       connectedAt: new Date(),
       lastActivity: new Date(),
       metadata: {}
     };
+
     this.clients.set(clientId, client);
     this.logger.log(`Client connected: ${clientId}`);
+
     socket.on('disconnect', (reason) => {
-  // Implementation needed
-}
       this.handleDisconnection(clientId, reason);
     });
+
     socket.on('error', (error) => {
-  // Implementation needed
-}
       this.logger.error(`Socket error for client ${clientId}:`, error);
       this.handleError(clientId, error);
     });
+
     socket.on('message', (data) => {
-  // Implementation needed
-}
       this.handleMessage(clientId, data);
     });
+
     socket.on('ping', () => {
-  // Implementation needed
-}
       this.handlePing(clientId);
     });
+
     socket.on('join-room', (room: string) => {
-  // Implementation needed
-}
       this.handleJoinRoom(clientId, room);
     });
+
     socket.on('leave-room', (room: string) => {
-  // Implementation needed
-}
       this.handleLeaveRoom(clientId, room);
     });
+
     // Send welcome message
     socket.emit('connected', {
-  // Implementation needed
-}
       clientId,
       timestamp: new Date().toISOString(),
       message: 'Connected to WebSocket server'
     });
+
     this.emit('clientConnected', client);
   }
 
   private handleDisconnection(clientId: string, reason: string) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       this.clients.delete(clientId);
       this.logger.log(`Client disconnected: ${clientId}, reason: ${reason}`);
       this.emit('clientDisconnected', { client, reason });
@@ -115,16 +112,16 @@ const client = this.clients.get(clientId);
   }
 
   private handleError(clientId: string, error: Error) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       this.logger.error(`Client error: ${clientId}`, error);
       this.emit('clientError', { client, error });
     }
   }
 
   private handleMessage(clientId: string, data: any) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       client.lastActivity = new Date();
       this.logger.debug(`Message from ${clientId}:`, data);
       this.emit('clientMessage', { client, data });
@@ -132,16 +129,16 @@ const client = this.clients.get(clientId);
   }
 
   private handlePing(clientId: string) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       client.lastActivity = new Date();
       client.socket.emit('pong', { timestamp: new Date().toISOString() });
     }
   }
 
   private handleJoinRoom(clientId: string, room: string) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       client.socket.join(room);
       this.logger.log(`Client ${clientId} joined room: ${room}`);
       this.emit('clientJoinedRoom', { client, room });
@@ -149,8 +146,8 @@ const client = this.clients.get(clientId);
   }
 
   private handleLeaveRoom(clientId: string, room: string) {
-const client = this.clients.get(clientId);
-  }    if(): unknown {
+    const client = this.clients.get(clientId);
+    if (client) {
       client.socket.leave(room);
       this.logger.log(`Client ${clientId} left room: ${room}`);
       this.emit('clientLeftRoom', { client, room });
@@ -158,70 +155,68 @@ const client = this.clients.get(clientId);
   }
 
   // Public methods
-  broadcast(): unknown {
+  broadcast(message: BroadcastMessage): void {
     this.server.emit(message.type, {
-  // Implementation needed
-}
       ...message.data,
       timestamp: message.timestamp
     });
     this.logger.debug('Broadcasted message:', message);
   }
 
-  broadcastToRoom(): unknown {
+  broadcastToRoom(room: string, message: BroadcastMessage): void {
     this.server.to(room).emit(message.type, {
-...message.data,
-  }      timestamp: message.timestamp
+      ...message.data,
+      timestamp: message.timestamp
     });
     this.logger.debug(`Broadcasted to room ${room}:`, message);
   }
 
-  sendToClient(): unknown {
+  sendToClient(clientId: string, type: string, data: any): boolean {
     const client = this.clients.get(clientId);
-    if(): unknown {
+    if (client) {
       client.socket.emit(type, {
-...data,
-  }        timestamp: new Date().toISOString()
+        ...data,
+        timestamp: new Date().toISOString()
       });
       return true;
     }
     return false;
   }
 
-  disconnectClient(): unknown {
+  disconnectClient(clientId: string, _reason?: string): boolean {
     const client = this.clients.get(clientId);
-    if(): unknown {
-      client.socket.disconnect(reason);
+    if (client) {
+      client.socket.disconnect(true);
       return true;
     }
     return false;
   }
 
-  getClient(): unknown {
+  getClient(clientId: string): WebSocketClient | undefined {
     return this.clients.get(clientId);
   }
 
-  getAllClients(): unknown {
+  getAllClients(): WebSocketClient[] {
     return Array.from(this.clients.values());
   }
 
-  getConnectedClientsCount(): unknown {
+  getConnectedClientsCount(): number {
     return this.clients.size;
   }
 
-  getClientsInRoom(): unknown {
+  getClientsInRoom(room: string): WebSocketClient[] {
     return Array.from(this.clients.values()).filter(client => 
       client.socket.rooms.has(room)
     );
   }
 
-  isClientConnected(): unknown {
+  isClientConnected(clientId: string): boolean {
     return this.clients.has(clientId);
   }
 
-  updateClientMetadata(): unknown {
+  updateClientMetadata(clientId: string, metadata: Record<string, any>): boolean {
     const client = this.clients.get(clientId);
-    if(): unknown {
+    if (client) {
       client.metadata = { ...client.metadata, ...metadata };
       return true;
     }
@@ -229,20 +224,16 @@ const client = this.clients.get(clientId);
   }
 
   private generateClientId(): string {
-return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-  }}
+    return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  }
 
   // Health check methods
-  async healthCheck(): unknown {
+  async healthCheck(): Promise<{
     status: string;
     connectedClients: number;
     uptime: number;
   }> {
-  // Implementation needed
-}
     return {
-  // Implementation needed
-}
       status: 'healthy',
       connectedClients: this.clients.size,
       uptime: process.uptime()
@@ -253,15 +244,16 @@ return `client_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   cleanupInactiveClients(timeoutMs: number = 300000): number { // 5 minutes default
     const now = new Date();
     let cleaned = 0;
-    for(): unknown {
+    
+    for (const [clientId, client] of this.clients) {
       const inactiveTime = now.getTime() - client.lastActivity.getTime();
-      if(): unknown {
+      if (inactiveTime > timeoutMs) {
         this.disconnectClient(clientId, 'Inactive timeout');
         cleaned++;
       }
     }
 
-    if(): unknown {
+    if (cleaned > 0) {
       this.logger.log(`Cleaned up ${cleaned} inactive clients`);
     }
 

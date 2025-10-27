@@ -1,4 +1,5 @@
-import { FileVisualizer, FileNode, VisualizationConfig } from './fileVisualizer';
+import { FileVisualizer, VisualizationConfig } from './fileVisualizer';
+
 export interface VisualizationRequest {
   type: 'file-tree' | 'dependency-graph' | 'code-metrics';
   target: string;
@@ -18,22 +19,26 @@ export interface VisualizationResult {
 export class VisualizationManager {
   private fileVisualizer: FileVisualizer;
   private cache: Map<string, VisualizationResult> = new Map();
-  constructor(): unknown {
-    this.fileVisualizer = new FileVisualizer();
+
+  constructor() {
+    const defaultConfig = this.getDefaultConfig();
+    this.fileVisualizer = new FileVisualizer(defaultConfig);
   }
 
-  async createVisualization(): unknown {
+  async createVisualization(request: VisualizationRequest): Promise<VisualizationResult> {
     const id = this.generateId(request);
+    
     // Check cache first
-    if(): unknown {
+    if (this.cache.has(id)) {
       return this.cache.get(id)!;
     }
 
     let data: any;
     const format = request.format || 'json';
-    switch(): unknown {
+    
+    switch (request.type) {
       case 'file-tree':
-        data = await this.fileVisualizer.generateFileTree(request.target, request.config || this.getDefaultConfig());
+        data = await this.fileVisualizer.generateFileTree(request.target);
         break;
       case 'dependency-graph':
         data = await this.fileVisualizer.generateDependencyGraph(request.target);
@@ -46,48 +51,48 @@ export class VisualizationManager {
     }
 
     const result: VisualizationResult = {
-id,
-  }      type: request.type,
+      id,
+      type: request.type,
       data,
       format,
       createdAt: new Date(),
-      metadata: unknown;
-target: request.target,
-  }        config: request.config
+      metadata: {
+        target: request.target,
+        config: request.config
       }
     };
+
     this.cache.set(id, result);
     return result;
   }
 
-  async getVisualization(): unknown {
+  async getVisualization(id: string): Promise<VisualizationResult | null> {
     return this.cache.get(id) || null;
   }
 
-  async exportVisualization(): unknown {
+  async exportVisualization(id: string, format: string): Promise<string> {
     const visualization = this.cache.get(id);
-    if(): unknown {
+    if (!visualization) {
       throw new Error(`Visualization not found: ${id}`);
     }
 
     return this.fileVisualizer.exportVisualization(visualization.data, format);
   }
 
-  async clearCache(): unknown {
+  async clearCache(): Promise<void> {
     this.cache.clear();
   }
 
-  async getCacheStats(): unknown {
+  async getCacheStats(): Promise<{ size: number, keys: string[], totalMemory: number }> {
     return {
-size: this.cache.size,
-  }      keys: Array.from(this.cache.keys()),
+      size: this.cache.size,
+      keys: Array.from(this.cache.keys()),
       totalMemory: JSON.stringify(Array.from(this.cache.values())).length
     };
   }
 
   private generateId(request: VisualizationRequest): string {
-const hash = JSON.stringify(request).split('').reduce((a, b) => {
-  }}
+    const hash = JSON.stringify(request).split('').reduce((a, b) => {
       a = ((a << 5) - a) + b.charCodeAt(0);
       return a & a;
     }, 0);
@@ -95,8 +100,7 @@ const hash = JSON.stringify(request).split('').reduce((a, b) => {
   }
 
   private getDefaultConfig(): VisualizationConfig {
-return {
-  }}
+    return {
       maxDepth: 5,
       includeHidden: false,
       groupByType: true
