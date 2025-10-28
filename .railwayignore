@@ -1,9 +1,5 @@
 # Force Railway to use Dockerfile instead of auto-detection
 nixpacks.toml
-bunfig.toml
-.bunfig.toml
-bun.lockb
-bun.json
 
 # Ignore development files
 .env*
