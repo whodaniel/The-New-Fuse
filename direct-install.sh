@@ -5,7 +5,6 @@ echo "Starting direct installation approach..."
 # Step 1: Clean up existing installation
 echo "Step 1: Cleaning up existing installation..."
 rm -rf node_modules
-rm -f yarn.lock
 
 # Step 2: Install ts-node directly with npm
 echo "Step 2: Installing ts-node directly with npm..."
