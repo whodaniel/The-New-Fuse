@@ -65,7 +65,7 @@ export class ToolRegistry extends EventEmitter {
       this.executions.set(executionId, executionResult);
       this.emit('tool:executed', toolId, executionResult);
       return executionResult;
-    } catch (error)S {
+    } catch (error) {
       const executionResult: ToolExecutionResult = {
         id: executionId,
         toolId,

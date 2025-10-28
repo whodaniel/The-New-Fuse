@@ -1,53 +1,48 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
 @Injectable()
 export class MessageQueue {
+  private readonly logger = new Logger(MessageQueue.name);
   private queue: any[] = [];
+
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async enqueue(): void {
-    // Mock implementation
+  async enqueue(message: any): Promise<void> {
     this.queue.push(message);
     this.eventEmitter.emit('message.queued', message);
   }
 
-  async dequeue(): any {
-    // Mock implementation
+  async dequeue(): Promise<any> {
     const message = this.queue.shift();
-    if(): void {
+    if (message) {
       this.eventEmitter.emit('message.dequeued', message);
     }
     return message;
   }
 
-  async peek(): any {
-    // Mock implementation
+  async peek(): Promise<any> {
     return this.queue[0] || null;
   }
 
-  async size(): any {
-    // Mock implementation
+  async size(): Promise<number> {
     return this.queue.length;
   }
 
-  async clear(): void {
-    // Mock implementation
+  async clear(): Promise<void> {
     this.queue = [];
     this.eventEmitter.emit('queue.cleared');
   }
 
-  async isEmpty(): any {
-    // Mock implementation
+  async isEmpty(): Promise<boolean> {
     return this.queue.length === 0;
   }
 
-  async getStats(): any {
-    // Mock implementation
+  async getStats(): Promise<any> {
     return {
-size: this.queue.length,
-  }      processed: 0,
+      size: this.queue.length,
+      processed: 0,
       failed: 0,
-      message: 'Queue stats not implemented'
     };
   }
 }
