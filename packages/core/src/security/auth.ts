@@ -1,20 +1,23 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-import { /* TODO: specify imports */ } from /@nestjs/config/;
-import 'jsonwebtoken';
-    this.config= 'placeholder';
-  ): Promise<AuthCredentials> { let hashedValue = 'placeholder';
-    if(type  === 'placeholder';
-    switch (type) { case AuthMethod.PASSWORD: ''
-       return bcrypt.compare('value, storedCredentials.value);'
-      case AuthMethod.API_KEY: ''
-       return value'placeholder';
-      case AuthMethod.JWT: ''
-         jwt.verify('value'
-  async createToken('')
- this.eventEmitter.emit('event', data);
-     errors.push('')
-      errors.push('')
-    if (errors.length >0){ throw new Error('Passwordvalidationfailed: ${errors.join(;) });'
-        const session = 'placeholder';
-          session.userId'placeholder';
-        session.status'placeholder';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { SecurityService } from './security.service';
+import * as jwt from 'jsonwebtoken';
+
+@Injectable()
+export class AuthService {
+  private readonly jwtSecret: string;
+
+  constructor(private readonly securityService: SecurityService) {
+    this.jwtSecret = process.env.JWT_SECRET || 'default-secret-for-dev';
+  }
+
+  async validateUser(password: string, hash: string): Promise<boolean> {
+    return this.securityService.comparePassword(password, hash);
+  }
+
+  async login(user: any) {
+    const payload = { username: user.username, sub: user.userId };
+    return {
+      access_token: jwt.sign(payload, this.jwtSecret, { expiresIn: '60s' }),
+    };
+  }
+}

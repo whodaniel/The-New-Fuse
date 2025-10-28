@@ -1,18 +1,17 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-import { /* TODO: specify imports */ } from /@nestjs/config'';
-export class SecurityAuditService { privatereadonlyconfig: 'SecurityConfig[, audit]'
-  private readonly flushInterval: 'number;'
-  constructor('')
-    this.config= 'placeholder';
-   this.flushInterval=this.configService.get<number>('')
-      action, //Addedaction'
-        tags: [...(options?.tags||[]), error'
- status?'success|failure'
-    if (this.auditQueue.length'placeholder';
-    this.auditQueue.length = 0; // Clear queue';
-      const expireAt = 'newDate(';';
-    } catch (error) { console.error('');
-  private matchesFilter('')
-     status?success|'
-    // Attempt to flush any remaining items in the queue beforedestroying'
-   this.flushQueue().catch('placeholder');
+import { Injectable, Logger } from '@nestjs/common';
+import { AuditLoggingService } from './audit-logging.service';
+
+@Injectable()
+export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
+  constructor(private readonly auditLoggingService: AuditLoggingService) {}
+
+  async record(action: string, userId: string, details?: Record<string, any>) {
+    await this.auditLoggingService.log({
+      action,
+      userId,
+      details,
+    });
+  }
+}
