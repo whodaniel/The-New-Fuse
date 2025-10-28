@@ -1,58 +1,52 @@
 import { ClaudeCodeCLIService, ClaudeCodeCLIMessage, ClaudeCodeCLIResponse } from './claude-code-cli.service';
+
 export interface LocalLLMAdapter {
   name: string;
-  isAvailable() => Promise<boolean>;
-  sendMessage(message: any) => Promise<any>;
+  isAvailable(): Promise<boolean>;
+  sendMessage(message: any): Promise<any>;
 }
 
-export class ClaudeCodeCLIAdapter {
+export class ClaudeCodeCLIAdapter implements LocalLLMAdapter {
   name = 'Claude Code CLI';
   private service: ClaudeCodeCLIService;
-  constructor(): void {
+
+  constructor() {
     this.service = new ClaudeCodeCLIService();
   }
 
-  async isAvailable(): Promise<any> {
-    return await this.service.isClaudeCodeAvailable();
+  async isAvailable(): Promise<boolean> {
+    return this.service.isAvailable;
   }
 
-  async sendMessage(message: unknown;
-text: string;
-  }    systemPrompt?: string;
+  async sendMessage(message: {
+    text: string;
+    systemPrompt?: string;
     temperature?: number;
     maxTokens?: number;
   }): Promise<{ text: string; usage?: any; metadata?: any }> {
-  // Implementation needed
-}
     try {
       const claudeMessage: ClaudeCodeCLIMessage = {
-  // Implementation needed
-}
         prompt: message.text,
         context: message.systemPrompt,
         temperature: message.temperature,
-        maxTokens: message.maxTokens
+        maxTokens: message.maxTokens,
       };
       const response: ClaudeCodeCLIResponse = await this.service.sendMessage(claudeMessage);
       return {
-  // Implementation needed
-}
         text: response.content,
         usage: response.usage,
-        metadata: unknown;
-  // Implementation needed
-}
+        metadata: {
           ...response.metadata,
           provider: 'claude-code-cli',
-          local: true
-        }
+          local: true,
+        },
       };
     } catch (error) {
-throw new Error(`Claude Code CLI Error: ${error.message}`);
-  }}
+      throw new Error(`Claude Code CLI Error: ${error.message}`);
+    }
   }
 
-  async getVersion(): Promise<any> {
+  async getVersion(): Promise<string> {
     return await this.service.getVersion();
   }
 }
