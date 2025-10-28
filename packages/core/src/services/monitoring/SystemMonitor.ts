@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 export interface SecurityAlert {
   id: string;
@@ -10,59 +10,29 @@ export interface SecurityAlert {
 
 @Injectable()
 export class SystemMonitor {
+  private readonly logger = new Logger(SystemMonitor.name);
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async getSystemHealth(): any {
-    // Mock implementation
+  async getSystemHealth(): Promise<any> {
     return {
-  // Implementation needed
-}
       status: 'healthy',
-      uptime: 0,
-      memory: { used: 0, total: 0 },
-      cpu: { usage: 0 },
-      disk: { used: 0, total: 0 },
-      message: 'System health not implemented'
+      uptime: process.uptime(),
+      memory: process.memoryUsage(),
+      cpu: process.cpuUsage(),
     };
   }
 
-  async getSecurityAlerts(): any[] {
-    // Mock implementation
+  async getSecurityAlerts(): Promise<any[]> {
     return [];
   }
 
-  async createAlert(): void {
-    // Mock implementation
+  async createAlert(alert: Partial<SecurityAlert>): Promise<SecurityAlert> {
     const newAlert: SecurityAlert = {
-  // Implementation needed
-}
       id: Date.now().toString(),
       timestamp: new Date(),
-      ...alert
-    };
+      ...alert,
+    } as SecurityAlert;
     this.eventEmitter.emit('security.alert', newAlert);
     return newAlert;
-  }
-
-  async startMonitoring(): void {
-    // Mock implementation
-    console.log('System monitoring started');
-  }
-
-  async stopMonitoring(): void {
-    // Mock implementation
-    console.log('System monitoring stopped');
-  }
-
-  async getMetrics(): any {
-    // Mock implementation
-    return {
-requests: 0
-          },
-          errors: 0,
-      latency: 0,
-      throughput: 0,
-      message: 'System metrics not implemented'
-    };
   }
 }
