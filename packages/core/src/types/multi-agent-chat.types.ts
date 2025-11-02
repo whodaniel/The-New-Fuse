@@ -42,15 +42,15 @@ export interface MultiAgentChatState {
 }
 
 export interface MultiAgentChatActions {
-  createAgent(agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>): void;
-  createRule(rule: Omit<ConversationRule, 'id' | 'createdAt' | 'updatedAt'>): void;
-  setMode(mode: 'manual' | 'auto'): void;
-  sendMessage(message: Omit<Message, 'id' | 'timestamp'>): void;
-  selectAgent(agentId: string): void;
-  updateAgent(agentId: string, updates: Partial<Agent>): void;
-  updateRule(ruleId: string, updates: Partial<ConversationRule>): void;
-  deleteAgent(agentId: string): void;
-  deleteRule(ruleId: string): void;
+  createAgent(agent: Omit<Agent, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  createRule(rule: Omit<ConversationRule, 'id' | 'createdAt' | 'updatedAt'>) => void;
+  setMode(mode: 'manual' | 'auto') => void;
+  sendMessage(message: Omit<Message, 'id' | 'timestamp'>) => void;
+  selectAgent(agentId: string) => void;
+  updateAgent(agentId: string, updates: Partial<Agent>) => void;
+  updateRule(ruleId: string, updates: Partial<ConversationRule>) => void;
+  deleteAgent(agentId: string) => void;
+  deleteRule(ruleId: string) => void;
   // UI related actions
-  setTheme(theme: 'light' | 'dark' | 'system'): void;
+  setTheme(theme: 'light' | 'dark' | 'system') => void;
 }

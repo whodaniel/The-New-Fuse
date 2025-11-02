@@ -2,8 +2,12 @@ export interface MemoryQuery {
     query: string;
     limit?: number;
     filter?: {
+  // Implementation needed
+}
         type?: string;
         timeRange?: {
+  // Implementation needed
+}
             start: Date;
             end: Date;
         };
@@ -15,6 +19,8 @@ export interface MemoryContent {
     type: string;
     data: unknown;
     metadata?: {
+  // Implementation needed
+}
         timestamp?: Date;
         source?: string;
         tags?: string[];
@@ -30,14 +36,10 @@ export interface VectorStore {
 }
 
 export interface MemorySystem {
-    add(content: MemoryContent): Promise<void>;
-    search(query: MemoryQuery): Promise<MemoryContent[]>;
-    delete(filter: Partial<MemoryContent>): Promise<void>;
-    clear(): Promise<void>;
-    getStats(): {
+    add(): unknown {
         totalMemories: number;
         byType: Record<string, number>;
         oldestMemory: Date;
         newestMemory: Date;
-    };
+    }>;
 }

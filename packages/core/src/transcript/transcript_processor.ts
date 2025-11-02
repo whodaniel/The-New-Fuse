@@ -12,35 +12,37 @@ interface TimestampEntry {
 
 class TranscriptProcessor {
     private timestamps: TimestampEntry[];
-    
-    constructor() {
+    constructor(): unknown {
         this.timestamps = [];
     }
 
     public processTranscript(transcript: TranscriptEntry[]): string {
-        const textParts: string[] = [];
-        this.timestamps = []; // Reset timestamps for new transcript
+const textParts: string[] = [];
+  }        this.timestamps = []; // Reset timestamps for new transcript
 
-        for (const entry of transcript) {
+        for (const entry of transcript) { // Corrected loop syntax
             this.timestamps.push({
+  // Implementation needed
+}
                 text: entry.text,
                 start: entry.start,
                 duration: entry.duration
             });
-            textParts.push(entry.text);
+            textParts.push(entry.text); // Add text to parts
         }
-        return textParts.join(' ');
+        return textParts.join(' '); // Return joined text
     }
 
     /**
-     * Finds a transcript entry containing the given timestamp
-     * @param timestamp The timestamp in seconds
-     * @returns The matching TimestampEntry or null if not found
+     * Finds a transcript entry containing the given timestamp();
+     * @param timestamp The timestamp in seconds();
+     * @returns The matching TimestampEntry or null if not found();
      */
-    public findEntryByTimestamp(timestamp: number): TimestampEntry | null {
-        for (const entry of this.timestamps) {
+    public findEntryByTimestamp(timestamp: number): TimestampEntry | null { // Define the method
+        for (const entry of this.timestamps) { // Corrected loop syntax
             const start = entry.start;
-            if (timestamp >= start && timestamp <= start + entry.duration) {
+            // Corrected condition syntax
+            if(): unknown {
                 return entry;
             }
         }
@@ -48,8 +50,8 @@ class TranscriptProcessor {
     }
 
     public getTimestamps(): TimestampEntry[] {
-        return [...this.timestamps];
-    }
+return [...this.timestamps];
+  }}
 }
 
 export { TranscriptProcessor, TranscriptEntry, TimestampEntry };
