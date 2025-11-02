@@ -19,7 +19,7 @@ EOF
 
 # Install ts-node in the temporary directory
 cd temp-fix
-npm install
+pnpm install
 cd ..
 
 # Create the node_modules directory if it doesn't exist

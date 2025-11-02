@@ -1,0 +1,27 @@
+# Nixpacks configuration for api-gateway in monorepo
+# This handles pnpm workspace dependencies correctly
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[variables]
+NODE_VERSION = "20"
+PNPM_VERSION = "10.19.0"
+
+[phases.install]
+cmds = [
+  # Install all workspace dependencies from root
+  "pnpm install --frozen-lockfile"
+]
+
+[phases.build]
+cmds = [
+  # Build dependencies first (types, core, etc)
+  "pnpm --filter @the-new-fuse/types build || true",
+  "pnpm --filter @the-new-fuse/core build || true",
+  # Build api-gateway
+  "pnpm --filter @the-new-fuse/api-gateway build"
+]
+
+[start]
+cmd = "pnpm --filter @the-new-fuse/api-gateway start:prod"

@@ -42,7 +42,7 @@ check_dependencies() {
     print_status "Checking dependencies..."
     
     if ! command -v wrangler &> /dev/null; then
-        print_error "Wrangler CLI is not installed. Install it with: npm install -g wrangler"
+        print_error "Wrangler CLI is not installed. Install it with: pnpm install -g wrangler"
         exit 1
     fi
     
@@ -159,7 +159,7 @@ build_worker() {
     
     # Build the worker
     print_status "Building TypeScript..."
-    npm run build
+    pnpm run build
     
     if [ $? -eq 0 ]; then
         print_success "Worker built successfully"

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { TaskExecutor, Task } from '../TaskExecutor';
+
 export interface ComponentAnalysisData {
   componentId: string;
   componentType: string;
@@ -10,9 +10,7 @@ export interface ComponentAnalysisData {
 
 export interface ComponentAnalysisResult {
   componentId: string;
-  analysis: unknown;
-  // Implementation needed
-}
+  analysis: {
     complexity: number;
     maintainability: number;
     security: number;
@@ -26,93 +24,104 @@ export interface ComponentAnalysisResult {
 
 @Injectable()
 export class ComponentAnalysisTask {
-  constructor(private readonly taskExecutor: TaskExecutor) {}
+  constructor() {}
 
-  async execute(): unknown {
-    const task: Task = {
-  // Implementation needed
-}
-      id: `analysis_${Date.now()}`,
-      type: 'component-analysis',
-      status: 'pending',
-      data,
-      createdAt: new Date(),
-      updatedAt: new Date()
+  // Renamed 'execute' to 'analyze' and kept 'Current' implementation
+  async analyze(data: ComponentAnalysisData): Promise<ComponentAnalysisResult> {
+    const { componentId, sourceCode } = data;
+    const complexity = await this.analyzeComplexity(sourceCode);
+    const maintainability = await this.analyzeMaintainability(sourceCode);
+    const performance = await this.analyzePerformance(sourceCode);
+    const issues = await this.generateIssues(sourceCode);
+    const recommendations = await this.generateRecommendations(sourceCode);
+
+    return {
+      componentId,
+      analysis: {
+        complexity,
+        maintainability,
+        security: 0, // Placeholder
+        performance,
+        issues,
+        recommendations,
+      },
+      metrics: {}, // Placeholder
+      timestamp: new Date().toISOString(),
     };
-    const result = await this.taskExecutor.executeTask(task);
-    return result as ComponentAnalysisResult;
   }
 
-  async analyzeComplexity(): unknown {
+  // Added 'analyzeMultiple' from 'Incoming'
+  async analyzeMultiple(
+    components: ComponentAnalysisData[],
+  ): Promise<ComponentAnalysisResult[]> {
+    const results: ComponentAnalysisResult[] = [];
+    for (const component of components) {
+      // Make sure it calls the 'analyze' method
+      results.push(await this.analyze(component));
+    }
+    return results;
+  }
+
+  // All helper methods from 'Current'
+  async analyzeComplexity(sourceCode: string | undefined): Promise<number> {
     if (!sourceCode) return 0;
-    // Simple complexity calculation based on lines and nesting
     const lines = sourceCode.split('\n').length;
     const nesting = (sourceCode.match(/[{}]/g) || []).length / 2;
-    const conditions = (sourceCode.match(/\b(if|else|switch|case)\b/g) || []).length;
-    return Math.min(100, (lines * 0.1) + (nesting * 5) + (conditions * 3));
+    const conditions = (sourceCode.match(/\b(if|else|switch|case)\b/g) || [])
+      .length;
+    return Math.min(100, lines * 0.1 + nesting * 5 + conditions * 3);
   }
 
-  async analyzeMaintainability(): unknown {
-    if(): unknown {
-    if(): unknown {
+  async analyzeMaintainability(
+    sourceCode: string | undefined,
+  ): Promise<number> {
+    if (!sourceCode) return 0;
+    let score = 100;
+    const patterns = [/eval\(/, /innerHTML/];
+    patterns.forEach((pattern) => {
       const matches = sourceCode.match(pattern);
-      if(): unknown {
+      if (matches) {
         score -= matches.length * 10;
       }
     });
     return Math.max(0, score);
   }
 
-  async analyzePerformance(): unknown {
+  async analyzePerformance(sourceCode: string | undefined): Promise<number> {
     if (!sourceCode) return 100;
-    // Simple performance analysis based on patterns
     const inefficientPatterns = [
       /for\s*\([^)]*\)\s*{[^}]*for\s*\(/gi, // Nested loops
       /while\s*\([^)]*\)\s*{[^}]*while\s*\(/gi, // Nested while loops
-      /new\s+Array\s*\(/gi, // Array constructor
-      /\.length\s*>\s*0/gi // Length checks in loops
     ];
     let score = 100;
-    inefficientPatterns.forEach(pattern => {
-  // Implementation needed
-}
+    inefficientPatterns.forEach((pattern) => {
       const matches = sourceCode.match(pattern);
-      if(): unknown {
+      if (matches) {
         score -= matches.length * 5;
       }
     });
     return Math.max(0, score);
   }
 
-  async generateIssues(): unknown {
+  async generateIssues(sourceCode: string | undefined): Promise<string[]> {
     const issues: string[] = [];
-    if(): unknown {
+    if (!sourceCode) return issues;
+    if (sourceCode.includes('eval(')) {
       issues.push('Use of eval() is dangerous and should be avoided');
     }
-    
-    if(): unknown {
+    if (sourceCode.includes('innerHTML')) {
       issues.push('Direct innerHTML assignment can lead to XSS vulnerabilities');
     }
-    
-    if(): unknown {
-      issues.push('Excessive console.log statements should be removed in production');
-    }
-    
-    if(): unknown {
-      issues.push('Code contains TODO/FIXME comments that should be addressed');
-    }
-    
     return issues;
   }
 
-  async generateRecommendations(): unknown {
+  async generateRecommendations(
+    sourceCode: string | undefined,
+  ): Promise<string[]> {
     const recommendations: string[] = [];
     if (!sourceCode) return recommendations;
-    // Add recommendations based on analysis
     recommendations.push('Consider adding unit tests for this component');
     recommendations.push('Add JSDoc comments for better documentation');
-    recommendations.push('Consider implementing error handling');
-    recommendations.push('Add input validation for external data');
     return recommendations;
   }
 }

@@ -3,8 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { WebSocketService } from './WebSocketService';
 import { WebSocketManager } from './WebSocketManager';
 @Module({
-  // Implementation needed
-}
   imports: [ConfigModule],
   providers: [
     WebSocketService,

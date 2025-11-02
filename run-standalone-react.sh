@@ -8,9 +8,9 @@ cd standalone-react
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Start the development server
 echo "🚀 Starting the development server..."
 echo "The application will be available at http://localhost:3000"
-npm run dev
+pnpm run dev

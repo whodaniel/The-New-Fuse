@@ -20,34 +20,32 @@ export interface WorkflowContext {
 }
 
 export class NotificationNodeHandler {
-  constructor(private dependencies: unknown) {}
+  constructor(private dependencies: any) {}
 
-  async handle(): unknown {
+  async handle(step: WorkflowStep, context: WorkflowContext): Promise<{ success: boolean; data?: any; error?: string }> {
     try {
       const config = step.config as NotificationConfig;
-      if(): unknown {
+      if (!config.type || !config.recipient || !config.message) {
         throw new Error('Notification type, recipient, and message are required');
       }
 
       // Mock implementation - replace with actual notification service
       const result = {
-type: config.type,
-  }        recipient: config.recipient,
+        type: config.type,
+        recipient: config.recipient,
         message: config.message,
         subject: config.subject || 'Notification',
         sent: true,
       };
+
       return {
-  // Implementation needed
-}
         success: true,
         data: result,
       };
     } catch (error) {
-return {
-  }}
+      return {
         success: false,
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

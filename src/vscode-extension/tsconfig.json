@@ -13,6 +13,7 @@
     "emitDecoratorMetadata": true,
     "types": ["vscode"],
     "baseUrl": "./",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@the-new-fuse/fairtable-core": ["../../packages/fairtable-core/src"],
       "@the-new-fuse/hooks-types": ["../../packages/hooks/src/types/index.ts"]

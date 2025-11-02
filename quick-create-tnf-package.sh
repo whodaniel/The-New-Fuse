@@ -20,7 +20,7 @@ if [[ $? -eq 0 ]]; then
         
         echo ""
         echo "🎉 Installation complete!"
-        echo "🚀 You can now start the system with: npm start"
+        echo "🚀 You can now start the system with: pnpm start"
         echo "🌐 Dashboard will be available at: http://localhost:3002"
     else
         echo ""

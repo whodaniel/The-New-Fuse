@@ -22,13 +22,13 @@ git clone [repository-url]
 cd the-new-fuse
 
 # Install dependencies
-yarn install
+pnpm install
 
 # Copy environment configuration
 cp .env.example .env
 
 # Start development environment
-yarn dev
+pnpm dev
 ```
 
 ## Project Structure
@@ -88,11 +88,11 @@ git push origin feature/your-feature
 ### 3. Testing
 ```bash
 # Run all tests
-yarn test
+pnpm test
 
 # Run specific test suites
-yarn test:unit
-yarn test:integration
+pnpm test:unit
+pnpm test:integration
 ```
 
 ### 4. Code Quality

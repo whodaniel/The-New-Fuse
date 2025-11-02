@@ -1,23 +1,20 @@
-import { /* TODO: specify imports */ } from /@nestjs/common/;
-import { /* TODO: specify imports */ } from /@the-new-fuse/utils/;
-import './performance-monitoring.service.tsx';
-  ): Promise<void> { await this.recordMetric('{'
-     name: ''
-  ): Promise<void> { await this.recordMetric('{'
-    name: ''
-        userId: ''
-   aggregationsum|'placeholder';
-        lte: ''
-      select: '{ '
-   if(metrics.length'placeholder';
-    switch (aggregation){ case "placeholder"
-        return values.reduce((sum, value)= '>sum'+ value';
-      case "placeholder"
-      case "placeholder"
-    case "placeholder"
-    case 'avg'
-      default: ''
- privatetriggerAlert('')
- levelwarning'
-    definition:BusinessMetricDefinition;): void{ const threshold= 'placeholder';
-      if(typeof value === 'placeholder';
+import { Injectable, Logger } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
+
+@Injectable()
+export class BusinessMetricsService {
+  private readonly logger = new Logger(BusinessMetricsService.name);
+
+  constructor(private readonly prisma: PrismaService) {}
+
+  async recordMetric(
+    name: string,
+    value: number,
+    tags: Record<string, string> = {},
+  ): Promise<void> {
+    this.logger.log(`Recording metric: ${name} = ${value}`);
+    // In a real implementation, you would store this in a time-series database like Prometheus or InfluxDB.
+    // For now, we will log it to the console.
+    // This is a placeholder for a more robust implementation.
+  }
+}

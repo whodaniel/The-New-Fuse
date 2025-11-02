@@ -15,18 +15,23 @@ The Claude Dev automation system provides AI-powered automation capabilities for
 ## Components
 
 ### 1. ClaudeDevAutomationService
+
 Core service that manages automation templates and execution.
 
 ### 2. ClaudeDevAutomationController
+
 REST API endpoints for managing automations.
 
 ### 3. ClaudeDevAutomationModule
+
 NestJS module that wires everything together.
 
 ### 4. TNFClaudeDevMCPServer
+
 MCP (Model Context Protocol) server for Claude integration.
 
 ### 5. CLI Tool
+
 Command-line interface for interacting with the automation system.
 
 ## API Endpoints
@@ -46,16 +51,16 @@ Command-line interface for interacting with the automation system.
 cd apps/api
 
 # List templates
-yarn claude-dev templates
+pnpm claude-dev templates
 
 # Execute automation
-yarn claude-dev run code-review params.json
+pnpm claude-dev run code-review params.json
 
 # Check automation status
-yarn claude-dev get <automation-id>
+pnpm claude-dev get <automation-id>
 
 # View statistics
-yarn claude-dev stats
+pnpm claude-dev stats
 ```
 
 ## Configuration
@@ -100,4 +105,3 @@ You can create custom templates via the API or CLI with:
 - Error tracking and logging
 - Performance monitoring
 - Cost tracking
-

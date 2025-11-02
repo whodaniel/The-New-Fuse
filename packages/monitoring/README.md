@@ -56,7 +56,7 @@ packages/monitoring/
 ## Installation
 
 ```bash
-npm install
+pnpm install
 ```
 
 ## Configuration

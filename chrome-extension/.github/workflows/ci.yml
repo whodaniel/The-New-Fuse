@@ -21,22 +21,22 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: ${{ matrix.node-version }}
-        cache: 'bun'
+        cache: 'pnpm'
         
     - name: Install dependencies
       run: pnpm install --frozen-lockfile
       
     - name: Run type check
-      run: bun typecheck
+      run: pnpm typecheck
       
     - name: Run linting
-      run: bun lint
+      run: pnpm lint
       
     - name: Run tests
       run: pnpm test --coverage
       
     - name: Build
-      run: bun build
+      run: pnpm build
       
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3

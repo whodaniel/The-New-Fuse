@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, session, shell } = require('electron');
+const fs = require('fs');
 type BrowserWindow = import('electron').BrowserWindow;
 type IpcMain = import('electron').IpcMain;
 type Session = import('electron').Session;
@@ -78,17 +79,18 @@ class ElectronMain {
           delete responseHeaders['X-Frame-Options']
           delete responseHeaders['x-frame-options']
 
-          // Set proper CSP for development - more restrictive but functional
+          // Set proper CSP for development - allow local file loading
           responseHeaders['Content-Security-Policy'] = [
-            "default-src 'self' 'unsafe-inline' data: blob: ws: wss: http://localhost:* https:; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https: data:; " +
-            "frame-src 'self' http://localhost:* https: data:; " +
-            "child-src 'self' http://localhost:* https: data:; " +
-            "connect-src 'self' ws: wss: http://localhost:* https:; " +
-            "img-src 'self' data: https: http://localhost:*; " +
-            "style-src 'self' 'unsafe-inline' https: http://localhost:*; " +
-            "font-src 'self' data: https:; " +
-            "object-src 'none';"
+            "default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: ws: wss: http: https: file:; " +
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: http: https: file:; " +
+            "frame-src 'self' data: blob: http: https: file:; " +
+            "child-src 'self' data: blob: http: https: file:; " +
+            "connect-src 'self' ws: wss: http: https: file:; " +
+            "img-src 'self' data: blob: http: https: file:; " +
+            "style-src 'self' 'unsafe-inline' data: blob: http: https: file:; " +
+            "font-src 'self' data: blob: http: https: file:; " +
+            "object-src 'none'; " +
+            "media-src 'self' data: blob: http: https: file:;"
           ]
 
           callback({ responseHeaders })
@@ -116,6 +118,19 @@ class ElectronMain {
 
         // Set user agent to avoid iframe detection
         ses.setUserAgent(ses.getUserAgent().replace(/Electron\/[\d.]+\s/, ''))
+
+        // Register protocol handler for file:// URLs
+        app.setAsDefaultProtocolClient('file')
+
+        // Handle file:// protocol requests
+        ses.protocol.handle('file', (request: any) => {
+          const filePath = request.url.replace('file://', '')
+          try {
+            return { data: fs.readFileSync(decodeURIComponent(filePath)) }
+          } catch (error) {
+            return { error: -6 } // FILE_NOT_FOUND
+          }
+        })
       }
       this.createWindow()
       this.initializeHybridBackend()
@@ -155,10 +170,14 @@ class ElectronMain {
         contextIsolation: true,
         preload: join(__dirname, '../preload/preload.js'),
         webviewTag: true,
-        webSecurity: !isDev, // Disable in development for iframe loading, enable in production
-        allowRunningInsecureContent: false, // Always disable insecure content
-        experimentalFeatures: false, // Disable to remove security warning
-        // Removed enableBlinkFeatures to eliminate security warnings
+        webSecurity: false, // Disable for development to allow file:// loading
+        allowRunningInsecureContent: isDev, // Allow in development only
+        experimentalFeatures: false,
+        // Enable specific features for development
+        ...(isDev ? {
+          enableBlinkFeatures: 'CSSColorSchemeUARendering',
+          additionalArguments: ['--disable-web-security', '--allow-file-access-from-files']
+        } : {}),
         disableBlinkFeatures: 'OutOfBlinkCors',
         partition: 'persist:browser-hub'
       },

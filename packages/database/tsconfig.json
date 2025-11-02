@@ -5,12 +5,15 @@
     "rootDir": "./src",
     "composite": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "types": []
   },
-  "include": ["src/**/*", "generated/prisma"],
+  "include": ["src/**/*", "generated/**/*"],
   "exclude": ["dist", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "references": [
-    { "path": "../types" },
-    { "path": "../utils" }
+    { "path": "../types" }
   ]
 }

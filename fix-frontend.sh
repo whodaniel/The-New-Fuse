@@ -8,7 +8,7 @@ cd "$(dirname "$0")/apps/frontend"
 
 # Install dependencies directly with npm
 echo "📦 Installing dependencies with npm..."
-npm install --no-save vite@latest @vitejs/plugin-react@latest
+pnpm install --no-save vite@latest @vitejs/plugin-react@latest
 
 # Create a simple React component
 echo "🧩 Creating a simple React component..."

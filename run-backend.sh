@@ -9,6 +9,6 @@ cd "$(dirname "$0")/packages/backend"
 
 # Run the development server
 echo "Starting backend server..."
-npm run dev
+pnpm run dev
 
 echo "Backend server stopped"

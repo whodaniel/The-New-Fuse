@@ -1,0 +1,483 @@
+# Comprehensive Security Policies for The New Fuse
+# Implements Pod Security Standards, admission controllers, and security contexts
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted
+    security.component: production-namespace
+
+---
+# Pod Security Policy (for clusters that still support it)
+apiVersion: policy/v1beta1
+kind: PodSecurityPolicy
+metadata:
+  name: fuse-restricted-psp
+  labels:
+    security.component: pod-security-policy
+spec:
+  privileged: false
+  allowPrivilegeEscalation: false
+  requiredDropCapabilities:
+    - ALL
+  volumes:
+    - 'configMap'
+    - 'emptyDir'
+    - 'projected'
+    - 'secret'
+    - 'downwardAPI'
+    - 'persistentVolumeClaim'
+  hostNetwork: false
+  hostIPC: false
+  hostPID: false
+  runAsUser:
+    rule: 'MustRunAsNonRoot'
+  supplementalGroups:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  fsGroup:
+    rule: 'MustRunAs'
+    ranges:
+      - min: 1
+        max: 65535
+  readOnlyRootFilesystem: false
+  seLinux:
+    rule: 'RunAsAny'
+
+---
+# Security Context Constraints for OpenShift (if applicable)
+apiVersion: security.openshift.io/v1
+kind: SecurityContextConstraints
+metadata:
+  name: fuse-restricted-scc
+  labels:
+    security.component: security-context-constraints
+allowHostDirVolumePlugin: false
+allowHostIPC: false
+allowHostNetwork: false
+allowHostPID: false
+allowHostPorts: false
+allowPrivilegedContainer: false
+allowedCapabilities: null
+defaultAddCapabilities: null
+requiredDropCapabilities:
+- KILL
+- MKNOD
+- SETUID
+- SETGID
+fsGroup:
+  type: MustRunAs
+  ranges:
+  - min: 1
+    max: 65535
+readOnlyRootFilesystem: false
+runAsUser:
+  type: MustRunAsNonRoot
+seLinuxContext:
+  type: MustRunAs
+supplementalGroups:
+  type: MustRunAs
+  ranges:
+  - min: 1
+    max: 65535
+volumes:
+- configMap
+- downwardAPI
+- emptyDir
+- persistentVolumeClaim
+- projected
+- secret
+
+---
+# Network Security Policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+  namespace: production
+  labels:
+    security.component: default-deny-policy
+spec:
+  podSelector: {}
+  policyTypes:
+  - Ingress
+  - Egress
+
+---
+# API Server Security Policy
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: api-security-policy
+  namespace: production
+  labels:
+    app: fuse-api
+    security.component: api-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: fuse-api
+  policyTypes:
+  - Ingress
+  - Egress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: nginx-ingress
+    - podSelector:
+        matchLabels:
+          app: fuse-frontend
+    - podSelector:
+        matchLabels:
+          app: fuse-autoscaler
+    ports:
+    - protocol: TCP
+      port: 8080
+  egress:
+  - to:
+    - podSelector:
+        matchLabels:
+          app: postgres
+    ports:
+    - protocol: TCP
+      port: 5432
+  - to:
+    - podSelector:
+        matchLabels:
+          app: redis
+    ports:
+    - protocol: TCP
+      port: 6379
+  - to: []
+    ports:
+    - protocol: TCP
+      port: 53
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 443
+
+---
+# Resource Quotas for Security
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: production-security-quota
+  namespace: production
+  labels:
+    security.component: resource-quota
+spec:
+  hard:
+    requests.cpu: "10"
+    requests.memory: 20Gi
+    limits.cpu: "20"
+    limits.memory: 40Gi
+    persistentvolumeclaims: "10"
+    pods: "50"
+    services: "20"
+    secrets: "50"
+    configmaps: "50"
+
+---
+# Limit Ranges for Security
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: production-security-limits
+  namespace: production
+  labels:
+    security.component: limit-range
+spec:
+  limits:
+  - default:
+      cpu: "500m"
+      memory: "512Mi"
+    defaultRequest:
+      cpu: "100m"
+      memory: "128Mi"
+    max:
+      cpu: "2"
+      memory: "4Gi"
+    min:
+      cpu: "50m"
+      memory: "64Mi"
+    type: Container
+  - default:
+      storage: "10Gi"
+    max:
+      storage: "100Gi"
+    min:
+      storage: "1Gi"
+    type: PersistentVolumeClaim
+
+---
+# Service Account with restricted permissions
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: fuse-restricted-sa
+  namespace: production
+  labels:
+    security.component: restricted-service-account
+automountServiceAccountToken: false
+
+---
+# Role for restricted service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: fuse-restricted-role
+  namespace: production
+  labels:
+    security.component: restricted-role
+rules:
+- apiGroups: [""]
+  resources: ["configmaps", "secrets"]
+  verbs: ["get", "list"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+
+---
+# RoleBinding for restricted service account
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: fuse-restricted-binding
+  namespace: production
+  labels:
+    security.component: restricted-role-binding
+subjects:
+- kind: ServiceAccount
+  name: fuse-restricted-sa
+  namespace: production
+roleRef:
+  kind: Role
+  name: fuse-restricted-role
+  apiGroup: rbac.authorization.k8s.io
+
+---
+# Security Context for API Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fuse-api-secure
+  namespace: production
+  labels:
+    app: fuse-api
+    security.component: secure-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: fuse-api
+  template:
+    metadata:
+      labels:
+        app: fuse-api
+        security.component: secure-pod
+      annotations:
+        container.apparmor.security.beta.kubernetes.io/fuse-api: runtime/default
+    spec:
+      serviceAccountName: fuse-restricted-sa
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 3000
+        fsGroup: 2000
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: fuse-api
+        image: fuse-api:latest
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        securityContext:
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
+          runAsUser: 1000
+          runAsGroup: 3000
+          capabilities:
+            drop:
+            - ALL
+          seccompProfile:
+            type: RuntimeDefault
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+        livenessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/v1/health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "8080"
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: var-cache
+          mountPath: /var/cache
+        - name: var-run
+          mountPath: /var/run
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      - name: var-cache
+        emptyDir: {}
+      - name: var-run
+        emptyDir: {}
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+      - key: "node.kubernetes.io/not-ready"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+      - key: "node.kubernetes.io/unreachable"
+        operator: "Exists"
+        effect: "NoExecute"
+        tolerationSeconds: 300
+
+---
+# Admission Controller Configuration (ValidatingAdmissionWebhook)
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionWebhook
+metadata:
+  name: fuse-security-validator
+  labels:
+    security.component: admission-webhook
+webhooks:
+- name: security.fuse.com
+  clientConfig:
+    service:
+      name: fuse-security-webhook
+      namespace: production
+      path: "/validate"
+  rules:
+  - operations: ["CREATE", "UPDATE"]
+    apiGroups: ["apps"]
+    apiVersions: ["v1"]
+    resources: ["deployments", "daemonsets", "statefulsets"]
+  - operations: ["CREATE", "UPDATE"]
+    apiGroups: [""]
+    apiVersions: ["v1"]
+    resources: ["pods"]
+  admissionReviewVersions: ["v1", "v1beta1"]
+  sideEffects: None
+  failurePolicy: Fail
+
+---
+# Secret for storing sensitive configuration
+apiVersion: v1
+kind: Secret
+metadata:
+  name: fuse-security-config
+  namespace: production
+  labels:
+    security.component: security-config
+type: Opaque
+data:
+  # Base64 encoded values
+  jwt-secret: "c2VjdXJlLWp3dC1zZWNyZXQtZm9yLXByb2R1Y3Rpb24="
+  encryption-key: "MzItYnl0ZS1lbmNyeXB0aW9uLWtleS1mb3ItYWVzLTI1Ng=="
+  oauth-client-secret: "b2F1dGgtY2xpZW50LXNlY3JldC1mb3ItcHJvZHVjdGlvbg=="
+
+---
+# ConfigMap for security configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fuse-security-config
+  namespace: production
+  labels:
+    security.component: security-config
+data:
+  security.yaml: |
+    security:
+      cors:
+        enabled: true
+        allowedOrigins:
+          - "https://app.thenewfuse.com"
+          - "https://www.thenewfuse.com"
+        allowedMethods:
+          - "GET"
+          - "POST"
+          - "PUT"
+          - "DELETE"
+          - "OPTIONS"
+        allowedHeaders:
+          - "Content-Type"
+          - "Authorization"
+          - "X-Requested-With"
+        maxAge: 86400
+      
+      rateLimit:
+        enabled: true
+        windowMs: 900000  # 15 minutes
+        max: 100  # limit each IP to 100 requests per windowMs
+        
+      headers:
+        contentSecurityPolicy:
+          directives:
+            defaultSrc: ["'self'"]
+            scriptSrc: ["'self'", "'unsafe-inline'"]
+            styleSrc: ["'self'", "'unsafe-inline'"]
+            imgSrc: ["'self'", "data:", "https:"]
+            connectSrc: ["'self'", "wss:", "https:"]
+            fontSrc: ["'self'", "data:"]
+            objectSrc: ["'none'"]
+            mediaSrc: ["'self'"]
+            frameSrc: ["'none'"]
+        
+        hsts:
+          maxAge: 31536000
+          includeSubDomains: true
+          preload: true
+        
+        xFrameOptions: "SAMEORIGIN"
+        xContentTypeOptions: "nosniff"
+        xXssProtection: "1; mode=block"
+        referrerPolicy: "strict-origin-when-cross-origin"
+      
+      authentication:
+        jwt:
+          algorithm: "HS256"
+          expiresIn: "1h"
+          refreshExpiresIn: "7d"
+        
+        oauth:
+          providers:
+            - name: "google"
+              enabled: true
+            - name: "github"
+              enabled: true
+      
+      encryption:
+        algorithm: "aes-256-gcm"
+        keyRotation:
+          enabled: true
+          intervalDays: 90

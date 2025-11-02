@@ -44,7 +44,7 @@ mkdir -p packages/your-feature/src/{components,services,types}
 
 # Initialize package.json
 cd packages/your-feature
-npm init -y
+pnpm init -y
 ```
 
 #### Step 2: Configure TypeScript
@@ -381,7 +381,7 @@ Brief description of your feature.
 ## Installation
 
 \`\`\`bash
-npm install @the-new-fuse/your-feature
+pnpm install @the-new-fuse/your-feature
 \`\`\`
 
 ## Usage
@@ -455,7 +455,7 @@ DATABASE_URL=postgresql://prod-server:5432/newfuse_prod
 ```dockerfile
 # Add to main Dockerfile if needed
 COPY packages/your-feature ./packages/your-feature
-RUN cd packages/your-feature && npm install && npm run build
+RUN cd packages/your-feature && pnpm install && pnpm run build
 ```
 
 ## Troubleshooting

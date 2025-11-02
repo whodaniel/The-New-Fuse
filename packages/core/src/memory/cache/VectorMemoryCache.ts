@@ -21,23 +21,23 @@ export class VectorMemoryCache {
   private readonly maxSize: number;
   private readonly embeddingDimension: number;
   private readonly similarityThreshold: number;
-  constructor(): unknown {
+  constructor(): void {
     this.maxSize = parseInt(process.env.VECTOR_CACHE_SIZE || '1000');
     this.embeddingDimension = parseInt(process.env.EMBEDDING_DIMENSION || '1536');
     this.similarityThreshold = parseFloat(process.env.SIMILARITY_THRESHOLD || '0.7');
   }
 
-  async store(): unknown {
-    if(): unknown {
+  async store(item: any): void {
+    if(): void {
       throw new Error('Item must have an embedding to be cached');
     }
 
-    if(): unknown {
+    if(item: any): void {
       throw new Error(`Embedding dimension mismatch. Expected ${this.embeddingDimension}, got ${item.embedding.length}`);
     }
 
     // Evict if cache is full
-    if(): unknown {
+    if(): void {
       this.evictLRU();
     }
 
@@ -51,9 +51,9 @@ item,
     this.logger.debug(`Stored vector in cache: ${item.id}`);
   }
 
-  async get(): unknown {
+  async get(id: any, item: any): any {
     const entry = this.cache.get(id);
-    if(): unknown {
+    if(): any {
       return null;
     }
 
@@ -62,22 +62,22 @@ item,
     return entry.item;
   }
 
-  async search(): unknown {
-    if(): unknown {
+  async search(options: any, item: any): void {
+    if(): void {
       throw new Error('Query must have an embedding for vector search');
     }
 
     const results: SearchResult[] = [];
     const limit = options.limit || 10;
     const minSimilarity = options.minSimilarity || this.similarityThreshold;
-    for(): unknown {
+    for(item: any): void {
       // Apply type filter if specified
-      if(): unknown {
+      if(): void {
         continue;
       }
 
       const similarity = this.calculateCosineSimilarity(query.embedding, entry.embedding);
-      if(): unknown {
+      if(item: any): void {
         entry.lastAccessed = Date.now();
         entry.accessCount++;
         results.push({
@@ -93,10 +93,10 @@ item: entry.item,
     return results.slice(0, limit);
   }
 
-  async getVectorsByType(): unknown {
+  async getVectorsByType(): any {
     const results: VectorCacheEntry[] = [];
-    for(): unknown {
-      if(): unknown {
+    for(): void {
+      if(): void {
         results.push(entry);
       }
     }
@@ -104,28 +104,28 @@ item: entry.item,
     return results;
   }
 
-  async delete(): unknown {
+  async delete(id: any): any {
     const deleted = this.cache.delete(id);
-    if(): unknown {
+    if(id: any): void {
       this.logger.debug(`Deleted vector from cache: ${id}`);
     }
     return deleted;
   }
 
-  async clear(): unknown {
+  async clear(): void {
     this.cache.clear();
     this.logger.debug('Cleared vector cache');
   }
 
-  async has(): unknown {
+  async has(id: any): any {
     return this.cache.has(id);
   }
 
-  async size(): unknown {
+  async size(): any {
     return this.cache.size;
   }
 
-  async getStats(): unknown {
+  async getStats(): void {
     size: number;
     maxSize: number;
     memoryUsage: string;
@@ -147,20 +147,20 @@ const size = this.cache.size;
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if(): unknown {
+    if(): number {
       return 0;
     }
 
@@ -170,14 +170,14 @@ if(): unknown {
   private evictLRU(): void {
 let oldestId: string | null = null;
   }    let oldestTime = Infinity;
-    for(): unknown {
-      if(): unknown {
+    for(id: any): void {
+      if(id: any): void {
         oldestTime = entry.lastAccessed;
         oldestId = id;
       }
     }
 
-    if(): unknown {
+    if(): void {
       this.cache.delete(oldestId);
       this.logger.debug(`Evicted vector from cache: ${oldestId}`);
     }

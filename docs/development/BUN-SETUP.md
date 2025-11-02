@@ -1,34 +1,21 @@
-# Bun Setup Documentation
+# PNPM Setup Guide
 
-## Overview
+This guide covers setting up PNPM for The New Fuse development environment.
 
-This project uses Bun for dependency management and as a JavaScript runtime. Bun is a fast all-in-one JavaScript runtime that includes a package manager, bundler, and test runner.
+## Prerequisites
+
+- Node.js 18+ installed
+- PNPM package manager
 
 ## Installation
 
-Install Bun from the official website:
+### Install PNPM
 
 ```bash
-# Install Bun (macOS/Linux)
-curl -fsSL https://bun.sh/install | bash
-
-# Or via npm
-npm install -g bun
+npm install -g pnpm
 ```
 
-## Key Features
-
-Bun provides built-in support for:
-- Fast package installation (faster than npm/yarn)
-- TypeScript compilation (no additional setup required)
-- Workspace management for monorepos
-- Built-in bundler
-- Test runner
-- Hot reloading
-
-## Getting Started
-
-If you're new to the project:
+### Verify Installation
 
 ```bash
 # Install all dependencies
@@ -38,11 +25,9 @@ pnpm install
 pnpm run scripts/setup-bun.js
 ```
 
-## Daily Usage
+## Project Setup
 
-### Running Bun Commands
-
-Bun commands are straightforward:
+### Install Dependencies
 
 ```bash
 # Install dependencies
@@ -61,9 +46,7 @@ pnpm test
 pnpm run --filter @the-new-fuse/core build
 ```
 
-### Adding Dependencies
-
-Adding dependencies is simple with Bun:
+### Run Setup Script
 
 ```bash
 # Add a regular dependency
@@ -76,9 +59,9 @@ pnpm add -d typescript
 pnpm add express --cwd packages/core
 ```
 
-## Working with Monorepo Workspaces
+## Development Workflow
 
-This project uses Bun workspaces for monorepo management. To work with specific workspaces:
+### Install Dependencies
 
 ```bash
 # Run a script in a specific workspace
@@ -91,35 +74,36 @@ pnpm install --cwd packages/core
 pnpm add express --cwd packages/api
 ```
 
-## Environment Variables
+### Build Project
 
-Bun automatically loads environment variables from `.env` files. No additional configuration needed.
+```bash
+pnpm run build
+```
 
-## TypeScript Support
+### Start Development
 
-Bun has built-in TypeScript support:
-- No need for ts-node
-- No need for separate TypeScript compilation
-- Runs TypeScript files directly
-- Fast compilation
+```bash
+pnpm run dev
+```
 
-## Performance Benefits
+## Workspace Commands
 
-Bun is significantly faster than npm/yarn:
-- Package installation is 2-3x faster
-- Script execution is faster due to built-in runtime
-- Built-in bundling eliminates need for webpack/rollup
+### Build Specific Package
+
+```bash
+pnpm run --filter @the-new-fuse/core build
+```
 
 ## Troubleshooting
 
-If you encounter Bun-related issues:
+### Common Issues
 
 1. Check Bun version: `bun --version`
 2. Clear cache: `bun pm cache clear`
 3. Reinstall dependencies: `rm -rf node_modules && pnpm install`
 4. Check for conflicting package managers (remove yarn.lock if present)
 
-## Migration from Yarn
+### Package-specific Commands
 
 If migrating from Yarn:
 1. Remove yarn.lock and .yarn directory
@@ -127,10 +111,26 @@ If migrating from Yarn:
 3. Run `pnpm install` to create bun.lockb
 4. Update scripts to use `bun` instead of `yarn`
 
-## Why Bun?
+## Best Practices
 
-- **Speed**: Much faster than npm/yarn for installation and execution
-- **Simplicity**: All-in-one tool eliminates need for multiple tools
-- **Modern**: Built with modern JavaScript features in mind
-- **TypeScript**: Native TypeScript support without configuration
-- **Compatibility**: Drop-in replacement for npm/yarn in most cases
+1. Always use `pnpm install --frozen-lockfile` in CI
+2. Use workspace commands for monorepo operations
+3. Keep dependencies up to date with `pnpm update`
+
+## Migration Notes
+
+If migrating from Bun:
+
+1. Remove `bun.lockb` file
+2. Remove any Bun-specific configurations
+3. Reinstall dependencies: `rm -rf node_modules && pnpm install`
+4. Update scripts to use `pnpm` instead of `bun`
+5. Verify builds work correctly
+
+## Verification
+
+After setup, verify everything works:
+
+1. Check installation: `pnpm --version`
+2. Install dependencies: `pnpm install`
+3. Run `pnpm install` to create pnpm-lock.yaml

@@ -1,30 +1,29 @@
-# The New Fuse
+# The New Fuse - SaaS Platform
 
-A comprehensive multi-agent orchestration framework with browser automation, desktop integration, and AI-powered workflow management.
+A comprehensive multi-service SaaS platform with AI-powered workflow management, browser automation, and agent orchestration capabilities.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- [Bun](https://bun.sh) (recommended) or Node.js 18+
-- [Docker Desktop](https://docker.com/products/docker-desktop) (for database services)
-- Git
+
+- Node.js 20+
+- pnpm 10.19.0+ (install with `npm install -g pnpm`)
+- PostgreSQL 14+
+- Redis 6+
+- Docker (optional, for local database services)
 
 ### Installation
 
 ```bash
 # Clone the repository
-git clone <repository-url>
-cd the-new-fuse
+git clone https://github.com/whodaniel/fuse.git
+cd fuse
 
 # Install dependencies (includes automatic native module setup)
 pnpm install
 ```
 
-> **Note**: The installation process automatically sets up required native modules (canvas, drivelist, node-pty, @vscode/ripgrep) for optimal performance across different systems.
-
-### Development Setup
-
-#### 🚀 NEW: Modular Development (Recommended)
+### Development
 
 ```bash
 # Option 1: Fastest startup (no IDE) - RECOMMENDED FOR FIRST RUN
@@ -38,9 +37,9 @@ pnpm run dev             # Smart startup based on configuration
 pnpm run dev:cloud-ide   # Connect to remote IDE instance
 ```
 
-**🔧 Having Build Issues?** → See [Theia Quick Start Guide](docs/THEIA_QUICK_START.md)
+## Architecture
 
-#### Legacy Development Options
+### Core Services
 
 ```bash
 # With Docker Infrastructure
@@ -99,81 +98,87 @@ graph TD
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   None Mode     │    │   Local Mode    │    │   Cloud Mode    │
-│   Fastest       │    │ Full Local IDE  │    │  Remote IDE     │
-│   ~11 seconds   │    │ Port: 3007      │    │ External URL    │
+│   Frontend      │    │  API Gateway    │    │   API Server    │
+│   React + Vite  │◄──►│  NestJS         │◄──►│   NestJS        │
+│   Port: 3000    │    │  Port: 3002     │    │   Port: 3001    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
+         │                      │                       │
+         └──────────────────────┼───────────────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │   Backend Services     │
+                    │   NestJS + Workers     │
+                    │   Port: 3003           │
+                    └────────────────────────┘
 ```
 
-## 🎯 Core Features
+### Service Inventory
+
+#### Frontend Applications
+- **Frontend** (`apps/frontend`) - Main React application with Vite
+- **Client** (`apps/client`) - Alternative client application
+
+#### API Services
+- **API Server** (`apps/api`) - Core API service
+- **API Gateway** (`apps/api-gateway`) - Request routing and authentication
+- **Backend** (`apps/backend`) - Background services and workers
+
+#### Specialized Services
+- **Browser Hub** (`apps/browser-hub`) - Browser automation and management
+- **MCP Servers** (`apps/mcp-servers`) - Model Context Protocol servers
+- **Relay Server** (`apps/relay-server`) - Real-time communication relay
+- **Electron Desktop** (`apps/electron-desktop`) - Desktop application
+
+## Features
 
 ### Multi-Agent Orchestration
-- **Agent Communication**: Real-time agent-to-agent messaging
-- **Task Delegation**: Intelligent task distribution
-- **Workflow Management**: Visual workflow builder
-- **Context Sharing**: Shared memory and context management
+- Agent-to-agent communication
+- Intelligent task delegation
+- Workflow management
+- Shared context and memory
 
 ### Browser Automation
-- **Chrome Extension**: Native browser integration
-- **Browser Hub**: Unified control interface
-- **Web Scraping**: Intelligent data extraction
-- **UI Automation**: Visual element interaction
-
-### Desktop Integration
-- **Electron App**: Cross-platform desktop application
-- **System Integration**: Native OS capabilities
-- **Terminal Access**: Integrated terminal management
-- **File System Access**: Direct file operations
+- Chrome extension integration
+- Web scraping capabilities
+- UI automation
+- Visual element interaction
 
 ### AI Integration
-- **Multiple Providers**: Support for various AI models
-- **Context Protocol**: Model Context Protocol (MCP) support
-- **Real-time Processing**: Streaming AI responses
-- **Tool Integration**: AI-powered tool usage
+- Multiple AI provider support (OpenAI, Anthropic, Google)
+- Model Context Protocol (MCP) integration
+- Streaming responses
+- Tool integration
 
-### 🤖 Claude Agent System
-- **106+ Specialized Agents**: Complete ecosystem of AI agents for every domain
-- **Intelligent Search**: Advanced agent discovery with multi-criteria filtering
-- **Database Integration**: PostgreSQL storage with full metadata and analytics
-- **Slash Commands**: `/search-agents`, `/register-agents`, `/tag-agents` for easy access
-- **Auto-Registration**: Agents automatically discovered and stored on startup
-- **Performance Tracking**: Usage analytics and effectiveness metrics
+### Real-time Capabilities
+- WebSocket support
+- Live collaboration
+- Real-time updates
+- Event-driven architecture
 
-## 📦 Components
+## Technology Stack
 
-### Frontend (`apps/frontend`)
+### Frontend
 - React 18 with TypeScript
 - Vite for fast development
-- Chakra UI for components
-- Real-time WebSocket integration
+- Chakra UI components
+- React Query for data fetching
 
-### Backend (`apps/backend`)
-- NestJS framework with Bun runtime
-- RESTful API design
-- Real-time system monitoring
-- Docker service integration
+### Backend
+- NestJS framework
+- TypeScript
+- Prisma ORM
+- PostgreSQL database
+- Redis caching
 
-### Electron Desktop (`apps/electron-desktop`)
-- Cross-platform desktop application
-- Browser Hub integration
-- System-level capabilities
-- Native menu and tray integration
+### Infrastructure
+- Docker containerization
+- Railway deployment ready
+- Nixpacks build system
+- GitHub Actions CI/CD
 
-### Browser Hub (`apps/browser-hub`)
-- HTTP server for browser integration
-- Chrome extension compatibility
-- Visual service management
-- Real-time status monitoring
+## Package Manager
 
-## 🐳 Docker Infrastructure
-
-The project uses Docker for production-ready database services:
-
-### Services
-- **PostgreSQL**: Primary database (port 5433)
-- **Redis**: Caching and messaging (port 6380)
-
-### Docker Commands
+This project uses **pnpm** exclusively. Do not use npm or yarn.
 
 ```bash
 # Start Docker services
@@ -192,9 +197,37 @@ pnpm run docker:logs
 pnpm run docker:stop
 ```
 
-## 🛠️ Development
+## Project Structure
 
-### Available Scripts
+```
+fuse/
+├── apps/                      # Application services
+│   ├── api/                   # Main API server
+│   ├── api-gateway/           # API gateway
+│   ├── backend/               # Backend services
+│   ├── frontend/              # React frontend
+│   ├── browser-hub/           # Browser automation
+│   ├── mcp-servers/           # MCP servers
+│   ├── relay-server/          # Communication relay
+│   └── electron-desktop/      # Desktop app
+├── packages/                  # Shared packages
+│   ├── a2a-core/              # Agent-to-agent core
+│   ├── a2a-react/             # Agent React components
+│   ├── api-client/            # API client library
+│   ├── api-types/             # Shared API types
+│   ├── core/                  # Core utilities
+│   ├── database/              # Database schemas
+│   ├── mcp-core/              # MCP core functionality
+│   ├── workflow-engine/       # Workflow processing
+│   └── ...                    # Other shared packages
+├── scripts/                   # Build and deployment scripts
+├── docs/                      # Documentation
+└── railway-deploy.sh          # Railway deployment script
+```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with:
 
 ```bash
 # Development
@@ -321,7 +354,7 @@ pnpm run docker:start
 pnpm run dev
 ```
 
-### Production
+### Building
 ```bash
 # Build for production
 pnpm run build
@@ -330,52 +363,168 @@ pnpm run build
 docker-compose -f docker-compose.yml up -d
 ```
 
-### Cloud Deployment
-- **Frontend**: Vercel, Netlify
-- **Backend**: Railway, DigitalOcean Apps
-- **Database**: AWS RDS, Google Cloud SQL
-- **Redis**: Redis Cloud, AWS ElastiCache
+### Testing
+```bash
+pnpm run test             # Run all tests
+pnpm run test:unit        # Unit tests
+pnpm run test:integration # Integration tests
+pnpm run test:e2e         # End-to-end tests
+```
 
-## 🔧 Configuration
+### Database
+```bash
+pnpm run db:generate      # Generate Prisma client
+pnpm run db:migrate       # Run migrations
+pnpm run db:studio        # Open Prisma Studio
+pnpm run db:reset         # Reset database with seed data
+```
 
-### Environment Variables
+### Quality
+```bash
+pnpm run lint             # Lint code
+pnpm run type-check       # TypeScript checking
+pnpm run format           # Format code
+```
+
+### Cleaning
+```bash
+pnpm run clean            # Clean build artifacts
+pnpm run clean:cache      # Clear pnpm cache
+pnpm run clean:full       # Full clean + remove node_modules
+```
+
+## Deployment
+
+### Railway Deployment
+
+The project is configured for easy Railway deployment:
 
 ```bash
-# Database (Docker)
-DATABASE_URL=postgresql://newfuse:secretpass123@localhost:5433/the_new_fuse_dev
-REDIS_URL=redis://localhost:6380
+# Deploy all services
+./railway-deploy.sh
 
-# Application
-NODE_ENV=development
-PORT=3004
-API_URL=http://localhost:3004
-FRONTEND_URL=http://localhost:3000
-
-# Security
-JWT_SECRET=your-jwt-secret
+# Or deploy individual services
+cd apps/frontend && railway up
+cd apps/api && railway up
+cd apps/backend && railway up
 ```
 
-### Docker Configuration
+See [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md) for detailed deployment instructions.
 
-The project includes `docker-compose.dev-simple.yml` for development:
+### Docker Deployment
 
-```yaml
-services:
-  postgres-dev:
-    image: postgres:14-alpine
-    ports: ["5433:5432"]
-  redis-dev:
-    image: redis:6
-    ports: ["6380:6379"]
+```bash
+# Build Docker images
+docker build -t fuse-frontend -f apps/frontend/Dockerfile .
+docker build -t fuse-api -f apps/api/Dockerfile .
+
+# Run with docker-compose
+docker-compose up -d
 ```
 
-## 🤝 Contributing
+### Environment Setup
+
+1. Configure environment variables in Railway dashboard
+2. Add PostgreSQL and Redis plugins
+3. Set up custom domains (optional)
+4. Configure health checks
+5. Monitor deployments
+
+## Development Workflow
+
+### Adding a New Feature
+
+1. Create a new branch
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+2. Make your changes in the appropriate package/app
+
+3. Test locally
+   ```bash
+   pnpm run test
+   pnpm run type-check
+   ```
+
+4. Build to verify
+   ```bash
+   pnpm run build
+   ```
+
+5. Commit and push
+   ```bash
+   git add .
+   git commit -m "feat: your feature description"
+   git push origin feature/your-feature-name
+   ```
+
+### Working with Workspaces
+
+```bash
+# Install dependency in specific package
+pnpm --filter @the-new-fuse/api add express
+
+# Run command in specific package
+pnpm --filter @the-new-fuse/frontend run build
+
+# Run command in all packages
+pnpm -r run build
+```
+
+## Troubleshooting
+
+### Port Already in Use
+```bash
+# Check what's using the port
+lsof -i :3000
+
+# Clean ports (if script exists)
+pnpm run clean:ports
+```
+
+### Database Connection Issues
+```bash
+# Verify PostgreSQL is running
+psql -U postgres -c "SELECT version();"
+
+# Reset database
+pnpm run db:reset
+```
+
+### Build Failures
+```bash
+# Clean and reinstall
+pnpm run clean:full
+pnpm install
+pnpm run build
+```
+
+### Type Errors
+```bash
+# Regenerate Prisma client
+pnpm run db:generate
+
+# Run type check
+pnpm run type-check
+```
+
+## Documentation
+
+- [Development Setup](./DEVELOPMENT_SETUP.md) - Detailed development guide
+- [Railway Deployment](./RAILWAY_DEPLOYMENT.md) - Deployment instructions
+- [API Documentation](./docs/api/) - API reference
+- [Architecture](./docs/architecture/) - System architecture
+- [pnpm Standardization](./PNPM_STANDARDIZATION_REPORT.md) - Package manager info
+
+## Contributing
 
 1. Fork the repository
 2. Create a feature branch
-3. Make changes with tests
-4. Ensure Docker services work
-5. Submit a pull request
+3. Make your changes
+4. Add tests
+5. Ensure all tests pass
+6. Submit a pull request
 
 ### Development Setup for Contributors
 
@@ -472,11 +621,16 @@ For detailed troubleshooting, see:
 
 ## 📞 Support
 
+- **Issues**: [GitHub Issues](https://github.com/whodaniel/fuse/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/whodaniel/fuse/discussions)
 - **Documentation**: Check the `docs/` directory
-- **Issues**: Use GitHub Issues for bug reports
-- **Discussions**: Use GitHub Discussions for questions
-- **Docker Issues**: See [troubleshooting guide](./docs/troubleshooting/docker-services.md)
+
+## License
+
+[Add your license information here]
 
 ---
 
-**Happy coding! 🚀**
+**Ready to launch your SaaS platform!** 🚀
+
+For deployment instructions, see [RAILWAY_DEPLOYMENT.md](./RAILWAY_DEPLOYMENT.md)

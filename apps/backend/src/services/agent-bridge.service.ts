@@ -12,7 +12,7 @@ import { RedisService } from './redis.service';
 @Injectable()
 export class AgentBridgeService {
   @WebSocketServer()
-  server: Server;
+  server!: Server;
 
   private readonly logger = new Logger(AgentBridgeService.name);
 
@@ -63,4 +63,4 @@ export class AgentBridgeService {
       await this.redisService.sendToRooCoder(message);
     }
   }
-} 
+}

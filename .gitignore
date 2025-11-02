@@ -5,12 +5,13 @@ node_modules/
 
 # Build outputs
 build/
-dist/
 *.tsbuildinfo
 
 # Compiled output directories
 apps/*/dist/
 packages/*/dist/
+# Temporarily allow port-management dist for Railway deployment
+!packages/port-management/dist/
 
 # Generated files within source directories
 apps/**/*.js
@@ -33,6 +34,8 @@ src/renderer/
 
 # Specific generated directories
 generated/
+prisma/generated/
+packages/database/generated/
 apps/backend/src/scheduling/
 .claude/
 .kiro/
@@ -41,7 +44,7 @@ temp-theia-app/
 # Documentation/Planning files
 REAL_USER_JOURNEYS.md
 USER_JOURNEY_MAP.md
-README.md
+# README.md - Re-enabled for SaaS launch
 *_RESULTS.md
 *_USAGE.md
 *_REFERENCE.md
@@ -122,8 +125,8 @@ node-v*-*/
 logs
 *.log
 npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
+pnpm-error.log*
 
 # Database
 *.sqlite

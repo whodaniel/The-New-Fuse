@@ -1,0 +1,61 @@
+{
+  "targetUsers": 1000000,
+  "environment": "production",
+  "timeout": 3600000,
+  "parallel": true,
+  "maxConcurrentValidators": 3,
+  "reportFormats": ["json", "html", "summary"],
+  "outputDir": "./reports",
+  "thresholds": {
+    "overallScore": 85,
+    "criticalIssues": 0,
+    "warningThreshold": 5
+  },
+  "notifications": {
+    "enabled": false,
+    "webhook": null,
+    "email": null
+  },
+  "validationSettings": {
+    "loadTesting": {
+      "enabled": true,
+      "maxUsers": 1000000,
+      "duration": "10m",
+      "rampUpTime": "5m"
+    },
+    "security": {
+      "enabled": true,
+      "includeVulnerabilityScanning": true,
+      "includePenetrationTesting": true
+    },
+    "infrastructure": {
+      "enabled": true,
+      "validateAutoScaling": true,
+      "validateLoadBalancing": true,
+      "validateResourceLimits": true
+    },
+    "database": {
+      "enabled": true,
+      "validateIndexes": true,
+      "validateConnectionPools": true,
+      "validateQueryPerformance": true
+    },
+    "monitoring": {
+      "enabled": true,
+      "validateAlerts": true,
+      "validateDashboards": true,
+      "validateLogging": true
+    },
+    "disasterRecovery": {
+      "enabled": true,
+      "validateBackups": true,
+      "validateFailover": true,
+      "validateRecoveryTime": true
+    }
+  },
+  "customValidators": [],
+  "skipValidators": [],
+  "retryFailedValidators": true,
+  "maxRetries": 2,
+  "continueOnFailure": false
+}

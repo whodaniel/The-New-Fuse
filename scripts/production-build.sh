@@ -24,7 +24,7 @@ yarn clean:build
 
 # Step 3: Run tests
 echo -e "\n${YELLOW}Step 3: Running tests${NC}"
-yarn test || { 
+pnpm test || { 
   echo -e "${RED}Tests failed! Fix before continuing to production build.${NC}"
   exit 1
 }

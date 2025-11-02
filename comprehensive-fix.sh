@@ -14,11 +14,11 @@ sed -i '' 's/"ts-node": "\^10.9.3"/"ts-node": "10.9.3"/g' package.json
 
 # Step 3: Install ts-node globally
 echo "Step 3: Installing ts-node globally..."
-npm install -g ts-node@10.9.3
+pnpm install -g ts-node@10.9.3
 
-# Step 4: Try npm install first
-echo "Step 4: Running npm install..."
-npm install
+# Step 4: Try pnpm install first
+echo "Step 4: Running pnpm install..."
+pnpm install
 
 # Step 5: Try pnpm install
 echo "Step 5: Running pnpm install..."

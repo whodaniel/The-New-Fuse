@@ -38,7 +38,7 @@ print_info "Preparing extension for development testing..."
 echo "1️⃣ Checking dependencies..."
 if [ ! -d "node_modules" ]; then
     print_warning "Installing dependencies..."
-    npm install
+    pnpm install
     if [ $? -ne 0 ]; then
         print_error "Failed to install dependencies"
         exit 1

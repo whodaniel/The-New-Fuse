@@ -33,7 +33,7 @@ export {
  * 
  * Provides a convenient way to create and configure the workflow engine
  */
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@tnf/relay-core';
 
 // Import actual types from relay-core
@@ -46,7 +46,7 @@ import { WorkflowExecutor } from './executor/WorkflowExecutor';
 
 export interface WorkflowEngineFactoryConfig {
   // Database configuration
-  prisma: PrismaClient;
+  prisma: any; // PrismaClient;
   
   // Core services
   agentRegistry: MasterAgentRegistry;
@@ -152,7 +152,7 @@ export class WorkflowEngineFactory {
   }
   
   static createDefault(
-    prisma: PrismaClient,
+    prisma: any, // PrismaClient,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger

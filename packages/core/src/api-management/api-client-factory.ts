@@ -12,36 +12,33 @@ export interface ApiClientOptions {
 export class ApiClientFactory {
   private static logger = new Logger('ApiClientFactory');
   static createClient(options: ApiClientOptions): AxiosInstance {
-const client = axios.create({
-  }}
+    const client = axios.create({
       baseURL: options.baseURL,
       timeout: options.timeout || 30000,
-      headers: unknown;
-  // Implementation needed
-}
+      headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json'
       }
     });
     // Add API version header if specified
-    if(): unknown {
+    if (options.apiVersion) {
       client.defaults.headers.common['x-api-version'] = options.apiVersion;
     }
 
     // Add authorization header if API key is provided
-    if(): unknown {
+    if (options.apiKey) {
       client.defaults.headers.common['Authorization'] = `Bearer ${options.apiKey}`;
     }
 
     // Request interceptor for logging
     client.interceptors.request.use(
       (config) => {
-const redactedConfig = { ...config };
-  }        if(): unknown {
+        const redactedConfig = { ...config };
+        if (redactedConfig.headers?.Authorization) {
           redactedConfig.headers.Authorization = 'Bearer [REDACTED]';
         }
-        
-        this.logger.debug('message', context);
+
+        this.logger.debug('API Request', {
           method: config.method?.toUpperCase(),
           url: config.url,
           baseURL: config.baseURL,
@@ -50,23 +47,25 @@ const redactedConfig = { ...config };
         return config;
       },
       (error) => {
-this.logger.error('Request interceptor error', error);
-  }        return Promise.reject(error);
+        this.logger.error('Request interceptor error', error);
+        return Promise.reject(error);
       }
     );
     // Response interceptor for logging
     client.interceptors.response.use(
       (response: AxiosResponse) => {
-  // Implementation needed
-}
-        this.logger.debug('message', context);
+        this.logger.debug('API Response', {
+          status: response.status,
+          statusText: response.statusText,
+          url: response.config.url
         });
         return response;
       },
       (error) => {
-  // Implementation needed
-}
-        this.logger.error('message', context);
+        this.logger.error('API Error', {
+          message: error.message,
+          status: error.response?.status,
+          url: error.config?.url
         });
         return Promise.reject(error);
       }
@@ -75,25 +74,23 @@ this.logger.error('Request interceptor error', error);
   }
 
   static createRetryClient(options: ApiClientOptions): AxiosInstance {
-const client = this.createClient(options);
-  }    const retryAttempts = options.retryAttempts || 3;
+    const client = this.createClient(options);
+    const retryAttempts = options.retryAttempts || 3;
     const retryDelay = options.retryDelay || 1000;
     // Add retry logic
     client.interceptors.response.use(
       (response) => response,
-      async(): unknown {
+      async (error) => {
         const config = error.config;
-        if(): unknown {
+        if (!config.retry) {
           config.retry = 0;
         }
 
-        if(): unknown {
+        if (config.retry < retryAttempts && this.shouldRetry(error)) {
           config.retry++;
           const delay = retryDelay * Math.pow(2, config.retry - 1); // Exponential backoff
-          
+
           this.logger.warn(`API request failed, retrying in ${delay}ms (attempt ${config.retry}/${retryAttempts})`, {
-  // Implementation needed
-}
             url: config.url,
             status: error.response?.status
           });
@@ -108,8 +105,8 @@ const client = this.createClient(options);
   }
 
   private static shouldRetry(error: any): boolean {
-if(): unknown {
-  }      return true; // Network error
+    if (!error.response) {
+      return true; // Network error
     }
 
     const status = error.response.status;
@@ -117,6 +114,6 @@ if(): unknown {
   }
 
   private static delay(ms: number): Promise<void> {
-return new Promise(resolve => setTimeout(resolve, ms));
-  }}
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 }

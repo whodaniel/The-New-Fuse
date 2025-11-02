@@ -6,13 +6,24 @@
  */
 
 import { getTestEnvironment, TestHelpers } from '../setup/test-setup';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
+
+// Define types locally since workflow-engine dependency was removed
+enum WorkflowNodeType {
+  AGENT_TASK = 'AGENT_TASK',
+  AGENT_HANDOFF = 'AGENT_HANDOFF',
+  AGENT_COORDINATION = 'AGENT_COORDINATION',
+  CONDITION = 'CONDITION',
+  PARALLEL = 'PARALLEL',
+  SEQUENTIAL = 'SEQUENTIAL',
+  CUSTOM = 'CUSTOM'
+}
 
 describe('Master Agent Registry + Workflow Engine Integration', () => {
   let env: any;
 
   beforeAll(async () => {
-    env = getTestEnvironment();
+    env = await getTestEnvironment();
   });
 
   describe('Agent Task Assignment', () => {

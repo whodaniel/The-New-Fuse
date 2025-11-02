@@ -14,7 +14,7 @@ export class VectorMemoryManager {
   private readonly memories: VectorMemory[] = [];
   private readonly config: VectorMemoryManagerConfig;
   private optimizationTimer: NodeJS.Timeout | null = null;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 maxMemories: parseInt(process.env.MAX_VECTOR_MEMORIES || '1000'),
   }      optimizationInterval: parseInt(process.env.OPTIMIZATION_INTERVAL || '300000'), // 5 minutes
@@ -25,7 +25,7 @@ maxMemories: parseInt(process.env.MAX_VECTOR_MEMORIES || '1000'),
     this.logger.log('VectorMemoryManager initialized');
   }
 
-  async storeMemory(): unknown {
+  async storeMemory(): void {
     try {
 const importance = this.calculateImportance(content, metadata);
   }      const memoryId = await this.vectorMemoryService.addMemory({
@@ -50,7 +50,7 @@ this.logger.error('Failed to store vector memory:', error);
     }
   }
 
-  async retrieveMemory(): unknown {
+  async retrieveMemory(id: any): Promise<any> {
     try {
       return await this.vectorMemoryService.getMemory(id);
     } catch (error) {
@@ -59,12 +59,12 @@ this.logger.error(`Failed to retrieve vector memory ${id}:`, error);
     }
   }
 
-  async searchSimilarMemories(): unknown {
+  async searchSimilarMemories(options: any, item: any): Promise<any> {
     try {
       const { limit = 10, minSimilarity = 0.7 } = options;
       const results = await this.vectorMemoryService.searchSimilar(query, limit, minSimilarity);
       // Apply metadata filters if provided
-      if(): unknown {
+      if(options: any, item: any): any[] {
         return results.filter(result => 
           this.matchesMetadataFilter(result.item.metadata, options.filterMetadata!)
         );
@@ -77,10 +77,10 @@ this.logger.error('Failed to search similar memories:', error);
     }
   }
 
-  async deleteMemory(): unknown {
+  async deleteMemory(id: any): Promise<any> {
     try {
       const deleted = await this.vectorMemoryService.deleteMemory(id);
-      if(): unknown {
+      if(id: any): void {
         this.logger.debug(`Deleted vector memory: ${id}`);
       }
       return deleted;
@@ -90,13 +90,13 @@ this.logger.error(`Failed to delete vector memory ${id}:`, error);
     }
   }
 
-  async optimizeMemories(): unknown {
+  async optimizeMemories(): void {
     try {
       this.logger.debug('Starting memory optimization...');
       const stats = await this.vectorMemoryService.getStats();
       // Check if optimization is needed
       const utilizationRatio = stats.totalMemories / stats.maxMemories;
-      if(): unknown {
+      if(): void {
         this.logger.debug('Memory optimization not needed');
         return;
       }
@@ -110,7 +110,7 @@ this.logger.error('Memory optimization failed:', error);
   }}
   }
 
-  async getStats(): unknown {
+  async getStats(): void {
     totalMemories: number;
     maxMemories: number;
     memoryUsage: string;
@@ -137,7 +137,7 @@ this.logger.error('Failed to get memory stats:', error);
     }
   }
 
-  async clearAllMemories(): unknown {
+  async clearAllMemories(): void {
     try {
       await this.vectorMemoryService.clearMemories();
       this.logger.log('Cleared all vector memories');
@@ -154,11 +154,11 @@ let importance = 0.5; // Base importance
   }    const lengthBonus = Math.min(0.3, content.length / 1000);
     importance += lengthBonus;
     // Increase importance based on metadata flags
-    if(): unknown {
+    if(): void {
       importance += 0.3;
     }
     
-    if(): unknown {
+    if(): void {
       importance += 0.2;
     }
     
@@ -167,8 +167,8 @@ let importance = 0.5; // Base importance
   }
 
   private matchesMetadataFilter(itemMetadata: Record<string, unknown>, filter: Record<string, unknown>): boolean {
-for(): unknown {
-  }      if(): unknown {
+for(): boolean {
+  if(): void {
         return false;
       }
     }
@@ -182,8 +182,8 @@ this.optimizationTimer = setInterval(async () => {
     }, this.config.optimizationInterval);
   }
 
-  async onDestroy(): unknown {
-    if(): unknown {
+  async onDestroy(): void {
+    if(): void {
       clearInterval(this.optimizationTimer);
       this.optimizationTimer = null;
     }

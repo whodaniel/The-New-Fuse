@@ -18,7 +18,8 @@ import {
   StepType,
   WorkflowTask,
 } from './WorkflowTypes';
-import { TaskPriority, TaskStatus } from '@the-new-fuse/database';
+// import { TaskPriority, TaskStatus } from '@the-new-fuse/database';
+import { TaskPriority, TaskStatus } from './WorkflowTypes';
 
 export class WorkflowExecutor extends EventEmitter {
   private logger: Logger;

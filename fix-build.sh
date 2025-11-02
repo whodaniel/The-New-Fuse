@@ -6,12 +6,8 @@ echo "🔧 Fixing build issues..."
 echo "Removing postgres-migrations dependency..."
 sed -i '' '/postgres-migrations/d' package.json
 
-# Create an empty yarn.lock file
-echo "Creating empty yarn.lock file..."
-touch yarn.lock
-
-# Run yarn build with the --ignore-engines flag
-echo "Running yarn build..."
-yarn build --ignore-engines
+# Run pnpm build
+echo "Running pnpm build..."
+pnpm build
 
 echo "✅ Build process completed."

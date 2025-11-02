@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Put, Delete, Param, Body, Query, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Query, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../modules/guards/jwt-auth.guard';
 import { AgentService } from '../services/agent.service';
@@ -65,7 +65,13 @@ export class ConsolidatedApiController {
     @CurrentUser() user: UserModel,
   ): Promise<BatchOperationResponse<any>> {
     const startTime = Date.now();
-    const results = [];
+    const results: Array<{
+      id: string;
+      action: string;
+      success: boolean;
+      data?: any;
+      error?: string;
+    }> = [];
 
     for (const operation of request.operations) {
       try {
@@ -324,7 +330,7 @@ export class ConsolidatedApiController {
     const searchTypes = types.split(',');
     const results: any = { agents: [], workflows: [], tasks: [], total: 0 };
 
-    const searchPromises = [];
+    const searchPromises: Promise<{ type: string; data: any[] }>[] = [];
 
     if (searchTypes.includes('agents')) {
       searchPromises.push(

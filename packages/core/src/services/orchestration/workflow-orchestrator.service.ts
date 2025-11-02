@@ -1,2 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { WorkflowRegistry } from /../managers/workflow-registry'';
+import { Injectable, Logger } from '@nestjs/common';
+
+@Injectable()
+export class WorkflowOrchestratorService {
+  private readonly logger = new Logger(WorkflowOrchestratorService.name);
+
+  constructor() {}
+}

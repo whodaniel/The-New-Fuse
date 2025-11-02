@@ -32,6 +32,8 @@ export interface BuildError extends BaseError {
  */
 export interface BuildErrorContext extends ErrorContext {
   // Build-specific context properties
+  component: string;
+  operation: string;
   buildId?: string;
   packageName?: string;
   buildStage?: string;
@@ -43,37 +45,36 @@ export interface BuildErrorContext extends ErrorContext {
 /**
  * Build error handler configuration
  */
-export interface BuildErrorHandlerConfig extends BaseErrorHandlerConfig {
-  // Build-specific configuration
-  enableMemoryRecovery?: boolean;
-  enableCompilationRetry?: boolean;
-  enableDependencyRetry?: boolean;
-  maxMemoryRetries?: number;
-  memoryThreshold?: number;
+export interface BuildErrorHandlerConfig {
+  enableBuildOptimization: boolean;
+  enableMemoryMonitoring: boolean;
+  enableDependencyTracking: boolean;
+  buildTimeoutMs: number;
+  memoryThresholdMB: number;
+  maxConcurrentBuilds: number;
 }
 
 /**
  * Build error handler implementation
  */
 export class BuildUnifiedErrorHandler extends BaseErrorHandler<BuildError, BuildErrorContext> {
+  private readonly buildConfig: BuildErrorHandlerConfig;
   
-  constructor(config: Partial<BuildErrorHandlerConfig> = {}, logger?: Logger) {
-    const buildConfig: BuildErrorHandlerConfig = {
-      // Base configuration with defaults
-      enableAutoRecovery: config.enableAutoRecovery ?? true,
-      maxRecoveryAttempts: config.maxRecoveryAttempts ?? 3,
-      statisticsInterval: config.statisticsInterval ?? 60000,
-      enableLogging: config.enableLogging ?? true,
-      logLevel: config.logLevel ?? 'error',
-      // Build-specific configuration
-      enableMemoryRecovery: config.enableMemoryRecovery ?? true,
-      enableCompilationRetry: config.enableCompilationRetry ?? true,
-      enableDependencyRetry: config.enableDependencyRetry ?? true,
-      maxMemoryRetries: config.maxMemoryRetries ?? 2,
-      memoryThreshold: config.memoryThreshold ?? 80
+  constructor(config?: Partial<BuildErrorHandlerConfig>, logger?: Logger) {
+    // Pass only base configuration to parent
+    const baseConfig: Partial<BaseErrorHandlerConfig> = {};
+    super(baseConfig, logger || new Logger('BuildUnifiedErrorHandler'));
+
+    this.buildConfig = {
+      enableBuildOptimization: config?.enableBuildOptimization ?? true,
+      enableMemoryMonitoring: config?.enableMemoryMonitoring ?? true,
+      enableDependencyTracking: config?.enableDependencyTracking ?? true,
+      buildTimeoutMs: config?.buildTimeoutMs ?? 300000,
+      memoryThresholdMB: config?.memoryThresholdMB ?? 2048,
+      maxConcurrentBuilds: config?.maxConcurrentBuilds ?? 4
     };
-    
-    super(buildConfig, logger || new Logger('BuildUnifiedErrorHandler'));
+
+    this.initializeDefaultRecoveryStrategies();
   }
 
   /**

@@ -1,0 +1,27 @@
+# Nixpacks configuration for frontend service in monorepo
+# This handles pnpm workspace dependencies correctly
+
+[phases.setup]
+nixPkgs = ["nodejs_20", "pnpm"]
+
+[variables]
+NODE_VERSION = "20"
+PNPM_VERSION = "10.19.0"
+
+[phases.install]
+cmds = [
+  # Install all workspace dependencies from root
+  "pnpm install --frozen-lockfile"
+]
+
+[phases.build]
+cmds = [
+  # Build dependencies first (types, ui-consolidated, etc)
+  "pnpm --filter @the-new-fuse/types build || true",
+  "pnpm --filter @the-new-fuse/ui-consolidated build || true",
+  # Build frontend
+  "pnpm --filter @the-new-fuse/frontend-app build"
+]
+
+[start]
+cmd = "pnpm --filter @the-new-fuse/frontend-app start"

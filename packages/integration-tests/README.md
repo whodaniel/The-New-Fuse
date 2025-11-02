@@ -35,38 +35,38 @@ src/
 
 ```bash
 # Install dependencies
-npm install
+pnpm install
 
 # Setup test database
-npm run setup-db
+ppnpm run setup-d
 ```
 
 ### Test Commands
 
 ```bash
 # Run all integration tests
-npm test
+pnpm test
 
 # Run specific test suites
-npm run test:integration
-npm run test:e2e
-npm run test:performance
+pnpm run test:integration
+pnpm run test:e2e
+pnpm run test:performance
 
 # Run with coverage
-npm run test:coverage
+pnpm run test:coverage
 
 # Watch mode for development
-npm run test:watch
+pnpm run test:watch
 ```
 
 ### Performance Benchmarks
 
 ```bash
 # Run performance benchmarks
-npm run test:performance
+pnpm run test:performance
 
 # Generate benchmark report
-npm run benchmark:report
+pnpm run benchmark:report
 ```
 
 ## Test Categories
@@ -329,9 +329,9 @@ jobs:
         with:
           node-version: '18'
       - run: npm ci
-      - run: npm run test:integration
-      - run: npm run test:e2e
-      - run: npm run test:performance
+      - run: pnpm run test:integration
+      - run: pnpm run test:e2e
+      - run: pnpm run test:performance
 ```
 
 ### Test Reports
@@ -346,12 +346,12 @@ jobs:
 
 ```bash
 # Enable verbose logging
-DEBUG=* npm test
+DEBUG=* pnpm test
 
 # Component-specific logging
-DEBUG=agent-registry npm test
-DEBUG=workflow-engine npm test
-DEBUG=extension-system npm test
+DEBUG=agent-registry pnpm test
+DEBUG=workflow-engine pnpm test
+DEBUG=extension-system pnpm test
 ```
 
 ### Common Issues

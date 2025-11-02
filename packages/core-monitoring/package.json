@@ -2,21 +2,23 @@
   "name": "@tnf/core-monitoring",
   "version": "1.0.0",
   "description": "Unified monitoring system for The New Fuse",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "test": "echo \"No tests found for @tnf/core-monitoring\" && exit 0",
+    "build:foundation": "tsc",
+    "test": "vitest",
     "lint": "eslint src/**/*.ts"
   },
   "dependencies": {
     "events": "^3.3.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "typescript": "^5.0.0",
-    "vitest": "^1.0.0",
-    "eslint": "^8.0.0"
+    "@types/node": "^24.8.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "eslint": "^9.38.0"
   },
   "exports": {
     ".": {

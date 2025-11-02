@@ -150,7 +150,7 @@ window.postMessage({ type: 'TNF_RESET_ELEMENTS' }, '*');
 
 **A. Install WebSocket Package:**
 ```bash
-npm install ws
+pnpm install ws
 # or
 pnpm install ws
 ```
@@ -163,9 +163,9 @@ node --version
 
 **C. Clear Package Cache:**
 ```bash
-npm cache clean --force
+pnpm store prune --force
 rm -rf node_modules
-npm install
+pnpm install
 ```
 
 ## 🛠 Debug Commands

@@ -22,7 +22,7 @@ fi
 
 # Step 3: Install ts-node globally to ensure it's available
 echo "Step 3: Installing ts-node globally..."
-npm install -g ts-node@10.9.3
+pnpm install -g ts-node@10.9.3
 
 # Step 4: Try yarn install with increased network timeout
 echo "Step 4: Running yarn install with increased network timeout..."

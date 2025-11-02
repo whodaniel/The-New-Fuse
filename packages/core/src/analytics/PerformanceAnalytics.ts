@@ -23,10 +23,8 @@ export interface RequestRecord {
 export class PerformanceAnalytics {
   private metrics: RequestRecord[] = [];
   private readonly maxStoredMetrics = 50000;
-  recordRequest(): unknown {
+  recordRequest(responseTime: number, success: boolean, endpoint?: string, method?: string, statusCode?: number): void {
     const record: RequestRecord = {
-  // Implementation needed
-}
       timestamp: new Date(),
       responseTime,
       success,
@@ -36,20 +34,19 @@ export class PerformanceAnalytics {
     };
     this.metrics.push(record);
     // Keep only the most recent metrics to prevent memory issues
-    if(): unknown {
+    if (this.metrics.length > this.maxStoredMetrics) {
       this.metrics = this.metrics.slice(-this.maxStoredMetrics);
     }
   }
 
-  getMetrics(): unknown {
+  getMetrics(timeWindowMinutes: number = 60): PerformanceMetrics {
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
     const recentMetrics = this.metrics.filter(m => m.timestamp > windowStart);
-    if(): unknown {
+    if (recentMetrics.length === 0) {
       return {
-averageResponseTime: 0
-          },
-          requestCount: 0,
+        averageResponseTime: 0,
+        requestCount: 0,
         throughput: 0,
         minResponseTime: 0,
         maxResponseTime: 0,
@@ -65,8 +62,6 @@ averageResponseTime: 0
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p99Index = Math.floor(responseTimes.length * 0.99);
     return {
-  // Implementation needed
-}
       averageResponseTime: avgResponseTime,
       requestCount: recentMetrics.length,
       throughput: recentMetrics.length / timeWindowMinutes, // per minute
@@ -78,17 +73,16 @@ averageResponseTime: 0
     };
   }
 
-  getEndpointMetrics(): unknown {
+  getEndpointMetrics(endpoint: string, timeWindowMinutes: number = 60): PerformanceMetrics {
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
-    const filteredMetrics = this.metrics.filter(m => 
+    const filteredMetrics = this.metrics.filter(m =>
       m.timestamp > windowStart && m.endpoint === endpoint
     );
-    if(): unknown {
+    if (filteredMetrics.length === 0) {
       return {
-averageResponseTime: 0
-          },
-          requestCount: 0,
+        averageResponseTime: 0,
+        requestCount: 0,
         throughput: 0,
         minResponseTime: 0,
         maxResponseTime: 0,
@@ -104,8 +98,6 @@ averageResponseTime: 0
     const p95Index = Math.floor(responseTimes.length * 0.95);
     const p99Index = Math.floor(responseTimes.length * 0.99);
     return {
-  // Implementation needed
-}
       averageResponseTime: avgResponseTime,
       requestCount: filteredMetrics.length,
       throughput: filteredMetrics.length / timeWindowMinutes,
@@ -117,24 +109,20 @@ averageResponseTime: 0
     };
   }
 
-  getSlowRequests(): unknown {
+  getSlowRequests(thresholdMs: number, hours: number = 24): RequestRecord[] {
     const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.metrics.filter(m => 
+    return this.metrics.filter(m =>
       m.timestamp > cutoff && m.responseTime > thresholdMs
     );
   }
 
   getTopEndpoints(limit: number = 10, timeWindowMinutes: number = 60): Array<{endpoint: string; count: number}> {
-  // Implementation needed
-}
     const now = new Date();
     const windowStart = new Date(now.getTime() - timeWindowMinutes * 60 * 1000);
     const recentMetrics = this.metrics.filter(m => m.timestamp > windowStart && m.endpoint);
     const endpointCounts: Record<string, number> = {};
     recentMetrics.forEach(m => {
-  // Implementation needed
-}
-      if(): unknown {
+      if (m.endpoint) {
         endpointCounts[m.endpoint] = (endpointCounts[m.endpoint] || 0) + 1;
       }
     });
@@ -149,7 +137,7 @@ averageResponseTime: 0
     this.metrics = this.metrics.filter(m => m.timestamp > cutoff);
   }
 
-  getTotalRequestCount(): unknown {
+  getTotalRequestCount(): number {
     return this.metrics.length;
   }
 }

@@ -24,7 +24,7 @@ export interface ToolDefinition {
 export class McpToolRegistry {
   private logger = new Logger('McpToolRegistry');
   private tools: Map<string, MCPTool> = new Map();
-  constructor(): unknown {
+  constructor(): void {
     this.registerDefaultTools();
   }
 
@@ -40,7 +40,7 @@ export class McpToolRegistry {
 }
         path: z.string().describe('File path to read')
       }),
-      async handler(): unknown {
+      async handler(): any {
         // Implementation would go here
         return { content: 'File content would be returned here' };
       }
@@ -55,7 +55,7 @@ name: 'execute_command',
         command: z.string().describe('Command to execute'),
         cwd: z.string().optional().describe('Working directory')
       }),
-      async handler(): unknown {
+      async handler(): any {
         // Implementation would go here
         return { output: 'Command output would be returned here' };
       }
@@ -72,7 +72,7 @@ name: 'web_request',
         headers: z.record(z.string()).optional(),
         body: z.any().optional()
       }),
-      async handler(): unknown {
+      async handler(data: any): any {
         // Implementation would go here
         return { status: 200, data: 'Response data would be returned here' };
       }
@@ -87,7 +87,7 @@ name: 'analyze_code',
         query: z.string().describe('Analysis query or file pattern'),
         type: z.enum(['structure', 'dependencies', 'complexity']).default('structure')
       }),
-      async handler(): unknown {
+      async handler(): any {
         // Implementation would go here
         return { analysis: 'Code analysis results would be returned here' };
       }
@@ -102,7 +102,7 @@ this.tools.set(tool.name, tool);
 
   public unregisterTool(name: string): boolean {
 const removed = this.tools.delete(name);
-  }    if(): unknown {
+  if(): void {
       this.logger.debug(`Unregistered tool: ${name}`);
     }
     return removed;
@@ -127,7 +127,7 @@ return this.getAllTools().map(tool => ({
 
   public async executeTool(name: string, params: any): Promise<any> {
 const tool = this.getTool(name);
-  }    if(): unknown {
+  if(): void {
       throw new Error(`Tool not found: ${name}`);
     }
 
@@ -155,14 +155,14 @@ return this.getAllTools().filter(tool => tool.name.startsWith(`${group}.`));
   private zodSchemaToJsonSchema(schema: z.ZodSchema): any {
 // Basic conversion of Zod schema to JSON schema
     // This is a simplified implementation - in production you might want to use a library
-  }    if(): unknown {
+  if(): void {
       const shape = schema.shape;
       const properties: Record<string, any> = {};
       const required: string[] = [];
       Object.entries(shape).forEach(([key, value]) => {
-if(): unknown {
+if(): void {
   }          properties[key] = { type: 'string' };
-          if(): unknown {
+          if(value: any): void {
             properties[key].description = value.description;
           }
         } else if (value instanceof z.ZodNumber) {
@@ -187,7 +187,7 @@ properties[key] = {
         }
 
         // Add to required if not optional
-        if(): unknown {
+        if(): void {
           required.push(key);
         }
       });

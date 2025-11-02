@@ -1,20 +1,15 @@
 import { WorkflowTemplate, WorkflowStepType, WorkflowStep } from '../types/types';
+
 export const communicationFlowTemplate: WorkflowTemplate = {
-  // Implementation needed
-}
   id: 'ai-diplomacy-agentic-flow',
   name: 'AI Diplomacy Agentic Flow',
   description: 'Detailed agentic workflow for AI Diplomacy, including context construction, memory, diaries, and phase transitions.',
   version: '1.0.0',
-  config: unknown;
-  // Implementation needed
-}
+  config: {
     startStep: 'context-construction'
   },
   steps: [
     {
-  // Implementation needed
-}
       id: 'context-construction',
       name: 'Context Construction',
       type: WorkflowStepType.DATA_TRANSFORMATION,
@@ -33,44 +28,32 @@ export const communicationFlowTemplate: WorkflowTemplate = {
         'build_context_prompt',
         'Recent Context'
       ],
-      config: unknown;
-  // Implementation needed
-}
+      config: {
         operation: 'build_context'
       },
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'initialization',
       name: 'Initialization',
       type: WorkflowStepType.INITIALIZATION,
-      config: unknown;
-  // Implementation needed
-}
+      config: {
         action: 'Set initial goals & relationships'
       },
       dependencies: ['context-construction'],
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'negotiation',
       name: 'Negotiation',
       type: WorkflowStepType.COMMUNICATION,
-      config: unknown;
-  // Implementation needed
-}
+      config: {
         action: 'Generate messages, update relationships'
       },
       dependencies: ['initialization'],
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'private-diary',
       name: 'Private Diary',
       type: WorkflowStepType.DOCUMENTATION,
@@ -85,8 +68,6 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'negotiation-diary',
       name: 'Negotiation Diary',
       type: WorkflowStepType.DOCUMENTATION,
@@ -101,8 +82,6 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'order-diary',
       name: 'Order Diary',
       type: WorkflowStepType.DOCUMENTATION,
@@ -117,8 +96,6 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'phase-result-diary',
       name: 'Phase Result Diary',
       type: WorkflowStepType.DOCUMENTATION,
@@ -133,8 +110,6 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'diary-consolidation',
       name: 'Diary Consolidation',
       type: WorkflowStepType.DATA_CONSOLIDATION,
@@ -149,8 +124,6 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'memory-update',
       name: 'Memory System Update',
       type: WorkflowStepType.MEMORY_UPDATE,
@@ -171,14 +144,10 @@ export const communicationFlowTemplate: WorkflowTemplate = {
       status: 'pending'
     },
     {
-  // Implementation needed
-}
       id: 'loop',
       name: 'Loop to Next Phase',
       type: WorkflowStepType.CONTROL_FLOW,
-      config: unknown;
-  // Implementation needed
-}
+      config: {
         action: 'Return to Negotiation for next phase'
       },
       dependencies: ['memory-update'],

@@ -1,53 +1,40 @@
-# Start from the official Node.js LTS image
-FROM node:20-alpine as builder
+FROM node:20-alpine3.19
 
-# Set working directory
+# Update Alpine packages for security patches
+RUN apk update && apk upgrade --no-cache
+
+RUN npm install -g pnpm
 WORKDIR /app
 
-# Copy root package files for dependency install
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY .yarn ./.yarn
+# Copy workspace config
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
-# Copy all workspace package.json files
+# Copy package.json files for workspace packages
 COPY packages/types/package.json ./packages/types/
-COPY packages/utils/package.json ./packages/utils/
 COPY packages/core/package.json ./packages/core/
-COPY packages/api/package.json ./packages/api/
-COPY packages/api-types/package.json ./packages/api-types/
-COPY packages/features/package.json ./packages/features/
-COPY packages/shared/package.json ./packages/shared/
+COPY packages/database/package.json ./packages/database/
+COPY packages/utils/package.json ./packages/utils/
 COPY apps/backend/package.json ./apps/backend/
 
-# Install dependencies
-RUN corepack enable
-RUN yarn install --immutable
+# Install all dependencies
+RUN pnpm install --frozen-lockfile
 
-# Copy source files for all required packages
-COPY ../../packages/types ./packages/types
-COPY ../../packages/utils ./packages/utils
-COPY ../../packages/core ./packages/core
-COPY ../../packages/api ./packages/api
-COPY ../../packages/api-types ./packages/api-types
-COPY ../../packages/features ./packages/features
-COPY ../../packages/shared ./packages/shared
-COPY ../../apps/backend/src ./apps/backend/src
-COPY ../../apps/backend/tsconfig.json ./apps/backend/tsconfig.json
+# Copy source code for packages and app
+COPY packages/types ./packages/types
+COPY packages/core ./packages/core
+COPY packages/database ./packages/database
+COPY packages/utils ./packages/utils
+COPY apps/backend ./apps/backend
 
-# Build the backend app (outputs to dist/)
+# Build packages first
+RUN cd packages/types && pnpm run build || true
+RUN cd packages/core && pnpm run build || true
+RUN cd packages/database && pnpm run build || true
+RUN cd packages/utils && pnpm run build || true
+
+# Build the backend app
 WORKDIR /app/apps/backend
-RUN yarn build
+RUN pnpm run build
 
-# --- Production image ---
-FROM node:20-alpine
-WORKDIR /app
-
-# Copy only built app and node_modules from builder
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY package.json .
-
-# Expose backend port
-EXPOSE 3000
-
-# Start the app
-CMD ["node", "dist/main"]
+EXPOSE 3001
+CMD ["node", "dist/main.js"]

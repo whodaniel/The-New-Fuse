@@ -8,9 +8,14 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger';
-import { AgentType, AgentStatus, TaskStatus, TaskPriority } from '@the-new-fuse/database';
-import { PrismaClient } from '@the-new-fuse/database';
-import { ethers } from 'ethers';
+import {
+  AgentType,
+  AgentStatus,
+  TaskStatus,
+  TaskPriority,
+  PrismaClient
+} from '@the-new-fuse/database';
+import { ethers, Contract, JsonRpcProvider, Wallet, parseUnits } from 'ethers';
 import { VCIssuanceService, VCIssuanceRequest } from './VCIssuanceService';
 import { BlockchainService, BlockchainConfig } from './shared/BlockchainService';
 // import { sha256 } from '../../../../src/utils/cryptoUtils';
@@ -76,8 +81,8 @@ export interface MasterAgentProfile {
   // Core Identity (from Prisma Agent model)
   id: string;
   name: string;
-  type: AgentType;
-  status: AgentStatus;
+  type: string;
+  status: string;
   description?: string;
   systemPrompt?: string;
   configuration?: any;
@@ -229,7 +234,7 @@ export interface SpreadsheetIntegration {
 
 export class MasterAgentRegistry extends EventEmitter {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private prisma: any;
   private legacyRegistry: AgentRegistry;
   private metadataManager: AgentMetadataManager;
   
@@ -253,12 +258,12 @@ export class MasterAgentRegistry extends EventEmitter {
   private blockchainService: BlockchainService | null = null;
   private vcIssuanceService: VCIssuanceService | null = null;
   private blockchainConfig: BlockchainConfig | null = null;
-  private agentNFTContract: ethers.Contract | null = null;
-  private web3Provider: ethers.providers.JsonRpcProvider | null = null;
-  private wallet: ethers.Wallet | null = null;
+  private agentNFTContract: Contract | null = null;
+  private web3Provider: JsonRpcProvider | null = null;
+  private wallet: Wallet | null = null;
 
   constructor(
-    prisma: PrismaClient, 
+    prisma: any, 
     logger: Logger, 
     blockchainConfig?: BlockchainConfig,
     vcPrivateKey?: string
@@ -316,13 +321,23 @@ export class MasterAgentRegistry extends EventEmitter {
     verificationHash: string;
     spreadsheetRowId?: string;
   }> {
+    console.log('🚨 REGISTERAGENT METHOD CALLED - VERY FIRST LINE');
     try {
+      console.error('🔥 REGISTERAGENT METHOD CALLED - ENTRY POINT');
+      console.error('🔥 Profile received:', JSON.stringify(profile, null, 2));
+      console.error('🔥 Logger exists:', !!this.logger);
+      console.error('🔥 Prisma exists:', !!this.prisma);
+      console.error('🔥 ENTERING TRY BLOCK');
+      console.error('🔍 DEBUG: registerAgent called with profile:', JSON.stringify(profile, null, 2));
       this.logger.info(`🚀 MASTER REGISTRATION INITIATED: ${profile.name || 'Unknown Agent'}`);
 
       // Generate unique ID if not provided
       const agentId = profile.id || this.generateAgentId(profile.type || 'BASIC', profile.platform || 'unknown');
+      console.error('🔥 Generated agentId:', agentId);
+      console.error('🔍 DEBUG: Generated agentId:', agentId);
       
       // Create complete profile with defaults
+      console.log('🔍 DEBUG: Creating complete profile...');
       const completeProfile: MasterAgentProfile = {
         id: agentId,
         name: profile.name || `${profile.type || 'Unknown'} Agent`,
@@ -397,7 +412,13 @@ export class MasterAgentRegistry extends EventEmitter {
       };
 
       // 1. Store in Prisma database (single source of truth)
-      await this.prisma.agent.create({
+      console.log('🔍 DEBUG: About to call prisma.agent.create with data:', JSON.stringify({
+        id: agentId,
+        name: completeProfile.name,
+        type: completeProfile.type,
+        status: completeProfile.status
+      }, null, 2));
+      const dbAgent = await this.prisma.agent.create({
         data: {
           id: agentId,
           name: completeProfile.name,
@@ -411,10 +432,13 @@ export class MasterAgentRegistry extends EventEmitter {
           metadata: {
             create: {
               version: completeProfile.metadata.version,
-              lastActive: new Date(),
-              personalityTraits: completeProfile.metadata.personalityTraits,
-              communicationStyle: completeProfile.metadata.communicationStyle,
-              expertiseAreas: completeProfile.metadata.expertiseAreas,
+              metadata: {
+                lastActive: new Date(),
+                capabilities: completeProfile.capabilities,
+                personalityTraits: completeProfile.metadata.personalityTraits,
+                communicationStyle: completeProfile.metadata.communicationStyle,
+                expertiseAreas: completeProfile.metadata.expertiseAreas
+              },
               config: {
                 platform: completeProfile.platform,
                 location: completeProfile.location,
@@ -425,6 +449,7 @@ export class MasterAgentRegistry extends EventEmitter {
         },
         include: { metadata: true }
       });
+      console.log('🔍 DEBUG: Prisma agent.create successful, dbAgent:', JSON.stringify(dbAgent, null, 2));
 
       const dbAgent = await this.prisma.agent.findUnique({
         where: { id: agentId },
@@ -439,8 +464,8 @@ export class MasterAgentRegistry extends EventEmitter {
       const legacyAgent: LegacyAgent = {
         id: agentId,
         name: completeProfile.name,
-        type: this.convertToLegacyType(completeProfile.type),
-        status: this.convertToLegacyStatus(completeProfile.status),
+        type: this.convertToLegacyType(completeProfile.type as AgentType),
+        status: this.convertToLegacyStatus(completeProfile.status as AgentStatus),
         capabilities: this.extractLegacyCapabilities(completeProfile.capabilities),
         registeredAt: completeProfile.registeredAt.toISOString(),
         lastSeen: completeProfile.lastSeen.toISOString(),
@@ -451,11 +476,11 @@ export class MasterAgentRegistry extends EventEmitter {
       // 3. Generate verification hash
       completeProfile.verificationHash = this.generateVerificationHash(completeProfile);
 
-      // 4. Initialize agent todo list
-      await this.initializeAgentTodoList(agentId);
-
-      // 5. Store in memory cache
+      // 4. Store in memory cache FIRST (required for todo list initialization)
       this.agentProfiles.set(agentId, completeProfile);
+
+      // 5. Initialize agent todo list (now that agent is in memory)
+      await this.initializeAgentTodoList(agentId);
 
       // 6. Update system metrics
       this.updateSystemMetrics();
@@ -483,11 +508,8 @@ export class MasterAgentRegistry extends EventEmitter {
                 metadata: {
                   update: {
                     config: {
-                    ...((dbAgent.metadata?.config && typeof dbAgent.metadata.config === 'object') ? dbAgent.metadata.config : {}),
-                    onChainData: {
-                        ...onChainData,
-                        lastOnChainUpdate: onChainData.lastOnChainUpdate?.toISOString(),
-                    }
+                      ...(typeof dbAgent.metadata?.config === 'object' && dbAgent.metadata?.config !== null ? dbAgent.metadata.config : {}),
+                      onChainData: JSON.parse(JSON.stringify(onChainData))
                     }
                   }
                 }
@@ -515,6 +537,8 @@ export class MasterAgentRegistry extends EventEmitter {
         spreadsheetRowId
       };
     } catch (error) {
+      console.log('🔍 DEBUG: Error in registerAgent:', error);
+      console.log('🔍 DEBUG: Error stack:', error instanceof Error ? error.stack : 'No stack trace');
       this.logger.error(`❌ MASTER REGISTRATION FAILED: ${error instanceof Error ? error.message : String(error)}`);
       return {
         success: false,
@@ -734,26 +758,39 @@ export class MasterAgentRegistry extends EventEmitter {
     // Store in agent's todo list
     agent.todoList.push(todo);
 
-    // Also create a Prisma Task for persistence and integration
-    if (todoData.category !== 'onboarding') { // Don't clutter Task table with onboarding todos
-      const prismaTask = await this.prisma.task.create({
+    const prismaTask = await this.prisma.task.create({
+      data: {
+        type: todo.content,
         data: {
           title: todo.content,
           description: `Agent todo: ${todo.content}`,
-            type: todo.category,
-          status: this.convertTodoStatusToTaskStatus(todo.status),
-          priority: this.convertTodoPriorityToTaskPriority(todo.priority),
-          assignedToId: agentId,
-          userId: agent.userId,
-          metadata: {
-            masterRegistryTodoId: todoId,
-            category: todo.category,
-            context: todo.context
-          }
-        }
-      });
-      todo.integrationId = prismaTask.id;
-    }
+          masterRegistryTodoId: todoId,
+          category: todo.category,
+          context: todo.context,
+        },
+        status: this.convertTodoStatusToTaskStatus(todo.status),
+        priority: this.convertTodoPriorityToTaskPriority(todo.priority),
+        pipeline: {
+          connectOrCreate: {
+            where: {
+              agentId_name: {
+                agentId,
+                name: 'Default Agent Pipeline',
+              },
+            },
+            create: {
+              name: 'Default Agent Pipeline',
+              description: 'Default pipeline for agent tasks',
+              agentId,
+              userId: agent.userId,
+            },
+          },
+        },
+        agentId,
+        userId: agent.userId,
+      },
+    });
+    todo.integrationId = prismaTask.id;
 
     this.updateSystemMetrics();
     
@@ -1227,8 +1264,8 @@ export class MasterAgentRegistry extends EventEmitter {
   }
 
   // Type conversion utilities for legacy compatibility
-  private convertToLegacyType(type: AgentType): any {
-    const mapping = {
+  private convertToLegacyType(type: AgentType): string {
+    const mapping: Record<string, string> = {
       'BASIC': 'LLM',
       'CHAT': 'LLM',
       'WORKFLOW': 'ORCHESTRATOR',
@@ -1239,11 +1276,11 @@ export class MasterAgentRegistry extends EventEmitter {
       'IDE_EXTENSION': 'HYBRID',
       'API': 'TOOL'
     };
-    return mapping[type] || 'HYBRID';
+    return mapping[type as string] || 'HYBRID';
   }
 
-  private convertToLegacyStatus(status: AgentStatus): any {
-    const mapping = {
+  private convertToLegacyStatus(status: AgentStatus): string {
+    const mapping: Record<string, string> = {
       'ACTIVE': 'ACTIVE',
       'INACTIVE': 'INACTIVE',
       'IDLE': 'INACTIVE',
@@ -1254,7 +1291,7 @@ export class MasterAgentRegistry extends EventEmitter {
       'READY': 'ACTIVE',
       'TERMINATED': 'INACTIVE'
     };
-    return mapping[status] || 'INACTIVE';
+    return mapping[status as string] || 'INACTIVE';
   }
 
   private extractLegacyCapabilities(capabilities: MasterAgentProfile['capabilities']): string[] {
@@ -1312,36 +1349,99 @@ export class MasterAgentRegistry extends EventEmitter {
     return { ...this.spreadsheetIntegration };
   }
 
-  async updateAgentStatus(agentId: string, status: AgentStatus): Promise<boolean> {
+  async updateAgentStatus(agentId: string, status: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
-    if (!agent) return false;
-    
+    if (!agent) {
+      this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
+      return false;
+    }
+
     agent.status = status;
     agent.lastSeen = new Date();
-    
+
     // Update in database
-    await this.prisma.agent.update({
-      where: { id: agentId },
-      data: { status, updatedAt: new Date() }
-    });
-    
-    this.emit('agent_status_updated', { agentId, status });
-    return true;
+    try {
+      await this.prisma.agent.update({
+        where: { id: agentId },
+        data: { status, updatedAt: new Date() }
+      });
+      this.logger.debug(`Agent status updated: ${agentId} -> ${status}`);
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to update agent status in database: ${error}`);
+      return false;
+    }
+  }
+
+  /**
+   * Update agent capabilities
+   */
+  async updateAgentCapabilities(agentId: string, capabilities: Partial<MasterAgentProfile['capabilities']>): Promise<boolean> {
+    const agent = this.agentProfiles.get(agentId);
+    if (!agent) {
+      this.logger.warn(`Agent not found in Master Registry: ${agentId}`);
+      return false;
+    }
+
+    // Update capabilities in memory
+    agent.capabilities = { ...agent.capabilities, ...capabilities };
+    agent.lastSeen = new Date();
+
+    // Update in database
+    try {
+      await this.prisma.agent.update({
+        where: { id: agentId },
+        data: { 
+          configuration: {
+            ...agent.configuration,
+            capabilities: agent.capabilities
+          },
+          updatedAt: new Date() 
+        }
+      });
+      
+      this.logger.debug(`Agent capabilities updated: ${agentId} - ${JSON.stringify(capabilities)}`);
+      
+      // Emit event for capability update
+      this.emit('agentCapabilitiesUpdated', { agentId, capabilities });
+      
+      return true;
+    } catch (error) {
+      this.logger.error(`Failed to update agent capabilities in database: ${error}`);
+      return false;
+    }
   }
 
   async recordAgentHeartbeat(agentId: string): Promise<boolean> {
     const agent = this.agentProfiles.get(agentId);
     if (!agent) return false;
-    
+
     agent.lastHeartbeat = new Date();
     agent.lastSeen = new Date();
-    
+
     if (agent.status === 'INACTIVE') {
       agent.status = 'ACTIVE';
       await this.updateAgentStatus(agentId, 'ACTIVE');
     }
-    
+
     return true;
+  }
+
+  /**
+   * Add task to agent - missing method for tests
+   */
+  async addTaskToAgent(agentId: string, taskData: {
+    content: string;
+    priority?: 'low' | 'medium' | 'high';
+    category?: string;
+    estimatedDuration?: number;
+  }): Promise<string> {
+    return this.addAgentTodo(agentId, {
+      content: taskData.content,
+      priority: taskData.priority || 'medium',
+      category: (taskData.category as any) || 'task',
+      estimatedDuration: taskData.estimatedDuration
+    });
   }
 
   /**
@@ -1445,7 +1545,7 @@ export class MasterAgentRegistry extends EventEmitter {
       const legalContractURI = `ipfs://QmAgent${profile.id}Constitution`;
 
       // Set gas configuration
-      const gasPrice = ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei');
+      const gasPrice = parseUnits(blockchainConfig.maxGasPrice, 'gwei');
       
       // Mint the Agent NFT
       const tx = await agentNFTContract.mintAgent(
@@ -1473,8 +1573,7 @@ export class MasterAgentRegistry extends EventEmitter {
         throw new Error('Failed to parse token ID from mint transaction');
       }
 
-      // TODO: In production, trigger TBA creation here
-      const tbaAddress = `0x${profile.id.slice(-40).padStart(40, '0')}`; // Mock TBA address
+      const tbaAddress = await this.blockchainService.createTokenBoundAccount(tokenId);
 
       const onChainData: OnChainAgentData = {
         isOnChain: true,
@@ -1518,7 +1617,7 @@ export class MasterAgentRegistry extends EventEmitter {
         newMetadataURI,
         {
           gasLimit: blockchainConfig.gasLimit,
-          gasPrice: ethers.utils.parseUnits(blockchainConfig.maxGasPrice, 'gwei')
+          gasPrice: parseUnits(blockchainConfig.maxGasPrice, 'gwei')
         }
       );
 
@@ -1556,9 +1655,9 @@ export class MasterAgentRegistry extends EventEmitter {
     systemHealth: SystemWideMetrics;
     agentSummary: {
       totalAgents: number;
-      byStatus: Record<AgentStatus, number>;
+      byStatus: Record<string, number>;
       byPlatform: Record<string, number>;
-      recentActivity: { agentId: string; lastSeen: Date; status: AgentStatus }[];
+      recentActivity: { agentId: string; lastSeen: Date; status: string }[];
     };
     todoSummary: {
       totalTodos: number;
@@ -1606,8 +1705,8 @@ export class MasterAgentRegistry extends EventEmitter {
     };
   }
 
-  private groupAgentsByStatus(agents: MasterAgentProfile[]): Record<AgentStatus, number> {
-    const groups: Record<AgentStatus, number> = {
+  private groupAgentsByStatus(agents: MasterAgentProfile[]): Record<string, number> {
+    const groups: Record<string, number> = {
       'ACTIVE': 0,
       'INACTIVE': 0,
       'IDLE': 0,

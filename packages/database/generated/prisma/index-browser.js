@@ -20,12 +20,12 @@ exports.Prisma = Prisma
 exports.$Enums = {}
 
 /**
- * Prisma Client JS version: 6.11.0
- * Query Engine version: 9c30299f5a0ea26a96790e13f796dc6094db3173
+ * Prisma Client JS version: 6.17.1
+ * Query Engine version: 272a37d34178c2894197e17273bf937f25acdeac
  */
 Prisma.prismaVersion = {
-  client: "6.11.0",
-  engine: "9c30299f5a0ea26a96790e13f796dc6094db3173"
+  client: "6.17.1",
+  engine: "272a37d34178c2894197e17273bf937f25acdeac"
 }
 
 Prisma.PrismaClientKnownRequestError = () => {
@@ -183,11 +183,7 @@ exports.Prisma.AgentMetadataScalarFieldEnum = {
   agentId: 'agentId',
   metadata: 'metadata',
   version: 'version',
-  config: 'config',
-  lastActive: 'lastActive',
-  personalityTraits: 'personalityTraits',
-  communicationStyle: 'communicationStyle',
-  expertiseAreas: 'expertiseAreas'
+  config: 'config'
 };
 
 exports.Prisma.ChatScalarFieldEnum = {
@@ -231,6 +227,8 @@ exports.Prisma.MessageScalarFieldEnum = {
   updatedAt: 'updatedAt',
   isEdited: 'isEdited',
   isDeleted: 'isDeleted',
+  isEphemeral: 'isEphemeral',
+  expiresAt: 'expiresAt',
   reactions: 'reactions'
 };
 
@@ -583,9 +581,7 @@ exports.Prisma.AgentOrderByRelevanceFieldEnum = {
 exports.Prisma.AgentMetadataOrderByRelevanceFieldEnum = {
   id: 'id',
   agentId: 'agentId',
-  version: 'version',
-  communicationStyle: 'communicationStyle',
-  expertiseAreas: 'expertiseAreas'
+  version: 'version'
 };
 
 exports.Prisma.ChatOrderByRelevanceFieldEnum = {

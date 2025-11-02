@@ -1,7 +1,5 @@
 import { EventEmitter } from 'events';
 import { Logger } from '@nestjs/common';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export interface ComponentAnalysis {
   componentName: string;
@@ -30,55 +28,56 @@ export interface AnalysisOptions {
 export class ComponentAnalyzer extends EventEmitter {
   private readonly logger = new Logger(ComponentAnalyzer.name);
 
-  async analyzeComponent(filePath: string, options?: AnalysisOptions): Promise<ComponentAnalysis> {
-    this.logger.debug(`Analyzing component at path: ${filePath}`);
+  async analyzeComponent(path: string, options?: AnalysisOptions): Promise<ComponentAnalysis> {
+    this.logger.debug(`Analyzing component at path: ${path}`);
+
     try {
-      const stats = await fs.promises.stat(filePath);
       const analysis: ComponentAnalysis = {
-        componentName: this.extractComponentName(filePath),
-        type: this.determineComponentType(filePath),
-        path: filePath,
-        dependencies: await this.analyzeDependencies(filePath),
-        size: stats.size,
-        complexity: await this.calculateComplexity(filePath),
-        lastModified: stats.mtime,
-        issues: await this.detectIssues(filePath),
+        componentName: this.extractComponentName(path),
+        type: this.determineComponentType(path),
+        path,
+        dependencies: await this.analyzeDependencies(path),
+        size: await this.calculateSize(path),
+        complexity: await this.calculateComplexity(path),
+        lastModified: new Date(),
+        issues: await this.detectIssues(path)
       };
+
       this.emit('analysisComplete', analysis);
       return analysis;
     } catch (error) {
-      this.logger.error(`Component analysis failed for ${filePath}`, error);
+      this.logger.error(`Component analysis failed for ${path}`, error);
       throw new Error(`Failed to analyze component: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   async analyzeMultipleComponents(paths: string[], options?: AnalysisOptions): Promise<ComponentAnalysis[]> {
     const results: ComponentAnalysis[] = [];
-    for (const p of paths) {
+
+    for (const path of paths) {
       try {
-        const analysis = await this.analyzeComponent(p, options);
+        const analysis = await this.analyzeComponent(path, options);
         results.push(analysis);
       } catch (error) {
-        this.logger.warn(`Skipping analysis for ${p} due to error:`, error);
+        this.logger.warn(`Skipping analysis for ${path} due to error:`, error);
       }
     }
     return results;
   }
 
-  private extractComponentName(filePath: string): string {
-    return path.basename(filePath);
+  private extractComponentName(path: string): string {
+    return path.split('/').pop() || 'unknown';
   }
 
-  private determineComponentType(filePath: string): ComponentAnalysis['type'] {
-    if (filePath.includes('service')) return 'module';
-    if (filePath.includes('controller')) return 'api';
-    if (filePath.endsWith('.tsx') || filePath.endsWith('.jsx')) return 'frontend';
-    if (filePath.includes('repository') || filePath.includes('database')) return 'repository';
-    if (filePath.includes('memory')) return 'memory';
+  private determineComponentType(path: string): ComponentAnalysis['type'] {
+    if (path.includes('memory')) return 'memory';
+    if (path.includes('repository')) return 'repository';
+    if (path.includes('api')) return 'api';
+    if (path.includes('frontend')) return 'frontend';
     return 'module';
   }
 
-  private async analyzeDependencies(filePath: string): Promise<string[]> {
+  private async analyzeDependencies(path: string): Promise<string[]> {
     // Simulate dependency analysis
     return [
       'react',
@@ -87,13 +86,19 @@ export class ComponentAnalyzer extends EventEmitter {
     ];
   }
 
-  private async calculateComplexity(filePath: string): Promise<number> {
+  private async calculateSize(path: string): Promise<number> {
+    // Simulate size calculation (in bytes)
+    return Math.floor(Math.random() * 50000) + 1000;
+  }
+
+  private async calculateComplexity(path: string): Promise<number> {
     // Simulate complexity calculation (cyclomatic complexity)
     return Math.floor(Math.random() * 20) + 1;
   }
 
-  private async detectIssues(filePath: string): Promise<ComponentIssue[]> {
+  private async detectIssues(path: string): Promise<ComponentIssue[]> {
     const issues: ComponentIssue[] = [];
+
     // Simulate issue detection
     if (Math.random() > 0.5) {
       issues.push({
@@ -117,13 +122,10 @@ export class ComponentAnalyzer extends EventEmitter {
   }
 
   generateReport(analyses: ComponentAnalysis[]): string {
-    if (!analyses || analyses.length === 0) {
-        return "No analysis results to report.";
-    }
     const totalComponents = analyses.length;
     const totalIssues = analyses.reduce((sum, analysis) => sum + analysis.issues.length, 0);
     const averageComplexity = analyses.reduce((sum, analysis) => sum + analysis.complexity, 0) / totalComponents;
-    
+
     const report = [
       '# Component Analysis Report',
       '',
@@ -136,9 +138,8 @@ export class ComponentAnalyzer extends EventEmitter {
     ];
 
     const typeGroups = analyses.reduce((groups, analysis) => {
-      const type = analysis.type;
-      if (!groups[type]) {
-        groups[type] = [];
+      if (!groups[analysis.type]) {
+        groups[analysis.type] = [];
       }
       groups[type].push(analysis);
       return groups;
@@ -149,6 +150,7 @@ export class ComponentAnalyzer extends EventEmitter {
     });
 
     report.push('', '## High Priority Issues');
+
     const highPriorityIssues = analyses
       .flatMap(analysis =>
         analysis.issues

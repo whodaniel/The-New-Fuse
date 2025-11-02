@@ -100,7 +100,7 @@ export class MarketplaceController {
   @ApiQuery({ name: 'page', required: false, type: Number, description: 'Page number, starting from 1' })
   @ApiQuery({ name: 'limit', required: false, type: Number, description: 'Number of items per page' })
   @ApiResponse({ status: 200, description: 'Returns a list of marketplace items' })
-  async getItems(): unknown {
+  async getItems(id: any, item: any): any {
     try {
       // Implementation would filter and paginate items
       return {
@@ -122,7 +122,7 @@ throw new HttpException('Failed to retrieve marketplace items', HttpStatus.INTER
   @ApiParam({ name: 'id', description: 'Marketplace item ID' })
   @ApiResponse({ status: 200, description: 'Returns the specified marketplace item' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async getItem(): unknown {
+  async getItem(data: any, id: any, item: any): any {
     try {
       // Implementation would fetch item by ID
       return {
@@ -144,7 +144,7 @@ throw new HttpException('Failed to retrieve marketplace item', HttpStatus.INTERN
   @ApiOperation({ summary: 'Create a new marketplace item' })
   @ApiBody({ description: 'Marketplace item data' })
   @ApiResponse({ status: 201, description: 'Returns the created marketplace item' })
-  async createItem(): unknown {
+  async createItem(id: any, item: any): any {
     try {
       // Implementation would create new marketplace item
       const newItem = {
@@ -172,7 +172,7 @@ throw new HttpException('Failed to create marketplace item', HttpStatus.INTERNAL
   @ApiBody({ description: 'Updated marketplace item data' })
   @ApiResponse({ status: 200, description: 'Returns the updated marketplace item' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async updateItem(): unknown {
+  async updateItem(id: any, item: any): any {
     try {
       // Implementation would update the item
       return {
@@ -191,7 +191,7 @@ throw new HttpException('Failed to update marketplace item', HttpStatus.INTERNAL
   @ApiParam({ name: 'id', description: 'Marketplace item ID' })
   @ApiResponse({ status: 200, description: 'Marketplace item deleted successfully' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async deleteItem(): unknown {
+  async deleteItem(item: any): any {
     try {
       // Implementation would delete the item
       return {
@@ -210,7 +210,7 @@ throw new HttpException('Failed to delete marketplace item', HttpStatus.INTERNAL
   @ApiBody({ description: 'Payment details (if required)' })
   @ApiResponse({ status: 200, description: 'Subscription created successfully' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async subscribeToItem(): unknown {
+  async subscribeToItem(id: any): any {
     try {
       // Implementation would create subscription
       return {
@@ -237,7 +237,7 @@ throw new HttpException('Failed to create subscription', HttpStatus.INTERNAL_SER
   @ApiParam({ name: 'subscriptionId', description: 'Subscription ID' })
   @ApiResponse({ status: 200, description: 'Subscription cancelled successfully' })
   @ApiResponse({ status: 404, description: 'Subscription not found' })
-  async cancelSubscription(): unknown {
+  async cancelSubscription(): any {
     try {
       // Implementation would cancel subscription
       return {
@@ -260,7 +260,7 @@ throw new HttpException('Failed to cancel subscription', HttpStatus.INTERNAL_SER
     description: 'Filter by subscription status'
   })
   @ApiResponse({ status: 200, description: 'Returns the user subscriptions' })
-  async getUserSubscriptions(): unknown {
+  async getUserSubscriptions(item: any): any {
     try {
       // Implementation would fetch user subscriptions
       return {
@@ -278,7 +278,7 @@ throw new HttpException('Failed to retrieve user subscriptions', HttpStatus.INTE
   @ApiOperation({ summary: 'Check if user has access to a marketplace item' })
   @ApiParam({ name: 'itemId', description: 'Marketplace item ID' })
   @ApiResponse({ status: 200, description: 'Returns access status' })
-  async checkAccess(): unknown {
+  async checkAccess(): any {
     try {
       // Implementation would check user access
       return {
@@ -295,7 +295,7 @@ throw new HttpException('Failed to check access', HttpStatus.INTERNAL_SERVER_ERR
   @Get('subscription-tiers')
   @ApiOperation({ summary: 'Get available subscription tiers' })
   @ApiResponse({ status: 200, description: 'Returns the available subscription tiers' })
-  async getSubscriptionTiers(): unknown {
+  async getSubscriptionTiers(): any {
     try {
       return {
   // Implementation needed
@@ -357,7 +357,7 @@ throw new HttpException('Failed to retrieve subscription tiers', HttpStatus.INTE
   @ApiParam({ name: 'id', description: 'Marketplace item ID' })
   @ApiResponse({ status: 200, description: 'Marketplace item approved successfully' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async approveItem(): unknown {
+  async approveItem(id: any, item: any): any {
     try {
       // Implementation would approve the item
       return {
@@ -376,7 +376,7 @@ throw new HttpException('Failed to approve marketplace item', HttpStatus.INTERNA
   @ApiBody({ description: 'Rejection reason' })
   @ApiResponse({ status: 200, description: 'Marketplace item rejected successfully' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async rejectItem(): unknown {
+  async rejectItem(id: any, item: any): any {
     try {
       // Implementation would reject the item
       return {
@@ -395,7 +395,7 @@ throw new HttpException('Failed to reject marketplace item', HttpStatus.INTERNAL
   @ApiBody({ description: 'Featured status' })
   @ApiResponse({ status: 200, description: 'Featured status updated successfully' })
   @ApiResponse({ status: 404, description: 'Marketplace item not found' })
-  async featureItem(): unknown {
+  async featureItem(data: any, item: any): any {
     try {
       // Implementation would update featured status
       return {

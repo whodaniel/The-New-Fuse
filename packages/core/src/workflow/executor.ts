@@ -1,14 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import {
-  WorkflowTemplate,
-  WorkflowExecution,
-  WorkflowStatus,
-  WorkflowStep,
-  WorkflowStepType,
-  WorkflowExecutionContext,
-  WorkflowStepExecution,
-} from '../types/types';
+import { WorkflowTemplate, WorkflowExecution, WorkflowStatus, WorkflowStep, WorkflowStepType, WorkflowExecutionContext } from './types';
 import { WorkflowValidator } from './validator';
 
 @Injectable()
@@ -21,10 +13,10 @@ export class WorkflowExecutor {
     private readonly validator: WorkflowValidator,
   ) {}
 
-  async executeWorkflow(
+  async execute(
     template: WorkflowTemplate,
-    context: any,
-    userId?: string,
+    context: Record<string, any>,
+    userId: string
   ): Promise<WorkflowExecution> {
     // Validate template before execution
     const validation = this.validator.validateTemplate(template);
@@ -44,6 +36,7 @@ export class WorkflowExecutor {
     };
 
     this.logger.log(`Starting workflow execution: ${execution.id}`);
+
     try {
       execution.status = WorkflowStatus.RUNNING;
       await this.executeSteps(template, execution);
@@ -65,16 +58,18 @@ export class WorkflowExecutor {
     execution: WorkflowExecution,
   ): Promise<void> {
     const stepOrder = this.calculateStepOrder(template.steps);
+    
     for (const stepId of stepOrder) {
       const step = template.steps.find(s => s.id === stepId);
       if (!step) {
-        throw new Error(`Step ${stepId} not found`);
+        throw new Error(`Step not found: ${stepId}`);
+      }
+
+      if (this.shouldSkipStep(step, execution)) {
+        continue;
       }
 
       await this.executeStep(step, template, execution);
-      if (execution.steps[stepId]?.status === WorkflowStatus.FAILED) {
-        throw new Error(`Step ${stepId} failed: ${execution.steps[stepId]?.error}`);
-      }
     }
   }
 
@@ -83,36 +78,43 @@ export class WorkflowExecutor {
     template: WorkflowTemplate,
     execution: WorkflowExecution,
   ): Promise<void> {
-    this.logger.log(`Executing step: ${step.id}`);
-    const stepExecution: WorkflowStepExecution = {
+    const stepExecution: {
+      status: WorkflowStatus;
+      output?: any;
+      error?: string;
+      startedAt?: string;
+      completedAt?: string;
+      attempts?: number;
+    } = {
       status: WorkflowStatus.RUNNING,
       startedAt: new Date().toISOString(),
-      attempts: 0,
-      output: undefined,
-      error: undefined,
-      completedAt: undefined,
+      attempts: 1,
     };
+
     execution.steps[step.id] = stepExecution;
 
     try {
       const result = await this.executeStepLogic(step, template, execution);
-      stepExecution.status = WorkflowStatus.COMPLETED;
       stepExecution.output = result;
+      stepExecution.status = WorkflowStatus.COMPLETED;
       stepExecution.completedAt = new Date().toISOString();
-      this.eventEmitter.emit('workflow.step.completed', {
+      
+      this.eventEmitter.emit('step.completed', {
         executionId: execution.id,
         stepId: step.id,
         result,
       });
     } catch (error) {
       stepExecution.status = WorkflowStatus.FAILED;
-      stepExecution.error = (error as Error).message;
+      stepExecution.error = error instanceof Error ? error.message : 'Unknown error';
       stepExecution.completedAt = new Date().toISOString();
-      this.eventEmitter.emit('workflow.step.failed', {
+      
+      this.eventEmitter.emit('step.failed', {
         executionId: execution.id,
         stepId: step.id,
-        error: (error as Error).message,
+        error: stepExecution.error,
       });
+      
       throw error;
     }
   }
@@ -152,6 +154,7 @@ export class WorkflowExecutor {
     context: WorkflowExecutionContext,
   ): Promise<any> {
     const { url, method = 'GET', headers = {}, body, transform } = step.config;
+    
     if (!url) {
       throw new Error('URL is required for API call');
     }
@@ -170,6 +173,7 @@ export class WorkflowExecutor {
     }
 
     const data = await response.json();
+    
     if (transform) {
       return this.applyTransform(data, transform, context);
     }
@@ -182,6 +186,7 @@ export class WorkflowExecutor {
     context: WorkflowExecutionContext,
   ): Promise<any> {
     const { transform } = step.config;
+    
     if (!transform) {
       throw new Error('Transform expression is required');
     }
@@ -194,6 +199,7 @@ export class WorkflowExecutor {
     context: WorkflowExecutionContext,
   ): Promise<any> {
     const { condition } = step.config;
+    
     if (!condition) {
       throw new Error('Condition expression is required');
     }
@@ -211,24 +217,28 @@ export class WorkflowExecutor {
     context: WorkflowExecutionContext,
   ): Promise<any> {
     const { iterationPath, maxIterations = 100 } = step.config;
+    
     if (!iterationPath) {
       throw new Error('Iteration path is required for loop');
     }
 
     const items = this.getValueByPath(context.globalContext, iterationPath);
+    
     if (!Array.isArray(items)) {
       throw new Error(`Iteration path must resolve to an array, got: ${typeof items}`);
     }
 
     const results = [];
-    for (const item of items) {
-      // This is a simplified loop execution. A real implementation would need to handle context per iteration.
-      const result = await this.executeStepLogic(
-        { ...step, type: WorkflowStepType.TASK }, // Assuming loop body is a task
-        context.template,
-        context.execution,
-      );
-      results.push(result);
+    
+    for (let i = 0; i < Math.min(items.length, maxIterations); i++) {
+      // Create a simple task execution for each loop iteration
+      const loopResult = {
+        stepId: step.id,
+        iteration: i,
+        item: items[i],
+        timestamp: new Date().toISOString(),
+      };
+      results.push(loopResult);
     }
 
     return results;
@@ -239,6 +249,7 @@ export class WorkflowExecutor {
     _context: WorkflowExecutionContext,
   ): Promise<any> {
     const { agentType, prompt, input } = step.config;
+    
     if (!agentType) {
       throw new Error('Agent type is required');
     }
@@ -246,10 +257,12 @@ export class WorkflowExecutor {
     this.logger.log(`Executing agent step with type: ${agentType}`);
     // In a real implementation, this would call an agent service
     return {
+      stepId: step.id,
       agentType,
       prompt,
       input,
       output: `Agent ${agentType} processed the request`,
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -258,24 +271,41 @@ export class WorkflowExecutor {
     _context: WorkflowExecutionContext,
   ): Promise<any> {
     const { taskType, parameters } = step.config;
+    
     this.logger.log(`Executing task: ${taskType}`);
-    // In a real implementation, this would call a task handler
     return {
+      stepId: step.id,
       taskType,
       parameters,
       status: 'completed',
+      timestamp: new Date().toISOString(),
     };
+  }
+
+  private shouldSkipStep(step: WorkflowStep, execution: WorkflowExecution): boolean {
+    // Check if all dependencies are completed
+    if (step.dependencies) {
+      for (const depId of step.dependencies) {
+        const depExecution = execution.steps[depId];
+        if (!depExecution || depExecution.status !== WorkflowStatus.COMPLETED) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   private calculateStepOrder(steps: WorkflowStep[]): string[] {
     const graph = new Map<string, string[]>();
     const inDegree = new Map<string, number>();
 
+    // Initialize graph
     for (const step of steps) {
       graph.set(step.id, []);
       inDegree.set(step.id, 0);
     }
 
+    // Build dependency graph
     for (const step of steps) {
       if (step.dependencies) {
         for (const dep of step.dependencies) {
@@ -285,17 +315,20 @@ export class WorkflowExecutor {
       }
     }
 
+    // Topological sort
     const queue: string[] = [];
     const result: string[] = [];
-    inDegree.forEach((degree, stepId) => {
+
+    for (const [stepId, degree] of inDegree) {
       if (degree === 0) {
         queue.push(stepId);
       }
-    });
+    }
 
     while (queue.length > 0) {
       const current = queue.shift()!;
       result.push(current);
+
       for (const neighbor of graph.get(current)!) {
         inDegree.set(neighbor, inDegree.get(neighbor)! - 1);
         if (inDegree.get(neighbor) === 0) {
@@ -313,21 +346,19 @@ export class WorkflowExecutor {
 
   private applyTransform(data: any, transform: string, context: WorkflowExecutionContext): any {
     try {
-      // This is a basic and insecure implementation. In a real-world scenario, use a sandboxed expression engine like `vm2`.
       const func = new Function('data', 'context', `return ${transform}`);
       return func(data, context);
     } catch (error) {
-      throw new Error(`Transform failed: ${(error as Error).message}`);
+      throw new Error(`Transform failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
   private evaluateCondition(condition: string, context: WorkflowExecutionContext): boolean {
     try {
-      // This is a basic and insecure implementation. In a real-world scenario, use a sandboxed expression engine.
       const func = new Function('context', `return ${condition}`);
       return Boolean(func(context));
     } catch (error) {
-      throw new Error(`Condition evaluation failed: ${(error as Error).message}`);
+      throw new Error(`Condition evaluation failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

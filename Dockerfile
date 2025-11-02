@@ -1,63 +1,62 @@
-# Multi-stage Dockerfile for The New Fuse - Optimized Build
-FROM node:20-alpine AS base
+# The New Fuse - Monorepo Dockerfile
 
-# Install system dependencies in one layer
-RUN apk add --no-cache curl git python3 make g++ dumb-init && \
+# 1. Base image for all stages
+FROM node:20-alpine AS base
+RUN apk add --no-cache curl && \
     npm install -g pnpm && \
     rm -rf /var/cache/apk/*
-
 WORKDIR /app
 
-# Dependencies stage - install all dependencies once
-FROM base AS dependencies
-COPY package.json pnpm-lock.yaml* ./
-COPY apps/frontend/package.json ./apps/frontend/
-COPY apps/backend/package.json ./apps/backend/
-
-# Install all dependencies at workspace level
+# 2. Install all dependencies
+FROM base AS deps
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY .npmrc .npmrc
 RUN pnpm install --frozen-lockfile
 
-# Build stage - build both frontend and backend
-FROM dependencies AS build
+# 3. Build all packages
+FROM base AS builder
 COPY . .
-
-# Build frontend
-WORKDIR /app/apps/frontend
+COPY --from=deps /app/node_modules ./node_modules
 RUN pnpm run build
 
-# Build backend
-WORKDIR /app/apps/backend  
-RUN pnpm run build
+# --- Production Stages ---
 
-# Production stage
-FROM node:20-alpine AS production
-
-# Install runtime dependencies only
-RUN apk add --no-cache curl dumb-init && \
-    npm install -g pnpm && \
-    rm -rf /var/cache/apk/*
-
+# 4. Production base image
+FROM base AS prod_base
+ENV NODE_ENV=production
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S appuser -u 1001
+USER appuser
 WORKDIR /app
 
-# Copy built frontend
-COPY --from=build /app/apps/frontend/dist ./apps/frontend/dist
+# 5. Production image for api-gateway
+FROM prod_base AS api-gateway
+COPY --chown=appuser:nodejs --from=builder /app .
+RUN pnpm deploy --filter @the-new-fuse/api-gateway /app/deploy
+WORKDIR /app/deploy
+RUN pnpm install --prod --frozen-lockfile
+CMD ["node", "dist/main.js"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3002}/health || exit 1
 
-# Copy backend build and dependencies
-COPY --from=build /app/apps/backend/dist ./apps/backend/dist
-COPY --from=build /app/node_modules ./node_modules
-COPY --from=build /app/package.json ./package.json
+# 6. Production image for backend
+FROM prod_base AS backend
+COPY --chown=appuser:nodejs --from=builder /app .
+RUN pnpm deploy --filter @the-new-fuse/backend-app /app/deploy
+WORKDIR /app/deploy
+RUN pnpm install --prod --frozen-lockfile
+CMD ["node", "dist/main.js"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3003}/health || exit 1
 
-# Create non-root user
-RUN addgroup -g 1001 -S nodejs && \
-    adduser -S app-user -u 1001 && \
-    chown -R app-user:nodejs /app
-
-USER app-user
-
-EXPOSE 8080
-
-HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD curl -f http://localhost:8080/health || exit 1
-
-ENTRYPOINT ["dumb-init", "--"]
-CMD ["node", "apps/backend/dist/main.js"]
+# 7. Production image for frontend
+FROM prod_base AS frontend
+WORKDIR /app
+COPY --chown=appuser:nodejs --from=builder /app/apps/frontend/dist ./dist
+COPY --chown=appuser:nodejs --from=builder /app/server.js ./
+COPY --chown=appuser:nodejs --from=builder /app/package.json ./
+COPY --chown=appuser:nodejs --from=builder /app/pnpm-lock.yaml ./
+RUN pnpm install --prod --frozen-lockfile
+CMD ["node", "server.js"]
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-3000}/ || exit 1

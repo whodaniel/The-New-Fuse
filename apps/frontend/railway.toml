@@ -1,0 +1,10 @@
+[build]
+builder = "NIXPACKS"
+nixpacksConfigPath = "apps/frontend/nixpacks.toml"
+watchPaths = ["apps/frontend/**", "packages/**"]
+
+[deploy]
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyMaxRetries = 10
+restartPolicyType = "ON_FAILURE"

@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '@tnf/relay-core';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import {
   UnifiedWorkflow,
   WorkflowExecution,
@@ -48,7 +48,7 @@ export interface WorkflowEngineConfig {
 export class UnifiedWorkflowEngine extends EventEmitter {
   private logger: Logger;
   private config: WorkflowEngineConfig;
-  private prisma: PrismaClient;
+  private prisma: any; // PrismaClient;
   private agentRegistry: MasterAgentRegistry;
   private heartbeatService: HeartbeatMonitoringService;
   // Removed handoffService - implementing handoff logic directly
@@ -69,7 +69,7 @@ export class UnifiedWorkflowEngine extends EventEmitter {
 
   constructor(
     config: WorkflowEngineConfig,
-    prisma: PrismaClient,
+    prisma: any /* PrismaClient */,
     agentRegistry: MasterAgentRegistry,
     heartbeatService: HeartbeatMonitoringService,
     logger: Logger

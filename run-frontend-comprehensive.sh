@@ -75,7 +75,7 @@ fi
 
 # Approach 3: Try using npm instead of yarn
 echo "🔍 Approach 3: Using npm instead of yarn..."
-(cd apps/frontend && rm -rf node_modules && npm install && npm run dev) &
+(cd apps/frontend && rm -rf node_modules && pnpm install && pnpm run dev) &
 NPM_PID=$!
 
 # Wait for the server to start or fail
@@ -102,7 +102,7 @@ fi
 
 # Approach 5: Fall back to the standalone React app
 echo "🔍 Approach 5: Falling back to the standalone React app..."
-(cd standalone-react && npm install && npm run dev) &
+(cd standalone-react && pnpm install && pnpm run dev) &
 STANDALONE_PID=$!
 
 # Wait for the server to start or fail

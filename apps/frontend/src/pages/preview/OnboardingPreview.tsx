@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { Box, Center, Spinner, Text } from '@chakra-ui/react';
 import { OnboardingWizard } from '../../components/wizard/OnboardingWizard';
 
 /**
@@ -33,22 +32,22 @@ const OnboardingPreview: React.FC = () => {
   
   if (loading) {
     return (
-      <Center minH="100vh">
-        <Box textAlign="center">
-          <Spinner size="xl" mb={4} />
-          <Text>Loading onboarding preview...</Text>
-        </Box>
-      </Center>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading onboarding preview...</p>
+        </div>
+      </div>
     );
   }
   
   return (
-    <Box minH="100vh" bg="gray.50" py={8}>
+    <div className="min-h-screen bg-gray-50 py-8">
       <OnboardingWizard 
         userType={userType as 'human' | 'ai_agent'} 
         onComplete={handleComplete}
       />
-    </Box>
+    </div>
   );
 };
 

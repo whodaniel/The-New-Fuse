@@ -54,7 +54,7 @@ try {
             console.log('❌ Command registration NOT found in compiled code');
         }
     } else {
-        console.log('❌ Compiled extension does not exist. Run: npm run build');
+        console.log('❌ Compiled extension does not exist. Run: pnpm run build');
         process.exit(1);
     }
 } catch (error) {

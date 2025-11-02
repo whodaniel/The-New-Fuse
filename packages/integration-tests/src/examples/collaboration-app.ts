@@ -6,9 +6,9 @@
  */
 
 import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
-import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
+// import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -134,425 +134,16 @@ export class CollaborationApp {
     const extensionDir = path.join(__dirname, '../examples/collaboration-extensions');
 
     // Task Coordinator Extension
-    await this.createExtension(extensionDir, 'task-coordinator', 'agent_capability', `
-class TaskCoordinator {
-  constructor(config) {
-    this.config = config;
-    this.name = 'task-coordinator';
-    this.activeTasks = new Map();
-  }
-
-  async onLoad(context) {
-    this.logger = context.logger;
-    this.agentRegistry = context.agentRegistry;
-    this.logger.info('Task Coordinator extension loaded');
-  }
-
-  async coordinateTask(task, teamMembers = []) {
-    const coordination = {
-      taskId: \`task_\${Date.now()}\`,
-      task,
-      assignedTo: null,
-      status: 'pending',
-      priority: task.priority || 'medium',
-      estimatedDuration: task.estimatedDuration || 60,
-      dependencies: task.dependencies || [],
-      teamMembers,
-      createdAt: new Date(),
-      updates: []
-    };
-
-    // Find best agent for task based on capabilities
-    const bestAgent = await this.findBestAgent(task, teamMembers);
-    if (bestAgent) {
-      coordination.assignedTo = bestAgent.agentId;
-      coordination.status = 'assigned';
-      coordination.updates.push({
-        timestamp: new Date(),
-        type: 'assignment',
-        message: \`Task assigned to \${bestAgent.name}\`
-      });
-    }
-
-    this.activeTasks.set(coordination.taskId, coordination);
-    
-    return {
-      success: true,
-      coordination,
-      message: \`Task coordinated and assigned to \${bestAgent?.name || 'queue'}\`
-    };
-  }
-
-  async updateTaskStatus(taskId, status, progress = null, notes = null) {
-    const task = this.activeTasks.get(taskId);
-    if (!task) {
-      return { success: false, error: 'Task not found' };
-    }
-
-    task.status = status;
-    task.updates.push({
-      timestamp: new Date(),
-      type: 'status_update',
-      status,
-      progress,
-      notes
-    });
-
-    if (status === 'completed') {
-      task.completedAt = new Date();
-      task.actualDuration = task.completedAt - task.createdAt;
-    }
-
-    return {
-      success: true,
-      task,
-      message: \`Task \${taskId} updated to \${status}\`
-    };
-  }
-
-  async findBestAgent(task, teamMembers) {
-    // Simple capability matching logic
-    const requiredCapabilities = task.requiredCapabilities || [];
-    let bestMatch = null;
-    let bestScore = 0;
-
-    for (const member of teamMembers) {
-      try {
-        const profile = await this.agentRegistry.getAgentProfile(member.agentId);
-        if (!profile || profile.status !== 'ACTIVE') continue;
-
-        let score = 0;
-        
-        // Check capability match
-        requiredCapabilities.forEach(capability => {
-          if (profile.capabilities[capability]) {
-            score += 10;
-          }
-        });
-
-        // Prefer agents with lower current workload
-        const currentTasks = profile.todoList?.length || 0;
-        score -= currentTasks * 2;
-
-        // Bonus for matching specialization
-        if (profile.metadata?.specialization === task.category) {
-          score += 15;
-        }
-
-        if (score > bestScore) {
-          bestScore = score;
-          bestMatch = { agentId: member.agentId, name: profile.name, score };
-        }
-      } catch (error) {
-        this.logger.warn(\`Error evaluating agent \${member.agentId}: \${error.message}\`);
-      }
-    }
-
-    return bestMatch;
-  }
-
-  getActiveTasksReport() {
-    const tasks = Array.from(this.activeTasks.values());
-    return {
-      totalTasks: tasks.length,
-      byStatus: tasks.reduce((acc, task) => {
-        acc[task.status] = (acc[task.status] || 0) + 1;
-        return acc;
-      }, {}),
-      tasks: tasks.map(task => ({
-        taskId: task.taskId,
-        status: task.status,
-        assignedTo: task.assignedTo,
-        priority: task.priority
-      }))
-    };
-  }
-}
-
-module.exports = TaskCoordinator;
-`);
+    const taskCoordinatorContent = await fs.readFile(path.join(extensionDir, 'task-coordinator.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'task-coordinator', 'agent_capability', taskCoordinatorContent);
 
     // Communication Hub Extension
-    await this.createExtension(extensionDir, 'communication-hub', 'workflow_node', `
-class CommunicationHub {
-  constructor(config) {
-    this.config = config;
-    this.name = 'communication-hub';
-    this.messages = [];
-    this.channels = new Map();
-  }
-
-  async onLoad(context) {
-    this.logger = context.logger;
-    this.logger.info('Communication Hub extension loaded');
-  }
-
-  async execute(input) {
-    const { action, data } = input;
-
-    try {
-      switch (action) {
-        case 'send_message':
-          return await this.sendMessage(data);
-        case 'create_channel':
-          return await this.createChannel(data);
-        case 'broadcast':
-          return await this.broadcast(data);
-        case 'get_messages':
-          return await this.getMessages(data);
-        default:
-          throw new Error(\`Unknown action: \${action}\`);
-      }
-    } catch (error) {
-      return {
-        success: false,
-        error: error.message
-      };
-    }
-  }
-
-  async sendMessage(data) {
-    const { from, to, channel, message, priority = 'normal' } = data;
-    
-    const messageObj = {
-      id: \`msg_\${Date.now()}_\${Math.random().toString(36).substr(2, 9)}\`,
-      from,
-      to,
-      channel,
-      message,
-      priority,
-      timestamp: new Date(),
-      status: 'sent'
-    };
-
-    this.messages.push(messageObj);
-
-    // Add to channel if specified
-    if (channel && this.channels.has(channel)) {
-      const channelData = this.channels.get(channel);
-      channelData.messages.push(messageObj.id);
-    }
-
-    return {
-      success: true,
-      messageId: messageObj.id,
-      message: 'Message sent successfully'
-    };
-  }
-
-  async createChannel(data) {
-    const { name, description, members = [], type = 'team' } = data;
-    
-    const channel = {
-      id: \`channel_\${Date.now()}\`,
-      name,
-      description,
-      type,
-      members,
-      messages: [],
-      createdAt: new Date(),
-      active: true
-    };
-
-    this.channels.set(channel.id, channel);
-
-    return {
-      success: true,
-      channelId: channel.id,
-      channel
-    };
-  }
-
-  async broadcast(data) {
-    const { from, message, priority = 'normal', excludeAgents = [] } = data;
-    
-    const broadcastId = \`broadcast_\${Date.now()}\`;
-    const recipients = data.recipients || 'all';
-
-    const broadcastMessage = {
-      id: broadcastId,
-      type: 'broadcast',
-      from,
-      recipients,
-      message,
-      priority,
-      timestamp: new Date(),
-      excludeAgents
-    };
-
-    this.messages.push(broadcastMessage);
-
-    return {
-      success: true,
-      broadcastId,
-      message: 'Broadcast sent successfully'
-    };
-  }
-
-  async getMessages(data) {
-    const { agentId, channel, since, limit = 50 } = data;
-    
-    let filteredMessages = this.messages;
-
-    if (agentId) {
-      filteredMessages = filteredMessages.filter(msg => 
-        msg.to === agentId || msg.from === agentId || 
-        (msg.type === 'broadcast' && !msg.excludeAgents.includes(agentId))
-      );
-    }
-
-    if (channel) {
-      filteredMessages = filteredMessages.filter(msg => msg.channel === channel);
-    }
-
-    if (since) {
-      const sinceDate = new Date(since);
-      filteredMessages = filteredMessages.filter(msg => msg.timestamp > sinceDate);
-    }
-
-    return {
-      success: true,
-      messages: filteredMessages.slice(-limit),
-      count: filteredMessages.length
-    };
-  }
-}
-
-module.exports = CommunicationHub;
-`);
+    const communicationHubContent = await fs.readFile(path.join(extensionDir, 'communication-hub.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'communication-hub', 'workflow_node', communicationHubContent);
 
     // Progress Tracker Extension
-    await this.createExtension(extensionDir, 'progress-tracker', 'agent_capability', `
-class ProgressTracker {
-  constructor(config) {
-    this.config = config;
-    this.name = 'progress-tracker';
-    this.projects = new Map();
-  }
-
-  async onLoad(context) {
-    this.logger = context.logger;
-    this.logger.info('Progress Tracker extension loaded');
-  }
-
-  async trackProgress(projectId, task, progress) {
-    if (!this.projects.has(projectId)) {
-      this.projects.set(projectId, {
-        id: projectId,
-        name: \`Project \${projectId}\`,
-        tasks: new Map(),
-        overallProgress: 0,
-        startDate: new Date(),
-        lastUpdate: new Date()
-      });
-    }
-
-    const project = this.projects.get(projectId);
-    
-    const taskProgress = {
-      taskId: task.id || \`task_\${Date.now()}\`,
-      name: task.name,
-      assignedTo: task.assignedTo,
-      progress: progress.percentage || 0,
-      status: progress.status || 'in_progress',
-      estimatedCompletion: progress.estimatedCompletion,
-      actualHours: progress.actualHours || 0,
-      estimatedHours: task.estimatedHours || 8,
-      lastUpdate: new Date(),
-      milestones: progress.milestones || [],
-      issues: progress.issues || []
-    };
-
-    project.tasks.set(taskProgress.taskId, taskProgress);
-    project.lastUpdate = new Date();
-
-    // Calculate overall project progress
-    const tasks = Array.from(project.tasks.values());
-    project.overallProgress = tasks.reduce((total, task) => total + task.progress, 0) / tasks.length;
-
-    return {
-      success: true,
-      project: {
-        id: project.id,
-        name: project.name,
-        overallProgress: project.overallProgress,
-        totalTasks: tasks.length,
-        completedTasks: tasks.filter(t => t.status === 'completed').length
-      },
-      task: taskProgress
-    };
-  }
-
-  async generateReport(projectId) {
-    const project = this.projects.get(projectId);
-    if (!project) {
-      return { success: false, error: 'Project not found' };
-    }
-
-    const tasks = Array.from(project.tasks.values());
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-    const inProgressTasks = tasks.filter(t => t.status === 'in_progress');
-    const blockedTasks = tasks.filter(t => t.status === 'blocked');
-
-    const report = {
-      project: {
-        id: project.id,
-        name: project.name,
-        overallProgress: project.overallProgress,
-        startDate: project.startDate,
-        lastUpdate: project.lastUpdate
-      },
-      summary: {
-        totalTasks: tasks.length,
-        completedTasks: completedTasks.length,
-        inProgressTasks: inProgressTasks.length,
-        blockedTasks: blockedTasks.length,
-        completionRate: (completedTasks.length / tasks.length) * 100
-      },
-      timeline: {
-        totalEstimatedHours: tasks.reduce((total, task) => total + task.estimatedHours, 0),
-        totalActualHours: tasks.reduce((total, task) => total + task.actualHours, 0),
-        efficiency: this.calculateEfficiency(tasks)
-      },
-      issues: tasks.flatMap(task => task.issues),
-      upcomingMilestones: this.getUpcomingMilestones(tasks)
-    };
-
-    return {
-      success: true,
-      report,
-      generatedAt: new Date()
-    };
-  }
-
-  calculateEfficiency(tasks) {
-    const completedTasks = tasks.filter(t => t.status === 'completed');
-    if (completedTasks.length === 0) return 0;
-
-    const totalEstimated = completedTasks.reduce((total, task) => total + task.estimatedHours, 0);
-    const totalActual = completedTasks.reduce((total, task) => total + task.actualHours, 0);
-
-    return totalEstimated > 0 ? (totalEstimated / totalActual) * 100 : 0;
-  }
-
-  getUpcomingMilestones(tasks) {
-    const allMilestones = tasks.flatMap(task => 
-      task.milestones.map(milestone => ({
-        ...milestone,
-        taskId: task.taskId,
-        taskName: task.name
-      }))
-    );
-
-    return allMilestones
-      .filter(milestone => new Date(milestone.dueDate) > new Date())
-      .sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate))
-      .slice(0, 10);
-  }
-}
-
-module.exports = ProgressTracker;
-`);
+    const progressTrackerContent = await fs.readFile(path.join(extensionDir, 'progress-tracker.js'), 'utf-8');
+    await this.createExtension(extensionDir, 'progress-tracker', 'agent_capability', progressTrackerContent);
 
     this.logger.info('Collaboration extensions created successfully');
   }
@@ -913,7 +504,7 @@ module.exports = ProgressTracker;
 
         // Log status changes
         if (execution?.status !== lastStatus) {
-          this.logger.info(\`Collaboration status: \${lastStatus} -> \${execution?.status}\`);
+          this.logger.info(`Collaboration status: ${lastStatus} -> ${execution?.status}`);
           lastStatus = execution?.status;
         }
 
@@ -930,12 +521,12 @@ module.exports = ProgressTracker;
             this.logger.info('Collaborative project completed successfully!');
             await this.generateCollaborationReport(executionId);
           } else {
-            this.logger.error(\`Collaborative project failed: \${execution?.error}\`);
+            this.logger.error(`Collaborative project failed: ${execution?.error}`);
           }
         }
 
       } catch (error) {
-        this.logger.error(\`Error monitoring collaboration: \${error.message}\`);
+        this.logger.error(`Error monitoring collaboration: ${error.message}`);
       }
     }, 3000); // Check every 3 seconds
 
@@ -958,9 +549,9 @@ module.exports = ProgressTracker;
         const activeTasks = profile.todoList?.filter(task => task.status === 'in_progress').length || 0;
         const completedTasks = profile.completedTasks || 0;
         
-        this.logger.info(\`\${role}: \${completedTasks} completed, \${activeTasks} active tasks\`);
+        this.logger.info(`${role}: ${completedTasks} completed, ${activeTasks} active tasks`);
       } catch (error) {
-        this.logger.warn(\`Error getting progress for \${role}: \${error.message}\`);
+        this.logger.warn(`Error getting progress for ${role}: ${error.message}`);
       }
     }
 
@@ -1009,7 +600,7 @@ module.exports = ProgressTracker;
 
         report.collaboration.handoffs += profile.handoffsInitiated || 0;
       } catch (error) {
-        this.logger.warn(\`Error collecting data for \${role}: \${error.message}\`);
+        this.logger.warn(`Error collecting data for ${role}: ${error.message}`);
       }
     }
 
@@ -1033,19 +624,19 @@ module.exports = ProgressTracker;
 
     // Agent status
     const agents = await this.agentRegistry.getAllAgents();
-    this.logger.info(\`Active Agents: \${agents.length}\`);
+    this.logger.info(`Active Agents: ${agents.length}`);
     
     agents.forEach(agent => {
-      this.logger.info(\`  - \${agent.name} (\${agent.type}): \${agent.status}\`);
+      this.logger.info(`  - ${agent.name} (${agent.type}): ${agent.status}`);
     });
 
     // Extension status
     const extensionStats = this.extensionManager.getExtensionStats();
-    this.logger.info(\`Active Extensions: \${extensionStats.activeExtensions}\`);
+    this.logger.info(`Active Extensions: ${extensionStats.activeExtensions}`);
 
     // System health
     const systemHealth = await this.agentRegistry.getSystemHealth();
-    this.logger.info(\`System Health: \${systemHealth.status}\`);
+    this.logger.info(`System Health: ${systemHealth.status}`);
 
     this.logger.info('=== END SYSTEM STATUS ===');
   }
@@ -1083,9 +674,9 @@ module.exports = ProgressTracker;
     await fs.ensureDir(extensionDir);
 
     const manifest = {
-      name: \`@collaboration/\${name}\`,
+      name: `@collaboration/${name}`,
       version: '1.0.0',
-      description: \`Collaboration extension: \${name}\`,
+      description: `Collaboration extension: ${name}`,
       type,
       category: 'collaboration',
       main: 'index.js',

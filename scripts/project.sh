@@ -62,7 +62,7 @@ function start_services() {
     local env=${1:-dev}
     echo -e "${BLUE}🚀 Starting services in ${env} mode...${NC}"
     
-    if [ "$env" == "prod" ]; then
+    if [ "$env" == "prod" ];
         docker-compose -f docker-compose.prod.yml up -d
         cd packages/backend && pnpm run start:prod
     else
@@ -108,7 +108,7 @@ function run_consolidation() {
 
   # Check if TypeScript compiler is available
   if ! command -v tsc &> /dev/null; then
-    echo -e "${RED}Error: TypeScript compiler (tsc) not found. Please install it. (e.g., npm install -g typescript)${NC}"
+    echo -e "${RED}Error: TypeScript compiler (tsc) not found. Please install it. (e.g., pnpm install -g typescript)${NC}"
     exit 1
   fi
 

@@ -1,6 +1,4 @@
 import {
-  // Implementation needed
-}
   Entity,
   PrimaryGeneratedColumn,
   Column,
@@ -8,7 +6,10 @@ import {
   UpdateDateColumn,
   Index,
 } from 'typeorm';
-import { TaskStatus, TaskPriority } from '../types/types';
+
+// Conflict 1 Resolution: Use the import from 'Incoming'
+import { TaskStatus, TaskPriority } from '@the-new-fuse/types';
+
 @Entity('tasks')
 @Index(['status', 'priority'])
 @Index(['type', 'status'])
@@ -16,40 +17,53 @@ import { TaskStatus, TaskPriority } from '../types/types';
 export class Task {
   @PrimaryGeneratedColumn('uuid')
   id!: string;
+
   @Column({ type: 'varchar', length: 255 })
   type!: string;
+
   @Column({
-  // Implementation needed
-}
     type: 'enum',
     enum: TaskStatus,
-    default: TaskStatus.PENDING
+    default: TaskStatus.PENDING,
   })
   status!: TaskStatus;
+
   @Column({
-  // Implementation needed
-}
     type: 'enum',
     enum: TaskPriority,
-    default: TaskPriority.MEDIUM
+    default: TaskPriority.MEDIUM,
   })
   priority!: TaskPriority;
+
+  // Conflict 2 Resolution: Merged fields from both branches
+
+  // Keep 'userId' as optional (from 'Incoming')
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  userId?: string;
+
+  // Kept 'data' (from both)
   @Column('jsonb', { nullable: true })
   data?: any;
+
+  // Keep detailed fields (from 'Current')
   @Column('jsonb', { nullable: true })
   result?: any;
+
   @Column('jsonb', { nullable: true })
   metadata?: any;
+
   @Column({ type: 'text', nullable: true })
   error?: string;
+
   @Column({ type: 'timestamp', nullable: true })
   startTime?: Date;
+
   @Column({ type: 'timestamp', nullable: true })
   endTime?: Date;
-  @Column({ type: 'uuid' })
-  userId!: string;
+
   @CreateDateColumn()
   createdAt!: Date;
+
   @UpdateDateColumn()
   updatedAt!: Date;
 }

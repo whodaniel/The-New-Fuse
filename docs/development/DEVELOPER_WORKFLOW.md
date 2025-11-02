@@ -160,7 +160,7 @@ export class FeatureModule {}
 ### Emergency Procedures
 ```bash
 # Database Issues
-npm run migration:revert
+pnpm run migration:revert
 tail -f /var/log/postgresql/postgresql-14-main.log
 
 # Application Issues

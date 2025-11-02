@@ -218,15 +218,15 @@ class MyCustomAgent implements Agent {
 
 1. **Install Dependencies**
    ```bash
-   npm install @new-fuse/agent-sdk
-   npm install @new-fuse/mcp-client
+   pnpm install @new-fuse/agent-sdk
+   pnpm install @new-fuse/mcp-client
    ```
 
 2. **Initialize Agent Project**
    ```bash
    npx @new-fuse/create-agent my-agent
    cd my-agent
-   npm install
+   pnpm install
    ```
 
 3. **Configure Environment**

@@ -1,17 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Text,
-  Input,
-  Button,
-  Avatar,
-  Flex,
-  Divider,
-  Spinner,
-  useColorModeValue
-} from '@chakra-ui/react';
 import { useWizard } from './WizardProvider';
 
 // Mock RAG service to avoid dependency issues
@@ -59,10 +46,6 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const bgColor = useColorModeValue('gray.50', 'gray.700');
-  const userBgColor = useColorModeValue('blue.50', 'blue.900');
-  const assistantBgColor = useColorModeValue('gray.100', 'gray.600');
 
   // Initialize with system message and initial greeting
   useEffect(() => {
@@ -166,93 +149,93 @@ export const GreeterAgent: React.FC<GreeterAgentProps> = ({
   };
 
   return (
-    <Box
-      borderRadius="lg"
-      overflow="hidden"
-      bg={bgColor}
-      boxShadow="md"
-      height="500px"
-      display="flex"
-      flexDirection="column"
-    >
+    <div className="rounded-lg overflow-hidden bg-gray-50 shadow-md h-[500px] flex flex-col">
       {/* Chat header */}
-      <Box p={4} bg="blue.600" color="white">
-        <HStack>
-          <Avatar size="sm" name={agentName} src={agentAvatar} />
-          <Text fontWeight="bold">{agentName}</Text>
-        </HStack>
-      </Box>
+      <div className="p-4 bg-blue-600 text-white">
+        <div className="flex items-center space-x-2">
+          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-sm font-semibold">
+            {agentName.charAt(0)}
+          </div>
+          <span className="font-bold">{agentName}</span>
+        </div>
+      </div>
 
       {/* Messages container */}
-      <VStack
-        flex="1"
-        overflowY="auto"
-        p={4}
-        alignItems="stretch"
-        spacing={4}
-      >
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.filter(m => m.role !== 'system').map((message) => (
-          <Flex
+          <div
             key={message.id}
-            justifyContent={message.role === 'user' ? 'flex-end' : 'flex-start'}
+            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
-            <Box
-              maxW="80%"
-              bg={message.role === 'user' ? userBgColor : assistantBgColor}
-              p={3}
-              borderRadius="lg"
+            <div
+              className={`max-w-[80%] p-3 rounded-lg ${
+                message.role === 'user' 
+                  ? 'bg-blue-50 text-gray-900' 
+                  : 'bg-gray-100 text-gray-900'
+              }`}
             >
               {message.role === 'assistant' && (
-                <HStack mb={1}>
-                  <Avatar size="xs" name={agentName} src={agentAvatar} />
-                  <Text fontWeight="bold" fontSize="sm">{agentName}</Text>
-                </HStack>
+                <div className="flex items-center space-x-1 mb-1">
+                  <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
+                    {agentName.charAt(0)}
+                  </div>
+                  <span className="font-bold text-sm">{agentName}</span>
+                </div>
               )}
-              <Text>{message.content}</Text>
-              <Text fontSize="xs" color="gray.500" textAlign="right" mt={1}>
+              <p>{message.content}</p>
+              <p className="text-xs text-gray-500 text-right mt-1">
                 {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </Text>
-            </Box>
-          </Flex>
+              </p>
+            </div>
+          </div>
         ))}
 
         {isTyping && (
-          <Flex justifyContent="flex-start">
-            <Box bg={assistantBgColor} p={3} borderRadius="lg">
-              <HStack>
-                <Avatar size="xs" name={agentName} src={agentAvatar} />
-                <Spinner size="sm" />
-              </HStack>
-            </Box>
-          </Flex>
+          <div className="flex justify-start">
+            <div className="bg-gray-100 p-3 rounded-lg">
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center text-xs text-white font-semibold">
+                  {agentName.charAt(0)}
+                </div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+              </div>
+            </div>
+          </div>
         )}
 
         <div ref={messagesEndRef} />
-      </VStack>
+      </div>
 
-      <Divider />
+      <hr className="border-gray-200" />
 
       {/* Input area */}
-      <Box p={4}>
-        <HStack>
-          <Input
+      <div className="p-4">
+        <div className="flex space-x-2">
+          <input
+            type="text"
             placeholder="Type your message..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
             disabled={isTyping}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100 disabled:cursor-not-allowed"
           />
-          <Button
-            colorScheme="blue"
+          <button
             onClick={handleSendMessage}
-            isLoading={isTyping}
-            loadingText="Sending"
             disabled={!input.trim() || isTyping}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center space-x-2"
           >
-            Send
-          </Button>
-        </HStack>
-      </Box>
-    </Box>
+            {isTyping ? (
+              <>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                <span>Sending</span>
+              </>
+            ) : (
+              <span>Send</span>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 };

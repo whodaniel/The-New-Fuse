@@ -6,18 +6,18 @@
  */
 
 // Core components
-export { ExtensionManager } from './manager/ExtensionManager.js';
-export { ExtensionLoader, type ExtensionLoaderConfig } from './loader/ExtensionLoader.js';
-export { ExtensionRegistry, type ExtensionRegistryConfig, type ExtensionSearchQuery, type ExtensionSearchResult } from './registry/ExtensionRegistry.js';
-export { ExtensionValidator, type ExtensionValidatorConfig, type SecurityScanResult, type SecurityIssue } from './validator/ExtensionValidator.js';
+export { ExtensionManager } from './manager/ExtensionManager';
+export { ExtensionLoader, type ExtensionLoaderConfig } from './loader/ExtensionLoader';
+export { ExtensionRegistry, type ExtensionRegistryConfig, type ExtensionSearchQuery, type ExtensionSearchResult } from './registry/ExtensionRegistry';
+export { ExtensionValidator, type ExtensionValidatorConfig, type SecurityScanResult, type SecurityIssue } from './validator/ExtensionValidator';
 
 // Types and interfaces
-export * from './types/ExtensionTypes.js';
+export * from './types/ExtensionTypes';
 
 // Factory for creating extension system
 import { Logger, MasterAgentRegistry } from '@tnf/relay-core';
-import { ExtensionManager } from './manager/ExtensionManager.js';
-import { ExtensionManagerConfig } from './types/ExtensionTypes.js';
+import { ExtensionManager } from './manager/ExtensionManager';
+import { ExtensionManagerConfig } from './types/ExtensionTypes';
 
 export interface ExtensionSystemConfig {
   extensionDirectory: string;

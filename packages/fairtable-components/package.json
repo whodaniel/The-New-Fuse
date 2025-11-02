@@ -20,16 +20,16 @@
   "author": "The New Fuse Team",
   "license": "MIT",
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
     "rimraf": "^6.0.1",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@the-new-fuse/fairtable-core": "workspace:*",
     "@the-new-fuse/fairtable-utils": "workspace:*",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

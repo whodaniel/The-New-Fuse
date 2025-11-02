@@ -9,7 +9,7 @@
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "noEmit": false,
+    "noEmit": true,
     "composite": true,
     "jsx": "react-jsx",
     "strict": true,
@@ -23,7 +23,8 @@
       "@/*": ["./src/*"],
       "@the-new-fuse/api-client": ["../api-client/src"],
       "@the-new-fuse/hooks": ["../hooks/src"],
-      "@the-new-fuse/types": ["../types/src"]
+      "@the-new-fuse/types": ["../types/src"],
+      "types": []
     }
   },
   "include": ["src/**/*"],

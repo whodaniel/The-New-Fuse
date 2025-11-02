@@ -1,20 +1,25 @@
 import { Router, Request, Response } from 'express';
 import { MCPBrokerService } from '../mcp/services/mcp-broker.service';
 
-// Define a User interface with an id property to fix the type error
+// User interface for type safety
 interface User {
   id: string;
+  email?: string;
+  name?: string;
+  role?: string;
   [key: string]: any;
 }
 
-// Extend the Express Request type to include the updated User interface
-declare module 'express-serve-static-core' {
-  interface Request {
-    user?: User;
+// Extend Express Request interface
+declare global {
+  namespace Express {
+    interface Request {
+      user?: User;
+    }
   }
 }
 
-const router = Router();
+const router: Router = Router();
 
 /**
  * @swagger
@@ -175,7 +180,7 @@ router.post('/execute', (req: Request, res: Response) => {
 
       const mcpBroker = req.app.get('mcpBroker') as MCPBrokerService;
       // Ensure user id exists or default to 'anonymous'
-      const sender = req.user?.id || 'anonymous';
+      const sender = (req.user as User)?.id || 'anonymous';
       const result = await mcpBroker.executeDirective(
         serverName,
         action,

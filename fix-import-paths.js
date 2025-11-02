@@ -78,7 +78,7 @@ function main() {
   // Try to compile after fixes
   console.log('\nTrying to compile...');
   try {
-    execSync('cd packages/core && npm run build', { stdio: 'pipe' });
+    execSync('cd packages/core && pnpm run build', { stdio: 'pipe' });
     console.log('Build successful!');
   } catch (error) {
     console.log('Build still has errors. Checking error count...');

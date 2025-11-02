@@ -17,7 +17,7 @@ Qwen (通义千问) is a series of large language models developed by Alibaba Cl
 ### Node.js Integration
 
 ```bash
-npm install @alicloud/daashscope
+pnpm install @alicloud/daashscope
 ```
 
 ### Python Integration

@@ -16,6 +16,6 @@ fi
 
 # Install dependencies with npm
 echo "Installing dependencies with npm..."
-npm install
+pnpm install
 
 echo "Process completed."

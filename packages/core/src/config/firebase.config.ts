@@ -8,8 +8,8 @@ export class FirebaseConfig {
   private app: admin.app.App | null = null;
   constructor(private readonly configService: ConfigService) {}
 
-  async initialize(): unknown {
-    if(): unknown {
+  async initialize(): any {
+    if(): any {
       return this.app;
     }
 
@@ -19,7 +19,7 @@ export class FirebaseConfig {
       const storageBucket = this.configService.get<string>('FIREBASE_STORAGE_BUCKET');
       const projectId = this.configService.get<string>('FIREBASE_PROJECT_ID');
       let credential: admin.credential.Credential;
-      if(): unknown {
+      if(): void {
         try {
 const firebaseConfig = JSON.parse(firebaseConfigEnv);
   }          credential = admin.credential.cert(firebaseConfig);
@@ -59,26 +59,26 @@ this.logger.error('Failed to initialize Firebase Admin SDK', error);
     }
   }
 
-  getApp(): unknown {
-    if(): unknown {
+  getApp(): any {
+    if(): void {
       throw new Error('Firebase Admin SDK not initialized. Call initialize() first.');
     }
     return this.app;
   }
 
-  getFirestore(): unknown {
+  getFirestore(): any {
     return this.getApp().firestore();
   }
 
-  getAuth(): unknown {
+  getAuth(): any {
     return this.getApp().auth();
   }
 
-  getStorage(): unknown {
+  getStorage(): any {
     return this.getApp().storage();
   }
 
-  async createCustomToken(): unknown {
+  async createCustomToken(): Promise<any> {
     try {
 return await this.getAuth().createCustomToken(uid, additionalClaims);
     } catch (error) {
@@ -88,7 +88,7 @@ return await this.getAuth().createCustomToken(uid, additionalClaims);
     }
   }
 
-  async verifyIdToken(): unknown {
+  async verifyIdToken(): Promise<any> {
     try {
       return await this.getAuth().verifyIdToken(idToken);
     } catch (error) {
@@ -97,7 +97,7 @@ this.logger.error('Failed to verify ID token', error);
     }
   }
 
-  async getUserByEmail(): unknown {
+  async getUserByEmail(): Promise<any> {
     try {
       return await this.getAuth().getUserByEmail(email);
     } catch (error) {
@@ -106,7 +106,7 @@ this.logger.error('Failed to get user by email', error);
     }
   }
 
-  async createUser(): unknown {
+  async createUser(): Promise<any> {
     try {
       return await this.getAuth().createUser(userData);
     } catch (error) {
@@ -115,7 +115,7 @@ this.logger.error('Failed to create user', error);
     }
   }
 
-  async updateUser(): unknown {
+  async updateUser(): Promise<any> {
     try {
       return await this.getAuth().updateUser(uid, userData);
     } catch (error) {
@@ -124,7 +124,7 @@ this.logger.error('Failed to update user', error);
     }
   }
 
-  async deleteUser(): unknown {
+  async deleteUser(): void {
     try {
       await this.getAuth().deleteUser(uid);
       this.logger.log(`User ${uid} deleted successfully`);
@@ -134,8 +134,8 @@ this.logger.error('Failed to delete user', error);
     }
   }
 
-  onModuleDestroy(): unknown {
-    if(): unknown {
+  onModuleDestroy(): void {
+    if(): void {
       this.app.delete();
       this.logger.log('Firebase Admin SDK connection closed');
     }

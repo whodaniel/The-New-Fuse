@@ -81,36 +81,36 @@
     "prepublishOnly": "npm run clean && npm run build && npm run test"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.15.0",
-    "ajv": "^8.12.0",
+    "@modelcontextprotocol/sdk": "^1.20.1",
+    "ajv": "^8.17.1",
     "ws": "^8.18.3",
-    "uuid": "^9.0.0",
-    "winston": "^3.3.3",
+    "uuid": "^13.0.0",
+    "winston": "^3.18.3",
     "eventemitter3": "^5.0.1",
-    "p-retry": "^6.2.0",
-    "p-timeout": "^6.1.2",
+    "p-retry": "^7.1.0",
+    "p-timeout": "^7.0.1",
     "@tnf/core-monitoring": "workspace:*",
     "@tnf/core-error-handling": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24.0.13",
-    "@types/uuid": "^9.0.0",
-    "@types/ws": "^8.5.10",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "eslint": "^8.56.0",
-    "rimraf": "^5.0.10",
-    "typescript": "^5.8.3",
-    "vitest": "^1.6.0",
-    "@vitest/coverage-v8": "^1.6.0",
-    "typedoc": "^0.25.13"
+    "@types/node": "^24.8.1",
+    "@types/uuid": "^11.0.0",
+    "@types/ws": "^8.18.1",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
+    "eslint": "^9.38.0",
+    "rimraf": "^6.0.1",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4",
+    "@vitest/coverage-v8": "^3.2.4",
+    "typedoc": "^0.28.14"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.15.0"
   },
   "optionalDependencies": {
     "@the-new-fuse/types": "workspace:*",
-    "@the-new-fuse/relay-core": "workspace:*"
+    "@tnf/relay-core": "workspace:*"
   },
   "files": [
     "dist",

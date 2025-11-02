@@ -5,7 +5,7 @@ import '../../types/workflow.js';
  */
 export class FlowRouter {
   private routes: Map<string, any> = new Map();
-  constructor(): unknown {
+  constructor(): void {
     this.initializeRouter();
   }
 

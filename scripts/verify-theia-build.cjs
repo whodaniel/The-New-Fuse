@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
 /**
- * Verify Theia Build Script
- * Checks if Theia IDE is properly built and functional
+ * Verify Browser Hub Build Script
+ * Checks if Browser Hub IDE is properly built and functional
  */
 
 const fs = require('fs');
@@ -23,7 +23,7 @@ function checkFile(filePath, description) {
 }
 
 function main() {
-  console.log('🔍 Verifying Theia IDE build...\n');
+  console.log('🔍 Verifying Browser Hub IDE build...\n');
   
   const requiredFiles = [
     { path: 'apps/theia-ide/lib/build-info.json', desc: 'Build Info' },

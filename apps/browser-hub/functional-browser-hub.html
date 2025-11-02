@@ -1020,10 +1020,10 @@ dy>
                     </div>
                 </div>
                 <div class="nav-section-content" id="dev-section">
-                    <div class="nav-item" onclick="openService('theia')">
-                        <i class="fas fa-laptop-code"></i>
-                        <span>Theia IDE</span>
-                        <div class="status-dot warning"></div>
+                    <div class="nav-item" onclick="openService('browser-hub')">
+                        <i class="fas fa-globe"></i>
+                        <span>Browser Hub</span>
+                        <div class="status-dot connected"></div>
                     </div>
                     <div class="nav-item" onclick="openService('vscode')">
                         <i class="fas fa-file-code"></i>
@@ -1201,7 +1201,7 @@ dy>
                     <div class="service-group">
                         <div class="service-chip error" id="frontendStatus">● Frontend</div>
                         <div class="service-chip error" id="gatewayStatus">● API Gateway</div>
-                        <div class="service-chip warning" id="theiaStatus">● Theia IDE</div>
+                        <div class="service-chip connected" id="browserHubStatus">● Browser Hub</div>
                         <div class="service-chip error" id="mlStatus">● ML Service</div>
                     </div>
                 </div>
@@ -2086,9 +2086,9 @@ dy>
                     </div>
                     <div class="card-stats">
                         <div class="stat-item">
-                            <span class="stat-label">Theia IDE:</span>
-                            <span class="stat-value" style="color: ${serviceStatus.theia ? '#10b981' : '#f59e0b'};">
-                                ${serviceStatus.theia ? 'Running' : 'Starting...'}
+                            <span class="stat-label">Browser Hub:</span>
+                            <span class="stat-value" style="color: #10b981;">
+                                Running
                             </span>
                         </div>
                         <div class="stat-item">
@@ -2097,9 +2097,9 @@ dy>
                         </div>
                     </div>
                     <div style="margin-top: 16px;">
-                        <button class="btn btn-primary" onclick="openService('theia')">
+                        <button class="btn btn-primary" onclick="openService('browser-hub')">
                             <i class="fas fa-external-link-alt"></i>
-                            Open IDE
+                            Open Browser Hub
                         </button>
                     </div>
                 </div>
@@ -2433,8 +2433,8 @@ dy>
                     <p style="margin-bottom: 8px;">Terminal output is not available in browser mode.</p>
                     <p style="font-size: 12px; margin-bottom: 16px;">Use the Electron app to access terminal features.</p>
                     <div style="display: flex; gap: 8px; justify-content: center;">
-                        <button class="btn btn-secondary" onclick="openService('theia')">
-                            <i class="fas fa-external-link-alt"></i> Open Theia Terminal
+                        <button class="btn btn-secondary" onclick="openService('browser-hub')">
+                            <i class="fas fa-external-link-alt"></i> Open Browser Hub
                         </button>
                         <button class="btn btn-secondary" onclick="hideTerminal()">
                             <i class="fas fa-times"></i> Close

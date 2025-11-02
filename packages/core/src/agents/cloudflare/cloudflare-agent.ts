@@ -3,28 +3,28 @@ import { Injectable, Logger } from '@nestjs/common';
 @Injectable()
 export class CloudflareAgent {
   private readonly logger = new Logger(CloudflareAgent.name);
-  constructor(): unknown {
+  constructor(): void {
     this.logger.log('CloudflareAgent initialized');
   }
 
-  async processMessage(): unknown {
+  async processMessage(): string {
     this.logger.log(`Processing message: ${message}`);
     return `Cloudflare Agent processed: ${message}`;
   }
 
-  async getStatus(): unknown {
+  async getStatus(): string {
     return 'active';
   }
 
-  async handleCoordinationChannel(): unknown {
+  async handleCoordinationChannel(data: any): void {
     this.logger.log('Handling AI coordination channel data', data);
   }
 
-  async handleTaskChannel(): unknown {
+  async handleTaskChannel(data: any): void {
     this.logger.log('Handling AI task channel data', data);
   }
 
-  async schedule(): unknown {
+  async schedule(): void {
     this.logger.log(`Scheduling task: ${task}`);
   }
 }

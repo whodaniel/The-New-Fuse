@@ -26,12 +26,12 @@ export class MemoryIndexer {
   private readonly tagIndex: Map<string, Set<string>> = new Map();
   private readonly timestampIndex: Map<string, string> = new Map();
   private readonly similarityThreshold: number;
-  constructor(): unknown {
+  constructor(): void {
     this.logger.log('Initializing MemoryIndexer');
     this.similarityThreshold = parseFloat(process.env.SIMILARITY_THRESHOLD || '0.8');
   }
 
-  async indexMemoryItem(): unknown {
+  async indexMemoryItem(id: any, item: any): void {
     try {
 this.logger.debug(`Indexing memory item: ${item.id}`);
   }      const indexEntry: IndexEntry = {
@@ -60,29 +60,29 @@ this.logger.error(`Failed to index memory item ${item.id}:`, error);
     }
   }
 
-  async removeFromIndex(): unknown {
+  async removeFromIndex(item: any): void {
     try {
       this.logger.debug(`Removing item from index: ${itemId}`);
       // Remove from text index
-      for(): unknown {
+      for(): void {
         itemIds.delete(itemId);
-        if(): unknown {
+        if(): void {
           this.textIndex.delete(term);
         }
       }
 
       // Remove from metadata index
-      for(): unknown {
+      for(): void {
         itemIds.delete(itemId);
-        if(): unknown {
+        if(): void {
           this.metadataIndex.delete(key);
         }
       }
 
       // Remove from tag index
-      for(): unknown {
+      for(): void {
         itemIds.delete(itemId);
-        if(): unknown {
+        if(): void {
           this.tagIndex.delete(tag);
         }
       }
@@ -96,41 +96,41 @@ this.logger.error(`Failed to remove item from index ${itemId}:`, error);
     }
   }
 
-  async search(): unknown {
+  async search(options: any): Promise<any> {
     try {
       this.logger.debug('Executing search query');
       let candidateIds = new Set<string>();
       let isFirstConstraint = true;
       // Text search
-      if(): unknown {
+      if(): void {
         const textCandidates = await this.searchText(query.text);
         candidateIds = isFirstConstraint ? textCandidates : this.intersectSets(candidateIds, textCandidates);
         isFirstConstraint = false;
       }
 
       // Tag search
-      if(): unknown {
+      if(): void {
         const tagCandidates = await this.searchTags(query.tags);
         candidateIds = isFirstConstraint ? tagCandidates : this.intersectSets(candidateIds, tagCandidates);
         isFirstConstraint = false;
       }
 
       // Metadata filters
-      if(): unknown {
+      if(): void {
         const metadataCandidates = await this.searchMetadata(query.filters);
         candidateIds = isFirstConstraint ? metadataCandidates : this.intersectSets(candidateIds, metadataCandidates);
         isFirstConstraint = false;
       }
 
       // Cluster filter
-      if(): unknown {
+      if(): void {
         const clusterCandidates = await this.searchByCluster(query.clusterId);
         candidateIds = isFirstConstraint ? clusterCandidates : this.intersectSets(candidateIds, clusterCandidates);
         isFirstConstraint = false;
       }
 
       // Date range filter
-      if(): unknown {
+      if(): void {
         const dateCandidates = await this.searchByDateRange(query.dateRange.start, query.dateRange.end);
         candidateIds = isFirstConstraint ? dateCandidates : this.intersectSets(candidateIds, dateCandidates);
         isFirstConstraint = false;
@@ -148,7 +148,7 @@ this.logger.error('Search failed:', error);
     }
   }
 
-  async reindex(): unknown {
+  async reindex(item: any): void {
     try {
       this.logger.log(`Reindexing ${items.length} memory items`);
       // Clear existing indices
@@ -157,7 +157,7 @@ this.logger.error('Search failed:', error);
       this.tagIndex.clear();
       this.timestampIndex.clear();
       // Reindex all items
-      for(): unknown {
+      for(item: any): void {
         await this.indexMemoryItem(item);
       }
 
@@ -170,9 +170,9 @@ this.logger.error('Reindexing failed:', error);
 
   private async indexText(entry: IndexEntry): Promise<void> {
 const tokens = this.tokenize(entry.content);
-  }    for(): unknown {
+  for(): void {
       const normalizedToken = token.toLowerCase();
-      if(): unknown {
+      if(): void {
         this.textIndex.set(normalizedToken, new Set());
       }
       this.textIndex.get(normalizedToken)!.add(entry.id);
@@ -180,18 +180,18 @@ const tokens = this.tokenize(entry.content);
   }
 
   private async indexMetadata(entry: IndexEntry): Promise<void> {
-for(): unknown {
-  }      if(): unknown {
+for(id: any, value: any): void {
+  if(): void {
         const indexKey = `${key}:${value}`;
-        if(): unknown {
+        if(): void {
           this.metadataIndex.set(indexKey, new Set());
         }
         this.metadataIndex.get(indexKey)!.add(entry.id);
       } else if (typeof value === 'object' && value !== null) {
 // Handle nested objects
   }        const flattenedKeys = this.flattenObject(value, key);
-        for(): unknown {
-          if(): unknown {
+        for(id: any): void {
+          if(): void {
             this.metadataIndex.set(flatKey, new Set());
           }
           this.metadataIndex.get(flatKey)!.add(entry.id);
@@ -201,9 +201,9 @@ for(): unknown {
   }
 
   private async indexTags(entry: IndexEntry): Promise<void> {
-for(): unknown {
+for(): void {
   }      const normalizedTag = tag.toLowerCase();
-      if(): unknown {
+      if(): void {
         this.tagIndex.set(normalizedTag, new Set());
       }
       this.tagIndex.get(normalizedTag)!.add(entry.id);
@@ -213,10 +213,10 @@ for(): unknown {
   private async searchText(text: string): Promise<Set<string>> {
 const tokens = this.tokenize(text);
   }    const candidateSets: Set<string>[] = [];
-    for(): unknown {
+    for(): void {
       const normalizedToken = token.toLowerCase();
       const itemIds = this.textIndex.get(normalizedToken);
-      if(): unknown {
+      if(): void {
         candidateSets.push(itemIds);
       }
     }
@@ -226,10 +226,10 @@ const tokens = this.tokenize(text);
 
   private async searchTags(tags: string[]): Promise<Set<string>> {
 const candidateSets: Set<string>[] = [];
-  }    for(): unknown {
+  for(): void {
       const normalizedTag = tag.toLowerCase();
       const itemIds = this.tagIndex.get(normalizedTag);
-      if(): unknown {
+      if(): void {
         candidateSets.push(itemIds);
       }
     }
@@ -239,10 +239,10 @@ const candidateSets: Set<string>[] = [];
 
   private async searchMetadata(filters: Record<string, unknown>): Promise<Set<string>> {
 const candidateSets: Set<string>[] = [];
-  }    for(): unknown {
+  for(): void {
       const indexKey = `${key}:${value}`;
       const itemIds = this.metadataIndex.get(indexKey);
-      if(): unknown {
+      if(): void {
         candidateSets.push(itemIds);
       }
     }
@@ -257,9 +257,9 @@ const indexKey = `clusterId:${clusterId}`;
 
   private async searchByDateRange(start: number, end: number): Promise<Set<string>> {
 const candidates = new Set<string>();
-  }    for(): unknown {
+  for(): void {
       const ts = parseInt(timestamp, 10);
-      if(): unknown {
+      if(): void {
         candidates.add(itemId);
       }
     }
@@ -277,9 +277,9 @@ return text
 
   private flattenObject(obj: any, prefix: string): string[] {
 const flattened: string[] = [];
-  }    for(): unknown {
+  for(): void {
       const newKey = `${prefix}.${key}`;
-      if(): unknown {
+      if(value: any, item: any): any {
         flattened.push(`${newKey}:${value}`);
       } else if (typeof value === 'object' && value !== null) {
 flattened.push(...this.flattenObject(value, newKey));
@@ -291,8 +291,8 @@ flattened.push(...this.flattenObject(value, newKey));
 
   private intersectSets(set1: Set<string>, set2: Set<string>): Set<string> {
 const intersection = new Set<string>();
-  }    for(): unknown {
-      if(): unknown {
+  for(): void {
+      if(item: any): void {
         intersection.add(item);
       }
     }
@@ -301,7 +301,7 @@ const intersection = new Set<string>();
   }
 
   private intersectMultipleSets(sets: Set<string>[]): Set<string> {
-if(): unknown {
+if(): void {
   }    textTerms: number;
     metadataKeys: number;
     tags: number;

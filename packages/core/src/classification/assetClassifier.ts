@@ -40,20 +40,17 @@ export interface ClassificationResult {
 
 export class AssetClassifier {
   private categoryKeywords: Record<AssetCategory, string[]> = {
-  // Implementation needed
-}
     [AssetCategory.ALGORITHM]: ['complexity', 'optimization', 'computation', 'algorithm', 'sort', 'search'],
     [AssetCategory.PROTOCOL]: ['communication', 'handshake', 'exchange', 'protocol', 'tcp', 'udp'],
     [AssetCategory.FRAMEWORK]: ['extensible', 'configurable', 'plugin', 'framework', 'mvc', 'architecture'],
-    [AssetCategory.TOOL]: ['utility', 'cli', 'standalone', 'tool', 'utility', 'helper'],
+    [AssetCategory.TOOL]: ['utility', 'cli', 'standalone', 'tool', 'helper'],
     [AssetCategory.MODEL]: ['training', 'inference', 'prediction', 'model', 'ml', 'ai'],
     [AssetCategory.LIBRARY]: ['reusable', 'import', 'module', 'library', 'package', 'dependency'],
     [AssetCategory.API]: ['endpoint', 'request', 'response', 'api', 'rest', 'graphql'],
-    [AssetCategory.ARCHITECTURE]: ['system', 'structure', 'pattern', 'architecture', 'design', 'pattern'],
+    [AssetCategory.ARCHITECTURE]: ['system', 'structure', 'pattern', 'architecture', 'design'],
   };
+
   private qualityKeywords: Record<AssetQuality, string[]> = {
-  // Implementation needed
-}
     [AssetQuality.INNOVATIVE]: ['novel', 'innovative', 'breakthrough', 'cutting-edge', 'pioneering'],
     [AssetQuality.EFFICIENT]: ['efficient', 'optimized', 'fast', 'performance', 'speed'],
     [AssetQuality.SCALABLE]: ['scalable', 'distributed', 'horizontal', 'vertical', 'growth'],
@@ -63,67 +60,56 @@ export class AssetClassifier {
     [AssetQuality.REUSABLE]: ['reusable', 'modular', 'component', 'library', 'generic'],
     [AssetQuality.DOCUMENTED]: ['documented', 'readme', 'docs', 'comments', 'examples'],
   };
-  classify(): unknown {
+
+  classify(assetData: AssetData): ClassificationResult {
     const content = String(assetData.content || '').toLowerCase();
+
     // Determine category
     let bestCategory = AssetCategory.LIBRARY;
     let categoryScore = 0;
-    for(): unknown {
-      const score = keywords.reduce((acc, keyword) => {
-const matches = (content.match(new RegExp(keyword, 'gi')) || []).length;
-  }        return acc + matches;
+
+    for (const [category, keywords] of Object.entries(this.categoryKeywords)) {
+      const score = keywords.reduce((sum, keyword) => {
+        return sum + (content.includes(keyword) ? 1 : 0);
       }, 0);
-      if(): unknown {
+
+      if (score > categoryScore) {
         categoryScore = score;
         bestCategory = category as AssetCategory;
       }
     }
 
-    // Determine qualities
+    // Determine quality attributes
     const qualities: AssetQuality[] = [];
-    for(): unknown {
-      const score = keywords.reduce((acc, keyword) => {
-const matches = (content.match(new RegExp(keyword, 'gi')) || []).length;
-  }        return acc + matches;
-      }, 0);
-      if(): unknown {
+    for (const [quality, keywords] of Object.entries(this.qualityKeywords)) {
+      const hasQuality = keywords.some(keyword => content.includes(keyword));
+      if (hasQuality) {
         qualities.push(quality as AssetQuality);
       }
     }
 
-    // Generate tags
+    // Extract tags from content
     const tags = this.extractTags(content);
+
     // Calculate confidence
-    const confidence = Math.min(0.9, (categoryScore + qualities.length * 0.5) / 10);
+    const confidence = Math.min((categoryScore / 3) * 100, 100);
+
     return {
-category: bestCategory,
-  }      quality: qualities,
+      category: bestCategory,
+      quality: qualities,
       confidence,
       tags,
-      summary: this.generateSummary(assetData, bestCategory, qualities),
+      summary: this.generateSummary(assetData, bestCategory, qualities)
     };
   }
 
   private extractTags(content: string): string[] {
-const commonTags = [
-      'javascript', 'typescript', 'python', 'java', 'go', 'rust', 'cpp', 'c',
-      'react', 'vue', 'angular', 'node', 'express', 'nestjs', 'fastapi',
-      'database', 'redis', 'mongodb', 'postgresql', 'mysql',
-      'cloud', 'aws', 'azure', 'gcp', 'docker', 'kubernetes',
-      'testing', 'unit', 'integration', 'e2e', 'jest', 'mocha',
-      'security', 'auth', 'jwt', 'oauth', 'encryption',
-    ];
-  }    const foundTags = commonTags.filter(tag => 
-      content.toLowerCase().includes(tag)
-    );
-    return [...new Set(foundTags)];
+    // Simple tag extraction based on common technical terms
+    const commonTags = ['typescript', 'javascript', 'react', 'node', 'api', 'database', 'testing'];
+    return commonTags.filter(tag => content.includes(tag));
   }
 
-  private generateSummary(): unknown {
-    assetData: AssetData,
-    category: AssetCategory,
-    qualities: AssetQuality[],
-  ): string {
-return `${assetData.name} is a ${category} that demonstrates ${qualities.join(', ')} qualities.`;
-  }}
+  private generateSummary(assetData: AssetData, category: AssetCategory, qualities: AssetQuality[]): string {
+    return `${assetData.name} is classified as a ${category} with ${qualities.length} quality attributes: ${qualities.join(', ')}`;
+  }
 }

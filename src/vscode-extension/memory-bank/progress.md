@@ -7,7 +7,7 @@
 
 ## What's Left to Build/Fix
 
-- **Immediate:** Systematically replace all Yarn references in scripts, Dockerfiles, and documentation with Bun equivalents.
+- **Immediate:** Systematically replace all Yarn references in scripts, Dockerfiles, and documentation with pnpm equivalents.
 - **Immediate:** Resolve 118 TypeScript errors across 16 files.
   - `src/extension.ts` (18 errors)
   - `src/llm/LLMProviderManager.ts` (2 errors)
@@ -40,6 +40,6 @@
 
 ## Evolution of Project Decisions
 
-- **Decision (2025-06-07):** Migrated package management from Yarn to Bun for improved speed and modern tooling. All scripts and documentation are being updated to reflect this change.
+- **Decision (2025-06-07):** Migrated package management from Yarn to pnpm for improved speed and modern tooling. All scripts and documentation are being updated to reflect this change.
 - **Decision (Initial):** Prioritize fixing all TypeScript errors to establish a stable baseline.
 - **Decision (Initial):** Create and maintain a Memory Bank for project context due to session memory resets.

@@ -16,9 +16,11 @@ function runCommand(command, args, options = {}) {
     const child = spawn(command, args, {
       stdio: 'inherit',
       cwd: options.cwd || path.resolve(__dirname, '..'),
+      shell: true, // Add shell option to resolve PATH issues
       env: { 
         ...process.env,
         NODE_OPTIONS: '--max-old-space-size=4096',
+        PATH: process.env.PATH, // Ensure PATH is preserved
         ...options.env
       }
     });
@@ -50,9 +52,9 @@ async function buildTheiaWithMemoryOptimization() {
   console.log('🔧 Building Theia IDE with memory optimization...');
   
   try {
-    // Install dependencies first with bun (following project convention)
-    console.log('📦 Installing Theia dependencies with bun...');
-    await runCommand('bun', ['install'], { 
+    // Install dependencies first with pnpm (using system path)
+    console.log('📦 Installing Theia dependencies with pnpm...');
+    await runCommand('pnpm', ['install'], { 
       cwd: path.resolve(__dirname, '..', 'apps', 'theia-ide'),
       env: { NODE_ENV: 'production' }
     });
@@ -60,17 +62,17 @@ async function buildTheiaWithMemoryOptimization() {
     // Use multiple build strategies, prioritizing the working approach
     const buildStrategies = [
       {
-        name: 'direct-theia-build',
-        command: 'theia',
-        args: ['build', '--mode', 'production'],
+        name: 'pnpx-theia-cli-optimized',
+        command: 'pnpx',
+        args: ['@theia/cli@1.59.0', 'build', '--mode', 'production'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=6144',
           NODE_ENV: 'production'
         }
       },
       {
-        name: 'bun-theia-build-script',
-        command: 'bun',
+        name: 'pnpm-theia-build-script',
+        command: 'pnpm',
         args: ['run', 'theia:build'],
         env: { 
           NODE_OPTIONS: '--max-old-space-size=4096',
@@ -266,9 +268,9 @@ async function main() {
       // Analyze failure and provide recommendations
       if (error.message.includes('out of memory') || error.message.includes('heap') || error.message.includes('timed out')) {
         console.log('💡 Memory/timeout-related failure detected. Recommendations:');
-        console.log('   - Try: bun run build:low-memory');
-        console.log('   - Try: bun run build:staged');
-        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" bun run build');
+        console.log('   - Try: /Users/<owner>/Library/pnpm/pnpm run build:low-memory');
+        console.log('   - Try: /Users/<owner>/Library/pnpm/pnpm run build:staged');
+        console.log('   - Try: NODE_OPTIONS="--max-old-space-size=8192" /Users/<owner>/Library/pnpm/pnpm run build');
         console.log('   - Consider increasing system memory or closing other applications');
         console.log('   - Check if any processes are hanging: ps aux | grep theia');
       }

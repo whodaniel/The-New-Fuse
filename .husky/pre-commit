@@ -6,7 +6,7 @@ if [ -n "$STAGED_FILES" ]; then
   echo "Pre-commit: Found staged files, running checks..."
   
   # Run other pre-commit hooks
-  # bun run lint-staged  # Temporarily disabled - not configured
+  # pnpm run lint-staged  # Temporarily disabled - not configured
   
   echo "Pre-commit: Checks completed."
 fi

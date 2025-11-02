@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Build and Launch Frontend with Bun
-# This script builds the React frontend and launches it using Bun runtime
+# Build and Launch Frontend with pnpm
+# This script builds the React frontend and launches it using pnpm
 
 set -e
 
-echo "🚀 Building and launching The New Fuse Frontend with Bun..."
+echo "🚀 Building and launching The New Fuse Frontend with pnpm..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -20,14 +20,14 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR" && pwd)"
 
 echo -e "${BLUE}📁 Project root: $PROJECT_ROOT${NC}"
 
-# Check if Bun is installed
-if ! command -v bun &> /dev/null; then
-    echo -e "${RED}❌ Bun is not installed. Please install Bun first:${NC}"
-    echo "curl -fsSL https://bun.sh/install | bash"
+# Check if pnpm is installed
+if ! command -v pnpm &> /dev/null; then
+    echo -e "${RED}❌ pnpm is not installed. Please install pnpm first:${NC}"
+    echo "npm install -g pnpm"
     exit 1
 fi
 
-echo -e "${GREEN}✅ Bun version: $(bun --version)${NC}"
+echo -e "${GREEN}✅ pnpm version: $(pnpm --version)${NC}"
 
 # Navigate to frontend directory
 FRONTEND_DIR="$PROJECT_ROOT/apps/frontend"
@@ -38,7 +38,7 @@ fi
 
 echo -e "${BLUE}📂 Frontend directory: $FRONTEND_DIR${NC}"
 
-# Install dependencies with Bun
+# Install dependencies with pnpm
 echo -e "${YELLOW}📦 Installing dependencies...${NC}"
 cd "$PROJECT_ROOT"
 pnpm install
@@ -64,8 +64,8 @@ fi
 
 echo -e "${GREEN}✅ Build artifacts found in: $BUILD_DIR${NC}"
 
-# Start the Bun server
-echo -e "${YELLOW}🌐 Starting Bun server...${NC}"
+# Start the pnpm server
+echo -e "${YELLOW}🌐 Starting pnpm server...${NC}"
 cd "$PROJECT_ROOT"
 
 # Kill any existing server on port 3001

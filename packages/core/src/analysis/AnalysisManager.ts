@@ -53,15 +53,17 @@ export interface AnalysisReport {
 @Injectable()
 export class AnalysisManager {
   private readonly logger = new Logger(AnalysisManager.name);
+  private analysisQueue = new Map<string, Promise<AnalysisReport>>();
 
-  async analyzeCode(config: AnalysisConfig, files: string[]): Promise<AnalysisReport> {
+  async analyzeCode(files: string[], config: AnalysisConfig): Promise<AnalysisReport> {
     const analysisId = `analysis_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const startTime = Date.now();
+
     this.logger.log(`Starting analysis: ${analysisId}`);
 
     try {
       const results: AnalysisResult[] = [];
-      
+      // Run different types of analysis based on config
       if (config.includeCodeQuality) {
         const qualityResults = await this.analyzeCodeQuality(files);
         results.push(...qualityResults);
@@ -87,6 +89,7 @@ export class AnalysisManager {
         results.push(...complexityResults);
       }
 
+      // Apply custom rules if any
       if (config.customRules && config.customRules.length > 0) {
         const customResults = await this.applyCustomRules(files, config.customRules);
         results.push(...customResults);
@@ -105,7 +108,8 @@ export class AnalysisManager {
         executionTime,
       };
 
-      this.logger.log(`Analysis completed: ${analysisId}`);
+      this.logger.log(`Analysis completed: ${analysisId} - ${filteredResults.length} issues found`);
+
       return report;
     } catch (error) {
       this.logger.error(`Analysis failed: ${analysisId}`, error);
@@ -115,7 +119,9 @@ export class AnalysisManager {
 
   private async analyzeCodeQuality(files: string[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
+
     for (const file of files) {
+      // Simulate code quality analysis
       results.push({
         id: `quality_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'code_quality',
@@ -136,8 +142,10 @@ export class AnalysisManager {
 
   private async analyzeSecurity(files: string[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
+
     for (const file of files) {
-      if (Math.random() > 0.8) { // Simulate finding a security issue
+      // Simulate security analysis
+      if (Math.random() > 0.7) {
         results.push({
           id: `security_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           type: 'security',
@@ -157,7 +165,9 @@ export class AnalysisManager {
 
   private async analyzePerformance(files: string[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
+
     for (const file of files) {
+      // Simulate performance analysis
       results.push({
         id: `perf_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'performance',
@@ -176,7 +186,7 @@ export class AnalysisManager {
 
   private async analyzeDependencies(files: string[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
-    // In a real implementation, this would parse package.json or similar
+    // Simulate dependency analysis
     results.push({
       id: `dep_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       type: 'dependency',
@@ -193,7 +203,9 @@ export class AnalysisManager {
 
   private async analyzeComplexity(files: string[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
+
     for (const file of files) {
+      // Simulate complexity analysis
       results.push({
         id: `complex_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         type: 'complexity',
@@ -213,9 +225,10 @@ export class AnalysisManager {
 
   private async applyCustomRules(files: string[], rules: AnalysisRule[]): Promise<AnalysisResult[]> {
     const results: AnalysisResult[] = [];
+
     for (const file of files) {
       for (const rule of rules) {
-        // Simulate applying custom rule
+        // Simulate custom rule application
         results.push({
           id: `custom_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           type: rule.type,
@@ -238,7 +251,7 @@ export class AnalysisManager {
   }
 
   private generateSummary(results: AnalysisResult[]): AnalysisReport['summary'] {
-    const summary: AnalysisReport['summary'] = {
+    const summary = {
       totalIssues: results.length,
       critical: 0,
       high: 0,
@@ -261,7 +274,7 @@ export class AnalysisManager {
     return summary;
   }
 
-  async getAnalysisReport(analysisId: string): Promise<AnalysisReport | null> {
+  async getAnalysisReport(id: string): Promise<AnalysisReport | null> {
     // This would typically retrieve from a database
     // For now, return null
     return null;

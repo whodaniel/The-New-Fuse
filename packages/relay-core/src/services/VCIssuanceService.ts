@@ -8,10 +8,8 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../utils/Logger.js';
-import { Agent, AgentType } from '@the-new-fuse/database';
-import { PrismaClient } from '@the-new-fuse/database';
-import { ethers } from 'ethers';
-import { BigNumberish, BigNumber } from '@ethersproject/bignumber';
+import { Agent, AgentType, PrismaClient } from '@the-new-fuse/database';
+import { ethers, BigNumberish } from 'ethers';
 import { BlockchainService } from './shared/BlockchainService.js';
 
 // W3C Verifiable Credentials data model interfaces
@@ -37,7 +35,7 @@ export interface CredentialIssuer {
 export interface CredentialSubject {
   id: string;
   agentId: string;
-  agentType: AgentType;
+  agentType: string;
   capabilities: AgentCapability[];
   achievements: AgentAchievement[];
   verifiedSkills: VerifiedSkill[];
@@ -185,7 +183,7 @@ export interface TrustedIssuer {
  * VCIssuanceService - Handles Verifiable Credential lifecycle
  */
 export class VCIssuanceService extends EventEmitter {
-  private prisma: PrismaClient;
+  private prisma: any;
   private logger: Logger;
   private blockchainService: BlockchainService | null = null;
   private trustedIssuers: Map<string, TrustedIssuer> = new Map();
@@ -206,7 +204,7 @@ export class VCIssuanceService extends EventEmitter {
   };
 
   constructor(
-    prisma: PrismaClient,
+    prisma: any,
     logger: Logger,
     privateKey?: string
   ) {
@@ -469,9 +467,9 @@ export class VCIssuanceService extends EventEmitter {
     // Query task history for capability-related tasks
     const tasks = await this.prisma.task.findMany({
       where: {
-        assignedTo: { id: agentId },
+        agentId: agentId,
         status: 'COMPLETED',
-        title: {
+        type: {
           contains: capability,
           mode: 'insensitive'
         }
@@ -555,7 +553,7 @@ export class VCIssuanceService extends EventEmitter {
    */
   private async generatePerformanceMetrics(agentId: string): Promise<PerformanceMetrics> {
     const tasks = await this.prisma.task.findMany({
-      where: { assignedTo: { id: agentId } },
+      where: { agentId: agentId },
       orderBy: { createdAt: 'desc' },
       take: 1000 // Last 1000 tasks for comprehensive analysis
     });
@@ -624,7 +622,7 @@ export class VCIssuanceService extends EventEmitter {
     const achievements: AgentAchievement[] = [];
     
     const taskCount = await this.prisma.task.count({
-      where: { assignedTo: { id: agentId }, status: 'COMPLETED' }
+      where: { agentId: agentId, status: 'COMPLETED' }
     });
 
     if (taskCount >= 100) {

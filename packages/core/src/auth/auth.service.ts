@@ -10,18 +10,16 @@ export interface UserData {
 
 @Injectable()
 export class AuthService {
-  constructor(): unknown {
+  constructor(
     private jwtService: JwtService,
     private configService: ConfigService
   ) {}
 
-  async validateUser(): unknown {
+  async validateUser(email: string, password: string): Promise<UserData | null> {
     // This is a placeholder implementation
     // In a real app, you would validate against a database
-    if(): unknown {
+    if (email && password) {
       return {
-  // Implementation needed
-}
         id: '1',
         email,
         name: 'Test User',
@@ -31,33 +29,27 @@ export class AuthService {
     return null;
   }
 
-  async login(): unknown {
+  async login(user: UserData): Promise<{ access_token: string; user: UserData }> {
     const payload = {
-  // Implementation needed
-}
       email: user.email,
       sub: user.id,
       roles: user.roles || ['user'],
     };
     return {
-  // Implementation needed
-}
       access_token: this.jwtService.sign(payload),
-      user: unknown;
-id: user.id,
-  }        email: user.email,
+      user: {
+        id: user.id,
+        email: user.email,
         name: user.name,
         roles: user.roles,
       },
     };
   }
 
-  async register(): unknown {
+  async register(userData: UserData): Promise<UserData> {
     // This is a placeholder implementation
     // In a real app, you would save to a database
     return {
-  // Implementation needed
-}
       id: Date.now().toString(),
       email: userData.email,
       name: userData.name || 'New User',
@@ -65,19 +57,15 @@ id: user.id,
     };
   }
 
-  async validateToken(): unknown {
+  async validateToken(token: string): Promise<UserData | null> {
     try {
-const payload = this.jwtService.verify(token);
-  }      return {
-  // Implementation needed
-}
+      const payload = this.jwtService.verify(token);
+      return {
         id: payload.sub,
         email: payload.email,
         roles: payload.roles,
       };
     } catch {
-  // Implementation needed
-}
       return null;
     }
   }

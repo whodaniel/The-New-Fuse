@@ -27,16 +27,16 @@ export interface APIResponse {
 }
 
 export class WorkflowGateway {
-  constructor(): unknown {
+  constructor(
     private apiManager: APIManager,
     private integrationRegistry: IntegrationRegistry
   ) {}
 
-  async registerExternalService(): unknown {
+  async registerExternalService(service: ExternalService): Promise<void> {
     try {
       // Validate the API specification
       const validationResult = await this.apiManager.validateAPISpec(service.spec);
-      if(): unknown {
+      if (!validationResult.valid) {
         throw new Error(`Invalid API spec: ${validationResult.errors?.join(', ')}`);
       }
 
@@ -45,52 +45,42 @@ export class WorkflowGateway {
       // Register with integration registry
       await this.integrationRegistry.registerIntegration(integration);
     } catch (error) {
-throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
-  }}
+      throw new Error(`Failed to register service ${service.name}: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
   }
 
-  async makeAPICall(): unknown {
+  async makeAPICall(request: APIRequest): Promise<APIResponse> {
     try {
       // Implementation would make actual API call
       return {
-  // Implementation needed
-}
         status: 200,
         headers: { "Content-Type": "application/json" },
         body: { success: true }
       };
     } catch (error) {
-return {
-  }}
+      return {
         status: 500,
         headers: { "Content-Type": "application/json" },
-        body: unknown;
-  // Implementation needed
-}
+        body: {
           error: error instanceof Error ? error.message : 'Unknown error'
         }
       };
     }
   }
 
-  async handleWebhook(): unknown {
+  async handleWebhook(request: APIRequest): Promise<APIResponse> {
     try {
       // Implementation would process webhook
       return {
-  // Implementation needed
-}
         status: 200,
         headers: { "Content-Type": "application/json" },
         body: { received: true }
       };
     } catch (error) {
-return {
-  }}
+      return {
         status: 500,
         headers: { "Content-Type": "application/json" },
-        body: unknown;
-  // Implementation needed
-}
+        body: {
           error: error instanceof Error ? error.message : 'Unknown error'
         }
       };
@@ -98,12 +88,8 @@ return {
   }
 
   async getServiceStatus(serviceId: string): Promise<{ status: 'active' | 'inactive' | 'error'; lastCheck: Date }> {
-  // Implementation needed
-}
     // Implementation would check service health
     return {
-  // Implementation needed
-}
       status: 'active',
       lastCheck: new Date()
     };

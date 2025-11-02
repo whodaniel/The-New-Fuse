@@ -1,9 +1,27 @@
-import { useA2AContext } from '../context/A2AContext';
+import { useState, useCallback } from 'react';
 
-export const useA2AAgents = () => {
-  const context = useA2AContext();
+export interface Agent {
+  agentId: string;
+  name: string;
+  type: string;
+  status: string;
+}
+
+export function useA2AAgents() {
+  const [agents, setAgents] = useState<Agent[]>([]);
+
+  const refreshAgents = useCallback(async () => {
+    // Mock implementation - in real scenario this would fetch from A2A service
+    setAgents([]);
+  }, []);
+
+  const findAgentsByType = useCallback((type: string) => {
+    return agents.filter(agent => agent.type === type);
+  }, [agents]);
+
   return {
-    agents: context.agents,
-    isConnected: context.isConnected,
+    agents,
+    refreshAgents,
+    findAgentsByType
   };
-};
+}

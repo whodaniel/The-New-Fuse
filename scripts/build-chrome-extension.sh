@@ -6,7 +6,7 @@ echo "🏗️ Building Chrome Extension with Bun..."
 
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/chrome-extension"
 
-# Install dependencies with bun
+# Install dependencies with pnpm
 echo "Installing dependencies..."
 pnpm install
 

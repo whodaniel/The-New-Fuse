@@ -28,12 +28,14 @@ export class Logger {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] [${level.toUpperCase()}] ${message}\n`;
 
-    console.log(logEntry.trim());
+    process.stdout.write(logEntry);
 
     try {
+      // Ensure the directory exists before writing
+      await fs.mkdir(this.workspaceDir, { recursive: true });
       await fs.appendFile(this.logPath, logEntry);
     } catch (error) {
-      console.error('Logging error:', error);
+      process.stderr.write(`Logging error: ${error}\n`);
     }
   }
 

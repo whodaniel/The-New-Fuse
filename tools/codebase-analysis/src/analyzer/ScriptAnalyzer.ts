@@ -332,7 +332,7 @@ export class ScriptAnalyzer {
   }
 
   private categorizeCommand(command: string): CommandCategory {
-    const buildCommands = ['npm', 'yarn', 'bun', 'make', 'cmake', 'gradle', 'mvn'];
+    const buildCommands = ['npm', 'yarn', 'pnpm', 'make', 'cmake', 'gradle', 'mvn'];
     const fileCommands = ['cp', 'mv', 'rm', 'mkdir', 'chmod', 'chown', 'find', 'ls'];
     const processCommands = ['ps', 'kill', 'killall', 'nohup', 'screen', 'tmux'];
     const networkCommands = ['curl', 'wget', 'ping', 'netstat', 'ss'];

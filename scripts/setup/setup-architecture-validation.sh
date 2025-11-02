@@ -8,7 +8,7 @@ mkdir -p /var/log/fuse/architecture-monitoring
 mkdir -p /etc/fuse/cron.d
 
 # Install required npm packages
-npm install --save js-yaml
+pnpm install --save js-yaml
 
 # Set up cron job for validation
 cat << EOF > /etc/fuse/cron.d/architecture-validation

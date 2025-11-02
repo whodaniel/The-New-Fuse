@@ -38,7 +38,7 @@ fi
 echo "Checking TypeScript dependencies..."
 if ! grep -q '"typescript":' package.json; then
     echo "Adding TypeScript dependency..."
-    npm install --save-dev typescript @types/node
+    pnpm install --save-dev typescript @types/node
 fi
 
 # Check for essential type definitions
@@ -52,7 +52,7 @@ needed_types=(
 for type in "${needed_types[@]}"; do
     if ! grep -q "\"$type\":" package.json; then
         echo "Adding $type..."
-        npm install --save-dev "$type"
+        pnpm install --save-dev "$type"
     fi
 done
 

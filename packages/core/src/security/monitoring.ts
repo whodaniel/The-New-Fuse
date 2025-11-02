@@ -1,52 +1,127 @@
-/**
- * System monitoring and analytics for the chat system.;
- * Tracks performance metrics, agent interactions, and system health.;
- */;
-import /../redis_core/redis_client.js;
-const logger: Date
-    value: number
-    labels: Record<string, string>;
+import { Injectable, Logger, OnModuleDestroy } from '@nestjs/common';
+import Redis from 'ioredis';
+import { performance } from 'perf_hooks';
+
+export interface Metric {
+  timestamp: Date;
+  value: number;
+  labels?: Record<string, string>;
 }
 
-interface SystemHealth    { response_times: unknown;
-  // Implementation needed
-}
-        avg: number
-        p95: number }
-        p99: number };
-    message_counts: { total: number }
-        by_type: Record<string, number>;
-    };
-    tool_usage: { success_rate: number }
-        most_used: string[];
-     };
-    error_rates: { total: number }
-        by_type: Record<string, number>;
-    };
-    agent_load: { avg: number
-        max: number }
-        by_agent: Record<string, number>;
-    };
+export interface SystemHealth {
+  responseTimes: {
+    avg: number;
+    p95: number;
+    p99: number;
+  };
+  messageCounts: {
+    total: number;
+    byType: Record<string, number>;
+  };
+  errorRates: {
+    total: number;
+    byType: Record<string, number>;
+  };
 }
 
-export class SystemMonitor {
-  private readonly redis: RedisCore
-    private readonly metricPrefixes: Record<string, string>'';
-    constructor(redis: 'RedisCore){'
-  timestamp redis'
-        this.metricPrefixes = 'placeholder';
-           tool_usage: 'monitor:tool_usage,'
-           error_rate: 'monitor:errors,'
-            agent_load: 'monitor: agent_load;'
-        await this.storeMetric(key, 1, true): string, success: ''
-        const key = 'placeholder';
-                        labels: { type: metricType, id: 'identifier'
-                    by_agent: ''
-              agentLoad';'}'
-            ]= 'awaitPromise.all([';';
-    private calculatePercentile(values: Record<string, number>, percentile: number): number { const nums = 'key.split('Object.entries('data): Record<string, number>): number {';
-            grouped[type]  = key.split( (grouped[type] || 0): Record<string, number>): number { let successes= 'placeholder';
-        let total = 'placeholder';
-          if('')
-                successes += 'placeholder';
-          total'
+@Injectable()
+export class MonitoringService implements OnModuleDestroy {
+  private readonly logger = new Logger(MonitoringService.name);
+  private readonly redis: Redis;
+
+  constructor() {
+    this.redis = new Redis({
+      host: process.env.REDIS_HOST || 'localhost',
+      port: parseInt(process.env.REDIS_PORT || '6379', 10),
+    });
+    this.redis.on('error', (err) => this.logger.error('Redis Error', err));
+  }
+
+  onModuleDestroy() {
+    this.redis.disconnect();
+  }
+
+  /**
+   * Increments a counter metric.
+   */
+  async increment(key: string, labels: Record<string, string> = {}) {
+    const serializedLabels = this.serializeLabels(labels);
+    await this.redis.hincrby('counters', `${key}:${serializedLabels}`, 1);
+  }
+
+  /**
+   * Records a timing measurement for a function.
+   */
+  async recordTime<T>(key: string, fn: () => Promise<T>, labels: Record<string, string> = {}): Promise<T> {
+    const start = performance.now();
+    try {
+      return await fn();
+    } finally {
+      const duration = performance.now() - start;
+      const serializedLabels = this.serializeLabels(labels);
+      await this.redis.lpush(`timings:${key}:${serializedLabels}`, duration.toString());
+    }
+  }
+
+  /**
+   * Calculates system health metrics.
+   */
+  async getSystemHealth(): Promise<SystemHealth> {
+    // This is a simplified example. A real implementation would require
+    // more sophisticated data aggregation and analysis.
+    const responseTimes = await this.getTimingStats('api.response');
+    const messageCounts = await this.getCounterStats('message.type');
+    const errorRates = await this.getCounterStats('error.type');
+
+    return {
+      responseTimes,
+      messageCounts,
+      errorRates,
+    };
+  }
+
+  private async getTimingStats(key: string): Promise<{ avg: number; p95: number; p99: number }> {
+    const timings = await this.redis.lrange(`timings:${key}`, 0, -1);
+    const numbers = timings.map(Number).sort((a, b) => a - b);
+    if (numbers.length === 0) return { avg: 0, p95: 0, p99: 0 };
+
+    const sum = numbers.reduce((acc, val) => acc + val, 0);
+    const avg = sum / numbers.length;
+    const p95 = this.calculatePercentile(numbers, 95);
+    const p99 = this.calculatePercentile(numbers, 99);
+
+    return { avg, p95, p99 };
+  }
+
+  private async getCounterStats(keyPrefix: string): Promise<{ total: number; byType: Record<string, number> }> {
+    const counters = await this.redis.hgetall('counters');
+    let total = 0;
+    const byType: Record<string, number> = {};
+
+    for (const [field, value] of Object.entries(counters)) {
+      if (field.startsWith(keyPrefix)) {
+        const type = field.split(':')[1] || 'unknown';
+        const count = Number(value);
+        total += count;
+        byType[type] = (byType[type] || 0) + count;
+      }
+    }
+
+    return { total, byType };
+  }
+
+  private calculatePercentile(arr: number[], percentile: number): number {
+    if (arr.length === 0) return 0;
+    const index = (percentile / 100) * (arr.length - 1);
+    const floor = Math.floor(index);
+    const ceil = Math.ceil(index);
+    if (floor === ceil) return arr[floor];
+    const d0 = arr[floor] * (ceil - index);
+    const d1 = arr[ceil] * (index - floor);
+    return d0 + d1;
+  }
+
+  private serializeLabels(labels: Record<string, string>): string {
+    return Object.entries(labels).map(([k, v]) => `${k}=${v}`).join(',');
+  }
+}

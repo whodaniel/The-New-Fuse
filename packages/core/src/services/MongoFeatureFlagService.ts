@@ -106,7 +106,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
       }
 
       const features = await FeatureFlag.find(query);
-      return features.map(doc => this.documentToFeatureFlag(doc));
+      return features.map((doc: FeatureFlagDocument) => this.documentToFeatureFlag(doc));
     } catch (error) {
       this.logger.error('Failed to get MongoDB features:', error);
       return [];
@@ -166,7 +166,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
   async getAllFeatures(): Promise<IFeatureFlag[]> {
     try {
       const features = await FeatureFlag.find({});
-      return features.map(doc => this.documentToFeatureFlag(doc));
+      return features.map((doc: FeatureFlagDocument) => this.documentToFeatureFlag(doc));
     } catch (error) {
       this.logger.error('Failed to get all MongoDB features:', error);
       return [];
@@ -175,7 +175,7 @@ export class MongoFeatureFlagService extends FeatureFlagService {
 
   private documentToFeatureFlag(doc: FeatureFlagDocument): IFeatureFlag {
     return {
-      id: doc.id || (doc._id as any).toString(),
+      id: (doc as any).id || (doc as any)._id.toString(),
       name: doc.name,
       description: doc.description,
       enabled: doc.enabled,

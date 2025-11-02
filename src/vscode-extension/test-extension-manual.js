@@ -65,7 +65,7 @@ try {
         console.log('✅ Main entry point exists: out/extension.js');
     } else {
         console.log('❌ Main entry point missing: out/extension.js');
-        console.log('   Run "npm run compile" to build the extension');
+        console.log('   Run "pnpm run compile" to build the extension');
     }
 } catch (error) {
     console.log('❌ Error checking main entry point:', error.message);

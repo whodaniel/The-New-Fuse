@@ -5,15 +5,15 @@
  * abstracting the Prisma queries from the WorkflowEngine.
  */
 
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@tnf/relay-core';
 import { WorkflowDefinition } from './WorkflowTypes';
 
 export class WorkflowRepository {
-  private prisma: PrismaClient;
+  private prisma: any; // PrismaClient;
   private logger: Logger;
 
-  constructor(prisma: PrismaClient, logger: Logger) {
+  constructor(prisma: any /* PrismaClient */, logger: Logger) {
     this.prisma = prisma;
     this.logger = logger;
   }

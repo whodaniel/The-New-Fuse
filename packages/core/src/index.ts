@@ -10,7 +10,7 @@ export { PerformanceMonitor } from './services/PerformanceMonitor';
 export { UnifiedMonitoringService } from './services/UnifiedMonitoringService';
 export { LocalAIDetectionService } from './services/LocalAIDetectionService';
 export { AgentLLMService, LLMResponse } from './services/AgentLLMService';
-export { PromptService, PromptTemplate, PromptContext, GeneratedPrompt } from './services/PromptService';
+export { PromptService, PromptTemplate, PromptContext } from './services/PromptService';
 export { FeatureFlagService } from './services/FeatureFlagService';
 export { MongoFeatureFlagService } from './services/MongoFeatureFlagService';
 
@@ -31,7 +31,6 @@ export { ConfigService } from './config/ConfigService';
 export { DatabaseService } from './database/DatabaseService';
 
 // Redis Services and Constants
-export { RedisService } from './redis/redis.service';
 export { REDIS_CHANNELS, REDIS_QUEUES } from './config/redis.config';
 
 // Models

@@ -6,8 +6,8 @@ import {
   useA2AMessages, 
   useA2AConversations,
   A2AMessage,
-  MessageType,
-  Priority,
+  A2AMessageType,
+  A2APriority,
   AgentStatus
 } from '@the-new-fuse/a2a-react';
 import { v4 as uuidv4 } from 'uuid';
@@ -97,8 +97,8 @@ function EnhancedMultiAgentChatUI() {
         // Send direct message to selected agent
         await sendMessage({
           toAgent: selectedAgent,
-          type: MessageType.REQUEST,
-          priority: Priority.MEDIUM,
+          type: A2AMessageType.REQUEST,
+      priority: A2APriority.MEDIUM,
           conversationId: currentConversation || undefined,
           payload: messagePayload
         });
@@ -110,8 +110,8 @@ function EnhancedMultiAgentChatUI() {
       } else if (mode === 'conversation' && currentConversation) {
         // Send to conversation
         await sendMessage({
-          type: MessageType.NOTIFICATION,
-          priority: Priority.MEDIUM,
+          type: A2AMessageType.NOTIFICATION,
+        priority: A2APriority.MEDIUM,
           conversationId: currentConversation,
           payload: messagePayload
         });
@@ -263,7 +263,7 @@ function EnhancedMultiAgentChatUI() {
   // Enhanced message bubble
   const MessageBubble = ({ msg }: { msg: A2AMessage }) => {
     const isUser = msg.payload?.sender === 'User';
-    const isSystem = msg.type === MessageType.NOTIFICATION && msg.payload?.type === 'system';
+    const isSystem = msg.type === A2AMessageType.NOTIFICATION && msg.payload?.type === 'system';
     const bubbleClass = cn(
       'p-4 rounded-xl shadow-md max-w-lg',
       isUser && 'bg-blue-500 text-white ml-auto',

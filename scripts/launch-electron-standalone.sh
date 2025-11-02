@@ -12,7 +12,7 @@ cd apps/electron-desktop
 
 # Build the app first
 echo "Building Electron app..."
-npm run build
+pnpm run build
 
 # Launch electron directly without vite dev server
 echo "Launching Electron..."

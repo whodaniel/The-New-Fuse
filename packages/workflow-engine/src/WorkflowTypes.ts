@@ -5,8 +5,24 @@
  * It integrates with the Prisma database schema and the Master Agent Registry.
  */
 
-import { AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
+// import { AgentType, TaskPriority, TaskStatus } from '@the-new-fuse/database';
 import type { MasterAgentProfile } from '@tnf/relay-core';
+
+// Define local types to replace database imports
+export enum TaskPriority {
+  LOW = 'LOW',
+  MEDIUM = 'MEDIUM',
+  HIGH = 'HIGH',
+  URGENT = 'URGENT'
+}
+
+export enum TaskStatus {
+  PENDING = 'PENDING',
+  IN_PROGRESS = 'IN_PROGRESS',
+  COMPLETED = 'COMPLETED',
+  FAILED = 'FAILED',
+  CANCELLED = 'CANCELLED'
+}
 
 // ------------------- Core Workflow Enums -------------------
 

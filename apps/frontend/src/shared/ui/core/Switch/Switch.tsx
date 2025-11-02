@@ -37,17 +37,17 @@ const thumbVariants = cva("pointer-events-none block rounded-full bg-background 
         size: "default",
     },
 });
-const Switch = React.forwardRef((_a, ref) => {
-    var { className, size, label, description, labelPosition = "right" } = _a, props = __rest(_a, ["className", "size", "label", "description", "labelPosition"]);
+const Switch = React.forwardRef((props, ref) => {
+    var { className, size, label, description, labelPosition = "right" } = props, restProps = __rest(props, ["className", "size", "label", "description", "labelPosition"]);
     return (<div className={cn("flex items-center gap-x-2", labelPosition === "left" ? "flex-row-reverse" : "flex-row")}>
-    <SwitchPrimitives.Root className={cn(switchVariants({ size, className }))} {...props} ref={ref}>
+    <SwitchPrimitives.Root className={cn(switchVariants({ size, className }))} {...restProps} ref={ref}>
       <SwitchPrimitives.Thumb className={cn(thumbVariants({ size }))}/>
     </SwitchPrimitives.Root>
     {(label || description) && (<div className="flex flex-col">
-        {label && (<label className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", props.disabled && "opacity-70 cursor-not-allowed")}>
+        {label && (<label className={cn("text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70", restProps.disabled && "opacity-70 cursor-not-allowed")}>
             {label}
           </label>)}
-        {description && (<p className={cn("text-sm text-muted-foreground", props.disabled && "opacity-70")}>
+        {description && (<p className={cn("text-sm text-muted-foreground", restProps.disabled && "opacity-70")}>
             {description}
           </p>)}
       </div>)}

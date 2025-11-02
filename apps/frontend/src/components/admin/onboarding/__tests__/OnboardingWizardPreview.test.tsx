@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ChakraProvider } from '@chakra-ui/react';
+
 import { OnboardingWizardPreview } from '../OnboardingWizardPreview';
 import { OnboardingAdminService } from '../../../../services/onboarding-admin.service';
 import { BrowserRouter } from 'react-router-dom';
@@ -32,11 +32,11 @@ describe('OnboardingWizardPreview', () => {
 
   it('renders loading state initially', () => {
     render(
-      <ChakraProvider>
+      
         <BrowserRouter>
           <OnboardingWizardPreview />
         </BrowserRouter>
-      </ChakraProvider>
+      
     );
     
     expect(screen.getByText('Loading preview...')).toBeInTheDocument();
@@ -44,11 +44,11 @@ describe('OnboardingWizardPreview', () => {
 
   it('renders preview after loading', async () => {
     render(
-      <ChakraProvider>
+      
         <BrowserRouter>
           <OnboardingWizardPreview />
         </BrowserRouter>
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -64,11 +64,11 @@ describe('OnboardingWizardPreview', () => {
 
   it('allows switching user types', async () => {
     render(
-      <ChakraProvider>
+      
         <BrowserRouter>
           <OnboardingWizardPreview />
         </BrowserRouter>
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -86,11 +86,11 @@ describe('OnboardingWizardPreview', () => {
 
   it('runs validation when validation button is clicked', async () => {
     render(
-      <ChakraProvider>
+      
         <BrowserRouter>
           <OnboardingWizardPreview />
         </BrowserRouter>
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -122,11 +122,11 @@ describe('OnboardingWizardPreview', () => {
     (OnboardingAdminService.validateConfiguration as jest.Mock).mockResolvedValue(errorValidationResult);
     
     render(
-      <ChakraProvider>
+      
         <BrowserRouter>
           <OnboardingWizardPreview />
         </BrowserRouter>
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete

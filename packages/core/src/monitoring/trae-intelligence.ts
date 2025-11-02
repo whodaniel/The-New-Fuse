@@ -3,7 +3,7 @@ export class TraeIntelligence {
   private redisMonitor: RedisMonitor;
   private systemMonitor: SystemMonitor;
   private activityLog: unknown[] = [];
-  constructor(): unknown {
+  constructor(): void {
     this.traeMonitor = new TraeMonitor();
     this.redisMonitor = new RedisMonitor();
     this.systemMonitor = new SystemMonitor();

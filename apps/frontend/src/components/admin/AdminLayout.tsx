@@ -1,23 +1,5 @@
-import React, { ReactNode } from 'react';
-import {
-  Box,
-  Flex,
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
-  DrawerCloseButton,
-  DrawerHeader,
-  DrawerBody,
-  useDisclosure,
-  IconButton,
-  VStack,
-  HStack,
-  Text,
-  Heading,
-  Divider,
-  useColorModeValue,
-  Icon
-} from '@chakra-ui/react';
+import React, { ReactNode, useState } from 'react';
+import { Button } from '@the-new-fuse/ui-consolidated';
 import { 
   FiMenu, 
   FiHome, 
@@ -28,7 +10,8 @@ import {
   FiMessageSquare,
   FiDatabase,
   FiActivity,
-  FiShield
+  FiShield,
+  FiX
 } from 'react-icons/fi';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -37,11 +20,8 @@ interface AdminLayoutProps {
 }
 
 export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
-  
-  const bgColor = useColorModeValue('white', 'gray.800');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
   
   const menuItems = [
     { name: 'Dashboard', icon: FiHome, path: '/admin' },
@@ -55,94 +35,99 @@ export const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
     { name: 'Settings', icon: FiSettings, path: '/admin/settings' },
   ];
 
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
   return (
-    <Box minH="100vh">
-      {/* Mobile nav */}
-      <Box display={{ base: 'flex', md: 'none' }} alignItems="center" p={4} borderBottomWidth="1px">
-        <IconButton
-          aria-label="Open menu"
-          icon={<FiMenu />}
-          onClick={onOpen}
+    <div className="min-h-screen bg-background">
+      {/* Mobile nav header */}
+      <div className="flex md:hidden items-center p-4 border-b border-border bg-background">
+        <Button
           variant="outline"
-        />
-        <Text ml={4} fontWeight="bold">Admin Panel</Text>
-      </Box>
-      
-      {/* Sidebar for mobile */}
-      <Drawer isOpen={isOpen} placement="left" onClose={onClose}>
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader borderBottomWidth="1px">Admin Panel</DrawerHeader>
-          <DrawerBody p={0}>
-            <VStack align="stretch" spacing={0}>
-              {menuItems.map((item) => (
-                <Link key={item.path} to={item.path} onClick={onClose}>
-                  <Box
-                    py={3}
-                    px={4}
-                    bg={location.pathname === item.path ? 'blue.50' : 'transparent'}
-                    color={location.pathname === item.path ? 'blue.500' : 'inherit'}
-                    _hover={{ bg: 'gray.100' }}
-                  >
-                    <HStack spacing={3}>
-                      <Icon as={item.icon} />
-                      <Text>{item.name}</Text>
-                    </HStack>
-                  </Box>
-                </Link>
-              ))}
-            </VStack>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
-      
-      {/* Desktop view */}
-      <Flex>
-        {/* Sidebar */}
-        <Box
-          w="250px"
-          h="100vh"
-          bg={bgColor}
-          borderRightWidth="1px"
-          borderColor={borderColor}
-          position="fixed"
-          display={{ base: 'none', md: 'block' }}
-          overflowY="auto"
+          size="icon"
+          onClick={() => setIsMobileMenuOpen(true)}
+          aria-label="Open menu"
         >
-          <Box p={4} borderBottomWidth="1px">
-            <Heading size="md">Admin Panel</Heading>
-          </Box>
+          <FiMenu className="h-4 w-4" />
+        </Button>
+        <h1 className="ml-4 font-bold text-foreground">Admin Panel</h1>
+      </div>
+      
+      {/* Mobile sidebar overlay */}
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden">
+          <div className="fixed inset-0 bg-black/50" onClick={closeMobileMenu} />
+          <div className="fixed left-0 top-0 h-full w-64 bg-background border-r border-border">
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 className="font-bold text-foreground">Admin Panel</h2>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={closeMobileMenu}
+                aria-label="Close menu"
+              >
+                <FiX className="h-4 w-4" />
+              </Button>
+            </div>
+            <nav className="flex flex-col">
+              {menuItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                return (
+                  <Link 
+                    key={item.path} 
+                    to={item.path} 
+                    onClick={closeMobileMenu}
+                    className={`flex items-center space-x-3 py-3 px-4 transition-colors hover:bg-accent hover:text-accent-foreground ${
+                      isActive 
+                        ? 'bg-accent text-accent-foreground border-r-2 border-primary' 
+                        : 'text-muted-foreground'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.name}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+      )}
+      
+      {/* Desktop layout */}
+      <div className="flex">
+        {/* Desktop sidebar */}
+        <div className="hidden md:block w-64 h-screen bg-background border-r border-border fixed left-0 top-0 overflow-y-auto">
+          <div className="p-4 border-b border-border">
+            <h1 className="text-lg font-semibold text-foreground">Admin Panel</h1>
+          </div>
           
-          <VStack align="stretch" spacing={0}>
-            {menuItems.map((item) => (
-              <Link key={item.path} to={item.path}>
-                <Box
-                  py={3}
-                  px={4}
-                  bg={location.pathname === item.path ? 'blue.50' : 'transparent'}
-                  color={location.pathname === item.path ? 'blue.500' : 'inherit'}
-                  _hover={{ bg: 'gray.100' }}
+          <nav className="flex flex-col">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = location.pathname === item.path;
+              return (
+                <Link 
+                  key={item.path} 
+                  to={item.path}
+                  className={`flex items-center space-x-3 py-3 px-4 transition-colors hover:bg-accent hover:text-accent-foreground ${
+                    isActive 
+                      ? 'bg-accent text-accent-foreground border-r-2 border-primary' 
+                      : 'text-muted-foreground'
+                  }`}
                 >
-                  <HStack spacing={3}>
-                    <Icon as={item.icon} />
-                    <Text>{item.name}</Text>
-                  </HStack>
-                </Box>
-              </Link>
-            ))}
-          </VStack>
-        </Box>
+                  <Icon className="h-4 w-4" />
+                  <span>{item.name}</span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
         
         {/* Main content */}
-        <Box
-          ml={{ base: 0, md: '250px' }}
-          w={{ base: 'full', md: 'calc(100% - 250px)' }}
-          p={6}
-        >
+        <div className="w-full md:ml-64 p-6">
           {children}
-        </Box>
-      </Flex>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 };

@@ -506,9 +506,10 @@
             <span style="font-size: 12px; color: #9ca3af; font-weight: 400;">Enhanced with IDE</span>
         </div>
         <div class="ide-controls">
-            <button class="ide-btn theia" onclick="openTheiaIDE()">
-                <span>💻</span>
-                <span>Theia IDE</span>
+            <button class="ide-btn browser-hub" onclick="openBrowserHub()">
+                <span class="ide-icon">🌐</span>
+                <span class="ide-name">Browser Hub</span>
+                <span class="ide-status">Ready</span>
             </button>
             <button class="ide-btn vscode" onclick="openVSCode()">
                 <span>⚡</span>
@@ -587,9 +588,9 @@
                 </div>
             </div>
             <div class="ide-buttons">
-                <button class="ide-service-btn" onclick="openTheiaIDE()">
-                    <span>💻</span>
-                    <span>Open Theia IDE</span>
+                <button class="ide-service-btn" onclick="openBrowserHub()">
+                    <span>🌐</span>
+                    <span>Browser Hub</span>
                 </button>
                 <button class="ide-service-btn" onclick="openTheiaTerminal()">
                     <span>📟</span>
@@ -632,9 +633,9 @@
                 <p>Start coding, browsing, or automating with integrated development tools</p>
                 
                 <div class="quick-actions">
-                    <button class="quick-action-btn" onclick="openTheiaIDE()">
-                        <span>💻</span>
-                        <span>Launch Theia IDE</span>
+                    <button class="quick-action-btn" onclick="openBrowserHub()">
+                        <span>🌐</span>
+                        <span>Browser Hub</span>
                     </button>
                     <button class="quick-action-btn" onclick="createNewTab()">
                         <span>🌐</span>
@@ -780,22 +781,19 @@
         }
 
         // IDE Integration Functions
-        function openTheiaIDE() {
-            console.log('Opening Theia IDE');
+        function openBrowserHub() {
+            console.log('Opening Browser Hub');
             
-            // First try to check if Theia is running
-            checkTheiaStatus().then(isRunning => {
-                if (!isRunning) {
-                    startTheiaServer();
+            // Create new tab for Browser Hub
+            createNewTab('enhanced-hub.html', 'Browser Hub');
+            
+            if (window.electronAPI && window.electronAPI.openBrowserHub) {
+                try {
+                    window.electronAPI.openBrowserHub();
+                } catch (error) {
+                    console.error('Error opening Browser Hub via Electron:', error);
                 }
-                
-                // Create new tab for Theia
-                createNewTab('http://localhost:3000', 'Theia IDE');
-                
-                if (window.electronAPI) {
-                    window.electronAPI.openTheia();
-                }
-            });
+            }
         }
 
         function openTheiaTerminal() {
@@ -846,7 +844,7 @@
 
         function openProjectExplorer() {
             console.log('Opening Project Explorer');
-            openTheiaIDE(); // For now, open Theia which has project explorer
+            openBrowserHub(); // For now, open Browser Hub which has project explorer
         }
 
         // Theia Server Management

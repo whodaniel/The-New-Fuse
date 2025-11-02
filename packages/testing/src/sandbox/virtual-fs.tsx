@@ -29,7 +29,7 @@ export class VirtualFileSystem {
    */
   writeFile(path: string, content: string): void {
     const fullPath = this.resolvePath(path);
-    vol.mkdirpSync(this.getDirname(fullPath));
+    vol.mkdirSync(this.getDirname(fullPath), { recursive: true });
     vol.writeFileSync(fullPath, content);
   }
 

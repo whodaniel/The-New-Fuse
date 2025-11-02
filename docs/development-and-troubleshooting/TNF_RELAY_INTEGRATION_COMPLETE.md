@@ -103,7 +103,7 @@ chrome-extension/
 ### 1. Build and Install
 ```bash
 cd chrome-extension
-npm run build  # or your build command
+pnpm run build  # or your build command
 ```
 
 ### 2. Load Extension

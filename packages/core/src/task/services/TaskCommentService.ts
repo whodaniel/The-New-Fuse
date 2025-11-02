@@ -1,102 +1,73 @@
-import { Injectable, Logger, NotFoundException, ForbiddenException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { TaskComment } from '../entities/TaskComment';
-import { Task } from '../entities/Task';
-import { User } from '../../auth/entities/User';
+import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { HttpService } from '@nestjs/axios';
+import { firstValueFrom } from 'rxjs';
+
+// Interface from Incoming change
+export interface NotificationPayload {
+  componentId: string;
+  analysisType: string;
+  status: 'started' | 'completed' | 'failed';
+  result?: any;
+  error?: string;
+  timestamp: Date;
+}
+
 @Injectable()
-export class TaskCommentService {
-  private readonly logger = new Logger(TaskCommentService.name);
-  constructor(): unknown {
-    @InjectRepository(TaskComment)
-    private readonly commentRepository: Repository<TaskComment>,
-    @InjectRepository(Task)
-    private readonly taskRepository: Repository<Task>,
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+export class ComponentAnalysisNotifier {
+  private readonly logger = new Logger(ComponentAnalysisNotifier.name); // From Current
+  private webhooks: string[] = []; // From Incoming
+
+  constructor(
+    private readonly eventEmitter: EventEmitter2, // From Current
+    private readonly httpService: HttpService, // Added to make webhooks work
   ) {}
 
-  async createComment(): unknown {
-    const task = await this.taskRepository.findOne({ where: { id: taskId } });
-    if(): unknown {
-      throw new NotFoundException(`Task ${taskId} not found`);
+  // From Incoming
+  registerWebhook(url: string): void {
+    if (!this.webhooks.includes(url)) {
+      this.webhooks.push(url);
+      this.logger.log(`Registered new webhook: ${url}`);
     }
-
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if(): unknown {
-      throw new NotFoundException(`User ${userId} not found`);
-    }
-
-    const comment = this.commentRepository.create({
-content,
-  }      task,
-      author: user,
-      parentId,
-    });
-    return this.commentRepository.save(comment);
   }
 
-  async getCommentsByTask(): unknown {
-    return this.commentRepository.find({
-  // Implementation needed
-}
-      where: { task: { id: taskId } },
-      relations: ['author', 'replies'],
-      order: { createdAt: 'ASC' },
-    });
+  // Merged notify method
+  async notify(payload: NotificationPayload): Promise<void> {
+    this.logger.log(
+      `Notifying component analysis ${payload.status} for ${payload.componentId}`,
+    );
+
+    // 1. Emit internal event (from Current change)
+    this.eventEmitter.emit('component.analysis', payload);
+
+    // 2. Send external webhooks (from Incoming change)
+    if (this.webhooks.length > 0) {
+      this.logger.log(`Sending ${this.webhooks.length} webhook(s)...`);
+      const promises = this.webhooks.map((url) =>
+        this.sendWebhook(url, payload),
+      );
+      await Promise.allSettled(promises);
+    }
   }
 
-  async updateComment(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
+  private async sendWebhook(
+    url: string,
+    payload: NotificationPayload,
+  ): Promise<void> {
+    try {
+      // Use HttpService to POST the payload
+      await firstValueFrom(
+        this.httpService.post(url, payload, {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 5000, // 5 second timeout
+        }),
+      );
+      this.logger.log(`Successfully sent webhook to ${url}`);
+    } catch (error) {
+      this.logger.error(
+        `Failed to send webhook to ${url}: ${error.message}`,
+        error.stack,
+      );
     }
-
-    if(): unknown {
-      throw new ForbiddenException('You can only edit your own comments');
-    }
-
-    comment.content = content;
-    comment.updatedAt = new Date();
-    return this.commentRepository.save(comment);
-  }
-
-  async deleteComment(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
-
-    if(): unknown {
-      throw new ForbiddenException('You can only delete your own comments');
-    }
-
-    await this.commentRepository.remove(comment);
-  }
-
-  async getCommentById(): unknown {
-    const comment = await this.commentRepository.findOne({
-where: { id: commentId },
-  }      relations: ['author', 'task', 'replies'],
-    });
-    if(): unknown {
-      throw new NotFoundException(`Comment ${commentId} not found`);
-    }
-
-    return comment;
-  }
-
-  async getCommentsByUser(): unknown {
-    return this.commentRepository.find({
-where: { author: { id: userId } },
-  }      relations: ['task', 'author'],
-      order: { createdAt: 'DESC' },
-    });
   }
 }

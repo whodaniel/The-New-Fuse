@@ -1,5 +1,10 @@
 import * as vscode from 'vscode';
 
+interface WebviewMessage {
+    command: string;
+    text?: string;
+}
+
 export async function activateSimpleChat(context: vscode.ExtensionContext) {
     // Register a command that will open a chat interface
     const chatCommand = vscode.commands.registerCommand('theNewFuse.simpleChat', async () => {
@@ -28,7 +33,7 @@ export async function activateSimpleChat(context: vscode.ExtensionContext) {
 
             // Handle messages from the webview
             panel.webview.onDidReceiveMessage(
-                async message => {
+                async (message: WebviewMessage) => {
                     if (message.command === 'sendMessage') {
                         const userMessage = message.text;
                         
@@ -40,7 +45,7 @@ export async function activateSimpleChat(context: vscode.ExtensionContext) {
                         const chatRequest = await model.sendRequest(messages, {}, new vscode.CancellationTokenSource().token);                        
                         let responseText = '';
                         // @ts-ignore - The .stream property is part of the proposed Language Model API and might not be in your current @types/vscode version.
-                        // Please ensure your package.json's "engines.vscode" is up to date and you've run `npm install`.
+                        // Please ensure your package.json's "engines.vscode" is up to date and you've run `pnpm install`.
                         for await (const chunk of chatRequest.stream) {
                             responseText += chunk;
                             // Post incremental updates to the webview

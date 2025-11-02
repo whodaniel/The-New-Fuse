@@ -21,6 +21,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Home = lazy(() => import('./pages/Home'));
 const AIAgentPortal = lazy(() => import('./pages/AIAgentPortal/index'));
 const ModernHub = lazy(() => import('./pages/Hub/ModernHub'));
+const SophisticatedTNFHub = lazy(() => import('./pages/Hub/SophisticatedTNFHub'));
 
 // UI Component pages
 const ComponentsNav = lazy(() => import('./pages/ComponentsNav'));
@@ -167,6 +168,9 @@ export default function Router() {
         <Route element={<ProtectedRoute />}>
           {/* Modern Hub - Main entry point */}
           <Route path="hub" element={<Suspense fallback={<Loading />}><ModernHub /></Suspense>} />
+          
+          {/* Sophisticated TNF Hub - Advanced interface */}
+          <Route path="sophisticated-hub" element={<Suspense fallback={<Loading />}><SophisticatedTNFHub /></Suspense>} />
           
           {/* Main dashboard */}
           <Route path="dashboard" element={<Suspense fallback={<Loading />}><Dashboard /></Suspense>} />

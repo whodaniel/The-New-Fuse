@@ -13,21 +13,22 @@ export interface ProtocolHandler {
 
 export class CommunicationProtocol {
   private handlers: Map<string, ProtocolHandler> = new Map();
-  registerHandler(): unknown {
+
+  registerHandler(handler: ProtocolHandler): void {
     this.handlers.set(handler.type, handler);
   }
 
-  async processMessage(): unknown {
+  async processMessage(message: MessageProtocol): Promise<void> {
     const handler = this.handlers.get(message.type);
-    if(): unknown {
+    if (handler) {
       await handler.handle(message);
     }
   }
 
-  createMessage(): unknown {
+  createMessage(type: string, payload: any, senderId: string, recipientId?: string): MessageProtocol {
     return {
-type,
-  }      payload,
+      type,
+      payload,
       timestamp: new Date(),
       senderId,
       recipientId,

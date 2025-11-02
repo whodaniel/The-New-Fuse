@@ -1,9 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import {
-  ChakraProvider,
-  useColorMode as useChakraColorMode,
-} from '@chakra-ui/react';
-import { ThemeConfig, validateThemeConfig, defaultTheme } from '../utils/themeValidation';
+import { ThemeConfig, validateThemeConfig } from '../utils/themeValidation';
 
 interface ThemeContextType {
   theme: ThemeConfig;
@@ -24,16 +20,36 @@ function getStoredTheme(): Partial<ThemeConfig> {
   }
 }
 
+function getStoredColorMode(): 'light' | 'dark' {
+  try {
+    const stored = localStorage.getItem('color-mode');
+    return (stored === 'dark' ? 'dark' : 'light') as 'light' | 'dark';
+  } catch {
+    return 'light';
+  }
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<ThemeConfig>(() => validateThemeConfig(getStoredTheme()));
-  const { colorMode, toggleColorMode } = useChakraColorMode();
+  const [colorMode, setColorMode] = useState<'light' | 'dark'>(getStoredColorMode);
 
   useEffect(() => {
     localStorage.setItem('user-theme', JSON.stringify(theme));
   }, [theme]);
 
+  useEffect(() => {
+    localStorage.setItem('color-mode', colorMode);
+    // Apply color mode to document
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(colorMode);
+  }, [colorMode]);
+
   const updateTheme = (updates: Partial<ThemeConfig>) => {
     setTheme(prev => validateThemeConfig({ ...prev, ...updates }));
+  };
+
+  const toggleColorMode = () => {
+    setColorMode(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   return (
@@ -45,9 +61,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         toggleColorMode,
       }}
     >
-      <ChakraProvider theme={theme}>
-        {children}
-      </ChakraProvider>
+      {children}
     </ThemeContext.Provider>
   );
 }

@@ -753,15 +753,14 @@
         // Initialize
         createNewTab();
 
-        // Add Theia IDE integration
-        function openTheiaIDE() {
-            console.log('Opening Theia IDE');
-            if (window.electronAPI) {
-                window.electronAPI.openTheia();
+        // Add Browser Hub integration
+        function openBrowserHub() {
+            console.log('Opening Browser Hub');
+            if (window.electronAPI && window.electronAPI.openBrowserHub) {
+                window.electronAPI.openBrowserHub();
             } else {
-                // Fallback to opening Theia in current window
-                const theiaUrl = 'http://localhost:3000'; // Default Theia port
-                window.location.href = theiaUrl;
+                // Fallback to opening enhanced hub
+                window.open('enhanced-hub.html', '_blank');
             }
         }
 

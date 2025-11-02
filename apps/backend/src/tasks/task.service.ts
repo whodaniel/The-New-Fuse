@@ -35,18 +35,19 @@ export class TaskService {
   }
 
   async processTaskQueue(): Promise<void> {
-    await this.queue.process(REDIS_QUEUES.TASK_QUEUE, async (job) => {
-      const { id, data } = job;
-      // Process the task
-      await this.processTask(id, data);
-      
-      // Update task status
-      await this.pubsub.publish(REDIS_CHANNELS.TASK_UPDATES, {
-        type: 'TASK_COMPLETED',
-        taskId: id,
-        result: 'success',
-      });
-    });
+    // TODO: Implement queue processing when QueueService is available
+    // await this.queue.process(REDIS_QUEUES.TASK_QUEUE, async (job) => {
+    //   const { id, data } = job;
+    //   // Process the task
+    //   await this.processTask(id, data);
+    //   
+    //   // Update task status
+    //   await this.pubsub.publish(REDIS_CHANNELS.TASK_UPDATES, {
+    //     type: 'TASK_COMPLETED',
+    //     taskId: id,
+    //     result: 'success',
+    //   });
+    // });
   }
 
   async processTask(id: string, data: any): Promise<void> {
@@ -56,6 +57,7 @@ export class TaskService {
   }
 
   async subscribeToTaskUpdates(callback: (message: any) => void): Promise<void> {
-    await this.pubsub.subscribe(REDIS_CHANNELS.TASK_UPDATES, callback);
+    // TODO: Implement pubsub subscription when PubSubService is available
+    // await this.pubsub.subscribe(REDIS_CHANNELS.TASK_UPDATES, callback);
   }
 }

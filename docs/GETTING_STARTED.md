@@ -62,7 +62,7 @@ For complete development access:
 
 2. **Install dependencies:**
    ```bash
-   yarn install
+   pnpm install
    ```
 
 3. **Set up environment variables:**
@@ -70,7 +70,7 @@ For complete development access:
    cp .env.example .env
    # Edit .env with your configuration
    ```
-   You can validate your environment variable setup by running `yarn validate:env` (or `npm run validate:env`) from the project root. This script checks for required `.env.example` files and critical variables.
+   You can validate your environment variable setup by running `yarn validate:env` (or `pnpm run validate:env`) from the project root. This script checks for required `.env.example` files and critical variables.
 
 4. **Initialize the database:**
    ```bash
@@ -80,7 +80,7 @@ For complete development access:
 
 5. **Start the development services:**
    ```bash
-   yarn dev
+   pnpm dev
    ```
 
 ## Project Structure
@@ -112,7 +112,7 @@ The project follows a monorepo structure using Yarn workspaces:
 
 1. **Start all services:**
    ```bash
-   yarn dev
+   pnpm dev
    ```
    This starts frontend, backend, and all supporting services.
 
@@ -127,12 +127,12 @@ The project follows a monorepo structure using Yarn workspaces:
 
 1. **Build the project:**
    ```bash
-   yarn build
+   pnpm build
    ```
 
 2. **Start production services:**
    ```bash
-   yarn start
+   pnpm start
    ```
 
 ### Docker Deployment

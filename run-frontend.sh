@@ -9,6 +9,6 @@ cd "$(dirname "$0")/packages/frontend"
 
 # Run the development server
 echo "Starting Next.js development server..."
-npm run dev
+pnpm run dev
 
 echo "Frontend server stopped"

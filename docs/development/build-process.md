@@ -111,13 +111,13 @@ This script:
 If you prefer to build manually, follow this order to ensure all dependencies are properly built:
 
 1. Fix TypeScript declaration errors: `node fix-declarations.mjs`
-2. Build types package: `npm run build:types`
-3. Build utils package: `npm run build:utils`
-4. Build core package: `npm run build:core`
-5. Build UI package: `npm run build:ui`
-6. Build feature-tracker package: `npm run build:feature-tracker`
-7. Build feature-suggestions package: `npm run build:feature-suggestions`
-8. Build all applications: `npm run build`
+2. Build types package: `pnpm run build:types`
+3. Build utils package: `pnpm run build:utils`
+4. Build core package: `pnpm run build:core`
+5. Build UI package: `pnpm run build:ui`
+6. Build feature-tracker package: `pnpm run build:feature-tracker`
+7. Build feature-suggestions package: `pnpm run build:feature-suggestions`
+8. Build all applications: `pnpm run build`
 
 ### Building Specific Components
 
@@ -175,15 +175,15 @@ To manually start the development servers:
 ```bash
 # Start the frontend
 cd apps/frontend
-npm run dev
+pnpm run dev
 
 # Start the API
 cd apps/api
-npm run dev
+pnpm run dev
 
 # Start the message broker
 cd apps/message-broker
-npm run dev
+pnpm run dev
 ```
 
 ### Production Mode
@@ -308,13 +308,13 @@ node fix-declarations.mjs
 If you encounter build errors, try building the packages in the correct order:
 
 ```bash
-npm run build:types
-npm run build:utils
-npm run build:core
-npm run build:ui
-npm run build:feature-tracker
-npm run build:feature-suggestions
-npm run build
+pnpm run build:types
+pnpm run build:utils
+pnpm run build:core
+pnpm run build:ui
+pnpm run build:feature-tracker
+pnpm run build:feature-suggestions
+pnpm run build
 ```
 
 4. **Port Conflicts**
@@ -392,8 +392,8 @@ If you encounter issues with the VS Code extension, try:
 # Clean the VS Code extension directory
 cd packages/vscode-extension
 rm -rf node_modules dist
-npm install
-npm run build
+pnpm install
+pnpm run build
 ```
 
 9. **Chrome Extension Issues**
@@ -404,6 +404,6 @@ If you encounter issues with the Chrome extension, try:
 # Clean the Chrome extension directory
 cd packages/chrome-extension
 rm -rf node_modules dist
-npm install
-npm run build
+pnpm install
+pnpm run build
 ```

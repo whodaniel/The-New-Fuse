@@ -39,11 +39,11 @@ const checkboxVariants = cva('peer h-4 w-4 shrink-0 rounded-sm border border-pri
         state: 'default',
     },
 });
-const Checkbox = React.forwardRef((_a, ref) => {
-    const { className, variant, size, state, error, success, label, description, indeterminate, containerClassName, labelClassName, descriptionClassName } = _a, props = __rest(_a, ["className", "variant", "size", "state", "error", "success", "label", "description", "indeterminate", "containerClassName", "labelClassName", "descriptionClassName"]);
+const Checkbox = React.forwardRef((props, ref) => {
+    const { className, variant, size, state, error, success, label, description, indeterminate, containerClassName, labelClassName, descriptionClassName } = props, restProps = __rest(props, ["className", "variant", "size", "state", "error", "success", "label", "description", "indeterminate", "containerClassName", "labelClassName", "descriptionClassName"]);
     const checkboxState = error ? 'error' : success ? 'success' : state;
     return (<div className={cn('flex items-start space-x-2', containerClassName)}>
-        <CheckboxPrimitive.Root ref={ref} className={cn(checkboxVariants({ variant, size, state: checkboxState }), className)} {...props}>
+        <CheckboxPrimitive.Root ref={ref} className={cn(checkboxVariants({ variant, size, state: checkboxState }), className)} {...restProps}>
           <CheckboxPrimitive.Indicator className={cn('flex items-center justify-center text-current')}>
             {indeterminate ? (<Minus className="h-3 w-3"/>) : (<Check className="h-3 w-3"/>)}
           </CheckboxPrimitive.Indicator>

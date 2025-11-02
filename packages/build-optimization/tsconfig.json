@@ -13,10 +13,11 @@
     "allowSyntheticDefaultImports": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "target": "ES2022",
+    "module": "ESNext",
     "lib": ["ES2022", "DOM"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "types": []
   },
   "include": [
     "src/**/*"

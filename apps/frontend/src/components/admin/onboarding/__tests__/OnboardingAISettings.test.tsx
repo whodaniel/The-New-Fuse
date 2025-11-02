@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { ChakraProvider } from '@chakra-ui/react';
+
 import { OnboardingAISettings } from '../OnboardingAISettings';
 import { OnboardingAdminService } from '../../../../services/onboarding-admin.service';
 
@@ -64,13 +64,13 @@ describe('OnboardingAISettings', () => {
 
   it('renders loading state initially', () => {
     render(
-      <ChakraProvider>
+      
         <OnboardingAISettings 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     expect(screen.getByText('Loading AI settings...')).toBeInTheDocument();
@@ -78,13 +78,13 @@ describe('OnboardingAISettings', () => {
 
   it('renders AI settings after loading', async () => {
     render(
-      <ChakraProvider>
+      
         <OnboardingAISettings 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -102,13 +102,13 @@ describe('OnboardingAISettings', () => {
     const handleChange = jest.fn();
     
     render(
-      <ChakraProvider>
+      
         <OnboardingAISettings 
           onSave={jest.fn()} 
           onChange={handleChange} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -128,13 +128,13 @@ describe('OnboardingAISettings', () => {
     const handleSave = jest.fn();
     
     render(
-      <ChakraProvider>
+      
         <OnboardingAISettings 
           onSave={handleSave} 
           onChange={jest.fn()} 
           hasUnsavedChanges={true} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for loading to complete
@@ -159,13 +159,13 @@ describe('OnboardingAISettings', () => {
     (OnboardingAdminService.getAISettings as jest.Mock).mockRejectedValue(new Error('API Error'));
     
     render(
-      <ChakraProvider>
+      
         <OnboardingAISettings 
           onSave={jest.fn()} 
           onChange={jest.fn()} 
           hasUnsavedChanges={false} 
         />
-      </ChakraProvider>
+      
     );
     
     // Wait for error to be displayed

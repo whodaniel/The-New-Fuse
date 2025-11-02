@@ -1,89 +1,110 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { RedisService } from '@the-new-fuse/redis';
-import { DatabaseService } from '@the-new-fuse/database';
-import { TokenPayload, AuthEventType } from './AuthTypes';
+import { Injectable, Logger } from '@nestjs/common'; // From Current
+import { v4 as uuidv4 } from 'uuid';
+
+// Interface from Incoming
+interface Token {
+  id: string; // The token record's own ID
+  userId: string;
+  token: string; // The actual token string
+  expiresAt: Date;
+  type: 'access' | 'refresh';
+}
+
 @Injectable()
 export class TokenManager {
-  private readonly logger = new Logger(TokenManager.name);
-  constructor(): unknown {
-    private readonly redis: RedisService,
-    private readonly db: DatabaseService
-  ) {}
+  private readonly logger = new Logger(TokenManager.name); // From Current
+  
+  // Store by the token *string* for fast O(1) validation
+  private tokens = new Map<string, Token>(); 
 
-  async generateRefreshToken(): unknown {
-    try {
-      const token = this.generateToken(payload);
-      return token;
-    } catch (error) {
-this.logger.error('Failed to generate refresh token:', error as Error);
-  }      throw error;
-    }
+  constructor() {}
+
+  // Merged: Based on 'Incoming' but async, with logging
+  async generateToken(
+    userId: string,
+    type: 'access' | 'refresh' = 'access',
+  ): Promise<Token> {
+    this.logger.log(`Generate ${type} token for ${userId}`);
+    const tokenString = uuidv4();
+    
+    const token: Token = {
+      id: uuidv4(),
+      userId,
+      token: tokenString,
+      expiresAt: new Date(
+        Date.now() + (type === 'access' ? 3600000 : 604800000), // 1 hour or 7 days
+      ),
+      type,
+    };
+
+    this.tokens.set(token.token, token);
+    return token;
   }
 
-  async validateRefreshToken(): unknown {
-    try {
-      const payload = this.parseToken(token);
-      return payload;
-    } catch (error) {
-this.logger.error('Failed to validate refresh token:', error as Error);
-  }      return null;
+  // Merged: Based on 'Incoming' but async, with logging, and fast lookup
+  async validateToken(tokenString: string): Promise<Token | null> {
+    this.logger.log(`Validate token`);
+    const token = this.tokens.get(tokenString);
+
+    if (!token) {
+      this.logger.warn('Token not found');
+      return null;
     }
+
+    if (token.expiresAt < new Date()) {
+      this.logger.warn(`Token for ${token.userId} expired, removing.`);
+      this.tokens.delete(tokenString); // Clean up expired token
+      return null;
+    }
+    
+    return token;
   }
 
-  async revokeToken(): unknown {
-    try {
-      await this.redis.set(`blacklist:${token}`, '1', 'EX', 86400);
-    } catch (error) {
-this.logger.error('Failed to revoke token:', error as Error);
-  }      throw error;
-    }
+  // Merged: Based on 'Incoming' but async and with logging
+  async revokeToken(tokenString: string): Promise<boolean> {
+    this.logger.log(`Revoke token`);
+    return this.tokens.delete(tokenString);
   }
 
-  async revokeAllUserTokens(): unknown {
-    try {
-      const pattern = `refresh_token:${userId}:*`;
-      const keys = await this.redis.keys(pattern);
-      if(): unknown {
-        await this.redis.del(...keys);
+  // Merged: Based on 'Incoming' but async and with logging
+  async refreshToken(refreshTokenString: string): Promise<Token | null> {
+    this.logger.log(`Attempting to refresh token`);
+    const refreshToken = await this.validateToken(refreshTokenString);
+
+    if (refreshToken && refreshToken.type === 'refresh') {
+      this.logger.log(`Issuing new access token for ${refreshToken.userId}`);
+      // Revoke the used refresh token (optional, but good practice)
+      await this.revokeToken(refreshTokenString);
+      // Issue new ones
+      // In a real system, you might issue a new refresh token as well
+      return this.generateToken(refreshToken.userId, 'access');
+    }
+
+    this.logger.warn(`Invalid or expired refresh token provided`);
+    return null;
+  }
+  
+  // Kept from 'Current', but adapted to new structure
+  async revokeAllUserTokens(userId: string): Promise<void> {
+    this.logger.log(`Revoke all tokens for user ${userId}`);
+    for (const [tokenString, token] of this.tokens.entries()) {
+      if (token.userId === userId) {
+        this.tokens.delete(tokenString);
       }
-      
-      await this.recordTokenEvent(userId, AuthEventType.TOKEN_REFRESH, { allSessions: true });
-    } catch (error) {
-this.logger.error('Failed to revoke all user tokens:', error as Error);
-  }      throw error;
     }
   }
 
-  private generateToken(payload: Omit<TokenPayload, 'issuedAt' | 'expiresAt'>): string {
-// Implementation would use JWT or similar
-  }    return JSON.stringify({
-  // Implementation needed
-}
-      ...payload,
-      issuedAt: Date.now(),
-      expiresAt: Date.now() + (7 * 24 * 60 * 60 * 1000) // 7 days
-    });
-  }
-
-  private parseToken(token: string): TokenPayload {
-return JSON.parse(token);
-  }}
-
-  private async recordTokenEvent(userId: string, eventType: AuthEventType, metadata: any): Promise<void> {
-try {
-  }}
-      await(): unknown {
-        data: unknown;
-  // Implementation needed
-}
-          userId,
-          eventType,
-          metadata,
-          timestamp: new Date()
-        }
-      });
-    } catch (error) {
-this.logger.error('Failed to record token event:', error as Error);
-  }}
+  // Kept from 'Incoming', but adapted to be async
+  async cleanExpiredTokens(): Promise<number> {
+    this.logger.log('Cleaning expired tokens...');
+    let count = 0;
+    for (const [tokenString, token] of this.tokens.entries()) {
+      if (token.expiresAt <= new Date()) {
+        this.tokens.delete(tokenString);
+        count++;
+      }
+    }
+    this.logger.log(`Removed ${count} expired tokens.`);
+    return count;
   }
 }

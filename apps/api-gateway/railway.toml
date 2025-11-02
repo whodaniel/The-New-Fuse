@@ -1,0 +1,10 @@
+[build]
+builder = "NIXPACKS"
+nixpacksConfigPath = "apps/api-gateway/nixpacks.toml"
+watchPaths = ["apps/api-gateway/**", "packages/**"]
+
+[deploy]
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+restartPolicyMaxRetries = 10
+restartPolicyType = "ON_FAILURE"

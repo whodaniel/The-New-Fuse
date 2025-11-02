@@ -32,40 +32,40 @@ export const appCardVariants = cva('rounded-xl transition-all duration-200', {
         size: 'default',
     },
 });
-const AppCard = forwardRef((_a, ref) => {
-    var { className, variant, size, asChild = false } = _a, props = __rest(_a, ["className", "variant", "size", "asChild"]);
+const AppCard = forwardRef((props, ref) => {
+    var { className, variant, size, asChild = false } = props, restProps = __rest(props, ["className", "variant", "size", "asChild"]);
     const Comp = asChild ? Slot : 'div';
-    return (<Comp ref={ref} className={cn(appCardVariants({ variant, size }), className)} {...props}/>);
+    return (<Comp ref={ref} className={cn(appCardVariants({ variant, size }), className)} {...restProps}/>);
 });
 AppCard.displayName = 'AppCard';
-const AppCardHeader = forwardRef((_a, ref) => {
-    var { className, asChild = false } = _a, props = __rest(_a, ["className", "asChild"]);
+const AppCardHeader = forwardRef((props, ref) => {
+    var { className, asChild = false } = props, restProps = __rest(props, ["className", "asChild"]);
     const Comp = asChild ? Slot : 'div';
-    return (<Comp ref={ref} className={cn('space-y-1.5 mb-4', className)} {...props}/>);
+    return (<Comp ref={ref} className={cn('space-y-1.5 mb-4', className)} {...restProps}/>);
 });
 AppCardHeader.displayName = 'AppCardHeader';
-const AppCardTitle = forwardRef((_a, ref) => {
-    var { className, asChild = false } = _a, props = __rest(_a, ["className", "asChild"]);
+const AppCardTitle = forwardRef((props, ref) => {
+    var { className, asChild = false } = props, restProps = __rest(props, ["className", "asChild"]);
     const Comp = asChild ? Slot : 'h3';
-    return (<Comp ref={ref} className={cn('text-2xl font-semibold tracking-tight', className)} {...props}/>);
+    return (<Comp ref={ref} className={cn('text-2xl font-semibold tracking-tight', className)} {...restProps}/>);
 });
 AppCardTitle.displayName = 'AppCardTitle';
-const AppCardDescription = forwardRef((_a, ref) => {
-    var { className, asChild = false } = _a, props = __rest(_a, ["className", "asChild"]);
+const AppCardDescription = forwardRef((props, ref) => {
+    var { className, asChild = false } = props, restProps = __rest(props, ["className", "asChild"]);
     const Comp = asChild ? Slot : 'p';
-    return (<Comp ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props}/>);
+    return (<Comp ref={ref} className={cn('text-sm text-muted-foreground', className)} {...restProps}/>);
 });
 AppCardDescription.displayName = 'AppCardDescription';
-const AppCardContent = forwardRef((_a, ref) => {
-    var { className, asChild = false } = _a, props = __rest(_a, ["className", "asChild"]);
+const AppCardContent = forwardRef((props, ref) => {
+    var { className, asChild = false } = props, restProps = __rest(props, ["className", "asChild"]);
     const Comp = asChild ? Slot : 'div';
-    return (<Comp ref={ref} className={cn('', className)} {...props}/>);
+    return (<Comp ref={ref} className={cn('', className)} {...restProps}/>);
 });
 AppCardContent.displayName = 'AppCardContent';
-const AppCardFooter = forwardRef((_a, ref) => {
-    var { className, asChild = false } = _a, props = __rest(_a, ["className", "asChild"]);
+const AppCardFooter = forwardRef((props, ref) => {
+    var { className, asChild = false } = props, restProps = __rest(props, ["className", "asChild"]);
     const Comp = asChild ? Slot : 'div';
-    return (<Comp ref={ref} className={cn('flex items-center pt-4', className)} {...props}/>);
+    return (<Comp ref={ref} className={cn('flex items-center pt-4', className)} {...restProps}/>);
 });
 AppCardFooter.displayName = 'AppCardFooter';
 export { AppCard, AppCardHeader, AppCardTitle, AppCardDescription, AppCardContent, AppCardFooter, };

@@ -16,7 +16,7 @@ cp .env.example .env
 
 ```bash
 # Install all dependencies
-npm install
+pnpm install
 
 # Generate Prisma types
 pnpm run db:generate
@@ -73,7 +73,7 @@ pnpm run dev:frontend # Frontend only (port 3000)
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
 │   Frontend      │    │  API Gateway    │    │   API Server    │
-│   (Vite)        │◄──►│  (NestJS)       │◄──►│   (Bun)         │
+│   (Vite)        │◄──►│  (NestJS)       │◄──►│   (NestJS)      │
 │   Port: 3000    │    │   Port: 3002    │    │   Port: 3001    │
 └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```

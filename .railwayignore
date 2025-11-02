@@ -1,0 +1,9 @@
+# Force Railway to use Dockerfile instead of auto-detection
+nixpacks.toml
+
+# Ignore development files
+.env*
+.git/
+node_modules/
+*.log
+.DS_Store

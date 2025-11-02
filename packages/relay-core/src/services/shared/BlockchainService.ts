@@ -7,7 +7,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '../../utils/Logger.js';
-import { ethers, BigNumberish } from 'ethers';
+import { ethers, BigNumberish, JsonRpcProvider, Wallet, Contract, TransactionReceipt, formatEther, parseEther, formatUnits, parseUnits, isAddress, verifyMessage, id as keccak256 } from 'ethers';
 
 
 
@@ -42,9 +42,9 @@ export interface ContractCallResult<T = any> {
 export class BlockchainService extends EventEmitter {
   private logger: Logger;
   private config: BlockchainConfig;
-  private provider: ethers.providers.JsonRpcProvider | null = null;
-  private wallet: ethers.Wallet | null = null;
-  private contracts: Map<string, ethers.Contract> = new Map();
+  private provider: JsonRpcProvider | null = null;
+  private wallet: Wallet | null = null;
+  private contracts: Map<string, Contract> = new Map();
   private isConnected: boolean = false;
 
   constructor(config: BlockchainConfig, logger: Logger) {
@@ -67,17 +67,17 @@ export class BlockchainService extends EventEmitter {
       this.logger.info('Initializing blockchain connection...');
       
       // Setup provider
-      this.provider = new ethers.providers.JsonRpcProvider(this.config.providerUrl);
-      
+      this.provider = new JsonRpcProvider(this.config.providerUrl);
+
       // Test connection
       const network = await this.provider.getNetwork();
-      if (network.chainId !== this.config.chainId) {
+      if (network.chainId !== BigInt(this.config.chainId)) {
         throw new Error(`Chain ID mismatch. Expected: ${this.config.chainId}, Got: ${network.chainId}`);
       }
-      
+
       // Setup wallet if private key provided
       if (this.config.privateKey) {
-        this.wallet = new ethers.Wallet(this.config.privateKey, this.provider);
+        this.wallet = new Wallet(this.config.privateKey, this.provider);
         this.logger.info(`Wallet connected: ${this.wallet.address}`);
       }
       
@@ -102,14 +102,14 @@ export class BlockchainService extends EventEmitter {
   /**
    * Get provider instance
    */
-  getProvider(): ethers.providers.JsonRpcProvider | null {
+  getProvider(): JsonRpcProvider | null {
     return this.provider;
   }
 
   /**
    * Get wallet instance
    */
-  getWallet(): ethers.Wallet | null {
+  getWallet(): Wallet | null {
     return this.wallet;
   }
 
@@ -209,30 +209,43 @@ export class BlockchainService extends EventEmitter {
       // Prepare transaction options
       const txOptions: any = {};
       if (options.gasLimit) txOptions.gasLimit = options.gasLimit;
-      if (options.gasPrice) txOptions.gasPrice = ethers.utils.parseUnits(options.gasPrice, 'gwei');
-      if (options.value) txOptions.value = ethers.utils.parseEther(options.value);
+      if (options.gasPrice) txOptions.gasPrice = parseUnits(options.gasPrice, 'gwei');
+      if (options.value) txOptions.value = parseEther(options.value);
 
       // Execute the call
       let result;
-      if (method.estimateGas) {
-        // This is a state-changing transaction
+      try {
+        // Try to execute as a transaction first
         const tx = await method(...args, txOptions);
-        const receipt = await tx.wait();
-        
-        result = {
-          success: true,
-          data: receipt as T,
-          transactionHash: receipt.hash,
-          blockNumber: receipt.blockNumber,
-          gasUsed: receipt.gasUsed.toNumber()
-        };
-      } else {
-        // This is a view/pure function call
-        const data = await method(...args);
-        result = {
-          success: true,
-          data: data as T
-        };
+        if (tx && typeof tx.wait === 'function') {
+          // This is a state-changing transaction
+          const receipt = await tx.wait();
+          
+          result = {
+            success: true,
+            data: receipt as T,
+            transactionHash: receipt.hash,
+            blockNumber: receipt.blockNumber,
+            gasUsed: receipt.gasUsed.toNumber()
+          };
+        } else {
+          // This is a view/pure function call result
+          result = {
+            success: true,
+            data: tx as T
+          };
+        }
+      } catch (error: any) {
+        // If transaction fails, try as a view call
+        if (error.code === 'CALL_EXCEPTION' || error.message?.includes('call revert')) {
+          const data = await method(...args);
+          result = {
+            success: true,
+            data: data as T
+          };
+        } else {
+          throw error;
+        }
       }
 
       this.emit('contractCall', {
@@ -262,8 +275,9 @@ export class BlockchainService extends EventEmitter {
         return this.config.maxGasPrice;
       }
 
-      const gasPrice = await this.provider.getGasPrice();
-      const gasPriceGwei = ethers.utils.formatUnits(gasPrice, 'gwei');
+      const feeData = await this.provider.getFeeData();
+      const gasPrice = feeData.gasPrice || 0n;
+      const gasPriceGwei = formatUnits(gasPrice, 'gwei');
       
       // Cap at max gas price
       const maxGwei = parseFloat(this.config.maxGasPrice);
@@ -292,18 +306,19 @@ export class BlockchainService extends EventEmitter {
         return this.config.gasLimit;
       }
 
-      const method = contract.estimateGas[methodName];
-      if (!method) {
+      // Check if the method exists on the contract
+      if (!(methodName in contract)) {
         return this.config.gasLimit;
       }
 
       const txOptions: any = {};
-      if (options.value) txOptions.value = ethers.utils.parseEther(options.value);
+      if (options.value) txOptions.value = parseEther(options.value);
 
-      const estimatedGas = await method(...args, txOptions);
+      // Use the contract's estimateGas method
+      const estimatedGas = await contract[methodName].estimateGas(...args, txOptions);
       
       // Add 20% buffer for safety
-      return Math.floor(estimatedGas.toNumber() * 1.2);
+      return Math.floor(Number(estimatedGas) * 1.2);
       
     } catch (error) {
       this.logger.warn(`Gas estimation failed, using default: ${error}`);
@@ -338,7 +353,7 @@ export class BlockchainService extends EventEmitter {
    */
   verifyMessage(message: string, signature: string): string | null {
     try {
-      const recoveredAddress = ethers.utils.verifyMessage(message, signature);
+      const recoveredAddress = verifyMessage(message, signature);
       this.logger.info(`Message verified, recovered address: ${recoveredAddress}`);
       return recoveredAddress;
       
@@ -353,7 +368,7 @@ export class BlockchainService extends EventEmitter {
    */
   static verifyMessage(message: string, signature: string): string | null {
     try {
-      return ethers.utils.verifyMessage(message, signature);
+      return verifyMessage(message, signature);
     } catch (error) {
       return null;
     }
@@ -377,41 +392,41 @@ export class BlockchainService extends EventEmitter {
    * Format ETH amount for display
    */
   static formatEther(amount: BigNumberish): string {
-    return ethers.utils.formatEther(amount);
+    return formatEther(amount);
   }
 
   /**
    * Parse ETH amount from string
    */
-  static parseEther(amount: string): ethers.BigNumber {
-    return ethers.utils.parseEther(amount);
+  static parseEther(amount: string): bigint {
+    return parseEther(amount);
   }
 
   /**
    * Convert to Wei
    */
-  static toWei(amount: string, unit: BigNumberish = 'ether'): ethers.BigNumber {
-    return ethers.utils.parseUnits(amount, unit);
+  static toWei(amount: string, unit: BigNumberish = 'ether'): bigint {
+    return parseUnits(amount, unit);
   }
 
   /**
    * Convert from Wei
    */
   static fromWei(amount: BigNumberish, unit: BigNumberish = 'ether'): string {
-    return ethers.utils.formatUnits(amount, unit);
+    return formatUnits(amount, unit);
   }
 
   /**
    * Check if address is valid
    */
   static isValidAddress(address: string): boolean {
-    return ethers.utils.isAddress(address);
+    return isAddress(address);
   }
 
   /**
    * Get transaction receipt
    */
-  async getTransactionReceipt(txHash: string): Promise<ethers.providers.TransactionReceipt | null> {
+  async getTransactionReceipt(txHash: string): Promise<TransactionReceipt | null> {
     try {
       if (!this.provider) {
         return null;
@@ -428,7 +443,7 @@ export class BlockchainService extends EventEmitter {
   /**
    * Wait for transaction confirmation
    */
-  async waitForTransaction(txHash: string, confirmations: number = 1): Promise<ethers.providers.TransactionReceipt | null> {
+  async waitForTransaction(txHash: string, confirmations: number = 1): Promise<TransactionReceipt | null> {
     try {
       if (!this.provider) {
         return null;
@@ -456,9 +471,9 @@ export class BlockchainService extends EventEmitter {
         };
       }
 
-      const [blockNumber, gasPrice, network] = await Promise.all([
+      const [blockNumber, feeData, network] = await Promise.all([
         this.provider.getBlockNumber(),
-        this.provider.getGasPrice(),
+        this.provider.getFeeData(),
         this.provider.getNetwork()
       ]);
 
@@ -466,7 +481,7 @@ export class BlockchainService extends EventEmitter {
         healthy: true,
         details: {
           blockNumber,
-          gasPrice: ethers.utils.formatUnits(gasPrice, 'gwei'),
+          gasPrice: formatUnits(feeData.gasPrice || 0n, 'gwei'),
           chainId: network.chainId,
           name: network.name
         }

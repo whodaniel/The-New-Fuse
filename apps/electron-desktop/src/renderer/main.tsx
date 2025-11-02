@@ -1,14 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from 'react-redux'
-import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 import { store } from './store/store'
 import { CommandCenter } from './components/CommandCenter'
+import './theme.css'
 
-// Custom theme for the desktop app
-const theme = extendTheme({
+// Theme configuration for the desktop app
+export const desktopTheme = {
   config: {
-    initialColorMode: 'dark',
+    initialColorMode: 'dark' as const,
     useSystemColorMode: false,
   },
   colors: {
@@ -25,55 +25,23 @@ const theme = extendTheme({
       900: '#001733',
     },
   },
-  styles: {
-    global: {
-      body: {
-        bg: 'transparent',
-        color: 'white',
-      },
-    },
-  },
-  components: {
-    Card: {
-      baseStyle: {
-        container: {
-          bg: 'whiteAlpha.100',
-          backdropFilter: 'blur(10px)',
-          border: '1px solid',
-          borderColor: 'whiteAlpha.200',
-        },
-      },
-    },
-    Button: {
-      baseStyle: {
-        fontWeight: 'semibold',
-      },
-      variants: {
-        solid: {
-          bg: 'brand.500',
-          color: 'white',
-          _hover: {
-            bg: 'brand.600',
-            transform: 'translateY(-1px)',
-            boxShadow: 'lg',
-          },
-          _active: {
-            bg: 'brand.700',
-            transform: 'translateY(0)',
-          },
-          transition: 'all 0.2s',
-        },
-      },
-    },
-  },
-})
+}
+
+function App() {
+  useEffect(() => {
+    // Apply dark mode by default
+    document.documentElement.classList.add('dark')
+  }, [])
+
+  return (
+    <Provider store={store}>
+      <CommandCenter />
+    </Provider>
+  )
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <ChakraProvider theme={theme}>
-        <CommandCenter />
-      </ChakraProvider>
-    </Provider>
+    <App />
   </React.StrictMode>
 )

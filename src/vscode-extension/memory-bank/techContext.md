@@ -11,7 +11,7 @@
 ## Development Setup
 
 - VSCode as the IDE.
-- `bun` for package management (based on `package.json`, `bun.lockb`).
+- `pnpm` for package management (based on `package.json`, `pnpm-lock.yaml`).
 - `esbuild` for bundling (from `esbuild.js`).
 - `eslint` for linting (from `eslint.config.mjs`).
 - `tsconfig.json` for TypeScript configuration.

@@ -5,14 +5,16 @@ interface StateManager {
   getState(workflowId: string): Promise<WorkflowState | null>;
 }
 
+interface StateTransitionEvent {
+  workflowId: string;
+  previousState: string;
+  newState: string;
+  timestamp: Date;
+  metadata?: Record<string, unknown>;
+}
+
 interface EventStore {
-  recordTransition(event: {
-    workflowId: string;
-    previousState: string;
-    newState: string;
-    timestamp: Date;
-    metadata?: Record<string, unknown>;
-  }): Promise<void>;
+  recordTransition(event: StateTransitionEvent): Promise<void>;
   getEventsSince(workflowId: string, timestamp: Date): Promise<any[]>;
 }
 
@@ -28,7 +30,7 @@ export class WorkflowStatePersistence {
   async persistWorkflowState(workflowId: string, state: WorkflowState): Promise<void> {
     // Store current state
     await this.stateManager.saveState(workflowId, state);
-    
+
     // Record state transition event
     await this.eventStore.recordTransition({
       workflowId,
@@ -39,26 +41,20 @@ export class WorkflowStatePersistence {
     });
   }
 
-  async recoverWorkflowState(workflowId: string): Promise<WorkflowState | null> {
+  async recoverWorkflowState(workflowId: string): Promise<WorkflowState> {
     // Retrieve last known state
     const savedState = await this.stateManager.getState(workflowId);
-    if (!savedState) {
-      return null;
-    }
-    
+
     // Replay events if needed
-    const events = await this.eventStore.getEventsSince(
-      workflowId, 
-      savedState.timestamp || new Date(0)
-    );
-    
+    const events = await this.eventStore.getEventsSince(workflowId, savedState.timestamp || new Date(0));
+
     return this.reconstructState(savedState, events);
   }
 
-  private reconstructState(savedState: WorkflowState, events: any[]): WorkflowState {
+  private reconstructState(savedState: any, events: any[]): WorkflowState {
     // Implementation for reconstructing state from events
     let currentState = savedState;
-    
+
     for (const event of events) {
       currentState = this.applyEvent(currentState, event);
     }
@@ -66,12 +62,8 @@ export class WorkflowStatePersistence {
     return currentState;
   }
 
-  private applyEvent(state: WorkflowState, event: any): WorkflowState {
+  private applyEvent(state: any, event: any): any {
     // Implementation for applying event to state
-    return { 
-      ...state, 
-      ...event.changes,
-      timestamp: event.timestamp 
-    };
+    return { ...state, ...event.changes };
   }
 }

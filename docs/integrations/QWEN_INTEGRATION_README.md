@@ -17,18 +17,18 @@ The VSCode extension enhancements have been integrated into your existing The Ne
 1. Install dependencies:
 ```bash
 cd src/vscode-extension
-npm install
-npm install socket.io-client langfuse
+pnpm install
+pnpm install socket.io-client langfuse
 ```
 
 2. Build and compile the extension:
 ```bash
-npm run compile
+pnpm run compile
 ```
 
 3. (Optional) Package as `.vsix` for installation:
 ```bash
-npm install --save-dev vsce         # if not installed already
+pnpm install --save-dev vsce         # if not installed already
 npx vsce package                   # generates the VSIX in this directory
 ```
 
@@ -49,7 +49,7 @@ The relay server acts as a bridge between VSCode and web browsers:
 1. Install dependencies:
 ```bash
 cd relay-server
-npm install
+pnpm install
 ```
 
 2. Start the server:

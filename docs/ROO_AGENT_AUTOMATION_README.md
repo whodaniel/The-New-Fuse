@@ -74,10 +74,10 @@ export class AppModule {}
 
 ```bash
 # Core dependencies (if not already installed)
-npm install @nestjs/common @nestjs/core commander inquirer chalk ora
+pnpm install @nestjs/common @nestjs/core commander inquirer chalk ora
 
 # Type definitions
-npm install -D @types/inquirer @types/node
+pnpm install -D @types/inquirer @types/node
 ```
 
 ### 3. Configure MCP Server

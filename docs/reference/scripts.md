@@ -37,10 +37,10 @@ For more details about automated component analysis, see [Automated Component An
 ### Core Development
 ```bash
 # Start development server
-bun dev
+pnpm dev
 
 # Start production server
-bun start
+pnpm start
 
 # Build project
 pnpm run build

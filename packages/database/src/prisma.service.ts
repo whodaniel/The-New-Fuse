@@ -44,8 +44,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
     return super.workflowExecution;
   }
 
-  // registeredEntity model not available in current schema
-  // get registeredEntity() {
-  //   return super.registeredEntity;
-  // }
+  get registeredEntity() {
+    return super.registeredEntity;
+  }
+
+  // Expose the PrismaClient instance for security package compatibility
+  // This allows access via this.prisma.user while maintaining existing getter methods
+  get prisma() {
+    return this;
+  }
 }

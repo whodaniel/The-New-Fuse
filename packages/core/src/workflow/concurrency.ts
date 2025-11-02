@@ -13,13 +13,14 @@ export interface WorkflowExecutionContext {
 
 export class ConcurrencyManager {
   private activeWorkflows = new Map<string, WorkflowExecutionContext>();
-  canExecute(): unknown {
+
+  canExecute(template: WorkflowTemplate): boolean {
     const existingExecution = this.activeWorkflows.get(template.id);
-    if(): unknown {
+    if (!existingExecution) {
       return true;
     }
-    
-    switch(): unknown {
+
+    switch (template.concurrencyPolicy) {
       case 'queue':
         return false; // Will be queued
       case 'merge':
@@ -30,26 +31,32 @@ export class ConcurrencyManager {
         return false;
     }
   }
-  
-  startExecution(): unknown {
+
+  startExecution(template: WorkflowTemplate, context: WorkflowExecutionContext): void {
     this.activeWorkflows.set(template.id, context);
   }
-  
-  endExecution(): unknown {
+
+  endExecution(templateId: string): void {
     this.activeWorkflows.delete(templateId);
   }
-  
-  getActiveExecutions(): unknown {
+
+  getActiveExecutions(): WorkflowExecutionContext[] {
     return Array.from(this.activeWorkflows.values());
   }
 }
 
-export class ConcurrentExecutionError {
-  constructor(): unknown {
-    super(): unknown {
-  return {
-  // Implementation needed
+export class ConcurrentExecutionError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'ConcurrentExecutionError';
+  }
 }
+
+export function createExecutionContext(
+  workflowId: string,
+  priority: 'high' | 'normal' | 'low' = 'normal'
+): WorkflowExecutionContext {
+  return {
     workflowId,
     priority,
     timestamp: new Date()

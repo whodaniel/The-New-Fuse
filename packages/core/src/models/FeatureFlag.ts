@@ -1,7 +1,13 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { FeatureFlag as IFeatureFlag, Environment, FeatureTargeting, FeatureFlagMetadata } from '../types/featureFlags';
 
-export interface FeatureFlagDocument extends Omit<IFeatureFlag, 'id'>, Document {}
+export interface FeatureFlagDocument extends Omit<IFeatureFlag, 'id'>, Document {
+  isEnabledForEnvironment(environment: Environment): boolean;
+  evaluateForUser(userId: string, userAttributes?: Record<string, any>): boolean;
+  hashUser(userId: string): number;
+  evaluateRules(rules: any[], userAttributes: Record<string, any>): boolean;
+  isModified(path?: string): boolean;
+}
 
 const FeatureTargetingSchema = new Schema({
   percentage: { type: Number, min: 0, max: 100 },
@@ -48,29 +54,28 @@ FeatureFlagSchema.index({ enabled: 1 });
 FeatureFlagSchema.index({ 'metadata.createdAt': 1 });
 FeatureFlagSchema.index({ 'metadata.updatedAt': 1 });
 
-// Pre-save middleware to update the updatedAt timestamp
-FeatureFlagSchema.pre('save', function(next) {
-  if (this.isModified() && !this.isNew) {
+// Pre-save middleware to update metadata timestamps
+FeatureFlagSchema.pre('save', function(this: FeatureFlagDocument, next: () => void) {
+  if (this.isModified() && this.metadata) {
     this.metadata.updatedAt = new Date();
-    this.metadata.version = (this.metadata.version || 0) + 1;
   }
   next();
 });
 
-// Pre-update middleware to update the updatedAt timestamp
-FeatureFlagSchema.pre(['findOneAndUpdate', 'updateOne', 'updateMany'], function(next) {
+// Pre-update middleware to update metadata timestamps
+FeatureFlagSchema.pre(['findOneAndUpdate', 'updateOne', 'updateMany'], function(this: any, next: () => void) {
   this.set({ 'metadata.updatedAt': new Date() });
   next();
 });
 
 // Instance methods
-FeatureFlagSchema.methods.isEnabledForEnvironment = function(environment: Environment): boolean {
+FeatureFlagSchema.methods.isEnabledForEnvironment = function(this: FeatureFlagDocument, environment: Environment): boolean {
   if (!this.enabled) return false;
   if (!this.environments || this.environments.length === 0) return true;
   return this.environments.includes(environment);
 };
 
-FeatureFlagSchema.methods.evaluateForUser = function(userId: string, userAttributes?: Record<string, any>): boolean {
+FeatureFlagSchema.methods.evaluateForUser = function(this: FeatureFlagDocument, userId: string, userAttributes?: Record<string, any>): boolean {
   if (!this.enabled) return false;
   
   // Check user ID targeting
@@ -93,13 +98,13 @@ FeatureFlagSchema.methods.evaluateForUser = function(userId: string, userAttribu
   return true;
 };
 
-FeatureFlagSchema.methods.hashUser = function(userId: string): number {
+FeatureFlagSchema.methods.hashUser = function(this: FeatureFlagDocument, userId: string): number {
   const crypto = require('crypto');
   const hash = crypto.createHash('md5').update(`${this.name}:${userId}`).digest('hex');
   return parseInt(hash.substring(0, 8), 16);
 };
 
-FeatureFlagSchema.methods.evaluateRules = function(rules: any[], userAttributes: Record<string, any>): boolean {
+FeatureFlagSchema.methods.evaluateRules = function(this: FeatureFlagDocument, rules: any[], userAttributes: Record<string, any>): boolean {
   return rules.every(rule => {
     const userValue = userAttributes[rule.attribute];
     if (!userValue) return false;

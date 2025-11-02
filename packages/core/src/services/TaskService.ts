@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
 export interface Task {
   id: string;
   title: string;
@@ -16,29 +17,28 @@ export interface Task {
 export class TaskService {
   private readonly logger = new Logger(TaskService.name);
   private tasks: Map<string, Task> = new Map();
+
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async createTask(): unknown {
+  async createTask(taskData: Omit<Task, 'id' | 'createdAt' | 'updatedAt'>): Promise<Task> {
     // Mock implementation
     const task: Task = {
-  // Implementation needed
-}
       id: Date.now().toString(),
       createdAt: new Date(),
       updatedAt: new Date(),
-      ...taskData
+      ...taskData,
     };
     this.tasks.set(task.id, task);
     this.eventEmitter.emit('task.created', task);
     return task;
   }
 
-  async getTask(): unknown {
+  async getTask(id: string): Promise<Task | null> {
     // Mock implementation
     return this.tasks.get(id) || null;
   }
 
-  async updateTask(): unknown {
+  async updateTask(id: string, updates: Partial<Task>): Promise<Task | null> {
     // Mock implementation
     const task = this.tasks.get(id);
     if (!task) return null;
@@ -48,48 +48,46 @@ export class TaskService {
     return updatedTask;
   }
 
-  async deleteTask(): unknown {
+  async deleteTask(id: string): Promise<boolean> {
     // Mock implementation
     const deleted = this.tasks.delete(id);
-    if(): unknown {
+    if (deleted) {
       this.eventEmitter.emit('task.deleted', { id });
     }
     return deleted;
   }
 
-  async getTasks(): unknown {
+  async getTasks(filters?: { status?: string; assignedTo?: string }): Promise<Task[]> {
     // Mock implementation
     let tasks = Array.from(this.tasks.values());
-    if(): unknown {
-      tasks = tasks.filter(task => task.status === filters.status);
+    if (filters?.status) {
+      tasks = tasks.filter((task) => task.status === filters.status);
     }
-    
-    if(): unknown {
-      tasks = tasks.filter(task => task.assignedTo === filters.assignedTo);
+    if (filters?.assignedTo) {
+      tasks = tasks.filter((task) => task.assignedTo === filters.assignedTo);
     }
-    
     return tasks;
   }
 
-  async completeTask(): unknown {
+  async completeTask(id: string): Promise<Task | null> {
     // Mock implementation
     return this.updateTask(id, { status: 'completed', completedAt: new Date() });
   }
 
-  async assignTask(): unknown {
+  async assignTask(id: string, assignedTo: string): Promise<Task | null> {
     // Mock implementation
     return this.updateTask(id, { assignedTo });
   }
 
-  async getTaskStats(): unknown {
+  async getTaskStats(): Promise<any> {
     // Mock implementation
     const tasks = Array.from(this.tasks.values());
     return {
-total: tasks.length,
-  }      pending: tasks.filter(t => t.status === 'pending').length,
-      in_progress: tasks.filter(t => t.status === 'in_progress').length,
-      completed: tasks.filter(t => t.status === 'completed').length,
-      failed: tasks.filter(t => t.status === 'failed').length
+      total: tasks.length,
+      pending: tasks.filter((t) => t.status === 'pending').length,
+      in_progress: tasks.filter((t) => t.status === 'in_progress').length,
+      completed: tasks.filter((t) => t.status === 'completed').length,
+      failed: tasks.filter((t) => t.status === 'failed').length,
     };
   }
 }

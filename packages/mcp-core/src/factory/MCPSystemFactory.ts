@@ -8,7 +8,7 @@
 import { MCPServer } from '../server/MCPServer';
 import { MCPServerConfig } from '../types/server';
 import { LogLevel } from '../types/common';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 
 // Import types from relay-core for integration
 type Logger = {
@@ -30,7 +30,7 @@ export interface MCPSystemConfig {
   
   /** Database configuration */
   database?: {
-    prisma?: PrismaClient;
+    prisma?: any; // PrismaClient;
     connectionString?: string;
   };
   
@@ -148,7 +148,7 @@ export interface SystemMetrics {
  */
 export interface SystemComponents {
   server: MCPServer;
-  database?: PrismaClient;
+  database?: any; // PrismaClient;
   relay?: {
     agentRegistry?: MasterAgentRegistry;
     heartbeatService?: HeartbeatMonitoringService;

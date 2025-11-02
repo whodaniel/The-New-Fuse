@@ -14,12 +14,16 @@ import { ServiceOrUserAuthGuard } from './guards/service-or-user-auth.guard';
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: configService.get<string>('JWT_EXPIRES_IN', '60m') },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        return {
+          secret: configService.get<string>('JWT_SECRET'),
+          signOptions: {
+            expiresIn: 3600 // 1 hour in seconds
+          },
+        };
+      },
       inject: [ConfigService],
-    }) as any,
+    }),
   ],
   providers: [
     ApiKeyAuthGuard,

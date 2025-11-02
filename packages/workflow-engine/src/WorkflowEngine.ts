@@ -9,7 +9,7 @@
 
 import { EventEmitter } from 'events';
 import { Logger } from '@tnf/relay-core';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { MasterAgentRegistry } from '@tnf/relay-core';
 import { WorkflowRepository } from './WorkflowRepository';
 import { WorkflowValidator } from './WorkflowValidator';
@@ -20,14 +20,14 @@ import {
 
 export class WorkflowEngine extends EventEmitter {
   private logger: Logger;
-  private prisma: PrismaClient;
+  private prisma: any; // PrismaClient;
   private agentRegistry: MasterAgentRegistry;
   private workflowRepository: WorkflowRepository;
   private workflowValidator: WorkflowValidator;
   private workflows: Map<string, WorkflowDefinition> = new Map();
 
   constructor(
-    prisma: PrismaClient,
+    prisma: any /* PrismaClient */,
     logger: Logger,
     agentRegistry: MasterAgentRegistry
   ) {

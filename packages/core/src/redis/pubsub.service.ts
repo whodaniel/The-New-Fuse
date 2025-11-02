@@ -6,37 +6,37 @@ export interface PubSubCallback {
 @Injectable()
 export class PubSubService {
   private subscriptions: Map<string, Set<PubSubCallback>> = new Map();
-  async subscribe(): unknown {
-    if(): unknown {
+  async subscribe(): void {
+    if(): void {
       this.subscriptions.set(channel, new Set());
     }
     this.subscriptions.get(channel)!.add(callback);
   }
 
-  async unsubscribe(): unknown {
+  async unsubscribe(): void {
     const callbacks = this.subscriptions.get(channel);
-    if(): unknown {
+    if(): void {
       callbacks.delete(callback);
-      if(): unknown {
+      if(): void {
         this.subscriptions.delete(channel);
       }
     }
   }
 
-  async publish(): unknown {
+  async publish(): void {
     const callbacks = this.subscriptions.get(channel);
-    if(): unknown {
+    if(): void {
       callbacks.forEach(callback => {
 try {
   }}
-          callback(): unknown {
+          callback(): void {
           console.error(`Error in pubsub callback for channel ${channel}:`, error);
         }
       });
     }
   }
 
-  async unsubscribeAll(): unknown {
+  async unsubscribeAll(): void {
     this.subscriptions.delete(channel);
   }
 }

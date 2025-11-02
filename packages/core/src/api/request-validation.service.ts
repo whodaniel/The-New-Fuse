@@ -29,70 +29,48 @@ export class RequestValidationService {
   constructor(private readonly configService: ConfigService) {}
 
   validateRequest<T>(schema: z.ZodSchema<T>, request: Request): T {
-  // Implementation needed
-}
     try {
-      const result = schema.parse(request.body, {
-  // Implementation needed
-}
-        abortEarly: false,
-        stripUnknown: true,
-        allowUnknown: false
-      });
+      const result = schema.parse(request.body);
       this.logger.debug('Request validation successful');
       return result;
     } catch (error) {
-if(): unknown {
-  }        this.logger.warn('Request validation failed', error.errors);
+      if (error instanceof z.ZodError) {
+        this.logger.warn('Request validation failed', error.errors);
         const validationErrors: ValidationError[] = error.errors.map(err => ({
-  // Implementation needed
-}
           field: err.path.join('.'),
           message: err.message,
           code: err.code
         }));
         throw new BadRequestException({
-  // Implementation needed
-}
           category: ErrorCategory.VALIDATION,
           severity: ErrorSeverity.MEDIUM,
           errors: validationErrors
         });
       }
-      
+
       this.logger.error('Unexpected validation error', error);
       throw new BadRequestException('Invalid request format');
     }
   }
 
   validateQuery<T>(schema: z.ZodSchema<T>, request: Request): T {
-try {
-  }}
-      const result = schema.parse(request.query, {
-  // Implementation needed
-}
-        abortEarly: false,
-        stripUnknown: true
-      });
+    try {
+      const result = schema.parse(request.query);
       return result;
     } catch (error) {
-if(): unknown {
-  }        const validationErrors: ValidationError[] = error.errors.map(err => ({
-  // Implementation needed
-}
+      if (error instanceof z.ZodError) {
+        const validationErrors: ValidationError[] = error.errors.map(err => ({
           field: err.path.join('.'),
           message: err.message,
           code: err.code
         }));
         throw new BadRequestException({
-  // Implementation needed
-}
           category: ErrorCategory.VALIDATION,
           severity: ErrorSeverity.LOW,
           errors: validationErrors
         });
       }
-      
+
       throw new BadRequestException('Invalid query parameters');
     }
   }

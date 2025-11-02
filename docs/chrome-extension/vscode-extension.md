@@ -119,8 +119,8 @@ The extension can be configured through VS Code settings:
 
 1. Clone the repository
 2. Navigate to the extension directory: `cd vscode-extension`
-3. Install dependencies: `npm install`
-4. Compile the extension: `npm run compile`
+3. Install dependencies: `pnpm install`
+4. Compile the extension: `pnpm run compile`
 
 ### Running the Extension
 
@@ -133,7 +133,7 @@ The extension can be configured through VS Code settings:
 To build a VSIX package:
 
 ```bash
-npm run package
+pnpm run package
 ```
 
 This will create a `.vsix` file that can be installed in VS Code.
@@ -143,7 +143,7 @@ This will create a `.vsix` file that can be installed in VS Code.
 To run tests:
 
 ```bash
-npm test
+pnpm test
 ```
 
 ## Protocol Documentation

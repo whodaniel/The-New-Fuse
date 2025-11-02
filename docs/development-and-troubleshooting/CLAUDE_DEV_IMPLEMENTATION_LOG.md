@@ -102,7 +102,7 @@
 ### Next Steps Required:
 1. **Register Module** - Add ClaudeDevAutomationModule to main app.module.ts
 2. **Test Compilation** - Run `npx tsc --noEmit`
-3. **Test Service Startup** - Run `npm run start:dev`
+3. **Test Service Startup** - Run `pnpm run start:dev`
 4. **Verify API Endpoints** - Check Swagger documentation
 5. **Integration Testing** - Test with existing platform services
 

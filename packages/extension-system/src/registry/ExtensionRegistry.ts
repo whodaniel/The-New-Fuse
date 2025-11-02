@@ -16,7 +16,7 @@ import {
   ExtensionType,
   ExtensionCategory,
   ExtensionStatus
-} from '../types/ExtensionTypes.js';
+} from '../types/ExtensionTypes';
 
 export interface ExtensionRegistryConfig {
   registryFile: string;

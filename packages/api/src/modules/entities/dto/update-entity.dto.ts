@@ -13,7 +13,7 @@ export class UpdateEntityDto {
   @IsString()
   type?: string;
 
-  @ApiPropertyOptional({ description: 'New or updated specific details about the entity', type: 'object', example: { modelId: 'gpt-4-turbo', provider: 'OpenAI', updated: true } })
+  @ApiPropertyOptional({ description: 'New or updated specific details about the entity', additionalProperties: true, example: { modelId: 'gpt-4-turbo', provider: 'OpenAI', updated: true } })
   @IsOptional()
   @IsObject()
   metadata?: Prisma.JsonValue;

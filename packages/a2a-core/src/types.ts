@@ -101,8 +101,8 @@ export const AgentCapabilitySchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   version: z.string(),
-  parameters: z.record(z.any()).optional(),
-  metadata: z.record(z.any()).optional()
+  parameters: z.record(z.string(), z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 // Agent Registration Schema
@@ -113,7 +113,7 @@ export const AgentRegistrationSchema = z.object({
   version: z.string(),
   description: z.string().optional(),
   capabilities: z.array(z.string()), // Changed to string array for simplicity
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
   endpoints: z.object({
     websocket: z.string().url().optional(),
     http: z.string().url().optional(),
@@ -121,7 +121,7 @@ export const AgentRegistrationSchema = z.object({
   }).optional(),
   authentication: z.object({
     type: z.enum(['none', 'token', 'certificate']),
-    credentials: z.record(z.string()).optional()
+    credentials: z.record(z.string(), z.string()).optional()
   }).optional(),
   maxConcurrentRequests: z.number().optional(), // Added from AgentCapabilities
   averageResponseTime: z.number().optional(), // Added from AgentCapabilities
@@ -144,7 +144,7 @@ export const A2AMessageSchema = z.object({
   retryCount: z.number().optional(),
   requiresResponse: z.boolean().optional(),
   conversationId: z.string().optional(),
-  metadata: z.record(z.any()).optional(),
+  metadata: z.record(z.string(), z.any()).optional(),
 });
 
 // Agent Heartbeat Schema
@@ -155,7 +155,7 @@ export const AgentHeartbeatSchema = z.object({
   load: z.number().min(0).max(1).optional(), // CPU/resource load 0-1
   activeConnections: z.number().nonnegative().optional(),
   lastActivity: z.string().datetime().optional(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 // Conversation Schema
@@ -167,7 +167,7 @@ export const ConversationSchema = z.object({
   status: z.enum(['active', 'paused', 'completed', 'failed']),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
-  metadata: z.record(z.any()).optional()
+  metadata: z.record(z.string(), z.any()).optional()
 });
 
 // Type exports from schemas

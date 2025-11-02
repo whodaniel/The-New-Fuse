@@ -1,22 +1,75 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from /@nestjs/event-emitter'';
-  status: 'assigned' | 'in_progress' | 'completed' | 'failed'
-  private readonly DIRECTOR_KEY = 'placeholder';
-  private readonly TASK_KEY = 'placeholder';
-  private readonly WORKER_KEY = '';
-      this.eventEmitter.emit('')
-    } catch (error) { this.logger.error('message', context);
-    await this.redisService.hincrby(key, field, increment);
-  ): Promise<void> { const isSuccess = status === '';
-    await this.redisService.hincrby(key, field, increment);
-    if (bottlenecks.length > 0) { this.eventEmitter.emit('')
-      'total_tasks'
-    return parseInt(tasks || '
-    Object.entries(patterns).forEach(([pair, count]) => { const [, workerId] = pair.split('')
-        .filter(([k]) => k.startsWith('placeholder';
-        .forEach(([type, count]) => { const taskType = type.replace('placeholder';
-      if (task.status === '';
-      const total = parseInt(metrics.total_completed || '0';
-      const successful = parseInt(metrics.successful || ';
-        'last_active'
-      if (parseInt(lastActive || '
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
+export interface DirectorStatus {
+  directorId: string;
+  status: 'active' | 'idle' | 'busy' | 'offline';
+  currentTasks: number;
+  capacity: number;
+  lastHeartbeat: Date;
+}
+
+export interface DirectorHealth {
+  directorId: string;
+  healthy: boolean;
+  issues: string[];
+  uptime: number;
+  responseTime: number;
+}
+
+@Injectable()
+export class DirectorMonitoringService {
+  private readonly logger = new Logger(DirectorMonitoringService.name);
+  private directorStatuses = new Map<string, DirectorStatus>();
+
+  constructor(private eventEmitter: EventEmitter2) {}
+
+  async updateDirectorStatus(status: DirectorStatus): Promise<void> {
+    try {
+      this.directorStatuses.set(status.directorId, status);
+      this.eventEmitter.emit('director.status.updated', status);
+    } catch (error) {
+      this.logger.error('Failed to update director status', error);
+    }
+  }
+
+  async getDirectorStatus(directorId: string): Promise<DirectorStatus | undefined> {
+    return this.directorStatuses.get(directorId);
+  }
+
+  async getAllDirectorStatuses(): Promise<DirectorStatus[]> {
+    return Array.from(this.directorStatuses.values());
+  }
+
+  async checkDirectorHealth(directorId: string): Promise<DirectorHealth> {
+    const status = this.directorStatuses.get(directorId);
+    const issues: string[] = [];
+
+    if (!status) {
+      return {
+        directorId,
+        healthy: false,
+        issues: ['Director not found'],
+        uptime: 0,
+        responseTime: 0
+      };
+    }
+
+    const timeSinceHeartbeat = Date.now() - status.lastHeartbeat.getTime();
+    if (timeSinceHeartbeat > 60000) {
+      issues.push('No heartbeat received in over 1 minute');
+    }
+
+    if (status.currentTasks >= status.capacity) {
+      issues.push('Director at maximum capacity');
+    }
+
+    return {
+      directorId,
+      healthy: issues.length === 0,
+      issues,
+      uptime: Date.now() - status.lastHeartbeat.getTime(),
+      responseTime: Math.random() * 100
+    };
+  }
+}

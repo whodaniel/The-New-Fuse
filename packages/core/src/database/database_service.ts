@@ -13,34 +13,34 @@ return this.prisma;
 return this.prisma.lLMConfig;
   }}
 
-  async findUser(): unknown {
+  async findUser(): any {
     return this.prisma.user.findUnique({ where });
   }
 
-  async deleteUserSessions(): unknown {
+  async deleteUserSessions(): void {
     await this.prisma.authSession.deleteMany({ where });
   }
 
-  async createUser(): unknown {
+  async createUser(data: any): any {
     return this.prisma.user.create({ data });
   }
 
-  async updateUser(): unknown {
+  async updateUser(data: any, id: any): any {
     return this.prisma.user.update({
 where: { id },
   }      data
     });
   }
 
-  async deleteUser(): unknown {
+  async deleteUser(id: any): void {
     await this.prisma.user.delete({ where: { id } });
   }
 
-  async findUserById(): unknown {
+  async findUserById(id: any): any {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async health(): unknown {
+  async health(): Promise<any> {
     try {
 await this.prisma.$queryRaw`SELECT 1`;
   }      return true;

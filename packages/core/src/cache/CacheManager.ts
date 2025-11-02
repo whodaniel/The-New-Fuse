@@ -6,132 +6,126 @@ export class CacheManager {
   private readonly logger = new Logger(CacheManager.name);
   private redis: RedisClientType;
   private isConnected = false;
-  constructor(): unknown {
+  constructor() {
     this.redis = createClient({
-url: process.env.REDIS_URL || 'redis://localhost:6379',
+      url: process.env.REDIS_URL || 'redis://localhost:6379',
     });
-  }    this.redis.on('error', (err) => this.logger.error('Redis error:', err));
+    this.redis.on('error', (err) => this.logger.error('Redis error:', err));
     this.redis.on('ready', () => this.logger.log('Cache ready'));
     this.redis.on('connect', () => {
-  // Implementation needed
-}
       this.logger.log('Cache connected');
       this.isConnected = true;
     });
     this.redis.on('end', () => {
-  // Implementation needed
-}
       this.logger.warn('Cache disconnected');
       this.isConnected = false;
     });
   }
 
-  async onModuleInit(): unknown {
+  async onModuleInit(): Promise<void> {
     await this.connect();
   }
 
-  async onModuleDestroy(): unknown {
+  async onModuleDestroy(): Promise<void> {
     await this.disconnect();
   }
 
-  async connect(): unknown {
-    if(): unknown {
+  async connect(): Promise<void> {
+    if (!this.isConnected) {
       await this.redis.connect();
     }
   }
 
-  async disconnect(): unknown {
-    if(): unknown {
+  async disconnect(): Promise<void> {
+    if (this.isConnected) {
       await this.redis.disconnect();
     }
   }
 
   private generateKey(key: string): string {
-return crypto.createHash('sha256').update(key).digest('hex');
-  }}
+    return crypto.createHash('sha256').update(key).digest('hex');
+  }
 
   async get<T>(key: string): Promise<T | null> {
-  // Implementation needed
-}
     try {
       const value = await this.redis.get(key);
       return value ? JSON.parse(value) : null;
     } catch (error) {
-this.logger.error(`Error getting cache for key ${key}`, error);
-  }      return null;
+      this.logger.error(`Error getting cache for key ${key}`, error);
+      return null;
     }
   }
 
-  async set(): unknown {
+  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
     try {
       const serializedValue = JSON.stringify(value);
-      if(): unknown {
+      if (ttl) {
         await this.redis.setEx(key, ttl, serializedValue);
       } else {
-await this.redis.set(key, serializedValue);
-  }}
+        await this.redis.set(key, serializedValue);
+      }
     } catch (error) {
-this.logger.error(`Error setting cache for key ${key}`, error);
-  }}
+      this.logger.error(`Error setting cache for key ${key}`, error);
+    }
   }
 
-  async del(): unknown {
+  async del(key: string): Promise<void> {
     try {
       await this.redis.del(key);
     } catch (error) {
-this.logger.error(`Error deleting cache for key ${key}`, error);
-  }}
+      this.logger.error(`Error deleting cache for key ${key}`, error);
+    }
   }
 
-  async exists(): unknown {
+  async exists(key: string): Promise<boolean> {
     try {
       const result = await this.redis.exists(key);
       return result === 1;
     } catch (error) {
-this.logger.error(`Error checking cache existence for key ${key}`, error);
-  }      return false;
+      this.logger.error(`Error checking cache existence for key ${key}`, error);
+      return false;
     }
   }
 
-  async clear(): unknown {
+  async clear(): Promise<void> {
     try {
       await this.redis.flushAll();
       this.logger.log('Cache flushed');
     } catch (error) {
-this.logger.error('Error flushing cache:', error);
-  }}
+      this.logger.error('Error flushing cache:', error);
+    }
   }
 
-  async getKeys(): unknown {
+  async getKeys(pattern: string = '*'): Promise<string[]> {
     try {
       const keys = await this.redis.keys(pattern);
       return keys;
     } catch (error) {
-this.logger.error(`Error getting keys with pattern ${pattern}`, error);
-  }      return [];
+      this.logger.error(`Error getting keys with pattern ${pattern}`, error);
+      return [];
     }
   }
 
-  async increment(): unknown {
+  async increment(key: string, increment: number = 1): Promise<number> {
     try {
       return await this.redis.incrBy(key, increment);
     } catch (error) {
-this.logger.error(`Error incrementing cache for key ${key}`, error);
-  }      return 0;
+      this.logger.error(`Error incrementing cache for key ${key}`, error);
+      return 0;
     }
   }
 
-  async expire(): unknown {
+  async expire(key: string, ttl: number): Promise<boolean> {
     try {
       const result = await this.redis.expire(key, ttl);
       return result;
     } catch (error) {
-this.logger.error(`Error setting expiration for key ${key}`, error);
-  }      return false;
+      this.logger.error(`Error setting expiration for key ${key}`, error);
+      return false;
     }
   }
 
-  async getStats(): unknown {
+  async getStats(): Promise<Record<string, string>> {
     try {
       const info = await this.redis.info('memory');
       const lines = info
@@ -140,16 +134,14 @@ this.logger.error(`Error setting expiration for key ${key}`, error);
         .map(line => line.split(':'));
       const stats: Record<string, string> = {};
       lines.forEach(([key, value]) => {
-  // Implementation needed
-}
-        if(): unknown {
+        if (key && value) {
           stats[key.trim()] = value.trim();
         }
       });
       return stats;
     } catch (error) {
-this.logger.error('Error getting cache stats:', error);
-  }      return {};
+      this.logger.error('Error getting cache stats:', error);
+      return {};
     }
   }
 }

@@ -49,8 +49,9 @@ export interface DependencyNode {
 export class AnalysisVisualizer {
   private readonly logger = new Logger(AnalysisVisualizer.name);
 
-  async visualizeAnalysis(report: AnalysisReport, options: VisualizationOptions): Promise<VisualizationData> {
-    this.logger.debug(`Visualizing report: ${report.id}`);
+  async visualizeAnalysis(report: AnalysisReport, options: VisualizationOptions = {}): Promise<VisualizationData> {
+    this.logger.debug(`Visualizing analysis report: ${report.id}`);
+
     try {
       const format = options.format || 'json';
       switch (format) {
@@ -67,13 +68,14 @@ export class AnalysisVisualizer {
           return this.generateJsonVisualization(report, options);
       }
     } catch (error) {
-      this.logger.error('Visualization failed', error);
+      this.logger.error(`Visualization failed for report ${report.id}`, error);
       throw new Error(`Visualization failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  async visualizeByType(analysisType: AnalysisType, results: AnalysisResult[], options: VisualizationOptions): Promise<VisualizationData> {
+  async visualizeByType(results: AnalysisResult[], analysisType: AnalysisType, options: VisualizationOptions = {}): Promise<VisualizationData> {
     const filteredResults = results.filter(r => r.type === analysisType);
+
     switch (analysisType) {
       case AnalysisType.DEPENDENCY:
         return this.createDependencyVisualization(filteredResults, options);
@@ -90,7 +92,10 @@ export class AnalysisVisualizer {
     }
   }
 
-  private generateJsonVisualization(report: AnalysisReport, options: VisualizationOptions): VisualizationData {
+  private generateJsonVisualization(
+    report: AnalysisReport,
+    options: VisualizationOptions
+  ): VisualizationData {
     return {
       type: 'text',
       title: 'Analysis Report (JSON)',
@@ -100,9 +105,13 @@ export class AnalysisVisualizer {
     };
   }
 
-  private generateHtmlVisualization(report: AnalysisReport, options: VisualizationOptions): VisualizationData {
+  private generateHtmlVisualization(
+    report: AnalysisReport,
+    options: VisualizationOptions
+  ): VisualizationData {
     const theme = options.theme || 'light';
     const html = this.createHtmlReport(report, theme);
+
     return {
       type: 'text',
       title: 'Analysis Report (HTML)',
@@ -112,8 +121,12 @@ export class AnalysisVisualizer {
     };
   }
 
-  private generateSvgVisualization(report: AnalysisReport, options: VisualizationOptions): VisualizationData {
+  private generateSvgVisualization(
+    report: AnalysisReport,
+    options: VisualizationOptions
+  ): VisualizationData {
     const svg = this.createSvgChart(report);
+
     return {
       type: 'chart',
       title: 'Analysis Report (SVG Chart)',
@@ -123,8 +136,12 @@ export class AnalysisVisualizer {
     };
   }
 
-  private generateTextVisualization(report: AnalysisReport, options: VisualizationOptions): VisualizationData {
+  private generateTextVisualization(
+    report: AnalysisReport,
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push(`Analysis Report: ${report.id}`);
     sections.push(`Timestamp: ${report.timestamp.toISOString()}`);
     sections.push(`Execution Time: ${report.executionTime}ms`);
@@ -140,6 +157,7 @@ export class AnalysisVisualizer {
     Object.entries(report.summary.byType).forEach(([type, count]) => {
       sections.push(`  ${type}: ${count}`);
     });
+
     if (report.results.length > 0) {
       sections.push('');
       sections.push('Top Issues:');
@@ -163,17 +181,22 @@ export class AnalysisVisualizer {
     };
   }
 
-  private createDependencyVisualization(results: AnalysisResult[], options: VisualizationOptions): VisualizationData {
+  private createDependencyVisualization(
+    results: AnalysisResult[],
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push('Dependency Analysis');
     sections.push('This visualization shows dependency-related issues and vulnerabilities.');
     sections.push('');
     results.forEach((result, index) => {
       sections.push(`${index + 1}. ${result.message}`);
-      if (result.suggestions) {
+      if (result.suggestions && result.suggestions.length > 0) {
         sections.push(`   Suggestions: ${result.suggestions.join(', ')}`);
       }
     });
+
     return {
       type: 'text',
       title: 'Dependency Analysis',
@@ -183,13 +206,18 @@ export class AnalysisVisualizer {
     };
   }
 
-  private createSecurityVisualization(results: AnalysisResult[], options: VisualizationOptions): VisualizationData {
+  private createSecurityVisualization(
+    results: AnalysisResult[],
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push('Security Analysis');
     sections.push('This visualization shows security vulnerabilities and risks.');
     sections.push('');
     const criticalIssues = results.filter(r => r.severity === 'critical');
     const highIssues = results.filter(r => r.severity === 'high');
+
     if (criticalIssues.length > 0) {
       sections.push('Critical Security Issues:');
       criticalIssues.forEach((issue, index) => {
@@ -216,8 +244,12 @@ export class AnalysisVisualizer {
     };
   }
 
-  private createPerformanceVisualization(results: AnalysisResult[], options: VisualizationOptions): VisualizationData {
+  private createPerformanceVisualization(
+    results: AnalysisResult[],
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push('Performance Analysis');
     sections.push('This visualization shows performance issues and optimization opportunities.');
     sections.push('');
@@ -226,11 +258,12 @@ export class AnalysisVisualizer {
       if (result.file) {
         sections.push(`   File: ${result.file}${result.line ? `:${result.line}` : ''}`);
       }
-      if (result.suggestions) {
+      if (result.suggestions && result.suggestions.length > 0) {
         sections.push(`   Suggestions: ${result.suggestions.join(', ')}`);
       }
       sections.push('');
     });
+
     return {
       type: 'text',
       title: 'Performance Analysis',
@@ -240,12 +273,17 @@ export class AnalysisVisualizer {
     };
   }
 
-  private createCodeQualityVisualization(results: AnalysisResult[], options: VisualizationOptions): VisualizationData {
+  private createCodeQualityVisualization(
+    results: AnalysisResult[],
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push('Code Quality Analysis');
     sections.push('This visualization shows code quality metrics and issues.');
     sections.push('');
     const groupedByFile = this.groupResultsByFile(results);
+
     Object.entries(groupedByFile).forEach(([file, fileResults]) => {
       sections.push(`File: ${file}`);
       fileResults.forEach((result, index) => {
@@ -254,6 +292,7 @@ export class AnalysisVisualizer {
       });
       sections.push('');
     });
+
     return {
       type: 'text',
       title: 'Code Quality Analysis',
@@ -263,8 +302,12 @@ export class AnalysisVisualizer {
     };
   }
 
-  private createComplexityVisualization(results: AnalysisResult[], options: VisualizationOptions): VisualizationData {
+  private createComplexityVisualization(
+    results: AnalysisResult[],
+    options: VisualizationOptions
+  ): VisualizationData {
     const sections: string[] = [];
+
     sections.push('Complexity Analysis');
     sections.push('This visualization shows code complexity metrics.');
     sections.push('');
@@ -272,10 +315,12 @@ export class AnalysisVisualizer {
     const sortedFiles = Object.entries(complexFiles).sort(
       ([, a], [, b]) => b.length - a.length
     );
+
     sections.push('Most Complex Files:');
     sortedFiles.slice(0, 10).forEach(([file, issues], index) => {
       sections.push(`  ${index + 1}. ${file} (${issues.length} complexity issues)`);
     });
+
     return {
       type: 'text',
       title: 'Complexity Analysis',
@@ -289,22 +334,23 @@ export class AnalysisVisualizer {
     const sections: string[] = [];
     sections.push('System Metrics');
     sections.push('');
-    if (metrics.cpuUsage) {
+
+    if (metrics.cpuUsage !== undefined) {
       sections.push(`CPU Usage: ${metrics.cpuUsage}%`);
     }
-    if (metrics.memoryUsage) {
+    if (metrics.memoryUsage !== undefined) {
       sections.push(`Memory Usage: ${metrics.memoryUsage} MB`);
     }
-    if (metrics.throughput) {
+    if (metrics.throughput !== undefined) {
       sections.push(`Throughput: ${metrics.throughput} req/s`);
     }
-    if (metrics.errorRate) {
+    if (metrics.errorRate !== undefined) {
       sections.push(`Error Rate: ${metrics.errorRate}%`);
     }
-    if (metrics.responseTime) {
+    if (metrics.responseTime !== undefined) {
       sections.push(`Response Time: ${metrics.responseTime}ms`);
     }
-    if (metrics.activeConnections) {
+    if (metrics.activeConnections !== undefined) {
       sections.push(`Active Connections: ${metrics.activeConnections}`);
     }
 
@@ -331,8 +377,9 @@ export class AnalysisVisualizer {
     const sections: string[] = [];
     sections.push('Dependency Graph');
     sections.push('');
+
     dependencies.forEach(dep => {
-      sections.push(`${dep.name}${dep.version ? `@${dep.version}` : ''}`);
+      sections.push(`${dep.name}${dep.version ? ` v${dep.version}` : ''}`);
       sections.push(`  Type: ${dep.type}`);
       if (dep.vulnerable) {
         sections.push(`  ⚠️  VULNERABLE`);
@@ -342,6 +389,7 @@ export class AnalysisVisualizer {
       }
       sections.push('');
     });
+
     return {
       type: 'graph',
       title: 'Dependency Graph',
@@ -405,22 +453,25 @@ export class AnalysisVisualizer {
       { label: 'Critical', value: report.summary.critical, color: '#ff0000' },
       { label: 'High', value: report.summary.high, color: '#ff6600' },
       { label: 'Medium', value: report.summary.medium, color: '#ffcc00' },
-      { label: 'Low', value: report.summary.low, color: '#00cc00' },
+      { label: 'Low', value: report.summary.low, color: '#00cc00' }
     ];
+
     const total = data.reduce((sum, item) => sum + item.value, 0);
     if (total === 0) return '<svg width="400" height="300"><text x="100" y="150">No data to display</text></svg>';
     
     let currentAngle = 0;
+
     const slices = data.map(item => {
       const sliceAngle = (item.value / total) * 360;
       const startAngle = currentAngle;
       const endAngle = currentAngle + sliceAngle;
       currentAngle = endAngle;
+
       return {
         ...item,
         startAngle,
         endAngle,
-        percentage: ((item.value / total) * 100).toFixed(1),
+        percentage: ((item.value / total) * 100).toFixed(1)
       };
     });
 
@@ -435,9 +486,9 @@ export class AnalysisVisualizer {
             const y2 = Math.sin((slice.endAngle - 90) * Math.PI / 180) * 80;
             const largeArc = slice.endAngle - slice.startAngle > 180 ? 1 : 0;
             return `
-              <path d="M 0 0 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z" 
-                    fill="${slice.color}" 
-                    stroke="white" 
+              <path d="M 0 0 L ${x1} ${y1} A 80 80 0 ${largeArc} 1 ${x2} ${y2} Z"
+                    fill="${slice.color}"
+                    stroke="white"
                     stroke-width="2">
                 <title>${slice.label}: ${slice.value} (${slice.percentage}%)</title>
               </path>
@@ -459,8 +510,8 @@ export class AnalysisVisualizer {
   }
 
   private getSeverityWeight(severity: string): number {
-    const weights: Record<string, number> = { low: 1, medium: 2, high: 3, critical: 4 };
-    return weights[severity] || 0;
+    const weights = { low: 1, medium: 2, high: 3, critical: 4 };
+    return weights[severity as keyof typeof weights] || 0;
   }
 
   private groupResultsByFile(results: AnalysisResult[]): Record<string, AnalysisResult[]> {

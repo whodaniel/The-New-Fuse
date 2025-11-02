@@ -6,17 +6,17 @@ The primary focus is to resolve all TypeScript compilation errors to achieve a c
 
 ## Recent Changes
 
-- Migrated package management from Yarn to Bun across the project.
-  - All references to Yarn in scripts, documentation, and configuration are being systematically replaced with Bun equivalents.
-  - Updated Memory Bank and README.md to reflect Bun usage.
+- Migrated package management from Yarn to pnpm across the project.
+- All references to Yarn in scripts, documentation, and configuration are being systematically replaced with pnpm equivalents.
+- Updated Memory Bank and README.md to reflect pnpm usage.
 - Initial creation of Memory Bank files:
   - `projectbrief.md`
   - `productContext.md`
 
 ## Next Steps
 
-1. Systematically update all scripts, Dockerfiles, and documentation to use Bun instead of Yarn.
-2. Communicate the migration to all contributors and ensure onboarding docs reference Bun.
+1. Systematically update all scripts, Dockerfiles, and documentation to use pnpm instead of Yarn.
+2. Communicate the migration to all contributors and ensure onboarding docs reference pnpm.
 3. Address each TypeScript error provided in the user's initial problem statement.
 4. Prioritize errors that might have cascading effects or are simpler to fix to build momentum.
 5. For each error:
@@ -28,7 +28,7 @@ The primary focus is to resolve all TypeScript compilation errors to achieve a c
 
 ## Active Decisions and Considerations
 
-- The project has migrated from Yarn to Bun for package management to improve install speed and modernize tooling.
+- The project has migrated from Yarn to pnpm for package management to improve install speed and modernize tooling.
 - The large number of errors suggests potential systemic issues, possibly related to type definitions, interface implementations, or recent refactoring.
 - Changes to one file (e.g., a type definition in `src/types/`) might resolve errors in multiple other files.
 - Need to be careful with changes to private members (e.g., `_view`) and ensure encapsulation is respected or appropriately modified.

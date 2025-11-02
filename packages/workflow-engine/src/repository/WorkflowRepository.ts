@@ -5,7 +5,7 @@
  * Integrates with existing Prisma schema and database structure
  */
 
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
 import { Logger } from '@tnf/relay-core';
 import {
   UnifiedWorkflow,
@@ -25,12 +25,12 @@ export interface RepositoryConfig {
 }
 
 export class WorkflowRepository {
-  private prisma: PrismaClient;
+  private prisma: any; // PrismaClient;
   private logger: Logger;
   private config: RepositoryConfig;
   private cache: Map<string, { data: any; timestamp: number }> = new Map();
 
-  constructor(prisma: PrismaClient, config: RepositoryConfig, logger: Logger) {
+  constructor(prisma: any /* PrismaClient */, config: RepositoryConfig, logger: Logger) {
     this.prisma = prisma;
     this.config = config;
     this.logger = logger;

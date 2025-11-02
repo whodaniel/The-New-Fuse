@@ -16,4 +16,4 @@ find apps/frontend/src -name "websocket.js*" -delete 2>/dev/null || true
 
 # Start frontend
 echo "🎨 Starting Frontend on port 3000..."
-cd apps/frontend && npm run dev
+cd apps/frontend && pnpm run dev

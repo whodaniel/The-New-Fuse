@@ -6,8 +6,6 @@ import { TaskQueue } from './TaskQueue';
 import { TaskService } from './TaskService';
 import { TaskScheduler } from './TaskScheduler';
 @Module({
-  // Implementation needed
-}
   imports: [DatabaseModule],
   providers: [
     TaskExecutor,

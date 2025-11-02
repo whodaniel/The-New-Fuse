@@ -1,42 +1,18 @@
 import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
-import {
-  VStack,
-  HStack,
-  Text,
-  Button,
-  Input,
-  FormControl,
-  FormLabel,
-  Card,
-  CardBody,
-  Badge,
-  Divider,
-  useToast,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  Switch,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  Box
-} from '@chakra-ui/react'
+import { toast } from 'react-hot-toast'
+import { Button, Input, Card, CardContent, Badge, Alert, Container, Select } from '@the-new-fuse/ui-consolidated'
 import type { RootState } from '../../store/store'
 
 export const ConnectionTab: React.FC = () => {
-  const toast = useToast()
-  
   const { tnfRelay, mcp, systemStatus } = useSelector((state: RootState) => state.connections)
   
   // Local state for configuration
   const [tnfConfig, setTnfConfig] = useState({
     url: 'ws://localhost:3001',
     port: 3001,
-    autoReconnect: true
+    autoReconnect: true,
+    maxReconnectAttempts: 5
   })
   
   const [mcpConfig, setMcpConfig] = useState({
@@ -50,31 +26,13 @@ export const ConnectionTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.tnfConnect(tnfConfig)
         if (response.success) {
-          toast({
-            title: 'TNF Relay Connected',
-            description: 'Successfully connected to TNF Relay',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success('Successfully connected to TNF Relay')
         } else {
-          toast({
-            title: 'Connection Failed',
-            description: response.error || 'Failed to connect to TNF Relay',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          })
+          toast.error(response.error || 'Failed to connect to TNF Relay')
         }
       }
     } catch {
-      toast({
-        title: 'Connection Error',
-        description: 'An error occurred while connecting',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while connecting')
     }
   }
 
@@ -83,23 +41,11 @@ export const ConnectionTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.tnfDisconnect()
         if (response.success) {
-          toast({
-            title: 'TNF Relay Disconnected',
-            description: 'Successfully disconnected from TNF Relay',
-            status: 'info',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success('Successfully disconnected from TNF Relay')
         }
       }
     } catch {
-      toast({
-        title: 'Disconnection Error',
-        description: 'An error occurred while disconnecting',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while disconnecting')
     }
   }
 
@@ -108,31 +54,13 @@ export const ConnectionTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.mcpConnect(mcpConfig)
         if (response.success) {
-          toast({
-            title: 'MCP Connected',
-            description: 'Successfully connected to MCP server',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success('Successfully connected to MCP Server')
         } else {
-          toast({
-            title: 'MCP Connection Failed',
-            description: response.error || 'Failed to connect to MCP server',
-            status: 'error',
-            duration: 5000,
-            isClosable: true,
-          })
+          toast.error(response.error || 'Failed to connect to MCP Server')
         }
       }
     } catch {
-      toast({
-        title: 'MCP Connection Error',
-        description: 'An error occurred while connecting to MCP',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while connecting to MCP')
     }
   }
 
@@ -141,23 +69,29 @@ export const ConnectionTab: React.FC = () => {
       if (window.api) {
         const response = await window.api.mcpDisconnect()
         if (response.success) {
-          toast({
-            title: 'MCP Disconnected',
-            description: 'Successfully disconnected from MCP server',
-            status: 'info',
-            duration: 3000,
-            isClosable: true,
-          })
+          toast.success('Successfully disconnected from MCP Server')
         }
       }
     } catch {
-      toast({
-        title: 'MCP Disconnection Error',
-        description: 'An error occurred while disconnecting from MCP',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      })
+      toast.error('An error occurred while disconnecting from MCP')
+    }
+  }
+
+  const handleTestConnection = async (type: 'tnf' | 'mcp') => {
+    try {
+      if (window.api) {
+        const response = type === 'tnf' 
+          ? await window.api.testTNFConnection()
+          : await window.api.testMCPConnection()
+        
+        if (response.success) {
+          toast.success(`${type.toUpperCase()} connection test successful`)
+        } else {
+          toast.error(response.error || `${type.toUpperCase()} connection test failed`)
+        }
+      }
+    } catch {
+      toast.error(`An error occurred during ${type.toUpperCase()} connection test`)
     }
   }
 
@@ -165,189 +99,168 @@ export const ConnectionTab: React.FC = () => {
   const getStatusText = (connected: boolean) => connected ? 'Connected' : 'Disconnected'
 
   return (
-    <VStack spacing={6} align="stretch">
+    <Container className="space-y-6">
       {/* System Status Alert */}
       {!systemStatus.initialized && (
-        <Alert status="warning" borderRadius="lg">
-          <AlertIcon />
-          <Box>
-            <AlertTitle>System Initializing</AlertTitle>
-            <AlertDescription>
+        <Alert variant="warning" className="rounded-lg">
+          <div>
+            <div className="font-semibold">System Initializing</div>
+            <div className="text-sm">
               The hybrid backend is still initializing. Some features may not be available yet.
-            </AlertDescription>
-          </Box>
+            </div>
+          </div>
         </Alert>
       )}
 
       {/* TNF Relay Connection */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">TNF Relay</Text>
-              <Badge colorScheme={getStatusColor(tnfRelay.connected)} variant="solid">
-                {getStatusText(tnfRelay.connected)}
-              </Badge>
-            </HStack>
+      <Card className="bg-white/10 border-white/20">
+        <CardContent className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold">TNF Relay</h3>
+            <Badge variant={tnfRelay.connected ? 'default' : 'outline'}>
+              {getStatusText(tnfRelay.connected)}
+            </Badge>
+          </div>
+          
+          <p className="text-sm text-gray-400">
+            Connect to the TNF Relay system for AI-powered browser automation
+          </p>
+
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">WebSocket URL</label>
+              <Input
+                value={tnfConfig.url}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTnfConfig(prev => ({ ...prev, url: e.target.value }))}
+                placeholder="ws://localhost:3001"
+                size="sm"
+              />
+            </div>
             
-            <Text fontSize="sm" color="gray.400">
-              Connect to the TNF Relay system for AI-powered browser automation
-            </Text>
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Port</label>
+              <Input
+                type="number"
+                value={tnfConfig.port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTnfConfig(prev => ({ ...prev, port: parseInt(e.target.value) || 3001 }))}
+                min={1000}
+                max={65535}
+                size="sm"
+              />
+            </div>
+          </div>
 
-            <HStack spacing={4}>
-              <FormControl flex={2}>
-                <FormLabel fontSize="sm">WebSocket URL</FormLabel>
-                <Input
-                  value={tnfConfig.url}
-                  onChange={(e) => setTnfConfig(prev => ({ ...prev, url: e.target.value }))}
-                  placeholder="ws://localhost:3001"
-                  size="sm"
-                />
-              </FormControl>
-              
-              <FormControl flex={1}>
-                <FormLabel fontSize="sm">Port</FormLabel>
-                <NumberInput
-                  value={tnfConfig.port}
-                  onChange={(_, value) => setTnfConfig(prev => ({ ...prev, port: value || 3001 }))}
-                  min={1000}
-                  max={65535}
-                  size="sm"
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-            </HStack>
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                id="auto-reconnect"
+                checked={tnfConfig.autoReconnect}
+                onChange={(e) => setTnfConfig(prev => ({ ...prev, autoReconnect: e.target.checked }))}
+                className="rounded"
+              />
+              <label htmlFor="auto-reconnect" className="text-sm">Auto-reconnect</label>
+            </div>
 
-            <HStack justify="space-between">
-              <FormControl w="auto">
-                <HStack>
-                  <Switch
-                    isChecked={tnfConfig.autoReconnect}
-                    onChange={(e) => setTnfConfig(prev => ({ ...prev, autoReconnect: e.target.checked }))}
-                    size="sm"
-                  />
-                  <Text fontSize="sm">Auto-reconnect</Text>
-                </HStack>
-              </FormControl>
+            <Button
+              onClick={tnfRelay.connected ? handleTNFDisconnect : handleTNFConnect}
+              variant={tnfRelay.connected ? 'destructive' : 'default'}
+              size="sm"
+            >
+              {tnfRelay.connected ? 'Disconnect' : 'Connect'}
+            </Button>
+          </div>
 
-              <HStack>
-                <Button
-                  onClick={tnfRelay.connected ? handleTNFDisconnect : handleTNFConnect}
-                  colorScheme={tnfRelay.connected ? 'red' : 'green'}
-                  size="sm"
-                  isLoading={false}
-                >
-                  {tnfRelay.connected ? 'Disconnect' : 'Connect'}
-                </Button>
-              </HStack>
-            </HStack>
-
-            {tnfRelay.connected && tnfRelay.lastConnected && (
-              <Text fontSize="xs" color="gray.500">
-                Last connected: {new Date(tnfRelay.lastConnected).toLocaleString()}
-              </Text>
-            )}
-          </VStack>
-        </CardBody>
+          {tnfRelay.connected && tnfRelay.lastConnected && (
+            <p className="text-xs text-gray-500">
+              Last connected: {new Date(tnfRelay.lastConnected).toLocaleString()}
+            </p>
+          )}
+        </CardContent>
       </Card>
 
-      <Divider />
+      <hr className="border-gray-600" />
 
       {/* MCP Connection */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">Model Context Protocol (MCP)</Text>
-              <Badge colorScheme={getStatusColor(mcp.connected)} variant="solid">
-                {getStatusText(mcp.connected)}
-              </Badge>
-            </HStack>
-            
-            <Text fontSize="sm" color="gray.400">
-              Connect to MCP servers for enhanced AI capabilities and tool integration
-            </Text>
+      <Card className="bg-white/10 border-white/20">
+        <CardContent className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold">Model Context Protocol (MCP)</h3>
+            <Badge variant={mcp.connected ? 'default' : 'outline'}>
+              {getStatusText(mcp.connected)}
+            </Badge>
+          </div>
+          
+          <p className="text-sm text-gray-400">
+            Connect to MCP servers for enhanced AI capabilities and tool integration
+          </p>
 
-            <HStack spacing={4}>
-              <FormControl flex={2}>
-                <FormLabel fontSize="sm">Host</FormLabel>
-                <Input
-                  value={mcpConfig.host}
-                  onChange={(e) => setMcpConfig(prev => ({ ...prev, host: e.target.value }))}
-                  placeholder="localhost"
-                  size="sm"
-                />
-              </FormControl>
-              
-              <FormControl flex={1}>
-                <FormLabel fontSize="sm">Port</FormLabel>
-                <NumberInput
-                  value={mcpConfig.port}
-                  onChange={(_, value) => setMcpConfig(prev => ({ ...prev, port: value || 3000 }))}
-                  min={1000}
-                  max={65535}
-                  size="sm"
-                >
-                  <NumberInputField />
-                  <NumberInputStepper>
-                    <NumberIncrementStepper />
-                    <NumberDecrementStepper />
-                  </NumberInputStepper>
-                </NumberInput>
-              </FormControl>
-            </HStack>
-
-            <HStack justify="space-between">
-              <Text fontSize="sm" color="gray.400">
-                Protocol: WebSocket
-              </Text>
-
-              <Button
-                onClick={mcp.connected ? handleMCPDisconnect : handleMCPConnect}
-                colorScheme={mcp.connected ? 'red' : 'blue'}
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Host</label>
+              <Input
+                value={mcpConfig.host}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMcpConfig(prev => ({ ...prev, host: e.target.value }))}
+                placeholder="localhost"
                 size="sm"
-              >
-                {mcp.connected ? 'Disconnect' : 'Connect'}
-              </Button>
-            </HStack>
-          </VStack>
-        </CardBody>
+              />
+            </div>
+            
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">Port</label>
+              <Input
+                type="number"
+                value={mcpConfig.port}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMcpConfig(prev => ({ ...prev, port: parseInt(e.target.value) || 3000 }))}
+                min={1000}
+                max={65535}
+                size="sm"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-between items-center">
+            <p className="text-sm text-gray-400">
+              Protocol: WebSocket
+            </p>
+
+            <Button
+              onClick={mcp.connected ? handleMCPDisconnect : handleMCPConnect}
+              variant={mcp.connected ? 'destructive' : 'default'}
+              size="sm"
+            >
+              {mcp.connected ? 'Disconnect' : 'Connect'}
+            </Button>
+          </div>
+        </CardContent>
       </Card>
 
-      <Divider />
+      <hr className="border-gray-600" />
 
       {/* Native Host Status */}
-      <Card bg="whiteAlpha.100" borderColor="whiteAlpha.200">
-        <CardBody>
-          <VStack spacing={4} align="stretch">
-            <HStack justify="space-between">
-              <Text fontSize="lg" fontWeight="bold">Native Host</Text>
-              <Badge colorScheme={getStatusColor(systemStatus.nativeHost)} variant="solid">
-                {getStatusText(systemStatus.nativeHost)}
-              </Badge>
-            </HStack>
-            
-            <Text fontSize="sm" color="gray.400">
-              Python native host for system-level automation and file operations
-            </Text>
+      <Card className="bg-white/10 border-white/20">
+        <CardContent className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h3 className="text-lg font-bold">Native Host</h3>
+            <Badge variant={systemStatus.nativeHost ? 'default' : 'outline'}>
+              {getStatusText(systemStatus.nativeHost)}
+            </Badge>
+          </div>
+          
+          <p className="text-sm text-gray-400">
+            Python native host for system-level automation and file operations
+          </p>
 
-            {!systemStatus.nativeHost && (
-              <Alert status="info" size="sm" borderRadius="md">
-                <AlertIcon />
-                <Text fontSize="sm">
-                  Native host provides system-level automation capabilities. 
-                  Ensure Python 3 is installed and the host script is available.
-                </Text>
-              </Alert>
-            )}
-          </VStack>
-        </CardBody>
+          {!systemStatus.nativeHost && (
+            <Alert variant="default" className="rounded-md">
+              <p className="text-sm">
+                Native host provides system-level automation capabilities. 
+                Ensure Python 3 is installed and the host script is available.
+              </p>
+            </Alert>
+          )}
+        </CardContent>
       </Card>
-    </VStack>
+    </Container>
   )
 }

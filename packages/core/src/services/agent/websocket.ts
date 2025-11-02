@@ -1,32 +1,74 @@
 import { io, Socket } from 'socket.io-client';
 import { toast } from 'react-hot-toast';
-  type:message' | file' | agent_action' | collaboration'
-    type:user' | agent'
-import { WebSocketGateway } from /@nestjs/websockets'';
-        type: 'message'
-          id: 'agent'
-          type: 'agent'
-      console.error('');
-    this.socket = io(/http://localhost:3001';
-      transports: ['websocket'
-    this.socket.on('connect'
-      toast.success('Connected to chat server'
-    this.socket.on('disconnect'
-      toast.error('Disconnected from chat server';
-    this.socket.on('error'
-      console.error('');
-    this.socket.on('message'
-    this.socket.on('agent_joined'
-    this.socket.on('agent_left'
-    this.socket.on('file_upload_progress'
-    this.socket.on('file_upload_complete'
-      toast.success('File uploaded successfully'
-    this.socket.on('file_transfer_start'
-      this.emit('transfer_started'
-    this.socket.on('file_transfer_progress'
-      this.emit('transfer_progress'
-  sendMessage(message: Omit<WebSocketMessage, 'timestamp'
-      toast.error('Not connected to chat server'
-    this.socket.emit('message'
-      throw new Error('');
-      this.socket.emit('')
+import { EventEmitter } from 'events';
+
+export interface WebSocketMessage {
+  type: 'message' | 'file' | 'agent_action' | 'collaboration';
+  payload: any;
+  sender: {
+    type: 'user' | 'agent';
+    id: string;
+  };
+  timestamp: Date;
+}
+
+export class WebSocketService extends EventEmitter {
+  private socket: Socket;
+
+  constructor(serverUrl: string = 'http://localhost:3001') {
+    super();
+    this.socket = io(serverUrl, {
+      transports: ['websocket'],
+    });
+    this.setupEventListeners();
+  }
+
+  private setupEventListeners(): void {
+    this.socket.on('connect', () => {
+      toast.success('Connected to chat server');
+      this.emit('connect');
+    });
+
+    this.socket.on('disconnect', () => {
+      toast.error('Disconnected from chat server');
+      this.emit('disconnect');
+    });
+
+    this.socket.on('error', (error) => {
+      console.error('WebSocket error:', error);
+      toast.error('WebSocket connection error');
+    });
+
+    this.socket.on('message', (message: WebSocketMessage) => {
+      this.emit('message', message);
+    });
+
+    this.socket.on('agent_joined', (agentId: string) => {
+      this.emit('agent_joined', agentId);
+    });
+
+    this.socket.on('agent_left', (agentId: string) => {
+      this.emit('agent_left', agentId);
+    });
+
+    this.socket.on('file_upload_complete', (fileInfo) => {
+      toast.success('File uploaded successfully');
+      this.emit('file_upload_complete', fileInfo);
+    });
+  }
+
+  public sendMessage(message: Omit<WebSocketMessage, 'timestamp'>): void {
+    if (!this.socket.connected) {
+      toast.error('Not connected to chat server');
+      return;
+    }
+    this.socket.emit('message', { ...message, timestamp: new Date() });
+  }
+
+  public uploadFile(file: File): void {
+    if (!this.socket.connected) {
+      throw new Error('Not connected to chat server');
+    }
+    this.socket.emit('upload_file', file);
+  }
+}

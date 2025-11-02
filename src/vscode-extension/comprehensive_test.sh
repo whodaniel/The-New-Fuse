@@ -137,7 +137,7 @@ if [ $TESTS_FAILED -eq 0 ]; then
     echo "   - Open the extension and test chat functionality"
     echo "   - Test LLM provider switching"
     echo "   - Test agent communication features"
-    echo "3. Package extension with: npm run package"
+    echo "3. Package extension with: pnpm run package"
     echo ""
 else
     echo "❌ SOME TESTS FAILED. Please fix the issues above."

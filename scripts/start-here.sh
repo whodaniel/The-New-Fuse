@@ -19,14 +19,14 @@ echo "Would you like to build and run the extension now? (y/n)"
 read -r response
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])+$ ]]; then
   cd src/vscode-extension
-  npm install
-  npm run compile
+  pnpm install
+  pnpm run compile
   code --extensionDevelopmentPath="$(pwd)"
   echo "Extension should now be running in VS Code!"
 else
   echo "To build and run the extension later, run these commands:"
   echo "cd src/vscode-extension"
-  echo "npm install"
-  echo "npm run compile"
+  echo "pnpm install"
+  echo "pnpm run compile"
   echo "code --extensionDevelopmentPath=\"\$(pwd)\""
 fi

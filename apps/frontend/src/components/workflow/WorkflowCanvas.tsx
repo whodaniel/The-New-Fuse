@@ -11,7 +11,6 @@ import ReactFlow, {
   Connection
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Box, useToast } from '@chakra-ui/react';
 import { NodeToolbar } from '../WorkflowBuilder/NodeToolbar';
 import { WorkflowToolbar } from './WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
@@ -20,7 +19,6 @@ import { nodeTypes } from './nodes/nodeTypes';
 import { edgeTypes } from './edges';
 
 export const WorkflowCanvas: React.FC = () => {
-  const toast = useToast();
   const { saveWorkflow, executeWorkflow } = useWorkflow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -28,6 +26,12 @@ export const WorkflowCanvas: React.FC = () => {
   const [workflowName, setWorkflowName] = useState('Untitled Workflow');
   const [isSaving, setIsSaving] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [notification, setNotification] = useState<{message: string, type: 'success' | 'error' | 'info'} | null>(null);
+
+  const showNotification = (message: string, type: 'success' | 'error' | 'info') => {
+    setNotification({ message, type });
+    setTimeout(() => setNotification(null), 3000);
+  };
 
   const onConnect = useCallback(
     (connection: Connection) => {
@@ -40,19 +44,14 @@ export const WorkflowCanvas: React.FC = () => {
         const hasErrors = validationErrors.some(e => e.severity === 'error');
         
         if (hasErrors) {
-          toast({
-            title: 'Invalid Connection',
-            description: validationErrors[0].message,
-            status: 'error',
-            duration: 3000
-          });
+          showNotification(validationErrors[0].message, 'error');
           return;
         }
       }
       
       setEdges((eds) => addEdge(connection, eds));
     },
-    [setEdges, nodes, toast]
+    [setEdges, nodes]
   );
 
   const onNodeClick = useCallback((_, node) => {
@@ -119,28 +118,14 @@ export const WorkflowCanvas: React.FC = () => {
       const validation = await workflowValidationService.validateWorkflow(workflow);
       
       if (!validation.valid) {
-        toast({
-          title: 'Validation Failed',
-          description: `${validation.errors.length} errors found. Please fix them before saving.`,
-          status: 'error',
-          duration: 5000
-        });
+        showNotification(`${validation.errors.length} errors found. Please fix them before saving.`, 'error');
         return;
       }
       
       await saveWorkflow(workflow);
-      toast({
-        title: 'Workflow saved',
-        status: 'success',
-        duration: 3000
-      });
+      showNotification('Workflow saved', 'success');
     } catch (err) {
-      toast({
-        title: 'Error saving workflow',
-        description: (err as Error).message,
-        status: 'error',
-        duration: 5000
-      });
+      showNotification((err as Error).message, 'error');
     } finally {
       setIsSaving(false);
     }
@@ -165,46 +150,35 @@ export const WorkflowCanvas: React.FC = () => {
       const validation = await workflowValidationService.validateWorkflow(workflow);
       
       if (!validation.valid) {
-        toast({
-          title: 'Validation Failed',
-          description: `Cannot execute workflow with ${validation.errors.length} errors.`,
-          status: 'error',
-          duration: 5000
-        });
+        showNotification(`Cannot execute workflow with ${validation.errors.length} errors.`, 'error');
         return;
       }
       
       // Execute workflow if it has an ID (saved workflow)
       if (workflow.id && workflow.id !== 'temp') {
         const execution = await executeWorkflow(workflow.id);
-        toast({
-          title: 'Workflow execution started',
-          description: `Execution ID: ${execution.id}`,
-          status: 'success',
-          duration: 3000
-        });
+        showNotification(`Workflow execution started. Execution ID: ${execution.id}`, 'success');
       } else {
-        toast({
-          title: 'Save Required',
-          description: 'Please save the workflow before executing it.',
-          status: 'warning',
-          duration: 3000
-        });
+        showNotification('Please save the workflow before executing it.', 'info');
       }
     } catch (err) {
-      toast({
-        title: 'Error executing workflow',
-        description: (err as Error).message,
-        status: 'error',
-        duration: 5000
-      });
+      showNotification((err as Error).message, 'error');
     } finally {
       setIsExecuting(false);
     }
   };
 
   return (
-    <Box height="80vh" border="1px" borderColor="gray.200" borderRadius="md">
+    <div className="h-[80vh] border border-gray-200 rounded-md relative">
+      {notification && (
+        <div className={`absolute top-4 right-4 z-50 px-4 py-2 rounded-md text-white ${
+          notification.type === 'error' ? 'bg-red-500' : 
+          notification.type === 'success' ? 'bg-green-500' : 
+          'bg-blue-500'
+        }`}>
+          {notification.message}
+        </div>
+      )}
       <WorkflowToolbar
         workflowName={workflowName}
         onNameChange={setWorkflowName}
@@ -243,6 +217,6 @@ export const WorkflowCanvas: React.FC = () => {
           <MiniMap />
         </ReactFlow>
       </div>
-    </Box>
+    </div>
   );
 };

@@ -43,8 +43,8 @@ const inputVariants = cva('flex rounded-md border border-input bg-background px-
         width: 'default',
     },
 });
-const Input = React.forwardRef((_a, ref) => {
-    var { className, variant, size, state, width, startIcon, endIcon, label, helperText, error, success, containerClassName, labelClassName, helperTextClassName, type = 'text' } = _a, props = __rest(_a, ["className", "variant", "size", "state", "width", "startIcon", "endIcon", "label", "helperText", "error", "success", "containerClassName", "labelClassName", "helperTextClassName", "type"]);
+const Input = React.forwardRef((props, ref) => {
+    var { className, variant, size, state, width, startIcon, endIcon, label, helperText, error, success, containerClassName, labelClassName, helperTextClassName, type = 'text' } = props, restProps = __rest(props, ["className", "variant", "size", "state", "width", "startIcon", "endIcon", "label", "helperText", "error", "success", "containerClassName", "labelClassName", "helperTextClassName", "type"]);
     const inputState = error ? 'error' : success ? 'success' : state;
     return (<div className={cn('space-y-2', containerClassName)}>
         {label && (<label className={cn('text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70', error && 'text-destructive', success && 'text-success', labelClassName)}>
@@ -54,7 +54,7 @@ const Input = React.forwardRef((_a, ref) => {
           {startIcon && (<div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {startIcon}
             </div>)}
-          <input type={type} className={cn(inputVariants({ variant, size, state: inputState, width }), startIcon && 'pl-10', endIcon && 'pr-10', className)} ref={ref} {...props}/>
+          <input type={type} className={cn(inputVariants({ variant, size, state: inputState, width }), startIcon && 'pl-10', endIcon && 'pr-10', className)} ref={ref} {...restProps}/>
           {endIcon && (<div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               {endIcon}
             </div>)}

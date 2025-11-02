@@ -9,43 +9,45 @@ export interface MetadataVersion {
 
 export class MetadataVersioningService {
   private versions: Map<string, MetadataVersion[]> = new Map();
-  async createVersion(): unknown {
+
+  async createVersion(resourceId: string, author: string, changes: string[], metadata: any): Promise<MetadataVersion> {
     const version: MetadataVersion = {
-version: this.generateVersionNumber(resourceId),
-  }      timestamp: new Date(),
+      version: this.generateVersionNumber(resourceId),
+      timestamp: new Date(),
       author,
       changes,
       checksum: this.calculateChecksum(metadata),
       previousVersion: this.getLatestVersion(resourceId)?.version
     };
-    if(): unknown {
+
+    if (!this.versions.has(resourceId)) {
       this.versions.set(resourceId, []);
     }
     this.versions.get(resourceId)!.push(version);
     return version;
   }
 
-  async getVersionHistory(): unknown {
+  async getVersionHistory(resourceId: string): Promise<MetadataVersion[]> {
     return this.versions.get(resourceId) || [];
   }
 
-  async getVersion(): unknown {
+  async getVersion(resourceId: string, version: string): Promise<MetadataVersion | null> {
     const versions = this.versions.get(resourceId) || [];
     return versions.find(v => v.version === version) || null;
   }
 
-  async getLatestVersion(): unknown {
+  async getLatestVersion(resourceId: string): Promise<MetadataVersion | null> {
     const versions = this.versions.get(resourceId) || [];
     return versions.length > 0 ? versions[versions.length - 1] : null;
   }
 
   private generateVersionNumber(resourceId: string): string {
-const versions = this.versions.get(resourceId) || [];
-  }    return `v${versions.length + 1}.0.0`;
+    const versions = this.versions.get(resourceId) || [];
+    return `v${versions.length + 1}.0.0`;
   }
 
   private calculateChecksum(metadata: any): string {
-// Mock implementation - in production this would use a proper hash function
-  }    return JSON.stringify(metadata).length.toString(36);
+    // Mock implementation - in production this would use a proper hash function
+    return JSON.stringify(metadata).length.toString(36);
   }
 }

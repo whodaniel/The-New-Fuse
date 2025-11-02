@@ -500,8 +500,8 @@ export class BuildSystemAnalyzer {
   private extractScriptDependencies(command: string): string[] {
     const dependencies: string[] = [];
     
-    // Extract npm/yarn/bun commands
-    const packageManagers = command.match(/(npm|yarn|bun)\s+\w+/g);
+    // Extract npm/yarn/pnpm commands
+    const packageManagers = command.match(/(npm|yarn|pnpm)\s+\w+/g);
     if (packageManagers) {
       dependencies.push(...packageManagers);
     }

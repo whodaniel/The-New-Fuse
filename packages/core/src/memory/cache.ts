@@ -11,17 +11,17 @@ export class MemoryCache {
   private keyPrefix: string;
   private defaultTTL: number;
   private maxSize: number;
-  constructor(): unknown {
+  constructor(options: any): void {
     this.keyPrefix = options.keyPrefix || 'cache:';
     this.defaultTTL = options.ttl || 3600000; // 1 hour
     this.maxSize = options.maxSize || 1000;
   }
 
-  set(): unknown {
+  set(value: any): void {
     const prefixedKey = this.keyPrefix + key;
     const expires = Date.now() + (ttl || this.defaultTTL);
     // Remove oldest items if cache is full
-    if(): unknown {
+    if(value: any): void {
       const oldestKey = this.cache.keys().next().value;
       this.cache.delete(oldestKey);
     }
@@ -29,10 +29,10 @@ export class MemoryCache {
     this.cache.set(prefixedKey, { value, expires });
   }
 
-  get(): unknown {
+  get(value: any, item: any): any {
     const prefixedKey = this.keyPrefix + key;
     const item = this.cache.get(prefixedKey);
-    if(): unknown {
+    if(): any {
       this.cache.delete(prefixedKey);
       return null;
     }
@@ -40,19 +40,19 @@ export class MemoryCache {
     return item.value;
   }
 
-  delete(): unknown {
+  delete(): any {
     const prefixedKey = this.keyPrefix + key;
     return this.cache.delete(prefixedKey);
   }
 
-  clear(): unknown {
+  clear(): void {
     this.cache.clear();
   }
 
-  has(): unknown {
+  has(item: any): boolean {
     const prefixedKey = this.keyPrefix + key;
     const item = this.cache.get(prefixedKey);
-    if(): unknown {
+    if(): boolean {
       this.cache.delete(prefixedKey);
       return false;
     }
@@ -60,10 +60,10 @@ export class MemoryCache {
     return true;
   }
 
-  keys(): unknown {
+  keys(): void {
     const keys: string[] = [];
-    for(): unknown {
-      if(): unknown {
+    for(): void {
+      if(): any {
         keys.push(key.replace(this.keyPrefix, ''));
       } else {
 this.cache.delete(key);
@@ -72,22 +72,22 @@ this.cache.delete(key);
     return keys;
   }
 
-  size(): unknown {
+  size(): any {
     this.cleanup();
     return this.cache.size;
   }
 
   private cleanup(): void {
 const now = Date.now();
-  }    for(): unknown {
-      if(): unknown {
+  for(): void {
+      if(): void {
         this.cache.delete(key);
       }
     }
   }
 
   static createWithDefaults<T>(type: 'memory' = 'memory'): MemoryCache<T> {
-switch(): unknown {
+switch(): void {
   }      case 'memory':
       default:
         return new MemoryCache<T>({

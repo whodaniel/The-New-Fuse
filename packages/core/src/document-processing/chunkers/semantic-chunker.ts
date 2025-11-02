@@ -26,7 +26,7 @@ export interface SentenceEmbedding {
 export class SemanticChunker {
   private readonly logger = new Logger(SemanticChunker.name);
   private readonly config: Required<SemanticChunkerConfig>;
-  constructor(): unknown {
+  constructor(config: any): void {
     this.config = {
 maxChunkSize: this.configService?.get<number>('chunking.maxChunkSize', 1000) || 1000,
   }      overlap: this.configService?.get<number>('chunking.overlap', 100) || 100,
@@ -36,11 +36,11 @@ maxChunkSize: this.configService?.get<number>('chunking.maxChunkSize', 1000) || 
     };
   }
 
-  async chunk(): unknown {
+  async chunk(): Promise<any> {
     try {
       // Split text into sentences
       const sentences = this.splitIntoSentences(text);
-      if(): unknown {
+      if(): any[] {
         return [];
       }
 
@@ -74,10 +74,10 @@ const chunks: Chunk[] = [];
     let chunkStartIndex = 0;
     let chunkIndex = 0;
     let globalIndex = 0;
-    for(): unknown {
+    for(): void {
       const sentence = sentences[i];
       const potentialChunk = currentChunk + (currentChunk ? 'placeholder') + sentence;
-      if(): unknown {
+      if(): void {
         // Create chunk from current content
         chunks.push({
 id: `semantic_chunk_${chunkIndex}`,
@@ -100,7 +100,7 @@ id: `semantic_chunk_${chunkIndex}`,
   // Implementation needed
 }
         currentChunk = potentialChunk;
-        if(): unknown {
+        if(): void {
           chunkStartIndex = globalIndex;
         }
       }
@@ -109,7 +109,7 @@ id: `semantic_chunk_${chunkIndex}`,
     }
 
     // Add the last chunk if it has content
-    if(): unknown {
+    if(): void {
       chunks.push({
   // Implementation needed
 }
@@ -134,7 +134,7 @@ chunkIndex,
     const maxSize = this.config.maxChunkSize;
     let startIndex = 0;
     let chunkIndex = 0;
-    while(): unknown {
+    while(): void {
       const endIndex = Math.min(startIndex + maxSize, text.length);
       const chunkText = text.slice(startIndex, endIndex);
       chunks.push({
@@ -157,16 +157,16 @@ id: `fallback_chunk_${chunkIndex}`,
     return chunks;
   }
 
-  async chunkByParagraphs(): unknown {
+  async chunkByParagraphs(): void {
     const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim().length > 0);
     const chunks: Chunk[] = [];
     let currentChunk = '';
     let chunkIndex = 0;
     let globalIndex = 0;
     let chunkStartIndex = 0;
-    for(): unknown {
+    for(): void {
       const potentialChunk = currentChunk + (currentChunk ? 'placeholder') + paragraph;
-      if(): unknown {
+      if(): void {
         // Create chunk from current content
         chunks.push({
 id: `paragraph_chunk_${chunkIndex}`,
@@ -189,7 +189,7 @@ id: `paragraph_chunk_${chunkIndex}`,
   // Implementation needed
 }
         currentChunk = potentialChunk;
-        if(): unknown {
+        if(): void {
           chunkStartIndex = globalIndex;
         }
       }
@@ -198,7 +198,7 @@ id: `paragraph_chunk_${chunkIndex}`,
     }
 
     // Add the last chunk
-    if(): unknown {
+    if(): void {
       chunks.push({
   // Implementation needed
 }
@@ -227,16 +227,16 @@ chunkIndex,
     return intersection.size / union.size;
   }
 
-  async mergeSmallChunks(): unknown {
+  async mergeSmallChunks(id: any): void {
     const merged: Chunk[] = [];
     let currentChunk: Chunk | null = null;
-    for(): unknown {
-      if(): unknown {
+    for(id: any): void {
+      if(): void {
         currentChunk = { ...chunk };
         continue;
       }
 
-      if(): unknown {
+      if(): void {
         // Merge with next chunk
         const combinedContent = currentChunk.text + ' ' + chunk.text;
         currentChunk = {
@@ -261,14 +261,14 @@ chunkIndex,
       }
     }
 
-    if(): unknown {
+    if(): void {
       merged.push(currentChunk);
     }
 
     return merged;
   }
 
-  async optimizeChunks(): unknown {
+  async optimizeChunks(): void {
     // Apply various optimization strategies
     let optimizedChunks = [...chunks];
     // Remove empty chunks
@@ -290,7 +290,7 @@ chunkIndex,
     return optimizedChunks;
   }
 
-  getChunkingStats(): unknown {
+  getChunkingStats(): void {
     totalChunks: number;
     averageChunkSize: number;
     minChunkSize: number;
@@ -299,7 +299,7 @@ chunkIndex,
   } {
   // Implementation needed
 }
-    if(): unknown {
+    if(): any {
       return {
   // Implementation needed
 }

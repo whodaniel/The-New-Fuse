@@ -29,7 +29,7 @@ export interface ConfigValue {
 export class ConfigurationManager {
   private configCache: Map<string, ConfigValue> = new Map();
   private readonly options: ConfigurationOptions;
-  constructor(): unknown {
+  constructor(options: any): void {
     this.options = {
 environment: 'development',
   }      encryptionKey: process.env.CONFIG_ENCRYPTION_KEY,
@@ -48,16 +48,16 @@ environment: 'development',
   // Implementation needed
 }
     // Check cache first
-    if(): unknown {
+    if(value: any): any {
       const cached = this.configCache.get(key);
-      if(): unknown {
+      if(value: any): any {
         return cached.value as T;
       }
     }
 
     // Try environment variables first
     const envValue = process.env[key];
-    if(): unknown {
+    if(): void {
       const configValue: ConfigValue = {
 key,
   }        value: this.parseValue(envValue),
@@ -68,10 +68,10 @@ key,
     }
 
     // Try vault if enabled
-    if(): unknown {
+    if(value: any): Promise<any> {
       try {
 const vaultValue = await this.vaultService.getSecret(key);
-  }        if(): unknown {
+  if(): void {
           const configValue: ConfigValue = {
   // Implementation needed
 }
@@ -91,7 +91,7 @@ console.warn(`Failed to retrieve ${key} from vault:`, error);
     return null;
   }
 
-  async set(): unknown {
+  async set(value: any): void {
     const configValue: ConfigValue = {
   // Implementation needed
 }
@@ -101,7 +101,7 @@ console.warn(`Failed to retrieve ${key} from vault:`, error);
       lastUpdated: new Date()
     };
     // Store in vault if enabled and encryption requested
-    if(): unknown {
+    if(value: any): void {
       try {
 await this.vaultService.setSecret(key, value);
       } catch (error) {
@@ -115,11 +115,11 @@ await this.vaultService.setSecret(key, value);
     this.setCacheValue(key, configValue);
   }
 
-  async delete(): unknown {
+  async delete(): Promise<any> {
     // Remove from cache
     this.configCache.delete(key);
     // Remove from vault if enabled
-    if(): unknown {
+    if(): Promise<any> {
       try {
 return await this.vaultService.deleteSecret(key);
       } catch (error) {
@@ -132,23 +132,23 @@ return await this.vaultService.deleteSecret(key);
     return true;
   }
 
-  async refresh(): unknown {
-    if(): unknown {
+  async refresh(): void {
+    if(options: any, value: any): any {
       this.configCache.delete(key);
     } else {
 this.configCache.clear();
   }}
   }
 
-  getEnvironment(): unknown {
+  getEnvironment(options: any): any {
     return this.options.environment;
   }
 
-  isProduction(): unknown {
+  isProduction(options: any): any {
     return this.options.environment === 'production';
   }
 
-  isDevelopment(): unknown {
+  isDevelopment(options: any): any {
     return this.options.environment === 'development';
   }
 
@@ -165,13 +165,13 @@ this.configCache.clear();
   }
 
   private setCacheValue(key: string, value: ConfigValue): void {
-if(): unknown {
+if(value: any): void {
   }      this.configCache.set(key, value);
     }
   }
 
   private isValidCache(cached: ConfigValue): boolean {
-if(): unknown {
+if(): boolean {
   }      return false;
     }
     

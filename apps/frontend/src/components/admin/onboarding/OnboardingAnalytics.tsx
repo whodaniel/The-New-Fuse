@@ -1,45 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  VStack,
-  HStack,
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  Text,
-  Stat,
-  StatLabel,
-  StatNumber,
-  StatHelpText,
-  StatArrow,
-  StatGroup,
-  Flex,
-  Select,
-  Divider,
-  useColorModeValue,
-  Spinner,
-  Alert,
-  AlertIcon,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td,
-  Badge,
-  Tooltip,
-  IconButton,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Grid,
-  GridItem,
-  Progress,
-  SimpleGrid
-} from '@chakra-ui/react';
 import { 
   FiDownload, 
   FiCalendar, 
@@ -77,9 +36,6 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
   const [analytics, setAnalytics] = useState<any>(null);
   const [dateRange, setDateRange] = useState('last30days');
   const [comparisonPeriod, setComparisonPeriod] = useState('previous');
-  
-  const cardBg = useColorModeValue('white', 'gray.700');
-  const borderColor = useColorModeValue('gray.200', 'gray.700');
   
   // Chart colors
   const COLORS = ['#3182CE', '#4FD1C5', '#F6AD55', '#F56565', '#9F7AEA', '#ED64A6'];
@@ -190,15 +146,14 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
   const userTypeData = generateUserTypeData();
   
   return (
-    <Box>
-      <HStack justifyContent="space-between" mb={6}>
-        <Heading size="md">Onboarding Analytics</Heading>
-        <HStack>
-          <Select 
+    <div className="p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Onboarding Analytics</h2>
+        <div className="flex items-center space-x-3">
+          <select 
             value={dateRange}
             onChange={(e) => setDateRange(e.target.value)}
-            size="sm"
-            width="150px"
+            className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             aria-label="Select date range"
           >
             <option value="last7days">Last 7 Days</option>
@@ -206,142 +161,154 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
             <option value="last90days">Last 90 Days</option>
             <option value="thisYear">This Year</option>
             <option value="allTime">All Time</option>
-          </Select>
+          </select>
           
-          <Select 
+          <select 
             value={comparisonPeriod}
             onChange={(e) => setComparisonPeriod(e.target.value)}
-            size="sm"
-            width="150px"
+            className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             aria-label="Select comparison period"
           >
             <option value="previous">vs. Previous Period</option>
             <option value="lastYear">vs. Last Year</option>
             <option value="none">No Comparison</option>
-          </Select>
+          </select>
           
-          <Tooltip label="Refresh data">
-            <IconButton
-              aria-label="Refresh data"
-              icon={<FiRefreshCw />}
-              size="sm"
+          <div className="relative group">
+            <button
               onClick={handleRefresh}
-              isLoading={isLoading}
-            />
-          </Tooltip>
+              disabled={isLoading}
+              className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors disabled:opacity-50"
+              title="Refresh data"
+            >
+              <FiRefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
           
-          <Menu>
-            <MenuButton
-              as={IconButton}
-              aria-label="More options"
-              icon={<FiMoreVertical />}
-              size="sm"
-            />
-            <MenuList>
-              <MenuItem icon={<FiDownload />} onClick={handleExport}>
+          <div className="relative group">
+            <button className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors">
+              <FiMoreVertical className="w-4 h-4" />
+            </button>
+            <div className="absolute right-0 top-full mt-1 w-48 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-10">
+              <button 
+                onClick={handleExport}
+                className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <FiDownload className="w-4 h-4 mr-2" />
                 Export Data
-              </MenuItem>
-              <MenuItem icon={<FiCalendar />}>
+              </button>
+              <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <FiCalendar className="w-4 h-4 mr-2" />
                 Custom Date Range
-              </MenuItem>
-              <MenuItem icon={<FiBarChart2 />}>
+              </button>
+              <button className="flex items-center w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                <FiBarChart2 className="w-4 h-4 mr-2" />
                 Advanced Analytics
-              </MenuItem>
-            </MenuList>
-          </Menu>
-        </HStack>
-      </HStack>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
       
       {isLoading && (
-        <Box textAlign="center" py={10}>
-          <Spinner size="xl" mb={4} />
-          <Text>Loading analytics data...</Text>
-        </Box>
+        <div className="text-center py-10">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
+          <p className="text-gray-600 dark:text-gray-400">Loading analytics data...</p>
+        </div>
       )}
       
       {error && !isLoading && (
-        <Alert status="error" mb={4}>
-          <AlertIcon />
-          <Box flex="1">
-            <Text fontWeight="bold">Error Loading Analytics</Text>
-            <Text>{error}</Text>
-          </Box>
-          <Button 
-            size="sm" 
-            colorScheme="red" 
-            onClick={handleRefresh}
-          >
-            Retry
-          </Button>
-        </Alert>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4 mb-4">
+          <div className="flex items-start">
+            <FiAlertCircle className="w-5 h-5 text-red-500 mt-0.5 mr-3 flex-shrink-0" />
+            <div className="flex-1">
+              <h3 className="text-sm font-medium text-red-800 dark:text-red-200">Error Loading Analytics</h3>
+              <p className="text-sm text-red-700 dark:text-red-300 mt-1">{error}</p>
+            </div>
+            <button 
+              onClick={handleRefresh}
+              className="ml-3 px-3 py-1 text-sm bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
       )}
       
       {!isLoading && !error && (
-        <VStack spacing={6} align="stretch">
+        <div className="space-y-6">
           {/* Key Metrics */}
-          <SimpleGrid columns={{ base: 1, md: 2, lg: 4 }} spacing={6}>
-            <Card bg={cardBg}>
-              <CardBody>
-                <Stat>
-                  <StatLabel>Completion Rate</StatLabel>
-                  <StatNumber>{analytics ? `${(analytics.completionRate * 100).toFixed(1)}%` : '78.0%'}</StatNumber>
-                  <StatHelpText>
-                    <StatArrow type="increase" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completion Rate</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analytics ? `${(analytics.completionRate * 100).toFixed(1)}%` : '78.0%'}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
+                    <FiTrendingUp className="w-3 h-3 mr-1" />
                     5.2% vs. previous period
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
+                  </p>
+                </div>
+              </div>
+            </div>
             
-            <Card bg={cardBg}>
-              <CardBody>
-                <Stat>
-                  <StatLabel>Avg. Time to Complete</StatLabel>
-                  <StatNumber>{analytics ? `${Math.floor(analytics.averageTimeSpent / 60)}m ${analytics.averageTimeSpent % 60}s` : '4m 0s'}</StatNumber>
-                  <StatHelpText>
-                    <StatArrow type="decrease" />
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg. Time to Complete</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analytics ? `${Math.floor(analytics.averageTimeSpent / 60)}m ${analytics.averageTimeSpent % 60}s` : '4m 0s'}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
+                    <FiTrendingUp className="w-3 h-3 mr-1 rotate-180" />
                     30s vs. previous period
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
+                  </p>
+                </div>
+              </div>
+            </div>
             
-            <Card bg={cardBg}>
-              <CardBody>
-                <Stat>
-                  <StatLabel>Total Onboardings</StatLabel>
-                  <StatNumber>{analytics ? analytics.totalOnboardings : 198}</StatNumber>
-                  <StatHelpText>
-                    <StatArrow type="increase" />
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Onboardings</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analytics ? analytics.totalOnboardings : 198}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
+                    <FiTrendingUp className="w-3 h-3 mr-1" />
                     12.5% vs. previous period
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
+                  </p>
+                </div>
+              </div>
+            </div>
             
-            <Card bg={cardBg}>
-              <CardBody>
-                <Stat>
-                  <StatLabel>Completed Onboardings</StatLabel>
-                  <StatNumber>{analytics ? analytics.completedOnboardings : 154}</StatNumber>
-                  <StatHelpText>
-                    <StatArrow type="increase" />
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed Onboardings</p>
+                  <p className="text-2xl font-bold text-gray-900 dark:text-white">
+                    {analytics ? analytics.completedOnboardings : 154}
+                  </p>
+                  <p className="text-sm text-green-600 dark:text-green-400 flex items-center mt-1">
+                    <FiTrendingUp className="w-3 h-3 mr-1" />
                     18.3% vs. previous period
-                  </StatHelpText>
-                </Stat>
-              </CardBody>
-            </Card>
-          </SimpleGrid>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           
           {/* Charts */}
-          <SimpleGrid columns={{ base: 1, lg: 2 }} spacing={6}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Daily Completions Chart */}
-            <Card bg={cardBg}>
-              <CardHeader pb={0}>
-                <Heading size="sm">Daily Onboarding Activity</Heading>
-              </CardHeader>
-              <CardBody>
-                <Box height="300px">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="p-6 pb-0">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Daily Onboarding Activity</h3>
+              </div>
+              <div className="p-6">
+                <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart
                       data={dailyCompletionData}
@@ -367,17 +334,17 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                       />
                     </LineChart>
                   </ResponsiveContainer>
-                </Box>
-              </CardBody>
-            </Card>
+                </div>
+              </div>
+            </div>
             
             {/* User Type Distribution Chart */}
-            <Card bg={cardBg}>
-              <CardHeader pb={0}>
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+              <div className="p-6 pb-0">
                 <Heading size="sm">User Type Distribution</Heading>
-              </CardHeader>
-              <CardBody>
-                <Box height="300px">
+              </div>
+              <div className="p-6">
+                <div className="h-80">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                       <Pie
@@ -399,18 +366,18 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
-                </Box>
-              </CardBody>
-            </Card>
-          </SimpleGrid>
+                </div>
+              </div>
+            </div>
+          </div>
           
           {/* Step Completion Chart */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="sm">Step Completion Rates</Heading>
-            </CardHeader>
-            <CardBody>
-              <Box height="300px">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Step Completion Rates</h3>
+            </div>
+            <div className="p-6">
+              <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart
                     data={stepCompletionData}
@@ -433,136 +400,162 @@ export const OnboardingAnalytics: React.FC<OnboardingAnalyticsProps> = () => {
                     />
                   </BarChart>
                 </ResponsiveContainer>
-              </Box>
-            </CardBody>
-          </Card>
+              </div>
+            </div>
+          </div>
           
           {/* Drop-off Points Table */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="sm">Drop-off Points</Heading>
-            </CardHeader>
-            <CardBody>
-              <Table variant="simple">
-                <Thead>
-                  <Tr>
-                    <Th>Step</Th>
-                    <Th>Drop-off Rate</Th>
-                    <Th>Users</Th>
-                    <Th>Trend</Th>
-                    <Th>Action</Th>
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {analytics && analytics.dropOffPoints ? (
-                    analytics.dropOffPoints.map((point: any, index: number) => (
-                      <Tr key={index}>
-                        <Td>{point.step}</Td>
-                        <Td>{(point.rate * 100).toFixed(1)}%</Td>
-                        <Td>{Math.round(point.rate * (analytics.totalOnboardings || 198))}</Td>
-                        <Td>
-                          <StatArrow type={index % 2 === 0 ? "decrease" : "increase"} />
-                          {(Math.random() * 5).toFixed(1)}%
-                        </Td>
-                        <Td>
-                          <Button size="sm" colorScheme="blue" variant="outline">
-                            Analyze
-                          </Button>
-                        </Td>
-                      </Tr>
-                    ))
-                  ) : (
-                    <>
-                      <Tr>
-                        <Td>Profile</Td>
-                        <Td>12.0%</Td>
-                        <Td>24</Td>
-                        <Td>
-                          <StatArrow type="decrease" />
-                          2.3%
-                        </Td>
-                        <Td>
-                          <Button size="sm" colorScheme="blue" variant="outline">
-                            Analyze
-                          </Button>
-                        </Td>
-                      </Tr>
-                      <Tr>
-                        <Td>AI Preferences</Td>
-                        <Td>8.0%</Td>
-                        <Td>16</Td>
-                        <Td>
-                          <StatArrow type="increase" />
-                          1.5%
-                        </Td>
-                        <Td>
-                          <Button size="sm" colorScheme="blue" variant="outline">
-                            Analyze
-                          </Button>
-                        </Td>
-                      </Tr>
-                      <Tr>
-                        <Td>Workspace</Td>
-                        <Td>2.0%</Td>
-                        <Td>4</Td>
-                        <Td>
-                          <StatArrow type="decrease" />
-                          0.5%
-                        </Td>
-                        <Td>
-                          <Button size="sm" colorScheme="blue" variant="outline">
-                            Analyze
-                          </Button>
-                        </Td>
-                      </Tr>
-                    </>
-                  )}
-                </Tbody>
-              </Table>
-            </CardBody>
-          </Card>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Drop-off Points</h3>
+            </div>
+            <div className="p-6">
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                  <thead className="bg-gray-50 dark:bg-gray-800">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Step</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Drop-off Rate</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Users</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Trend</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                    {analytics && analytics.dropOffPoints ? (
+                      analytics.dropOffPoints.map((point: any, index: number) => (
+                        <tr key={index}>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{point.step}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{(point.rate * 100).toFixed(1)}%</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">{Math.round(point.rate * (analytics.totalOnboardings || 198))}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <span className={`flex items-center ${index % 2 === 0 ? 'text-green-600' : 'text-red-600'}`}>
+                              <FiTrendingUp className={`w-3 h-3 mr-1 ${index % 2 === 0 ? '' : 'rotate-180'}`} />
+                              {(Math.random() * 5).toFixed(1)}%
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <button 
+                              className="px-3 py-1 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                              aria-label="Analyze drop-off point"
+                              title="Analyze drop-off point"
+                            >
+                              Analyze
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <>
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">Profile</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">12.0%</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">24</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <span className="flex items-center text-green-600">
+                              <FiTrendingUp className="w-3 h-3 mr-1" />
+                              2.3%
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <button 
+                              className="px-3 py-1 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                              aria-label="Analyze Profile step drop-off"
+                              title="Analyze Profile step drop-off"
+                            >
+                              Analyze
+                            </button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">AI Preferences</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">8.0%</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">16</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <span className="flex items-center text-red-600">
+                              <FiTrendingUp className="w-3 h-3 mr-1 rotate-180" />
+                              1.5%
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <button 
+                              className="px-3 py-1 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                              aria-label="Analyze AI Preferences step drop-off"
+                              title="Analyze AI Preferences step drop-off"
+                            >
+                              Analyze
+                            </button>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">Workspace</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">2.0%</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">4</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <span className="flex items-center text-green-600">
+                              <FiTrendingUp className="w-3 h-3 mr-1" />
+                              0.5%
+                            </span>
+                          </td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                            <button 
+                              className="px-3 py-1 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                              aria-label="Analyze Workspace step drop-off"
+                              title="Analyze Workspace step drop-off"
+                            >
+                              Analyze
+                            </button>
+                          </td>
+                        </tr>
+                      </>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
           
           {/* Recommendations */}
-          <Card bg={cardBg}>
-            <CardHeader pb={0}>
-              <Heading size="sm">Recommendations</Heading>
-            </CardHeader>
-            <CardBody>
-              <VStack align="start" spacing={4}>
-                <HStack align="start" spacing={4}>
-                  <Box color="blue.500">
-                    <FiAlertCircle size={24} />
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold">Simplify the Profile step</Text>
-                    <Text>This step has the highest drop-off rate. Consider reducing the number of required fields.</Text>
-                  </Box>
-                </HStack>
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg">
+            <div className="p-6 pb-0">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Recommendations</h3>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-4">
+                  <div className="text-blue-500 mt-1">
+                    <FiAlertCircle className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Simplify the Profile step</p>
+                    <p className="text-gray-600 dark:text-gray-400">This step has the highest drop-off rate. Consider reducing the number of required fields.</p>
+                  </div>
+                </div>
                 
-                <HStack align="start" spacing={4}>
-                  <Box color="blue.500">
-                    <FiUsers size={24} />
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold">Optimize for AI Agents</Text>
-                    <Text>AI Agents have a lower completion rate. Consider creating a more streamlined flow for them.</Text>
-                  </Box>
-                </HStack>
+                <div className="flex items-start space-x-4">
+                  <div className="text-blue-500 mt-1">
+                    <FiUsers className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Optimize for AI Agents</p>
+                    <p className="text-gray-600 dark:text-gray-400">AI Agents have a lower completion rate. Consider creating a more streamlined flow for them.</p>
+                  </div>
+                </div>
                 
-                <HStack align="start" spacing={4}>
-                  <Box color="blue.500">
-                    <FiClock size={24} />
-                  </Box>
-                  <Box>
-                    <Text fontWeight="bold">Reduce time spent on AI Preferences</Text>
-                    <Text>Users spend an average of 90 seconds on this step, which is higher than other steps.</Text>
-                  </Box>
-                </HStack>
-              </VStack>
-            </CardBody>
-          </Card>
-        </VStack>
+                <div className="flex items-start space-x-4">
+                  <div className="text-blue-500 mt-1">
+                    <FiClock className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">Reduce time spent on AI Preferences</p>
+                    <p className="text-gray-600 dark:text-gray-400">Users spend an average of 90 seconds on this step, which is higher than other steps.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
-    </Box>
+    </div>
   );
 };

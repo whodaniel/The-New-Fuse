@@ -182,7 +182,7 @@
                         <li>Open Terminal application</li>
                         <li>Copy and paste this command:</li>
                     </ol>
-                    <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && npm run dev</div>
+                    <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev</div>
                     <button class="control-btn" onclick="copyCommand()">📋 Copy Command</button>
                     
                     <p style="margin: 15px 0 5px 0; color: rgba(255,255,255,0.9);"><strong>Method 2: Using VS Code</strong></p>
@@ -190,7 +190,7 @@
                         <li>Open VS Code</li>
                         <li>Open the frontend folder</li>
                         <li>Open integrated terminal (Terminal → New Terminal)</li>
-                        <li>Run: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npm run dev</code></li>
+                        <li>Run: <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">pnpm run dev</code></li>
                     </ol>
                     
                     <button class="control-btn" onclick="createStartScript()">📜 Create Start Script</button>
@@ -211,8 +211,8 @@
                     <h4 style="margin-top: 0; color: white;">🛠️ Troubleshooting</h4>
                     <ul style="margin: 10px 0; color: rgba(255,255,255,0.8); font-size: 13px;">
                         <li><strong>Port already in use:</strong> Kill existing process with <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npx kill-port 3000</code></li>
-                        <li><strong>Module not found:</strong> Run <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">npm install</code> first</li>
-                        <li><strong>Permission denied:</strong> Try <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">sudo npm run dev</code> (Use with caution)</li>
+                        <li><strong>Module not found:</strong> Run <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">pnpm install</code> first</li>
+                        <li><strong>Permission denied:</strong> Try <code style="background: rgba(0,0,0,0.3); padding: 2px 6px; border-radius: 3px;">sudo pnpm run dev</code> (Use with caution)</li>
                         <li><strong>Node.js not found:</strong> Install Node.js from <a href="https://nodejs.org" target="_blank" rel="noopener" style="color: #87CEEB;">nodejs.org</a></li>
                     </ul>
                 </div>
@@ -362,7 +362,7 @@
         
         // Copy terminal command to clipboard
         function copyCommand() {
-            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && npm run dev';
+            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev';
             navigator.clipboard.writeText(command).then(() => {
                 alert('Command copied to clipboard! Paste it in Terminal.');
             }).catch(() => {
@@ -374,7 +374,7 @@
         function createStartScript() {
             const scriptContent = `#!/bin/bash
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
-npm run dev
+pnpm run dev
 `;
             
             const blob = new Blob([scriptContent], { type: 'text/plain' });

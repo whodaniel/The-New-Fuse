@@ -1,34 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { OnboardingAdminService } from '../../../services/onboarding-admin.service';
-import {
-  Box,
-  VStack,
-  FormControl,
-  FormLabel,
-  Input,
-  Switch,
-  Button,
-  Textarea,
-  Select,
-  HStack,
-  Text,
-  Divider,
-  Card,
-  CardHeader,
-  CardBody,
-  Heading,
-  SimpleGrid,
-  NumberInput,
-  NumberInputField,
-  NumberInputStepper,
-  NumberIncrementStepper,
-  NumberDecrementStepper,
-  useColorModeValue,
-  useToast,
-  Spinner,
-  Alert,
-  AlertIcon
-} from '@chakra-ui/react';
 
 interface OnboardingGeneralSettingsProps {
   onSave: () => void;
@@ -41,9 +12,13 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
   onChange,
   hasUnsavedChanges
 }) => {
-  const toast = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [notification, setNotification] = useState<{
+    type: 'success' | 'error';
+    title: string;
+    description: string;
+  } | null>(null);
   const [settings, setSettings] = useState({
     // General settings
     onboardingEnabled: true,
@@ -70,6 +45,12 @@ export const OnboardingGeneralSettings: React.FC<OnboardingGeneralSettingsProps>
     trackOnboardingAnalytics: true,
     collectFeedback: true
   });
+
+  // Show notification helper
+  const showNotification = (type: 'success' | 'error', title: string, description: string) => {
+    setNotification({ type, title, description });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   // Fetch general settings from API
   useEffect(() => {

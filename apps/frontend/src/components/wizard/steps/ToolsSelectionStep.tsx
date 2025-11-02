@@ -1,24 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { 
-  Box, 
-  VStack, 
-  Heading, 
-  Text, 
-  SimpleGrid, 
-  Checkbox, 
-  CheckboxGroup,
-  Accordion,
-  AccordionItem,
-  AccordionButton,
-  AccordionPanel,
-  AccordionIcon,
-  Divider,
-  Button,
-  HStack,
-  Icon,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { 
   FiFile, 
   FiGlobe, 
   FiTerminal, 
@@ -28,7 +9,8 @@ import {
   FiGithub,
   FiDatabase,
   FiClipboard,
-  FiCloud
+  FiCloud,
+  FiChevronDown
 } from 'react-icons/fi';
 import { useWizard } from '../WizardProvider';
 
@@ -86,8 +68,6 @@ export const ToolsSelectionStep: React.FC = () => {
       setSelectedIntegrations([]);
     }
   };
-  
-  const bgColor = useColorModeValue('gray.50', 'gray.700');
 
   const toolCategories = [
     {
@@ -129,7 +109,7 @@ export const ToolsSelectionStep: React.FC = () => {
     },
     {
       name: 'Memory Tools',
-      icon: FiBrain,
+      icon: FiCpu,
       tools: [
         { id: 'remember', label: 'Remember', description: 'Create long-term memories' },
       ]
@@ -170,124 +150,146 @@ export const ToolsSelectionStep: React.FC = () => {
   ];
 
   return (
-    <Box>
-      <Heading as="h2" size="md" mb={4}>
+    <div className="space-y-6">
+      <h2 className="text-lg font-semibold text-gray-900 mb-4">
         Tools & Integrations
-      </Heading>
+      </h2>
       
-      <Text mb={6}>
+      <p className="text-gray-600 mb-6">
         Select the tools and integrations you want to enable for your AI assistants.
-      </Text>
+      </p>
       
-      <VStack spacing={6} align="stretch">
-        <Box>
-          <HStack justify="space-between" mb={3}>
-            <Heading as="h3" size="sm">
+      <div className="space-y-6">
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-sm font-semibold text-gray-900">
               Tools
-            </Heading>
-            <HStack spacing={2}>
-              <Button size="xs" onClick={() => handleSelectAll('tools')}>
+            </h3>
+            <div className="flex space-x-2">
+              <button 
+                className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={() => handleSelectAll('tools')}
+              >
                 Select All
-              </Button>
-              <Button size="xs" variant="outline" onClick={() => handleClearAll('tools')}>
+              </button>
+              <button 
+                className="px-2 py-1 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                onClick={() => handleClearAll('tools')}
+              >
                 Clear All
-              </Button>
-            </HStack>
-          </HStack>
+              </button>
+            </div>
+          </div>
           
-          <CheckboxGroup 
-            colorScheme="blue" 
-            value={selectedTools}
-            onChange={handleToolsChange}
-          >
-            <Accordion allowMultiple defaultIndex={[0]}>
-              {toolCategories.map((category, idx) => (
-                <AccordionItem key={idx} bg={bgColor} mb={2} borderRadius="md">
-                  <h2>
-                    <AccordionButton py={3}>
-                      <HStack flex="1" textAlign="left">
-                        <Icon as={category.icon} />
-                        <Text fontWeight="medium">{category.name}</Text>
-                      </HStack>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <SimpleGrid columns={1} spacing={3}>
-                      {category.tools.map((tool) => (
-                        <Checkbox key={tool.id} value={tool.id}>
-                          <Box>
-                            <Text fontWeight="medium">{tool.label}</Text>
-                            <Text fontSize="sm" color="gray.600">{tool.description}</Text>
-                          </Box>
-                        </Checkbox>
-                      ))}
-                    </SimpleGrid>
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CheckboxGroup>
-        </Box>
+          <div className="space-y-2">
+            {toolCategories.map((category, idx) => (
+              <details key={idx} className="bg-gray-50 rounded-md" open={idx === 0}>
+                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-gray-100 rounded-md">
+                  <div className="flex items-center space-x-2">
+                    <category.icon className="w-4 h-4" />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <FiChevronDown className="w-4 h-4" />
+                </summary>
+                <div className="pb-4 px-3">
+                  <div className="space-y-3">
+                    {category.tools.map((tool) => (
+                      <label key={tool.id} className="flex items-start space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value={tool.id}
+                          checked={selectedTools.includes(tool.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedTools([...selectedTools, tool.id]);
+                            } else {
+                              setSelectedTools(selectedTools.filter(t => t !== tool.id));
+                            }
+                          }}
+                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <div>
+                          <div className="font-medium text-gray-900">{tool.label}</div>
+                          <div className="text-sm text-gray-600">{tool.description}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
         
-        <Divider />
+        <hr className="border-gray-200" />
         
-        <Box>
-          <HStack justify="space-between" mb={3}>
-            <Heading as="h3" size="sm">
+        <div>
+          <div className="flex justify-between items-center mb-3">
+            <h3 className="text-sm font-semibold text-gray-900">
               Integrations
-            </Heading>
-            <HStack spacing={2}>
-              <Button size="xs" onClick={() => handleSelectAll('integrations')}>
+            </h3>
+            <div className="flex space-x-2">
+              <button 
+                className="px-2 py-1 text-xs bg-blue-600 text-white rounded hover:bg-blue-700"
+                onClick={() => handleSelectAll('integrations')}
+              >
                 Select All
-              </Button>
-              <Button size="xs" variant="outline" onClick={() => handleClearAll('integrations')}>
+              </button>
+              <button 
+                className="px-2 py-1 text-xs border border-gray-300 text-gray-700 rounded hover:bg-gray-50"
+                onClick={() => handleClearAll('integrations')}
+              >
                 Clear All
-              </Button>
-            </HStack>
-          </HStack>
+              </button>
+            </div>
+          </div>
           
-          <CheckboxGroup 
-            colorScheme="blue" 
-            value={selectedIntegrations}
-            onChange={handleIntegrationsChange}
-          >
-            <Accordion allowMultiple defaultIndex={[0]}>
-              {integrationCategories.map((category, idx) => (
-                <AccordionItem key={idx} bg={bgColor} mb={2} borderRadius="md">
-                  <h2>
-                    <AccordionButton py={3}>
-                      <HStack flex="1" textAlign="left">
-                        <Icon as={category.icon} />
-                        <Text fontWeight="medium">{category.name}</Text>
-                      </HStack>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <SimpleGrid columns={1} spacing={3}>
-                      {category.integrations.map((integration) => (
-                        <Checkbox key={integration.id} value={integration.id}>
-                          <Box>
-                            <Text fontWeight="medium">{integration.label}</Text>
-                            <Text fontSize="sm" color="gray.600">{integration.description}</Text>
-                          </Box>
-                        </Checkbox>
-                      ))}
-                    </SimpleGrid>
-                  </AccordionPanel>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </CheckboxGroup>
-        </Box>
+          <div className="space-y-2">
+            {integrationCategories.map((category, idx) => (
+              <details key={idx} className="bg-gray-50 rounded-md" open={idx === 0}>
+                <summary className="p-3 cursor-pointer flex items-center justify-between hover:bg-gray-100 rounded-md">
+                  <div className="flex items-center space-x-2">
+                    <category.icon className="w-4 h-4" />
+                    <span className="font-medium">{category.name}</span>
+                  </div>
+                  <FiChevronDown className="w-4 h-4" />
+                </summary>
+                <div className="pb-4 px-3">
+                  <div className="space-y-3">
+                    {category.integrations.map((integration) => (
+                      <label key={integration.id} className="flex items-start space-x-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          value={integration.id}
+                          checked={selectedIntegrations.includes(integration.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedIntegrations([...selectedIntegrations, integration.id]);
+                            } else {
+                              setSelectedIntegrations(selectedIntegrations.filter(i => i !== integration.id));
+                            }
+                          }}
+                          className="mt-1 w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                        />
+                        <div>
+                          <div className="font-medium text-gray-900">{integration.label}</div>
+                          <div className="text-sm text-gray-600">{integration.description}</div>
+                        </div>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
         
-        <Box bg="blue.50" p={4} borderRadius="md">
-          <Text fontSize="sm" color="blue.800">
+        <div className="bg-blue-50 p-4 rounded-md">
+          <p className="text-sm text-blue-800">
             <strong>Note:</strong> You can always change these settings later in your workspace settings.
-          </Text>
-        </Box>
-      </VStack>
-    </Box>
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };

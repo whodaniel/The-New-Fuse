@@ -27,19 +27,23 @@ if [ ! -f "package.json" ]; then
     exit 1
 fi
 
-# Check if Bun is available
-if ! command -v bun &> /dev/null; then
-    print_error "Bun is not installed. Please install Bun first."
+# Check if pnpm is available
+if ! command -v pnpm &> /dev/null; then
+    print_error "pnpm is not installed. Please install pnpm first."
+    echo "To install pnpm, run:"
+    echo "  npm install -g pnpm"
+    echo "  or"
+    echo "  curl -fsSL https://get.pnpm.io/install.sh | sh -"
     exit 1
 fi
 
 # Install vsce if not present
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
 if ! command -v vsce &> /dev/null; then
-    print_warning "vsce not found. Installing globally via npm (requires npm to be functional)..."
-    npm install -g @vscode/vsce
+    print_warning "vsce not found. Installing globally via pnpm (requires pnpm to be functional)..."
+    pnpm install -g @vscode/vsce
     if [ $? -ne 0 ]; then
-        print_error "Failed to install vsce. Please ensure npm is working or install vsce manually."
+        print_error "Failed to install vsce. Please ensure pnpm is working or install vsce manually."
         exit 1
     fi
     print_status "vsce installed successfully"
@@ -51,10 +55,10 @@ fi
 echo "2️⃣ Installing dependencies using Bun..."
 pnpm install --frozen-lockfile
 if [ $? -ne 0 ]; then
-    print_error "Failed to install dependencies using Bun. Check for Bun installation or workspace errors."
+    print_error "Failed to install dependencies using pnpm. Check for pnpm installation or workspace errors."
     exit 1
 fi
-print_status "Dependencies installed using Bun"
+print_status "Dependencies installed using pnpm"
 
 # Build the extension using Bun
 echo "3️⃣ Building extension using Bun..."
@@ -78,18 +82,12 @@ else
 fi
 
 # Package the extension
-echo "5️⃣ Creating .vsix package..."
-vsce package --allow-star-activation --no-dependencies
-if [ $? -ne 0 ]; then
-    print_error "Failed to create .vsix package"
-    
-    print_warning "Trying with relaxed validation (skip license)..."
-    vsce package --allow-star-activation --no-dependencies --skip-license
-    if [ $? -ne 0 ]; then
-        print_error "Package creation failed even with relaxed validation"
-        exit 1
-    fi
+echo "4️⃣ Creating .vsix package..."
+if ! pnpm dlx vsce package; then
+    print_error "Failed to create .vsix package using pnpm dlx vsce"
+    exit 1
 fi
+print_status "Extension packaged successfully using pnpm dlx vsce"
 
 # Find the created .vsix file
 VSIX_FILE=$(ls -t *.vsix 2>/dev/null | head -n1)

@@ -278,8 +278,8 @@ if [ -z "$JWT_SECRET" ]; then
 fi
 
 # Setup database
-npm run db:migrate
-npm run db:seed
+ppnpm run d:migrate
+ppnpm run d:seed
 
 echo "Environment setup complete for: $ENVIRONMENT"
 ```
@@ -321,16 +321,16 @@ console.log('Environment validation passed');
 
 ```bash
 # Test database connection
-npm run test:db
+ppnpm run test:d
 
 # Test Redis connection
-npm run test:redis
+pnpm run test:redis
 
 # Test webhook endpoints
-npm run test:webhooks
+ppnpm run test:wehooks
 
 # Test SSE connections
-npm run test:sse
+pnpm run test:sse
 ```
 
 ## 📝 Best Practices

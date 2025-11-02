@@ -24,7 +24,7 @@ export class DependencyMapper {
       version: dependency.version || '0.0.0',
       type: dependency.type || 'direct',
       description: dependency.description,
-      vulnerabilities: dependency.vulnerabilities?.map(this.mapToVulnerabilityInfo) || [],
+      vulnerabilities: dependency.vulnerabilities?.map((v: any) => this.mapToVulnerabilityInfo(v)) || []
     };
   }
 

@@ -38,8 +38,11 @@ export default defineConfig(({ mode }) => {
         '@the-new-fuse/core': path.resolve(__dirname, '../../packages/core/src'),
         '@the-new-fuse/types': path.resolve(__dirname, '../../packages/types/src'),
         '@the-new-fuse/utils': path.resolve(__dirname, '../../packages/utils/src'),
+        '@the-new-fuse/shared': path.resolve(__dirname, '../../packages/shared/src'),
         '@the-new-fuse/feature-suggestions': path.resolve(__dirname, '../../packages/feature-suggestions/src'),
         '@the-new-fuse/config': path.resolve(__dirname, '../../config'),
+        '@the-new-fuse/a2a-react': path.resolve(__dirname, '../../packages/a2a-react/src'),
+        '@the-new-fuse/a2a-core': path.resolve(__dirname, '../../packages/a2a-core/src'),
       }
     },
     define: {
@@ -72,7 +75,7 @@ export default defineConfig(({ mode }) => {
             vendor: ['react', 'react-dom', 'react-router-dom'],
             
             // UI Libraries (multiple in use - preserve all)
-            ui: ['@chakra-ui/react', '@mui/material', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+            ui: ['@mui/material', '@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
             
             // Utilities
             utils: ['lodash', 'date-fns', 'axios'],

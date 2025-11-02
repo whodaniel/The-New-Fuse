@@ -108,7 +108,7 @@ function run_consolidation() {
 
   # Check if TypeScript compiler is available
   if ! command -v tsc &> /dev/null; then
-    echo -e "${RED}Error: TypeScript compiler (tsc) not found. Please install it. (e.g., npm install -g typescript)${NC}"
+    echo -e "${RED}Error: TypeScript compiler (tsc) not found. Please install it. (e.g., pnpm install -g typescript)${NC}"
     exit 1
   fi
 

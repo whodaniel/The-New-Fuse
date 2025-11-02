@@ -16,7 +16,7 @@ export LOG_LEVEL=debug
 # Install nodemon if not present
 if ! command -v nodemon &> /dev/null; then
     echo "Installing nodemon for development..."
-    npm install -g nodemon
+    pnpm install -g nodemon
 fi
 
 # Start TypeScript compiler in watch mode

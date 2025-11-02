@@ -501,4 +501,75 @@ export class HeartbeatMonitoringService extends EventEmitter {
   getStagnationAlerts(): StagnationAlert[] {
     return Array.from(this.stagnationAlerts.values());
   }
+
+  /**
+   * Get agent health status
+   */
+  async getAgentHealth(agentId: string): Promise<{
+    agentId: string;
+    status: string;
+    lastHeartbeat: Date;
+    lastActivity: Date;
+    consecutiveFailures: number;
+    isHealthy: boolean;
+    timeSinceLastHeartbeat: number;
+    timeSinceLastActivity: number;
+  } | null> {
+    const heartbeat = this.agentHeartbeats.get(agentId);
+    if (!heartbeat) {
+      return null;
+    }
+
+    const now = new Date();
+    const timeSinceLastHeartbeat = now.getTime() - heartbeat.lastHeartbeat.getTime();
+    const timeSinceLastActivity = now.getTime() - heartbeat.lastActivity.getTime();
+    
+    return {
+      agentId,
+      status: heartbeat.status,
+      lastHeartbeat: heartbeat.lastHeartbeat,
+      lastActivity: heartbeat.lastActivity,
+      consecutiveFailures: heartbeat.consecutiveFailures,
+      isHealthy: heartbeat.status === 'active' && timeSinceLastHeartbeat < this.config.timeoutMs,
+      timeSinceLastHeartbeat,
+      timeSinceLastActivity
+    };
+  }
+
+  /**
+   * Get overall stagnation status
+   */
+  async getStagnationStatus(): Promise<{
+    totalAgents: number;
+    activeAgents: number;
+    stalledAgents: number;
+    failedAgents: number;
+    activeAlerts: StagnationAlert[];
+    criticalAlerts: number;
+    emergencyAlerts: number;
+    averageResponseTime: number;
+  }> {
+    const agents = Array.from(this.agentHeartbeats.values());
+    const alerts = Array.from(this.stagnationAlerts.values());
+    
+    const now = new Date();
+    const responseTimes = agents
+      .filter(a => a.status === 'active')
+      .map(a => now.getTime() - a.lastHeartbeat.getTime());
+    
+    const averageResponseTime = responseTimes.length > 0 
+      ? responseTimes.reduce((sum, time) => sum + time, 0) / responseTimes.length 
+      : 0;
+
+    return {
+      totalAgents: agents.length,
+      activeAgents: agents.filter(a => a.status === 'active').length,
+      stalledAgents: agents.filter(a => a.status === 'stalled').length,
+      failedAgents: agents.filter(a => a.status === 'failed').length,
+      activeAlerts: alerts,
+      criticalAlerts: alerts.filter(a => a.severity === 'critical').length,
+      emergencyAlerts: alerts.filter(a => a.severity === 'emergency').length,
+      averageResponseTime
+    };
+  }
 }

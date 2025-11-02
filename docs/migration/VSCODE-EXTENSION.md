@@ -64,13 +64,13 @@ graph TD
 3. Install dependencies:
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 4. Build the extension:
 
    ```bash
-   npm run build
+   pnpm run build
    ```
 
 5. Launch VS Code with the extension:

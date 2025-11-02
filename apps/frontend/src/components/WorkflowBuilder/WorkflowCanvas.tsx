@@ -11,15 +11,14 @@ import ReactFlow, {
   Connection
 } from 'reactflow';
 import 'reactflow/dist/style.css';
-import { Box, useToast } from '@chakra-ui/react';
 import { NodeToolbar } from './NodeToolbar';
 import { WorkflowToolbar } from '../workflow/WorkflowToolbar';
 import { useWorkflow } from '../../hooks/useWorkflow';
 import { nodeTypes } from './nodes';
 import { edgeTypes } from '../workflow/edges';
+import { showNotification } from '../../utils/notifications';
 
 export const WorkflowCanvas: React.FC = () => {
-  const toast = useToast();
   const { saveWorkflow, executeWorkflow } = useWorkflow();
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
@@ -46,18 +45,9 @@ export const WorkflowCanvas: React.FC = () => {
         edges,
         version: 1
       });
-      toast({
-        title: 'Workflow saved',
-        status: 'success',
-        duration: 3000
-      });
+      showNotification({ message: 'Workflow saved successfully!', type: 'success' });
     } catch (err) {
-      toast({
-        title: 'Error saving workflow',
-        description: (err as Error).message,
-        status: 'error',
-        duration: 5000
-      });
+      showNotification({ message: 'Failed to save workflow', type: 'error' });
     } finally {
       setIsSaving(false);
     }
@@ -70,18 +60,16 @@ export const WorkflowCanvas: React.FC = () => {
         nodes,
         edges
       });
-      toast({
-        title: 'Workflow executed',
-        description: `Completed ${result.nodeCount} nodes in ${result.executionTime}ms`,
-        status: 'success',
-        duration: 3000
+      showNotification({ 
+        message: `Completed ${result.nodeCount} nodes in ${result.executionTime}ms`, 
+        type: 'success',
+        title: 'Workflow executed'
       });
     } catch (err) {
-      toast({
-        title: 'Error executing workflow',
-        description: (err as Error).message,
-        status: 'error',
-        duration: 5000
+      showNotification({ 
+        message: (err as Error).message, 
+        type: 'error',
+        title: 'Error executing workflow'
       });
     } finally {
       setIsExecuting(false);
@@ -89,7 +77,7 @@ export const WorkflowCanvas: React.FC = () => {
   };
 
   return (
-    <Box height="80vh" border="1px" borderColor="gray.200" borderRadius="md">
+    <div className="h-[80vh] border border-gray-200 rounded-md">
       <WorkflowToolbar
         workflowName={workflowName}
         onNameChange={setWorkflowName}
@@ -122,6 +110,6 @@ export const WorkflowCanvas: React.FC = () => {
         <Controls />
         <MiniMap />
       </ReactFlow>
-    </Box>
+    </div>
   );
 };

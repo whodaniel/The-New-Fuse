@@ -21,12 +21,12 @@ export interface UpdateMemoryDto {
 @Injectable()
 export class MemoryService {
   private readonly logger = new Logger(MemoryService.name);
-  constructor(): unknown {
+  constructor(): Promise<any> {
     @InjectRepository(Memory)
     private readonly memoryRepository: Repository<Memory>
   ) {}
 
-  async createMemory(): unknown {
+  async createMemory(): Promise<any> {
     try {
       const memory = this.memoryRepository.create(createMemoryDto);
       return await this.memoryRepository.save(memory);
@@ -36,7 +36,7 @@ this.logger.error('Failed to create memory:', error);
     }
   }
 
-  async findMemoryById(): unknown {
+  async findMemoryById(id: any): Promise<any> {
     try {
       return await this.memoryRepository.findOne({ where: { id } });
     } catch (error) {
@@ -45,7 +45,7 @@ this.logger.error('Failed to find memory:', error);
     }
   }
 
-  async findMemoriesByType(): unknown {
+  async findMemoriesByType(): Promise<any> {
     try {
       return await this.memoryRepository.find({
   // Implementation needed
@@ -59,7 +59,7 @@ this.logger.error('Failed to find memories by type:', error);
     }
   }
 
-  async updateMemory(): unknown {
+  async updateMemory(id: any): Promise<any> {
     try {
       await this.memoryRepository.update(id, updateMemoryDto);
       return await this.findMemoryById(id);
@@ -69,7 +69,7 @@ this.logger.error('Failed to update memory:', error);
     }
   }
 
-  async deleteMemory(): unknown {
+  async deleteMemory(id: any): void {
     try {
       await this.memoryRepository.delete(id);
     } catch (error) {
@@ -78,7 +78,7 @@ this.logger.error('Failed to delete memory:', error);
     }
   }
 
-  async findAllMemories(): unknown {
+  async findAllMemories(): Promise<any> {
     try {
       return await this.memoryRepository.find({
   // Implementation needed
@@ -91,7 +91,7 @@ this.logger.error('Failed to find all memories:', error);
     }
   }
 
-  async searchMemories(): unknown {
+  async searchMemories(): Promise<any> {
     try {
       return await this.memoryRepository
         .createQueryBuilder('memory')

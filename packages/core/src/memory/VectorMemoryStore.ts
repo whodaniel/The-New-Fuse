@@ -25,8 +25,8 @@ export class VectorMemoryStore {
   private readonly config: VectorStoreConfig;
   private readonly memoryItems: Map<string, MemoryItem> = new Map();
   private readonly embeddings: Map<string, Vector> = new Map();
-  constructor(): unknown {
-    super(): unknown {
+  constructor(): void {
+    super(): void {
       apiEndpoint: process.env.VECTOR_STORE_API_ENDPOINT || 'http://localhost:3000/api/vector-store',
       apiKey: process.env.VECTOR_STORE_API_KEY || '',
       embeddingModel: process.env.EMBEDDING_MODEL || 'universal-sentence-encoder',
@@ -37,11 +37,11 @@ export class VectorMemoryStore {
     this.logger.log('VectorMemoryStore initialized');
   }
 
-  async addItem(): unknown {
+  async addItem(id: any, config: any, item: any): void {
     try {
 this.logger.debug(`Adding item to vector store: ${item.id}`);
       // Validate embedding
-  }      if(): unknown {
+  if(): void {
         throw new Error(`Invalid embedding dimensions. Expected ${this.config.dimensions}, got ${item.embedding?.length}`);
       }
 
@@ -57,10 +57,10 @@ this.logger.error(`Failed to add item to vector store: ${item.id}`, error);
     }
   }
 
-  async updateItem(): unknown {
+  async updateItem(id: any, item: any): void {
     try {
       this.logger.debug(`Updating item in vector store: ${item.id}`);
-      if(): unknown {
+      if(id: any, item: any): void {
         throw new Error(`Item not found: ${item.id}`);
       }
 
@@ -76,11 +76,11 @@ this.logger.error(`Failed to update item in vector store: ${item.id}`, error);
     }
   }
 
-  async removeItem(): unknown {
+  async removeItem(item: any): void {
     try {
       this.logger.debug(`Removing item from vector store: ${itemId}`);
       const item = this.memoryItems.get(itemId);
-      if(): unknown {
+      if(): void {
         throw new Error(`Item not found: ${itemId}`);
       }
 
@@ -96,12 +96,12 @@ this.logger.error(`Failed to remove item from vector store: ${itemId}`, error);
     }
   }
 
-  async findSimilarItems(): unknown {
+  async findSimilarItems(): void {
     try {
       this.logger.debug('Finding similar items');
       let queryEmbedding: Vector;
       // Get query embedding
-      if(): unknown {
+      if(): void {
         queryEmbedding = query.embedding;
       } else if (query.text) {
 queryEmbedding = await this.generateEmbedding(query.text);
@@ -112,10 +112,10 @@ queryEmbedding = await this.generateEmbedding(query.text);
 
       // Find similar items
       const similarities: Array<{ item: MemoryItem; similarity: number }> = [];
-      for(): unknown {
+      for(item: any): void {
         const embedding = this.embeddings.get(itemId);
-        if(): unknown {
-          if(): unknown {
+        if(item: any): void {
+          if(item: any): void {
             similarities.push({ item, similarity });
           }
         }
@@ -142,15 +142,15 @@ this.logger.error('Failed to find similar items', error);
     }
   }
 
-  async getAllItems(): unknown {
+  async getAllItems(): any {
     return Array.from(this.memoryItems.values());
   }
 
-  async getItem(): unknown {
+  async getItem(): any {
     return this.memoryItems.get(itemId);
   }
 
-  async clear(): unknown {
+  async clear(): void {
     try {
 this.logger.debug('Clearing vector store');
   }      this.memoryItems.clear();
@@ -162,7 +162,7 @@ this.logger.error('Failed to clear vector store', error);
     }
   }
 
-  async getStats(): unknown {
+  async getStats(): void {
     totalItems: number;
     memoryUsage: number;
     dimensions: number;
@@ -191,7 +191,7 @@ try {
       const mockEmbedding = new Float32Array(this.config.dimensions);
       // Simple hash-based mock embedding
       const hash = this.simpleHash(text);
-      for(): unknown {
+      for(): void {
         mockEmbedding[i] = Math.sin(hash + i) * 0.1;
       }
 
@@ -203,20 +203,20 @@ this.logger.error('Failed to generate embedding', error);
   }
 
   private calculateCosineSimilarity(vecA: Vector, vecB: Vector): number {
-if(): unknown {
+if(): void {
   }      throw new Error('Vector dimensions must match');
     }
 
     let dotProduct = 0;
     let normA = 0;
     let normB = 0;
-    for(): unknown {
+    for(): void {
       dotProduct += vecA[i] * vecB[i];
       normA += vecA[i] * vecA[i];
       normB += vecB[i] * vecB[i];
     }
 
-    if(): unknown {
+    if(): number {
       return 0;
     }
 
@@ -225,32 +225,32 @@ if(): unknown {
 
   private passesFilters(item: MemoryItem, query: MemoryQuery): boolean {
 // Apply metadata filters
-  }    if(): unknown {
-      for(): unknown {
-        if(): unknown {
+  if(): void {
+      for(): boolean {
+        if(): boolean {
           return false;
         }
       }
     }
 
     // Apply tag filters
-    if(): unknown {
+    if(item: any): boolean {
       const itemTags = item.tags || [];
       const hasAllTags = query.tags.every(tag => itemTags.includes(tag));
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
 
     // Apply cluster filter
-    if(): unknown {
+    if(): boolean {
       return false;
     }
 
     // Apply date range filter
-    if(): unknown {
+    if(item: any): boolean {
       const itemTime = item.timestamp;
-      if(): unknown {
+      if(): boolean {
         return false;
       }
     }
@@ -260,7 +260,7 @@ if(): unknown {
 
   private simpleHash(text: string): number {
 let hash = 0;
-  }    for(): unknown {
+  for(): void {
       const char = text.charCodeAt(i);
       hash = ((hash << 5) - hash) + char;
       hash = hash & hash; // Convert to 32-bit integer
@@ -269,27 +269,27 @@ let hash = 0;
   }
 
   // Event handling helpers
-  onItemAdded(): unknown {
+  onItemAdded(): void {
     this.on(VectorMemoryEventType.ITEM_ADDED, callback);
   }
 
-  onItemUpdated(): unknown {
+  onItemUpdated(): void {
     this.on(VectorMemoryEventType.ITEM_UPDATED, callback);
   }
 
-  onItemRemoved(): unknown {
+  onItemRemoved(): void {
     this.on(VectorMemoryEventType.ITEM_REMOVED, callback);
   }
 
-  onMemoryPruned(): unknown {
+  onMemoryPruned(): void {
     this.on(VectorMemoryEventType.MEMORY_PRUNED, callback);
   }
 
-  onCacheHit(): unknown {
+  onCacheHit(): void {
     this.on(VectorMemoryEventType.CACHE_HIT, callback);
   }
 
-  onCacheMiss(): unknown {
+  onCacheMiss(): void {
     this.on(VectorMemoryEventType.CACHE_MISS, callback);
   }
 }

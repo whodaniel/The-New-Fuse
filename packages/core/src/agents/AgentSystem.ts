@@ -3,7 +3,7 @@ import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent';
 import * as Redis from 'ioredis';
 import { randomUUID } from 'crypto';
 import { AgentManager } from './AgentManager';
-import { AgentProcessor } from '../agent/core/AgentProcessor';
+import { AgentProcessor } from '../agent/AgentProcessor';
 
 @Injectable()
 export class AgentSystem {

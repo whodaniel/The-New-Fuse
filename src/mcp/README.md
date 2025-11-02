@@ -19,34 +19,34 @@ pnpm install
 
 ### 2. Build the MCP Server
 ```bash
-npm run mcp:build
+ppnpm run mcp:uild
 ```
 
 ### 3. Start Development Mode
 ```bash
-npm run mcp:dev
+pnpm run mcp:dev
 ```
 
 ### 4. Test the Server
 ```bash
-npm run mcp:test
+pnpm run mcp:test
 ```
 
 ## Usage
 
 ### Local Development (stdio)
 ```bash
-npm run mcp:start
+pnpm run mcp:start
 ```
 
 ### Production (HTTP/SSE)
 ```bash
-npm run mcp:start:remote [port]
+pnpm run mcp:start:remote [port]
 ```
 
 ### Development with Auto-reload
 ```bash
-npm run mcp:dev
+pnpm run mcp:dev
 ```
 
 ## Available Tools
@@ -162,7 +162,7 @@ npx @modelcontextprotocol/inspector dist/mcp/server.js
 
 Set `LOG_LEVEL=debug` for detailed logging:
 ```bash
-LOG_LEVEL=debug npm run mcp:start
+LOG_LEVEL=debug pnpm run mcp:start
 ```
 
 ## Integration with Your Services

@@ -13,7 +13,7 @@ export class CreateEntityDto {
   @IsNotEmpty()
   type: string = '';
 
-  @ApiProperty({ description: 'Specific details about the entity', required: false, type: 'object', example: { modelId: 'gpt-4', provider: 'OpenAI' } })
+  @ApiProperty({ description: 'Specific details about the entity', required: false, example: { modelId: 'gpt-4', provider: 'OpenAI' } })
   @IsOptional()
   @IsObject()
   metadata?: Prisma.JsonValue;

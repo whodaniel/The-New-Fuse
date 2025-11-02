@@ -183,7 +183,7 @@ nvm use 18
 
 1. **Start the development environment:**
    ```bash
-   npm run dev:all
+   pnpm run dev:all
    ```
    This starts:
    - WebSocket server on port 3711
@@ -197,19 +197,19 @@ nvm use 18
 
 3. **Test agent communication:**
    ```bash
-   npm run test:agents
+   pnpm run test:agents
    ```
 
 ### Building for Production
 
 ```bash
 # Build all packages
-npm run build:all
+pnpm run build:all
 
 # Build specific components
-npm run build:vscode
-npm run build:chrome
-npm run build:agents
+pnpm run build:vscode
+pnpm run build:chrome
+pnpm run build:agents
 ```
 
 ## Docker Setup
@@ -362,7 +362,7 @@ export const customTool = {
 1. **Start WebSocket server:**
    ```bash
    # Using npm script
-   npm run start:websocket
+   ppnpm run start:wesocket
 
    # Direct node execution
    node test-websocket-server-3711.cjs
@@ -615,8 +615,8 @@ class FileProtocol {
 #### From v1.x to v2.x
 1. **Update dependencies:**
    ```bash
-   npm update @the-new-fuse/core
-   npm update @the-new-fuse/agents
+   pnpm update @the-new-fuse/core
+   pnpm update @the-new-fuse/agents
    ```
 
 2. **Run migration script:**
@@ -656,7 +656,7 @@ lsof -i :3711
 kill -9 $(lsof -t -i:3711)
 
 # Restart WebSocket server
-npm run start:websocket
+ppnpm run start:wesocket
 ```
 
 #### Extension Not Loading
@@ -718,7 +718,7 @@ npm run start:websocket
 1. **Enable debug logging:**
    ```bash
    export DEBUG=the-new-fuse:*
-   npm run dev
+   pnpm run dev
    ```
 
 2. **VS Code debug configuration:**

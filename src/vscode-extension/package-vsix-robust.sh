@@ -8,22 +8,22 @@ if [ ! -f "package.json" ]; then
 fi
 echo "✅ Found package.json in current directory."
 
-echo "Ensuring Bun is available..."
-if ! command -v bun &> /dev/null; then
-    echo "⚠️  Bun not found. Installing Bun..."
-    curl -fsSL https://bun.sh/install | bash
-    source ~/.bashrc 2>/dev/null || true
-    export PATH="$HOME/.bun/bin:$PATH"
+echo "Ensuring pnpm is available..."
+if ! command -v pnpm &> /dev/null; then
+    echo "⚠️  pnpm not found. Installing pnpm..."
+    npm install -g pnpm
+    # Reload shell to ensure pnpm is in PATH
+    export PATH="$HOME/.local/share/pnpm:$PATH"
 fi
 
 echo "1️⃣ Checking for vsce (Visual Studio Code Extension CLI)..."
 if ! command -v vsce &> /dev/null; then
-    echo "⚠️  vsce not found. Attempting to install globally via npm..."
-    if ! npm install -g @vscode/vsce; then
-        echo "❌ Failed to install vsce. Please ensure npm is working or install vsce manually."
+    echo "⚠️  vsce not found. Attempting to install globally via pnpm..."
+    if ! pnpm install -g @vscode/vsce; then
+        echo "❌ Failed to install vsce. Please ensure pnpm is working or install vsce manually."
         exit 1
     fi
-    echo "✅ vsce installed successfully via npm."
+    echo "✅ vsce installed successfully via pnpm."
 else
     echo "✅ vsce is already installed."
 fi
@@ -39,7 +39,7 @@ if ! pnpm install; then
         exit 1
     fi
 fi
-echo "✅ Dependencies installed successfully using Bun."
+echo "✅ Dependencies installed successfully using pnpm."
 
 echo "3️⃣ Building extension..."
 BUILD_SUCCESSFUL=false

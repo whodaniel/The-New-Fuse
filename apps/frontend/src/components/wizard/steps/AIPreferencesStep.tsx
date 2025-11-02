@@ -1,29 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Box, 
-  VStack, 
-  Heading, 
-  Text, 
-  FormControl, 
-  FormLabel, 
-  Select, 
-  Checkbox, 
-  CheckboxGroup, 
-  SimpleGrid,
-  Divider,
-  Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
-  HStack,
-  Tag,
-  TagLabel,
-  TagCloseButton,
-  Input,
-  Button,
-  useColorModeValue
-} from '@chakra-ui/react';
-import { AddIcon } from '@chakra-ui/icons';
+import { Button, Input, Select, Checkbox } from '@the-new-fuse/ui-consolidated';
+import { FaPlus, FaTimes } from 'react-icons/fa';
 import { useWizard } from '../WizardProvider';
 
 export const AIPreferencesStep: React.FC = () => {
@@ -94,192 +71,379 @@ export const AIPreferencesStep: React.FC = () => {
     }));
   };
   
-  const tagBg = useColorModeValue('blue.100', 'blue.900');
+  const tagBg = 'bg-blue-100 dark:bg-blue-900';
 
   return (
-    <Box>
-      <Heading as="h2" size="md" mb={4}>
-        {isAIAgent ? 'Agent Capabilities' : 'AI Preferences'}
-      </Heading>
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-lg font-semibold mb-2">
+          {isAIAgent ? 'Agent Capabilities' : 'AI Preferences'}
+        </h2>
+        
+        <p className="text-gray-600 dark:text-gray-400 mb-6">
+          {isAIAgent 
+            ? 'Define the capabilities and protocols your agent supports for integration with The New Fuse.'
+            : 'Configure your preferences for AI models and behavior.'}
+        </p>
+      </div>
       
-      <Text mb={6}>
-        {isAIAgent 
-          ? 'Define the capabilities and protocols your agent supports for integration with The New Fuse.'
-          : 'Configure your preferences for AI models and behavior.'}
-      </Text>
-      
-      <VStack spacing={6} align="stretch">
+      <div className="space-y-6">
         {isAIAgent ? (
           // AI Agent specific fields
           <>
-            <FormControl>
-              <FormLabel>Supported Protocols</FormLabel>
-              <CheckboxGroup 
-                colorScheme="blue" 
-                value={formData.supportedProtocols}
-                onChange={(values) => handleCheckboxChange('supportedProtocols', values as string[])}
-              >
-                <SimpleGrid columns={2} spacing={4}>
-                  <Checkbox value="http">HTTP/REST</Checkbox>
-                  <Checkbox value="websocket">WebSocket</Checkbox>
-                  <Checkbox value="grpc">gRPC</Checkbox>
-                  <Checkbox value="mqtt">MQTT</Checkbox>
-                  <Checkbox value="redis">Redis Pub/Sub</Checkbox>
-                  <Checkbox value="kafka">Kafka</Checkbox>
-                </SimpleGrid>
-              </CheckboxGroup>
-            </FormControl>
+            <div>
+              <label className="block text-sm font-medium mb-3">Supported Protocols</label>
+              <div className="grid grid-cols-2 gap-4">
+                <Checkbox 
+                  label="HTTP/REST" 
+                  checked={formData.supportedProtocols.includes('http')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'http']
+                      : formData.supportedProtocols.filter(p => p !== 'http');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+                <Checkbox 
+                  label="WebSocket" 
+                  checked={formData.supportedProtocols.includes('websocket')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'websocket']
+                      : formData.supportedProtocols.filter(p => p !== 'websocket');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+                <Checkbox 
+                  label="gRPC" 
+                  checked={formData.supportedProtocols.includes('grpc')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'grpc']
+                      : formData.supportedProtocols.filter(p => p !== 'grpc');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+                <Checkbox 
+                  label="MQTT" 
+                  checked={formData.supportedProtocols.includes('mqtt')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'mqtt']
+                      : formData.supportedProtocols.filter(p => p !== 'mqtt');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Redis Pub/Sub" 
+                  checked={formData.supportedProtocols.includes('redis')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'redis']
+                      : formData.supportedProtocols.filter(p => p !== 'redis');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Kafka" 
+                  checked={formData.supportedProtocols.includes('kafka')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.supportedProtocols, 'kafka']
+                      : formData.supportedProtocols.filter(p => p !== 'kafka');
+                    handleCheckboxChange('supportedProtocols', values);
+                  }}
+                />
+              </div>
+            </div>
             
-            <Divider />
+            <hr className="border-gray-200 dark:border-gray-700" />
             
-            <FormControl>
-              <FormLabel>Agent Capabilities</FormLabel>
-              <Text fontSize="sm" color="gray.600" mb={3}>
+            <div>
+              <label className="block text-sm font-medium mb-3">Agent Capabilities</label>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                 Select the capabilities your agent provides:
-              </Text>
+              </p>
               
-              <CheckboxGroup 
-                colorScheme="blue" 
-                value={formData.capabilities}
-                onChange={(values) => handleCheckboxChange('capabilities', values as string[])}
-              >
-                <SimpleGrid columns={2} spacing={4} mb={4}>
-                  <Checkbox value="text-generation">Text Generation</Checkbox>
-                  <Checkbox value="code-generation">Code Generation</Checkbox>
-                  <Checkbox value="text-embedding">Text Embedding</Checkbox>
-                  <Checkbox value="image-generation">Image Generation</Checkbox>
-                  <Checkbox value="text-classification">Text Classification</Checkbox>
-                  <Checkbox value="summarization">Summarization</Checkbox>
-                  <Checkbox value="translation">Translation</Checkbox>
-                  <Checkbox value="question-answering">Question Answering</Checkbox>
-                  <Checkbox value="data-analysis">Data Analysis</Checkbox>
-                  <Checkbox value="search">Search</Checkbox>
-                </SimpleGrid>
-              </CheckboxGroup>
+              <div className="grid grid-cols-2 gap-4 mb-4">
+                <Checkbox 
+                  label="Text Generation" 
+                  checked={formData.capabilities.includes('text-generation')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'text-generation']
+                      : formData.capabilities.filter(c => c !== 'text-generation');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Code Generation" 
+                  checked={formData.capabilities.includes('code-generation')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'code-generation']
+                      : formData.capabilities.filter(c => c !== 'code-generation');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Text Embedding" 
+                  checked={formData.capabilities.includes('text-embedding')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'text-embedding']
+                      : formData.capabilities.filter(c => c !== 'text-embedding');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Image Generation" 
+                  checked={formData.capabilities.includes('image-generation')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'image-generation']
+                      : formData.capabilities.filter(c => c !== 'image-generation');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Text Classification" 
+                  checked={formData.capabilities.includes('text-classification')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'text-classification']
+                      : formData.capabilities.filter(c => c !== 'text-classification');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Summarization" 
+                  checked={formData.capabilities.includes('summarization')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'summarization']
+                      : formData.capabilities.filter(c => c !== 'summarization');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Translation" 
+                  checked={formData.capabilities.includes('translation')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'translation']
+                      : formData.capabilities.filter(c => c !== 'translation');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Question Answering" 
+                  checked={formData.capabilities.includes('question-answering')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'question-answering']
+                      : formData.capabilities.filter(c => c !== 'question-answering');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Data Analysis" 
+                  checked={formData.capabilities.includes('data-analysis')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'data-analysis']
+                      : formData.capabilities.filter(c => c !== 'data-analysis');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Search" 
+                  checked={formData.capabilities.includes('search')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.capabilities, 'search']
+                      : formData.capabilities.filter(c => c !== 'search');
+                    handleCheckboxChange('capabilities', values);
+                  }}
+                />
+              </div>
               
-              <Box mt={4}>
-                <FormLabel>Custom Capabilities</FormLabel>
-                <HStack>
+              <div className="mt-4">
+                <label className="block text-sm font-medium mb-2">Custom Capabilities</label>
+                <div className="flex gap-2">
                   <Input 
                     placeholder="Add custom capability..."
                     value={formData.customCapability}
                     name="customCapability"
                     onChange={handleChange}
+                    className="flex-1"
                   />
                   <Button 
-                    leftIcon={<AddIcon />} 
                     onClick={handleAddCapability}
-                    isDisabled={!formData.customCapability.trim()}
+                    disabled={!formData.customCapability.trim()}
+                    className="flex items-center gap-2"
                   >
+                    <FaPlus className="w-3 h-3" />
                     Add
                   </Button>
-                </HStack>
+                </div>
                 
-                <Box mt={3}>
+                <div className="mt-3 flex flex-wrap gap-2">
                   {formData.capabilities.filter(cap => 
                     !['text-generation', 'code-generation', 'text-embedding', 'image-generation', 
                       'text-classification', 'summarization', 'translation', 'question-answering',
                       'data-analysis', 'search'].includes(cap)
                   ).map(capability => (
-                    <Tag 
+                    <span 
                       key={capability} 
-                      size="md" 
-                      borderRadius="full" 
-                      variant="solid" 
-                      bg={tagBg}
-                      color="black"
-                      m={1}
+                      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm ${tagBg} text-black`}
                     >
-                      <TagLabel>{capability}</TagLabel>
-                      <TagCloseButton onClick={() => handleRemoveCapability(capability)} />
-                    </Tag>
+                      {capability}
+                      <button 
+                         onClick={() => handleRemoveCapability(capability)}
+                         className="ml-1 hover:bg-black/10 rounded-full p-0.5"
+                         title={`Remove ${capability} capability`}
+                         aria-label={`Remove ${capability} capability`}
+                       >
+                         <FaTimes className="w-3 h-3" />
+                       </button>
+                    </span>
                   ))}
-                </Box>
-              </Box>
-            </FormControl>
+                </div>
+              </div>
+            </div>
           </>
         ) : (
           // Human user specific fields
           <>
-            <FormControl>
-              <FormLabel>Preferred AI Models</FormLabel>
-              <CheckboxGroup 
-                colorScheme="blue" 
-                value={formData.preferredModels}
-                onChange={(values) => handleCheckboxChange('preferredModels', values as string[])}
-              >
-                <SimpleGrid columns={2} spacing={4}>
-                  <Checkbox value="gpt-4">GPT-4</Checkbox>
-                  <Checkbox value="gpt-3.5-turbo">GPT-3.5 Turbo</Checkbox>
-                  <Checkbox value="claude-3-opus">Claude 3 Opus</Checkbox>
-                  <Checkbox value="claude-3-sonnet">Claude 3 Sonnet</Checkbox>
-                  <Checkbox value="llama-3">Llama 3</Checkbox>
-                  <Checkbox value="mistral-large">Mistral Large</Checkbox>
-                </SimpleGrid>
-              </CheckboxGroup>
-            </FormControl>
+            <div>
+              <label className="block text-sm font-medium mb-3">Preferred AI Models</label>
+              <div className="grid grid-cols-2 gap-4">
+                <Checkbox 
+                  label="GPT-4" 
+                  checked={formData.preferredModels.includes('gpt-4')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'gpt-4']
+                      : formData.preferredModels.filter(m => m !== 'gpt-4');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+                <Checkbox 
+                  label="GPT-3.5 Turbo" 
+                  checked={formData.preferredModels.includes('gpt-3.5-turbo')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'gpt-3.5-turbo']
+                      : formData.preferredModels.filter(m => m !== 'gpt-3.5-turbo');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Claude 3 Opus" 
+                  checked={formData.preferredModels.includes('claude-3-opus')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'claude-3-opus']
+                      : formData.preferredModels.filter(m => m !== 'claude-3-opus');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Claude 3 Sonnet" 
+                  checked={formData.preferredModels.includes('claude-3-sonnet')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'claude-3-sonnet']
+                      : formData.preferredModels.filter(m => m !== 'claude-3-sonnet');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Llama 3" 
+                  checked={formData.preferredModels.includes('llama-3')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'llama-3']
+                      : formData.preferredModels.filter(m => m !== 'llama-3');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+                <Checkbox 
+                  label="Mistral Large" 
+                  checked={formData.preferredModels.includes('mistral-large')}
+                  onChange={(e) => {
+                    const values = e.target.checked 
+                      ? [...formData.preferredModels, 'mistral-large']
+                      : formData.preferredModels.filter(m => m !== 'mistral-large');
+                    handleCheckboxChange('preferredModels', values);
+                  }}
+                />
+              </div>
+            </div>
             
-            <Divider />
+            <hr className="border-gray-200 dark:border-gray-700" />
             
-            <FormControl>
-              <FormLabel>Embedding Model</FormLabel>
+            <div>
               <Select 
+                label="Embedding Model"
                 name="embeddingModel"
                 value={formData.embeddingModel}
                 onChange={handleChange}
-              >
-                <option value="text-embedding-3-large">OpenAI text-embedding-3-large</option>
-                <option value="text-embedding-3-small">OpenAI text-embedding-3-small</option>
-                <option value="claude-3-embedding">Claude 3 Embedding</option>
-                <option value="voyage-embedding">Voyage Embedding</option>
-                <option value="cohere-embed">Cohere Embed</option>
-              </Select>
-            </FormControl>
+                options={[
+                  { value: 'text-embedding-3-large', label: 'OpenAI text-embedding-3-large' },
+                  { value: 'text-embedding-3-small', label: 'OpenAI text-embedding-3-small' },
+                  { value: 'claude-3-embedding', label: 'Claude 3 Embedding' },
+                  { value: 'voyage-embedding', label: 'Voyage Embedding' },
+                  { value: 'cohere-embed', label: 'Cohere Embed' }
+                ]}
+              />
+            </div>
             
-            <Divider />
+            <hr className="border-gray-200 dark:border-gray-700" />
             
-            <FormControl>
-              <FormLabel>Temperature: {formData.temperature}</FormLabel>
-              <Slider 
-                min={0} 
-                max={1} 
-                step={0.1} 
-                value={formData.temperature}
-                onChange={(value) => handleSliderChange('temperature', value)}
-              >
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack justify="space-between" mt={1}>
-                <Text fontSize="xs">More Deterministic</Text>
-                <Text fontSize="xs">More Creative</Text>
-              </HStack>
-            </FormControl>
-            
-            <FormControl>
-              <FormLabel>Max Tokens: {formData.maxTokens}</FormLabel>
-              <Slider 
-                min={1000} 
-                max={8000} 
-                step={1000} 
-                value={formData.maxTokens}
-                onChange={(value) => handleSliderChange('maxTokens', value)}
-              >
-                <SliderTrack>
-                  <SliderFilledTrack />
-                </SliderTrack>
-                <SliderThumb />
-              </Slider>
-              <HStack justify="space-between" mt={1}>
-                <Text fontSize="xs">Shorter</Text>
-                <Text fontSize="xs">Longer</Text>
-              </HStack>
-            </FormControl>
+            <div>
+               <label htmlFor="temperature-slider" className="block text-sm font-medium mb-2">Temperature: {formData.temperature}</label>
+               <input 
+                 id="temperature-slider"
+                 type="range"
+                 min={0} 
+                 max={1} 
+                 step={0.1} 
+                 value={formData.temperature}
+                 onChange={(e) => handleSliderChange('temperature', parseFloat(e.target.value))}
+                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                 title="Temperature slider"
+                 aria-label="Temperature slider"
+               />
+               <div className="flex justify-between mt-1">
+                 <span className="text-xs text-gray-500">More Deterministic</span>
+                 <span className="text-xs text-gray-500">More Creative</span>
+               </div>
+             </div>
+             
+             <div>
+               <label htmlFor="max-tokens-slider" className="block text-sm font-medium mb-2">Max Tokens: {formData.maxTokens}</label>
+               <input 
+                 id="max-tokens-slider"
+                 type="range"
+                 min={1000} 
+                 max={8000} 
+                 step={1000} 
+                 value={formData.maxTokens}
+                 onChange={(e) => handleSliderChange('maxTokens', parseInt(e.target.value))}
+                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                 title="Max tokens slider"
+                 aria-label="Max tokens slider"
+               />
+               <div className="flex justify-between mt-1">
+                 <span className="text-xs text-gray-500">Shorter</span>
+                 <span className="text-xs text-gray-500">Longer</span>
+               </div>
+             </div>
           </>
         )}
-      </VStack>
-    </Box>
+      </div>
+    </div>
   );
 };

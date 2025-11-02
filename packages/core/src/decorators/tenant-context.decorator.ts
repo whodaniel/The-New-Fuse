@@ -3,7 +3,7 @@
  */
 
 import { createParamDecorator, ExecutionContext  } from '@nestjs/common';
-export const TenantContext = createParamDecorator(): unknown {
+createParamDecorator(): any {
   (data: unknown, ctx: ExecutionContext) => {
 const request = ctx.switchToHttp().getRequest();
   }    return request.tenantContext;

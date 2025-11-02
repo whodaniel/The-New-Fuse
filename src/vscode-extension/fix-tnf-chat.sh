@@ -23,7 +23,7 @@ mkdir -p dist
 
 # Step 2: Install dependencies
 echo -e "\n${YELLOW}2. Installing dependencies...${NC}"
-npm install
+pnpm install
 
 # Step 3: Create a diagnostic extension wrapper to test LLM connectivity
 echo -e "\n${YELLOW}3. Creating diagnostic wrapper...${NC}"

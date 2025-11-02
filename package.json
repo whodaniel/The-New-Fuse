@@ -162,43 +162,7 @@
   },
   "workspaces": [
     "apps/*",
-    "packages/*",
-    "tools/*"
+    "packages/*"
   ],
-  "trustedDependencies": [
-    "@firebase/util",
-    "@nestjs/core",
-    "@parcel/watcher",
-    "@prisma/client",
-    "@prisma/engines",
-    "@swc/core",
-    "@the-new-fuse/electron-desktop",
-    "@theia/ffmpeg",
-    "@trufflesuite/bigint-buffer",
-    "@vscode/ripgrep",
-    "aws-sdk",
-    "bcrypt",
-    "bufferutil",
-    "canvas",
-    "core-js-pure",
-    "cpu-features",
-    "drivelist",
-    "electron",
-    "esbuild",
-    "find-git-repositories",
-    "keccak",
-    "keytar",
-    "leveldown",
-    "lzma-native",
-    "msgpackr-extract",
-    "native-keymap",
-    "node-pty",
-    "prisma",
-    "protobufjs",
-    "puppeteer",
-    "secp256k1",
-    "ssh2",
-    "unrs-resolver",
-    "utf-8-validate"
-  ]
+  "packageManager": "pnpm@10.19.0"
 }

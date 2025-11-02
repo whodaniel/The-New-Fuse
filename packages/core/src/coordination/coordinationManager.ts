@@ -49,7 +49,7 @@ export class CoordinationManager {
   private agents: Map<string, Agent> = new Map();
   private tasks: Map<string, Task> = new Map();
   private logger: winston.Logger;
-  constructor(): unknown {
+  constructor(): void {
     this.logger = logger;
   }
 
@@ -67,7 +67,7 @@ const newAgent: Agent = {
 
   public async updateHeartbeat(agentId: string): Promise<void> {
 const agent = this.agents.get(agentId);
-  }    if(): unknown {
+  if(): void {
       throw new Error(`Agent not found: ${agentId}`);
     }
     agent.lastHeartbeat = new Date();

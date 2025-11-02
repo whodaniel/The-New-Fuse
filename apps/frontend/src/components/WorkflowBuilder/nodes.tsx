@@ -2,8 +2,19 @@ import React from 'react';
 import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory } from 'react-icons/fa';
 import { FileText } from 'lucide-react';
 
-// Import the new prompt template node
-import { PromptTemplateNode } from '@the-new-fuse/prompt-templating';
+// Temporarily commenting out the prompt template node import to debug build issues
+// import { PromptTemplateNode as BasePromptTemplateNode } from '@the-new-fuse/prompt-templating';
+
+// Wrapper for the prompt template node to match React Flow's expected interface
+// const PromptTemplateNodeWrapper = ({ data, id, selected }) => {
+//   return (
+//     <BasePromptTemplateNode
+//       id={id}
+//       data={data}
+//       selected={selected}
+//     />
+//   );
+// };
 
 // Standard workflow node component
 export const StandardNode = ({ data }) => {
@@ -223,7 +234,7 @@ export const nodeTypes = {
   vectorStore: VectorStoreNode,
   documentProcessing: DocumentProcessingNode,
   condition: ConditionNode,
-  promptTemplate: PromptTemplateNode, // Add the new prompt template node
+  // promptTemplate: PromptTemplateNodeWrapper, // Temporarily commented out
 };
 
 export default nodeTypes;

@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
 export interface WebhookConfig {
   id: string;
   url: string;
@@ -28,12 +29,11 @@ export class WebhookManagerService {
   private readonly logger = new Logger(WebhookManagerService.name);
   private webhooks: Map<string, WebhookConfig> = new Map();
   private events: Map<string, WebhookEvent> = new Map();
+
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async registerWebhook(): unknown {
+  async registerWebhook(config: Omit<WebhookConfig, 'id'>): Promise<WebhookConfig> {
     const webhook: WebhookConfig = {
-  // Implementation needed
-}
       id: this.generateId(),
       ...config
     };
@@ -42,38 +42,40 @@ export class WebhookManagerService {
     return webhook;
   }
 
-  async unregisterWebhook(): unknown {
+  async unregisterWebhook(webhookId: string): Promise<boolean> {
     const deleted = this.webhooks.delete(webhookId);
-    if(): unknown {
+    if (deleted) {
       this.eventEmitter.emit('webhook.unregistered', { webhookId });
     }
     return deleted;
   }
 
-  async updateWebhook(): unknown {
+  async updateWebhook(webhookId: string, updates: Partial<Omit<WebhookConfig, 'id'>>): Promise<WebhookConfig | null> {
     const webhook = this.webhooks.get(webhookId);
     if (!webhook) return null;
+    
     const updatedWebhook = { ...webhook, ...updates };
     this.webhooks.set(webhookId, updatedWebhook);
     this.eventEmitter.emit('webhook.updated', updatedWebhook);
     return updatedWebhook;
   }
 
-  async getWebhook(): unknown {
+  async getWebhook(webhookId: string): Promise<WebhookConfig | null> {
     return this.webhooks.get(webhookId) || null;
   }
 
-  async getAllWebhooks(): unknown {
+  async getAllWebhooks(): Promise<WebhookConfig[]> {
     return Array.from(this.webhooks.values());
   }
 
-  async triggerWebhook(): unknown {
+  async triggerWebhook(eventType: string, data: any): Promise<void> {
     const relevantWebhooks = Array.from(this.webhooks.values())
       .filter(webhook => webhook.active && webhook.events.includes(eventType));
-    for(): unknown {
+    
+    for (const webhook of relevantWebhooks) {
       const event: WebhookEvent = {
-id: this.generateId(),
-  }        type: eventType,
+        id: this.generateId(),
+        type: eventType,
         data,
         timestamp: new Date(),
         webhookId: webhook.id,
@@ -86,8 +88,10 @@ id: this.generateId(),
   }
 
   private async sendWebhook(event: WebhookEvent, webhook: WebhookConfig): Promise<void> {
-// Mock implementation
-  }    try {
+    try {
+      // Mock webhook sending - replace with actual HTTP request
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       event.status = 'sent';
       event.attempts += 1;
       event.lastAttempt = new Date();
@@ -95,8 +99,9 @@ id: this.generateId(),
       this.eventEmitter.emit('webhook.sent', { event, webhook });
       this.logger.log(`Webhook sent successfully: ${webhook.url}`);
     } catch (error) {
-event.status = 'failed';
-  }      event.error = (error as Error).message;
+      event.status = 'failed';
+      event.error = (error as Error).message;
+      event.attempts += 1;
       event.lastAttempt = new Date();
       this.events.set(event.id, event);
       this.eventEmitter.emit('webhook.failed', { event, webhook, error });
@@ -104,17 +109,18 @@ event.status = 'failed';
     }
   }
 
-  async getWebhookEvents(): unknown {
+  async getWebhookEvents(webhookId?: string): Promise<WebhookEvent[]> {
     const events = Array.from(this.events.values());
     return webhookId ? events.filter(e => e.webhookId === webhookId) : events;
   }
 
-  async retryFailedWebhooks(): unknown {
+  async retryFailedWebhooks(): Promise<void> {
     const failedEvents = Array.from(this.events.values())
       .filter(event => event.status === 'failed' && event.attempts < 3);
-    for(): unknown {
+    
+    for (const event of failedEvents) {
       const webhook = this.webhooks.get(event.webhookId);
-      if(): unknown {
+      if (webhook) {
         event.status = 'retrying';
         this.sendWebhook(event, webhook);
       }
@@ -122,6 +128,6 @@ event.status = 'failed';
   }
 
   private generateId(): string {
-return Date.now().toString(36) + Math.random().toString(36).substr(2);
-  }}
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
 }

@@ -11,6 +11,12 @@ interface SourceInfo {
   [key: string]: unknown;
 }
 
+interface UsageMetrics {
+  integrationCount: number;
+  referenceCount: number;
+  successRate: number;
+}
+
 interface AssetEntry {
   id: string;
   classification: Classification;
@@ -20,34 +26,29 @@ interface AssetEntry {
   integrationStatus: string;
   versionHistory: unknown[];
   relatedAssets: unknown[];
-  usageMetrics: unknown;
-  // Implementation needed
-}
-    integrationCount: number;
-    referenceCount: number;
-    successRate: number;
-  };
+  usageMetrics: UsageMetrics;
 }
 
 // Simple graph implementation since graphlib import was corrupted
 class Graph {
   private edges: Map<string, Map<string, string>> = new Map();
-  setEdge(): unknown {
-    if(): unknown {
+
+  setEdge(sourceId: string, targetId: string, label: string): void {
+    if (!this.edges.has(sourceId)) {
       this.edges.set(sourceId, new Map());
     }
     this.edges.get(sourceId)!.set(targetId, label);
   }
 
-  getEdge(): unknown {
+  getEdge(sourceId: string, targetId: string): string | undefined {
     return this.edges.get(sourceId)?.get(targetId);
   }
 
-  removeEdge(): unknown {
+  removeEdge(sourceId: string, targetId: string): void {
     this.edges.get(sourceId)?.delete(targetId);
   }
 
-  getSuccessors(): unknown {
+  getSuccessors(nodeId: string): string[] {
     return Array.from(this.edges.get(nodeId)?.keys() || []);
   }
 }
@@ -55,20 +56,23 @@ class Graph {
 export class AssetRegistry {
   private assets: Map<string, AssetEntry> = new Map();
   private relationships: Graph = new Graph();
-  async registerAsset(): unknown {
+
+  async registerAsset(
+    assetId: string,
+    classification: Classification,
+    sourceInfo: SourceInfo
+  ): Promise<void> {
     const timestamp = new Date();
     const assetEntry: AssetEntry = {
-id: assetId,
-  }      classification,
+      id: assetId,
+      classification,
       source: sourceInfo,
       registrationDate: timestamp,
       lastEvaluated: timestamp,
       integrationStatus: 'pending',
       versionHistory: [],
       relatedAssets: [],
-      usageMetrics: unknown;
-  // Implementation needed
-}
+      usageMetrics: {
         integrationCount: 0,
         referenceCount: 0,
         successRate: 0,
@@ -77,43 +81,44 @@ id: assetId,
     this.assets.set(assetId, assetEntry);
   }
 
-  async getAsset(): unknown {
+  async getAsset(assetId: string): Promise<AssetEntry | undefined> {
     return this.assets.get(assetId);
   }
 
-  async updateAsset(): unknown {
+  async updateAsset(assetId: string, updates: Partial<AssetEntry>): Promise<void> {
     const asset = this.assets.get(assetId);
-    if(): unknown {
+    if (asset) {
       Object.assign(asset, updates);
       asset.lastEvaluated = new Date();
     }
   }
 
-  async listAssets(): unknown {
+  async listAssets(): Promise<AssetEntry[]> {
     return Array.from(this.assets.values());
   }
 
-  async addRelationship(): unknown {
+  async addRelationship(sourceId: string, targetId: string, relationshipType: string): Promise<void> {
     this.relationships.setEdge(sourceId, targetId, relationshipType);
   }
 
-  async getRelatedAssets(): unknown {
+  async getRelatedAssets(assetId: string): Promise<string[]> {
     return this.relationships.getSuccessors(assetId);
   }
 
-  async searchAssets(): unknown {
+  async searchAssets(criteria: { category?: string; quality?: string }): Promise<AssetEntry[]> {
     const results: AssetEntry[] = [];
-    for(): unknown {
+    for (const asset of this.assets.values()) {
       let matches = true;
-      if(): unknown {
+
+      if (criteria.category && asset.classification.category !== criteria.category) {
         matches = false;
       }
 
-      if(): unknown {
+      if (criteria.quality && !asset.classification.qualities?.includes(criteria.quality)) {
         matches = false;
       }
 
-      if(): unknown {
+      if (matches) {
         results.push(asset);
       }
     }
@@ -121,18 +126,18 @@ id: assetId,
     return results;
   }
 
-  async getUsageMetrics(): unknown {
+  async getUsageMetrics(assetId: string): Promise<UsageMetrics | undefined> {
     return this.assets.get(assetId)?.usageMetrics;
   }
 
-  async incrementUsage(): unknown {
+  async incrementUsage(assetId: string, wasSuccessful: boolean = true): Promise<void> {
     const asset = this.assets.get(assetId);
-    if(): unknown {
+    if (asset) {
       asset.usageMetrics.integrationCount++;
-      if(): unknown {
+      if (wasSuccessful) {
         asset.usageMetrics.referenceCount++;
       }
-      
+
       const total = asset.usageMetrics.integrationCount;
       const successful = asset.usageMetrics.referenceCount;
       asset.usageMetrics.successRate = total > 0 ? successful / total : 0;

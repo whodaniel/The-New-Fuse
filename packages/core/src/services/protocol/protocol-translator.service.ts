@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { Logger } from /../../utils/logger'';
-import { MCPMessage } from /../../types/mcp'';
-      if (typeof adapter.validate === '';
+import { Injectable, Logger } from '@nestjs/common';
+
+@Injectable()
+export class ProtocolTranslatorService {
+  private readonly logger = new Logger(ProtocolTranslatorService.name);
+
+  constructor() {}
+}

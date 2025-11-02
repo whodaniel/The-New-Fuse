@@ -11,6 +11,7 @@ import { AgentGatewayModule } from './gateway/agent-gateway.module';
 import { WebhookGatewayModule } from './gateway/webhook-gateway.module';
 import { ChatGatewayModule } from './gateway/chat-gateway.module';
 import { McpGatewayModule } from './gateway/mcp-gateway.module';
+import { IdeGatewayModule } from './gateway/ide-gateway.module';
 
 @Module({
   imports: [
@@ -18,18 +19,19 @@ import { McpGatewayModule } from './gateway/mcp-gateway.module';
       isGlobal: true,
       envFilePath: ['.env.local', '.env'],
     }),
-    
+
     // Authentication module
     AuthModule,
-    
+
     // Service proxy module for routing requests
     ProxyModule,
-    
+
     // Gateway modules for each service area
     AgentGatewayModule,
-    WebhookGatewayModule, 
+    WebhookGatewayModule,
     ChatGatewayModule,
     McpGatewayModule,
+    IdeGatewayModule,
   ],
 })
 export class AppModule {}

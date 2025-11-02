@@ -20,7 +20,7 @@ fi
 # Check if WebSocket package is installed
 if ! node -e "require('ws')" 2>/dev/null; then
     echo "📦 Installing required WebSocket package..."
-    npm install ws
+    pnpm install ws
 fi
 
 # Check if the enhanced relay script exists

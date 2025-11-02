@@ -65,7 +65,7 @@ cloudflare-worker/
 
    ```bash
    cd cloudflare-worker
-   npm install
+   pnpm install
    ```
 
 2. **Configure Wrangler**:
@@ -106,18 +106,18 @@ cloudflare-worker/
 
 ```bash
 # Start development server
-npm run dev
+pnpm run dev
 
 # Type checking
-npm run type-check
+pnpm run type-check
 
 # Linting
-npm run lint
-npm run lint:fix
+pnpm run lint
+pnpm run lint:fix
 
 # Testing
-npm test
-npm run test:watch
+pnpm test
+pnpm run test:watch
 ```
 
 ### Deployment

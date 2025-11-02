@@ -1,21 +1,5 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  Flex,
-  HStack,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  Divider,
-  Tooltip,
-  Text,
-  Icon,
-  SimpleGrid
-} from '@chakra-ui/react';
-import { ChevronDownIcon, AddIcon } from '@chakra-ui/icons';
-import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory } from 'react-icons/fa';
+import { FaRobot, FaTools, FaCode, FaDatabase, FaGlobe, FaWaveSquare, FaBell, FaSearch, FaFileAlt, FaMemory, FaChevronDown, FaPlus } from 'react-icons/fa';
 import { FileText } from 'lucide-react';
 
 interface NodeToolbarProps {
@@ -59,6 +43,7 @@ const nodeCategories = [
 
 export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
   const [hoveredNode, setHoveredNode] = useState<string | null>(null);
+  const [expandedCategory, setExpandedCategory] = useState<string | null>(null);
 
   const handleAddNode = (nodeType: string) => {
     // Calculate position - in a real app this might be based on the current view
@@ -70,72 +55,59 @@ export const NodeToolbar: React.FC<NodeToolbarProps> = ({ onAddNode }) => {
   };
 
   return (
-    <Box 
-      position="absolute" 
-      top="70px" 
-      left="10px" 
-      zIndex="10" 
-      bg="white" 
-      p={2} 
-      borderRadius="md" 
-      boxShadow="md"
-      borderWidth="1px"
-    >
-      <HStack spacing={2}>
-        <Tooltip label="Add a node" hasArrow>
-          <Button 
-            leftIcon={<AddIcon />} 
-            size="sm" 
-            colorScheme="blue" 
-            variant="solid"
-          >
-            Add Node
-          </Button>
-        </Tooltip>
+    <div className="absolute top-[70px] left-[10px] z-10 bg-white p-2 rounded-md border shadow-md">
+      <div className="flex items-center space-x-2">
+        <div className="relative group">
+          <button className="flex items-center space-x-1 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
+            <FaPlus className="w-3 h-3" />
+            <span>Add Node</span>
+          </button>
+          <div className="absolute bottom-full left-0 mb-1 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+            Add a node
+          </div>
+        </div>
         
         {nodeCategories.map((category) => (
-          <Menu key={category.name}>
-            <MenuButton 
-              as={Button} 
-              rightIcon={<ChevronDownIcon />} 
-              size="sm" 
-              variant="outline"
-            >
-              {category.name}
-            </MenuButton>
-            <MenuList>
-              {category.nodes.map((node, idx) => (
-                <MenuItem 
-                  key={node.type} 
-                  onClick={() => handleAddNode(node.type)}
-                  onMouseEnter={() => setHoveredNode(node.type)}
-                  onMouseLeave={() => setHoveredNode(null)}
-                >
-                  <HStack>
-                    <Icon as={node.icon} mr={2} />
-                    <Text>{node.label}</Text>
-                  </HStack>
-                  {hoveredNode === node.type && (
-                    <Box 
-                      position="absolute" 
-                      right="-220px" 
-                      top="0" 
-                      width="200px" 
-                      p={2} 
-                      bg="gray.50" 
-                      borderWidth="1px" 
-                      borderRadius="md"
-                      shadow="md"
-                    >
-                      <Text fontSize="sm">{node.description}</Text>
-                    </Box>
-                  )}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
+          <div key={category.name} className="relative">
+            <div className="relative group">
+              <button 
+                className="flex items-center space-x-1 px-3 py-1 text-sm border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                onClick={() => setExpandedCategory(expandedCategory === category.name ? null : category.name)}
+              >
+                <span>{category.name}</span>
+                <FaChevronDown className="w-3 h-3" />
+              </button>
+              <div className="absolute bottom-full left-0 mb-1 px-2 py-1 text-xs bg-gray-800 text-white rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                Add {category.name} nodes
+              </div>
+            </div>
+            {expandedCategory === category.name && (
+              <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-md shadow-lg z-10 min-w-[200px]">
+                {category.nodes.map((node) => (
+                  <button
+                    key={node.type}
+                    className="w-full flex items-center space-x-2 px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors relative"
+                    onClick={() => {
+                      handleAddNode(node.type);
+                      setExpandedCategory(null);
+                    }}
+                    onMouseEnter={() => setHoveredNode(node.type)}
+                    onMouseLeave={() => setHoveredNode(null)}
+                  >
+                    <node.icon className="w-4 h-4" />
+                    <span>{node.label}</span>
+                    {hoveredNode === node.type && (
+                      <div className="absolute right-[-220px] top-0 w-[200px] p-2 bg-gray-50 border border-gray-200 rounded-md shadow-md">
+                        <p className="text-sm">{node.description}</p>
+                      </div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         ))}
-      </HStack>
-    </Box>
+      </div>
+    </div>
   );
 };

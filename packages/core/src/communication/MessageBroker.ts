@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+
 export interface Message {
   id: string;
   topic: string;
@@ -16,60 +17,59 @@ export interface MessageHandler {
 export class MessageBroker {
   private handlers: Map<string, MessageHandler[]> = new Map();
   private messageQueue: Message[] = [];
+
   constructor(private eventEmitter: EventEmitter2) {}
 
-  async publish(): unknown {
+  async publish(topic: string, payload: any): Promise<void> {
     const message: Message = {
-  // Implementation needed
-}
       id: `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       topic,
       payload,
       timestamp: new Date(),
     };
+
     this.messageQueue.push(message);
     await this.processMessage(message);
   }
 
-  async subscribe(): unknown {
-    if(): unknown {
+  async subscribe(topic: string, handler: MessageHandler): Promise<void> {
+    if (!this.handlers.has(topic)) {
       this.handlers.set(topic, []);
     }
-    
+
     const handlers = this.handlers.get(topic)!;
     handlers.push(handler);
   }
 
-  async unsubscribe(): unknown {
+  async unsubscribe(topic: string, handler: MessageHandler): Promise<void> {
     const handlers = this.handlers.get(topic);
-    if(): unknown {
+    if (handlers) {
       const index = handlers.indexOf(handler);
-      if(): unknown {
+      if (index !== -1) {
         handlers.splice(index, 1);
       }
     }
   }
 
   private async processMessage(message: Message): Promise<void> {
-const handlers = this.handlers.get(message.topic) || [];
-  }    for(): unknown {
+    const handlers = this.handlers.get(message.topic) || [];
+    for (const handler of handlers) {
       try {
-      await handler.handle(message);
+        await handler.handle(message);
       } catch (error) {
-this.eventEmitter.emit('event', data);
-        });
-  }}
+        this.eventEmitter.emit('message.error', { message, error });
+      }
     }
   }
 
-  async getMessageHistory(): unknown {
-    if(): unknown {
+  async getMessageHistory(topic?: string): Promise<Message[]> {
+    if (topic) {
       return this.messageQueue.filter(msg => msg.topic === topic);
     }
     return [...this.messageQueue];
   }
 
-  async clearMessages(): unknown {
+  async clearMessages(): Promise<void> {
     this.messageQueue = [];
   }
 }

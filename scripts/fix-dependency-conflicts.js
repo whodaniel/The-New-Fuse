@@ -52,7 +52,7 @@ function createDirectTscScript() {
 const { spawnSync } = require('child_process');
 const fs = require('fs');
 
-// Install TypeScript directly with npm
+// Install TypeScript directly with pnpm
 spawnSync('npm', ['install', '--no-save', 'typescript@5.3.3', '--force'], { 
   stdio: 'inherit',
   shell: true 

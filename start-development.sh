@@ -77,7 +77,7 @@ main() {
     # Install dependencies if node_modules doesn't exist
     if [ ! -d "node_modules" ]; then
         print_status "Installing dependencies..."
-        npm install
+        pnpm install
         print_success "Dependencies installed"
     else
         print_status "Dependencies already installed"
@@ -138,7 +138,7 @@ EOF
     if [ -f "tsconfig.json" ]; then
         print_status "Checking TypeScript compilation..."
         if command_exists tsc; then
-            npm run build || print_warning "TypeScript build failed, continuing with development mode"
+            pnpm run build || print_warning "TypeScript build failed, continuing with development mode"
         fi
     fi
     
@@ -149,13 +149,13 @@ EOF
     if [ -f "packages/agency-hub/package.json" ]; then
         print_status "Starting Agency Hub on port 3000..."
         cd packages/agency-hub
-        npm run dev > ../../logs/agency-hub.log 2>&1 &
+        pnpm run dev > ../../logs/agency-hub.log 2>&1 &
         AGENCY_HUB_PID=$!
         cd ../..
         echo $AGENCY_HUB_PID > .pids/agency-hub.pid
     elif [ -f "agency.controller.ts" ]; then
         print_status "Starting Agency Hub (standalone)..."
-        npm run start:agency-hub > logs/agency-hub.log 2>&1 &
+        pnpm run start:agency-hub > logs/agency-hub.log 2>&1 &
         AGENCY_HUB_PID=$!
         echo $AGENCY_HUB_PID > .pids/agency-hub.pid
     fi
@@ -163,7 +163,7 @@ EOF
     # Start MCP Server
     if [ -f "mcp-server.js" ] || [ -f "src/mcp-server.ts" ]; then
         print_status "Starting MCP Server on port 3001..."
-        npm run start:mcp > logs/mcp-server.log 2>&1 &
+        pnpm run start:mcp > logs/mcp-server.log 2>&1 &
         MCP_PID=$!
         echo $MCP_PID > .pids/mcp-server.pid
     fi
@@ -171,7 +171,7 @@ EOF
     # Start WebSocket Server
     if [ -f "websocket-server.js" ] || [ -f "src/websocket-server.ts" ]; then
         print_status "Starting WebSocket Server on port 3002..."
-        npm run start:ws > logs/websocket.log 2>&1 &
+        pnpm run start:ws > logs/websocket.log 2>&1 &
         WS_PID=$!
         echo $WS_PID > .pids/websocket.pid
     fi
@@ -186,7 +186,7 @@ EOF
     if [ -f "frontend/package.json" ]; then
         print_status "Starting Frontend development server..."
         cd frontend
-        npm run dev > ../logs/frontend.log 2>&1 &
+        pnpm run dev > ../logs/frontend.log 2>&1 &
         FRONTEND_PID=$!
         cd ..
         echo $FRONTEND_PID > .pids/frontend.pid
@@ -255,7 +255,7 @@ EOF
     echo "  • Stop all:        ./stop-development.sh"
     echo "  • View logs:       tail -f logs/agency-hub.log"
     echo "  • Test API:        curl http://localhost:3000/health"
-    echo "  • Monitor:         npm run monitor"
+    echo "  • Monitor:         pnpm run monitor"
     echo ""
     
     # Create stop script

@@ -21,7 +21,17 @@
     "tsBuildInfoFile": "./dist/.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@the-new-fuse/database": ["../database/src"],
+      "@the-new-fuse/database/*": ["../database/src/*"],
+      "@the-new-fuse/security": ["../security/src"],
+      "@the-new-fuse/security/*": ["../security/src/*"],
+      "@tnf/relay-core": ["../relay-core/src"],
+      "@tnf/relay-core/*": ["../relay-core/src/*"]
+    },
+    "types": []
   },
   "include": ["src"],
   "references": [

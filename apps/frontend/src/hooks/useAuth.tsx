@@ -268,6 +268,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) {
+    // For development, return a default context to prevent crashes
+    if (import.meta.env.DEV) {
+      console.warn('useAuth called outside AuthProvider, returning default context');
+      return {
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+        login: async () => {},
+        register: async () => {},
+        logout: async () => {},
+        error: null,
+      };
+    }
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;

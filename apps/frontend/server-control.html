@@ -108,7 +108,7 @@
                 <li>Open Terminal application</li>
                 <li>Copy and paste this command:</li>
             </ol>
-            <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && npm run dev</div>
+            <div class="command-box">cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev</div>
             <button class="btn" onclick="copyCommand()">📋 Copy Command</button>
             
             <p><strong>Method 2: Using VS Code</strong></p>
@@ -116,7 +116,7 @@
                 <li>Open VS Code</li>
                 <li>Open the frontend folder: <code>/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend</code></li>
                 <li>Open integrated terminal (Terminal → New Terminal)</li>
-                <li>Run: <code>npm run dev</code></li>
+                <li>Run: <code>pnpm run dev</code></li>
             </ol>
             
             <p><strong>Method 3: Double-click Start Script</strong></p>
@@ -138,8 +138,8 @@
             <h3>🛠️ Troubleshooting</h3>
             <ul>
                 <li><strong>Port already in use:</strong> Kill existing process with <code>npx kill-port 3000</code></li>
-                <li><strong>Module not found:</strong> Run <code>npm install</code> first</li>
-                <li><strong>Permission denied:</strong> Try <code>sudo npm run dev</code></li>
+                <li><strong>Module not found:</strong> Run <code>pnpm install</code> first</li>
+                    <li><strong>Permission denied:</strong> Try <code>sudo pnpm run dev</code></li>
                 <li><strong>Node.js not found:</strong> Install Node.js from <a href="https://nodejs.org" target="_blank">nodejs.org</a></li>
             </ul>
         </div>
@@ -180,7 +180,7 @@
         }
         
         function copyCommand() {
-            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && npm run dev';
+            const command = 'cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend" && pnpm run dev';
             navigator.clipboard.writeText(command).then(() => {
                 alert('Command copied to clipboard! Paste it in Terminal.');
             }).catch(() => {
@@ -191,7 +191,7 @@
         function createStartScript() {
             const scriptContent = \`#!/bin/bash
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/apps/frontend"
-npm run dev
+pnpm run dev
 \`;
             
             // Create a downloadable file

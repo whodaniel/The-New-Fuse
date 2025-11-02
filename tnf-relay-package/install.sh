@@ -28,12 +28,12 @@ install_dependencies() {
     echo "📦 Installing dependencies..."
     
     # Main package dependencies
-    npm install
+    pnpm install
     
     # UI dependencies (if UI directory exists and has package.json)
     if [[ -f "ui/package.json" ]]; then
         cd ui
-        npm install
+        pnpm install
         cd ..
     fi
     
@@ -46,7 +46,7 @@ build_ui() {
     
     if [[ -f "ui/package.json" ]]; then
         cd ui
-        npm run build
+        pnpm run build
         cd ..
         
         # Copy build to main package

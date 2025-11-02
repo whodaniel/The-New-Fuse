@@ -23,7 +23,7 @@
     "prepackage": "pnpm run clean && pnpm run build",
     "build": "pnpm run compile && pnpm run bundle",
     "compile": "tsc -p ./",
-    "bundle": "bun build-extension.js",
+    "bundle": "pnpm build-extension.js",
     "watch": "tsc -watch -p ./",
     "test": "pnpm run compile && pnpm test-extension.js",
     "package": "pnpm dlx vsce package",
@@ -60,7 +60,10 @@
           "enum": [
             "vscode",
             "openai",
-            "anthropic"
+            "anthropic",
+            "google",
+            "local",
+            "custom"
           ],
           "description": "Primary LLM provider"
         },
@@ -78,6 +81,45 @@
           "type": "boolean",
           "default": false,
           "description": "Enable debug logging"
+        },
+        "theNewFuse.customModes": {
+          "type": "array",
+          "default": [],
+          "description": "Custom agent modes configuration",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Display name for the custom mode"
+              },
+              "slug": {
+                "type": "string",
+                "description": "Unique identifier for the custom mode"
+              },
+              "roleDefinition": {
+                "type": "string",
+                "description": "Role definition and capabilities for the custom mode"
+              },
+              "color": {
+                "type": "string",
+                "description": "Color theme for the custom mode",
+                "enum": ["Red", "Blue", "Green", "Yellow", "Purple", "Orange", "Pink", "Cyan"]
+              },
+              "model": {
+                "type": "string",
+                "description": "Preferred model for the custom mode"
+              },
+              "tools": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Available tools for the custom mode"
+              }
+            },
+            "required": ["name", "slug", "roleDefinition"]
+          }
         }
       }
     },
@@ -97,6 +139,12 @@
           "id": "theNewFuse.tabbedContainer",
           "name": "AI Assistant",
           "icon": "$(comment-discussion)"
+        },
+        {
+          "type": "webview",
+          "id": "theNewFuse.chatInterface",
+          "name": "AI Chat",
+          "icon": "$(comment-discussion)"
         }
       ]
     },
@@ -115,6 +163,110 @@
         "command": "the-new-fuse.runDiagnostic",
         "title": "🔍 Run Diagnostic",
         "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.manageCustomModes",
+        "title": "⚙️ Manage Custom Modes",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.importCustomModes",
+        "title": "📥 Import Custom Modes",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.exportCustomModes",
+        "title": "📤 Export Custom Modes",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "the-new-fuse.createDefaultModes",
+        "title": "🏗️ Create Default Modes",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.showChatInterface",
+        "title": "💬 Show AI Chat Interface",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.analyzeCurrentFile",
+        "title": "🔍 Analyze Current File",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.analyzeWorkspace",
+        "title": "📊 Analyze Workspace",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.selectModelProvider",
+        "title": "🤖 Select Model Provider",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.showModelPerformance",
+        "title": "📈 Show Model Performance",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.compareModels",
+        "title": "⚖️ Compare Models",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.searchWorkspace",
+        "title": "🔍 AI-Powered Workspace Search",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.showWorkspaceContext",
+        "title": "📋 Show Workspace Context",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.refreshWorkspaceIndex",
+        "title": "🔄 Refresh Workspace Index",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.startCollaboration",
+        "title": "🤝 Start Collaboration Session",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.joinCollaboration",
+        "title": "👥 Join Collaboration Session",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.leaveCollaboration",
+        "title": "🚪 Leave Collaboration Session",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.inviteCollaborator",
+        "title": "📧 Invite Collaborator",
+        "category": "The New Fuse"
+      },
+      {
+        "command": "theNewFuse.showCollaborationPanel",
+        "title": "📋 Show Collaboration Panel",
+        "category": "The New Fuse"
+      }
+    ],
+    "languages": [
+      {
+        "id": "typescript",
+        "extensions": [".ts", ".tsx"]
+      },
+      {
+        "id": "javascript",
+        "extensions": [".js", ".jsx"]
+      },
+      {
+        "id": "python",
+        "extensions": [".py"]
       }
     ]
   }

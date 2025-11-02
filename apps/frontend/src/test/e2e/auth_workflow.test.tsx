@@ -61,7 +61,7 @@ describe('Authentication E2E Tests', () => {
     }
 
     // Start the dev server with mock OAuth enabled
-    devServer = spawn('yarn', ['dev'], {
+    devServer = spawn('pnpm', ['dev'], {
       stdio: 'inherit',
       shell: true,
       cwd: process.cwd(),

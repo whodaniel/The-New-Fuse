@@ -8,15 +8,15 @@ cd packages/vscode-extension
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-npm install
+pnpm install
 
 # Build the extension
 echo "🏗️ Building extension..."
-npm run build
+pnpm run build
 
 # Package the extension
 echo "📦 Packaging extension..."
-npm run package
+pnpm run package
 
 echo "✅ VS Code extension built successfully!"
 echo "The extension package is available in the packages/vscode-extension/dist directory."

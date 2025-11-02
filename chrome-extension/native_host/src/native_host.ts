@@ -218,7 +218,7 @@ async function restartVite(port: number = 5173): Promise<NativeHostResponse> {
             cwd: PROJECT_DIR,
             detached: true,
             stdio: 'ignore',
-            shell: true // Use shell to ensure npm command is found
+            shell: true // Use shell to ensure pnpm command is found
         });
         viteProcess.unref();
 

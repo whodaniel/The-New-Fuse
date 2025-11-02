@@ -1,19 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+"""import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter } from 'events';
-import { ConfigService } from './config/ConfigService';
-import { AxiosError } from 'axios';
-const bridgeConfig = {
-  // Implementation needed
-}
-  type: 'redis',
-  host: 'localhost',
-  port: 6379
-};
+import { ConfigService } from '../config/ConfigService';
+
 export enum MessageRole {
   SYSTEM = 'system',
   USER = 'user',
   ASSISTANT = 'assistant',
-  FUNCTION = 'function'
+  FUNCTION = 'function',
 }
 
 export enum MessageType {
@@ -21,12 +14,12 @@ export enum MessageType {
   COMMAND = 'command',
   STREAM = 'stream',
   STATUS = 'status',
-  RESPONSE = 'response'
+  RESPONSE = 'response',
 }
 
 export enum Provider {
   LITELLM = 'litellm',
-  OPENROUTER = 'openrouter'
+  OPENROUTER = 'openrouter',
 }
 
 export interface MessageContent {
@@ -53,225 +46,223 @@ export interface AgentMetadata {
 }
 
 @Injectable()
-export class MessageHandler {
+export class MessageHandler extends EventEmitter {
   private readonly logger = new Logger(MessageHandler.name);
   private readonly maxMemoryMessages: number;
   private readonly agents: Map<string, AgentConfig>;
   private readonly conversationContexts: Map<string, MessageContent[]>;
-  constructor(): unknown {
-    super(): unknown {
+
+  constructor(private readonly configService: ConfigService) {
+    super();
+    this.maxMemoryMessages = this.configService.get('MAX_MEMORY_MESSAGES') || 100;
+    this.agents = new Map<string, AgentConfig>();
+    this.conversationContexts = new Map<string, MessageContent[]>();
+    this.initializeAgents();
+    this.subscribeToMessages();
+  }
+
+  private initializeAgents(): void {
+    const agentConfigs = this.configService.get('AGENTS');
+    if (agentConfigs && Array.isArray(agentConfigs)) {
+      for (const config of agentConfigs) {
+        this.agents.set(config.name.toLowerCase(), this.createAgentConfig(config.name, config.model, config.apiKey));
+      }
+    }
+  }
+
+  private createAgentConfig(name: string, model: string, apiKey: string): AgentConfig {
     const metadata: AgentMetadata = {
-description: name === 'Cascade' 
+        description: name === 'Cascade' 
         ? "Cascade is a knowledgeable and analytical AI assistant"
         : 'Cline is a creative and collaborative AI assistant',
-  }      capabilities: [
-        'Natural language understanding',
-        'Context-aware responses',
-        'Knowledge integration',
-        'Collaborative problem-solving'
-      ],
-      personalityTraits: name === 'Cascade'
+        capabilities: [
+            'Natural language understanding',
+            'Context-aware responses',
+            'Knowledge integration',
+            'Collaborative problem-solving'
+        ],
+        personalityTraits: name === 'Cascade'
         ? ['Analytical and precise', 'Detail-oriented', 'Systematic', 'Logical']
         : ['Creative and intuitive', 'Big-picture focused', 'Adaptable', 'Imaginative'],
-      communicationStyle: name === 'Cascade'
+        communicationStyle: name === 'Cascade'
         ? "Clear and structured"
         : 'Engaging and conversational',
-      expertiseAreas: name === 'Cascade'
+        expertiseAreas: name === 'Cascade'
         ? ['Data analysis', 'Technical documentation', 'System design', 'Process optimization']
         : ['Creative problem-solving', 'Brainstorming', 'Innovation', 'User experience']
     };
     return {
-  // Implementation needed
-}
-      name,
-      model,
-      apiKey,
-      provider: Provider.OPENROUTER,
-      metadata
+        name,
+        model,
+        apiKey,
+        provider: Provider.OPENROUTER,
+        metadata
     };
   }
 
   private subscribeToMessages(): void {
-this.on('message', (message: MessageContent) => {
-  }}
+    this.on('message', (message: MessageContent) => {
       this.handleMessage(message);
     });
   }
 
   private async handleMessage(message: MessageContent): Promise<void> {
-try {
-  }}
+    try {
       this.logger.debug(`Handling message: ${message.content.substring(0, 100)}...`);
-      // Add message to conversation context
       const agentId = this.determineTargetAgent(message);
       this.addToConversationContext(agentId, message);
-      // Process the message
       await this.processMessage(message, agentId);
     } catch (error) {
-this.logger.error('Error handling message:', error);
-  }      this.emit('error', error);
+      this.logger.error('Error handling message:', error);
+      this.emit('error', error);
     }
   }
 
   private determineTargetAgent(message: MessageContent): string {
-// Simple routing logic - can be enhanced with more sophisticated routing
-  }    if(): unknown {
+    if (message.metadata && message.metadata.targetAgent) {
       return message.metadata.targetAgent;
     }
-    
-    // Default to cascade for system messages, cline for user messages
     return message.role === MessageRole.SYSTEM ? 'cascade' : 'cline';
   }
 
   private addToConversationContext(agentId: string, message: MessageContent): void {
-if(): unknown {
-  }      this.conversationContexts.set(agentId, []);
+    if (!this.conversationContexts.has(agentId)) {
+      this.conversationContexts.set(agentId, []);
     }
-    
     const context = this.conversationContexts.get(agentId)!;
     context.push(message);
-    // Maintain memory limit
-    if(): unknown {
+    if (context.length > this.maxMemoryMessages) {
       context.shift();
     }
   }
 
   private async processMessage(message: MessageContent, agentId: string): Promise<void> {
-const agent = this.agents.get(agentId);
-  }    if(): unknown {
+    const agent = this.agents.get(agentId);
+    if (!agent) {
       throw new Error(`Agent not found: ${agentId}`);
     }
 
     try {
-const response = await this.callAgent(agent, message);
-      // Add response to conversation context
-  }      const responseMessage: MessageContent = {
-  // Implementation needed
-}
+      const response = await this.callAgent(agent, message);
+      const responseMessage: MessageContent = {
         role: MessageRole.ASSISTANT,
         content: response,
         timestamp: Date.now(),
         metadata: { agentId }
       };
       this.addToConversationContext(agentId, responseMessage);
-      // Emit response
       this.emit('response', responseMessage);
     } catch (error) {
-this.logger.error(`Error calling agent ${agentId}:`, error);
-  }      throw error;
+      this.logger.error(`Error calling agent ${agentId}:`, error);
+      throw error;
     }
   }
 
   private async callAgent(agent: AgentConfig, message: MessageContent): Promise<string> {
-if(): unknown {
-  }      throw new Error('Content must be a non-empty string');
+    if (!message.content || typeof message.content !== 'string') {
+      throw new Error('Content must be a non-empty string');
     }
 
     const context = this.conversationContexts.get(agent.name.toLowerCase()) || [];
-    // Build conversation history
     const messages = [
       {
-role: 'system',
-  }        content: this.buildSystemPrompt(agent.metadata)
+        role: 'system',
+        content: this.buildSystemPrompt(agent.metadata)
       },
       ...context.map(msg => ({
-  // Implementation needed
-}
         role: msg.role,
         content: msg.content
       }))
     ];
+
     const requestBody = {
-  // Implementation needed
-}
       model: agent.model,
       messages,
       max_tokens: 1000,
       temperature: 0.7
     };
+
     const headers = {
-  // Implementation needed
-}
       'Authorization': `Bearer ${agent.apiKey}`,
       'Content-Type': 'application/json',
       'HTTP-Referer': 'https://openrouter.ai/docs',
       'X-Title': 'The New Fuse Framework'
     };
+
     try {
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-  // Implementation needed
-}
         method: 'POST',
         headers,
         body: JSON.stringify(requestBody)
       });
-      if(): unknown {
+
+      if (!response.ok) {
         throw new Error(`API request failed: ${response.status} ${response.statusText}`);
       }
 
       const responseData = await response.json();
-      if(): unknown {
+      if (!responseData.choices || !responseData.choices[0] || !responseData.choices[0].message) {
         throw new Error('Unexpected API response format');
       }
 
       return responseData.choices[0].message.content;
     } catch (error) {
-this.logger.error('Error calling OpenRouter API:', error);
-  }      throw error;
+      this.logger.error('Error calling OpenRouter API:', error);
+      throw error;
     }
   }
 
   private buildSystemPrompt(metadata: AgentMetadata): string {
-return [
+    return [
       `You are ${metadata.description}.`,
       `- Key traits: ${metadata.personalityTraits.join(', ')}`,
       `- Communication style: ${metadata.communicationStyle}`,
       `- Expertise areas: ${metadata.expertiseAreas.join(', ')}`,
       `- Capabilities: ${metadata.capabilities.join(', ')}`,
       'Please respond in character with your defined personality and expertise.'
-    ].join('\n');
-  }}
+    ].join('
+');
+  }
 
-  async sendMessage(): unknown {
-    if(): unknown {
-      throw new Error('Message content must be a non-empty string');
+  public async sendMessage(content: string, toAgent: string, fromAgent?: string): Promise<void> {
+    if (!content || typeof content !== 'string') {
+        throw new Error('Message content must be a non-empty string');
     }
 
-    if(): unknown {
-      throw new Error(`Invalid agent: ${toAgent}`);
+    if (!this.agents.has(toAgent.toLowerCase())) {
+        throw new Error(`Invalid agent: ${toAgent}`);
     }
 
     const message: MessageContent = {
-role: MessageRole.USER,
-  }      content,
-      timestamp: Date.now(),
-      metadata: unknown;
-  // Implementation needed
-}
-        targetAgent: toAgent,
-        sourceAgent: fromAgent
-      }
+        role: MessageRole.USER,
+        content,
+        timestamp: Date.now(),
+        metadata: {
+            targetAgent: toAgent,
+            sourceAgent: fromAgent,
+        },
     };
     this.emit('message', message);
   }
 
-  getConversationContext(): unknown {
+  public getConversationContext(agentId: string): MessageContent[] {
     return this.conversationContexts.get(agentId) || [];
   }
 
-  clearConversationContext(): unknown {
-    if(): unknown {
+  public clearConversationContext(agentId?: string): void {
+    if (agentId) {
       this.conversationContexts.delete(agentId);
     } else {
-this.conversationContexts.clear();
-  }}
+      this.conversationContexts.clear();
+    }
   }
 
-  getAgents(): unknown {
+  public getAgents(): string[] {
     return Array.from(this.agents.keys());
   }
 
-  getAgentConfig(): unknown {
+  public getAgentConfig(agentId: string): AgentConfig | undefined {
     return this.agents.get(agentId);
   }
 }
+""

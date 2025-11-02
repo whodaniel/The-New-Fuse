@@ -35,25 +35,25 @@ The project follows a monorepo structure using Turborepo for build orchestration
 ### Setup
 
 1. Clone the repository
-2. Install dependencies: `yarn install`
+2. Install dependencies: `pnpm install`
 3. Generate database client: `yarn db:generate`
 4. Run database migrations: `yarn db:migrate`
-5. Start development servers: `yarn dev`
+5. Start development servers: `pnpm dev`
 
 ### Build Process
 
 The build process follows a specific order to ensure dependencies are built correctly:
 
-1. Build types package: `yarn build:types`
-2. Build utils package: `yarn build:utils`
-3. Build core package: `yarn build:core`
-4. Build database package: `yarn build:database`
-5. Build remaining packages: `yarn build`
+1. Build types package: `pnpm build:types`
+2. Build utils package: `pnpm build:utils`
+3. Build core package: `pnpm build:core`
+4. Build database package: `pnpm build:database`
+5. Build remaining packages: `pnpm build`
 
 ### Testing
 
 - Run linting: `yarn lint`
-- Run tests: `yarn test`
+- Run tests: `pnpm test`
 
 ### Deployment
 
@@ -169,7 +169,7 @@ Contributions are welcome! Please follow these guidelines:
 1. Fork the repository
 2. Create a feature branch
 3. Make your changes
-4. Run tests: `yarn test`
+4. Run tests: `pnpm test`
 5. Submit a pull request
 
 ## License

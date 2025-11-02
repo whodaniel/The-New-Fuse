@@ -3,13 +3,13 @@
 # Start Vite Development Server for The New Fuse Frontend
 echo "🚀 Starting The New Fuse - Frontend Development Server"
 echo "📂 Directory: $(pwd)"
-echo "⚡ Running: npm run dev"
+echo "⚡ Running: pnpm run dev"
 echo ""
 
 # Check if node_modules exists
 if [ ! -d "node_modules" ]; then
     echo "📦 Installing dependencies first..."
-    npm install
+    pnpm install
     echo ""
 fi
 
@@ -19,4 +19,4 @@ echo "🔥 Hot reload enabled - changes will update automatically"
 echo "⏹️  Press Ctrl+C to stop the server"
 echo ""
 
-npm run dev
+pnpm run dev

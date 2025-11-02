@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { WorkflowTemplate, WorkflowExecution, WorkflowStatus } from '../types/types';
+import { WorkflowTemplate, WorkflowExecution, WorkflowStatus } from './types';
 import { WorkflowExecutor } from './executor';
 import { WorkflowValidator } from './validator';
 import { WorkflowVersionManager } from './versioning';
@@ -18,10 +18,10 @@ export class WorkflowEngine {
   private activeExecutions = new Map<string, WorkflowExecution>();
 
   constructor(
-    private readonly eventEmitter: EventEmitter2,
     private readonly executor: WorkflowExecutor,
     private readonly validator: WorkflowValidator,
     private readonly versionManager: WorkflowVersionManager,
+    private readonly eventEmitter: EventEmitter2,
     options?: WorkflowEngineOptions
   ) {
     this.options = {
@@ -43,17 +43,17 @@ export class WorkflowEngine {
 
     // Emit event for workflow creation
     this.eventEmitter.emit('workflow.created', {
-      workflowId: template.id,
+      templateId: template.id,
       timestamp: new Date().toISOString(),
     });
     
     return template.id;
   }
 
-  async startWorkflow(template: WorkflowTemplate, context?: any, userId?: string): Promise<WorkflowExecution> {
+  async startWorkflow(template: WorkflowTemplate, context: any, userId: string): Promise<WorkflowExecution> {
     this.logger.log(`Starting workflow: ${template.id}`);
     
-    if (this.activeExecutions.size >= this.options.maxConcurrentExecutions) {
+    if (this.activeExecutions.size >= this.options.maxConcurrentExecutions!) {
       throw new Error('Maximum concurrent executions reached');
     }
 
@@ -64,34 +64,36 @@ export class WorkflowEngine {
       
       if (currentVersion !== latestVersion) {
         this.logger.log(`Migrating workflow from ${currentVersion} to ${latestVersion}`);
-        template = await this.versionManager.migrateWorkflow(template, latestVersion);
+        template = await this.versionManager.migrateWorkflow(template, latestVersion!);
       }
 
-      const execution = await this.executor.executeWorkflow(template, context, userId);
+      const execution = await this.executor.execute(template, context, userId);
       this.activeExecutions.set(execution.id, execution);
       
       this.eventEmitter.emit('workflow.started', {
-        workflowId: template.id,
         executionId: execution.id,
+        templateId: template.id,
         timestamp: new Date().toISOString(),
       });
       
       return execution;
     } catch (error) {
       this.logger.error(`Failed to start workflow: ${template.id}`, error);
-      this.eventEmitter.emit('workflow.failed', {
-        workflowId: template.id,
-        error: (error as Error).message,
+      
+      this.eventEmitter.emit('workflow.error', {
+        templateId: template.id,
+        error: error instanceof Error ? error.message : 'Unknown error',
         timestamp: new Date().toISOString(),
       });
+      
       throw error;
     }
   }
 
   async pauseWorkflow(executionId: string): Promise<void> {
     this.logger.log(`Pausing workflow execution: ${executionId}`);
-    const execution = this.activeExecutions.get(executionId);
     
+    const execution = this.activeExecutions.get(executionId);
     if (!execution) {
       throw new Error(`Execution not found: ${executionId}`);
     }
@@ -101,6 +103,7 @@ export class WorkflowEngine {
     }
 
     execution.status = WorkflowStatus.PAUSED;
+    
     this.eventEmitter.emit('workflow.paused', {
       executionId,
       timestamp: new Date().toISOString(),
@@ -109,8 +112,8 @@ export class WorkflowEngine {
 
   async resumeWorkflow(executionId: string): Promise<void> {
     this.logger.log(`Resuming workflow execution: ${executionId}`);
-    const execution = this.activeExecutions.get(executionId);
     
+    const execution = this.activeExecutions.get(executionId);
     if (!execution) {
       throw new Error(`Execution not found: ${executionId}`);
     }
@@ -120,6 +123,7 @@ export class WorkflowEngine {
     }
 
     execution.status = WorkflowStatus.RUNNING;
+    
     this.eventEmitter.emit('workflow.resumed', {
       executionId,
       timestamp: new Date().toISOString(),
@@ -128,8 +132,8 @@ export class WorkflowEngine {
 
   async stopWorkflow(executionId: string): Promise<void> {
     this.logger.log(`Stopping workflow execution: ${executionId}`);
-    const execution = this.activeExecutions.get(executionId);
     
+    const execution = this.activeExecutions.get(executionId);
     if (!execution) {
       throw new Error(`Execution not found: ${executionId}`);
     }
@@ -150,8 +154,8 @@ export class WorkflowEngine {
 
   async cancelWorkflow(executionId: string): Promise<void> {
     this.logger.log(`Cancelling workflow execution: ${executionId}`);
-    const execution = this.activeExecutions.get(executionId);
     
+    const execution = this.activeExecutions.get(executionId);
     if (!execution) {
       throw new Error(`Execution not found: ${executionId}`);
     }

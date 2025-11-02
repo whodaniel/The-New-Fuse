@@ -5,7 +5,7 @@ echo "🧪 Testing The New Fuse Extension..."
 cd "/Users/<owner>/Desktop/A1-Inter-LLM-Com/The New Fuse/vscode-extension"
 
 echo "1️⃣ Checking dependencies..."
-if npm list uuid > /dev/null 2>&1; then
+if pnpm list uuid > /dev/null 2>&1; then
     echo "✅ uuid dependency found"
 else
     echo "❌ uuid dependency missing"
@@ -13,7 +13,7 @@ else
 fi
 
 echo "2️⃣ Compiling extension..."
-npm run compile > /dev/null 2>&1
+pnpm run compile > /dev/null 2>&1
 if [ $? -eq 0 ]; then
     echo "✅ Extension compiles successfully"
 else

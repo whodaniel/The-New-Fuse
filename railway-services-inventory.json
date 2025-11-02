@@ -1,0 +1,77 @@
+{
+  "saas_services": [
+    {
+      "name": "core-vector-db",
+      "path": "packages/core-vector-db",
+      "type": "infrastructure",
+      "priority": 1,
+      "description": "Vector database service for AI/ML features"
+    },
+    {
+      "name": "relay-core", 
+      "path": "packages/relay-core",
+      "type": "infrastructure",
+      "priority": 1,
+      "description": "Core relay service for inter-service communication"
+    },
+    {
+      "name": "backend-package",
+      "path": "packages/backend",
+      "type": "backend",
+      "priority": 2,
+      "description": "Backend package service"
+    },
+    {
+      "name": "api-package",
+      "path": "packages/api",
+      "type": "api",
+      "priority": 2,
+      "description": "API package service"
+    },
+    {
+      "name": "backend",
+      "path": "apps/backend",
+      "type": "backend",
+      "priority": 2,
+      "description": "Main backend application"
+    },
+    {
+      "name": "api",
+      "path": "apps/api",
+      "type": "api",
+      "priority": 3,
+      "description": "Main API server"
+    },
+    {
+      "name": "api-gateway",
+      "path": "apps/api-gateway",
+      "type": "gateway",
+      "priority": 3,
+      "description": "API Gateway for routing requests"
+    },
+    {
+      "name": "frontend",
+      "path": "apps/frontend",
+      "type": "frontend",
+      "priority": 4,
+      "description": "Frontend web application"
+    }
+  ],
+  "excluded_services": [
+    {
+      "name": "browser-hub",
+      "path": "apps/browser-hub",
+      "reason": "Electron desktop application"
+    },
+    {
+      "name": "mcp-servers",
+      "path": "apps/mcp-servers",
+      "reason": "Local MCP servers, not for Railway"
+    },
+    {
+      "name": "relay-server",
+      "path": "apps/relay-server",
+      "reason": "Local relay server"
+    }
+  ]
+}

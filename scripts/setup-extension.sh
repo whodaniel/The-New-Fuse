@@ -87,7 +87,7 @@ cat > package.json << 'EOF'
     }
   },
   "scripts": {
-    "vscode:prepublish": "npm run compile",
+    "vscode:prepublish": "pnpm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
     "lint": "eslint src --ext ts"
@@ -418,7 +418,7 @@ EOF
 
 # Install dependencies
 echo "Installing dependencies..."
-npm install
+pnpm install
 
 # Compile TypeScript
 echo "Compiling TypeScript..."

@@ -1,5 +1,5 @@
-import { BaseProcessor } from './BaseProcessor'; // Assuming a BaseProcessor exists
-import { Logger } from '@the-new-fuse/core/src/utils/Logger';
+import { BaseProcessor } from './BaseProcessor';
+import { Logger } from '@the-new-fuse/core';
 import {
   Message,
   MessageType,
@@ -7,14 +7,12 @@ import {
   CoreTaskResult as TaskResult,
   TaskStatus,
   UUID,
-  // LLMConfig, // Removed unused import
-  // ToolDefinition, // Removed unused import
 } from '@the-new-fuse/types';
-import { AlertService } from '../services/AlertService'; // Corrected import
-import { RedisService } from '../services/RedisService'; // Corrected import
-// Import other necessary services like LLMService, ToolService, etc.
-// import { LLMService } from '../services/LLMService';
-// import { ToolService } from '../services/ToolService';
+import { AlertService } from '../services/AlertService';
+import { RedisService } from '../services/RedisService';
+import { MessageValidator } from '../services/MessageValidator';
+import { InterAgentChatService } from '../services/InterAgentChatService';
+
 
 /**
  * Processes incoming task assignment messages and executes the tasks.
@@ -23,61 +21,65 @@ export class TaskProcessor extends BaseProcessor {
   protected logger: Logger;
   private alertService: AlertService;
   private redisService: RedisService;
-  // private llmService: LLMService; // Example dependency
-  // private toolService: ToolService; // Example dependency
+  private messageValidator: MessageValidator;
+  private chatService: InterAgentChatService;
   private agentId: UUID;
-  private activeTasks: Map<UUID, Task>; // Keep track of tasks being processed
+  private activeTasks: Map<UUID, Task>;
+  private cancelledTasks: Set<UUID>;
 
   constructor(
     agentId: UUID,
     alertService: AlertService,
-    redisService: RedisService
-    // llmService: LLMService,
-    // toolService: ToolService
-    // Inject other dependencies
+    redisService: RedisService,
+    messageValidator: MessageValidator,
+    chatService: InterAgentChatService
   ) {
     super();
     this.agentId = agentId;
     this.logger = new Logger(`TaskProcessor [Agent ${this.agentId}]`);
     this.alertService = alertService;
     this.redisService = redisService;
-    // this.llmService = llmService;
-    // this.toolService = toolService;
+    this.messageValidator = messageValidator;
+    this.chatService = chatService;
     this.activeTasks = new Map();
+    this.cancelledTasks = new Set();
 
     this.logger.info('TaskProcessor initialized.');
-    // TODO: Potentially load any unfinished tasks from persistent storage (e.g., Redis) on startup
+    this.loadUnfinishedTasks();
   }
 
-  /**
-   * Processes an incoming message, expecting it to be a task assignment.
-   * @param message The incoming message.
-   * @returns A Promise resolving to a TaskResult or null if the message is not a task assignment.
-   */
+  private async loadUnfinishedTasks(): Promise<void> {
+    this.logger.info('Checking for unfinished tasks...');
+    try {
+        const keys = await this.redisService.keys('task:*:status');
+        for (const key of keys) {
+            const data = await this.redisService.get(key);
+            if (data) {
+                const taskData = JSON.parse(data);
+                if (taskData.status === TaskStatus.IN_PROGRESS) {
+                    this.logger.warn(`Task ${taskData.id} was in progress. Re-queuing is not yet implemented.`);
+                    // In a real implementation, you would re-queue or restart the task.
+                    // For now, we will just mark it as failed.
+                    await this.updateTaskStatus(taskData.id, TaskStatus.FAILED, 'Agent restarted during task execution.');
+                }
+            }
+        }
+    } catch (error) {
+        this.logger.error(`Error loading unfinished tasks: ${(error as Error).message}`);
+    }
+  }
+
   async process(message: Message): Promise<TaskResult | null> {
-    if (message.type !== MessageType.TASK_ASSIGNMENT || typeof message.content !== 'object' || message.content === null) {
+    if (!this.messageValidator.validate(message) || message.type !== MessageType.TASK_ASSIGNMENT) {
       this.logger.debug(`Skipping message ${message.id}: Not a valid task assignment.`);
       return null;
     }
 
-    // TODO: Add validation using MessageValidator service if available
-    const task = message.content as unknown as Task; // Type assertion, consider validation
-
-    // Basic validation
-    if (!task.id || !task.title) {
-        this.logger.warn(`Received invalid task assignment message ${message.id}: Missing ID or description.`);
-        await this.alertService.error(
-            'Received invalid task assignment',
-            `Agent ${this.agentId} / TaskProcessor`,
-            { messageId: message.id, taskContent: task }
-        );
-        // Return a failure result if possible, though the TaskResult structure might need a taskId
-        return null; // Or construct a minimal error TaskResult if the format allows
-    }
+    const task = message.content as unknown as Task;
 
     if (this.activeTasks.has(task.id)) {
         this.logger.warn(`Task ${task.id} is already being processed. Ignoring duplicate assignment.`);
-        return null; // Avoid processing the same task twice concurrently
+        return null;
     }
 
     this.logger.info(`Starting processing for task ${task.id}: "${task.title.substring(0, 50)}..."`);
@@ -85,20 +87,21 @@ export class TaskProcessor extends BaseProcessor {
     await this.updateTaskStatus(task.id, TaskStatus.IN_PROGRESS);
 
     try {
-      // --- Task Execution Logic ---
-      // 1. Understand the task description (potentially using LLM)
-      // 2. Identify required tools/capabilities (using ToolService or LLM)
-      // 3. Execute the steps (call tools, interact with LLM, etc.)
-      // 4. Aggregate results
-
-      // Placeholder execution:
       this.logger.debug(`Executing task ${task.id}... (Placeholder)`);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate work
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      if (this.cancelledTasks.has(task.id)) {
+        this.cancelledTasks.delete(task.id);
+        this.logger.info(`Task ${task.id} was cancelled during execution.`);
+        await this.updateTaskStatus(task.id, TaskStatus.CANCELLED);
+        this.activeTasks.delete(task.id);
+        return null;
+      }
+
       const resultData = {
           summary: `Task "${task.title}" completed successfully (placeholder).`,
           details: { executedAt: new Date() },
       };
-      // --- End Task Execution Logic ---
 
       this.logger.info(`Task ${task.id} completed successfully.`);
       await this.updateTaskStatus(task.id, TaskStatus.COMPLETED);
@@ -111,15 +114,14 @@ export class TaskProcessor extends BaseProcessor {
         output: resultData,
         metrics: {
           duration: 1000,
-          resourceUsage: {
-            cpuUsage: 0,
-            memoryUsage: 0
-          }
+          resourceUsage: { cpuUsage: 0, memoryUsage: 0 }
         },
         timestamp: new Date(),
       };
-      // TODO: Send TaskResult back to the orchestrator or requesting agent
-      // Example: await this.chatService.sendMessage(task.originatorId, taskResult, MessageType.TASK_RESULT);
+
+      if (task.originatorId) {
+        await this.chatService.sendMessage(task.originatorId, taskResult, MessageType.TASK_RESULT);
+      }
       return taskResult;
 
     } catch (error) {
@@ -139,24 +141,18 @@ export class TaskProcessor extends BaseProcessor {
         error: (error as Error).message,
         metrics: {
           duration: 0,
-          resourceUsage: {
-            cpuUsage: 0,
-            memoryUsage: 0
-          }
+          resourceUsage: { cpuUsage: 0, memoryUsage: 0 }
         },
         timestamp: new Date(),
       };
-       // TODO: Send failure TaskResult back
+
+      if (task.originatorId) {
+        await this.chatService.sendMessage(task.originatorId, taskResult, MessageType.TASK_RESULT);
+      }
       return taskResult;
     }
   }
 
-  /**
-   * Updates the status of a task, potentially storing it in Redis or another state store.
-   * @param taskId The ID of the task.
-   * @param status The new status.
-   * @param error Optional error message if status is FAILED.
-   */
   private async updateTaskStatus(taskId: UUID, status: TaskStatus, error?: string): Promise<void> {
     this.logger.debug(`Updating status for task ${taskId} to ${status}.`);
     const taskData = {
@@ -166,19 +162,13 @@ export class TaskProcessor extends BaseProcessor {
         ...(error && { error: error }),
     };
     try {
-        // Example: Store status update in Redis
-        await this.redisService.set(`task:${taskId}:status`, JSON.stringify(taskData), 3600 * 24); // Store for 24 hours
-        // TODO: Potentially publish status update event (e.g., via Redis Pub/Sub or EventBus)
+        await this.redisService.set(`task:${taskId}:status`, JSON.stringify(taskData), 3600 * 24);
+        await this.redisService.publish('task-status-updates', JSON.stringify(taskData));
     } catch (redisError) {
         this.logger.error(`Failed to update task status in Redis for task ${taskId}: ${(redisError as Error).message}`);
-        // Consider alternative logging or alerting if Redis fails
     }
   }
 
-  /**
-   * Handles cancellation requests for active tasks.
-   * @param taskId The ID of the task to cancel.
-   */
   async cancelTask(taskId: UUID): Promise<boolean> {
       if (!this.activeTasks.has(taskId)) {
           this.logger.warn(`Cannot cancel task ${taskId}: Not currently active.`);
@@ -186,12 +176,10 @@ export class TaskProcessor extends BaseProcessor {
       }
 
       this.logger.info(`Attempting to cancel task ${taskId}...`);
-      // TODO: Implement actual cancellation logic. This might involve:
-      // - Setting a flag that the execution loop checks.
-      // - Aborting ongoing operations (e.g., network requests, LLM calls).
-      // - This can be complex depending on the task's nature.
+      this.cancelledTasks.add(taskId);
 
-      // Placeholder: Mark as cancelled and remove from active tasks
+      // In a real implementation, you would abort ongoing operations.
+      // For this placeholder, we just mark it as cancelled.
       await this.updateTaskStatus(taskId, TaskStatus.CANCELLED);
       this.activeTasks.delete(taskId);
       this.logger.info(`Task ${taskId} marked as cancelled.`);

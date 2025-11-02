@@ -10,7 +10,7 @@ export interface ComponentValidator {
   childrenAllowed?: boolean;
 }
 
-export type ComponentValidatorInput = ComponentValidator | z.ZodSchema;
+export type ComponentValidatorInput = ComponentValidator | z.ZodTypeAny;
 
 // Helper type guard to check if a type is a component constructor
 // Use unknown for generic parameter
@@ -29,7 +29,7 @@ export const toBeValidComponent = createMatcher(
     const receivedProps = received.props as Record<string, unknown>;
 
     // Handle Zod schema validation
-    if (validator instanceof z.ZodSchema) {
+    if (validator instanceof z.ZodType) {
       const result = validator.safeParse(receivedProps);
       return result.success;
     }
@@ -79,7 +79,7 @@ export const toBeValidComponent = createMatcher(
     const receivedProps = received.props as Record<string, unknown>;
 
     // Handle Zod schema validation error messages
-    if (validator instanceof z.ZodSchema) {
+    if (validator instanceof z.ZodType) {
       const result = validator.safeParse(receivedProps);
       if (!result.success) {
         return `Component props did not match schema:\n${result.error.message}`;

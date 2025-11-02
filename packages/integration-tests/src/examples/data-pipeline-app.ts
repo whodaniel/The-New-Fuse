@@ -8,9 +8,9 @@
  */
 
 import { Logger, MasterAgentRegistry, HeartbeatMonitoringService } from '@tnf/relay-core';
-import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine';
+// import { WorkflowEngineFactory } from '@the-new-fuse/workflow-engine'; // Removed workflow-engine dependency
 import { ExtensionSystemFactory } from '@the-new-fuse/extension-system';
-import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types';
+// import { WorkflowNodeType } from '@the-new-fuse/workflow-engine/types'; // Removed workflow-engine dependency
 import { PrismaClient } from '@prisma/client';
 import * as path from 'path';
 import * as fs from 'fs-extra';
@@ -211,7 +211,7 @@ class DataValidator {
       if (rules.required) {
         rules.required.forEach(field => {
           if (!row[field] || row[field] === null || row[field] === '') {
-            rowErrors.push(\`Required field '\${field}' is missing\`);
+            rowErrors.push(`Required field '${field}' is missing`);
           }
         });
       }
@@ -221,9 +221,9 @@ class DataValidator {
         Object.entries(rules.types).forEach(([field, type]) => {
           if (row[field] !== null && row[field] !== undefined) {
             if (type === 'number' && isNaN(Number(row[field]))) {
-              rowErrors.push(\`Field '\${field}' must be a number\`);
+              rowErrors.push(`Field '${field}' must be a number`);
             } else if (type === 'email' && !row[field].includes('@')) {
-              rowErrors.push(\`Field '\${field}' must be a valid email\`);
+              rowErrors.push(`Field '${field}' must be a valid email`);
             }
           }
         });
@@ -312,7 +312,7 @@ class DataAnalytics {
       numericFields.forEach(field => {
         const stats = analytics.statistics[field];
         if (stats && stats.max > stats.average * 3) {
-          analytics.insights.push(\`Field '\${field}' has outliers that may need investigation\`);
+          analytics.insights.push(`Field '${field}' has outliers that may need investigation`);
         }
       });
       
@@ -401,55 +401,55 @@ class ReportGenerator {
   generateMarkdownReport(analytics) {
     const { summary, statistics, insights, recommendations } = analytics;
     
-    let report = \`# Data Analysis Report
+    let report = `# Data Analysis Report
 
 ## Summary
-- **Total Records**: \${summary.totalRecords}
-- **Fields**: \${summary.fields.join(', ')}
-- **Analysis Type**: \${summary.analysisType}
-- **Generated**: \${summary.timestamp}
+- **Total Records**: ${summary.totalRecords}
+- **Fields**: ${summary.fields.join(', ')}
+- **Analysis Type**: ${summary.analysisType}
+- **Generated**: ${summary.timestamp}
 
 ## Statistics
-\`;
+`;
 
     Object.entries(statistics).forEach(([field, stats]) => {
-      report += \`
-### \${field}
-- Count: \${stats.count}
-- Average: \${stats.average.toFixed(2)}
-- Min/Max: \${stats.min} / \${stats.max}
-- Median: \${stats.median}
-\`;
+      report += `
+### ${field}
+- Count: ${stats.count}
+- Average: ${stats.average.toFixed(2)}
+- Min/Max: ${stats.min} / ${stats.max}
+- Median: ${stats.median}
+`;
     });
 
     if (insights.length > 0) {
-      report += \`
+      report += `
 ## Insights
-\${insights.map(insight => \`- \${insight}\`).join('\\n')}
-\`;
+${insights.map(insight => `- ${insight}`).join('\\n')}
+`;
     }
 
     if (recommendations && recommendations.length > 0) {
-      report += \`
+      report += `
 ## Recommendations
-\${recommendations.map(rec => \`- \${rec}\`).join('\\n')}
-\`;
+${recommendations.map(rec => `- ${rec}`).join('\\n')}
+`;
     }
 
     return report;
   }
   
   generateTextReport(analytics) {
-    return \`Data Analysis Report
-Generated: \${analytics.summary.timestamp}
-Total Records: \${analytics.summary.totalRecords}
-Fields: \${analytics.summary.fields.join(', ')}
+    return `Data Analysis Report
+Generated: ${analytics.summary.timestamp}
+Total Records: ${analytics.summary.totalRecords}
+Fields: ${analytics.summary.fields.join(', ')}
 
 Statistics:
-\${Object.entries(analytics.statistics).map(([field, stats]) => 
-  \`\${field}: avg=\${stats.average.toFixed(2)}, min=\${stats.min}, max=\${stats.max}\`
+${Object.entries(analytics.statistics).map(([field, stats]) => 
+  `${field}: avg=${stats.average.toFixed(2)}, min=${stats.min}, max=${stats.max}`
 ).join('\\n')}
-\`;
+`;
   }
 }
 
@@ -716,7 +716,7 @@ Diana Davis,29,diana.davis@company.com,54000,Marketing
 Eve Miller,27,eve.miller@company.com,51000,Sales
 Frank Garcia,33,frank.garcia@company.com,59000,Engineering
 Grace Lee,26,grace.lee@company.com,53000,Marketing
-Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
+Henry Taylor,31,henry.taylor@company.com,57000,Sales`;
 
     // Get the workflow
     const workflows = await this.workflowEngine.repository.getAllWorkflows();
@@ -751,7 +751,7 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
       }
     );
 
-    this.logger.info(\`Pipeline execution started with ID: \${executionId}\`);
+    this.logger.info(`Pipeline execution started with ID: ${executionId}`);
 
     // Monitor execution progress
     let execution = await this.workflowEngine.engine.getExecutionStatus(executionId);
@@ -761,7 +761,7 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
       execution = await this.workflowEngine.engine.getExecutionStatus(executionId);
       
       if (execution?.status !== lastStatus) {
-        this.logger.info(\`Pipeline status changed: \${lastStatus} -> \${execution?.status}\`);
+        this.logger.info(`Pipeline status changed: ${lastStatus} -> ${execution?.status}`);
         lastStatus = execution?.status;
       }
 
@@ -770,9 +770,9 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
         
         if (execution?.status === 'COMPLETED') {
           this.logger.info('Pipeline completed successfully!');
-          this.logger.info(\`Execution results: \${JSON.stringify(execution.result, null, 2)}\`);
+          this.logger.info(`Execution results: ${JSON.stringify(execution.result, null, 2)}`);
         } else {
-          this.logger.error(\`Pipeline failed: \${execution?.error}\`);
+          this.logger.error(`Pipeline failed: ${execution?.error}`);
         }
       }
     }, 2000);
@@ -805,23 +805,23 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
 
     // Agent Registry Stats
     const systemHealth = await this.agentRegistry.getSystemHealth();
-    this.logger.info(\`Active Agents: \${systemHealth.activeAgents}\`);
-    this.logger.info(\`System Status: \${systemHealth.status}\`);
+    this.logger.info(`Active Agents: ${systemHealth.activeAgents}`);
+    this.logger.info(`System Status: ${systemHealth.status}`);
 
     // Extension Stats
     const extensionStats = this.extensionManager.getExtensionStats();
-    this.logger.info(\`Total Extensions: \${extensionStats.totalExtensions}\`);
-    this.logger.info(\`Active Extensions: \${extensionStats.activeExtensions}\`);
+    this.logger.info(`Total Extensions: ${extensionStats.totalExtensions}`);
+    this.logger.info(`Active Extensions: ${extensionStats.activeExtensions}`);
 
     // Workflow Stats
     const workflows = await this.workflowEngine.repository.getAllWorkflows();
-    this.logger.info(\`Total Workflows: \${workflows.length}\`);
+    this.logger.info(`Total Workflows: ${workflows.length}`);
 
     // Agent details
     const agents = await this.agentRegistry.getAllAgents();
     this.logger.info('\\nAgent Details:');
     agents.forEach(agent => {
-      this.logger.info(\`  - \${agent.name} (\${agent.type}): \${agent.status}\`);
+      this.logger.info(`  - ${agent.name} (${agent.type}): ${agent.status}`);
     });
 
     this.logger.info('=== END STATISTICS ===');
@@ -861,9 +861,9 @@ Henry Taylor,31,henry.taylor@company.com,57000,Sales\`;
 
     // Create manifest
     const manifest = {
-      name: \`@data-pipeline/\${name}\`,
+      name: `@data-pipeline/${name}`,
       version: '1.0.0',
-      description: \`Data pipeline extension: \${name}\`,
+      description: `Data pipeline extension: ${name}`,
       type,
       category: 'data-processing',
       main: 'index.js',

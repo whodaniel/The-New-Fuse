@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Agent, AgentState, ExtendedAgentConfig } from '../types/agent.d';
-import { AgentProcessor } from '../agent/core/AgentProcessor';
+import { AgentProcessor } from '../agent/AgentProcessor';
 import { AgentCommunicationManager } from './AgentCommunicationManager';
 
 export enum AgentStatus {
