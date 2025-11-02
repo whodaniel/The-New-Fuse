@@ -16,7 +16,7 @@ pnpm install
 
 # Build Theia with pnpm dlx (which provides yarn-like functionality for Theia)
 echo "Building Theia with pnpm dlx @theia/cli..."
-pnpm dlx @theia/cli@1.59.0 build --mode production
+pnpm --package=@theia/cli@1.59.0 dlx theia build --mode production
 
 # Verify build success
 if [ -f "lib/backend/main.js" ] && [ -f "src-gen/backend/main.js" ]; then

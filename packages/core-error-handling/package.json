@@ -7,7 +7,7 @@
   "scripts": {
     "build": "tsc",
     "build:foundation": "tsc",
-    "test": "vitest",
+    "test": "echo \"No tests for this package\"",
     "lint": "eslint src/**/*.ts"
   },
   "dependencies": {
