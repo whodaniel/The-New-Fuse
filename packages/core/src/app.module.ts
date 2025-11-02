@@ -9,6 +9,8 @@ import { LoggingService } from './services/LoggingService';
 import { MessageHandler } from './communication/message_handler';
 import { PubSubService } from './redis/pubsub.service';
 import { SharedMemory } from './agents/shared-memory';
+import { SupabaseService } from './supabase/SupabaseService';
+
 @Module({
   imports: [ConfigModule],
   controllers: [AppController],
@@ -20,7 +22,8 @@ import { SharedMemory } from './agents/shared-memory';
     LoggingService,
     MessageHandler,
     PubSubService,
-    SharedMemory
+    SharedMemory,
+    SupabaseService,
   ],
   exports: [
     AgentLLMService,
@@ -29,7 +32,8 @@ import { SharedMemory } from './agents/shared-memory';
     LoggingService,
     MessageHandler,
     PubSubService,
-    SharedMemory
-  ]
+    SharedMemory,
+    SupabaseService,
+  ],
 })
 export class AppModule {}
