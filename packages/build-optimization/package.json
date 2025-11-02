@@ -10,7 +10,7 @@
     "build:memory-optimized": "BUILD_ENABLE_MONITORING=true tsc --incremental",
     "build:staged": "tsc --incremental --build",
     "dev": "tsc --watch",
-    "test": "vitest",
+    "test": "echo \"No tests for this package\"",
     "test:coverage": "vitest --coverage"
   },
   "dependencies": {

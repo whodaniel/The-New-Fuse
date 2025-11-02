@@ -132,7 +132,8 @@ function setupNativeModules() {
     {
       name: '@vscode/ripgrep',
       requiredFiles: ['bin/rg'],
-      canInstall: true
+      canInstall: true,
+      canRebuild: false
     }
   ];
   

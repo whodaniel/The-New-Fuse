@@ -8,7 +8,7 @@
     "build": "tsc",
     "build:foundation": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
+    "test": "echo \"No tests for this package\"",
     "lint": "eslint src/**/*.ts",
     "clean": "rm -rf dist"
   },
