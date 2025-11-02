@@ -748,43 +748,39 @@ export class MasterAgentRegistry extends EventEmitter {
     // Store in agent's todo list
     agent.todoList.push(todo);
 
-    // Also create a Prisma Task for persistence and integration
-    if (todoData.category !== 'onboarding') { // Don't clutter Task table with onboarding todos
-      // First ensure we have a default pipeline for this agent
-      let defaultPipeline = await this.prisma.pipeline.findFirst({
-        where: { agentId, name: 'Default Agent Pipeline' }
-      });
-      
-      if (!defaultPipeline) {
-        defaultPipeline = await this.prisma.pipeline.create({
-          data: {
-            name: 'Default Agent Pipeline',
-            description: 'Default pipeline for agent tasks',
-            agentId,
-            userId: agent.userId
-          }
-        });
-      }
-
-      const prismaTask = await this.prisma.task.create({
+    const prismaTask = await this.prisma.task.create({
+      data: {
+        type: todo.content,
         data: {
-          type: todo.content,
-          data: {
-            title: todo.content,
-            description: `Agent todo: ${todo.content}`,
-            masterRegistryTodoId: todoId,
-            category: todo.category,
-            context: todo.context
+          title: todo.content,
+          description: `Agent todo: ${todo.content}`,
+          masterRegistryTodoId: todoId,
+          category: todo.category,
+          context: todo.context,
+        },
+        status: this.convertTodoStatusToTaskStatus(todo.status),
+        priority: this.convertTodoPriorityToTaskPriority(todo.priority),
+        pipeline: {
+          connectOrCreate: {
+            where: {
+              agentId_name: {
+                agentId,
+                name: 'Default Agent Pipeline',
+              },
+            },
+            create: {
+              name: 'Default Agent Pipeline',
+              description: 'Default pipeline for agent tasks',
+              agentId,
+              userId: agent.userId,
+            },
           },
-          status: this.convertTodoStatusToTaskStatus(todo.status),
-          priority: this.convertTodoPriorityToTaskPriority(todo.priority),
-          pipelineId: defaultPipeline.id,
-          agentId,
-          userId: agent.userId
-        }
-      });
-      todo.integrationId = prismaTask.id;
-    }
+        },
+        agentId,
+        userId: agent.userId,
+      },
+    });
+    todo.integrationId = prismaTask.id;
 
     this.updateSystemMetrics();
     
@@ -1567,8 +1563,7 @@ export class MasterAgentRegistry extends EventEmitter {
         throw new Error('Failed to parse token ID from mint transaction');
       }
 
-      // TODO: In production, trigger TBA creation here
-      const tbaAddress = `0x${profile.id.slice(-40).padStart(40, '0')}`; // Mock TBA address
+      const tbaAddress = await this.blockchainService.createTokenBoundAccount(tokenId);
 
       const onChainData: OnChainAgentData = {
         isOnChain: true,

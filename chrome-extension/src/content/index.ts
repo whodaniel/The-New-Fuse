@@ -9,6 +9,7 @@
 
 import { BaseAdapter } from './adapters/base-adapter';
 import { GeminiAdapter } from './adapters/gemini-adapter';
+import { ClaudeAdapter } from './adapters/claude-adapter';
 
 let activeAdapter: BaseAdapter | null = null;
 
@@ -22,11 +23,10 @@ function initializeAdapter() {
   if (hostname.includes('gemini.google.com')) {
     console.log('[The New Fuse] Gemini website detected. Initializing GeminiAdapter.');
     activeAdapter = new GeminiAdapter();
+  } else if (hostname.includes('claude.ai')) {
+    console.log('[The New Fuse] Claude website detected. Initializing ClaudeAdapter.');
+    activeAdapter = new ClaudeAdapter();
   }
-  // TODO: Add other adapters here with else-if blocks
-  // else if (hostname.includes('claude.ai')) {
-  //   activeAdapter = new ClaudeAdapter();
-  // }
   else {
     console.log('[The New Fuse] No compatible adapter found for this website.');
   }
